@@ -29,9 +29,27 @@ class JsonDataPresenter implements HistoryPresenterInterface
             return $normalizedData;
         }
 
-        $removed = array_diff($oldArray['common'] ?? [], $newArray['common'] ?? []);
+        $removed = [];
+        $updated = [];
 
-        $updated = array_diff($newArray['common'] ?? [], $oldArray['common'] ?? []);
+        foreach ($oldArray['common'] ?? [] as $key => $oldValue) {
+            if (isset($newArray['common'][$key])) {
+                $newValue = $newArray['common'][$key];
+
+                if ($oldValue !== $newValue) {
+                    $removed[$key] = $oldValue;
+                    $updated[$key] = $newValue;
+                }
+            } else {
+                $removed[$key] = $oldValue;
+            }
+        }
+
+        foreach ($newArray['common'] ?? [] as $key => $newValue) {
+            if (!isset($oldArray['common'][$key])) {
+                $updated[$key] = $newValue;
+            }
+        }
 
         foreach (static::$sections as $section) {
             $removed += static::getChangedValues(

@@ -72,7 +72,7 @@
                             class="text-xs text-gray-600 dark:text-gray-300 font-medium cursor-pointer select-none"
                             for="{{ $field->code . '_' . $option->id }}"
                         >
-                            {{ $option->translate($currentLocaleCode)['label'] }}
+                            {{ $option->translate($currentLocaleCode)['label'] ?? "[{$option->code}]" }}
                         </label>
                     </div>
                 @endforeach

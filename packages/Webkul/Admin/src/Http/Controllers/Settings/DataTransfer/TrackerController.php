@@ -51,7 +51,7 @@ class TrackerController extends Controller
         $summary = $this->normalizeSummary($import->summary);
         $import['data'] = json_decode($import->data, true);
 
-        if ('export' == $jobInstance['type']) {
+        if ($jobInstance['type'] == 'export') {
             $isValid = $this->exportHelper->setExport($import)->isValid();
             $stats = $this->exportHelper->stats($import->state);
         } else {

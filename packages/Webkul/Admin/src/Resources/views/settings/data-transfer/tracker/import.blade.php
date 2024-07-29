@@ -177,7 +177,7 @@
                             class="secondary-button place-self-start"
                             href="{{ route('admin.settings.data_transfer.imports.download_error_report', $import->id) }}"
                             target="_blank"
-                            v-if="importResource.errors_count"
+                            v-if="importResource.errors_count && importResource.error_file_path"
                         >
                             @lang('admin::app.settings.data-transfer.imports.import.download-error-report')
                         </a>
@@ -366,6 +366,18 @@
 
                             @{{ value}}
                         </p>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex gap-2" v-if="jobInstance.type == 'import'">
+                        <a
+                            class="secondary-button place-self-start"
+                            href="{{ route('admin.settings.data_transfer.imports.download_error_report', $import->id) }}"
+                            target="_blank"
+                            v-if="importResource.errors_count && importResource.error_file_path"
+                        >
+                            @lang('admin::app.settings.data-transfer.imports.import.download-error-report')
+                        </a>
                     </div>
 
                     <!-- Actions -->

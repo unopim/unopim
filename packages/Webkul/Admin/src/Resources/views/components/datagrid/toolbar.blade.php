@@ -168,7 +168,7 @@
                 <x-slot:content class="!p-5">
                     <x-admin::datagrid.filters />
                     <div
-                            class="primary-button text-center"
+                            class="primary-button block text-center"
                             @click="runFilters()"
                         >
                             @lang('admin::app.components.datagrid.filters.save')

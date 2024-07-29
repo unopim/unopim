@@ -26,21 +26,6 @@
                 :for="$name"
             >
                 {!! __($field['title']) . ( __($field['title']) ? '<span class="'.$isRequired.'"></span>' : '') !!}
-
-                @if (
-                    ! empty($field['channel_based'])
-                    && $channels->count() > 1
-                )
-                    <span class="px-1 py-0.5 bg-gray-100 border border-gray-200 rounded text-[10px] text-gray-600 font-semibold leading-normal">
-                        {{ $currentChannel->name }}
-                    </span>
-                @endif
-
-                @if (! empty($field['locale_based']))
-                    <span class="px-1 py-0.5 bg-gray-100 border border-gray-200 rounded text-[10px] text-gray-600 font-semibold leading-normal">
-                        {{ $currentLocale->name }}
-                    </span>
-                @endif
             </x-admin::form.control-group.label>
         </div>
 
@@ -50,7 +35,7 @@
                 type="text"
                 :id="$name"
                 :name="$name"
-                :value="old($nameKey) ?? (core()->getConfigData($nameKey, $currentChannel->code, $currentLocale->code) ? core()->getConfigData($nameKey, $currentChannel->code, $currentLocale->code) : ($field['default_value'] ?? ''))"
+                :value="old($nameKey) ?? (core()->getConfigData($nameKey) ? core()->getConfigData($nameKey) : ($field['default_value'] ?? ''))"
                 :rules="$validations"
                 :label="trans($field['title'])"
             />
@@ -62,7 +47,7 @@
                 :id="$name"
                 :name="$name"
                 :rules="$validations"
-                :value="old($nameKey) ?? core()->getConfigData($nameKey, $currentChannel->code, $currentLocale->code)"
+                :value="old($nameKey) ?? core()->getConfigData($nameKey)"
                 :label="trans($field['title'])"
             />
 
@@ -73,7 +58,7 @@
                 :id="$name"
                 :name="$name"
                 :rules="$validations"
-                :value="old($nameKey) ?? core()->getConfigData($nameKey, $currentChannel->code, $currentLocale->code)"
+                :value="old($nameKey) ?? core()->getConfigData($nameKey)"
                 :label="trans($field['title'])"
                 :min="$field['name'] == 'minimum_order_amount'"
             />
@@ -86,7 +71,7 @@
                 :id="$name"
                 :name="$name"
                 :rules="$validations"
-                :value="old($nameKey) ?: core()->getConfigData($nameKey, $currentChannel->code, $currentLocale->code) ?: (isset($field['default_value']) ? $field['default_value'] : '')"
+                :value="old($nameKey) ?: core()->getConfigData($nameKey) ?: (isset($field['default_value']) ? $field['default_value'] : '')"
                 :label="trans($field['title'])"
             />
 
@@ -98,13 +83,13 @@
                 :id="$name"
                 :name="$name"
                 :rules="$validations"
-                :value="old($nameKey) ?: core()->getConfigData($nameKey, $currentChannel->code, $currentLocale->code) ?: (isset($field['default_value']) ? $field['default_value'] : '')"
+                :value="old($nameKey) ?: core()->getConfigData($nameKey) ?: (isset($field['default_value']) ? $field['default_value'] : '')"
                 :label="trans($field['title'])"
             />
 
         <!-- Select input -->
         @elseif ($field['type'] == 'select')
-            @php $selectedOption = core()->getConfigData($nameKey, $currentChannel->code, $currentLocale->code) ?? ''; @endphp
+            @php $selectedOption = core()->getConfigData($nameKey) ?? ''; @endphp
 
             <x-admin::form.control-group.control
                 type="select"
@@ -137,7 +122,7 @@
 
         <!-- Multiselect Input -->
         @elseif ($field['type'] == 'multiselect')
-            @php $selectedOption = core()->getConfigData($nameKey, $currentChannel->code, $currentLocale->code) ?? ''; @endphp
+            @php $selectedOption = core()->getConfigData($nameKey) ?? ''; @endphp
 
             <v-field
                 name="{{ $name }}[]"
@@ -178,7 +163,7 @@
         <!-- Boolean/Switch input -->
         @elseif ($field['type'] == 'boolean')
             @php
-                $selectedOption = core()->getConfigData($nameKey, $currentChannel->code, $currentLocale->code) ?? ($field['default_value'] ?? '');
+                $selectedOption = core()->getConfigData($nameKey) ?? ($field['default_value'] ?? '');
             @endphp
 
             <input type="hidden" name="{{ $name }}" value="0" />
@@ -199,8 +184,8 @@
         @elseif ($field['type'] == 'image')
 
             @php
-                $src = Storage::url(core()->getConfigData($nameKey, $currentChannel->code, $currentLocale->code));
-                $result = core()->getConfigData($nameKey, $currentChannel->code, $currentLocale->code);
+                $src = Storage::url(core()->getConfigData($nameKey));
+                $result = core()->getConfigData($nameKey);
             @endphp
 
             <div class="flex justify-center items-center">
@@ -247,7 +232,7 @@
 
         @elseif ($field['type'] == 'file')
             @php
-                $result = core()->getConfigData($nameKey, $currentChannel->code, $currentLocale->code);
+                $result = core()->getConfigData($nameKey);
                 $src = explode("/", $result);
                 $path = end($src);
             @endphp

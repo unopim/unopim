@@ -7,6 +7,16 @@ use Webkul\DataGrid\DataGrid;
 
 class ExportDataGrid extends DataGrid
 {
+    protected $exporters;
+
+    /**
+     * Intitialize the exporters
+     */
+    public function __construct()
+    {
+        $this->exporters = config('exporters');
+    }
+
     /**
      * Prepare query builder.
      *
@@ -46,7 +56,7 @@ class ExportDataGrid extends DataGrid
             'index'      => 'code',
             'label'      => trans('admin::app.settings.data-transfer.imports.index.datagrid.code'),
             'type'       => 'text',
-            'searchable' => false,
+            'searchable' => true,
             'filterable' => true,
             'sortable'   => true,
         ]);
@@ -58,6 +68,9 @@ class ExportDataGrid extends DataGrid
             'searchable' => false,
             'filterable' => true,
             'sortable'   => true,
+            'closure'    => function ($row) {
+                return isset($this->exporters[$row->entity_type]['title']) ? trans($this->exporters[$row->entity_type]['title']) : $row->entity_type;
+            },
         ]);
     }
 

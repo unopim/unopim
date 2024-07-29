@@ -30,29 +30,11 @@ class CoreConfigRepository extends Repository
     {
         Event::dispatch('core.configuration.save.before');
 
-        $channel = null;
-        $locale  = null;
-        
-        if (
-            isset($data['locale']) && $data['locale']
-            || isset($data['channel']) && $data['channel']
-        ) {
-            $locale = $data['locale'];
-            $channel = $data['channel'];
-
-            unset($data['locale']);
-            unset($data['channel']);
-        }
-
         foreach ($data as $method => $fieldData) {
             $recursiveData = $this->recursiveArray($fieldData, $method);
 
             foreach ($recursiveData as $fieldName => $value) {
                 $field = core()->getConfigField($fieldName);
-
-                $channelBased = ! empty($field['channel_based']);
-
-                $localeBased = ! empty($field['locale_based']);
 
                 if (
                     gettype($value) == 'array'
@@ -61,31 +43,9 @@ class CoreConfigRepository extends Repository
                     $value = implode(',', $value);
                 }
 
-                if (! empty($field['channel_based'])) {
-                    if (! empty($field['locale_based'])) {
-                        $coreConfigValue = $this->model
-                            ->where('code', $fieldName)
-                            ->where('locale_code', $locale)
-                            ->where('channel_code', $channel)
-                            ->get();
-                    } else {
-                        $coreConfigValue = $this->model
-                            ->where('code', $fieldName)
-                            ->where('channel_code', $channel)
-                            ->get();
-                    }
-                } else {
-                    if (! empty($field['locale_based'])) {
-                        $coreConfigValue = $this->model
-                            ->where('code', $fieldName)
-                            ->where('locale_code', $locale)
-                            ->get();
-                    } else {
-                        $coreConfigValue = $this->model
-                            ->where('code', $fieldName)
-                            ->get();
-                    }
-                }
+                $coreConfigValue = $this->model
+                    ->where('code', $fieldName)
+                    ->get();
 
                 if (request()->hasFile($fieldName)) {
                     $value = request()->file($fieldName)->store('configuration');
@@ -95,8 +55,8 @@ class CoreConfigRepository extends Repository
                     parent::create([
                         'code'         => $fieldName,
                         'value'        => $value,
-                        'locale_code'  => $localeBased ? $locale : null,
-                        'channel_code' => $channelBased ? $channel : null,
+                        'locale_code'  => null,
+                        'channel_code' => null,
                     ]);
                 } else {
                     foreach ($coreConfigValue as $coreConfig) {
@@ -110,8 +70,8 @@ class CoreConfigRepository extends Repository
                             parent::update([
                                 'code'         => $fieldName,
                                 'value'        => $value,
-                                'locale_code'  => $localeBased ? $locale : null,
-                                'channel_code' => $channelBased ? $channel : null,
+                                'locale_code'  => null,
+                                'channel_code' => null,
                             ], $coreConfig->id);
                         }
                     }

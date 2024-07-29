@@ -479,7 +479,7 @@ class ImportController extends Controller
         $jobInstance = json_decode($import->meta, true);
         $summary = $this->normalizeSummary($import->summary);
 
-        if ('export' == $jobInstance['type']) {
+        if ($jobInstance['type'] == 'export') {
             $isValid = $this->exportHelper->setExport($import)->isValid();
             $stats = $this->exportHelper->stats($state);
             $jobTrack = $this->exportHelper->getExport()->unsetRelations();
