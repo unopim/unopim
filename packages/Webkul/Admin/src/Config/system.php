@@ -25,22 +25,18 @@ return [
                 'name'          => 'enabled',
                 'title'         => 'admin::app.configuration.index.general.magic-ai.settings.enabled',
                 'type'          => 'boolean',
-                'channel_based' => true,
             ], [
                 'name'          => 'api_key',
                 'title'         => 'admin::app.configuration.index.general.magic-ai.settings.api-key',
                 'type'          => 'password',
-                'channel_based' => true,
             ], [
                 'name'          => 'organization',
                 'title'         => 'admin::app.configuration.index.general.magic-ai.settings.organization',
                 'type'          => 'text',
-                'channel_based' => true,
             ], [
                 'name'          => 'api_domain',
                 'title'         => 'admin::app.configuration.index.general.magic-ai.settings.llm-api-domain',
                 'type'          => 'text',
-                'channel_based' => true,
             ],
         ],
     ],

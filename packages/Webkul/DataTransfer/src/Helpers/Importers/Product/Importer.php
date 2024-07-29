@@ -254,7 +254,7 @@ class Importer extends AbstractImporter
         foreach ($channels as $channel) {
             $this->channelsAndLocales[$channel->code] = $channel->locales?->pluck('code')?->toArray() ?? [];
 
-            $this->currencies = array_merge($channel->currencies?->pluck('code')?->toArray() ?? []);
+            $this->currencies = array_merge($this->currencies, $channel->currencies?->pluck('code')?->toArray() ?? []);
         }
     }
 
@@ -264,8 +264,16 @@ class Importer extends AbstractImporter
     public function addPriceAttributesColumns(string $attributeCode): void
     {
         foreach ($this->currencies as $currency) {
-            $this->validColumnNames[] = "{$attributeCode} ({$currency})";
+            $this->validColumnNames[] = $this->getPriceTypeColumnName($attributeCode, $currency);
         }
+    }
+
+    /**
+     * Get formatted price column name
+     */
+    protected function getPriceTypeColumnName(string $attributeCode, string $currency): string
+    {
+        return "{$attributeCode} ({$currency})";
     }
 
     /**
@@ -471,6 +479,14 @@ class Importer extends AbstractImporter
                 $validations += $attribute->getValidationRules(withUniqueValidation: false);
             } else {
                 $validations = $rules[$attributeCode];
+            }
+
+            if ($attribute->type == 'price') {
+                foreach ($this->currencies as $currency) {
+                    $rules[$this->getPriceTypeColumnName($attributeCode, $currency)] = $validations;
+                }
+
+                continue;
             }
 
             $rules[$attributeCode] = $validations;

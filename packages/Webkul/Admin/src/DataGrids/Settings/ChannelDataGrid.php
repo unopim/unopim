@@ -45,7 +45,7 @@ class ChannelDataGrid extends DataGrid
         $this->addFilter('id', 'channels.id');
         $this->addFilter('code', 'channels.code');
         $this->addFilter('translated_name', 'requested_channel_translation.name');
-        $this->addFilter('translated_category_name', 'categories.code');
+        $this->addFilter('translated_category_name', DB::raw('(CASE WHEN '.$tablePrefix."categories.additional_data->'$.locale_specific.".$requestedLocaleCode.".name' IS NOT NULL THEN REPLACE(additional_data->'$.locale_specific.".$requestedLocaleCode.".name', '\"', '') ELSE ".$tablePrefix."categories.code END)"));
 
         return $queryBuilder;
     }

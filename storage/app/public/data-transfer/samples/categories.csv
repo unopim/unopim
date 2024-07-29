@@ -1,0 +1,7 @@
+locale;code;parent;name
+en_US;clothing;root;Clothing
+en_US;women;clothing;Women 
+en_US;men;clothing;Men
+en_US;electronics;root;Electronics
+en_US;summer_wear;men;Summer Wear Men
+en_US;summer_wear_women;women;Summer Wear Women

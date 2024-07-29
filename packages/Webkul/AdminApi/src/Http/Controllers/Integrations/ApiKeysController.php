@@ -143,7 +143,7 @@ class ApiKeysController extends Controller
     private function getDefaultDetails($apiKey)
     {
         $oauthClientId = $apiKey->oauthClients?->getKey();
-        $clientId  = $apiKey->oauthClients?->getKey();
+        $clientId = $apiKey->oauthClients?->getKey();
         $secretKey = $oauthClientId ? $this->maskClientIdAndScreatKey($apiKey->oauthClients?->secret) : $apiKey->oauthClients?->secret;
 
         return [

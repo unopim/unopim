@@ -8,6 +8,16 @@ use Webkul\DataTransfer\Helpers\Import;
 
 class JobTrackerGrid extends DataGrid
 {
+    protected $importers;
+
+    /**
+     * Intitialize the importers
+     */
+    public function __construct()
+    {
+        $this->importers = config('importers');
+    }
+
     /**
      * Prepare query builder.
      *
@@ -35,6 +45,10 @@ class JobTrackerGrid extends DataGrid
                 'job_track.updated_at',
             );
 
+        $this->addFilter('id', 'job_track.id');
+        $this->addFilter('job_code', 'job.code');
+        $this->addFilter('type', 'job.type');
+
         return $queryBuilder;
     }
 
@@ -58,7 +72,7 @@ class JobTrackerGrid extends DataGrid
             'index'      => 'job_code',
             'label'      => trans('admin::app.settings.data-transfer.tracker.index.datagrid.job_code'),
             'type'       => 'text',
-            'searchable' => false,
+            'searchable' => true,
             'filterable' => true,
             'sortable'   => true,
         ]);
@@ -67,9 +81,12 @@ class JobTrackerGrid extends DataGrid
             'index'      => 'entity_type',
             'label'      => trans('admin::app.settings.data-transfer.tracker.index.datagrid.type'),
             'type'       => 'text',
-            'searchable' => false,
+            'searchable' => true,
             'filterable' => true,
             'sortable'   => true,
+            'closure'    => function ($row) {
+                return isset($this->importers[$row->entity_type]['title']) ? trans($this->importers[$row->entity_type]['title']) : $row->entity_type;
+            },
         ]);
 
         $this->addColumn([

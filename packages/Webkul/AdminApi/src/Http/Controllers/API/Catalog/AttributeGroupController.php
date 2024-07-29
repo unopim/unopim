@@ -98,7 +98,7 @@ class AttributeGroupController extends ApiController
 
             return $this->successResponse(
                 trans('admin::app.catalog.attribute-groups.update-success'),
-                Response::HTTP_NO_CONTENT
+                Response::HTTP_OK
             );
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);

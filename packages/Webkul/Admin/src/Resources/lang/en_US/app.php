@@ -1103,7 +1103,7 @@ return [
                         'job_code'             => 'Job',
                         'type'                 => 'Type',
                         'job_type'             => 'Job Type',
-                        'state'                => 'State',
+                        'state'                => 'Status',
                         'processed_rows_count' => 'Processed Rows',
                         'invalid_rows_count'   => 'Invalid Rows',
                         'started_at'           => 'Started at',
@@ -1253,6 +1253,7 @@ return [
                         'updated'               => 'Updated',
                         'uploaded-file'         => 'Uploaded File',
                         'images_directory_path' => 'Images File',
+                        'import'                => 'Import',
                     ],
                 ],
 
@@ -1375,6 +1376,7 @@ return [
                         'updated'               => 'Updated',
                         'uploaded-file'         => 'Uploaded File',
                         'images_directory_path' => 'Images File',
+                        'export'                => 'Export',
                     ],
                 ],
 
@@ -2564,11 +2566,11 @@ return [
     ],
 
     'common' => [
-        'yes'      => 'Yes',
-        'no'       => 'No',
-        'true'     => 'True',
-        'false'    => 'False',
-        'enable'   => 'Enabled',
-        'disable'  => 'Disabled',
+        'yes'     => 'Yes',
+        'no'      => 'No',
+        'true'    => 'True',
+        'false'   => 'False',
+        'enable'  => 'Enabled',
+        'disable' => 'Disabled',
     ],
 ];

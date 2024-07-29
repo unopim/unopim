@@ -19,9 +19,10 @@ Current version: 0.1.0
 
 To get started with UnoPim, follow these steps:
 
-1. **Create Project**:
+1. **Project Setup**:
     ```bash
     composer create-project unopim/unopim
+    cd unopim
     ```
 
 2. **Install the UnoPim**:
@@ -36,6 +37,13 @@ To get started with UnoPim, follow these steps:
 
 4. **Access UnoPim**:
     Open your browser and go to `http://localhost:8000`.
+
+5. **Queue Operations** 
+   To execute import/export operations, you are required to initiate the Queue command. Execute the following command:
+
+   ```bash
+   php artisan queue:work
+   
 
 ## Usage
 

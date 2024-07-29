@@ -7,6 +7,16 @@ use Webkul\DataGrid\DataGrid;
 
 class ImportDataGrid extends DataGrid
 {
+    protected $importers;
+
+    /**
+     * Intitialize the importers
+     */
+    public function __construct()
+    {
+        $this->importers = config('importers');
+    }
+
     /**
      * Prepare query builder.
      *
@@ -48,7 +58,7 @@ class ImportDataGrid extends DataGrid
             'index'      => 'code',
             'label'      => trans('admin::app.settings.data-transfer.imports.index.datagrid.code'),
             'type'       => 'text',
-            'searchable' => false,
+            'searchable' => true,
             'filterable' => true,
             'sortable'   => true,
         ]);
@@ -60,6 +70,9 @@ class ImportDataGrid extends DataGrid
             'searchable' => false,
             'filterable' => true,
             'sortable'   => true,
+            'closure'    => function ($row) {
+                return isset($this->importers[$row->entity_type]['title']) ? trans($this->importers[$row->entity_type]['title']) : $row->entity_type;
+            },
         ]);
 
         $this->addColumn([
@@ -70,7 +83,6 @@ class ImportDataGrid extends DataGrid
             'filterable' => true,
             'sortable'   => true,
             'closure'    => function ($row) {
-
                 $options = [
                     'append' => trans('admin::app.settings.data-transfer.exports.edit.create-update'),
                     'delete' => trans('admin::app.settings.data-transfer.exports.edit.delete'),

@@ -145,7 +145,7 @@ class ConfigurableProductController extends ProductController
 
             return $this->successResponse(
                 trans('admin::app.catalog.products.update-success'),
-                Response::HTTP_NO_CONTENT
+                Response::HTTP_OK
             );
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);

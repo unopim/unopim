@@ -306,7 +306,7 @@
                             <x-admin::form.control-group.control
                                 type="text"
                                 name="field_separator"
-                                :value="old('field_separator') ?? ','"
+                                :value="old('field_separator') ?? ';'"
                                 rules="required"
                                 :label="trans('admin::app.settings.data-transfer.imports.create.field-separator')"
                                 :placeholder="trans('admin::app.settings.data-transfer.imports.create.field-separator')"
