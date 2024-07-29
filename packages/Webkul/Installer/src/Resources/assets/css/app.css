@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+
+	* {
+		@apply box-border font-inter;
+	}
+
+	body {
+		@apply bg-gray-50;
+	}
+
+	@font-face {
+		font-family: 'unopim-installer';
+		src: url('../fonts/unopim-installer.woff') format('woff');
+		font-weight: normal;
+		font-style: normal;
+		font-display: block;
+	}
+
+	[class^="icon-"],
+	[class*=" icon-"] {
+		/* use !important to prevent issues with browser extensions that change fonts */
+		font-family: 'unopim-installer' !important;
+		speak: never;
+		font-style: normal;
+		font-weight: normal;
+		font-variant: normal;
+		text-transform: none;
+		line-height: 1;
+		color: #6B7280;
+
+		/* Better Font Rendering =========== */
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+
+	.icon-limited:before {
+		content: "\e900";
+	}
+
+	.icon-cancel:before {
+		content: "\e901";
+	}
+
+	.icon-arrow-down:before {
+		content: "\e902";
+	}
+
+	.icon-right:before {
+		content: "\e903";
+	}
+
+	.icon-checkbox-active:before {
+		content: "\e904";
+	}
+
+	.icon-checkbox-normal:before {
+		content: "\e905";
+	}
+
+	.icon-tick:before {
+		content: "\e906";
+	}
+
+	.icon-view:before {
+		content: "\e907";
+	}
+
+	.required:after {
+        @apply content-['*'];
+	}
+}

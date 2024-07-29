@@ -1,0 +1,20 @@
+{
+  "src/Resources/assets/css/app.css": {
+    "file": "assets/app-c5be658a.css",
+    "isEntry": true,
+    "src": "src/Resources/assets/css/app.css"
+  },
+  "src/Resources/assets/fonts/unopim-installer.woff": {
+    "file": "assets/unopim-installer-974e4842.woff",
+    "src": "src/Resources/assets/fonts/unopim-installer.woff"
+  },
+  "src/Resources/assets/images/installer/spinner.svg": {
+    "file": "assets/spinner-75cc5358.svg",
+    "src": "src/Resources/assets/images/installer/spinner.svg"
+  },
+  "src/Resources/assets/js/app.js": {
+    "file": "assets/app-704c214d.js",
+    "isEntry": true,
+    "src": "src/Resources/assets/js/app.js"
+  }
+}

@@ -1,0 +1,27 @@
+{
+    "name": "unopim/laravel-attribute",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "UnoPim",
+            "email": "support@webkul.com"
+        }
+    ],
+    "require": {
+        "unopim/laravel-core": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Webkul\\Attribute\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Webkul\\Attribute\\Providers\\AttributeServiceProvider"
+            ],
+            "aliases": { }
+        }
+    },
+    "minimum-stability": "dev"
+}
