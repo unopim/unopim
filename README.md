@@ -19,28 +19,22 @@ Current version: 0.1.0
 
 To get started with UnoPim, follow these steps:
 
-1. **Clone the repository**:
+1. **Create Project**:
     ```bash
-    git clone https://github.com/navneetbhardwaj/UnoPim.git
-    cd UnoPim/
+    composer create-project unopim/unopim
     ```
 
-2. **Install dependencies**:
-    ```bash
-    composer install
-    ```
-
-3. **Install the UnoPim**:
+2. **Install the UnoPim**:
     ```bash
     php artisan unopim:install
     ```
 
-4. **Serve the application**:
+3. **Serve the application**:
     ```bash
     php artisan serve
     ```
 
-10. **Access UnoPim**:
+4. **Access UnoPim**:
     Open your browser and go to `http://localhost:8000`.
 
 ## Usage
