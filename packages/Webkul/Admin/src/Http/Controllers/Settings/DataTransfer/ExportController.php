@@ -68,7 +68,7 @@ class ExportController extends Controller
             'entity_type'         => 'required|in:'.implode(',', $exporters),
             'filters'             => 'array',
             'filters.file_format' => 'required',
-            'field_separator'     => ['required_if:filters.file_format,Csv', new SeparatorTypes()],
+            'field_separator'     => ['required_if:filters.file_format,Csv', new SeparatorTypes],
         ]);
 
         Event::dispatch('data_transfer.exports.create.before');
@@ -127,7 +127,7 @@ class ExportController extends Controller
             'entity_type'         => 'required|in:'.implode(',', $exporters),
             'filters'             => 'array',
             'filters.file_format' => 'required',
-            'field_separator'     => ['required_if:filters.file_format,Csv', new SeparatorTypes()],
+            'field_separator'     => ['required_if:filters.file_format,Csv', new SeparatorTypes],
         ]);
 
         Event::dispatch('data_transfer.exports.update.before');

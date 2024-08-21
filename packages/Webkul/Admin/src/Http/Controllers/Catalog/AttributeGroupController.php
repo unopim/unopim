@@ -56,7 +56,7 @@ class AttributeGroupController extends Controller
     public function store()
     {
         $this->validate(request(), [
-            'code' => ['required', 'unique:attribute_groups,code', new Code()],
+            'code' => ['required', 'unique:attribute_groups,code', new Code],
         ]);
 
         $requestData = request()->all();

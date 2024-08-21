@@ -64,18 +64,18 @@ class CategoryFieldController extends ApiController
         $rules = [
             'type' => [
                 'required',
-                new FieldTypes(),
+                new FieldTypes,
             ],
             'code' => [
                 'required',
                 sprintf('unique:%s,code', 'category_fields'),
-                new Code(),
-                new NotSupportedFields(),
+                new Code,
+                new NotSupportedFields,
             ],
         ];
 
         if (isset($requestData['validation']) && $requestData['validation']) {
-            $rules['validation'] = [new ValidationTypes()];
+            $rules['validation'] = [new ValidationTypes];
         }
 
         $validator = $this->codeRequireWithUniqueValidator(
@@ -279,7 +279,7 @@ class CategoryFieldController extends ApiController
                 Rule::unique('category_field_options')->where(function ($query) use ($requestData, $categoryFieldId) {
                     return $query->where('code', $requestData['code'])->where('category_field_id', $categoryFieldId);
                 }),
-                new Code(),
+                new Code,
             ],
         ];
 

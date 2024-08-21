@@ -85,12 +85,12 @@ class ProductValuesValidator
 
         $this->localeValuesValidator = new LocaleValuesValidator($this->channelRepository, $this->attributeService);
 
-        $this->sectionsValidator = new SectionsValidator();
+        $this->sectionsValidator = new SectionsValidator;
 
         $this->commonValidator = new CommonValuesValidator($this->attributeService);
 
-        $this->categoriesValidator = new ProductCategoriesValidator();
+        $this->categoriesValidator = new ProductCategoriesValidator;
 
-        $this->associationsValidator = new ProductAssociationsValidator();
+        $this->associationsValidator = new ProductAssociationsValidator;
     }
 }

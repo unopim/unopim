@@ -63,18 +63,18 @@ class AttributeController extends ApiController
         $rules = [
             'type' => [
                 'required',
-                new AttributeTypes(),
+                new AttributeTypes,
             ],
             'code' => [
                 'required',
                 sprintf('unique:%s,code', 'attributes'),
-                new Code(),
-                new NotSupportedAttributes(),
+                new Code,
+                new NotSupportedAttributes,
             ],
         ];
 
         if (isset($requestData['validation']) && $requestData['validation']) {
-            $rules['validation'] = [new ValidationTypes()];
+            $rules['validation'] = [new ValidationTypes];
         }
 
         $validator = $this->codeRequireWithUniqueValidator(
@@ -249,7 +249,7 @@ class AttributeController extends ApiController
                 Rule::unique('attribute_options')->where(function ($query) use ($requestData, $attributeId) {
                     return $query->where('code', $requestData['code'])->where('attribute_id', $attributeId);
                 }),
-                new Code(),
+                new Code,
             ],
         ];
 

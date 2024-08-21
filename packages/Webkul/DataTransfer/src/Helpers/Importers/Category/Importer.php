@@ -222,7 +222,7 @@ class Importer extends AbstractImporter
          * Validate category attributes
          */
         $validator = Validator::make($rowData, [
-            'code'   => ['string', 'required', new Code()],
+            'code'   => ['string', 'required', new Code],
             'parent' => 'nullable|string|exists:categories,code',
             ...$this->categoryFieldValidations,
         ]);

@@ -46,7 +46,7 @@ class ApiController extends BaseController
             'code' => [
                 'required',
                 sprintf('unique:%s,code', $table),
-                new Code(),
+                new Code,
             ],
         ];
 

@@ -145,7 +145,7 @@ class CategoryValidator extends FieldValidator
         $rules = $this->inputFieldsRules($existsFields, $requestData, $id);
 
         if (! $id) {
-            $rules['code'] = ['required', 'unique:categories,code', new Code()];
+            $rules['code'] = ['required', 'unique:categories,code', new Code];
         }
 
         return Validator::make($requestData, $rules);

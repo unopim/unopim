@@ -19,7 +19,7 @@ final class SpoutWriterFactory
 
     public static function createSpreadSheet()
     {
-        return new Spreadsheet();
+        return new Spreadsheet;
     }
 
     public static function createWriter(string $type, $spreadsheet, array $normalizedOptions = [])

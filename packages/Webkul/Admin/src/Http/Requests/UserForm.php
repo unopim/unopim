@@ -35,7 +35,7 @@ class UserForm extends FormRequest
     public function rules()
     {
         return [
-            'name'                  => ['required', new AlphaNumericSpace()],
+            'name'                  => ['required', new AlphaNumericSpace],
             'email'                 => 'required|email|unique:admins,email,'.$this->id,
             'password'              => 'nullable',
             'password_confirmation' => 'nullable|required_with:password|same:password',

@@ -176,13 +176,13 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
             $validations[] = match ($this->validation) {
                 'regex'   => 'regex: "'.$this->regex_pattern.'"',
                 'number'  => 'numeric',
-                'decimal' => new Decimal(),
+                'decimal' => new Decimal,
                 default   => $this->validation
             };
         }
 
         if ($this->code === 'sku') {
-            $validations[] = new Slug();
+            $validations[] = new Slug;
         }
 
         return $validations;
@@ -387,7 +387,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
 
         switch ($this->type) {
             case self::BOOLEAN_FIELD_TYPE:
-                $rules[] = new BooleanString();
+                $rules[] = new BooleanString;
 
                 break;
             case self::DATETIME_FIELD_TYPE:

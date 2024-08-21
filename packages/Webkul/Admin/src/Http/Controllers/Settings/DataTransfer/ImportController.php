@@ -69,7 +69,7 @@ class ImportController extends Controller
             'action'              => 'required:in:append,delete',
             'validation_strategy' => 'required:in:stop-on-errors,skip-errors',
             'allowed_errors'      => 'required|integer|min:0',
-            'field_separator'     => ['required', new SeparatorTypes()],
+            'field_separator'     => ['required', new SeparatorTypes],
             'file'                => 'required|mimes:csv,xls,xlsx,txt',
         ], ['file.mimes' => trans('core::validation.file-type')]);
 
@@ -136,7 +136,7 @@ class ImportController extends Controller
             'action'              => 'required:in:append,delete',
             'validation_strategy' => 'required:in:stop-on-errors,skip-errors',
             'allowed_errors'      => 'required|integer|min:0',
-            'field_separator'     => ['required', new SeparatorTypes()],
+            'field_separator'     => ['required', new SeparatorTypes],
             'file'                => 'mimes:csv,xls,xlsx,txt',
         ], ['file.mimes' => trans('core::validation.file-type')]);
 

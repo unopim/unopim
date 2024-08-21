@@ -44,7 +44,7 @@ class CategoryRequest extends FormRequest
             return $rules;
         }
 
-        $rules['code'] = ['required', 'unique:categories,code', new Code()];
+        $rules['code'] = ['required', 'unique:categories,code', new Code];
 
         return $rules;
     }

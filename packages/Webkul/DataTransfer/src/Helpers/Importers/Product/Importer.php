@@ -480,7 +480,7 @@ class Importer extends AbstractImporter
     public function getValidationRules(array $rowData): array
     {
         $rules = [
-            'sku' => ['required', new Slug()],
+            'sku' => ['required', new Slug],
         ];
 
         $attributes = $this->getProductTypeFamilyAttributes($rowData['type'], $rowData[self::ATTRIBUTE_FAMILY_CODE]);
@@ -861,7 +861,7 @@ class Importer extends AbstractImporter
             foreach ($images as $key => $image) {
                 $file = new UploadedFile($image['path'], $image['name']);
 
-                $image = (new ImageManager())->make($file)->encode('webp');
+                $image = (new ImageManager)->make($file)->encode('webp');
 
                 $imageDirectory = 'product/'.$product['id'];
 

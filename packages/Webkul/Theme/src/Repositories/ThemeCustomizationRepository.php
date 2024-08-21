@@ -76,7 +76,7 @@ class ThemeCustomizationRepository extends Repository
                 ];
             } elseif ($image['image'] instanceof UploadedFile) {
                 try {
-                    $manager = new ImageManager();
+                    $manager = new ImageManager;
 
                     $path = 'theme/'.$theme->id.'/'.Str::random(40).'.webp';
 

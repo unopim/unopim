@@ -59,7 +59,7 @@ class ProductForm extends FormRequest
             }
         }
 
-        $this->rules['sku'] = ['required', 'unique:products,sku,'.$this->id, new Slug()];
+        $this->rules['sku'] = ['required', 'unique:products,sku,'.$this->id, new Slug];
 
         return $this->rules;
     }

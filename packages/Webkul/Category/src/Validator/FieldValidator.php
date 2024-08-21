@@ -64,7 +64,7 @@ abstract class FieldValidator
 
         switch ($field->type) {
             case self::BOOLEAN_FIELD_TYPE:
-                $ruleFormat[] = new BooleanString();
+                $ruleFormat[] = new BooleanString;
                 break;
             case self::DATETIME_FIELD_TYPE:
                 $ruleFormat[] = 'date_format:Y-m-d H:i:s';
