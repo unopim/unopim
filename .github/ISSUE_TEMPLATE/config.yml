@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+- name: ❔ Support Question
+  url: https://webkul.uvdesk.com/en/customer/create-ticket/
+  about: This repository is only for reporting bugs or feature requests, please create a support ticket if you need any assistance from our team.
