@@ -819,7 +819,6 @@
             },
 
             data() {
-                console.log('value', this.value, this.field)
                 return {
                     fieldData: this.field,
                 }
@@ -840,7 +839,6 @@
                 },
             methods: {
                 handleChange(event) {
-                    console.log('handleChange')
                     const file = event.target.files[0];
                     if (file) {
                         this.fieldData.value = file;

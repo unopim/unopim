@@ -2,15 +2,15 @@
 
 ## Supported Versions
 
-For version 0.1.0 of UnoPim, we support and provide patches for any security vulnerabilities.
+For version 0.1.1 of UnoPim, we support and provide patches for any security vulnerabilities.
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 0.1.0   | :white_check_mark: |
+| 0.1.1   | :white_check_mark: |
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in version 0.1.0 of UnoPim, please do the following:
+If you discover a security vulnerability in any supported version of UnoPim, please do the following:
 
 1. **Do not open a public issue.** Security vulnerabilities should be reported privately to prevent malicious actors from exploiting the issue before it is fixed.
 2. **Send an email to** [support@webkul.com](mailto:support@webkul.com) **with the following information:**
@@ -23,7 +23,7 @@ We will respond to your report within 72 hours with an acknowledgment of receipt
 
 ## Security Vulnerability Process
 
-Upon receiving a security vulnerability report for version 0.1.0 of UnoPim, we will follow these steps:
+Upon receiving a security vulnerability report for version 0.1.1 of UnoPim, we will follow these steps:
 
 1. **Acknowledgment**: We will acknowledge receipt of the vulnerability report within 72 hours.
 2. **Investigation**: We will investigate the reported vulnerability and determine its impact and severity.
@@ -38,4 +38,3 @@ We prefer vulnerability reports to be written in English.
 ## Thank You
 
 We appreciate your efforts to help improve the security of UnoPim. Thank you for working with us to keep our users safe.
-

@@ -36,8 +36,11 @@
                     class="fixed inset-0 z-[10002] transform  left-20  right-20 top-24 bottom-4"
                     v-if="isOpen"
                 >
-                    <div class="fixed inset-0 z-[9999] flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none">
-                        <div class="w-full max-w-[568px] max-h-[96%] overflow-y-auto z-[999] absolute ltr:left-1/2 rtl:right-1/2 top-1/2 rounded-lg bg-white dark:bg-gray-900 box-shadow max-md:w-[90%] ltr:-translate-x-1/2 rtl:translate-x-1/2 -translate-y-1/2">
+                    <!-- Modal Overlay -->
+                    <div class="fixed inset-0 z-[9999] flex items-center justify-center outline-none">
+                        <!-- Modal Container -->
+                        <div class="w-full max-w-[568px] z-[999] absolute ltr:left-1/2 rtl:right-1/2 top-1/2 rounded-lg bg-white dark:bg-gray-900 box-shadow max-md:w-[90%] ltr:-translate-x-1/2 rtl:translate-x-1/2 -translate-y-1/2">
+                            <!-- Modal Header -->
                             <div class="flex justify-between items-center p-4 border-b dark:border-cherry-800 text-lg text-gray-800 dark:text-white font-bold">
                                 <div>
                                     <h2 class="text-xl">@{{ title }}</h2>
@@ -51,68 +54,73 @@
                                 >
                                 </button>
                             </div>
-                            <div class="p-4 text-gray-600 dark:text-gray-300">
-                                
-                                <div class="flex  gap-2.5">
-                                    <span class="font-bold">@{{ versionLabel }} : </span>
-                                    <span>@{{ version }}</span>
-                                </div>
-                                
-                                <div class="flex  gap-2.5">
-                                    <span class="font-bold">@{{ dateTimeLabel }} : </span>
-                                    <span>@{{ dateTime }}</span>
-                                </div>
-
-                                <div class="flex  gap-2.5">
-                                    <span class="font-bold">@{{ userLabel }} : </span>
-                                    <span>@{{ user }}</span>
-                                </div>
-
-                            </div>
+                            <!-- Modal Body -->
                             <div class="p-4">
-                                <div class="w-full bg-white dark:bg-cherry-800 dark:text-white rounded-lg overflow-hidden shadow-md">
-                                    <table class="w-full">
-                                        <!-- Table Header -->
-                                        <thead>
-                                            <tr class="bg-gray-100 dark:bg-cherry-800">
-                                                <th class="py-2 px-4 text-left">
-                                                    <span>@{{ nameLabel }}</span>
-                                                </th>
-                                                <th class="py-2 px-4 text-left">
-                                                    <span class="text-red-500">@{{ oldValueLabel }}</span>
-                                                </th>
-                                                <th class="py-2 px-4 text-left">
-                                                    <span class="text-violet-700">@{{ newValueLabel }}</span>
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <!-- Table Body -->
-                                        <tbody>
-                                            <template v-if="versionHistory.length === 0">
-                                                <tr>
-                                                    <td colspan="3">
-                                                        <div class="flex items-center justify-center h-32">
-                                                            <span class="text-gray-400 text-2xl">
-                                                                @lang('admin::app.components.modal.history.no-history')
-                                                            </span>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </template>
-                                        
-                                            <template v-else-if="versionHistory">
-                                                <tr v-for="history in versionHistory" :key="history.id" class="border-t dark:border-gray-800">
-                                                    <td class="py-2 px-4">@{{ history.name }}</td>
-                                                    <td class="py-2 px-4 text-red-500  word-break">@{{ history.old }}</td>
-                                                    <td class="py-2 px-4 text-violet-700 word-break">@{{ history.new }}</td>
-                                                </tr>
-                                            </template>
-                                        </tbody>
-                                    </table>
+                                <div class="p-4 text-gray-600 dark:text-gray-300">
+                                    
+                                    <div class="flex  gap-2.5">
+                                        <span class="font-bold">@{{ versionLabel }} : </span>
+                                        <span>@{{ version }}</span>
+                                    </div>
+                                    
+                                    <div class="flex  gap-2.5">
+                                        <span class="font-bold">@{{ dateTimeLabel }} : </span>
+                                        <span>@{{ dateTime }}</span>
+                                    </div>
+
+                                    <div class="flex  gap-2.5">
+                                        <span class="font-bold">@{{ userLabel }} : </span>
+                                        <span>@{{ user }}</span>
+                                    </div>
+
                                 </div>
+                                <div class="p-4 overflow-y-auto max-h-[50vh]" >
+                                    <div class="w-full bg-white dark:bg-cherry-800 dark:text-white rounded-lg overflow-hidden shadow-md">
+                                        <table class="w-full">
+                                            <!-- Table Header -->
+                                            <thead>
+                                                <tr class="bg-gray-100 dark:bg-cherry-800">
+                                                    <th class="py-2 px-4 text-left">
+                                                        <span>@{{ nameLabel }}</span>
+                                                    </th>
+                                                    <th class="py-2 px-4 text-left">
+                                                        <span class="text-red-500">@{{ oldValueLabel }}</span>
+                                                    </th>
+                                                    <th class="py-2 px-4 text-left">
+                                                        <span class="text-violet-700">@{{ newValueLabel }}</span>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <!-- Table Body -->
+                                            <tbody>
+                                                <template v-if="versionHistory.length === 0">
+                                                    <tr>
+                                                        <td colspan="3">
+                                                            <div class="flex items-center justify-center h-32">
+                                                                <span class="text-gray-400 text-2xl">
+                                                                    @lang('admin::app.components.modal.history.no-history')
+                                                                </span>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </template>
+                                            
+                                                <template v-else-if="versionHistory">
+                                                    <tr v-for="history in versionHistory" :key="history.id" class="border-t dark:border-gray-800">
+                                                        <td class="py-2 px-4">@{{ history.name }}</td>
+                                                        <td class="py-2 px-4 text-red-500  word-break">@{{ history.old }}</td>
+                                                        <td class="py-2 px-4 text-violet-700 word-break">@{{ history.new }}</td>
+                                                    </tr>
+                                                </template>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            <!-- Add more child elements as needed -->
                             </div>
                         </div>
                     </div>
+
                 </div>
             </transition>
         </div>

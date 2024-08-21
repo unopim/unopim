@@ -56,7 +56,7 @@ class HistoryDataGrid extends DataGrid
     {
         $this->addColumn([
             'index'      => 'id',
-            'label'      => trans('id'),
+            'label'      => trans('admin::app.catalog.products.index.datagrid.id'),
             'type'       => 'id',
             'searchable' => false,
             'filterable' => false,

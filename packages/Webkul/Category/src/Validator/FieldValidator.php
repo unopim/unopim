@@ -5,6 +5,7 @@ namespace Webkul\Category\Validator;
 use Illuminate\Contracts\Queue\QueueableCollection;
 use Webkul\Category\Contracts\CategoryField;
 use Webkul\Category\Rules\FieldOption;
+use Webkul\Core\Rules\BooleanString;
 
 abstract class FieldValidator
 {
@@ -63,13 +64,15 @@ abstract class FieldValidator
 
         switch ($field->type) {
             case self::BOOLEAN_FIELD_TYPE:
-                $ruleFormat[] = self::BOOLEAN_FIELD_TYPE;
+                $ruleFormat[] = new BooleanString();
                 break;
             case self::DATETIME_FIELD_TYPE:
                 $ruleFormat[] = 'date_format:Y-m-d H:i:s';
                 break;
             case self::DATE_FIELD_TYPE:
                 $ruleFormat[] = 'date';
+                $ruleFormat[] = 'date_format:Y-m-d';
+
                 break;
             case self::SELECT_FIELD_TYPE:
             case self::MULTISELECT_FIELD_TYPE:

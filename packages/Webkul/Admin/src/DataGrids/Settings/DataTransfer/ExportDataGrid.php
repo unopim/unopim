@@ -81,7 +81,7 @@ class ExportDataGrid extends DataGrid
      */
     public function prepareActions()
     {
-        if (bouncer()->hasPermission('settings.data_transfer.exports.export')) {
+        if (bouncer()->hasPermission('data_transfer.export.execute')) {
             $this->addAction([
                 'index'  => 'export',
                 'icon'   => 'icon-export',
@@ -93,7 +93,7 @@ class ExportDataGrid extends DataGrid
             ]);
         }
 
-        if (bouncer()->hasPermission('settings.data_transfer.exports.edit')) {
+        if (bouncer()->hasPermission('data_transfer.export.edit')) {
             $this->addAction([
                 'index'  => 'edit',
                 'icon'   => 'icon-edit',
@@ -105,7 +105,7 @@ class ExportDataGrid extends DataGrid
             ]);
         }
 
-        if (bouncer()->hasPermission('settings.data_transfer.exports.delete')) {
+        if (bouncer()->hasPermission('data_transfer.export.delete')) {
             $this->addAction([
                 'index'  => 'delete',
                 'icon'   => 'icon-delete',

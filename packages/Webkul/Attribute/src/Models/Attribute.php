@@ -8,15 +8,31 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Webkul\Attribute\Contracts\Attribute as AttributeContract;
 use Webkul\Attribute\Database\Factories\AttributeFactory;
 use Webkul\Core\Eloquent\TranslatableModel;
+use Webkul\Core\Rules\BooleanString;
 use Webkul\Core\Rules\Decimal;
 use Webkul\Core\Rules\Slug;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
+use Webkul\Product\Validator\Rule\AttributeOptionRule;
 
 class Attribute extends TranslatableModel implements AttributeContract, HistoryContract
 {
     use HasFactory;
     use HistoryTrait;
+
+    const BOOLEAN_FIELD_TYPE = 'boolean';
+
+    const PRICE_FIELD_TYPE = 'price';
+
+    const SELECT_FIELD_TYPE = 'select';
+
+    const MULTISELECT_FIELD_TYPE = 'multiselect';
+
+    const DATETIME_FIELD_TYPE = 'datetime';
+
+    const DATE_FIELD_TYPE = 'date';
+
+    const CHECKBOX_FIELD_TYPE = 'checkbox';
 
     public $translatedAttributes = ['name'];
 
@@ -57,6 +73,13 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
     const NON_DELETABLE_ATTRIBUTE_CODES = [
         'sku',
         'status',
+    ];
+
+    /**
+     * These columns history will not be generated
+     */
+    protected $auditExclude = [
+        'id',
     ];
 
     /**
@@ -129,11 +152,9 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
      */
     public function getValidationRules(?string $currentChannelCode = null, ?string $currentLocaleCode = null, ?int $id = null, bool $withUniqueValidation = true)
     {
-        $validations = [];
+        $validations = $this->fieldTypeValidations();
 
-        if ($this->is_required) {
-            $validations[] = 'required';
-        }
+        $validations[] = $this->is_required ? 'required' : 'nullable';
 
         if ($this->type == 'price') {
             $validations[] = "regex:/^\d+(\.\d+)?$/";
@@ -355,5 +376,41 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
         }
 
         $productValues['common'][$this->code] = $value;
+    }
+
+    /**
+     * Attribute type validations for value formats and options existance
+     */
+    public function fieldTypeValidations(): array
+    {
+        $rules = [];
+
+        switch ($this->type) {
+            case self::BOOLEAN_FIELD_TYPE:
+                $rules[] = new BooleanString();
+
+                break;
+            case self::DATETIME_FIELD_TYPE:
+                $rules[] = 'date_format:Y-m-d H:i:s';
+
+                break;
+            case self::DATE_FIELD_TYPE:
+                $rules[] = 'date';
+                $rules[] = 'date_format:Y-m-d';
+
+                break;
+            case self::SELECT_FIELD_TYPE:
+            case self::MULTISELECT_FIELD_TYPE:
+                $rules[] = 'string';
+                $rules[] = new AttributeOptionRule($this);
+
+                break;
+            case self::CHECKBOX_FIELD_TYPE:
+                $rules[] = new AttributeOptionRule($this);
+
+                break;
+        }
+
+        return $rules;
     }
 }

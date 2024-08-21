@@ -9,24 +9,6 @@ use Webkul\Product\Facades\ProductImage;
 class Configurable extends AbstractType
 {
     /**
-     * Skip attribute for configurable product type.
-     *
-     * @var array
-     */
-    protected $skipAttributes = [
-        'price',
-        'cost',
-        'special_price',
-        'special_price_from',
-        'special_price_to',
-        'length',
-        'width',
-        'height',
-        'weight',
-        'manage_stock',
-    ];
-
-    /**
      * These are the types which can be fillable when generating variant.
      *
      * @var array

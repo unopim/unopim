@@ -5,23 +5,15 @@
 import { configure, defineRule, Field, Form, ErrorMessage } from "vee-validate";
 import { localize, setLocale } from "@vee-validate/i18n";
 import ar from "@vee-validate/i18n/dist/locale/ar.json";
-import bn from "@vee-validate/i18n/dist/locale/bn.json";
 import de from "@vee-validate/i18n/dist/locale/de.json";
 import en from "@vee-validate/i18n/dist/locale/en.json";
 import es from "@vee-validate/i18n/dist/locale/es.json";
-import fa from "@vee-validate/i18n/dist/locale/fa.json";
 import fr from "@vee-validate/i18n/dist/locale/fr.json";
-import he from "@vee-validate/i18n/dist/locale/he.json";
 import hi_IN from "../../locales/hi_IN.json";
-import it from "@vee-validate/i18n/dist/locale/it.json";
 import ja from "@vee-validate/i18n/dist/locale/ja.json";
 import nl from "@vee-validate/i18n/dist/locale/nl.json";
-import pl from "@vee-validate/i18n/dist/locale/pl.json";
-import pt_BR from "@vee-validate/i18n/dist/locale/pt_BR.json";
+import mn from "@vee-validate/i18n/dist/locale/mn.json";
 import ru from "@vee-validate/i18n/dist/locale/ru.json";
-import sin from "../../locales/sin.json";
-import tr from "@vee-validate/i18n/dist/locale/tr.json";
-import uk from "@vee-validate/i18n/dist/locale/uk.json";
 import zh_CN from "@vee-validate/i18n/dist/locale/zh_CN.json";
 import * as AllRules from '@vee-validate/rules';
 
@@ -114,7 +106,7 @@ export default {
              * locales can be added in the same way.
              */
             generateMessage: localize({
-                ar: {
+                ar_AE: {
                     ...ar,
                     messages: {
                         ...ar.messages,
@@ -122,15 +114,7 @@ export default {
                     },
                 },
         
-                bn: {
-                    ...bn,
-                    messages: {
-                        ...bn.messages,
-                        phone: "এই {field} একটি বৈধ ফোন নম্বর হতে হবে",
-                    },
-                },
-        
-                de: {
+                de_DE: {
                     ...de,
                     messages: {
                         ...de.messages,
@@ -154,7 +138,7 @@ export default {
                     },
                 },
 
-                es: {
+                es_ES: {
                     ...es,
                     messages: {
                         ...es.messages,
@@ -162,27 +146,11 @@ export default {
                     },
                 },
         
-                fa: {
-                    ...fa,
-                    messages: {
-                        ...fa.messages,
-                        phone: "این {field} باید یک شماره تلفن معتبر باشد.",
-                    },
-                },
-        
-                fr: {
+                fr_FR: {
                     ...fr,
                     messages: {
                         ...fr.messages,
                         phone: "Ce {field} doit être un numéro de téléphone valide.",
-                    },
-                },
-        
-                he: {
-                    ...he,
-                    messages: {
-                        ...he.messages,
-                        phone: "זה {field} חייב להיות מספר טלפון תקין.",
                     },
                 },
         
@@ -194,75 +162,35 @@ export default {
                     },
                 },
         
-                it: {
-                    ...it,
-                    messages: {
-                        ...it.messages,
-                        phone: "Questo {field} deve essere un numero di telefono valido.",
-                    },
-                },
-        
-                ja: {
+                ja_JP: {
                     ...ja,
                     messages: {
                         ...ja.messages,
                         phone: "この{field}は有効な電話番号である必要があります。",
                     },
                 },
-        
-                nl: {
+
+                nl_NL: {
                     ...nl,
                     messages: {
                         ...nl.messages,
                         phone: "Dit {field} moet een geldig telefoonnummer zijn.",
                     },
                 },
-        
-                pl: {
-                    ...pl,
+
+                mn_MN: {
+                    ...mn,
                     messages: {
-                        ...pl.messages,
-                        phone: "To {field} musi być prawidłowy numer telefonu.",
+                        ...mn.messages,
+                        phone: "Энэ {field} хүчинтэй утасны дугаар байх ёстой.",
                     },
                 },
-        
-                pt_BR: {
-                    ...pt_BR,
-                    messages: {
-                        ...pt_BR.messages,
-                        phone: "Este {field} deve ser um número de telefone válido.",
-                    },
-                },
-        
-                ru: {
+
+                ru_RU: {
                     ...ru,
                     messages: {
                         ...ru.messages,
                         phone: "Это {field} должно быть действительным номером телефона.",
-                    },
-                },
-        
-                sin: {
-                    ...sin,
-                    messages: {
-                        ...sin.messages,
-                        phone: "මෙම {field} වටේ වලංගු දුරකතන අංකය විය යුතුයි.",
-                    },
-                },
-        
-                tr: {
-                    ...tr,
-                    messages: {
-                        ...tr.messages,
-                        phone: "Bu {field} geçerli bir telefon numarası olmalıdır.",
-                    },
-                },
-        
-                uk: {
-                    ...uk,
-                    messages: {
-                        ...uk.messages,
-                        phone: "Це {field} повинно бути дійсним номером телефону.",
                     },
                 },
         

@@ -20,6 +20,9 @@ class AdminsTableSeeder extends Seeder
 
         $defaultLocale = $parameters['default_locale'] ?? config('app.locale');
 
+        /** Default locale id to be set to user else 58 id of en_US locale is added */
+        $defaultLocaleId = DB::table('locales')->where('code', $defaultLocale)->where('status', 1)->first()?->id ?? 58;
+
         DB::table('admins')->insert([
             'id'            => 1,
             'name'          => trans('installer::app.seeders.user.users.name', [], $defaultLocale),
@@ -30,6 +33,7 @@ class AdminsTableSeeder extends Seeder
             'updated_at'    => date('Y-m-d H:i:s'),
             'status'        => 1,
             'role_id'       => 1,
+            'ui_locale_id'  => $defaultLocaleId,
         ]);
     }
 }

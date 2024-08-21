@@ -69,7 +69,7 @@ return [
         'sort'       => 8,
         'icon'       => 'icon-data-transfer',
     ],  [
-        'key'        => 'data_transfer.tracker',
+        'key'        => 'data_transfer.job_tracker',
         'name'       => 'admin::app.components.layouts.sidebar.tracker',
         'route'      => 'admin.settings.data_transfer.tracker.index',
         'sort'       => 1,
@@ -134,8 +134,7 @@ return [
     [
         'key'    => 'configuration',
         'name'   => 'admin::app.components.layouts.sidebar.configure',
-        'route'  => 'admin.configuration.edit',
-        'params' => ['general', 'magic_ai'],
+        'route'  => 'admin.configuration.integrations.index',
         'sort'   => 9,
         'icon'   => 'icon-configuration',
     ], [
@@ -143,7 +142,7 @@ return [
         'name'   => 'admin::app.components.layouts.sidebar.magic-ai',
         'route'  => 'admin.configuration.edit',
         'params' => ['general', 'magic_ai'],
-        'sort'   => 3,
+        'sort'   => 1,
         'icon'   => '',
     ],
 ];

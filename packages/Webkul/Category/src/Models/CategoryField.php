@@ -232,11 +232,7 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
      */
     public function getValidationRules(?string $currentLocaleCode = null, ?int $id = null, bool $withUniqueValidation = true)
     {
-        $validations = [];
-
-        if ($this->is_required) {
-            $validations[] = 'required';
-        }
+        $validations = $this->is_required ? ['required'] : ['nullable'];
 
         if ($this->is_unique && $withUniqueValidation) {
             $path = $this->getJsonPath($currentLocaleCode);

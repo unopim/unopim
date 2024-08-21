@@ -131,7 +131,7 @@ class ApiKeysController extends Controller
 
         session()->flash('success', trans('admin::app.configuration.integrations.update-success'));
 
-        return view('admin_api::integrations.api-keys.edit', $this->getDefaultDetails($apiKey));
+        return redirect()->route('admin.configuration.integrations.edit', $id);
     }
 
     /**
@@ -192,8 +192,9 @@ class ApiKeysController extends Controller
         ], $id);
 
         return new JsonResponse([
-            'client_id'  => $client->getKey(),
-            'secret_key' => $client->plainSecret,
+            'client_id'       => $client->getKey(),
+            'secret_key'      => $client->plainSecret,
+            'oauth_client_id' => $client->getKey(),
         ]);
     }
 

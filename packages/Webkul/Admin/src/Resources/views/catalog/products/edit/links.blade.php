@@ -67,9 +67,9 @@
                                 <!-- Image -->
                                 <div
                                     class="w-full h-[60px] max-w-[60px] max-h-[60px] relative rounded overflow-hidden"
-                                    :class="{'border border-dashed border-gray-300 dark:border-cherry-800 dark:invert dark:mix-blend-exclusion': ! product?.images?.length}"
+                                    :class="{'border border-dashed border-gray-300 dark:border-cherry-800 dark:invert dark:mix-blend-exclusion': ! product?.image, 'w-[60px]': product?.image}"
                                 >
-                                    <template v-if="! product?.images?.length">
+                                    <template v-if="! product?.image">
                                         <img src="{{ unopim_asset('images/product-placeholders/front.svg') }}">
                                     
                                         <p class="w-full absolute bottom-1.5 text-[6px] text-gray-400 text-center font-semibold">
@@ -78,7 +78,7 @@
                                     </template>
                 
                                     <template v-else>
-                                        <img :src="product?.images[0]?.url">
+                                        <img :src="product?.image" class="w-full h-full object-cover object-top">
                                     </template>
                                 </div>
 
@@ -176,11 +176,11 @@
                     ],
 
                     addedProducts: {
-                        'up_sells': @json($product->whereIn('sku', $upSellAssociations)->get()),
+                        'up_sells': @json($product->whereIn('sku', $upSellAssociations)->get()->map(fn ($item) => $item->normalizeWithImage())),
 
-                        'cross_sells': @json($product->whereIn('sku', $crossSellAssociations)->get()),
+                        'cross_sells': @json($product->whereIn('sku', $crossSellAssociations)->get()->map(fn ($item) => $item->normalizeWithImage())),
 
-                        'related_products': @json($product->whereIn('sku', $relatedAssociations)->get())
+                        'related_products': @json($product->whereIn('sku', $relatedAssociations)->get()->map(fn ($item) => $item->normalizeWithImage()))
                     },
 
                     queryParams: {
@@ -201,7 +201,13 @@
 
             methods: {
                 addSelected(selectedProducts) {
-                    this.addedProducts[this.selectedType] = [...this.addedProducts[this.selectedType], ...selectedProducts];
+                    const existingProducts = this.addedProducts[this.selectedType] || [];
+                    const existingSkus = new Set(existingProducts.map(product => product.sku));
+                    const newProducts = selectedProducts.filter(product => !existingSkus.has(product.sku));
+                    
+                    if (newProducts.length > 0) {
+                        this.addedProducts[this.selectedType] = [...existingProducts, ...newProducts];
+                    }
                 },
 
                 remove(type, product) {

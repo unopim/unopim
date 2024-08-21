@@ -9,11 +9,15 @@ use Illuminate\Support\Facades\Validator;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\Category\Repositories\CategoryRepository;
+use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Repositories\LocaleRepository;
+use Webkul\Core\Rules\Code;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Helpers\Importers\AbstractImporter;
+use Webkul\DataTransfer\Helpers\Importers\FieldProcessor;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
+use Webkul\DataTransfer\Validators\Import\CategoryRulesExtractor;
 
 class Importer extends AbstractImporter
 {
@@ -42,6 +46,10 @@ class Importer extends AbstractImporter
      */
     public const ERROR_NOT_FOUND_LOCALE = 'slug_not_found_to_delete';
 
+    const ERROR_NOT_UNIQUE_VALUE = 'not_unique_value';
+
+    const ERROR_RELATED_TO_CHANNEL = 'channel_related_category_root';
+
     /**
      * Permanent entity columns
      */
@@ -54,10 +62,9 @@ class Importer extends AbstractImporter
     protected array $categoryFields;
 
     /**
-     * Category supported image types
+     * Current Batch Category codes
      */
-    protected array $imageTypes = [
-    ];
+    protected array $categoryCodesInBatch = [];
 
     /**
      * Permanent entity columns
@@ -69,7 +76,7 @@ class Importer extends AbstractImporter
      */
     protected string $masterAttributeCode = 'id';
 
-    const ERROR_NOT_UNIQUE_VALUE = 'not_unique_value';
+    protected ?array $nonDeletableCategories = null;
 
     /**
      * Error message templates
@@ -79,6 +86,7 @@ class Importer extends AbstractImporter
         self::ERROR_CODE_NOT_FOUND_FOR_DELETE => 'data_transfer::app.importers.categories.validation.errors.code_not_found_to_delete',
         self::ERROR_NOT_FOUND_LOCALE          => 'data_transfer::app.importers.products.validation.errors.locale-not-exist',
         self::ERROR_NOT_UNIQUE_VALUE          => 'data_transfer::app.importers.products.validation.errors.not-unique-value',
+        self::ERROR_RELATED_TO_CHANNEL        => 'data_transfer::app.importers.categories.validation.errors.channel-related-category-root',
     ];
 
     /**
@@ -111,6 +119,9 @@ class Importer extends AbstractImporter
         protected Storage $categoryStorage,
         protected AttributeRepository $attributeRepository,
         protected LocaleRepository $localeRepository,
+        protected ChannelRepository $channelRepository,
+        protected CategoryRulesExtractor $categoryRulesExtractor,
+        protected FieldProcessor $fieldProcessor
     ) {
         parent::__construct($importBatchRepository);
 
@@ -146,6 +157,8 @@ class Importer extends AbstractImporter
 
         $this->categoryStorage->init();
 
+        $this->getNonDeletableCategories();
+
         parent::validateData();
     }
 
@@ -178,8 +191,16 @@ class Importer extends AbstractImporter
          * If import action is delete than no need for further validation
          */
         if ($this->import->action == Import::ACTION_DELETE) {
-            if (! $this->isCategoryExist($rowData['code'])) {
+            $id = $this->categoryStorage->get($rowData['code']);
+
+            if (! $id) {
                 $this->skipRow($rowNumber, self::ERROR_CODE_NOT_FOUND_FOR_DELETE, $rowData['code']);
+
+                return false;
+            }
+
+            if (in_array($id, $this->nonDeletableCategories)) {
+                $this->skipRow($rowNumber, self::ERROR_RELATED_TO_CHANNEL, $rowData['code']);
 
                 return false;
             }
@@ -201,8 +222,8 @@ class Importer extends AbstractImporter
          * Validate category attributes
          */
         $validator = Validator::make($rowData, [
-            'code'   => 'string|required',
-            'parent' => 'string',
+            'code'   => ['string', 'required', new Code()],
+            'parent' => 'nullable|string|exists:categories,code',
             ...$this->categoryFieldValidations,
         ]);
 
@@ -210,6 +231,10 @@ class Importer extends AbstractImporter
             $failedAttributes = $validator->failed();
 
             foreach ($validator->errors()->getMessages() as $attributeCode => $message) {
+                if ($attributeCode === 'parent' && in_array($rowData['parent'], $this->categoryCodesInBatch)) {
+                    continue;
+                }
+
                 $errorCode = array_key_first($failedAttributes[$attributeCode] ?? []);
 
                 $this->skipRow($rowNumber, $errorCode, $attributeCode, current($message));
@@ -218,7 +243,13 @@ class Importer extends AbstractImporter
 
         $this->validateUniqueValues($rowData, $rowNumber);
 
-        return ! $this->errorHelper->isRowInvalid($rowNumber);
+        $isValidRow = ! $this->errorHelper->isRowInvalid($rowNumber);
+
+        if ($isValidRow) {
+            $this->categoryCodesInBatch[] = $rowData['code'];
+        }
+
+        return $isValidRow;
     }
 
     /**
@@ -321,18 +352,24 @@ class Importer extends AbstractImporter
 
         /** additional fields data import  */
         $categoryFields = $this->getCategoryFields();
-        foreach ($rowData as $field => $value) {
-            if (in_array($field, $categoryFields)) {
-                $catalogField = $this->categoryFieldRepository->where('code', $field)->first();
+        $imageDirPath = $this->import->images_directory_path;
 
-                if ($catalogField->value_per_locale === self::VALUE_PER_LOCALE) {
-                    $locale = $rowData['locale'] ?? null;
-                    if ($locale) {
-                        $data['additional_data']['locale_specific'][$locale][$field] = $value;
-                    }
-                } else {
-                    $data['additional_data']['common'][$field] = $value;
+        foreach ($rowData as $field => $value) {
+            if (! in_array($field, $categoryFields)) {
+                continue;
+            }
+
+            $catalogField = $this->categoryFieldRepository->where('code', $field)->first();
+
+            $value = $this->fieldProcessor->handleField($catalogField, $value, $imageDirPath);
+
+            if ($catalogField->value_per_locale === self::VALUE_PER_LOCALE) {
+                $locale = $rowData['locale'] ?? null;
+                if ($locale) {
+                    $data['additional_data']['locale_specific'][$locale][$field] = $value;
                 }
+            } else {
+                $data['additional_data']['common'][$field] = $value;
             }
         }
 
@@ -448,6 +485,8 @@ class Importer extends AbstractImporter
         foreach ($this->cachedCategoryFields as $categoryField) {
             $fieldValidation = $categoryField->getValidationRules(withUniqueValidation: false);
 
+            $fieldValidation = array_merge($fieldValidation, $this->categoryRulesExtractor->getFieldTypeRules($categoryField));
+
             if (empty($fieldValidation)) {
                 continue;
             }
@@ -494,7 +533,9 @@ class Importer extends AbstractImporter
                 }
 
                 if (! $hasError) {
-                    $this->localeCachedValues[$rowData['locale']] = [$categoryFieldCode => $rowData[$categoryFieldCode]];
+                    if (! empty($rowData[$categoryFieldCode])) {
+                        $this->localeCachedValues[$rowData['locale']] = [$categoryFieldCode => $rowData[$categoryFieldCode]];
+                    }
 
                     $validations[$categoryFieldCode] = $field->getValidationRules($rowData['locale'], $existingCategoryId);
                 }
@@ -517,7 +558,9 @@ class Importer extends AbstractImporter
             }
 
             if (! $hasError) {
-                $this->cachedUniqueValues[$rowData['code']] = [$categoryFieldCode => $rowData[$categoryFieldCode]];
+                if (! empty($rowData[$categoryFieldCode])) {
+                    $this->cachedUniqueValues[$rowData['code']] = [$categoryFieldCode => $rowData[$categoryFieldCode]];
+                }
 
                 $validations[$categoryFieldCode] = $field->getValidationRules($rowData['locale'], $existingCategoryId);
             }
@@ -537,6 +580,16 @@ class Importer extends AbstractImporter
 
                 $this->skipRow($rowNumber, $errorCode, $categoryFieldCode, current($message));
             }
+        }
+    }
+
+    /**
+     * Get Categories linked to channel which should not be deleted
+     */
+    public function getNonDeletableCategories(): void
+    {
+        if (! $this->nonDeletableCategories) {
+            $this->nonDeletableCategories = $this->channelRepository->pluck('root_category_id')->toArray();
         }
     }
 }

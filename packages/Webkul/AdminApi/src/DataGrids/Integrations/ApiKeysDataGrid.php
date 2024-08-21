@@ -40,6 +40,11 @@ class ApiKeysDataGrid extends DataGrid
             )
             ->where('api.revoked', '=', 0);
 
+        $this->addFilter('api_id', 'api.id');
+        $this->addFilter('api_name', 'api.name');
+        $this->addFilter('api_permission_type', 'api.permission_type');
+        $this->addFilter('user_name', 'u.name');
+
         return $queryBuilder;
     }
 
@@ -73,9 +78,9 @@ class ApiKeysDataGrid extends DataGrid
             'index'      => 'user_name',
             'label'      => trans('admin::app.configuration.integrations.index.datagrid.user'),
             'type'       => 'string',
-            'searchable' => false,
-            'filterable' => false,
-            'sortable'   => false,
+            'searchable' => true,
+            'filterable' => true,
+            'sortable'   => true,
         ]);
 
         $this->addColumn([

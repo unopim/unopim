@@ -33,7 +33,7 @@ class TemporaryFileFactory
             return $this->makeRemote($fileExtension);
         }
 
-        return $this->makeLocal(null, $fileExtension);
+        return $this->makeLocal($fileName, $fileExtension);
     }
 
     public function makeLocal(?string $fileName = null, ?string $fileExtension = null): LocalTemporaryFile

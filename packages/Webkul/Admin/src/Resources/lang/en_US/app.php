@@ -11,7 +11,7 @@ return [
         ],
 
         'forget-password' => [
-            'create'    => [
+            'create' => [
                 'email'                => 'Registered Email',
                 'email-not-exist'      => 'Email Not Exists',
                 'page-title'           => 'Forget Password',
@@ -90,9 +90,10 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken' => 'The :name has already been taken.',
-                'create-btn'    => 'Create Product',
-                'title'         => 'Products',
+                'already-taken'  => 'The :name has already been taken.',
+                'create-btn'     => 'Create Product',
+                'title'          => 'Products',
+                'magic-ai-error' => 'Please verify the Magic AI credentials and ensure the correct model is selected.',
 
                 'create' => [
                     'back-btn'                          => 'Back',
@@ -109,7 +110,7 @@ return [
                 ],
 
                 'datagrid' => [
-                    'active'                 => 'Active',
+                    'active'                 => 'Enable',
                     'attribute-family'       => 'Attribute Family',
                     'attribute-family-value' => 'Attribute Family - :attribute_family',
                     'category'               => 'Category',
@@ -119,8 +120,8 @@ return [
                     'edit'                   => 'Edit',
                     'copy'                   => 'Copy',
                     'disable'                => 'Disable',
-                    'id'                     => 'Id',
-                    'id-value'               => 'Id - :id',
+                    'id'                     => 'ID',
+                    'id-value'               => 'ID - :id',
                     'image'                  => 'Image',
                     'mass-delete-success'    => 'Selected Products Deleted Successfully',
                     'mass-update-success'    => 'Selected Products Updated Successfully',
@@ -145,33 +146,6 @@ return [
                 'remove'   => 'Remove',
                 'save-btn' => 'Save Product',
                 'title'    => 'Edit Product',
-
-                'price' => [
-                    'group' => [
-                        'add-group-price'           => 'Add Group Price',
-                        'all-groups'                => 'All Groups',
-                        'create-btn'                => 'Add New',
-                        'discount-group-price-info' => 'For :qty Qty at discount of :price',
-                        'edit-btn'                  => 'Edit',
-                        'empty-info'                => 'Special pricing for customers belonging to a specific group.',
-                        'fixed-group-price-info'    => 'For :qty Qty at fixed price of :price',
-                        'title'                     => 'Customer Group Price',
-
-                        'create' => [
-                            'all-groups'     => 'All Groups',
-                            'create-title'   => 'Create Customer Group Price',
-                            'customer-group' => 'Customer Group',
-                            'delete-btn'     => 'Delete',
-                            'discount'       => 'Discount',
-                            'fixed'          => 'Fixed',
-                            'price'          => 'Price',
-                            'price-type'     => 'Price Type',
-                            'qty'            => 'Minimum Qty',
-                            'save-btn'       => 'Save',
-                            'update-title'   => 'Update Customer Group Price',
-                        ],
-                    ],
-                ],
 
                 'categories' => [
                     'title' => 'Categories',
@@ -280,124 +254,6 @@ return [
                             'variant-name'        => 'Variant Name',
                             'variant-sku'         => 'Variant SKU',
                             'weight'              => 'Weight',
-                        ],
-                    ],
-
-                    'grouped' => [
-                        'add-btn'           => 'Add Product',
-                        'default-qty'       => 'Default Qty',
-                        'delete'            => 'Delete',
-                        'empty-info'        => 'To create various combination of product on a go.',
-                        'empty-title'       => 'Add Product',
-                        'image-placeholder' => 'Product Image',
-                        'info'              => 'A grouped product comprises standalone items presented as a set, allowing variations or coordination by season or theme. Each product can be bought individually or as part of the group.',
-                        'sku'               => 'SKU - :sku',
-                        'title'             => 'Group Products',
-                    ],
-
-                    'bundle' => [
-                        'add-btn'           => 'Add Option',
-                        'empty-info'        => 'To create bundle options on a go.',
-                        'empty-title'       => 'Add Option',
-                        'image-placeholder' => 'Product Image',
-                        'info'              => 'A bundle product is a package of multiple items or services sold together at a special price, providing value and convenience to customers.',
-                        'title'             => 'Bundle Items',
-
-                        'update-create' => [
-                            'checkbox'    => 'Checkbox',
-                            'is-required' => 'Is Required',
-                            'multiselect' => 'Multiselect',
-                            'name'        => 'Title',
-                            'no'          => 'No',
-                            'radio'       => 'Radio',
-                            'save-btn'    => 'Save',
-                            'select'      => 'Select',
-                            'title'       => 'Option',
-                            'type'        => 'Type',
-                            'yes'         => 'Yes',
-                        ],
-
-                        'option' => [
-                            'add-btn'     => 'Add Product',
-                            'default-qty' => 'Default Qty',
-                            'delete'      => 'Delete',
-                            'delete-btn'  => 'Delete',
-                            'edit-btn'    => 'Edit',
-                            'empty-info'  => 'To create various combination of product on a go.',
-                            'empty-title' => 'Add Product',
-                            'sku'         => 'SKU - :sku',
-
-                            'types' => [
-                                'checkbox' => [
-                                    'info'  => 'Set default product using checkbox',
-                                    'title' => 'Checkbox',
-                                ],
-
-                                'multiselect' => [
-                                    'info'  => 'Set default product using checkbox button',
-                                    'title' => 'Multiselect',
-                                ],
-
-                                'radio' => [
-                                    'info'  => 'Set default product using radio button',
-                                    'title' => 'Radio',
-                                ],
-
-                                'select' => [
-                                    'info'  => 'Set default product using radio button',
-                                    'title' => 'Select',
-                                ],
-                            ],
-                        ],
-                    ],
-
-                    'downloadable' => [
-                        'links' => [
-                            'add-btn'     => 'Add Link',
-                            'delete-btn'  => 'Delete',
-                            'edit-btn'    => 'Edit',
-                            'empty-info'  => 'To create link on a go.',
-                            'empty-title' => 'Add Link',
-                            'file'        => 'File : ',
-                            'info'        => 'Downloadable product type allows to sell digital products, such as eBooks, software applications, music, games, etc.',
-                            'sample-file' => 'Sample File : ',
-                            'sample-url'  => 'Sample URL : ',
-                            'title'       => 'Downloadable Links',
-                            'url'         => 'URL : ',
-
-                            'update-create' => [
-                                'downloads'   => 'Download Allowed',
-                                'file'        => 'File',
-                                'file-type'   => 'File Type',
-                                'name'        => 'Title',
-                                'price'       => 'Price',
-                                'sample'      => 'Sample',
-                                'sample-type' => 'Sample Type',
-                                'save-btn'    => 'Save',
-                                'title'       => 'Link',
-                                'url'         => 'URL',
-                            ],
-                        ],
-
-                        'samples' => [
-                            'add-btn'     => 'Add Sample',
-                            'delete-btn'  => 'Delete',
-                            'edit-btn'    => 'Edit',
-                            'empty-info'  => 'To create sample on a go.',
-                            'empty-title' => 'Add Sample',
-                            'file'        => 'File : ',
-                            'info'        => 'Downloadable product type allows to sell digital products, such as eBooks, software applications, music, games, etc.',
-                            'title'       => 'Downloadable Samples',
-                            'url'         => 'URL : ',
-
-                            'update-create' => [
-                                'file'      => 'File',
-                                'file-type' => 'File Type',
-                                'name'      => 'Title',
-                                'save-btn'  => 'Save',
-                                'title'     => 'Link',
-                                'url'       => 'URL',
-                            ],
                         ],
                     ],
                 ],
@@ -1171,12 +1027,14 @@ return [
                 'nothing-to-import' => 'There are no resources to import.',
                 'setup-queue-error' => 'Please change your queue driver to "database" or "redis" to start the import process.',
                 'update-success'    => 'Export updated successfully.',
+                'failed-info'       => 'Job has failed. Please fix the following errors and try again.',
             ],
             'imports' => [
                 'create' => [
                     'code'                => 'Code',
                     'action'              => 'Action',
                     'allowed-errors'      => 'Allowed Errors',
+                    'allowed-file-types'  => 'Allowed file types (CSV, XLSX, XLS)',
                     'back-btn'            => 'Back',
                     'create-update'       => 'Create/Update',
                     'delete'              => 'Delete',
@@ -1184,7 +1042,8 @@ return [
                     'images'              => 'Images',
                     'download-sample'     => 'Download :resource Sample CSV',
                     'field-separator'     => 'Field Separator',
-                    'file-info-example'   => 'For example, in case product-images, files should be placed into /project-root/storage/app/import/product-images folder.',
+                    'separator-info'      => 'Only use for CSV files',
+                    'file-info-example'   => 'Place images in storage/app/public/. For images in storage/app/public/import-images, include import-images/ in the path and use only the file name in the import file.',
                     'file-info'           => 'Use relative path to /project-root/storage/app/import, e.g. product-images, import-images.',
                     'file'                => 'File',
                     'general'             => 'General',
@@ -1206,12 +1065,14 @@ return [
                     'images'              => 'Images',
                     'action'              => 'Action',
                     'allowed-errors'      => 'Allowed Errors',
+                    'allowed-file-types'  => 'Allowed file types (CSV, XLSX, XLS)',
                     'back-btn'            => 'Back',
                     'create-update'       => 'Create/Update',
                     'delete'              => 'Delete',
                     'download-sample'     => 'Download Sample',
                     'field-separator'     => 'Field Separator',
-                    'file-info-example'   => 'For example, in case product-images, files should be placed into /project-root/storage/app/import/product-images folder.',
+                    'separator-info'      => 'Only use for CSV files',
+                    'file-info-example'   => 'Place images in storage/app/public/. For images in storage/app/public/import-images, include import-images/ in the path and use only the file name in the import file.',
                     'file-info'           => 'Use relative path to /project-root/storage/app/import, e.g. product-images, import-images.',
                     'file'                => 'File',
                     'general'             => 'General',
@@ -1282,6 +1143,7 @@ return [
                     'file_path'               => 'File Path',
                     'import-now'              => 'Import Now',
                     'action'                  => 'Action Mode',
+                    'profile'                 => 'Import Profile',
                     'validating-info'         => 'The data started reading and Validating',
                     'validation-failed-info'  => 'Your import is invalid. Please fix the following errors and try again.',
                     'validation-success-info' => 'Your import is valid. Click on Import to start the import process.',
@@ -1405,7 +1267,9 @@ return [
                     'validating-info'         => 'The data started reading and Validating',
                     'validation-failed-info'  => 'Your export is invalid. Please fix the following errors and try again.',
                     'validation-success-info' => 'Your export is valid. Click on Export to start the export process.',
-                    'action'                  => 'Action Mode',
+                    'profile'                 => 'Export Profile',
+                    'file-format'             => 'File Format',
+                    'with-media'              => 'With Media',
                 ],
 
                 'create-success'    => 'Export created successfully.',
@@ -1562,16 +1426,17 @@ return [
                 'title'            => 'Edit User',
             ],
 
-            'activate-warning'   => 'Your account is yet to be activated, please contact administrator.',
-            'cannot-change'      => 'User cannot be changed',
-            'create-success'     => 'User created successfully.',
-            'delete-failed'      => 'User deleted failed.',
-            'delete-success'     => 'User deleted successfully.',
-            'delete-warning'     => 'Are you sure, you want to perform this action?',
-            'incorrect-password' => 'Incorrect password',
-            'last-delete-error'  => 'Last User delete failed',
-            'login-error'        => 'Please check your credentials and try again.',
-            'update-success'     => 'User updated successfully.',
+            'activate-warning'          => 'Your account is yet to be activated, please contact administrator.',
+            'cannot-change'             => 'User cannot be changed',
+            'create-success'            => 'User created successfully.',
+            'delete-failed'             => 'User deleted failed.',
+            'delete-success'            => 'User deleted successfully.',
+            'delete-warning'            => 'Are you sure, you want to perform this action?',
+            'incorrect-password'        => 'Incorrect password',
+            'last-delete-error'         => 'Last User delete failed',
+            'login-error'               => 'Please check your credentials and try again.',
+            'update-success'            => 'User updated successfully.',
+            'current-user-delete-error' => 'The logged in user can not be deleted.',
         ],
 
         'roles' => [
@@ -1582,7 +1447,7 @@ return [
                 'datagrid' => [
                     'delete'          => 'Delete',
                     'edit'            => 'Edit',
-                    'id'              => 'Id',
+                    'id'              => 'ID',
                     'name'            => 'Name',
                     'permission-type' => 'Permission Type',
                 ],
@@ -1624,30 +1489,9 @@ return [
         ],
     ],
 
-    'reporting' => [
-        'view' => [
-            'day'           => 'Day',
-            'end-date'      => 'End Date',
-            'export-csv'    => 'Export CSV',
-            'export-xls'    => 'Export XLS',
-            'month'         => 'Month',
-            'not-available' => 'No Records Available.',
-            'start-date'    => 'Start Date',
-            'year'          => 'Year',
-        ],
-
-        'empty' => [
-            'info'  => 'No data available for selected interval',
-            'title' => 'No Data Available',
-        ],
-    ],
-
     'configuration' => [
         'index' => [
-            'back-btn'                     => 'Back',
             'delete'                       => 'Delete',
-            'enable-at-least-one-payment'  => 'Enable at least one payment method.',
-            'enable-at-least-one-shipping' => 'Enable at least one shipping method.',
             'no-result-found'              => 'No result found',
             'save-btn'                     => 'Save Configuration',
             'save-message'                 => 'Configuration saved successfully',
@@ -1661,39 +1505,6 @@ return [
                 'general' => [
                     'info'  => '',
                     'title' => 'General',
-
-                ],
-
-                'content' => [
-                    'info'  => 'Set compare options, wishlist options, image search options, footer, toggle footer and custom scripts.',
-                    'title' => 'Content',
-
-                    'settings' => [
-                        'compare-options'     => 'Compare options',
-                        'image-search-option' => 'Image Search Option',
-                        'title'               => 'Settings',
-                        'title-info'          => 'Settings refer to configurable choices that control how a system, application, or device behaves, tailored to user preferences and requirements.',
-                        'wishlist-options'    => 'Wishlist options',
-                    ],
-
-                    'custom-scripts' => [
-                        'custom-css'        => 'Custom CSS',
-                        'custom-javascript' => 'Custom Javascript',
-                        'title'             => 'Custom Scripts',
-                        'title-info'        => 'Custom scripts are personalized pieces of code created to add specific functions or features to software, enhancing its capabilities uniquely.',
-                    ],
-                ],
-
-                'design' => [
-                    'info'  => 'Set logo and favicon icon.',
-                    'title' => 'Design',
-
-                    'admin-logo' => [
-                        'favicon'    => 'Favicon',
-                        'logo-image' => 'Logo Image',
-                        'title'      => 'Admin Logo',
-                        'title-info' => 'Admin logo is the distinctive image or emblem representing the administration interface of a system or website, often customizable.',
-                    ],
                 ],
 
                 'magic-ai' => [
@@ -1708,384 +1519,6 @@ return [
                         'title'          => 'General Settings',
                         'title-info'     => 'Enhance your experience with the Magic AI feature by entering your exclusive API Key and indicating the pertinent Organization for effortless integration. Seize command over your OpenAI credentials and customize the settings according to your specific needs.',
                     ],
-
-                    'content-generation' => [
-                        'category-description-prompt'      => 'Category Description Prompt',
-                        'cms-page-content-prompt'          => 'CMS Page Content Prompt',
-                        'enabled'                          => 'Enabled',
-                        'product-description-prompt'       => 'Product Description Prompt',
-                        'product-short-description-prompt' => 'Product Short Description Prompt',
-                        'title'                            => 'Content Generation',
-                        'title-info'                       => 'This feature will enable the Magic AI for every WYSIWYG editor, where you want to mange content using AI.<br/><br/>When Enable, go to any editor to generate content.',
-                    ],
-
-                    'image-generation' => [
-                        'enabled'    => 'Enabled',
-                        'title'      => 'Image Generation',
-                        'title-info' => 'This feature will enable the Magic AI for every image upload, where you want to generate images using DALL-E.<br/><br/>When Enable, go to any image upload to generate image.',
-                    ],
-
-                    'review-translation' => [
-                        'dolphin-phi'       => 'Dolphin Phi',
-                        'enabled'           => 'Enabled',
-                        'gpt-3-5-turbo'     => 'OpenAI gpt-3.5-turbo',
-                        'llama2'            => 'Llama 2',
-                        'llama2-uncensored' => 'Llama 2 Uncensored',
-                        'llama2:13b'        => 'Llama 2 13B',
-                        'llama2:70b'        => 'Llama 2 70B',
-                        'llava'             => 'LLaVA',
-                        'mistral'           => 'Mistral',
-                        'model'             => 'Model',
-                        'orca-mini'         => 'Orca Mini',
-                        'phi'               => 'Phi-2',
-                        'starling-lm'       => 'Starling',
-                        'title'             => 'Review Translation',
-                        'title-info'        => 'Provide option to customer or visitor to translate customer review into english.<br/><br/>When enable, go to review and you will find the button ‘Translate to English’ if you review other then English.',
-                        'vicuna'            => 'Vicuna',
-                    ],
-
-                    'checkout-message' => [
-                        'dolphin-phi'       => 'Dolphin Phi',
-                        'enabled'           => 'Enabled',
-                        'gpt-3-5-turbo'     => 'OpenAI gpt-3.5-turbo',
-                        'llama2'            => 'Llama 2',
-                        'llama2-uncensored' => 'Llama 2 Uncensored',
-                        'llama2:13b'        => 'Llama 2 13B',
-                        'llama2:70b'        => 'Llama 2 70B',
-                        'llava'             => 'LLaVA',
-                        'mistral'           => 'Mistral',
-                        'model'             => 'Model',
-                        'orca-mini'         => 'Orca Mini',
-                        'phi'               => 'Phi-2',
-                        'prompt'            => 'Prompt',
-                        'starling-lm'       => 'Starling',
-                        'title'             => 'Personalized Checkout Message',
-                        'title-info'        => 'Craft a personalized checkout message for customers on the Thank-You page, tailoring the content to resonate with individual preferences and enhancing the overall post-purchase experience.',
-                        'vicuna'            => 'Vicuna',
-                    ],
-                ],
-            ],
-
-            'catalog' => [
-                'info'     => 'Catalog',
-                'title'    => 'Catalog',
-                'products' => [
-                    'info'  => 'Set guest checkout, product view page, cart view page, store front, review and attribute social share.',
-                    'title' => 'Products',
-
-                    'guest-checkout' => [
-                        'allow-guest-checkout'      => 'Allow Guest Checkout',
-                        'allow-guest-checkout-hint' => 'Hint: If turned on, this option can be configured for each product specifically.',
-                        'title'                     => 'Guest Checkout',
-                        'title-info'                => 'Guest checkout allows customers to buy products without creating an account, streamlining the purchase process for convenience and faster transactions.',
-                    ],
-
-                    'product-view-page' => [
-                        'allow-no-of-related-products'  => 'Allowed number of Related Products',
-                        'allow-no-of-up-sells-products' => 'Allowed number of Up-Sell Products',
-                        'title'                         => 'Product view page configuration',
-                        'title-info'                    => 'Product view page configuration entails adjusting the layout and elements on a product\'s display page, enhancing user experience and information presentation.',
-                    ],
-
-                    'cart-view-page' => [
-                        'allow-no-of-cross-sells-products' => 'Allowed number of Cross-Sell Products',
-                        'title'                            => 'Cart view page configuration',
-                        'title-info'                       => 'Cart view page configuration involves arranging items, details, and options on the shopping cart page, improving user interaction and purchase flow.',
-                    ],
-
-                    'storefront' => [
-                        'buy-now-button-display' => 'Allow customers to directly buy products',
-                        'cheapest-first'         => 'Cheapest First',
-                        'comma-separated'        => 'Comma Separated',
-                        'database'               => 'Database',
-                        'default-list-mode'      => 'Default List Mode',
-                        'elastic'                => 'Elastic Search',
-                        'expensive-first'        => 'Expensive First',
-                        'from-a-z'               => 'From A-Z',
-                        'from-z-a'               => 'From Z-A',
-                        'grid'                   => 'Grid',
-                        'latest-first'           => 'Newest First',
-                        'list'                   => 'List',
-                        'oldest-first'           => 'Oldest First',
-                        'products-per-page'      => 'Products Per Page',
-                        'search-mode'            => 'Search Mode',
-                        'sort-by'                => 'Sort By',
-                        'title'                  => 'Storefront',
-                        'title-info'             => 'Storefront is the customer-facing interface of an online shop, showcasing products, categories, and navigation for a seamless shopping experience.',
-                    ],
-
-                    'small-image' => [
-                        'height'     => 'Height',
-                        'title'      => 'Small Image',
-                        'title-info' => 'Storefront is the customer-facing interface of an online shop, showcasing products, categories, and navigation for a seamless shopping experience.',
-                        'width'      => 'Width',
-                    ],
-
-                    'medium-image' => [
-                        'height'     => 'Height',
-                        'title'      => 'Medium Image',
-                        'title-info' => 'Medium image refers to a moderate-sized picture that offers a balance between detail and screen space, commonly used for visuals.',
-                        'width'      => 'Width',
-                    ],
-
-                    'large-image' => [
-                        'height'     => 'Height',
-                        'title'      => 'Large image',
-                        'title-info' => 'Large image represents a high-resolution picture providing enhanced detail and visual impact, often used for showcasing products or graphics.',
-                        'width'      => 'Width',
-                    ],
-
-                    'review' => [
-                        'allow-guest-review' => 'Allow Guest Review',
-                        'title'              => 'Review',
-                        'title-info'         => 'Evaluation or assessment of something, often involving opinions and feedback.',
-                    ],
-
-                    'attribute' => [
-                        'file-upload-size'  => 'Allowed File Upload Size (in Kb)',
-                        'image-upload-size' => 'Allowed Image Upload Size (in Kb)',
-                        'title'             => 'Attribute',
-                        'title-info'        => 'Characteristic or property that defines an object, influencing its behavior, appearance, or function.',
-                    ],
-
-                    'social-share' => [
-                        'enable-share-email'     => 'Enable Share in Email?',
-                        'enable-share-facebook'  => 'Enable Share in Facebook?',
-                        'enable-share-linkedin'  => 'Enable Share in Linkedin?',
-                        'enable-share-pinterest' => 'Enable Share in Pinterest?',
-                        'enable-share-twitter'   => 'Enable Share in Twitter?',
-                        'enable-share-whatsapp'  => 'Enable Share in What\'s App?',
-                        'enable-social-share'    => 'Enable Social Share?',
-                        'share'                  => 'Share',
-                        'share-message'          => 'Share Message',
-                        'title'                  => 'Social Share',
-                        'title-info'             => 'Sharing things from a website with friends on social media platforms like Facebook, Twitter, or Instagram.',
-                    ],
-                ],
-
-                'rich-snippets' => [
-                    'info'  => 'Set products and categories.',
-                    'title' => 'Rich Snippets',
-
-                    'products' => [
-                        'enable'          => 'Enable',
-                        'show-categories' => 'Show Categories',
-                        'show-images'     => 'Show Images',
-                        'show-offers'     => 'Show Offers',
-                        'show-ratings'    => 'Show Ratings',
-                        'show-reviews'    => 'Show Reviews',
-                        'show-sku'        => 'Show SKU',
-                        'show-weight'     => 'Show Weight',
-                        'title'           => 'Products',
-                        'title-info'      => 'Items available for purchase or use, offered by a business or seller.',
-                    ],
-
-                    'categories' => [
-                        'enable'                  => 'Enable',
-                        'show-search-input-field' => 'Show Search Input Field',
-                        'title'                   => 'Categories',
-                        'title-info'              => '"Categories" refer to groups or classifications that help organize and group similar products or items together for easier browsing and navigation.',
-                    ],
-                ],
-            ],
-
-            'customer' => [
-                'info'  => 'Customer',
-                'title' => 'Customer',
-
-                'address' => [
-                    'info'  => 'Set country, state, zip and lines in a street address.',
-                    'title' => 'Address',
-
-                    'requirements' => [
-                        'city'       => 'City',
-                        'country'    => 'Country',
-                        'state'      => 'State',
-                        'title'      => 'Requirements',
-                        'title-info' => 'Requirements are the conditions, features, or specifications necessary for something to be fulfilled, achieved, or met successfully.',
-                        'zip'        => 'Zip',
-                    ],
-
-                    'information' => [
-                        'street-lines' => 'Lines in a Street Address',
-                        'title'        => 'Information',
-                        'title-info'   => '"Lines in a street address" refer to individual segments of an address, often separated by commas, providing location information such as house number, street, city, and more.',
-                    ],
-                ],
-
-                'captcha' => [
-                    'info'  => 'Set site key, secret key and status.',
-                    'title' => 'Captcha',
-
-                    'credentials' => [
-                        'secret-key' => 'Secret Key',
-                        'site-key'   => 'Site Key',
-                        'status'     => 'Status',
-                        'title'      => 'Credentials',
-                        'title-info' => '"Sitemap: Website layout map for search engines. Secret key: Secure code for data encryption, authentication, or API access protection."',
-                    ],
-
-                    'validations' => [
-                        'captcha'  => 'Something went wrong! Please try again.',
-                        'required' => 'Please select CAPTCHA',
-                    ],
-                ],
-
-                'settings' => [
-                    'settings-info' => 'Set newsletter subscriptions, email verifications and social login.',
-                    'title'         => 'Settings',
-
-                    'newsletter' => [
-                        'subscription' => 'Allow Newsletter Subscription',
-                        'title'        => 'Newsletter Subscription',
-                        'title-info'   => '"Newsletter information" contains updates, offers, or content shared regularly through emails to subscribers, keeping them informed and engaged.',
-                    ],
-
-                    'email' => [
-                        'email-verification' => 'Allow Email Verification',
-                        'title'              => 'Email Verification',
-                        'title-info'         => '"Email verification" confirms the authenticity of an email address, often by sending a confirmation link, enhancing account security and communication reliability.',
-                    ],
-
-                    'social-login' => [
-                        'enable-facebook'   => 'Enable Facebook',
-                        'enable-github'     => 'Enable Github',
-                        'enable-google'     => 'Enable Google',
-                        'enable-linkedin'   => 'Enable LinkedIn',
-                        'enable-twitter'    => 'Enable Twitter',
-                        'social-login'      => 'Social Login',
-                        'social-login-info' => '"Social login" enables users to access websites using their social media accounts, streamlining registration and login processes for convenience.',
-                    ],
-                ],
-            ],
-
-            'email' => [
-                'info'  => 'Email',
-                'title' => 'Email',
-
-                'email-settings' => [
-                    'admin-email'           => 'Admin Email',
-                    'admin-email-tip'       => 'The email address of the admin for this channel to receive emails',
-                    'admin-name'            => 'Admin Name',
-                    'admin-name-tip'        => 'This name will be displayed in all admin emails',
-                    'admin-page-limit'      => 'Default Items Per Page (Admin)',
-                    'email-sender-name'     => 'Email Sender Name',
-                    'email-sender-name-tip' => 'This name will be displayed in the customers inbox',
-                    'info'                  => 'Set email sender name, shop email address, admin name and admin email address.',
-                    'shop-email-from'       => 'Shop Email Address',
-                    'shop-email-from-tip'   => 'The email address of this channel to send emails to your customers',
-                    'title'                 => 'Email Settings',
-                ],
-
-                'notifications' => [
-                    'info'      => '"Notification" is a message or alert that informs users about events, updates, or actions, enhancing user engagement and awareness.',
-                    'new-admin' => 'Send a confirmation e-mail to the admin',
-                    'title'     => 'Notifications',
-                ],
-            ],
-
-            'sales' => [
-                'info'  => 'Sales',
-                'title' => 'Sales',
-
-                'shipping' => [
-                    'info'  => 'Set shipping information.',
-                    'title' => 'Shipping',
-
-                    'origin' => [
-                        'bank-details'   => 'Bank Details',
-                        'city'           => 'City',
-                        'contact-number' => 'Contact Number',
-                        'country'        => 'Country',
-                        'state'          => 'State',
-                        'store-name'     => 'Store Name',
-                        'street-address' => 'Street Address',
-                        'title'          => 'Origin',
-                        'title-info'     => 'Shipping origin refers to the location where goods or products originate before being transported to their destination.',
-                        'vat-number'     => 'Vat Number',
-                        'zip'            => 'Zip',
-                    ],
-                ],
-
-                'shipping-methods' => [
-                    'info'  => 'Set shipping methods information',
-                    'title' => 'Shipping Methods',
-
-                    'free-shipping' => [
-                        'description' => 'Description',
-                        'page-title'  => 'Free Shipping',
-                        'status'      => 'Status',
-                        'title'       => 'Title',
-                        'title-info'  => '"Free shipping" refers to a shipping method where the cost of shipping is waived, and the seller covers the shipping expenses for delivering goods to the buyer.',
-                    ],
-
-                    'flat-rate-shipping' => [
-                        'description' => 'Description',
-                        'page-title'  => 'Flat Rate Shipping',
-                        'rate'        => 'Rate',
-                        'status'      => 'Status',
-                        'title'       => 'Title',
-                        'title-info'  => 'Flat rate shipping is a shipping method where a fixed fee is charged for shipping, regardless of the weight, size, or distance of the package. This simplifies shipping costs and can be advantageous for both buyers and sellers.',
-                        'type'        => 'Type',
-                    ],
-                ],
-
-                'invoice-settings' => [
-                    'info'  => 'Set invoice number, payment terms, invoice slip design and invoice reminders.',
-                    'title' => 'Invoice Settings',
-
-                    'invoice-number' => [
-                        'generator'  => 'Invoice Number Generator',
-                        'length'     => 'Invoice Number Length',
-                        'prefix'     => 'Invoice Number Prefix',
-                        'suffix'     => 'Invoice Number Suffix',
-                        'title'      => 'Invoice Number Settings',
-                        'title-info' => 'Configuration of rules or parameters for generating and assigning unique identification numbers to invoices for organizational and tracking purposes.',
-                    ],
-
-                    'payment-terms' => [
-                        'due-duration'      => 'Due Duration',
-                        'due-duration-day'  => ':due-duration Day',
-                        'due-duration-days' => ':due-duration Days',
-                        'title'             => 'Payment Terms',
-                        'title-info'        => 'Agreed-upon conditions dictating when and how payment for goods or services should be made by the buyer to the seller.',
-                    ],
-
-                    'invoice-slip-design' => [
-                        'logo'       => 'Logo',
-                        'title'      => 'Invoice Slip Design',
-                        'title-info' => 'Visual layout and formatting of an invoice slip, including company branding, itemization, pricing, and payment details for professional presentation.',
-                    ],
-
-                    'invoice-reminders' => [
-                        'interval-between-reminders' => 'Interval between reminders',
-                        'maximum-limit-of-reminders' => 'Maximum limit of reminders',
-                        'title'                      => 'Invoice Reminders',
-                        'title-info'                 => 'Automated notifications or communications sent to customers to remind them of upcoming or overdue payments for invoices.',
-                    ],
-                ],
-            ],
-
-            'taxes' => [
-                'title' => 'Taxes',
-
-                'catalog' => [
-                    'title'      => 'Catalog',
-                    'title-info' => 'Set pricing and default location calculations',
-
-                    'pricing' => [
-                        'title'         => 'Pricing',
-                        'title-info'    => 'Details about the cost of goods or services, including base price, discounts, taxes, and additional charges.information',
-                        'tax-inclusive' => 'Tax inclusive',
-                    ],
-
-                    'default-location-calculation' => [
-                        'default-country'   => 'Default Country',
-                        'default-post-code' => 'Default Post Code',
-                        'default-state'     => 'Default State',
-                        'title'             => 'Default Location Calculation',
-                        'title-info'        => 'Automated determination of a standard or initial location based on predefined factors or settings.',
-                    ],
                 ],
             ],
         ],
@@ -2098,7 +1531,7 @@ return [
                 'datagrid' => [
                     'delete'          => 'Delete',
                     'edit'            => 'Edit',
-                    'id'              => 'Id',
+                    'id'              => 'ID',
                     'name'            => 'Name',
                     'user'            => 'User',
                     'client-id'       => 'Client ID',
@@ -2158,23 +1591,6 @@ return [
                 'my-account'    => 'My Account',
                 'notifications' => 'Notifications',
                 'visit-shop'    => 'Visit Shop',
-
-                'mega-search' => [
-                    'categories'                      => 'Categories',
-                    'customers'                       => 'Customers',
-                    'explore-all-categories'          => 'Explore all categories',
-                    'explore-all-customers'           => 'Explore all customers',
-                    'explore-all-matching-categories' => 'Explore all categories matching “:query” (:count)',
-                    'explore-all-matching-customers'  => 'Explore all customers matching “:query” (:count)',
-                    'explore-all-matching-orders'     => 'Explore all Orders matching “:query” (:count)',
-                    'explore-all-matching-products'   => 'Explore all products matching “:query” (:count)',
-                    'explore-all-orders'              => 'Explore all Orders',
-                    'explore-all-products'            => 'Explore all products',
-                    'orders'                          => 'Orders',
-                    'products'                        => 'Products',
-                    'sku'                             => 'SKU: :sku',
-                    'title'                           => 'Mega Search',
-                ],
             ],
 
             'sidebar' => [
@@ -2184,53 +1600,26 @@ return [
                 'history'                  => 'History',
                 'edit-section'             => 'Data',
                 'general'                  => 'General',
-                'campaigns'                => 'Campaigns',
                 'catalog'                  => 'Catalog',
                 'categories'               => 'Categories',
                 'category_fields'          => 'Category Fields',
                 'channels'                 => 'Channels',
-                'cms'                      => 'CMS',
                 'collapse'                 => 'Collapse',
-                'communications'           => 'Communications',
                 'configure'                => 'Configuration',
                 'currencies'               => 'Currencies',
-                'customers'                => 'Customers',
                 'dashboard'                => 'Dashboard',
                 'data-transfer'            => 'Data Transfer',
-                'discount'                 => 'Discount',
-                'email-templates'          => 'Email Templates',
-                'events'                   => 'Events',
-                'exchange-rates'           => 'Exchange Rates',
                 'groups'                   => 'Groups',
                 'tracker'                  => 'Job Tracker',
                 'imports'                  => 'Imports',
                 'exports'                  => 'Exports',
-                'invoices'                 => 'Invoices',
                 'locales'                  => 'Locales',
                 'magic-ai'                 => 'Magic AI',
-                'marketing'                => 'Marketing',
                 'mode'                     => 'Dark Mode',
-                'newsletter-subscriptions' => 'Newsletter Subscriptions',
-                'orders'                   => 'Orders',
                 'products'                 => 'Products',
-                'promotions'               => 'Promotions',
-                'refunds'                  => 'Refunds',
-                'reporting'                => 'Reporting',
-                'reviews'                  => 'Reviews',
                 'roles'                    => 'Roles',
-                'sales'                    => 'Sales',
-                'search-seo'               => 'Search & SEO',
-                'search-synonyms'          => 'Search Synonyms',
-                'search-terms'             => 'Search Terms',
                 'settings'                 => 'Settings',
-                'shipments'                => 'Shipments',
-                'sitemaps'                 => 'Sitemaps',
-                'tax-categories'           => 'Tax Categories',
-                'tax-rates'                => 'Tax Rates',
-                'taxes'                    => 'Taxes',
                 'themes'                   => 'Themes',
-                'transactions'             => 'Transactions',
-                'url-rewrites'             => 'URL Rewrites',
                 'users'                    => 'Users',
                 'integrations'             => 'Integrations',
             ],
@@ -2321,16 +1710,16 @@ return [
                 'title'        => 'Confirm Deletion',
             ],
             'history' => [
-                'title'             => 'History Preview',
-                'subtitle'          => 'Quickly review your updates and changes.',
-                'close-btn'         => 'Close',
-                'version-label'     => 'Version',
-                'date-time-label'   => 'Date/Time',
-                'user-label'        => 'User',
-                'name-label'        => 'Key',
-                'old-value-label'   => 'Old Value',
-                'new-value-label'   => 'New Value',
-                'no-history'        => 'No history Found',
+                'title'           => 'History Preview',
+                'subtitle'        => 'Quickly review your updates and changes.',
+                'close-btn'       => 'Close',
+                'version-label'   => 'Version',
+                'date-time-label' => 'Date/Time',
+                'user-label'      => 'User',
+                'name-label'      => 'Key',
+                'old-value-label' => 'Old Value',
+                'new-value-label' => 'New Value',
+                'no-history'      => 'No history Found',
             ],
         ],
 
@@ -2430,21 +1819,15 @@ return [
         'attribute-families'       => 'Attribute Families',
         'attribute-groups'         => 'Attribute Groups',
         'attributes'               => 'Attributes',
-        'campaigns'                => 'Campaigns',
         'cancel'                   => 'Cancel',
-        'cart-rules'               => 'Cart Rules',
-        'catalog-rules'            => 'Catalog Rules',
         'catalog'                  => 'Catalog',
         'categories'               => 'Categories',
         'channels'                 => 'Channels',
-        'cms'                      => 'CMS',
-        'communications'           => 'Communications',
         'configure'                => 'Configure',
         'configuration'            => 'Configuration',
         'copy'                     => 'Copy',
         'create'                   => 'Create',
         'currencies'               => 'Currencies',
-        'customers'                => 'Customers',
         'dashboard'                => 'Dashboard',
         'data-transfer'            => 'Data Transfer',
         'delete'                   => 'Delete',
@@ -2484,10 +1867,15 @@ return [
         'users'                    => 'Users',
         'category_fields'          => 'Category Fields',
         'view'                     => 'View',
+        'execute'                  => 'Job Execute',
         'history'                  => 'History',
         'restore'                  => 'Restore',
         'integrations'             => 'Integrations',
         'api'                      => 'API',
+        'tracker'                  => 'Job Tracker',
+        'imports'                  => 'Imports',
+        'exports'                  => 'Exports',
+
     ],
 
     'errors' => [

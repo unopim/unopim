@@ -154,11 +154,20 @@
                                 const url = window.URL.createObjectURL(new Blob([response.data]));
 
                                 /**
+                                 * Get the filename from header
+                                 */
+                                const contentDisposition = response.headers.get('Content-Disposition');
+
+                                const filename = contentDisposition
+                                    ? contentDisposition.split('filename=')[1].replace(/["']/g, '')
+                                    : (Math.random() + 1).toString(36).substring(7) + '.' + this.format;
+
+                                /**
                                  * Link generation.
                                  */
                                 const link = document.createElement('a');
                                 link.href = url;
-                                link.setAttribute('download', `${(Math.random() + 1).toString(36).substring(7)}.${this.format}`);
+                                link.setAttribute('download', filename);
 
                                 /**
                                  * Adding a link to a document, clicking on the link, and then removing the link.

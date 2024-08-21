@@ -49,36 +49,54 @@
                         <i class="text-2xl text-orange-600 dark:text-orange-600! bg-orange-200 rounded-full"></i>
 
                         <span class="font-bold">
-                            @lang('admin::app.settings.data-transfer.exports.export.action') :  
+                            @lang('admin::app.settings.data-transfer.exports.export.profile') :  
                         </span>
 
                         <span class="text-gray-600 dark:text-white">
-                            @php
-                                $actionConfig = collect(config('export_settings.actions'))->firstWhere('id', $export->action);
-                                $actionTitle = $actionConfig ? __($actionConfig['title']) : __($export->action);
-                            @endphp
+                            {{ $export->code }}
+                        </span>
+                    </p>
+                    <p class="flex gap-2 items-center dark:text-white">
+                        <i class="text-2xl text-orange-600 dark:text-orange-600! bg-orange-200 rounded-full"></i>
 
-                            {{ $actionTitle }}
+                        <span class="font-bold">
+                            @lang('admin::app.settings.data-transfer.exports.export.file-format') :  
+                        </span>
+
+                        <span class="text-gray-600 dark:text-white">
+                            {{ $export->filters['file_format'] }}
+                        </span>
+                    </p>
+                    <p class="flex gap-2 items-center dark:text-white">
+                        <i class="text-2xl text-orange-600 dark:text-orange-600! bg-orange-200 rounded-full"></i>
+
+                        <span class="font-bold">
+                            @lang('admin::app.settings.data-transfer.exports.export.with-media') :  
+                        </span>
+
+                        <span class="text-gray-600 dark:text-white">
+                            {{ $export->filters['with_media'] == 1 ? 'Yes' : 'No' }}
                         </span>
                     </p>
                 </div>
-
-                <x-admin::form  
-                        :action="route('admin.settings.data_transfer.exports.export_now', ['id' => $export->id])"
-                    >
-                     @method('PUT')
-
-                    {!! view_render_event('unopim.admin.settings.channels.edit.edit_form_controls.before') !!}
-                        <button
-                            type="submit" 
-                            class="primary-button place-self-start"
-                            aria-lebel="Submit"
+                @if (bouncer()->hasPermission('data_transfer.export.execute'))
+                    <x-admin::form  
+                            :action="route('admin.settings.data_transfer.exports.export_now', ['id' => $export->id])"
                         >
-                            @lang('admin::app.settings.data-transfer.exports.export.export-now')
-                        </button>
-                    {!! view_render_event('unopim.admin.settings.channels.edit.edit_form_controls.after') !!}
+                        @method('PUT')
 
-                </x-admin::form> 
+                        {!! view_render_event('unopim.admin.settings.channels.edit.edit_form_controls.before') !!}
+                            <button
+                                type="submit" 
+                                class="primary-button place-self-start"
+                                aria-lebel="Submit"
+                            >
+                                @lang('admin::app.settings.data-transfer.exports.export.export-now')
+                            </button>
+                        {!! view_render_event('unopim.admin.settings.channels.edit.edit_form_controls.after') !!}
+
+                    </x-admin::form>
+                @endif
             </div>
         </script>
 

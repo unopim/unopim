@@ -12,6 +12,7 @@ use Webkul\AdminApi\Http\Controllers\API\ApiController;
 use Webkul\Category\Repositories\CategoryFieldOptionRepository;
 use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\Category\Rules\FieldTypes;
+use Webkul\Category\Rules\NotSupportedFields;
 use Webkul\Category\Rules\ValidationTypes;
 use Webkul\Core\Rules\Code;
 
@@ -64,6 +65,12 @@ class CategoryFieldController extends ApiController
             'type' => [
                 'required',
                 new FieldTypes(),
+            ],
+            'code' => [
+                'required',
+                sprintf('unique:%s,code', 'category_fields'),
+                new Code(),
+                new NotSupportedFields(),
             ],
         ];
 

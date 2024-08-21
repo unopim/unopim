@@ -2,7 +2,7 @@
 
 return [
     [
-        'key'   => 'configuration.api_integration',
+        'key'   => 'configuration.integrations',
         'name'  => 'admin::app.components.layouts.sidebar.integrations',
         'route' => 'admin.configuration.integrations.index',
         'sort'  => 2,

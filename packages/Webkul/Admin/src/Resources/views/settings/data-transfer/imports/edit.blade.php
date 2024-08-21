@@ -119,18 +119,6 @@
                             :value="old('entity_type') ?? $import->entity_type"
                         />
                         <x-admin::form.control-group.error control-name="type" />
-                        
-                        <!-- Source Sample Download Links -->
-                        <template v-if="$refs['importType'] && $refs['importType'].selectedOption">
-                            <a
-                                :href="'{{ route('admin.settings.data_transfer.imports.download_sample') }}/' + $refs['importType'].selectedOption"
-                                target="_blank"
-                                id="source-sample-link"
-                                class="text-sm text-violet-700 dark:text-sky-500 cursor-pointer transition-all hover:underline mt-1"
-                            >
-                                @{{ "@lang('admin::app.settings.data-transfer.imports.create.download-sample')".replace(':resource', $refs['importType'].selectedOption) }}
-                            </a>
-                        </template>
                     </x-admin::form.control-group>
                 </div>
                 <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
@@ -142,6 +130,10 @@
                     <x-admin::form.control-group>
                         <x-admin::form.control-group.label>
                             @lang('admin::app.settings.data-transfer.imports.edit.file')
+                        </x-admin::form.control-group.label>
+
+                        <x-admin::form.control-group.label>
+                            @lang('admin::app.settings.data-transfer.imports.edit.allowed-file-types')
                         </x-admin::form.control-group.label>
 
                         <x-admin::form.control-group.control
@@ -164,10 +156,10 @@
                             
                                 @{{ "@lang('admin::app.settings.data-transfer.imports.create.download-sample')".replace(':resource', $refs['importType'].selectedOption.replace(/^\w/, (c) => c.toUpperCase())) }}
                             </a>
-                        </template>                        
+                        </template>
                     </x-admin::form.control-group>
 
-                    <x-admin::form.control-group.label class="required">
+                    <x-admin::form.control-group.label>
                         @lang('admin::app.settings.data-transfer.imports.edit.images')
                     </x-admin::form.control-group.label>
                     
@@ -337,8 +329,10 @@
 
                         <!-- CSV Field Separator -->
                         <x-admin::form.control-group>
-                            <x-admin::form.control-group.label class="required">
+                            <x-admin::form.control-group.label>
                                 @lang('admin::app.settings.data-transfer.imports.edit.field-separator')
+                                <span>*</span>
+                                <span>(@lang('admin::app.settings.data-transfer.imports.edit.separator-info'))</span>
                             </x-admin::form.control-group.label>
 
                             <x-admin::form.control-group.control

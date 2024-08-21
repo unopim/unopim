@@ -162,8 +162,8 @@
                     <!-- Id and Parent -->
                     <div class="flex gap-1.5 overflow-hidden">
                         <div class="flex flex-col gap-1.5">
-                            <p :class="['true' == record.status ? 'label-active': 'label-info']">
-                                @{{ 'true' == record.status ? "@lang('admin::app.common.enable')" : "@lang('admin::app.common.disable')" }}
+                            <p :class="['true' == record?.status?.toLowerCase() ? 'label-active': 'label-info']">
+                                @{{ 'true' == record?.status?.toLowerCase() ? "@lang('admin::app.common.enable')" : "@lang('admin::app.common.disable')" }}
                             </p>
 
                             <p

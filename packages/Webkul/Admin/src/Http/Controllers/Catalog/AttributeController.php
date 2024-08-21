@@ -8,6 +8,7 @@ use Webkul\Admin\DataGrids\Catalog\AttributeDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
 use Webkul\Attribute\Repositories\AttributeRepository;
+use Webkul\Attribute\Rules\NotSupportedAttributes;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Core\Rules\Code;
 use Webkul\Product\Repositories\ProductRepository;
@@ -57,7 +58,7 @@ class AttributeController extends Controller
     public function store()
     {
         $this->validate(request(), [
-            'code' => ['required', 'not_in:type,attribute_family_id', 'unique:attributes,code', new Code()],
+            'code' => ['required', 'not_in:type,attribute_family_id', 'unique:attributes,code', new Code(), new NotSupportedAttributes()],
             'type' => 'required',
         ]);
 

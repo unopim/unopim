@@ -12,7 +12,7 @@ UnoPim is an open-source Product Information Management (PIM) system built on th
 
 ## Version
 
-Current version: 0.1.0
+Current version: 0.1.1
 
 ## Features
 
@@ -51,7 +51,7 @@ To get started with UnoPim, follow these steps:
 
    ```bash
    php artisan queue:work
-   
+   ```
 
 ## Usage
 
@@ -73,7 +73,7 @@ If you discover any security vulnerabilities, please follow our [Security Policy
 
 ## License
 
-UnoPim is open-sourced software licensed under the [MIT license](LICENSE).
+UnoPim is open-sourced software licensed under the [Open Software License (OSL) 3.0](LICENSE.txt).
 
 ## Acknowledgements
 

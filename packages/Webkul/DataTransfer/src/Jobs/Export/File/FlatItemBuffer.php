@@ -13,12 +13,12 @@ class FlatItemBuffer extends FileBuffer implements BufferInterface
     /** @var int */
     protected $count = 0;
 
-    public function initilize($directory, string $writerType)
+    public function initilize($directory, string $writerType, ?string $fileName = null)
     {
         $this->count = 0;
 
         if (! $this->spreadsheet) {
-            $filePath = $this->make($directory, $writerType);
+            $filePath = $this->make($directory, $writerType, $fileName);
         }
 
         $this->spreadsheet = SpoutWriterFactory::createSpreadSheet();
@@ -40,10 +40,7 @@ class FlatItemBuffer extends FileBuffer implements BufferInterface
         foreach ($items as $item) {
             $this->addToHeaders(array_keys($item));
             $this->highestRow++;
-            // if (isset($options['withHeader']) && $options['withHeader']) {
             $this->setHeaders($sheet, $this->highestRow);
-            // }
-
             $this->appendRows($item, $sheet);
             $this->count++;
         }

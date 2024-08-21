@@ -12,43 +12,28 @@ return [
                     'invalid-attribute-family'                 => 'Invalid value for attribute family column (attribute family doesn\'t exist?)',
                     'invalid-type'                             => 'Product type is invalid or not supported',
                     'sku-not-found'                            => 'Product with specified SKU not found',
-                    'super-attribute-not-found'                => 'Configurable attribute with code: \'%s\' not found or does not belong to the attribute family: \'%s\'',
+                    'super-attribute-not-found'                => 'Configurable attribute with code :code not found or does not belong to the attribute family :familyCode',
                     'configurable-attributes-not-found'        => 'Configurable attributes are required for creating product model',
-                    'configurable-attributes-wrong-type'       => 'Only select type attributes are allowed to be configurable attributes for a configurable product',
+                    'configurable-attributes-wrong-type'       => 'Only select type attributes which are not locale or channel based are allowed to be configurable attributes for a configurable product',
                     'variant-configurable-attribute-not-found' => 'Variant configurable attribute :code is required for creating',
-                    'not-unique-variant-product'               => 'A Product with same configurable attributes already exists.',
+                    'not-unique-variant-product'               => 'A product with same configurable attributes already exists.',
                     'channel-not-exist'                        => 'This channel does not exist.',
                     'locale-not-in-channel'                    => 'This locale is not selected in the channel.',
                     'locale-not-exist'                         => 'This locale does not exist',
                     'not-unique-value'                         => 'The :code value must be unique.',
+                    'incorrect-family-for-variant'             => 'The family must be same as the parent family',
+                    'parent-not-exist'                         => 'The parent does not exist.',
                 ],
             ],
         ],
-        'roles' => [
-            'title' => 'Roles',
-        ],
-        'users' => [
-            'title' => 'Users',
-        ],
-        'channels' => [
-            'title' => 'Channels',
-        ],
         'categories' => [
-            'title' => 'Categories',
+            'title'      => 'Categories',
+            'validation' => [
+                'errors' => [
+                    'channel-related-category-root' => 'You cannot delete the root category that is associated with a channel',
+                ],
+            ],
         ],
-        'category_field' => [
-            'title' => 'Category Field',
-        ],
-        'attribute' => [
-            'title' => 'Attribute',
-        ],
-        'attribute_group' => [
-            'title' => 'Attribute Group',
-        ],
-        'attribute_family' => [
-            'title' => 'Attribute Family',
-        ],
-
     ],
 
     'exporters' => [
@@ -66,31 +51,9 @@ return [
                 ],
             ],
         ],
-        'roles' => [
-            'title' => 'Roles',
-        ],
-        'users' => [
-            'title' => 'Users',
-        ],
-        'channels' => [
-            'title' => 'Channels',
-        ],
         'categories' => [
             'title' => 'Categories',
         ],
-        'category_field' => [
-            'title' => 'Category Field',
-        ],
-        'attribute' => [
-            'title' => 'Attribute',
-        ],
-        'attribute_group' => [
-            'title' => 'Attribute Group',
-        ],
-        'attribute_family' => [
-            'title' => 'Attribute Family',
-        ],
-
     ],
 
     'validation' => [

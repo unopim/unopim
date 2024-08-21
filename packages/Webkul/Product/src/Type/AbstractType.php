@@ -6,6 +6,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Attribute\Repositories\AttributeRepository;
+use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Core\Filesystem\FileStorer;
 use Webkul\Product\Contracts\Product;
 use Webkul\Product\Repositories\ProductRepository;
@@ -318,7 +319,8 @@ abstract class AbstractType
             $commonValues = $this->processValues(
                 productId: $product->id,
                 values: $commonValues,
-                productValues: ($product->values[self::COMMON_VALUES_KEY] ?? [])
+                productValues: ($product->values[self::COMMON_VALUES_KEY] ?? []),
+                isCommonAttribute: true
             );
         } elseif (isset($product->values[self::COMMON_VALUES_KEY])) {
             $commonValues = $product->values[self::COMMON_VALUES_KEY];
@@ -346,9 +348,17 @@ abstract class AbstractType
     }
 
     /**
+     * Process price values for common attribute
+     */
+    public function processCommonPriceValues(string $field, array $newData, array $oldData): array
+    {
+        return array_merge($oldData[$field] ?? [], $newData);
+    }
+
+    /**
      * process values by value type like files and images
      */
-    protected function processValues(int $productId, array $values, array $productValues = []): array
+    protected function processValues(int $productId, array $values, array $productValues = [], bool $isCommonAttribute = false): array
     {
         $values = array_filter(
             ! empty($productValues)
@@ -369,6 +379,17 @@ abstract class AbstractType
                 );
 
                 continue;
+            }
+
+            if (
+                $isCommonAttribute
+                && $this->attributeRepository->findWhere([
+                    'type' => AttributeTypes::PRICE_ATTRIBUTE_TYPE,
+                    'code' => $field,
+                ])->first()?->toArray()
+            ) {
+
+                $fieldValue = $this->processCommonPriceValues($field, $fieldValue, $productValues);
             }
 
             if (is_array($fieldValue)) {

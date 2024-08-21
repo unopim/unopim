@@ -3,6 +3,7 @@
 namespace Webkul\DataTransfer\Helpers\Sources;
 
 use Illuminate\Support\Facades\Storage;
+use Webkul\DataTransfer\Rules\SeparatorTypes;
 
 class CSV extends AbstractSource
 {
@@ -20,6 +21,11 @@ class CSV extends AbstractSource
         string $filePath,
         protected string $delimiter = ','
     ) {
+
+        if (self::checkSeparator(Storage::disk('private')->path($filePath)) != $delimiter) {
+            throw new \LogicException("Separator '{$delimiter}' is not supported in the provided file.");
+        }
+
         try {
             $this->reader = fopen(Storage::disk('private')->path($filePath), 'r');
 
@@ -29,6 +35,33 @@ class CSV extends AbstractSource
         } catch (\Exception $e) {
             throw new \LogicException("Unable to open file: '{$filePath}'");
         }
+    }
+
+    /**
+     * Determine the separator used in a CSV file.
+     */
+    public static function checkSeparator(string $filePath): ?string
+    {
+        $handle = fopen($filePath, 'r');
+        if ($handle === false) {
+            return null;
+        }
+
+        $line = fgets($handle);
+        fclose($handle);
+
+        if ($line === false) {
+            return null;
+        }
+
+        $separatorCounts = [];
+        foreach (SeparatorTypes::SEPERATOR_TYPES as $separator) {
+            $separatorCounts[$separator] = substr_count($line, $separator);
+        }
+
+        $detectedSeparator = array_keys($separatorCounts, max($separatorCounts));
+
+        return count($detectedSeparator) === 1 ? $detectedSeparator[0] : null;
     }
 
     /**

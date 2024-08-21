@@ -84,19 +84,27 @@
                 <div class="flex-1 max-w-full px-4 pt-3 pb-6 bg-transparent dark:bg-cherry-800 ltr:pl-[286px] rtl:pr-[286px] max-lg:!px-4 transition-all duration-300 group-[.sidebar-collapsed]/container:ltr:pl-[85px] group-[.sidebar-collapsed]/container:rtl:pr-[85px]">
                     <div class="tabs">    
                         @php
-                            $activeTab = request()->getQueryString() === 'history=' ? "history" : "general";
+                            $hasPermission = bouncer()->hasPermission('history');
+
+                            $activeTab = $hasPermission ?
+                                request()->getQueryString() === 'history=' ? "history" : "general"
+                                : 'general';
 
                             $items = [
                                 [
-                                    'url'  => '?',
-                                    'name' => 'admin::app.components.layouts.sidebar.general',                    
+                                    'url'    => '?',
+                                    'name'   => 'admin::app.components.layouts.sidebar.general',
                                     'active' => $activeTab === 'general' ? true : false,
-                                ], [
-                                    'url'  => '?history',
-                                    'name' => 'admin::app.components.layouts.sidebar.history',
-                                    'active' => $activeTab === 'history' ? true : false,
-                                ], 
+                                ],
                             ];
+
+                            if ($hasPermission) {
+                                $items[] = [
+                                    'url'    => '?history',
+                                    'name'   => 'admin::app.components.layouts.sidebar.history',
+                                    'active' => $activeTab === 'history' ? true : false,
+                                ];
+                            }
                         @endphp
 
                         <div class="flex gap-4 mb-4 pt-2 border-b-2 max-sm:hidden dark:border-gray-800">

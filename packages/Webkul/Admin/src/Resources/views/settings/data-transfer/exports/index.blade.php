@@ -11,7 +11,7 @@
 
         <div class="flex gap-x-2.5 items-center">
             <!-- Create New Tax Rate Button -->
-            @if (bouncer()->hasPermission('settings.data_transfer.exports.create'))
+            @if (bouncer()->hasPermission('data_transfer.export.create'))
                 <a href="{{ route('admin.settings.data_transfer.exports.create') }}" class="primary-button">
                     @lang('admin::app.settings.data-transfer.exports.index.button-title')
                 </a>

@@ -39,6 +39,12 @@ class ProductController extends ApiController
      */
     protected function updateProduct(array $data, Product $product): Product
     {
+        $attributes = $product->getEditableAttributes()
+            ->where('enable_wysiwyg', '==', 1)
+            ->where('type', '==', 'textarea');
+
+        $data['values'] = $this->sanitizeData($data['values'], $attributes);
+
         if (isset($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::COMMON_VALUES_KEY])) {
             ValueSetter::setCommon($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::COMMON_VALUES_KEY]);
         }
@@ -72,6 +78,7 @@ class ProductController extends ApiController
         }
 
         $data['values'] = ValueSetter::getValues();
+
         $product->values = ValueSetter::getValues();
 
         if ($product->isDirty()) {
@@ -83,6 +90,45 @@ class ProductController extends ApiController
         }
 
         $product->refresh();
+
+        return $product;
+    }
+
+    public function sanitizeData($product, $attributes)
+    {
+        foreach ($attributes as $attribute) {
+            if ($attribute->value_per_channel && $attribute->value_per_locale) {
+                foreach ($product[ProductAbstractType::CHANNEL_LOCALE_VALUES_KEY] ?? [] as $channel => $locales) {
+                    foreach ($locales ?? [] as $locale => $value) {
+                        if (! empty($value[$attribute->code])) {
+                            $val = htmlspecialchars($value[$attribute->code], ENT_QUOTES, 'UTF-8');
+                            $attribute->setProductValue($val, $product, $channel, $locale);
+                        }
+                    }
+                }
+            } elseif ($attribute->value_per_channel) {
+                foreach ($product[ProductAbstractType::CHANNEL_VALUES_KEY] ?? [] as $channel => $value) {
+                    if (! empty($value[$attribute->code])) {
+                        $val = htmlspecialchars($value[$attribute->code], ENT_QUOTES, 'UTF-8');
+                        $attribute->setProductValue($val, $product, $channel);
+                    }
+                }
+            } elseif ($attribute->value_per_locale) {
+                foreach ($product[ProductAbstractType::LOCALE_VALUES_KEY] ?? [] as $locale => $value) {
+                    if (! empty($value[$attribute->code])) {
+                        $val = htmlspecialchars($value[$attribute->code], ENT_QUOTES, 'UTF-8');
+                        $attribute->setProductValue($val, $product, null, $locale);
+                    }
+                }
+            } else {
+                foreach ($product[ProductAbstractType::COMMON_VALUES_KEY] ?? [] as $key => $value) {
+                    if (! empty($value) && $key === $attribute->code) {
+                        $val = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+                        $attribute->setProductValue($val, $product);
+                    }
+                }
+            }
+        }
 
         return $product;
     }

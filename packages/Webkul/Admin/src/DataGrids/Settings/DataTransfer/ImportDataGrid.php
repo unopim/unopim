@@ -113,7 +113,7 @@ class ImportDataGrid extends DataGrid
      */
     public function prepareActions()
     {
-        if (bouncer()->hasPermission('settings.data_transfer.imports.import')) {
+        if (bouncer()->hasPermission('data_transfer.imports.execute')) {
             $this->addAction([
                 'index'  => 'import',
                 'icon'   => 'icon-import',
@@ -125,7 +125,7 @@ class ImportDataGrid extends DataGrid
             ]);
         }
 
-        if (bouncer()->hasPermission('settings.data_transfer.imports.edit')) {
+        if (bouncer()->hasPermission('data_transfer.imports.edit')) {
             $this->addAction([
                 'index'  => 'edit',
                 'icon'   => 'icon-edit',
@@ -137,7 +137,7 @@ class ImportDataGrid extends DataGrid
             ]);
         }
 
-        if (bouncer()->hasPermission('settings.data_transfer.imports.delete')) {
+        if (bouncer()->hasPermission('data_transfer.imports.delete')) {
             $this->addAction([
                 'index'  => 'delete',
                 'icon'   => 'icon-delete',

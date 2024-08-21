@@ -385,7 +385,7 @@
                      * We need to reset the page on filtering.
                      */
                     this.applied.pagination.page = 1;
-                    if ('search' == $event.srcElement.name ) {
+                    if ('search' == $event.srcElement?.name ) {
                         this.get();
                     }
                 },

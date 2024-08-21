@@ -32,11 +32,11 @@ class FileBuffer
     /**
      * @return TemporaryFile
      */
-    public function make($directory, ?string $fileExtension = null)
+    public function make($directory, ?string $fileExtension = null, ?string $fileName = null)
     {
         $temporaryFileFactory = new TemporaryFileFactory($directory);
 
-        return $temporaryFileFactory->make($fileExtension);
+        return $temporaryFileFactory->make($fileExtension, $fileName);
     }
 
     /**

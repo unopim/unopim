@@ -47,8 +47,6 @@
         "symfony/intl": "^6.4"
     },
     "require-dev": {
-        "bagisto/bagisto-package-generator": "^2.0",
-        "bagisto/laravel-datafaker": "dev-master",
         "barryvdh/laravel-debugbar": "^3.8",
         "fakerphp/faker": "^1.9.1",
         "laravel/pint": "^1.8",

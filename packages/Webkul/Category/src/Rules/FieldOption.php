@@ -25,7 +25,7 @@ class FieldOption implements ValidationRule
         $codeNotExists = array_diff($optionCode, $this->getOptionCode());
 
         if (count($codeNotExists) > 0) {
-            $fail('core::validation.field-option-not-found')->translate();
+            $fail(trans('core::validation.field-option-not-found', ['invalid_codes' => implode(',', $codeNotExists)]));
         }
     }
 

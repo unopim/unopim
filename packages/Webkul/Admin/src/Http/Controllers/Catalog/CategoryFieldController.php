@@ -10,6 +10,7 @@ use Webkul\Admin\Http\Requests\MassDestroyRequest;
 use Webkul\Admin\Http\Requests\MassUpdateRequest;
 use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\Category\Repositories\CategoryRepository;
+use Webkul\Category\Rules\NotSupportedFields;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Core\Rules\Code;
 
@@ -58,7 +59,7 @@ class CategoryFieldController extends Controller
     public function store()
     {
         $this->validate(request(), [
-            'code'     => ['required', 'unique:category_fields,code', new Code()],
+            'code'     => ['required', 'unique:category_fields,code', new Code(), new NotSupportedFields()],
             'type'     => 'required',
             'status'   => 'required',
             'position' => 'required',

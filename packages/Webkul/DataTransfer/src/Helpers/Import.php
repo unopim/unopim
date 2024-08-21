@@ -176,6 +176,8 @@ class Import
      */
     public function validate(): Import
     {
+        $state = self::STATE_VALIDATED;
+
         try {
             $source = $this->getSource();
 
@@ -183,6 +185,8 @@ class Import
 
             $typeImporter->validateData();
         } catch (\Exception $e) {
+            $state = self::STATE_FAILED;
+
             $this->errorHelper->addError(
                 AbstractImporter::ERROR_CODE_SYSTEM_EXCEPTION,
                 null,
@@ -192,7 +196,7 @@ class Import
         }
 
         $import = $this->jobTrackRepository->update([
-            'state'                => self::STATE_VALIDATED,
+            'state'                => $state,
             'processed_rows_count' => $this->getProcessedRowsCount(),
             'invalid_rows_count'   => $this->errorHelper->getInvalidRowsCount(),
             'errors_count'         => $this->errorHelper->getErrorsCount(),
@@ -515,14 +519,14 @@ class Import
 
             $source->next();
         }
-        $data = json_decode($this->import->data);
-        $fileType = $data?->file_path ? pathinfo($data->file_path, PATHINFO_EXTENSION) : 'xls';
+
+        $fileType = $this->import?->file_path ? pathinfo($this->import->file_path, PATHINFO_EXTENSION) : 'xlsx';
 
         switch ($fileType) {
             case 'csv':
                 $writer = new Csv($spreadsheet);
 
-                $writer->setDelimiter($data->field_separator);
+                $writer->setDelimiter($this->import->field_separator);
 
                 break;
 

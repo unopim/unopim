@@ -73,7 +73,7 @@ return [
         'index' => [
             'title'                       => 'لوحة القيادة',
             'user-info'                   => 'الرصد بسرعة ، ما \'s count in your PIM',
-            'user-name'                   => 'أهلاً!:user_name',
+            'user-name'                   => 'مرحبًا! :user_name',
             'catalog-details'             => 'فهرس',
             'total-families'              => 'إجمالي العائلات',
             'total-attributes'            => 'إجمالي السمات',
@@ -90,7 +90,7 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken' => 'تم أخذ الاسم بالفعل.',
+                'already-taken' => 'تم أخذ :name بالفعل.',
                 'create-btn'    => 'إنشاء المنتج',
                 'title'         => 'منتجات',
 
@@ -104,23 +104,23 @@ return [
                     'title'                             => 'إنشاء منتج جديد',
                     'type'                              => 'يكتب',
                     'not-config-family-error'           => 'هذه العائلة لا تملك أي سمات قابلة للتكوين',
-                    'not-config-super-attributes-error' => 'لا يمكن العثور على هذه السمات الفائقة ذات القيمة ":super_attributes"',
-                    'sku-exists-error'                  => 'SKU ذات القيمة ":SKU" موجود بالفعل',
+                    'not-config-super-attributes-error' => 'لم يتم العثور على هذه السمات الفائقة بقيمة ":super_attributes"',
+                    'sku-exists-error'                  => 'SKU بقيمة ":sku" موجودة بالفعل',
                 ],
 
                 'datagrid' => [
                     'active'                        => 'نشيط',
                     'attribute-family'              => 'تنسب الأسرة',
-                    'attribute-family-value'        => 'عائلة السمة -:attribute_family',
+                    'attribute-family-value'        => 'عائلة السمات - :attribute_family',
                     'category'                      => 'فئة',
-                    'copy-of'                       => 'نسخة من:القيمة',
-                    'copy-of-slug'                  => 'نسخة من:القيمة',
+                    'copy-of'                       => 'نسخة :value القيمة',
+                    'copy-of-slug'                  => 'نسخة :value القيمة',
                     'delete'                        => 'يمسح',
                     'edit'                          => 'يحرر',
                     'copy'                          => 'ينسخ',
                     'disable'                       => 'إبطال',
                     'id'                            => 'بطاقة تعريف',
-                    'id-value'                      => 'فعلتُ',
+                    'id-value'                      => 'بطاقة تعريف:id',
                     'image'                         => 'صورة',
                     'mass-delete-success'           => 'تم حذف المنتجات المختارة بنجاح',
                     'mass-update-success'           => 'تم تحديث المنتجات المحددة بنجاح',
@@ -129,9 +129,9 @@ return [
                     'price'                         => 'سعر',
                     'product-image'                 => 'صورة المنتج',
                     'qty'                           => 'كمية',
-                    'qty-value'                     => ':كتي المتاحة',
+                    'qty-value'                     => ':qty الكمية',
                     'sku'                           => 'SKU',
-                    'sku-value'                     => 'التزلج - ماك',
+                    'sku-value'                     => 'SKU - :sku',
                     'status'                        => 'حالة',
                     'type'                          => 'يكتب',
                     'update-status'                 => 'تحديث الحالة',
@@ -146,33 +146,6 @@ return [
                 'save-btn' => 'حفظ المنتج',
                 'title'    => 'تحرير المنتج',
 
-                'price' => [
-                    'group' => [
-                        'add-group-price'           => 'إضافة سعر المجموعة',
-                        'all-groups'                => 'كل المجموعات',
-                        'create-btn'                => 'اضف جديد',
-                        'discount-group-price-info' => 'لـ:Qty Qty بخصم:السعر',
-                        'edit-btn'                  => 'يحرر',
-                        'empty-info'                => 'أسعار خاصة للعملاء الذين ينتمون إلى مجموعة معينة.',
-                        'fixed-group-price-info'    => 'لـ:Qty Qty بسعر ثابت لـ:السعر',
-                        'title'                     => 'سعر مجموعة العملاء',
-
-                        'create' => [
-                            'all-groups'     => 'كل المجموعات',
-                            'create-title'   => 'إنشاء سعر مجموعة العملاء',
-                            'customer-group' => 'مجموعة العملاء',
-                            'delete-btn'     => 'يمسح',
-                            'discount'       => 'تخفيض',
-                            'fixed'          => 'مُثَبَّت',
-                            'price'          => 'سعر',
-                            'price-type'     => 'نوع السعر',
-                            'qty'            => 'الحد الأدنى الكمي',
-                            'save-btn'       => 'يحفظ',
-                            'update-title'   => 'تحديث سعر مجموعة العملاء',
-                        ],
-                    ],
-                ],
-
                 'categories' => [
                     'title' => 'فئات',
                 ],
@@ -183,8 +156,8 @@ return [
                 ],
 
                 'videos' => [
-                    'error' => 'قد لا تكون السمة أكبر من:الحد الأقصى كيلوبايت.الرجاء اختيار ملف أصغر.',
-                    'info'  => 'يجب أن يكون الحد الأقصى لحجم الفيديو:الحجم',
+                    'error' => 'لا يجوز أن يكون حجم الملف :max أكبر من :attribute كيلوبايت. يرجى اختيار ملف أصغر حجمًا.',
+                    'info'  => 'يجب أن يكون الحد الأقصى لحجم الفيديو مثل :size',
                     'title' => 'أشرطة فيديو',
                 ],
 
@@ -209,10 +182,10 @@ return [
 
                     'add-btn'           => 'يضيف',
                     'delete'            => 'يمسح',
-                    'empty-info'        => 'لإضافة:اكتب المنتجات أثناء التنقل.',
+                    'empty-info'        => 'لإضافة منتجات :type أثناء التنقل.',
                     'empty-title'       => 'أضف منتج',
                     'image-placeholder' => 'صورة المنتج',
-                    'sku'               => 'التزلج - ماك',
+                    'sku'               => ':sku التزلج - ماك',
                     'title'             => 'ذات الصلة',
                 ],
 
@@ -225,13 +198,13 @@ return [
                         'empty-title'                        => 'إضافة البديل',
                         'image-placeholder'                  => 'صورة المنتج',
                         'info'                               => 'تعتمد منتجات التباين على كل مجموعة ممكنة من السمة.',
-                        'qty'                                => ':كتي كتي',
-                        'sku'                                => 'التزلج - ماك',
+                        'qty'                                => ':qty الكمية',
+                        'sku'                                => ':sku التزلج - ماك',
                         'title'                              => 'الاختلافات',
                         'variant-exists'                     => 'هذا المزيج البديل موجود بالفعل أو تم أخذ SKU بالفعل.',
-                        'variant-attribute-option-not-found' => 'سمة أو خيار متغير مع القيمة ":السمات" لم يتم العثور عليها',
-                        'supper-attribute-not-found'         => 'سمة العشاء مع القيمة ":السمة" لم يتم العثور عليها',
-                        'variant-given-exists'               => 'هذا البديل مع القيمة ":المتغيرات" موجود بالفعل',
+                        'variant-attribute-option-not-found' => 'لم يتم العثور على سمة أو خيار متغير بقيمة ":attributes"',
+                        'supper-attribute-not-found'         => 'لم يتم العثور على سمة سوبر بقيمة ":attribute"',
+                        'variant-given-exists'               => 'هذا المتغير بقيمة ":variants" موجود بالفعل',
 
                         'create' => [
                             'description'            => 'وصف',
@@ -282,124 +255,6 @@ return [
                             'weight'              => 'وزن',
                         ],
                     ],
-
-                    'grouped' => [
-                        'add-btn'           => 'أضف منتج',
-                        'default-qty'       => 'الافتراضي Qty',
-                        'delete'            => 'يمسح',
-                        'empty-info'        => 'لإنشاء مزيج مختلف من المنتج أثناء التنقل.',
-                        'empty-title'       => 'أضف منتج',
-                        'image-placeholder' => 'صورة المنتج',
-                        'info'              => 'يتكون المنتج المجمع عن عناصر مستقلة مقدمة كمجموعة ، مما يسمح بالتغيرات أو التنسيق حسب الموسم أو الموضوع.يمكن شراء كل منتج بشكل فردي أو كجزء من المجموعة.',
-                        'sku'               => 'التزلج - ماك',
-                        'title'             => 'منتجات جماعية',
-                    ],
-
-                    'bundle' => [
-                        'add-btn'           => 'أضف الخيار',
-                        'empty-info'        => 'لإنشاء خيارات الحزمة أثناء التنقل.',
-                        'empty-title'       => 'أضف الخيار',
-                        'image-placeholder' => 'صورة المنتج',
-                        'info'              => 'منتج الحزمة عبارة عن مجموعة من العناصر أو الخدمات المتعددة التي يتم بيعها معًا بسعر خاص ، مما يوفر القيمة والراحة للعملاء.',
-                        'title'             => 'عناصر الحزمة',
-
-                        'update-create' => [
-                            'checkbox'    => 'مربع الاختيار',
-                            'is-required' => 'مطلوب',
-                            'multiselect' => 'تحديد متعدد',
-                            'name'        => 'عنوان',
-                            'no'          => 'لا',
-                            'radio'       => 'مذياع',
-                            'save-btn'    => 'يحفظ',
-                            'select'      => 'يختار',
-                            'title'       => 'خيار',
-                            'type'        => 'يكتب',
-                            'yes'         => 'نعم',
-                        ],
-
-                        'option' => [
-                            'add-btn'     => 'أضف منتج',
-                            'default-qty' => 'الافتراضي Qty',
-                            'delete'      => 'يمسح',
-                            'delete-btn'  => 'يمسح',
-                            'edit-btn'    => 'يحرر',
-                            'empty-info'  => 'لإنشاء مزيج مختلف من المنتج أثناء التنقل.',
-                            'empty-title' => 'أضف منتج',
-                            'sku'         => 'التزلج - ماك',
-
-                            'types' => [
-                                'checkbox' => [
-                                    'info'  => 'اضبط المنتج الافتراضي باستخدام مربع الاختيار',
-                                    'title' => 'مربع الاختيار',
-                                ],
-
-                                'multiselect' => [
-                                    'info'  => 'اضبط المنتج الافتراضي باستخدام زر مربع الاختيار',
-                                    'title' => 'تحديد متعدد',
-                                ],
-
-                                'radio' => [
-                                    'info'  => 'اضبط المنتج الافتراضي باستخدام زر الراديو',
-                                    'title' => 'مذياع',
-                                ],
-
-                                'select' => [
-                                    'info'  => 'اضبط المنتج الافتراضي باستخدام زر الراديو',
-                                    'title' => 'يختار',
-                                ],
-                            ],
-                        ],
-                    ],
-
-                    'downloadable' => [
-                        'links' => [
-                            'add-btn'     => 'إضافة رابط',
-                            'delete-btn'  => 'يمسح',
-                            'edit-btn'    => 'يحرر',
-                            'empty-info'  => 'لإنشاء رابط أثناء التنقل.',
-                            'empty-title' => 'إضافة رابط',
-                            'file'        => 'ملف :',
-                            'info'        => 'يسمح نوع المنتج القابل للتنزيل ببيع المنتجات الرقمية ، مثل الكتب الإلكترونية ، وتطبيقات البرامج ، والموسيقى ، والألعاب ، إلخ.',
-                            'sample-file' => 'نموذج الملف:',
-                            'sample-url'  => 'عينة عنوان URL:',
-                            'title'       => 'روابط قابلة للتنزيل',
-                            'url'         => 'URL:',
-
-                            'update-create' => [
-                                'downloads'   => 'تحميل مسموح به',
-                                'file'        => 'ملف',
-                                'file-type'   => 'نوع الملف',
-                                'name'        => 'عنوان',
-                                'price'       => 'سعر',
-                                'sample'      => 'عينة',
-                                'sample-type' => 'نوع العينة',
-                                'save-btn'    => 'يحفظ',
-                                'title'       => 'وصلة',
-                                'url'         => 'عنوان URL',
-                            ],
-                        ],
-
-                        'samples' => [
-                            'add-btn'     => 'إضافة عينة',
-                            'delete-btn'  => 'يمسح',
-                            'edit-btn'    => 'يحرر',
-                            'empty-info'  => 'لإنشاء عينة على الذهاب.',
-                            'empty-title' => 'إضافة عينة',
-                            'file'        => 'ملف :',
-                            'info'        => 'يسمح نوع المنتج القابل للتنزيل ببيع المنتجات الرقمية ، مثل الكتب الإلكترونية ، وتطبيقات البرامج ، والموسيقى ، والألعاب ، إلخ.',
-                            'title'       => 'عينات قابلة للتنزيل',
-                            'url'         => 'URL:',
-
-                            'update-create' => [
-                                'file'      => 'ملف',
-                                'file-type' => 'نوع الملف',
-                                'name'      => 'عنوان',
-                                'save-btn'  => 'يحفظ',
-                                'title'     => 'وصلة',
-                                'url'       => 'عنوان URL',
-                            ],
-                        ],
-                    ],
                 ],
             ],
 
@@ -410,7 +265,7 @@ return [
             'saved-inventory-message' => 'تم حفظ المنتج بنجاح',
             'update-success'          => 'تم تحديث المنتج بنجاح',
             'unique-validation'       => 'هذه القيمة مأخوذة بالفعل.',
-            'invalid-type'            => 'نوع المنتج مع القيمة ":النوع" لا يمكن العثور عليه',
+            'invalid-type'            => 'لم يتم العثور على نوع المنتج بقيمة ":type"',
             'product-not-found'       => 'المنتج مع SKU ":SKU" لا يمكن العثور عليها',
             'parent-not-found'        => 'الوالد مع SKU ":SKU" لا يمكن العثور عليها',
             'upload-success'          => 'تم تحميل ملف المنتج بنجاح.',
@@ -574,7 +429,7 @@ return [
             'delete-success'    => 'تم حذف السمة بنجاح',
             'update-success'    => 'سمة تحديث بنجاح',
             'user-define-error' => 'لا يمكن حذف سمة النظام',
-            'not-found'         => 'السمة مع الكود ":رمز" لا يمكن العثور عليها',
+            'not-found'         => 'لم يتم العثور على السمة برمز ":code"',
         ],
 
         'attribute-options' => [
@@ -626,7 +481,7 @@ return [
             'update-success'          => 'تم تحديث مجموعة السمات بنجاح',
             'user-define-error'       => 'لا يمكن حذف مجموعة سمة النظام',
             'attribute-group-error'   => 'يتم استخدام المجموعة في العائلات.',
-            'not-found'               => 'لم يتم العثور على مجموعة السمات مع الكود ":الرمز"',
+            'not-found'               => 'لم يتم العثور على مجموعة السمات برمز "code"',
         ],
 
         'categories' => [
@@ -698,8 +553,8 @@ return [
             'update-success'       => 'تحديث الفئة بنجاح.',
             'can-not-update'       => 'ترتبط فئة الجذر هذه بالقناة ولا يمكن أن يكون لها فئة أولياء الأمور.',
             'unique-validation'    => 'هذه القيمة مأخوذة بالفعل.',
-            'not-found'            => 'لا يمكن العثور على الفئة مع الرمز ":الرمز"',
-            'unknown-fields'       => 'حقل الفئة مع الكود ":الحقول" لا يمكن العثور عليها',
+            'not-found'            => 'لم يتم العثور على عائلة السمات برمز ":code"',
+            'unknown-fields'       => 'لم يتم العثور على حقل الفئة برمز ":fields"',
             'upload-success'       => 'تم تحميل ملف الفئة بنجاح.',
         ],
 
@@ -869,7 +724,7 @@ return [
             'delete-success'    => 'حذف حقل الفئة بنجاح',
             'update-success'    => 'تحديث حقل الفئة بنجاح',
             'user-define-error' => 'لا يمكن حذف حقل فئة النظام',
-            'not-found'         => 'لا يمكن العثور على حقل الفئة مع الرمز ":الرمز"',
+            'not-found'         => 'لم يتم العثور على عائلة السمات برمز ":code"',
         ],
 
         'category-fields-options' => [
@@ -885,15 +740,15 @@ return [
                 'datagrid' => [
                     'code'           => 'شفرة',
                     'delete'         => 'يمسح',
-                    'delete-success' => 'تم اختياره:تم حذف المورد بنجاح',
+                    'delete-success' => 'تم حذف :resource المحددة بنجاح',
                     'edit'           => 'يحرر',
                     'copy'           => 'ينسخ',
                     'id'             => 'بطاقة تعريف',
                     'method-error'   => 'خطأ!تم اكتشاف طريقة خاطئة ، يرجى التحقق من تكوين الإجراءات الجماعية',
                     'name'           => 'اسم',
                     'no-resource'    => 'المورد المقدم لعدم كفاية للعمل',
-                    'partial-action' => 'لم يتم تنفيذ بعض الإجراءات بسبب قيود النظام المقيدة على:الموارد',
-                    'update-success' => 'تم اختياره:تم تحديث المورد بنجاح',
+                    'partial-action' => 'لم يتم تنفيذ بعض الإجراءات بسبب قيود النظام المقيدة على :resource',
+                    'update-success' => 'تم تحديث :resource المحددة بنجاح',
                 ],
             ],
 
@@ -973,7 +828,7 @@ return [
             'last-delete-error'              => 'مطلوب عائلة واحدة على الأقل.',
             'update-success'                 => 'تحديث الأسرة بنجاح.',
             'user-define-error'              => 'لا يمكن حذف عائلة سمة النظام',
-            'not-found'                      => 'لا يمكن العثور على عائلة السمة بالرمز ":الكود"',
+            'not-found'                      => 'لم يتم العثور على مجموعة السمات برمز "code"',
             'can-not-update-variant-options' => 'لا يمكن تحديث الخيارات القابلة للتكوين لأن هذه العائلة لديها بالفعل منتجات متغيرة.',
         ],
 
@@ -994,7 +849,7 @@ return [
                 'create-btn'            => 'إنشاء لغة',
                 'locale'                => 'لغة',
                 'title'                 => 'أماكن',
-                'can-not-delete-error'  => 'لا يمكنك حذف لغة مرتبطة بقناة أو مستخدم',
+                'can-not-delete-error'  => 'لا يمكنك حذف القناة ":channel." لأن PIM الخاص بك يحتاج إلى قناة واحدة على الأقل.',
                 'can-not-disable-error' => 'لا يمكنك تعطيل لغة مرتبطة بقناة أو مستخدم',
 
                 'datagrid' => [
@@ -1057,8 +912,8 @@ return [
                     'method-error'   => 'خطأ!تم اكتشاف طريقة خاطئة ، يرجى التحقق من تكوين الإجراءات الجماعية',
                     'name'           => 'اسم العرض',
                     'no-resource'    => 'المورد المقدم لعدم كفاية للعمل',
-                    'partial-action' => 'لم يتم تنفيذ بعض الإجراءات بسبب قيود النظام المقيدة على:المورد',
-                    'update-success' => 'تم اختياره:تم تحديث المورد بنجاح',
+                    'partial-action' => 'لم يتم تنفيذ بعض الإجراءات بسبب قيود النظام المقيدة على :resource',
+                    'update-success' => 'تم تحديث :resource المحددة بنجاح',
                     'mass-update'    => 'تحديث الحالة',
 
                     'status' => [
@@ -1170,7 +1025,7 @@ return [
                     'delete'              => 'يمسح',
                     'media'               => 'ملف / صور',
                     'images'              => 'الصور',
-                    'download-sample'     => 'التنزيل:عينة الموارد CSV',
+                    'download-sample'     => 'تنزيل :resource عينة',
                     'field-separator'     => 'فاصل الحقل',
                     'file-info-example'   => 'على سبيل المثال ، في حالة صور المنتج ، يجب وضع الملفات في/مجلد/تخزين/تخزين/تطبيق/استيراد/منتجات.',
                     'file-info'           => 'استخدم المسار النسبي إلى/الجذر/التخزين/التطبيق/الاستيراد ، على سبيل المثالصور المنتج ، استيراد الصور.',
@@ -1291,7 +1146,7 @@ return [
                     'delete'              => 'يمسح',
                     'media'               => 'ملف / صور',
                     'images'              => 'الصور',
-                    'download-sample'     => 'تنزيل:عينة الموارد',
+                    'download-sample'     => 'تنزيل :resource عينة',
                     'field-separator'     => 'فاصل الحقل',
                     'file-info-example'   => 'على سبيل المثال ، في حالة صور المنتجات ، يجب وضع الملفات في مجلد/الجذر/التخزين/التطبيق/التصدير/تصدير/صور المنتج.',
                     'file-info'           => 'استخدم المسار النسبي لـ/project-root/التخزين/التطبيق/التصدير ، على سبيل المثالصور المنتج ، تصدير الصور.',
@@ -1545,16 +1400,17 @@ return [
                 'title'            => 'تحرير العضو',
             ],
 
-            'activate-warning'   => 'لم يتم تنشيط حسابك بعد ، يرجى الاتصال بالمسؤول.',
-            'cannot-change'      => 'لا يمكن تغيير المستخدم',
-            'create-success'     => 'تم إنشاء المستخدم بنجاح.',
-            'delete-failed'      => 'فشل حذف المستخدم.',
-            'delete-success'     => 'تم حذف المستخدم بنجاح.',
-            'delete-warning'     => 'هل أنت متأكد من أنك تريد تنفيذ هذا الإجراء؟',
-            'incorrect-password' => 'كلمة سر خاطئة',
-            'last-delete-error'  => 'فشل آخر حذف المستخدم',
-            'login-error'        => 'يرجى التحقق من بيانات الاعتماد الخاصة بك والمحاولة مرة أخرى.',
-            'update-success'     => 'تم تحديث المستخدم بنجاح.',
+            'activate-warning'          => 'لم يتم تنشيط حسابك بعد ، يرجى الاتصال بالمسؤول.',
+            'cannot-change'             => 'لا يمكن تغيير المستخدم',
+            'create-success'            => 'تم إنشاء المستخدم بنجاح.',
+            'delete-failed'             => 'فشل حذف المستخدم.',
+            'delete-success'            => 'تم حذف المستخدم بنجاح.',
+            'delete-warning'            => 'هل أنت متأكد من أنك تريد تنفيذ هذا الإجراء؟',
+            'incorrect-password'        => 'كلمة سر خاطئة',
+            'last-delete-error'         => 'فشل آخر حذف المستخدم',
+            'login-error'               => 'يرجى التحقق من بيانات الاعتماد الخاصة بك والمحاولة مرة أخرى.',
+            'update-success'            => 'تم تحديث المستخدم بنجاح.',
+            'current-user-delete-error' => 'لا يمكن حذف المستخدم الذي قام بتسجيل الدخول',
         ],
 
         'roles' => [
@@ -1598,7 +1454,7 @@ return [
             ],
 
             'being-used'        => 'يتم استخدام الدور بالفعل في مستخدم المسؤول',
-            'being-used-by'     => 'يتم استخدام الدور بالفعل بواسطة:اسم المستخدم',
+            'being-used-by'     => 'الدور مستخدم بالفعل بواسطة المستخدم :name',
             'create-success'    => 'أدوار تم إنشاؤها بنجاح',
             'delete-failed'     => 'تم حذف الأدوار فشلت',
             'delete-success'    => 'تم حذف الأدوار بنجاح',
@@ -2028,8 +1884,8 @@ return [
 
                     'payment-terms' => [
                         'due-duration'      => 'مدة بسبب',
-                        'due-duration-day'  => ':يوم المدة',
-                        'due-duration-days' => ':أيام المدة',
+                        'due-duration-day'  => ':due-duration يوم',
+                        'due-duration-days' => ':due-duration أيام',
                         'title'             => 'شروط الدفع',
                         'title-info'        => 'شروط المتفق عليها التي تملي متى وكيف يجب أن يتم الدفع للسلع أو الخدمات من قبل المشتري للبائع.',
                     ],
@@ -2136,7 +1992,7 @@ return [
         'layouts' => [
             'header' => [
                 'account-title' => 'حساب',
-                'app-version'   => 'الإصدار : :version',
+                'app-version'   => 'الإصدار: :version',
                 'logout'        => 'تسجيل خروج',
                 'my-account'    => 'حسابي',
                 'notifications' => 'إشعارات',
@@ -2147,15 +2003,15 @@ return [
                     'customers'                       => 'عملاء',
                     'explore-all-categories'          => 'استكشاف جميع الفئات',
                     'explore-all-customers'           => 'استكشف جميع العملاء',
-                    'explore-all-matching-categories' => 'استكشف جميع الفئات المطابقة ":Query" (:Count)',
-                    'explore-all-matching-customers'  => 'استكشف جميع العملاء المطابقة ":Query" (:Count)',
-                    'explore-all-matching-orders'     => 'استكشف جميع الطلبات المطابقة ":Query" (:Count)',
-                    'explore-all-matching-products'   => 'استكشف جميع المنتجات المطابقة ":الاستعلام" (:العد)',
+                    'explore-all-matching-categories' => 'استكشف جميع الفئات المطابقة لـ ":query" ( :count)',
+                    'explore-all-matching-customers'  => 'استكشف جميع العملاء المطابقة لـ ":query" ( :count)',
+                    'explore-all-matching-orders'     => 'استكشف جميع الطلبات المطابقة لـ ":query" ( :count)',
+                    'explore-all-matching-products'   => 'استكشف جميع المنتجات المطابقة لـ ":count" ()',
                     'explore-all-orders'              => 'استكشاف جميع الطلبات',
                     'explore-all-products'            => 'استكشاف جميع المنتجات',
                     'orders'                          => 'طلبات',
                     'products'                        => 'منتجات',
-                    'sku'                             => 'التزلج:ماك',
+                    'sku'                             => 'رمز المنتج: :sku',
                     'title'                           => 'البحث الضخم',
                 ],
             ],
@@ -2227,11 +2083,11 @@ return [
             ],
 
             'toolbar' => [
-                'length-of' => ':length of',
-                'ل'        => 'ل',
+                'length-of' => ':length من',
+                'ل'         => 'ل',
                 'per-page'  => 'لكل صفحة',
-                'results'   => ':إجمالي النتائج',
-                'selected'  => ':مجموع المختار',
+                'results'   => ':total النتائج',
+                'selected'  => ':total المحددة',
 
                 'mass-actions' => [
                     'submit'        => 'يُقدِّم',
@@ -2323,8 +2179,8 @@ return [
                 'empty-info'    => 'لا توجد منتجات متاحة لمصطلح البحث.',
                 'empty-title'   => 'لم يتم العثور على منتجات',
                 'product-image' => 'صورة المنتج',
-                'qty'           => ':كتي المتاحة',
-                'sku'           => 'التزلج - ماك',
+                'qty'           => ':qty المتوفرة',
+                'sku'           => 'رمز المنتج  - :sku',
                 'title'         => 'حدد المنتجات',
             ],
         ],
@@ -2476,7 +2332,7 @@ return [
     'errors' => [
         'dashboard' => 'لوحة القيادة',
         'go-back'   => 'عُد',
-        'support'   => 'إذا استمرت المشكلة، فاتصل بنا على <a href=":link" class=":class">:email</a> للحصول على المساعدة.',
+        'support'   => 'إذا استمرت المشكلة، فتواصل معنا على <a href=":link " class="  :class "> :email</a> للحصول على المساعدة.',
 
         '404' => [
             'description' => 'أُووبس! الصفحة التي تبحث عنها في إجازة. يبدو أننا لم نتمكن من العثور على ما كنت تبحث عنه.',
@@ -2527,16 +2383,16 @@ return [
     'validations' => [
         'slug-being-used' => 'يتم استخدام هذه سبيكة في أي من الفئات أو المنتجات.',
         'slug-reserved'   => 'هذه البزاقة محجوزة.',
-        'invalid-locale'  => 'لغات غير صالحة: locales',
+        'invalid-locale'  => 'لغات محلية غير صالحة :locales',
     ],
 
     'footer' => [
-        'copy-right' => 'مدعوم من <a href="https://unopim.com/" target="_blank">UnoPim</a>، وهو مشروع مجتمعي من <a href="https://webkul.com/" target="_blank ">ويبكول</a>',
+        'copy-right' => 'مدعوم من <a href="https://unopim.com/" target="_blank">UnoPim</a>، مشروع مجتمعي من <a href="https://webkul.com/" target="_blank">Webkul</a>',
     ],
 
     'emails' => [
         'dear'   => 'عزيزي :admin_name',
-        'thanks' => 'إذا كنت بحاجة إلى أي نوع من المساعدة، فيرجى الاتصال بنا على <a href=":link" style=":style">:email</a>.<br/>شكرًا!',
+        'thanks' => 'إذا كنت بحاجة إلى أي نوع من المساعدة، يرجى الاتصال بنا على <a href=":link " style=" :style"></a>.<br/>شكرًا!',
 
         'admin' => [
             'forgot-password' => [

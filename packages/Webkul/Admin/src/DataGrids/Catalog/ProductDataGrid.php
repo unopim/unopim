@@ -352,4 +352,12 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             ? json_decode($product[AbstractType::PRODUCT_VALUES_KEY], true) ?? []
             : [];
     }
+
+    /**
+     * Set File name to be used during quick export
+     */
+    protected function getExportFileName(): string
+    {
+        return 'products';
+    }
 }

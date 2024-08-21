@@ -71,9 +71,9 @@
                             <!-- Image -->
                             <div
                                 class="w-full h-[60px] max-w-[60px] max-h-[60px] relative rounded overflow-hidden"
-                                :class="{'border border-dashed border-gray-300 dark:border-cherry-800 dark:invert dark:mix-blend-exclusion': ! product.images.length}"
+                                :class="{'border border-dashed border-gray-300 dark:border-cherry-800 dark:invert dark:mix-blend-exclusion': ! product?.image, 'w-[60px]': product?.image}"
                             >
-                                <template v-if="! product.images.length">
+                                <template v-if="! product?.image">
                                     <img src="{{ unopim_asset('images/product-placeholders/front.svg') }}">
                                 
                                     <p class="w-full absolute bottom-1.5 text-[6px] text-gray-400 text-center font-semibold">
@@ -82,7 +82,7 @@
                                 </template>
 
                                 <template v-else>
-                                    <img :src="product.images[0].url">
+                                    <img :src="product?.image" class="w-full h-full object-cover object-top">
                                 </template>
                             </div>
 

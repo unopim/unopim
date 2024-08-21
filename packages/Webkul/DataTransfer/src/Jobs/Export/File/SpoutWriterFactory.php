@@ -29,8 +29,6 @@ final class SpoutWriterFactory
                 $writer = new CsvWriter($spreadsheet);
                 $writer->setDelimiter($normalizedOptions['fieldDelimiter']);
                 $writer->setEnclosure($normalizedOptions['filedEnclosure']);
-                // $writer->setSheetIndex(0);
-                // $options->SHOULD_ADD_BOM = $normalizedOptions['shouldAddBOM'] ?? $options->SHOULD_ADD_BOM;
                 break;
             case self::XLS:
                 $writer = new XlsWriter($spreadsheet);

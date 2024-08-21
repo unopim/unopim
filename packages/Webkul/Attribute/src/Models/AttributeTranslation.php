@@ -11,6 +11,15 @@ class AttributeTranslation extends Model implements AttributeTranslationContract
 {
     use HistoryTrait;
 
+    /**
+     * These columns history will not be generated
+     */
+    protected $auditExclude = [
+        'id',
+        'locale',
+        'attribute_id',
+    ];
+
     public $timestamps = false;
 
     protected $fillable = ['name'];

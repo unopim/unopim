@@ -20,6 +20,7 @@ use Webkul\Core\Rules\Slug;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Helpers\Importers\AbstractImporter;
+use Webkul\DataTransfer\Helpers\Importers\FieldProcessor;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\Product\Jobs\ElasticSearch\DeleteIndex as DeleteIndexJob;
 use Webkul\Product\Models\Product as ProductModel;
@@ -81,13 +82,13 @@ class Importer extends AbstractImporter
     /**
      * Error code for super attribute code not found
      */
-    public const ERROR_SUPER_ATTRIBUTE_CODE_NOT_FOUND = 'attribute_family_code_not_found';
+    public const ERROR_SUPER_ATTRIBUTE_CODE_NOT_FOUND = 'configurable_attribute_not_in_family';
 
     const ERROR_NO_CONFIGURABLE_ATTRIBUES = 'configurable_attributes_not_found';
 
     const ERROR_NOT_CORRECT_TYPE_FOR_AXIS = 'incorrect_type_for_configurable_attribute';
 
-    const ERROR_NOR_FOUND_VARIANT_CONFIGURABLE_ATTRIBUTE = 'variant_configurable_attribute_not_found';
+    const ERROR_NOT_FOUND_VARIANT_CONFIGURABLE_ATTRIBUTE = 'variant_configurable_attribute_not_found';
 
     const ERROR_NOT_UNIQUE_VARIANT = 'not_unique_variant_product';
 
@@ -96,6 +97,10 @@ class Importer extends AbstractImporter
     const ERROR_NOT_FOUND_LOCALE_IN_CHANNEL = 'locale_not_found_in_channel';
 
     const ERROR_NOT_UNIQUE_VALUE = 'not_unique_value';
+
+    const ERROR_PARENT_DOES_NOT_EXIST = 'parent_not_exist';
+
+    const ERROR_WRONG_FAMILY_FOR_VARIANT = 'incorrect_family_for_variant';
 
     const ATTRIBUTE_FAMILY_CODE = 'attribute_family';
 
@@ -111,10 +116,12 @@ class Importer extends AbstractImporter
         self::ERROR_NO_CONFIGURABLE_ATTRIBUES                => 'data_transfer::app.importers.products.validation.errors.configurable-attributes-not-found',
         self::ERROR_NOT_CORRECT_TYPE_FOR_AXIS                => 'data_transfer::app.importers.products.validation.errors.configurable-attributes-wrong-type',
         self::ERROR_NOT_UNIQUE_VARIANT                       => 'data_transfer::app.importers.products.validation.errors.not-unique-variant-product',
-        self::ERROR_NOR_FOUND_VARIANT_CONFIGURABLE_ATTRIBUTE => 'data_transfer::app.importers.products.validation.errors.variant-configurable-attribute-not-found',
+        self::ERROR_NOT_FOUND_VARIANT_CONFIGURABLE_ATTRIBUTE => 'data_transfer::app.importers.products.validation.errors.variant-configurable-attribute-not-found',
         self::ERROR_NOT_FOUND_CHANNEL                        => 'data_transfer::app.importers.products.validation.errors.channel-not-exist',
         self::ERROR_NOT_FOUND_LOCALE_IN_CHANNEL              => 'data_transfer::app.importers.products.validation.errors.locale-not-in-channel',
         self::ERROR_NOT_UNIQUE_VALUE                         => 'data_transfer::app.importers.products.validation.errors.not-unique-value',
+        self::ERROR_PARENT_DOES_NOT_EXIST                    => 'data_transfer::app.importers.products.validation.errors.parent-not-exist',
+        self::ERROR_WRONG_FAMILY_FOR_VARIANT                 => 'data_transfer::app.importers.products.validation.errors.incorrect-family-for-variant',
     ];
 
     /**
@@ -215,7 +222,8 @@ class Importer extends AbstractImporter
         protected CategoryRepository $categoryRepository,
         protected ProductRepository $productRepository,
         protected SKUStorage $skuStorage,
-        protected ChannelRepository $channelRepository
+        protected ChannelRepository $channelRepository,
+        protected FieldProcessor $fieldProcessor,
     ) {
         parent::__construct($importBatchRepository);
 
@@ -367,15 +375,27 @@ class Importer extends AbstractImporter
             return false;
         }
 
+        if (! empty($rowData['parent'])) {
+            $parentProduct = $this->getExistingProduct($rowData['parent']);
+
+            if (! $parentProduct || $parentProduct?->type != self::PRODUCT_TYPE_CONFIGURABLE) {
+                $this->skipRow($rowNumber, self::ERROR_PARENT_DOES_NOT_EXIST, 'parent');
+
+                return false;
+            }
+
+            if ($rowData[self::ATTRIBUTE_FAMILY_CODE] != $parentProduct->attribute_family->code) {
+                $this->skipRow($rowNumber, self::ERROR_WRONG_FAMILY_FOR_VARIANT, self::ATTRIBUTE_FAMILY_CODE);
+
+                return false;
+            }
+        }
+
         if (! isset($this->typeFamilyValidationRules[$rowData['type']][$rowData[self::ATTRIBUTE_FAMILY_CODE]])) {
             $this->typeFamilyValidationRules[$rowData['type']][$rowData[self::ATTRIBUTE_FAMILY_CODE]] = $this->getValidationRules($rowData);
         }
 
         $validationRules = $this->typeFamilyValidationRules[$rowData['type']][$rowData[self::ATTRIBUTE_FAMILY_CODE]];
-
-        if (! empty($rowData['parent'])) {
-            $validationRules['parent'] = 'exists:products,sku,type,'.self::PRODUCT_TYPE_CONFIGURABLE;
-        }
 
         /**
          * Validate product attributes
@@ -425,15 +445,20 @@ class Importer extends AbstractImporter
                         $rowNumber,
                         self::ERROR_SUPER_ATTRIBUTE_CODE_NOT_FOUND,
                         'configurable_attributes',
-                        sprintf(
-                            trans($this->messages[self::ERROR_SUPER_ATTRIBUTE_CODE_NOT_FOUND]),
-                            $attributeCode,
-                            $rowData[self::ATTRIBUTE_FAMILY_CODE]
-                        )
+                        trans($this->messages[self::ERROR_SUPER_ATTRIBUTE_CODE_NOT_FOUND], [
+                            'code'       => $attributeCode,
+                            'familyCode' => $rowData[self::ATTRIBUTE_FAMILY_CODE],
+                        ])
                     );
+
+                    break;
                 }
 
-                if (! in_array($attribute->type, AttributeFamily::ALLOWED_VARIANT_OPTION_TYPES)) {
+                if (
+                    $attribute->isLocaleBasedAttribute()
+                    || $attribute->isChannelBasedAttribute()
+                    || ! in_array($attribute->type, AttributeFamily::ALLOWED_VARIANT_OPTION_TYPES)
+                ) {
                     $this->skipRow(
                         $rowNumber,
                         self::ERROR_NOT_CORRECT_TYPE_FOR_AXIS,
@@ -691,12 +716,15 @@ class Importer extends AbstractImporter
     public function prepareAttributeValues(array $rowData, array &$attributeValues): void
     {
         $familyAttributes = $this->getProductTypeFamilyAttributes($rowData['type'], $rowData[self::ATTRIBUTE_FAMILY_CODE]);
+        $imageDirPath = $this->import->images_directory_path;
 
         foreach ($rowData as $attributeCode => $value) {
             if (is_null($value)) {
                 continue;
             }
-
+            /**
+             * Since Price column is added like this price (USD) the below function formats and returns the actual attributeCode from the columnName
+             */
             [$attributeCode, $currencyCode] = $this->getAttributeCodeAndCurrency($attributeCode);
 
             $attribute = $familyAttributes->where('code', $attributeCode)->first();
@@ -704,6 +732,8 @@ class Importer extends AbstractImporter
             if (! $attribute) {
                 continue;
             }
+
+            $value = $this->fieldProcessor->handleField($attribute, $value, $imageDirPath);
 
             if ($attribute->type === 'price') {
                 $value = $this->formatPriceValueWithCurrency($currencyCode, $value, $attribute->getValueFromProductValues($attributeValues, $rowData['channel'] ?? null, $rowData['locale'] ?? null));
@@ -754,9 +784,19 @@ class Importer extends AbstractImporter
 
             $associations = explode(',', $rowData[$section]);
 
-            $associations = array_map('trim', $associations);
+            $filteredAssociation = [];
 
-            $associationProducts = $this->productRepository->whereIn('sku', $associations)?->pluck('sku')?->toArray();
+            foreach ($associations as $value) {
+                $value = is_string($value) ? trim($value) : $value;
+
+                if (empty($value) || $value == $rowData['sku']) {
+                    continue;
+                }
+
+                $filteredAssociation[] = $value;
+            }
+
+            $associationProducts = $this->productRepository->whereIn('sku', $filteredAssociation)?->pluck('sku')?->toArray();
 
             if (empty($associationProducts)) {
                 continue;
@@ -1050,11 +1090,11 @@ class Importer extends AbstractImporter
 
         $variantConfigValues = [];
 
-        foreach ($parentProduct->super_attributes as $attribute) {
+        foreach ($parentProduct?->super_attributes ?? [] as $attribute) {
             $attributeCode = $attribute->code;
 
             if (! isset($productData[$attributeCode])) {
-                $this->skipRow($rowNumber, self::ERROR_NOR_FOUND_VARIANT_CONFIGURABLE_ATTRIBUTE, $attributeCode, trans($this->messages[self::ERROR_NOR_FOUND_VARIANT_CONFIGURABLE_ATTRIBUTE], ['code' => $attributeCode]));
+                $this->skipRow($rowNumber, self::ERROR_NOT_FOUND_VARIANT_CONFIGURABLE_ATTRIBUTE, $attributeCode, trans($this->messages[self::ERROR_NOT_FOUND_VARIANT_CONFIGURABLE_ATTRIBUTE], ['code' => $attributeCode]));
 
                 return false;
             }
@@ -1066,12 +1106,11 @@ class Importer extends AbstractImporter
             return false;
         }
 
-        foreach ($this->cachedVariantValues[$parentProduct->sku] ?? [] as $variants) {
-            $existsAlready = array_filter($variants, function ($existingVariant) use ($variantConfigValues) {
-                return $variantConfigValues == $existingVariant;
-            });
-
-            if (! empty($existsAlready)) {
+        foreach ($this->cachedVariantValues[$parentProduct->sku] ?? [] as $variantSku => $variantValues) {
+            /**
+             * If same configurable attributes for a variant already exist then should skip this row
+             */
+            if ($variantValues == $variantConfigValues && $variantSku != $productData['sku']) {
                 $this->skipRow($rowNumber, self::ERROR_NOT_UNIQUE_VARIANT, 'sku', trans($this->messages[self::ERROR_NOT_UNIQUE_VARIANT]));
 
                 return false;
@@ -1177,7 +1216,9 @@ class Importer extends AbstractImporter
                 }
 
                 if (! $hasError) {
-                    $this->channelLocaleCachedValues[$rowData['channel']][$rowData['locale']] = [$attributeCode => $rowData[$attributeCode]];
+                    if (! empty($rowData[$attributeCode])) {
+                        $this->channelLocaleCachedValues[$rowData['channel']][$rowData['locale']] = [$attributeCode => $rowData[$attributeCode]];
+                    }
 
                     $validations[$attributeCode] = $attribute->getValidationRules($rowData['channel'], $rowData['locale'], $existingProductId);
                 }
@@ -1201,7 +1242,9 @@ class Importer extends AbstractImporter
                 }
 
                 if (! $hasError) {
-                    $this->channelCachedValues[$rowData['channel']] = [$attributeCode => $rowData[$attributeCode]];
+                    if (! empty($rowData[$attributeCode])) {
+                        $this->channelCachedValues[$rowData['channel']] = [$attributeCode => $rowData[$attributeCode]];
+                    }
 
                     $validations[$attributeCode] = $attribute->getValidationRules($rowData['channel'], $rowData['locale'], $existingProductId);
                 }
@@ -1225,7 +1268,9 @@ class Importer extends AbstractImporter
                 }
 
                 if (! $hasError) {
-                    $this->localeCachedValues[$rowData['locale']] = [$attributeCode => $rowData[$attributeCode]];
+                    if (! empty($rowData[$attributeCode])) {
+                        $this->localeCachedValues[$rowData['locale']] = [$attributeCode => $rowData[$attributeCode]];
+                    }
 
                     $validations[$attributeCode] = $attribute->getValidationRules($rowData['channel'], $rowData['locale'], $existingProductId);
                 }
@@ -1248,7 +1293,9 @@ class Importer extends AbstractImporter
             }
 
             if (! $hasError) {
-                $this->cachedUniqueValues[$rowData['sku']] = [$attributeCode => $rowData[$attributeCode]];
+                if (! empty($rowData[$attributeCode])) {
+                    $this->cachedUniqueValues[$rowData['sku']] = [$attributeCode => $rowData[$attributeCode]];
+                }
 
                 $validations[$attributeCode] = $attribute->getValidationRules($rowData['channel'], $rowData['locale'], $existingProductId);
             }

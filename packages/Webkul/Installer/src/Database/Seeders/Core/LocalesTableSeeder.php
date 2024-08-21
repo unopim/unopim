@@ -240,7 +240,9 @@ class LocalesTableSeeder extends Seeder
 
         DB::table('locales')->delete();
 
-        $enableLocales = $parameters['enable_locales'] ?? self::DEFAULT_LOCALES;
+        $enableLocales = $parameters['allowed_locales'] ?? self::DEFAULT_LOCALES;
+
+        $enableLocales = array_merge($enableLocales, [config('app.locale')]);
 
         $locales = $this->localCodes;
 

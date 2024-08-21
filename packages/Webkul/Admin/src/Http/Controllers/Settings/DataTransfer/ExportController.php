@@ -11,6 +11,7 @@ use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Jobs\Export\ExportTrackBatch;
 use Webkul\DataTransfer\Repositories\JobInstancesRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
+use Webkul\DataTransfer\Rules\SeparatorTypes;
 
 class ExportController extends Controller
 {
@@ -65,9 +66,9 @@ class ExportController extends Controller
         $this->validate(request(), [
             'code'                => 'required|unique:job_instances,code',
             'entity_type'         => 'required|in:'.implode(',', $exporters),
-            'field_separator'     => 'required',
             'filters'             => 'array',
             'filters.file_format' => 'required',
+            'field_separator'     => ['required_if:filters.file_format,Csv', new SeparatorTypes()],
         ]);
 
         Event::dispatch('data_transfer.exports.create.before');
@@ -124,9 +125,9 @@ class ExportController extends Controller
         $this->validate(request(), [
             'code'                => 'required',
             'entity_type'         => 'required|in:'.implode(',', $exporters),
-            'field_separator'     => 'required',
             'filters'             => 'array',
             'filters.file_format' => 'required',
+            'field_separator'     => ['required_if:filters.file_format,Csv', new SeparatorTypes()],
         ]);
 
         Event::dispatch('data_transfer.exports.update.before');
@@ -201,6 +202,10 @@ class ExportController extends Controller
      */
     public function exportView(int $id)
     {
+        if (! bouncer()->hasPermission('data_transfer.export')) {
+            abort(401, 'This action is unauthorized');
+        }
+
         $export = $jobInstance = $this->jobInstancesRepository->findOrFail($id);
 
         $export->unsetRelations();

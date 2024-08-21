@@ -33,13 +33,23 @@
     @endphp
 
     <x-admin::form.control-group>
-        <x-admin::form.control-group.label :localizable="$isLocalizable">
-            {{ $fieldLabel }}
+        <div class="inline-flex justify-between w-full">
+            <x-admin::form.control-group.label :for="$fieldName">
+                {{ $fieldLabel }} 
 
-            @if ($field->is_required)
-                <span class="required"></span>
-            @endif
-        </x-admin::form.control-group.label>
+                @if ($field->is_required)
+                    <span class="required"></span>
+                @endif
+            </x-admin::form.control-group.label>
+
+            <div class="self-end mb-2 text-xs flex gap-1">
+                @if ($isLocalizable)
+                    <span class="icon-language uppercase box-shadow p-1 rounded-full bg-gray-100 border border-gray-200 rounded text-gray-600 dark:!text-gray-600">
+                        {{ "{$currentLocaleCode}" }}
+                    </span>
+                @endif
+            </div>
+        </div>
 
         @switch ($field->type)
             @case ('checkbox')
@@ -79,15 +89,15 @@
 
                 @break
             @case ('boolean')
-                <input type="hidden" name="{{ $fieldName }}" value="0" />
+                <input type="hidden" name="{{ $fieldName }}" value="false" />
 
                 <x-admin::form.control-group.control
                     type="switch"
                     :id="$field->code"
                     :name="$fieldName"
                     :label="$fieldLabel"
-                    :checked="(bool) ! empty($value)"
-                    value="1"
+                    :checked="(bool) (! empty($value) && ('true' == strtolower($value)))"
+                    value="true"
                 />
 
                 @break

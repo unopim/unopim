@@ -181,8 +181,7 @@ class Exporter extends AbstractExporter
             if ($withMedia && in_array($attribute->type, [AttributeTypes::FILE_ATTRIBUTE_TYPE, AttributeTypes::IMAGE_ATTRIBUTE_TYPE])) {
                 $exitingFilePath = $values[$attribute->code] ?? null;
                 if ($exitingFilePath && ! empty($exitingFilePath)) {
-                    $oldFilePath = $this->removeLastSegment($exitingFilePath);
-                    $newfilePath = $filePath->getTemporaryPath().'/'.$oldFilePath;
+                    $newfilePath = $filePath->getTemporaryPath().'/'.$exitingFilePath;
                     $this->copyMedia($exitingFilePath, $newfilePath);
                 }
             }
@@ -210,7 +209,7 @@ class Exporter extends AbstractExporter
     }
 
     /**
-     * Retrieves and formats the channel-specific fields for a product.
+     * Retrieves and formats the locale-specific fields for a product.
      *
      * @param  string  $channel
      * @return array
@@ -227,6 +226,12 @@ class Exporter extends AbstractExporter
         return $data['values']['locale_specific'][$locale] ?? [];
     }
 
+    /**
+     * Retrieves and formats the channel-specific fields for a product.
+     *
+     * @param  string  $channel
+     * @return array
+     */
     protected function getChannelSpecificFields(array $data, $channel)
     {
         if (
@@ -236,7 +241,7 @@ class Exporter extends AbstractExporter
             return [];
         }
 
-        return $data['values']['locale_specific'][$channel] ?? [];
+        return $data['values']['channel_specific'][$channel] ?? [];
     }
 
     /**

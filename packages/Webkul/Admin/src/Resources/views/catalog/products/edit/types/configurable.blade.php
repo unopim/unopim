@@ -588,24 +588,18 @@
                 <!-- Image -->
                 <div
                     class="w-full h-[60px] max-w-[60px] max-h-[60px] relative rounded overflow-hidden"
-                    :class="{'border border-dashed border-gray-300 dark:border-cherry-800 dark:invert dark:mix-blend-exclusion': ! variant?.images?.length}"
+                    :class="{'border border-dashed border-gray-300 dark:border-cherry-800 dark:invert dark:mix-blend-exclusion': ! variant?.image, 'w-[60px]': variant?.image}"
                 >
-                    <template v-if="! variant?.images?.length">
+                    <template v-if="! variant?.image">
                         <img src="{{ unopim_asset('images/product-placeholders/front.svg') }}">
-                    
+
                         <p class="w-full absolute bottom-1.5 text-[6px] text-gray-400 text-center font-semibold">
                             @lang('admin::app.catalog.products.edit.types.configurable.image-placeholder')
                         </p>
                     </template>
 
                     <template v-else>
-                        <img :src="variant?.images[0]?.url">
-
-                        <span
-                            class="absolute bottom-px ltr:left-px rtl:right-px text-xs font-bold text-white leading-normal bg-violet rounded-full px-1.5"
-                            v-text="variant?.images?.length"
-                        >
-                        </span>
+                        <img :src="variant?.image" class="w-full h-full object-cover object-top">
                     </template>
                 </div>
 
@@ -780,7 +774,7 @@
                 return {
                     defaultId: parseInt('{{ $product->additional['default_variant_id'] ?? null }}'),
 
-                    variants: @json($product->variants()->with(['attribute_family'])->get()),
+                    variants: @json($product->variants()->with(['attribute_family'])->get()->map(fn ($item) => $item->normalizeWithImage())),
 
                     superAttributes: @json($product->super_attributes()->with(['options', 'options.attribute', 'options.translations'])->get()),
 
@@ -799,7 +793,7 @@
                     for (const key of formData.keys()) {
                         let formValue = formData.getAll(key);
 
-                        params[key] = formValue.filter((value) => value !== '')[0];
+                        params[key] = formValue.pop();
                     }
 
                     let filteredVariants = this.variants.filter((variant) => {
@@ -921,8 +915,7 @@
 
                     for (const key of formData.keys()) {
                         let formValue = formData.getAll(key);
-
-                        params[key] = formValue.filter((value) => value !== '')[0];
+                        params[key] = formValue.pop();
                     }
 
                     for (const attribute of this.attributes) {

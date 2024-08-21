@@ -108,9 +108,9 @@ class ProductController extends Controller
 
             foreach ($configurableFamily->getConfigurableAttributes() as $attribute) {
                 $configurableAttributes[] = [
-                    'code'    => $attribute->code,
-                    'name'    => $attribute->name,
-                    'id'      => $attribute->id,
+                    'code' => $attribute->code,
+                    'name' => $attribute->name,
+                    'id'   => $attribute->id,
                 ];
             }
 
@@ -353,11 +353,7 @@ class ProductController extends Controller
         $products = $this->productRepository->searchFromDatabase();
 
         foreach ($products as $product) {
-            $results[] = [
-                'id'              => $product->id,
-                'sku'             => $product->sku,
-                'images'          => [],
-            ];
+            $results[] = $product->normalizeWithImage();
         }
 
         $products->setCollection(collect($results));

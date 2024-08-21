@@ -135,7 +135,7 @@ class JobTrackerGrid extends DataGrid
                         return '<p class="label-completed">'.trans('admin::app.settings.data-transfer.tracker.index.datagrid.completed').'</p>';
 
                     case Import::STATE_FAILED:
-                        return '<p class="label-failed">'.trans('admin::app.settings.data-transfer.tracker.index.datagrid.completed').'</p>';
+                        return '<p class="label-info">'.trans('admin::app.settings.data-transfer.tracker.index.datagrid.failed').'</p>';
                 }
             },
         ]);

@@ -38,25 +38,16 @@ class Installer extends Command
      * @var array
      */
     protected $locales = [
-        'ar'       => 'Arabic',
-        'bn'       => 'Bengali',
-        'de'       => 'German',
-        'en_US'    => 'English',
-        'es'       => 'Spanish',
-        'fa'       => 'Persian',
-        'fr'       => 'French',
-        'he'       => 'Hebrew',
-        'hi_IN'    => 'Hindi',
-        'it'       => 'Italian',
-        'ja'       => 'Japanese',
-        'nl'       => 'Dutch',
-        'pl'       => 'Polish',
-        'pt_BR'    => 'Brazilian Portuguese',
-        'ru'       => 'Russian',
-        'sin'      => 'Sinhala',
-        'tr'       => 'Turkish',
-        'uk'       => 'Ukrainian',
-        'zh_CN'    => 'Chinese',
+        'ar_AE'       => 'Arabic',
+        'de_DE'       => 'German',
+        'en_US'       => 'English',
+        'es_ES'       => 'Spanish',
+        'fr_FR'       => 'French',
+        'hi_IN'       => 'Hindi',
+        'ja_JP'       => 'Japanese',
+        'nl_NL'       => 'Dutch',
+        'ru_RU'       => 'Russian',
+        'zh_CN'       => 'Chinese',
     ];
 
     /**
@@ -312,6 +303,16 @@ class Installer extends Command
             default: 'JohnDoe@123',
             required: true
         );
+
+        while (strlen($adminPassword) < 6) {
+            $this->error('Password must be at least 6 characters.');
+
+            $adminPassword = text(
+                label: 'Input a Secure Password for Administrator',
+                default: 'JohnDoe@123',
+                required: true
+            );
+        }
 
         $password = password_hash($adminPassword, PASSWORD_BCRYPT, ['cost' => 10]);
 

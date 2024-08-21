@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Event;
 use Symfony\Component\HttpFoundation\Response;
 use Webkul\AdminApi\ApiDataSource\Catalog\CategoryDataSource;
 use Webkul\AdminApi\Http\Controllers\API\ApiController;
+use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Category\Validator\Catalog\CategoryValidator;
 
@@ -19,6 +20,7 @@ class CategoryController extends ApiController
      */
     public function __construct(
         protected CategoryRepository $categoryRepository,
+        protected CategoryFieldRepository $categoryFieldRepository,
         protected CategoryValidator $categoryValidator
     ) {}
 
@@ -70,6 +72,7 @@ class CategoryController extends ApiController
         }
 
         try {
+            $this->sanitizeInput($requestData);
             Event::dispatch('catalog.category.create.before');
             $category = $this->categoryRepository->create($requestData);
             Event::dispatch('catalog.category.create.after', $category);
@@ -97,7 +100,6 @@ class CategoryController extends ApiController
 
         $requestData = request()->only(['parent', 'additional_data']);
         $parentId = null;
-
         if (isset($requestData['parent'])) {
             $parentId = $this->getParentIdByCode($requestData['parent']);
         }
@@ -113,6 +115,7 @@ class CategoryController extends ApiController
         }
 
         try {
+            $this->sanitizeInput($requestData);
             Event::dispatch('catalog.category.update.before', $id);
             $category = $this->categoryRepository->update($requestData, $id);
             Event::dispatch('catalog.category.update.after', $category);
@@ -123,6 +126,33 @@ class CategoryController extends ApiController
             );
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
+        }
+    }
+
+    public function sanitizeInput(&$requestData)
+    {
+        $fields = $this->categoryFieldRepository->findByField('status', true)
+            ->where('enable_wysiwyg', '==', 1)
+            ->where('type', '==', 'textarea');
+
+        foreach ($fields as $field) {
+            if ($field->value_per_locale) {
+                foreach ($requestData['additional_data']['locale_specific'] ?? [] as $locale => $values) {
+                    foreach ($values ?? [] as $code => $value) {
+                        if (empty($value) || $field->code !== $code) {
+                            continue;
+                        }
+                        $requestData['additional_data']['locale_specific'][$locale][$code] = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+                    }
+                }
+            } else {
+                foreach ($requestData['additional_data']['common'] ?? [] as $code => $value) {
+                    if (empty($value) || $field->code !== $code) {
+                        continue;
+                    }
+                    $requestData['additional_data']['common'][$code] = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+                }
+            }
         }
     }
 

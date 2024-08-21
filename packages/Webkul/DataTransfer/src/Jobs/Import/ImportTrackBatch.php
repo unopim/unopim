@@ -47,10 +47,8 @@ class ImportTrackBatch implements ShouldQueue
 
         // Validate the import
         $import = $importHelper->validate();
-        $this->importBatch = $import->getImport();
 
-        // Update the state to VALIDATED
-        $importHelper->stateUpdate(ImportHelper::STATE_VALIDATED);
+        $this->importBatch = $import->getImport();
 
         if ($import->isValid() && $this->importBatch->state === ImportHelper::STATE_VALIDATED) {
             $importHelper->started();

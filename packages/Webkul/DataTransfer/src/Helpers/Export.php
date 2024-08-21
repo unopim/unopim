@@ -143,6 +143,10 @@ class Export
      */
     public function isValid(): bool
     {
+        if ($this->export->state == self::STATE_FAILED) {
+            return false;
+        }
+
         return true;
     }
 

@@ -20,7 +20,7 @@ class Controller extends ImageCacheController
      *
      * @var string
      */
-    const PIM_LOGO = 'pim.png';
+    const PIM_LOGO = 'https://updates.unopim.com/unopim.png';
 
     /**
      * Get HTTP response of either original image file or

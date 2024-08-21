@@ -82,6 +82,11 @@ class SimpleProductController extends ProductController
             }
 
             if ($data['parent']) {
+                $data[AbstractType::PRODUCT_VALUES_KEY][AbstractType::COMMON_VALUES_KEY] = array_merge(
+                    $data[AbstractType::PRODUCT_VALUES_KEY][AbstractType::COMMON_VALUES_KEY],
+                    ($data['variant']['attributes'] ?? [])
+                );
+
                 $product = $this->createOrUpdateVariant($data);
                 unset($data['variant']);
             }

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 use Shetabit\Visitor\Traits\Visitable;
 use Webkul\Attribute\Models\AttributeFamilyProxy;
 use Webkul\Attribute\Models\AttributeProxy;
@@ -272,6 +273,58 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
     {
         return [
             'values' => ProductValuesPresenter::class,
+        ];
+    }
+
+    /**
+     * Get all image attributes for the product
+     */
+    public function getImageAttributes()
+    {
+        return $this->attribute_family->customAttributes()->where('type', 'image')->get();
+    }
+
+    /**
+     * Find the first image which has value in the product to be displayed as display image
+     * This will be the image to be displayed as product thumbnail from product values
+     */
+    public function getProductDisplayImage(?string $currentChannelCode = null, ?string $currentLocaleCode = null, mixed $imageAttributes = null): ?string
+    {
+        $imageAttributes ??= $this->getImageAttributes();
+
+        $productImage = null;
+
+        $productValues = $this->values;
+
+        $currentChannelCode ??= core()->getRequestedChannelCode();
+
+        $currentLocaleCode ??= core()->getRequestedLocaleCode();
+
+        foreach ($imageAttributes as $attribute) {
+            if ($productImage = $attribute->getValueFromProductValues($productValues, $currentChannelCode, $currentLocaleCode)) {
+                break;
+            }
+        }
+
+        return $productImage;
+    }
+
+    /**
+     * Normalize product data with product image displaye url
+     */
+    public function normalizeWithImage(?string $currentChannelCode = null, ?string $currentLocaleCode = null, mixed $imageAttributes = null): array
+    {
+        $image = $this->getProductDisplayImage();
+
+        $image = $image ? Storage::url($image) : null;
+
+        return [
+            'id'              => $this->id,
+            'sku'             => $this->sku,
+            'parent'          => $this->parent,
+            'values'          => $this->values,
+            'additional_data' => $this->additional_data,
+            'image'           => $image,
         ];
     }
 }

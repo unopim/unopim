@@ -12,6 +12,7 @@ use Webkul\AdminApi\Http\Controllers\API\ApiController;
 use Webkul\Attribute\Repositories\AttributeOptionRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\AttributeTypes;
+use Webkul\Attribute\Rules\NotSupportedAttributes;
 use Webkul\Attribute\Rules\ValidationTypes;
 use Webkul\Core\Rules\Code;
 
@@ -63,6 +64,12 @@ class AttributeController extends ApiController
             'type' => [
                 'required',
                 new AttributeTypes(),
+            ],
+            'code' => [
+                'required',
+                sprintf('unique:%s,code', 'attributes'),
+                new Code(),
+                new NotSupportedAttributes(),
             ],
         ];
 

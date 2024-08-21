@@ -7,6 +7,7 @@ use Illuminate\Http\UploadedFile;
 use Webkul\Category\Contracts\Category;
 use Webkul\Core\Eloquent\Repository;
 use Webkul\Core\Filesystem\FileStorer;
+use Webkul\Product\Models\ProductProxy;
 
 class CategoryRepository extends Repository
 {
@@ -329,5 +330,13 @@ class CategoryRepository extends Repository
     {
         return $this->with(['parent_category']);
 
+    }
+
+    /**
+     * The products.
+     */
+    public function getProducts(string $code)
+    {
+        return ProductProxy::query()->whereJsonContains('values->categories', $code)->get();
     }
 }

@@ -79,6 +79,8 @@ class Exporter extends AbstractExporter
         $locales = core()->getAllActiveLocales()->pluck('code');
         $categories = [];
         foreach ($batch->data as $rowData) {
+            $productCounts = $this->productCountsByCategory($rowData['code']);
+
             foreach ($locales as $locale) {
                 $commonFields = $this->getCommonFields($rowData);
                 $localeSpecificFields = $this->getLocaleSpecificFields($rowData, $locale);
@@ -91,6 +93,8 @@ class Exporter extends AbstractExporter
                     'code'   => $rowData['code'],
                     'parent' => $rowData['parent_category']['code'] ?? null,
                 ], $additionalData);
+
+                $data['productCounts'] = $productCounts;
 
                 $categories[] = $data;
             }
@@ -109,25 +113,23 @@ class Exporter extends AbstractExporter
      */
     protected function setFieldsAdditionalData(array $additionalData, $filePath, $options = [])
     {
+        $fieldValues = [];
         $filters = $this->getFilters();
         $withMedia = (bool) $filters['with_media'];
 
         foreach ($this->categoryFields as $key => $field) {
-            if (! isset($additionalData[$field->code])) {
-                $additionalData[$field->code] = null;
-            }
+            $fieldValues[$field->code] = $additionalData[$field->code] ?? null;
 
             if ($withMedia && in_array($field->type, [FieldValidator::FILE_FIELD_TYPE, FieldValidator::IMAGE_FIELD_TYPE])) {
                 $exitingFilePath = $additionalData[$field->code] ?? null;
                 if ($exitingFilePath && ! empty($exitingFilePath)) {
-                    $oldFilePath = $this->removeLastSegment($exitingFilePath);
-                    $newfilePath = $filePath->getTemporaryPath().'/'.$oldFilePath;
+                    $newfilePath = $filePath->getTemporaryPath().'/'.$exitingFilePath;
                     $this->copyMedia($exitingFilePath, $newfilePath);
                 }
             }
         }
 
-        return $additionalData;
+        return $fieldValues;
     }
 
     /**
@@ -166,5 +168,17 @@ class Exporter extends AbstractExporter
         }
 
         return $data['additional_data']['locale_specific'][$locale] ?? [];
+    }
+
+    /**
+     * get product count the given category code
+     */
+    protected function productCountsByCategory(string $code): int
+    {
+        if (! $this->source) {
+            $this->source = app()->make(config('exporters.categories.source'));
+        }
+
+        return $this->source->getProducts($code)->count();
     }
 }

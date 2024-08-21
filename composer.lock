@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "af7f5edb0cc242016d0f22d1d6241d68",
+    "content-hash": "c0fc8c8f6672f42f8ca7749f3b0512f1",
     "packages": [
         {
             "name": "astrotomic/laravel-translatable",
@@ -10682,105 +10682,6 @@
     ],
     "packages-dev": [
         {
-            "name": "bagisto/bagisto-package-generator",
-            "version": "v2.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/bagisto/bagisto-package-generator.git",
-                "reference": "84a0fe962e2bf139449e96d542c5a791a8c30f68"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/bagisto/bagisto-package-generator/zipball/84a0fe962e2bf139449e96d542c5a791a8c30f68",
-                "reference": "84a0fe962e2bf139449e96d542c5a791a8c30f68",
-                "shasum": ""
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Webkul\\PackageGenerator\\Providers\\PackageGeneratorServiceProvider"
-                    ],
-                    "aliases": []
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Webkul\\PackageGenerator\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jitendra Singh",
-                    "email": "jitendra@webkul.com"
-                }
-            ],
-            "description": "Bagisto Package Generator",
-            "support": {
-                "issues": "https://github.com/bagisto/bagisto-package-generator/issues",
-                "source": "https://github.com/bagisto/bagisto-package-generator/tree/v2.0.0"
-            },
-            "time": "2024-02-14T14:26:21+00:00"
-        },
-        {
-            "name": "bagisto/laravel-datafaker",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/bagisto/laravel-data-faker.git",
-                "reference": "e064846a2d7c71ce3a6d0a1e3d9db45cd92f41f7"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/bagisto/laravel-data-faker/zipball/e064846a2d7c71ce3a6d0a1e3d9db45cd92f41f7",
-                "reference": "e064846a2d7c71ce3a6d0a1e3d9db45cd92f41f7",
-                "shasum": ""
-            },
-            "default-branch": true,
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Webkul\\Faker\\Providers\\FakerServiceProvider"
-                    ],
-                    "aliases": []
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Webkul\\Faker\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jitendra Singh",
-                    "email": "jitendra@webkul.in",
-                    "homepage": "https://bagisto.com"
-                }
-            ],
-            "description": "Create fake customers, categories and products in Bagisto.",
-            "homepage": "https://github.com/bagisto/laravel-data-faker",
-            "keywords": [
-                "bagisto",
-                "fake categories",
-                "fake customers",
-                "fake products"
-            ],
-            "support": {
-                "issues": "https://github.com/bagisto/laravel-data-faker/issues",
-                "source": "https://github.com/bagisto/laravel-data-faker/tree/master"
-            },
-            "time": "2024-06-07T11:16:25+00:00"
-        },
-        {
             "name": "barryvdh/laravel-debugbar",
             "version": "v3.13.5",
             "source": {
@@ -14129,13 +14030,11 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "bagisto/laravel-datafaker": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.1",
+        "php": "^8.2",
         "ext-calendar": "*",
         "ext-curl": "*",
         "ext-intl": "*",
@@ -14146,5 +14045,5 @@
         "ext-tokenizer": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }

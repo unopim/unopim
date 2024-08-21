@@ -18,7 +18,6 @@
                 @lang('admin::app.settings.data-transfer.imports.create.title')
             </p>
 
-            <span class="label-pending"></span>
             <div class="flex gap-x-2.5 items-center">
                 <!-- Cancel Button -->
                 <a
@@ -113,6 +112,10 @@
                             @lang('admin::app.settings.data-transfer.imports.create.file')
                         </x-admin::form.control-group.label>
 
+                        <x-admin::form.control-group.label>
+                            @lang('admin::app.settings.data-transfer.imports.create.allowed-file-types')
+                        </x-admin::form.control-group.label>
+
                         <x-admin::form.control-group.control
                             type="file"
                             name="file"
@@ -131,7 +134,7 @@
                             
                                 @{{ "@lang('admin::app.settings.data-transfer.imports.create.download-sample')".replace(':resource', $refs['importType'].selectedOption.replace(/^\w/, (c) => c.toUpperCase())) }}
                             </a>
-                        </template>                        
+                        </template>
                     </x-admin::form.control-group>
 
                     <x-admin::form.control-group.label class="required">
@@ -299,8 +302,10 @@
 
                         <!-- CSV Field Separator -->
                         <x-admin::form.control-group>
-                            <x-admin::form.control-group.label class="required">
+                            <x-admin::form.control-group.label>
                                 @lang('admin::app.settings.data-transfer.imports.create.field-separator')
+                                <span>*</span>
+                                <span>(@lang('admin::app.settings.data-transfer.imports.create.separator-info'))</span>
                             </x-admin::form.control-group.label>
 
                             <x-admin::form.control-group.control

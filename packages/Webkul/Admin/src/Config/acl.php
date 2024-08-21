@@ -174,6 +174,76 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Configuration
+    |--------------------------------------------------------------------------
+    |
+    | All acl related to configuration tabs should be placed here.
+    |
+    */
+    [
+        'key'    => 'data_transfer',
+        'name'   => 'admin::app.acl.data-transfer',
+        'route'  => 'admin.settings.data_transfer.tracker.index',
+        'sort'   => 7,
+    ], [
+        'key'   => 'data_transfer.job_tracker',
+        'name'  => 'admin::app.acl.tracker',
+        'route' => 'admin.settings.data_transfer.tracker.index',
+        'sort'  => 1,
+    ], [
+        'key'   => 'data_transfer.imports',
+        'name'  => 'admin::app.acl.imports',
+        'route' => 'admin.settings.data_transfer.imports.index',
+        'sort'  => 2,
+    ], [
+        'key'   => 'data_transfer.imports.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.settings.data_transfer.imports.create',
+        'sort'  => 1,
+    ], [
+        'key'   => 'data_transfer.imports.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.settings.data_transfer.imports.edit',
+        'sort'  => 2,
+    ], [
+        'key'   => 'data_transfer.imports.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.settings.data_transfer.imports.delete',
+        'sort'  => 3,
+    ], [
+        'key'   => 'data_transfer.imports.execute',
+        'name'  => 'admin::app.acl.execute',
+        'route' => 'admin.settings.data_transfer.imports.import_now',
+        'sort'  => 4,
+    ], [
+        'key'   => 'data_transfer.export',
+        'name'  => 'admin::app.acl.exports',
+        'route' => 'admin.settings.data_transfer.exports.index',
+        'sort'  => 3,
+    ], [
+        'key'   => 'data_transfer.export.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.settings.data_transfer.exports.create',
+        'sort'  => 1,
+    ], [
+        'key'   => 'data_transfer.export.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.settings.data_transfer.exports.edit',
+        'sort'  => 2,
+    ], [
+        'key'   => 'data_transfer.export.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.settings.data_transfer.exports.delete',
+        'sort'  => 3,
+    ], [
+        'key'   => 'data_transfer.export.execute',
+        'name'  => 'admin::app.acl.execute',
+        'route' => 'admin.settings.data_transfer.exports.export_now',
+        'sort'  => 4,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Settings
     |--------------------------------------------------------------------------
     |
@@ -291,6 +361,7 @@ return [
         'route' => 'admin.settings.roles.delete',
         'sort'  => 3,
     ],
+
     /*
     |--------------------------------------------------------------------------
     | Configuration
@@ -302,27 +373,27 @@ return [
     [
         'key'    => 'configuration',
         'name'   => 'admin::app.acl.configuration',
-        'route'  => 'admin.integrations.api_keys.index',
+        'route'  => 'admin.configuration.integrations.index',
         'sort'   => 9,
     ], [
         'key'   => 'configuration.integrations',
         'name'  => 'admin::app.acl.integrations',
-        'route' => 'admin.integrations.api_keys.index',
+        'route' => 'admin.configuration.integrations.index',
         'sort'  => 1,
     ], [
         'key'   => 'configuration.integrations.create',
         'name'  => 'admin::app.acl.create',
-        'route' => 'admin.integrations.api_keys.create',
+        'route' => 'admin.configuration.integrations.create',
         'sort'  => 1,
     ], [
         'key'   => 'configuration.integrations.edit',
         'name'  => 'admin::app.acl.edit',
-        'route' => 'admin.integrations.api_keys.edit',
+        'route' => 'admin.configuration.integrations.edit',
         'sort'  => 2,
     ], [
         'key'   => 'configuration.integrations.delete',
         'name'  => 'admin::app.acl.delete',
-        'route' => 'admin.integrations.api_keys.delete',
+        'route' => 'admin.configuration.integrations.delete',
         'sort'  => 3,
     ], [
         'key'    => 'configuration.magic-ai',

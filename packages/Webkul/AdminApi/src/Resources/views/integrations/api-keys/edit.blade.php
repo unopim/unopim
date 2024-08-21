@@ -287,6 +287,7 @@
                             .then((response) => {
                                 this.client_id = response.data.client_id;
                                 this.secret_key = response.data.secret_key;
+                                this.oauth_client_id = response.data.oauth_client_id;
                                 this.$emitter.emit('add-flash', { type: 'success', message: "@lang('admin::app.configuration.integrations.generate-key-success')" });
 
                             })

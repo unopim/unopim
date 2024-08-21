@@ -15,6 +15,14 @@
 
             - {{ ucfirst(trans($import->jobInstance->entity_type)) }} / {{ ucfirst(trans($import->jobInstance->code)) }}
         </p>
+
+        <!-- Edit Button -->
+        <a
+            href="{{ route(sprintf('admin.settings.data_transfer.%ss.edit', $import->jobInstance->type), $import->jobInstance->id) }}"
+            class="primary-button"
+        >
+            @lang('admin::app.settings.data-transfer.tracker.import.edit-btn')
+        </a>
     </div>
 
     <!-- Import Vue Compontent -->
@@ -181,6 +189,40 @@
                         >
                             @lang('admin::app.settings.data-transfer.imports.import.download-error-report')
                         </a>
+                    </div>
+                </div>
+
+                <!-- Job Failed -->
+                <div
+                    class="flex place-content-between w-full p-3 border rounded-sm"
+                    :class="isValid ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'"
+                    v-else-if="importResource.state == 'failed'"
+                >
+                    <!-- Import Stats -->
+                    <div class="grid gap-2">
+                        <p
+                            class="flex gap-2 items-center"
+                        >
+                            <i class="icon-cancel h-fit rounded-full bg-red-200 text-2xl text-red-600"></i>
+
+                            @lang('admin::app.settings.data-transfer.tracker.failed-info')
+                        </p>
+
+                        <div
+                            class="flex gap-2 items-center place-items-start"
+                            v-if="importResource.errors?.length"
+                        >
+                            <i class="icon-information bg-red-200 text-red-600 text-2xl rounded-full"></i>
+
+                            <div class="grid gap-2">
+                                <p
+                                    class="break-all"
+                                    v-for="error in importResource.errors"
+                                >
+                                    @{{ error }}
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

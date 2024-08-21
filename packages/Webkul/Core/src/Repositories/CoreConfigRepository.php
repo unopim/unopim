@@ -30,6 +30,20 @@ class CoreConfigRepository extends Repository
     {
         Event::dispatch('core.configuration.save.before');
 
+        $channel = null;
+        $locale = null;
+
+        if (
+            isset($data['locale']) && $data['locale']
+            || isset($data['channel']) && $data['channel']
+        ) {
+            $locale = $data['locale'];
+            $channel = $data['channel'];
+
+            unset($data['locale']);
+            unset($data['channel']);
+        }
+
         foreach ($data as $method => $fieldData) {
             $recursiveData = $this->recursiveArray($fieldData, $method);
 

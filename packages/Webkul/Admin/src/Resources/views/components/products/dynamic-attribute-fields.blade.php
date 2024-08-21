@@ -40,19 +40,28 @@
     @endphp
 
     <x-admin::form.control-group>
-        <x-admin::form.control-group.label :for="$fieldName" :localizable="$isLocalizable" :currentLocaleCode="$currentLocaleCode">
-            {{ $fieldLabel }} 
+        <div class="inline-flex justify-between w-full">
+            <x-admin::form.control-group.label :for="$fieldName">
+                {{ $fieldLabel }} 
 
-            @if ($field->is_required || $isConfigurableAttribute)
-                <span class="required"></span>
-            @endif
+                @if ($field->is_required || $isConfigurableAttribute)
+                    <span class="required"></span>
+                @endif
+            </x-admin::form.control-group.label>
 
-            @if ($isChannelBased)
-                <span class="px-1 py-0.5 bg-gray-100 border border-gray-200 rounded text-[10px] text-gray-600 font-semibold leading-normal uppercase">
-                    {{ "{$currentChannelCode}" }}
-                </span>
-            @endif
-        </x-admin::form.control-group.label>
+            <div class="self-end mb-2 text-xs flex gap-1">
+                @if ($isChannelBased)
+                    <span class="icon-channel uppercase box-shadow p-1 rounded-full bg-gray-100 border border-gray-200 rounded text-gray-600 dark:!text-gray-600">
+                        {{ "{$currentChannelCode}" }}
+                    </span>
+                @endif
+                @if ($isLocalizable)
+                    <span class="icon-language uppercase box-shadow p-1 rounded-full bg-gray-100 border border-gray-200 rounded text-gray-600 dark:!text-gray-600">
+                        {{ "{$currentLocaleCode}" }}
+                    </span>
+                @endif
+            </div>
+        </div>
 
         @switch ($field->type)
             @case ('checkbox')
@@ -63,9 +72,9 @@
                 @php
                     $fieldName = $fieldName.'[]';
 
-                    $selectedValue = ! empty($value) ? explode(',', $value) : $value;
+                    $selectedValue = ! empty($value) && is_string($value) ? explode(',', $value) : $value;
 
-                    $selectedValue = empty($selectedValue) ? [] : $selectedValue;
+                    $selectedValue = empty($selectedValue) || ! is_array($selectedValue) ? [] : $selectedValue;
                 @endphp
 
                 @foreach ($field->options as $option)

@@ -245,6 +245,21 @@ abstract class AbstractExporter
     }
 
     /**
+     * Get filename for generate data
+     */
+    protected function getFileName(): string
+    {
+        $fileName = sprintf(
+            '%s-%s.%s',
+            $this->export->jobInstance->code,
+            $this->export->jobInstance->entity_type,
+            strtolower($this->filters['file_format'] ?? SpoutWriterFactory::CSV),
+        );
+
+        return $fileName;
+    }
+
+    /**
      * Start the export process
      */
     public function exportData(?JobTrackBatchContract $exportBatch = null, $filePath = null): bool
@@ -252,7 +267,12 @@ abstract class AbstractExporter
         if (! $filePath) {
             $this->filters = $this->export->jobInstance->filters ?? [];
             $directory = sprintf('exports/%s/%s', $this->export->id, FileBuffer::FOLDER_PREFIX);
-            $filePath = $this->exportFileBuffer->initilize($directory, $this->filters['file_format'] ?? SpoutWriterFactory::CSV);
+            $fileName = $this->getFileName();
+            $filePath = $this->exportFileBuffer->initilize(
+                $directory,
+                $this->filters['file_format'] ?? SpoutWriterFactory::CSV,
+                $fileName
+            );
         }
 
         if ($exportBatch) {
@@ -439,20 +459,6 @@ abstract class AbstractExporter
     public function getCsvHeader(): array
     {
         return $this->validColumnNames;
-    }
-
-    public function removeLastSegment($path)
-    {
-        // Find the position of the last slash
-        $lastSlashPos = strrpos($path, '/');
-
-        // If a slash was found, extract the substring up to that position
-        if ($lastSlashPos !== false) {
-            return substr($path, 0, $lastSlashPos);
-        } else {
-            // If no slash was found, return the original string
-            return $path;
-        }
     }
 
     /**

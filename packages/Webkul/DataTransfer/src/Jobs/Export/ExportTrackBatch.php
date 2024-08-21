@@ -59,7 +59,11 @@ class ExportTrackBatch implements ShouldQueue
             try {
                 $exportHelper->start();
             } catch (\Exception $e) {
-                \Log::error('Import process failed: '.$e->getMessage());
+                $this->exportBatch->state = ExportHelper::STATE_FAILED;
+                $this->exportBatch->errors = [$e->getMessage()];
+                $this->exportBatch->save();
+
+                \Log::error('Export process failed: '.$e->getMessage());
 
                 return;
             }

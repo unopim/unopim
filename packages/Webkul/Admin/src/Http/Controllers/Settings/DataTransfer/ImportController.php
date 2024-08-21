@@ -12,6 +12,7 @@ use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Jobs\Import\ImportTrackBatch;
 use Webkul\DataTransfer\Repositories\JobInstancesRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
+use Webkul\DataTransfer\Rules\SeparatorTypes;
 
 class ImportController extends Controller
 {
@@ -68,9 +69,9 @@ class ImportController extends Controller
             'action'              => 'required:in:append,delete',
             'validation_strategy' => 'required:in:stop-on-errors,skip-errors',
             'allowed_errors'      => 'required|integer|min:0',
-            'field_separator'     => 'required',
+            'field_separator'     => ['required', new SeparatorTypes()],
             'file'                => 'required|mimes:csv,xls,xlsx,txt',
-        ]);
+        ], ['file.mimes' => trans('core::validation.file-type')]);
 
         Event::dispatch('data_transfer.imports.create.before');
 
@@ -135,9 +136,9 @@ class ImportController extends Controller
             'action'              => 'required:in:append,delete',
             'validation_strategy' => 'required:in:stop-on-errors,skip-errors',
             'allowed_errors'      => 'required|integer|min:0',
-            'field_separator'     => 'required',
+            'field_separator'     => ['required', new SeparatorTypes()],
             'file'                => 'mimes:csv,xls,xlsx,txt',
-        ]);
+        ], ['file.mimes' => trans('core::validation.file-type')]);
 
         Event::dispatch('data_transfer.imports.update.before');
 
@@ -221,6 +222,10 @@ class ImportController extends Controller
      */
     public function importView(int $id)
     {
+        if (! bouncer()->hasPermission('data_transfer.imports')) {
+            abort(401, 'This action is unauthorized');
+        }
+
         $import = $jobInstance = $this->jobInstancesRepository->findOrFail($id);
 
         $import->unsetRelations();
@@ -256,6 +261,7 @@ class ImportController extends Controller
                 'user_id'               => $userId,
                 'created_at'            => now(),
                 'updated_at'            => now(),
+                'action'                => $import->action,
             ]);
 
             // Dispatch the import job
@@ -534,7 +540,7 @@ class ImportController extends Controller
      */
     public function download(int $id)
     {
-        $import = $this->jobTrackRepository->findOrFail($id);
+        $import = $this->jobInstancesRepository->findOrFail($id);
 
         return Storage::disk('private')->download($import->file_path);
     }

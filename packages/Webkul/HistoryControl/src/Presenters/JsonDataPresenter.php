@@ -46,7 +46,7 @@ class JsonDataPresenter implements HistoryPresenterInterface
         }
 
         foreach ($newArray['common'] ?? [] as $key => $newValue) {
-            if (!isset($oldArray['common'][$key])) {
+            if (! isset($oldArray['common'][$key])) {
                 $updated[$key] = $newValue;
             }
         }
@@ -104,7 +104,7 @@ class JsonDataPresenter implements HistoryPresenterInterface
             if (static::$channelAndLocaleSpecific === $sectionName) {
                 foreach ($fields as $channelOrLocale => $values) {
                     $changed = ! empty($comparingArray[$locale][$channelOrLocale])
-                        ? array_diff($values, $comparingArray[$locale][$channelOrLocale])
+                        ? static::calculateDifference($values, $comparingArray[$locale][$channelOrLocale])
                         : $values;
 
                     if (! empty($changed)) {
@@ -120,7 +120,7 @@ class JsonDataPresenter implements HistoryPresenterInterface
             }
 
             $changed = ! empty($comparingArray[$locale])
-                ? array_diff($fields, $comparingArray[$locale])
+                ? static::calculateDifference($fields, $comparingArray[$locale])
                 : $fields;
 
             if (! empty($changed)) {
@@ -150,5 +150,27 @@ class JsonDataPresenter implements HistoryPresenterInterface
                 $valueKey => $value,
             ];
         }
+    }
+
+    /**
+     * Calculate difference between old and new value arrays
+     */
+    public static function calculateDifference(array $values, array $comparingArray): array
+    {
+        $changes = [];
+
+        foreach ($values as $key => $currentValue) {
+            if (! isset($comparingArray[$key])) {
+                $changes[$key] = $currentValue;
+
+                continue;
+            }
+
+            if ($currentValue != $comparingArray[$key]) {
+                $changes[$key] = $currentValue;
+            }
+        }
+
+        return $changes;
     }
 }

@@ -26,9 +26,11 @@ class MagicAIController extends Controller
                 'content' => $response,
             ]);
         } catch (\Exception $e) {
+            report($e);
+
             return new JsonResponse([
-                'message' => $e->getMessage(),
-            ], 500);
+                'message' => trans('admin::app.catalog.products.index.magic-ai-error'),
+            ], 400);
         }
     }
 

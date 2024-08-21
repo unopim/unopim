@@ -76,7 +76,7 @@ class DataGridExport implements FromGenerator, WithCustomCsvSettings
     public function getCsvSettings(): array
     {
         return [
-            'delimiter' => ';',
+            'delimiter' => ',',
         ];
     }
 }

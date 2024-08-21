@@ -12,7 +12,7 @@
         id="v-datagrid-template"
     >
         <div>
-            
+            <x-admin::history.toolbar />
             <div class="flex mt-4">
                 <x-admin::history.table :isMultiRow="$isMultiRow">
                     <template #header>

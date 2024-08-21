@@ -130,7 +130,7 @@
                                 >
                                     <button
                                         class="flex justify-center items-center w-9 h-9 bg-violet-400 rounded-full text-sm text-white font-semibold cursor-pointer leading-6 transition-all hover:bg-violet-700 focus:bg-violet-700"
-                                        v-text="record.user_name[0].toUpperCase()"
+                                        v-text="record.user_name[0]?.toUpperCase()"
                                     >
                                     </button>
                                 </div>

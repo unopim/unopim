@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Kalnoy\Nestedset\NodeTrait;
 use Shetabit\Visitor\Traits\Visitable;
 use Webkul\Category\Contracts\Category as CategoryContract;
@@ -17,7 +16,6 @@ use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
 use Webkul\HistoryControl\Presenters\JsonDataPresenter;
 use Webkul\HistoryControl\Traits\HistoryTrait;
-use Webkul\Product\Models\ProductProxy;
 
 class Category extends Model implements CategoryContract, HistoryContract, PresentableHistoryInterface
 {
@@ -60,14 +58,6 @@ class Category extends Model implements CategoryContract, HistoryContract, Prese
      * @var array
      */
     protected $appends = ['name'];
-
-    /**
-     * The products that belong to the category.
-     */
-    public function products(): BelongsToMany
-    {
-        return $this->belongsToMany(ProductProxy::modelClass(), 'product_categories');
-    }
 
     /**
      * Use fallback for category.

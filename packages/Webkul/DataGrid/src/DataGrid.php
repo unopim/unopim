@@ -365,7 +365,7 @@ abstract class DataGrid
      */
     public function setExportFile($records, $format = 'csv')
     {
-        $this->exportFile = Excel::download(new DataGridExport($records), Str::random(36).'.'.$format);
+        $this->exportFile = Excel::download(new DataGridExport($records), $this->getExportFileName().'.'.$format);
     }
 
     /**
@@ -494,5 +494,13 @@ abstract class DataGrid
         }
 
         return response()->json($this->formatData());
+    }
+
+    /**
+     * Set File name to be used during quick export
+     */
+    protected function getExportFileName(): string
+    {
+        return Str::random(36);
     }
 }

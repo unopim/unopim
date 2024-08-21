@@ -63,7 +63,7 @@
             <x-slot:content class="!p-0">
                 <div class="flex gap-1.5 items-center px-5 py-2.5 border border-b-gray-300 dark:border-gray-800">
                     <img
-                        src="{{ unopim_asset('images/square-logo.svg')  }}"
+                        src="{{ url('cache/logo/unopim.png') }}"
                         width="24"
                         height="24"
                     />

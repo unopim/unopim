@@ -157,6 +157,12 @@ class UserController extends Controller
             ], 400);
         }
 
+        if ($id == auth('admin')->user()->id) {
+            return new JsonResponse([
+                'message' => trans('admin::app.settings.users.current-user-delete-error'),
+            ], 400);
+        }
+
         try {
             Event::dispatch('user.admin.delete.before', $id);
 
