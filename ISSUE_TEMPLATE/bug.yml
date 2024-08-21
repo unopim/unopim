@@ -1,0 +1,84 @@
+name: 🐛 Bug report
+description: Report a general issue.
+labels: ['Bug']
+
+body:
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Terms
+      options:
+        - label: Before you open this issue, I have checked if the issue has already been reported.
+          required: true
+
+  # Input box
+
+  - type: input
+    id: versioninput
+    attributes:
+      label: UnoPim Version(s) affected
+      description: Please enter the UnoPim version(s) affected by this issue.
+      placeholder: 'x.y.z'
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Issue Description
+      description: Provide a more detailed introduction to the issue itself.
+    validations:
+      required: true
+
+  - type: textarea
+    id: precon
+    attributes:
+      label: Preconditions
+      description: Please provide as much detailed information about your environment as possible.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: It is important to provide a set of clear steps to reproduce this bug. If relevant, please include code samples.
+      value: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Result
+      description: A clear and concise description of what should happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Result
+      description: A clear and concise description of what happens instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: Please add screenshots if applicable.
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here.
+    validations:
+      required: false
