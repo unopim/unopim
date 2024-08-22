@@ -1,5 +1,4 @@
-## How to contribute to Bagisto
-
+## How to contribute to Unopim
 
 ### **Bug Reporting**
 
