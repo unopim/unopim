@@ -36,7 +36,7 @@ class JsonDataPresenter implements HistoryPresenterInterface
             if (isset($newArray['common'][$key])) {
                 $newValue = $newArray['common'][$key];
 
-                if ($oldValue !== $newValue) {
+                if ($oldValue != $newValue) {
                     $removed[$key] = $oldValue;
                     $updated[$key] = $newValue;
                 }

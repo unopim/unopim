@@ -45,4 +45,14 @@ class ChannelTranslation extends Model implements ChannelTranslationContract, Hi
     {
         return ChannelTranslationFactory::new();
     }
+
+    /**
+     * Id used for creating version for history
+     *
+     * {@inheritdoc}
+     */
+    public function getPrimaryModelIdForHistory(): int
+    {
+        return $this->channel_id;
+    }
 }

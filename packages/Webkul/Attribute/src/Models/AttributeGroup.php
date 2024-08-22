@@ -3,12 +3,12 @@
 namespace Webkul\Attribute\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Webkul\Attribute\Contracts\AttributeGroup as AttributeGroupContract;
 use Webkul\Core\Eloquent\TranslatableModel;
+use Webkul\HistoryControl\Contracts\HistoryAuditable;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 
-class AttributeGroup extends TranslatableModel implements AttributeGroupContract, AuditableContract
+class AttributeGroup extends TranslatableModel implements AttributeGroupContract, HistoryAuditable
 {
     use HasFactory;
     use HistoryTrait;

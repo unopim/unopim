@@ -23,4 +23,14 @@ class AttributeOptionTranslation extends Model implements AttributeOptionTransla
     protected $historyTranslatableFields = [
         'label' => 'Option Label',
     ];
+
+    /**
+     * Id used for creating version for history
+     *
+     * {@inheritdoc}
+     */
+    public function getPrimaryModelIdForHistory(): int
+    {
+        return $this->attribute_option_id;
+    }
 }

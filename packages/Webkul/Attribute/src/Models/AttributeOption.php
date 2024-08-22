@@ -77,4 +77,14 @@ class AttributeOption extends TranslatableModel implements AttributeOptionContra
     {
         return AttributeOptionFactory::new();
     }
+
+    /**
+     * Id used for creating version for history
+     *
+     * {@inheritdoc}
+     */
+    public function getPrimaryModelIdForHistory(): int
+    {
+        return $this->attribute_id;
+    }
 }

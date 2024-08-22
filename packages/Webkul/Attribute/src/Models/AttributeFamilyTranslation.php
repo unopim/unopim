@@ -3,11 +3,11 @@
 namespace Webkul\Attribute\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Webkul\Attribute\Contracts\AttributeFamilyTranslation as AttributeFamilyTranslationContract;
+use Webkul\HistoryControl\Contracts\HistoryAuditable;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 
-class AttributeFamilyTranslation extends Model implements AttributeFamilyTranslationContract, AuditableContract
+class AttributeFamilyTranslation extends Model implements AttributeFamilyTranslationContract, HistoryAuditable
 {
     use HistoryTrait;
 
@@ -23,4 +23,14 @@ class AttributeFamilyTranslation extends Model implements AttributeFamilyTransla
     ];
 
     protected $fillable = ['name'];
+
+    /**
+     * Id used for creating version for history
+     *
+     * {@inheritdoc}
+     */
+    public function getPrimaryModelIdForHistory(): int
+    {
+        return $this->attribute_family_id;
+    }
 }

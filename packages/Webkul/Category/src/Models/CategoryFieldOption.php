@@ -52,4 +52,14 @@ class CategoryFieldOption extends TranslatableModel implements CategoryFieldOpti
     {
         return CategoryFieldOptionFactory::new();
     }
+
+    /**
+     * Id used for creating version for history
+     *
+     * {@inheritdoc}
+     */
+    public function getPrimaryModelIdForHistory(): int
+    {
+        return $this->category_field_id;
+    }
 }

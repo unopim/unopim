@@ -64,4 +64,14 @@ class AttributeFamilyGroupMapping extends Model implements AttributeFamilyGroupM
             'id'     => AttributeFamilyPresenter::class,
         ];
     }
+
+    /**
+     * Id used for creating version for history
+     *
+     * {@inheritdoc}
+     */
+    public function getPrimaryModelIdForHistory(): int
+    {
+        return $this->attribute_family_id;
+    }
 }

@@ -30,4 +30,14 @@ class CategoryFieldOptionTranslation extends Model implements CategoryFieldOptio
         'category_field_option_id',
         'id',
     ];
+
+    /**
+     * Id used for creating version for history
+     *
+     * {@inheritdoc}
+     */
+    public function getPrimaryModelIdForHistory(): int
+    {
+        return $this->category_field_option_id;
+    }
 }

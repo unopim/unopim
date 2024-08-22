@@ -53,4 +53,14 @@ trait HistoryTrait
     {
         return $this->historyTags;
     }
+
+    /**
+     * Id used for creating version for history
+     *
+     * {@inheritdoc}
+     */
+    public function getPrimaryModelIdForHistory(): int
+    {
+        return $this->id;
+    }
 }

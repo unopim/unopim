@@ -46,6 +46,7 @@ return [
         'ip_address' => OwenIt\Auditing\Resolvers\IpAddressResolver::class,
         'user_agent' => OwenIt\Auditing\Resolvers\UserAgentResolver::class,
         'url'        => OwenIt\Auditing\Resolvers\UrlResolver::class,
+        'history_id' => Webkul\HistoryControl\Resolvers\PrimaryIdResolver::class,
     ],
 
     /*
@@ -182,5 +183,5 @@ return [
     |
     */
 
-    'console' => false,
+    'console' => true,
 ];

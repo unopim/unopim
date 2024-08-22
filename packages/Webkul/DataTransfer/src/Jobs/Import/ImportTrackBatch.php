@@ -9,6 +9,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Webkul\DataTransfer\Helpers\Import as ImportHelper;
+use Webkul\User\Models\AdminProxy;
 
 class ImportTrackBatch implements ShouldQueue
 {
@@ -42,6 +43,10 @@ class ImportTrackBatch implements ShouldQueue
      */
     public function handle()
     {
+        $user = AdminProxy::find($this->importBatch->user_id);
+
+        auth('admin')->login($user);
+
         $importHelper = app(ImportHelper::class);
         $importHelper->setImport($this->importBatch);
 

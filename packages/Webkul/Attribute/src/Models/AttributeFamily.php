@@ -5,14 +5,14 @@ namespace Webkul\Attribute\Models;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Webkul\Attribute\Contracts\AttributeFamily as AttributeFamilyContract;
 use Webkul\Attribute\Database\Factories\AttributeFamilyFactory;
 use Webkul\Core\Eloquent\TranslatableModel;
+use Webkul\HistoryControl\Contracts\HistoryAuditable;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Product\Models\ProductProxy;
 
-class AttributeFamily extends TranslatableModel implements AttributeFamilyContract, AuditableContract
+class AttributeFamily extends TranslatableModel implements AttributeFamilyContract, HistoryAuditable
 {
     use HasFactory;
     use HistoryTrait;

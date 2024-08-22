@@ -37,10 +37,7 @@ class HistoryDataGrid extends DataGrid
             ->select('his.id', 'his.tags as entity_type', 'his.event', 'admins.name as user', 'his.updated_at', 'his.version_id')
             ->where(function ($query) {
                 $query->where('his.tags', '=', $this->entityName)
-                    ->where(function ($query) {
-                        $query->where('his.url', 'like', "%/edit/$this->entityId")
-                            ->orWhere('his.auditable_id', '=', $this->entityId);
-                    });
+                    ->where('his.history_id', '=', $this->entityId);
             })
             ->groupBy('his.updated_at', 'his.user_id');
 

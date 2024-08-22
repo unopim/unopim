@@ -263,7 +263,7 @@ return [
     ], [
         'key'   => 'settings.locales.create',
         'name'  => 'admin::app.acl.create',
-        'route' => 'admin.settings.locales.create',
+        'route' => 'admin.settings.locales.store',
         'sort'  => 1,
     ], [
         'key'   => 'settings.locales.edit',

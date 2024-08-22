@@ -32,4 +32,14 @@ class AttributeTranslation extends Model implements AttributeTranslationContract
     protected $historyTranslatableFields = [
         'name' => 'Name',
     ];
+
+    /**
+     * Id used for creating version for history
+     *
+     * {@inheritdoc}
+     */
+    public function getPrimaryModelIdForHistory(): int
+    {
+        return $this->attribute_id;
+    }
 }

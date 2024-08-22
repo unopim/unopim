@@ -134,7 +134,7 @@ abstract class AbstractType
      */
     public function create(array $data)
     {
-        $product = $this->productRepository->getModel()->create($data);
+        $product = $this->productRepository->getModel()->fill($data);
 
         $product->values = [self::COMMON_VALUES_KEY => ['sku' => $product->sku]];
 

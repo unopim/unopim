@@ -3,6 +3,7 @@
 namespace Webkul\Core\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Webkul\Category\Models\Category;
 use Webkul\Core\Models\Channel;
 use Webkul\Core\Models\Currency;
 use Webkul\Core\Models\Locale;
@@ -21,8 +22,8 @@ class ChannelFactory extends Factory
      */
     public function configure(): static
     {
-        return $this->hasAttached(Currency::inRandomOrder()->limit(1)->get())
-            ->hasAttached(Locale::inRandomOrder()->limit(1)->get())
+        return $this->hasAttached(Currency::inRandomOrder()->limit(1)->where('status', 1)->get())
+            ->hasAttached(Locale::inRandomOrder()->limit(1)->where('status', 1)->get())
             ->hasTranslations();
     }
 
@@ -35,7 +36,7 @@ class ChannelFactory extends Factory
     {
         return [
             'code'              => $code = $this->faker->unique()->word(),
-            'root_category_id'  => 1,
+            'root_category_id'  => Category::whereIsRoot()->first()->id,
         ];
     }
 }

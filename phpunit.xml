@@ -6,7 +6,6 @@
     colors="true"
 >
     <testsuites>
-        
 
         <!-- Core package testsuites. -->
         <testsuite name="Core Unit Test">
@@ -18,7 +17,13 @@
             <directory suffix="Test.php">./packages/Webkul/DataGrid/tests/Unit</directory>
         </testsuite>
 
-       
+        <testsuite name="User Unit Test">
+            <directory suffix="Test.php">./packages/Webkul/User/tests/Unit</directory>
+        </testsuite>
+
+        <testsuite name="Admin Unit Test">
+            <directory suffix="Test.php">./packages/Webkul/Admin/tests/Unit</directory>
+        </testsuite>
     </testsuites>
 
     <source>

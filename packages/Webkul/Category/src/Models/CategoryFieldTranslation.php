@@ -22,4 +22,14 @@ class CategoryFieldTranslation extends Model implements CategoryFieldTranslation
      * For Multilocale values history to display correctly
      */
     protected $historyTranslatableFields = ['name' => 'Name'];
+
+    /**
+     * Id used for creating version for history
+     *
+     * {@inheritdoc}
+     */
+    public function getPrimaryModelIdForHistory(): int
+    {
+        return $this->category_field_id;
+    }
 }

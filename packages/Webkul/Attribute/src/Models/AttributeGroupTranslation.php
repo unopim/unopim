@@ -3,11 +3,11 @@
 namespace Webkul\Attribute\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Webkul\Attribute\Contracts\AttributeGroupTranslation as AttributeGroupTranslationContract;
+use Webkul\HistoryControl\Contracts\HistoryAuditable;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 
-class AttributeGroupTranslation extends Model implements AttributeGroupTranslationContract, AuditableContract
+class AttributeGroupTranslation extends Model implements AttributeGroupTranslationContract, HistoryAuditable
 {
     use HistoryTrait;
 
@@ -23,4 +23,14 @@ class AttributeGroupTranslation extends Model implements AttributeGroupTranslati
     protected $historyTranslatableFields = [
         'name' => 'Name',
     ];
+
+    /**
+     * Id used for creating version for history
+     *
+     * {@inheritdoc}
+     */
+    public function getPrimaryModelIdForHistory(): int
+    {
+        return $this->attribute_group_id;
+    }
 }

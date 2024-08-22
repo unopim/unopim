@@ -35,10 +35,7 @@ class AuditRepository extends Repository
             )
             ->where('audits.tags', '=', $entityName)
             ->where('audits.version_id', $versionId)
-            ->where(function ($query) use ($id) {
-                $query->where('audits.url', 'like', "%/edit/{$id}")
-                    ->orWhere('audits.auditable_id', '=', $id);
-            });
+            ->where('audits.history_id', $id);
 
         return $versionData->get();
     }

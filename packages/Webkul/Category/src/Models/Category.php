@@ -117,7 +117,7 @@ class Category extends Model implements CategoryContract, HistoryContract, Prese
     }
 
     /**
-     * Get the product that owns the product.
+     * Get the category that is the parent of this category.
      */
     public function parent_category(): BelongsTo
     {
