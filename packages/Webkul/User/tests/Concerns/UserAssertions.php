@@ -2,6 +2,7 @@
 
 namespace Webkul\User\Tests\Concerns;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Webkul\User\Contracts\Admin as AdminContract;
 use Webkul\User\Models\Admin;
@@ -15,16 +16,28 @@ trait UserAssertions
     {
         foreach ($modelWiseAssertions as $modelClassName => $modelAssertions) {
             foreach ($modelAssertions as $assertion) {
-                $this->assertDatabaseHas(app($modelClassName)->getTable(), $assertion);
+                $this->assertDatabaseHas($this->getDbTablePrefix().app($modelClassName)->getTable(), $assertion);
             }
         }
+    }
+
+    /**
+     * Table name with db prefix for usign assertDatabaseHas
+     */
+    public function getFullTableName($className): string
+    {
+        return $this->getDbTablePrefix().app($className)->getTable();
+    }
+
+    public function getDbTablePrefix(): string
+    {
+        return DB::getTablePrefix();
     }
 
     public function loginAsAdmin(?AdminContract $admin = null): AdminContract
     {
         $admin = $admin ?? Admin::factory()->create([
             'password'     => Hash::make('password'),
-            'ui_locale_id' => 1,
         ]);
 
         $this->actingAs($admin, 'admin');

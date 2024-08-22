@@ -37,12 +37,15 @@ it('should create the currency', function () {
 it('should update the currency', function () {
     $this->loginAsAdmin();
 
-    $currency = Currency::factory()->create();
+    $currency = Currency::factory()->create([
+        'code'   => 'DOP',
+        'symbol' => '$',
+    ]);
 
     $response = putJson(route('admin.settings.currencies.update'),
         [
             'id'      => $currency->id,
-            'code'    => $currency->code,
+            'code'    => 'DOP',
             'symbol'  => '$$',
             'decimal' => '',
             'status'  => 0,
@@ -52,6 +55,7 @@ it('should update the currency', function () {
     $response->assertStatus(200);
 
     $this->assertDatabaseHas('currencies', [
+        'id'     => $currency->id,
         'code'   => $currency->code,
         'symbol' => '$$',
     ]);

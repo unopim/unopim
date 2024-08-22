@@ -63,7 +63,7 @@ it('should update a Role', function () {
         'description'     => 'description for the upated role',
     ];
 
-    $response = putJson(route('admin.settings.roles.update', ['id' => 2]), $updated);
+    $response = putJson(route('admin.settings.roles.update', ['id' => $role->id]), $updated);
 
     $this->assertDatabaseHas('roles', [
         'name' => 'demo role',

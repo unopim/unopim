@@ -163,10 +163,9 @@ it('should not update the admin with invalid data', function () {
     $response->assertInvalid();
 });
 
-it('should return an error when updating a non-existing admin', function () {
+it('should return a 404 error when updating a non-existing admin', function () {
     $this->loginAsAdmin();
 
-    // Issue in this test case
     $response = $this->put(route('admin.settings.users.update'), [
         'id'           => 9999,
         'email'        => 'nonexisting@example.com',
@@ -178,7 +177,7 @@ it('should return an error when updating a non-existing admin', function () {
         'password'     => '',
     ]);
 
-    $response->assertOk();
+    $response->assertStatus(404);
 });
 
 it('should not delete the logged in user', function () {

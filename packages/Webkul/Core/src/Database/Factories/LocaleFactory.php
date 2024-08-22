@@ -32,7 +32,7 @@ class LocaleFactory extends Factory
 
         return [
             'code'   => $languageCode,
-            'status' => $this->faker->boolean,
+            'status' => $this->faker->boolean ? 1 : 0,
         ];
     }
 }
