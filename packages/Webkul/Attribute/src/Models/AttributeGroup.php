@@ -2,8 +2,10 @@
 
 namespace Webkul\Attribute\Models;
 
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Webkul\Attribute\Contracts\AttributeGroup as AttributeGroupContract;
+use Webkul\Attribute\Database\Factories\AttributeGroupFactory;
 use Webkul\Core\Eloquent\TranslatableModel;
 use Webkul\HistoryControl\Contracts\HistoryAuditable;
 use Webkul\HistoryControl\Traits\HistoryTrait;
@@ -45,5 +47,13 @@ class AttributeGroup extends TranslatableModel implements AttributeGroupContract
     public function groupMappings()
     {
         return $this->hasMany(AttributeFamilyGroupMappingProxy::modelClass());
+    }
+
+    /**
+     * Create a new factory instance for the model
+     */
+    protected static function newFactory(): Factory
+    {
+        return AttributeGroupFactory::new();
     }
 }

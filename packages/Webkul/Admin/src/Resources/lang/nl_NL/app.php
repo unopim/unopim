@@ -866,8 +866,8 @@ return [
 
                     'status' => [
                         'title'    => 'Toestand',
-                        'active'   => 'Actief',
-                        'inactive' => 'Inactief',
+                        'active'   => 'Inschakelen',
+                        'inactive' => 'Uitzetten',
                     ],
                 ],
 
@@ -918,8 +918,8 @@ return [
 
                     'status' => [
                         'title'    => 'Toestand',
-                        'active'   => 'Actief',
-                        'inactive' => 'Inactief',
+                        'active'   => 'Inschakelen',
+                        'inactive' => 'Uitzetten',
                     ],
                 ],
 

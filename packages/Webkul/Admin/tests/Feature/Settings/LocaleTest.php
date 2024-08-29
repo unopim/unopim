@@ -278,3 +278,74 @@ it('should not disable a locale linked to a user through mass update', function 
         'status' => 1,
     ]);
 });
+
+it('should delete locales through mass delete', function () {
+    $this->loginAsAdmin();
+
+    $localeIds = Locale::where('status', 0)->limit(4)->pluck('id')->toArray();
+
+    $this->post(route('admin.settings.locales.mass_delete'), [
+        'indices' => $localeIds,
+    ])
+        ->assertOk()
+        ->assertJsonFragment(['message' => trans('admin::app.settings.locales.index.delete-success')]);
+
+    $this->assertTrue(Locale::whereIn('id', $localeIds)->count() == 0);
+});
+
+it('should not delete a locale linked to a channel through mass delete', function () {
+    $this->loginAsAdmin();
+
+    $channel = Channel::factory()->create();
+
+    $localeId = $channel->locales->first()?->id;
+
+    $this->post(route('admin.settings.locales.mass_delete'), [
+        'indices' => [$localeId],
+    ])
+        ->assertOk()
+        ->assertJsonFragment(['message' => trans('admin::app.settings.locales.index.delete-success')]);
+
+    $this->assertDatabaseHas($this->getFullTableName(Locale::class), [
+        'id'     => $localeId,
+        'status' => 1,
+    ]);
+});
+
+it('should not delete a locale linked to a user through mass delete', function () {
+    $user = $this->loginAsAdmin();
+
+    $localeId = $user->ui_locale_id;
+
+    $this->post(route('admin.settings.locales.mass_delete'), [
+        'indices' => [$localeId],
+    ])
+        ->assertOk()
+        ->assertJsonFragment(['message' => trans('admin::app.settings.locales.index.delete-success')]);
+
+    $this->assertDatabaseHas($this->getFullTableName(Locale::class), [
+        'id'     => $localeId,
+        'status' => 1,
+    ]);
+});
+
+it('should return error when deleting the last locale through mass delete', function () {
+    $user = $this->loginAsAdmin();
+
+    $localeId = $user->ui_locale_id;
+
+    Admin::whereNot('id', $user->id)->delete();
+
+    Locale::whereNot('id', $localeId)->delete();
+
+    $response = $this->post(route('admin.settings.locales.mass_delete'), [
+        'indices' => [$localeId],
+    ])
+        ->assertBadRequest()
+        ->assertJsonFragment(['message' => trans('admin::app.settings.locales.index.last-delete-error')]);
+
+    $this->assertDatabaseHas($this->getFullTableName(Locale::class), [
+        'id'     => $localeId,
+        'status' => 1,
+    ]);
+});

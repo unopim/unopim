@@ -867,8 +867,8 @@ return [
 
                     'status' => [
                         'title'    => 'Statut',
-                        'active'   => 'Active',
-                        'inactive' => 'Inactive',
+                        'active'   => 'Activer',
+                        'inactive' => 'Désactiver',
                     ],
                 ],
 
@@ -919,8 +919,8 @@ return [
 
                     'status' => [
                         'title'    => 'Statut',
-                        'active'   => 'Active',
-                        'inactive' => 'Inactive',
+                        'active'   => 'Activer',
+                        'inactive' => 'Désactiver',
                     ],
                 ],
 

@@ -4,6 +4,7 @@ namespace Webkul\Category\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Webkul\Category\Models\CategoryField;
+use Webkul\Category\Models\CategoryFieldOption;
 
 class CategoryFieldFactory extends Factory
 {
@@ -45,15 +46,16 @@ class CategoryFieldFactory extends Factory
         ];
 
         return [
-            'name'                => $this->faker->word,
-            'code'                => $this->faker->regexify('/^[a-zA-Z]+[a-zA-Z0-9_]+$/'),
-            'type'                => array_rand($types),
-            'validation'          => '',
-            'position'            => $this->faker->randomDigit,
-            'is_required'         => false,
-            'is_unique'           => false,
-            'value_per_locale'    => false,
-            'value_per_channel'   => false,
+            'name'             => $this->faker->word,
+            'code'             => $this->faker->regexify('/^[a-zA-Z]+[a-zA-Z0-9_]+$/'),
+            'type'             => array_rand($types),
+            'validation'       => '',
+            'position'         => $this->faker->randomDigit,
+            'is_required'      => false,
+            'is_unique'        => false,
+            'value_per_locale' => false,
+            'section'          => $this->faker->randomElement(['left', 'right']),
+            'status'           => $this->faker->boolean ? 1 : 0,
         ];
     }
 
@@ -108,6 +110,18 @@ class CategoryFieldFactory extends Factory
             return [
                 'is_unique' => true,
             ];
+        });
+    }
+
+    /**
+     * Configure the model
+     */
+    public function configure()
+    {
+        return $this->afterCreating(function (CategoryField $field) {
+            if (in_array($field->type, ['select', 'multiselect', 'checkbox'])) {
+                CategoryFieldOption::factory()->count(2)->create(['category_field_id' => $field->id]);
+            }
         });
     }
 }

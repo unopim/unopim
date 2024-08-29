@@ -28,19 +28,15 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            'parent_id' => 1,
+            'code'            => $this->faker->regexify('/^[a-zA-Z]+[a-zA-Z0-9_]+$/'),
+            'parent_id'       => Category::whereIsRoot()->first()->id,
+            'additional_data' => [
+                'locale_specific' => [
+                    core()->getRequestedLocaleCode() => [
+                        'name' => $this->faker->name,
+                    ],
+                ],
+            ],
         ];
-    }
-
-    /**
-     * Handle rtl state
-     */
-    public function rtl(): CategoryFactory
-    {
-        return $this->state(function (array $attributes) {
-            return [
-                'direction' => 'rtl',
-            ];
-        });
     }
 }
