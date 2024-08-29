@@ -17,12 +17,12 @@
             <directory suffix="Test.php">./packages/Webkul/DataGrid/tests/Unit</directory>
         </testsuite>
 
-        <testsuite name="User Unit Test">
-            <directory suffix="Test.php">./packages/Webkul/User/tests/Unit</directory>
+        <testsuite name="User Feature Test">
+            <directory suffix="Test.php">./packages/Webkul/User/tests/Feature</directory>
         </testsuite>
 
-        <testsuite name="Admin Unit Test">
-            <directory suffix="Test.php">./packages/Webkul/Admin/tests/Unit</directory>
+        <testsuite name="Admin Feature Test">
+            <directory suffix="Test.php">./packages/Webkul/Admin/tests/Feature</directory>
         </testsuite>
     </testsuites>
 

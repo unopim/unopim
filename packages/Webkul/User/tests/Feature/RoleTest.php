@@ -1,5 +1,6 @@
 <?php
 
+use Webkul\User\Models\Admin;
 use Webkul\User\Models\Role;
 
 use function Pest\Laravel\get;
@@ -25,7 +26,7 @@ it('should create a Role type ALL', function () {
 
     $response = postJson(route('admin.settings.roles.store'), $role);
 
-    $this->assertDatabaseHas('roles', [
+    $this->assertDatabaseHas($this->getFullTableName(Role::class), [
         'name'            => 'newTests',
         'permission_type' => 'All',
     ]);
@@ -43,12 +44,11 @@ it('should create a Role type CUSTOM', function () {
     ];
 
     // In permission type ,any value is stored but only All and custom should be stored
-    $response = postJson(route('admin.settings.roles.store'), $role);
+    postJson(route('admin.settings.roles.store'), $role);
 
-    $this->assertDatabaseHas('roles', [
+    $this->assertDatabaseHas($this->getFullTableName(Role::class), [
         'name' => 'newTests',
     ]);
-
 });
 
 it('should update a Role', function () {
@@ -61,12 +61,13 @@ it('should update a Role', function () {
         'name'            => 'demo role',
         'permission_type' => 'custom',
         'description'     => 'description for the upated role',
+        'permissions'     => ['admin.users.index', 'admin.users.create'],
     ];
 
-    $response = putJson(route('admin.settings.roles.update', ['id' => $role->id]), $updated);
+    putJson(route('admin.settings.roles.update', ['id' => $role->id]), $updated);
 
-    $this->assertDatabaseHas('roles', [
-        'name' => 'demo role',
+    $this->assertDatabaseHas($this->getFullTableName(Role::class), [
+        'name'        => 'demo role',
     ]);
 });
 
@@ -109,4 +110,34 @@ it('should give validation message when updating a Role without permission type'
     $response = putJson(route('admin.settings.roles.update', ['id' => $role->id]), $updated);
 
     $response->assertJsonValidationErrorFor('permission_type');
+});
+
+it('should delete a Role', function () {
+    $this->loginAsAdmin();
+
+    $role = Role::factory()->create();
+
+    $this->delete(route('admin.settings.roles.delete', ['id' => $role->id]))
+        ->assertJsonFragment(['message' => trans('admin::app.settings.roles.delete-success')]);
+
+    $this->assertDatabaseMissing($this->getFullTableName(Role::class), [
+        'id' => $role->id,
+    ]);
+});
+
+it('should not delete a Role if it is assigned to user', function () {
+    $this->loginAsAdmin();
+
+    $role = Role::factory()->create();
+    $user = Admin::factory()->create(['role_id' => $role->id]);
+
+    $response = $this->delete(route('admin.settings.roles.delete', ['id' => $user->role->id]));
+
+    $this->assertDatabaseHas($this->getFullTableName(Role::class), [
+        'id' => $user->role->id,
+    ]);
+
+    $response->assertJsonFragment([
+        'message' => trans('admin::app.settings.roles.being-used-by', ['name' => $user->name]),
+    ]);
 });

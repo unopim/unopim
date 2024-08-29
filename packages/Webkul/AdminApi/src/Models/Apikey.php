@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Webkul\AdminApi\Contracts\Apikey as ApikeyContract;
-use Webkul\AdminApi\Database\Factories\apiKeyFactory;
+use Webkul\AdminApi\Database\Factories\ApiKeyFactory;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\User\Models\AdminProxy;
@@ -83,7 +83,7 @@ class Apikey extends Model implements ApikeyContract, HistoryContract
      */
     protected static function newFactory(): Factory
     {
-        return apiKeyFactory::new();
+        return ApiKeyFactory::new();
     }
 
     /**

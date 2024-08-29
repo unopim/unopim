@@ -111,6 +111,5 @@ class CategoryFieldRepository extends Repository
     public function queryBuilder()
     {
         return $this->with(['translations']);
-
     }
 }

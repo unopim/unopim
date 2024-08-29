@@ -867,8 +867,8 @@ return [
 
                     'status' => [
                         'title'    => 'ステータス',
-                        'active'   => 'アクティブ',
-                        'inactive' => '非アクティブ',
+                        'active'   => '有効にする',
+                        'inactive' => '無効にする',
                     ],
                 ],
 
@@ -919,8 +919,8 @@ return [
 
                     'status' => [
                         'title'    => 'ステータス',
-                        'active'   => 'アクティブ',
-                        'inactive' => '非アクティブ',
+                        'active'   => '有効にする',
+                        'inactive' => '無効にする',
                     ],
                 ],
 

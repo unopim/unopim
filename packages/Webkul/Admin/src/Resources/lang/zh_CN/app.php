@@ -867,8 +867,8 @@ return [
 
                     'status' => [
                         'title'    => '地位',
-                        'active'   => '积极的',
-                        'inactive' => '不活动',
+                        'active'   => '使能够',
+                        'inactive' => '禁用',
                     ],
                 ],
 
@@ -919,8 +919,8 @@ return [
 
                     'status' => [
                         'title'    => '地位',
-                        'active'   => '积极的',
-                        'inactive' => '不活动',
+                        'active'   => '使能够',
+                        'inactive' => '禁用',
                     ],
                 ],
 

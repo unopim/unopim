@@ -5,7 +5,7 @@ namespace Webkul\AdminApi\Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Webkul\AdminApi\Models\Apikey;
 
-class apiKeyFactory extends Factory
+class ApiKeyFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
