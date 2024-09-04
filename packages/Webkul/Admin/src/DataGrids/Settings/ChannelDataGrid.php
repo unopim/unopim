@@ -50,6 +50,7 @@ class ChannelDataGrid extends DataGrid
 
         return $queryBuilder;
     }
+
     public function prepareColumns()
     {
         $this->addColumn([
