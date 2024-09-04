@@ -170,14 +170,14 @@ class CategoryDataGrid extends DataGrid
         return DB::table(DB::raw("(WITH RECURSIVE tree_view AS (
             SELECT id,
                 parent_id,
-                (CASE WHEN additional_data->'$.locale_specific.".$locales.".name' IS NOT NULL THEN REPLACE(additional_data->'$.locale_specific.".$locales.".name', '\"', '') ELSE CONCAT('[', code, ']') END) as name
+                (CASE WHEN JSON_EXTRACT(additional_data, '$.locale_specific.".$locales.".name') IS NOT NULL THEN REPLACE(JSON_EXTRACT(additional_data, '$.locale_specific.".$locales.".name'), '\"', '') ELSE CONCAT('[', code, ']') END) as name
             FROM ".$tablePrefix."categories
             WHERE parent_id IS NULL
             UNION ALL
 
             SELECT parent.id,
                 parent.parent_id,
-                CONCAT(tree_view.name, ' / ', (CASE WHEN additional_data->'$.locale_specific.".$locales.".name' IS NOT NULL THEN REPLACE(additional_data->'$.locale_specific.".$locales.".name', '\"', '') ELSE CONCAT('[', code, ']') END)) AS name
+                CONCAT(tree_view.name, ' / ', (CASE WHEN JSON_EXTRACT(additional_data, '$.locale_specific.".$locales.".name') IS NOT NULL THEN REPLACE(JSON_EXTRACT(additional_data, '$.locale_specific.".$locales.".name'), '\"', '') ELSE CONCAT('[', code, ']') END)) AS name
             FROM ".$tablePrefix.'categories parent
             JOIN tree_view ON parent.parent_id = tree_view.id
         )
