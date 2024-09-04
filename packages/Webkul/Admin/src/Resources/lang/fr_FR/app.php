@@ -1508,7 +1508,7 @@ return [
 
                 'magic-ai' => [
                     'info'  => 'Définissez les options magiques AI.',
-                    'title' => 'Magie que tu as',
+                    'title' => 'Magic AI',
 
                     'settings' => [
                         'api-key'           => 'clé API',
@@ -1613,7 +1613,7 @@ return [
                 'imports'                  => 'Importations',
                 'exports'                  => 'Exportations',
                 'locales'                  => 'Localités',
-                'magic-ai'                 => 'Magie que tu as',
+                'magic-ai'                 => 'Magic AI',
                 'mode'                     => 'Mode sombre',
                 'products'                 => 'Des produits',
                 'roles'                    => 'Les rôles',
@@ -1835,7 +1835,7 @@ return [
         'import'                   => 'Importer',
         'imports'                  => 'Importations',
         'locales'                  => 'Localités',
-        'magic-ai'                 => 'Magie que tu as',
+        'magic-ai'                 => 'Magic AI',
         'note'                     => 'Note',
         'products'                 => 'Des produits',
         'roles'                    => 'Les rôles',
