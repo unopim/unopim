@@ -17,8 +17,8 @@ class ChannelDataGrid extends DataGrid
         $requestedLocaleCode = core()->getRequestedLocaleCode();
 
         $fallbackLocaleCode = app()->getFallbackLocale();
-        $tableCategories    = DB::table('categories')->select('id', 'code', 'additional_data->locale_specific->' . $requestedLocaleCode . '->name as name');
-        
+        $tableCategories = DB::table('categories')->select('id', 'code', 'additional_data->locale_specific->'.$requestedLocaleCode.'->name as name');
+
         $tablePrefix = DB::getTablePrefix();
 
         $queryBuilder = DB::table('channels')
@@ -50,7 +50,6 @@ class ChannelDataGrid extends DataGrid
 
         return $queryBuilder;
     }
-
     public function prepareColumns()
     {
         $this->addColumn([
