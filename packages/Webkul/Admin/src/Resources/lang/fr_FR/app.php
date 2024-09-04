@@ -52,7 +52,7 @@ return [
 
     'account' => [
         'edit' => [
-            'back-btn'          => 'Dos',
+            'back-btn'          => 'Retour',
             'change-password'   => 'Changer le mot de passe',
             'confirm-password'  => 'Confirmez le mot de passe',
             'current-password'  => 'Mot de passe actuel',
@@ -92,18 +92,18 @@ return [
             'index' => [
                 'already-taken'  => 'Le :name a déjà été pris.',
                 'create-btn'     => 'Créer un produit',
-                'title'          => 'Des produits',
+                'title'          => 'Produits',
                 'magic-ai-error' => 'Veuillez vérifier les informations d\'identification de Magic AI et vous assurer que le bon modèle est sélectionné.',
 
                 'create' => [
-                    'back-btn'                          => 'Dos',
+                    'back-btn'                          => 'Retour',
                     'configurable-attributes'           => 'Attributs configurables',
                     'create-btn'                        => 'Créer un produit',
                     'family'                            => 'Famille',
-                    'save-btn'                          => 'Économiser le produit',
+                    'save-btn'                          => 'Enregistrer le produit',
                     'sku'                               => 'Sku',
                     'title'                             => 'Créer un nouveau produit',
-                    'type'                              => 'Taper',
+                    'type'                              => 'Type',
                     'not-config-family-error'           => 'Cette famille n\'a pas d\'attributs configurables',
                     'not-config-super-attributes-error' => 'Ce super attributs avec la valeur ":super_attributes" n\'a pas pu être trouvé',
                     'sku-exists-error'                  => 'Le sku avec valeur ":sku" existe déjà',
@@ -134,7 +134,7 @@ return [
                     'sku'                           => 'Sku',
                     'sku-value'                     => 'SKU - :sku',
                     'status'                        => 'Statut',
-                    'type'                          => 'Taper',
+                    'type'                          => 'Type',
                     'update-status'                 => 'État de mise à jour',
                     'parent'                        => 'Parent',
                     'parent-identifier'             => 'Parent : :sku',
@@ -144,7 +144,7 @@ return [
             'edit' => [
                 'preview'  => 'Aperçu',
                 'remove'   => 'Retirer',
-                'save-btn' => 'Économiser le produit',
+                'save-btn' => 'Enregistrer le produit',
                 'title'    => 'Modifier le produit',
 
                 'categories' => [
@@ -275,7 +275,7 @@ return [
         'attributes' => [
             'index' => [
                 'create-btn' => 'Créer un attribut',
-                'title'      => 'Les attributs',
+                'title'      => 'Attributs',
 
                 'datagrid' => [
                     'channel-based'       => 'Basé sur le canal',
@@ -283,12 +283,12 @@ return [
                     'created-at'          => 'Créé à',
                     'delete'              => 'Supprimer',
                     'edit'                => 'Modifier',
-                    'id'                  => 'IDENTIFIANT',
+                    'id'                  => 'Identifiant',
                     'locale-based'        => 'Basé sur les paramètres régionaux',
                     'mass-delete-success' => 'Attribut sélectionné supprimé avec succès',
                     'name'                => 'Nom',
                     'required'            => 'Requis',
-                    'type'                => 'Taper',
+                    'type'                => 'Type',
                     'unique'              => 'Unique',
                     'delete-failed'       => 'Cet attribut ne peut pas être supprimé.',
                     'mass-delete-failed'  => 'Les attributs sélectionnés ne peuvent pas être supprimés.',
@@ -302,7 +302,7 @@ return [
                 'add-row'               => 'Ajouter une rangée',
                 'admin'                 => 'Administrer',
                 'admin-name'            => 'Nom d\'administration',
-                'back-btn'              => 'Dos',
+                'back-btn'              => 'Retour',
                 'boolean'               => 'Boolean',
                 'checkbox'              => 'Cocher',
                 'code'                  => 'Code',
@@ -341,7 +341,7 @@ return [
                 'text'                  => 'Texte',
                 'textarea'              => 'Textarea',
                 'title'                 => 'Ajouter un attribut',
-                'type'                  => 'Taper',
+                'type'                  => 'Type',
                 'url'                   => 'URL',
                 'use-in-flat'           => 'Créer dans la table plate du produit',
                 'validations'           => 'Validation',
@@ -367,7 +367,7 @@ return [
                 'add-row'               => 'Ajouter une rangée',
                 'admin'                 => 'Administrer',
                 'admin-name'            => 'Nom d\'administration',
-                'back-btn'              => 'Dos',
+                'back-btn'              => 'Retour',
                 'boolean'               => 'Boolean',
                 'checkbox'              => 'Cocher',
                 'code'                  => 'Code',
@@ -406,7 +406,7 @@ return [
                 'text'                  => 'Texte',
                 'textarea'              => 'Textarea',
                 'title'                 => 'Modifier l\'attribut',
-                'type'                  => 'Taper',
+                'type'                  => 'Type',
                 'url'                   => 'URL',
                 'use-in-flat'           => 'Créer dans la table plate du produit',
                 'validations'           => 'Validation',
@@ -443,14 +443,14 @@ return [
         'attribute-groups' => [
             'index' => [
                 'create-btn' => 'Créer un groupe d\'attributs',
-                'title'      => 'Groupes d\'attribut',
+                'title'      => 'Groupes d\'attributs',
 
                 'datagrid' => [
                     'code'                => 'Code',
                     'delete'              => 'Supprimer',
                     'mass-delete-success' => 'Groupe d\'attributs sélectionné supprimé avec succès',
                     'edit'                => 'Modifier',
-                    'id'                  => 'IDENTIFIANT',
+                    'id'                  => 'Identifiant',
                     'inactive'            => 'Inactive',
                     'name'                => 'Nom',
                     'position'            => 'Position',
@@ -461,7 +461,7 @@ return [
             'create' => [
                 'title'    => 'Ajouter un groupe d\'attributs',
                 'save-btn' => 'SAVE GROUP ATTRIBLE',
-                'back-btn' => 'Dos',
+                'back-btn' => 'Retour',
                 'general'  => 'Général',
                 'code'     => 'Code',
                 'label'    => 'Étiquette',
@@ -469,7 +469,7 @@ return [
 
             'edit' => [
                 'title'    => 'EDIT GROUPE D\'ATTRIBUT',
-                'back-btn' => 'Dos',
+                'back-btn' => 'Retour',
                 'save-btn' => 'SAVE GROUP ATTRIBLE',
                 'general'  => 'Général',
                 'code'     => 'Code',
@@ -496,7 +496,7 @@ return [
                     'delete'         => 'Supprimer',
                     'delete-success' => 'Sélectionné :resource a été supprimée avec succès',
                     'edit'           => 'Modifier',
-                    'id'             => 'IDENTIFIANT',
+                    'id'             => 'Identifiant',
                     'inactive'       => 'Inactive',
                     'name'           => 'Afficher un nom',
                     'no-of-products' => 'Nombre de produits',
@@ -507,7 +507,7 @@ return [
             ],
 
             'create' => [
-                'back-btn'            => 'Dos',
+                'back-btn'            => 'Retour',
                 'code'                => 'Code',
                 'general'             => 'Général',
                 'meta-description'    => 'Meta Description',
@@ -528,7 +528,7 @@ return [
             ],
 
             'edit' => [
-                'back-btn'               => 'Dos',
+                'back-btn'               => 'Retour',
                 'code'                   => 'Code',
                 'display-mode'           => 'Mode d\'affichage',
                 'enter-position'         => 'Entrer la position',
@@ -571,12 +571,12 @@ return [
                     'created-at'          => 'Créé à',
                     'delete'              => 'Supprimer',
                     'edit'                => 'Modifier',
-                    'id'                  => 'IDENTIFIANT',
+                    'id'                  => 'Identifiant',
                     'locale-based'        => 'Basé sur les paramètres régionaux',
                     'mass-delete-success' => 'Champ de catégorie sélectionné supprimé avec succès',
                     'name'                => 'Nom',
                     'required'            => 'Requis',
-                    'type'                => 'Taper',
+                    'type'                => 'Type',
                     'unique'              => 'Unique',
                     'disable'             => 'Désactiver',
                     'active'              => 'Activer',
@@ -598,7 +598,7 @@ return [
                 'add-row'               => 'Ajouter une rangée',
                 'admin'                 => 'Administrer',
                 'admin-name'            => 'Nom d\'administration',
-                'back-btn'              => 'Dos',
+                'back-btn'              => 'Retour',
                 'boolean'               => 'Boolean',
                 'checkbox'              => 'Cocher',
                 'code'                  => 'Code',
@@ -632,7 +632,7 @@ return [
                 'text'                  => 'Texte',
                 'textarea'              => 'Textarea',
                 'title'                 => 'Ajouter un champ de catégorie',
-                'type'                  => 'Taper',
+                'type'                  => 'Type',
                 'url'                   => 'URL',
                 'use-in-flat'           => 'Créer dans la table plate du produit',
                 'validations'           => 'Validation',
@@ -662,7 +662,7 @@ return [
                 'add-row'               => 'Ajouter une rangée',
                 'admin'                 => 'Administrer',
                 'admin-name'            => 'Nom d\'administration',
-                'back-btn'              => 'Dos',
+                'back-btn'              => 'Retour',
                 'boolean'               => 'Boolean',
                 'checkbox'              => 'Cocher',
                 'code'                  => 'Code',
@@ -697,7 +697,7 @@ return [
                 'text'                  => 'Texte',
                 'textarea'              => 'Textarea',
                 'title'                 => 'Champ de catégorie d\'édition',
-                'type'                  => 'Taper',
+                'type'                  => 'Type',
                 'url'                   => 'URL',
                 'use-in-flat'           => 'Créer dans la table plate du produit',
                 'validations'           => 'Validation',
@@ -744,7 +744,7 @@ return [
                     'delete-success' => 'Sélectionné :resource a été supprimée avec succès',
                     'edit'           => 'Modifier',
                     'copy'           => 'Copie',
-                    'id'             => 'IDENTIFIANT',
+                    'id'             => 'Identifiant',
                     'method-error'   => 'Erreur!Mauvaise méthode détectée, veuillez vérifier la configuration de l\'action de masse',
                     'name'           => 'Nom',
                     'no-resource'    => 'La ressource prévue pour l\'insuffisance pour l\'action',
@@ -757,7 +757,7 @@ return [
                 'assign-group-btn'                 => 'Attribuer un groupe d\'attributs',
                 'assign-group-title'               => 'Assignez le groupe d\'attributs',
                 'assign-group-btn'                 => 'Assignez le groupe d\'attributs',
-                'back-btn'                         => 'Dos',
+                'back-btn'                         => 'Retour',
                 'code'                             => 'Code',
                 'label'                            => 'Étiquette',
                 'column'                           => 'Colonne',
@@ -789,7 +789,7 @@ return [
                 'assign-group-btn'                 => 'Attribuer un groupe d\'attributs',
                 'assign-group-title'               => 'Attribuer un groupe d\'attributs',
                 'assign-group-btn'                 => 'Attribuer un groupe d\'attributs',
-                'back-btn'                         => 'Dos',
+                'back-btn'                         => 'Retour',
                 'code'                             => 'Code',
                 'label'                            => 'Étiquette',
                 'column'                           => 'Colonne',
@@ -803,7 +803,7 @@ return [
                 'group-contains-system-attributes' => 'Ce groupe contient des attributs système.Déplacez d\'abord les attributs du système à un autre groupe et réessayez.',
                 'group-name-already-exists'        => 'Un nom de groupe d\'attribut existe déjà.',
                 'groups'                           => 'Groupes',
-                'attribute-groups'                 => 'Groupes d\'attribut',
+                'attribute-groups'                 => 'Groupes d\'attributs',
                 'groups-info'                      => 'Gérer les groupes familiaux d\'attribut',
                 'main-column'                      => 'Colonne principale',
                 'name'                             => 'Nom',
@@ -859,7 +859,7 @@ return [
                     'delete'      => 'Supprimer',
                     'direction'   => 'Direction',
                     'edit'        => 'Modifier',
-                    'id'          => 'IDENTIFIANT',
+                    'id'          => 'Identifiant',
                     'ltr'         => 'LTR',
                     'name'        => 'Afficher un nom',
                     'rtl'         => 'Rtl',
@@ -909,7 +909,7 @@ return [
                     'code'           => 'Code',
                     'delete'         => 'Supprimer',
                     'edit'           => 'Modifier',
-                    'id'             => 'IDENTIFIANT',
+                    'id'             => 'Identifiant',
                     'method-error'   => 'Erreur!Mauvaise méthode détectée, veuillez vérifier la configuration de l\'action de masse',
                     'name'           => 'Afficher un nom',
                     'no-resource'    => 'La ressource prévue pour l\'insuffisance pour l\'action',
@@ -955,16 +955,16 @@ return [
                 'index'             => [
                     'title'        => 'Tracker d\'emploi',
                     'datagrid'     => [
-                        'id'                   => 'IDENTIFIANT',
+                        'id'                   => 'Identifiant',
                         'job_code'             => 'Emploi',
-                        'type'                 => 'Taper',
+                        'type'                 => 'Type',
                         'job_type'             => 'Type d\'emploi',
                         'state'                => 'État',
                         'processed_rows_count' => 'Lignes transformées',
                         'invalid_rows_count'   => 'Lignes non valides',
                         'started_at'           => 'Commencé à',
                         'completed_at'         => 'Terminé à',
-                        'user'                 => 'User',
+                        'user'                 => 'Utilisateur',
                         'created_at'           => 'Créé à',
                         'updated_at'           => 'Mis à jour à',
 
@@ -984,7 +984,7 @@ return [
                 ],
 
                 'import'            => [
-                    'back-btn'                => 'Dos',
+                    'back-btn'                => 'Retour',
                     'completed-batches'       => 'Total des lots terminés:',
                     'download-error-report'   => 'Télécharger le rapport complet',
                     'edit-btn'                => 'Modifier',
@@ -1035,7 +1035,7 @@ return [
                     'action'              => 'Action',
                     'allowed-errors'      => 'Erreurs autorisées',
                     'allowed-file-types'  => 'Types de fichiers autorisés (CSV, XLSX, XLS)',
-                    'back-btn'            => 'Dos',
+                    'back-btn'            => 'Retour',
                     'create-update'       => 'Créer / mettre à jour',
                     'delete'              => 'Supprimer',
                     'media'               => 'Fichier / images',
@@ -1057,7 +1057,7 @@ return [
                     'skip-errors'         => 'Parcourir les erreurs',
                     'stop-on-errors'      => 'S\'arrêter sur les erreurs',
                     'title'               => 'Créer une importation',
-                    'type'                => 'Taper',
+                    'type'                => 'Type',
                     'validation-strategy' => 'Stratégie de validation',
                 ],
 
@@ -1066,7 +1066,7 @@ return [
                     'action'              => 'Action',
                     'allowed-errors'      => 'Erreurs autorisées',
                     'allowed-file-types'  => 'Types de fichiers autorisés (CSV, XLSX, XLS)',
-                    'back-btn'            => 'Dos',
+                    'back-btn'            => 'Retour',
                     'create-update'       => 'Créer / mettre à jour',
                     'delete'              => 'Supprimer',
                     'download-sample'     => 'Télécharger un exemple',
@@ -1084,7 +1084,7 @@ return [
                     'skip-errors'         => 'Parcourir les erreurs',
                     'stop-on-errors'      => 'S\'arrêter sur les erreurs',
                     'title'               => 'Modifier l\'importation',
-                    'type'                => 'Taper',
+                    'type'                => 'Type',
                     'validation-strategy' => 'Stratégie de validation',
                 ],
 
@@ -1094,7 +1094,7 @@ return [
 
                 'index'             => [
                     'button-title' => 'Créer une importation',
-                    'title'        => 'Importations',
+                    'title'        => 'Imports',
 
                     'datagrid' => [
                         'actions'               => 'Actions',
@@ -1104,10 +1104,10 @@ return [
                         'deleted'               => 'Supprimé',
                         'edit'                  => 'Modifier',
                         'error-file'            => 'Fichier d\'erreur',
-                        'id'                    => 'IDENTIFIANT',
+                        'id'                    => 'Identifiant',
                         'import'                => 'Importer',
                         'code'                  => 'Code',
-                        'type'                  => 'Taper',
+                        'type'                  => 'Type',
                         'action'                => 'Action',
                         'started-at'            => 'Commencé à',
                         'state'                 => 'État',
@@ -1119,7 +1119,7 @@ return [
                 ],
 
                 'import'            => [
-                    'back-btn'                => 'Dos',
+                    'back-btn'                => 'Retour',
                     'completed-batches'       => 'Total des lots terminés:',
                     'download-error-report'   => 'Télécharger le rapport complet',
                     'edit-btn'                => 'Modifier',
@@ -1161,7 +1161,7 @@ return [
                     'code'                => 'Code',
                     'action'              => 'Action',
                     'allowed-errors'      => 'Erreurs autorisées',
-                    'back-btn'            => 'Dos',
+                    'back-btn'            => 'Retour',
                     'create-update'       => 'Créer / mettre à jour',
                     'delete'              => 'Supprimer',
                     'media'               => 'Fichier / images',
@@ -1182,14 +1182,14 @@ return [
                     'skip-errors'         => 'Parcourir les erreurs',
                     'stop-on-errors'      => 'S\'arrêter sur les erreurs',
                     'title'               => 'Créer des exportations',
-                    'type'                => 'Taper',
+                    'type'                => 'Type',
                     'validation-strategy' => 'Stratégie de validation',
                 ],
 
                 'edit'              => [
                     'action'              => 'Action',
                     'allowed-errors'      => 'Erreurs autorisées',
-                    'back-btn'            => 'Dos',
+                    'back-btn'            => 'Retour',
                     'create-update'       => 'Créer / mettre à jour',
                     'delete'              => 'Supprimer',
                     'download-sample'     => 'Télécharger un exemple',
@@ -1206,7 +1206,7 @@ return [
                     'skip-errors'         => 'Parcourir les erreurs',
                     'stop-on-errors'      => 'S\'arrêter sur les erreurs',
                     'title'               => 'Modifier l\'exportation',
-                    'type'                => 'Taper',
+                    'type'                => 'Type',
                     'validation-strategy' => 'Stratégie de validation',
                 ],
 
@@ -1216,7 +1216,7 @@ return [
 
                 'index'             => [
                     'button-title' => 'Créer des exportations',
-                    'title'        => 'Exportations',
+                    'title'        => 'Exports',
 
                     'datagrid' => [
                         'actions'               => 'Actions',
@@ -1227,9 +1227,9 @@ return [
                         'edit'                  => 'Modifier',
                         'error-file'            => 'Fichier d\'erreur',
                         'export'                => 'Exporter',
-                        'id'                    => 'IDENTIFIANT',
+                        'id'                    => 'Identifiant',
                         'code'                  => 'Code',
-                        'type'                  => 'Taper',
+                        'type'                  => 'Type',
                         'action'                => 'Action',
                         'started-at'            => 'Commencé à',
                         'state'                 => 'État',
@@ -1241,7 +1241,7 @@ return [
                 ],
 
                 'export'            => [
-                    'back-btn'                => 'Dos',
+                    'back-btn'                => 'Retour',
                     'completed-batches'       => 'Total des lots terminés:',
                     'download-error-report'   => 'Télécharger le rapport complet',
                     'edit-btn'                => 'Modifier',
@@ -1293,7 +1293,7 @@ return [
                     'delete'        => 'Supprimer',
                     'edit'          => 'Modifier',
                     'host-name'     => 'Nom d\'hôte',
-                    'id'            => 'IDENTIFIANT',
+                    'id'            => 'Identifiant',
                     'name'          => 'Nom',
                     'root-category' => 'Catégorie de racines',
                 ],
@@ -1301,7 +1301,7 @@ return [
 
             'create' => [
                 'allowed-ips'             => 'Permis aux ips',
-                'cancel'                  => 'Dos',
+                'cancel'                  => 'Retour',
                 'code'                    => 'Code',
                 'create-success'          => 'Channel a créé avec succès.',
                 'currencies'              => 'Devises',
@@ -1336,7 +1336,7 @@ return [
 
             'edit' => [
                 'allowed-ips'                 => 'Permis aux ips',
-                'back-btn'                    => 'Dos',
+                'back-btn'                    => 'Retour',
                 'code'                        => 'Code',
                 'currencies'                  => 'Devises',
                 'currencies-and-locales'      => 'Devises et lieux',
@@ -1375,8 +1375,8 @@ return [
         'users' => [
             'index' => [
                 'admin' => 'Administrer',
-                'title' => 'Users',
-                'user'  => 'User',
+                'title' => 'Utilisateurs',
+                'user'  => 'Utilisateur',
 
                 'create' => [
                     'confirm-password'  => 'Confirmez le mot de passe',
@@ -1398,7 +1398,7 @@ return [
                     'delete'   => 'Supprimer',
                     'edit'     => 'Modifier',
                     'email'    => 'E-mail',
-                    'id'       => 'IDENTIFIANT',
+                    'id'       => 'Identifiant',
                     'inactive' => 'Inactive',
                     'name'     => 'Nom',
                     'role'     => 'Rôle',
@@ -1412,7 +1412,7 @@ return [
             ],
 
             'edit' => [
-                'back-btn'         => 'Dos',
+                'back-btn'         => 'Retour',
                 'confirm-password' => 'Confirmez le mot de passe',
                 'email'            => 'E-mail',
                 'general'          => 'Général',
@@ -1454,7 +1454,7 @@ return [
             'create' => [
                 'access-control' => 'Contrôle d\'accès',
                 'all'            => 'All',
-                'back-btn'       => 'Dos',
+                'back-btn'       => 'Retour',
                 'custom'         => 'Coutume',
                 'description'    => 'Description',
                 'general'        => 'Général',
@@ -1467,7 +1467,7 @@ return [
             'edit' => [
                 'access-control' => 'Contrôle d\'accès',
                 'all'            => 'All',
-                'back-btn'       => 'Dos',
+                'back-btn'       => 'Retour',
                 'custom'         => 'Coutume',
                 'description'    => 'Description',
                 'general'        => 'Général',
@@ -1508,7 +1508,7 @@ return [
 
                 'magic-ai' => [
                     'info'  => 'Définissez les options magiques AI.',
-                    'title' => 'Magie que tu as',
+                    'title' => 'Magic AI',
 
                     'settings' => [
                         'api-key'           => 'clé API',
@@ -1525,7 +1525,7 @@ return [
         'integrations' => [
             'index' => [
                 'create-btn' => 'Créer',
-                'title'      => 'Intégrations',
+                'title'      => 'Intégration',
 
                 'datagrid' => [
                     'delete'          => 'Supprimer',
@@ -1540,8 +1540,8 @@ return [
 
             'create' => [
                 'access-control' => 'Contrôle d\'accès',
-                'all'            => 'All',
-                'back-btn'       => 'Dos',
+                'all'            => 'Tout',
+                'back-btn'       => 'Retour',
                 'custom'         => 'Coutume',
                 'assign-user'    => 'Affecter l\'utilisateur',
                 'general'        => 'Général',
@@ -1553,14 +1553,14 @@ return [
 
             'edit' => [
                 'access-control' => 'Contrôle d\'accès',
-                'all'            => 'All',
-                'back-btn'       => 'Dos',
+                'all'            => 'Tout',
+                'back-btn'       => 'Retour',
                 'custom'         => 'Coutume',
                 'assign-user'    => 'Affecter l\'utilisateur',
                 'general'        => 'Général',
                 'name'           => 'Nom',
                 'credentials'    => 'Informations d\'identification',
-                'client-id'      => 'identité du client',
+                'client-id'      => 'Id client',
                 'secret-key'     => 'Clef secrète',
                 'generate-btn'   => 'Générer',
                 're-secret-btn'  => 'Re-générer la clé secrète',
@@ -1593,9 +1593,9 @@ return [
             ],
 
             'sidebar' => [
-                'attribute-families'       => 'Attribut les familles',
-                'attribute-groups'         => 'Groupes d\'attribut',
-                'attributes'               => 'Les attributs',
+                'attribute-families'       => 'Familles d\'attributs',
+                'attribute-groups'         => 'Groupes d\'attributs',
+                'attributes'               => 'Attributs',
                 'history'                  => 'Histoire',
                 'edit-section'             => 'Data',
                 'general'                  => 'Général',
@@ -1610,17 +1610,17 @@ return [
                 'data-transfer'            => 'Transfert de données',
                 'groups'                   => 'Groupes',
                 'tracker'                  => 'Tracker d\'emploi',
-                'imports'                  => 'Importations',
-                'exports'                  => 'Exportations',
+                'imports'                  => 'Imports',
+                'exports'                  => 'Exports',
                 'locales'                  => 'Localités',
-                'magic-ai'                 => 'Magie que tu as',
+                'magic-ai'                 => 'Magic AI',
                 'mode'                     => 'Mode sombre',
-                'products'                 => 'Des produits',
+                'products'                 => 'Produits',
                 'roles'                    => 'Les rôles',
                 'settings'                 => 'Paramètres',
                 'themes'                   => 'Thèmes',
-                'users'                    => 'Users',
-                'integrations'             => 'Intégrations',
+                'users'                    => 'Utilisateurs',
+                'integrations'             => 'Intégration',
             ],
         ],
 
@@ -1709,12 +1709,12 @@ return [
                 'title'        => 'Confirmer la suppression',
             ],
             'history' => [
-                'title'             => 'Aperçu de l\'histoire',
+                'title'             => 'Historique',
                 'subtitle'          => 'Passez rapidement en revue vos mises à jour et changements.',
                 'close-btn'         => 'Fermer',
                 'version-label'     => 'Version',
                 'date-time-label'   => 'Date / heure',
-                'user-label'        => 'User',
+                'user-label'        => 'Utilisateur',
                 'name-label'        => 'Clé',
                 'old-value-label'   => 'Valeur ancienne',
                 'new-value-label'   => 'Nouvelle valeur',
@@ -1737,7 +1737,7 @@ return [
         'media' => [
             'images' => [
                 'add-image-btn'     => 'Ajouter une image',
-                'ai-add-image-btn'  => 'Magie que tu as',
+                'ai-add-image-btn'  => 'Magic AI',
                 'ai-btn-info'       => 'Générer une image',
                 'allowed-types'     => 'png, jpeg, jpg',
                 'not-allowed-error' => 'Seuls les fichiers d\'images (.jpeg, .jpg, .png, ..) sont autorisés.',
@@ -1786,7 +1786,7 @@ return [
         ],
 
         'tinymce' => [
-            'ai-btn-tile' => 'Magie que tu as',
+            'ai-btn-tile' => 'Magic AI',
 
             'ai-generation' => [
                 'apply'                  => 'Appliquer',
@@ -1815,9 +1815,9 @@ return [
 
     'acl' => [
         'addresses'                => 'Adresses',
-        'attribute-families'       => 'Attribut les familles',
-        'attribute-groups'         => 'Groupes d\'attribut',
-        'attributes'               => 'Les attributs',
+        'attribute-families'       => 'Familles d\'attributs',
+        'attribute-groups'         => 'Groupes d\'attributs',
+        'attributes'               => 'Attributs',
         'cancel'                   => 'Annuler',
         'catalog'                  => 'Catalogue',
         'categories'               => 'Catégories',
@@ -1833,26 +1833,26 @@ return [
         'edit'                     => 'Modifier',
         'groups'                   => 'Groupes',
         'import'                   => 'Importer',
-        'imports'                  => 'Importations',
+        'imports'                  => 'Imports',
         'locales'                  => 'Localités',
-        'magic-ai'                 => 'Magie que tu as',
+        'magic-ai'                 => 'Magic AI',
         'note'                     => 'Note',
-        'products'                 => 'Des produits',
+        'products'                 => 'Produits',
         'roles'                    => 'Les rôles',
         'sales'                    => 'Ventes',
         'settings'                 => 'Paramètres',
         'themes'                   => 'Thèmes',
         'integration'              => 'L\'intégration',
-        'users'                    => 'Users',
+        'users'                    => 'Utilisateurs',
         'category_fields'          => 'Champs de catégorie',
         'view'                     => 'Voir',
         'history'                  => 'Histoire',
         'restore'                  => 'Restaurer',
-        'integrations'             => 'Intégrations',
+        'integrations'             => 'Intégration',
         'api'                      => 'API',
         'tracker'                  => 'Suivi des tâches',
-        'imports'                  => 'Importations',
-        'exports'                  => 'Exportations',
+        'imports'                  => 'Imports',
+        'exports'                  => 'Exports',
     ],
 
     'errors' => [
@@ -1900,7 +1900,7 @@ return [
     'export' => [
         'csv'        => 'CSV',
         'download'   => 'Télécharger',
-        'export'     => 'Exportation rapide',
+        'export'     => 'Export rapide',
         'no-records' => 'Rien à exporter',
         'xls'        => 'Xls',
         'xlsx'       => 'Xlsx',
