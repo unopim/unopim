@@ -26,29 +26,34 @@ Before you begin, ensure your server meets the following requirements:
 - **Centralized Product Management**  
   Manage all your product data in one place.
 
-- **Data Enrichment**  
-  Enhance your product information with detailed attributes.
+  ![enter image description here](https://raw.githubusercontent.com/unopim/temp-media/main/catalog-management.png)
 
-- **Category Management**  
-  Organize products into categories for easier navigation, with customizable category fields.
 
 - **User Management**  
   Control user access and permissions.
 
+  ![enter image description here](https://raw.githubusercontent.com/unopim/temp-media/main/access-control.png)
+
 - **API Integration**  
   Seamlessly integrate with other systems via RESTful APIs.
+
+  ![enter image description here](https://raw.githubusercontent.com/unopim/temp-media/main/api-integration.png)
 
 - **Localization**  
   Support for multiple languages and locales.
 
+    ![enter image description here](https://raw.githubusercontent.com/unopim/temp-media/main/localization-and-channels.png)
+
 - **Import/Export Functionality**  
   Easily import and export product data using CSV and XLSX formats, with a quick export feature for streamlined data handling.
+
+    ![enter image description here](https://raw.githubusercontent.com/unopim/temp-media/main/data-transfer.png)
 
 - **Magic AI for Product Content Generation**  
   Automatically generate engaging product content using advanced LLM (Large Language Model) technology.
 
-- **Multi-Channel Support**  
-  Manage and distribute your product data across multiple sales channels from a single platform.
+  ![enter image description here](https://raw.githubusercontent.com/unopim/temp-media/main/advanced-features.png)
+
 
 ## Installation
 
