@@ -41,13 +41,13 @@ class ChannelDataGrid extends DataGrid
                 'channels.code',
                 'channels.root_category_id',
                 DB::raw('(CASE WHEN CHAR_LENGTH(TRIM('.$tablePrefix.'requested_channel_translation.name)) < 1 THEN '.$tablePrefix.'fallback_channel_translation.name ELSE '.$tablePrefix.'requested_channel_translation.name END) as translated_name'),
-                DB::raw("(CASE WHEN categories.name IS NOT NULL THEN REPLACE(categories.name, '\"', '') ELSE CONCAT('[', categories.code, ']') END) as translated_category_name")
+                DB::raw('(CASE WHEN '.$tablePrefix.'categories.name IS NOT NULL THEN REPLACE('.$tablePrefix."categories.name, '\"', '') ELSE CONCAT('[', ".$tablePrefix."categories.code, ']') END) as translated_category_name")
             );
 
         $this->addFilter('id', 'channels.id');
         $this->addFilter('code', 'channels.code');
         $this->addFilter('translated_name', 'requested_channel_translation.name');
-        $this->addFilter('translated_category_name', DB::raw('(CASE WHEN '.$tablePrefix."categories.additional_data->'$.locale_specific.".$requestedLocaleCode.".name' IS NOT NULL THEN REPLACE(additional_data->'$.locale_specific.".$requestedLocaleCode.".name', '\"', '') ELSE ".$tablePrefix.'categories.code END)'));
+        $this->addFilter('translated_category_name', DB::raw('CASE WHEN '.$tablePrefix.'categories.name IS NOT NULL THEN REPLACE('.$tablePrefix."categories.name, '\"', '') ELSE CONCAT('[', ".$tablePrefix."categories.code, ']') END"));
 
         return $queryBuilder;
     }
