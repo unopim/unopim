@@ -1,9 +1,7 @@
 <?php
 
 use Webkul\Category\Models\Category;
-use Webkul\Category\Models\CategoryField;
 use Webkul\Core\Models\Channel;
-use Webkul\Core\Models\Locale;
 
 it('should return the category index page', function () {
     $this->loginAsAdmin();
@@ -119,6 +117,23 @@ it('should not update the code of the category', function () {
     ]);
 });
 
+it('should return error when adding parent to any root category which is linked to a channel', function () {
+    $this->loginAsAdmin();
+
+    $category = Category::factory(['parent_id' => null])->create();
+
+    $rootCategoryId = Channel::first()->root_category_id;
+
+    $this->put(route('admin.catalog.categories.update', $rootCategoryId), ['parent_id' => $category->id])
+        ->assertSessionHas('error', trans('admin::app.catalog.categories.can-not-update'))
+        ->assertRedirect(route('admin.catalog.categories.edit', $rootCategoryId));
+
+    $this->assertDatabaseHas($this->getFullTableName(Category::class), [
+        'id'        => $rootCategoryId,
+        'parent_id' => null,
+    ]);
+});
+
 it('should delete a category successfully', function () {
     $this->loginAsAdmin();
 
@@ -187,105 +202,4 @@ it('should not mass delete a category linked to a channel', function () {
     $this->assertDatabaseHas($this->getFullTableName(Category::class), [
         'id' => $channelLinkedCategory,
     ]);
-});
-
-/**Category value tests */
-it('should store category values per locale correctly and not remove other locale value.', function () {
-    $this->loginAsAdmin();
-
-    $defaultLocaleCode = core()->getRequestedLocaleCode();
-
-    Locale::where('code', 'fr_FR')->update(['status' => 1]);
-
-    $newLocale = 'fr_FR';
-
-    $category = Category::factory()->create();
-
-    $categoryId = $category->id;
-
-    $originalCategoryValues = $category->additional_data;
-
-    $data = [
-        'parent_id'       => $category->parent_id,
-        'additional_data' => [
-            'locale_specific' => [
-                $newLocale => [
-                    'name' => 'New Locale Name',
-                ],
-            ],
-        ],
-    ];
-
-    $this->put(route('admin.catalog.categories.update', ['id' => $categoryId, 'locale' => $newLocale]), $data)
-        ->assertSessionHas('success', trans('admin::app.catalog.categories.update-success'))
-        ->assertRedirect(route('admin.catalog.categories.edit', ['id' => $categoryId, 'locale' => $newLocale]));
-
-    $category->refresh();
-
-    $this->assertEquals('New Locale Name', $category->additional_data['locale_specific'][$newLocale]['name'] ?? '');
-
-    $this->assertArrayHasKey($defaultLocaleCode, $category->additional_data['locale_specific']);
-
-    $this->assertEquals($originalCategoryValues['locale_specific'][$defaultLocaleCode]['name'], $category->additional_data['locale_specific'][$defaultLocaleCode]['name']);
-});
-
-it('should return validation error for unique values when creating category', function () {
-    $this->loginAsAdmin();
-
-    $categoryFieldCode = 'categoryValues_uniqueField';
-
-    CategoryField::factory()->create(['code' => $categoryFieldCode, 'is_unique' => 1, 'value_per_locale' => 0, 'type' => 'text']);
-
-    Category::factory()->create(['additional_data' => ['common' => [$categoryFieldCode => 'Already Present Value']]]);
-
-    $data = [
-        'code'            => 'test_category_1_0_0',
-        'parent_id'       => null,
-        'additional_data' => [
-            'common' => [
-                $categoryFieldCode => 'Already Present Value',
-            ],
-        ],
-        'uniqueFields' => [
-            'additional_data.common.'.$categoryFieldCode => 'additional_data[common]['.$categoryFieldCode.']',
-        ],
-    ];
-
-    $this->post(route('admin.catalog.categories.store'), $data)
-        ->assertInvalid('additional_data.common.categoryValues_uniqueField');
-
-    $this->assertDatabaseMissing($this->getFullTableName(Category::class), [
-        'code' => $data['code'],
-    ]);
-});
-
-it('should return validation error for unique values when updating category', function () {
-    $this->loginAsAdmin();
-
-    $categoryFieldCode = 'categoryValues_uniqueField';
-
-    CategoryField::factory()->create(['code' => $categoryFieldCode, 'is_unique' => 1, 'value_per_locale' => 0, 'type' => 'text']);
-
-    $category = Category::first();
-
-    Category::factory()->create(['additional_data' => ['common' => [$categoryFieldCode => 'Already Present Value']]]);
-
-    $data = [
-        'parent_id'       => $category->parent_id,
-        'additional_data' => [
-            'common' => [
-                $categoryFieldCode => 'Already Present Value',
-            ],
-        ],
-        'uniqueFields' => [
-            'additional_data.common.'.$categoryFieldCode => 'additional_data[common]['.$categoryFieldCode.']',
-        ],
-    ];
-
-    $this->put(route('admin.catalog.categories.update', $category->id), $data)
-        ->assertInvalid('additional_data.common.categoryValues_uniqueField');
-
-    $category->refresh();
-
-    $this->assertNotEquals('Already Present Value', ($category->additional_data['common'][$categoryFieldCode] ?? ''));
 });

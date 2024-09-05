@@ -1,5 +1,6 @@
 <?php
 
+use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Attribute\Models\AttributeGroup;
 use Webkul\Core\Models\Locale;
 
@@ -108,5 +109,22 @@ it('should delete the attribute group', function () {
 
     $this->assertDatabaseMissing($this->getFullTableName(AttributeGroup::class), [
         'id' => $attributeGroup->id,
+    ]);
+});
+
+it('should not delete the attribute group if used in families', function () {
+    $this->loginAsAdmin();
+
+    $attributeFamily = AttributeFamily::factory()->create();
+
+    $attributeFamily = AttributeFamily::factory()->linkAttributeGroupToFamily($attributeFamily);
+
+    $attributeGroupId = $attributeFamily->familyGroups()?->first()->id;
+
+    $this->delete(route('admin.catalog.attribute.groups.delete', $attributeGroupId))
+        ->assertJsonPath('message', trans('admin::app.catalog.attribute-groups.attribute-group-error'));
+
+    $this->assertDatabaseHas($this->getFullTableName(AttributeGroup::class), [
+        'id' => $attributeGroupId,
     ]);
 });

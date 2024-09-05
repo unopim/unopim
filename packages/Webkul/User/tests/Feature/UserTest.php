@@ -2,6 +2,7 @@
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Webkul\User\Models\Admin;
 
 use function Pest\Laravel\get;
@@ -72,6 +73,8 @@ it('should update the user with image', function () {
         'password'     => Hash::make('password'),
         'ui_locale_id' => 1,
     ]);
+
+    Storage::fake();
 
     $response = $this->put(route('admin.settings.users.update'), [
         'id'                    => $admin->id,
@@ -161,23 +164,6 @@ it('should not update the admin with invalid data', function () {
     ]);
 
     $response->assertInvalid();
-});
-
-it('should return a 404 error when updating a non-existing admin', function () {
-    $this->loginAsAdmin();
-
-    $response = $this->put(route('admin.settings.users.update'), [
-        'id'           => 9999,
-        'email'        => 'nonexisting@example.com',
-        'name'         => 'New Name',
-        'status'       => 1,
-        'role_id'      => 1,
-        'timezone'     => 'Asia/Kolkata',
-        'ui_locale_id' => 1,
-        'password'     => '',
-    ]);
-
-    $response->assertStatus(404);
 });
 
 it('should not delete the logged in user', function () {

@@ -22,8 +22,8 @@ class ChannelFactory extends Factory
      */
     public function configure(): static
     {
-        return $this->hasAttached(Currency::inRandomOrder()->limit(1)->where('status', 1)->get())
-            ->hasAttached(Locale::inRandomOrder()->limit(1)->where('status', 1)->get())
+        return $this->hasAttached(Currency::inRandomOrder()->limit(2)->where('status', 1)->get())
+            ->hasAttached(Locale::inRandomOrder()->limit(2)->where('status', 1)->get())
             ->hasTranslations();
     }
 

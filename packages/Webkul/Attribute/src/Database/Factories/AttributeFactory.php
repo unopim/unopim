@@ -4,6 +4,7 @@ namespace Webkul\Attribute\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Webkul\Attribute\Models\Attribute;
+use Webkul\Attribute\Models\AttributeOption;
 
 class AttributeFactory extends Factory
 {
@@ -111,6 +112,18 @@ class AttributeFactory extends Factory
             return [
                 'is_unique' => true,
             ];
+        });
+    }
+
+    /**
+     * Configure the model
+     */
+    public function configure()
+    {
+        return $this->afterCreating(function (Attribute $attribute) {
+            if (in_array($attribute->type, ['select', 'multiselect', 'checkbox'])) {
+                AttributeOption::factory()->count(3)->create(['attribute_id' => $attribute->id]);
+            }
         });
     }
 }
