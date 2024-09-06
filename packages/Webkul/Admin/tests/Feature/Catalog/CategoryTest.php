@@ -18,8 +18,30 @@ it('should return the category create page', function () {
         ->assertOk()
         ->assertSeeText(trans('admin::app.catalog.categories.create.title'))
         ->assertSeeText(trans('admin::app.catalog.categories.create.save-btn'))
-        ->assertSeeText(trans('admin::app.catalog.categories.create.save-btn'))
         ->assertSeeText(trans('admin::app.catalog.categories.create.code'));
+});
+
+it('should return the category datagrid', function () {
+    $this->loginAsAdmin();
+
+    $category = Category::factory()->create();
+
+    $response = $this->withHeaders([
+        'X-Requested-With' => 'XMLHttpRequest',
+    ])->json('GET', route('admin.catalog.categories.index'));
+
+    $response->assertStatus(200);
+
+    $data = $response->json();
+
+    $this->assertArrayHasKey('records', $data);
+    $this->assertArrayHasKey('columns', $data);
+    $this->assertNotEmpty($data['records']);
+
+    $this->assertDatabaseHas($this->getFullTableName(Category::class), [
+        'id'   => $data['records'][0]['category_id'],
+        'code' => $data['records'][0]['code'],
+    ]);
 });
 
 it('should create a category successfully', function () {

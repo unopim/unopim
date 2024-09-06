@@ -239,10 +239,6 @@ class UserController extends Controller
 
         $user = $this->adminRepository->find($id);
 
-        if (! $user) {
-            abort(404);
-        }
-
         /**
          * Password check.
          */

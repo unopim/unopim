@@ -24,6 +24,10 @@
         <testsuite name="Admin Feature Test">
             <directory suffix="Test.php">./packages/Webkul/Admin/tests/Feature</directory>
         </testsuite>
+
+        <testsuite name="Api Feature Test">
+            <directory suffix="Test.php">./packages/Webkul/AdminApi/tests/Feature</directory>
+        </testsuite>
     </testsuites>
 
     <source>

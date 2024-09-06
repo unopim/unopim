@@ -15,6 +15,25 @@ it('should return the locale index datagrid page', function () {
         ]);
 });
 
+it('should return the locale datagrid', function () {
+    $this->loginAsAdmin();
+    Locale::factory()->create();
+
+    $response = $this->withHeaders([
+        'X-Requested-With' => 'XMLHttpRequest', ])->json('GET', route('admin.settings.locales.index'));
+
+    $data = $response->json();
+
+    $this->assertArrayHasKey('records', $data);
+    $this->assertArrayHasKey('columns', $data);
+    $this->assertNotEmpty($data['records']);
+
+    $this->assertDatabaseHas($this->getFullTableName(Locale::class), [
+        'id'   => $data['records'][0]['id'],
+        'code' => $data['records'][0]['code'],
+    ]);
+});
+
 it('should create the locale succesfully', function () {
     $this->loginAsAdmin();
 

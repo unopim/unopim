@@ -22,6 +22,28 @@ it('should return validation errors for certain fields when creating', function 
         ->assertInvalid('sku');
 });
 
+it('should return the product datagrid', function () {
+    $this->loginAsAdmin();
+
+    Product::factory()->create();
+
+    $response = $this->withHeaders([
+        'X-Requested-With' => 'XMLHttpRequest',
+    ])->json('GET', route('admin.catalog.products.index'));
+
+    $response->assertStatus(200);
+
+    $data = $response->json();
+
+    $this->assertArrayHasKey('records', $data);
+    $this->assertArrayHasKey('columns', $data);
+    $this->assertNotEmpty($data['records']);
+
+    $this->assertDatabaseHas($this->getFullTableName(Product::class), [
+        'sku' => $data['records'][0]['sku'],
+    ]);
+});
+
 it('should return unique validation for product sku while creating', function () {
     $this->loginAsAdmin();
 

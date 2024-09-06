@@ -33,6 +33,29 @@ it('should create the Attribute', function () {
     $this->assertDatabaseHas($this->getFullTableName(Attribute::class), $attribute);
 });
 
+it('should return the attribute datagrid', function () {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create();
+
+    $response = $this->withHeaders([
+        'X-Requested-With' => 'XMLHttpRequest',
+    ])->json('GET', route('admin.catalog.attributes.index'));
+
+    $response->assertStatus(200);
+
+    $data = $response->json();
+
+    $this->assertArrayHasKey('records', $data);
+    $this->assertArrayHasKey('columns', $data);
+    $this->assertNotEmpty($data['records']);
+
+    $this->assertDatabaseHas($this->getFullTableName(Attribute::class), [
+        'id'   => $data['records'][0]['id'],
+        'code' => $data['records'][0]['code'],
+    ]);
+});
+
 it('should show the create attribute form', function () {
     $this->loginAsAdmin();
 

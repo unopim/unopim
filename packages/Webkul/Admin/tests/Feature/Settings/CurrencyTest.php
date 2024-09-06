@@ -12,7 +12,8 @@ it('should returns the currency index page', function () {
 
     $response = get(route('admin.settings.currencies.index'));
 
-    $response->assertStatus(200);
+    $response->assertStatus(200)
+        ->assertSeeText(trans('admin::app.settings.currencies.index.title'));
 });
 
 it('should create the currency', function () {
@@ -32,6 +33,39 @@ it('should create the currency', function () {
     $this->assertDatabaseHas($this->getFullTableName(Currency::class), [
         'code' => 'DOP',
     ]);
+});
+
+it('should return the currency datagrid', function () {
+    $this->loginAsAdmin();
+    Currency::factory()->create([
+        'code'   => 'DOP',
+        'symbol' => '$',
+    ]);
+
+    $response = $this->withHeaders([
+        'X-Requested-With' => 'XMLHttpRequest', ])->json('GET', route('admin.settings.currencies.index'));
+
+    $data = $response->json();
+
+    $this->assertArrayHasKey('records', $data);
+    $this->assertArrayHasKey('columns', $data);
+    $this->assertNotEmpty($data['records']);
+
+    $this->assertDatabaseHas($this->getFullTableName(Currency::class), [
+        'id'   => $data['records'][0]['id'],
+        'code' => $data['records'][0]['code'],
+    ]);
+});
+
+it('should return the currency create page', function () {
+    $this->loginAsAdmin();
+    $currency = Currency::factory()->create([
+        'code'   => 'DOP',
+        'symbol' => '$',
+    ]);
+
+    $this->get(route('admin.settings.currencies.edit', ['id' => $currency->id]))
+        ->assertOk();
 });
 
 it('should update the currency', function () {

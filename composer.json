@@ -87,7 +87,8 @@
             "Webkul\\Admin\\Tests\\": "packages/Webkul/Admin/tests",
             "Webkul\\Core\\Tests\\": "packages/Webkul/Core/tests",
             "Webkul\\DataGrid\\Tests\\": "packages/Webkul/DataGrid/tests",
-            "Webkul\\User\\Tests\\": "packages/Webkul/User/tests"
+            "Webkul\\User\\Tests\\": "packages/Webkul/User/tests",
+            "Webkul\\AdminApi\\Tests\\": "packages/Webkul/AdminApi/tests"
         }
     },
     "scripts": {
