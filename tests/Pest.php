@@ -13,6 +13,7 @@
 
 uses(Webkul\Core\Tests\CoreTestCase::class)->in('../packages/Webkul/Core/tests');
 uses(Webkul\Admin\Tests\AdminTestCase::class)->in('../packages/Webkul/Admin/tests');
+uses(Webkul\AdminApi\Tests\ApiTestCase::class)->in('../packages/Webkul/AdminApi/tests');
 uses(Webkul\User\Tests\UserTestCase::class)->in('../packages/Webkul/User/tests');
 uses(Webkul\DataGrid\Tests\DataGridTestCase::class)->in('../packages/Webkul/DataGrid/tests');
 

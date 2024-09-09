@@ -32,6 +32,29 @@ it('should create Attribute group', function () {
     $response->assertSessionHas('success');
 });
 
+it('should return the attribute group datagrid', function () {
+    $this->loginAsAdmin();
+
+    $attributegroup = AttributeGroup::factory()->create();
+
+    $response = $this->withHeaders([
+        'X-Requested-With' => 'XMLHttpRequest',
+    ])->json('GET', route('admin.catalog.attribute.groups.index'));
+
+    $response->assertStatus(200);
+
+    $data = $response->json();
+
+    $this->assertArrayHasKey('records', $data);
+    $this->assertArrayHasKey('columns', $data);
+    $this->assertNotEmpty($data['records']);
+
+    $this->assertDatabaseHas($this->getFullTableName(AttributeGroup::class), [
+        'id'   => $data['records'][0]['id'],
+        'code' => $data['records'][0]['code'],
+    ]);
+});
+
 it('should show the create attribute group form', function () {
     $this->loginAsAdmin();
 

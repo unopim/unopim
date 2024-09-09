@@ -21,6 +21,31 @@ it('should return the family create page successfully', function () {
         ->assertSeeText(trans('admin::app.catalog.families.create.title'));
 });
 
+it('should return the attribute family datagrid', function () {
+    $this->loginAsAdmin();
+
+    $attributeFamily = AttributeFamily::factory()->create();
+
+    $response = $this->withHeaders([
+        'Accept'           => 'application/json',
+        'Content-Type'     => 'application/json',
+        'X-Requested-With' => 'XMLHttpRequest',
+    ])->json('GET', route('admin.catalog.families.index'));
+
+    $response->assertStatus(200);
+
+    $data = $response->json();
+
+    $this->assertArrayHasKey('records', $data);
+    $this->assertArrayHasKey('columns', $data);
+    $this->assertNotEmpty($data['records']);
+
+    $this->assertDatabaseHas($this->getFullTableName(AttributeFamily::class), [
+        'id'   => $data['records'][0]['id'],
+        'code' => $data['records'][0]['code'],
+    ]);
+});
+
 it('should return validation error for unique family code', function () {
     $this->loginAsAdmin();
 

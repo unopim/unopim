@@ -21,6 +21,29 @@ it('should show the create category field form', function () {
         ->assertSeeText(trans('admin::app.catalog.category_fields.create.title'));
 });
 
+it('should return the category field datagrid', function () {
+    $this->loginAsAdmin();
+
+    $categoryField = CategoryField::factory()->create();
+
+    $response = $this->withHeaders([
+        'X-Requested-With' => 'XMLHttpRequest',
+    ])->json('GET', route('admin.catalog.category_fields.index'));
+
+    $response->assertStatus(200);
+
+    $data = $response->json();
+
+    $this->assertArrayHasKey('records', $data);
+    $this->assertArrayHasKey('columns', $data);
+    $this->assertNotEmpty($data['records']);
+
+    $this->assertDatabaseHas($this->getFullTableName(CategoryField::class), [
+        'id'   => $categoryField->id,
+        'code' => $categoryField->code,
+    ]);
+});
+
 it('should show validations for code,type,status,position and section fields on creating category field', function () {
     $this->loginAsAdmin();
 

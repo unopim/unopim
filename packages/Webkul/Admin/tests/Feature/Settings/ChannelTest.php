@@ -14,7 +14,8 @@ it('should returns the Channel index page', function () {
 
     $response = get(route('admin.settings.channels.index'));
 
-    $response->assertStatus(200);
+    $response->assertStatus(200)
+        ->assertSeeText(trans('admin::app.settings.channels.index.title'));
 });
 
 it('should returns the Channel edit page', function () {
@@ -24,7 +25,27 @@ it('should returns the Channel edit page', function () {
 
     $response = get(route('admin.settings.channels.edit', ['id' => $demoChannel->id]));
 
-    $response->assertStatus(200);
+    $response->assertStatus(200)
+        ->assertSeeText(trans('admin::app.settings.channels.edit.title'));
+});
+
+it('should return the channel datagrid', function () {
+    $this->loginAsAdmin();
+    Channel::factory()->create();
+
+    $response = $this->withHeaders([
+        'X-Requested-With' => 'XMLHttpRequest', ])->json('GET', route('admin.settings.channels.index'));
+
+    $data = $response->json();
+
+    $this->assertArrayHasKey('records', $data);
+    $this->assertArrayHasKey('columns', $data);
+    $this->assertNotEmpty($data['records']);
+
+    $this->assertDatabaseHas($this->getFullTableName(Channel::class), [
+        'id'   => $data['records'][0]['id'],
+        'code' => $data['records'][0]['code'],
+    ]);
 });
 
 it('should returns the Channel create page', function () {
