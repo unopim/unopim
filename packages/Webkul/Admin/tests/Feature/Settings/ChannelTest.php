@@ -33,8 +33,7 @@ it('should return the channel datagrid', function () {
     $this->loginAsAdmin();
     Channel::factory()->create();
 
-    $response = $this->withHeaders([
-        'X-Requested-With' => 'XMLHttpRequest', ])->json('GET', route('admin.settings.channels.index'));
+    $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest'])->json('GET', route('admin.settings.channels.index'));
 
     $data = $response->json();
 
