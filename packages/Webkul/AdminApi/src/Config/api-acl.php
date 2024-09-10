@@ -50,7 +50,7 @@ return [
     [
         'key'   => 'api.catalog',
         'name'  => 'admin::app.acl.catalog',
-        'route' => 'admin.api.channels.index',
+        'route' => 'admin.api.products.index',
         'sort'  => 2,
     ], [
         'key'   => 'api.catalog.products',

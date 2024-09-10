@@ -19,8 +19,7 @@ it('should return the locale datagrid', function () {
     $this->loginAsAdmin();
     Locale::factory()->create();
 
-    $response = $this->withHeaders([
-        'X-Requested-With' => 'XMLHttpRequest', ])->json('GET', route('admin.settings.locales.index'));
+    $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest'])->json('GET', route('admin.settings.locales.index'));
 
     $data = $response->json();
 

@@ -11,7 +11,7 @@ trait ApiHelperTrait
     /**
      * Genereate authentication token and return header for the user
      */
-    public function getAuthenticationHeaders(): array
+    public function getAuthenticationHeaders(string $permissionType = 'all', mixed $permissions = null): array
     {
         $admin = Admin::factory()->create(['email' => 'test@testingApi.com', 'password' => bcrypt('password')]);
 
@@ -21,7 +21,7 @@ trait ApiHelperTrait
             $admin->id, 'Client for Testing the api', env('APP_URL'), 'admins'
         );
 
-        Apikey::factory()->create(['permission_type' => 'all', 'admin_id' => $admin->id, 'oauth_client_id' => $client->getKey()]);
+        Apikey::factory()->create(['permission_type' => $permissionType, 'admin_id' => $admin->id, 'oauth_client_id' => $client->getKey(), 'permissions' => $permissions]);
 
         $this->accessToken = $this->postJson('/oauth/token', [
             'grant_type'    => 'password',

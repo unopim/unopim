@@ -42,8 +42,7 @@ it('should return the currency datagrid', function () {
         'symbol' => '$',
     ]);
 
-    $response = $this->withHeaders([
-        'X-Requested-With' => 'XMLHttpRequest', ])->json('GET', route('admin.settings.currencies.index'));
+    $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest'])->json('GET', route('admin.settings.currencies.index'));
 
     $data = $response->json();
 

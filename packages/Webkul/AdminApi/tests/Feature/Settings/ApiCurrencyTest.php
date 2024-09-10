@@ -1,21 +1,22 @@
 <?php
 
-use Webkul\Core\Models\Locale;
+use Webkul\Core\Models\Currency;
 
 beforeEach(function () {
     $this->headers = $this->getAuthenticationHeaders();
 });
 
-it('should return the list of all locales', function () {
-    $locale = Locale::first();
+it('should return the list of all currencies', function () {
+    $currency = Currency::first();
 
-    $response = $this->withHeaders($this->headers)->json('GET', route('admin.api.locales.index'))
+    $response = $this->withHeaders($this->headers)->json('GET', route('admin.api.currencies.index'))
         ->assertOK()
         ->assertJsonStructure([
             'data' => [
                 '*' => [
                     'code',
                     'status',
+                    'label',
                 ],
             ],
             'current_page',
@@ -28,28 +29,29 @@ it('should return the list of all locales', function () {
                 'prev',
             ],
         ])
-        ->assertJsonFragment(['total' => Locale::count()])
+        ->assertJsonFragment(['total' => Currency::count()])
         ->json('data');
 
     $this->assertTrue(
-        collect($response)->contains(['code' => $locale->code, 'status' => $locale->status]),
+        collect($response)->contains(['code' => $currency->code, 'status' => $currency->status, 'label' => core()->getCurrencyLabel($currency->code, core()->getCurrentLocale()->code)]),
     );
 });
 
-it('should fetch single locale by code', function () {
-    $locale = Locale::inRandomOrder()->first();
+it('should fetch single currency by code', function () {
+    $currency = Currency::inRandomOrder()->first();
 
-    $this->withHeaders($this->headers)->json('GET', route('admin.api.locales.get', $locale->code))
+    $this->withHeaders($this->headers)->json('GET', route('admin.api.currencies.get', $currency->code))
         ->assertOK()
         ->assertJsonStructure([
             'code',
             'status',
+            'label',
         ])
-        ->assertJson(['code' => $locale->code]);
+        ->assertJson(['code' => $currency->code, 'status' => $currency->status, 'label' => core()->getCurrencyLabel($currency->code, core()->getCurrentLocale()->code)]);
 });
 
-it('should filter the locale based on status', function () {
-    $locale = Locale::where('status', 1)->first();
+it('should filter the currencies based on status', function () {
+    $currency = Currency::where('status', 1)->first();
 
     $filters = [
         'status' => [
@@ -60,13 +62,14 @@ it('should filter the locale based on status', function () {
         ],
     ];
 
-    $this->withHeaders($this->headers)->json('GET', route('admin.api.locales.index', ['filters' => json_encode($filters)]))
+    $this->withHeaders($this->headers)->json('GET', route('admin.api.currencies.index', ['filters' => json_encode($filters)]))
         ->assertOK()
         ->assertJsonStructure([
             'data' => [
                 '*' => [
                     'code',
                     'status',
+                    'label',
                 ],
             ],
             'current_page',
@@ -79,13 +82,13 @@ it('should filter the locale based on status', function () {
                 'prev',
             ],
         ])
-        ->assertJsonFragment(['code' => $locale->code, 'status' => $locale->status])
-        ->assertJsonFragment(['total' => Locale::where('status', 1)->count()]);
+        ->assertJsonFragment(['code' => $currency->code, 'status' => $currency->status, 'label' => core()->getCurrencyLabel($currency->code, core()->getCurrentLocale()->code)])
+        ->assertJsonFragment(['total' => Currency::where('status', 1)->count()]);
 });
 
 it('should return validation error when filtering based on any other field than status', function () {
     $filters = [
-        'code' => [
+        'label' => [
             [
                 'operator' => 'LIKE',
                 'value'    => 'U',
@@ -93,7 +96,7 @@ it('should return validation error when filtering based on any other field than 
         ],
     ];
 
-    $this->withHeaders($this->headers)->json('GET', route('admin.api.locales.index', ['filters' => json_encode($filters)]))
+    $this->withHeaders($this->headers)->json('GET', route('admin.api.currencies.index', ['filters' => json_encode($filters)]))
         ->assertBadRequest()
         ->assertJsonStructure([
             'error',
@@ -101,7 +104,7 @@ it('should return validation error when filtering based on any other field than 
 });
 
 it('should return error message when code does not exists', function () {
-    $this->withHeaders($this->headers)->json('GET', route('admin.api.locales.get', ['code' => 'en_IN2']))
+    $this->withHeaders($this->headers)->json('GET', route('admin.api.currencies.get', ['code' => 'US2']))
         ->assertBadRequest()
         ->assertJsonStructure([
             'error',
