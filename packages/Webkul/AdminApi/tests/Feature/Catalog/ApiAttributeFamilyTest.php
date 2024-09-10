@@ -72,7 +72,6 @@ it('should return the message when code does not exists', function () {
 });
 
 it('should create the attribute family', function () {
-
     $locales = Locale::where('status', 1)->limit(2);
 
     $attributefamily = [
@@ -95,8 +94,8 @@ it('should create the attribute family', function () {
 });
 
 it('should give warning if code is not unique for attribute family', function () {
-
     $locales = Locale::where('status', 1)->limit(2);
+
     $attributeFamily = AttributeFamily::factory()->create();
 
     $attributefamily = [
@@ -120,9 +119,10 @@ it('should give warning if code is not unique for attribute family', function ()
 });
 
 it('should create attribute family with complete attribute group data', function () {
-
     $locales = Locale::where('status', 1)->limit(2);
+
     $attributeGroups = AttributeGroup::limit(2)->get();
+
     $attributes = Attribute::limit(6)->get();
 
     $data = [];
@@ -130,11 +130,13 @@ it('should create attribute family with complete attribute group data', function
 
     $attributesChunked = $attributes->chunk(3);
     foreach ($attributeGroups as $index => $grp) {
-
         if (isset($attributesChunked[$index])) {
             $customAttributes = [];
+
             $currentAttributes = $attributesChunked[$index];
+
             $attrPos = 0;
+
             foreach ($currentAttributes as $attribute) {
                 $customAttributes[] = [
                     'code'     => $attribute->code,
@@ -169,43 +171,11 @@ it('should create attribute family with complete attribute group data', function
     $this->assertDatabaseHas($this->getFullTableName(AttributeFamily::class), ['code' => $attributefamily['code']]);
 });
 
-// it('should give validation message for custom attribute key during attribute family create', function () {
-
-//     $locales = Locale::where('status', 1)->limit(2);
-//     $attributeGroups = AttributeGroup::limit(2)->get();
-
-//     $data = [];
-//     $pos = 0;
-
-//     foreach ($attributeGroups as $index => $grp) {
-//             $data[] = [
-//                 'code' => $grp->code,
-//                 'position' => ++$pos,
-//             ];
-//     }
-
-//     $attributefamily = [
-//         'code'   => 'attrFamily',
-//         'labels' => [
-//             $locales->first()->code => 'Attribute Family',
-//         ],
-//         'attribute_groups' => $data
-//     ];
-
-//     $this->withHeaders($this->headers)->json('POST', route('admin.api.families.store'), $attributefamily)
-//         ->assertStatus(422)
-//         ->assertJsonStructure([
-//             'success',
-//             'message',
-//         ])
-//         ->assertJsonFragment(['success' => false]);
-// });
-
-// Attribute group is not updated with blank attribute group, shows 500 internal server error
 it('should update the attribute family', function () {
-
     $attributeFamily = AttributeFamily::factory()->create();
+
     $locales = Locale::where('status', 1)->limit(2);
+
     $attributeGroups = AttributeGroup::limit(1)->get();
 
     $updatedfamily = [
@@ -232,8 +202,8 @@ it('should update the attribute family', function () {
 });
 
 it('should give locale validation message during update attribute family', function () {
-
     $attributeFamily = AttributeFamily::factory()->create();
+
     $attributeGroups = AttributeGroup::limit(1)->get();
 
     $updatedfamily = [
