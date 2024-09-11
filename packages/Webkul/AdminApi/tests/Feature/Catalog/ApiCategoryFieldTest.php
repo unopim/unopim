@@ -56,7 +56,7 @@ it('should return the list of all category fields', function () {
         'value_per_locale' => $categoryField->value_per_locale,
         'enable_wysiwyg'   => $categoryField->enable_wysiwyg,
         'section'          => $categoryField->section,
-        'labels'           => $categoryField->translations()->pluck('name', 'locale')->toArray(),
+        'labels'           => $categoryField->translations()->pluck('name', 'locale')->filter()->toArray(),
     ];
 
     $this->assertTrue(
@@ -79,7 +79,7 @@ it('should return the category field by code', function () {
         'value_per_locale' => $categoryField->value_per_locale,
         'enable_wysiwyg'   => $categoryField->enable_wysiwyg,
         'section'          => $categoryField->section,
-        'labels'           => $categoryField->translations()->pluck('name', 'locale')->toArray(),
+        'labels'           => $categoryField->translations()->pluck('name', 'locale')->filter()->toArray(),
     ];
 
     $this->withHeaders($this->headers)->json('GET', route('admin.api.category-fields.get', $fieldData['code']))
