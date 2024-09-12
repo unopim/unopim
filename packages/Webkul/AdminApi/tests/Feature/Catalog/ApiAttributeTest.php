@@ -24,7 +24,7 @@ it('should return the list of all attributes', function () {
         'value_per_locale'  => $attribute->value_per_locale,
         'value_per_channel' => $attribute->value_per_channel,
         'enable_wysiwyg'    => $attribute->enable_wysiwyg,
-        'labels'            => $attribute->translations->pluck('name', 'locale')->toArray(),
+        'labels'            => $attribute->translations->pluck('name', 'locale')->filter()->toArray(),
     ];
 
     $response = $this->withHeaders($this->headers)->json('GET', route('admin.api.attributes.index'))
@@ -76,7 +76,7 @@ it('should return the attribute by code', function () {
         'value_per_locale'  => $attribute->value_per_locale,
         'value_per_channel' => $attribute->value_per_channel,
         'enable_wysiwyg'    => $attribute->enable_wysiwyg,
-        'labels'            => $attribute->translations->pluck('name', 'locale')->toArray(),
+        'labels'            => $attribute->translations->pluck('name', 'locale')->filter()->toArray(),
     ];
 
     $this->withHeaders($this->headers)->json('GET', route('admin.api.attributes.get', $attributeData['code']))

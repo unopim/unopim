@@ -266,7 +266,7 @@ it('should store the file type field value when creating category', function () 
 
     Storage::fake();
 
-    $data['additional_data']['common'][$categoryField->code] = [UploadedFile::fake()->image('category.pdf')];
+    $data['additional_data']['common'][$categoryField->code] = [UploadedFile::fake()->create('category.pdf', 100)];
 
     $this->post(route('admin.catalog.categories.store'), $data)
         ->assertSessionHas('success', trans('admin::app.catalog.categories.create-success'));
