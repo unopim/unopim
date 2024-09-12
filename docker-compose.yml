@@ -1,0 +1,48 @@
+version : "3"
+services:
+  unopim-web:
+    build:
+      context: .
+      dockerfile: dockerfiles/web.Dockerfile
+    container_name: unopim-web
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "8000:80"
+    restart: "no"
+    depends_on:
+      - unopim-mysql
+
+  unopim-mysql:
+    image: mysql:8
+    container_name: unopim-mysql
+    volumes:
+      - unopim-mysql-disk:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    restart: "no"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: unopim
+
+  unopim-q:
+    build:
+      context: .
+      dockerfile: dockerfiles/q.Dockerfile
+    container_name: unopim-q
+    volumes:
+      - .:/var/www/html
+    restart: unless-stopped
+    depends_on:
+      - unopim-mysql
+
+  unopim-mailpit:
+    image: 'axllent/mailpit:latest'
+    container_name: unopim-mailpit
+    restart: "no"
+    ports:
+      - "8025:8025"
+
+# On-disk storage of DB data, when containers are stopped
+volumes:
+  unopim-mysql-disk: {}
