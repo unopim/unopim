@@ -130,17 +130,17 @@ return [
     ], [
         'key'   => 'api.catalog.attribute_groups',
         'name'  => 'admin::app.acl.attribute-groups',
-        'route' => 'admin.api.attribute-groups.index',
+        'route' => 'admin.api.attribute_groups.index',
         'sort'  => 5,
     ], [
         'key'   => 'api.catalog.attribute_groups.create',
         'name'  => 'admin::app.acl.create',
-        'route' => 'admin.api.attribute-groups.store',
+        'route' => 'admin.api.attribute_groups.store',
         'sort'  => 1,
     ], [
         'key'   => 'api.catalog.attribute_groups.edit',
         'name'  => 'admin::app.acl.edit',
-        'route' => 'admin.api.attribute-groups.update',
+        'route' => 'admin.api.attribute_groups.update',
         'sort'  => 2,
     ], [
         'key'   => 'api.catalog.families',

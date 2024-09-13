@@ -1,7 +1,9 @@
 <?php
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Webkul\Attribute\Models\Attribute;
+use Webkul\Category\Models\Category;
 use Webkul\Core\Models\Channel;
 use Webkul\Core\Models\Locale;
 use Webkul\Product\Models\Product;
@@ -555,7 +557,7 @@ it('should store the image attribute value when updating simple product', functi
 it('should store the file attribute value when updating simple product', function () {
     $this->loginAsAdmin();
 
-    $attribute = Attribute::factory()->create(['type' => 'image']);
+    $attribute = Attribute::factory()->create(['type' => 'file']);
 
     $product = Product::factory()->simple()->create();
 
@@ -582,6 +584,62 @@ it('should store the file attribute value when updating simple product', functio
     $this->assertNotEmpty($product->values['common'][$attributeCode] ?? '');
 
     $this->assertTrue(Storage::exists($product->values['common'][$attributeCode]));
+});
+
+it('should store the categories value when updating simple product', function () {
+    $this->loginAsAdmin();
+
+    $category = Category::factory()->create();
+
+    $product = Product::factory()->simple()->create();
+
+    $value = [$category->code, $category->parent?->code];
+
+    $data = [
+        'sku'    => $product->sku,
+        'values' => [
+            'categories' => $value,
+        ],
+    ];
+
+    $this->put(route('admin.catalog.products.update', $product->id), $data)
+        ->assertSessionHas('success', trans('admin::app.catalog.products.update-success'));
+
+    $product->refresh();
+
+    $this->assertEquals($value, $product->values['categories'] ?? '');
+});
+
+it('should store the associations value when updating simple product', function () {
+    $this->loginAsAdmin();
+
+    $products = Product::factory()->simple()->createMany(2);
+
+    $product = $products->first();
+
+    $value = [$products->last()->sku];
+
+    $data = [
+        'sku'    => $product->sku,
+        'values' => [
+            'associations' => [
+                'related_products' => $value,
+                'cross_sells'      => $value,
+                'up_sells'         => $value,
+            ],
+        ],
+    ];
+
+    $this->put(route('admin.catalog.products.update', $product->id), $data)
+        ->assertSessionHas('success', trans('admin::app.catalog.products.update-success'));
+
+    $product->refresh();
+
+    $this->assertArrayHasKey('associations', $product->values);
+
+    foreach (['related_products', 'cross_sells', 'up_sells'] as $type) {
+        $this->assertEquals($value, $product->values['associations'][$type] ?? '');
+    }
 });
 
 /** Update cases for the configurable product different attribute type values */
@@ -804,7 +862,7 @@ it('should store the image attribute value when updating configurable product', 
 it('should store the file attribute value when updating configurable product', function () {
     $this->loginAsAdmin();
 
-    $attribute = Attribute::factory()->create(['type' => 'image']);
+    $attribute = Attribute::factory()->create(['type' => 'file']);
 
     $product = Product::factory()->configurable()->create();
 
@@ -831,4 +889,60 @@ it('should store the file attribute value when updating configurable product', f
     $this->assertNotEmpty($product->values['common'][$attributeCode] ?? '');
 
     $this->assertTrue(Storage::exists($product->values['common'][$attributeCode]));
+});
+
+it('should store the categories value when updating configurable product', function () {
+    $this->loginAsAdmin();
+
+    $category = Category::factory()->create();
+
+    $product = Product::factory()->configurable()->create();
+
+    $value = [$category->code, $category->parent?->code];
+
+    $data = [
+        'sku'    => $product->sku,
+        'values' => [
+            'categories' => $value,
+        ],
+    ];
+
+    $this->put(route('admin.catalog.products.update', $product->id), $data)
+        ->assertSessionHas('success', trans('admin::app.catalog.products.update-success'));
+
+    $product->refresh();
+
+    $this->assertEquals($value, $product->values['categories'] ?? '');
+});
+
+it('should store the associations value when updating configurable product', function () {
+    $this->loginAsAdmin();
+
+    $products = Product::factory()->configurable()->createMany(2);
+
+    $product = $products->first();
+
+    $value = [$products->last()->sku];
+
+    $data = [
+        'sku'    => $product->sku,
+        'values' => [
+            'associations' => [
+                'related_products' => $value,
+                'cross_sells'      => $value,
+                'up_sells'         => $value,
+            ],
+        ],
+    ];
+
+    $this->put(route('admin.catalog.products.update', $product->id), $data)
+        ->assertSessionHas('success', trans('admin::app.catalog.products.update-success'));
+
+    $product->refresh();
+
+    $this->assertArrayHasKey('associations', $product->values);
+
+    foreach (['related_products', 'cross_sells', 'up_sells'] as $type) {
+        $this->assertEquals($value, $product->values['associations'][$type] ?? '');
+    }
 });
