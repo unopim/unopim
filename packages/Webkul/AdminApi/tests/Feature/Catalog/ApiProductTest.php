@@ -479,7 +479,6 @@ it('should return validation error for unique common attribute value when updati
 });
 
 it('should return validation error for unique channel and locale wise attribute value when updating simple product', function () {
-
     $attribute = Attribute::factory()->create(['is_unique' => true, 'value_per_channel' => true, 'value_per_locale' => true, 'type' => 'text']);
 
     $attributeCode = $attribute->code;
