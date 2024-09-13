@@ -166,7 +166,6 @@
 </x-admin::drawer>
 
 @pushOnce('scripts')
-    
 
     <script type="text/x-template" id="v-dark-template">
         <div class="flex">

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Webkul\Category\Models\Category;
 use Webkul\Category\Models\CategoryField;
 use Webkul\Core\Models\Locale;

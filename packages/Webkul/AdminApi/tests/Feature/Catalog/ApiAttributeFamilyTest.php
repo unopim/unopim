@@ -61,7 +61,7 @@ it('should return the attribute family using the code', function () {
         ->assertJson(['code' => $attributeFamily->code]);
 });
 
-it('should return the message when code does not exists', function () {
+it('should return 404 message when code does not exists', function () {
     $this->withHeaders($this->headers)->json('GET', route('admin.api.families.get', ['code' => 'abcxyz']))
         ->assertStatus(404)
         ->assertJsonStructure([
@@ -72,12 +72,12 @@ it('should return the message when code does not exists', function () {
 });
 
 it('should create the attribute family', function () {
-    $locales = Locale::where('status', 1)->limit(2);
+    $localeCode = Locale::where('status', 1)->first()->code;
 
     $attributefamily = [
         'code'   => 'attrFamily',
         'labels' => [
-            $locales->first()->code => 'Attribute Family',
+            $localeCode => 'Attribute Family',
         ],
         'attribute_groups' => [],
     ];
@@ -94,14 +94,14 @@ it('should create the attribute family', function () {
 });
 
 it('should give warning if code is not unique for attribute family', function () {
-    $locales = Locale::where('status', 1)->limit(2);
+    $localeCode = Locale::where('status', 1)->first()->code;
 
     $attributeFamily = AttributeFamily::factory()->create();
 
     $attributefamily = [
         'code'   => $attributeFamily->code,
         'labels' => [
-            $locales->first()->code => 'Attribute Family',
+            $localeCode => 'Attribute Family',
         ],
         'attribute_groups' => [],
     ];
@@ -119,7 +119,7 @@ it('should give warning if code is not unique for attribute family', function ()
 });
 
 it('should create attribute family with complete attribute group data', function () {
-    $locales = Locale::where('status', 1)->limit(2);
+    $localeCode = Locale::where('status', 1)->first()->code;
 
     $attributeGroups = AttributeGroup::limit(2)->get();
 
@@ -155,7 +155,7 @@ it('should create attribute family with complete attribute group data', function
     $attributefamily = [
         'code'   => 'attrFamily',
         'labels' => [
-            $locales->first()->code => 'Attribute Family',
+            $localeCode => 'Attribute Family',
         ],
         'attribute_groups' => $data,
     ];
@@ -174,14 +174,14 @@ it('should create attribute family with complete attribute group data', function
 it('should update the attribute family', function () {
     $attributeFamily = AttributeFamily::factory()->create();
 
-    $locales = Locale::where('status', 1)->limit(2);
+    $localeCode = Locale::where('status', 1)->first()->code;
 
     $attributeGroups = AttributeGroup::limit(1)->get();
 
     $updatedfamily = [
         'code'   => $attributeFamily->code,
         'labels' => [
-            $locales->first()->code => 'Attribute Family',
+            $localeCode => 'Attribute Family',
         ],
         'attribute_groups' => [
             [
@@ -204,7 +204,7 @@ it('should update the attribute family', function () {
 it('should give locale validation message during update attribute family', function () {
     $attributeFamily = AttributeFamily::factory()->create();
 
-    $attributeGroups = AttributeGroup::limit(1)->get();
+    $attributeGroupCode = AttributeGroup::first()->code;
 
     $updatedfamily = [
         'code'   => $attributeFamily->code,
@@ -213,7 +213,7 @@ it('should give locale validation message during update attribute family', funct
         ],
         'attribute_groups' => [
             [
-                'code'              => $attributeGroups->first()->code,
+                'code'              => $attributeGroupCode,
                 'position'          => 1,
                 'custom_attributes' => [],
             ],
