@@ -85,6 +85,24 @@ To get started with UnoPim, follow these steps:
    php artisan queue:work
    ```
 
+## Installation with Docker
+
+If you have docker/docker compose installed on your system, you can run UnoPim using the following steps:
+1. **Clone the repository** using HTTPS or SSH
+   1. HTTPS: `git clone https://github.com/unopim/unopim.git`
+   1. SSH: `git clone git@github.com:unopim/unopim.git`
+1. **Enter the directory** : `cd unopim`
+1. Run `docker-compose up -d` / `docker compose up -d` (depending on the compose version you have installed)
+
+It will take a minute (or two) to pull the required images and once the containers are up and running, here are the URLs you can access:
+- Application: `http://localhost:8000`
+- MySQL: `http://localhost:3306`
+
+Note:   
+If you already have MySQL running on your system, you can change the MySQL port in the `docker-compose.yml` and `.env` file.   
+Run `docker-compose up -d` again.
+
+
 ## Usage
 
 Once installed, you can start adding and managing your products. The intuitive interface allows you to easily categorize products, enrich product data, and manage user permissions.
