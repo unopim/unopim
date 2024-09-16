@@ -5,6 +5,7 @@ namespace Webkul\User\Tests\Concerns;
 use Illuminate\Support\Facades\Hash;
 use Webkul\User\Contracts\Admin as AdminContract;
 use Webkul\User\Models\Admin;
+use Webkul\User\Models\Role;
 
 trait UserAssertions
 {
@@ -32,6 +33,27 @@ trait UserAssertions
     {
         $admin = $admin ?? Admin::factory()->create([
             'password' => Hash::make('password'),
+        ]);
+
+        $this->actingAs($admin, 'admin');
+
+        return $admin;
+    }
+
+    /**
+     * @param  string  $permissionTye
+     * @param  array  $permissions
+     * @return AdminContract
+     *
+     * Get user with specified permissions
+     */
+    public function loginWithPermissions(string $permissionType = 'custom', mixed $permissions = ['dashboard']): AdminContract
+    {
+        $role = Role::factory()->create(['permission_type' => $permissionType, 'permissions' => $permissions]);
+
+        $admin = Admin::factory()->create([
+            'password' => Hash::make('password'),
+            'role_id'  => $role->id,
         ]);
 
         $this->actingAs($admin, 'admin');
