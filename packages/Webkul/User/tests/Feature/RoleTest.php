@@ -3,16 +3,43 @@
 use Webkul\User\Models\Admin;
 use Webkul\User\Models\Role;
 
-use function Pest\Laravel\get;
 use function Pest\Laravel\postJson;
 use function Pest\Laravel\putJson;
 
-it('should returns the Roles index page', function () {
+it('should returns the roles index page', function () {
     $this->loginAsAdmin();
 
-    $response = get(route('admin.settings.roles.index'));
+    $response = $this->get(route('admin.settings.roles.index'));
+    $response->assertSeeText(trans('admin::app.settings.roles.index.title'));
 
     $response->assertStatus(200);
+});
+
+it('should returns the roles edit page', function () {
+    $this->loginAsAdmin();
+
+    $role = Role::factory()->create();
+
+    $this->get(route('admin.settings.roles.edit', ['id' => $role->id]))
+        ->assertStatus(200)
+        ->assertSeeText(trans('admin::app.settings.roles.edit.title'));
+});
+
+it('should return the roles datagrid', function () {
+    $this->loginAsAdmin();
+    Role::factory()->create();
+
+    $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest'])->json('GET', route('admin.settings.roles.index'));
+
+    $data = $response->json();
+
+    $this->assertArrayHasKey('records', $data);
+    $this->assertArrayHasKey('columns', $data);
+    $this->assertNotEmpty($data['records']);
+
+    $this->assertDatabaseHas($this->getFullTableName(Role::class), [
+        'id'    => $data['records'][0]['id'],
+    ]);
 });
 
 it('should create a Role type ALL', function () {
