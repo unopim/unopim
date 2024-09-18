@@ -2,7 +2,7 @@
 
 This changelog details the bug fixes included in this release.
 
-## **v0.1.1 (18nd September 2024)** - *Release*
+## **v0.1.2 (18nd September 2024)** - *Release*
 ### Changed
 - Updated the test cases.
 - French translation updated.
