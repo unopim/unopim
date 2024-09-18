@@ -3,6 +3,13 @@
 This changelog details the bug fixes included in this release.
 
 ## **v0.1.1 (18nd September 2024)** - *Release*
+### Changed
+- Updated the test cases.
+- French translation updated.
+
+### Added
+- Added MariaDB compatibility (thanks to @helgvor-stoll).
+- Added Docker support (thanks to @jdecode).
 
 ## **v0.1.1 (22nd August 2024)** - *Release*
 
