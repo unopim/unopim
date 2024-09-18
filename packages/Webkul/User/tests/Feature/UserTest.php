@@ -10,10 +10,38 @@ use function Pest\Laravel\get;
 it('should returns the user index page', function () {
     $this->loginAsAdmin();
 
-    $response = get(route('admin.settings.users.index'));
+    get(route('admin.settings.users.index'))
+        ->assertStatus(200)
+        ->assertSeeText(trans('admin::app.settings.users.index.title'));
+});
 
-    $response->assertStatus(200);
-    $response->assertOk();
+it('should return the user as json for edit', function () {
+    $this->loginAsAdmin();
+
+    $user = Admin::factory()->create();
+
+    $response = get(route('admin.settings.users.edit', ['id' => $user->id]));
+
+    $response->assertStatus(200)
+        ->assertJsonFragment($user->toArray());
+});
+
+it('should return the users datagrid', function () {
+    $this->loginAsAdmin();
+    Admin::factory()->create();
+
+    $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest'])->json('GET', route('admin.settings.users.index'));
+
+    $data = $response->json();
+
+    $this->assertArrayHasKey('records', $data);
+    $this->assertArrayHasKey('columns', $data);
+    $this->assertNotEmpty($data['records']);
+
+    $this->assertDatabaseHas($this->getFullTableName(Admin::class), [
+        'id'    => $data['records'][0]['user_id'],
+        'email' => $data['records'][0]['email'],
+    ]);
 });
 
 it('should store the newly created admin', function () {
@@ -32,7 +60,7 @@ it('should store the newly created admin', function () {
 
     $response->assertStatus(200);
 
-    $this->assertDatabaseHas('admins', [
+    $this->assertDatabaseHas($this->getFullTableName(Admin::class), [
         'email' => 'test@example.com',
     ]);
 });
@@ -59,9 +87,9 @@ it('should update the user', function () {
 
     $response->assertStatus(200);
 
-    $this->assertDatabaseHas('admins', [
-        'name' => 'testadmin',
-        'email'=> 'update@example.com',
+    $this->assertDatabaseHas($this->getFullTableName(Admin::class), [
+        'name'  => 'testadmin',
+        'email' => 'update@example.com',
     ]);
 });
 
@@ -77,24 +105,24 @@ it('should update the user with image', function () {
     Storage::fake();
 
     $response = $this->put(route('admin.settings.users.update'), [
-        'id'                    => $admin->id,
-        'email'                 => 'update@example.com',
-        'name'                  => 'testadmin',
-        'status'                => 1,
-        'role_id'               => 1,
-        'timezone'              => 'Asia/Kolkata',
-        'ui_locale_id'          => 1,
-        'password'              => '',
-        'image'                 => [
+        'id'           => $admin->id,
+        'email'        => 'update@example.com',
+        'name'         => 'testadmin',
+        'status'       => 1,
+        'role_id'      => 1,
+        'timezone'     => 'Asia/Kolkata',
+        'ui_locale_id' => 1,
+        'password'     => '',
+        'image'        => [
             UploadedFile::fake()->image('avatar.jpg'),
         ],
     ]);
 
     $response->assertStatus(200);
 
-    $this->assertDatabaseHas('admins', [
-        'name' => 'testadmin',
-        'email'=> 'update@example.com',
+    $this->assertDatabaseHas($this->getFullTableName(Admin::class), [
+        'name'  => 'testadmin',
+        'email' => 'update@example.com',
     ]);
 });
 
@@ -110,7 +138,7 @@ it('should delete the user', function () {
     $response = $this->delete(route('admin.settings.users.delete', ['id' => $admin->id]));
     $response->assertStatus(200);
 
-    $this->assertDatabaseMissing('admins', [
+    $this->assertDatabaseMissing($this->getFullTableName(Admin::class), [
         'id' => $admin->id,
     ]);
 });
@@ -148,7 +176,7 @@ it('should not update the admin with invalid data', function () {
 
     $response = $this->put(route('admin.settings.users.update'), [
         'id'                    => $admin->id,
-        'email'                 => 'invalid-email', // Invalid email
+        'email'                 => 'invalid-email',
         'name'                  => '',
         'status'                => 1,
         'role_id'               => 1,

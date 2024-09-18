@@ -133,7 +133,7 @@ return [
     ], [
         'key'   => 'catalog.attribute_groups.delete',
         'name'  => 'admin::app.acl.delete',
-        'route' => 'admin.catalog.attribute_groups.delete',
+        'route' => 'admin.catalog.attribute.groups.delete',
         'sort'  => 3,
     ], [
         'key'   => 'catalog.families',
