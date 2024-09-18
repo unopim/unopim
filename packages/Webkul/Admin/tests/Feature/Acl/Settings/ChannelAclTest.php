@@ -5,8 +5,8 @@ use Webkul\Core\Models\Channel;
 it('should not display the channel list if does not have permission', function () {
     $this->loginWithPermissions('custom', ['dashboard']);
 
-    $response = $this->get(route('admin.settings.channels.index'));
-    $this->assertStringContainsString('Unauthorized', $response->getContent());
+    $this->get(route('admin.settings.channels.index'))
+        ->assertSeeText('Unauthorized');
 });
 
 it('should display the channel list if have permission', function () {
@@ -20,8 +20,8 @@ it('should display the channel list if have permission', function () {
 it('should not display the create channel form if does not have permission', function () {
     $this->loginWithPermissions('custom', ['dashboard']);
 
-    $response = $this->get(route('admin.settings.channels.create'));
-    $this->assertStringContainsString('Unauthorized', $response->getContent());
+    $this->get(route('admin.settings.channels.create'))
+        ->assertSeeText('Unauthorized');
 });
 
 it('should display the create channel form if have permission', function () {
@@ -36,8 +36,8 @@ it('should not display the channel edit if does not have permission', function (
     $this->loginWithPermissions('custom', ['dashboard']);
     $channel = Channel::first();
 
-    $response = $this->get(route('admin.settings.channels.edit', ['id' => $channel->id]));
-    $this->assertStringContainsString('Unauthorized', $response->getContent());
+    $this->get(route('admin.settings.channels.edit', ['id' => $channel->id]))
+        ->assertSeeText('Unauthorized');
 });
 
 it('should display the channel edit if have permission', function () {
@@ -55,12 +55,10 @@ it('should not be able to delete channel if does not have permission', function 
     $this->loginWithPermissions('custom', ['dashboard']);
     $channel = Channel::first();
 
-    $response = $this->delete(route('admin.settings.channels.delete', ['id' => $channel->id]));
-    $this->assertStringContainsString('Unauthorized', $response->getContent());
+    $this->delete(route('admin.settings.channels.delete', ['id' => $channel->id]))
+        ->assertSeeText('Unauthorized');
 
-    $this->assertDatabaseHas($this->getFullTableName(channel::class),
-        ['id' => $channel->id]
-    );
+    $this->assertDatabaseHas($this->getFullTableName(channel::class), ['id' => $channel->id]);
 });
 
 it('should be able to delete channel if have permission', function () {

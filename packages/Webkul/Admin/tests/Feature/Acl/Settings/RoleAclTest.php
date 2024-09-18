@@ -5,8 +5,8 @@ use Webkul\User\Models\Role;
 it('should not display the roles list if does not have permission', function () {
     $this->loginWithPermissions();
 
-    $response = $this->get(route('admin.settings.roles.index'));
-    $this->assertStringContainsString('Unauthorized', $response->getContent());
+    $this->get(route('admin.settings.roles.index'))
+        ->assertSeeText('Unauthorized');
 });
 
 it('should display the roles list if has permission', function () {
@@ -20,8 +20,8 @@ it('should display the roles list if has permission', function () {
 it('should not display the create role form if does not have permission', function () {
     $this->loginWithPermissions();
 
-    $response = $this->get(route('admin.settings.roles.create'));
-    $this->assertStringContainsString('Unauthorized', $response->getContent());
+    $this->get(route('admin.settings.roles.create'))
+        ->assertSeeText('Unauthorized');
 });
 
 it('should display the create role form if has permission', function () {
@@ -36,8 +36,8 @@ it('should not display the role edit if does not have permission', function () {
     $this->loginWithPermissions();
     $role = Role::first();
 
-    $response = $this->get(route('admin.settings.roles.edit', ['id' => $role->id]));
-    $this->assertStringContainsString('Unauthorized', $response->getContent());
+    $this->get(route('admin.settings.roles.edit', ['id' => $role->id]))
+        ->assertSeeText('Unauthorized');
 });
 
 it('should display the role edit if has permission', function () {
@@ -53,8 +53,8 @@ it('should not be able to delete roles if does not have permission', function ()
     $this->loginWithPermissions();
     $role = Role::first();
 
-    $response = $this->delete(route('admin.settings.roles.delete', ['id' => $role->id]));
-    $this->assertStringContainsString('Unauthorized', $response->getContent());
+    $this->delete(route('admin.settings.roles.delete', ['id' => $role->id]))
+        ->assertSeeText('Unauthorized');
 
     $this->assertDatabaseHas($this->getFullTableName(Role::class),
         ['id' => $role->id]

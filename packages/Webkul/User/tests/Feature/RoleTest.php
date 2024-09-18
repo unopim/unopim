@@ -70,7 +70,6 @@ it('should create a Role type CUSTOM', function () {
         'permissions'     => ['admin.users.index', 'admin.users.create'],
     ];
 
-    // In permission type ,any value is stored but only All and custom should be stored
     postJson(route('admin.settings.roles.store'), $role);
 
     $this->assertDatabaseHas($this->getFullTableName(Role::class), [

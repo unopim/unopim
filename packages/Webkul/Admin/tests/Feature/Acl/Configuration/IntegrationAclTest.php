@@ -72,18 +72,30 @@ it('should not display the edit integration page if does not have permission', f
 });
 
 it('should delete an integration if has permission', function () {
-    $userId = $this->loginWithPermissions('custom', ['configuration', 'configuration.integrations.delete'])?->id;
+    $userId = $this->loginWithPermissions('custom', ['configuration', 'configuration.integrations', 'configuration.integrations.delete'])?->id;
 
     $apiKey = Apikey::factory()->create(['permission_type' => 'all', 'admin_id' => $userId]);
 
     $this->delete(route('admin.configuration.integrations.delete', $apiKey->id))
         ->assertOk()
         ->assertDontSeeText('Unauthorized');
+
+    $this->assertDatabaseHas($this->getFullTableName(ApiKey::class), [
+        'id'      => $apiKey->id,
+        'revoked' => 1,
+    ]);
 });
 
 it('should not delete an integration if does not have permission', function () {
-    $this->loginWithPermissions();
+    $userId = $this->loginWithPermissions('custom', ['configuration'])?->id;
 
-    $this->delete(route('admin.configuration.integrations.delete', 1))
+    $apiKey = Apikey::factory()->create(['permission_type' => 'all', 'admin_id' => $userId]);
+
+    $this->delete(route('admin.configuration.integrations.delete', $apiKey))
         ->assertSeeText('Unauthorized');
+
+    $this->assertDatabaseHas($this->getFullTableName(Apikey::class), [
+        'id'      => $apiKey->id,
+        'revoked' => 0,
+    ]);
 });

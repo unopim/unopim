@@ -5,9 +5,8 @@ use Webkul\Core\Models\Currency;
 it('should not display the currency list if does not have permission', function () {
     $this->loginWithPermissions('custom', ['dashboard']);
 
-    $response = $this->get(route('admin.settings.currencies.index'));
-
-    $this->assertStringContainsString('Unauthorized', $response->getContent());
+    $this->get(route('admin.settings.currencies.index'))
+        ->assertSeeText('Unauthorized');
 });
 
 it('should display the currency list if have permission', function () {
@@ -19,15 +18,15 @@ it('should display the currency list if have permission', function () {
         ->assertSeeText(trans('admin::app.settings.currencies.index.title'));
 });
 
-it('should not display the currency edit if does not have permission', function () {
+it('should not return the currency json for edit if does not have permission', function () {
     $this->loginWithPermissions('custom', ['dashboard']);
     $currency = Currency::first();
 
-    $response = $this->get(route('admin.settings.currencies.edit', ['id' => $currency->id]));
-    $this->assertStringContainsString('Unauthorized', $response->getContent());
+    $this->get(route('admin.settings.currencies.edit', ['id' => $currency->id]))
+        ->assertSeeText('Unauthorized');
 });
 
-it('should display the currency edit if have permission', function () {
+it('should return the currency json for edit if have permission', function () {
     $this->loginWithPermissions('custom', ['settings', 'settings.currencies.edit']);
     $currency = Currency::first();
 
@@ -40,12 +39,10 @@ it('should not be able to delete currency if does not have permission', function
     $this->loginWithPermissions('custom', ['dashboard']);
     $currency = Currency::first();
 
-    $response = $this->delete(route('admin.settings.currencies.delete', ['id' => $currency->id]));
-    $this->assertStringContainsString('Unauthorized', $response->getContent());
+    $this->delete(route('admin.settings.currencies.delete', ['id' => $currency->id]))
+        ->assertSeeText('Unauthorized');
 
-    $this->assertDatabaseHas($this->getFullTableName(Currency::class),
-        ['id' => $currency->id]
-    );
+    $this->assertDatabaseHas($this->getFullTableName(Currency::class), ['id' => $currency->id]);
 });
 
 it('should be able to delete currency if have permission', function () {

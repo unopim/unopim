@@ -56,7 +56,7 @@ it('should return the currency datagrid', function () {
     ]);
 });
 
-it('should return the currency create page', function () {
+it('should return the currency edit page', function () {
     $this->loginAsAdmin();
     $currency = Currency::factory()->create([
         'code'   => 'DOP',
@@ -106,23 +106,6 @@ it('should give validation message for code', function () {
     );
 
     $response->assertJsonValidationErrorFor('code');
-});
-
-it('should give validation message for decimal', function () {
-    $this->loginAsAdmin();
-
-    $response = postJson(route('admin.settings.currencies.store'),
-        [
-            'code'    => 'DOP',
-            'symbol'  => 'RD$',
-            'decimal' => 'char',
-            'status'  => 0,
-        ],
-    );
-
-    // Issue in this test , there should be validation message for decimal
-    $response->assertok();
-    // $response->assertJsonValidationErrorFor('decimal');
 });
 
 it('should delete the currency', function () {

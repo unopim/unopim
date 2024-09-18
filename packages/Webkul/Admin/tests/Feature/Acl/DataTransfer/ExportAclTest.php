@@ -59,13 +59,19 @@ it('should display the export delete action if user has delete permission', func
 
     $this->delete(route('admin.settings.data_transfer.exports.delete', $jobId))
         ->assertOk();
+
+    $this->assertDatabaseMissing($this->getFullTableName(JobInstances::class), ['id' => $jobId]);
 });
 
 it('should not allow the export delete action if user does not have delete permission', function () {
     $this->loginWithPermissions();
 
-    $this->delete(route('admin.settings.data_transfer.exports.delete', 1))
+    $jobId = JobInstances::factory()->exportJob()->entityProduct()->create()->id;
+
+    $this->delete(route('admin.settings.data_transfer.exports.delete', $jobId))
         ->assertSeeText('Unauthorized');
+
+    $this->assertDatabaseHas($this->getFullTableName(JobInstances::class), ['id' => $jobId]);
 });
 
 it('should display the export now action if user has execute permission', function () {

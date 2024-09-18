@@ -15,7 +15,7 @@ it('should returns the user index page', function () {
         ->assertSeeText(trans('admin::app.settings.users.index.title'));
 });
 
-it('should return the user edit page', function () {
+it('should return the user as json for edit', function () {
     $this->loginAsAdmin();
 
     $user = Admin::factory()->create();
@@ -176,7 +176,7 @@ it('should not update the admin with invalid data', function () {
 
     $response = $this->put(route('admin.settings.users.update'), [
         'id'                    => $admin->id,
-        'email'                 => 'invalid-email', // Invalid email
+        'email'                 => 'invalid-email',
         'name'                  => '',
         'status'                => 1,
         'role_id'               => 1,

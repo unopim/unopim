@@ -132,8 +132,9 @@ it('should display the attribute group list if has permission', function () {
 
 it('should display the attribute group by code route if has permission', function () {
     $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.attribute_groups']);
+    $attributeGroup = AttributeGroup::factory()->create();
 
-    $this->withHeaders($headers)->json('GET', route('admin.api.attribute_groups.get', 'general'))
+    $this->withHeaders($headers)->json('GET', route('admin.api.attribute_groups.get', $attributeGroup->code))
         ->assertOK();
 });
 
@@ -269,9 +270,9 @@ it('should display the family list if has permission', function () {
 it('should display the family by code route if has permission', function () {
     $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.families']);
 
-    AttributeFamily::factory()->create();
+    $attributeFamily = AttributeFamily::factory()->create();
 
-    $this->withHeaders($headers)->json('GET', route('admin.api.families.get', 'default'))
+    $this->withHeaders($headers)->json('GET', route('admin.api.families.get', $attributeFamily->code))
         ->assertOK();
 });
 
