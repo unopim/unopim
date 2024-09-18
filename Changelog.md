@@ -2,6 +2,8 @@
 
 This changelog details the bug fixes included in this release.
 
+## **v0.1.1 (18nd September 2024)** - *Release*
+
 ## **v0.1.1 (22nd August 2024)** - *Release*
 
 ### Bug Fixes
