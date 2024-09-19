@@ -238,6 +238,8 @@ class LocalesTableSeeder extends Seeder
     {
         DB::table('channels')->delete();
 
+        DB::table('admins')->delete();
+
         DB::table('locales')->delete();
 
         $enableLocales = $parameters['allowed_locales'] ?? self::DEFAULT_LOCALES;
