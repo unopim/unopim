@@ -129,7 +129,7 @@
         </div>
 
         <!-- Right Toolbar -->
-        <div class="flex gap-x-4">
+        <div class="flex items-center gap-x-4">
             <!-- Filters Activation Button -->
             <x-admin::drawer width="350px" ref="filterDrawer">
                 <x-slot:toggle>
@@ -221,17 +221,29 @@
                 <!-- Pagination -->
                 <div class="flex items-center gap-1">
                     <div
+                        class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-violet-100 dark:hover:bg-gray-800 active:border-gray-300"
+                        @click="changePage('first')"
+                    >
+                        <span class="text-2xl">&#171;</span>
+                    </div>
+                    <div
                         class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent p-1.5 text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-violet-100 dark:hover:bg-gray-800 active:border-gray-300"
                         @click="changePage('previous')"
                     >
-                        <span class="icon-chevron-left text-2xl"></span>
+                        <span class="text-2xl">&#8249;</span>
                     </div>
 
                     <div
                         class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent p-1.5 text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-violet-100 dark:hover:bg-gray-800 active:border-gray-300"
                         @click="changePage('next')"
                     >
-                        <span class="icon-chevron-right text-2xl"></span>
+                        <span class="text-2xl">&#8250;</span>
+                    </div>
+                    <div
+                        class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-violet-100 dark:hover:bg-gray-800 active:border-gray-300"
+                        @click="changePage('last')"
+                    >
+                        <span class="text-2xl">&#187;</span>
                     </div>
                 </div>
             </div>

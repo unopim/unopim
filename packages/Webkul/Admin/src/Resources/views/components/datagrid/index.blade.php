@@ -261,6 +261,10 @@
                             newPage = this.available.meta.current_page - 1;
                         } else if (directionOrPageNumber === 'next') {
                             newPage = this.available.meta.current_page + 1;
+                        } else if (directionOrPageNumber === 'first') {
+                            newPage = 1;
+                        } else if (directionOrPageNumber === 'last') {
+                            newPage = this.available.meta.last_page;
                         } else {
                             console.warn('Invalid Direction Provided : ' + directionOrPageNumber);
 
