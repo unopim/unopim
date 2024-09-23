@@ -278,6 +278,10 @@
                         return;
                     }
 
+                    if (this.applied.pagination.page == newPage) {
+                        return;
+                    }
+
                     /**
                      * Check if the `newPage` is within the valid range.
                      */
