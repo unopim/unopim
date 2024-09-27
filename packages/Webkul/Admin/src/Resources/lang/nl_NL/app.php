@@ -64,8 +64,10 @@ return [
             'profile-image'     => 'Profielfoto',
             'save-btn'          => 'Bewaar account',
             'title'             => 'Mijn rekening',
+            'ui-locale'         => 'UI lokaal',
             'update-success'    => 'Account met succes bijgewerkt',
             'upload-image-info' => 'Upload een profielafbeelding (110px x 110px)',
+            'user-timezone'     => 'Tijdzone',
         ],
     ],
 

@@ -64,8 +64,10 @@ return [
             'profile-image'     => '个人资料图像',
             'save-btn'          => '保存帐户',
             'title'             => '我的账户',
+            'ui-locale'         => 'UI本地',
             'update-success'    => '帐户成功更新',
             'upload-image-info' => '上传配置文件图像 110px x 110px',
+            'user-timezone'     => '时区',
         ],
     ],
 

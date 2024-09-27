@@ -64,8 +64,10 @@ return [
             'profile-image'     => 'Хувийн мэдээллийг',
             'save-btn'          => 'Данс хадгалах',
             'title'             => 'Миний данс',
+            'ui-locale'         => 'Ui орон нутгийн',
             'update-success'    => 'Данс амжилттай шинэчлэгдсэн',
             'upload-image-info' => 'Профайл зургийг байршуулах (110px x 110px)',
+            'user-timezone'     => 'Цагийн бүс',
         ],
     ],
 

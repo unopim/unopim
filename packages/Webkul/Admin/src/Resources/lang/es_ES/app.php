@@ -64,6 +64,8 @@ return [
             'profile-image'     => 'Imagen de perfil',
             'save-btn'          => 'Guardar cuenta',
             'title'             => 'Mi cuenta',
+            'ui-locale'         => 'UI local',
+            'user-timezone'     => 'Zona horaria',
             'update-success'    => 'Cuenta actualizada con éxito',
             'upload-image-info' => 'Sube una imagen de perfil (110px x 110px)',
         ],
