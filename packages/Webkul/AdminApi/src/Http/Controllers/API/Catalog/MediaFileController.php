@@ -71,7 +71,6 @@ class MediaFileController extends ApiController
                         file: $value
                     );
                 }
-
             }
 
             $filePath = implode(',', $filePath);
@@ -85,7 +84,6 @@ class MediaFileController extends ApiController
                     'filePath'  => $filePath,
                 ]
             );
-
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
         }
