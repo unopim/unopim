@@ -372,7 +372,6 @@ abstract class AbstractType
                 $type = $attribute?->type;
 
                 if ($type === 'image' || $type === 'gallery' || $type === 'file') {
-
                     $path = 'product'.DIRECTORY_SEPARATOR.$productId.DIRECTORY_SEPARATOR.$field;
 
                     if ($type === 'gallery') {
