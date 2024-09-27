@@ -53,7 +53,7 @@ class FieldProcessor
      * @param  string  $imgpath  The path to the media files.
      * @return array|null valid paths of the media files, or null if none are found.
      */
-    protected function handleMediaField(mixed $value, $imgpath): ?array
+    protected function handleMediaField(mixed $value, string $imgpath): ?array
     {
         $paths = is_array($value) ? $value : [$value];
         $validPaths = [];
