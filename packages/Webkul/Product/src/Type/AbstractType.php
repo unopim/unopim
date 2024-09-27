@@ -390,16 +390,6 @@ abstract class AbstractType
                 }
             }
 
-            if ($fieldValue instanceof UploadedFile) {
-                $values[$field] = $this->fileStorer->store(
-                    path: 'product'.DIRECTORY_SEPARATOR.$productId.DIRECTORY_SEPARATOR.$field,
-                    file: $fieldValue,
-                    options: [FileStorer::HASHED_FOLDER_NAME_KEY => true]
-                );
-
-                continue;
-            }
-
             if (
                 $isCommonAttribute
                 && $this->attributeRepository->findWhere([

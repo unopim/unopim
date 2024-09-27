@@ -115,11 +115,11 @@
                 @break
             @case('image')
                 @php
-                if (is_array($value)) {
-                    $value = current($value);
-                }
+                    if (is_array($value)) {
+                        $value = current($value);
+                    }
 
-                $savedImage = ! empty($value) ? [
+                    $savedImage = ! empty($value) ? [
                         'id'    => 0,
                         'url'   => Storage::url($value),
                         'value' => $value,
@@ -142,13 +142,13 @@
                 @break
             @case('gallery')
                 @php
-                $savedImages = ! empty($value) ? array_map(function ($image, $index) {
-                    return [
-                        'id'    => uniqid(),
-                        'url'   => Storage::url($image),
-                        'value' => $image,
-                    ];
-                },  (array)$value, array_keys((array)$value)) : [];
+                    $savedImages = ! empty($value) ? array_map(function ($image, $index) {
+                        return [
+                            'id'    => uniqid(),
+                            'url'   => Storage::url($image),
+                            'value' => $image,
+                        ];
+                    }, (array)$value, array_keys((array)$value)) : [];
                 @endphp
 
                 @if (! empty($value))
