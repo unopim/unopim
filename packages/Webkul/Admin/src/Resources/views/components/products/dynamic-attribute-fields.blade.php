@@ -115,8 +115,11 @@
                 @break
             @case('image')
                 @php
+                if (is_array($value)) {
+                    $value = current($value);
+                }
 
-                    $savedImage = ! empty($value) ? [
+                $savedImage = ! empty($value) ? [
                         'id'    => 0,
                         'url'   => Storage::url($value),
                         'value' => $value,
@@ -134,6 +137,32 @@
                     :id="$field->code"
                     ::rules="{{ $field->getValidationsField() }}"
                     :uploaded-images="! empty($value) ? [$savedImage] : []"
+                    width='210px'
+                />
+                @break
+            @case('gallery')
+                @php
+                $savedImages = !empty($value) ? array_map(function ($image, $index) {
+                    return [
+                        'id'    => uniqid(),
+                        'url'   => Storage::url($image),
+                        'value' => $image,
+                    ];
+                },  (array)$value, array_keys((array)$value)) : [];
+                @endphp
+
+                @if (! empty($value))
+                    <!-- Empty value sent when value is deleted need to send empty value for this field -->
+                    <input type="hidden" name="{{ $fieldName }}" value="" multiple>
+                @endIf
+
+                <x-admin::media.images
+                    name="{{ $fieldName }}"
+                    ::class="[errors && errors['{{ $fieldName }}'] ? 'border !border-red-600 hover:border-red-600' : '']"
+                    :id="$field->code"
+                    ::rules="{{ $field->getValidationsField() }}"
+                    :uploaded-images="! empty($value) ? $savedImages : []"
+                    :allow-multiple=true
                     width='210px'
                 />
                 @break

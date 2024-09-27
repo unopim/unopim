@@ -367,8 +367,28 @@ abstract class AbstractType
         );
 
         foreach ($values as $field => $fieldValue) {
-            if (is_array($fieldValue) && current($fieldValue) instanceof UploadedFile) {
-                $fieldValue = current($fieldValue);
+            if (is_array($fieldValue)) {
+                $attribute = $this->attributeRepository->findOneByField('code', $field);
+                $type = $attribute?->type;
+
+                if ($type === 'image' || $type === 'gallery' || $type === 'file') {
+
+                    $path = 'product'.DIRECTORY_SEPARATOR.$productId.DIRECTORY_SEPARATOR.$field;
+
+                    if ($type === 'gallery') {
+                        $values[$field] = array_map(function ($val) use ($path) {
+                            return $val instanceof UploadedFile
+                            ? $this->fileStorer->store($path, $val, [FileStorer::HASHED_FOLDER_NAME_KEY => true])
+                            : $val;
+                        }, $fieldValue);
+
+                        $values[$field] = array_values($values[$field]);
+                    } elseif (! empty($fieldValue) && current($fieldValue) instanceof UploadedFile) {
+                        $values[$field] = $this->fileStorer->store($path, current($fieldValue), [FileStorer::HASHED_FOLDER_NAME_KEY => true]);
+                    }
+
+                    continue;
+                }
             }
 
             if ($fieldValue instanceof UploadedFile) {

@@ -33,6 +33,22 @@ it('should create the Attribute', function () {
     $this->assertDatabaseHas($this->getFullTableName(Attribute::class), $attribute);
 });
 
+it('should create the gallery type Attribute', function () {
+    $this->loginAsAdmin();
+
+    $attribute = [
+        'code' => 'testAttribute',
+        'type' => 'gallery',
+    ];
+
+    $response = postJson(route('admin.catalog.attributes.store'), $attribute);
+
+    $response->assertStatus(302)
+        ->assertRedirect(route('admin.catalog.attributes.index'));
+
+    $this->assertDatabaseHas($this->getFullTableName(Attribute::class), $attribute);
+});
+
 it('should return the attribute datagrid', function () {
     $this->loginAsAdmin();
 

@@ -13,9 +13,16 @@ class FieldProcessor
         }
 
         switch ($field->type) {
+            case 'gallery':
+                $value = $this->handleMediaField($value, $path);
+
+                break;
             case 'image':
             case 'file':
-                $value = $this->handleMediaField($path.$value);
+                $value = $this->handleMediaField($value, $path);
+                if (is_array($value)) {
+                    $value = implode(',', $value);
+                }
 
                 break;
             case 'textarea':
@@ -31,12 +38,19 @@ class FieldProcessor
         return $value;
     }
 
-    protected function handleMediaField(mixed $value)
+    protected function handleMediaField(mixed $value, $imgpath)
     {
-        if (! StorageFacade::disk('local')->has('public/'.$value)) {
-            return;
+        $paths = is_array($value) ? $value : [$value];
+        $validPaths = [];
+
+        foreach ($paths as $path) {
+            $trimmedPath = trim($path);
+
+            if (StorageFacade::disk('local')->has('public/'.$imgpath.$trimmedPath)) {
+                $validPaths[] = $imgpath.$trimmedPath;
+            }
         }
 
-        return $value;
+        return count($validPaths) ? $validPaths : null;
     }
 }

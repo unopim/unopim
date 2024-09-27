@@ -42,7 +42,6 @@ class MediaFileController extends ApiController
         ]);
 
         $requestData = request()->all();
-
         try {
             $product = $this->findProductOr404($requestData['sku']);
             $productId = $product->id;
@@ -62,22 +61,31 @@ class MediaFileController extends ApiController
         $attribute = $requestData['attribute'];
 
         try {
-            if ($attributeValue instanceof UploadedFile) {
-                $filePath = $this->fileStorer->store(
-                    path: 'product'.DIRECTORY_SEPARATOR.$productId.DIRECTORY_SEPARATOR.$attribute,
-                    file: $attributeValue
-                );
+            $attributeValue = is_array($attributeValue) ? $attributeValue : [$attributeValue];
+            $filePath = [];
 
-                return $this->successResponse(
-                    trans('admin::app.catalog.products.upload-success'),
-                    Response::HTTP_OK,
-                    [
-                        'attribute' => $attribute,
-                        'sku'       => $requestData['sku'],
-                        'filePath'  => $filePath,
-                    ]
-                );
+            foreach ($attributeValue as $value) {
+                if ($value instanceof UploadedFile) {
+                    $filePath[] = $this->fileStorer->store(
+                        path: 'product'.DIRECTORY_SEPARATOR.$productId.DIRECTORY_SEPARATOR.$attribute,
+                        file: $value
+                    );
+                }
+
             }
+
+            $filePath = implode(',', $filePath);
+
+            return $this->successResponse(
+                trans('admin::app.catalog.products.upload-success'),
+                Response::HTTP_OK,
+                [
+                    'attribute' => $attribute,
+                    'sku'       => $requestData['sku'],
+                    'filePath'  => $filePath,
+                ]
+            );
+
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
         }
