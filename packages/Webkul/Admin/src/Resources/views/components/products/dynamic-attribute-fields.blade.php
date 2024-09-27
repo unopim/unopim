@@ -142,7 +142,7 @@
                 @break
             @case('gallery')
                 @php
-                $savedImages = !empty($value) ? array_map(function ($image, $index) {
+                $savedImages = ! empty($value) ? array_map(function ($image, $index) {
                     return [
                         'id'    => uniqid(),
                         'url'   => Storage::url($image),
@@ -153,7 +153,7 @@
 
                 @if (! empty($value))
                     <!-- Empty value sent when value is deleted need to send empty value for this field -->
-                    <input type="hidden" name="{{ $fieldName }}" value="" multiple>
+                    <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
                 <x-admin::media.images
