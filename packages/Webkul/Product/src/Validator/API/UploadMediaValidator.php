@@ -40,7 +40,7 @@ class UploadMediaValidator
             });
         }
 
-        if ($productAttribute && ! in_array($productAttribute->type, [AttributeTypes::FILE_ATTRIBUTE_TYPE, AttributeTypes::IMAGE_ATTRIBUTE_TYPE])) {
+        if ($productAttribute && ! in_array($productAttribute->type, [AttributeTypes::FILE_ATTRIBUTE_TYPE, AttributeTypes::IMAGE_ATTRIBUTE_TYPE, AttributeTypes::GALLERY_ATTRIBUTE_TYPE])) {
             $validator->after(function ($validator) use ($attributeCode) {
                 $validator->errors()->add('attribute', trans('admin::app.catalog.attributes.not-found', ['code' => $attributeCode]));
             });

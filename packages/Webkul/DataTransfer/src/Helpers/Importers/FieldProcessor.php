@@ -6,6 +6,14 @@ use Illuminate\Support\Facades\Storage as StorageFacade;
 
 class FieldProcessor
 {
+    /**
+     * Processes a field value based on its type.
+     *
+     * @param  object  $field  The field object.
+     * @param  mixed  $value  The value of the field.
+     * @param  string  $path  The path to the media files.
+     * @return mixed The processed value of the field.
+     */
     public function handleField($field, mixed $value, string $path)
     {
         if (empty($value)) {
@@ -13,9 +21,16 @@ class FieldProcessor
         }
 
         switch ($field->type) {
+            case 'gallery':
+                $value = $this->handleMediaField($value, $path);
+
+                break;
             case 'image':
             case 'file':
-                $value = $this->handleMediaField($path.$value);
+                $value = $this->handleMediaField($value, $path);
+                if (is_array($value)) {
+                    $value = implode(',', $value);
+                }
 
                 break;
             case 'textarea':
@@ -31,12 +46,26 @@ class FieldProcessor
         return $value;
     }
 
-    protected function handleMediaField(mixed $value)
+    /**
+     * Processes media fields value.
+     *
+     * @param  mixed  $value  The value of the media field.
+     * @param  string  $imgpath  The path to the media files.
+     * @return array|null valid paths of the media files, or null if none are found.
+     */
+    protected function handleMediaField(mixed $value, string $imgpath): ?array
     {
-        if (! StorageFacade::disk('local')->has('public/'.$value)) {
-            return;
+        $paths = is_array($value) ? $value : [$value];
+        $validPaths = [];
+
+        foreach ($paths as $path) {
+            $trimmedPath = trim($path);
+
+            if (StorageFacade::disk('local')->has('public/'.$imgpath.$trimmedPath)) {
+                $validPaths[] = $imgpath.$trimmedPath;
+            }
         }
 
-        return $value;
+        return count($validPaths) ? $validPaths : null;
     }
 }

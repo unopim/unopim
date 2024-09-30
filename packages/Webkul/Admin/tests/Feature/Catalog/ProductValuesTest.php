@@ -554,6 +554,44 @@ it('should store the image attribute value when updating simple product', functi
     $this->assertTrue(Storage::exists($product->values['common'][$attributeCode]));
 });
 
+it('should store the gallery attribute value when updating simple product', function () {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create(['type' => 'gallery']);
+
+    $product = Product::factory()->simple()->create();
+
+    $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
+
+    $attributeCode = $attribute->code;
+
+    Storage::fake();
+
+    $data = [
+        'sku'    => $product->sku,
+        'values' => [
+            'common' => [
+                $attributeCode => [
+                    UploadedFile::fake()->image('product.jpg'),
+                    UploadedFile::fake()->image('product2.jpg'),
+                    UploadedFile::fake()->image('product3.jpg'),
+                ],
+            ],
+        ],
+    ];
+
+    $this->put(route('admin.catalog.products.update', $product->id), $data)
+        ->assertSessionHas('success', trans('admin::app.catalog.products.update-success'));
+
+    $product->refresh();
+
+    $this->assertNotEmpty($product->values['common'][$attributeCode] ?? '');
+
+    foreach ($product->values['common'][$attributeCode] as $media) {
+        $this->assertTrue(Storage::exists($media));
+    }
+});
+
 it('should store the file attribute value when updating simple product', function () {
     $this->loginAsAdmin();
 
@@ -857,6 +895,44 @@ it('should store the image attribute value when updating configurable product', 
     $this->assertNotEmpty($product->values['common'][$attributeCode] ?? '');
 
     $this->assertTrue(Storage::exists($product->values['common'][$attributeCode]));
+});
+
+it('should store the gallery attribute value when updating configurable product', function () {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create(['type' => 'gallery']);
+
+    $product = Product::factory()->configurable()->create();
+
+    $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
+
+    $attributeCode = $attribute->code;
+
+    Storage::fake();
+
+    $data = [
+        'sku'    => $product->sku,
+        'values' => [
+            'common' => [
+                $attributeCode => [
+                    UploadedFile::fake()->image('product.jpg'),
+                    UploadedFile::fake()->image('product2.jpg'),
+                    UploadedFile::fake()->image('product3.jpg'),
+                ],
+            ],
+        ],
+    ];
+
+    $this->put(route('admin.catalog.products.update', $product->id), $data)
+        ->assertSessionHas('success', trans('admin::app.catalog.products.update-success'));
+
+    $product->refresh();
+
+    $this->assertNotEmpty($product->values['common'][$attributeCode] ?? '');
+
+    foreach ($product->values['common'][$attributeCode] as $media) {
+        $this->assertTrue(Storage::exists($media));
+    }
 });
 
 it('should store the file attribute value when updating configurable product', function () {

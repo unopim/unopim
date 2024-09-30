@@ -101,7 +101,7 @@
                                 </x-admin::form.control-group.label>
 
                                 @php
-                                    $supportedTypes = ['text', 'textarea', 'price', 'boolean', 'select', 'multiselect', 'datetime', 'date', 'image', 'file', 'checkbox'];
+                                    $supportedTypes = ['text', 'textarea', 'price', 'boolean', 'select', 'multiselect', 'datetime', 'date', 'image', 'gallery', 'file', 'checkbox'];
 
                                     $attributeTypes = [];
 
