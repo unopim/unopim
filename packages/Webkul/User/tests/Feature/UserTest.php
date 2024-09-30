@@ -1,11 +1,11 @@
 <?php
 
-use function Pest\Laravel\get;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-
 use Webkul\User\Models\Admin;
+
+use function Pest\Laravel\get;
 
 it('should returns the user index page', function () {
     $this->loginAsAdmin();
