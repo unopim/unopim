@@ -67,4 +67,9 @@ return [
             'wrong-quotes'         => 'Se utilizan comillas rizadas en lugar de comillas rectas.',
         ],
     ],
+
+    'job' => [
+        'started'   => 'La ejecución del trabajo ha comenzado.',
+        'completed' => 'Ejecución del trabajo completada',
+    ],
 ];

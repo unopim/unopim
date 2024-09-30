@@ -7,6 +7,14 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Webkul\DataTransfer\Contracts\Validator\JobInstances\JobValidator as JobValidatorContract;
 
+/**
+ * Class JobValidator
+ *
+ * This class is responsible for validating job instance data
+ * according to specified rules, custom messages, and attribute names.
+ *
+ * Can be extended to implement custom validate function while using the other helper functions of this class
+ */
 class JobValidator implements JobValidatorContract
 {
     /**
@@ -29,7 +37,7 @@ class JobValidator implements JobValidatorContract
      *
      * @throws ValidationException
      */
-    public function validate(mixed $data)
+    public function validate(array $data): void
     {
         $data = $this->preValidationProcess($data);
 

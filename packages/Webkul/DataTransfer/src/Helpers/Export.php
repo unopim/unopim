@@ -257,7 +257,7 @@ class Export
             $this->setExport($export);
             Event::dispatch('data_transfer.export.completed', $export);
 
-            $this->jobLogger->info('Completed Job Execution');
+            $this->jobLogger->info(trans('data_transfer::app.job.completed'));
         }
     }
 

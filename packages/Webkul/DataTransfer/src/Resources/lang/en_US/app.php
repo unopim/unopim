@@ -67,4 +67,9 @@ return [
             'wrong-quotes'         => 'Curly quotes used instead of straight quotes.',
         ],
     ],
+
+    'job' => [
+        'started'   => 'Job execution started',
+        'completed' => 'Job execution completed',
+    ],
 ];

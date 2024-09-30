@@ -60,7 +60,7 @@ class AjaxOptionsController extends Controller
      * Fetch options according to parameters for search, page and id
      */
     protected function getOptionsByParams(
-        null|int|string $id,
+        int|string|null $id,
         string $entityName,
         int|string $page,
         string $query = '',

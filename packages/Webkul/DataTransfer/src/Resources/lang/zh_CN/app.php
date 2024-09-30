@@ -67,4 +67,9 @@ return [
             'wrong-quotes'         => '使用弯引号代替直引号。',
         ],
     ],
+
+    'job' => [
+        'started'   => '作业执行开始',
+        'completed' => '作业执行完成',
+    ],
 ];

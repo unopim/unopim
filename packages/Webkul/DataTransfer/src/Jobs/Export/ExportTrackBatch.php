@@ -51,7 +51,7 @@ class ExportTrackBatch implements ShouldQueue
 
         $exportHelper->setLogger($logger);
 
-        $logger->info('Started execution of job with tracking id: '.$this->exportBatch->id);
+        $logger->info(trans('data_transfer::app.job.started'));
 
         // Update the state to VALIDATED
         $exportHelper->stateUpdate(ExportHelper::STATE_VALIDATED);

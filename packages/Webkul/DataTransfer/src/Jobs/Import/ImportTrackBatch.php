@@ -56,7 +56,7 @@ class ImportTrackBatch implements ShouldQueue
 
         $importHelper->setLogger($logger);
 
-        $logger->info('Started execution of job with tracking id: '.$this->importBatch->id);
+        $logger->info(trans('data_transfer::app.job.started'));
 
         // Validate the import
         $import = $importHelper->validate();
