@@ -1030,6 +1030,7 @@ return [
                 'setup-queue-error' => 'Veuillez modifier votre pilote de file d\'attente en "base de données" ou "redis" pour démarrer le processus d\'importation.',
                 'update-success'    => 'Exporter mis à jour avec succès.',
                 'failed-info'       => 'Le travail a échoué. Veuillez corriger les erreurs suivantes et réessayer.',
+                'download-log-file' => 'Télécharger le journal',
             ],
             'imports' => [
                 'create'            => [

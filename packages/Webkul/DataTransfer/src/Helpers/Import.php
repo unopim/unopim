@@ -11,6 +11,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Psr\Log\LoggerInterface;
 use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
 use Webkul\DataTransfer\Helpers\Importers\AbstractImporter;
@@ -105,6 +106,11 @@ class Import
     protected $typeImporter;
 
     /**
+     * For job specific log file
+     */
+    protected $jobLogger;
+
+    /**
      * Create a new helper instance.
      *
      * @return void
@@ -123,6 +129,24 @@ class Import
         $this->import = $import;
 
         return $this;
+    }
+
+    /**
+     * Set logger instance
+     */
+    public function setLogger(LoggerInterface $logger): self
+    {
+        $this->jobLogger = $logger;
+
+        return $this;
+    }
+
+    /**
+     * Get logger instance for this job
+     */
+    public function getLogger(): LoggerInterface
+    {
+        return $this->jobLogger;
     }
 
     /**
@@ -373,7 +397,6 @@ class Import
      */
     public function completed(): void
     {
-
         $summary = $this->jobTrackBatchRepository
             ->select(
                 DB::raw('SUM(json_unquote(json_extract(summary, \'$."created"\'))) AS created'),
@@ -385,7 +408,6 @@ class Import
             ->first()?->toArray();
 
         if ($summary) {
-
             $import = $this->jobTrackRepository->update([
                 'state'        => self::STATE_COMPLETED,
                 'summary'      => $summary,
@@ -393,9 +415,11 @@ class Import
             ], $this->import->id);
 
             $this->setImport($import);
-            Event::dispatch('data_transfer.imports.completed', $import);
-        }
 
+            Event::dispatch('data_transfer.imports.completed', $import);
+
+            $this->jobLogger->info('Completed Job Execution');
+        }
     }
 
     /**
@@ -560,6 +584,7 @@ class Import
 
             $this->typeImporter = app()->make($importerConfig['importer'])
                 ->setImport($this->import)
+                ->setLogger($this->jobLogger)
                 ->setErrorHelper($this->errorHelper);
         }
 

@@ -4,6 +4,7 @@ namespace Webkul\DataTransfer\Helpers\Importers;
 
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
+use Psr\Log\LoggerInterface;
 use Webkul\DataTransfer\Contracts\JobTrack as ImportJobTrackContract;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as ImportJobBatchContract;
 use Webkul\DataTransfer\Helpers\Import;
@@ -127,6 +128,11 @@ abstract class AbstractImporter
     protected int $deletedItemsCount = 0;
 
     /**
+     * For job specific log file
+     */
+    protected $jobLogger;
+
+    /**
      * Create a new helper instance.
      *
      * @return void
@@ -187,6 +193,24 @@ abstract class AbstractImporter
         $this->initErrorMessages();
 
         return $this;
+    }
+
+    /**
+     * Set logger instance
+     */
+    public function setLogger(LoggerInterface $logger): self
+    {
+        $this->jobLogger = $logger;
+
+        return $this;
+    }
+
+    /**
+     * Get logger instance for this job
+     */
+    public function getLogger(): LoggerInterface
+    {
+        return $this->jobLogger;
     }
 
     /**
@@ -308,7 +332,7 @@ abstract class AbstractImporter
         $typeBatches = [];
 
         foreach ($this->import->batches as $batch) {
-            $typeBatches['import'][] = new ImportBatchJob($batch);
+            $typeBatches['import'][] = new ImportBatchJob($batch, $this->import->id);
 
             if ($this->isLinkingRequired()) {
                 $typeBatches['link'][] = new LinkBatchJob($batch);
@@ -333,7 +357,7 @@ abstract class AbstractImporter
             $chain[] = Bus::batch($typeBatches['index']);
         }
 
-        $chain[] = new CompletedJob($this->import);
+        $chain[] = new CompletedJob($this->import, $this->import->id);
 
         Bus::chain($chain)->dispatch();
 

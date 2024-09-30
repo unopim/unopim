@@ -4,6 +4,7 @@ namespace Webkul\DataTransfer\Helpers;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Psr\Log\LoggerInterface;
 use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
 use Webkul\DataTransfer\Helpers\Exporters\AbstractExporter;
@@ -100,6 +101,11 @@ class Export
     protected $source;
 
     /**
+     * Job specific logger
+     */
+    protected $jobLogger;
+
+    /**
      * Create a new helper instance.
      *
      * @return void
@@ -118,6 +124,24 @@ class Export
         $this->export = $export;
 
         return $this;
+    }
+
+    /**
+     * Set job logger instance.
+     */
+    public function setLogger(LoggerInterface $logger): self
+    {
+        $this->jobLogger = $logger;
+
+        return $this;
+    }
+
+    /**
+     * Get logger instance for this job
+     */
+    public function getLogger(): LoggerInterface
+    {
+        return $this->jobLogger;
     }
 
     /**
@@ -224,7 +248,6 @@ class Export
             ->first()?->toArray();
 
         if ($summary) {
-
             $export = $this->jobTrackRepository->update([
                 'state'        => self::STATE_COMPLETED,
                 'summary'      => $summary,
@@ -233,8 +256,9 @@ class Export
 
             $this->setExport($export);
             Event::dispatch('data_transfer.export.completed', $export);
-        }
 
+            $this->jobLogger->info('Completed Job Execution');
+        }
     }
 
     /**
@@ -300,6 +324,7 @@ class Export
 
             $this->typeExporter = app()->make($exporterConfig['exporter'])
                 ->setExport($this->export)
+                ->setLogger($this->jobLogger)
                 ->setErrorHelper($this->errorHelper);
 
             $this->source = app()->make($exporterConfig['source']);

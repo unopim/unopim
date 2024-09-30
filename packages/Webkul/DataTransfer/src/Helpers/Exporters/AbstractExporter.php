@@ -4,6 +4,7 @@ namespace Webkul\DataTransfer\Helpers\Exporters;
 
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
+use Psr\Log\LoggerInterface;
 use Webkul\DataTransfer\Buffer\FileBuffer;
 use Webkul\DataTransfer\Contracts\JobTrack as ExportJobTrackContract;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
@@ -131,6 +132,16 @@ abstract class AbstractExporter
     protected array $filters = [];
 
     /**
+     * For exporting file
+     */
+    protected bool $exportsFile = true;
+
+    /**
+     * For job specific log file
+     */
+    protected $jobLogger;
+
+    /**
      * Create a new instance.
      *
      * @return void
@@ -175,6 +186,24 @@ abstract class AbstractExporter
         $this->export = $export;
 
         return $this;
+    }
+
+    /**
+     * Set logger instance
+     */
+    public function setLogger(LoggerInterface $logger): self
+    {
+        $this->jobLogger = $logger;
+
+        return $this;
+    }
+
+    /**
+     * Get logger instance for this job
+     */
+    public function getLogger(): LoggerInterface
+    {
+        return $this->jobLogger;
     }
 
     public function getExportParameter(): array
@@ -266,13 +295,16 @@ abstract class AbstractExporter
     {
         if (! $filePath) {
             $this->filters = $this->export->jobInstance->filters ?? [];
-            $directory = sprintf('exports/%s/%s', $this->export->id, FileBuffer::FOLDER_PREFIX);
-            $fileName = $this->getFileName();
-            $filePath = $this->exportFileBuffer->initilize(
-                $directory,
-                $this->filters['file_format'] ?? SpoutWriterFactory::CSV,
-                $fileName
-            );
+
+            if ($this->exportsFile) {
+                $directory = sprintf('exports/%s/%s', $this->export->id, FileBuffer::FOLDER_PREFIX);
+                $fileName = $this->getFileName();
+                $filePath = $this->exportFileBuffer->initilize(
+                    $directory,
+                    $this->filters['file_format'] ?? SpoutWriterFactory::CSV,
+                    $fileName
+                );
+            }
         }
 
         if ($exportBatch) {
@@ -283,20 +315,22 @@ abstract class AbstractExporter
 
         $typeBatches = [];
 
-        $chain[] = new UploadFileJob(
-            $this->export,
-            $filePath->getFilePath(),
-            $filePath->getTemporaryPath(),
-            $this->filters
-        );
+        if ($this->exportsFile) {
+            $chain[] = new UploadFileJob(
+                $this->export,
+                $filePath->getFilePath(),
+                $filePath->getTemporaryPath(),
+                $this->filters
+            );
+        }
 
         foreach ($this->export->batches as $batch) {
-            $typeBatches['export'][] = new ExportBatchJob($batch, $filePath);
+            $typeBatches['export'][] = new ExportBatchJob($batch, $filePath, $this->export->id);
         }
 
         $chain[] = Bus::batch($typeBatches['export']);
 
-        $chain[] = new CompletedJob($this->export);
+        $chain[] = new CompletedJob($this->export, $this->export->id);
 
         Bus::chain($chain)->dispatch();
 

@@ -157,15 +157,12 @@
 
                             <x-slot:content>                        
                                 <!-- Filter Fields -->
-                                {!! view_render_event('unopim.admin.settings.data_transfer.exports.create.filters.fields.befor') !!}
-
-                                @php
-                                    $fields = $exporterConfig['categories']['filters']['fields'];
-                                    $filters = $export->filters ?? [];
-                                @endphp
+                                {!! view_render_event('unopim.admin.settings.data_transfer.exports.create.filters.fields.before') !!}
 
                                 <x-admin::data-transfer.filter-fields
-                                    :fields="$fields"
+                                    ::entity-type="entityType"
+                                    ::fields="filterFields"
+                                    :exporter-config="json_encode($exporterConfig)"
                                 >
                                 </x-admin::data-transfer.filter-fields>
 
@@ -186,11 +183,15 @@
                 data() {
                     return {
                         fileFormat: 'Csv',
-                        selectedFileFormat: 'Csv',
-                        entityType: '',
+                        selectedFileFormat: "{{ old('filters.file_format') ?? null }}",
+                        entityType: 'categories',
                         exporterConfig: @json($exporterConfig), 
                         filterFields: @json($exporterConfig['categories']['filters']['fields']),
                     };
+                },
+
+                mounted() {
+                    this.$emitter.on('filter-value-changed', this.handleFilterValues);
                 },
 
                 watch: {
@@ -199,6 +200,12 @@
                     },
                     entityType(value) {
                         this.filterFields = this.exporterConfig[JSON.parse(value).id]['filters']['fields'];
+
+                        if (this.filterFields.filter(field => field.name == 'file_format').length == 0) {
+                            this.selectedFileFormat = '';
+                        }
+
+                        this.$emitter.emit('entity-type-changed', value);
                     },
                 },
                 methods: {
@@ -207,6 +214,12 @@
                             return value ? JSON.parse(value) : null;
                         } catch (error) {
                             return value;
+                        }
+                    },
+
+                    handleFilterValues(changed) {
+                        if ('file_format' == changed.filterName) {
+                            this.selectedFileFormat = changed.value;
                         }
                     },
                 },

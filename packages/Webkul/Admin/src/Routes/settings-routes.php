@@ -117,6 +117,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
                 Route::get('track/{batch_id}', 'view')->name('admin.settings.data_transfer.tracker.view');
                 Route::get('track/download/{batch_id}', 'download')->name('admin.settings.data_transfer.tracker.download');
                 Route::get('track/archive/download/{batch_id}', 'downloadArchive')->name('admin.settings.data_transfer.tracker.archive.download');
+                Route::get('track/download-log/{track_id}', 'downloadLogFile')->name('admin.settings.data_transfer.tracker.log.download');
             });
             /**
              * Import routes.
