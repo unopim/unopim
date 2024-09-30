@@ -16,12 +16,24 @@
             }
 
             foreach ($config['filters']['fields'] as $key => $filter) {
-                if (
-                    ($filter['type'] == 'select' || $filter['type'] == 'multiselect')
-                    && ($filter['async'] ?? false) == true
-                    && ! empty($filter['list_route'])
-                ) {
-                    $exporterConfig[$name]['filters']['fields'][$key]['list_route'] = route($filter['list_route']);
+                $exporterConfig[$name]['filters']['fields'][$key]['title'] = trans($filter['title']);
+
+                if ($filter['type'] == 'select' || $filter['type'] == 'multiselect') {
+                    if (($filter['async'] ?? false) == true && ! empty($filter['list_route'])) {
+                        $exporterConfig[$name]['filters']['fields'][$key]['list_route'] = route($filter['list_route']);
+
+                        continue;
+                    }
+
+                    if (! isset($filter['options'])) {
+                        continue;
+                    }
+
+                    foreach ($filter['options'] as &$filterOption) {
+                        $filterOption['label'] = trans($filterOption['label']);
+                    }
+
+                    $exporterConfig[$name]['filters']['fields'][$key]['options'] = $filter['options'];
                 }
             }
         }
