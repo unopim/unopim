@@ -161,7 +161,6 @@ it('should not store the admin with invalid data', function () {
         'email',
         'password_confirmation',
     ]);
-
 });
 
 it('should not update the admin with invalid data', function () {
@@ -189,7 +188,6 @@ it('should not update the admin with invalid data', function () {
         'name',
         'password_confirmation',
     ]);
-
 });
 
 it('should not delete the logged in user', function () {
@@ -220,7 +218,6 @@ it('should give validation errors when updating the user', function () {
         'timezone',
         'ui_locale_id',
     ]);
-
 });
 
 it('should not update the user with invalid email', function () {
@@ -240,7 +237,6 @@ it('should not update the user with invalid email', function () {
     $response->assertSessionHasErrors([
         'email',
     ]);
-
 });
 
 it('should not update the user without name', function () {
@@ -260,7 +256,6 @@ it('should not update the user without name', function () {
     $response->assertSessionHasErrors([
         'name',
     ]);
-
 });
 
 it('should not update the user without current password', function () {
@@ -280,7 +275,6 @@ it('should not update the user without current password', function () {
     $response->assertSessionHasErrors([
         'current_password',
     ]);
-
 });
 
 it('should not update the user without ui-locale', function () {
@@ -300,7 +294,6 @@ it('should not update the user without ui-locale', function () {
     $response->assertSessionHasErrors([
         'ui_locale_id',
     ]);
-
 });
 
 it('should not update the user without timezone', function () {
@@ -320,7 +313,6 @@ it('should not update the user without timezone', function () {
     $response->assertSessionHasErrors([
         'timezone',
     ]);
-
 });
 
 it('should update the user with all required data', function () {
