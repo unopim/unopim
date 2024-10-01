@@ -95,10 +95,6 @@
                             @lang('admin::app.account.edit.ui-locale')
                         </x-admin::form.control-group.label>
 
-                        @php
-                        $locales = core()->getAllActiveLocales();
-                        @endphp
-
                         <x-admin::form.control-group.control
                             type="select"
                             id="ui_locale_id"
@@ -107,7 +103,7 @@
                             :value="old('ui_locale_id') ?: $user->ui_locale_id"
                             :label="trans('admin::app.account.edit.ui-locale')"
                             :placeholder="trans('admin::app.account.edit.ui-locale')"
-                            :options="$locales"
+                            :options="core()->getAllActiveLocales()"
                             track-by="id"
                             label-by="name"
                         >
@@ -122,10 +118,6 @@
                             @lang('admin::app.account.edit.user-timezone')
                         </x-admin::form.control-group.label>
 
-                        @php
-                        $timezones = json_encode(core()->getTimeZones());
-                        @endphp
-
                         <x-admin::form.control-group.control
                             type="select"
                             name="timezone"
@@ -133,7 +125,7 @@
                             :value="old('timezone') ?: $user->timezone"
                             :label="trans('admin::app.account.edit.user-timezone')"
                             :placeholder="trans('admin::app.account.edit.user-timezone')"
-                            :options="$timezones"
+                            :options="json_encode(core()->getTimeZones())"
                             track-by="id"
                             label-by="label"
                         >
