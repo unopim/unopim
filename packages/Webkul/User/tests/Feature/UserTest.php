@@ -213,13 +213,6 @@ it('should returns the users account page', function () {
 it('should give validation errors when updating the user', function () {
     $this->loginAsAdmin();
 
-    $currentPass = Hash::make('password');
-    $admin = Admin::factory()->create([
-        'email'        => 'update@example.com',
-        'password'     => $currentPass,
-        'ui_locale_id' => 1,
-    ]);
-
     $response = $this->put(route('admin.account.update'), []);
 
     $response->assertStatus(302);
@@ -235,13 +228,6 @@ it('should give validation errors when updating the user', function () {
 
 it('should not update the user with invalid email', function () {
     $this->loginAsAdmin();
-
-    $currentPass = Hash::make('password');
-    $admin = Admin::factory()->create([
-        'email'        => 'update@example.com',
-        'password'     => $currentPass,
-        'ui_locale_id' => 1,
-    ]);
 
     $response = $this->put(route('admin.account.update'), [
         'name'             => 'John',
@@ -264,13 +250,6 @@ it('should not update the user with invalid email', function () {
 it('should not update the user without name', function () {
     $this->loginAsAdmin();
 
-    $currentPass = Hash::make('password');
-    $admin = Admin::factory()->create([
-        'email'        => 'update@example.com',
-        'password'     => $currentPass,
-        'ui_locale_id' => 1,
-    ]);
-
     $response = $this->put(route('admin.account.update'), [
         'name'             => '',
         'email'            => 'update@example.com',
@@ -291,13 +270,6 @@ it('should not update the user without name', function () {
 
 it('should not update the user without current password', function () {
     $this->loginAsAdmin();
-
-    $currentPass = Hash::make('password');
-    $admin = Admin::factory()->create([
-        'email'        => 'update@example.com',
-        'password'     => $currentPass,
-        'ui_locale_id' => 1,
-    ]);
 
     $response = $this->put(route('admin.account.update'), [
         'name'             => 'John',
@@ -320,13 +292,6 @@ it('should not update the user without current password', function () {
 it('should not update the user without ui-locale', function () {
     $this->loginAsAdmin();
 
-    $currentPass = Hash::make('password');
-    $admin = Admin::factory()->create([
-        'email'        => 'update@example.com',
-        'password'     => $currentPass,
-        'ui_locale_id' => 1,
-    ]);
-
     $response = $this->put(route('admin.account.update'), [
         'name'             => 'John',
         'email'            => 'update@example.com',
@@ -347,13 +312,6 @@ it('should not update the user without ui-locale', function () {
 
 it('should not update the user without timezone', function () {
     $this->loginAsAdmin();
-
-    $currentPass = Hash::make('password');
-    $admin = Admin::factory()->create([
-        'email'        => 'update@example.com',
-        'password'     => $currentPass,
-        'ui_locale_id' => 1,
-    ]);
 
     $response = $this->put(route('admin.account.update'), [
         'name'             => 'John',
@@ -376,13 +334,6 @@ it('should not update the user without timezone', function () {
 it('should update the user with all required data', function () {
     $this->loginAsAdmin();
 
-    $currentPass = Hash::make('password');
-    $admin = Admin::factory()->create([
-        'email'        => 'update@example.com',
-        'password'     => $currentPass,
-        'ui_locale_id' => 1,
-    ]);
-
     $response = $this->put(route('admin.account.update'), [
         'name'                  => 'John doe',
         'email'                 => 'new@example.com',
@@ -394,7 +345,6 @@ it('should update the user with all required data', function () {
         'password_confirmation' => 'password2',
     ]);
 
-    $response->assertStatus(302);
     $response->assertRedirect();
 
     $this->assertDatabaseHas($this->getFullTableName(Admin::class), [
