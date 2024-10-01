@@ -82,6 +82,7 @@
                 >
                     <template #item="{ element, index }">
                         <v-media-image-item
+                            :allowMultiple="{{ $allowMultiple ? 'true' : 'false' }}"
                             :name="name"
                             :index="index"
                             :image="element"
@@ -339,7 +340,7 @@
                         :for="$.uid + '_imageInput_' + index"
                     ></label>
 
-                    <input type="hidden" :name="name + '[' + image.id + ']'" v-if="! image.is_new"/>
+                    <input type="hidden" :name="name + '[' + image.id + ']'" v-if="allowMultiple && ! image.is_new && image.value" :value="image.value"/>
 
                     <input type="hidden" :name="name" v-if="! allowMultiple && ! image.is_new && image.value" :value="image.value"/>
 
@@ -461,8 +462,6 @@
                             file: file
                         });
                     });
-
-
                 },
 
                 remove(image) {
@@ -542,7 +541,7 @@
         app.component('v-media-image-item', {
             template: '#v-media-image-item-template',
 
-            props: ['index', 'image', 'name', 'width', 'height'],
+            props: ['allowMultiple', 'index', 'image', 'name', 'width', 'height'],
 
             mounted() {
                 if (this.image.file instanceof File) {

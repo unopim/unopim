@@ -178,11 +178,18 @@ class Exporter extends AbstractExporter
                 unset($attributeValues[$attribute->code]);
             }
 
-            if ($withMedia && in_array($attribute->type, [AttributeTypes::FILE_ATTRIBUTE_TYPE, AttributeTypes::IMAGE_ATTRIBUTE_TYPE])) {
-                $exitingFilePath = $values[$attribute->code] ?? null;
-                if ($exitingFilePath && ! empty($exitingFilePath)) {
-                    $newfilePath = $filePath->getTemporaryPath().'/'.$exitingFilePath;
-                    $this->copyMedia($exitingFilePath, $newfilePath);
+            if ($withMedia && in_array($attribute->type, [AttributeTypes::FILE_ATTRIBUTE_TYPE, AttributeTypes::IMAGE_ATTRIBUTE_TYPE, AttributeTypes::GALLERY_ATTRIBUTE_TYPE])) {
+                $existingFilePath = $values[$attribute->code] ?? null;
+                $existingFilePath = is_array($existingFilePath) ? $existingFilePath : [$existingFilePath];
+                foreach ($existingFilePath as $path) {
+                    if ($path && ! empty($path)) {
+                        $newfilePath = $filePath->getTemporaryPath().'/'.$path;
+                        $this->copyMedia($path, $newfilePath);
+                    }
+                }
+
+                if (is_array($existingFilePath)) {
+                    $attributeValues[$attribute->code] = implode(', ', $existingFilePath);
                 }
             }
         }

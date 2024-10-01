@@ -935,6 +935,63 @@ it('should store the image attribute value when updating simple product', functi
     $this->assertTrue(Storage::exists($product->values['common'][$attributeCode]));
 });
 
+it('should store the gallery attribute value when updating simple product', function () {
+    $product = Product::factory()->simple()->create();
+    $attribute = Attribute::factory()->create(['type' => 'gallery']);
+    Storage::fake();
+
+    $updatedProduct = [
+        'sku'       => $product->sku,
+        'file'      => [
+            UploadedFile::fake()->image('product.jpg'),
+            UploadedFile::fake()->image('product2.jpg'),
+            UploadedFile::fake()->image('product3.jpg'),
+        ],
+        'attribute' => $attribute->code,
+    ];
+
+    $response = $this->withHeaders($this->headers)->json('POST', route('admin.api.media-files.product.store'), $updatedProduct);
+    $response->assertStatus(200);
+
+    if (! $response->status() === 200) {
+        test()->skip('Media is not exported.');
+    }
+
+    $family = AttributeFamily::where('id', $product->attribute_family_id);
+
+    $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
+
+    $attributeCode = $attribute->code;
+
+    $updatedproduct = [
+        'sku'    => $product->sku,
+        'parent' => null,
+        'family' => $family->first()->code,
+        'values' => [
+            'common' => [
+                'sku'          => $product->sku,
+                $attributeCode => explode(',', $response->json()['data']['filePath']),
+            ],
+        ],
+    ];
+
+    $this->withHeaders($this->headers)->json('PUT', route('admin.api.products.update', ['code' => $updatedproduct['sku']]), $updatedproduct)
+        ->assertStatus(200)
+        ->assertJsonStructure([
+            'success',
+            'message',
+        ])
+        ->assertJsonFragment(['success' => true]);
+
+    $product->refresh();
+
+    $this->assertNotEmpty($product->values['common'][$attributeCode] ?? '');
+
+    foreach ($product->values['common'][$attributeCode] as $media) {
+        $this->assertTrue(Storage::exists($media));
+    }
+});
+
 it('should store the file attribute value when updating simple product', function () {
     $product = Product::factory()->simple()->create();
     $attribute = Attribute::factory()->create(['type' => 'file']);
