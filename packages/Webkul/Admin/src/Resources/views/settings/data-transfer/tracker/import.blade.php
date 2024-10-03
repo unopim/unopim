@@ -231,23 +231,33 @@
                     class="grid gap-2 w-full p-3 bg-green-50 border border-green-200 rounded-sm dark:bg-cherry-700 dark:border-cherry-700 dark:text-gray-300"
                     v-else-if="importResource.state == 'processing' || importResource.state == 'processed'"
                 >
-                    <p 
-                        class="flex gap-2 items-center"
-                        v-if="jobInstance.type == 'import'"
-                    >
-                        <i class="icon-information rounded-full bg-green-200 text-2xl text-green-600 dark:!text-green-600"></i>
+                    <div class="flex place-content-between">
+                        <p 
+                            class="flex gap-2 items-center"
+                            v-if="jobInstance.type == 'import'"
+                        >
+                            <i class="icon-information rounded-full bg-green-200 text-2xl text-green-600 dark:!text-green-600"></i>
+    
+                            @lang('admin::app.settings.data-transfer.imports.import.importing-info')
+                        </p>
+    
+                        <p 
+                            class="flex gap-2 items-center"
+                            v-if="jobInstance.type == 'export'"
+                        >
+                            <i class="icon-information rounded-full bg-green-200 text-2xl text-green-600 dark:!text-green-600"></i>
+    
+                            @lang('admin::app.settings.data-transfer.imports.import.exporting-info')
+                        </p>
 
-                        @lang('admin::app.settings.data-transfer.imports.import.importing-info')
-                    </p>
-
-                    <p 
-                        class="flex gap-2 items-center"
-                        v-if="jobInstance.type == 'export'"
-                    >
-                        <i class="icon-information rounded-full bg-green-200 text-2xl text-green-600 dark:!text-green-600"></i>
-
-                        @lang('admin::app.settings.data-transfer.imports.import.exporting-info')
-                    </p>
+                        <a
+                            class="transparent-button hover:dark:bg-cherry-800 place-self-start"
+                            href="{{ route('admin.settings.data_transfer.tracker.log.download', $import->id) }}"
+                            target="_blank"
+                        >
+                            @lang('admin::app.settings.data-transfer.tracker.download-log-file')
+                        </a>
+                    </div>
 
                     <div class="w-full bg-green-200 rounded-sm h-5 dark:bg-green-500">
                         <div
