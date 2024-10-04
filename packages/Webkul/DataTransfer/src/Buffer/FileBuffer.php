@@ -89,7 +89,6 @@ class FileBuffer
             $sheet->setCellValue($column.'1', $header);
             $column++;
         }
-
     }
 
     /**

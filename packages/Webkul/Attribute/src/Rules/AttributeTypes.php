@@ -13,6 +13,8 @@ class AttributeTypes implements ValidationRule
 
     const PRICE_ATTRIBUTE_TYPE = 'price';
 
+    const GALLERY_ATTRIBUTE_TYPE = 'gallery';
+
     const ATTRIBUTE_TYPES = [
         'text',
         'textarea',
@@ -25,6 +27,7 @@ class AttributeTypes implements ValidationRule
         'image',
         'file',
         'checkbox',
+        'gallery',
     ];
 
     /**

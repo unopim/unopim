@@ -733,6 +733,10 @@ class Importer extends AbstractImporter
                 continue;
             }
 
+            if ($attribute->type === 'gallery') {
+                $value = explode(',', $value);
+            }
+
             $value = $this->fieldProcessor->handleField($attribute, $value, $imageDirPath);
 
             if ($attribute->type === 'price') {
