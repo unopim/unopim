@@ -1,5 +1,7 @@
 <?php
 
+use Webkul\User\Models\Admin;
+
 it('should ask for email if email option is not provided in the command', function () {
     $this->artisan('unopim:user:create', [
         '--name'      => 'New User',
@@ -8,8 +10,7 @@ it('should ask for email if email option is not provided in the command', functi
         '--timezone'  => 'UTC',
         '--admin'     => false,
     ])
-
-        ->expectsQuestion('Provide Email of Administrator', 'new.user@example.com')
+        ->expectsQuestion('Provide Email of User', 'new.user@example.com')
         ->assertExitCode(0);
 });
 
@@ -21,8 +22,7 @@ it('should ask for name if name option is not provided in the command', function
         '--timezone'   => 'UTC',
         '--admin'      => false,
     ])
-
-        ->expectsQuestion('Set the Name for Administrator', 'New User')
+        ->expectsQuestion('Set the Name for User', 'New User')
         ->assertExitCode(0);
 });
 
@@ -34,8 +34,7 @@ it('should ask for password if password option is not provided in the command', 
         '--timezone'  => 'UTC',
         '--admin'     => false,
     ])
-
-        ->expectsQuestion('Input a Secure Password for Administrator', 'password')
+        ->expectsQuestion('Input a Secure Password for User', 'password')
         ->assertExitCode(0);
 });
 
@@ -48,8 +47,7 @@ it('should ask for password if password length is less than 6 in the command', f
         '--timezone'  => 'UTC',
         '--admin'     => false,
     ])
-
-        ->expectsQuestion('Input a Secure Password for Administrator', 'password')
+        ->expectsQuestion('Input a Secure Password for User', 'password')
         ->assertExitCode(0);
 });
 
@@ -88,6 +86,10 @@ it('should create a user with command', function () {
 });
 
 it('should not create a user if with same already exists for same email with command', function () {
+    $admin = $admin ?? Admin::factory()->create([
+        'email' => 'new.user@example.com',
+    ]);
+
     $this->artisan('unopim:user:create', [
         '--name'      => 'New User',
         '--email'     => 'new.user@example.com',
