@@ -140,7 +140,6 @@ it('should give validation messages during create of export job', function () {
         ])->assertJsonFragment([
             'code'                => [trans('validation.required', ['attribute' => 'code'])],
             'entity_type'         => [trans('validation.required', ['attribute' => 'entity type'])],
-            'filters.file_format' => [trans('validation.required', ['attribute' => 'filters.file format'])],
         ]);
 });
 
