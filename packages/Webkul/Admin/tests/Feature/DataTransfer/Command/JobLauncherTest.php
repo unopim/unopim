@@ -2,7 +2,7 @@
 
 use Webkul\DataTransfer\Models\JobInstances;
 
-it('should run job successfully with valid jobId and username', function () {
+it('should run job successfully with valid jobId and user email Id', function () {
     $user = $this->loginAsAdmin();
     
     $exportJob = JobInstances::factory()->exportJob()->entityProduct()->create();
@@ -20,11 +20,11 @@ it('should fail when given queue invalid jobId', function () {
         ->assertFailed();
 });
 
-it('should fail when given an invalid username', function () {
+it('should fail when given an invalid user email Id', function () {
     $exportJob = JobInstances::factory()->exportJob()->entityProduct()->create();
 
     $this->artisan(sprintf('unopim:queue:work %s xyz@example.com', $exportJob->id))
-        ->expectsOutputToContain('User not found given username.')
+        ->expectsOutputToContain('User not found given user email Id.')
         ->assertFailed();
 });
 

@@ -33,7 +33,7 @@ class JobExecuteCommand extends Command
      */
     protected $signature = 'unopim:queue:work 
                             {jobId} 
-                            {username}
+                            {userEmailId}
                             {connection? : The name of the queue connection to work}
                             {--queue= : The names of the queue to work}
                             {--name=single : The name of the worker}
@@ -75,10 +75,10 @@ class JobExecuteCommand extends Command
         $jobId = $this->argument('jobId');
         $userId = null;
 
-        if ($this->argument('username')) {
-            $user = $this->adminRepository->findByField('email', $this->argument('username'))->first();
+        if ($this->argument('userEmailId')) {
+            $user = $this->adminRepository->findByField('email', $this->argument('userEmailId'))->first();
             if (! $user) {
-                $this->error('User not found given username.');
+                $this->error('User not found given user email Id.');
 
                 return 1;
             }
