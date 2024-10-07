@@ -99,7 +99,7 @@ class JobExecuteCommand extends Command
             $this->listenForEvents();
 
             $connectionName = $this->argument('connection')
-            ?: $this->laravel['config']['queue.default'];
+                ?: $this->laravel['config']['queue.default'];
 
             $this->runWorker(
                 $connectionName, $queueName
@@ -219,10 +219,8 @@ class JobExecuteCommand extends Command
 
     /**
      * Write the status output for the queue worker.
-     *
-     * @return void
      */
-    protected function writeOutput(Job $job, string $status)
+    protected function writeOutput(Job $job, string $status): void
     {
         $this->output->write(sprintf(
             '  <fg=gray>%s</> %s%s',
@@ -242,7 +240,9 @@ class JobExecuteCommand extends Command
 
             $this->output->write(' '.str_repeat('<fg=gray>.</>', $dots));
 
-            return $this->output->writeln(' <fg=yellow;options=bold>RUNNING</>');
+            $this->output->writeln(' <fg=yellow;options=bold>RUNNING</>');
+
+            return;
         }
 
         $runTime = $this->formatRunTime($this->latestStartedAt);
@@ -293,8 +293,9 @@ class JobExecuteCommand extends Command
     {
         $queueTimezone = $this->laravel['config']->get('queue.output_timezone');
 
-        if ($queueTimezone &&
-            $queueTimezone !== $this->laravel['config']->get('app.timezone')) {
+        if ($queueTimezone
+            && $queueTimezone !== $this->laravel['config']->get('app.timezone')
+        ) {
             return Carbon::now()->setTimezone($queueTimezone);
         }
 
