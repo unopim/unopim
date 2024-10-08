@@ -318,7 +318,6 @@ return [
                 'file'                  => 'Mengajukan',
                 'general'               => 'Umum',
                 'image'                 => 'Gambar',
-                'gallery'               => 'Galeri',
                 'input-options'         => 'Opsi input',
                 'input-validation'      => 'Validasi input',
                 'is-comparable'         => 'Atribut sebanding',
@@ -384,7 +383,6 @@ return [
                 'file'                  => 'Mengajukan',
                 'general'               => 'Umum',
                 'image'                 => 'Gambar',
-                'gallery'               => 'Galeri',
                 'input-options'         => 'Opsi input',
                 'input-validation'      => 'Validasi input',
                 'is-comparable'         => 'Atribut sebanding',
@@ -1519,6 +1517,12 @@ return [
                         'organization'   => 'ID Organisasi',
                         'title'          => 'Pengaturan Umum',
                         'title-info'     => 'Tingkatkan pengalaman Anda dengan fitur AI ajaib dengan memasukkan kunci API eksklusif Anda dan menunjukkan organisasi terkait untuk integrasi yang mudah.Rebut perintah atas kredensial OpenAI Anda dan sesuaikan pengaturan sesuai dengan kebutuhan spesifik Anda.',
+                    ],
+
+                    'image-generation' => [
+                        'enabled'    => 'Diaktifkan',
+                        'title'      => 'Pembuatan Gambar',
+                        'title-info' => 'Fitur ini akan mengaktifkan Magic AI untuk setiap unggahan gambar, di mana Anda ingin menghasilkan gambar menggunakan DALL-E.<br/><br/>Jika Diaktifkan, buka unggahan gambar mana pun untuk menghasilkan gambar.',
                     ],
                 ],
             ],

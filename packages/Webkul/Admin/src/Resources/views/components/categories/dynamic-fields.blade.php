@@ -121,6 +121,7 @@
                     :id="$field->code"
                     ::rules="{{ $field->getValidationsField() }}"
                     :uploaded-images="! empty($value) ? [$savedImage] : []"
+                    width='210px'
                 />
                 @break
             @case('file')

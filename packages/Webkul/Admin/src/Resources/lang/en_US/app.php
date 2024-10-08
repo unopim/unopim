@@ -318,7 +318,6 @@ return [
                 'file'                  => 'File',
                 'general'               => 'General',
                 'image'                 => 'Image',
-                'gallery'               => 'Gallery',
                 'input-options'         => 'Input Options',
                 'input-validation'      => 'Input Validation',
                 'is-comparable'         => 'Attribute is comparable',
@@ -384,7 +383,6 @@ return [
                 'file'                  => 'File',
                 'general'               => 'General',
                 'image'                 => 'Image',
-                'gallery'               => 'Gallery',
                 'input-options'         => 'Input Options',
                 'input-validation'      => 'Input Validation',
                 'is-comparable'         => 'Attribute is comparable',
@@ -1520,6 +1518,12 @@ return [
                         'organization'   => 'Organization ID',
                         'title'          => 'General Settings',
                         'title-info'     => 'Enhance your experience with the Magic AI feature by entering your exclusive API Key and indicating the pertinent Organization for effortless integration. Seize command over your OpenAI credentials and customize the settings according to your specific needs.',
+                    ],
+
+                    'image-generation' => [
+                        'enabled'    => 'Enabled',
+                        'title'      => 'Image Generation',
+                        'title-info' => 'This feature will enable the Magic AI for every image upload, where you want to generate images using DALL-E.<br/><br/>When Enable, go to any image upload to generate image.',
                     ],
                 ],
             ],

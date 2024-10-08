@@ -39,5 +39,17 @@ return [
                 'type'          => 'text',
             ],
         ],
+    ], [
+        'key'    => 'general.magic_ai.image_generation',
+        'name'   => 'admin::app.configuration.index.general.magic-ai.image-generation.title',
+        'info'   => 'admin::app.configuration.index.general.magic-ai.image-generation.title-info',
+        'sort'   => 1,
+        'fields' => [
+            [
+                'name'          => 'enabled',
+                'title'         => 'admin::app.configuration.index.general.magic-ai.image-generation.enabled',
+                'type'          => 'boolean',
+            ],
+        ],
     ],
 ];

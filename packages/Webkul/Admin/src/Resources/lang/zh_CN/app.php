@@ -318,7 +318,6 @@ return [
                 'file'                  => '文件',
                 'general'               => '一般的',
                 'image'                 => '图像',
-                'gallery'               => '画廊',
                 'input-options'         => '输入选项',
                 'input-validation'      => '输入验证',
                 'is-comparable'         => '属性是可比的',
@@ -384,7 +383,6 @@ return [
                 'file'                  => '文件',
                 'general'               => '一般的',
                 'image'                 => '图像',
-                'gallery'               => '画廊',
                 'input-options'         => '输入选项',
                 'input-validation'      => '输入验证',
                 'is-comparable'         => '属性是可比的',
@@ -1517,6 +1515,12 @@ return [
                         'organization'      => '组织ID',
                         'title'             => '常规设置',
                         'title-info'        => '通过输入您的独家API密钥并指示相关的毫不费力集成组织，从而增强您使用魔术AI功能的体验。抓住您的OpenAI凭据，并根据您的特定需求自定义设置。',
+                    ],
+
+                    'image-generation' => [
+                        'enabled'    => '啟用',
+                        'title'      => '影像生成',
+                        'title-info' => '此功能將為每次圖像上傳啟用 Magic AI，您希望使用 DALL-E 生成圖像。',
                     ],
                 ],
             ],

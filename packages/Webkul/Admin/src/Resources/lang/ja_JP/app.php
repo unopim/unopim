@@ -318,7 +318,6 @@ return [
                 'file'                  => 'ファイル',
                 'general'               => '一般',
                 'image'                 => '画像',
-                'gallery'               => 'ギャラリー',
                 'input-options'         => '入力オプション',
                 'input-validation'      => '入力検証',
                 'is-comparable'         => '属性は比較可能です',
@@ -384,7 +383,6 @@ return [
                 'file'                  => 'ファイル',
                 'general'               => '一般',
                 'image'                 => '画像',
-                'gallery'               => 'ギャラリー',
                 'input-options'         => '入力オプション',
                 'input-validation'      => '入力検証',
                 'is-comparable'         => '属性は比較可能です',
@@ -1520,6 +1518,12 @@ return [
                         'organization'   => '組織 ID',
                         'title'          => '一般設定',
                         'title-info'     => '専用の API キーを入力し、関連する組織を指定して簡単に統合することで、Magic AI 機能のエクスペリエンスが向上します。OpenAI 資格情報を制御して、特定のニーズに応じて設定をカスタマイズします。',
+                    ],
+
+                    'image-generation' => [
+                        'enabled'    => '有効',
+                        'title'      => '画像生成',
+                        'title-info' => 'この機能は、DALL-E を使用して画像を生成するすべての画像アップロードで Magic AI を有効にします。<br/><br/>有効にすると、任意の画像アップロードに移動して画像を生成します。',
                     ],
                 ],
             ],

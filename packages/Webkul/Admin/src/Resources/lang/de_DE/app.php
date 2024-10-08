@@ -318,7 +318,6 @@ return [
                 'file'                  => 'Datei',
                 'general'               => 'Allgemein',
                 'image'                 => 'Bild',
-                'gallery'               => 'Galerie',
                 'input-options'         => 'Eingabeoptionen',
                 'input-validation'      => 'Eingabevalidierung',
                 'is-comparable'         => 'Attribut ist vergleichbar',
@@ -384,7 +383,6 @@ return [
                 'file'                  => 'Datei',
                 'general'               => 'Allgemein',
                 'image'                 => 'Bild',
-                'gallery'               => 'Galerie',
                 'input-options'         => 'Eingabeoptionen',
                 'input-validation'      => 'Eingabevalidierung',
                 'is-comparable'         => 'Attribut ist vergleichbar',
@@ -1518,6 +1516,12 @@ return [
                         'organization'   => 'Organisations-ID',
                         'title'          => 'Allgemeine Einstellungen',
                         'title-info'     => 'Verbessern Sie Ihre Erfahrung mit der Magic AI-Funktion, indem Sie Ihren exklusiven API-Schlüssel eingeben und die entsprechende Organisation für eine mühelose Integration angeben. Übernehmen Sie die Kontrolle über Ihre OpenAI-Anmeldeinformationen und passen Sie die Einstellungen entsprechend Ihren spezifischen Anforderungen an.',
+                    ],
+
+                    'image-generation' => [
+                        'enabled'    => 'Ermöglicht',
+                        'title'      => 'Bilderzeugung',
+                        'title-info' => 'Diese Funktion aktiviert die Magic AI für jeden Bild-Upload, bei dem Sie Bilder mit DALL-E generieren möchten.<br/><br/>Wenn aktiviert, gehen Sie zu einem beliebigen Bild-Upload, um ein Bild zu generieren.',
                     ],
                 ],
             ],

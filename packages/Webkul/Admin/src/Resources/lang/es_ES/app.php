@@ -318,7 +318,6 @@ return [
                 'file'                  => 'Archivo',
                 'general'               => 'General',
                 'image'                 => 'Imagen',
-                'gallery'               => 'Galería',
                 'input-options'         => 'Opciones de entrada',
                 'input-validation'      => 'Validación de entrada',
                 'is-comparable'         => 'El atributo es comparable',
@@ -384,7 +383,6 @@ return [
                 'file'                  => 'Archivo',
                 'general'               => 'General',
                 'image'                 => 'Imagen',
-                'gallery'               => 'Galería',
                 'input-options'         => 'Opciones de entrada',
                 'input-validation'      => 'Validación de entrada',
                 'is-comparable'         => 'El atributo es comparable',
@@ -1518,6 +1516,12 @@ return [
                         'organization'      => 'ID de organización',
                         'title'             => 'Configuración general',
                         'title-info'        => 'Mejore su experiencia con la función Magic AI ingresando su clave API exclusiva e indicando la organización pertinente para la integración sin esfuerzo.Aproveche el comando sobre sus credenciales de OpenAI y personalice la configuración de acuerdo con sus necesidades específicas.',
+                    ],
+
+                    'image-generation' => [
+                        'enabled'    => 'Activado',
+                        'title'      => 'Generación de imágenes',
+                        'title-info' => 'Esta función habilitará Magic AI para cada carga de imagen, donde desee generar imágenes usando DALL-E.<br/><br/>Cuando esté habilitado, vaya a cualquier carga de imagen para generar una imagen.',
                     ],
                 ],
             ],

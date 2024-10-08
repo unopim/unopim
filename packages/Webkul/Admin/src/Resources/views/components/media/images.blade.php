@@ -26,50 +26,61 @@
             <div class="flex flex-wrap gap-1">
                 <!-- Upload Image Button -->
                 <template v-if="allowMultiple || images.length == 0">
-                    <!-- AI Image Generation Button -->
-                    <label
-                        class="grid justify-items-center items-center w-full h-[120px] max-w-[120px] min-w-[110px] max-h-[120px] min-h-[110px] border border-dashed border-violet-300 rounded cursor-pointer transition-all hover:border-violet-700  dark:invert dark:mix-blend-exclusion"
-                        :style="{'max-width': this.width, 'max-height': this.height}"
-                        v-if="ai.enabled"
-                        @click="resetAIModal(); $refs.magicAIImageModal.open()"
+                    <div 
+                        class="flex flex-col w-full max-w-[210px]"
                     >
-                        <div class="flex flex-col items-center">
-                            <span class="icon-magic text-2xl text-violet-700"></span>
+                        <!-- AI Image Generation Button -->
+                        <label
+                            class="cursor-pointer mb-2"
+                            v-if="ai.enabled"
+                            @click="resetAIModal(); $refs.magicAIImageModal.open()"
+                        >
+                            <div class="flex flex-col items-end">
+                                <div class="flex gap-1 box-shadow px-1 bg-violet-100 rounded-sm text-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                        <g clip-path="url(#clip0_3148_2242)"> <path fill-rule="evenodd" clip-rule="evenodd" d="M12.1484 9.31989L9.31995 12.1483L19.9265 22.7549L22.755 19.9265L12.1484 9.31989ZM12.1484 10.7341L10.7342 12.1483L13.5626 14.9767L14.9768 13.5625L12.1484 10.7341Z" fill="#6d28d9"/>
+                                            <path d="M11.0877 3.30949L13.5625 4.44748L16.0374 3.30949L14.8994 5.78436L16.0374 8.25924L13.5625 7.12124L11.0877 8.25924L12.2257 5.78436L11.0877 3.30949Z" fill="#6d28d9"/>
+                                            <path d="M2.39219 2.39217L5.78438 3.95197L9.17656 2.39217L7.61677 5.78436L9.17656 9.17655L5.78438 7.61676L2.39219 9.17655L3.95198 5.78436L2.39219 2.39217Z" fill="#6d28d9"/>
+                                            <path d="M3.30947 11.0877L5.78434 12.2257L8.25922 11.0877L7.12122 13.5626L8.25922 16.0374L5.78434 14.8994L3.30947 16.0374L4.44746 13.5626L3.30947 11.0877Z" fill="#6d28d9"/>
+                                        </g> 
+                                        <defs> 
+                                            <clipPath id="clip0_3148_2242">
+                                                <rect width="24" height="24" fill="white"/>
+                                            </clipPath> 
+                                        </defs> 
+                                    </svg>
 
-                            <p class="grid text-sm text-violet-700 font-semibold text-center">
-                                @lang('admin::app.components.media.images.ai-add-image-btn')
+                                    <span class="text-violet-700 text-sm">Magic AI</span>
+                                </div>
                                 
-                                <span class="text-xs">
-                                    @lang('admin::app.components.media.images.ai-btn-info')
-                                </span>
-                            </p>
-                        </div>
-                    </label>
+                            </div>
+                        </label>
 
-                    <!-- Upload Image Button -->
-                    <label
-                        class="grid justify-items-center items-center w-full h-[120px] max-w-[210px] max-h-[120px] border border-dashed dark:border-gray-300 rounded cursor-pointer transition-all hover:border-gray-400 border-gray-300"
-                        :style="{'max-width': this.width, 'max-height': this.height}"
-                        :for="$.uid + '_imageInput'"
-                    >
-                        <div class="flex flex-col items-center">
-                            <span class="icon-image text-2xl"></span>
+                        <!-- Upload Image Button -->
+                        <label
+                            class="grid justify-items-center items-center w-full h-[120px] max-w-[210px] max-h-[120px] border border-dashed dark:border-gray-300 rounded cursor-pointer transition-all hover:border-gray-400 border-gray-300"
+                            :style="{'max-width': this.width, 'max-height': this.height}"
+                            :for="$.uid + '_imageInput'"
+                        >
+                            <div class="flex flex-col items-center">
+                                <span class="icon-image text-2xl"></span>
 
-                            <p class="grid text-sm text-gray-600 dark:text-gray-300 font-semibold text-center">
-                                @lang('admin::app.components.media.images.add-image-btn')
-                            </p>
+                                <p class="grid text-sm text-gray-600 dark:text-gray-300 font-semibold text-center">
+                                    @lang('admin::app.components.media.images.add-image-btn')
+                                </p>
 
-                            <input
-                                type="file"
-                                class="hidden"
-                                :id="$.uid + '_imageInput'"
-                                accept="image/*"
-                                :multiple="allowMultiple"
-                                :ref="$.uid + '_imageInput'"
-                                @change="add"
-                            />
-                        </div>
-                    </label>
+                                <input
+                                    type="file"
+                                    class="hidden"
+                                    :id="$.uid + '_imageInput'"
+                                    accept="image/*"
+                                    :multiple="allowMultiple"
+                                    :ref="$.uid + '_imageInput'"
+                                    @change="add"
+                                />
+                            </div>
+                        </label>
+                     </div>
                 </template>
 
                 <!-- Uploaded Images -->
@@ -82,7 +93,6 @@
                 >
                     <template #item="{ element, index }">
                         <v-media-image-item
-                            :allowMultiple="{{ $allowMultiple ? 'true' : 'false' }}"
                             :name="name"
                             :index="index"
                             :image="element"
@@ -150,20 +160,28 @@
                                             @lang('admin::app.components.media.images.ai-generation.model')
                                         </x-admin::form.control-group.label>
 
+                                        @php
+                                            $aiModelsJson = json_encode([
+                                                    [
+                                                        'label' => trans('admin::app.components.media.images.ai-generation.dall-e-2'),
+                                                        'value' => 'dall-e-2'
+                                                    ], [
+                                                        'label' => trans('admin::app.components.media.images.ai-generation.dall-e-3'),
+                                                        'value' => 'dall-e-3'
+                                                    ]
+                                                ]);
+                                        @endphp
+
                                         <x-admin::form.control-group.control
                                             type="select"
                                             name="model"
                                             rules="required"
                                             v-model="ai.model"
+                                            :options="$aiModelsJson"
+                                            track-by="value"
+                                            label-by="label"
                                             :label="trans('admin::app.components.media.images.ai-generation.model')"
                                         >
-                                            <option value="dall-e-2">
-                                                @lang('admin::app.components.media.images.ai-generation.dall-e-2')
-                                            </option>
-
-                                            <option value="dall-e-3">
-                                                @lang('admin::app.components.media.images.ai-generation.dall-e-3')
-                                            </option>
                                         </x-admin::form.control-group.control>
 
                                         <x-admin::form.control-group.error control-name="model" />
@@ -187,27 +205,35 @@
 
                                     <x-admin::form.control-group>
                                         <x-admin::form.control-group.label class="required">
-                                            @lang('admin::app.components.media.images.ai-generation.size')
+                                            @lang('admin::app.components.media.images.ai-generation.size') 
                                         </x-admin::form.control-group.label>
+
+
+                                        @php
+                                            $aiImageSizes = json_encode([
+                                                    [
+                                                        'label' => trans('admin::app.components.media.images.ai-generation.1024x1024'),
+                                                        'value' => '1024x1024'
+                                                    ], [
+                                                        'label' => trans('admin::app.components.media.images.ai-generation.1024x1792'),
+                                                        'value' => '1024x1792'
+                                                    ], [
+                                                        'label' => trans('admin::app.components.media.images.ai-generation.1792x1024'),
+                                                        'value' => '1792x1024'
+                                                    ]
+                                                ]);
+                                        @endphp
 
                                         <x-admin::form.control-group.control
                                             type="select"
                                             name="size"
                                             rules="required"
                                             v-model="ai.size"
+                                            :options="$aiImageSizes"
+                                            track-by="value"
+                                            label-by="label"
                                             :label="trans('admin::app.components.media.images.ai-generation.size')"
                                         >
-                                            <option value="1024x1024">
-                                                @lang('admin::app.components.media.images.ai-generation.1024x1024')
-                                            </option>
-
-                                            <option value="1024x1792">
-                                                @lang('admin::app.components.media.images.ai-generation.1024x1792')
-                                            </option>
-
-                                            <option value="1792x1024">
-                                                @lang('admin::app.components.media.images.ai-generation.1792x1024')
-                                            </option>
                                         </x-admin::form.control-group.control>
 
                                         <x-admin::form.control-group.error control-name="size" />
@@ -217,21 +243,27 @@
                                         <x-admin::form.control-group.label class="required">
                                             @lang('admin::app.components.media.images.ai-generation.quality')
                                         </x-admin::form.control-group.label>
-
+                                        @php
+                                            $aiImageQualities = json_encode([
+                                                    [
+                                                        'label' => trans('admin::app.components.media.images.ai-generation.standard'),
+                                                        'value' => 'standard'
+                                                    ], [
+                                                        'label' => trans('admin::app.components.media.images.ai-generation.hd'),
+                                                        'value' => 'hd'
+                                                    ]
+                                                ]);
+                                        @endphp
                                         <x-admin::form.control-group.control
                                             type="select"
                                             name="quality"
                                             rules="required"
                                             v-model="ai.quality"
+                                            :options="$aiImageQualities"
+                                            track-by="value"
+                                            label-by="label"
                                             :label="trans('admin::app.components.media.images.ai-generation.quality')"
                                         >
-                                            <option value="standard">
-                                                @lang('admin::app.components.media.images.ai-generation.standard')
-                                            </option>
-
-                                            <option value="hd">
-                                                @lang('admin::app.components.media.images.ai-generation.hd')
-                                            </option>
                                         </x-admin::form.control-group.control>
 
                                         <x-admin::form.control-group.error control-name="quality" />
@@ -244,7 +276,7 @@
                                             class="grid justify-items-center min-w-[120px] max-h-[120px] relative border-[3px] border-transparent rounded overflow-hidden transition-all hover:opacity-80 cursor-pointer"
                                             :class="{'!border-violet-700 ': image.selected}"
                                             v-for="image in ai.images"
-                                            @click="image.selected = ! image.selected"
+                                            @click="selectImage(image)"
                                         >
                                             <!-- Image Preview -->
                                             <img
@@ -340,7 +372,7 @@
                         :for="$.uid + '_imageInput_' + index"
                     ></label>
 
-                    <input type="hidden" :name="name + '[' + image.id + ']'" v-if="allowMultiple && ! image.is_new && image.value" :value="image.value"/>
+                    <input type="hidden" :name="name + '[' + image.id + ']'" v-if="! image.is_new"/>
 
                     <input type="hidden" :name="name" v-if="! allowMultiple && ! image.is_new && image.value" :value="image.value"/>
 
@@ -385,7 +417,7 @@
 
                 width: {
                     type: String,
-                    default: '120px'
+                    default: '210px'
                 },
 
                 height: {
@@ -432,11 +464,36 @@
                 }
             },
 
+            watch: {
+                'ai.model': function (newVal, oldVal) {
+                    try {
+                        this.ai.model = JSON.parse(newVal)?.value     // Return true if parsing succeeds
+                    } catch (e) {}
+                },
+
+                'ai.size': function (newVal, oldVal) {
+                    try {
+                        this.ai.size = JSON.parse(newVal)?.value     // Return true if parsing succeeds
+                    } catch (e) {}
+                },
+
+                'ai.quality': function (newVal, oldVal) {
+                    try {
+                        this.ai.quality = JSON.parse(newVal)?.value     // Return true if parsing succeeds
+                    } catch (e) {}
+                }
+            },
+
             mounted() {
                 this.images = this.uploadedImages;
             },
 
             methods: {
+                selectImage(image) {
+                    this.ai.images.filter(image => image.selected = false)
+                    image.selected = true;
+                },
+
                 add() {
                     let imageInput = this.$refs[this.$.uid + '_imageInput'];
 
@@ -462,6 +519,8 @@
                             file: file
                         });
                     });
+
+
                 },
 
                 remove(image) {
@@ -541,7 +600,7 @@
         app.component('v-media-image-item', {
             template: '#v-media-image-item-template',
 
-            props: ['allowMultiple', 'index', 'image', 'name', 'width', 'height'],
+            props: ['index', 'image', 'name', 'width', 'height'],
 
             mounted() {
                 if (this.image.file instanceof File) {
