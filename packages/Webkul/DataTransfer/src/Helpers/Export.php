@@ -247,18 +247,23 @@ class Export
             ->groupBy('job_track_id')
             ->first()?->toArray();
 
-        if ($summary) {
-            $export = $this->jobTrackRepository->update([
-                'state'        => self::STATE_COMPLETED,
-                'summary'      => $summary,
-                'completed_at' => now(),
-            ], $this->export->id);
+        $summary ??= [
+            'processed' => 0,
+            'created'   => 0,
+            'skipped'   => 0,
+        ];
 
-            $this->setExport($export);
-            Event::dispatch('data_transfer.export.completed', $export);
+        $export = $this->jobTrackRepository->update([
+            'state'        => self::STATE_COMPLETED,
+            'summary'      => $summary,
+            'completed_at' => now(),
+        ], $this->export->id);
 
-            $this->jobLogger->info(trans('data_transfer::app.job.completed'));
-        }
+        $this->setExport($export);
+
+        Event::dispatch('data_transfer.export.completed', $export);
+
+        $this->jobLogger->info(trans('data_transfer::app.job.completed'));
     }
 
     /**
