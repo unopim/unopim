@@ -122,9 +122,9 @@ abstract class AbstractExporter
     protected int $updatedItemsCount = 0;
 
     /**
-     * Number of deleted items
+     * Number of skipped items
      */
-    protected int $skipedItemsCount = 0;
+    protected int $skippedItemsCount = 0;
 
     /**
      * Filters
@@ -385,7 +385,7 @@ abstract class AbstractExporter
         $summaryData = [
             'processed' => $this->processedRowsCount,
             'created'   => $this->createdItemsCount,
-            'skipped'   => $this->skipedItemsCount,
+            'skipped'   => $this->skippedItemsCount,
         ];
 
         $this->updateSummary($summaryData);
@@ -452,19 +452,19 @@ abstract class AbstractExporter
 
         $this->errorHelper->addRowToSkip($rowNumber);
 
-        $this->skipedItemsCount++;
+        $this->skippedItemsCount++;
 
         return $this;
     }
 
     /**
-     * Returns number of skippef items count
+     * Returns number of skipped items count
      */
     public function getSkippedtemsCount(): int
     {
         $count = $this->export->summary['skipped'] ?? 0;
 
-        return $count + $this->skipedItemsCount;
+        return $count + $this->skippedItemsCount;
     }
 
     /**
