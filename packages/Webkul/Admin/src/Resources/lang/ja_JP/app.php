@@ -64,8 +64,10 @@ return [
             'profile-image'     => 'プロフィール画像',
             'save-btn'          => 'アカウントを保存',
             'title'             => 'マイアカウント',
+            'ui-locale'         => 'UI ロケール',
             'update-success'    => 'アカウントが正常に更新されました',
             'upload-image-info' => 'プロフィール画像をアップロード (110 x 110 ピクセル)',
+            'user-timezone'     => 'タイムゾーン',
         ],
     ],
 

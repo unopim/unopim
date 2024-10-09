@@ -64,8 +64,10 @@ return [
             'profile-image'     => 'Image de profil',
             'save-btn'          => 'Enregistrer le compte',
             'title'             => 'Mon compte',
+            'ui-locale'         => 'Ui local',
             'update-success'    => 'Compte mis à jour avec succès',
             'upload-image-info' => 'Télécharger une image de profil (110px x 110px)',
+            'user-timezone'     => 'Fuseau horaire',
         ],
     ],
 

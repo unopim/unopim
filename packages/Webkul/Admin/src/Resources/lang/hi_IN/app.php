@@ -64,8 +64,10 @@ return [
             'profile-image'     => 'प्रोफ़ाइल छवि',
             'save-btn'          => 'खाता सहेजें',
             'title'             => 'मेरा खाता',
+            'ui-locale'         => 'यूआई स्थानीय',
             'update-success'    => 'खाता सफलतापूर्वक अपडेट किया गया',
             'upload-image-info' => 'एक प्रोफ़ाइल छवि अपलोड करें (110px x 110px)',
+            'user-timezone'     => 'समय क्षेत्र',
         ],
     ],
 

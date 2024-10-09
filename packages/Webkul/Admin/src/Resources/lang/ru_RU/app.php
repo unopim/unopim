@@ -64,8 +64,10 @@ return [
             'profile-image'     => 'Изображение профиля',
             'save-btn'          => 'Сохранить учетную запись',
             'title'             => 'Мой счет',
+            'ui-locale'         => 'UI Local',
             'update-success'    => 'Учетная запись обновлена ​​успешно',
             'upload-image-info' => 'Загрузите изображение профиля (110px x 110px)',
+            'user-timezone'     => 'Часовой пояс',
         ],
     ],
 

@@ -161,8 +161,6 @@ it('should not store the admin with invalid data', function () {
         'email',
         'password_confirmation',
     ]);
-
-    $response->assertInvalid();
 });
 
 it('should not update the admin with invalid data', function () {
@@ -190,8 +188,6 @@ it('should not update the admin with invalid data', function () {
         'name',
         'password_confirmation',
     ]);
-
-    $response->assertInvalid();
 });
 
 it('should not delete the logged in user', function () {
@@ -200,4 +196,143 @@ it('should not delete the logged in user', function () {
     $response = $this->delete(route('admin.settings.users.delete', ['id' => $user->id]));
 
     $response->assertStatus(400);
+});
+
+it('should returns the users account page', function () {
+    $this->loginAsAdmin();
+
+    get(route('admin.account.edit'))
+        ->assertStatus(200)
+        ->assertSeeText(trans('admin::app.account.edit.title'));
+});
+
+it('should give validation errors when updating the user', function () {
+    $this->loginAsAdmin();
+
+    $response = $this->put(route('admin.account.update'), []);
+
+    $response->assertStatus(302);
+    $response->assertSessionHasErrors([
+        'name',
+        'current_password',
+        'timezone',
+        'ui_locale_id',
+    ]);
+});
+
+it('should not update the user with invalid email', function () {
+    $this->loginAsAdmin();
+
+    $response = $this->put(route('admin.account.update'), [
+        'name'             => 'John',
+        'email'            => 'invalid-email',
+        'current_password' => 'password',
+        'password'         => '',
+        'image'            => '',
+        'timezone'         => 'Asia/Kolkata',
+        'ui_locale_id'     => 1,
+    ]);
+
+    $response->assertStatus(302);
+    $response->assertSessionHasErrors([
+        'email',
+    ]);
+});
+
+it('should not update the user without name', function () {
+    $this->loginAsAdmin();
+
+    $response = $this->put(route('admin.account.update'), [
+        'name'             => '',
+        'email'            => 'update@example.com',
+        'current_password' => 'password',
+        'password'         => '',
+        'image'            => '',
+        'timezone'         => 'Asia/Kolkata',
+        'ui_locale_id'     => 1,
+    ]);
+
+    $response->assertStatus(302);
+    $response->assertSessionHasErrors([
+        'name',
+    ]);
+});
+
+it('should not update the user without current password', function () {
+    $this->loginAsAdmin();
+
+    $response = $this->put(route('admin.account.update'), [
+        'name'             => 'John',
+        'email'            => 'update@example.com',
+        'current_password' => '',
+        'password'         => '',
+        'image'            => '',
+        'timezone'         => 'Asia/Kolkata',
+        'ui_locale_id'     => 1,
+    ]);
+
+    $response->assertStatus(302);
+    $response->assertSessionHasErrors([
+        'current_password',
+    ]);
+});
+
+it('should not update the user without ui-locale', function () {
+    $this->loginAsAdmin();
+
+    $response = $this->put(route('admin.account.update'), [
+        'name'             => 'John',
+        'email'            => 'update@example.com',
+        'current_password' => 'password',
+        'password'         => '',
+        'image'            => '',
+        'timezone'         => 'Asia/Kolkata',
+        'ui_locale_id'     => '',
+    ]);
+
+    $response->assertStatus(302);
+    $response->assertSessionHasErrors([
+        'ui_locale_id',
+    ]);
+});
+
+it('should not update the user without timezone', function () {
+    $this->loginAsAdmin();
+
+    $response = $this->put(route('admin.account.update'), [
+        'name'             => 'John',
+        'email'            => 'update@example.com',
+        'current_password' => 'password',
+        'password'         => '',
+        'image'            => '',
+        'timezone'         => '',
+        'ui_locale_id'     => 1,
+    ]);
+
+    $response->assertStatus(302);
+    $response->assertSessionHasErrors([
+        'timezone',
+    ]);
+});
+
+it('should update the user with all required data', function () {
+    $this->loginAsAdmin();
+
+    $response = $this->put(route('admin.account.update'), [
+        'name'                  => 'John doe',
+        'email'                 => 'new@example.com',
+        'current_password'      => 'password',
+        'password'              => 'password2',
+        'image'                 => '',
+        'timezone'              => 'Asia/Kolkata',
+        'ui_locale_id'          => 2,
+        'password_confirmation' => 'password2',
+    ]);
+
+    $response->assertRedirect();
+
+    $this->assertDatabaseHas($this->getFullTableName(Admin::class), [
+        'name'  => 'John doe',
+        'email' => 'new@example.com',
+    ]);
 });

@@ -64,8 +64,10 @@ return [
             'profile-image'     => 'Profilbild',
             'save-btn'          => 'Konto speichern',
             'title'             => 'Mein Konto',
+            'ui-locale'         => 'UI-Gebietsschema',
             'update-success'    => 'Konto erfolgreich aktualisiert',
             'upload-image-info' => 'Profilbild hochladen (110px x 110px)',
+            'user-timezone'     => 'Zeitzone',
         ],
     ],
 

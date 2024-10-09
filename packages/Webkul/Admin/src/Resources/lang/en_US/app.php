@@ -64,8 +64,10 @@ return [
             'profile-image'     => 'Profile Image',
             'save-btn'          => 'Save Account',
             'title'             => 'My Account',
+            'ui-locale'         => 'UI Locale',
             'update-success'    => 'Account updated successfully',
             'upload-image-info' => 'Upload a Profile Image (110px X 110px)',
+            'user-timezone'     => 'Timezone',
         ],
     ],
 
