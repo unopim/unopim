@@ -208,12 +208,13 @@ class Export
     /**
      * Starts import process
      */
-    public function start(?JobTrackBatchContract $exportBatch = null): bool
+    public function start(?JobTrackBatchContract $exportBatch = null, ?string $queue = null): bool
     {
         DB::beginTransaction();
 
         try {
             $typeExporter = $this->getTypeExporter();
+            $typeExporter->queue = $queue;
             $typeExporter->exportData($exportBatch);
         } catch (\Exception $e) {
             /**

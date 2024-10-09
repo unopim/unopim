@@ -267,13 +267,13 @@ class Import
     /**
      * Starts import process
      */
-    public function start(?JobTrackBatchContract $importBatch = null): bool
+    public function start(?JobTrackBatchContract $importBatch = null, ?string $queue = null): bool
     {
         DB::beginTransaction();
 
         try {
             $typeImporter = $this->getTypeImporter();
-
+            $typeImporter->queue = $queue;
             $typeImporter->importData($importBatch);
         } catch (\Exception $e) {
             /**

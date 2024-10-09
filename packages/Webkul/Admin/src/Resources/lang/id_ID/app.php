@@ -64,8 +64,10 @@ return [
             'profile-image'     => 'Gambar profil',
             'save-btn'          => 'Simpan akun',
             'title'             => 'Akun saya',
+            'ui-locale'         => 'Ui lokal',
             'update-success'    => 'Akun berhasil diperbarui',
             'upload-image-info' => 'Unggah gambar profil (110px x 110px)',
+            'user-timezone'     => 'Zona waktu',
         ],
     ],
 

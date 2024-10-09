@@ -140,6 +140,13 @@ abstract class AbstractExporter
      * For job specific log file
      */
     protected $jobLogger;
+    
+    /**
+     * The name of the queue the job should be sent to.
+     *
+     * @var string|null
+     */
+    public $queue;
 
     /**
      * Create a new instance.
@@ -332,9 +339,23 @@ abstract class AbstractExporter
 
         $chain[] = new CompletedJob($this->export, $this->export->id);
 
-        Bus::chain($chain)->dispatch();
+        $queueName = $this->getQueue();
+
+        if ($queueName) {
+            Bus::chain($chain)->onQueue($queueName)->dispatch();
+        } else {
+            Bus::chain($chain)->dispatch();
+        }
 
         return true;
+    }
+
+    /**
+     * Get the queue name for the worker.
+     */
+    protected function getQueue(): ?string
+    {
+        return $this->queue;
     }
 
     /**
