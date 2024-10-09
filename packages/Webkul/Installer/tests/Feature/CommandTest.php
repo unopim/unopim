@@ -88,6 +88,7 @@ it('should create a user with command', function () {
 it('should not create a user if with same already exists for same email with command', function () {
     $admin = Admin::factory()->create([
         'email' => 'new.user@example.com',
+        'name'  => 'New User',
     ]);
 
     $this->artisan('unopim:user:create', [
