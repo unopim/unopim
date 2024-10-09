@@ -86,7 +86,7 @@ it('should create a user with command', function () {
 });
 
 it('should not create a user if with same already exists for same email with command', function () {
-    $admin = $admin ?? Admin::factory()->create([
+    $admin = Admin::factory()->create([
         'email' => 'new.user@example.com',
     ]);
 
