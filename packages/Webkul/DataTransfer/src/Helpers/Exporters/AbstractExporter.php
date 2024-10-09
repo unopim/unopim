@@ -131,6 +131,13 @@ abstract class AbstractExporter
     protected array $filters = [];
 
     /**
+     * The name of the queue the job should be sent to.
+     *
+     * @var string|null
+     */
+    public $queue;
+
+    /**
      * Create a new instance.
      *
      * @return void
@@ -283,6 +290,12 @@ abstract class AbstractExporter
 
         $typeBatches = [];
 
+        foreach ($this->export->batches as $batch) {
+            $typeBatches['export'][] = new ExportBatchJob($batch, $filePath);
+        }
+
+        $chain[] = Bus::batch($typeBatches['export']);
+
         $chain[] = new UploadFileJob(
             $this->export,
             $filePath->getFilePath(),
@@ -290,17 +303,25 @@ abstract class AbstractExporter
             $this->filters
         );
 
-        foreach ($this->export->batches as $batch) {
-            $typeBatches['export'][] = new ExportBatchJob($batch, $filePath);
-        }
-
-        $chain[] = Bus::batch($typeBatches['export']);
-
         $chain[] = new CompletedJob($this->export);
 
-        Bus::chain($chain)->dispatch();
+        $queueName = $this->getQueue();
+
+        if ($queueName) {
+            Bus::chain($chain)->onQueue($queueName)->dispatch();
+        } else {
+            Bus::chain($chain)->dispatch();
+        }
 
         return true;
+    }
+
+    /**
+     * Get the queue name for the worker.
+     */
+    protected function getQueue(): ?string
+    {
+        return $this->queue;
     }
 
     /**

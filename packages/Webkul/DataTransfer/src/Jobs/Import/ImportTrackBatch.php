@@ -43,9 +43,10 @@ class ImportTrackBatch implements ShouldQueue
      */
     public function handle()
     {
-        $user = AdminProxy::find($this->importBatch->user_id);
-
-        auth('admin')->login($user);
+        if (! auth()->guard('admin')->check()) {
+            $user = AdminProxy::find($this->importBatch->user_id);
+            auth('admin')->login($user);
+        }
 
         $importHelper = app(ImportHelper::class);
         $importHelper->setImport($this->importBatch);
@@ -65,7 +66,7 @@ class ImportTrackBatch implements ShouldQueue
         if ($pendingBatch) {
             // Start the import process
             try {
-                $importHelper->start();
+                $importHelper->start(null, $this->queue);
             } catch (\Exception $e) {
                 \Log::error('Import process failed: '.$e->getMessage());
 

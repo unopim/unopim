@@ -127,6 +127,13 @@ abstract class AbstractImporter
     protected int $deletedItemsCount = 0;
 
     /**
+     * The name of the queue the job should be sent to.
+     *
+     * @var string|null
+     */
+    public $queue;
+
+    /**
      * Create a new helper instance.
      *
      * @return void
@@ -335,9 +342,23 @@ abstract class AbstractImporter
 
         $chain[] = new CompletedJob($this->import);
 
-        Bus::chain($chain)->dispatch();
+        $queueName = $this->getQueue();
+
+        if ($queueName) {
+            Bus::chain($chain)->onQueue($queueName)->dispatch();
+        } else {
+            Bus::chain($chain)->dispatch();
+        }
 
         return true;
+    }
+
+    /**
+     * Get the queue name for the worker.
+     */
+    protected function getQueue(): ?string
+    {
+        return $this->queue;
     }
 
     /**

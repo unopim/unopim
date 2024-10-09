@@ -67,7 +67,6 @@ class ExportController extends Controller
             'code'                => 'required|unique:job_instances,code',
             'entity_type'         => 'required|in:'.implode(',', $exporters),
             'filters'             => 'array',
-            'filters.file_format' => 'required',
             'field_separator'     => ['required_if:filters.file_format,Csv', new SeparatorTypes],
         ]);
 
@@ -126,7 +125,6 @@ class ExportController extends Controller
             'code'                => 'required',
             'entity_type'         => 'required|in:'.implode(',', $exporters),
             'filters'             => 'array',
-            'filters.file_format' => 'required',
             'field_separator'     => ['required_if:filters.file_format,Csv', new SeparatorTypes],
         ]);
 
