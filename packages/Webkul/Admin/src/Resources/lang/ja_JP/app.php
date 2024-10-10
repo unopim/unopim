@@ -1032,6 +1032,7 @@ return [
                 'setup-queue-error' => 'インポート プロセスを開始するには、キュー ドライバーを「database」または「redis」に変更してください。',
                 'update-success'    => 'エクスポートが正常に更新されました。',
                 'failed-info'       => 'ジョブが失敗しました。次のエラーを修正して再試行してください。',
+                'download-log-file' => 'ダウンロードログ',
             ],
             'imports' => [
                 'create' => [

@@ -1032,6 +1032,7 @@ return [
                 'setup-queue-error' => 'Please change your queue driver to "database" or "redis" to start the import process.',
                 'update-success'    => 'Export updated successfully.',
                 'failed-info'       => 'Job has failed. Please fix the following errors and try again.',
+                'download-log-file' => 'Download log',
             ],
             'imports' => [
                 'create' => [
@@ -1250,7 +1251,7 @@ return [
                     'back-btn'                => 'Back',
                     'completed-batches'       => 'Total Batches Completed:',
                     'download-error-report'   => 'Download Full Report',
-                    'download-created-file'   => 'Download Created Files',
+                    'download-created-file'   => 'Download Exported Files',
                     'edit-btn'                => 'Edit',
                     'exported-info'           => 'Congratulations! Your export was successful.',
                     'exporting-info'          => 'Export In Process',

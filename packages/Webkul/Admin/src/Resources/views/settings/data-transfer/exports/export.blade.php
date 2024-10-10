@@ -45,6 +45,8 @@
                 <div
                     class="flex flex-col gap-1.5 w-full p-3 border border-orange-200 rounded-sm"
                 >
+                    {!! view_render_event('unopim.admin.settings.data-transfer.exports.export.profile.before') !!}
+
                     <p class="flex gap-2 items-center dark:text-white">
                         <i class="text-2xl text-orange-600 dark:text-orange-600! bg-orange-200 rounded-full"></i>
 
@@ -56,6 +58,8 @@
                             {{ $export->code }}
                         </span>
                     </p>
+
+                    @isset($export->filters['file_format'])
                     <p class="flex gap-2 items-center dark:text-white">
                         <i class="text-2xl text-orange-600 dark:text-orange-600! bg-orange-200 rounded-full"></i>
 
@@ -67,6 +71,9 @@
                             {{ $export->filters['file_format'] }}
                         </span>
                     </p>
+                    @endisset
+
+                    @isset($export->filters['with_media'])
                     <p class="flex gap-2 items-center dark:text-white">
                         <i class="text-2xl text-orange-600 dark:text-orange-600! bg-orange-200 rounded-full"></i>
 
@@ -78,6 +85,10 @@
                             {{ $export->filters['with_media'] == 1 ? 'Yes' : 'No' }}
                         </span>
                     </p>
+                    @endisset
+
+                    {!! view_render_event('unopim.admin.settings.data-transfer.exports.export.profile.after') !!}
+
                 </div>
                 @if (bouncer()->hasPermission('data_transfer.export.execute'))
                     <x-admin::form  

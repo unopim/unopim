@@ -6,6 +6,7 @@ return [
         'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\Product\Exporter',
         'source'      => 'Webkul\Product\Repositories\ProductRepository',
         'sample_path' => 'data-transfer/samples/products.csv',
+        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\ProductJobValidator',
         'filters'     => [
             'fields' => [
                 [
@@ -41,6 +42,7 @@ return [
         'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\Category\Exporter',
         'source'      => 'Webkul\Category\Repositories\CategoryRepository',
         'sample_path' => 'data-transfer/samples/categories.csv',
+        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\CategoryJobValidator',
         'filters'     => [
             'fields' => [
                 [

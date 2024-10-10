@@ -67,4 +67,9 @@ return [
             'wrong-quotes'         => 'Kutipan keriting digunakan sebagai pengganti tanda kutip lurus.',
         ],
     ],
+
+    'job' => [
+        'started'   => 'Eksekusi pekerjaan dimulai',
+        'completed' => 'Eksekusi pekerjaan selesai',
+    ],
 ];

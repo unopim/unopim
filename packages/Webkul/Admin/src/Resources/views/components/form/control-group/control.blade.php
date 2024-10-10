@@ -426,7 +426,12 @@
                     try {
                         return JSON.parse(this.options);
                     } catch (error) {
+                        if (this.options !== null && Array.isArray(this.options)) {
+                            return this.options;
+                        }
+                        
                         console.error('Error parsing options JSON:', error);
+
                         return [];
                     }
                 },
@@ -612,7 +617,8 @@
                 listRoute: {
                     type: String,
                     default: '{{ route('admin.catalog.options.fetch-all')}}'
-                }
+                },
+                queryParams: Array,
             },
 
             data() {
@@ -629,7 +635,8 @@
                         entityName: this.entityName,
                         attributeId: this.attributeId,
                         page: 1,
-                        locale: "{{ core()->getRequestedLocaleCode() }}"
+                        locale: "{{ core()->getRequestedLocaleCode() }}",
+                        ...this.queryParams
                     }
                 }
             },
@@ -649,6 +656,10 @@
 
             mounted() {
                 this.$refs['multiselect__handler__']._.refs.list.addEventListener('scroll', this.onScroll);
+
+                if (this.selectedValue && this.selectedValue != 'object') {
+                    this.initializeValue();
+                }
             },
 
             watch: {
@@ -762,6 +773,24 @@
                             this.isLoading = false;
                         });
                 },
+
+                initializeValue() {
+                    this.isLoading = true;
+                    
+                    this.params.identifiers = {
+                        columnName: this.trackBy,
+                        values: 'string' == typeof this.selectedValue ? this.selectedValue?.split(',') : this.selectedValue
+                    };
+
+                    this.$axios.get(this.listRoute, {params: this.params})
+                        .then((result) => {
+                            this.selectedValue = this.multiple ? result.data.options : result.data.options[0];
+
+                            this.params.identifiers = {};
+
+                            this.isLoading = false;
+                        })
+                }
             }
         });
     </script>

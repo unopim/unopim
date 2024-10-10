@@ -41,7 +41,7 @@
                         <i class="icon-information text-2xl text-orange-600 bg-orange-200 rounded-full dark:!text-orange-600 "></i>
 
                         @lang('admin::app.settings.data-transfer.imports.import.pending-info')
-                        <svg class="h-5 w-5   text-yellow-500" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true" viewBox="0 0 24 24">
+                        <svg class="h-5 w-5 text-yellow-500" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true" viewBox="0 0 24 24">
                             <circle
                                 cx="12"
                                 cy="12"
@@ -109,7 +109,7 @@
                             class="flex gap-2 items-center mb-2"
                             v-if="isValid"
                         >
-                            <i class="icon-done h-fit rounded-full bg-green-200 text-2xl text-green-600"></i>
+                            <i class="icon-done h-fit rounded-full bg-green-200 text-2xl text-green-600 dark:!text-green-600"></i>
 
                             @lang('admin::app.settings.data-transfer.imports.import.validation-success-info')
                         </p>
@@ -126,7 +126,7 @@
                         <p class="flex gap-2 items-center">
                             <i
                                 class="icon-information text-2xl rounded-full"
-                                :class="isValid ? 'bg-green-200 text-green-600' : 'bg-red-200 text-red-600'"
+                                :class="isValid ? 'bg-green-200 text-green-600 dark:!text-green-600' : 'bg-red-200 text-red-600'"
                             ></i>
 
                             <span class="text-gray-800 font-medium">
@@ -139,7 +139,7 @@
                         <p class="flex gap-2 items-center">
                             <i
                                 class="icon-information text-2xl rounded-full"
-                                :class="isValid ? 'bg-green-200 text-green-600' : 'bg-red-200 text-red-600'"
+                                :class="isValid ? 'bg-green-200 text-green-600 dark:!text-green-600' : 'bg-red-200 text-red-600'"
                             ></i>
 
                             <span class="text-gray-800 font-medium">
@@ -152,7 +152,7 @@
                         <p class="flex gap-2 items-center">
                             <i
                                 class="icon-information text-2xl rounded-full"
-                                :class="isValid ? 'bg-green-200 text-green-600' : 'bg-red-200 text-red-600'"
+                                :class="isValid ? 'bg-green-200 text-green-600 dark:!text-green-600' : 'bg-red-200 text-red-600'"
                             ></i>
 
                             <span class="text-gray-800 font-medium">
@@ -228,28 +228,38 @@
 
                 <!-- Import In Process -->
                 <div
-                    class="grid gap-2 w-full p-3 bg-green-50 border border-green-200 rounded-sm"
+                    class="grid gap-2 w-full p-3 bg-green-50 border border-green-200 rounded-sm dark:bg-cherry-700 dark:border-cherry-700 dark:text-gray-300"
                     v-else-if="importResource.state == 'processing' || importResource.state == 'processed'"
                 >
-                    <p 
-                        class="flex gap-2 items-center"
-                        v-if="jobInstance.type == 'import'"
-                    >
-                        <i class="icon-information rounded-full bg-green-200 text-2xl text-green-600"></i>
+                    <div class="flex place-content-between">
+                        <p 
+                            class="flex gap-2 items-center"
+                            v-if="jobInstance.type == 'import'"
+                        >
+                            <i class="icon-information rounded-full bg-green-200 text-2xl text-green-600 dark:!text-green-600"></i>
+    
+                            @lang('admin::app.settings.data-transfer.imports.import.importing-info')
+                        </p>
+    
+                        <p 
+                            class="flex gap-2 items-center"
+                            v-if="jobInstance.type == 'export'"
+                        >
+                            <i class="icon-information rounded-full bg-green-200 text-2xl text-green-600 dark:!text-green-600"></i>
+    
+                            @lang('admin::app.settings.data-transfer.imports.import.exporting-info')
+                        </p>
 
-                        @lang('admin::app.settings.data-transfer.imports.import.importing-info')
-                    </p>
+                        <a
+                            class="transparent-button hover:dark:bg-cherry-800 place-self-start"
+                            href="{{ route('admin.settings.data_transfer.tracker.log.download', $import->id) }}"
+                            target="_blank"
+                        >
+                            @lang('admin::app.settings.data-transfer.tracker.download-log-file')
+                        </a>
+                    </div>
 
-                    <p 
-                        class="flex gap-2 items-center"
-                        v-if="jobInstance.type == 'export'"
-                    >
-                        <i class="icon-information rounded-full bg-green-200 text-2xl text-green-600"></i>
-
-                        @lang('admin::app.settings.data-transfer.imports.import.exporting-info')
-                    </p>
-
-                    <div class="w-full bg-green-200 rounded-sm h-5 dark:bg-green-700">
+                    <div class="w-full bg-green-200 rounded-sm h-5 dark:bg-green-500">
                         <div
                             class="bg-green-600 h-5 rounded-sm"
                             :style="{ 'width': stats.progress + '%' }"
@@ -257,7 +267,7 @@
                     </div>
 
                     <p class="flex gap-2 items-center">
-                        <span class="text-gray-800 font-medium">
+                        <span class="text-gray-800 dark:text-gray-300 font-medium">
                             @lang('admin::app.settings.data-transfer.imports.import.progress')
                         </span>
 
@@ -265,7 +275,7 @@
                     </p>
 
                     <p class="flex gap-2 items-center">
-                        <span class="text-gray-800 font-medium">
+                        <span class="text-gray-800 dark:text-gray-300 font-medium">
                             @lang('admin::app.settings.data-transfer.imports.import.total-batches')
                         </span>
 
@@ -273,7 +283,7 @@
                     </p>
 
                     <p class="flex gap-2 items-center">
-                        <span class="text-gray-800 font-medium">
+                        <span class="text-gray-800 dark:text-gray-300 font-medium">
                             @lang('admin::app.settings.data-transfer.imports.import.completed-batches')
                         </span>
 
@@ -281,10 +291,10 @@
                     </p>
 
                     <p 
-                        class="flex gap-2 items-center"
+                        class="flex gap-2 dark:text-gray-300 items-center"
                         v-for="(value, key) in stats.summary" :key="key"
                     >
-                        <span class="text-gray-800 font-medium">
+                        <span class="text-gray-800 dark:text-gray-300 font-medium">
                             @{{key}}
                         </span>
 
@@ -382,7 +392,7 @@
 
                 <!-- Import Completed -->
                 <div
-                    class="flex place-content-between w-full p-3 bg-green-50 border border-green-200 rounded-sm"
+                    class="flex place-content-between w-full p-3 bg-green-50 border border-green-200 dark:bg-cherry-700 dark:border-cherry-700 dark:text-gray-300 rounded-sm"
                     v-else-if="importResource.state == 'completed'"
                 >
                     <!-- Stats -->
@@ -391,7 +401,7 @@
                             class="flex gap-2 items-center mb-2 text-base"
                             v-if="isValid"
                         >
-                            <i class="icon-done h-fit rounded-full bg-green-200 text-2xl text-green-600"></i>
+                            <i class="icon-done h-fit rounded-full bg-green-200 text-2xl text-green-600 dark:!text-green-600"></i>
 
                             @lang('admin::app.settings.data-transfer.tracker.info')
                         </p>
@@ -400,9 +410,9 @@
                             class="flex gap-2 items-center"
                             v-for="(value, key) in summary" :key="key"
                         >
-                            <i class="icon-information text-2xl text-green-600 bg-green-200 rounded-full"></i>
+                            <i class="icon-information text-2xl text-green-600 bg-green-200 dark:!text-green-600 rounded-full"></i>
                             
-                            <span class="text-gray-800 font-medium">
+                            <span class="text-gray-800 dark:text-gray-300 font-medium">
                                 @{{key}}
                             </span>
 
@@ -411,38 +421,41 @@
                     </div>
 
                     <!-- Actions -->
-                    <div class="flex gap-2" v-if="jobInstance.type == 'import'">
+                    <div class="flex flex-col gap-2">
+                        <template v-if="jobInstance.type == 'export' && importResource.file_path">
+                            <a
+                                class="secondary-button place-self-start"
+                                href="{{ route('admin.settings.data_transfer.tracker.archive.download', $import->id) }}"
+                                target="_blank"
+                                v-if="toBoolean(jobInstance.filters.with_media)"
+                            >
+                                @lang('admin::app.settings.data-transfer.exports.export.download-created-file')
+                            </a>
+                            <a
+                                class="secondary-button place-self-start"
+                                href="{{ route('admin.settings.data_transfer.tracker.download', $import->id) }}"
+                                target="_blank"
+                                v-else
+                            >
+                                @lang('admin::app.settings.data-transfer.exports.export.download-created-file')
+                            </a>
+                        </template>
+                        <template v-if="jobInstance.type == 'import'">
+                            <a
+                                class="secondary-button place-self-start"
+                                href="{{ route('admin.settings.data_transfer.imports.download_error_report', $import->id) }}"
+                                target="_blank"
+                                v-if="importResource.errors_count && importResource.error_file_path"
+                            >
+                                @lang('admin::app.settings.data-transfer.imports.import.download-error-report')
+                            </a>
+                        </template>
                         <a
-                            class="secondary-button place-self-start"
-                            href="{{ route('admin.settings.data_transfer.imports.download_error_report', $import->id) }}"
+                            class="transparent-button hover:dark:bg-cherry-800 place-self-start"
+                            href="{{ route('admin.settings.data_transfer.tracker.log.download', $import->id) }}"
                             target="_blank"
-                            v-if="importResource.errors_count && importResource.error_file_path"
                         >
-                            @lang('admin::app.settings.data-transfer.imports.import.download-error-report')
-                        </a>
-                    </div>
-
-                    <!-- Actions -->
-                    <div 
-                        class="flex gap-2"
-                        v-if="jobInstance.type == 'export'"
-                    >
-                        
-                        <a
-                            class="secondary-button place-self-start"
-                            href="{{ route('admin.settings.data_transfer.tracker.archive.download', $import->id) }}"
-                            target="_blank"
-                            v-if="jobInstance.type == 'export' && toBoolean(jobInstance.filters.with_media)"
-                        >
-                            @lang('admin::app.settings.data-transfer.exports.export.download-created-file')
-                        </a>
-                        <a
-                            class="secondary-button place-self-start"
-                            href="{{ route('admin.settings.data_transfer.tracker.download', $import->id) }}"
-                            target="_blank"
-                            v-else="jobInstance.type == 'export'"
-                        >
-                            @lang('admin::app.settings.data-transfer.exports.export.download-created-file')
+                            @lang('admin::app.settings.data-transfer.tracker.download-log-file')
                         </a>
                     </div>
                 </div>
@@ -555,7 +568,7 @@
                                 this.isValid = response.data.isValid;
                                 this.summary = response.data.summary;
                                 this.jobInstance = response.data.jobInstance;
-                               
+
                                 if (this.importResource.state !== 'completed' 
                                     && (this.importResource.state === 'pending' || this.isValid)
                                 ) {

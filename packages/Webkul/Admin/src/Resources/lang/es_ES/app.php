@@ -1031,6 +1031,7 @@ return [
                 'setup-queue-error' => 'Cambie su controlador de cola a "base de datos" o "redis" para comenzar el proceso de importación.',
                 'update-success'    => 'Exportar actualizado con éxito.',
                 'failed-info'       => 'El trabajo ha fracasado. Corrija los siguientes errores y vuelva a intentarlo.',
+                'download-log-file' => 'Descargar registro',
             ],
 
             'imports' => [

@@ -9,6 +9,7 @@ use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Repositories\JobInstancesRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
+use Webkul\DataTransfer\Services\JobLogger;
 use ZipArchive;
 
 class TrackerController extends Controller
@@ -132,5 +133,21 @@ class TrackerController extends Controller
         } else {
             return 'Failed to create the zip file.';
         }
+    }
+
+    /**
+     * Download Log file for the job
+     */
+    public function downloadLogFile(int $id)
+    {
+        $path = JobLogger::getJobLogPath($id);
+
+        $path = storage_path($path);
+
+        if (! file_exists($path)) {
+            abort(404);
+        }
+
+        return response()->download($path);
     }
 }

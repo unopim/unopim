@@ -138,7 +138,7 @@ class Exporter extends AbstractExporter
      *
      * @return array
      */
-    private function getCommonFields(array $data)
+    protected function getCommonFields(array $data)
     {
         if (! is_array($data['additional_data'])) {
             return [];
@@ -157,7 +157,7 @@ class Exporter extends AbstractExporter
      * @param  string  $locale
      * @return array
      */
-    private function getLocaleSpecificFields(array $data, $locale)
+    protected function getLocaleSpecificFields(array $data, $locale)
     {
         if (! is_array($data['additional_data'])) {
             return [];

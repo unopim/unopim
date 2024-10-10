@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ExportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\DataTransfer\Contracts\Validator\JobInstances\JobValidator;
 use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Jobs\Export\ExportTrackBatch;
 use Webkul\DataTransfer\Repositories\JobInstancesRepository;
@@ -61,7 +62,9 @@ class ExportController extends Controller
      */
     public function store()
     {
-        $exporters = array_keys(config('exporters'));
+        $exporterConfig = config('exporters');
+
+        $exporters = array_keys($exporterConfig);
 
         $this->validate(request(), [
             'code'                => 'required|unique:job_instances,code',
@@ -78,6 +81,16 @@ class ExportController extends Controller
             'field_separator',
             'filters',
         ]);
+
+        Event::dispatch('data_transfer.exports.create.validate.before');
+
+        $jobValidator = isset($exporterConfig[$data['entity_type']]['validator']) ? app($exporterConfig[$data['entity_type']]['validator']) : null;
+
+        if ($jobValidator instanceof JobValidator) {
+            $jobValidator->validate($data);
+        }
+
+        Event::dispatch('data_transfer.exports.create.validate.after');
 
         $export = $this->jobInstancesRepository->create(
             array_merge(
@@ -117,7 +130,9 @@ class ExportController extends Controller
      */
     public function update(int $id)
     {
-        $exporters = array_keys(config('exporters'));
+        $exporterConfig = config('exporters');
+
+        $exporters = array_keys($exporterConfig);
 
         $export = $this->jobInstancesRepository->findOrFail($id);
 
@@ -153,6 +168,16 @@ class ExportController extends Controller
                 'type'                 => self::TYPE,
             ]
         );
+
+        Event::dispatch('data_transfer.exports.update.validate.before');
+
+        $jobValidator = isset($exporterConfig[$data['entity_type']]['validator']) ? app($exporterConfig[$data['entity_type']]['validator']) : null;
+
+        if ($jobValidator instanceof JobValidator) {
+            $jobValidator->validate($data);
+        }
+
+        Event::dispatch('data_transfer.exports.update.validate.after');
 
         Storage::disk('private')->delete($export->error_file_path ?? '');
 

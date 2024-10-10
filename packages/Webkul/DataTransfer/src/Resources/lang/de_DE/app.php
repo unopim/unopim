@@ -67,4 +67,9 @@ return [
             'wrong-quotes'         => 'Anstelle von geraden Anführungszeichen werden geschweifte Anführungszeichen verwendet.',
         ],
     ],
+
+    'job' => [
+        'started'   => 'Jobausführung gestartet',
+        'completed' => 'Jobausführung abgeschlossen',
+    ],
 ];

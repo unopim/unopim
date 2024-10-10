@@ -4,6 +4,7 @@ namespace Webkul\DataTransfer\Helpers\Exporters;
 
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
+use Psr\Log\LoggerInterface;
 use Webkul\DataTransfer\Buffer\FileBuffer;
 use Webkul\DataTransfer\Contracts\JobTrack as ExportJobTrackContract;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
@@ -121,14 +122,24 @@ abstract class AbstractExporter
     protected int $updatedItemsCount = 0;
 
     /**
-     * Number of deleted items
+     * Number of skipped items
      */
-    protected int $skipedItemsCount = 0;
+    protected int $skippedItemsCount = 0;
 
     /**
      * Filters
      */
     protected array $filters = [];
+
+    /**
+     * For exporting file
+     */
+    protected bool $exportsFile = true;
+
+    /**
+     * For job specific log file
+     */
+    protected $jobLogger;
 
     /**
      * The name of the queue the job should be sent to.
@@ -182,6 +193,24 @@ abstract class AbstractExporter
         $this->export = $export;
 
         return $this;
+    }
+
+    /**
+     * Set logger instance
+     */
+    public function setLogger(LoggerInterface $logger): self
+    {
+        $this->jobLogger = $logger;
+
+        return $this;
+    }
+
+    /**
+     * Get logger instance for this job
+     */
+    public function getLogger(): LoggerInterface
+    {
+        return $this->jobLogger;
     }
 
     public function getExportParameter(): array
@@ -273,13 +302,16 @@ abstract class AbstractExporter
     {
         if (! $filePath) {
             $this->filters = $this->export->jobInstance->filters ?? [];
-            $directory = sprintf('exports/%s/%s', $this->export->id, FileBuffer::FOLDER_PREFIX);
-            $fileName = $this->getFileName();
-            $filePath = $this->exportFileBuffer->initilize(
-                $directory,
-                $this->filters['file_format'] ?? SpoutWriterFactory::CSV,
-                $fileName
-            );
+
+            if ($this->exportsFile) {
+                $directory = sprintf('exports/%s/%s', $this->export->id, FileBuffer::FOLDER_PREFIX);
+                $fileName = $this->getFileName();
+                $filePath = $this->exportFileBuffer->initilize(
+                    $directory,
+                    $this->filters['file_format'] ?? SpoutWriterFactory::CSV,
+                    $fileName
+                );
+            }
         }
 
         if ($exportBatch) {
@@ -290,20 +322,22 @@ abstract class AbstractExporter
 
         $typeBatches = [];
 
+        if ($this->exportsFile) {
+            $chain[] = new UploadFileJob(
+                $this->export,
+                $filePath->getFilePath(),
+                $filePath->getTemporaryPath(),
+                $this->filters
+            );
+        }
+
         foreach ($this->export->batches as $batch) {
-            $typeBatches['export'][] = new ExportBatchJob($batch, $filePath);
+            $typeBatches['export'][] = new ExportBatchJob($batch, $filePath, $this->export->id);
         }
 
         $chain[] = Bus::batch($typeBatches['export']);
 
-        $chain[] = new UploadFileJob(
-            $this->export,
-            $filePath->getFilePath(),
-            $filePath->getTemporaryPath(),
-            $this->filters
-        );
-
-        $chain[] = new CompletedJob($this->export);
+        $chain[] = new CompletedJob($this->export, $this->export->id);
 
         $queueName = $this->getQueue();
 
@@ -372,7 +406,7 @@ abstract class AbstractExporter
         $summaryData = [
             'processed' => $this->processedRowsCount,
             'created'   => $this->createdItemsCount,
-            'skipped'   => $this->skipedItemsCount,
+            'skipped'   => $this->skippedItemsCount,
         ];
 
         $this->updateSummary($summaryData);
@@ -439,19 +473,19 @@ abstract class AbstractExporter
 
         $this->errorHelper->addRowToSkip($rowNumber);
 
-        $this->skipedItemsCount++;
+        $this->skippedItemsCount++;
 
         return $this;
     }
 
     /**
-     * Returns number of skippef items count
+     * Returns number of skipped items count
      */
     public function getSkippedtemsCount(): int
     {
         $count = $this->export->summary['skipped'] ?? 0;
 
-        return $count + $this->skipedItemsCount;
+        return $count + $this->skippedItemsCount;
     }
 
     /**
