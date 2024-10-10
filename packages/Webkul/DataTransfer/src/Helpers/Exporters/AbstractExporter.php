@@ -140,7 +140,7 @@ abstract class AbstractExporter
      * For job specific log file
      */
     protected $jobLogger;
-    
+
     /**
      * The name of the queue the job should be sent to.
      *
