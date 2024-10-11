@@ -13,6 +13,7 @@
             <x-admin::form
                 :action="route('admin.settings.data_transfer.exports.store')"
                 enctype="multipart/form-data"
+                ref="exportCreateForm"
             >
                 {!! view_render_event('unopim.admin.settings.data_transfer.exports.create.create_form_controls.before') !!}
 
@@ -198,14 +199,31 @@
                     fileFormat(value) {
                         this.selectedFileFormat = JSON.parse(value).value;
                     },
+
                     entityType(value) {
-                        this.filterFields = this.exporterConfig[JSON.parse(value).id]['filters']['fields'];
+                        let configKey = this.parseValue(value)?.id;
+
+                        if (! configKey) {
+                            return;
+                        }
+
+                        this.filterFields = this.exporterConfig[configKey]['filters']['fields'];
 
                         if (this.filterFields.filter(field => field.name == 'file_format').length == 0) {
                             this.selectedFileFormat = '';
                         }
 
                         this.$emitter.emit('entity-type-changed', value);
+
+                        let formValues = this.$refs.exportCreateForm.values;
+
+                        let resetState = {
+                            values: {code: formValues.code},
+                            errors: this.$refs.exportCreateForm.errors
+                        };
+
+                        /** Resets other field values except for errors and code */
+                        this.$refs.exportCreateForm.resetForm(resetState);
                     },
                 },
                 methods: {
