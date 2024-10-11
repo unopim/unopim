@@ -102,7 +102,7 @@
                                     label-by="label"
                                 >   
                                 </x-admin::form.control-group.control>
-                                <x-admin::form.control-group.error control-name="type" /> 
+                                <x-admin::form.control-group.error control-name="entity_type" /> 
                             </x-admin::form.control-group>
                         </div>
                         {!! view_render_event('unopim.admin.settings.data_transfer.exports.create.card.general.after') !!}
