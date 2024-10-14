@@ -1029,6 +1029,7 @@ return [
                 'setup-queue-error' => 'Harap ubah driver antrian Anda menjadi "basis data" atau "redis" untuk memulai proses impor.',
                 'update-success'    => 'Ekspor berhasil diperbarui.',
                 'failed-info'       => 'Pekerjaan gagal. Harap perbaiki kesalahan berikut dan coba lagi.',
+                'download-log-file' => 'Unduh log',
             ],
             'imports' => [
                 'create' => [

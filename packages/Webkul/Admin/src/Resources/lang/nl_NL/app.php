@@ -1018,6 +1018,8 @@ return [
                 'nothing-to-import' => 'Er zijn geen middelen om te importeren.',
                 'setup-queue-error' => 'Wijzig uw wachtrijstuurprogramma in "database" of "redis" om het importproces te starten.',
                 'update-success'    => 'Exporteren met succes bijgewerkt.',
+                'failed-info'       => 'Taak is mislukt. Los de volgende fouten op en probeer het opnieuw.',
+                'download-log-file' => 'Logboek downloaden',
             ],
             'imports' => [
                 'create'            => [

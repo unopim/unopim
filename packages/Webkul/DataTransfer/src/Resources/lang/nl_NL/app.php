@@ -67,4 +67,9 @@ return [
             'wrong-quotes'         => 'Er worden gekrulde aanhalingstekens gebruikt in plaats van rechte aanhalingstekens.',
         ],
     ],
+
+    'job' => [
+        'started'   => 'De uitvoering van de werkzaamheden is begonnen',
+        'completed' => 'Uitvoering van de taak voltooid',
+    ],
 ];

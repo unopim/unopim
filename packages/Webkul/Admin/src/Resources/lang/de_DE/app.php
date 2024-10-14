@@ -1030,6 +1030,7 @@ return [
                 'setup-queue-error' => 'Bitte ändern Sie Ihren Warteschlangentreiber auf „Datenbank“ oder „Redis“, um den Importvorgang zu starten.',
                 'update-success'    => 'Export erfolgreich aktualisiert.',
                 'failed-info'       => 'Auftrag ist fehlgeschlagen. Bitte beheben Sie die folgenden Fehler und versuchen Sie es erneut.',
+                'download-log-file' => 'Protokoll herunterladen',
             ],
             'imports' => [
                 'create' => [

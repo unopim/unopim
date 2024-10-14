@@ -1030,6 +1030,8 @@ return [
                 'nothing-to-import' => '没有资源可以进口。',
                 'setup-queue-error' => '请将您的队列驱动程序更改为“数据库”或“ Redis”以开始导入过程。',
                 'update-success'    => '导出成功更新。',
+                'failed-info'       => '作业失败了。请修复以下错误并重试。',
+                'download-log-file' => '下载日志',
             ],
             'imports' => [
                 'create'            => [
