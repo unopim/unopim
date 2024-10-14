@@ -2,7 +2,24 @@
 
 This changelog details the bug fixes included in this release.
 
+## **v0.1.3 (14 October 2024)** - *Release*
+
+### Bug Fixes
+* Issue #21: fix db:seed command throwing error when running after installation
+
+### Changed
+* Bump phpoffice/phpspreadsheet from 1.29.1 to 1.29.2
+* Docker images for installation through docker
+
+### Added
+* #23: Gallery type attribute
+* Executing data transfer jobs via terminal through 'php artisan unopim:queue:work {JobId} {userEmailId}'
+* Job specific log files for data transfer jobs
+* Datagrid Improvement: first and last page buttons (thanks to @helgvor-stoll)
+* #26 Account page Improvement: UI locale and timezone field added
+
 ## **v0.1.2 (18nd September 2024)** - *Release*
+
 ### Changed
 - Updated the test cases.
 - French translation updated.
