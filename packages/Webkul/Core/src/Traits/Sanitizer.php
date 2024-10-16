@@ -4,6 +4,7 @@ namespace Webkul\Core\Traits;
 
 use enshrined\svgSanitize\Sanitizer as MainSanitizer;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\File\File;
 
 trait Sanitizer
 {
@@ -17,13 +18,10 @@ trait Sanitizer
 
     /**
      * Sanitize SVG file.
-     *
-     * @param  string  $path
-     * @return void
      */
-    public function sanitizeSVG($path, $mimeType)
+    public function sanitizeSVG(string $path, ?string $mimeType): void
     {
-        if ($this->checkMimeType($mimeType)) {
+        if ($this->isFileSVG($mimeType)) {
             /* sanitizer instance */
             $sanitizer = new MainSanitizer;
 
@@ -36,12 +34,9 @@ trait Sanitizer
     }
 
     /**
-     * Sanitize SVG file.
-     *
-     * @param  string  $path
-     * @return void
+     * Check file mime type
      */
-    public function checkMimeType($mimeType)
+    public function isFileSVG(?string $mimeType): bool
     {
         return in_array($mimeType, $this->mimeTypes);
     }
