@@ -377,8 +377,8 @@ abstract class AbstractType
                     if ($type === 'gallery') {
                         $values[$field] = array_map(function ($val) use ($path) {
                             return $val instanceof UploadedFile
-                            ? $this->fileStorer->store($path, $val, [FileStorer::HASHED_FOLDER_NAME_KEY => true])
-                            : $val;
+                                ? $this->fileStorer->store($path, $val, [FileStorer::HASHED_FOLDER_NAME_KEY => true])
+                                : $val;
                         }, $fieldValue);
 
                         $values[$field] = array_values($values[$field]);
