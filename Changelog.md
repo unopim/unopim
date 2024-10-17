@@ -2,6 +2,9 @@
 
 This changelog details the bug fixes included in this release.
 
+## **v0.1.4 (17 October 2024)** - *Release*
+* Security Issue #41: fixed Stored XSS 
+
 ## **v0.1.3 (14 October 2024)** - *Release*
 
 ### Bug Fixes
