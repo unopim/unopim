@@ -5,6 +5,7 @@ namespace Webkul\Installer\Providers;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Webkul\Installer\Console\Commands\DefaultUser as DefaultUserCommand;
 use Webkul\Installer\Console\Commands\Installer as InstallerCommand;
 use Webkul\Installer\Http\Middleware\CanInstall;
 use Webkul\Installer\Http\Middleware\Locale;
@@ -56,6 +57,7 @@ class InstallerServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 InstallerCommand::class,
+                DefaultUserCommand::class,
             ]);
         }
     }
