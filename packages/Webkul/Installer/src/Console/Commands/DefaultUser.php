@@ -278,8 +278,8 @@ class DefaultUser extends Command
         $userName = $this->getUserName($isAdmin);
         $userEmail = $this->getUserEmail($isAdmin);
         $userPassword = $this->getUserPassword($isAdmin);
-        $timezone = $this->getSelectedTimeZone($isAdmin);
-        $defaultLocale = $this->getSelectedUiLocale($isAdmin);
+        $timezone = $this->getSelectedTimeZone();
+        $defaultLocale = $this->getSelectedUiLocale();
         $password = password_hash($userPassword, PASSWORD_BCRYPT, ['cost' => 10]);
 
         $localeId = DB::table('locales')->where('code', $defaultLocale)->where('status', 1)->first()?->id ?? 58;
@@ -328,7 +328,7 @@ class DefaultUser extends Command
     }
 
     /**
-     * Method for asking default locale choice based on the list of options.
+     * Method for asking default choice based on the list of options.
      */
     protected function askForDefaultValues(string $key, string $question, array $choices): string
     {
@@ -363,13 +363,23 @@ class DefaultUser extends Command
         return $formattedTimezones;
     }
 
-    protected function generateWarnings($message)
+    /**
+     * Generates and logs warnings based on the provided message.
+     *
+     * @param  string  $message  The warning message to be logged and displayed.
+     */
+    protected function generateWarnings(string $message): void
     {
         $this->warn($message);
         Log::warning($message);
     }
 
-    protected function getUserName($isAdmin)
+    /**
+     * Retrieves the username, validating input to ensure it meets criteria.
+     *
+     * @param  bool  $isAdmin  Indicates whether the user is an admin.
+     */
+    protected function getUserName(bool $isAdmin): string
     {
         $userName = $this->option('name');
 
@@ -391,7 +401,12 @@ class DefaultUser extends Command
         return $userName;
     }
 
-    protected function getUserEmail($isAdmin)
+    /**
+     * Retrieves the user email, ensuring it is valid and not already in use.
+     *
+     * @param  bool  $isAdmin  Indicates whether the user is an admin.
+     */
+    protected function getUserEmail(bool $isAdmin): string
     {
         $userEmail = $this->option('email');
         $existingUserEmails = DB::table('admins')->pluck('email')->toArray();
@@ -420,7 +435,12 @@ class DefaultUser extends Command
         return $userEmail;
     }
 
-    protected function getUserPassword($isAdmin)
+    /**
+     * Prompts for and validates the user's password.
+     *
+     * @param  bool  $isAdmin  Indicates whether the user is an admin.
+     */
+    protected function getUserPassword(bool $isAdmin): string
     {
         $userPassword = $this->option('password') ?: text(
             label: 'Input a Secure Password for User',
@@ -441,7 +461,10 @@ class DefaultUser extends Command
         return $userPassword;
     }
 
-    protected function getSelectedTimeZone($isAdmin)
+    /**
+     * Retrieves the selected timezone, validating it against a list of available timezones.
+     */
+    protected function getSelectedTimeZone(): string
     {
         $timezone = $this->option('timezone');
 
@@ -459,7 +482,10 @@ class DefaultUser extends Command
         return $timezone;
     }
 
-    protected function getSelectedUiLocale($isAdmin)
+    /**
+     * Retrieves the selected UI locale, validating it against a list of available locales.
+     */
+    protected function getSelectedUiLocale(): string
     {
         $uiLocale = $this->option('ui_locale');
 
