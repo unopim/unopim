@@ -29,7 +29,7 @@
             <directory suffix="Test.php">./packages/Webkul/AdminApi/tests/Feature</directory>
         </testsuite>
 
-        <testsuite name="Create User Command Test">
+        <testsuite name="Installer Test">
             <directory suffix="Test.php">./packages/Webkul/Installer/tests/Feature</directory>
         </testsuite>
     </testsuites>

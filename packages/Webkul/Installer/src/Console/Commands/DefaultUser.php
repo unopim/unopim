@@ -274,98 +274,13 @@ class DefaultUser extends Command
     {
         Log::info('User create command has started');
 
-        $userName = $this->option('name');
         $isAdmin = $this->option('admin');
-
-        if ($userName && ! preg_match('/^[a-zA-Z0-9\s]+$/', $userName)) {
-            $this->warn('The name can only accept alphanumeric characters and spaces.');
-            Log::warning('The name can only accept alphanumeric characters and spaces.');
-            $userName = null;
-        }
-
-        $userName = $userName ?: text(
-            label: 'Set the Name for User',
-            default: $isAdmin ? 'Admin' : 'User',
-            required: true,
-            validate: fn (string $value) => match (true) {
-                ! preg_match('/^[a-zA-Z0-9\s]+$/', $value) => 'The name can only accept alphanumeric characters and spaces.',
-                default                                    => null
-            }
-        );
-
-        $userEmail = $this->option('email');
-        $existingUserEmails = DB::table('admins')->pluck('email')->toArray();
-
-        if ($userEmail && ! filter_var($userEmail, FILTER_VALIDATE_EMAIL)) {
-            $this->warn('The provided email is invalid, kindly enter a valid email address.');
-            Log::warning('The provided email is invalid, kindly enter a valid email address.');
-        }
-
-        if ($userEmail && in_array($userEmail, $existingUserEmails)) {
-            $this->warn('User with email '.$userEmail.' already exists.');
-            Log::warning('User with email '.$userEmail.' already exists.');
-            $userEmail = null;
-        }
-
-        if (! $userEmail || ! filter_var($userEmail, FILTER_VALIDATE_EMAIL)) {
-            $userEmail = text(
-                label: 'Provide Email of User',
-                default: $isAdmin ? 'admin@example.com' : 'user@example.com',
-                validate: fn (string $value) => match (true) {
-                    ! filter_var($value, FILTER_VALIDATE_EMAIL) => 'The provided email is invalid, kindly enter a valid email address.',
-                    in_array($value, $existingUserEmails)       => 'User with email '.$value.' already exists.',
-                    default                                     => null
-                }
-            );
-        }
-
-        $userPassword = $this->option('password') ?: text(
-            label: 'Input a Secure Password for User',
-            default: $isAdmin ? 'admin@123' : 'user@123',
-            required: true
-        );
-
-        while (strlen($userPassword) < 6) {
-            $this->warn('Password must be at least 6 characters.');
-            Log::warning('Password must be at least 6 characters.');
-
-            $userPassword = text(
-                label: 'Input a Secure Password for User',
-                default: $isAdmin ? 'admin@123' : 'user@123',
-                required: true
-            );
-        }
-
+        $userName = $this->getUserName($isAdmin);
+        $userEmail = $this->getUserEmail($isAdmin);
+        $userPassword = $this->getUserPassword($isAdmin);
+        $timezone = $this->getSelectedTimeZone($isAdmin);
+        $defaultLocale = $this->getSelectedUiLocale($isAdmin);
         $password = password_hash($userPassword, PASSWORD_BCRYPT, ['cost' => 10]);
-
-        $timezone = $this->option('timezone');
-
-        if ($timezone && ! array_key_exists($timezone, $this->getTimeZones())) {
-            $this->warn("The specified timezone '$timezone' is not valid. Please select a valid timezone.");
-            Log::warning("The specified timezone '$timezone' is not valid. Please select a valid timezone.");
-            $timezone = null;
-        }
-
-        $timezone = $timezone ?: $this->askForDefaultValues(
-            'APP_LOCALE',
-            'Please select the default timezone',
-            $this->getTimeZones()
-        );
-
-        $uiLocale = $this->option('ui_locale');
-
-        if ($uiLocale && ! in_array($uiLocale, $this->localCodes)) {
-            $this->warn("The specified locale code '$uiLocale' is not valid. Please select a valid locale.");
-            Log::warning("The specified locale code '$uiLocale' is not valid. Please select a valid locale.");
-
-            $uiLocale = null;
-        }
-
-        $defaultLocale = $uiLocale ?: $this->askForDefaultValues(
-            'APP_LOCALE',
-            'Please select the default application locale',
-            $this->locales
-        );
 
         $localeId = DB::table('locales')->where('code', $defaultLocale)->where('status', 1)->first()?->id ?? 58;
         $role = $isAdmin ? DB::table('roles')->where('permission_type', 'all')->first()?->id : DB::table('roles')->where('permission_type', 'custom')->first()?->id;
@@ -407,13 +322,8 @@ class DefaultUser extends Command
             $this->info('Cheers!');
             Log::info('Congratulations! The User has been created successfully');
         } catch (\Exception $e) {
-            if (strpos($e->getMessage(), 'Duplicate entry')) {
-                $this->error('User with email '.$userEmail.' already exists.');
-                Log::error('User with email '.$userEmail.' already exists.');
-            } else {
-                $this->error($e->getMessage());
-                Log::error($e->getMessage());
-            }
+            $this->error($e->getMessage());
+            Log::error($e->getMessage());
         }
     }
 
@@ -451,5 +361,119 @@ class DefaultUser extends Command
         }
 
         return $formattedTimezones;
+    }
+
+    protected function generateWarnings($message)
+    {
+        $this->warn($message);
+        Log::warning($message);
+    }
+
+    protected function getUserName($isAdmin)
+    {
+        $userName = $this->option('name');
+
+        if ($userName && ! preg_match('/^[a-zA-Z0-9\s]+$/', $userName)) {
+            $this->generateWarnings('The name can only accept alphanumeric characters and spaces.');
+            $userName = null;
+        }
+
+        $userName = $userName ?: text(
+            label: 'Set the Name for User',
+            default: $isAdmin ? 'Admin' : 'User',
+            required: true,
+            validate: fn (string $value) => match (true) {
+                ! preg_match('/^[a-zA-Z0-9\s]+$/', $value) => 'The name can only accept alphanumeric characters and spaces.',
+                default                                    => null
+            }
+        );
+
+        return $userName;
+    }
+
+    protected function getUserEmail($isAdmin)
+    {
+        $userEmail = $this->option('email');
+        $existingUserEmails = DB::table('admins')->pluck('email')->toArray();
+
+        if ($userEmail && ! filter_var($userEmail, FILTER_VALIDATE_EMAIL)) {
+            $this->generateWarnings('The provided email is invalid, kindly enter a valid email address.');
+        }
+
+        if ($userEmail && in_array($userEmail, $existingUserEmails)) {
+            $this->generateWarnings('User with email '.$userEmail.' already exists.');
+            $userEmail = null;
+        }
+
+        if (! $userEmail || ! filter_var($userEmail, FILTER_VALIDATE_EMAIL)) {
+            $userEmail = text(
+                label: 'Provide Email of User',
+                default: $isAdmin ? 'admin@example.com' : 'user@example.com',
+                validate: fn (string $value) => match (true) {
+                    ! filter_var($value, FILTER_VALIDATE_EMAIL) => 'The provided email is invalid, kindly enter a valid email address.',
+                    in_array($value, $existingUserEmails)       => 'User with email '.$value.' already exists.',
+                    default                                     => null
+                }
+            );
+        }
+
+        return $userEmail;
+    }
+
+    protected function getUserPassword($isAdmin)
+    {
+        $userPassword = $this->option('password') ?: text(
+            label: 'Input a Secure Password for User',
+            default: $isAdmin ? 'admin@123' : 'user@123',
+            required: true
+        );
+
+        while (strlen($userPassword) < 6) {
+            $this->generateWarnings('Password must be at least 6 characters.');
+
+            $userPassword = text(
+                label: 'Input a Secure Password for User',
+                default: $isAdmin ? 'admin@123' : 'user@123',
+                required: true
+            );
+        }
+
+        return $userPassword;
+    }
+
+    protected function getSelectedTimeZone($isAdmin)
+    {
+        $timezone = $this->option('timezone');
+
+        if ($timezone && ! array_key_exists($timezone, $this->getTimeZones())) {
+            $this->generateWarnings("The specified timezone '$timezone' is not valid. Please select a valid timezone.");
+            $timezone = null;
+        }
+
+        $timezone = $timezone ?: $this->askForDefaultValues(
+            'APP_LOCALE',
+            'Please select the default timezone',
+            $this->getTimeZones()
+        );
+
+        return $timezone;
+    }
+
+    protected function getSelectedUiLocale($isAdmin)
+    {
+        $uiLocale = $this->option('ui_locale');
+
+        if ($uiLocale && ! in_array($uiLocale, $this->localCodes)) {
+            $this->generateWarnings("The specified locale code '$uiLocale' is not valid. Please select a valid locale.");
+            $uiLocale = null;
+        }
+
+        $defaultLocale = $uiLocale ?: $this->askForDefaultValues(
+            'APP_LOCALE',
+            'Please select the default application locale',
+            $this->locales
+        );
+
+        return $defaultLocale;
     }
 }
