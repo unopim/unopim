@@ -2,6 +2,17 @@
 
 This changelog details the bug fixes included in this release.
 
+## v0.1.5 - 2024-10-25
+
+### Enhancements
+- **New Command**: Introduced the `user:create` command for streamlined user management ([#35](https://github.com/unopim/unopim/pull/35)).
+
+### Bug Fixes
+- **Database Compatibility**: Fixed an issue with import job creation due to the `longtext` column type in MariaDB, improving database compatibility and import stability ([#43](https://github.com/unopim/unopim/pull/43)).
+- **Data Consistency**: Addressed an issue with merging old and new values during import to ensure accurate data synchronization ([#44](https://github.com/unopim/unopim/pull/44)).
+
+**Full Changelog**: [v0.1.4...v0.1.5](https://github.com/unopim/unopim/compare/v0.1.4...v0.1.5)
+
 ## **v0.1.4 (17 October 2024)** - *Release*
 * Security Issue #41: fixed Stored XSS 
 
