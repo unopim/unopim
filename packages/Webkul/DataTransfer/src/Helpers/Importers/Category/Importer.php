@@ -344,10 +344,16 @@ class Importer extends AbstractImporter
     {
         $isCategory = $this->isCategoryExist($rowData['code']);
 
+        $categoryValues = $categories['update'][$rowData['code']]['additional_data'] ?? [];
+
+        if (empty($categoryValues) && $isCategory) {
+            $categoryValues = $this->categoryRepository->findOneByField('code', $rowData['code'])?->additional_data ?? [];
+        }
+
         $data = [
             'code'            => $rowData['code'],
             'parent'          => $rowData['parent'],
-            'additional_data' => $isCategory ? $this->categoryRepository->where('code', $rowData['code'])->first()->toArray()['additional_data'] : [],
+            'additional_data' => $categoryValues,
         ];
 
         /** additional fields data import  */
@@ -459,13 +465,13 @@ class Importer extends AbstractImporter
     {
         if (! empty($oldValues[CategoryRepository::COMMON_VALUES_KEY])) {
             $newValues[CategoryRepository::COMMON_VALUES_KEY] = array_filter(
-                array_merge($newValues[CategoryRepository::COMMON_VALUES_KEY] ?? [], $oldValues[CategoryRepository::COMMON_VALUES_KEY])
+                array_merge($oldValues[CategoryRepository::COMMON_VALUES_KEY] ?? [], $newValues[CategoryRepository::COMMON_VALUES_KEY])
             );
         }
 
         foreach ($this->locales as $localeCode) {
             $newValues[CategoryRepository::LOCALE_VALUES_KEY][$localeCode] = array_filter(
-                array_merge($newValues[CategoryRepository::LOCALE_VALUES_KEY][$localeCode] ?? [], $oldValues[CategoryRepository::LOCALE_VALUES_KEY][$localeCode] ?? [])
+                array_merge($oldValues[CategoryRepository::LOCALE_VALUES_KEY][$localeCode] ?? [], $newValues[CategoryRepository::LOCALE_VALUES_KEY][$localeCode] ?? [])
             );
 
             if (empty($newValues[CategoryRepository::LOCALE_VALUES_KEY][$localeCode])) {
