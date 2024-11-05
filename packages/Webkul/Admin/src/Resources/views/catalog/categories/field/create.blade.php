@@ -101,24 +101,18 @@
 
                                  
                                     @php
-                                        $supportedTypes = ['text', 'textarea', 'boolean', 'select', 'multiselect', 'datetime', 'date', 'image', 'file', 'checkbox'];
+                                        $supportedTypes = config('category_field_types');
 
                                         $fieldTypes = [];
 
-                                        foreach($supportedTypes as $type) {
+                                        foreach($supportedTypes as $key => $type) {
                                             $fieldTypes[] = [
-                                                'id'    => $type,
-                                                'label' => trans('admin::app.catalog.category_fields.create.'. $type)
+                                                'id'    => $key,
+                                                'label' => trans($type['name'])
                                             ];
                                         }
 
                                         $fieldTypesJson = json_encode($fieldTypes);
-
-                                        $selectedType = [
-                                            'id'    => old('type'),
-                                            'label' => trans('admin::app.catalog.category_fields.create.'. old('type'))
-                                        ];
-
                                     @endphp
                                     
                                     <x-admin::form.control-group.control
