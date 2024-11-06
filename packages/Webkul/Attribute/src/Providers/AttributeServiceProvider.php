@@ -12,5 +12,15 @@ class AttributeServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
+
+        $this->registerConfig();
+    }
+
+    /**
+     * Register configuration.
+     */
+    public function registerConfig(): void
+    {
+        $this->mergeConfigFrom(dirname(__DIR__).'/Config/attribute_types.php', 'attribute_types');
     }
 }

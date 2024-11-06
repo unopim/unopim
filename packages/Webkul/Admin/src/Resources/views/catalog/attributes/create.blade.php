@@ -101,14 +101,14 @@
                                 </x-admin::form.control-group.label>
 
                                 @php
-                                    $supportedTypes = ['text', 'textarea', 'price', 'boolean', 'select', 'multiselect', 'datetime', 'date', 'image', 'gallery', 'file', 'checkbox'];
+                                    $supportedTypes = config('attribute_types');
 
                                     $attributeTypes = [];
 
                                     foreach($supportedTypes as $type) {
                                         $attributeTypes[] = [
-                                            'id'    => $type,
-                                            'label' => trans('admin::app.catalog.attributes.create.'. $type)
+                                            'id'    => $type['key'],
+                                            'label' => trans($type['name'])
                                         ];
                                     }
 

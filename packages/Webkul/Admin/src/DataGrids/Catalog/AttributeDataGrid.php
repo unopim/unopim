@@ -7,6 +7,16 @@ use Webkul\DataGrid\DataGrid;
 
 class AttributeDataGrid extends DataGrid
 {
+    protected array $typeConfig = [];
+
+    /**
+     * Initialize the config value
+     */
+    public function __construct()
+    {
+        $this->typeConfig = config('attribute_types');
+    }
+
     /**
      * Prepare query builder.
      *
@@ -68,7 +78,7 @@ class AttributeDataGrid extends DataGrid
             'searchable' => true,
             'filterable' => true,
             'sortable'   => true,
-            'closure'    => fn ($row) => trans('admin::app.catalog.attributes.create.'.$row->type),
+            'closure'    => fn ($row) => trans($this->typeConfig[$row->type]['name'] ?? "[$row->type]"),
         ]);
 
         $this->addColumn([

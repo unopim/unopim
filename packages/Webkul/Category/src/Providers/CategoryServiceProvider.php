@@ -16,5 +16,15 @@ class CategoryServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
 
         CategoryProxy::observe(CategoryObserver::class);
+
+        $this->registerConfig();
+    }
+
+    /**
+     * Register configuration.
+     */
+    public function registerConfig(): void
+    {
+        $this->mergeConfigFrom(dirname(__DIR__).'/Config/category_field_types.php', 'category_field_types');
     }
 }
