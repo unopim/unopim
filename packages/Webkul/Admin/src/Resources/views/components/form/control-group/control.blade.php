@@ -210,6 +210,27 @@
 
         @break
 
+    @case('tagging')
+        <v-field
+            v-slot="{ field, errors }"
+            :class="[errors && errors['{{ $name }}'] ? 'border !border-red-600 hover:border-red-600' : '']"
+            {{ $attributes->only(['name', ':name', 'value', ':value', 'v-model', 'rules', ':rules', 'label', ':label']) }}
+            name="{{ $name }}"
+        >
+            
+                <v-tagging-handler
+                    :taggable=true
+                    name="{{ $name }}"
+                    v-bind="field"
+                    :class="[errors.length ? 'border border-red-500' : '']"
+                    {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label']) }}
+                >
+                </v-tagging-handler>
+            
+        </v-field>
+
+        @break
+
     @case('checkbox')
         <v-field
             v-slot="{ field }"
@@ -551,6 +572,140 @@
         });
     </script>
 
+
+    <script type="text/x-template" id="v-tagging-handler-template">
+        <div>
+            <v-multiselect
+                :track-by="trackBy"
+                :label="labelBy"
+                :taggable="true"
+                @tag="addTag"
+                @select="selectOption"
+                @remove="removeOption"
+                :options="formattedOptions"
+                :preserve-search="false"
+                :multiple="true"
+                :searchable="true"
+                :placeholder="placeholder"
+                :close-on-select="false"
+                :clear-on-select="false"
+                :show-no-results="true"
+                :hide-selected="true"
+                :name="name"
+                v-model="selectedValue"
+                v-bind="field"
+            >
+
+            </v-multiselect>   
+            <input
+                v-model="selectedOption"
+                v-validate="'required'"
+                :name="name"
+                type="hidden"
+            >
+        </div>
+    </script>
+
+    <script type="module">
+        app.component('v-tagging-handler', {
+            template: '#v-tagging-handler-template',
+
+            props: {
+                trackBy: {
+                    type: String,
+                    default: 'id'
+                },
+                labelBy: {
+                    type: String,
+                    default: 'label'
+                },
+                options: Array,
+                label: String,
+                name: String,
+                value: String,
+                field: Array,
+                placeholder: String,
+            },
+            
+            data() {
+                return {
+                    selectedValue: this.parseValue() ? this.parseOptions().filter(option =>  this.parseValue() instanceof Array && this.parseValue()?.some(valueItem => option[this.trackBy] === valueItem)) : [],
+                }
+            },
+
+            computed: {
+                formattedOptions() {
+                    return this.parseOptions();
+                },
+                selectedOption() {
+                    let selectedOptions = [];
+
+                    this.selectedValue instanceof Array ? this.selectedValue.forEach((item) => {
+                        selectedOptions.push(item[this.trackBy]);
+                    }) : null;
+
+                    return selectedOptions.length > 0 ? selectedOptions : null;
+                },
+                
+            },
+
+            watch: {
+                selectedValue(newValue) {
+                    if (
+                        (newValue instanceof Array && newValue.length < 1) || null == newValue
+                    ) {
+                        this.$emit('input', newValue);
+
+                        return;
+                    }
+
+                    this.$emit('input', JSON.stringify(newValue));
+                },
+            },
+
+            methods: {
+                parseOptions() {
+                    try {
+                        return this.options ? JSON.parse(this.options) : [];
+                    } catch (error) {
+                        console.error('Error parsing options JSON:', error);
+                        return [];
+                    }
+                },
+                parseValue() {
+                    try {
+                        return this.value ? JSON.parse(this.value) : [];
+                    } catch (error) {
+                        return this.value;
+                    }
+                },
+                addTag (newTag) {
+                    const tag = {
+                        name: newTag,
+                        code: newTag
+                    }
+                    this.formattedOptions.push(tag)
+                    this.selectedValue.push(tag)
+                },
+                selectOption(tag) {
+                    console.log(tag)
+                    this.$emit('select-option', {
+                        target: {
+                            value: tag
+                        }
+                    });
+                },
+                removeOption(tag) {
+                    console.log(tag)
+                    this.$emit('remove-option', {
+                        target: {
+                            value: tag
+                        }
+                    });
+                },                
+            }
+        });
+    </script>
 
     <script type="text/x-template" id="v-async-select-handler-template">
         <div>
