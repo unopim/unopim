@@ -688,7 +688,6 @@
                     this.selectedValue.push(tag)
                 },
                 selectOption(tag) {
-                    console.log(tag)
                     this.$emit('select-option', {
                         target: {
                             value: tag
@@ -696,7 +695,6 @@
                     });
                 },
                 removeOption(tag) {
-                    console.log(tag)
                     this.$emit('remove-option', {
                         target: {
                             value: tag
