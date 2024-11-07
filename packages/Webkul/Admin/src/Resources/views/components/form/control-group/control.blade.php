@@ -683,9 +683,14 @@
                     const tag = {
                         name: newTag,
                         code: newTag
-                    }
-                    this.formattedOptions.push(tag)
-                    this.selectedValue.push(tag)
+                    };
+                    this.formattedOptions.push(tag);
+                    this.selectedValue.push(tag);
+                    this.$emit('add-option', {
+                        target: {
+                            value: tag
+                        }
+                    });
                 },
                 selectOption(tag) {
                     this.$emit('select-option', {
