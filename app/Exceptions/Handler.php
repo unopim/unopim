@@ -25,6 +25,13 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $exception)
     {
         if ($exception instanceof PostTooLargeException) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'message'   => trans('admin::app.errors.413.title'),
+                    'errorCode' => $exception->getStatusCode() ?? 413,
+                ], $exception->getStatusCode() ?? 413);
+            }
+
             return response()->view('admin::errors.index', ['errorCode' => $exception->getStatusCode() ?? 413]);
         }
 
