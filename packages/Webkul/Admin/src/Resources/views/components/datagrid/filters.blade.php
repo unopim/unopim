@@ -384,7 +384,7 @@
                     class="block w-full rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2 py-1.5 text-sm leading-6 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
                     :name="column.index"
                     :placeholder="column.label"
-                    @keyup.enter="filterPage($event, column)"
+                    @change="filterPage($event, column)"
                 />
             </div>
 
