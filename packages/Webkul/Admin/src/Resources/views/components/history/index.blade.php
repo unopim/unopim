@@ -1,15 +1,15 @@
 @props(['isMultiRow' => false, 'isSearchable' => true, 'isFilterable' => true])
 
-<v-datagrid {{ $attributes }}>
+<v-history-datagrid {{ $attributes }}>
     <x-admin::shimmer.datagrid :isMultiRow="$isMultiRow" />
 
     {{ $slot }}
-</v-datagrid>
+</v-history-datagrid>
 
 @pushOnce('scripts')
     <script
         type="text/x-template"
-        id="v-datagrid-template"
+        id="v-history-datagrid-template"
     >
         <div>
             <x-admin::history.toolbar />
@@ -54,8 +54,8 @@
     </script>
 
     <script type="module">
-        app.component('v-datagrid', {
-            template: '#v-datagrid-template',
+        app.component('v-history-datagrid', {
+            template: '#v-history-datagrid-template',
 
             props: ['src'],
 
