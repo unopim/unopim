@@ -18,7 +18,7 @@ class InstallerController extends Controller
      *
      * @var string
      */
-    const MIN_PHP_VERSION = '8.1.0';
+    const MIN_PHP_VERSION = '8.2.0';
 
     /**
      * Const Variable for Static Customer Id
@@ -125,17 +125,20 @@ class InstallerController extends Controller
     public function adminConfigSetup()
     {
         $password = password_hash(request()->input('password'), PASSWORD_BCRYPT, ['cost' => 10]);
+        $uiLocaleId = DB::table('locales')->where('code', request()->input('locale'))->where('status', 1)->first()?->id ?? 58;
 
         try {
             DB::table('admins')->updateOrInsert(
                 [
                     'id' => self::USER_ID,
                 ], [
-                    'name'     => request()->input('admin'),
-                    'email'    => request()->input('email'),
-                    'password' => $password,
-                    'role_id'  => 1,
-                    'status'   => 1,
+                    'name'         => request()->input('admin'),
+                    'email'        => request()->input('email'),
+                    'timezone'     => request()->input('timezone'),
+                    'ui_locale_id' => $uiLocaleId,
+                    'password'     => $password,
+                    'role_id'      => 1,
+                    'status'       => 1,
                 ]
             );
         } catch (\Throwable $th) {

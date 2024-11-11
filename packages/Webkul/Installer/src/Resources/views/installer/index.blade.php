@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html
     lang="{{ app()->getLocale() }}"
-    dir="{{ in_array(app()->getLocale(), ['ar', 'fa', 'he']) ? 'rtl' : 'ltr' }}"
+    dir="{{ in_array(app()->getLocale(), ['ar_AE']) ? 'rtl' : 'ltr' }}"
 >
     <head>
         <title>
@@ -44,24 +44,16 @@
 
     @php
         $locales = [
-            'ar'    => 'arabic',
-            'bn'    => 'bengali',
-            'de'    => 'german',
-            'en_US'    => 'english',
-            'es'    => 'spanish',
-            'fa'    => 'persian',
-            'fr'    => 'french',
-            'he'    => 'hebrew',
+            'ar_AE' => 'arabic',
+            'de_DE' => 'german',
+            'en_US' => 'english',
+            'es_ES' => 'spanish',
+            'fr_FR' => 'french',
             'hi_IN' => 'hindi',
-            'it'    => 'italian',
-            'ja'    => 'japanese',
-            'nl'    => 'dutch',
-            'pl'    => 'polish',
+            'ja_JP' => 'japanese',
+            'nl_NL' => 'dutch',
             'pt_BR' => 'portuguese',
-            'ru'    => 'russian',
-            'sin'   => 'sinhala',
-            'tr'    => 'turkish',
-            'uk'    => 'ukrainian',
+            'ru_RU' => 'russian',
             'zh_CN' => 'chinese',
         ];
 
@@ -247,7 +239,7 @@
                                 @lang('installer::app.installer.index.unopim')
                             </a>
 
-                            <span>@lang('installer::app.installer.index.unopim-info')</span>
+                            <span>@lang('installer::app.installer.index.UnoPim-info')</span>
 
                             <a
                                 class="bg-white underline text-violet-700"
@@ -293,7 +285,7 @@
                                         <!-- Application Name -->
                                         <x-installer::form.control-group class="mb-2.5">
                                             <x-installer::form.control-group.label>
-                                                @lang('Installation Wizard language')
+                                                @lang('installer::app.installer.index.wizard-language')
                                             </x-installer::form.control-group.label>
 
                                             <x-installer::form.control-group.control
@@ -1029,6 +1021,72 @@
 
                                     <x-installer::form.control-group.error control-name="confirm_password" />
                                 </x-installer::form.control-group>
+
+                                <!-- User Default Timezone -->
+                                <x-installer::form.control-group class="mb-2.5">
+                                    <x-installer::form.control-group.label class="required">
+                                        @lang('installer::app.installer.index.environment-configuration.default-timezone')
+                                    </x-installer::form.control-group.label>
+
+                                    @php
+                                        date_default_timezone_set('UTC');
+
+                                        $tzlist = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
+
+                                        $current = date_default_timezone_get();
+                                    @endphp
+
+                                    <x-installer::form.control-group.control
+                                        type="select"
+                                        name="timezone"
+                                        ::value="envData.app_timezone ?? $current"
+                                        rules="required"
+                                        :aria-label="trans('installer::app.installer.index.environment-configuration.default-timezone')"
+                                        :label="trans('installer::app.installer.index.environment-configuration.default-timezone')"
+                                    >
+                                        <option
+                                            value=""
+                                            disabled
+                                        >
+                                            @lang('installer::app.installer.index.environment-configuration.select-timezone')
+                                        </option>
+
+                                        @foreach($tzlist as $key => $value)
+                                            <option
+                                                value="{{ $value }}"
+                                                {{ $value === $current ? 'selected' : '' }}
+                                            >
+                                                {{ $value }}
+                                            </option>
+                                        @endforeach
+                                    </x-installer::form.control-group.control>
+
+                                    <x-installer::form.control-group.error control-name="timezone" />
+                                </x-installer::form.control-group>
+
+                                <!-- User's Default Locale -->
+                                    <x-installer::form.control-group class="w-full">
+                                        <x-installer::form.control-group.label class="required">
+                                            @lang('installer::app.installer.index.environment-configuration.default-locale')
+                                        </x-installer::form.control-group.label>
+    
+                                        <x-installer::form.control-group.control
+                                            type="select"
+                                            name="locale"
+                                            value="{{ app()->getLocale() }}"
+                                            rules="required"
+                                            :aria-label="trans('installer::app.installer.index.environment-configuration.default-locale')"
+                                            :label="trans('installer::app.installer.index.environment-configuration.default-locale')"
+                                        >
+                                            @foreach ($locales as $value => $label)
+                                                <option value="{{ $value }}">
+                                                    @lang("installer::app.installer.index.$label")
+                                                </option>
+                                            @endforeach
+                                        </x-installer::form.control-group.control>
+    
+                                        <x-installer::form.control-group.error control-name="locale" />
+                                    </x-installer::form.control-group>
                             </div>
 
                             <div class="flex px-4 py-2.5 justify-end items-center">
@@ -1079,13 +1137,6 @@
                                     >
                                         @lang('installer::app.installer.index.installation-completed.admin-panel')
                                     </a>
-
-                                    <a
-                                        href="{{ URL('/')}}"
-                                        class="px-3 py-1.5 bg-violet-700 border border-violet-700 rounded-md text-gray-50 font-semibold cursor-pointer hover:opacity-90"
-                                    >
-                                        @lang('installer::app.installer.index.installation-completed.customer-panel')
-                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -1093,14 +1144,7 @@
 
                     <div class="flex px-4 py-2.5 justify-between items-center">
                         <a
-                            href="https://forums.unopim.com"
-                            class="text-[12px] text-violet-700 font-semibold cursor-pointer"
-                        >
-                            @lang('installer::app.installer.index.installation-completed.unopim-forums')
-                        </a>
-
-                        <a
-                            href="https://unopim.com/en/extensions"
+                            href="https://unopim.com/extensions"
                             class="px-3 py-1.5 bg-white border border-violet-700 rounded-md text-violet-700 font-semibold cursor-pointer hover:opacity-90"
                         >
                             @lang('installer::app.installer.index.installation-completed.explore-unopim-extensions')
