@@ -239,7 +239,7 @@
                                 @lang('installer::app.installer.index.unopim')
                             </a>
 
-                            <span>@lang('installer::app.installer.index.UnoPim-info')</span>
+                            <span>@lang('installer::app.installer.index.unopim-info')</span>
 
                             <a
                                 class="bg-white underline text-violet-700"

@@ -408,7 +408,7 @@ return [
 
             'arabic'                    => '阿拉伯',
             'back'                      => '后退',
-            'UnoPim-info'               => '社区项目',
+            'unopim-info'               => '社区项目',
             'unopim-logo'               => '乌诺皮姆标志',
             'unopim'                    => '乌诺皮姆',
             'bengali'                   => '孟加拉',

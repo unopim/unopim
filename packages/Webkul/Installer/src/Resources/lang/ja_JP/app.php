@@ -408,7 +408,7 @@ return [
 
             'arabic'                    => 'アラビア語',
             'back'                      => '戻る',
-            'UnoPim-info'               => 'によるコミュニティプロジェクト',
+            'unopim-info'               => 'によるコミュニティプロジェクト',
             'unopim-logo'               => 'ウノピムのロゴ',
             'unopim'                    => 'UnoPim',
             'bengali'                   => 'ベンガル語',

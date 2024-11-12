@@ -408,7 +408,7 @@ return [
 
             'arabic'                    => 'عربي',
             'back'                      => 'خلف',
-            'UnoPim-info'               => 'مشروع مجتمعي بقلم',
+            'unopim-info'               => 'مشروع مجتمعي بقلم',
             'unopim-logo'               => 'شعار أونوبيم',
             'unopim'                    => 'Unopim',
             'bengali'                   => 'البنغالية',

@@ -408,7 +408,7 @@ return [
 
             'arabic'                    => 'арабский',
             'back'                      => 'Назад',
-            'UnoPim-info'               => 'общественный проект от',
+            'unopim-info'               => 'общественный проект от',
             'unopim-logo'               => 'Логотип УноПим',
             'unopim'                    => 'UnoPim',
             'bengali'                   => 'Бенгальский',
