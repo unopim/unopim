@@ -46,7 +46,7 @@
                     <x-admin::form.control-group>
                         <x-admin::media.images
                             name="image"
-                            :uploaded-images="$user->image ? [['id' => 'image', 'url' => $user->image_url]] : []"
+                            :uploaded-images="$user->image ? [['id' => 'image', 'url' => $user->image_url, 'value' => $user->image]] : []"
                         />
                     </x-admin::form.control-group>
 
