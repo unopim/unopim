@@ -380,7 +380,7 @@ return [
                 'main'          => 'Start',
                 'select-locale' => 'Select Locale',
                 'title'         => 'Your UnoPim install',
-                'welcome-title' => 'Welcome to UnoPim '.core()->version(),
+                'welcome-title' => 'Welcome to UnoPim :version',
             ],
 
             'server-requirements'       => [

@@ -380,7 +380,7 @@ return [
                 'main'          => '始める',
                 'select-locale' => 'ロケールの選択',
                 'title'         => 'UnoPim のインストール',
-                'welcome-title' => 'UnoPimへようこそ '.core()->version(),
+                'welcome-title' => 'UnoPimへようこそ :version',
             ],
 
             'server-requirements'       => [

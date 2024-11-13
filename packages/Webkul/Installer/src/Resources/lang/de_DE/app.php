@@ -380,7 +380,7 @@ return [
                 'main'          => 'Start',
                 'select-locale' => 'Wählen Sie Gebietsschema aus',
                 'title'         => 'Ihre UnoPim-Installation',
-                'welcome-title' => 'Willkommen bei UnoPim'.core()->version(),
+                'welcome-title' => 'Willkommen bei UnoPim :version',
             ],
 
             'server-requirements'       => [

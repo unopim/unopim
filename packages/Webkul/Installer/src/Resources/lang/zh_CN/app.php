@@ -380,7 +380,7 @@ return [
                 'main'          => '开始',
                 'select-locale' => '选择区域设置',
                 'title'         => '您的 UnoPim 安装',
-                'welcome-title' => '欢迎来到乌诺皮姆 '.core()->version(),
+                'welcome-title' => '欢迎来到乌诺皮姆 :version',
             ],
 
             'server-requirements'       => [

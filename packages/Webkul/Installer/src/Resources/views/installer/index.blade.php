@@ -269,7 +269,7 @@
                         >
                             <div class="flex justify-between items-center gap-2.5 px-4 py-[11px] border-b-[1px] border-gray-300">
                                 <p class="text-[20px] text-gray-800 font-bold">
-                                    @lang('installer::app.installer.index.start.welcome-title')
+                                    @lang('installer::app.installer.index.start.welcome-title',['version' => core()->version()])
                                 </p>
                             </div>
 

@@ -380,7 +380,7 @@ return [
                 'main'          => 'शुरू',
                 'select-locale' => 'स्थान का चयन करें',
                 'title'         => 'आपका यूनोपिम इंस्टॉल',
-                'welcome-title' => 'यूनोपिम में आपका स्वागत है '.core()->version(),
+                'welcome-title' => 'यूनोपिम में आपका स्वागत है :version',
             ],
 
             'server-requirements'       => [
