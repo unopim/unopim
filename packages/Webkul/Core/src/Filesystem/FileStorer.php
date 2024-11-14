@@ -45,7 +45,7 @@ class FileStorer
 
         $path = Storage::disk($disk)->putFileAs($path, $file, $name, $options);
 
-        $this->sanitizeSVG($path, $file->getMimeType());
+        $this->sanitizeSVG($path, $file->getMimeType(), $disk);
 
         return $path;
     }
