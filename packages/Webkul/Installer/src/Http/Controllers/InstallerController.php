@@ -61,6 +61,7 @@ class InstallerController extends Controller
      */
     public function envFileSetup(Request $request): JsonResponse
     {
+        
         $message = $this->environmentManager->generateEnv($request);
 
         return new JsonResponse(['data' => $message]);
@@ -71,6 +72,12 @@ class InstallerController extends Controller
      */
     public function runMigration()
     {
+        try {
+            DB::connection()->getPdo();
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+        }
+
         $migration = $this->databaseManager->migration();
 
         return $migration;

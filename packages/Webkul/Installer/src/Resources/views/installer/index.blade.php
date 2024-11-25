@@ -434,13 +434,15 @@
                                             @lang('installer::app.installer.index.environment-configuration.mysql')
                                         </option>
 
-                                        <option value="pgsql">
+                                        <!-- @TODO: Future support for -->
+
+                                        <!-- <option value="pgsql">
                                             @lang('installer::app.installer.index.environment-configuration.pgsql')
                                         </option>
 
                                         <option value="sqlsrv">
                                             @lang('installer::app.installer.index.environment-configuration.sqlsrv')
-                                        </option>
+                                        </option> -->
                                     </x-installer::form.control-group.control>
 
                                     <x-installer::form.control-group.error control-name="db_connection" />
@@ -997,7 +999,7 @@
                                     <x-installer::form.control-group.control
                                         type="password"
                                         name="password"
-                                        rules="required"
+                                        rules="required|min:6"
                                         :value="old('password')"
                                         :label="trans('installer::app.installer.index.create-administrator.password')"
                                     />
@@ -1319,6 +1321,11 @@
                                     this.runMigartion(setErrors);
                             })
                             .catch(error => {
+                                if (error.response.data.message) {
+                                    alert(error.response.data.message);
+                                    window.location.reload();
+                                }
+
                                 setErrors(error.response.data.errors);
                             });
                         },
