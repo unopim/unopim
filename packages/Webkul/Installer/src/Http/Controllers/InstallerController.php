@@ -61,7 +61,7 @@ class InstallerController extends Controller
      */
     public function envFileSetup(Request $request): JsonResponse
     {
-        
+
         $message = $this->environmentManager->generateEnv($request);
 
         return new JsonResponse(['data' => $message]);
