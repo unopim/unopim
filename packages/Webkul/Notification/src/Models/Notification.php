@@ -9,7 +9,13 @@ class Notification extends Model implements NotificationContract
 {
     protected $fillable = [
         'type',
-        'read',
-        'order_id',
+        'url',
+        'title',
+        'description',
+        'context',
+    ];
+    
+    protected $cost = [
+        'context' => 'array',
     ];
 }

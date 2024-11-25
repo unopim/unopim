@@ -16,6 +16,7 @@ use Webkul\AdminApi\Models\Apikey;
 use Webkul\Core\Models\LocaleProxy;
 use Webkul\User\Contracts\Admin as AdminContract;
 use Webkul\User\Database\Factories\AdminFactory;
+use Webkul\Notification\Models\Notification;
 
 class Admin extends Authenticatable implements AdminContract, AuditableContract
 {
@@ -152,5 +153,12 @@ class Admin extends Authenticatable implements AdminContract, AuditableContract
     public function findForPassport(string $username)
     {
         return $this->where('email', $username)->first();
+    }
+
+    public function notifications()
+    {
+        return $this->belongsToMany(Notification::class, 'user_notifications')
+            ->withPivot('read')
+            ->withTimestamps();
     }
 }
