@@ -733,6 +733,8 @@
                 @search-change="handleSearch"
                 @open="openedSelect"
                 @scroll="onScroll"
+                @select="selectOption"
+                @remove="removeOption"
                 ref="multiselect__handler__"
                 v-model="selectedValue"
                 v-bind="field"
@@ -814,6 +816,7 @@
 
             mounted() {
                 this.$refs['multiselect__handler__']._.refs.list.addEventListener('scroll', this.onScroll);
+                console.log(this.selectedValue);
 
                 if (this.selectedValue && typeof this.selectedValue != 'object') {
                     this.initializeValue();
@@ -948,7 +951,23 @@
 
                             this.isLoading = false;
                         })
-                }
+                },
+
+                selectOption(newValue) {
+                    this.$emit('select-option', {
+                        target: {
+                            value: newValue
+                        }
+                    });
+                },
+
+                removeOption(removeValue) {
+                    this.$emit('remove-option', {
+                        target: {
+                            value: removeValue
+                        }
+                    });
+                },
             }
         });
     </script>
