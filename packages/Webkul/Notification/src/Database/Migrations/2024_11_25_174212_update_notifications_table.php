@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('notifications', function (Blueprint $table) {
-            $table->string('url')->nullable()->after('type');
-            $table->string('title')->nullable()->after('url');
+            $table->string('route')->nullable()->after('type');
+            $table->json('route_params')->nullable()->after('route');
+            $table->string('title')->nullable()->after('route_params');
             $table->text('description')->nullable()->after('title');
             $table->json('context')->nullable()->after('description');
             $table->dropColumn(['read']);
@@ -27,7 +28,7 @@ return new class extends Migration
     {
         Schema::table('notifications', function (Blueprint $table) {
             $table->boolean('read')->default(0);
-            $table->dropColumn(['url', 'title', 'description', 'context']); // Drop the columns if rolling back
+            $table->dropColumn(['route', 'route_params', 'title', 'description', 'context']); // Drop the columns if rolling back
         });
     }
 };

@@ -15,7 +15,6 @@ class NotificationEvent implements NotificationEventInterface
     /**
      * Create a new event instance.
      *
-     * @param array $notificationData
      * @return void
      */
     public function __construct(array $notificationData)

@@ -184,52 +184,47 @@
             <x-slot:toggle>
                 <span class="flex relative">
                     <span
-                        class="icon-notification p-1.5 rounded-md text-2xl text-red cursor-pointer transition-all hover:bg-gray-100 dark:hover:bg-gray-950" 
+                        class="icon-dark p-1.5 rounded-md text-2xl text-red cursor-pointer transition-all hover:bg-gray-100 dark:hover:bg-gray-950" 
                         title="@lang('admin::app.components.layouts.header.notifications')"
                     >
                     </span>
                 
                     <span
-                        class="flex justify-center items-center min-w-5 h-5 absolute -top-2 p-1.5 ltr:left-5 rtl:right-5 bg-blue-600 rounded-full text-white text-[10px] font-semibold leading-[9px] cursor-pointer"
+                        class="flex justify-center items-center min-w-5 h-5 absolute -top-2 p-1.5 ltr:left-5 rtl:right-5 bg-blue-600 rounded-full text-gray-600 text-[10px] font-semibold leading-[9px] cursor-pointer"
                         v-text="totalUnRead"
-                        v-if="totalUnRead"
                     >
                     </span>
                 </span>
             </x-slot>
 
             <!-- Notification Content -->
-            <x-slot:content class="!p-0 min-w-[250px] max-w-[250px]">
+            <x-slot:content class="p-5 min-w-[270px] max-w-[270px] !p-0">
                 <!-- Header -->
                 <div class="text-base  p-3 text-gray-600 dark:text-gray-300 font-semibold border-b dark:border-gray-800">
-                    @lang('admin::app.notifications.title', ['read' => 0])
+                    @lang('admin::app.notifications.title', ['read' => 4])
                 </div>
 
                 <!-- Content -->
                 <div class="grid">
                     <a
                         class="flex gap-1.5 items-start p-3 hover:bg-gray-50 dark:hover:bg-gray-950 border-b dark:border-gray-800 last:border-b-0"
-                        v-for="notification in notifications"
-                        :href="'{{ route('admin.notification.viewed_notification', ':orderId') }}'.replace(':orderId', notification.order_id)"
+                        v-for="userNotification in userNotifications"
+                        :href="'{{ route('admin.notification.viewed_notification', ':id') }}'.replace(':id', userNotification.notification.id)"
                     >
                         <!-- Notification Icon -->
                         <span
-                            v-if="notification.order.status in notificationStatusIcon"
                             class="h-fit"
-                            :class="notificationStatusIcon[notification.order.status]"
                         >
+                        
                         </span>
 
                         <div class="grid">
-                            <!-- Order Id & Status -->
-                            <p class="text-gray-800 dark:text-white">
-                                #@{{ notification.order.id }}
-                                @{{ orderTypeMessages[notification.order.status] }}
-                            </p>
-
+                           
+                            <p class="text-gray-800 dark:text-white"> @{{userNotification.notification.title}} </p>
+                            <p class="text-gray-800 dark:text-white"> @{{userNotification.notification.description}} </p>
                             <!-- Created Date In humand Readable Format -->
                             <p class="text-xs text-gray-600 dark:text-gray-300">
-                                @{{ notification.order.datetime }}
+                                @{{ timeAgo(userNotification.notification.created_at) }}
                             </p>
                         </div>
                     </a>
@@ -246,7 +241,7 @@
 
                     <a
                         class="text-xs text-blue-600 font-semibold cursor-pointer transition-all hover:underline"
-                        v-if="notifications?.length"
+                        v-if="userNotifications?.length"
                         @click="readAll()"
                     >
                         @lang('admin::app.notifications.read-all')
@@ -267,22 +262,10 @@
 
                 data() {
                     return {
-                        notifications: [],
+                        userNotifications: [],
 
                         totalUnRead: 0,
                     }
-                },
-
-                computed: {
-                    notificationStatusIcon() {
-                        return {
-                            pending: 'icon-information text-2xl text-amber-600 bg-amber-100 rounded-full',
-                            closed: 'icon-repeat text-2xl text-red-600 bg-red-100 rounded-full',
-                            completed: 'icon-done text-2xl text-blue-600 bg-blue-100 rounded-full',
-                            canceled: 'icon-cancel-1 text-2xl text-red-600 bg-red-100 rounded-full',
-                            processing: 'icon-sort-right text-2xl text-green-600 bg-green-100 rounded-full',
-                        };
-                    },
                 },
 
                 mounted() {
@@ -298,11 +281,36 @@
                                 }
                             })
                             .then((response) => {
-                                this.notifications = response.data.search_results.data;
+                                this.userNotifications = response.data.search_results.data;
 
                                 this.totalUnRead =   response.data.total_unread;
                             })
                             .catch(error => console.log(error))
+                    },
+
+                    timeAgo(timestamp) {
+                        const now = new Date();
+                        const past = new Date(timestamp);
+                        const diffInSeconds = Math.floor((now - past) / 1000);
+
+                        const intervals = {
+                            year: 365 * 24 * 60 * 60,
+                            month: 30 * 24 * 60 * 60,
+                            week: 7 * 24 * 60 * 60,
+                            day: 24 * 60 * 60,
+                            hour: 60 * 60,
+                            minute: 60,
+                            second: 1
+                        };
+
+                        for (const [unit, secondsInUnit] of Object.entries(intervals)) {
+                            const count = Math.floor(diffInSeconds / secondsInUnit);
+                            if (count > 0) {
+                                return count === 1 ? `${count} ${unit} ago` : `${count} ${unit}s ago`;
+                            }
+                        }
+
+                        return "just now";
                     },
 
                     readAll() {

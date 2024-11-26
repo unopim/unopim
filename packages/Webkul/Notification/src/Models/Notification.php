@@ -9,13 +9,23 @@ class Notification extends Model implements NotificationContract
 {
     protected $fillable = [
         'type',
-        'url',
+        'route',
+        'route_params',
         'title',
         'description',
         'context',
     ];
-    
-    protected $cost = [
-        'context' => 'array',
+
+    protected $casts = [
+        'context'      => 'array',
+        'route_params' => 'array',
     ];
+
+    /**
+     * Get the user notifications associated with the notification.
+     */
+    public function userNotifications()
+    {
+        return $this->hasMany(UserNotification::class);
+    }
 }

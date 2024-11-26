@@ -30,55 +30,30 @@
             <div class="flex flex-col justify-between max-w-max bg-white dark:bg-cherry-800 rounded-md box-shadow h-[calc(100vh-179px)]">
                 <div class="">
                     <div class="flex border-b dark:border-cherry-800 overflow-auto journal-scroll">
-                        <div
-                            class="flex py-4 px-4 gap-1 border-b-2 hover:bg-violet-50 dark:hover:bg-cherry-800 cursor-pointer"
-                            :class="{'border-violet-700  dark:border-violet-700 ': status == data.status}"
-                            ref="tabs"
-                            v-for="data in orderType"
-                            @click="status=data.status; getNotification()"
-                        >
-                            <p
-                                class="text-gray-600 dark:text-gray-300"
-                                v-text="data.message"
-                            >
-                            </p>
-
-                            <span
-                                class="text-xs text-white font-semibold py-px px-1.5 bg-gray-400 rounded-[35px]"
-                                v-text="data.status_count ?? '0'"
-                            >
-                            </span>
-                        </div>    
+                           
 
                     </div>
 
                     <div
                         class="grid max-h-[calc(100vh-330px)] overflow-auto journal-scroll"
-                        v-if="notifications.length"
+                        v-if="userNotifications.length"
                     >
                         <a
-                            :href="'{{ route('admin.notification.viewed_notification', ':orderId') }}'.replace(':orderId', notification.order_id)"
                             class="flex gap-1.5 h-14 p-4 items-start hover:bg-violet-50 dark:hover:bg-cherry-800"
-                            v-for="notification in notifications"
+                            v-for="userNotification in userNotifications"
+                            :href="'{{ route('admin.notification.viewed_notification', ':id') }}'.replace(':id', userNotification.notification.id)"
                         >
                             <span
-                                v-if="notification.order.status in orderType"
                                 class="h-fit text-2xl rounded-full"
-                                :class="orderType[notification.order.status].icon"
                             >
                             </span>
 
                             <div class="grid">
-                                <p  
-                                    class="text-gray-800 dark:text-white"
-                                    :class="notification.read ? 'font-normal' : 'font-semibold'"
-                                >
-                                    #@{{ notification.order.id }}
-                                    @{{ orderType[notification.order.status].message }}
-                                </p>
-    
+                                <p class="text-gray-800 dark:text-white"> @{{userNotification.notification.title}} </p>
+                                <p class="text-gray-800 dark:text-white"> @{{userNotification.notification.description}} </p>
+                                <!-- Created Date In humand Readable Format -->
                                 <p class="text-xs text-gray-600 dark:text-gray-300">
-                                    @{{ notification.order.datetime }}
+                                    @{{ timeAgo(userNotification.notification.created_at) }}
                                 </p>
                             </div>
                         </a>
@@ -142,7 +117,7 @@
 
                 data() {
                     return {
-                        notifications: [],
+                        userNotifications: [],
 
                         pagination: {},
 
@@ -166,17 +141,7 @@
                             params: params
                         })
                         .then((response) => {
-                            this.notifications = response.data.search_results.data;
-
-                            let total = 0;
-
-                            response.data.status_count.forEach((item) => {
-                                this.orderType[item.status].status_count = item.status_count;
-
-                                total += item.status_count;
-                            });
-
-                            this.orderType['all'].status_count = total;
+                            this.userNotifications = response.data.search_results.data;
 
                             this.pagination = response.data.search_results;
                         })
@@ -187,14 +152,39 @@
                         if (url) {
                             axios.get(url)
                                 .then(response => {
-                                    this.notifications = [];
+                                    this.userNotifications = [];
     
-                                    this.notifications = response.data.search_results.data;
+                                    this.userNotifications = response.data.search_results.data;
     
                                     this.pagination = response.data.search_results;
                                 });
                         }
-                    }
+                    },
+
+                    timeAgo(timestamp) {
+                        const now = new Date();
+                        const past = new Date(timestamp);
+                        const diffInSeconds = Math.floor((now - past) / 1000);
+
+                        const intervals = {
+                            year: 365 * 24 * 60 * 60,
+                            month: 30 * 24 * 60 * 60,
+                            week: 7 * 24 * 60 * 60,
+                            day: 24 * 60 * 60,
+                            hour: 60 * 60,
+                            minute: 60,
+                            second: 1
+                        };
+
+                        for (const [unit, secondsInUnit] of Object.entries(intervals)) {
+                            const count = Math.floor(diffInSeconds / secondsInUnit);
+                            if (count > 0) {
+                                return count === 1 ? `${count} ${unit} ago` : `${count} ${unit}s ago`;
+                            }
+                        }
+
+                        return "just now";
+                    },
                 }
             })
         </script>
