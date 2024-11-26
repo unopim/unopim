@@ -380,6 +380,8 @@
                 :name="name"
                 v-model="selectedValue"
                 v-bind="field"
+                @select="selectOption"
+                @remove="removeOption"
             >
 
             </v-multiselect>   
@@ -462,7 +464,21 @@
                     } catch (error) {
                         return this.value;
                     }
-                }
+                },
+                selectOption(newValue) {
+                    this.$emit('select-option', {
+                        target: {
+                            value: newValue
+                        }
+                    });
+                },
+                removeOption(removeValue) {
+                    this.$emit('remove-option', {
+                        target: {
+                            value: removeValue
+                        }
+                    });
+                },
             }
         });
     </script>
@@ -484,6 +500,8 @@
                 :name="name"
                 v-model="selectedValue"
                 v-bind="field"
+                @select="selectOption"
+                @remove="removeOption"
             >
 
             </v-multiselect>   
@@ -567,7 +585,21 @@
                     } catch (error) {
                         return this.value;
                     }
-                }
+                },
+                selectOption(newValue) {
+                    this.$emit('select-option', {
+                        target: {
+                            value: newValue
+                        }
+                    });
+                },
+                removeOption(removeValue) {
+                    this.$emit('remove-option', {
+                        target: {
+                            value: removeValue
+                        }
+                    });
+                },
             }
         });
     </script>
