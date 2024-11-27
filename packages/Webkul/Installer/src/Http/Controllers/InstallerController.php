@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Validator;
 use Webkul\Installer\Helpers\DatabaseManager;
 use Webkul\Installer\Helpers\EnvironmentManager;
 use Webkul\Installer\Helpers\ServerRequirements;
@@ -61,6 +62,21 @@ class InstallerController extends Controller
      */
     public function envFileSetup(Request $request): JsonResponse
     {
+        $rules = [
+            'db_prefix' => 'not_regex:/[^A-Za-z0-9_]/',
+        ];
+
+        $request = $request->all();
+
+        $request = array_map(function ($input) {
+            return strip_tags($input);
+        }, $request);
+
+        $validator = Validator::make($request, $rules);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => 'Failed to parse dotenv file due to some invalid values'], 422);
+        }
 
         $message = $this->environmentManager->generateEnv($request);
 
