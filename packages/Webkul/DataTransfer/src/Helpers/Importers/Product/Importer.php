@@ -640,8 +640,6 @@ class Importer extends AbstractImporter
             ->where('code', $rowData[self::ATTRIBUTE_FAMILY_CODE])
             ->first()->id;
 
-        $isExisting ??= $this->isSKUExist($rowData['sku']);
-
         $product = $isExisting ? $this->getExistingProduct($rowData['sku']) : null;
 
         $productValues = $products['update'][$rowData['sku']]['values'] ?? [];
@@ -656,6 +654,7 @@ class Importer extends AbstractImporter
             'sku'                 => $rowData['sku'],
             'attribute_family_id' => $attributeFamilyId,
             'values'              => $productValues,
+            'status'              => $this->getProductStatus($rowData, $isExisting, $product),
         ];
 
         /**
@@ -680,6 +679,20 @@ class Importer extends AbstractImporter
 
             $products['insert'][$rowData['sku']] = array_merge($products['insert'][$rowData['sku']] ?? [], $data);
         }
+    }
+
+    /**
+     * Format Product Status
+     */
+    protected function getProductStatus(array $rowData, bool $isExsting, $product = null): int
+    {
+        $status = $rowData['status'] ?? ($isExisting ? $product?->status : 0);
+
+        return match (true) {
+            is_string($status) && strtolower($status) === 'true' => 1,
+            is_bool($status)                                     => (int) $status,
+            default                                              => 0,
+        };
     }
 
     /**

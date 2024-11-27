@@ -647,8 +647,10 @@ abstract class AbstractType
 
         $product->values = $data[self::PRODUCT_VALUES_KEY];
 
+        $product->fill($data);
+
         if ($product->isDirty()) {
-            $product->update($data);
+            $product->save();
         }
 
         return $product;

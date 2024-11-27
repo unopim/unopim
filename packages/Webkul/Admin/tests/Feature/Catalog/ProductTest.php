@@ -212,14 +212,14 @@ it('should mass update the status of products to enabled', function () {
 
     $products = Product::factory()->simple()->createMany(2);
 
-    $this->post(route('admin.catalog.products.mass_update'), ['indices' => $products->pluck('id')->toArray(), 'value' => 'true'])
+    $this->post(route('admin.catalog.products.mass_update'), ['indices' => $products->pluck('id')->toArray(), 'value' => true])
         ->assertOk()
         ->assertJsonFragment(['message' => trans('admin::app.catalog.products.index.datagrid.mass-update-success')]);
 
     foreach ($products as $product) {
         $product->refresh();
 
-        $this->assertEquals('true', ($product->values['common']['status'] ?? false));
+        $this->assertEquals(1, $product->status);
     }
 });
 
@@ -228,14 +228,14 @@ it('should mass update the status of products to disabled', function () {
 
     $products = Product::factory()->simple()->createMany(2);
 
-    $this->post(route('admin.catalog.products.mass_update'), ['indices' => $products->pluck('id')->toArray(), 'value' => 'false'])
+    $this->post(route('admin.catalog.products.mass_update'), ['indices' => $products->pluck('id')->toArray(), 'value' => false])
         ->assertOk()
         ->assertJsonFragment(['message' => trans('admin::app.catalog.products.index.datagrid.mass-update-success')]);
 
     foreach ($products as $product) {
         $product->refresh();
 
-        $this->assertEquals('false', ($product->values['common']['status'] ?? false));
+        $this->assertEquals(0, $product->status);
     }
 });
 /** Need to add more assertions */

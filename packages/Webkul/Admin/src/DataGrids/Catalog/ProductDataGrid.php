@@ -53,7 +53,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'products.sku',
                 'products.id as product_id',
                 'products.type',
-                'products.values->common->status as status',
+                'products.status',
                 'parent_products.sku as parent',
                 DB::raw('(CASE WHEN '.$tablePrefix.'attribute_family_name.name IS NULL OR CHAR_LENGTH(TRIM('.$tablePrefix.'attribute_family_name.name)) < 1 THEN CONCAT("[", '.$tablePrefix.'af.code,"]") ELSE '.$tablePrefix.'attribute_family_name.name END) as attribute_family')
             );
@@ -61,7 +61,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $this->addFilter('product_id', 'products.id');
         $this->addFilter('attribute_family', 'af.code');
         $this->addFilter('sku', 'products.sku');
-        $this->addFilter('status', 'products.values->common->status');
+        $this->addFilter('status', 'products.status');
         $this->addFilter('type', 'products.type');
 
         return $queryBuilder;
@@ -131,15 +131,19 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                     'options' => [
                         [
                             'label' => trans('admin::app.common.enable'),
-                            'value' => 'true',
+                            'value' => 1,
                         ], [
                             'label' => trans('admin::app.common.disable'),
-                            'value' => 'false',
+                            'value' => 0,
                         ],
                     ],
                 ],
             ],
-
+            'closure' => function ($row) {
+                return $row->status
+                    ? "<span class='label-active'>".trans('admin::app.common.enable').'</span>'
+                    : "<span class='label-info'>".trans('admin::app.common.disable').'</span>';
+            },
         ]);
 
         $this->addColumn([
@@ -229,11 +233,11 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'options' => [
                     [
                         'label' => trans('admin::app.catalog.products.index.datagrid.active'),
-                        'value' => 'true',
+                        'value' => true,
                     ],
                     [
                         'label' => trans('admin::app.catalog.products.index.datagrid.disable'),
-                        'value' => 'false',
+                        'value' => false,
                     ],
                 ],
             ]);
@@ -266,7 +270,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             foreach ($this->getAllChannelsAndLocales() as [$channelCode, $localeCode]) {
                 $data = $this->getInitialData($channelCode, $localeCode);
 
-                $data += $productArray;
+                $data += $this->formatProductColumnsData($productArray);
 
                 $data += $this->formatProductValues($productValues, $localeCode, $channelCode);
 
@@ -359,5 +363,15 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     protected function getExportFileName(): string
     {
         return 'products';
+    }
+
+    /**
+     * Process product table columns data
+     */
+    protected function formatProductColumnsData(array $productArray): array
+    {
+        $productArray['status'] = $productArray['status'] ? 'true' : 'false';
+
+        return $productArray;
     }
 }

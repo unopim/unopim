@@ -17,6 +17,7 @@ use Webkul\Attribute\Models\AttributeProxy;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\HistoryControl\Contracts\HistoryAuditable;
 use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
+use Webkul\HistoryControl\Presenters\BooleanPresenter;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Product\Contracts\Product as ProductContract;
 use Webkul\Product\Database\Eloquent\Builder;
@@ -39,6 +40,7 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
         'attribute_family_id',
         'sku',
         'parent_id',
+        'status',
     ];
 
     /**
@@ -273,6 +275,7 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
     {
         return [
             'values' => ProductValuesPresenter::class,
+            'status' => BooleanPresenter::class,
         ];
     }
 
