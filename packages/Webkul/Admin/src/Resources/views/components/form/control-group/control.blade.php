@@ -848,7 +848,6 @@
 
             mounted() {
                 this.$refs['multiselect__handler__']._.refs.list.addEventListener('scroll', this.onScroll);
-                console.log(this.selectedValue);
 
                 if (this.selectedValue && typeof this.selectedValue != 'object') {
                     this.initializeValue();
