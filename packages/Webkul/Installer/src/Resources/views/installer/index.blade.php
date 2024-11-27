@@ -1215,7 +1215,7 @@
                     methods: {
                         FormSubmit(params, { setErrors }) {
                             const stepActions = {
-                                envDatabase: () => {
+                                envDatabase: (setErrors) => {
                                     if (params.db_connection === 'mysql') {
                                         this.completeStep('envDatabase', 'readyForInstallation', 'active', 'complete', setErrors);
 
@@ -1241,7 +1241,7 @@
                             const index = this.steps.find(step => step === this.currentStep);
 
                             if (stepActions[index]) {
-                                stepActions[index]();
+                                stepActions[index](setErrors);
                             }
                         },
 
@@ -1321,10 +1321,13 @@
                                     this.runMigartion(setErrors);
                             })
                             .catch(error => {
-                                if (error.response.data.message) {
-                                    alert(error.response.data.message);
+                                alert(error.response.data.error || error.response.data.message);
+
+                                if (error.response.status == 419) {
                                     window.location.reload();
                                 }
+
+                                this.currentStep = 'envDatabase';
 
                                 setErrors(error.response.data.errors);
                             });
@@ -1338,7 +1341,7 @@
                                     this.currentStep = 'envConfiguration';
                                 })
                                 .catch(error => {
-                                    alert(error.response.data.error);
+                                    alert(error.response.data.error || error.response.data.message);
 
                                     this.currentStep = 'envDatabase';
                                 });

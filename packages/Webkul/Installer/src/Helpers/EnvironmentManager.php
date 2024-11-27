@@ -33,7 +33,7 @@ class EnvironmentManager
         }
 
         try {
-            $response = $this->setEnvConfiguration($request->all());
+            $response = $this->setEnvConfiguration($request);
 
             $this->databaseManager->generateKey();
 
