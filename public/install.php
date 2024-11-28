@@ -270,7 +270,7 @@
                     echo '<p class="error"> Installation Failed. Please check output above and try again. </p>';
                     echo '<a href="install.php">Try Again</a>';
                 }
-            ?>
+                ?>
             </div>
         </div>
     </div>
