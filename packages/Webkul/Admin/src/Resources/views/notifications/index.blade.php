@@ -39,7 +39,7 @@
                         v-if="userNotifications.length"
                     >
                         <a
-                            class="flex gap-1.5 h-14 p-4 items-start hover:bg-violet-50 dark:hover:bg-cherry-800"
+                            class="flex gap-1.5 p-4 items-start hover:bg-violet-50 dark:hover:bg-cherry-800"
                             v-for="userNotification in userNotifications"
                             :href="'{{ route('admin.notification.viewed_notification', ':id') }}'.replace(':id', userNotification.notification.id)"
                         >
@@ -48,11 +48,18 @@
                             >
                             </span>
 
-                            <div class="grid">
-                                <p class="text-gray-800 dark:text-white"> @{{userNotification.notification.title}} </p>
-                                <p class="text-gray-800 dark:text-white"> @{{userNotification.notification.description}} </p>
-                                <!-- Created Date In humand Readable Format -->
-                                <p class="text-xs text-gray-600 dark:text-gray-300">
+                            <div class="grid gap-2">
+                                <p 
+                                    class="text-lg text-base text-gray-800 dark:text-white"
+                                    v-text="userNotification.notification.title"
+                                ></p>
+
+                                <p 
+                                    class="text-sm text-gray-600 dark:text-gray-300"
+                                    v-html="userNotification.notification.description"
+                                ></p>
+                                
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
                                     @{{ timeAgo(userNotification.notification.created_at) }}
                                 </p>
                             </div>

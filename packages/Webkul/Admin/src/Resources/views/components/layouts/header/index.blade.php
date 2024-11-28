@@ -198,7 +198,7 @@
             </x-slot>
 
             <!-- Notification Content -->
-            <x-slot:content class="p-5 min-w-[270px] max-w-[270px] !p-0">
+            <x-slot:content class="p-5 w-[270px] max-w-[270px] !p-0">
                 <!-- Header -->
                 <div class="text-base  p-3 text-gray-600 dark:text-gray-300 font-semibold border-b dark:border-gray-800">
                     @lang('admin::app.notifications.title', ['read' => 4])
@@ -218,12 +218,18 @@
                         
                         </span>
 
-                        <div class="grid">
-                           
-                            <p class="text-gray-800 dark:text-white"> @{{userNotification.notification.title}} </p>
-                            <p class="text-gray-800 dark:text-white"> @{{userNotification.notification.description}} </p>
-                            <!-- Created Date In humand Readable Format -->
-                            <p class="text-xs text-gray-600 dark:text-gray-300">
+                        <div class="grid gap-2">
+                            <p 
+                                class="text-lg text-base text-gray-800 dark:text-white"
+                                v-text="userNotification.notification.title"
+                            ></p>
+
+                            <p 
+                                class="text-sm text-gray-600 dark:text-gray-300"
+                                v-html="userNotification.notification.description"
+                            ></p>
+                            
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
                                 @{{ timeAgo(userNotification.notification.created_at) }}
                             </p>
                         </div>

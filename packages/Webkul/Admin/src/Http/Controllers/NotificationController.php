@@ -60,7 +60,10 @@ class NotificationController extends Controller
         $notification = $this->notificationRepository->find($id);
 
         if ($notification) {
-            $notification->userNotifications()->where('read', 0)->update(['read' => 1]);
+            $notification->userNotifications()
+                ->where('read', 0)
+                ->where('admin_id', auth()->user()->id)
+                ->update(['read' => 1]);
 
             if ($notification->route) {
                 return redirect()->route($notification->route, $notification->route_params);
