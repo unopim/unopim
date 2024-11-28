@@ -50,16 +50,16 @@
 
                             <div class="grid gap-2">
                                 <p 
-                                    class="text-lg text-base text-gray-800 dark:text-white"
+                                    class="text-sm text-base text-gray-800 dark:text-white"
                                     v-text="userNotification.notification.title"
                                 ></p>
 
                                 <p 
-                                    class="text-sm text-gray-600 dark:text-gray-300"
+                                    class="text-xs text-gray-600 dark:text-gray-300"
                                     v-html="userNotification.notification.description"
                                 ></p>
                                 
-                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                                <p class="text-xs text-gray-500 dark:text-gray-400">
                                     @{{ timeAgo(userNotification.notification.created_at) }}
                                 </p>
                             </div>

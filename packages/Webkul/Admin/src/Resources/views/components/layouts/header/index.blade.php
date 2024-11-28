@@ -190,7 +190,7 @@
                     </span>
                 
                     <span
-                        class="flex justify-center items-center min-w-5 h-5 absolute -top-2 p-1.5 ltr:left-5 rtl:right-5 bg-blue-600 rounded-full text-gray-600 text-[10px] font-semibold leading-[9px] cursor-pointer"
+                        class="flex justify-center items-center min-w-5 h-5 absolute -top-2 p-1.5 ltr:left-5 rtl:right-5 bg-violet-400 rounded-full text-white text-[10px] font-semibold leading-[9px] cursor-pointer"
                         v-text="totalUnRead"
                     >
                     </span>
@@ -198,10 +198,10 @@
             </x-slot>
 
             <!-- Notification Content -->
-            <x-slot:content class="p-5 w-[270px] max-w-[270px] !p-0">
+            <x-slot:content class="p-5 w-[360px] max-w-[360px] max-h-[calc(100vh-130px)] overflow-auto journal-scroll !p-0">
                 <!-- Header -->
                 <div class="text-base  p-3 text-gray-600 dark:text-gray-300 font-semibold border-b dark:border-gray-800">
-                    @lang('admin::app.notifications.title', ['read' => 4])
+                    @lang('admin::app.notifications.title')
                 </div>
 
                 <!-- Content -->
@@ -220,16 +220,16 @@
 
                         <div class="grid gap-2">
                             <p 
-                                class="text-lg text-base text-gray-800 dark:text-white"
+                                class="text-sm text-base text-gray-800 dark:text-white"
                                 v-text="userNotification.notification.title"
                             ></p>
 
                             <p 
-                                class="text-sm text-gray-600 dark:text-gray-300"
+                                class="text-xs text-gray-600 dark:text-gray-300"
                                 v-html="userNotification.notification.description"
                             ></p>
                             
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                            <p class="text-xs text-gray-500 dark:text-gray-400">
                                 @{{ timeAgo(userNotification.notification.created_at) }}
                             </p>
                         </div>
@@ -240,13 +240,13 @@
                 <div class="flex gap-1.5 justify-between h-[47px] py-4 px-6 border-t dark:border-gray-800">
                     <a
                         href="{{ route('admin.notification.index') }}"
-                        class="text-xs text-blue-600 font-semibold cursor-pointer transition-all hover:underline"
+                        class="text-xs text-violet-700 font-semibold cursor-pointer transition-all hover:underline"
                     >
                         @lang('admin::app.notifications.view-all')
                     </a>
 
                     <a
-                        class="text-xs text-blue-600 font-semibold cursor-pointer transition-all hover:underline"
+                        class="text-xs text-violet-700 font-semibold cursor-pointer transition-all hover:underline"
                         v-if="userNotifications?.length"
                         @click="readAll()"
                     >
