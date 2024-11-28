@@ -19,6 +19,7 @@ it('should return the list of all configurable products', function () {
             'data' => [
                 '*' => [
                     'sku',
+                    'status',
                     'parent',
                     'family',
                     'type',
@@ -47,6 +48,7 @@ it('should return the list of all configurable products', function () {
 
     $data = [
         'sku'              => $product->sku,
+        'status'           => (bool) $product->status,
         'parent'           => $product->parent,
         'family'           => $product->attribute_family->code,
         'type'             => $product->type,
@@ -68,6 +70,7 @@ it('should return the configurable product by code', function () {
 
     $data = [
         'sku'              => $product->sku,
+        'status'           => (bool) $product->status,
         'parent'           => $product->parent,
         'family'           => $product->attribute_family->code,
         'type'             => $product->type,
@@ -96,6 +99,7 @@ it('should return the configurable product by code', function () {
         ->assertOK()
         ->assertJsonStructure([
             'sku',
+            'status',
             'parent',
             'family',
             'type',

@@ -123,7 +123,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'type'       => 'dropdown',
             'searchable' => false,
             'filterable' => true,
-            'sortable'   => false,
+            'sortable'   => true,
             'options'    => [
                 'type' => 'basic',
 

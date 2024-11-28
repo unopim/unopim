@@ -44,6 +44,7 @@ class ConfigurableProductController extends ProductController
     public function store()
     {
         $validator = Validator::make(request()->all(), [
+            'status'            => ['nullable', 'boolean'],
             'parent'            => ['nullable', 'string'],
             'channel'           => ['nullable', 'string'],
             'locale'            => ['nullable', 'string'],
@@ -59,6 +60,7 @@ class ConfigurableProductController extends ProductController
         }
 
         $data = request()->only([
+            'status',
             'parent',
             'family',
             'additional',
@@ -105,6 +107,7 @@ class ConfigurableProductController extends ProductController
     public function update(string $sku)
     {
         $validator = Validator::make(request()->all(), [
+            'status'            => ['nullable', 'boolean'],
             'parent'            => ['nullable', 'string'],
             'channel'           => ['nullable', 'string'],
             'locale'            => ['nullable', 'string'],
@@ -119,6 +122,7 @@ class ConfigurableProductController extends ProductController
         }
 
         $data = request()->only([
+            'status',
             'parent',
             'additional',
             'values',
@@ -128,19 +132,21 @@ class ConfigurableProductController extends ProductController
         try {
             $product = $this->findProductOr404($sku);
             $data['sku'] = $this->getSkuFromValues($data);
+            $id = $product->id;
 
             try {
-                $this->valuesValidator->validate(data: $data[AbstractType::PRODUCT_VALUES_KEY], productId: $product->id);
+                $this->valuesValidator->validate(data: $data[AbstractType::PRODUCT_VALUES_KEY], productId: $id);
             } catch (ValidationException $e) {
                 return $this->validateErrorResponse($e->validator->errors()->messages());
             }
 
             $data['super_attributes'] = $product->super_attributes->pluck('code')?->toArray();
             $data['variants'] = $this->setVaraints($product, $data, $data['sku']);
-            $id = $product->id;
 
             Event::dispatch('catalog.product.update.before', $id);
+
             $product = $this->updateProduct($data, $product);
+
             Event::dispatch('catalog.product.update.after', $product);
 
             return $this->successResponse(
