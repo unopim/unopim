@@ -192,6 +192,7 @@
                     <span
                         class="flex justify-center items-center min-w-5 h-5 absolute -top-2 p-1.5 ltr:left-5 rtl:right-5 bg-violet-400 rounded-full text-white text-[10px] font-semibold leading-[9px] cursor-pointer"
                         v-text="totalUnRead"
+                        v-if="totalUnRead"
                     >
                     </span>
                 </span>
