@@ -52,8 +52,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             ->select(
                 'products.sku',
                 'products.id as product_id',
-                'products.type',
                 'products.status',
+                'products.type',
                 'parent_products.sku as parent',
                 DB::raw('(CASE WHEN '.$tablePrefix.'attribute_family_name.name IS NULL OR CHAR_LENGTH(TRIM('.$tablePrefix.'attribute_family_name.name)) < 1 THEN CONCAT("[", '.$tablePrefix.'af.code,"]") ELSE '.$tablePrefix.'attribute_family_name.name END) as attribute_family')
             );

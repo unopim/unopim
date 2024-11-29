@@ -44,7 +44,6 @@ class ProductFactory extends Factory
                 'values' => [
                     'common' => [
                         'sku'    => $attributes['sku'],
-                        'status' => 'false',
                     ],
                 ],
             ];

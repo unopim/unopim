@@ -12,7 +12,7 @@ return [
     'validation-type'         => ':attribute मान्य प्रकार का होना चाहिए।',
     'field-option-not-found'  => ':attribute में अमान्य विकल्प(विकल्प) :invalid_codes शामिल हैं।',
     'boolean-string'          => 'यह मान "सत्य" या "असत्य" के रूप में दर्शाए जाने वाला बूलियन स्ट्रिंग होना चाहिए।',
-    'not-supported'           => 'निम्नलिखित :attribute समर्थित नहीं हैं।',
+    'not-supported'           => ':attribute निम्नलिखित मानों का समर्थन नहीं करता है (:unsupported)।',
     'seperator-not-supported' => 'केवल , या ; या | को विभाजक के रूप में समर्थित किया जाता है।',
     'file-type'               => 'फ़ाइल csv,xls,xlsx प्रकार की होनी चाहिए',
 ];

@@ -11,8 +11,8 @@ return [
     'type'                    => 'The :attribute must be valid type.',
     'validation-type'         => 'The :attribute must be valid type.',
     'field-option-not-found'  => 'The :attribute contains invalid option(s) :invalid_codes.',
-    'boolean-string'          => 'This value must be a boolean string represented as "true" or "false"',
-    'not-supported'           => 'The following :attribute are not supported.',
+    'boolean-string'          => 'The :attribute must be a boolean string represented as "true" or "false"',
+    'not-supported'           => 'The :attribute does not support the following values (:unsupported).',
     'seperator-not-supported' => 'Only , or ; or | is supported as a seperator.',
     'file-type'               => 'The file must be of type csv,xls,xlsx',
 ];

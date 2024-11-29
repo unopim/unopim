@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -20,7 +18,11 @@ return new class extends Migration
                 continue;
             }
 
-            $status = is_string($valuesJson['common']['status']) && strtolower($valuesJson['common']['status']) === 'true' ? 1 : 0;
+            $statusValue = $valuesJson['common']['status'];
+
+            $status = is_string($statusValue) && strtolower($statusValue) === 'true' ? 1 : 0;
+
+            $valuesJson['common']['product_status'] = $statusValue;
 
             unset($valuesJson['common']['status']);
 
@@ -28,6 +30,8 @@ return new class extends Migration
                 ->where('id', $row->id)
                 ->update(['status' => $status, 'values' => $valuesJson]);
         }
+
+        DB::table('attributes')->where('code', 'status')->update(['code' => 'product_status']);
     }
 
     /**
@@ -43,12 +47,18 @@ return new class extends Migration
             if (! isset($valuesJson['common'])) {
                 $valuesJson['common'] = [];
             }
-            
+
             $valuesJson['common']['status'] = $row->status === 1 ? 'true' : 'false';
-            
+
+            if (isset($valuesJson['common']['product_status'])) {
+                unset($valuesJson['common']['product_status']);
+            }
+
             DB::table('products')
                 ->where('id', $row->id)
-                ->update(['values' => json_encode($valuesJson)]);
-        };
+                ->update(['values' => $valuesJson]);
+        }
+
+        DB::table('attributes')->where('code', 'product_status')->update(['code' => 'status']);
     }
 };

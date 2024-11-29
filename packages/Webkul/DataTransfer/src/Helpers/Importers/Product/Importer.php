@@ -197,6 +197,7 @@ class Importer extends AbstractImporter
      */
     protected array $validColumnNames = [
         'locale',
+        'status',
         'channel',
         'type',
         'attribute_family',

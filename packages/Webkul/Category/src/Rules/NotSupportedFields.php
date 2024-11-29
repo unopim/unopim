@@ -19,7 +19,7 @@ class NotSupportedFields implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (in_array($value, self::FILED_CODES)) {
-            $fail('core::validation.not-supported')->translate();
+            $fail('core::validation.not-supported')->translate(['unsupported' => implode(', ', self::FILED_CODES)]);
         }
     }
 }

@@ -91,7 +91,7 @@ class AttributeTableSeeder extends Seeder
                 'updated_at'          => $now,
             ], [
                 'id'                  => 8,
-                'code'                => 'status',
+                'code'                => 'product_status',
 
                 'type'                => 'boolean',
                 'validation'          => null,
