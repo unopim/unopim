@@ -61,11 +61,7 @@ class CategoryDataGrid extends DataGrid
                 'cat.id as category_id',
                 'cat.code as code',
                 DB::raw('CategoryNameTable.name as name'),
-                DB::raw('COUNT(DISTINCT '.$tablePrefix.'pc.id) as count')
             )
-            ->leftJoin('products as pc', function ($leftJoin) use ($tablePrefix) {
-                $leftJoin->whereJsonContains('pc.values->categories', DB::raw('JSON_QUOTE('.$tablePrefix.'cat.code)'));
-            })
             ->leftJoin(DB::raw("({$subQuery->toSql()}) as CategoryNameTable"), function ($leftJoin) {
                 $leftJoin->on('cat.id', '=', DB::raw('CategoryNameTable.id'));
             })
@@ -98,15 +94,6 @@ class CategoryDataGrid extends DataGrid
             'type'       => 'string',
             'searchable' => true,
             'filterable' => true,
-            'sortable'   => true,
-        ]);
-
-        $this->addColumn([
-            'index'      => 'count',
-            'label'      => trans('admin::app.catalog.categories.index.datagrid.no-of-products'),
-            'type'       => 'integer',
-            'searchable' => false,
-            'filterable' => false,
             'sortable'   => true,
         ]);
     }

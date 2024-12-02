@@ -40,7 +40,7 @@
                 >
                     <div
                         class="flex items-center select-none"
-                        v-for="(columnGroup, index) in ['name', 'code', 'count']"
+                        v-for="(columnGroup, index) in ['name', 'code']"
                     >
                         @if ($hasPermission)
                             <label
@@ -117,53 +117,57 @@
         </template>
 
         <!-- DataGrid Body -->
-        <template #body="{ columns, records, performAction, applied, actions }">
-            <div
-                v-for="record in records"
-                class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
-                :style="'grid-template-columns: 2fr repeat(' + (actions.length ? columns.length : (columns.length -1 )) + ', 1fr)'"
-            >
-                <div class="flex items-center gap-2.5 overflow-hidden">
-                    @if ($hasPermission)
-                        <div class="mass-action-input">
-                            <input
-                                type="checkbox"
-                                :name="`mass_action_select_record_${record.category_id}`"
-                                :id="`mass_action_select_record_${record.category_id}`"
-                                :value="record.category_id"
-                                class="hidden peer"
-                                v-model="applied.massActions.indices"
-                                @change="setCurrentSelectionMode"
-                                >
-                                
-                                <label
-                                class="icon-checkbox-normal rounded-md text-2xl cursor-pointer peer-checked:icon-checkbox-check peer-checked:text-violet-700"
-                                :for="`mass_action_select_record_${record.category_id}`"
-                                ></label>
-                            </div>
-                    @endif
+        <template #body="{ columns, records, performAction, applied, actions, isLoading }">
+            <template v-if="! isLoading">
+                <div
+                    v-for="record in records"
+                    class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
+                    :style="'grid-template-columns: 2fr repeat(' + (actions.length ? columns.length : (columns.length -1 )) + ', 1fr)'"
+                >
+                    <div class="flex items-center gap-2.5 overflow-hidden">
+                        @if ($hasPermission)
+                            <div class="mass-action-input">
+                                <input
+                                    type="checkbox"
+                                    :name="`mass_action_select_record_${record.category_id}`"
+                                    :id="`mass_action_select_record_${record.category_id}`"
+                                    :value="record.category_id"
+                                    class="hidden peer"
+                                    v-model="applied.massActions.indices"
+                                    @change="setCurrentSelectionMode"
+                                    >
+                                    
+                                    <label
+                                    class="icon-checkbox-normal rounded-md text-2xl cursor-pointer peer-checked:icon-checkbox-check peer-checked:text-violet-700"
+                                    :for="`mass_action_select_record_${record.category_id}`"
+                                    ></label>
+                                </div>
+                        @endif
 
-                    <p v-text="record.name" class="text-nowrap overflow-hidden text-ellipsis hover:text-wrap"></p>
+                        <p v-text="record.name" class="text-nowrap overflow-hidden text-ellipsis hover:text-wrap"></p>
+                    </div>
+
+                    <p v-text="record.code"></p>
+
+                    <!-- Actions -->
+                    <div class="flex justify-end">
+                        <span
+                            class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
+                            :class="action.icon"
+                            v-text="!action.icon ? action.title : ''"
+                            v-for="action in record.actions"
+                            :title="action.title ?? ''"
+                            @click="performAction(action)"
+                        >
+                        </span>
+                    </div>
                 </div>
+            </template>
 
-                <p v-text="record.code"></p>
-
-                <!-- Status -->
-                <p v-html="record.count"></p>
-
-                <!-- Actions -->
-                <div class="flex justify-end">
-                    <span
-                        class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
-                        :class="action.icon"
-                        v-text="!action.icon ? action.title : ''"
-                        v-for="action in record.actions"
-                        :title="action.title ?? ''"
-                        @click="performAction(action)"
-                    >
-                    </span>
-                </div>
-            </div>
+            <!-- Datagrid Shimmer for body when loading data  -->
+            <template v-else>
+                <x-admin::shimmer.datagrid.table.body :isMultiRow="true" />
+            </template>
         </template>
     </x-admin::datagrid>
 

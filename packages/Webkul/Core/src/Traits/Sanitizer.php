@@ -19,17 +19,14 @@ trait Sanitizer
     /**
      * Sanitize SVG file.
      */
-    public function sanitizeSVG(string $path, ?string $mimeType): void
+    public function sanitizeSVG(string $path, ?string $mimeType, ?string $disk): void
     {
         if ($this->isFileSVG($mimeType)) {
-            /* sanitizer instance */
             $sanitizer = new MainSanitizer;
 
-            /* grab svg file */
-            $dirtySVG = Storage::get($path);
+            $dirtySVG = Storage::disk($disk)->get($path);
 
-            /* save sanitized svg */
-            Storage::put($path, $sanitizer->sanitize($dirtySVG));
+            Storage::disk($disk)->put($path, $sanitizer->sanitize($dirtySVG));
         }
     }
 
