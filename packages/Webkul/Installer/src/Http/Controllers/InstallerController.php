@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Validator;
 use Webkul\Installer\Helpers\DatabaseManager;
 use Webkul\Installer\Helpers\EnvironmentManager;
 use Webkul\Installer\Helpers\ServerRequirements;
@@ -18,7 +19,7 @@ class InstallerController extends Controller
      *
      * @var string
      */
-    const MIN_PHP_VERSION = '8.1.0';
+    const MIN_PHP_VERSION = '8.2.0';
 
     /**
      * Const Variable for Static Customer Id
@@ -61,6 +62,22 @@ class InstallerController extends Controller
      */
     public function envFileSetup(Request $request): JsonResponse
     {
+        $rules = [
+            'db_prefix' => 'not_regex:/[^A-Za-z0-9_]/',
+        ];
+
+        $request = $request->all();
+
+        $request = array_map(function ($input) {
+            return strip_tags($input);
+        }, $request);
+
+        $validator = Validator::make($request, $rules);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => 'Failed to parse dotenv file due to some invalid values'], 422);
+        }
+
         $message = $this->environmentManager->generateEnv($request);
 
         return new JsonResponse(['data' => $message]);
@@ -71,6 +88,12 @@ class InstallerController extends Controller
      */
     public function runMigration()
     {
+        try {
+            DB::connection()->getPdo();
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+        }
+
         $migration = $this->databaseManager->migration();
 
         return $migration;
@@ -125,17 +148,20 @@ class InstallerController extends Controller
     public function adminConfigSetup()
     {
         $password = password_hash(request()->input('password'), PASSWORD_BCRYPT, ['cost' => 10]);
+        $uiLocaleId = DB::table('locales')->where('code', request()->input('locale'))->where('status', 1)->first()?->id ?? 58;
 
         try {
             DB::table('admins')->updateOrInsert(
                 [
                     'id' => self::USER_ID,
                 ], [
-                    'name'     => request()->input('admin'),
-                    'email'    => request()->input('email'),
-                    'password' => $password,
-                    'role_id'  => 1,
-                    'status'   => 1,
+                    'name'         => request()->input('admin'),
+                    'email'        => request()->input('email'),
+                    'timezone'     => request()->input('timezone'),
+                    'ui_locale_id' => $uiLocaleId,
+                    'password'     => $password,
+                    'role_id'      => 1,
+                    'status'       => 1,
                 ]
             );
         } catch (\Throwable $th) {

@@ -9,7 +9,7 @@ class ServerRequirements
      *
      * @var string
      */
-    private $minPhpVersion = '8.1.0';
+    private $minPhpVersion = '8.2.0';
 
     /**
      * Check for the server requirements.
