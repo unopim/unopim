@@ -12,7 +12,7 @@ return [
     'validation-type'         => ':attribute  нь хүчинтэй төрөл байх ёстой.',
     'field-option-not-found'  => ':attribute хүчингүй сонголт(ууд) агуулж байна :invalid_codes.',
     'boolean-string'          => 'Энэ утга нь "үнэн" эсвэл "худал" гэсэн утгатай логик мөр байх ёстой.',
-    'not-supported'           => 'Дараах :attribute ыг дэмждэггүй.',
+    'not-supported'           => ':attribute дараах утгуудыг (:unsupported) дэмждэггүй.',
     'seperator-not-supported' => 'Зөвхөн, эсвэл; эсвэл | тусгаарлагч болгон дэмждэг.',
     'file-type'               => 'Файл нь csv, xls, xlsx төрлийн байх ёстой',
 ];

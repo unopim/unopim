@@ -12,7 +12,7 @@ return [
     'validation-type'         => 'يجب أن تكون :attribute من النوع الصالح.',
     'field-option-not-found'  => 'تحتوي :attribute على خيار(ات) غير صالح:invalid_codes.',
     'boolean-string'          => 'يجب أن تكون هذه القيمة عبارة عن سلسلة منطقية يتم تمثيلها على أنها حقيقي أو حقيقي',
-    'not-supported'           => 'لا يتم دعم :attribute التالية.',
+    'not-supported'           => 'لا يدعم :attribute القيم التالية (:unsupported).',
     'seperator-not-supported' => 'فقط أو أو ; أو | مدعومة كفاصل.',
     'file-type'               => 'يجب أن يكون الملف من النوع csv,xls,xlsx',
 ];

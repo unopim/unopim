@@ -19,6 +19,7 @@ class NotSupportedAttributes implements ValidationRule
         'up_sells',
         'cross_sells',
         'related_products',
+        'status',
     ];
 
     /**
@@ -27,7 +28,7 @@ class NotSupportedAttributes implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (in_array($value, self::ATTRIBUTE_CODES)) {
-            $fail('core::validation.not-supported')->translate();
+            $fail('core::validation.not-supported')->translate(['unsupported' => implode(', ', self::ATTRIBUTE_CODES)]);
         }
     }
 }

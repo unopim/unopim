@@ -13,9 +13,7 @@ class SimpleProductDataSource extends ProductDataSource
      */
     public function prepareApiQueryBuilder()
     {
-        $queryMethodName = core()->getConfigData('catalog.products.storefront.search_mode') == 'elastic' ? 'queryBuilderFromElastic' : 'queryBuilderFromDatabase';
-
-        [$queryBuilder] = $this->productRepository->$queryMethodName([]);
+        [$queryBuilder] = $this->productRepository->queryBuilderFromDatabase([]);
 
         $this->addFilter('sku', [
             '=',

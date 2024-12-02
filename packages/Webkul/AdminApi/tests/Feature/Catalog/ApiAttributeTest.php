@@ -225,6 +225,7 @@ it('should not create attributes with certain codes', function () {
         'up_sells',
         'cross_sells',
         'related_products',
+        'status',
     ];
 
     $data = [

@@ -12,7 +12,7 @@ return [
     'validation-type'         => ':attribute должен быть допустимым типом.',
     'field-option-not-found'  => ':attribute содержит недопустимые параметры :invalid_codes.',
     'boolean-string'          => 'Это значение должно быть логической строкой, представленной как «true» или «false»',
-    'not-supported'           => 'Следующие :attribute не поддерживаются.',
+    'not-supported'           => ':attribute не поддерживает следующие значения (:unsupported).',
     'seperator-not-supported' => 'В качестве разделителя поддерживаются только , или ; или |.',
     'file-type'               => 'Файл должен иметь тип csv,xls,xlsx',
 ];
