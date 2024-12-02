@@ -380,6 +380,8 @@
                 :name="name"
                 v-model="selectedValue"
                 v-bind="field"
+                @select="selectOption"
+                @remove="removeOption"
             >
 
             </v-multiselect>   
@@ -462,7 +464,21 @@
                     } catch (error) {
                         return this.value;
                     }
-                }
+                },
+                selectOption(newValue) {
+                    this.$emit('select-option', {
+                        target: {
+                            value: newValue
+                        }
+                    });
+                },
+                removeOption(removeValue) {
+                    this.$emit('remove-option', {
+                        target: {
+                            value: removeValue
+                        }
+                    });
+                },
             }
         });
     </script>
@@ -484,6 +500,8 @@
                 :name="name"
                 v-model="selectedValue"
                 v-bind="field"
+                @select="selectOption"
+                @remove="removeOption"
             >
 
             </v-multiselect>   
@@ -567,7 +585,21 @@
                     } catch (error) {
                         return this.value;
                     }
-                }
+                },
+                selectOption(newValue) {
+                    this.$emit('select-option', {
+                        target: {
+                            value: newValue
+                        }
+                    });
+                },
+                removeOption(removeValue) {
+                    this.$emit('remove-option', {
+                        target: {
+                            value: removeValue
+                        }
+                    });
+                },
             }
         });
     </script>
@@ -733,6 +765,8 @@
                 @search-change="handleSearch"
                 @open="openedSelect"
                 @scroll="onScroll"
+                @select="selectOption"
+                @remove="removeOption"
                 ref="multiselect__handler__"
                 v-model="selectedValue"
                 v-bind="field"
@@ -948,7 +982,23 @@
 
                             this.isLoading = false;
                         })
-                }
+                },
+
+                selectOption(newValue) {
+                    this.$emit('select-option', {
+                        target: {
+                            value: newValue
+                        }
+                    });
+                },
+
+                removeOption(removeValue) {
+                    this.$emit('remove-option', {
+                        target: {
+                            value: removeValue
+                        }
+                    });
+                },
             }
         });
     </script>
