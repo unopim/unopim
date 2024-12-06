@@ -46,6 +46,10 @@
             white-space: pre-wrap;
         }
 
+        .output p {
+            margin: 0px;
+        }
+
         .output-container {
             padding: 16px;
         }
@@ -74,8 +78,20 @@
             text-decoration-skip-ink: none;
         }
 
-        .footer .error{
+        .error{
             color: #e24d4d
+        }
+
+        .checked::before {
+            content: "✔";
+            color: #0f0;
+            font-size: 20px;
+        }
+
+        .unchecked::before {
+            content: "✖";
+            color: red;
+            font-size: 20px;
         }
     </style>
 </head>
@@ -113,7 +129,7 @@
 
                     if ($returnVar !== 0) {
                         $installationSuccessful = false;
-                        echo "ERROR: Command failed with exit code $returnVar.\n";
+                        echo "<p class='error'>ERROR: Command failed with exit code $returnVar.</p>";
 
                         return false;
                     }
@@ -123,13 +139,13 @@
 
                 // Check PHP version
                 $phpVersion = phpversion();
-                echo "PHP Version: $phpVersion\n";
                 if (version_compare($phpVersion, $requiredPhpVersion, '<')) {
-                    echo "ERROR: PHP version must be >= $requiredPhpVersion.\n";
+                    echo "<p class='error'>PHP Version: $phpVersion <span class='unchecked'></span></p>";
+                    echo "<p class='error'>ERROR: PHP version must be >= $requiredPhpVersion.</p>";
                     exit(1);
+                } else {
+                    echo "<p>PHP Version: $phpVersion <span class='checked'></span></p>";
                 }
-
-                echo '<br>';
 
                 $extensions = [
                     'ctype',
@@ -152,16 +168,16 @@
 
                 foreach ($extensions as $extension) {
                     if (extension_loaded($extension)) {
-                        echo "$extension extension is enabled.<br>";
+                        echo "<p>$extension extension is enabled. <span class='checked'></span></p>";
                     } else {
                         $enabledExtension = false;
-                        echo "$extension extension is not enabled.<br>";
+                        echo "<p class='error'>$extension extension is not enabled. <span class='unchecked'></span></p>";
                     }
                 }
 
                 if (! $enabledExtension) {
                     $installationSuccessful = false;
-                    echo "ERROR: Required extensions are not enabled. Please enable them and try again.\n";
+                    echo "<p class='error'>ERROR: Required extensions are not enabled. Please enable them and try again.\n </p>";
                     exit(1);
                 }
 
@@ -174,12 +190,14 @@
                     $mysqlVersion = $matches[1] ?? null;
                     if ($mysqlVersion && version_compare($mysqlVersion, $requiredMySqlVersion, '<')) {
                         $installationSuccessful = false;
-                        echo "ERROR: MySQL version must be >= $requiredMySqlVersion.\n";
+                        echo "<p class='error'>ERROR: MySQL version must be >= $requiredMySqlVersion. <span class='unchecked'></span></p>";
                         exit(1);
+                    } else {
+                        echo "<p>MySQL Version: $mysqlVersion <span class='checked'></span></p>";
                     }
                 } else {
                     $installationSuccessful = false;
-                    echo "ERROR: MySQL is not installed or not accessible.\n";
+                    echo "<p class='error'>ERROR: MySQL is not installed or not accessible.</p>";
                     exit(1);
                 }
 
@@ -246,7 +264,7 @@
 
                             echo "\nCommand finished successfully with exit code: $return_value.\n";
                         } else {
-                            echo "Failed to execute the command: $command\n";
+                            echo "<p class='error'>Failed to execute the command: $command</p>";
                             $installationSuccessful = false; // Mark failure
                             break; // Stop execution if process creation fails
                         }
