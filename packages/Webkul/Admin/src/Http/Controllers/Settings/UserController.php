@@ -129,6 +129,11 @@ class UserController extends Controller
                 path: 'admins'.DIRECTORY_SEPARATOR.$admin->id,
                 file: current(request()->file('image'))
             );
+        } else {
+            if (request()->has('remove_image') && request()->input('remove_image') == 'true') {
+                Storage::delete($admin->image);
+                $admin->image = null;
+            }
         }
 
         $admin->save();

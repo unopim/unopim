@@ -68,6 +68,7 @@
                                 :ref="$.uid + '_imageInput'"
                                 @change="add"
                             />
+                            <input type="hidden" name="remove_image" :value="this.removeImage" />
                         </div>
                     </label>
                 </template>
@@ -403,6 +404,8 @@
                 return {
                     images: [],
 
+                    removeImage: false,
+
                     placeholders: [
                     ],
 
@@ -466,7 +469,7 @@
 
                 remove(image) {
                     let index = this.images.indexOf(image);
-
+                    this.removeImage = true;
                     this.images.splice(index, 1);
                 },
 
