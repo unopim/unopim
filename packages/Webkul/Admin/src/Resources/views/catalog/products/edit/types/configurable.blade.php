@@ -820,9 +820,10 @@
                         configurableValues[attribute.code] = params[attribute.code];
                     }
 
+                    let checkValues = await this.checkVariantValues({sku: params.sku, variantAttributes: configurableValues});
                     let isUnique = await this.isUniqueVariant({sku: params.sku, variantAttributes: configurableValues});
 
-                    if (! isUnique) {
+                    if (! isUnique || ! checkValues) {
                         return;
                     }
 
@@ -853,6 +854,24 @@
                     params.parentId = {{ $product->id }};
 
                     return this.$axios.post("{{ route('admin.catalog.products.check-variant') }}", params)
+                        .then((response) => {
+                            if (response?.data?.errors?.message) {
+                                this.$emitter.emit('add-flash', { type: 'warning', message: response?.data?.errors?.message});
+
+                                return false;
+                            }
+
+                            return true;
+                        })
+                        .catch(error => {
+                            console.error(error);
+
+                            return false;
+                        });
+                },
+
+                checkVariantValues(params) {
+                    return this.$axios.post("{{ route('admin.catalog.products.check-variant-values') }}", params)
                         .then((response) => {
                             if (response?.data?.errors?.message) {
                                 this.$emitter.emit('add-flash', { type: 'warning', message: response?.data?.errors?.message});
@@ -976,7 +995,7 @@
 
                             return false;
                         });
-                }
+                },
             }
         });
     </script>
