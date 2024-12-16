@@ -130,7 +130,7 @@ class UserController extends Controller
                 file: current(request()->file('image'))
             );
         } else {
-            if (request()->has('remove_image') && request()->input('remove_image') == 'true') {
+            if (! request()->has('image')) {
                 Storage::delete($admin->image);
                 $admin->image = null;
             }

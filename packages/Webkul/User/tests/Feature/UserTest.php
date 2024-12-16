@@ -145,7 +145,7 @@ it('should not remove image when user is updated', function () {
         'timezone'     => 'Asia/Kolkata',
         'ui_locale_id' => 1,
         'password'     => '',
-        'remove_image' => 'false',
+        'image'        => 'user/2/image.jpg',
     ]);
 
     $response->assertStatus(200);
@@ -157,7 +157,7 @@ it('should not remove image when user is updated', function () {
     ]);
 });
 
-it('should remove image when user is updated', function () {
+it('should remove image if image is removed', function () {
     $this->loginAsAdmin();
 
     $admin = Admin::factory()->create([
@@ -176,7 +176,6 @@ it('should remove image when user is updated', function () {
         'timezone'     => 'Asia/Kolkata',
         'ui_locale_id' => 1,
         'password'     => '',
-        'remove_image' => 'true',
     ]);
 
     $response->assertStatus(200);
