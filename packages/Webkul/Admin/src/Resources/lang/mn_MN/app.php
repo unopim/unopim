@@ -205,7 +205,7 @@ return [
                         'title'                                 => 'Бүруу шалтгаан',
                         'variant-exists'                        => 'Энэ хувилбарын хослол аль хэдийн байгаа эсвэл SKU аль хэдийн авсан байна.',
                         'variant-attribute-option-not-found'    => '":attributes" утгатай хувилбарын шинж чанар эсвэл сонголт олдсонгүй',
-                        'variant-attribute-option-not-selected' => 'Вариант шинж чанар ":attribute"-ийн сонголт сонгогдоогүй байна',
+                        'variant-attribute-option-not-selected' => 'Хувилбар үүсгэхээр сонгосон сонголт хүчин төгөлдөр бус байна',
                         'supper-attribute-not-found'            => '":attribute" утгатай оройн хоол олдсонгүй',
                         'variant-given-exists'                  => '":variants" утгатай энэ хувилбар аль хэдийн байна',
 

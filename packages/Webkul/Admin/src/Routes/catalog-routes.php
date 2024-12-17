@@ -155,8 +155,6 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
             Route::get('search', 'search')->name('admin.catalog.products.search');
 
             Route::post('check-variant', 'checkVariantUniqueness')->name('admin.catalog.products.check-variant');
-
-            Route::post('check-variant-values', 'checkVariantValues')->name('admin.catalog.products.check-variant-values');
         });
     });
 });

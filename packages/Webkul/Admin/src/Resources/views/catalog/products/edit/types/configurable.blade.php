@@ -75,7 +75,7 @@
 
             <!-- Add Variant Form Modal -->
             <x-admin::form
-                v-slot="{ meta, errors, handleSubmit }"
+                v-slot="{ meta, errors, handleSubmit, setErrors }"
                 as="div"
             >
                 <form @submit="handleSubmit($event, addVariant)" ref="variantCreateForm">
@@ -787,7 +787,7 @@
             },
 
             methods: {
-                async addVariant(params, { resetForm }) {
+                async addVariant(params, { resetForm, setErrors }) {
                     let formData = new FormData(this.$refs.variantCreateForm);
 
                     for (const key of formData.keys()) {
@@ -817,13 +817,20 @@
                     }
 
                     for (const attribute of this.superAttributes) {
+                        if( params[attribute.code].length === 0){
+                            setErrors({
+                                [attribute.code]:"@lang('admin::app.catalog.products.edit.types.configurable.variant-attribute-option-not-selected')",
+                            });
+
+                            return;
+                        }
+
                         configurableValues[attribute.code] = params[attribute.code];
                     }
 
-                    let checkValues = await this.checkVariantValues({sku: params.sku, variantAttributes: configurableValues});
                     let isUnique = await this.isUniqueVariant({sku: params.sku, variantAttributes: configurableValues});
 
-                    if (! isUnique || ! checkValues) {
+                    if (! isUnique) {
                         return;
                     }
 
@@ -869,24 +876,6 @@
                             return false;
                         });
                 },
-
-                checkVariantValues(params) {
-                    return this.$axios.post("{{ route('admin.catalog.products.check-variant-values') }}", params)
-                        .then((response) => {
-                            if (response?.data?.errors?.message) {
-                                this.$emitter.emit('add-flash', { type: 'warning', message: response?.data?.errors?.message});
-
-                                return false;
-                            }
-
-                            return true;
-                        })
-                        .catch(error => {
-                            console.error(error);
-
-                            return false;
-                        });
-                }
             }
         });
 

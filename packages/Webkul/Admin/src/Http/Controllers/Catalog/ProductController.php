@@ -382,21 +382,4 @@ class ProductController extends Controller
 
         return new JsonResponse([]);
     }
-
-    public function checkVariantValues(): JsonResponse
-    {
-        $variantAttributes = request()->get('variantAttributes');
-
-        foreach ($variantAttributes as $variantAttributeCode => $variantAttributeValue) {
-            if (empty($variantAttributeValue)) {
-                return new JsonResponse([
-                    'errors' => [
-                        'message' => trans('admin::app.catalog.products.edit.types.configurable.variant-attribute-option-not-selected', ['attribute' => $variantAttributeCode]),
-                    ],
-                ]);
-            }
-        }
-
-        return new JsonResponse([]);
-    }
 }

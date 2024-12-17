@@ -206,7 +206,7 @@ return [
                         'title'                                 => 'Variasi',
                         'variant-exists'                        => 'Kombinasi varian ini sudah ada atau SKU sudah diambil.',
                         'variant-attribute-option-not-found'    => 'Varian atribut atau opsi dengan nilai ":attributes" tidak ditemukan',
-                        'variant-attribute-option-not-selected' => 'Opsi untuk atribut varian ":attribute" belum dipilih.',
+                        'variant-attribute-option-not-selected' => 'Opsi yang dipilih untuk membuat varian tidak valid.',
                         'supper-attribute-not-found'            => 'Atribut makan malam dengan nilai ":attribute" tidak ditemukan',
                         'variant-given-exists'                  => 'Varian ini dengan nilai ":variants" sudah ada',
 

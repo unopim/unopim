@@ -206,7 +206,7 @@ return [
                         'title'                                 => '变化',
                         'variant-exists'                        => '这种变体组合已经存在，或者已经采用了SKU。',
                         'variant-attribute-option-not-found'    => '未找到值为“:attributes”的变体属性或选项',
-                        'variant-attribute-option-not-selected' => '未选择“:attribute”变体属性的选项。',
+                        'variant-attribute-option-not-selected' => '所选的创建变体选项无效。',
                         'supper-attribute-not-found'            => '未找到值为“:attribute”的附加属性',
                         'variant-given-exists'                  => '值为“:variants”的变体已存在',
 

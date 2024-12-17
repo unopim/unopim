@@ -205,7 +205,7 @@ return [
                         'title'                                 => 'Variaties',
                         'variant-exists'                        => 'Deze variantcombinatie bestaat al of de SKU is al genomen.',
                         'variant-attribute-option-not-found'    => 'Variant kenmerk of optie met waarde ":attributes" niet gevonden',
-                        'variant-attribute-option-not-selected' => 'Optie voor variantattribuut ":attribute" is niet geselecteerd',
+                        'variant-attribute-option-not-selected' => 'De geselecteerde optie voor het maken van een variant is niet geldig',
                         'supper-attribute-not-found'            => 'Avondmaal attribuut met waarde ":attribute" niet gevonden',
                         'variant-given-exists'                  => 'Deze variant met waarde ":variants" bestaat al',
 

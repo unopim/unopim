@@ -205,7 +205,7 @@ return [
                         'title'                                 => 'الاختلافات',
                         'variant-exists'                        => 'هذا المزيج البديل موجود بالفعل أو تم أخذ SKU بالفعل.',
                         'variant-attribute-option-not-found'    => 'لم يتم العثور على سمة أو خيار متغير بقيمة ":attributes"',
-                        'variant-attribute-option-not-selected' => 'لم يتم تحديد خيار السمة المتغيرة ":attribute"',
+                        'variant-attribute-option-not-selected' => 'الخيار المحدد لإنشاء المتغير غير صالح',
                         'supper-attribute-not-found'            => 'لم يتم العثور على سمة سوبر بقيمة ":attribute"',
                         'variant-given-exists'                  => 'هذا المتغير بقيمة ":variants" موجود بالفعل',
 

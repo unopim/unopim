@@ -205,7 +205,7 @@ return [
                         'title'                                 => 'Вариации',
                         'variant-exists'                        => 'Эта комбинация варианта уже существует, или SKU уже взята.',
                         'variant-attribute-option-not-found'    => 'Атрибут варианта или опция со значением ":attributes" не найдены',
-                        'variant-attribute-option-not-selected' => 'Опция для варианта атрибута ":attribute" не выбрана',
+                        'variant-attribute-option-not-selected' => 'Выбранный вариант для создания варианта недействителен',
                         'supper-attribute-not-found'            => 'Атрибут ужина со значением ":attribute" не найдены',
                         'variant-given-exists'                  => 'Этот вариант со значением ":variants" уже существует',
 
