@@ -294,6 +294,7 @@ return [
                     'unique'              => 'Unique',
                     'delete-failed'       => 'This attribute can not be deleted.',
                     'mass-delete-failed'  => 'Selected attributes can not be deleted.',
+                    'delete-failure-Attr' => 'Cannot remove this attribute used as a variant attribute',
                 ],
             ],
 

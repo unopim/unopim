@@ -12,6 +12,7 @@ use Webkul\Attribute\Rules\NotSupportedAttributes;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Core\Rules\Code;
 use Webkul\Product\Repositories\ProductRepository;
+use Illuminate\Support\Facades\DB;
 
 class AttributeController extends Controller
 {
@@ -139,6 +140,12 @@ class AttributeController extends Controller
             ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
+        if ($this->attributeCanBeDeleted($id) > 0) {
+            return new JsonResponse([
+                'message' => trans('admin::app.catalog.attributes.index.datagrid.delete-failure-Attr'),
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
         try {
             Event::dispatch('catalog.attribute.delete.before', $id);
 
@@ -155,6 +162,17 @@ class AttributeController extends Controller
             return new JsonResponse(['message' => $e->getMessage()], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+     /**
+     * attribute can't be deleted for super attributes
+     */
+    public function attributeCanBeDeleted(int $id): int
+    {
+        return DB::table('product_super_attributes')
+            ->where('attribute_id', $id)
+            ->count();
+    }
+
 
     /**
      * Remove the specified resources from database.

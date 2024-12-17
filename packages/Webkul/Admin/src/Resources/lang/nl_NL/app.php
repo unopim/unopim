@@ -293,6 +293,7 @@ return [
                     'unique'              => 'Uniek',
                     'delete-failed'       => 'Dit kenmerk kan niet worden verwijderd.',
                     'mass-delete-failed'  => 'Geselecteerde attributen kunnen niet worden verwijderd.',
+                    'delete-failure-Attr' => 'Dit attribuut kan niet worden verwijderd omdat het wordt gebruikt als variantattribuut.',
                 ],
             ],
 

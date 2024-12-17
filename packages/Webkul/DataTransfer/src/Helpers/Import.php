@@ -170,14 +170,15 @@ class Import
     /**
      * Returns source helper instance.
      */
-    public function getSource(): AbstractSource
+    public function getSource(): ?AbstractSource
     {
+        $source = null;
         if (Str::contains($this->import->file_path, '.csv')) {
             $source = new CSVSource(
                 $this->import->file_path,
                 $this->import->field_separator,
             );
-        } else {
+        } elseif (Str::contains($this->import->file_path, '.xlsx') || Str::contains($this->import->file_path, '.xls')) {
             $source = new ExcelSource(filePath: $this->import->file_path);
         }
 
@@ -581,7 +582,6 @@ class Import
 
         if (! $this->typeImporter) {
             $importerConfig = config('importers.'.$jobInstance->entity_type);
-
             $this->typeImporter = app()->make($importerConfig['importer'])
                 ->setImport($this->import)
                 ->setLogger($this->jobLogger)

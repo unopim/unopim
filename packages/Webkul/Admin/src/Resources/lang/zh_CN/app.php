@@ -294,6 +294,7 @@ return [
                     'unique'              => '独特的',
                     'delete-failed'       => '无法删除此属性。',
                     'mass-delete-failed'  => '所选属性无法删除。',
+                    'delete-failure-Attr' => '无法删除此属性，因为它被用作变体属性',
                 ],
             ],
 

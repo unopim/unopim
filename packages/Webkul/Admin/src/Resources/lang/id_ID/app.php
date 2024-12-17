@@ -294,6 +294,7 @@ return [
                     'unique'              => 'Unik',
                     'delete-failed'       => 'Atribut ini tidak dapat dihapus.',
                     'mass-delete-failed'  => 'Atribut yang dipilih tidak dapat dihapus.',
+                    'delete-failure-Attr' => 'Tidak dapat menghapus atribut ini karena digunakan sebagai atribut varian.',
                 ],
             ],
 
