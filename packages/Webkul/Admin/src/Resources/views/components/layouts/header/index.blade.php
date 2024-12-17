@@ -184,7 +184,7 @@
             <x-slot:toggle>
                 <span class="flex relative">
                     <span
-                        class="icon-dark p-1.5 rounded-md text-2xl text-red cursor-pointer transition-all hover:bg-gray-100 dark:hover:bg-gray-950" 
+                        class="icon-notification p-1.5 rounded-md text-2xl text-red cursor-pointer transition-all hover:bg-gray-100 dark:hover:bg-gray-950" 
                         title="@lang('admin::app.components.layouts.header.notifications')"
                     >
                     </span>
