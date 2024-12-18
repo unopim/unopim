@@ -246,6 +246,9 @@
     .icon-dark:before {
         content: "\e90a";
     }
+    .icon-notification:before {
+        content: "\e937";
+    }
     .icon-dashboard:before {
         content: "\e90b";
     }
