@@ -816,16 +816,22 @@
                         return;
                     }
 
+                    let requiredTranslation = "@lang('validation.required')";
+                    let optionErrors = false;
+
                     for (const attribute of this.superAttributes) {
                         if( params[attribute.code].length === 0){
                             setErrors({
-                                [attribute.code]:"@lang('admin::app.catalog.products.edit.types.configurable.variant-attribute-option-not-selected')",
+                                [attribute.code]: requiredTranslation.replace(':attribute', attribute.code),
                             });
-
-                            return;
+                            optionErrors = true;
                         }
 
                         configurableValues[attribute.code] = params[attribute.code];
+                    }
+
+                    if (optionErrors) {
+                        return;
                     }
 
                     let isUnique = await this.isUniqueVariant({sku: params.sku, variantAttributes: configurableValues});
