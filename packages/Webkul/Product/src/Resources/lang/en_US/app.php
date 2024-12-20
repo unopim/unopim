@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     'datagrid' => [
         'copy-of-slug'                  => 'copy-of-:value',
         'copy-of'                       => 'Copy Of :value',

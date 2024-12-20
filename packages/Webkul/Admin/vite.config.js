@@ -11,6 +11,10 @@ export default defineConfig(({ mode }) => {
     return {
         build: {
             emptyOutDir: true,
+            
+            rollupOptions: {
+              external: ['@vee-validate/i18n/dist/locale/tl.json'],
+            },
         },
 
         envDir,
