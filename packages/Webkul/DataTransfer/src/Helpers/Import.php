@@ -207,11 +207,9 @@ class Import
             $source = $this->getSource();
 
             $typeImporter = $this->getTypeImporter()->setSource($source);
-
             $typeImporter->validateData();
         } catch (\Exception $e) {
             $state = self::STATE_FAILED;
-
             $this->errorHelper->addError(
                 AbstractImporter::ERROR_CODE_SYSTEM_EXCEPTION,
                 null,
@@ -220,14 +218,25 @@ class Import
             );
         }
 
-        $import = $this->jobTrackRepository->update([
+        $updatedData = [
             'state'                => $state,
             'processed_rows_count' => $this->getProcessedRowsCount(),
             'invalid_rows_count'   => $this->errorHelper->getInvalidRowsCount(),
             'errors_count'         => $this->errorHelper->getErrorsCount(),
             'errors'               => $this->getFormattedErrors(),
             'error_file_path'      => $this->uploadErrorReport(),
-        ], $this->import->id);
+        ];
+
+        if ($this->getProcessedRowsCount() === 0 && empty($this->getFormattedErrors())) {
+            $updatedData['state'] = self::STATE_COMPLETED;
+            $updatedData['summary'] = [
+                'created' => 0,
+                'updated' => 0,
+                'deleted' => 0,
+            ];
+        }
+
+        $import = $this->jobTrackRepository->update($updatedData, $this->import->id);
 
         $this->setImport($import);
 
