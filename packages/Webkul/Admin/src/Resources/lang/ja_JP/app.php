@@ -206,7 +206,6 @@ return [
                         'title'                                 => 'バリエーション',
                         'variant-exists'                        => 'このバリアントの組み合わせは既に存在するか、SKU はすでに使用されています。',
                         'variant-attribute-option-not-found'    => '値 ":attributes" のバリアント属性またはオプションが見つかりません',
-                        'variant-attribute-option-not-selected' => 'バリアントを作成するために選択されたオプションは無効です。',
                         'supper-attribute-not-found'            => '値 ":attribute" のスーパー属性が見つかりません',
                         'variant-given-exists'                  => '値 ":variants" のこのバリアントは既に存在します',
 

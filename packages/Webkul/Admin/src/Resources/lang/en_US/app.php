@@ -206,7 +206,6 @@ return [
                         'title'                                 => 'Variations',
                         'variant-exists'                        => 'This variant combination already exists or the sku is already taken.',
                         'variant-attribute-option-not-found'    => 'Variant attribute or option with value ":attributes" not found',
-                        'variant-attribute-option-not-selected' => 'The selected option for creating variant is not valid',
                         'supper-attribute-not-found'            => 'Supper attribute  with value ":attribute" not found',
                         'variant-given-exists'                  => 'This variant with value ":variants" already exists',
 

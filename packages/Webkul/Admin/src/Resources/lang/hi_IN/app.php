@@ -205,7 +205,6 @@ return [
                         'title'                                 => 'बदलाव',
                         'variant-exists'                        => 'यह संस्करण संयोजन पहले से मौजूद है या SKU पहले से ही लिया गया है।',
                         'variant-attribute-option-not-found'    => 'वैल्यू के साथ वैरिएंट विशेषता या विकल्प ":attributes" नहीं मिली',
-                        'variant-attribute-option-not-selected' => 'वेरिएंट बनाने के लिए चुना गया विकल्प मान्य नहीं है।',
                         'supper-attribute-not-found'            => 'मूल्य के साथ रात का खाना ":attribute" नहीं मिला',
                         'variant-given-exists'                  => 'मूल्य के साथ यह संस्करण ":variants" पहले से मौजूद है',
 
