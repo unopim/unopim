@@ -437,8 +437,8 @@ return [
         ],
 
         'attribute-options' => [
-            'create-success'    => 'Attribuutoptie met succes gemaakt',
-            'update-success'    => 'Attribuutoptie met succes bijgewerkt',
+            'create-success'       => 'Attribuutoptie met succes gemaakt',
+            'update-success'       => 'Attribuutoptie met succes bijgewerkt',
             'usable-in-grid-error' => 'Slechts 4 attributen kunnen bruikbaar zijn in het raster ingeschakeld.',
         ],
 

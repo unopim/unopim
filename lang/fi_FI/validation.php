@@ -91,7 +91,7 @@ return [
 
     'mimes'     => ':attribute täytyy olla tiedosto, jonka tyyppi on: :values.',
     'mimetypes' => ':attribute täytyy olla tiedosto, jonka tyyppi on: :values.',
-    
+
     'min' => [
         'numeric' => ':attribute täytyy olla vähintään :min.',
         'file'    => ':attribute täytyy olla vähintään :min kilotavua.',

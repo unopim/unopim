@@ -90,7 +90,7 @@ return [
 
     'mimes'     => ':attribute phải là một tệp có định dạng: :values.',
     'mimetypes' => ':attribute phải là một tệp có định dạng: :values.',
-    
+
     'min' => [
         'numeric' => ':attribute phải lớn hơn hoặc bằng :min.',
         'file'    => ':attribute phải lớn hơn hoặc bằng :min kilobytes.',

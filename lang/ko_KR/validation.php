@@ -91,7 +91,7 @@ return [
 
     'mimes'     => ':attribute 는(은) :values 유형의 파일이어야 합니다.',
     'mimetypes' => ':attribute 는(은) :values 유형의 파일이어야 합니다.',
-    
+
     'min' => [
         'numeric' => ':attribute 는(은) 최소 :min 이어야 합니다.',
         'file'    => ':attribute 는(은) 최소 :min 킬로바이트여야 합니다.',

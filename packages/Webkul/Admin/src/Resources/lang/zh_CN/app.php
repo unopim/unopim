@@ -438,8 +438,8 @@ return [
         ],
 
         'attribute-options' => [
-            'create-success'    => '属性选项成功创建了',
-            'update-success'    => '属性选项成功更新',
+            'create-success'       => '属性选项成功创建了',
+            'update-success'       => '属性选项成功更新',
             'usable-in-grid-error' => '仅在启用网格中可以使用4个属性。',
         ],
 

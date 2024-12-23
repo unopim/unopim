@@ -16,5 +16,5 @@ return [
     'reset'    => 'La teva contrasenya s\'ha restablert!',
     'sent'     => 'Hem enviat per correu electrònic l\'enllaç per restablir la contrasenya!',
     'token'    => 'Aquest token de restabliment de contrasenya no és vàlid.',
-    'user'     => "No podem trobar un usuari amb aquesta adreça de correu electrònic.",
+    'user'     => 'No podem trobar un usuari amb aquesta adreça de correu electrònic.',
 ];

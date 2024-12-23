@@ -90,7 +90,7 @@ return [
 
     'mimes'     => ':attribute debe ser un archivo de tipo: :values.',
     'mimetypes' => ':attribute debe ser un archivo de tipo: :values.',
-    
+
     'min' => [
         'numeric' => ':attribute debe ser al menos :min.',
         'file'    => ':attribute debe ser al menos :min kilobytes.',

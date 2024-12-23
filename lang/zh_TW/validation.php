@@ -90,7 +90,7 @@ return [
 
     'mimes'     => ':attribute 必須是以下類型的檔案: :values。',
     'mimetypes' => ':attribute 必須是以下類型的檔案: :values。',
-    
+
     'min' => [
         'numeric' => ':attribute 必須大於或等於 :min。',
         'file'    => ':attribute 必須大於或等於 :min KB。',

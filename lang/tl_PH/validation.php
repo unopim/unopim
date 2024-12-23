@@ -90,7 +90,7 @@ return [
 
     'mimes'     => ':attribute ay kailangang isang file na may uri: :values.',
     'mimetypes' => ':attribute ay kailangang isang file na may uri: :values.',
-    
+
     'min' => [
         'numeric' => ':attribute ay kailangang hindi bababa sa :min.',
         'file'    => ':attribute ay kailangang hindi bababa sa :min kilobytes.',

@@ -90,7 +90,7 @@ return [
 
     'mimes'     => ':attribute, şu dosya türlerinden biri olmalıdır: :values.',
     'mimetypes' => ':attribute, şu dosya türlerinden biri olmalıdır: :values.',
-    
+
     'min' => [
         'numeric' => ':attribute, en az :min olmalıdır.',
         'file'    => ':attribute, en az :min kilobayt olmalıdır.',

@@ -438,8 +438,8 @@ return [
         ],
 
         'attribute-options' => [
-            'create-success' => '属性オプションが正常に作成されました',
-            'update-success' => '属性オプションが正常に更新されました',
+            'create-success'       => '属性オプションが正常に作成されました',
+            'update-success'       => '属性オプションが正常に更新されました',
             'usable-in-grid-error' => 'グリッドを有効にすると、4 つの属性のみ使用可能になります。',
         ],
 

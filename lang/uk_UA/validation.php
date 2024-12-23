@@ -90,7 +90,7 @@ return [
 
     'mimes'     => ':attribute має бути файлом типу: :values.',
     'mimetypes' => ':attribute має бути файлом типу: :values.',
-    
+
     'min' => [
         'numeric' => ':attribute має бути не менше ніж :min.',
         'file'    => ':attribute має бути не менше ніж :min кілобайтів.',

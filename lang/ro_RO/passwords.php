@@ -16,5 +16,5 @@ return [
     'reset'    => 'Parola ta a fost resetată!',
     'sent'     => 'Am trimis un email cu linkul pentru resetarea parolei!',
     'token'    => 'Acest token pentru resetarea parolei este invalid.',
-    'user'     => "Nu putem găsi un utilizator cu această adresă de email.",
+    'user'     => 'Nu putem găsi un utilizator cu această adresă de email.',
 ];

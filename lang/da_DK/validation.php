@@ -91,7 +91,7 @@ return [
 
     'mimes'     => ':attribute skal være en fil af typen: :values.',
     'mimetypes' => ':attribute skal være en fil af typen: :values.',
-    
+
     'min' => [
         'numeric' => ':attribute skal være mindst :min.',
         'file'    => ':attribute skal være mindst :min kilobytes.',

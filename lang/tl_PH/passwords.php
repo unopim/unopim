@@ -16,5 +16,5 @@ return [
     'reset'    => 'Ang iyong password ay na-reset na!',
     'sent'     => 'Nagpadala kami ng email ng link para ma-reset ang iyong password!',
     'token'    => 'Ang token ng pag-reset ng password na ito ay hindi wasto.',
-    'user'     => "Hindi namin mahanap ang isang user na may email address na iyon.",
+    'user'     => 'Hindi namin mahanap ang isang user na may email address na iyon.',
 ];

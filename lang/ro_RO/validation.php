@@ -90,7 +90,7 @@ return [
 
     'mimes'     => ':attribute trebuie să fie un fișier de tipul: :values.',
     'mimetypes' => ':attribute trebuie să fie un fișier de tipul: :values.',
-    
+
     'min' => [
         'numeric' => ':attribute trebuie să fie cel puțin :min.',
         'file'    => ':attribute trebuie să fie cel puțin :min kilobytes.',
