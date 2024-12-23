@@ -3,6 +3,7 @@
 namespace Webkul\Admin\Http\Controllers\Catalog;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Webkul\Admin\DataGrids\Catalog\AttributeDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
@@ -12,7 +13,6 @@ use Webkul\Attribute\Rules\NotSupportedAttributes;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Core\Rules\Code;
 use Webkul\Product\Repositories\ProductRepository;
-use Illuminate\Support\Facades\DB;
 
 class AttributeController extends Controller
 {
@@ -163,7 +163,7 @@ class AttributeController extends Controller
         }
     }
 
-     /**
+    /**
      * attribute can't be deleted for super attributes
      */
     public function attributeCanBeDeleted(int $id): int
@@ -172,7 +172,6 @@ class AttributeController extends Controller
             ->where('attribute_id', $id)
             ->count();
     }
-
 
     /**
      * Remove the specified resources from database.
