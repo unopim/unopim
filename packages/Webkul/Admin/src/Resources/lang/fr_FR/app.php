@@ -983,7 +983,6 @@ return [
                         'indexed'   => 'Indexed',
                         'completed' => 'Complété',
                         'failed'    => 'Échoué',
-
                     ],
                 ],
 
@@ -1034,6 +1033,7 @@ return [
                 'failed-info'       => 'Le travail a échoué. Veuillez corriger les erreurs suivantes et réessayer.',
                 'download-log-file' => 'Télécharger le journal',
             ],
+
             'imports' => [
                 'create'            => [
                     'code'                => 'Code',
@@ -1161,6 +1161,7 @@ return [
                 'setup-queue-error' => 'Veuillez modifier votre pilote de file d\'attente en "base de données" ou "redis" pour démarrer le processus d\'importation.',
                 'update-success'    => 'Importer à jour avec succès.',
             ],
+
             'exports' => [
                 'create'            => [
                     'code'                => 'Code',
@@ -1508,7 +1509,6 @@ return [
                 'general' => [
                     'info'  => '',
                     'title' => 'Général',
-
                 ],
 
                 'magic-ai' => [
@@ -1652,10 +1652,12 @@ return [
                 'filter' => [
                     'title' => 'Filtre',
                 ],
+
                 'search_by' => [
                     'code'       => 'Recherche par code',
                     'code_or_id' => 'Recherche par code ou identifiant',
                 ],
+
                 'search' => [
                     'title' => 'Recherche',
                 ],
@@ -1707,12 +1709,14 @@ return [
                 'message'      => 'Êtes-vous sûr de vouloir effectuer cette action?',
                 'title'        => 'Es-tu sûr?',
             ],
+
             'delete' => [
                 'agree-btn'    => 'Supprimer',
                 'disagree-btn' => 'Annuler',
                 'message'      => 'Etes-vous sûr que vous voulez supprimer?',
                 'title'        => 'Confirmer la suppression',
             ],
+
             'history' => [
                 'title'             => 'Historique',
                 'subtitle'          => 'Passez rapidement en revue vos mises à jour et changements.',
