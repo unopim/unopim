@@ -2,8 +2,8 @@
 
 namespace Webkul\DataTransfer\Validators\JobInstances\Import;
 
-use Webkul\DataTransfer\Validators\JobInstances\Default\JobValidator;
 use Webkul\DataTransfer\Rules\SeparatorTypes;
+use Webkul\DataTransfer\Validators\JobInstances\Default\JobValidator;
 
 class ProductJobValidator extends JobValidator
 {
