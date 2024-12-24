@@ -201,7 +201,7 @@
             <!-- Notification Content -->
             <x-slot:content class="p-5 w-[360px] max-w-[360px] max-h-[calc(100vh-130px)] overflow-auto journal-scroll !p-0">
                 <!-- Header -->
-                <div class="text-base  p-3 text-gray-600 dark:text-gray-300 font-semibold border-b dark:border-gray-800">
+                <div class="text-base  p-3 text-gray-800 dark:text-gray-300 font-bold border-b dark:border-gray-800">
                     @lang('admin::app.notifications.title')
                 </div>
 
@@ -212,25 +212,18 @@
                         v-for="userNotification in userNotifications"
                         :href="'{{ route('admin.notification.viewed_notification', ':id') }}'.replace(':id', userNotification.notification.id)"
                     >
-                        <!-- Notification Icon -->
-                        <span
-                            class="h-fit"
-                        >
-                        
-                        </span>
-
-                        <div class="grid gap-2">
+                        <div class="grid gap-3">
                             <p 
-                                class="text-sm text-base text-gray-800 dark:text-white"
+                                class="text-sm text-gray-800 dark:text-slate-50 font-semibold"
                                 v-text="userNotification.notification.title"
                             ></p>
 
                             <p 
-                                class="text-xs text-gray-600 dark:text-gray-300"
+                                class="text-sm text-gray-600 dark:text-gray-300"
                                 v-html="userNotification.notification.description"
                             ></p>
                             
-                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                            <p class="text-sm text-gray-500 dark:text-gray-400">
                                 @{{ userNotification.notification.created_at_human }}
                             </p>
                         </div>
@@ -241,13 +234,13 @@
                 <div class="flex gap-1.5 justify-between h-[47px] py-4 px-6 border-t dark:border-gray-800">
                     <a
                         href="{{ route('admin.notification.index') }}"
-                        class="text-xs text-violet-700 font-semibold cursor-pointer transition-all hover:underline"
+                        class="text-sm text-violet-700 font-semibold cursor-pointer transition-all hover:underline"
                     >
                         @lang('admin::app.notifications.view-all')
                     </a>
 
                     <a
-                        class="text-xs text-violet-700 font-semibold cursor-pointer transition-all hover:underline"
+                        class="text-sm text-violet-700 font-semibold cursor-pointer transition-all hover:underline"
                         v-if="userNotifications?.length"
                         @click="readAll()"
                     >

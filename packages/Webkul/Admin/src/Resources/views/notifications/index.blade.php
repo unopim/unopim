@@ -43,23 +43,18 @@
                             v-for="userNotification in userNotifications"
                             :href="'{{ route('admin.notification.viewed_notification', ':id') }}'.replace(':id', userNotification.notification.id)"
                         >
-                            <span
-                                class="h-fit text-2xl rounded-full"
-                            >
-                            </span>
-
-                            <div class="grid gap-2">
+                            <div class="grid gap-3">
                                 <p 
-                                    class="text-sm text-base text-gray-800 dark:text-white"
+                                    class="text-sm font-bold  dark:text-white"
                                     v-text="userNotification.notification.title"
                                 ></p>
 
                                 <p 
-                                    class="text-xs text-gray-600 dark:text-gray-300"
+                                    class="text-sm text-gray-600 dark:text-gray-300"
                                     v-html="userNotification.notification.description"
                                 ></p>
                                 
-                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                <p class="text-sm text-gray-500 dark:text-gray-400">
                                     @{{ userNotification.notification.created_at_human }}
                                 </p>
                             </div>
