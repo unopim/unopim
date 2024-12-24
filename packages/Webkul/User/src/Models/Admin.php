@@ -14,6 +14,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Webkul\Admin\Mail\Admin\ResetPasswordNotification;
 use Webkul\AdminApi\Models\Apikey;
 use Webkul\Core\Models\LocaleProxy;
+use Webkul\Notification\Models\UserNotification;
 use Webkul\User\Contracts\Admin as AdminContract;
 use Webkul\User\Database\Factories\AdminFactory;
 
@@ -152,5 +153,13 @@ class Admin extends Authenticatable implements AdminContract, AuditableContract
     public function findForPassport(string $username)
     {
         return $this->where('email', $username)->first();
+    }
+
+    /**
+     * Returns the notifications associated with the user.
+     */
+    public function notifications()
+    {
+        return $this->hasMany(UserNotification::class);
     }
 }
