@@ -12,5 +12,5 @@ interface JobValidator
     /**
      * Validates the job instance data
      */
-    public function validate(array $data): void;
+    public function validate(array $data, array $options = []): void;
 }
