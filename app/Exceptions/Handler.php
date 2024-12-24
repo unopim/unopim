@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Dotenv\Exception\InvalidFileException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Exceptions\PostTooLargeException;
 use Throwable;
@@ -33,6 +34,16 @@ class Handler extends ExceptionHandler
             }
 
             return response()->view('admin::errors.index', ['errorCode' => $exception->getStatusCode() ?? 413]);
+        }
+
+        if ($exception instanceof InvalidFileException) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'message'   => $exception->getMessage(),
+                ], 500);
+            }
+
+            exit($exception->getMessage());
         }
 
         return parent::render($request, $exception);

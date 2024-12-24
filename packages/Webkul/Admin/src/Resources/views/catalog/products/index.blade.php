@@ -159,12 +159,11 @@
                         </div>
                     </div>
 
-                    <!-- Id and Parent -->
+                    <!--  Status and type -->
                     <div class="flex gap-1.5 overflow-hidden">
                         <div class="flex flex-col gap-1.5">
-                            <p :class="['true' == record?.status?.toLowerCase() ? 'label-active': 'label-info']">
-                                @{{ 'true' == record?.status?.toLowerCase() ? "@lang('admin::app.common.enable')" : "@lang('admin::app.common.disable')" }}
-                            </p>
+                            <!-- Status Column -->
+                            <p v-html="record.status"></p>
 
                             <p
                                 class="text-gray-600 dark:text-gray-300"

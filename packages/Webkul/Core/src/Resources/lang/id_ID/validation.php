@@ -12,7 +12,7 @@ return [
     'validation-type'         => ':attribute harus bertipe valid.',
     'field-option-not-found'  => ':attribute berisi opsi yang tidak valid :invalid_codes.',
     'boolean-string'          => 'Nilai ini harus berupa string boolean yang direpresentasikan sebagai "benar" atau "salah"',
-    'not-supported'           => ':attribute berikut ini tidak didukung.',
+    'not-supported'           => ':attribute tidak mendukung nilai berikut (:unsupported).',
     'seperator-not-supported' => 'Hanya , atau ; atau | yang didukung sebagai pemisah.',
     'file-type'               => 'File harus bertipe csv, xls, xlsx',
 ];

@@ -86,16 +86,13 @@ class ProductRepository extends Repository
 
     /**
      * Updates the status of product.
-     *
-     * @param  int  $id
-     * @return \Webkul\Product\Contracts\Product
      */
-    public function updateStatus(string $status, $id)
+    public function updateStatus(bool $status, int $id): Product
     {
         $product = $this->findOrFail($id);
-        $values = $product->values;
-        $values['common']['status'] = $status;
-        $product->values = $values;
+
+        $product->status = (int) $status;
+
         $product->save();
 
         return $product;

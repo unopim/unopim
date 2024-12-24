@@ -21,9 +21,9 @@ class UserNotify extends Mailable implements ShouldQueue
      */
     public function __construct(
         protected array $recipients,
-        protected string $subject,
-        protected string $view,
-        protected mixed $data
+        protected string $emailSubject,
+        protected string $emailTemplate,
+        protected mixed $templateData
     ) {}
 
     /**
@@ -33,7 +33,7 @@ class UserNotify extends Mailable implements ShouldQueue
     {
         return new Envelope(
             to: $this->recipients,
-            subject: $this->subject,
+            subject: $this->emailSubject,
         );
     }
 
@@ -43,8 +43,8 @@ class UserNotify extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: $this->view,
-            with: $this->data,
+            view: $this->emailTemplate,
+            with: $this->templateData,
         );
     }
 }

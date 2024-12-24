@@ -70,10 +70,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
         'checkbox'    => 'text_value',
     ];
 
-    const NON_DELETABLE_ATTRIBUTE_CODES = [
-        'sku',
-        'status',
-    ];
+    const NON_DELETABLE_ATTRIBUTE_CODE = 'sku';
 
     /**
      * These columns history will not be generated
@@ -345,7 +342,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
      */
     public function canBeDeleted()
     {
-        return ! in_array($this->code, self::NON_DELETABLE_ATTRIBUTE_CODES);
+        return $this->code !== self::NON_DELETABLE_ATTRIBUTE_CODE;
     }
 
     /**
