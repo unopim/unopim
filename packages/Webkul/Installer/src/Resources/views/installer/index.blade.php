@@ -44,17 +44,37 @@
 
     @php
         $locales = [
-            'ar_AE' => 'arabic',
-            'de_DE' => 'german',
-            'en_US' => 'english',
-            'es_ES' => 'spanish',
-            'fr_FR' => 'french',
-            'hi_IN' => 'hindi',
-            'ja_JP' => 'japanese',
-            'nl_NL' => 'dutch',
-            'pt_BR' => 'portuguese',
-            'ru_RU' => 'russian',
-            'zh_CN' => 'chinese',
+            'ar_AE' => 'Arabic (United Arab Emirates)',
+            'ca_ES' => 'Catalan (Spain)',
+            'da_DK' => 'Danish (Denmark)',
+            'de_DE' => 'German (Germany)',
+            'en_AU' => 'English (Australia)',
+            'en_GB' => 'English (United Kingdom)',
+            'en_NZ' => 'English (New Zealand)',
+            'en_US' => 'English (United States)',
+            'es_ES' => 'Spanish (Spain)',
+            'es_VE' => 'Spanish (Venezuela)',
+            'fi_FI' => 'Finnish (Finland)',
+            'fr_FR' => 'French (France)',
+            'hi_IN' => 'Hindi (India)',
+            'hr_HR' => 'Croatian (Croatia)',
+            'it_IT' => 'Italian (Italy)',
+            'ja_JP' => 'Japanese (Japan)',
+            'ko_KR' => 'Korean (South Korea)',
+            'nl_NL' => 'Dutch (Netherlands)',
+            'no_NO' => 'Norwegian (Norway)',
+            'pl_PL' => 'Polish (Poland)',
+            'pt_BR' => 'Portuguese (Brazil)',
+            'pt_PT' => 'Portuguese (Portugal)',
+            'ro_RO' => 'Romanian (Romania)',
+            'ru_RU' => 'Russian (Russia)',
+            'sv_SE' => 'Swedish (Sweden)',
+            'tl_PH' => 'Tagalog (Philippines)',
+            'tr_TR' => 'Turkish (Turkey)',
+            'uk_UA' => 'Ukrainian (Ukraine)',
+            'vi_VN' => 'Vietnamese (Vietnam)',
+            'zh_CN' => 'Chinese (China)',
+            'zh_TW' => 'Chinese (Taiwan)',
         ];
 
         $currencies = [
@@ -186,7 +206,7 @@
                                     </span>
 
                                     <p>@lang('installer::app.installer.index.ready-for-installation.title')</p>
-                                </div> 
+                                </div>
 
                                 <!-- Create Admin Configuration -->
                                 <div
@@ -315,7 +335,7 @@
                                     </div>
                                 </div>
                             </div>
-                        
+
                             <div class="flex px-4 py-2.5 justify-end items-center">
                                 <button
                                     type="button"
@@ -792,7 +812,7 @@
                                         <x-installer::form.control-group.label class="required">
                                             @lang('installer::app.installer.index.environment-configuration.default-locale')
                                         </x-installer::form.control-group.label>
-    
+
                                         <x-installer::form.control-group.control
                                             type="select"
                                             name="app_locale"
@@ -807,7 +827,7 @@
                                                 </option>
                                             @endforeach
                                         </x-installer::form.control-group.control>
-    
+
                                         <x-installer::form.control-group.error control-name="app_locale" />
                                     </x-installer::form.control-group>
 
@@ -826,14 +846,14 @@
                                             :label="trans('installer::app.installer.index.environment-configuration.default-currency')"
                                         >
                                             <option value="" disabled>Select Currencies</option>
-    
+
                                             @foreach ($currencies as $value => $label)
                                                 <option value="{{ $value }}" @if($value == 'USD') selected @endif>
                                                     @lang("installer::app.installer.index.environment-configuration.$label")
                                                 </option>
                                             @endforeach
                                         </x-installer::form.control-group.control>
-    
+
                                         <x-installer::form.control-group.error control-name="app_currency" />
                                     </x-installer::form.control-group>
                                 </div>
@@ -882,7 +902,7 @@
                                         <x-installer::form.control-group.label class="required">
                                             @lang('installer::app.installer.index.environment-configuration.allowed-currencies')
                                         </x-installer::form.control-group.label>
-    
+
                                         <!-- Allowed Currencies -->
                                         @foreach ($currencies as $key => $currency)
                                             <x-installer::form.control-group class="flex gap-2.5 w-max !mb-0 p-1.5 cursor-pointer select-none">
@@ -1071,7 +1091,7 @@
                                         <x-installer::form.control-group.label class="required">
                                             @lang('installer::app.installer.index.environment-configuration.default-locale')
                                         </x-installer::form.control-group.label>
-    
+
                                         <x-installer::form.control-group.control
                                             type="select"
                                             name="locale"
@@ -1086,7 +1106,7 @@
                                                 </option>
                                             @endforeach
                                         </x-installer::form.control-group.control>
-    
+
                                         <x-installer::form.control-group.error control-name="locale" />
                                     </x-installer::form.control-group>
                             </div>
@@ -1253,7 +1273,7 @@
 
                                 systemRequirements: () => {
                                     this.completeStep('systemRequirements', 'envDatabase', 'active', 'complete');
-                                    
+
                                     this.currentStep = 'envDatabase';
                                 },
 
