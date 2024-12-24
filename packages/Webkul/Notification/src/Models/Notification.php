@@ -21,6 +21,16 @@ class Notification extends Model implements NotificationContract
         'route_params' => 'array',
     ];
 
+    protected $appends = ['created_at_human'];
+
+    /**
+     * Get the created_at field in a human-readable format.
+     */
+    public function getCreatedAtHumanAttribute()
+    {
+        return $this->created_at->diffForHumans();
+    }
+
     /**
      * Get the user notifications associated with the notification.
      */

@@ -43,24 +43,19 @@
                             v-for="userNotification in userNotifications"
                             :href="'{{ route('admin.notification.viewed_notification', ':id') }}'.replace(':id', userNotification.notification.id)"
                         >
-                            <span
-                                class="h-fit text-2xl rounded-full"
-                            >
-                            </span>
-
-                            <div class="grid gap-2">
+                            <div class="grid gap-3">
                                 <p 
-                                    class="text-sm text-base text-gray-800 dark:text-white"
+                                    class="text-sm font-bold  dark:text-white"
                                     v-text="userNotification.notification.title"
                                 ></p>
 
                                 <p 
-                                    class="text-xs text-gray-600 dark:text-gray-300"
+                                    class="text-sm text-gray-600 dark:text-gray-300"
                                     v-html="userNotification.notification.description"
                                 ></p>
                                 
-                                <p class="text-xs text-gray-500 dark:text-gray-400">
-                                    @{{ timeAgo(userNotification.notification.created_at) }}
+                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                    @{{ userNotification.notification.created_at_human }}
                                 </p>
                             </div>
                         </a>
@@ -166,31 +161,6 @@
                                     this.pagination = response.data.search_results;
                                 });
                         }
-                    },
-
-                    timeAgo(timestamp) {
-                        const now = new Date();
-                        const past = new Date(timestamp);
-                        const diffInSeconds = Math.floor((now - past) / 1000);
-
-                        const intervals = {
-                            year: 365 * 24 * 60 * 60,
-                            month: 30 * 24 * 60 * 60,
-                            week: 7 * 24 * 60 * 60,
-                            day: 24 * 60 * 60,
-                            hour: 60 * 60,
-                            minute: 60,
-                            second: 1
-                        };
-
-                        for (const [unit, secondsInUnit] of Object.entries(intervals)) {
-                            const count = Math.floor(diffInSeconds / secondsInUnit);
-                            if (count > 0) {
-                                return count === 1 ? `${count} ${unit} ago` : `${count} ${unit}s ago`;
-                            }
-                        }
-
-                        return "just now";
                     },
                 }
             })
