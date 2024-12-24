@@ -28,6 +28,7 @@ class AdminFactory extends Factory
             'role_id'      => 1,
             'status'       => 1,
             'ui_locale_id' => 58,
+            'image'        => null,
         ];
     }
 }

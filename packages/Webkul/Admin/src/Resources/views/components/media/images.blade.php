@@ -68,6 +68,7 @@
                                 :ref="$.uid + '_imageInput'"
                                 @change="add"
                             />
+
                         </div>
                     </label>
                 </template>
