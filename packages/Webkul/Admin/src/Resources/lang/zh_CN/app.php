@@ -438,9 +438,8 @@ return [
         ],
 
         'attribute-options' => [
-            'create-success'    => '属性选项成功创建了',
-            'update-success'    => '属性选项成功更新',
-
+            'create-success'       => '属性选项成功创建了',
+            'update-success'       => '属性选项成功更新',
             'usable-in-grid-error' => '仅在启用网格中可以使用4个属性。',
         ],
 
@@ -983,7 +982,6 @@ return [
                         'indexed'   => '索引',
                         'completed' => '完全的',
                         'failed'    => '失败的',
-
                     ],
                 ],
 
@@ -1033,6 +1031,7 @@ return [
                 'failed-info'       => '作业失败了。请修复以下错误并重试。',
                 'download-log-file' => '下载日志',
             ],
+
             'imports' => [
                 'create'            => [
                     'code'                => '代码',
@@ -1158,6 +1157,7 @@ return [
                 'setup-queue-error' => '请将您的队列驱动程序更改为“数据库”或“ Redis”以开始导入过程。',
                 'update-success'    => '导入成功更新。',
             ],
+
             'exports' => [
                 'create'            => [
                     'code'                => '代码',
@@ -1507,7 +1507,6 @@ return [
                 'general' => [
                     'info'  => '',
                     'title' => '一般的',
-
                 ],
 
                 'magic-ai' => [
@@ -1648,10 +1647,12 @@ return [
                 'filter' => [
                     'title' => '筛选',
                 ],
+
                 'search_by' => [
                     'code'       => '通过代码搜索',
                     'code_or_id' => '通过代码或ID搜索',
                 ],
+
                 'search' => [
                     'title' => '搜索',
                 ],
@@ -1703,12 +1704,14 @@ return [
                 'message'      => '您确定要执行此操作吗？',
                 'title'        => '你确定吗？',
             ],
+
             'delete' => [
                 'agree-btn'    => '删除',
                 'disagree-btn' => '取消',
                 'message'      => '你确定你要删除？',
                 'title'        => '确认删除',
             ],
+
             'history' => [
                 'title'             => '历史预览',
                 'subtitle'          => '快速查看您的更新和更改。',
