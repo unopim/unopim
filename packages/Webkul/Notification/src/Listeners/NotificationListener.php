@@ -3,9 +3,11 @@
 namespace Webkul\Notification\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Mail;
 use Webkul\Notification\Events\CreateNotification;
 use Webkul\Notification\Events\NotificationEventInterface;
 use Webkul\Notification\Models\Notification;
+use Webkul\Notification\Mail\UserNotify;
 
 class NotificationListener implements ShouldQueue
 {
@@ -34,5 +36,14 @@ class NotificationListener implements ShouldQueue
         $notification->userNotifications()->createMany($userNotificationsData);
 
         event(new CreateNotification);
+        
+        if (isset($event->notificationData['mailable']) && $event->notificationData['mailable']) {
+            Mail::queue( new UserNotify(
+                $event->notificationData['user_emails'],
+                $event->notificationData['subject'] ?? $event->notificationData['title'],
+                $event->notificationData['templateName'],
+                $event->notificationData['templateData']
+            ));
+        }
     }
 }
