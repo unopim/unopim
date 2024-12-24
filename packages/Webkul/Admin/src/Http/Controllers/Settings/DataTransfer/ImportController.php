@@ -88,7 +88,7 @@ class ImportController extends Controller
 
         $imageData = [
             'type'   => self::TYPE,
-            'action' => 'fetch',
+            'action' => 'append',
         ];
 
         if (isset($importerConfig[$data['entity_type']]['has_file_options'])) {
@@ -149,9 +149,11 @@ class ImportController extends Controller
         ], ['file.mimes' => trans('core::validation.file-type')]);
 
         Event::dispatch('data_transfer.imports.update.before');
-
         $data = array_merge(
-            request()->except(['_token', 'code']),
+            request()->only([
+                'entity_type',
+                'filters',
+            ]),
             [
                 'state'                => 'pending',
                 'processed_rows_count' => 0,

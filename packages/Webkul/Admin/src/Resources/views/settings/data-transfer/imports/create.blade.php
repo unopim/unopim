@@ -367,7 +367,6 @@
                         this.selectedFileFormat = JSON.parse(value).value;
                     },
                     entityType(value) {
-                        console.log(value);
                         this.enableFileShow = this.importerConfig[JSON.parse(value).id]?.has_file_options;
                         this.$emitter.emit('entity-type-changed', value);
                     },

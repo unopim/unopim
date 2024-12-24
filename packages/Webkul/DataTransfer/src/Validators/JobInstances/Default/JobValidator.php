@@ -29,11 +29,11 @@ class JobValidator implements JobValidatorContract
      *
      * @throws ValidationException
      */
-    public function validate(array $data, array $option = []): void
+    public function validate(array $data, array $options = []): void
     {
         $data = $this->preValidationProcess($data);
 
-        $validator = Validator::make($data, $this->getRules($option), $this->getMessages($option), $this->getAttributeNames($option));
+        $validator = Validator::make($data, $this->getRules($options), $this->getMessages($options), $this->getAttributeNames($options));
 
         if ($validator->fails()) {
             $messages = $this->processErrorMessages($validator);
@@ -45,7 +45,7 @@ class JobValidator implements JobValidatorContract
     /**
      * Validation rules for job instance
      */
-    public function getRules($option): array
+    public function getRules($options): array
     {
         return $this->rules;
     }
@@ -53,7 +53,7 @@ class JobValidator implements JobValidatorContract
     /**
      * Custom names for validation attributes
      */
-    public function getAttributeNames($option): array
+    public function getAttributeNames($options): array
     {
         return $this->attributeNames;
     }
@@ -61,7 +61,7 @@ class JobValidator implements JobValidatorContract
     /**
      * Add Custom error messages for validation
      */
-    public function getMessages($option): array
+    public function getMessages($options): array
     {
         return $this->messages;
     }
