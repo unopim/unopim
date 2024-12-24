@@ -30,7 +30,7 @@ class Notification extends Model implements NotificationContract
     {
         return $this->created_at->diffForHumans();
     }
-    
+
     /**
      * Get the user notifications associated with the notification.
      */
