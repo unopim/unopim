@@ -27,11 +27,12 @@ class NotificationListener implements ShouldQueue
             'context'      => $event->notificationData['context'] ?? null,
         ]);
 
-        $userNotificationsData = collect($event->notificationData['user_ids'])->map(function ($userId) {
-            return [
+        $userNotificationsData = array_map(
+            fn ($userId) => [
                 'admin_id' => $userId,
-            ];
-        })->toArray();
+            ],
+            $event->notificationData['user_ids']
+        );
 
         $notification->userNotifications()->createMany($userNotificationsData);
 
