@@ -27,6 +27,7 @@
         $importerConfig = json_encode($importerConfig);
         
     }
+
 @endphp
 
 <v-import-filter-fields
@@ -245,7 +246,7 @@
                 'old'
             ],
             data() {
-
+                console.log(this.parseJson(this.importers), this.entityType);
                 return {
                     importersConfig: this.parseJson(this.importers),
                     entity: this.entityType,
