@@ -21,7 +21,11 @@ class Kernel extends ConsoleKernel
      *
      * @return void
      */
-    protected function schedule(Schedule $schedule) {}
+    protected function schedule(Schedule $schedule)
+    {
+        $schedule->command('products:index')->dailyAt('00:01');
+        $schedule->command('products:index')->dailyAt('12:01');
+    }
 
     /**
      * Register the commands for the application.
