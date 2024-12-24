@@ -294,7 +294,7 @@ return [
                     'unique'                   => '一意',
                     'delete-failed'            => 'この属性は削除できません。',
                     'mass-delete-failed'       => '選択した属性は削除できません。',
-                    'delete-attribute-failure' => 'この属性はバリアント属性として使用されているため、削除できません',
+                    'delete-attribute-failure' => 'この属性は設定可能な製品で使用されているため、削除できません。',
                 ],
             ],
 

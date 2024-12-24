@@ -592,7 +592,7 @@ return [
                     'position'                 => 'Position',
                     'delete-failed'            => 'Dieses Kategoriefeld kann nicht gelöscht werden.',
                     'mass-delete-failed'       => 'Ausgewählte Kategoriefelder können nicht gelöscht werden.',
-                    'delete-attribute-failure' => 'Dieses Attribut kann nicht entfernt werden, da es als Variantenattribut verwendet wird',
+                    'delete-attribute-failure' => 'Dieses Attribut kann nicht gelöscht werden, da es für konfigurierbare Produkte verwendet wird',
                 ],
             ],
 

@@ -293,7 +293,7 @@ return [
                     'unique'                   => 'Uniek',
                     'delete-failed'            => 'Dit kenmerk kan niet worden verwijderd.',
                     'mass-delete-failed'       => 'Geselecteerde attributen kunnen niet worden verwijderd.',
-                    'delete-attribute-failure' => 'Dit attribuut kan niet worden verwijderd omdat het wordt gebruikt als variantattribuut.',
+                    'delete-attribute-failure' => 'Deze eigenschap kan niet worden verwijderd omdat deze in gebruik is voor configureerbare producten.',
                 ],
             ],
 

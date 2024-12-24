@@ -10,9 +10,9 @@ class ProductJobValidator extends JobValidator
     /**
      * Validation rules for job instance
      */
-    public function getRules($option): array
+    public function getRules($options): array
     {
-        if (isset($option['id'])) {
+        if (isset($options['id'])) {
             $this->rules['file'] = 'mimes:csv,xls,xlsx,txt';
         }
         $this->rules['field_separator'] = ['required', new SeparatorTypes];

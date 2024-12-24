@@ -294,7 +294,7 @@ return [
                     'unique'                   => 'Unik',
                     'delete-failed'            => 'Atribut ini tidak dapat dihapus.',
                     'mass-delete-failed'       => 'Atribut yang dipilih tidak dapat dihapus.',
-                    'delete-attribute-failure' => 'Tidak dapat menghapus atribut ini karena digunakan sebagai atribut varian.',
+                    'delete-attribute-failure' => 'Tidak dapat menghapus atribut ini karena sedang digunakan untuk produk yang dapat dikonfigurasi.',
                 ],
             ],
 

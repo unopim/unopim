@@ -152,6 +152,12 @@ class ImportController extends Controller
         $data = array_merge(
             request()->only([
                 'entity_type',
+                'action',
+                'validation_strategy',
+                'validation_strategy',
+                'allowed_errors',
+                'field_separator',
+                'images_directory_path',
                 'filters',
             ]),
             [
