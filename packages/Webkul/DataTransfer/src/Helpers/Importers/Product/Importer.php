@@ -22,7 +22,6 @@ use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Helpers\Importers\AbstractImporter;
 use Webkul\DataTransfer\Helpers\Importers\FieldProcessor;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
-use Webkul\Product\Jobs\ElasticSearch\DeleteIndex as DeleteIndexJob;
 use Webkul\Product\Models\Product as ProductModel;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Type\AbstractType;
@@ -592,8 +591,6 @@ class Importer extends AbstractImporter
 
             Storage::deleteDirectory($imageDirectory);
         }
-
-        DeleteIndexJob::dispatch($idsToDelete)->onConnection('sync');
 
         return true;
     }

@@ -251,19 +251,19 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     public function processRequest(): void
     {
-        // Call parent method to ensure compatibility
-        parent::processRequest();
+        if (! env('ELASTICSEARCH_ENABLED', false)) {
+            parent::processRequest();
+
+            return;
+        }
 
         // Additional logic specific to ProductDataGrid
         $params = $this->validatedRequest();
         $pagination = $params['pagination'];
         $channelCodes = request()->input('filters.channel') ?? core()->getAllChannels()->pluck('code')->toArray();
-        $indexNames = collect($channelCodes)->map(function ($channelCode) {
-            return strtolower('products_'.$channelCode.'_'.app()->getLocale().'_index');
-        })->toArray();
 
         $results = Elasticsearch::search([
-            'index' => $indexNames,
+            'index' => strtolower('products_'.core()->getRequestedChannelCode().'_'.core()->getRequestedLocaleCode().'_index'),
             'body'  => [
                 'from'          => ($pagination['page'] * $pagination['per_page']) - $pagination['per_page'],
                 'size'          => $pagination['per_page'],

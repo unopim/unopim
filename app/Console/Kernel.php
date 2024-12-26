@@ -23,8 +23,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('products:index')->dailyAt('00:01');
-        $schedule->command('products:index')->dailyAt('12:01');
+        $schedule->command('indexer:index')->dailyAt('00:01');
+        $schedule->command('indexer:index')->dailyAt('12:01');
     }
 
     /**

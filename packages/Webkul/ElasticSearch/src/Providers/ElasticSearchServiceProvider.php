@@ -3,7 +3,7 @@
 namespace Webkul\ElasticSearch\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Webkul\ElasticSearch\Console\Command\IndexProducts as IndexProductsCommand;
+use Webkul\ElasticSearch\Console\Command\Indexer;
 use Webkul\ElasticSearch\Observers\ProductObserver;
 use Webkul\Product\Models\Product;
 
@@ -43,7 +43,7 @@ class ElasticSearchServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                IndexProductsCommand::class,
+                Indexer::class,
             ]);
         }
     }
