@@ -29,29 +29,21 @@
                     <div 
                         class="flex flex-col w-full max-w-[210px]"
                     >
-                        <!-- AI Image Generation Button -->
+                        <!-- AI Image Generation -->
                         <label
-                            class="cursor-pointer mb-2"
+                            class="grid justify-items-center items-center w-full h-[120px] max-w-[210px] max-h-[120px] border border-dashed dark:border-gray-300 rounded cursor-pointer transition-all hover:border-gray-400 border-gray-300"
+                            :style="{'max-width': this.width, 'max-height': this.height}"
+                            :for="$.uid + '_imageInput'"
                             v-if="ai.enabled"
-                            @click="resetAIModal(); $refs.magicAIImageModal.open()"
+                            @click="resetAIModal(); $refs.choiceImageModal.open()"
                         >
-                            <div class="flex flex-col items-end">
-                                <div class="flex gap-1 box-shadow px-1 bg-violet-100 rounded-sm text-sm">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                        <g clip-path="url(#clip0_3148_2242)"> <path fill-rule="evenodd" clip-rule="evenodd" d="M12.1484 9.31989L9.31995 12.1483L19.9265 22.7549L22.755 19.9265L12.1484 9.31989ZM12.1484 10.7341L10.7342 12.1483L13.5626 14.9767L14.9768 13.5625L12.1484 10.7341Z" fill="#6d28d9"/>
-                                            <path d="M11.0877 3.30949L13.5625 4.44748L16.0374 3.30949L14.8994 5.78436L16.0374 8.25924L13.5625 7.12124L11.0877 8.25924L12.2257 5.78436L11.0877 3.30949Z" fill="#6d28d9"/>
-                                            <path d="M2.39219 2.39217L5.78438 3.95197L9.17656 2.39217L7.61677 5.78436L9.17656 9.17655L5.78438 7.61676L2.39219 9.17655L3.95198 5.78436L2.39219 2.39217Z" fill="#6d28d9"/>
-                                            <path d="M3.30947 11.0877L5.78434 12.2257L8.25922 11.0877L7.12122 13.5626L8.25922 16.0374L5.78434 14.8994L3.30947 16.0374L4.44746 13.5626L3.30947 11.0877Z" fill="#6d28d9"/>
-                                        </g> 
-                                        <defs> 
-                                            <clipPath id="clip0_3148_2242">
-                                                <rect width="24" height="24" fill="white"/>
-                                            </clipPath> 
-                                        </defs> 
-                                    </svg>
+                            <div class="flex flex-col items-center">
+                                <span class="icon-image text-2xl"></span>
 
-                                    <span class="text-violet-700 text-sm">Magic AI</span>
-                                </div>
+                                <p class="grid text-sm text-gray-600 dark:text-gray-300 font-semibold text-center">
+                                    @lang('admin::app.components.media.images.add-image-btn')
+                                </p>
+
                                 
                             </div>
                         </label>
@@ -61,6 +53,7 @@
                             class="grid justify-items-center items-center w-full h-[120px] max-w-[210px] max-h-[120px] border border-dashed dark:border-gray-300 rounded cursor-pointer transition-all hover:border-gray-400 border-gray-300"
                             :style="{'max-width': this.width, 'max-height': this.height}"
                             :for="$.uid + '_imageInput'"
+                            v-else
                         >
                             <div class="flex flex-col items-center">
                                 <span class="icon-image text-2xl"></span>
@@ -103,6 +96,89 @@
                         </v-media-image-item>
                     </template>
                 </draggable>
+
+                <x-admin::form
+                    v-slot="{ meta, errors, handleSubmit }"
+                    as="div"
+                >
+                    <form>
+                        <!-- AI Content Generation Modal -->
+                        <x-admin::modal ref="choiceImageModal">
+                            <!-- Modal Header -->
+                            <x-slot:header>
+                                <p class="grid text-sm text-gray-600 dark:text-gray-300 font-semibold text-center">
+                                    @lang('admin::app.components.media.images.add-image-btn')
+                                </p>
+                            </x-slot>
+
+                            <!-- Modal Content -->
+                            <x-slot:content>
+                                <div class="mb-4">
+                                    <label
+                                        class="cursor-pointer mb-2"
+                                        @click="resetAIModal(); $refs.magicAIImageModal.open(); $refs.choiceImageModal.close()"
+                                    >
+                                        <div class="flex flex-col">
+                                            <div class="flex gap-1 p-3 border rounded-md rounded-sm text-sm">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                                    <g clip-path="url(#clip0_3148_2242)"> <path fill-rule="evenodd" clip-rule="evenodd" d="M12.1484 9.31989L9.31995 12.1483L19.9265 22.7549L22.755 19.9265L12.1484 9.31989ZM12.1484 10.7341L10.7342 12.1483L13.5626 14.9767L14.9768 13.5625L12.1484 10.7341Z" fill="#27272A"/>
+                                                        <path d="M11.0877 3.30949L13.5625 4.44748L16.0374 3.30949L14.8994 5.78436L16.0374 8.25924L13.5625 7.12124L11.0877 8.25924L12.2257 5.78436L11.0877 3.30949Z" fill="#27272A"/>
+                                                        <path d="M2.39219 2.39217L5.78438 3.95197L9.17656 2.39217L7.61677 5.78436L9.17656 9.17655L5.78438 7.61676L2.39219 9.17655L3.95198 5.78436L2.39219 2.39217Z" fill="#27272A"/>
+                                                        <path d="M3.30947 11.0877L5.78434 12.2257L8.25922 11.0877L7.12122 13.5626L8.25922 16.0374L5.78434 14.8994L3.30947 16.0374L4.44746 13.5626L3.30947 11.0877Z" fill="#27272A"/>
+                                                    </g> 
+                                                    <defs> 
+                                                        <clipPath id="clip0_3148_2242">
+                                                            <rect width="24" height="24" fill="white"/>
+                                                        </clipPath> 
+                                                    </defs> 
+                                                </svg>
+
+                                                <span class="text-gray-600 text-sm">Generate with AI</span>
+                                            </div>
+                                            
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label
+                                        class="cursor-pointer mb-2"
+                                        :for="$.uid + '_imageInput_ai'"
+                                    >
+                                        <div class="flex flex-col">
+                                            <div class="flex gap-1 p-3 border rounded-md rounded-sm text-sm">
+                                                <span class="icon-export text-xl"></span>
+
+                                                <span class="text-gray-600 text-sm">Upload from Device</span>
+                                            </div>
+                                            
+                                        </div>
+                                        <input
+                                            type="file"
+                                            class="hidden"
+                                            :id="$.uid + '_imageInput_ai'"
+                                            accept="image/*"
+                                            :multiple="allowMultiple"
+                                            :ref="$.uid + '_imageInput'"
+                                            @change="add"
+                                        />
+                                    </label>
+                                </div>
+                            </x-slot>
+
+                            <!-- Modal Footer -->
+                            <x-slot:footer>
+                                <div class="flex gap-x-2.5 items-center">
+                                    <template>
+                                        <button class="secondary-button">
+                                            @lang('admin::app.components.media.images.ai-generation.generate')
+                                        </button>
+                                    </template>
+                                </div>
+                            </x-slot>
+                        </x-admin::modal>
+                    </form>
+                </x-admin::form>
 
                 <x-admin::form
                     v-slot="{ meta, errors, handleSubmit }"
@@ -344,6 +420,7 @@
                         </x-admin::modal>
                     </form>
                 </x-admin::form>
+                
             </div>
         </div>  
     </script>
@@ -520,7 +597,9 @@
                         });
                     });
 
-
+                    if (this.ai.enabled) {
+                        this.$refs.choiceImageModal.close()
+                    }
                 },
 
                 remove(image) {
