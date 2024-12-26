@@ -12,7 +12,7 @@ return [
     'validation-type'         => ':attribute 必须是有效类型。',
     'field-option-not-found'  => ':attribute 包含无效选项 :invalid_codes。',
     'boolean-string'          => '此值必须是表示为 真的 或 错误的 的布尔字符串',
-    'not-supported'           => '不支持以下 :attribute。',
+    'not-supported'           => ':attribute 不支持以下值 (:unsupported)。',
     'seperator-not-supported' => '仅支持 , 或 ; 或 | 作为分隔符。',
     'file-type'               => '文件必须为 csv、xls、xlsx 类型',
 ];

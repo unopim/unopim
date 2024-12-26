@@ -17,6 +17,16 @@ class CategoryFieldDataGrid extends DataGrid
      */
     protected $sortOrder = 'desc';
 
+    protected array $typeConfig = [];
+
+    /**
+     * Initialize the config value
+     */
+    public function __construct()
+    {
+        $this->typeConfig = config('category_field_types');
+    }
+
     /**
      * Prepare query builder.
      *
@@ -116,7 +126,7 @@ class CategoryFieldDataGrid extends DataGrid
             'label'      => trans('admin::app.catalog.category_fields.index.datagrid.type'),
             'type'       => 'string',
             'searchable' => true,
-            'closure'    => fn ($row) => trans('admin::app.catalog.category_fields.create.'.$row->type),
+            'closure'    => fn ($row) => trans($this->typeConfig[$row->type]['name'] ?? "[$row->type]"),
             'filterable' => true,
             'sortable'   => true,
         ]);

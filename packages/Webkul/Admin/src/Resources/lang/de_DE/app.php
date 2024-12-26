@@ -64,8 +64,10 @@ return [
             'profile-image'     => 'Profilbild',
             'save-btn'          => 'Konto speichern',
             'title'             => 'Mein Konto',
+            'ui-locale'         => 'UI-Gebietsschema',
             'update-success'    => 'Konto erfolgreich aktualisiert',
             'upload-image-info' => 'Profilbild hochladen (110px x 110px)',
+            'user-timezone'     => 'Zeitzone',
         ],
     ],
 
@@ -977,7 +979,6 @@ return [
                         'indexed'              => 'Indiziert',
                         'completed'            => 'Abgeschlossen',
                         'failed'               => 'Fehlgeschlagen',
-
                     ],
                 ],
 
@@ -1026,7 +1027,9 @@ return [
                 'setup-queue-error' => 'Bitte ändern Sie Ihren Warteschlangentreiber auf „Datenbank“ oder „Redis“, um den Importvorgang zu starten.',
                 'update-success'    => 'Export erfolgreich aktualisiert.',
                 'failed-info'       => 'Auftrag ist fehlgeschlagen. Bitte beheben Sie die folgenden Fehler und versuchen Sie es erneut.',
+                'download-log-file' => 'Protokoll herunterladen',
             ],
+
             'imports' => [
                 'create' => [
                     'code'                => 'Code',
@@ -1155,6 +1158,7 @@ return [
                 'setup-queue-error' => 'Bitte ändern Sie Ihren Warteschlangentreiber auf „Datenbank“ oder „Redis“, um den Importvorgang zu starten.',
                 'update-success'    => 'Import erfolgreich aktualisiert.',
             ],
+
             'exports' => [
                 'create' => [
                     'code'                => 'Code',
@@ -1652,10 +1656,12 @@ return [
                 'filter' => [
                     'title' => 'Filter',
                 ],
+
                 'search_by' => [
                     'code'       => 'Suche nach Code',
                     'code_or_id' => 'Suche nach Code oder ID',
                 ],
+
                 'search' => [
                     'title' => 'Suchen',
                 ],
@@ -1707,12 +1713,14 @@ return [
                 'message'      => 'Sind Sie sicher, dass Sie diese Aktion durchführen möchten?',
                 'title'        => 'Sind Sie sicher?',
             ],
+
             'delete' => [
                 'agree-btn'    => 'Löschen',
                 'disagree-btn' => 'Abbrechen',
                 'message'      => 'Möchten Sie wirklich löschen?',
                 'title'        => 'Löschung bestätigen',
             ],
+
             'history' => [
                 'title'           => 'Verlaufsvorschau',
                 'subtitle'        => 'Überprüfen Sie schnell Ihre Aktualisierungen und Änderungen.',
@@ -1879,7 +1887,6 @@ return [
         'tracker'                  => 'Job-Tracker',
         'imports'                  => 'Importe',
         'exports'                  => 'Exporte',
-
     ],
 
     'errors' => [

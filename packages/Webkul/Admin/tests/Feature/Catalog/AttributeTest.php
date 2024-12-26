@@ -187,11 +187,10 @@ it('should delete the Attribute', function () {
     $this->assertDatabaseMissing($this->getFullTableName(Attribute::class), ['id' => $attribute->id]);
 });
 
-it('should not delete the sku and status Attribute', function () {
+it('should not delete the sku Attribute', function () {
     $this->loginAsAdmin();
 
     $sku = Attribute::where('code', 'sku');
-    $status = Attribute::where('code', 'status');
 
     $response = deleteJson(route('admin.catalog.attributes.delete', $sku->first()->id));
 
@@ -200,15 +199,7 @@ it('should not delete the sku and status Attribute', function () {
             'message' => trans('admin::app.catalog.attributes.index.datagrid.delete-failed'),
         ]);
 
-    $response = deleteJson(route('admin.catalog.attributes.delete', $status->first()->id));
-
-    $response->assertStatus(400)
-        ->assertJson([
-            'message' => trans('admin::app.catalog.attributes.index.datagrid.delete-failed'),
-        ]);
-
     $this->assertDatabaseHas($this->getFullTableName(Attribute::class), ['id' => $sku->first()->id]);
-    $this->assertDatabaseHas($this->getFullTableName(Attribute::class), ['id' => $status->first()->id]);
 });
 
 it('should mass delete attributes', function () {
@@ -230,16 +221,14 @@ it('should mass delete attributes', function () {
     }
 });
 
-it('should not delete sku and status with mass delete attributes', function () {
+it('should not delete sku with mass delete attributes', function () {
     $this->loginAsAdmin();
 
     $attributes = Attribute::factory()->count(3)->create();
     $sku = Attribute::where('code', 'sku')?->first()?->id;
-    $status = Attribute::where('code', 'status')?->first()?->id;
 
     $attributeIds = $attributes->pluck('id')->toArray();
     $attributeIds[] = $sku;
-    $attributeIds[] = $status;
 
     $response = postJson(route('admin.catalog.attributes.mass_delete'), ['indices' => $attributeIds]);
 
@@ -249,7 +238,7 @@ it('should not delete sku and status with mass delete attributes', function () {
         ]);
 
     foreach ($attributeIds as $id) {
-        if ($id == $sku || $id == $status) {
+        if ($id === $sku) {
             $this->assertDatabaseHas($this->getFullTableName(Attribute::class), ['id' => $id]);
 
             continue;

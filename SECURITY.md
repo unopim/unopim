@@ -2,12 +2,11 @@
 
 ## Supported Versions
 
-For versions 0.1.1 and 0.1.2 of UnoPim, we support and provide patches for any security vulnerabilities.
+For versions 0.1.x of UnoPim, we support and provide patches for any security vulnerabilities.
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 0.1.2   | :white_check_mark: |
-| 0.1.1   | :white_check_mark: |
+| 0.1.x   | :white_check_mark: |
 
 ## Reporting a Vulnerability
 

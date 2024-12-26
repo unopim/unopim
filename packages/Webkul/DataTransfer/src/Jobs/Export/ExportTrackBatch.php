@@ -9,6 +9,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Webkul\DataTransfer\Helpers\Export as ExportHelper;
+use Webkul\DataTransfer\Services\JobLogger;
 
 class ExportTrackBatch implements ShouldQueue
 {
@@ -43,7 +44,14 @@ class ExportTrackBatch implements ShouldQueue
     public function handle()
     {
         $exportHelper = app(ExportHelper::class);
+
+        $logger = JobLogger::make($this->exportBatch->id);
+
         $exportHelper->setExport($this->exportBatch);
+
+        $exportHelper->setLogger($logger);
+
+        $logger->info(trans('data_transfer::app.job.started'));
 
         // Update the state to VALIDATED
         $exportHelper->stateUpdate(ExportHelper::STATE_VALIDATED);

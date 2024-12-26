@@ -101,14 +101,14 @@
                                 </x-admin::form.control-group.label>
 
                                 @php
-                                    $supportedTypes = ['text', 'textarea', 'price', 'boolean', 'select', 'multiselect', 'datetime', 'date', 'image', 'gallery', 'file', 'checkbox'];
+                                    $supportedTypes = config('attribute_types');
 
                                     $attributeTypes = [];
 
-                                    foreach($supportedTypes as $type) {
+                                    foreach($supportedTypes as $key => $type) {
                                         $attributeTypes[] = [
-                                            'id'    => $type,
-                                            'label' => trans('admin::app.catalog.attributes.edit.'. $type)
+                                            'id'    => $key,
+                                            'label' => trans($type['name'])
                                         ];
                                     }
 
@@ -486,13 +486,7 @@
                                         for="is_unique"
                                     >
                                         @lang('admin::app.catalog.attributes.edit.is-unique')
-                                    </label>    
-
-                                    <x-admin::form.control-group.control
-                                        type="hidden"
-                                        :name="$type"
-                                        :value="$attribute->is_unique"
-                                    />
+                                    </label>
                                 </x-admin::form.control-group>
                             </x-slot>
                         </x-admin::accordion>

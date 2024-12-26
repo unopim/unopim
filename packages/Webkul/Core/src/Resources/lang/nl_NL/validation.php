@@ -12,7 +12,7 @@ return [
     'validation-type'         => 'Het kenmerk :attribute moet een geldig type zijn.',
     'field-option-not-found'  => 'Het kenmerk :attribute bevat ongeldige optie(s) :invalid_codes.',
     'boolean-string'          => 'Deze waarde moet een Booleaanse tekenreeks zijn die wordt weergegeven als "true" of "false"',
-    'not-supported'           => 'De volgende kenmerken :attribute worden niet ondersteund.',
+    'not-supported'           => ':attribute ondersteunt de volgende waarden niet (:unsupported).',
     'seperator-not-supported' => 'Alleen , of ; of | wordt ondersteund als scheidingsteken.',
     'file-type'               => 'Het bestand moet van het type csv,xls,xlsx zijn',
 ];

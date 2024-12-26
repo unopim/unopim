@@ -100,16 +100,21 @@
 
                                 
                                 @php
-                                    $selectedOption = json_encode(['id' => $categoryField->type, 'label' => trans('admin::app.catalog.category_fields.create.'.$categoryField->type)]);
+                                    $supportedTypes = config('category_field_types');
 
-                                    $supportedTypes = ['text', 'textarea', 'boolean', 'select', 'multiselect', 'datetime', 'date', 'image', 'file', 'checkbox'];
+                                    $fieldType = $categoryField->type;
+
+                                    $selectedOption = json_encode([
+                                        'id'    => $fieldType,
+                                        'label' => trans($supportedTypes[$fieldType]['name'] ?? '')
+                                    ]);
 
                                     $attributeTypes = [];
 
-                                    foreach($supportedTypes as $type) {
+                                    foreach($supportedTypes as $key => $type) {
                                         $attributeTypes[] = [
-                                            'id'    => $type,
-                                            'label' => trans('admin::app.catalog.category_fields.create.'. $type)
+                                            'id'    => $key,
+                                            'label' => trans($type['name'])
                                         ];
                                     }
 
@@ -122,7 +127,6 @@
                                     class="cursor-not-allowed"
                                     name="type"
                                     rules="required"
-                                    :value="$selectedOption"
                                     v-model="categoryField.type"
                                     disabled
                                     :label="trans('admin::app.catalog.category_fields.edit.type')"
@@ -490,12 +494,6 @@
                                     >
                                         @lang('admin::app.catalog.category_fields.edit.is-unique')
                                     </label>    
-
-                                    <x-admin::form.control-group.control
-                                        type="hidden"
-                                        :name="$type"
-                                        :value="$categoryField->is_unique"
-                                    />
                                 </x-admin::form.control-group>
                             </x-slot>
                         </x-admin::accordion>

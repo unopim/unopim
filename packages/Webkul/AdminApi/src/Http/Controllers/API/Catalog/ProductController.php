@@ -81,6 +81,10 @@ class ProductController extends ApiController
 
         $product->values = ValueSetter::getValues();
 
+        if (isset($data['status'])) {
+            $product->status = (int) $data['status'];
+        }
+
         if ($product->isDirty()) {
             $product->update($data);
         }

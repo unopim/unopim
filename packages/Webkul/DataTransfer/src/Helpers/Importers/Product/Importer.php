@@ -197,6 +197,7 @@ class Importer extends AbstractImporter
      */
     protected array $validColumnNames = [
         'locale',
+        'status',
         'channel',
         'type',
         'attribute_family',
@@ -640,16 +641,21 @@ class Importer extends AbstractImporter
             ->where('code', $rowData[self::ATTRIBUTE_FAMILY_CODE])
             ->first()->id;
 
-        $isExisting ??= $this->isSKUExist($rowData['sku']);
-
         $product = $isExisting ? $this->getExistingProduct($rowData['sku']) : null;
+
+        $productValues = $products['update'][$rowData['sku']]['values'] ?? [];
+
+        if (empty($productValues) && $isExisting) {
+            $productValues = $product?->values ?? [];
+        }
 
         $data = [
             'type'                => $rowData['type'],
             'parent_id'           => $this->getParentId($rowData, $product?->parent_id),
             'sku'                 => $rowData['sku'],
             'attribute_family_id' => $attributeFamilyId,
-            'values'              => $product?->values ?? [],
+            'values'              => $productValues,
+            'status'              => $this->getProductStatus($rowData, $isExisting, $product),
         ];
 
         /**
@@ -674,6 +680,20 @@ class Importer extends AbstractImporter
 
             $products['insert'][$rowData['sku']] = array_merge($products['insert'][$rowData['sku']] ?? [], $data);
         }
+    }
+
+    /**
+     * Format Product Status
+     */
+    protected function getProductStatus(array $rowData, bool $isExsting, $product = null): int
+    {
+        $status = $rowData['status'] ?? ($isExisting ? $product?->status : 0);
+
+        return match (true) {
+            is_string($status) && strtolower($status) === 'true' => 1,
+            is_bool($status)                                     => (int) $status,
+            default                                              => 0,
+        };
     }
 
     /**
@@ -1042,22 +1062,22 @@ class Importer extends AbstractImporter
     {
         if (! empty($oldValues[AbstractType::COMMON_VALUES_KEY])) {
             $newValues[AbstractType::COMMON_VALUES_KEY] = array_filter(
-                array_merge($newValues[AbstractType::COMMON_VALUES_KEY] ?? [], $oldValues[AbstractType::COMMON_VALUES_KEY])
+                array_merge($oldValues[AbstractType::COMMON_VALUES_KEY] ?? [], $newValues[AbstractType::COMMON_VALUES_KEY])
             );
         }
 
         foreach ($this->channelsAndLocales as $channelCode => $locales) {
             $newValues[AbstractType::CHANNEL_VALUES_KEY][$channelCode] = array_filter(
-                array_merge($newValues[AbstractType::CHANNEL_VALUES_KEY][$channelCode] ?? [], $oldValues[AbstractType::CHANNEL_VALUES_KEY][$channelCode] ?? [])
+                array_merge($oldValues[AbstractType::CHANNEL_VALUES_KEY][$channelCode] ?? [], $newValues[AbstractType::CHANNEL_VALUES_KEY][$channelCode] ?? [])
             );
 
             foreach ($locales as $localeCode) {
                 $newValues[AbstractType::LOCALE_VALUES_KEY][$localeCode] = array_filter(
-                    array_merge($newValues[AbstractType::LOCALE_VALUES_KEY][$localeCode] ?? [], $oldValues[AbstractType::LOCALE_VALUES_KEY][$localeCode] ?? [])
+                    array_merge($oldValues[AbstractType::LOCALE_VALUES_KEY][$localeCode] ?? [], $newValues[AbstractType::LOCALE_VALUES_KEY][$localeCode] ?? [])
                 );
 
                 $newValues[AbstractType::CHANNEL_LOCALE_VALUES_KEY][$channelCode][$localeCode] = array_filter(
-                    array_merge($newValues[AbstractType::CHANNEL_LOCALE_VALUES_KEY][$channelCode][$localeCode] ?? [], $oldValues[AbstractType::CHANNEL_LOCALE_VALUES_KEY][$channelCode][$localeCode] ?? [])
+                    array_merge($oldValues[AbstractType::CHANNEL_LOCALE_VALUES_KEY][$channelCode][$localeCode] ?? [], $newValues[AbstractType::CHANNEL_LOCALE_VALUES_KEY][$channelCode][$localeCode] ?? [])
                 );
 
                 if (empty($newValues[AbstractType::LOCALE_VALUES_KEY][$localeCode])) {

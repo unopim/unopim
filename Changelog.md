@@ -2,7 +2,38 @@
 
 This changelog details the bug fixes included in this release.
 
+## v0.1.5 - 2024-10-25
+
+### Enhancements
+- **New Command**: Introduced the `user:create` command for streamlined user management ([#35](https://github.com/unopim/unopim/pull/35)).
+
+### Bug Fixes
+- **Database Compatibility**: Fixed an issue with import job creation due to the `longtext` column type in MariaDB, improving database compatibility and import stability ([#43](https://github.com/unopim/unopim/pull/43)).
+- **Data Consistency**: Addressed an issue with merging old and new values during import to ensure accurate data synchronization ([#44](https://github.com/unopim/unopim/pull/44)).
+
+**Full Changelog**: [v0.1.4...v0.1.5](https://github.com/unopim/unopim/compare/v0.1.4...v0.1.5)
+
+## **v0.1.4 (17 October 2024)** - *Release*
+* Security Issue #41: fixed Stored XSS 
+
+## **v0.1.3 (14 October 2024)** - *Release*
+
+### Bug Fixes
+* Issue #21: fix db:seed command throwing error when running after installation
+
+### Changed
+* Bump phpoffice/phpspreadsheet from 1.29.1 to 1.29.2
+* Docker images for installation through docker
+
+### Added
+* #23: Gallery type attribute
+* Executing data transfer jobs via terminal through 'php artisan unopim:queue:work {JobId} {userEmailId}'
+* Job specific log files for data transfer jobs
+* Datagrid Improvement: first and last page buttons (thanks to @helgvor-stoll)
+* #26 Account page Improvement: UI locale and timezone field added
+
 ## **v0.1.2 (18nd September 2024)** - *Release*
+
 ### Changed
 - Updated the test cases.
 - French translation updated.

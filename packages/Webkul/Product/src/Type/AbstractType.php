@@ -178,10 +178,6 @@ abstract class AbstractType
             $productValues[self::ASSOCIATION_VALUES_KEY][self::RELATED_ASSOCIATION_KEY] = $data[self::RELATED_ASSOCIATION_KEY];
         }
 
-        if (! isset($productValues[self::COMMON_VALUES_KEY]['status'])) {
-            $productValues[self::COMMON_VALUES_KEY]['status'] = 'false';
-        }
-
         if (! isset($productValues[self::COMMON_VALUES_KEY]['sku'])) {
             $productValues[self::COMMON_VALUES_KEY]['sku'] = $data['sku'] ?? $product->sku;
         }
@@ -377,8 +373,8 @@ abstract class AbstractType
                     if ($type === 'gallery') {
                         $values[$field] = array_map(function ($val) use ($path) {
                             return $val instanceof UploadedFile
-                            ? $this->fileStorer->store($path, $val, [FileStorer::HASHED_FOLDER_NAME_KEY => true])
-                            : $val;
+                                ? $this->fileStorer->store($path, $val, [FileStorer::HASHED_FOLDER_NAME_KEY => true])
+                                : $val;
                         }, $fieldValue);
 
                         $values[$field] = array_values($values[$field]);
@@ -637,18 +633,12 @@ abstract class AbstractType
     {
         $product = $this->productRepository->find($id);
 
-        if (! isset($data[self::COMMON_VALUES_KEY]['status'])) {
-            $data[self::COMMON_VALUES_KEY]['status'] = 'false';
-        }
-
-        if (! isset($data[self::COMMON_VALUES_KEY]['sku'])) {
-            $data[self::COMMON_VALUES_KEY]['sku'] = $data['sku'] ?? $product->sku;
-        }
-
         $product->values = $data[self::PRODUCT_VALUES_KEY];
 
+        $product->fill($data);
+
         if ($product->isDirty()) {
-            $product->update($data);
+            $product->save();
         }
 
         return $product;

@@ -6,9 +6,17 @@ use Hash;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Core\Filesystem\FileStorer;
 
 class AccountController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct(protected FileStorer $fileStorer) {}
+
     /**
      * Show the form for creating a new resource.
      *
@@ -35,7 +43,9 @@ class AccountController extends Controller
             'email'            => 'email|unique:admins,email,'.$user->id,
             'password'         => 'nullable|min:6|confirmed',
             'current_password' => 'required|min:6',
-            'image.*'          => 'nullable|mimes:bmp,jpeg,jpg,png,webp',
+            'image.*'          => 'nullable|mimes:bmp,jpeg,jpg,png,webp,svg',
+            'timezone'         => 'required',
+            'ui_locale_id'     => 'required',
         ]);
 
         $data = request()->only([
@@ -45,6 +55,8 @@ class AccountController extends Controller
             'password_confirmation',
             'current_password',
             'image',
+            'timezone',
+            'ui_locale_id',
         ]);
 
         if (! Hash::check($data['current_password'], $user->password)) {
@@ -64,7 +76,10 @@ class AccountController extends Controller
         }
 
         if (request()->hasFile('image')) {
-            $data['image'] = current(request()->file('image'))->store('admins/'.$user->id);
+            $data['image'] = $this->fileStorer->store(
+                path: 'admins'.DIRECTORY_SEPARATOR.$user->id,
+                file: current(request()->file('image'))
+            );
         } else {
             if (! isset($data['image'])) {
                 if (! empty($data['image'])) {

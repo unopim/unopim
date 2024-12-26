@@ -35,7 +35,7 @@ class AttributeTypes implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (! in_array($value, self::ATTRIBUTE_TYPES)) {
+        if (! in_array($value, array_keys(config('attribute_types')))) {
             $fail('core::validation.type')->translate();
         }
     }

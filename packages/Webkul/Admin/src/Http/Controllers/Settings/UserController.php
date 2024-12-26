@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use Webkul\Admin\DataGrids\Settings\UserDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\UserForm;
+use Webkul\Core\Filesystem\FileStorer;
 use Webkul\User\Repositories\AdminRepository;
 use Webkul\User\Repositories\RoleRepository;
 
@@ -22,7 +23,8 @@ class UserController extends Controller
      */
     public function __construct(
         protected AdminRepository $adminRepository,
-        protected RoleRepository $roleRepository
+        protected RoleRepository $roleRepository,
+        protected FileStorer $fileStorer
     ) {}
 
     /**
@@ -68,7 +70,10 @@ class UserController extends Controller
         $admin = $this->adminRepository->create($data);
 
         if (request()->hasFile('image')) {
-            $admin->image = current(request()->file('image'))->store('admins/'.$admin->id);
+            $admin->image = $this->fileStorer->store(
+                path: 'admins'.DIRECTORY_SEPARATOR.$admin->id,
+                file: current(request()->file('image'))
+            );
 
             $admin->save();
         }
@@ -120,7 +125,10 @@ class UserController extends Controller
         $admin = $this->adminRepository->update($data, $id);
 
         if (request()->hasFile('image')) {
-            $admin->image = current(request()->file('image'))->store('admins/'.$admin->id);
+            $admin->image = $this->fileStorer->store(
+                path: 'admins'.DIRECTORY_SEPARATOR.$admin->id,
+                file: current(request()->file('image'))
+            );
         } else {
             if (! request()->has('image.image')) {
                 if (! empty(request()->input('image.image'))) {

@@ -12,6 +12,8 @@
 
         @stack('meta')
 
+        {!! view_render_event('unopim.admin.layout.head.before') !!}
+
         @unoPimVite(['src/Resources/assets/css/app.css', 'src/Resources/assets/js/app.js'])
 
         <link

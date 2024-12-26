@@ -25,7 +25,7 @@ class FieldTypes implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (! in_array($value, self::FILED_TYPES)) {
+        if (! in_array($value, array_keys(config('category_field_types')))) {
             $fail('core::validation.type')->translate();
         }
     }

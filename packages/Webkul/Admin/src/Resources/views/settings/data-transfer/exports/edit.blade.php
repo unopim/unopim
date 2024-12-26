@@ -171,17 +171,19 @@
                                 </div>
                             </x-slot>
 
-                            <x-slot:content>                        
+                            <x-slot:content>
                                 <!-- Filter Fields -->
-                                {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.filters.fields.befor') !!}
+                                {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.filters.fields.before') !!}
 
                                 @php
                                     $fields = $exporterConfig[$export->entity_type]['filters']['fields'];
                                     $filters = $export->filters ?? [];
                                 @endphp
+
                                 <x-admin::data-transfer.filter-fields
-                                    :fields="$fields"
-                                    :fieldValues="$filters"
+                                    :entity-type="$export->entity_type"
+                                    :values="$filters"
+                                    :exporter-config="json_encode($exporterConfig)"
                                 >
                                 </x-admin::data-transfer.filter-fields>
 
@@ -201,9 +203,13 @@
 
                 data() {
                     return {
-                        fileFormat: @json($export->filters['file_format']),
-                        selectedFileFormat: @json($export->filters['file_format']),
+                        fileFormat: @json($export->filters['file_format'] ?? null),
+                        selectedFileFormat: @json($export->filters['file_format'] ?? null),
                     };
+                },
+
+                mounted() {
+                    this.$emitter.on('filter-value-changed', this.handleFilterValues);
                 },
 
                 watch: {
@@ -211,6 +217,14 @@
                         this.selectedFileFormat = JSON.parse(value).value;
                     },
                 },
+
+                methods: {
+                    handleFilterValues(changed) {
+                        if ('file_format' == changed.filterName) {
+                            this.selectedFileFormat = changed.value;
+                        }
+                    },
+                }
             })
         </script>
     @endPushOnce

@@ -64,6 +64,8 @@ return [
             'profile-image'     => 'Imagen de perfil',
             'save-btn'          => 'Guardar cuenta',
             'title'             => 'Mi cuenta',
+            'ui-locale'         => 'UI local',
+            'user-timezone'     => 'Zona horaria',
             'update-success'    => 'Cuenta actualizada con éxito',
             'upload-image-info' => 'Sube una imagen de perfil (110px x 110px)',
         ],
@@ -979,7 +981,6 @@ return [
                         'indexed'   => 'Indexed',
                         'completed' => 'Completed',
                         'failed'    => 'Failed',
-
                     ],
                 ],
 
@@ -1027,6 +1028,7 @@ return [
                 'setup-queue-error' => 'Cambie su controlador de cola a "base de datos" o "redis" para comenzar el proceso de importación.',
                 'update-success'    => 'Exportar actualizado con éxito.',
                 'failed-info'       => 'El trabajo ha fracasado. Corrija los siguientes errores y vuelva a intentarlo.',
+                'download-log-file' => 'Descargar registro',
             ],
 
             'imports' => [
@@ -1155,6 +1157,7 @@ return [
                 'setup-queue-error' => 'Cambie su controlador de cola a "base de datos" o "redis" para comenzar el proceso de importación.',
                 'update-success'    => 'Importar actualizado con éxito.',
             ],
+
             'exports' => [
                 'create'            => [
                     'code'                => 'Código',
@@ -1502,7 +1505,6 @@ return [
                 'general' => [
                     'info'  => '',
                     'title' => 'General',
-
                 ],
 
                 'magic-ai' => [
@@ -1654,10 +1656,12 @@ return [
                 'filter' => [
                     'title' => 'Filtrar',
                 ],
+
                 'search_by' => [
                     'code'       => 'Buscar por código',
                     'code_or_id' => 'Buscar por código o identificación',
                 ],
+
                 'search' => [
                     'title' => 'Buscar',
                 ],
@@ -1709,12 +1713,14 @@ return [
                 'message'      => 'Are you sure you want to perform this action?',
                 'title'        => 'Are you sure?',
             ],
+
             'delete' => [
                 'agree-btn'    => 'Borrar',
                 'disagree-btn' => 'Cancelar',
                 'message'      => 'Are you sure you want to delete?',
                 'title'        => 'Confirmar la eliminación',
             ],
+
             'history' => [
                 'title'             => 'Vista previa de la historia',
                 'subtitle'          => 'Revise rápidamente sus actualizaciones y cambios.',

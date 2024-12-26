@@ -31,7 +31,9 @@ class AjaxOptionsController extends Controller
         $page = request()->get('page');
         $query = request()->get('query') ?? '';
 
-        $options = $this->getOptionsByParams($attributeId, $entityName, $page, $query);
+        $queryParams = request()->except(['page', 'query', 'entityName', 'attributeId']);
+
+        $options = $this->getOptionsByParams($attributeId, $entityName, $page, $query, $queryParams);
 
         $currentLocaleCode = core()->getRequestedLocaleCode();
 
@@ -58,14 +60,17 @@ class AjaxOptionsController extends Controller
      * Fetch options according to parameters for search, page and id
      */
     protected function getOptionsByParams(
-        int|string $id,
+        int|string|null $id,
         string $entityName,
         int|string $page,
-        string $query = ''
+        string $query = '',
+        ?array $queryParams = []
     ): LengthAwarePaginator {
         $repository = $this->getRepository($entityName);
 
-        $repository = $repository->where($entityName.'_id', $id);
+        if ($id) {
+            $repository = $repository->where($entityName.'_id', $id);
+        }
 
         if (! empty($query)) {
             $repository = $repository->where(function ($queryBuilder) use ($query) {
@@ -74,10 +79,20 @@ class AjaxOptionsController extends Controller
             });
         }
 
+        $searchIdentifiers = isset($queryParams['identifiers']['columnName']) ? $queryParams['identifiers'] : [];
+
+        if (! empty($searchIdentifiers)) {
+            $repository = $repository->whereIn(
+                $searchIdentifiers['columnName'],
+                is_array($searchIdentifiers['values']) ? $searchIdentifiers['values'] : [$searchIdentifiers['values']]
+            );
+        }
+
         return $repository->orderBy('id')->paginate(self::DEFAULT_PER_PAGE, ['*'], 'page', $page);
     }
 
     /**
+     * TODO: Add attribute, family, attribute group, category, products support here
      * Get Repository according to entity name
      */
     private function getRepository(string $entityName): Repository
@@ -85,7 +100,7 @@ class AjaxOptionsController extends Controller
         return match ($entityName) {
             'attribute'      => $this->attributeOptionsRepository,
             'category_field' => $this->categoryFieldOptionsRepository,
-            default          => throw new \Excpetion('Not implemented for '.$entityName)
+            default          => throw new \Exception('Not implemented for '.$entityName)
         };
     }
 }

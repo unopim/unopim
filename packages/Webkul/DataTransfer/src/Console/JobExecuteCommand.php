@@ -293,7 +293,8 @@ class JobExecuteCommand extends Command
     {
         $queueTimezone = $this->laravel['config']->get('queue.output_timezone');
 
-        if ($queueTimezone
+        if (
+            $queueTimezone
             && $queueTimezone !== $this->laravel['config']->get('app.timezone')
         ) {
             return Carbon::now()->setTimezone($queueTimezone);

@@ -9,6 +9,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Webkul\DataTransfer\Helpers\Import as ImportHelper;
+use Webkul\DataTransfer\Services\JobLogger;
 use Webkul\User\Models\AdminProxy;
 
 class ImportTrackBatch implements ShouldQueue
@@ -49,7 +50,14 @@ class ImportTrackBatch implements ShouldQueue
         }
 
         $importHelper = app(ImportHelper::class);
+
         $importHelper->setImport($this->importBatch);
+
+        $logger = JobLogger::make($this->importBatch->id);
+
+        $importHelper->setLogger($logger);
+
+        $logger->info(trans('data_transfer::app.job.started'));
 
         // Validate the import
         $import = $importHelper->validate();

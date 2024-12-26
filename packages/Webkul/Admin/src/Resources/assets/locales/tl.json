@@ -1,0 +1,28 @@
+{
+  "code": "tl",
+  "messages": {
+    "alpha": "Ang {field} na field ay maaaring maglaman lamang ng mga titik",
+    "alpha_dash": "Ang {field} na field ay maaaring maglaman lamang ng mga alphanumeric na character, pati na rin ang gitling at underscore",
+    "alpha_num": "Ang {field} ay maaaring maglaman lamang ng mga alphanumeric na character",
+    "alpha_spaces": "Ang {field} na field ay maaaring maglaman lamang ng mga alphanumeric na character at mga espasyo",
+    "between": "Ang {field} na field ay dapat na nasa pagitan ng 0:{min} at 1:{max}",
+    "confirmed": "Ang {field} na field ay hindi nakumpirma",
+    "digits": "Ang {field} na field ay dapat na numeriko at may eksaktong 0:{length} na digit",
+    "dimensions": "Ang {field} na field ay dapat na 0:{width} x 1:{height} mga pixel",
+    "email": "Ang {field} na field ay dapat isang wastong email address",
+    "not_one_of": "Ang {field} na field ay dapat isang wastong halaga",
+    "ext": "Ang {field} na field ay dapat isang wastong file",
+    "image": "Ang {field} na field ay dapat isang larawan",
+    "one_of": "Ang {field} na field ay dapat isang wastong halaga",
+    "max": "Ang {field} na field ay hindi maaaring lumampas ng 0:{length} na karakter",
+    "max_value": "Ang {field} na field ay dapat hindi hihigit sa 0:{max}",
+    "mimes": "Ang {field} na field ay dapat may wastong uri ng file",
+    "min": "Ang {field} na field ay dapat hindi bababa sa 0:{length} na karakter",
+    "min_value": "Ang {field} na field ay dapat hindi bababa sa 0:{min}",
+    "numeric": "Ang {field} na field ay maaaring maglaman lamang ng mga numero",
+    "regex": "Ang format ng {field} na field ay hindi wasto",
+    "required": "Ang {field} na field ay kinakailangan",
+    "required_if": "Ang {field} na field ay kinakailangan",
+    "size": "Ang {field} na field ay dapat na mas maliit sa 0:{size}KB"
+  }
+}

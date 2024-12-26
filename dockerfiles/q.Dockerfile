@@ -1,3 +1,3 @@
-FROM jdecode/unopim:0.1.1
+FROM webkul/unopim:1.0.1
 
 ENTRYPOINT ["/var/www/html/dockerfiles/q-entrypoint.sh"]

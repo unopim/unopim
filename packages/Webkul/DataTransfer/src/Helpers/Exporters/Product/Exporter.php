@@ -116,10 +116,11 @@ class Exporter extends AbstractExporter
                         'channel'                 => $channel,
                         'locale'                  => $locale,
                         'sku'                     => $rowData['sku'],
+                        'status'                  => $rowData['status'] ? 'true' : 'false',
                         'type'                    => $rowData['type'],
                         'parent'                  => $rowData['parent']['sku'] ?? null,
                         'attribute_family'        => $rowData['attribute_family']['code'] ?? null,
-                        'configurable_attributes' => $this->getSupperAttributes($rowData),
+                        'configurable_attributes' => $this->getSuperAttributes($rowData),
                         'categories'              => $this->getCategories($rowData),
                         'up_sells'                => $this->getAssociations($rowData, 'up_sells'),
                         'cross_sells'             => $this->getAssociations($rowData, 'cross_sells'),
@@ -136,7 +137,7 @@ class Exporter extends AbstractExporter
         return $products;
     }
 
-    public function getSupperAttributes($data)
+    public function getSuperAttributes($data)
     {
         if (! isset($data['super_attributes'])) {
             return null;
@@ -162,25 +163,29 @@ class Exporter extends AbstractExporter
         $withMedia = (bool) $filters['with_media'];
 
         foreach ($this->attributes as $key => $attribute) {
-            if ($attribute->code == 'sku') {
+            $attributeCode = $attribute->code;
+
+            if ($attributeCode == 'sku' || $attributeCode === 'status') {
                 continue;
             }
 
-            $attributeValues[$attribute->code] = $values[$attribute->code] ?? null;
+            $attributeValues[$attributeCode] = $values[$attributeCode] ?? null;
 
             if ($attribute->type == AttributeTypes::PRICE_ATTRIBUTE_TYPE) {
-                $priceData = ! empty($attributeValues[$attribute->code]) ? $attributeValues[$attribute->code] : [];
+                $priceData = ! empty($attributeValues[$attributeCode]) ? $attributeValues[$attributeCode] : [];
 
                 foreach ($this->currencies as $value) {
-                    $attributeValues[$attribute->code.' ('.$value.')'] = $priceData[$value] ?? null;
+                    $attributeValues[$attributeCode.' ('.$value.')'] = $priceData[$value] ?? null;
                 }
 
-                unset($attributeValues[$attribute->code]);
+                unset($attributeValues[$attributeCode]);
             }
 
             if ($withMedia && in_array($attribute->type, [AttributeTypes::FILE_ATTRIBUTE_TYPE, AttributeTypes::IMAGE_ATTRIBUTE_TYPE, AttributeTypes::GALLERY_ATTRIBUTE_TYPE])) {
-                $existingFilePath = $values[$attribute->code] ?? null;
+                $existingFilePath = $values[$attributeCode] ?? null;
+
                 $existingFilePath = is_array($existingFilePath) ? $existingFilePath : [$existingFilePath];
+
                 foreach ($existingFilePath as $path) {
                     if ($path && ! empty($path)) {
                         $newfilePath = $filePath->getTemporaryPath().'/'.$path;
@@ -189,7 +194,7 @@ class Exporter extends AbstractExporter
                 }
 
                 if (is_array($existingFilePath)) {
-                    $attributeValues[$attribute->code] = implode(', ', $existingFilePath);
+                    $attributeValues[$attributeCode] = implode(', ', $existingFilePath);
                 }
             }
         }

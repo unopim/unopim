@@ -64,8 +64,10 @@ return [
             'profile-image'     => 'プロフィール画像',
             'save-btn'          => 'アカウントを保存',
             'title'             => 'マイアカウント',
+            'ui-locale'         => 'UI ロケール',
             'update-success'    => 'アカウントが正常に更新されました',
             'upload-image-info' => 'プロフィール画像をアップロード (110 x 110 ピクセル)',
+            'user-timezone'     => 'タイムゾーン',
         ],
     ],
 
@@ -434,9 +436,8 @@ return [
         ],
 
         'attribute-options' => [
-            'create-success' => '属性オプションが正常に作成されました',
-            'update-success' => '属性オプションが正常に更新されました',
-
+            'create-success'       => '属性オプションが正常に作成されました',
+            'update-success'       => '属性オプションが正常に更新されました',
             'usable-in-grid-error' => 'グリッドを有効にすると、4 つの属性のみ使用可能になります。',
         ],
 
@@ -979,7 +980,6 @@ return [
                         'indexed'   => 'インデックス作成済み',
                         'completed' => '完了',
                         'failed'    => '失敗',
-
                     ],
                 ],
 
@@ -1028,7 +1028,9 @@ return [
                 'setup-queue-error' => 'インポート プロセスを開始するには、キュー ドライバーを「database」または「redis」に変更してください。',
                 'update-success'    => 'エクスポートが正常に更新されました。',
                 'failed-info'       => 'ジョブが失敗しました。次のエラーを修正して再試行してください。',
+                'download-log-file' => 'ダウンロードログ',
             ],
+
             'imports' => [
                 'create' => [
                     'code'                => 'コード',
@@ -1157,6 +1159,7 @@ return [
                 'setup-queue-error' => 'インポート プロセスを開始するには、キュー ドライバーを「database」または「redis」に変更してください。',
                 'update-success'    => 'インポートが正常に更新されました。',
             ],
+
             'exports' => [
                 'create' => [
                     'code'                => 'コード',
@@ -1654,10 +1657,12 @@ return [
                 'filter' => [
                     'title' => 'フィルター',
                 ],
+
                 'search_by' => [
                     'code'       => 'コードで検索',
                     'code_or_id' => 'コードまたはIDで検索',
                 ],
+
                 'search' => [
                     'title' => '検索',
                 ],
@@ -1709,12 +1714,14 @@ return [
                 'message'      => 'この操作を実行してもよろしいですか?',
                 'title'        => 'よろしいですか?',
             ],
+
             'delete' => [
                 'agree-btn'    => '削除',
                 'disagree-btn' => 'キャンセル',
                 'message'      => '本当に削除しますか?',
                 'title'        => '削除の確認',
             ],
+
             'history' => [
                 'title'           => '履歴のプレビュー',
                 'subtitle'        => '更新内容や変更内容をすばやく確認できます。',
@@ -1881,7 +1888,6 @@ return [
         'tracker'                  => 'ジョブ トラッカー',
         'imports'                  => 'インポート',
         'exports'                  => 'エクスポート',
-
     ],
 
     'errors' => [

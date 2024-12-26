@@ -3,6 +3,7 @@
 namespace Webkul\Admin\Http\Controllers;
 
 use Illuminate\Support\Facades\Storage;
+use Webkul\Core\Filesystem\FileStorer;
 
 class TinyMCEController extends Controller
 {
@@ -12,6 +13,11 @@ class TinyMCEController extends Controller
      * @var string
      */
     private $storagePath = 'tinymce';
+
+    /**
+     * Return controller instance
+     */
+    public function __construct(protected FileStorer $fileStorer) {}
 
     /**
      * Upload file from tinymce.
@@ -42,8 +48,10 @@ class TinyMCEController extends Controller
             return [];
         }
 
+        $path = $this->fileStorer->store(file: request()->file('file'), path: $this->storagePath);
+
         return [
-            'file'      => $path = request()->file('file')->store($this->storagePath),
+            'file'      => $path,
             'file_name' => request()->file('file')->getClientOriginalName(),
             'file_url'  => Storage::url($path),
         ];

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html
     lang="{{ app()->getLocale() }}"
-    dir="{{ in_array(app()->getLocale(), ['ar', 'fa', 'he']) ? 'rtl' : 'ltr' }}"
+    dir="{{ in_array(app()->getLocale(), ['ar_AE']) ? 'rtl' : 'ltr' }}"
 >
     <head>
         <title>
@@ -44,25 +44,37 @@
 
     @php
         $locales = [
-            'ar'    => 'arabic',
-            'bn'    => 'bengali',
-            'de'    => 'german',
-            'en_US'    => 'english',
-            'es'    => 'spanish',
-            'fa'    => 'persian',
-            'fr'    => 'french',
-            'he'    => 'hebrew',
-            'hi_IN' => 'hindi',
-            'it'    => 'italian',
-            'ja'    => 'japanese',
-            'nl'    => 'dutch',
-            'pl'    => 'polish',
-            'pt_BR' => 'portuguese',
-            'ru'    => 'russian',
-            'sin'   => 'sinhala',
-            'tr'    => 'turkish',
-            'uk'    => 'ukrainian',
-            'zh_CN' => 'chinese',
+            'ar_AE' => 'Arabic (United Arab Emirates)',
+            'ca_ES' => 'Catalan (Spain)',
+            'da_DK' => 'Danish (Denmark)',
+            'de_DE' => 'German (Germany)',
+            'en_AU' => 'English (Australia)',
+            'en_GB' => 'English (United Kingdom)',
+            'en_NZ' => 'English (New Zealand)',
+            'en_US' => 'English (United States)',
+            'es_ES' => 'Spanish (Spain)',
+            'es_VE' => 'Spanish (Venezuela)',
+            'fi_FI' => 'Finnish (Finland)',
+            'fr_FR' => 'French (France)',
+            'hi_IN' => 'Hindi (India)',
+            'hr_HR' => 'Croatian (Croatia)',
+            'it_IT' => 'Italian (Italy)',
+            'ja_JP' => 'Japanese (Japan)',
+            'ko_KR' => 'Korean (South Korea)',
+            'nl_NL' => 'Dutch (Netherlands)',
+            'no_NO' => 'Norwegian (Norway)',
+            'pl_PL' => 'Polish (Poland)',
+            'pt_BR' => 'Portuguese (Brazil)',
+            'pt_PT' => 'Portuguese (Portugal)',
+            'ro_RO' => 'Romanian (Romania)',
+            'ru_RU' => 'Russian (Russia)',
+            'sv_SE' => 'Swedish (Sweden)',
+            'tl_PH' => 'Tagalog (Philippines)',
+            'tr_TR' => 'Turkish (Turkey)',
+            'uk_UA' => 'Ukrainian (Ukraine)',
+            'vi_VN' => 'Vietnamese (Vietnam)',
+            'zh_CN' => 'Chinese (China)',
+            'zh_TW' => 'Chinese (Taiwan)',
         ];
 
         $currencies = [
@@ -194,7 +206,7 @@
                                     </span>
 
                                     <p>@lang('installer::app.installer.index.ready-for-installation.title')</p>
-                                </div> 
+                                </div>
 
                                 <!-- Create Admin Configuration -->
                                 <div
@@ -277,7 +289,7 @@
                         >
                             <div class="flex justify-between items-center gap-2.5 px-4 py-[11px] border-b-[1px] border-gray-300">
                                 <p class="text-[20px] text-gray-800 font-bold">
-                                    @lang('installer::app.installer.index.start.welcome-title')
+                                    @lang('installer::app.installer.index.start.welcome-title',['version' => core()->version()])
                                 </p>
                             </div>
 
@@ -293,7 +305,7 @@
                                         <!-- Application Name -->
                                         <x-installer::form.control-group class="mb-2.5">
                                             <x-installer::form.control-group.label>
-                                                @lang('Installation Wizard language')
+                                                @lang('installer::app.installer.index.wizard-language')
                                             </x-installer::form.control-group.label>
 
                                             <x-installer::form.control-group.control
@@ -323,7 +335,7 @@
                                     </div>
                                 </div>
                             </div>
-                        
+
                             <div class="flex px-4 py-2.5 justify-end items-center">
                                 <button
                                     type="button"
@@ -442,13 +454,15 @@
                                             @lang('installer::app.installer.index.environment-configuration.mysql')
                                         </option>
 
-                                        <option value="pgsql">
+                                        <!-- @TODO: Future support for -->
+
+                                        <!-- <option value="pgsql">
                                             @lang('installer::app.installer.index.environment-configuration.pgsql')
                                         </option>
 
                                         <option value="sqlsrv">
                                             @lang('installer::app.installer.index.environment-configuration.sqlsrv')
-                                        </option>
+                                        </option> -->
                                     </x-installer::form.control-group.control>
 
                                     <x-installer::form.control-group.error control-name="db_connection" />
@@ -798,7 +812,7 @@
                                         <x-installer::form.control-group.label class="required">
                                             @lang('installer::app.installer.index.environment-configuration.default-locale')
                                         </x-installer::form.control-group.label>
-    
+
                                         <x-installer::form.control-group.control
                                             type="select"
                                             name="app_locale"
@@ -813,7 +827,7 @@
                                                 </option>
                                             @endforeach
                                         </x-installer::form.control-group.control>
-    
+
                                         <x-installer::form.control-group.error control-name="app_locale" />
                                     </x-installer::form.control-group>
 
@@ -832,14 +846,14 @@
                                             :label="trans('installer::app.installer.index.environment-configuration.default-currency')"
                                         >
                                             <option value="" disabled>Select Currencies</option>
-    
+
                                             @foreach ($currencies as $value => $label)
                                                 <option value="{{ $value }}" @if($value == 'USD') selected @endif>
                                                     @lang("installer::app.installer.index.environment-configuration.$label")
                                                 </option>
                                             @endforeach
                                         </x-installer::form.control-group.control>
-    
+
                                         <x-installer::form.control-group.error control-name="app_currency" />
                                     </x-installer::form.control-group>
                                 </div>
@@ -888,7 +902,7 @@
                                         <x-installer::form.control-group.label class="required">
                                             @lang('installer::app.installer.index.environment-configuration.allowed-currencies')
                                         </x-installer::form.control-group.label>
-    
+
                                         <!-- Allowed Currencies -->
                                         @foreach ($currencies as $key => $currency)
                                             <x-installer::form.control-group class="flex gap-2.5 w-max !mb-0 p-1.5 cursor-pointer select-none">
@@ -1005,7 +1019,7 @@
                                     <x-installer::form.control-group.control
                                         type="password"
                                         name="password"
-                                        rules="required"
+                                        rules="required|min:6"
                                         :value="old('password')"
                                         :label="trans('installer::app.installer.index.create-administrator.password')"
                                     />
@@ -1029,6 +1043,72 @@
 
                                     <x-installer::form.control-group.error control-name="confirm_password" />
                                 </x-installer::form.control-group>
+
+                                <!-- User Default Timezone -->
+                                <x-installer::form.control-group class="mb-2.5">
+                                    <x-installer::form.control-group.label class="required">
+                                        @lang('installer::app.installer.index.environment-configuration.default-timezone')
+                                    </x-installer::form.control-group.label>
+
+                                    @php
+                                        date_default_timezone_set('UTC');
+
+                                        $tzlist = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
+
+                                        $current = date_default_timezone_get();
+                                    @endphp
+
+                                    <x-installer::form.control-group.control
+                                        type="select"
+                                        name="timezone"
+                                        ::value="envData.app_timezone ?? $current"
+                                        rules="required"
+                                        :aria-label="trans('installer::app.installer.index.environment-configuration.default-timezone')"
+                                        :label="trans('installer::app.installer.index.environment-configuration.default-timezone')"
+                                    >
+                                        <option
+                                            value=""
+                                            disabled
+                                        >
+                                            @lang('installer::app.installer.index.environment-configuration.select-timezone')
+                                        </option>
+
+                                        @foreach($tzlist as $key => $value)
+                                            <option
+                                                value="{{ $value }}"
+                                                {{ $value === $current ? 'selected' : '' }}
+                                            >
+                                                {{ $value }}
+                                            </option>
+                                        @endforeach
+                                    </x-installer::form.control-group.control>
+
+                                    <x-installer::form.control-group.error control-name="timezone" />
+                                </x-installer::form.control-group>
+
+                                <!-- User's Default Locale -->
+                                    <x-installer::form.control-group class="w-full">
+                                        <x-installer::form.control-group.label class="required">
+                                            @lang('installer::app.installer.index.environment-configuration.default-locale')
+                                        </x-installer::form.control-group.label>
+
+                                        <x-installer::form.control-group.control
+                                            type="select"
+                                            name="locale"
+                                            value="{{ app()->getLocale() }}"
+                                            rules="required"
+                                            :aria-label="trans('installer::app.installer.index.environment-configuration.default-locale')"
+                                            :label="trans('installer::app.installer.index.environment-configuration.default-locale')"
+                                        >
+                                            @foreach ($locales as $value => $label)
+                                                <option value="{{ $value }}">
+                                                    @lang("installer::app.installer.index.$label")
+                                                </option>
+                                            @endforeach
+                                        </x-installer::form.control-group.control>
+
+                                        <x-installer::form.control-group.error control-name="locale" />
+                                    </x-installer::form.control-group>
                             </div>
 
                             <div class="flex px-4 py-2.5 justify-end items-center">
@@ -1079,13 +1159,6 @@
                                     >
                                         @lang('installer::app.installer.index.installation-completed.admin-panel')
                                     </a>
-
-                                    <a
-                                        href="{{ URL('/')}}"
-                                        class="px-3 py-1.5 bg-violet-700 border border-violet-700 rounded-md text-gray-50 font-semibold cursor-pointer hover:opacity-90"
-                                    >
-                                        @lang('installer::app.installer.index.installation-completed.customer-panel')
-                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -1093,14 +1166,7 @@
 
                     <div class="flex px-4 py-2.5 justify-between items-center">
                         <a
-                            href="https://forums.unopim.com"
-                            class="text-[12px] text-violet-700 font-semibold cursor-pointer"
-                        >
-                            @lang('installer::app.installer.index.installation-completed.unopim-forums')
-                        </a>
-
-                        <a
-                            href="https://unopim.com/en/extensions"
+                            href="https://unopim.com/extensions"
                             class="px-3 py-1.5 bg-white border border-violet-700 rounded-md text-violet-700 font-semibold cursor-pointer hover:opacity-90"
                         >
                             @lang('installer::app.installer.index.installation-completed.explore-unopim-extensions')
@@ -1169,7 +1235,7 @@
                     methods: {
                         FormSubmit(params, { setErrors }) {
                             const stepActions = {
-                                envDatabase: () => {
+                                envDatabase: (setErrors) => {
                                     if (params.db_connection === 'mysql') {
                                         this.completeStep('envDatabase', 'readyForInstallation', 'active', 'complete', setErrors);
 
@@ -1195,7 +1261,7 @@
                             const index = this.steps.find(step => step === this.currentStep);
 
                             if (stepActions[index]) {
-                                stepActions[index]();
+                                stepActions[index](setErrors);
                             }
                         },
 
@@ -1207,7 +1273,7 @@
 
                                 systemRequirements: () => {
                                     this.completeStep('systemRequirements', 'envDatabase', 'active', 'complete');
-                                    
+
                                     this.currentStep = 'envDatabase';
                                 },
 
@@ -1275,6 +1341,14 @@
                                     this.runMigartion(setErrors);
                             })
                             .catch(error => {
+                                alert(error.response.data.error || error.response.data.message);
+
+                                if (error.response.status == 419) {
+                                    window.location.reload();
+                                }
+
+                                this.currentStep = 'envDatabase';
+
                                 setErrors(error.response.data.errors);
                             });
                         },
@@ -1287,7 +1361,7 @@
                                     this.currentStep = 'envConfiguration';
                                 })
                                 .catch(error => {
-                                    alert(error.response.data.error);
+                                    alert(error.response.data.error || error.response.data.message);
 
                                     this.currentStep = 'envDatabase';
                                 });

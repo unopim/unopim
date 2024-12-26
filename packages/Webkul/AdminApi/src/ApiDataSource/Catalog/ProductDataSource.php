@@ -50,26 +50,7 @@ class ProductDataSource extends ApiDataSource
     {
         $paginator = $this->paginator->toArray();
 
-        return array_map(function ($data) {
-            $responseData = [
-                'sku'        => $data['sku'],
-                'parent'     => $data['parent']['sku'] ?? null,
-                'family'     => $data['attribute_family']['code'],
-                'type'       => $data['type'],
-                'additional' => $data['additional'],
-                'created_at' => $data['created_at'],
-                'updated_at' => $data['updated_at'],
-                'values'     => $data['values'],
-            ];
-
-            if (config('product_types.configurable.key') == $data['type']) {
-                $superAttributes = $this->getSupperAttributes($data);
-                $responseData['super_attributes'] = $superAttributes;
-                $responseData['variants'] = $this->getVariants($data, $superAttributes);
-            }
-
-            return $responseData;
-        }, $paginator['data'] ?? []);
+        return array_map([$this, 'normalizeProduct'], $paginator['data'] ?? []);
     }
 
     /**
@@ -102,27 +83,10 @@ class ProductDataSource extends ApiDataSource
             );
         }
 
-        $responseData = [
-            'sku'        => $product['sku'],
-            'parent'     => $product['parent']['sku'] ?? null,
-            'family'     => $product['attribute_family']['code'],
-            'type'       => $product['type'],
-            'additional' => $product['additional'],
-            'created_at' => $product['created_at'],
-            'updated_at' => $product['updated_at'],
-            'values'     => $product['values'],
-        ];
-
-        if (config('product_types.configurable.key') == $product['type']) {
-            $superAttributes = $this->getSupperAttributes($product);
-            $responseData['super_attributes'] = $superAttributes;
-            $responseData['variants'] = $this->getVariants($product, $superAttributes);
-        }
-
-        return $responseData;
+        return $this->normalizeProduct($product);
     }
 
-    public function getSupperAttributes($data)
+    public function getSuperAttributes($data)
     {
         if (! isset($data['super_attributes'])) {
             return [];
@@ -195,17 +159,12 @@ class ProductDataSource extends ApiDataSource
             case 'categories':
                 $scopeQueryBuilder = $this->filterByCategories($scopeQueryBuilder, $value['operator'], $filterTable, $value['value']);
                 break;
-            case 'status':
-                $scopeQueryBuilder->where($filterTable.'values->common->status', $value['value']);
-                break;
             default:
                 $scopeQueryBuilder->where($filterTable.$requestedColumn, $value['value']);
                 break;
         }
 
-        // Return the updated query builder instance.
         return $scopeQueryBuilder;
-
     }
 
     /**
@@ -214,8 +173,7 @@ class ProductDataSource extends ApiDataSource
      *
      * @return int|null
      *
-     * @throws ModelNotFoundException
-     *                                If a product with the given code is not found.
+     * @throws ModelNotFoundException If a product with the given code is not found.
      */
     protected function getParentIdByCode(Builder $queryBuilder, string $sku)
     {
@@ -269,5 +227,32 @@ class ProductDataSource extends ApiDataSource
         }
 
         return $scopeQueryBuilder;
+    }
+
+    /**
+     * Normalize product data for API response
+     */
+    protected function normalizeProduct(array $product): array
+    {
+        $responseData = [
+            'sku'        => $product['sku'],
+            'status'     => (bool) $product['status'],
+            'parent'     => $product['parent']['sku'] ?? null,
+            'family'     => $product['attribute_family']['code'],
+            'type'       => $product['type'],
+            'additional' => $product['additional'],
+            'created_at' => $product['created_at'],
+            'updated_at' => $product['updated_at'],
+            'values'     => $product['values'],
+        ];
+
+        if (config('product_types.configurable.key') == $product['type']) {
+            $superAttributes = $this->getSuperAttributes($product);
+
+            $responseData['super_attributes'] = $superAttributes;
+            $responseData['variants'] = $this->getVariants($product, $superAttributes);
+        }
+
+        return $responseData;
     }
 }

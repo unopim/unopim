@@ -30,7 +30,11 @@
         $fieldLabel = $field->translate($currentLocaleCode)['name'] ?? '';
 
         $fieldLabel = empty($fieldLabel) ? '['.$field->code.']' : $fieldLabel;
+
+        $fieldType = $field->type;
     @endphp
+
+    {!! view_render_event('unopim.admin.categories.dynamic-fields.field.before', ['field' => $field]) !!}
 
     <x-admin::form.control-group>
         <div class="inline-flex justify-between w-full">
@@ -51,7 +55,9 @@
             </div>
         </div>
 
-        @switch ($field->type)
+        {!! view_render_event('unopim.admin.categories.dynamic-fields.control.'.$fieldType.'.before', ['field' => $field, 'value' => $value, 'fieldName' => $fieldName]) !!}
+
+        @switch ($fieldType)
             @case ('checkbox')
                 @if (! empty($value))
                     <input type="hidden" name="{{ $fieldName }}" value="">
@@ -174,7 +180,7 @@
                         ];
                     }
 
-                    if ('select' == $field->type) {
+                    if ('select' == $fieldType) {
                         $selectedValue = ! empty($selectedValue[0]) ? $selectedValue[0] : $selectedValue;
                     }
 
@@ -182,7 +188,7 @@
                 @endphp
             @default
                 <x-admin::form.control-group.control
-                    :type="$field->type"
+                    :type="$fieldType"
                     :id="$field->code"
                     :name="$fieldName"
                     ::rules="{{ $field->getValidationsField() }}"
@@ -207,6 +213,10 @@
             />
         @endIf
 
+        {!! view_render_event('unopim.admin.categories.dynamic-fields.control.'.$fieldType.'.after', ['field' => $field, 'value' => $value, 'fieldName' => $fieldName]) !!}
+
         <x-admin::form.control-group.error :control-name="$fieldName" />
     </x-admin::form.control-group>
+
+    {!! view_render_event('unopim.admin.categories.dynamic-fields.field.after', ['fieldType' => $fieldType]) !!}
 @endforeach

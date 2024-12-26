@@ -21,6 +21,7 @@ it('should return the list of all simple products', function () {
             'data' => [
                 '*' => [
                     'sku',
+                    'status',
                     'parent',
                     'family',
                     'type',
@@ -47,6 +48,7 @@ it('should return the list of all simple products', function () {
 
     $expectedProducts = [
         'sku'        => $product->sku,
+        'status'     => (bool) $product->status,
         'parent'     => $product->parent,
         'family'     => $product->attribute_family->code,
         'type'       => $product->type,
@@ -69,6 +71,7 @@ it('should return the simple product using the code', function () {
         ->assertOK()
         ->assertJsonStructure([
             'sku',
+            'status',
             'parent',
             'family',
             'type',
@@ -1041,4 +1044,65 @@ it('should store the file attribute value when updating simple product', functio
     $this->assertNotEmpty($product->values['common'][$attributeCode] ?? '');
 
     $this->assertTrue(Storage::exists($product->values['common'][$attributeCode]));
+});
+
+/**
+ * Product Status Tests
+ */
+it('should save the product status while creating the product', function () {
+    $family = AttributeFamily::first();
+    $sku = fake()->word();
+
+    $product = [
+        'sku'    => $sku,
+        'status' => true,
+        'parent' => null,
+        'family' => $family->code,
+        'values' => [
+            'common' => [
+                'sku' => $sku,
+            ],
+        ],
+    ];
+
+    $this->withHeaders($this->headers)->json('POST', route('admin.api.products.store'), $product)
+        ->assertStatus(201)
+        ->assertJsonStructure([
+            'success',
+            'message',
+        ])
+        ->assertJsonFragment(['success' => true]);
+
+    $this->assertDatabaseHas($this->getFullTableName(Product::class), ['sku' => $product['sku'], 'status' => 1]);
+});
+
+it('should update the product status', function () {
+    $product = Product::factory()->simple()->create();
+
+    $sku = $product->sku;
+
+    $updatedproduct = [
+        'sku'    => $sku,
+        'status' => (bool) (! $product->status),
+        'family' => $product->attribute_family->code,
+        'parent' => null,
+        'values' => [
+            'common' => [
+                'sku' => $sku,
+            ],
+        ],
+    ];
+
+    $this->withHeaders($this->headers)->json('PUT', route('admin.api.products.update', ['code' => $sku]), $updatedproduct)
+        ->assertStatus(200)
+        ->assertJsonStructure([
+            'success',
+            'message',
+        ])
+        ->assertJsonFragment(['success' => true]);
+
+    $this->assertDatabaseHas($this->getFullTableName(Product::class), [
+        'sku'    => $updatedproduct['sku'],
+        'status' => (int) $updatedproduct['status']],
+    );
 });

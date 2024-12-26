@@ -13,6 +13,7 @@
             <x-admin::form
                 :action="route('admin.settings.data_transfer.exports.store')"
                 enctype="multipart/form-data"
+                ref="exportCreateForm"
             >
                 {!! view_render_event('unopim.admin.settings.data_transfer.exports.create.create_form_controls.before') !!}
 
@@ -101,7 +102,7 @@
                                     label-by="label"
                                 >   
                                 </x-admin::form.control-group.control>
-                                <x-admin::form.control-group.error control-name="type" /> 
+                                <x-admin::form.control-group.error control-name="entity_type" /> 
                             </x-admin::form.control-group>
                         </div>
                         {!! view_render_event('unopim.admin.settings.data_transfer.exports.create.card.general.after') !!}
@@ -157,15 +158,12 @@
 
                             <x-slot:content>                        
                                 <!-- Filter Fields -->
-                                {!! view_render_event('unopim.admin.settings.data_transfer.exports.create.filters.fields.befor') !!}
-
-                                @php
-                                    $fields = $exporterConfig['categories']['filters']['fields'];
-                                    $filters = $export->filters ?? [];
-                                @endphp
+                                {!! view_render_event('unopim.admin.settings.data_transfer.exports.create.filters.fields.before') !!}
 
                                 <x-admin::data-transfer.filter-fields
-                                    :fields="$fields"
+                                    ::entity-type="entityType"
+                                    ::fields="filterFields"
+                                    :exporter-config="json_encode($exporterConfig)"
                                 >
                                 </x-admin::data-transfer.filter-fields>
 
@@ -186,19 +184,46 @@
                 data() {
                     return {
                         fileFormat: 'Csv',
-                        selectedFileFormat: 'Csv',
-                        entityType: '',
+                        selectedFileFormat: "{{ old('filters.file_format') ?? null }}",
+                        entityType: 'categories',
                         exporterConfig: @json($exporterConfig), 
                         filterFields: @json($exporterConfig['categories']['filters']['fields']),
                     };
+                },
+
+                mounted() {
+                    this.$emitter.on('filter-value-changed', this.handleFilterValues);
                 },
 
                 watch: {
                     fileFormat(value) {
                         this.selectedFileFormat = JSON.parse(value).value;
                     },
+
                     entityType(value) {
-                        this.filterFields = this.exporterConfig[JSON.parse(value).id]['filters']['fields'];
+                        let configKey = this.parseValue(value)?.id;
+
+                        if (! configKey) {
+                            return;
+                        }
+
+                        this.filterFields = this.exporterConfig[configKey]['filters']['fields'];
+
+                        if (this.filterFields.filter(field => field.name == 'file_format').length == 0) {
+                            this.selectedFileFormat = '';
+                        }
+
+                        this.$emitter.emit('entity-type-changed', value);
+
+                        let formValues = this.$refs.exportCreateForm.values;
+
+                        let resetState = {
+                            values: {code: formValues.code},
+                            errors: this.$refs.exportCreateForm.errors
+                        };
+
+                        /** Resets other field values except for errors and code */
+                        this.$refs.exportCreateForm.resetForm(resetState);
                     },
                 },
                 methods: {
@@ -207,6 +232,12 @@
                             return value ? JSON.parse(value) : null;
                         } catch (error) {
                             return value;
+                        }
+                    },
+
+                    handleFilterValues(changed) {
+                        if ('file_format' == changed.filterName) {
+                            this.selectedFileFormat = changed.value;
                         }
                     },
                 },
