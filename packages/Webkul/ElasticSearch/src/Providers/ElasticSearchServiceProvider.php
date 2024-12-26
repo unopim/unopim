@@ -3,9 +3,12 @@
 namespace Webkul\ElasticSearch\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Webkul\ElasticSearch\Console\Command\Indexer;
-use Webkul\ElasticSearch\Observers\ProductObserver;
-use Webkul\Product\Models\Product;
+use Webkul\ElasticSearch\Console\Command\ProductIndexer;
+use Webkul\ElasticSearch\Console\Command\CategoryIndexer;
+use Webkul\ElasticSearch\Observers\Product;
+use Webkul\ElasticSearch\Observers\Category;
+use Webkul\Product\Models\Product as Products;
+use Webkul\Category\Models\Category as Categories;
 
 class ElasticSearchServiceProvider extends ServiceProvider
 {
@@ -23,7 +26,8 @@ class ElasticSearchServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Product::observe(ProductObserver::class);
+        Products::observe(Product::class);
+        Categories::observe(Category::class);
     }
 
     /**
@@ -43,7 +47,8 @@ class ElasticSearchServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                Indexer::class,
+                ProductIndexer::class,
+                CategoryIndexer::class,
             ]);
         }
     }

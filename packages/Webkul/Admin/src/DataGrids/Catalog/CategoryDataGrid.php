@@ -3,6 +3,8 @@
 namespace Webkul\Admin\DataGrids\Catalog;
 
 use Illuminate\Database\Query\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Webkul\Core\Facades\ElasticSearch;
 use Illuminate\Support\Facades\DB;
 use Webkul\Core\Models\Locale;
 use Webkul\DataGrid\DataGrid;
@@ -145,6 +147,126 @@ class CategoryDataGrid extends DataGrid
                 'options' => ['actionType' => 'delete'],
             ]);
         }
+    }
+
+    /**
+     * Process request.
+     */
+    public function processRequest(): void
+    {
+        if (! env('ELASTICSEARCH_ENABLED', false)) {
+            parent::processRequest();
+
+            return;
+        }
+
+        // Additional logic specific to ProductDataGrid
+        $params = $this->validatedRequest();
+        $pagination = $params['pagination'];
+
+        $results = Elasticsearch::search([
+            'index' => strtolower('categories'),
+            'body'  => [
+                'from'          => ($pagination['page'] * $pagination['per_page']) - $pagination['per_page'],
+                'size'          => $pagination['per_page'],
+                'stored_fields' => [],
+                'query'         => [
+                    'bool' => $this->getElasticFilters($params['filters'] ?? []) ?: new \stdClass,
+                ],
+                'sort'          => $this->getElasticSort($params['sort'] ?? []),
+            ],
+        ]);
+
+        $ids = collect($results['hits']['hits'])->pluck('_id')->toArray();
+
+        $this->queryBuilder->whereIn('cat.id', $ids)
+            ->orderBy(DB::raw('FIELD(cat.id, '.implode(',', $ids).')'));
+
+        $total = $results['hits']['total']['value'];
+
+        $this->paginator = new LengthAwarePaginator(
+            $total ? $this->queryBuilder->get() : [],
+            $total,
+            $pagination['per_page'],
+            $pagination['page'],
+            [
+                'path'  => request()->url(),
+                'query' => [],
+            ]
+        );
+    }
+
+    /**
+     * Process request.
+     */
+    protected function getElasticFilters($params): array
+    {
+        $filters = [];
+
+        foreach ($params as $attribute => $value) {
+            if (in_array($attribute, ['channel', 'locale'])) {
+                continue;
+            }
+
+            if ($attribute == 'all') {
+                $attribute = 'name';
+            }
+
+            $filters['filter'][] = $this->getFilterValue($attribute, $value);
+        }
+
+        return $filters;
+    }
+
+    /**
+     * Return applied filters
+     */
+    public function getFilterValue(mixed $attribute, mixed $values): array
+    {
+        switch ($attribute) {
+            case 'category_id':
+                return [
+                    'terms' => [
+                        'id' => $values,
+                    ],
+                ];
+
+            case 'name':
+                return [
+                    'terms' => [
+                        'name' => $values,
+                    ],
+                ];
+
+            default:
+                return [
+                    'terms' => [
+                        $attribute => $values,
+                    ],
+                ];
+        }
+    }
+
+    /**
+     * Process request.
+     */
+    protected function getElasticSort($params): array
+    {
+        $sort = $params['column'] ?? $this->primaryColumn;
+
+        if ($sort == 'name') {
+            $sort .= '.keyword';
+        }
+
+        if ($sort == 'category_id') {
+            $sort = 'id';
+        }
+
+        return [
+            $sort => [
+                'order' => $params['order'] ?? $this->sortOrder,
+            ],
+        ];
     }
 
     /**

@@ -3,11 +3,11 @@
 namespace Webkul\ElasticSearch\Observers;
 
 use Webkul\Core\Facades\ElasticSearch;
-use Webkul\Product\Models\Product;
+use Webkul\Product\Models\Product as Products;
 
-class ProductObserver
+class Product
 {
-    public function created(Product $product)
+    public function created(Products $product)
     {
         if (env('ELASTICSEARCH_ENABLED', false)) {
             Elasticsearch::index([
@@ -18,7 +18,7 @@ class ProductObserver
         }
     }
 
-    public function updated(Product $product)
+    public function updated(Products $product)
     {
         if (env('ELASTICSEARCH_ENABLED', false)) {
             Elasticsearch::index([
@@ -29,7 +29,7 @@ class ProductObserver
         }
     }
 
-    public function deleted(Product $product)
+    public function deleted(Products $product)
     {
         if (env('ELASTICSEARCH_ENABLED', false)) {
             Elasticsearch::delete([
