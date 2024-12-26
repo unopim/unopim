@@ -31,7 +31,7 @@ class Indexer extends Command
             // Indexing Products
             $products = Product::all();
 
-            $productIndex = strtolower('products_'.core()->getRequestedChannelCode().'_'.core()->getRequestedLocaleCode().'_index');
+            $productIndex = strtolower('products');
 
             $dbProductIds = $products->pluck('id')->toArray();
 

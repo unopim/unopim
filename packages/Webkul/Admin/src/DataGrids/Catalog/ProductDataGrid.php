@@ -260,10 +260,9 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         // Additional logic specific to ProductDataGrid
         $params = $this->validatedRequest();
         $pagination = $params['pagination'];
-        $channelCodes = request()->input('filters.channel') ?? core()->getAllChannels()->pluck('code')->toArray();
 
         $results = Elasticsearch::search([
-            'index' => strtolower('products_'.core()->getRequestedChannelCode().'_'.core()->getRequestedLocaleCode().'_index'),
+            'index' => strtolower('products'),
             'body'  => [
                 'from'          => ($pagination['page'] * $pagination['per_page']) - $pagination['per_page'],
                 'size'          => $pagination['per_page'],

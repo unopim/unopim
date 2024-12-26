@@ -11,7 +11,7 @@ class ProductObserver
     {
         if (env('ELASTICSEARCH_ENABLED', false)) {
             Elasticsearch::index([
-                'index' => strtolower('products_'.core()->getRequestedChannelCode().'_'.core()->getRequestedLocaleCode().'_index'),
+                'index' => strtolower('products'),
                 'id'    => $product->id,
                 'body'  => $product->toArray(),
             ]);
@@ -22,7 +22,7 @@ class ProductObserver
     {
         if (env('ELASTICSEARCH_ENABLED', false)) {
             Elasticsearch::index([
-                'index' => strtolower('products_'.core()->getRequestedChannelCode().'_'.core()->getRequestedLocaleCode().'_index'),
+                'index' => strtolower('products'),
                 'id'    => $product->id,
                 'body'  => $product->toArray(),
             ]);
@@ -33,7 +33,7 @@ class ProductObserver
     {
         if (env('ELASTICSEARCH_ENABLED', false)) {
             Elasticsearch::delete([
-                'index' => strtolower('products_'.core()->getRequestedChannelCode().'_'.core()->getRequestedLocaleCode().'_index'),
+                'index' => strtolower('products'),
                 'id'    => $product->id,
             ]);
         }

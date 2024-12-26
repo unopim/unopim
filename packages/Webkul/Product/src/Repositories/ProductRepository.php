@@ -181,6 +181,20 @@ class ProductRepository extends Repository
     }
 
     /**
+     * Get all products.
+     *
+     * To Do (@devansh-webkul): Need to reduce all the request query from this repo and provide
+     * good request parameter with an array type as an argument. Make a clean pull request for
+     * this to have track record.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getAll()
+    {
+        return $this->searchFromDatabase();
+    }
+
+    /**
      * Search product from database.
      *
      * @return \Illuminate\Support\Collection
