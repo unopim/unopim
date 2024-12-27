@@ -34,56 +34,13 @@
                             <x-admin::form.control-group.label class="required">
                                 @lang('admin::app.components.tinymce.ai-generation.model')
                             </x-admin::form.control-group.label>
-                            @php
-                                $options = [
-                                    [
-                                        'id'    => 'gpt-3.5-turbo',
-                                        'label' => trans('admin::app.components.tinymce.ai-generation.gpt-3-5-turbo'),
-                                    ], [
-                                        'id'    => 'llama2',
-                                        'label' => trans('admin::app.components.tinymce.ai-generation.llama2'),
-                                    ], [
-                                        'id'    => 'mistral',
-                                        'label' => trans('admin::app.components.tinymce.ai-generation.mistral'),
-                                    ], [
-                                        'id'    => 'dolphin-phi',
-                                        'label' => trans('admin::app.components.tinymce.ai-generation.dolphin-phi'),
-                                    ], [
-                                        'id'    => 'phi',
-                                        'label' => trans('admin::app.components.tinymce.ai-generation.phi'),
-                                    ], [
-                                        'id'    => 'starling-lm',
-                                        'label' => trans('admin::app.components.tinymce.ai-generation.starling-lm'),
-                                    ], [
-                                        'id'    => 'llama2-uncensored',
-                                        'label' => trans('admin::app.components.tinymce.ai-generation.llama2-uncensored'),
-                                    ], [
-                                        'id'    => 'llama2:13b',
-                                        'label' => trans('admin::app.components.tinymce.ai-generation.llama2:13b'),
-                                    ], [
-                                        'id'    => 'llama2:70b',
-                                        'label' => trans('admin::app.components.tinymce.ai-generation.llama2:70b'),
-                                    ], [
-                                        'id'    => 'orca-mini',
-                                        'label' => trans('admin::app.components.tinymce.ai-generation.orca-mini'),
-                                    ], [
-                                        'id'    => 'vicuna',
-                                        'label' => trans('admin::app.components.tinymce.ai-generation.vicuna'),
-                                    ], [
-                                        'id'    => 'llava',
-                                        'label' => trans('admin::app.components.tinymce.ai-generation.llava'),
-                                    ],
-                                ];
-
-                                $options = json_encode($options);
-                            @endphp
                             <x-admin::form.control-group.control
                                 type="select"
                                 name="model"
                                 rules="required"
                                 v-model="ai.model"
                                 :label="trans('admin::app.components.tinymce.ai-generation.model')"
-                                :options="$options"
+                                ::options="aiModels"
                             >
                             </x-admin::form.control-group.control>
 
@@ -192,6 +149,8 @@
 
                         content: null,
                     },
+
+                    aiModels: [],
                 };
             },
 
@@ -341,15 +300,47 @@
                                         content: null,
                                     };
 
-                                    self.$refs.magicAIModal.toggle()
+                                    self.magicAIModalToggle()
                                 }
                             });
 
                             editor.on('keyup', () => {
                                 this.field.onInput(editor.getContent());
                             });
+
+                            editor.on("keydown", (event) => {
+                            if (event.key === "@") {
+                                event.preventDefault();
+                                this.handleAtKey(editor);
+                            }
+                        });
                         },
                     });
+                },
+
+                handleAtKey(editor) {
+                // Implement your custom logic here
+                console.log("`@` key pressed!");
+                // Example: Open a dropdown for mentions
+                // You can use editor.execCommand or insert content programmatically
+                editor.insertContent('<span>@mention</span>');
+                },
+
+                magicAIModalToggle() {
+                    this.$refs.magicAIModal.toggle();
+
+                    if (this.aiModels.length === 0) {
+                        this.fetchModels();
+                    }
+                },
+
+                async fetchModels() {
+                    try {
+                        const response = await axios.get("{{ route('admin.magic_ai.model') }}");
+                        this.aiModels = response.data.models; // Populate the models array with the response data
+                    } catch (error) {
+                        console.error("Failed to fetch AI models:", error);
+                    }
                 },
 
                 generate(params, { resetForm, resetField, setErrors }) {

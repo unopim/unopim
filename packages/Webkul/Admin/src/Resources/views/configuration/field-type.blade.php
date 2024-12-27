@@ -90,34 +90,21 @@
         <!-- Select input -->
         @elseif ($field['type'] == 'select')
             @php $selectedOption = core()->getConfigData($nameKey) ?? ''; @endphp
-
+            @php
+                $options = isset($field['repository']) ? json_encode($value) : json_encode($field['options']);
+            @endphp
+            
             <x-admin::form.control-group.control
                 type="select"
                 :id="$name"
                 :name="$name"
                 :rules="$validations"
+                :options="$options"
                 :value="$selectedOption"
                 :label="trans($field['title'])"
+                track-by="value"
+                label-by="title"
             >
-                @if (isset($field['repository']))
-                    @foreach ($value as $key => $option)
-                        <option
-                            value="{{ $key }}"
-                            {{ $key == $selectedOption ? 'selected' : ''}}
-                        >
-                            @lang($option)
-                        </option>
-                    @endforeach
-                @else
-                    @foreach ($field['options'] as $option)
-                        <option
-                            value="{{ $option['value'] ?? 0 }}"
-                            {{ $value == $selectedOption ? 'selected' : ''}}
-                        >
-                            @lang($option['title'])
-                        </option>
-                    @endforeach
-                @endif
             </x-admin::form.control-group.control>
 
         <!-- Multiselect Input -->

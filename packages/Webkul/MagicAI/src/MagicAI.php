@@ -2,11 +2,24 @@
 
 namespace Webkul\MagicAI;
 
+use Webkul\MagicAI\Services\AIModel;
+use Webkul\MagicAI\Services\Groq;
 use Webkul\MagicAI\Services\Ollama;
 use Webkul\MagicAI\Services\OpenAI;
 
 class MagicAI
 {
+    const MAGIC_OPEN_AI = 'openai';
+
+    const MAGIC_GROQ_AI = 'groq';
+
+    const MAGIC_OLLAMA_AI = 'ollama';
+
+    /**
+     * AI platform.
+     */
+    protected string $platform;
+
     /**
      * LLM model.
      */
@@ -36,6 +49,16 @@ class MagicAI
      * LLM prompt text.
      */
     protected string $prompt;
+
+    /**
+     * Set LLM model
+     */
+    public function setPlatForm(string $platform): self
+    {
+        $this->platform = $platform;
+
+        return $this;
+    }
 
     /**
      * Set LLM model
@@ -116,14 +139,24 @@ class MagicAI
     /**
      * Get LLM model instance.
      */
-    public function getModelInstance(): OpenAI|Ollama
+    public function getModelInstance(): OpenAI|Groq|Ollama
     {
-        if (in_array($this->model, ['gpt-3.5-turbo', 'dall-e-2', 'dall-e-3'])) {
+        if ($this->platform === self::MAGIC_OPEN_AI) {
             return new OpenAI(
                 $this->model,
                 $this->prompt,
                 $this->temperature,
                 $this->stream,
+            );
+        }
+
+        if ($this->platform === self::MAGIC_GROQ_AI) {
+            return new Groq(
+                $this->model,
+                $this->prompt,
+                $this->temperature,
+                $this->stream,
+                $this->raw,
             );
         }
 
@@ -134,5 +167,13 @@ class MagicAI
             $this->stream,
             $this->raw,
         );
+    }
+
+    /**
+     * Gets the list of models from the API.
+     */
+    public function getModelList(): array
+    {
+        return AIModel::getModels();
     }
 }

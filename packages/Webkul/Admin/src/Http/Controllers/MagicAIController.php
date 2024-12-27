@@ -4,9 +4,20 @@ namespace Webkul\Admin\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Webkul\MagicAI\Facades\MagicAI;
+use Webkul\MagicAI\Services\AIModel;
 
 class MagicAIController extends Controller
 {
+    /**
+     * Get the AI model.
+     */
+    public function model(): JsonResponse
+    {
+        return new JsonResponse([
+            'models' => AIModel::getAvailableModels(),
+        ]);
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -19,6 +30,7 @@ class MagicAIController extends Controller
 
         try {
             $response = MagicAI::setModel(request()->input('model'))
+                ->setPlatForm(core()->getConfigData('general.magic_ai.settings.ai_platform'))
                 ->setPrompt(request()->input('prompt'))
                 ->ask();
 

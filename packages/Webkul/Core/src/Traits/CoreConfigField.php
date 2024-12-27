@@ -2,6 +2,8 @@
 
 namespace Webkul\Core\Traits;
 
+use Illuminate\Support\Str;
+
 trait CoreConfigField
 {
     /**
@@ -56,11 +58,9 @@ trait CoreConfigField
     public function getValueByRepository($field)
     {
         if (isset($field['repository'])) {
-            $temp = explode('@', $field['repository']);
-            $class = app(current($temp));
-            $method = end($temp);
+            [$class, $method] = Str::parseCallback($field['repository']);
 
-            return $class->$method();
+            return app($class)->$method();
         }
 
         return null;

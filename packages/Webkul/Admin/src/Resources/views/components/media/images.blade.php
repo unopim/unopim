@@ -106,7 +106,7 @@
                         <x-admin::modal ref="choiceImageModal">
                             <!-- Modal Header -->
                             <x-slot:header>
-                                <p class="grid text-sm text-gray-600 dark:text-gray-300 font-semibold text-center">
+                                <p class="grid text-base text-gray-800 dark:text-gray-300 font-semibold text-center">
                                     @lang('admin::app.components.media.images.add-image-btn')
                                 </p>
                             </x-slot>
@@ -133,7 +133,7 @@
                                                     </defs> 
                                                 </svg>
 
-                                                <span class="text-gray-600 text-sm">Generate with AI</span>
+                                                <span class="text-gray-600 text-sm font-semibold">Generate with AI</span>
                                             </div>
                                             
                                         </div>
@@ -149,7 +149,7 @@
                                             <div class="flex gap-1 p-3 border rounded-md rounded-sm text-sm">
                                                 <span class="icon-export text-xl"></span>
 
-                                                <span class="text-gray-600 text-sm">Upload from Device</span>
+                                                <span class="text-gray-600 text-sm font-semibold">Upload from Device</span>
                                             </div>
                                             
                                         </div>
