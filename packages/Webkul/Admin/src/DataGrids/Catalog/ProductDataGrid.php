@@ -257,7 +257,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             return;
         }
 
-        // Additional logic specific to ProductDataGrid
         $params = $this->validatedRequest();
         $pagination = $params['pagination'];
 

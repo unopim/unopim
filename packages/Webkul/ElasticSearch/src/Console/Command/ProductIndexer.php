@@ -23,18 +23,25 @@ class ProductIndexer extends Command
 
             $start = microtime(true);
 
-            // Indexing Products
             $products = Product::all();
 
-            $productIndex = strtolower(env('ELASTICSEARCH_INDEX_PREFIX').'_products');
+            if (count($products) != 0) {
+                $productIndex = strtolower(env('ELASTICSEARCH_INDEX_PREFIX').'_products');
 
-            $dbProductIds = $products->pluck('id')->toArray();
+                $dbProductIds = $products->pluck('id')->toArray();
 
-            try {
+                foreach ($products as $product) {
+                    Elasticsearch::index([
+                        'index' => $productIndex,
+                        'id'    => $product->id,
+                        'body'  => $product->toArray(),
+                    ]);
+                }
+
                 $elasticProductIds = collect(Elasticsearch::search([
                     'index' => $productIndex,
                     'body'  => [
-                        '_source' => false, // Fetch only IDs
+                        '_source' => false,
                         'query'   => [
                             'match_all' => new \stdClass,
                         ],
@@ -49,18 +56,11 @@ class ProductIndexer extends Command
                         'id'    => $productId,
                     ]);
                 }
-            } catch (\Exception $e) {
-            }
 
-            foreach ($products as $product) {
-                Elasticsearch::index([
-                    'index' => $productIndex,
-                    'id'    => $product->id,
-                    'body'  => $product->toArray(),
-                ]);
+                $this->info('Products indexed successfully!');
+            } else {
+                $this->info('No product found');
             }
-
-            $this->info('Products indexed successfully!');
 
             $end = microtime(true);
 

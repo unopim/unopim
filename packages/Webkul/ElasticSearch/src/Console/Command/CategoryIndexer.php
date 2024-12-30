@@ -23,12 +23,19 @@ class CategoryIndexer extends Command
 
             $start = microtime(true);
 
-            // Indexing Categories
             $categories = Category::all();
 
-            $dbCategoryIds = $categories->pluck('id')->toArray();
+            if (count($categories) != 0) {
+                $dbCategoryIds = $categories->pluck('id')->toArray();
 
-            try {
+                foreach ($categories as $category) {
+                    Elasticsearch::index([
+                        'index' => strtolower(env('ELASTICSEARCH_INDEX_PREFIX').'_categories'),
+                        'id'    => $category->id,
+                        'body'  => $category->toArray(),
+                    ]);
+                }
+
                 $elasticCategoryIds = collect(Elasticsearch::search([
                     'index' => strtolower(env('ELASTICSEARCH_INDEX_PREFIX').'_categories'),
                     'body'  => [
@@ -47,18 +54,11 @@ class CategoryIndexer extends Command
                         'id'    => $categoryId,
                     ]);
                 }
-            } catch (\Exception $e) {
-            }
 
-            foreach ($categories as $category) {
-                Elasticsearch::index([
-                    'index' => strtolower(env('ELASTICSEARCH_INDEX_PREFIX').'_categories'),
-                    'id'    => $category->id,
-                    'body'  => $category->toArray(),
-                ]);
+                $this->info('Categories indexed successfully!');
+            } else {
+                $this->info('No category found');
             }
-
-            $this->info('Categories indexed successfully!');
 
             $end = microtime(true);
 

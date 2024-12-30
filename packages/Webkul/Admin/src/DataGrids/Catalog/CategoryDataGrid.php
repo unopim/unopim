@@ -160,7 +160,6 @@ class CategoryDataGrid extends DataGrid
             return;
         }
 
-        // Additional logic specific to ProductDataGrid
         $params = $this->validatedRequest();
         $pagination = $params['pagination'];
 
