@@ -2,9 +2,11 @@
 
 namespace Webkul\Admin\DataGrids\Catalog;
 
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
+use Webkul\Core\Facades\ElasticSearch;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\DataGrid\Contracts\ExportableInterface;
 use Webkul\DataGrid\DataGrid;
@@ -242,6 +244,147 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 ],
             ]);
         }
+    }
+
+    /**
+     * Process request.
+     */
+    public function processRequest(): void
+    {
+        if (! env('ELASTICSEARCH_ENABLED', false)) {
+            parent::processRequest();
+
+            return;
+        }
+
+        $params = $this->validatedRequest();
+        $pagination = $params['pagination'];
+
+        $results = Elasticsearch::search([
+            'index' => strtolower(env('ELASTICSEARCH_INDEX_PREFIX').'_products'),
+            'body'  => [
+                'from'          => ($pagination['page'] * $pagination['per_page']) - $pagination['per_page'],
+                'size'          => $pagination['per_page'],
+                'stored_fields' => [],
+                'query'         => [
+                    'bool' => $this->getElasticFilters($params['filters'] ?? []) ?: new \stdClass,
+                ],
+                'sort'          => $this->getElasticSort($params['sort'] ?? []),
+            ],
+        ]);
+
+        $ids = collect($results['hits']['hits'])->pluck('_id')->toArray();
+
+        $this->queryBuilder->whereIn('products.id', $ids)
+            ->orderBy(DB::raw('FIELD(products.id, '.implode(',', $ids).')'));
+
+        $total = $results['hits']['total']['value'];
+
+        $this->paginator = new LengthAwarePaginator(
+            $total ? $this->queryBuilder->get() : [],
+            $total,
+            $pagination['per_page'],
+            $pagination['page'],
+            [
+                'path'  => request()->url(),
+                'query' => [],
+            ]
+        );
+    }
+
+    /**
+     * Process request.
+     */
+    protected function getElasticFilters($params): array
+    {
+        $filters = [];
+
+        foreach ($params as $attribute => $value) {
+            if (in_array($attribute, ['channel', 'locale'])) {
+                continue;
+            }
+
+            if ($attribute == 'all') {
+                $attribute = 'name';
+            }
+
+            $filters['filter'][] = $this->getFilterValue($attribute, $value);
+        }
+
+        return $filters;
+    }
+
+    /**
+     * Return applied filters
+     */
+    public function getFilterValue(mixed $attribute, mixed $values): array
+    {
+        switch ($attribute) {
+            case 'product_id':
+                return [
+                    'terms' => [
+                        'id' => $values,
+                    ],
+                ];
+
+            case 'attribute_family':
+                return [
+                    'terms' => [
+                        'attribute_family_id' => $values,
+                    ],
+                ];
+
+            case 'sku':
+            case 'name':
+                $filters = [];
+
+                foreach ($values as $value) {
+                    $filters['bool']['should'][] = [
+                        'match_phrase_prefix' => [
+                            $attribute => $value,
+                        ],
+                    ];
+                }
+
+                return $filters;
+
+            default:
+                return [
+                    'terms' => [
+                        $attribute => $values,
+                    ],
+                ];
+        }
+    }
+
+    /**
+     * Process request.
+     */
+    protected function getElasticSort($params): array
+    {
+        $sort = $params['column'] ?? $this->primaryColumn;
+
+        if ($sort == 'type') {
+            $sort .= '.keyword';
+        }
+
+        if ($sort == 'name') {
+            $sort .= '.keyword';
+        }
+
+        if ($sort == 'attribute_family') {
+            $sort .= '_id';
+        }
+
+        if ($sort == 'product_id') {
+            $sort = 'id';
+        }
+
+        return [
+            $sort => [
+                'order' => $params['order'] ?? $this->sortOrder,
+            ],
+        ];
     }
 
     /**

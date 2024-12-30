@@ -2,9 +2,6 @@
 
 namespace Webkul\Product\Listeners;
 
-use Illuminate\Support\Facades\Bus;
-use Webkul\Product\Jobs\ElasticSearch\DeleteIndex as DeleteElasticSearchIndexJob;
-use Webkul\Product\Jobs\ElasticSearch\UpdateCreateIndex as UpdateCreateElasticSearchIndexJob;
 use Webkul\Product\Repositories\ProductRepository;
 
 class Product
@@ -17,36 +14,6 @@ class Product
     public function __construct(
         protected ProductRepository $productRepository,
     ) {}
-
-    /**
-     * Update or create product indices
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return void
-     */
-    public function afterUpdate($product)
-    {
-        $productIds = $this->getAllRelatedProductIds($product);
-
-        Bus::chain([
-            new UpdateCreateElasticSearchIndexJob($productIds),
-        ])->dispatch();
-    }
-
-    /**
-     * Delete product indices
-     *
-     * @param  int  $productId
-     * @return void
-     */
-    public function beforeDelete($productId)
-    {
-        if (core()->getConfigData('catalog.products.storefront.search_mode') != 'elastic') {
-            return;
-        }
-
-        DeleteElasticSearchIndexJob::dispatch([$productId]);
-    }
 
     /**
      * Returns parents bundle product ids associated with simple product

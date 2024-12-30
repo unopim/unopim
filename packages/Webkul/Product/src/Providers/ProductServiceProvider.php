@@ -4,7 +4,6 @@ namespace Webkul\Product\Providers;
 
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
-use Webkul\Product\Console\Commands\Indexer;
 use Webkul\Product\Facades\ProductImage as ProductImageFacade;
 use Webkul\Product\Facades\ProductVideo as ProductVideoFacade;
 use Webkul\Product\Facades\ValueSetter as ProductValueSetter;
@@ -39,8 +38,6 @@ class ProductServiceProvider extends ServiceProvider
     {
         $this->registerConfig();
 
-        $this->registerCommands();
-
         $this->registerFacades();
     }
 
@@ -50,16 +47,6 @@ class ProductServiceProvider extends ServiceProvider
     public function registerConfig(): void
     {
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/product_types.php', 'product_types');
-    }
-
-    /**
-     * Register the console commands of this package.
-     */
-    protected function registerCommands(): void
-    {
-        if ($this->app->runningInConsole()) {
-            $this->commands([Indexer::class]);
-        }
     }
 
     /**
