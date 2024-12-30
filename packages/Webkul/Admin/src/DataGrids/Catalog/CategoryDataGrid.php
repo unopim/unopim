@@ -4,8 +4,8 @@ namespace Webkul\Admin\DataGrids\Catalog;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Webkul\Core\Facades\ElasticSearch;
 use Illuminate\Support\Facades\DB;
+use Webkul\Core\Facades\ElasticSearch;
 use Webkul\Core\Models\Locale;
 use Webkul\DataGrid\DataGrid;
 
@@ -165,7 +165,7 @@ class CategoryDataGrid extends DataGrid
         $pagination = $params['pagination'];
 
         $results = Elasticsearch::search([
-            'index' => strtolower('categories'),
+            'index' => strtolower(env('ELASTICSEARCH_INDEX_PREFIX').'_categories'),
             'body'  => [
                 'from'          => ($pagination['page'] * $pagination['per_page']) - $pagination['per_page'],
                 'size'          => $pagination['per_page'],

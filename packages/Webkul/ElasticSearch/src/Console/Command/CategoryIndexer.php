@@ -30,7 +30,7 @@ class CategoryIndexer extends Command
 
             try {
                 $elasticCategoryIds = collect(Elasticsearch::search([
-                    'index' => 'categories',
+                    'index' => strtolower(env('ELASTICSEARCH_INDEX_PREFIX').'_categories'),
                     'body'  => [
                         '_source' => false,
                         'query'   => [
@@ -43,15 +43,16 @@ class CategoryIndexer extends Command
 
                 foreach ($categoriesToDelete as $categoryId) {
                     Elasticsearch::delete([
-                        'index' => 'categories',
+                        'index' => strtolower(env('ELASTICSEARCH_INDEX_PREFIX').'_categories'),
                         'id'    => $categoryId,
                     ]);
                 }
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) {
+            }
 
             foreach ($categories as $category) {
                 Elasticsearch::index([
-                    'index' => 'categories',
+                    'index' => strtolower(env('ELASTICSEARCH_INDEX_PREFIX').'_categories'),
                     'id'    => $category->id,
                     'body'  => $category->toArray(),
                 ]);

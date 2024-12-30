@@ -26,7 +26,7 @@ class ProductIndexer extends Command
             // Indexing Products
             $products = Product::all();
 
-            $productIndex = strtolower('products');
+            $productIndex = strtolower(env('ELASTICSEARCH_INDEX_PREFIX').'_products');
 
             $dbProductIds = $products->pluck('id')->toArray();
 
@@ -49,7 +49,8 @@ class ProductIndexer extends Command
                         'id'    => $productId,
                     ]);
                 }
-            } catch (\Exception $e) {}
+            } catch (\Exception $e) {
+            }
 
             foreach ($products as $product) {
                 Elasticsearch::index([

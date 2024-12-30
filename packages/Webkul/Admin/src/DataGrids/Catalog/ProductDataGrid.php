@@ -262,7 +262,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $pagination = $params['pagination'];
 
         $results = Elasticsearch::search([
-            'index' => strtolower('products'),
+            'index' => strtolower(env('ELASTICSEARCH_INDEX_PREFIX').'_products'),
             'body'  => [
                 'from'          => ($pagination['page'] * $pagination['per_page']) - $pagination['per_page'],
                 'size'          => $pagination['per_page'],

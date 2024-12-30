@@ -11,7 +11,7 @@ class Product
     {
         if (env('ELASTICSEARCH_ENABLED', false)) {
             Elasticsearch::index([
-                'index' => strtolower('products'),
+                'index' => strtolower(env('ELASTICSEARCH_INDEX_PREFIX').'_products'),
                 'id'    => $product->id,
                 'body'  => $product->toArray(),
             ]);
@@ -22,7 +22,7 @@ class Product
     {
         if (env('ELASTICSEARCH_ENABLED', false)) {
             Elasticsearch::index([
-                'index' => strtolower('products'),
+                'index' => strtolower(env('ELASTICSEARCH_INDEX_PREFIX').'_products'),
                 'id'    => $product->id,
                 'body'  => $product->toArray(),
             ]);
@@ -33,7 +33,7 @@ class Product
     {
         if (env('ELASTICSEARCH_ENABLED', false)) {
             Elasticsearch::delete([
-                'index' => strtolower('products'),
+                'index' => strtolower(env('ELASTICSEARCH_INDEX_PREFIX').'_products'),
                 'id'    => $product->id,
             ]);
         }

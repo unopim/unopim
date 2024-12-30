@@ -2,8 +2,8 @@
 
 namespace Webkul\ElasticSearch\Observers;
 
-use Webkul\Core\Facades\ElasticSearch;
 use Webkul\Category\Models\Category as Categories;
+use Webkul\Core\Facades\ElasticSearch;
 
 class Category
 {
@@ -11,7 +11,7 @@ class Category
     {
         if (env('ELASTICSEARCH_ENABLED', false)) {
             Elasticsearch::index([
-                'index' => strtolower('categories'),
+                'index' => strtolower(env('ELASTICSEARCH_INDEX_PREFIX').'_categories'),
                 'id'    => $category->id,
                 'body'  => $category->toArray(),
             ]);
@@ -22,7 +22,7 @@ class Category
     {
         if (env('ELASTICSEARCH_ENABLED', false)) {
             Elasticsearch::index([
-                'index' => strtolower('categories'),
+                'index' => strtolower(env('ELASTICSEARCH_INDEX_PREFIX').'_categories'),
                 'id'    => $category->id,
                 'body'  => $category->toArray(),
             ]);
@@ -33,7 +33,7 @@ class Category
     {
         if (env('ELASTICSEARCH_ENABLED', false)) {
             Elasticsearch::delete([
-                'index' => strtolower('categories'),
+                'index' => strtolower(env('ELASTICSEARCH_INDEX_PREFIX').'_categories'),
                 'id'    => $category->id,
             ]);
         }
