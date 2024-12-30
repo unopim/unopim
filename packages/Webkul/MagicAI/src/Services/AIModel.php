@@ -21,6 +21,25 @@ class AIModel
         MagicAI::MAGIC_GROQ_AI => 'openai/v1/models',
     ];
 
+    const DEFAULT_MODELS = [
+        ['id' => "gpt-4o"],
+        ['id' => "gpt-4o-mini"],
+        ["id" => "starling"],
+        ['id' => "gpt-3.5-turbo"],
+        ['id' => "llama2"],
+        ['id' => "mistral"],
+        ['id' => "dolphin-phi"],
+        ['id' => "starling-lm"],
+        ['id' => "llama2-uncensored"],
+        ['id' => "llama-3.2-90b-vision-preview"],
+        ['id' => "llama2:13b"],
+        ['id' => "llama2:70b"],
+        ["id" => "qwen_2_5"],
+        ["id" => "orca-mini"],
+        ["id" => "vicuna"],
+        ["id" => "llava"]
+    ];
+
     /**
      * AIModel constructor.
      */
@@ -33,7 +52,7 @@ class AIModel
     /**
      * Sets OpenAI credentials.
      */
-    private function setConfig(): void
+    public function setConfig(): void
     {
         $this->apiKey = core()->getConfigData('general.magic_ai.settings.api_key');
         $this->baseUri = core()->getConfigData('general.magic_ai.settings.api_domain');
@@ -64,17 +83,23 @@ class AIModel
      */
     private function getModelList(): array
     {
-        $baseUri = BaseUri::from($this->baseUri ?: 'api.openai.com')->toString();
-        $modelEndpoint = self::MODEL_ENDPOINTS[core()->getConfigData('general.magic_ai.settings.ai_platform')] ?? null;
+        $credentials = request()->all();
 
-        if (! $modelEndpoint) {
-            return [];
+        $this->baseUri = $credentials['api_domain'] ?? $this->baseUri;
+        
+        $baseUri = BaseUri::from($this->baseUri ?: 'api.openai.com')->toString();
+        $modelEndpoint = self::MODEL_ENDPOINTS[$credentials['api_platform'] ?? core()->getConfigData('general.magic_ai.settings.ai_platform')] ?? null;
+        
+        if (! $modelEndpoint || !(bool)core()->getConfigData('general.magic_ai.settings.enabled')) {
+            return self::DEFAULT_MODELS;
         }
 
+        $this->apiKey = $credentials['api_key'] ?? $this->apiKey;
+        
         try {
             $response = $this->client->get(sprintf('%s%s', $baseUri, $modelEndpoint), [
                 'headers' => [
-                    'Authorization' => 'Bearer '.$this->apiKey,
+                    'Authorization' => 'Bearer '. $this->apiKey,
                     'Content-Type'  => 'application/json',
                 ],
             ]);
@@ -84,7 +109,8 @@ class AIModel
 
             return $data['data'] ?? [];
         } catch (\Exception $e) {
-            session()->flash('error', $e->getMessage());
+            throw $e;
+
             report($e);
 
             return [];
@@ -101,8 +127,8 @@ class AIModel
 
         foreach ($models as $model) {
             $formattedModels[] = [
-                'title' => $model['id'],
-                'value' => $model['id'],
+                'id'    => $model['id'],
+                'label' => $model['id'],
             ];
         }
 

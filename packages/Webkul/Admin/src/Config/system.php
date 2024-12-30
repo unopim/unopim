@@ -57,7 +57,7 @@ return [
                 'type'          => 'text',
             ], [
                 'name'          => 'api_model',
-                'title'         => 'Models',
+                'title'         => 'admin::app.configuration.index.general.magic-ai.settings.api-model',
                 'type'          => 'blade',
                 'path'          => 'admin::configuration.magic-ai.field.model',
             ],

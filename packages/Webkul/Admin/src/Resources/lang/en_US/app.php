@@ -1517,6 +1517,7 @@ return [
                         'enabled'        => 'Enabled',
                         'llm-api-domain' => 'LLM API Domain',
                         'organization'   => 'Organization ID',
+                        'api-model'      => 'Models',
                         'title'          => 'General Settings',
                         'title-info'     => 'Enhance your experience with the Magic AI feature by entering your exclusive API Key and indicating the pertinent Organization for effortless integration. Seize command over your OpenAI credentials and customize the settings according to your specific needs.',
                     ],

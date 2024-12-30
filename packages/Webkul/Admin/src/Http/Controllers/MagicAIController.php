@@ -9,9 +9,20 @@ use Webkul\MagicAI\Services\AIModel;
 class MagicAIController extends Controller
 {
     /**
-     * Get the AI model.
+     * Get the AI model API.
      */
     public function model(): JsonResponse
+    {
+        return new JsonResponse([
+            'models' => AIModel::getModels(),
+            'message' => trans('admin::app.catalog.products.index.magic-ai-model-success'),
+        ]);
+    }
+
+    /**
+     * Get the AI available model.
+     */
+    public function availableModel(): JsonResponse
     {
         return new JsonResponse([
             'models' => AIModel::getAvailableModels(),

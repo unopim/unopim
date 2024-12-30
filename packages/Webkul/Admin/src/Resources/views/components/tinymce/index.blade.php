@@ -336,7 +336,7 @@
 
                 async fetchModels() {
                     try {
-                        const response = await axios.get("{{ route('admin.magic_ai.model') }}");
+                        const response = await axios.get("{{ route('admin.magic_ai.available_model') }}");
                         this.aiModels = response.data.models; // Populate the models array with the response data
                     } catch (error) {
                         console.error("Failed to fetch AI models:", error);

@@ -37,6 +37,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
      */
     Route::controller(MagicAIController::class)->prefix('magic-ai')->group(function () {
         Route::get('model', 'model')->name('admin.magic_ai.model');
+        Route::get('available-model', 'availableModel')->name('admin.magic_ai.available_model');
 
         Route::post('content', 'content')->name('admin.magic_ai.content');
 
