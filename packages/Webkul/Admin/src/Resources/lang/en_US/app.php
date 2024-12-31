@@ -1971,5 +1971,6 @@ return [
         'false'   => 'False',
         'enable'  => 'Enabled',
         'disable' => 'Disabled',
+        'no-match-found' => 'No Match Found!',
     ],
 ];

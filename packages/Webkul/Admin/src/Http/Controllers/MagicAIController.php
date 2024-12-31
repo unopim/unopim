@@ -3,11 +3,15 @@
 namespace Webkul\Admin\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
+use Webkul\Attribute\Services\AttributeService;
 use Webkul\MagicAI\Facades\MagicAI;
 use Webkul\MagicAI\Services\AIModel;
 
 class MagicAIController extends Controller
 {
+    public function __construct(protected AttributeService $attributeService)
+    {
+    }
     /**
      * Get the AI model API.
      */
@@ -26,6 +30,26 @@ class MagicAIController extends Controller
     {
         return new JsonResponse([
             'models' => AIModel::getAvailableModels(),
+        ]);
+    }
+
+    /**
+     * Get the suggestion Attributes.
+     */
+    public function suggestionAttributes(): JsonResponse
+    {
+        $query = request()->input('query');
+        $attributes = $this->attributeService->getAttributeListBySearch($query);
+        
+        $data = array_map(function ($attribute) {
+            return [
+                'value'   => $attribute->code,
+                'key' => $attribute->name ?? $attribute->code,
+            ];
+        }, $attributes);
+
+        return new JsonResponse([
+            'attributes' => $data,
         ]);
     }
 

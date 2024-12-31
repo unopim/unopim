@@ -17,7 +17,7 @@
         >
             <form @submit="handleSubmit($event, generate)" ref="magicAiGenerateForm">
                 <!-- AI Content Generation Modal -->
-                <x-admin::modal ref="magicAIModal">
+                <x-admin::modal ref="magicAIModal" @toggle="toggleMagicAIModal">
                     <!-- Modal Header -->
                     <x-slot:header>
                         <p class="flex gap-2.5 items-center text-lg text-gray-800 dark:text-white font-bold">
@@ -59,6 +59,7 @@
                                 name="prompt"
                                 rules="required"
                                 v-model="ai.prompt"
+                                ref="promptInput"
                                 :label="trans('admin::app.components.tinymce.ai-generation.prompt')"
                             />
 
@@ -151,6 +152,7 @@
                     },
 
                     aiModels: [],
+                    suggestionAttributes: [],
                 };
             },
 
@@ -307,23 +309,8 @@
                             editor.on('keyup', () => {
                                 this.field.onInput(editor.getContent());
                             });
-
-                            editor.on("keydown", (event) => {
-                            if (event.key === "@") {
-                                event.preventDefault();
-                                this.handleAtKey(editor);
-                            }
-                        });
                         },
                     });
-                },
-
-                handleAtKey(editor) {
-                // Implement your custom logic here
-                console.log("`@` key pressed!");
-                // Example: Open a dropdown for mentions
-                // You can use editor.execCommand or insert content programmatically
-                editor.insertContent('<span>@mention</span>');
                 },
 
                 magicAIModalToggle() {
@@ -334,6 +321,18 @@
                     }
                 },
 
+                toggleMagicAIModal() {
+                    this.$nextTick(() => {
+                        if (this.$refs.promptInput) {
+                            const tribute = this.$tribute.init(
+                                this.fetchSuggestionAttributes,
+                                "@lang('admin::app.common.no-match-found')"
+                            );
+                            tribute.attach(this.$refs.promptInput);
+                        }
+                    });
+                },
+
                 async fetchModels() {
                     try {
                         const response = await axios.get("{{ route('admin.magic_ai.available_model') }}");
@@ -341,6 +340,12 @@
                     } catch (error) {
                         console.error("Failed to fetch AI models:", error);
                     }
+                },
+
+                async fetchSuggestionAttributes(text, cb) {
+                    const response = await fetch(`{{ route('admin.magic_ai.suggestion_attributes') }}?query=${text}`);
+                    const data = await response.json();
+                    cb(data.attributes);
                 },
 
                 generate(params, { resetForm, resetField, setErrors }) {

@@ -19,6 +19,7 @@
     "@vitejs/plugin-vue": "^4.2.3",
     "flatpickr": "^4.6.13",
     "mitt": "^3.0.1",
+    "tributejs": "^5.1.3",
     "vee-validate": "^4.9.1",
     "vue-flatpickr": "^2.3.0",
     "vue-multiselect": "^3.0.0",
