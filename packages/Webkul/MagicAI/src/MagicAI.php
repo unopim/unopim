@@ -15,6 +15,10 @@ class MagicAI
 
     const MAGIC_OLLAMA_AI = 'ollama';
 
+    const SUFFIX_HTML_PROMPT = 'Generate a response using HTML formatting only. Do not include Markdown or any non-HTML syntax.';
+
+    const SUFFIX_TEXT_PROMPT = 'Generate a response in plain text only, avoiding Markdown or any other formatting.';
+
     /**
      * AI platform.
      */
@@ -115,7 +119,7 @@ class MagicAI
      */
     public function setPrompt(string $prompt): self
     {
-        $this->prompt = $prompt;
+        $this->prompt = $prompt.' '.self::SUFFIX_HTML_PROMPT;
 
         return $this;
     }

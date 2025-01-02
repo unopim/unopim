@@ -6,19 +6,22 @@ use Illuminate\Http\JsonResponse;
 use Webkul\Attribute\Services\AttributeService;
 use Webkul\MagicAI\Facades\MagicAI;
 use Webkul\MagicAI\Services\AIModel;
+use Webkul\MagicAI\Services\Product;
 
 class MagicAIController extends Controller
 {
-    public function __construct(protected AttributeService $attributeService)
-    {
-    }
+    public function __construct(
+        protected AttributeService $attributeService,
+        protected Product $productService,
+    ) {}
+
     /**
      * Get the AI model API.
      */
     public function model(): JsonResponse
     {
         return new JsonResponse([
-            'models' => AIModel::getModels(),
+            'models'  => AIModel::getModels(),
             'message' => trans('admin::app.catalog.products.index.magic-ai-model-success'),
         ]);
     }
@@ -39,17 +42,17 @@ class MagicAIController extends Controller
     public function suggestionAttributes(): JsonResponse
     {
         $query = request()->input('query');
-        $attributes = $this->attributeService->getAttributeListBySearch($query);
-        
+        $attributes = $this->attributeService->getAttributeListBySearch($query, ['code', 'name']);
+
         $data = array_map(function ($attribute) {
             return [
-                'value'   => $attribute->code,
-                'key' => $attribute->name ?? $attribute->code,
+                'value' => $attribute->code,
+                'key'   => $attribute->name ?? $attribute->code,
             ];
         }, $attributes);
 
         return new JsonResponse([
-            'attributes' => $data,
+            'attributes' => $attributes,
         ]);
     }
 
@@ -64,9 +67,14 @@ class MagicAIController extends Controller
         ]);
 
         try {
+            $prompt = $this->productService->getPromptWithProductValues(
+                request()->input('prompt'),
+                (int) request()->input('product_id')
+            );
+
             $response = MagicAI::setModel(request()->input('model'))
                 ->setPlatForm(core()->getConfigData('general.magic_ai.settings.ai_platform'))
-                ->setPrompt(request()->input('prompt'))
+                ->setPrompt($prompt)
                 ->ask();
 
             return new JsonResponse([

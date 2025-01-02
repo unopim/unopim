@@ -53,18 +53,40 @@
                                 @lang('admin::app.components.tinymce.ai-generation.prompt')
                             </x-admin::form.control-group.label>
 
-                            <x-admin::form.control-group.control
-                                type="textarea"
-                                class="h-[180px]"
-                                name="prompt"
-                                rules="required"
-                                v-model="ai.prompt"
-                                ref="promptInput"
-                                :label="trans('admin::app.components.tinymce.ai-generation.prompt')"
-                            />
+                            <div class="relative w-full">
+                                <x-admin::form.control-group.control
+                                    type="textarea"
+                                    class="h-[180px]"
+                                    name="prompt"
+                                    rules="required"
+                                    v-model="ai.prompt"
+                                    ref="promptInput"
+                                    :label="trans('admin::app.components.tinymce.ai-generation.prompt')"
+                                />
+                                
+                                <!-- Icon inside textarea -->
+                                <div 
+                                    class="absolute bottom-2.5 left-1 text-gray-400 cursor-pointer text-2xl"
+                                    @click="openAttributeSuggestions"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="h-5 w-5"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                    >
+                                        <path
+                                            d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 3a7 7 0 1 1 0 14c-2.28 0-4-1.72-4-4v-1a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2H9v1c0 1.105.895 2 2 2a5 5 0 1 0 0-10c-2.38 0-4.5 1.62-4.5 4 0 .276.224.5.5.5h2.5a.5.5 0 0 0 0-1H7.077c.567-1.718 2.262-3 4.423-3a7 7 0 0 1 0 14c-3.86 0-7-3.14-7-7s3.14-7 7-7zm2 5.5v1c0 .552-.448 1-1 1h-1a1 1 0 1 1 0-2h1c.552 0 1 .448 1 1z"
+                                        />
+                                    </svg>
+                                </div>
+                            </div>
 
                             <x-admin::form.control-group.error control-name="prompt" />
                         </x-admin::form.control-group>
+
 
                         <!-- Modal Submission -->
                         <div class="flex gap-x-2.5 items-center">
@@ -153,6 +175,7 @@
 
                     aiModels: [],
                     suggestionAttributes: [],
+                    productId: @json(request()->id),
                 };
             },
 
@@ -324,28 +347,51 @@
                 toggleMagicAIModal() {
                     this.$nextTick(() => {
                         if (this.$refs.promptInput) {
-                            const tribute = this.$tribute.init(
-                                this.fetchSuggestionAttributes,
-                                "@lang('admin::app.common.no-match-found')"
-                            );
+                            const tribute = this.$tribute.init({
+                                values: this.fetchSuggestionAttributes,
+                                lookup: 'name',
+                                fillAttr: 'code',
+                                noMatchTemplate: "@lang('admin::app.common.no-match-found')",
+                                selectTemplate: (item) => `@${item.original.code}`,
+                                menuItemTemplate: (item) => `<div class="p-1.5 rounded-md text-base cursor-pointer transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center">${item.original.name || item.original.code}</div>`,
+                            });
+                            
                             tribute.attach(this.$refs.promptInput);
                         }
+                    });
+                },
+
+                openAttributeSuggestions() {
+                    this.ai.prompt += ' @';
+                    this.$nextTick(() => {
+                        this.$refs.promptInput.focus();
+                        const textarea = this.$refs.promptInput;
+                        const keydownEvent = new KeyboardEvent("keydown", { key: "@", bubbles: true });
+                        textarea.dispatchEvent(keydownEvent);
+                        const event = new KeyboardEvent("keyup", { key: "@", bubbles: true });
+                        textarea.dispatchEvent(event);
                     });
                 },
 
                 async fetchModels() {
                     try {
                         const response = await axios.get("{{ route('admin.magic_ai.available_model') }}");
-                        this.aiModels = response.data.models; // Populate the models array with the response data
+                        this.aiModels = response.data.models;
                     } catch (error) {
                         console.error("Failed to fetch AI models:", error);
                     }
                 },
 
                 async fetchSuggestionAttributes(text, cb) {
+                    if (!text && this.suggestionAttributes.length) {
+                        cb(this.suggestionAttributes);
+                        return;
+                    }
+
                     const response = await fetch(`{{ route('admin.magic_ai.suggestion_attributes') }}?query=${text}`);
                     const data = await response.json();
-                    cb(data.attributes);
+                    this.suggestionAttributes = data.attributes;
+                    cb(this.suggestionAttributes);
                 },
 
                 generate(params, { resetForm, resetField, setErrors }) {
@@ -361,7 +407,8 @@
 
                     this.$axios.post("{{ route('admin.magic_ai.content') }}", {
                         prompt: params['prompt'],
-                        model: params['model']
+                        model: params['model'],
+                        product_id: this.productId,
                     })
                         .then(response => {
                             this.isLoading = false;
@@ -384,9 +431,9 @@
                         return;
                     }
 
-                    tinymce.get(this.selector.replace('textarea#', '')).setContent(this.ai.content.replace(/\r?\n/g, '<br />'))
+                    tinymce.get(this.selector.replace('textarea#', '')).setContent(this.ai.content.replace(/\r?\n/g, ''))
 
-                    this.field.onInput(this.ai.content.replace(/\r?\n/g, '<br />'));
+                    this.field.onInput(this.ai.content.replace(/\r?\n/g, ''));
 
                     this.$refs.magicAIModal.close();
                 },

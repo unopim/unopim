@@ -1965,12 +1965,12 @@ return [
     ],
 
     'common' => [
-        'yes'     => 'Yes',
-        'no'      => 'No',
-        'true'    => 'True',
-        'false'   => 'False',
-        'enable'  => 'Enabled',
-        'disable' => 'Disabled',
+        'yes'            => 'Yes',
+        'no'             => 'No',
+        'true'           => 'True',
+        'false'          => 'False',
+        'enable'         => 'Enabled',
+        'disable'        => 'Disabled',
         'no-match-found' => 'No Match Found!',
     ],
 ];
