@@ -943,9 +943,10 @@
                 },
                 onScroll(e) {
                     const element = this.$refs['multiselect__handler__']._.refs.list;
+                    const tolerance = 10;
 
                     if (
-                        (Math.round(element.scrollHeight) - Math.round(element.scrollTop)) === Math.round(element.clientHeight)
+                        (element.scrollHeight - element.scrollTop) - element.clientHeight <= tolerance
                         && this.lastPage > this.params.page
                     ) {
                         this.fetchMore();
