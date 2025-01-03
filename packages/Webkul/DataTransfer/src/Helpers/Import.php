@@ -230,6 +230,10 @@ class Import
 
         $this->setImport($import);
 
+        if ($state == self::STATE_FAILED) {
+            Event::dispatch('data_transfer.import.validate.state_failed', $import);
+        }
+        
         return $this;
     }
 
