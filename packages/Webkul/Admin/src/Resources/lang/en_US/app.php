@@ -294,7 +294,7 @@ return [
                     'unique'                   => 'Unique',
                     'delete-failed'            => 'This attribute can not be deleted.',
                     'mass-delete-failed'       => 'Selected attributes can not be deleted.',
-                    'delete-attribute-failure' => 'No se puede eliminar este atributo porque está en uso para productos configurables',
+                    'delete-attribute-failure' => 'This attribute cannot be removed because it is in use for configurable products',
                 ],
             ],
 
