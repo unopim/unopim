@@ -13,6 +13,7 @@ use Webkul\Product\Observers\ProductObserver;
 use Webkul\Product\ProductImage;
 use Webkul\Product\ProductVideo;
 use Webkul\Product\ValueSetter;
+use Webkul\Product\Services\ProductValueMapper;
 
 class ProductServiceProvider extends ServiceProvider
 {
@@ -94,6 +95,13 @@ class ProductServiceProvider extends ServiceProvider
 
         $this->app->singleton('value_setter', function () {
             return app()->make(ValueSetter::class);
+        });
+
+        /**
+         * Product attribute mapper
+         */
+        $this->app->singleton('product_attribute_mapper', function ($app) {
+            return new ProductValueMapper();
         });
     }
 }
