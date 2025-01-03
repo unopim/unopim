@@ -106,7 +106,7 @@ class AttributeFamilyDataSource extends ApiDataSource
         }
 
         return array_map(function ($groupMapping) {
-            $group = $this->getGroup($groupMapping['attribute_group_id']); //TODO: need to improve this use wouth repository
+            $group = $this->getGroup($groupMapping['attribute_group_id']); // TODO: need to improve this use wouth repository
 
             return [
                 'code'              => $group['code'],

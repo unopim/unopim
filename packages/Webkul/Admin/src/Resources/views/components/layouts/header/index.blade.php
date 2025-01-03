@@ -208,9 +208,14 @@
                 <!-- Content -->
                 <div class="grid">
                     <a
-                        class="flex gap-1.5 items-start p-3 hover:bg-gray-50 dark:hover:bg-gray-950 border-b dark:border-gray-800 last:border-b-0"
+                        class="flex gap-1.5 items-start p-3 border-b dark:border-gray-800 last:border-b-0"
                         v-for="userNotification in userNotifications"
+                        :key="userNotification.notification.id"
                         :href="'{{ route('admin.notification.viewed_notification', ':id') }}'.replace(':id', userNotification.notification.id)"
+                        :class="{
+                            'bg-gray-100 dark:bg-gray-950': userNotification.read === 1,
+                            'hover:bg-gray-50 dark:hover:bg-gray-950': true,
+                        }"
                     >
                         <div class="grid gap-3">
                             <p 
@@ -270,14 +275,14 @@
 
                 mounted() {
                     this.getNotification();
+                    this.userNotifications = setInterval(this.getNotification, 15000);
                 },
 
                 methods: {
                     getNotification() {
                         this.$axios.get('{{ route('admin.notification.get_notification') }}', {
                                 params: {
-                                    limit: 5,
-                                    read: 0
+                                    limit: 5
                                 }
                             })
                             .then((response) => {
