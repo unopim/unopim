@@ -9,17 +9,14 @@ use Webkul\User\Repositories\AdminRepository;
 
 class SendNotificationListener
 {
-    public function __construct(public AdminRepository $adminRepository)
-    {
-        //
-    }
+    public function __construct(public AdminRepository $adminRepository) {}
 
     /**
      * Handle the event.
      *
      * @return void
      */
-    public function sendNotification($event) 
+    public function sendNotification($event)
     {
         if (!env('NOTIFICATIONS_ENABLED', true)) {
             Log::info('Notifications are disabled. No notification sent.', ['event' => $event]);
@@ -27,10 +24,10 @@ class SendNotificationListener
         }
 
         $mailConfigured = Config::get('mail.default') &&
-        Config::get('mail.mailers.smtp.host') &&
-        Config::get('mail.mailers.smtp.port') &&
-        Config::get('mail.mailers.smtp.username') &&
-        Config::get('mail.mailers.smtp.password');
+            Config::get('mail.mailers.smtp.host') &&
+            Config::get('mail.mailers.smtp.port') &&
+            Config::get('mail.mailers.smtp.username') &&
+            Config::get('mail.mailers.smtp.password');
 
         $metaData = json_decode($event->meta);
         //@TODO: manage user details with relation to the event
@@ -41,11 +38,11 @@ class SendNotificationListener
             'route'        => 'admin.settings.data_transfer.tracker.view',
             'route_params' => ['batch_id' => $event->id],
             'title'        => ucfirst($metaData->type),
-            'description'  => ucfirst($metaData->type).' "'.$metaData->code.'" '.$event->state,
+            'description'  => ucfirst($metaData->type) . ' "' . $metaData->code . '" ' . $event->state,
             'user_ids'     => [$event->user_id],
             'mailable'     => $mailConfigured,
             'user_emails'  => [$admin['email']],
-            'templateName' => 'notification::emails.index',
+            'templateName' => 'admin::emails.data-transfer.index',
             'templateData' => [
                 'templateData' => $event,
             ],

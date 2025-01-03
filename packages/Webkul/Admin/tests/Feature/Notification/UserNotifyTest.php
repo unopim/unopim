@@ -25,7 +25,7 @@ it('dispatches NotificationEvent with correct parameters', function () {
         'user_ids'     => [$exportData->user->id],
         'mailable'     => true,
         'user_emails'  => [$exportData->user->email],
-        'templateName' => 'admin::emails.export',
+        'templateName' => 'admin::emails.data-transfer.index',
         'templateData' => [
             'export' => $exportData,
         ],
