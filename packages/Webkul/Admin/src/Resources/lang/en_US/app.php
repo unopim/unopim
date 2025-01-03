@@ -439,9 +439,8 @@ return [
         ],
 
         'attribute-options' => [
-            'create-success' => 'Attribute Option Created Successfully',
-            'update-success' => 'Attribute Option Updated Successfully',
-
+            'create-success'       => 'Attribute Option Created Successfully',
+            'update-success'       => 'Attribute Option Updated Successfully',
             'usable-in-grid-error' => 'Only 4 attributes can be have usable in grid enabled.',
         ],
 
@@ -761,7 +760,6 @@ return [
             'create' => [
                 'assign-group-btn'                 => 'Assign Attribute Group',
                 'assign-group-title'               => 'Assign Attribute Group',
-                'assign-group-btn'                 => 'Assign Attribute Group',
                 'back-btn'                         => 'Back',
                 'code'                             => 'Code',
                 'label'                            => 'Label',
@@ -793,7 +791,6 @@ return [
             'edit' => [
                 'assign-group-btn'                 => 'Assign Attribute Group',
                 'assign-group-title'               => 'Assign Attribute Group',
-                'assign-group-btn'                 => 'Assign Attribute Group',
                 'back-btn'                         => 'Back',
                 'code'                             => 'Code',
                 'label'                            => 'Label',
@@ -984,7 +981,6 @@ return [
                         'indexed'   => 'Indexed',
                         'completed' => 'Completed',
                         'failed'    => 'Failed',
-
                     ],
                 ],
 
@@ -1035,6 +1031,7 @@ return [
                 'failed-info'       => 'Job has failed. Please fix the following errors and try again.',
                 'download-log-file' => 'Download log',
             ],
+
             'imports' => [
                 'create' => [
                     'code'                => 'Code',
@@ -1163,6 +1160,7 @@ return [
                 'setup-queue-error' => 'Please change your queue driver to "database" or "redis" to start the import process.',
                 'update-success'    => 'Import updated successfully.',
             ],
+
             'exports' => [
                 'create' => [
                     'code'                => 'Code',
@@ -1654,10 +1652,12 @@ return [
                 'filter' => [
                     'title' => 'Filter',
                 ],
+
                 'search_by' => [
                     'code'       => 'Search by code',
                     'code_or_id' => 'Search by code or id',
                 ],
+
                 'search' => [
                     'title' => 'Search',
                 ],
@@ -1709,12 +1709,14 @@ return [
                 'message'      => 'Are you sure you want to perform this action?',
                 'title'        => 'Are you sure?',
             ],
+
             'delete' => [
                 'agree-btn'    => 'Delete',
                 'disagree-btn' => 'Cancel',
                 'message'      => 'Are you sure you want to delete?',
                 'title'        => 'Confirm Deletion',
             ],
+
             'history' => [
                 'title'           => 'History Preview',
                 'subtitle'        => 'Quickly review your updates and changes.',
@@ -1881,7 +1883,6 @@ return [
         'tracker'                  => 'Job Tracker',
         'imports'                  => 'Imports',
         'exports'                  => 'Exports',
-
     ],
 
     'errors' => [

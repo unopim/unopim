@@ -1032,6 +1032,7 @@ return [
                 'failed-info'       => 'Pekerjaan gagal. Harap perbaiki kesalahan berikut dan coba lagi.',
                 'download-log-file' => 'Unduh log',
             ],
+
             'imports' => [
                 'create' => [
                     'code'                => 'Kode',
@@ -1157,6 +1158,7 @@ return [
                 'setup-queue-error' => 'Harap ubah driver antrian Anda menjadi "basis data" atau "redis" untuk memulai proses impor.',
                 'update-success'    => 'Impor berhasil diperbarui.',
             ],
+
             'exports' => [
                 'create' => [
                     'code'                => 'Kode',
@@ -1509,7 +1511,6 @@ return [
                 'general' => [
                     'info'  => '',
                     'title' => 'Umum',
-
                 ],
 
                 'magic-ai' => [
@@ -1670,10 +1671,12 @@ return [
                 'filter' => [
                     'title' => 'Saring',
                 ],
+
                 'search_by' => [
                     'code'       => 'Cari dengan kode',
                     'code_or_id' => 'Cari dengan kode atau ID',
                 ],
+
                 'search' => [
                     'title' => 'Mencari',
                 ],
@@ -1725,12 +1728,14 @@ return [
                 'message'      => 'Apakah Anda yakin ingin melakukan tindakan ini?',
                 'title'        => 'Apa kamu yakin?',
             ],
+
             'delete' => [
                 'agree-btn'    => 'Menghapus',
                 'disagree-btn' => 'Membatalkan',
                 'message'      => 'Apakah Anda yakin ingin menghapus?',
                 'title'        => 'Konfirmasi penghapusan',
             ],
+
             'history' => [
                 'title'           => 'Pratinjau Sejarah',
                 'subtitle'        => 'Tinjau pembaruan dan perubahan Anda dengan cepat.',

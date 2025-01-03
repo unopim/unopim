@@ -438,9 +438,8 @@ return [
         ],
 
         'attribute-options' => [
-            'create-success'    => 'Attribuutoptie met succes gemaakt',
-            'update-success'    => 'Attribuutoptie met succes bijgewerkt',
-
+            'create-success'       => 'Attribuutoptie met succes gemaakt',
+            'update-success'       => 'Attribuutoptie met succes bijgewerkt',
             'usable-in-grid-error' => 'Slechts 4 attributen kunnen bruikbaar zijn in het raster ingeschakeld.',
         ],
 
@@ -983,7 +982,6 @@ return [
                         'indexed'   => 'Geïndexeerd',
                         'completed' => 'Voltooid',
                         'failed'    => 'Mislukt',
-
                     ],
                 ],
 
@@ -1022,6 +1020,7 @@ return [
                 'failed-info'       => 'Taak is mislukt. Los de volgende fouten op en probeer het opnieuw.',
                 'download-log-file' => 'Logboek downloaden',
             ],
+
             'imports' => [
                 'create'            => [
                     'code'                => 'Code',
@@ -1143,6 +1142,7 @@ return [
                 'setup-queue-error' => 'Wijzig uw wachtrijstuurprogramma in "database" of "redis" om het importproces te starten.',
                 'update-success'    => 'Succesvol bijgewerkt bijgewerkt.',
             ],
+
             'exports' => [
                 'create'            => [
                     'code'                => 'Code',
@@ -1507,7 +1507,6 @@ return [
                 'general' => [
                     'info'  => '',
                     'title' => 'Algemeen',
-
                 ],
 
                 'content' => [
@@ -2105,10 +2104,12 @@ return [
                 'filter' => [
                     'title' => 'Filter',
                 ],
+
                 'search_by' => [
                     'code'       => 'Zoeken op code',
                     'code_or_id' => 'Zoek op code of ID',
                 ],
+
                 'search' => [
                     'title' => 'Zoekopdracht',
                 ],
@@ -2160,12 +2161,14 @@ return [
                 'message'      => 'Weet je zeker dat je deze actie wilt uitvoeren?',
                 'title'        => 'Weet je het zeker?',
             ],
+
             'delete' => [
                 'agree-btn'    => 'Verwijderen',
                 'disagree-btn' => 'Annuleren',
                 'message'      => 'Weet je zeker dat je wilt verwijderen?',
                 'title'        => 'Bevestig verwijdering',
             ],
+
             'history' => [
                 'title'             => 'Geschiedenis preview',
                 'subtitle'          => 'Bekijk snel uw updates en wijzigingen.',
