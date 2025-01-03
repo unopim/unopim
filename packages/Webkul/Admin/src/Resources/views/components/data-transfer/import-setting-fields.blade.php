@@ -16,16 +16,28 @@
             }
 
             foreach ($config['filters']['fields'] as $key => $filter) {
-                if (
-                    ($filter['type'] == 'select' || $filter['type'] == 'multiselect')
-                    && ($filter['async'] ?? false) == true
-                ) {
-                    $importerConfig[$name]['filters']['fields'][$key]['list_route'] = route($filter['list_route']);
+                $importerConfig[$name]['filters']['fields'][$key]['title'] = trans($filter['title']);
+
+                if ($filter['type'] == 'select' || $filter['type'] == 'multiselect') {
+                    if (($filter['async'] ?? false) == true && ! empty($filter['list_route'])) {
+                        $importerConfig[$name]['filters']['fields'][$key]['list_route'] = route($filter['list_route']);
+
+                        continue;
+                    }
+
+                    if (! isset($filter['options'])) {
+                        continue;
+                    }
+
+                    foreach ($filter['options'] as &$filterOption) {
+                        $filterOption['label'] = trans($filterOption['label']);
+                    }
+
+                    $importerConfig[$name]['filters']['fields'][$key]['options'] = $filter['options'];
                 }
             }
         }
         $importerConfig = json_encode($importerConfig);
-        
     }
 
 @endphp
@@ -238,13 +250,13 @@
     <script type="module">
         app.component('v-import-filter-fields', {
             template: '#v-import-filter-fields-template',
-
             props: [
                 'entityType',
                 'importers',
                 'values',
                 'old'
             ],
+
             data() {
                 return {
                     importersConfig: this.parseJson(this.importers),
