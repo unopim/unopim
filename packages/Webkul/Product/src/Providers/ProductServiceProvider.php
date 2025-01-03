@@ -98,9 +98,9 @@ class ProductServiceProvider extends ServiceProvider
         });
 
         /**
-         * Product attribute mapper
+         * Product value mapper
          */
-        $this->app->singleton('product_attribute_mapper', function ($app) {
+        $this->app->singleton('product_value_mapper', function ($app) {
             return new ProductValueMapper();
         });
     }

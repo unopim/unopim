@@ -8,6 +8,6 @@ class ProductValueMapper extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return 'product_attribute_mapper'; // Matches the binding in the service provider
+        return 'product_value_mapper'; // Matches the binding in the service provider
     }
 }

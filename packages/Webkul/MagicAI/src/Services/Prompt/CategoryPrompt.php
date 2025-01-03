@@ -5,7 +5,7 @@ namespace Webkul\MagicAI\Services\Prompt;
 use Illuminate\Support\Str;
 use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\Category\Repositories\CategoryRepository;
-use Webkul\Product\Facades\ProductValueMapper as ProductValueMapperFacade;
+use Webkul\Category\Facades\CategoryAdditionalDataMapper as CategoryAdditionalDataMapperFacade;
 
 class CategoryPrompt extends AbstractPrompt
 {
@@ -38,6 +38,11 @@ class CategoryPrompt extends AbstractPrompt
         $categoryData = $category->toArray();
         $locale = core()->getRequestedLocaleCode();
 
+        $values = array_merge(
+            CategoryAdditionalDataMapperFacade::getLocaleSpecificFields($categoryData, $locale),
+            CategoryAdditionalDataMapperFacade::getCommonFields($categoryData)
+        );
+
         foreach ($categoryFields as $fieldCodeWithAt) {
             $fieldCode = Str::replaceFirst('@', '', $fieldCodeWithAt);
             $categoryField = $this->findCategoryFieldByCode($fieldCode);
@@ -45,8 +50,6 @@ class CategoryPrompt extends AbstractPrompt
             if (! $categoryField) {
                 continue;
             }
-
-            $values = [];
 
             $value = $this->getValue($values, $fieldCode);
             $prompt = Str::replaceFirst($fieldCodeWithAt, $value, $prompt);
