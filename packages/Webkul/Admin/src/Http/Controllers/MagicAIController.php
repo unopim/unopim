@@ -3,16 +3,18 @@
 namespace Webkul\Admin\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
-use Webkul\Attribute\Services\AttributeService;
+use Webkul\Attribute\Repositories\AttributeRepository;
+use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\MagicAI\Facades\MagicAI;
 use Webkul\MagicAI\Services\AIModel;
-use Webkul\MagicAI\Services\Product;
+use Webkul\MagicAI\Services\Prompt\Prompt;
 
 class MagicAIController extends Controller
 {
     public function __construct(
-        protected AttributeService $attributeService,
-        protected Product $productService,
+        protected AttributeRepository $attributeRepository,
+        protected CategoryFieldRepository $categoryFieldRepository,
+        protected Prompt $promptService,
     ) {}
 
     /**
@@ -37,23 +39,20 @@ class MagicAIController extends Controller
     }
 
     /**
-     * Get the suggestion Attributes.
+     * Get the suggestion Attributes|Category-Field.
      */
-    public function suggestionAttributes(): JsonResponse
+    public function suggestionValues(): JsonResponse
     {
         $query = request()->input('query');
-        $attributes = $this->attributeService->getAttributeListBySearch($query, ['code', 'name']);
+        $entityName = request()->input('entity_name', 'attribute');
+        
+        if ($entityName === 'category_field') {
+            $data = $this->categoryFieldRepository->getCategoryFieldListBySearch($query, ['code', 'name']);
+        } else {
+            $data = $this->attributeRepository->getAttributeListBySearch($query, ['code', 'name']);
+        }
 
-        $data = array_map(function ($attribute) {
-            return [
-                'value' => $attribute->code,
-                'key'   => $attribute->name ?? $attribute->code,
-            ];
-        }, $attributes);
-
-        return new JsonResponse([
-            'attributes' => $attributes,
-        ]);
+        return new JsonResponse($data);
     }
 
     /**
@@ -67,9 +66,10 @@ class MagicAIController extends Controller
         ]);
 
         try {
-            $prompt = $this->productService->getPromptWithProductValues(
+            $prompt = $this->promptService->getPrompt(
                 request()->input('prompt'),
-                (int) request()->input('product_id')
+                request()->input('resource_id'),
+                request()->input('resource_type')
             );
 
             $response = MagicAI::setModel(request()->input('model'))

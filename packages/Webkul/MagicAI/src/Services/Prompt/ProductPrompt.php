@@ -1,28 +1,50 @@
 <?php
 
-namespace Webkul\MagicAI\Services;
+namespace Webkul\MagicAI\Services\Prompt;
 
 use Illuminate\Support\Str;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Facades\ProductValueMapper as ProductValueMapperFacade;
 
-class Product
+class ProductPrompt extends AbstractPrompt
 {
+    private static $instance;
+
     public function __construct(
         protected ProductRepository $productRepository,
         protected AttributeRepository $attributeRepository
     ) {}
 
     /**
+     * Gets the singleton instance of AIModel.
+     */
+    public static function getInstance(): ProductPrompt
+    {
+        if (self::$instance === null) {
+            self::$instance = new self(app(ProductRepository::class), app(AttributeRepository::class));
+        }
+
+        return self::$instance;
+    }
+
+    /**
      * Replaces placeholders in the prompt with product attribute values.
      */
-    public function getPromptWithProductValues(string $prompt, int $productId): string
+    public function updatePrompt(string $prompt, int $productId): string
     {
         $attributes = $this->searchStringWithAt($prompt);
         $product = $this->getProductById($productId);
         $productData = $product->toArray();
         $locale = core()->getRequestedLocaleCode();
+        $channel = 'default';
+
+        $values = array_merge(
+            ProductValueMapperFacade::getChannelLocaleSpecificFields($productData, $channel, $locale),
+            ProductValueMapperFacade::getLocaleSpecificFields($productData, $locale),
+            ProductValueMapperFacade::getChannelSpecificFields($productData, $locale),
+            ProductValueMapperFacade::getCommonFields($productData)
+        );
 
         foreach ($attributes as $attributeCodeWithAt) {
             $attributeCode = Str::replaceFirst('@', '', $attributeCodeWithAt);
@@ -32,20 +54,7 @@ class Product
                 continue;
             }
 
-            if (
-                $attribute->value_per_locale
-                && $attribute->value_per_channel
-            ) {
-                $values = ProductValueMapperFacade::getChannelLocaleSpecificFields($productData, $locale, $locale);
-            } elseif ($attribute->value_per_locale) {
-                $values = ProductValueMapperFacade::getLocaleSpecificFields($productData, $locale);
-            } elseif ($attribute->value_per_channel) {
-                $values = ProductValueMapperFacade::getChannelSpecificFields($productData, $locale);
-            } else {
-                $values = ProductValueMapperFacade::getCommonFields($productData);
-            }
-
-            $value = $this->getAttributeValue($values, $attributeCode);
+            $value = $this->getValue($values, $attributeCode);
             $prompt = Str::replaceFirst($attributeCodeWithAt, $value, $prompt);
         }
 
@@ -67,10 +76,5 @@ class Product
     public function findAttributeByCode($code)
     {
         return $this->attributeRepository->findOneByField('code', $code);
-    }
-
-    public function getAttributeValue(array $values, string $attributeCode)
-    {
-        return $values[$attributeCode] ?? '';
     }
 }

@@ -110,6 +110,7 @@
                     :selector="'textarea#' . $attributes->get('id')"
                     :prompt="stripcslashes($attributes->get('prompt', ''))"
                     ::field="field"
+                    :entity-name="$attributes->get('entity-name', '')"
                 >
                 </x-admin::tinymce>
             @endif

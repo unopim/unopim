@@ -174,8 +174,9 @@
                     },
 
                     aiModels: [],
-                    suggestionAttributes: [],
-                    productId: @json(request()->id),
+                    suggestionValues: [],
+                    resourceId: "{{ request()->id }}",
+                    entityName: "{{ $attributes->get('entity-name', 'attribute') }}",
                 };
             },
 
@@ -348,7 +349,7 @@
                     this.$nextTick(() => {
                         if (this.$refs.promptInput) {
                             const tribute = this.$tribute.init({
-                                values: this.fetchSuggestionAttributes,
+                                values: this.fetchSuggestionValues,
                                 lookup: 'name',
                                 fillAttr: 'code',
                                 noMatchTemplate: "@lang('admin::app.common.no-match-found')",
@@ -382,16 +383,17 @@
                     }
                 },
 
-                async fetchSuggestionAttributes(text, cb) {
-                    if (!text && this.suggestionAttributes.length) {
-                        cb(this.suggestionAttributes);
+                async fetchSuggestionValues(text, cb) {
+                    if (!text && this.suggestionValues.length) {
+                        cb(this.suggestionValues);
                         return;
                     }
 
-                    const response = await fetch(`{{ route('admin.magic_ai.suggestion_attributes') }}?query=${text}`);
+                    const response = await fetch(`{{ route('admin.magic_ai.suggestion_values') }}?query=${text}&&entity_name=${this.entityName}`);
                     const data = await response.json();
-                    this.suggestionAttributes = data.attributes;
-                    cb(this.suggestionAttributes);
+                    this.suggestionValues = data;
+
+                    cb(this.suggestionValues);
                 },
 
                 generate(params, { resetForm, resetField, setErrors }) {
@@ -408,7 +410,9 @@
                     this.$axios.post("{{ route('admin.magic_ai.content') }}", {
                         prompt: params['prompt'],
                         model: params['model'],
-                        product_id: this.productId,
+                        resource_id: this.resourceId,
+                        resource_type: this.getResourceType(),
+                        field_type: 'tinymce',
                     })
                         .then(response => {
                             this.isLoading = false;
@@ -424,6 +428,15 @@
                                 this.$emitter.emit('add-flash', { type: 'error', message: error.response.data.message });
                             }
                         });
+                },
+
+                getResourceType() {
+                    switch (this.entityName) {
+                        case 'category-field':
+                            return 'category';
+                        default:
+                            return 'product';
+                    }
                 },
 
                 apply() {
