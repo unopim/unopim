@@ -18,8 +18,9 @@ class SendNotificationListener
      */
     public function sendNotification($event)
     {
-        if (!env('NOTIFICATIONS_ENABLED', true)) {
+        if (! env('NOTIFICATIONS_ENABLED', true)) {
             Log::info('Notifications are disabled. No notification sent.', ['event' => $event]);
+
             return;
         }
 
