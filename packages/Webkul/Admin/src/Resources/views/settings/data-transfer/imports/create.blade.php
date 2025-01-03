@@ -349,23 +349,14 @@
                 
                 data() {
                     return {
-                        fileFormat: 'Csv',
-                        selectedFileFormat: "{{ old('filters.file_format') ?? null }}",
                         entityType: "{{ old('entity_type') ?? 'categories' }}",
                         enableFileShow: @json($importerConfig[old('entity_type') ?? 'categories']['has_file_options'] ?? false),
                         importerConfig: @json($importerConfig), 
                         filterFields: @json($importerConfig['categories']['filters']['fields'] ?? null)
                     };
                 },
-                
-                mounted() {
-                    this.$emitter.on('filter-value-changed', this.handleFilterValues);
-                },
 
                 watch: {
-                    fileFormat(value) {
-                        this.selectedFileFormat = JSON.parse(value).value;
-                    },
                     entityType(value) {
                         this.enableFileShow = this.importerConfig[JSON.parse(value).id]?.has_file_options;
                         this.$emitter.emit('entity-type-changed', value);
@@ -377,12 +368,6 @@
                             return value ? JSON.parse(value) : null;
                         } catch (error) {
                             return value;
-                        }
-                    },
-
-                    handleFilterValues(changed) {
-                        if ('file_format' == changed.filterName) {
-                            this.selectedFileFormat = changed.value;
                         }
                     },
                 },

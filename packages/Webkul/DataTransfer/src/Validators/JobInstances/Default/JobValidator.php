@@ -7,6 +7,14 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Webkul\DataTransfer\Contracts\Validator\JobInstances\JobValidator as JobValidatorContract;
 
+/**
+ * Class JobValidator
+ *
+ * This class is responsible for validating job instance data
+ * according to specified rules, custom messages, and attribute names.
+ *
+ * Can be extended to implement custom validate function while using the other helper functions of this class
+ */
 class JobValidator implements JobValidatorContract
 {
     /**
@@ -45,7 +53,7 @@ class JobValidator implements JobValidatorContract
     /**
      * Validation rules for job instance
      */
-    public function getRules($options): array
+    public function getRules(array $options): array
     {
         return $this->rules;
     }
@@ -53,7 +61,7 @@ class JobValidator implements JobValidatorContract
     /**
      * Custom names for validation attributes
      */
-    public function getAttributeNames($options): array
+    public function getAttributeNames(array $options): array
     {
         return $this->attributeNames;
     }
@@ -61,7 +69,7 @@ class JobValidator implements JobValidatorContract
     /**
      * Add Custom error messages for validation
      */
-    public function getMessages($options): array
+    public function getMessages(array $options): array
     {
         return $this->messages;
     }

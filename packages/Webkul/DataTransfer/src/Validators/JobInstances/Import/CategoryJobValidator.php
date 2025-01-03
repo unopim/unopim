@@ -10,7 +10,7 @@ class CategoryJobValidator extends JobValidator
     /**
      * Validation rules for job instance
      */
-    public function getRules($options): array
+    public function getRules(array $options): array
     {
         if (isset($options['id'])) {
             $this->rules['file'] = 'mimes:csv,xls,xlsx,txt';

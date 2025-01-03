@@ -77,22 +77,28 @@ class ImportController extends Controller
         $data = request()->only([
             'code',
             'entity_type',
+            'action',
+            'file',
+            'validation_strategy',
+            'allowed_errors',
+            'field_separator',
+            'images_directory_path',
+            'filters',
         ]);
 
         $jobValidator = isset($importerConfig[$data['entity_type']]['validator']) ? app($importerConfig[$data['entity_type']]['validator']) : null;
-        $data = request()->except(['_token']);
 
         if ($jobValidator instanceof JobValidator) {
             $jobValidator->validate($data);
         }
 
-        $imageData = [
+        $fileData = [
             'type'   => self::TYPE,
             'action' => 'append',
         ];
 
         if (isset($importerConfig[$data['entity_type']]['has_file_options'])) {
-            $imageData = [
+            $fileData = [
                 'file_path' => request()->file('file')->storeAs(
                     'imports',
                     time().'-'.request()->file('file')->getClientOriginalName(),
@@ -104,7 +110,7 @@ class ImportController extends Controller
 
         $import = $this->jobInstancesRepository->create(
             array_merge(
-                $imageData,
+                $fileData,
                 $data
             )
         );

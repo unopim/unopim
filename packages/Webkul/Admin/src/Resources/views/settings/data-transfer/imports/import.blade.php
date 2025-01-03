@@ -57,7 +57,7 @@
                         </span>
                     </p>
 
-                    @if (!empty($import->file_path))
+                    @if (! empty($import->file_path))
                     <p class="flex gap-2 items-center dark:text-white">
                         <i class="text-2xl text-orange-600 dark:text-orange-600! bg-orange-200 rounded-full"></i>
                         <span class="font-bold">
