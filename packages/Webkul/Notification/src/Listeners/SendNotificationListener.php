@@ -18,8 +18,9 @@ class SendNotificationListener
      */
     public function sendNotification($event)
     {
-        if (!env('NOTIFICATIONS_ENABLED', true)) {
+        if (! env('NOTIFICATIONS_ENABLED', true)) {
             Log::info('Notifications are disabled. No notification sent.', ['event' => $event]);
+
             return;
         }
 
@@ -38,7 +39,7 @@ class SendNotificationListener
             'route'        => 'admin.settings.data_transfer.tracker.view',
             'route_params' => ['batch_id' => $event->id],
             'title'        => ucfirst($metaData->type),
-            'description'  => ucfirst($metaData->type) . ' "' . $metaData->code . '" ' . $event->state,
+            'description'  => ucfirst($metaData->type).' "'.$metaData->code.'" '.$event->state,
             'user_ids'     => [$event->user_id],
             'mailable'     => $mailConfigured,
             'user_emails'  => [$admin['email']],
