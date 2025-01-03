@@ -34,7 +34,7 @@ class NotificationRepository extends Repository
 
         $notifications = $query->latest()->paginate($params['limit'] ?? 10);
 
-        $totalUnread = $query->count();
+        $totalUnread = $query->where('read', '0')->count();
 
         return ['notifications' => $notifications, 'total_unread' => $totalUnread];
     }
