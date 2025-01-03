@@ -10,9 +10,6 @@
 
     {!! view_render_event('unopim.admin.settings.data_transfer.imports.create.before') !!}
 
-    <v-import-profile-edit></v-import-profile-edit>
-    @pushOnce('scripts')
-        <script type="text/x-template" id="v-import-profile-edit-template">
             <x-admin::form
                 :action="route('admin.settings.data_transfer.imports.update', $import->id)"
                 method="PUT"
@@ -372,36 +369,4 @@
         
                 {!! view_render_event('unopim.admin.settings.data_transfer.imports.create.create_form_controls.after') !!}
             </x-admin::form>
-        </script>
-        <script type="module">
-            app.component('v-import-profile-edit', {
-                template: '#v-import-profile-edit-template',
-
-                data() {
-                    return {
-                        fileFormat: @json($import->filters['file_format'] ?? null),
-                        selectedFileFormat: @json($import->filters['file_format'] ?? null),
-                    };
-                },
-
-                mounted() {
-                    this.$emitter.on('filter-value-changed', this.handleFilterValues);
-                },
-
-                watch: {
-                    fileFormat(value) {
-                        this.selectedFileFormat = JSON.parse(value).value;
-                    },
-                },
-
-                methods: {
-                    handleFilterValues(changed) {
-                        if ('file_format' == changed.filterName) {
-                            this.selectedFileFormat = changed.value;
-                        }
-                    },
-                }
-            })
-        </script>
-    @endPushOnce
 </x-admin::layouts.with-history>

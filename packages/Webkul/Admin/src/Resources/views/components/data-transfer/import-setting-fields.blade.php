@@ -31,7 +31,7 @@
 @endphp
 
 <v-import-filter-fields
-    entityType="{{ $entityType }}"
+    entity-Type="{{ $entityType }}"
     importers="{{ $importerConfig }}"
     values="{{ json_encode($values) }}"
     old="{{ json_encode(old()) }}"
@@ -246,7 +246,6 @@
                 'old'
             ],
             data() {
-                console.log(this.parseJson(this.importers), this.entityType);
                 return {
                     importersConfig: this.parseJson(this.importers),
                     entity: this.entityType,
