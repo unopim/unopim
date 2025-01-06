@@ -116,7 +116,7 @@
                                 <div class="mb-4">
                                     <label
                                         class="cursor-pointer mb-2"
-                                        @click="resetAIModal(); $refs.magicAIImageModal.open(); $refs.choiceImageModal.close()"
+                                        @click="resetAIModal(); toggleImageAIModal(); $refs.choiceImageModal.close()"
                                     >
                                         <div class="flex flex-col">
                                             <div class="flex gap-1 p-3 border rounded-md rounded-sm text-sm">
@@ -219,14 +219,37 @@
                                         <x-admin::form.control-group.label class="required">
                                             @lang('admin::app.components.media.images.ai-generation.prompt')
                                         </x-admin::form.control-group.label>
-
-                                        <x-admin::form.control-group.control
-                                            type="textarea"
-                                            name="prompt"
-                                            rules="required"
-                                            v-model="ai.prompt"
-                                            :label="trans('admin::app.components.media.images.ai-generation.prompt')"
-                                        />
+                                        
+                                        <div class="relative w-full">
+                                            <x-admin::form.control-group.control
+                                                type="textarea"
+                                                class="h-[120px]"
+                                                name="prompt"
+                                                rules="required"
+                                                v-model="ai.prompt"
+                                                ref="imagePromptInput"
+                                                :label="trans('admin::app.components.media.images.ai-generation.prompt')"
+                                            />
+                                            
+                                            <!-- Icon inside textarea -->
+                                            <div 
+                                                class="absolute bottom-2.5 left-1 text-gray-400 cursor-pointer text-2xl"
+                                                @click="openSuggestions"
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    class="h-5 w-5"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    stroke-width="2"
+                                                >
+                                                    <path
+                                                        d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 3a7 7 0 1 1 0 14c-2.28 0-4-1.72-4-4v-1a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2H9v1c0 1.105.895 2 2 2a5 5 0 1 0 0-10c-2.38 0-4.5 1.62-4.5 4 0 .276.224.5.5.5h2.5a.5.5 0 0 0 0-1H7.077c.567-1.718 2.262-3 4.423-3a7 7 0 0 1 0 14c-3.86 0-7-3.14-7-7s3.14-7 7-7zm2 5.5v1c0 .552-.448 1-1 1h-1a1 1 0 1 1 0-2h1c.552 0 1 .448 1 1z"
+                                                    />
+                                                </svg>
+                                            </div>
+                                        </div>
 
                                         <x-admin::form.control-group.error control-name="prompt" />
                                     </x-admin::form.control-group>
@@ -253,7 +276,7 @@
                                             name="model"
                                             rules="required"
                                             v-model="ai.model"
-                                            :options="$aiModelsJson"
+                                            ::options="aiModels"
                                             track-by="value"
                                             label-by="label"
                                             :label="trans('admin::app.components.media.images.ai-generation.model')"
@@ -352,7 +375,7 @@
                                             class="grid justify-items-center min-w-[120px] max-h-[120px] relative border-[3px] border-transparent rounded overflow-hidden transition-all hover:opacity-80 cursor-pointer"
                                             :class="{'!border-violet-700 ': image.selected}"
                                             v-for="image in ai.images"
-                                            @click="selectImage(image)"
+                                            @click="image.selected = ! image.selected"
                                         >
                                             <!-- Image Preview -->
                                             <img
@@ -532,6 +555,10 @@
 
                         images: [],
                     },
+                    aiModels: [],
+                    suggestionValues: [],
+                    resourceId: "{{ request()->id }}",
+                    entityName: "{{ $attributes->get('entity-name', 'attribute') }}",
                 }
             },
 
@@ -544,7 +571,7 @@
             watch: {
                 'ai.model': function (newVal, oldVal) {
                     try {
-                        this.ai.model = JSON.parse(newVal)?.value     // Return true if parsing succeeds
+                        this.ai.model = JSON.parse(newVal)?.id     // Return true if parsing succeeds
                     } catch (e) {}
                 },
 
@@ -566,9 +593,14 @@
             },
 
             methods: {
-                selectImage(image) {
-                    this.ai.images.filter(image => image.selected = false)
-                    image.selected = true;
+                selectImage(selectedImage) {
+                    this.ai.images.filter(image => {
+                        image.selected = !(selectedImage === image);
+
+                        return image;
+                    })
+                    console.log(this.ai.images, 'this.ai.images')
+                    // image.selected = true;
                 },
 
                 add() {
@@ -608,10 +640,83 @@
                     this.images.splice(index, 1);
                 },
 
+                
+
+                toggleImageAIModal() {
+                    this.$refs.magicAIImageModal.open();
+                    this.$nextTick(() => {
+                        if (this.$refs.imagePromptInput) {
+                            const tribute = this.$tribute.init({
+                                values: this.fetchSuggestionValues,
+                                lookup: 'name',
+                                fillAttr: 'code',
+                                noMatchTemplate: "@lang('admin::app.common.no-match-found')",
+                                selectTemplate: (item) => `@${item.original.code}`,
+                                menuItemTemplate: (item) => `<div class="p-1.5 rounded-md text-base cursor-pointer transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center">${item.original.name || item.original.code}</div>`,
+                            });
+                            
+                            tribute.attach(this.$refs.imagePromptInput);
+                        }
+                    });
+
+                    this.fetchModels();
+                },
+
+                async fetchModels() {
+                    try {
+                        const response = await axios.get("{{ route('admin.magic_ai.available_model') }}");
+
+                        this.aiModels = response.data.models.filter(model => model.id === 'dall-e-2' || model.id === 'dall-e-3');
+                    } catch (error) {
+                        console.error("Failed to fetch AI models:", error);
+                    }
+                },
+
+                async fetchSuggestionValues(text, cb) {
+                    if (!text && this.suggestionValues.length) {
+                        cb(this.suggestionValues);
+                        return;
+                    }
+
+                    const response = await fetch(`{{ route('admin.magic_ai.suggestion_values') }}?query=${text}&&entity_name=${this.entityName}`);
+                    const data = await response.json();
+                    this.suggestionValues = data;
+
+                    cb(this.suggestionValues);
+                },
+
+
+                openSuggestions() {
+                    this.ai.prompt = this.ai.prompt ?? '';
+                    this.ai.prompt += ' @';
+                    this.$nextTick(() => {
+                        this.$refs.imagePromptInput.focus();
+                        const textarea = this.$refs.imagePromptInput;
+                        const keydownEvent = new KeyboardEvent("keydown", { key: "@", bubbles: true });
+                        textarea.dispatchEvent(keydownEvent);
+                        const event = new KeyboardEvent("keyup", { key: "@", bubbles: true });
+                        textarea.dispatchEvent(event);
+                    });
+                },
+
+                getResourceType() {
+                    switch (this.entityName) {
+                        case 'category-field':
+                            return 'category';
+                        default:
+                            return 'product';
+                    }
+                },
+
                 generate(params, { setErrors }) {
                     this.isLoading = true;
 
                     let self = this;
+
+                    params.resource_id = this.resourceId;
+                    params.resource_type = this.getResourceType();
+                    params.field_type = 'image';
+                    params.model = this.ai.model;
 
                     this.$axios.post("{{ route('admin.magic_ai.image') }}", params)
                         .then(response => {

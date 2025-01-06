@@ -107,6 +107,12 @@ class MagicAIController extends Controller
             'quality' => 'required_if:model,dall-e-3|in:standard,hd',
         ]);
 
+        if (core()->getConfigData('general.magic_ai.settings.ai_platform') != 'openai') {
+            return new JsonResponse([
+               'message' => trans('admin::app.catalog.products.index.magic-ai-openai-required'),
+            ], 500);
+        }
+
         try {
             $options = request()->only([
                 'n',
@@ -114,8 +120,15 @@ class MagicAIController extends Controller
                 'quality',
             ]);
 
+            $prompt = $this->promptService->getPrompt(
+                request()->input('prompt'),
+                request()->input('resource_id'),
+                request()->input('resource_type')
+            );
+
             $images = MagicAI::setModel(request()->input('model'))
-                ->setPrompt(request()->input('prompt'))
+                ->setPlatForm(core()->getConfigData('general.magic_ai.settings.ai_platform'))
+                ->setPrompt($prompt)
                 ->images($options);
 
             return new JsonResponse([

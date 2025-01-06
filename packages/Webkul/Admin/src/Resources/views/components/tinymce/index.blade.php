@@ -67,7 +67,7 @@
                                 <!-- Icon inside textarea -->
                                 <div 
                                     class="absolute bottom-2.5 left-1 text-gray-400 cursor-pointer text-2xl"
-                                    @click="openAttributeSuggestions"
+                                    @click="openSuggestions"
                                 >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -362,7 +362,7 @@
                     });
                 },
 
-                openAttributeSuggestions() {
+                openSuggestions() {
                     this.ai.prompt += ' @';
                     this.$nextTick(() => {
                         this.$refs.promptInput.focus();
