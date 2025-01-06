@@ -7,11 +7,23 @@ use Webkul\Product\Models\Product as Products;
 
 class Product
 {
+    /**
+     * Elastic search Index.
+     *
+     * @var string
+     */
+    private $indexPrefix;
+
+
+    public function __construct() {
+        $this->indexPrefix = env('ELASTICSEARCH_INDEX_PREFIX') ? env('ELASTICSEARCH_INDEX_PREFIX') : env('APP_NAME');
+    }
+
     public function created(Products $product)
     {
         if (env('ELASTICSEARCH_ENABLED', false)) {
             Elasticsearch::index([
-                'index' => strtolower(env('ELASTICSEARCH_INDEX_PREFIX').'_products'),
+                'index' => strtolower($this->indexPrefix.'_products'),
                 'id'    => $product->id,
                 'body'  => $product->toArray(),
             ]);
@@ -22,7 +34,7 @@ class Product
     {
         if (env('ELASTICSEARCH_ENABLED', false)) {
             Elasticsearch::index([
-                'index' => strtolower(env('ELASTICSEARCH_INDEX_PREFIX').'_products'),
+                'index' => strtolower($this->indexPrefix.'_products'),
                 'id'    => $product->id,
                 'body'  => $product->toArray(),
             ]);
@@ -33,7 +45,7 @@ class Product
     {
         if (env('ELASTICSEARCH_ENABLED', false)) {
             Elasticsearch::delete([
-                'index' => strtolower(env('ELASTICSEARCH_INDEX_PREFIX').'_products'),
+                'index' => strtolower($this->indexPrefix.'_products'),
                 'id'    => $product->id,
             ]);
         }

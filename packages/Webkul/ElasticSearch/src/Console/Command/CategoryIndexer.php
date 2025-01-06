@@ -20,6 +20,7 @@ class CategoryIndexer extends Command
     public function handle()
     {
         if (env('ELASTICSEARCH_ENABLED', false)) {
+            $indexPrefix = env('ELASTICSEARCH_INDEX_PREFIX') ? env('ELASTICSEARCH_INDEX_PREFIX') : env('APP_NAME');
 
             $start = microtime(true);
 
@@ -30,14 +31,14 @@ class CategoryIndexer extends Command
 
                 foreach ($categories as $category) {
                     Elasticsearch::index([
-                        'index' => strtolower(env('ELASTICSEARCH_INDEX_PREFIX').'_categories'),
+                        'index' => strtolower($indexPrefix.'_categories'),
                         'id'    => $category->id,
                         'body'  => $category->toArray(),
                     ]);
                 }
 
                 $elasticCategoryIds = collect(Elasticsearch::search([
-                    'index' => strtolower(env('ELASTICSEARCH_INDEX_PREFIX').'_categories'),
+                    'index' => strtolower($indexPrefix.'_categories'),
                     'body'  => [
                         '_source' => false,
                         'query'   => [
@@ -50,7 +51,7 @@ class CategoryIndexer extends Command
 
                 foreach ($categoriesToDelete as $categoryId) {
                     Elasticsearch::delete([
-                        'index' => strtolower(env('ELASTICSEARCH_INDEX_PREFIX').'_categories'),
+                        'index' => strtolower($indexPrefix.'_categories'),
                         'id'    => $categoryId,
                     ]);
                 }

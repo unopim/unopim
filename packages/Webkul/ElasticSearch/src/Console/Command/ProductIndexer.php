@@ -20,13 +20,14 @@ class ProductIndexer extends Command
     public function handle()
     {
         if (env('ELASTICSEARCH_ENABLED', false)) {
+            $indexPrefix = env('ELASTICSEARCH_INDEX_PREFIX') ? env('ELASTICSEARCH_INDEX_PREFIX') : env('APP_NAME');
 
             $start = microtime(true);
 
             $products = Product::all();
 
             if (count($products) != 0) {
-                $productIndex = strtolower(env('ELASTICSEARCH_INDEX_PREFIX').'_products');
+                $productIndex = strtolower($indexPrefix.'_products');
 
                 $dbProductIds = $products->pluck('id')->toArray();
 
