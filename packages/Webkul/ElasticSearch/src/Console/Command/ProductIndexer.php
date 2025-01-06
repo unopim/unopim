@@ -5,12 +5,13 @@ namespace Webkul\ElasticSearch\Console\Command;
 use Illuminate\Console\Command;
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\Product\Models\Product;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class ProductIndexer extends Command
 {
     protected $signature = 'product:index';
 
-    protected $description = 'Index all into Elasticsearch';
+    protected $description = 'Index all products into Elasticsearch';
 
     public function __construct()
     {
@@ -26,10 +27,14 @@ class ProductIndexer extends Command
 
             $products = Product::all();
 
-            if (count($products) != 0) {
+            if ($products->isNotEmpty()) {
                 $productIndex = strtolower($indexPrefix.'_products');
 
                 $dbProductIds = $products->pluck('id')->toArray();
+
+                $this->info('Indexing products into Elasticsearch...');
+                $progressBar = new ProgressBar($this->output, count($products));
+                $progressBar->start();
 
                 foreach ($products as $product) {
                     Elasticsearch::index([
@@ -37,8 +42,14 @@ class ProductIndexer extends Command
                         'id'    => $product->id,
                         'body'  => $product->toArray(),
                     ]);
+                    $progressBar->advance();
                 }
 
+                $progressBar->finish();
+                $this->newLine();
+                $this->info('Product indexing completed.');
+
+                $this->info('Checking for stale products to delete...');
                 $elasticProductIds = collect(Elasticsearch::search([
                     'index' => $productIndex,
                     'body'  => [
@@ -47,27 +58,38 @@ class ProductIndexer extends Command
                             'match_all' => new \stdClass,
                         ],
                     ],
-                ])['hits']['hits'])->pluck('_id')->map(fn ($id) => (int) $id)->toArray();
+                ])['hits']['hits'])->pluck('_id')->map(fn($id) => (int) $id)->toArray();
 
                 $productsToDelete = array_diff($elasticProductIds, $dbProductIds);
 
-                foreach ($productsToDelete as $productId) {
-                    Elasticsearch::delete([
-                        'index' => $productIndex,
-                        'id'    => $productId,
-                    ]);
-                }
+                if (!empty($productsToDelete)) {
+                    $this->info('Deleting stale products from Elasticsearch...');
+                    $deleteProgressBar = new ProgressBar($this->output, count($productsToDelete));
+                    $deleteProgressBar->start();
 
-                $this->info('Products indexed successfully!');
+                    foreach ($productsToDelete as $productId) {
+                        Elasticsearch::delete([
+                            'index' => $productIndex,
+                            'id'    => $productId,
+                        ]);
+                        $deleteProgressBar->advance();
+                    }
+
+                    $deleteProgressBar->finish();
+                    $this->newLine();
+                    $this->info('Stale products deleted successfully.');
+                } else {
+                    $this->info('No stale products to delete.');
+                }
             } else {
-                $this->info('No product found');
+                $this->info('No products found.');
             }
 
             $end = microtime(true);
 
-            echo 'The code took '.($end - $start)." seconds to complete.\n";
+            $this->info('The operation took ' . round($end - $start, 4) . ' seconds to complete.');
         } else {
-            $this->info('ELASTICSEARCH IS NOT ENABLED.');
+            $this->warn('ELASTICSEARCH IS NOT ENABLED.');
         }
     }
 }
