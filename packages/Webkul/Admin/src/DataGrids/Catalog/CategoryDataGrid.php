@@ -187,12 +187,21 @@ class CategoryDataGrid extends DataGrid
             ],
         ]);
 
+        $totalResults = Elasticsearch::count([
+            'index' => strtolower($this->indexPrefix . '_categories'),
+            'body'  => [
+                'query' => [
+                    'bool' => $this->getElasticFilters($params['filters'] ?? []) ?: new \stdClass,
+                ],
+            ],
+        ]);
+
         $ids = collect($results['hits']['hits'])->pluck('_id')->toArray();
 
         $this->queryBuilder->whereIn('cat.id', $ids)
             ->orderBy(DB::raw('FIELD(cat.id, '.implode(',', $ids).')'));
 
-        $total = $results['hits']['total']['value'];
+        $total = $totalResults['count'];
 
         $this->paginator = new LengthAwarePaginator(
             $total ? $this->queryBuilder->get() : [],

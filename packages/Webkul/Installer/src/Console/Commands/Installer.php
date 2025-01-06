@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Artisan;
 use Webkul\Installer\Database\Seeders\DatabaseSeeder as UnoPimDatabaseSeeder;
 use Webkul\Installer\Events\ComposerEvents;
 
@@ -162,6 +163,12 @@ class Installer extends Command
 
             $this->askForDatabaseDetails();
 
+            $this->askForElasticSearchDetails();
+
+            Artisan::call('category:index');
+
+            Artisan::call('product:index');
+
             return $applicationDetails;
         } catch (\Exception $e) {
             $this->error('Error in creating .env file, please create it manually and then run `php artisan migrate` again.');
@@ -290,6 +297,58 @@ class Installer extends Command
         }
 
         foreach ($databaseDetails as $key => $value) {
+            if ($value) {
+                $this->envUpdate($key, $value);
+            }
+        }
+    }
+
+    /**
+     * Add the Elastic Search credentials to the .env file.
+     */
+    protected function askForElasticSearchDetails()
+    {
+        $elasticSearchDetails = [
+            'ELASTICSEARCH_HOST' => true,
+
+            'ELASTICSEARCH_HOST' => text(
+                label: 'Please enter the elastic search host',
+                default: env('ELASTICSEARCH_HOST', 'http://localhost:9200/'),
+            ),
+
+            'ELASTICSEARCH_USER' => text(
+                label: 'Please enter the elastic search port',
+                default: env('ELASTICSEARCH_USER', ''),
+            ),
+
+            'ELASTICSEARCH_PASS' => password(
+                label: 'Please enter the elastic search name',
+            ),
+
+            'ELASTICSEARCH_API_KEY' => text(
+                label: 'Please enter the elastic search prefix',
+                default: env('ELASTICSEARCH_API_KEY', ''),
+            ),
+
+            'ELASTICSEARCH_CLOUD_ID' => text(
+                label: 'Please enter your elastic search username',
+                default: env('ELASTICSEARCH_CLOUD_ID', ''),
+            ),
+
+            'ELASTICSEARCH_INDEX_PREFIX' => text(
+                label: 'Please enter your elastic search password',
+                default: env('ELASTICSEARCH_CLOUD_ID', ''),
+            ),
+        ];
+
+        if (
+            ! $elasticSearchDetails['ELASTICSEARCH_HOST']
+            && ! $elasticSearchDetails['ELASTICSEARCH_CLOUD_ID']
+        ) {
+            return $this->error('Please enter the elastic search credentials.');
+        }
+
+        foreach ($elasticSearchDetails as $key => $value) {
             if ($value) {
                 $this->envUpdate($key, $value);
             }

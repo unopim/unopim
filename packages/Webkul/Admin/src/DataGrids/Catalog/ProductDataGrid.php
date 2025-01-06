@@ -282,12 +282,21 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             ],
         ]);
 
+        $totalResults = Elasticsearch::count([
+            'index' => strtolower($this->indexPrefix . '_products'),
+            'body'  => [
+                'query' => [
+                    'bool' => $this->getElasticFilters($params['filters'] ?? []) ?: new \stdClass,
+                ],
+            ],
+        ]);
+
         $ids = collect($results['hits']['hits'])->pluck('_id')->toArray();
 
         $this->queryBuilder->whereIn('products.id', $ids)
             ->orderBy(DB::raw('FIELD(products.id, '.implode(',', $ids).')'));
 
-        $total = $results['hits']['total']['value'];
+        $total = $totalResults['count'];
 
         $this->paginator = new LengthAwarePaginator(
             $total ? $this->queryBuilder->get() : [],

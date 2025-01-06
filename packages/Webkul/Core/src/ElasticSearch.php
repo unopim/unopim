@@ -5,6 +5,7 @@ namespace Webkul\Core;
 use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\ClientBuilder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 
 class ElasticSearch
 {
@@ -68,8 +69,36 @@ class ElasticSearch
             }
         }
 
-        return $clientBuilder->build();
+        $client = $clientBuilder->build();
+
+        // Now, after establishing the connection, update the index settings
+        $this->updateMaxResultWindow($client);
+
+        return $client;
     }
+
+    private function updateMaxResultWindow(Client $client)
+    {
+        // Setting the max_result_window to a large value
+        $params = [
+            'index' => '_all',
+            'body'  => [
+                'index' => [
+                    'max_result_window' => 1000000000,
+                ],
+            ],
+        ];
+
+        try {
+            $response = $client->indices()->putSettings($params);
+
+            Log::error("Max result window updated successfully.\n");
+        } catch (\Exception $e) {
+
+            Log::error("Error updating max_result_window: " . $e->getMessage() . "\n");
+        }
+    }
+
 
     /**
      * Get the default connection.
