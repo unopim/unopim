@@ -86,6 +86,7 @@
                 >
                     <template #item="{ element, index }">
                         <v-media-image-item
+                            :allowMultiple="{{ $allowMultiple ? 'true' : 'false' }}"
                             :name="name"
                             :index="index"
                             :image="element"
@@ -214,12 +215,32 @@
                             <!-- Modal Content -->
                             <x-slot:content>
                                 <div v-show="! ai.images.length">
+                                    <!-- Model -->
+                                    <x-admin::form.control-group>
+                                        <x-admin::form.control-group.label class="required">
+                                            @lang('admin::app.components.media.images.ai-generation.model')
+                                        </x-admin::form.control-group.label>
+
+                                        <x-admin::form.control-group.control
+                                            type="select"
+                                            name="model"
+                                            rules="required"
+                                            v-model="ai.model"
+                                            ::options="aiModels"
+                                            track-by="value"
+                                            label-by="label"
+                                            :label="trans('admin::app.components.media.images.ai-generation.model')"
+                                        >
+                                        </x-admin::form.control-group.control>
+
+                                        <x-admin::form.control-group.error control-name="model" />
+                                    </x-admin::form.control-group>
                                     <!-- Prompt -->
                                     <x-admin::form.control-group>
                                         <x-admin::form.control-group.label class="required">
                                             @lang('admin::app.components.media.images.ai-generation.prompt')
                                         </x-admin::form.control-group.label>
-                                        
+
                                         <div class="relative w-full">
                                             <x-admin::form.control-group.control
                                                 type="textarea"
@@ -252,38 +273,6 @@
                                         </div>
 
                                         <x-admin::form.control-group.error control-name="prompt" />
-                                    </x-admin::form.control-group>
-
-                                    <x-admin::form.control-group>
-                                        <x-admin::form.control-group.label class="required">
-                                            @lang('admin::app.components.media.images.ai-generation.model')
-                                        </x-admin::form.control-group.label>
-
-                                        @php
-                                            $aiModelsJson = json_encode([
-                                                    [
-                                                        'label' => trans('admin::app.components.media.images.ai-generation.dall-e-2'),
-                                                        'value' => 'dall-e-2'
-                                                    ], [
-                                                        'label' => trans('admin::app.components.media.images.ai-generation.dall-e-3'),
-                                                        'value' => 'dall-e-3'
-                                                    ]
-                                                ]);
-                                        @endphp
-
-                                        <x-admin::form.control-group.control
-                                            type="select"
-                                            name="model"
-                                            rules="required"
-                                            v-model="ai.model"
-                                            ::options="aiModels"
-                                            track-by="value"
-                                            label-by="label"
-                                            :label="trans('admin::app.components.media.images.ai-generation.model')"
-                                        >
-                                        </x-admin::form.control-group.control>
-
-                                        <x-admin::form.control-group.error control-name="model" />
                                     </x-admin::form.control-group>
 
                                     <x-admin::form.control-group v-if="ai.model == 'dall-e-2'">
@@ -375,7 +364,7 @@
                                             class="grid justify-items-center min-w-[120px] max-h-[120px] relative border-[3px] border-transparent rounded overflow-hidden transition-all hover:opacity-80 cursor-pointer"
                                             :class="{'!border-violet-700 ': image.selected}"
                                             v-for="image in ai.images"
-                                            @click="image.selected = ! image.selected"
+                                            @click="selectImage(image, allowMultiple)"
                                         >
                                             <!-- Image Preview -->
                                             <img
@@ -443,7 +432,6 @@
                         </x-admin::modal>
                     </form>
                 </x-admin::form>
-                
             </div>
         </div>  
     </script>
@@ -472,7 +460,7 @@
                         :for="$.uid + '_imageInput_' + index"
                     ></label>
 
-                    <input type="hidden" :name="name + '[' + image.id + ']'" v-if="! image.is_new"/>
+                    <input type="hidden" :name="name + '[' + image.id + ']'" v-if="allowMultiple && ! image.is_new && image.value" :value="image.value"/>
 
                     <input type="hidden" :name="name" v-if="! allowMultiple && ! image.is_new && image.value" :value="image.value"/>
 
@@ -517,7 +505,7 @@
 
                 width: {
                     type: String,
-                    default: '210px'
+                    default: '120px'
                 },
 
                 height: {
@@ -555,6 +543,7 @@
 
                         images: [],
                     },
+
                     aiModels: [],
                     suggestionValues: [],
                     resourceId: "{{ request()->id }}",
@@ -593,14 +582,13 @@
             },
 
             methods: {
-                selectImage(selectedImage) {
-                    this.ai.images.filter(image => {
-                        image.selected = !(selectedImage === image);
-
-                        return image;
-                    })
-                    console.log(this.ai.images, 'this.ai.images')
-                    // image.selected = true;
+                selectImage(image, allowMultiple) {
+                    if (allowMultiple) {
+                        image.selected =!image.selected;
+                    } else {
+                        this.ai.images.filter(image => image.selected = false)
+                        image.selected = true;
+                    }
                 },
 
                 add() {
@@ -639,8 +627,6 @@
 
                     this.images.splice(index, 1);
                 },
-
-                
 
                 toggleImageAIModal() {
                     this.$refs.magicAIImageModal.open();
@@ -684,7 +670,6 @@
 
                     cb(this.suggestionValues);
                 },
-
 
                 openSuggestions() {
                     this.ai.prompt = this.ai.prompt ?? '';
@@ -784,7 +769,7 @@
         app.component('v-media-image-item', {
             template: '#v-media-image-item-template',
 
-            props: ['index', 'image', 'name', 'width', 'height'],
+            props: ['allowMultiple', 'index', 'image', 'name', 'width', 'height'],
 
             mounted() {
                 if (this.image.file instanceof File) {

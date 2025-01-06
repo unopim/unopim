@@ -117,9 +117,9 @@ class MagicAI
     /**
      * Set LLM prompt text.
      */
-    public function setPrompt(string $prompt): self
+    public function setPrompt(string $prompt, string $fieldType = 'tinymce'): self
     {
-        $this->prompt = $prompt.' '.self::SUFFIX_HTML_PROMPT;
+        $this->prompt = $fieldType == 'tinymce' ? $prompt.' '.self::SUFFIX_HTML_PROMPT : $prompt.' '.self::SUFFIX_TEXT_PROMPT;
 
         return $this;
     }
