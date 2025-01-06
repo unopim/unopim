@@ -71,7 +71,7 @@ class AttributeFamilyController extends Controller
 
         $variantOptionAttributes = [];
 
-        //@TODO: Need to improve this function
+        // @TODO: Need to improve this function
         $familyGroupMappings = $attributeFamily?->attributeFamilyGroupMappings->map(function ($familyGroupMapping) {
             $attributeGroup = $familyGroupMapping->attributeGroups->first();
 
