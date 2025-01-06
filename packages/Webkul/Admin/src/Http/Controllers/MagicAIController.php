@@ -22,10 +22,16 @@ class MagicAIController extends Controller
      */
     public function model(): JsonResponse
     {
-        return new JsonResponse([
-            'models'  => AIModel::getModels(),
-            'message' => trans('admin::app.catalog.products.index.magic-ai-model-success'),
-        ]);
+        try {
+            return new JsonResponse([
+                'models'  => AIModel::getModels(),
+                'message' => trans('admin::app.catalog.products.index.magic-ai-validate-success'),
+            ]);
+        } catch(\Exception $e) {
+            return new JsonResponse([
+                'message' => trans('admin::app.catalog.products.index.magic-ai-validate-error'),
+            ], 500);
+        }
     }
 
     /**
