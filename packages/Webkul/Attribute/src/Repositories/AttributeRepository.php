@@ -2,8 +2,8 @@
 
 namespace Webkul\Attribute\Repositories;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Container\Container;
+use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Core\Eloquent\Repository;

@@ -24,7 +24,6 @@ class ProductValueMapper
     /**
      * Retrieves and formats the locale-specific fields for a product.
      *
-     * @param  string  $locale
      * @return array
      */
     public function getLocaleSpecificFields(array $data, string $locale)
@@ -42,7 +41,6 @@ class ProductValueMapper
     /**
      * Retrieves and formats the channel-specific fields for a product.
      *
-     * @param  string  $channel
      * @return array
      */
     public function getChannelSpecificFields(array $data, string $channel)
@@ -60,8 +58,6 @@ class ProductValueMapper
     /**
      * Retrieves and formats the channel-locale-specific fields for a product.
      *
-     * @param  string  $channel
-     * @param  string  $locale
      * @return array
      */
     public function getChannelLocaleSpecificFields(array $data, string $channel, string $locale)
@@ -95,7 +91,7 @@ class ProductValueMapper
         return implode(',', $data['values']['categories']);
     }
 
-     /**
+    /**
      * Retrieves and formats the associated products for a given data row and type.
      *
      *

@@ -15,7 +15,6 @@ abstract class AbstractPrompt
 
         return $matches;
     }
-    
 
     public function getValue(array $values, string $key)
     {

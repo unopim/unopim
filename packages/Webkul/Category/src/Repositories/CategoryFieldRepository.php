@@ -2,9 +2,9 @@
 
 namespace Webkul\Category\Repositories;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 use Webkul\Category\Contracts\CategoryField;
 use Webkul\Core\Eloquent\Repository;
 

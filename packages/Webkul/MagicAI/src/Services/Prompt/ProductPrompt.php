@@ -4,8 +4,8 @@ namespace Webkul\MagicAI\Services\Prompt;
 
 use Illuminate\Support\Str;
 use Webkul\Attribute\Repositories\AttributeRepository;
-use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Facades\ProductValueMapper as ProductValueMapperFacade;
+use Webkul\Product\Repositories\ProductRepository;
 
 class ProductPrompt extends AbstractPrompt
 {

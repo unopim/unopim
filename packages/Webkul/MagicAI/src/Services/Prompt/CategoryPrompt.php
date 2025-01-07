@@ -3,9 +3,9 @@
 namespace Webkul\MagicAI\Services\Prompt;
 
 use Illuminate\Support\Str;
+use Webkul\Category\Facades\CategoryAdditionalDataMapper as CategoryAdditionalDataMapperFacade;
 use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\Category\Repositories\CategoryRepository;
-use Webkul\Category\Facades\CategoryAdditionalDataMapper as CategoryAdditionalDataMapperFacade;
 
 class CategoryPrompt extends AbstractPrompt
 {

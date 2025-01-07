@@ -6,7 +6,8 @@ class Prompt
 {
     protected $typeInstance;
 
-    public function getPrompt(string $prompt, int $resourceId, string $resourceType) {
+    public function getPrompt(string $prompt, int $resourceId, string $resourceType)
+    {
         $typeInstance = $this->getTypeInstance($resourceType);
 
         $prompt = $typeInstance ? $this->getTypeInstance($resourceType)->updatePrompt($prompt, $resourceId) : $prompt;

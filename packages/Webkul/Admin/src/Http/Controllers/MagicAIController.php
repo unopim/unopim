@@ -27,7 +27,7 @@ class MagicAIController extends Controller
                 'models'  => AIModel::getModels(),
                 'message' => trans('admin::app.catalog.products.index.magic-ai-validate-success'),
             ]);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return new JsonResponse([
                 'message' => trans('admin::app.catalog.products.index.magic-ai-validate-error'),
             ], 500);
@@ -51,7 +51,7 @@ class MagicAIController extends Controller
     {
         $query = request()->input('query');
         $entityName = request()->input('entity_name', 'attribute');
-        
+
         if ($entityName === 'category_field') {
             $data = $this->categoryFieldRepository->getCategoryFieldListBySearch($query, ['code', 'name']);
         } else {
@@ -115,7 +115,7 @@ class MagicAIController extends Controller
 
         if (core()->getConfigData('general.magic_ai.settings.ai_platform') != 'openai') {
             return new JsonResponse([
-               'message' => trans('admin::app.catalog.products.index.magic-ai-openai-required'),
+                'message' => trans('admin::app.catalog.products.index.magic-ai-openai-required'),
             ], 500);
         }
 
