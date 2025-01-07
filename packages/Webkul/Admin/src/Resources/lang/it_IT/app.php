@@ -92,10 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name è già stato preso.',
-                'create-btn'     => 'Crea prodotto',
-                'title'          => 'Prodotti',
-                'magic-ai-error' => 'Verifica le credenziali di Magic AI e assicurati che sia selezionato il modello corretto.',
+                'already-taken'             => ':name è già stato preso.',
+                'create-btn'                => 'Crea prodotto',
+                'title'                     => 'Prodotti',
+                'magic-ai-error'            => 'Verifica le credenziali di Magic AI e assicurati che sia selezionato il modello corretto.',
+                'magic-ai-validate-error'   => 'Si prega di verificare le credenziali Magic AI.',
+                'magic-ai-validate-success' => 'Credenziali Magic AI convalidate con successo.',
 
                 'create' => [
                     'back-btn'                          => 'Indietro',

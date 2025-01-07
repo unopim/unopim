@@ -92,10 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => 'Der :name ist bereits vergeben.',
-                'create-btn'     => 'Produkt erstellen',
-                'title'          => 'Produkte',
-                'magic-ai-error' => 'Bitte überprüfen Sie die Magic AI-Anmeldeinformationen und stellen Sie sicher, dass das richtige Modell ausgewählt ist.',
+                'already-taken'             => 'Der :name ist bereits vergeben.',
+                'create-btn'                => 'Produkt erstellen',
+                'title'                     => 'Produkte',
+                'magic-ai-error'            => 'Bitte überprüfen Sie die Magic AI-Anmeldeinformationen und stellen Sie sicher, dass das richtige Modell ausgewählt ist.',
+                'magic-ai-validate-error'   => 'Bitte überprüfen Sie die Magic AI-Anmeldeinformationen.',
+                'magic-ai-validate-success' => 'Magic AI-Anmeldeinformationen erfolgreich validiert',
 
                 'create' => [
                     'back-btn'                          => 'Zurück',

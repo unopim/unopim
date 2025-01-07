@@ -92,10 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name on jo otettu.',
-                'create-btn'     => 'Luo tuote',
-                'title'          => 'Tuotteet',
-                'magic-ai-error' => 'Varmista, että Magic AI -tunnukset ovat oikein ja että oikea malli on valittu.',
+                'already-taken'             => ':name on jo otettu.',
+                'create-btn'                => 'Luo tuote',
+                'title'                     => 'Tuotteet',
+                'magic-ai-error'            => 'Varmista, että Magic AI -tunnukset ovat oikein ja että oikea malli on valittu.',
+                'magic-ai-validate-error'   => 'Tarkista Magic AI -kirjautumistiedot.',
+                'magic-ai-validate-success' => 'Magic AI -tunnistetiedot tarkistettu onnistuneesti',
 
                 'create' => [
                     'back-btn'                          => 'Takaisin',

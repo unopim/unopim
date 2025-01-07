@@ -92,10 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name er allerede taget.',
-                'create-btn'     => 'Opret Produkt',
-                'title'          => 'Produkter',
-                'magic-ai-error' => 'Venligst bekræft Magic AI-legitimationsoplysningerne og sørg for, at den korrekte model er valgt.',
+                'already-taken'             => ':name er allerede taget.',
+                'create-btn'                => 'Opret Produkt',
+                'title'                     => 'Produkter',
+                'magic-ai-error'            => 'Venligst bekræft Magic AI-legitimationsoplysningerne og sørg for, at den korrekte model er valgt.',
+                'magic-ai-validate-error'   => 'Bekræft venligst Magic AI-legitimationsoplysningerne.',
+                'magic-ai-validate-success' => 'Magic AI-legitimationsoplysninger valideret',
 
                 'create' => [
                     'back-btn'                          => 'Tilbage',

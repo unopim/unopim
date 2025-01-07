@@ -92,9 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken' => 'تم أخذ :name بالفعل.',
-                'create-btn'    => 'إنشاء المنتج',
-                'title'         => 'منتجات',
+                'already-taken'             => 'تم أخذ :name بالفعل.',
+                'create-btn'                => 'إنشاء المنتج',
+                'title'                     => 'منتجات',
+                'magic-ai-error'            => 'يرجى التحقق من بيانات اعتماد Magic AI والتأكد من اختيار النموذج الصحيح.',
+                'magic-ai-validate-error'   => 'يرجى التحقق من بيانات اعتماد Magic AI.',
+                'magic-ai-validate-success' => 'تم التحقق من بيانات اعتماد Magic AI بنجاح.',
 
                 'create' => [
                     'back-btn'                          => 'خلف',

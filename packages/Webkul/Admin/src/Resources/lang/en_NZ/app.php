@@ -92,10 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name has already been taken.',
-                'create-btn'     => 'Create Product',
-                'title'          => 'Products',
-                'magic-ai-error' => 'Please verify the Magic AI credentials and ensure the correct model is selected.',
+                'already-taken'             => ':name has already been taken.',
+                'create-btn'                => 'Create Product',
+                'title'                     => 'Products',
+                'magic-ai-error'            => 'Please verify the Magic AI credentials and ensure the correct model is selected.',
+                'magic-ai-validate-error'   => 'Please verify the Magic AI credentials.',
+                'magic-ai-validate-success' => 'Magic AI credentials validated successfully',
 
                 'create' => [
                     'back-btn'                          => 'Back',

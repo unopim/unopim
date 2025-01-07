@@ -92,9 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken' => ':name पहले ही लिया जा चुका है।',
-                'create-btn'    => 'उत्पाद बनाएँ',
-                'title'         => 'उत्पादों',
+                'already-taken'             => ':name पहले ही लिया जा चुका है।',
+                'create-btn'                => 'उत्पाद बनाएँ',
+                'title'                     => 'उत्पादों',
+                'magic-ai-error'            => 'कृपया Magic AI क्रेडेंशियल्स को सत्यापित करें और सुनिश्चित करें कि सही मॉडल चयनित है।',
+                'magic-ai-validate-error'   => 'कृपया Magic AI क्रेडेंशियल्स को सत्यापित करें।',
+                'magic-ai-validate-success' => 'Magic AI क्रेडेंशियल्स सफलतापूर्वक सत्यापित हो गए।',
 
                 'create' => [
                     'back-btn'                          => 'पीछे',

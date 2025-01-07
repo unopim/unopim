@@ -92,10 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name er allerede tatt.',
-                'create-btn'     => 'Lag produkt',
-                'title'          => 'Produkter',
-                'magic-ai-error' => 'Sjekk Magic AI-legitimasjonen og sørg for at riktig modell er valgt.',
+                'already-taken'             => ':name er allerede tatt.',
+                'create-btn'                => 'Lag produkt',
+                'title'                     => 'Produkter',
+                'magic-ai-error'            => 'Sjekk Magic AI-legitimasjonen og sørg for at riktig modell er valgt.',
+                'magic-ai-validate-error'   => 'Vennligst sjekk Magic AI-legitimasjonen.',
+                'magic-ai-validate-success' => 'Magic AI-legitimasjonen ble vellykket validert.',
 
                 'create' => [
                     'back-btn'                          => 'Tilbake',

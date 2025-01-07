@@ -92,10 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name 已被占用。',
-                'create-btn'     => '创建产品',
-                'title'          => '产品',
-                'magic-ai-error' => '请验证 Magic AI 凭证并确保选择了正确的模型。',
+                'already-taken'             => ':name 已被占用。',
+                'create-btn'                => '创建产品',
+                'title'                     => '产品',
+                'magic-ai-error'            => '请验证 Magic AI 凭证并确保选择了正确的模型。',
+                'magic-ai-validate-error'   => '请验证 Magic AI 凭据。',
+                'magic-ai-validate-success' => 'Magic AI 凭据验证成功。',
 
                 'create' => [
                     'back-btn'                          => '后退',

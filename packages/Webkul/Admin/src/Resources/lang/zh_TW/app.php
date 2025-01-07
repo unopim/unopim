@@ -92,10 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name 已經被使用。',
-                'create-btn'     => '創建產品',
-                'title'          => '產品',
-                'magic-ai-error' => '檢查您的 Magic AI 賬戶，並確保已選擇正確的模型。',
+                'already-taken'             => ':name 已經被使用。',
+                'create-btn'                => '創建產品',
+                'title'                     => '產品',
+                'magic-ai-error'            => '檢查您的 Magic AI 賬戶，並確保已選擇正確的模型。',
+                'magic-ai-validate-error'   => '請驗證 Magic AI 憑證。',
+                'magic-ai-validate-success' => 'Magic AI 憑證驗證成功。',
 
                 'create' => [
                     'back-btn'                          => '返回',

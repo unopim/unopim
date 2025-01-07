@@ -92,9 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken' => 'De :name is al in gebruik.',
-                'create-btn'    => 'Creëer product',
-                'title'         => 'Producten',
+                'already-taken'             => 'De :name is al in gebruik.',
+                'create-btn'                => 'Creëer product',
+                'title'                     => 'Producten',
+                'magic-ai-error'            => 'Controleer de Magic AI-referenties en zorg ervoor dat het juiste model is geselecteerd.',
+                'magic-ai-validate-error'   => 'Controleer de Magic AI-referenties.',
+                'magic-ai-validate-success' => 'Magic AI-referenties succesvol gevalideerd.',
 
                 'create' => [
                     'back-btn'                          => 'Rug',

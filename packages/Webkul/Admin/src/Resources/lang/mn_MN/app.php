@@ -92,9 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken' => ':name аль хэдийн авсан байна.',
-                'create-btn'    => 'Бүтээгдэхүүн үүсгэх',
-                'title'         => 'Бүтээгдэхүүн',
+                'already-taken'             => ':name аль хэдийн авсан байна.',
+                'create-btn'                => 'Бүтээгдэхүүн үүсгэх',
+                'title'                     => 'Бүтээгдэхүүн',
+                'magic-ai-error'            => 'Magic AI-ийн эрхийг шалгаж, зөв загвар сонгосон эсэхийг баталгаажуулна уу.',
+                'magic-ai-validate-error'   => 'Magic AI-ийн эрхийг шалгана уу.',
+                'magic-ai-validate-success' => 'Magic AI-ийн эрх амжилттай баталгаажлаа.',
 
                 'create' => [
                     'back-btn'                          => 'Буцах',

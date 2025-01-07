@@ -92,10 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name đã được sử dụng.',
-                'create-btn'     => 'Tạo sản phẩm',
-                'title'          => 'Sản phẩm',
-                'magic-ai-error' => 'Kiểm tra lại thông tin Magic AI của bạn và đảm bảo rằng mô hình chính xác đã được chọn.',
+                'already-taken'             => ':name đã được sử dụng.',
+                'create-btn'                => 'Tạo sản phẩm',
+                'title'                     => 'Sản phẩm',
+                'magic-ai-error'            => 'Kiểm tra lại thông tin Magic AI của bạn và đảm bảo rằng mô hình chính xác đã được chọn.',
+                'magic-ai-validate-error'   => 'Vui lòng kiểm tra thông tin đăng nhập Magic AI.',
+                'magic-ai-validate-success' => 'Thông tin đăng nhập Magic AI đã được xác thực thành công.',
 
                 'create' => [
                     'back-btn'                          => 'Quay lại',

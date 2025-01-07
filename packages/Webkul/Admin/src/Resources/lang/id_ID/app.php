@@ -92,10 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name telah diambil.',
-                'create-btn'     => 'Buat Produk',
-                'title'          => 'Produk',
-                'magic-ai-error' => 'Harap verifikasi kredensial Magic AI dan pastikan model yang benar dipilih.',
+                'already-taken'             => ':name telah diambil.',
+                'create-btn'                => 'Buat Produk',
+                'title'                     => 'Produk',
+                'magic-ai-error'            => 'Harap verifikasi kredensial Magic AI dan pastikan model yang benar dipilih.',
+                'magic-ai-validate-error'   => 'Silakan periksa kredensial Magic AI.',
+                'magic-ai-validate-success' => 'Kredensial Magic AI berhasil diverifikasi.',
 
                 'create' => [
                     'back-btn'                          => 'Kembali',

@@ -92,10 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name ay ginagamit na.',
-                'create-btn'     => 'Gumawa ng produkto',
-                'title'          => 'Mga Produkto',
-                'magic-ai-error' => 'Tiyakin na tama ang kredensyal ng Magic AI at ang tamang modelo ay napili.',
+                'already-taken'             => ':name ay ginagamit na.',
+                'create-btn'                => 'Gumawa ng produkto',
+                'title'                     => 'Mga Produkto',
+                'magic-ai-error'            => 'Tiyakin na tama ang kredensyal ng Magic AI at ang tamang modelo ay napili.',
+                'magic-ai-validate-error'   => 'Paki-verify ang mga kredensyal ng Magic AI.',
+                'magic-ai-validate-success' => 'Matagumpay na na-validate ang mga kredensyal ng Magic AI.',
 
                 'create' => [
                     'back-btn'                          => 'Bumalik',

@@ -92,10 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name je već zauzet.',
-                'create-btn'     => 'Stvori proizvod',
-                'title'          => 'Proizvodi',
-                'magic-ai-error' => 'Molimo provjerite Magic AI vjerodajnice i odaberite ispravan model.',
+                'already-taken'             => ':name je već zauzet.',
+                'create-btn'                => 'Stvori proizvod',
+                'title'                     => 'Proizvodi',
+                'magic-ai-error'            => 'Molimo provjerite Magic AI vjerodajnice i odaberite ispravan model.',
+                'magic-ai-validate-error'   => 'Provjerite vjerodajnice za Magic AI.',
+                'magic-ai-validate-success' => 'Magic AI vjerodajnice uspješno su potvrđene',
 
                 'create' => [
                     'back-btn'                          => 'Natrag',

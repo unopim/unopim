@@ -92,10 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name zaten kullanılıyor.',
-                'create-btn'     => 'Ürün oluştur',
-                'title'          => 'Ürünler',
-                'magic-ai-error' => 'Magic AI kimlik bilgilerinizi kontrol edin ve doğru modelin seçildiğinden emin olun.',
+                'already-taken'             => ':name zaten kullanılıyor.',
+                'create-btn'                => 'Ürün oluştur',
+                'title'                     => 'Ürünler',
+                'magic-ai-error'            => 'Magic AI kimlik bilgilerinizi kontrol edin ve doğru modelin seçildiğinden emin olun.',
+                'magic-ai-validate-error'   => 'Lütfen Magic AI kimlik bilgilerini doğrulayın.',
+                'magic-ai-validate-success' => 'Magic AI kimlik bilgileri başarıyla doğrulandı.',
 
                 'create' => [
                     'back-btn'                          => 'Geri',

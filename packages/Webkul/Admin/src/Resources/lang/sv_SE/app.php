@@ -92,10 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name är redan i bruk.',
-                'create-btn'     => 'Skapa produkt',
-                'title'          => 'Produkter',
-                'magic-ai-error' => 'Kontrollera Magic AI-uppgifterna och se till att rätt modell är vald.',
+                'already-taken'             => ':name är redan i bruk.',
+                'create-btn'                => 'Skapa produkt',
+                'title'                     => 'Produkter',
+                'magic-ai-error'            => 'Kontrollera Magic AI-uppgifterna och se till att rätt modell är vald.',
+                'magic-ai-validate-error'   => 'Vänligen kontrollera Magic AI-referenserna.',
+                'magic-ai-validate-success' => 'Magic AI-referenserna validerades framgångsrikt.',
 
                 'create' => [
                     'back-btn'                          => 'Tillbaka',

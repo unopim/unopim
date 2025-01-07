@@ -92,10 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name jest już zajęte.',
-                'create-btn'     => 'Utwórz produkt',
-                'title'          => 'Produkty',
-                'magic-ai-error' => 'Sprawdź dane uwierzytelniające Magic AI i upewnij się, że wybrano odpowiedni model.',
+                'already-taken'             => ':name jest już zajęte.',
+                'create-btn'                => 'Utwórz produkt',
+                'title'                     => 'Produkty',
+                'magic-ai-error'            => 'Sprawdź dane uwierzytelniające Magic AI i upewnij się, że wybrano odpowiedni model.',
+                'magic-ai-validate-error'   => 'Magic AIの認証情報を確認してください。',
+                'magic-ai-validate-success' => 'Magic AIの認証情報が正常に検証されました。',
 
                 'create' => [
                     'back-btn'                          => 'Wstecz',

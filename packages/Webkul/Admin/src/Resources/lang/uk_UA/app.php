@@ -92,10 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name вже використовується.',
-                'create-btn'     => 'Створити продукт',
-                'title'          => 'Продукти',
-                'magic-ai-error' => 'Перевірте свої облікові дані Magic AI та переконайтеся, що вибрано правильну модель.',
+                'already-taken'             => ':name вже використовується.',
+                'create-btn'                => 'Створити продукт',
+                'title'                     => 'Продукти',
+                'magic-ai-error'            => 'Перевірте свої облікові дані Magic AI та переконайтеся, що вибрано правильну модель.',
+                'magic-ai-validate-error'   => 'Будь ласка, перевірте облікові дані Magic AI.',
+                'magic-ai-validate-success' => 'Облікові дані Magic AI успішно підтверджені.',
 
                 'create' => [
                     'back-btn'                          => 'Назад',
