@@ -9,7 +9,7 @@
 
 <v-media-images
     name="{{ $name }}"
-    v-bind:allow-multiple="{{ $allowMultiple ? 'true' : 'false' }}"
+    v-bind:allow-multiple="{{ $allowMultiple ? true : false }}"
     v-bind:show-placeholders="{{ $showPlaceholders ? 'true' : 'false' }}"
     :uploaded-images='{{ json_encode($uploadedImages) }}'
     width="{{ $width }}"
@@ -82,7 +82,7 @@
                 >
                     <template #item="{ element, index }">
                         <v-media-image-item
-                            :allowMultiple="{{ $allowMultiple ? 'true' : 'false' }}"
+                            :allowMultiple="{{ $allowMultiple ? true : false }}"
                             :name="name"
                             :index="index"
                             :image="element"
