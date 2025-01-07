@@ -3,7 +3,6 @@
 namespace Webkul\Installer\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
@@ -124,6 +123,12 @@ class Installer extends Command
         $this->warn('Step: Clearing cached bootstrap files...');
         $this->call('optimize:clear');
 
+        $this->warn('Step: Indexing categories to elastic search...');
+        $this->call('category:index');
+
+        $this->warn('Step: Indexing products to elastic search...');
+        $this->call('product:index');
+
         if (! $this->option('skip-admin-creation')) {
             $this->warn('Step: Create admin credentials...');
             $this->createAdminCredentials();
@@ -164,10 +169,6 @@ class Installer extends Command
             $this->askForDatabaseDetails();
 
             $this->askForElasticSearchDetails();
-
-            Artisan::call('category:index');
-
-            Artisan::call('product:index');
 
             return $applicationDetails;
         } catch (\Exception $e) {
@@ -309,34 +310,34 @@ class Installer extends Command
     protected function askForElasticSearchDetails()
     {
         $elasticSearchDetails = [
-            'ELASTICSEARCH_HOST' => true,
+            'ELASTICSEARCH_ENABLED' => 'true',
 
             'ELASTICSEARCH_HOST' => text(
-                label: 'Please enter the elastic search host',
+                label: 'Please enter the Elastic Search host',
                 default: env('ELASTICSEARCH_HOST', 'http://localhost:9200/'),
             ),
 
             'ELASTICSEARCH_USER' => text(
-                label: 'Please enter the elastic search port',
+                label: 'Please enter the Elastic Search user',
                 default: env('ELASTICSEARCH_USER', ''),
             ),
 
             'ELASTICSEARCH_PASS' => password(
-                label: 'Please enter the elastic search name',
+                label: 'Please enter the Elastic Search password',
             ),
 
             'ELASTICSEARCH_API_KEY' => text(
-                label: 'Please enter the elastic search prefix',
+                label: 'Please enter the Elastic Search API key',
                 default: env('ELASTICSEARCH_API_KEY', ''),
             ),
 
             'ELASTICSEARCH_CLOUD_ID' => text(
-                label: 'Please enter your elastic search username',
+                label: 'Please enter your Elastic Search Cloud ID',
                 default: env('ELASTICSEARCH_CLOUD_ID', ''),
             ),
 
             'ELASTICSEARCH_INDEX_PREFIX' => text(
-                label: 'Please enter your elastic search password',
+                label: 'Please enter your Elastic Search Index Prefix',
                 default: env('ELASTICSEARCH_CLOUD_ID', ''),
             ),
         ];
