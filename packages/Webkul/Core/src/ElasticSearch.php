@@ -95,10 +95,9 @@ class ElasticSearch
             Log::error("Max result window updated successfully.\n");
         } catch (\Exception $e) {
 
-            Log::error("Error updating max_result_window: " . $e->getMessage() . "\n");
+            Log::error('Error updating max_result_window: '.$e->getMessage()."\n");
         }
     }
-
 
     /**
      * Get the default connection.

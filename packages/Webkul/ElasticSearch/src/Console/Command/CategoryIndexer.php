@@ -2,10 +2,11 @@
 
 namespace Webkul\ElasticSearch\Console\Command;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Webkul\Category\Models\Category;
 use Webkul\Core\Facades\ElasticSearch;
-use Symfony\Component\Console\Helper\ProgressBar;
 
 class CategoryIndexer extends Command
 {
@@ -27,20 +28,53 @@ class CategoryIndexer extends Command
 
             $categories = Category::all();
 
+            $categoryIndex = strtolower($indexPrefix.'_categories');
+
             if ($categories->isNotEmpty()) {
+                $elasticCategory = [];
+
+                try {
+                    $elasticCategory = collect(Elasticsearch::search([
+                        'index' => $categoryIndex,
+                        'body'  => [
+                            '_source' => ['updated_at'],
+                            'query'   => [
+                                'match_all' => new \stdClass,
+                            ],
+                            'size' => 1000000000,
+                        ],
+                    ])['hits']['hits'])->mapWithKeys(function ($hit) {
+                        return [(int) $hit['_id'] => $hit['_source']['updated_at']];
+                    })->toArray();
+                } catch (\Exception $e) {
+                    if (str_contains($e->getMessage(), 'index_not_found_exception')) {
+                        $this->info('No data found. Initiating fresh indexing');
+                    } else {
+                        throw $e;
+                    }
+                }
+
                 $this->info('Indexing categories into Elasticsearch...');
-                $categoryIndex = strtolower($indexPrefix . '_categories');
                 $dbCategoryIds = $categories->pluck('id')->toArray();
 
                 $progressBar = new ProgressBar($this->output, count($categories));
                 $progressBar->start();
 
                 foreach ($categories as $category) {
-                    Elasticsearch::index([
-                        'index' => $categoryIndex,
-                        'id'    => $category->id,
-                        'body'  => $category->toArray(),
-                    ]);
+                    if (
+                        (
+                            isset($elasticCategory[$category->id])
+                            && $elasticCategory[$category->id] != Carbon::parse($category->updated_at)->setTimezone('UTC')->format('Y-m-d\TH:i:s.u\Z')
+                        )
+                        || ! isset($elasticCategory[$category->id])
+                    ) {
+
+                        Elasticsearch::index([
+                            'index' => $categoryIndex,
+                            'id'    => $category->id,
+                            'body'  => $category->toArray(),
+                        ]);
+                    }
                     $progressBar->advance();
                 }
 
@@ -49,6 +83,7 @@ class CategoryIndexer extends Command
                 $this->info('Category indexing completed.');
 
                 $this->info('Checking for stale categories to delete...');
+
                 $elasticCategoryIds = collect(Elasticsearch::search([
                     'index' => $categoryIndex,
                     'body'  => [
@@ -56,12 +91,13 @@ class CategoryIndexer extends Command
                         'query'   => [
                             'match_all' => new \stdClass,
                         ],
+                        'size' => 1000000000,
                     ],
-                ])['hits']['hits'])->pluck('_id')->map(fn($id) => (int) $id)->toArray();
+                ])['hits']['hits'])->pluck('_id')->map(fn ($id) => (int) $id)->toArray();
 
                 $categoriesToDelete = array_diff($elasticCategoryIds, $dbCategoryIds);
 
-                if (!empty($categoriesToDelete)) {
+                if (! empty($categoriesToDelete)) {
                     $this->info('Deleting stale categories from Elasticsearch...');
                     $deleteProgressBar = new ProgressBar($this->output, count($categoriesToDelete));
                     $deleteProgressBar->start();
@@ -81,12 +117,21 @@ class CategoryIndexer extends Command
                     $this->info('No stale categories to delete.');
                 }
             } else {
-                $this->info('No categories found.');
+                try {
+                    Elasticsearch::indices()->delete(['index' => $categoryIndex]);
+                    $this->info('Elasticsearch index deleted successfully.');
+                } catch (\Exception $e) {
+                    if (str_contains($e->getMessage(), 'index_not_found_exception')) {
+                        $this->warn('Index not found: '.$categoryIndex);
+                    } else {
+                        throw $e;
+                    }
+                }
             }
 
             $end = microtime(true);
 
-            $this->info('The operation took ' . round($end - $start, 4) . ' seconds to complete.');
+            $this->info('The operation took '.round($end - $start, 4).' seconds to complete.');
         } else {
             $this->warn('ELASTICSEARCH IS NOT ENABLED.');
         }

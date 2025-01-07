@@ -17,13 +17,6 @@ use Webkul\Product\Type\AbstractType;
 class ProductDataGrid extends DataGrid implements ExportableInterface
 {
     /**
-     * Elastic search Index.
-     *
-     * @var string
-     */
-    private $indexPrefix;
-
-    /**
      * Primary column.
      *
      * @var string
@@ -40,9 +33,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         protected ProductRepository $productRepository,
         protected ChannelRepository $channelRepository,
         protected ProductAttributeValuesNormalizer $valuesNormalizer,
-    ) {
-        $this->indexPrefix = env('ELASTICSEARCH_INDEX_PREFIX') ? env('ELASTICSEARCH_INDEX_PREFIX') : env('APP_NAME');
-    }
+    ) {}
 
     /**
      * Prepare query builder.
@@ -281,9 +272,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'sort'          => $this->getElasticSort($params['sort'] ?? []),
             ],
         ]);
+        $indexPrefix = env('ELASTICSEARCH_INDEX_PREFIX') ? env('ELASTICSEARCH_INDEX_PREFIX') : env('APP_NAME');
 
         $totalResults = Elasticsearch::count([
-            'index' => strtolower($this->indexPrefix . '_products'),
+            'index' => strtolower($indexPrefix.'_products'),
             'body'  => [
                 'query' => [
                     'bool' => $this->getElasticFilters($params['filters'] ?? []) ?: new \stdClass,

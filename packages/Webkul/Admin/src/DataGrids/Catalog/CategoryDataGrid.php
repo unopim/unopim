@@ -12,13 +12,6 @@ use Webkul\DataGrid\DataGrid;
 class CategoryDataGrid extends DataGrid
 {
     /**
-     * Elastic search Index.
-     *
-     * @var string
-     */
-    private $indexPrefix;
-
-    /**
      * Index.
      *
      * @var string
@@ -48,9 +41,6 @@ class CategoryDataGrid extends DataGrid
         'locales',
     ];
 
-    public function __construct() {
-        $this->indexPrefix = env('ELASTICSEARCH_INDEX_PREFIX') ? env('ELASTICSEARCH_INDEX_PREFIX') : env('APP_NAME');
-    }
 
     /**
      * Prepare query builder.
@@ -186,9 +176,10 @@ class CategoryDataGrid extends DataGrid
                 'sort'          => $this->getElasticSort($params['sort'] ?? []),
             ],
         ]);
+        $indexPrefix = env('ELASTICSEARCH_INDEX_PREFIX') ? env('ELASTICSEARCH_INDEX_PREFIX') : env('APP_NAME');
 
         $totalResults = Elasticsearch::count([
-            'index' => strtolower($this->indexPrefix . '_categories'),
+            'index' => strtolower($indexPrefix.'_categories'),
             'body'  => [
                 'query' => [
                     'bool' => $this->getElasticFilters($params['filters'] ?? []) ?: new \stdClass,

@@ -2,10 +2,11 @@
 
 namespace Webkul\ElasticSearch\Console\Command;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\Product\Models\Product;
-use Symfony\Component\Console\Helper\ProgressBar;
 
 class ProductIndexer extends Command
 {
@@ -27,21 +28,52 @@ class ProductIndexer extends Command
 
             $products = Product::all();
 
-            if ($products->isNotEmpty()) {
-                $productIndex = strtolower($indexPrefix.'_products');
+            $productIndex = strtolower($indexPrefix.'_products');
 
-                $dbProductIds = $products->pluck('id')->toArray();
+            if ($products->isNotEmpty()) {
+                $elasticProduct = [];
+
+                try {
+                    $elasticProduct = collect(Elasticsearch::search([
+                        'index' => $productIndex,
+                        'body'  => [
+                            '_source' => ['updated_at'],
+                            'query'   => [
+                                'match_all' => new \stdClass,
+                            ],
+                            'size' => 1000000000,
+                        ],
+                    ])['hits']['hits'])->mapWithKeys(function ($hit) {
+                        return [(int) $hit['_id'] => $hit['_source']['updated_at']];
+                    })->toArray();
+                } catch (\Exception $e) {
+                    if (str_contains($e->getMessage(), 'index_not_found_exception')) {
+                        $this->info('No data found. Initiating fresh indexing');
+                    } else {
+                        throw $e;
+                    }
+                }
 
                 $this->info('Indexing products into Elasticsearch...');
+                $dbProductIds = $products->pluck('id')->toArray();
+
                 $progressBar = new ProgressBar($this->output, count($products));
                 $progressBar->start();
 
                 foreach ($products as $product) {
-                    Elasticsearch::index([
-                        'index' => $productIndex,
-                        'id'    => $product->id,
-                        'body'  => $product->toArray(),
-                    ]);
+                    if (
+                        (
+                            isset($elasticProduct[$product->id])
+                            && $elasticProduct[$product->id] != Carbon::parse($product->updated_at)->setTimezone('UTC')->format('Y-m-d\TH:i:s.u\Z')
+                        )
+                        || ! isset($elasticProduct[$product->id])
+                    ) {
+                        Elasticsearch::index([
+                            'index' => $productIndex,
+                            'id'    => $product->id,
+                            'body'  => $product->toArray(),
+                        ]);
+                    }
                     $progressBar->advance();
                 }
 
@@ -50,6 +82,7 @@ class ProductIndexer extends Command
                 $this->info('Product indexing completed.');
 
                 $this->info('Checking for stale products to delete...');
+
                 $elasticProductIds = collect(Elasticsearch::search([
                     'index' => $productIndex,
                     'body'  => [
@@ -57,12 +90,13 @@ class ProductIndexer extends Command
                         'query'   => [
                             'match_all' => new \stdClass,
                         ],
+                        'size' => 1000000000,
                     ],
-                ])['hits']['hits'])->pluck('_id')->map(fn($id) => (int) $id)->toArray();
+                ])['hits']['hits'])->pluck('_id')->map(fn ($id) => (int) $id)->toArray();
 
                 $productsToDelete = array_diff($elasticProductIds, $dbProductIds);
 
-                if (!empty($productsToDelete)) {
+                if (! empty($productsToDelete)) {
                     $this->info('Deleting stale products from Elasticsearch...');
                     $deleteProgressBar = new ProgressBar($this->output, count($productsToDelete));
                     $deleteProgressBar->start();
@@ -82,12 +116,21 @@ class ProductIndexer extends Command
                     $this->info('No stale products to delete.');
                 }
             } else {
-                $this->info('No products found.');
+                try {
+                    Elasticsearch::indices()->delete(['index' => $productIndex]);
+                    $this->info('Elasticsearch index deleted successfully.');
+                } catch (\Exception $e) {
+                    if (str_contains($e->getMessage(), 'index_not_found_exception')) {
+                        $this->warn('Index not found: '.$productIndex);
+                    } else {
+                        throw $e;
+                    }
+                }
             }
 
             $end = microtime(true);
 
-            $this->info('The operation took ' . round($end - $start, 4) . ' seconds to complete.');
+            $this->info('The operation took '.round($end - $start, 4).' seconds to complete.');
         } else {
             $this->warn('ELASTICSEARCH IS NOT ENABLED.');
         }

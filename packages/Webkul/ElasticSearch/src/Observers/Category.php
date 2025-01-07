@@ -14,8 +14,8 @@ class Category
      */
     private $indexPrefix;
 
-
-    public function __construct() {
+    public function __construct()
+    {
         $this->indexPrefix = env('ELASTICSEARCH_INDEX_PREFIX') ? env('ELASTICSEARCH_INDEX_PREFIX') : env('APP_NAME');
     }
 
