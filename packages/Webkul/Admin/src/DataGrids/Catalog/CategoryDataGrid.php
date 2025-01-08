@@ -234,7 +234,13 @@ class CategoryDataGrid extends DataGrid
                 $attribute = 'name';
             }
 
-            $filters['filter'][] = $this->getFilterValue($attribute, $value);
+            $value = array_filter($value, function ($val) {
+                return $val !== null && $val !== '';
+            });
+
+            if (count($value) > 0) {
+                $filters['filter'][] = $this->getFilterValue($attribute, $value);
+            }
         }
 
         return $filters;

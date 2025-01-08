@@ -331,7 +331,13 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 $attribute = 'name';
             }
 
-            $filters['filter'][] = $this->getFilterValue($attribute, $value);
+            $value = array_filter($value, function ($val) {
+                return $val !== null && $val !== '';
+            });
+
+            if (count($value) > 0) {
+                $filters['filter'][] = $this->getFilterValue($attribute, $value);
+            }
         }
 
         return $filters;
@@ -400,7 +406,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         }
 
         if ($sort == 'attribute_family') {
-            $sort .= '_id';
+            $sort = 'attribute_family_id';
         }
 
         if ($sort == 'product_id') {
