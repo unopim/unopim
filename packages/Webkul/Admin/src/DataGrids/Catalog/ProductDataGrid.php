@@ -376,7 +376,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 foreach ($values as $value) {
                     $filters['bool']['should'][] = [
                         'match_phrase_prefix' => [
-                            $attribute => $value,
+                            'sku' => $value,
                         ],
                     ];
                 }
