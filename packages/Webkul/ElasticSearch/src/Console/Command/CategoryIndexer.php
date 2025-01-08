@@ -21,8 +21,8 @@ class CategoryIndexer extends Command
 
     public function handle()
     {
-        if (env('ELASTICSEARCH_ENABLED', false)) {
-            $indexPrefix = env('ELASTICSEARCH_INDEX_PREFIX') ? env('ELASTICSEARCH_INDEX_PREFIX') : env('APP_NAME');
+        if (config('elasticsearch.connection')) {
+            $indexPrefix = config('elasticsearch.prefix');
 
             $start = microtime(true);
 
