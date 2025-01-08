@@ -5,6 +5,7 @@ namespace Webkul\Admin\DataGrids\Catalog;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\Core\Models\Locale;
 use Webkul\DataGrid\DataGrid;
@@ -40,7 +41,6 @@ class CategoryDataGrid extends DataGrid
     protected $extraFilters = [
         'locales',
     ];
-
 
     /**
      * Prepare query builder.
@@ -161,49 +161,61 @@ class CategoryDataGrid extends DataGrid
             return;
         }
 
-        $params = $this->validatedRequest();
-        $pagination = $params['pagination'];
+        try {
+            $params = $this->validatedRequest();
+            $pagination = $params['pagination'];
 
-        $results = Elasticsearch::search([
-            'index' => strtolower($this->indexPrefix.'_categories'),
-            'body'  => [
-                'from'          => ($pagination['page'] * $pagination['per_page']) - $pagination['per_page'],
-                'size'          => $pagination['per_page'],
-                'stored_fields' => [],
-                'query'         => [
-                    'bool' => $this->getElasticFilters($params['filters'] ?? []) ?: new \stdClass,
+            $indexPrefix = env('ELASTICSEARCH_INDEX_PREFIX') ? env('ELASTICSEARCH_INDEX_PREFIX') : env('APP_NAME');
+
+            $results = Elasticsearch::search([
+                'index' => strtolower($indexPrefix.'_categories'),
+                'body'  => [
+                    'from'          => ($pagination['page'] * $pagination['per_page']) - $pagination['per_page'],
+                    'size'          => $pagination['per_page'],
+                    'stored_fields' => [],
+                    'query'         => [
+                        'bool' => $this->getElasticFilters($params['filters'] ?? []) ?: new \stdClass,
+                    ],
+                    'sort'          => $this->getElasticSort($params['sort'] ?? []),
                 ],
-                'sort'          => $this->getElasticSort($params['sort'] ?? []),
-            ],
-        ]);
-        $indexPrefix = env('ELASTICSEARCH_INDEX_PREFIX') ? env('ELASTICSEARCH_INDEX_PREFIX') : env('APP_NAME');
+            ]);
 
-        $totalResults = Elasticsearch::count([
-            'index' => strtolower($indexPrefix.'_categories'),
-            'body'  => [
-                'query' => [
-                    'bool' => $this->getElasticFilters($params['filters'] ?? []) ?: new \stdClass,
+            $totalResults = Elasticsearch::count([
+                'index' => strtolower($indexPrefix.'_categories'),
+                'body'  => [
+                    'query' => [
+                        'bool' => $this->getElasticFilters($params['filters'] ?? []) ?: new \stdClass,
+                    ],
                 ],
-            ],
-        ]);
+            ]);
 
-        $ids = collect($results['hits']['hits'])->pluck('_id')->toArray();
+            $ids = collect($results['hits']['hits'])->pluck('_id')->toArray();
 
-        $this->queryBuilder->whereIn('cat.id', $ids)
-            ->orderBy(DB::raw('FIELD(cat.id, '.implode(',', $ids).')'));
+            $this->queryBuilder->whereIn('cat.id', $ids)
+                ->orderBy(DB::raw('FIELD(cat.id, '.implode(',', $ids).')'));
 
-        $total = $totalResults['count'];
+            $total = $totalResults['count'];
 
-        $this->paginator = new LengthAwarePaginator(
-            $total ? $this->queryBuilder->get() : [],
-            $total,
-            $pagination['per_page'],
-            $pagination['page'],
-            [
-                'path'  => request()->url(),
-                'query' => [],
-            ]
-        );
+            $this->paginator = new LengthAwarePaginator(
+                $total ? $this->queryBuilder->get() : [],
+                $total,
+                $pagination['per_page'],
+                $pagination['page'],
+                [
+                    'path'  => request()->url(),
+                    'query' => [],
+                ]
+            );
+        } catch (\Exception $e) {
+            if (str_contains($e->getMessage(), 'index_not_found_exception')) {
+                Log::error('Elasticsearch index not found. Please create an index first.');
+                parent::processRequest();
+
+                return;
+            } else {
+                throw $e;
+            }
+        }
     }
 
     /**
@@ -234,17 +246,17 @@ class CategoryDataGrid extends DataGrid
     public function getFilterValue(mixed $attribute, mixed $values): array
     {
         switch ($attribute) {
-            case 'category_id':
-                return [
-                    'terms' => [
-                        'id' => $values,
-                    ],
-                ];
-
             case 'name':
                 return [
                     'terms' => [
                         'name' => $values,
+                    ],
+                ];
+
+            case 'code':
+                return [
+                    'terms' => [
+                        'code' => $values,
                     ],
                 ];
 
@@ -268,8 +280,8 @@ class CategoryDataGrid extends DataGrid
             $sort .= '.keyword';
         }
 
-        if ($sort == 'category_id') {
-            $sort = 'id';
+        if ($sort == 'code') {
+            $sort .= '.keyword';
         }
 
         return [
