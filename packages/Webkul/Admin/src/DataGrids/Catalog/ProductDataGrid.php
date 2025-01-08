@@ -289,7 +289,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             $ids = collect($results['hits']['hits'])->pluck('_id')->toArray();
 
             $this->queryBuilder->whereIn('products.id', $ids)
-                ->orderBy(DB::raw('FIELD(products.id, '.implode(',', $ids).')'));
+                ->orderBy(DB::raw('FIELD('.DB::getTablePrefix().'products.id, '.implode(',', $ids).')'));
 
             $total = $totalResults['count'];
 
@@ -400,10 +400,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $sort = $params['column'] ?? $this->primaryColumn;
 
         if ($sort == 'type') {
-            $sort .= '.keyword';
-        }
-
-        if ($sort == 'name') {
             $sort .= '.keyword';
         }
 

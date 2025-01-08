@@ -192,7 +192,7 @@ class CategoryDataGrid extends DataGrid
             $ids = collect($results['hits']['hits'])->pluck('_id')->toArray();
 
             $this->queryBuilder->whereIn('cat.id', $ids)
-                ->orderBy(DB::raw('FIELD(cat.id, '.implode(',', $ids).')'));
+                ->orderBy(DB::raw('FIELD('.DB::getTablePrefix().'cat.id, '.implode(',', $ids).')'));
 
             $total = $totalResults['count'];
 
