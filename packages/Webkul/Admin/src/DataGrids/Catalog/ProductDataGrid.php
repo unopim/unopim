@@ -331,6 +331,12 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 $attribute = 'name';
             }
 
+            if ($attribute === 'product_id') {
+                $value = array_map(function ($val) {
+                    return is_numeric($val) ? $val : 0;
+                }, $value);
+            }
+
             $value = array_filter($value, function ($val) {
                 return $val !== null && $val !== '';
             });
