@@ -4,6 +4,7 @@ namespace Webkul\ElasticSearch\Console\Command;
 
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\Product\Models\Product;
@@ -49,7 +50,13 @@ class ProductIndexer extends Command
                 } catch (\Exception $e) {
                     if (str_contains($e->getMessage(), 'index_not_found_exception')) {
                         $this->info('No data found. Initiating fresh indexing');
+
+                        Log::channel('elasticsearch')->info('No data found. Initiating fresh indexing');
                     } else {
+                        Log::channel('elasticsearch')->error('Exception while fetching '.$productIndex.' index: ', [
+                            'error' => $e->getMessage(),
+                        ]);
+
                         throw $e;
                     }
                 }
@@ -80,6 +87,8 @@ class ProductIndexer extends Command
                 $progressBar->finish();
                 $this->newLine();
                 $this->info('Product indexing completed.');
+
+                Log::channel('elasticsearch')->info('Product indexing completed.');
 
                 $this->info('Checking for stale products to delete...');
 
@@ -112,17 +121,34 @@ class ProductIndexer extends Command
                     $deleteProgressBar->finish();
                     $this->newLine();
                     $this->info('Stale products deleted successfully.');
+
+                    Log::channel('elasticsearch')->info('Stale products deleted successfully.');
                 } else {
                     $this->info('No stale products to delete.');
+
+                    Log::channel('elasticsearch')->info('No stale products to delete.');
                 }
             } else {
+                $this->info('No product found in the database. Attempting to delete the index if it exists:-');
+                Log::channel('elasticsearch')->info('No product found in the database. Attempting to delete the index if it exists:-');
+
                 try {
                     Elasticsearch::indices()->delete(['index' => $productIndex]);
-                    $this->info('Elasticsearch index deleted successfully.');
+                    $this->info($productIndex.' index deleted successfully.');
+
+                    Log::channel('elasticsearch')->info($productIndex.' index deleted successfully.');
                 } catch (\Exception $e) {
                     if (str_contains($e->getMessage(), 'index_not_found_exception')) {
                         $this->warn('Index not found: '.$productIndex);
+
+                        Log::channel('elasticsearch')->warning($productIndex.' index not found: ', [
+                            'warning' => $e->getMessage(),
+                        ]);
                     } else {
+                        Log::channel('elasticsearch')->error('Exception while clearing '.$productIndex.' index: ', [
+                            'error' => $e->getMessage(),
+                        ]);
+
                         throw $e;
                     }
                 }
@@ -133,6 +159,8 @@ class ProductIndexer extends Command
             $this->info('The operation took '.round($end - $start, 4).' seconds to complete.');
         } else {
             $this->warn('ELASTICSEARCH IS NOT ENABLED.');
+
+            Log::channel('elasticsearch')->warning('ELASTICSEARCH IS NOT ENABLE.');
         }
     }
 }

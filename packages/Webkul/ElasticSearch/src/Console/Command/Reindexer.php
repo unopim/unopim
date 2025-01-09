@@ -3,6 +3,7 @@
 namespace Webkul\ElasticSearch\Console\Command;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use Webkul\Core\Facades\ElasticSearch;
 
 class Reindexer extends Command
@@ -30,22 +31,42 @@ class Reindexer extends Command
 
                 try {
                     Elasticsearch::indices()->delete(['index' => $productIndex]);
-                    $this->info('Elasticsearch '.$productIndex.' index deleted successfully.');
+                    $this->info($productIndex.' index deleted successfully.');
+
+                    Log::channel('elasticsearch')->info($productIndex.' index deleted successfully.');
                 } catch (\Exception $e) {
                     if (str_contains($e->getMessage(), 'index_not_found_exception')) {
                         $this->warn('Index not found: '.$productIndex);
+
+                        Log::channel('elasticsearch')->warning($productIndex.' index not found: ', [
+                            'warning' => $e->getMessage(),
+                        ]);
                     } else {
+                        Log::channel('elasticsearch')->error('Exception while clearing '.$productIndex.' index: ', [
+                            'error' => $e->getMessage(),
+                        ]);
+
                         throw $e;
                     }
                 }
 
                 try {
                     Elasticsearch::indices()->delete(['index' => $categoryIndex]);
-                    $this->info('Elasticsearch '.$categoryIndex.' index deleted successfully.');
+                    $this->info($categoryIndex.' index deleted successfully.');
+
+                    Log::channel('elasticsearch')->info($categoryIndex.' index deleted successfully.');
                 } catch (\Exception $e) {
                     if (str_contains($e->getMessage(), 'index_not_found_exception')) {
                         $this->warn('Index not found: '.$categoryIndex);
+
+                        Log::channel('elasticsearch')->warning($categoryIndex.'index not found: ', [
+                            'warning' => $e->getMessage(),
+                        ]);
                     } else {
+                        Log::channel('elasticsearch')->error('Exception while clearing '.$categoryIndex.' index: ', [
+                            'error' => $e->getMessage(),
+                        ]);
+
                         throw $e;
                     }
                 }
@@ -58,6 +79,8 @@ class Reindexer extends Command
             }
         } else {
             $this->warn('ELASTICSEARCH IS NOT ENABLED.');
+
+            Log::channel('elasticsearch')->warning('ELASTICSEARCH IS NOT ENABLE.');
         }
     }
 }
