@@ -264,18 +264,35 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
             $indexPrefix = env('ELASTICSEARCH_INDEX_PREFIX') ? env('ELASTICSEARCH_INDEX_PREFIX') : env('APP_NAME');
 
-            $results = Elasticsearch::search([
-                'index' => strtolower($indexPrefix.'_products'),
-                'body'  => [
-                    'from'          => ($pagination['page'] * $pagination['per_page']) - $pagination['per_page'],
-                    'size'          => $pagination['per_page'],
-                    'stored_fields' => [],
-                    'query'         => [
-                        'bool' => $this->getElasticFilters($params['filters'] ?? []) ?: new \stdClass,
+            try {
+                $results = Elasticsearch::search([
+                    'index' => strtolower($indexPrefix.'_products'),
+                    'body'  => [
+                        'from'          => ($pagination['page'] * $pagination['per_page']) - $pagination['per_page'],
+                        'size'          => $pagination['per_page'],
+                        'stored_fields' => [],
+                        'query'         => [
+                            'bool' => $this->getElasticFilters($params['filters'] ?? []) ?: new \stdClass,
+                        ],
+                        'sort'          => $this->getElasticSort($params['sort'] ?? []),
                     ],
-                    'sort'          => $this->getElasticSort($params['sort'] ?? []),
-                ],
-            ]);
+                ]);
+            } catch (\Exception $e) {
+                if (str_contains($e->getMessage(), 'attribute_family_id')) {
+                    $results = Elasticsearch::search([
+                        'index' => strtolower($indexPrefix.'_products'),
+                        'body'  => [
+                            'from'          => ($pagination['page'] * $pagination['per_page']) - $pagination['per_page'],
+                            'size'          => $pagination['per_page'],
+                            'stored_fields' => [],
+                            'query'         => [
+                                'bool' => $this->getElasticFilters($params['filters'] ?? []) ?: new \stdClass,
+                            ],
+                            'sort'          => $this->sortAttributeFamilyByKey($params['sort'] ?? []),
+                        ],
+                    ]);
+                }
+            }
 
             $totalResults = Elasticsearch::count([
                 'index' => strtolower($indexPrefix.'_products'),
@@ -413,6 +430,25 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         if ($sort == 'product_id') {
             $sort = 'id';
+        }
+
+        return [
+            $sort => [
+                'order' => $params['order'] ?? $this->sortOrder,
+            ],
+        ];
+    }
+
+    /**
+     * Process request.
+     */
+    protected function sortAttributeFamilyByKey($params): array
+    {
+        $sort = $params['column'] ?? $this->primaryColumn;
+
+        if ($sort == 'attribute_family') {
+            $sort = 'attribute_family_id';
+            $sort .= '.keyword';
         }
 
         return [
