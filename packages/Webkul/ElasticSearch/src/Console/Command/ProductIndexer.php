@@ -4,6 +4,7 @@ namespace Webkul\ElasticSearch\Console\Command;
 
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Webkul\Core\Facades\ElasticSearch;
@@ -27,7 +28,7 @@ class ProductIndexer extends Command
 
             $start = microtime(true);
 
-            $products = Product::all();
+            $products = DB::table('products')->get();
 
             $productIndex = strtolower($indexPrefix.'_products');
 
@@ -67,7 +68,11 @@ class ProductIndexer extends Command
                 $progressBar = new ProgressBar($this->output, count($products));
                 $progressBar->start();
 
-                foreach ($products as $product) {
+                foreach ($products as $productDB) {
+                    $product = new Product;
+
+                    $product->forceFill((array) $productDB);
+                    $product->syncOriginal();
                     if (
                         (
                             isset($elasticProduct[$product->id])

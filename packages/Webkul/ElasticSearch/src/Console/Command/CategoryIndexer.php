@@ -4,6 +4,7 @@ namespace Webkul\ElasticSearch\Console\Command;
 
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Webkul\Category\Models\Category;
@@ -27,7 +28,7 @@ class CategoryIndexer extends Command
 
             $start = microtime(true);
 
-            $categories = Category::all();
+            $categories = DB::table('categories')->get();
 
             $categoryIndex = strtolower($indexPrefix.'_categories');
 
@@ -67,7 +68,12 @@ class CategoryIndexer extends Command
                 $progressBar = new ProgressBar($this->output, count($categories));
                 $progressBar->start();
 
-                foreach ($categories as $category) {
+                foreach ($categories as $categoryDB) {
+                    $category = new Category;
+
+                    $category->forceFill((array) $categoryDB);
+                    $category->syncOriginal();
+
                     if (
                         (
                             isset($elasticCategory[$category->id])
@@ -75,7 +81,6 @@ class CategoryIndexer extends Command
                         )
                         || ! isset($elasticCategory[$category->id])
                     ) {
-
                         Elasticsearch::index([
                             'index' => $categoryIndex,
                             'id'    => $category->id,
