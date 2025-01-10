@@ -47,6 +47,16 @@ class CategoryIndexer extends Command
                     $category->forceFill((array) $categoryDB);
                     $category->syncOriginal();
 
+                    $categoryArray = $category->toArray();
+                    
+                    if (
+                        isset(json_decode($categoryDB->additional_data)->locale_specific)
+                        && isset(((array) json_decode($categoryDB->additional_data)->locale_specific)[core()->getRequestedLocaleCode()])
+                        && isset(((array) ((array) json_decode($categoryDB->additional_data)->locale_specific)[core()->getRequestedLocaleCode()])['name'])
+                    ) {
+                        $categoryArray['name'] = ((array) ((array) ((array) json_decode($categoryDB->additional_data))['locale_specific'])[core()->getRequestedLocaleCode()])['name'] ?? $category->name;
+                    }
+
                     if (
                         (
                             isset($elasticCategory[$category->id])
@@ -57,7 +67,7 @@ class CategoryIndexer extends Command
                         Elasticsearch::index([
                             'index' => $categoryIndex,
                             'id'    => $category->id,
-                            'body'  => $category->toArray(),
+                            'body'  => $categoryArray,
                         ]);
                     }
                     $progressBar->advance();
