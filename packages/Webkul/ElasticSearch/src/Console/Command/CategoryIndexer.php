@@ -33,34 +33,7 @@ class CategoryIndexer extends Command
             $categoryIndex = strtolower($indexPrefix.'_categories');
 
             if ($categories->isNotEmpty()) {
-                $elasticCategory = [];
-
-                try {
-                    $elasticCategory = collect(Elasticsearch::search([
-                        'index' => $categoryIndex,
-                        'body'  => [
-                            '_source' => ['updated_at'],
-                            'query'   => [
-                                'match_all' => new \stdClass,
-                            ],
-                            'size' => 1000000000,
-                        ],
-                    ])['hits']['hits'])->mapWithKeys(function ($hit) {
-                        return [(int) $hit['_id'] => $hit['_source']['updated_at']];
-                    })->toArray();
-                } catch (\Exception $e) {
-                    if (str_contains($e->getMessage(), 'index_not_found_exception')) {
-                        $this->info('No data found. Initiating fresh indexing');
-
-                        Log::channel('elasticsearch')->info('No data found. Initiating fresh indexing');
-                    } else {
-                        Log::channel('elasticsearch')->error('Exception while fetching '.$categoryIndex.' index: ', [
-                            'error' => $e->getMessage(),
-                        ]);
-
-                        throw $e;
-                    }
-                }
+                $elasticCategory = $this->getCategoryUpdates($categoryIndex, $this);
 
                 $this->info('Indexing categories into Elasticsearch...');
                 $dbCategoryIds = $categories->pluck('id')->toArray();
@@ -168,5 +141,72 @@ class CategoryIndexer extends Command
 
             Log::channel('elasticsearch')->warning('ELASTICSEARCH IS NOT ENABLE.');
         }
+    }
+
+    public function getCategoryUpdates($categoryIndex, $command = null)
+    {
+        $scrollSize = 10000;
+        $elasticCategory = [];
+
+        try {
+            $response = Elasticsearch::search([
+                'index' => $categoryIndex,
+                'body'  => [
+                    '_source' => ['updated_at'],
+                    'query'   => [
+                        'match_all' => new \stdClass,
+                    ],
+                    'size' => $scrollSize,
+                ],
+                'scroll' => '10m',
+            ]);
+
+            $scrollId = $response['_scroll_id'];
+
+            foreach ($response['hits']['hits'] as $hit) {
+                $elasticCategory[(int) $hit['_id']] = $hit['_source']['updated_at'];
+            }
+
+            while (true) {
+                $response = Elasticsearch::scroll([
+                    'scroll_id' => $scrollId,
+                    'scroll'    => '10m',
+                ]);
+
+                if (empty($response['hits']['hits'])) {
+                    break;
+                }
+
+                foreach ($response['hits']['hits'] as $hit) {
+                    $elasticCategory[(int) $hit['_id']] = $hit['_source']['updated_at'];
+                }
+            }
+
+            try {
+                Elasticsearch::clearScroll([
+                    'scroll_id' => $scrollId,
+                ]);
+            } catch (\Exception $e) {
+                Log::channel('elasticsearch')->error('Exception while clearing scroll: ', [
+                    'error' => $e->getMessage(),
+                ]);
+            }
+
+        } catch (\Exception $e) {
+            if (str_contains($e->getMessage(), 'index_not_found_exception')) {
+                if ($command) {
+                    $command->info('No data found. Initiating fresh indexing');
+                }
+                Log::channel('elasticsearch')->info('No data found. Initiating fresh indexing');
+            } else {
+                Log::channel('elasticsearch')->error('Exception while fetching '.$categoryIndex.' index: ', [
+                    'error' => $e->getMessage(),
+                ]);
+
+                throw $e;
+            }
+        }
+
+        return $elasticCategory;
     }
 }
