@@ -258,6 +258,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             return;
         }
 
+        $requestedParams = $this->validatedRequest();
+
         try {
             $params = $this->validatedRequest();
             $pagination = $params['pagination'];
@@ -307,6 +309,16 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
             $this->queryBuilder->whereIn('products.id', $ids)
                 ->orderBy(DB::raw('FIELD('.DB::getTablePrefix().'products.id, '.implode(',', $ids).')'));
+
+            if (isset($requestedParams['export']) && (bool) $requestedParams['export']) {
+                $this->exportable = true;
+
+                $gridData = $this instanceof ExportableInterface ? $this->getExportableData($requestedParams) : $this->queryBuilder->get();
+
+                $this->setExportFile($gridData, $requestedParams['format']);
+
+                return;
+            }
 
             $total = $totalResults['count'];
 
