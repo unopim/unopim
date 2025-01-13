@@ -30,6 +30,10 @@ class AdminServiceProvider extends ServiceProvider
         $this->registerACL();
 
         $this->app->register(EventServiceProvider::class);
+
+        $this->publishes([
+            __DIR__.'/../../publishable' => public_path('themes'),
+        ], 'admin-config');
     }
 
     /**
@@ -62,6 +66,10 @@ class AdminServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(
             dirname(__DIR__).'/Config/system.php',
             'core'
+        );
+
+        $this->mergeConfigFrom(
+            __DIR__.'/../Config/unopim-vite.php', 'unopim-vite.viters'
         );
     }
 

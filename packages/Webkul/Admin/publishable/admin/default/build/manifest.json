@@ -1,0 +1,107 @@
+{
+  "src/Resources/assets/css/app.css": {
+    "file": "assets/app-8dce1725.css",
+    "isEntry": true,
+    "src": "src/Resources/assets/css/app.css"
+  },
+  "src/Resources/assets/fonts/unopim-admin.woff": {
+    "file": "assets/unopim-admin-ac35ebd3.woff",
+    "src": "src/Resources/assets/fonts/unopim-admin.woff"
+  },
+  "src/Resources/assets/images/dark_logo.svg": {
+    "file": "assets/dark_logo-95b7ed7c.svg",
+    "src": "src/Resources/assets/images/dark_logo.svg"
+  },
+  "src/Resources/assets/images/error.svg": {
+    "file": "assets/error-f6a0b3bc.svg",
+    "src": "src/Resources/assets/images/error.svg"
+  },
+  "src/Resources/assets/images/favicon.svg": {
+    "file": "assets/favicon-19fbef86.svg",
+    "src": "src/Resources/assets/images/square-logo.svg"
+  },
+  "src/Resources/assets/images/icon-add-product.svg": {
+    "file": "assets/icon-add-product-7a003ffd.svg",
+    "src": "src/Resources/assets/images/icon-add-product.svg"
+  },
+  "src/Resources/assets/images/icon-attribute.svg": {
+    "file": "assets/icon-attribute-652c6173.svg",
+    "src": "src/Resources/assets/images/icon-attribute.svg"
+  },
+  "src/Resources/assets/images/icon-categories.svg": {
+    "file": "assets/icon-categories-49da1e2f.svg",
+    "src": "src/Resources/assets/images/icon-categories.svg"
+  },
+  "src/Resources/assets/images/icon-channel.svg": {
+    "file": "assets/icon-channel-9cac6e4a.svg",
+    "src": "src/Resources/assets/images/icon-channel.svg"
+  },
+  "src/Resources/assets/images/icon-currency.svg": {
+    "file": "assets/icon-currency-f793010c.svg",
+    "src": "src/Resources/assets/images/icon-currency.svg"
+  },
+  "src/Resources/assets/images/icon-families.svg": {
+    "file": "assets/icon-families-09543cd2.svg",
+    "src": "src/Resources/assets/images/icon-families.svg"
+  },
+  "src/Resources/assets/images/icon-groups.svg": {
+    "file": "assets/icon-groups-a6b60c98.svg",
+    "src": "src/Resources/assets/images/icon-groups.svg"
+  },
+  "src/Resources/assets/images/icon-locale.svg": {
+    "file": "assets/icon-locale-547afb14.svg",
+    "src": "src/Resources/assets/images/icon-locale.svg"
+  },
+  "src/Resources/assets/images/icon-products.svg": {
+    "file": "assets/icon-products-5b431497.svg",
+    "src": "src/Resources/assets/images/icon-products.svg"
+  },
+  "src/Resources/assets/images/logo.svg": {
+    "file": "assets/logo-aaa4be89.svg",
+    "src": "src/Resources/assets/images/logo.svg"
+  },
+  "src/Resources/assets/images/product-placeholders/front.svg": {
+    "file": "assets/front-93490c30.svg",
+    "src": "src/Resources/assets/images/product-placeholders/front.svg"
+  },
+  "src/Resources/assets/images/product-placeholders/next-1.svg": {
+    "file": "assets/next-1-91bb148a.svg",
+    "src": "src/Resources/assets/images/product-placeholders/next-1.svg"
+  },
+  "src/Resources/assets/images/product-placeholders/next-2.svg": {
+    "file": "assets/next-2-6aace5ca.svg",
+    "src": "src/Resources/assets/images/product-placeholders/next-2.svg"
+  },
+  "src/Resources/assets/images/product-placeholders/size.svg": {
+    "file": "assets/size-04e2a252.svg",
+    "src": "src/Resources/assets/images/product-placeholders/size.svg"
+  },
+  "src/Resources/assets/images/product-placeholders/use-cases.svg": {
+    "file": "assets/use-cases-4a33de1a.svg",
+    "src": "src/Resources/assets/images/product-placeholders/use-cases.svg"
+  },
+  "src/Resources/assets/images/product-placeholders/zoom.svg": {
+    "file": "assets/zoom-0c75bed3.svg",
+    "src": "src/Resources/assets/images/product-placeholders/zoom.svg"
+  },
+  "src/Resources/assets/images/spinner.svg": {
+    "file": "assets/spinner-75cc5358.svg",
+    "src": "src/Resources/assets/images/spinner.svg"
+  },
+  "src/Resources/assets/images/square-logo.svg": {
+    "file": "assets/favicon-19fbef86.svg",
+    "src": "src/Resources/assets/images/square-logo.svg"
+  },
+  "src/Resources/assets/js/app.css": {
+    "file": "assets/app-9e2a2734.css",
+    "src": "src/Resources/assets/js/app.css"
+  },
+  "src/Resources/assets/js/app.js": {
+    "css": [
+      "assets/app-9e2a2734.css"
+    ],
+    "file": "assets/app-f0c293c6.js",
+    "isEntry": true,
+    "src": "src/Resources/assets/js/app.js"
+  }
+}

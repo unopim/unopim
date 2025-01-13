@@ -313,16 +313,27 @@
                     </form>
                 </x-admin::form>
             </div>
-        </div>  
+        </div>
     </script>
 
     <script type="text/x-template" id="v-media-image-item-template">
-        <div class="grid justify-items-center min-w-[120px] max-h-[120px] relative rounded overflow-hidden transition-all hover:border-gray-400 group"  :style="{'width': this.width, 'height': this.height}">
-            <!-- Image Preview -->
+        <div class="justify-items-center min-w-[120px] max-h-[120px] relative rounded overflow-hidden transition-all hover:border-gray-400 group"  :style="{'width': this.width, 'height': this.height}">
             <img
                 :src="image.url"
-                class="w-full h-full object-cover object-top"
+                class="w-full h-full object-contain object-top"
             />
+            <x-admin::modal ref="imagePreviewModal">
+                <x-slot:header>
+                </x-slot>
+                <x-slot:content>
+                <div style="max-width: 100%;height: 260px;">
+                    <img
+                        :src="image.url"
+                        class="w-full h-full object-contain object-top"
+                    />
+                </div>
+                </x-slot>
+            </x-admin::modal>
 
             <div class="flex flex-col justify-between invisible w-full p-3 bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 transition-all group-hover:visible">
                 <!-- Image Name -->
@@ -334,7 +345,10 @@
                         class="icon-delete text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
                         @click="remove"
                     ></span>
-
+                    <span
+                        class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                        @click="preview"
+                    ></span>
                     <label
                         class="icon-edit text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
                         :for="$.uid + '_imageInput_' + index"
@@ -577,6 +591,14 @@
 
                 remove() {
                     this.$emit('onRemove', this.image)
+                },
+
+                preview() {
+                    this.$refs.imagePreviewModal.toggle();
+                },
+
+                closeImageModal() {
+                    this.$refs.imagePreviewModal.close();
                 },
 
                 setFile(file) {
