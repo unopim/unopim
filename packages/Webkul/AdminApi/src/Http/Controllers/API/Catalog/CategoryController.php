@@ -48,21 +48,23 @@ class CategoryController extends ApiController
         }
     }
 
-
+    /**
+     * Delete the single resource.
+     */
     public function delete(string $code): JsonResponse
     {
         try {
             $deleted = app(CategoryDataSource::class)->deleteByCode($code);
-            
             if ($deleted) {
-                return response()->json(['success' => true, 'message' => 'Resource deleted successfully.', 'code' => $code], 200);
+                return response()->json(['success' => true, 'message' => trans('admin::app.catalog.categories.delete-success'), 'code' => $code], 200);
             } else {
-                return response()->json(['success' => false, 'message' => 'Resource not found.', 'code' => $code], 404);
+                return response()->json(['success' => false, 'message' => trans('admin::app.catalog.categories.delete-failed'), 'code' => $code], 404);
             }
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
         }
     }
+
     /**
      * Store a newly created resource in storage.
      *

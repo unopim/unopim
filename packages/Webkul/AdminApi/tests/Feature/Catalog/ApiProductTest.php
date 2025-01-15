@@ -229,26 +229,22 @@ it('should update the product', function () {
 });
 
 it('should delete the product', function () {
-    
     $product = Product::factory()->simple()->create();
-   
     $response = $this->withHeaders($this->headers)
-        ->json('DELETE', route('admin.api.products.delete', ['code' => $product->sku])); 
+        ->json('DELETE', route('admin.api.products.delete', ['code' => $product->sku]));
     $response->assertStatus(200)
         ->assertJsonStructure([
             'success',
             'message',
         ])
         ->assertJsonFragment(['success' => true]);
-
     $this->assertDatabaseMissing($this->getFullTableName(Product::class), [
-        'sku' => $product->sku, 
+        'sku' => $product->sku,
     ]);
 });
 
-
-it('should return 404 if product not found for delete',function(){
-    $nonExistingSku = 'non-existing-sku'; 
+it('should return 404 if product not found for delete', function () {
+    $nonExistingSku = 'non-existing-sku';
     $response = $this->withHeaders($this->headers)
         ->json('DELETE', route('admin.api.products.delete', ['code' => 'non-existing-sku']));
 
@@ -258,11 +254,8 @@ it('should return 404 if product not found for delete',function(){
             'message',
         ])
         ->assertJsonFragment(['success' => false])
-        ->assertJsonFragment(['message' => "Product with SKU $nonExistingSku could not be found for deletion."]);
+        ->assertJsonFragment(['message' =>  trans('admin::app.catalog.products.product-not-found', ['sku' => (string) $nonExistingSku])]);
 });
-
-
-
 
 it('should update the product associations', function () {
     $product = Product::factory()->simple()->create();

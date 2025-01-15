@@ -170,8 +170,6 @@ it('should update the name of the category', function () {
         ->assertJsonFragment(['success' => true]);
 });
 
-
-
 it('should delete the category', function () {
     $rootCategory = Category::factory()->create(['parent_id' => null]);
     $category = Category::factory()->create(['parent_id' => $rootCategory->id]);
@@ -183,28 +181,23 @@ it('should delete the category', function () {
             'message',
         ])
         ->assertJsonFragment(['success' => true]);
-
     $this->assertDatabaseMissing($this->getFullTableName(Category::class), [
         'code' => $category->code,
     ]);
 });
 
-
-it('should return 404 if category not found for delete',function(){
-    $nonExistingCode = 'non-existing-code'; 
+it('should return 404 if category not found for delete', function () {
+    $nonExistingCode = 'non-existing-code';
     $response = $this->withHeaders($this->headers)
         ->json('DELETE', route('admin.api.categories.delete', ['code' => 'non-existing-code']));
-
     $response->assertStatus(404)
         ->assertJsonStructure([
             'success',
             'message',
         ])
         ->assertJsonFragment(['success' => false])
-        ->assertJsonFragment(['message' => "Category with code $nonExistingCode could not be found for deletion."]);
+        ->assertJsonFragment(['message' =>  trans('admin::app.catalog.categories.not-found', ['code' => (string) $nonExistingCode])]);
 });
-
-
 
 it('should give validation message if category trying to add parent to a root category', function () {
     $locale = Locale::where('status', 1)->first();

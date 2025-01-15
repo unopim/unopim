@@ -15,6 +15,8 @@ class CategoryDataSource extends ApiDataSource
      */
     protected $sortColumn = 'categories.id';
 
+    const equal_operator = '=';
+
     /**
      * Create a new DataSource instance.
      *
@@ -100,36 +102,28 @@ class CategoryDataSource extends ApiDataSource
         ];
     }
 
-
-    public function deleteByCode($code)
+    // Delete Category by its code
+    public function deleteByCode(string $code)
     {
         $this->prepareForSingleData();
-
         $requestedFilters = [
             'code' => [
                 [
-                    'operator' => '=',
+                    'operator' => self::equal_operator,
                     'value'    => $code,
                 ],
             ],
         ];
-
-        $this->queryBuilder = $this->processRequestedFilters($requestedFilters);
-
-        $category = $this->queryBuilder->first();
-
-
+        $category = $this->processRequestedFilters($requestedFilters)->first();
         if (! $category) {
             throw new ModelNotFoundException(
-                sprintf('Category with code %s could not be found for deletion.', (string) $code)
+                trans('admin::app.catalog.categories.not-found', ['code' => (string) $code])
             );
         }
-
-     
         $category->delete();
 
         return [
-            'message' => 'Category deleted successfully.',
+            'message' => trans('admin::app.catalog.categories.delete-success'),
             'code'    => $category['code'],
         ];
     }
