@@ -82,6 +82,7 @@ Route::group([
         Route::get('{code}', 'get')->name('admin.api.products.get');
         Route::post('', 'store')->name('admin.api.products.store');
         Route::put('{code}', 'update')->name('admin.api.products.update');
+        Route::delete('{code}', 'delete')->name('admin.api.products.delete');
     });
 
     /** Configurable Products API Routes */

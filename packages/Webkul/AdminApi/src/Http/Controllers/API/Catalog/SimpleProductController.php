@@ -36,6 +36,26 @@ class SimpleProductController extends ProductController
         }
     }
 
+
+
+    public function delete(string $code): JsonResponse
+    {
+        
+        try {
+            $deleted = app(SimpleProductDataSource::class)->deleteByCode($code);
+     
+            if ($deleted) {
+                return response()->json(['success' => true, 'message' => 'Product deleted successfully.', 'code' => $code], 200);
+            } else {
+                return response()->json(['success' => false, 'message' => 'Failed to delete the product.', 'code' => $code], 404);
+            }
+        } catch (\Exception $e) {
+  
+            return $this->storeExceptionLog($e, $code);
+        }
+    }
+
+
     /**
      * Store a newly created resource in storage.
      *

@@ -228,6 +228,42 @@ it('should update the product', function () {
     $this->assertEquals([$category->code], $product->values['categories'] ?? '');
 });
 
+it('should delete the product', function () {
+    
+    $product = Product::factory()->simple()->create();
+   
+    $response = $this->withHeaders($this->headers)
+        ->json('DELETE', route('admin.api.products.delete', ['code' => $product->sku])); 
+    $response->assertStatus(200)
+        ->assertJsonStructure([
+            'success',
+            'message',
+        ])
+        ->assertJsonFragment(['success' => true]);
+
+    $this->assertDatabaseMissing($this->getFullTableName(Product::class), [
+        'sku' => $product->sku, 
+    ]);
+});
+
+
+it('should return 404 if product not found for delete',function(){
+    $nonExistingSku = 'non-existing-sku'; 
+    $response = $this->withHeaders($this->headers)
+        ->json('DELETE', route('admin.api.products.delete', ['code' => 'non-existing-sku']));
+
+    $response->assertStatus(404)
+        ->assertJsonStructure([
+            'success',
+            'message',
+        ])
+        ->assertJsonFragment(['success' => false])
+        ->assertJsonFragment(['message' => "Product with SKU $nonExistingSku could not be found for deletion."]);
+});
+
+
+
+
 it('should update the product associations', function () {
     $product = Product::factory()->simple()->create();
 
