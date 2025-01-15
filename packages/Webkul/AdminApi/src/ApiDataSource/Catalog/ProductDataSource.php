@@ -86,6 +86,39 @@ class ProductDataSource extends ApiDataSource
         return $this->normalizeProduct($product);
     }
 
+
+    public function deleteByCode(string $code)
+    {
+        $this->prepareForSingleData();
+    
+        $requestedFilters = [
+            'sku' => [
+                [
+                    'operator' => '=',
+                    'value'    => $code,
+                ],
+            ],
+        ];
+    
+        $this->queryBuilder = $this->processRequestedFilters($requestedFilters);
+    
+        $product = $this->queryBuilder->first();
+    
+        if (!$product) {
+            throw new ModelNotFoundException(
+                sprintf('Product with SKU %s could not be found for deletion.', (string) $code)
+            );
+        }
+    
+        $product->delete();
+    
+        return [
+            'message' => 'Product deleted successfully.',
+            'sku'     => $product['sku'],
+        ];
+    }
+
+
     public function getSuperAttributes($data)
     {
         if (! isset($data['super_attributes'])) {

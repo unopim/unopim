@@ -100,6 +100,40 @@ class CategoryDataSource extends ApiDataSource
         ];
     }
 
+
+    public function deleteByCode($code)
+    {
+        $this->prepareForSingleData();
+
+        $requestedFilters = [
+            'code' => [
+                [
+                    'operator' => '=',
+                    'value'    => $code,
+                ],
+            ],
+        ];
+
+        $this->queryBuilder = $this->processRequestedFilters($requestedFilters);
+
+        $category = $this->queryBuilder->first();
+
+
+        if (! $category) {
+            throw new ModelNotFoundException(
+                sprintf('Category with code %s could not be found for deletion.', (string) $code)
+            );
+        }
+
+     
+        $category->delete();
+
+        return [
+            'message' => 'Category deleted successfully.',
+            'code'    => $category['code'],
+        ];
+    }
+
     /**
      * Applies the specified operator to the query builder based on the given column and value.
      *
