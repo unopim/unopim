@@ -66,6 +66,41 @@ class CategoryController extends ApiController
     }
 
     /**
+     * Patch the resource.
+     */
+    public function patch(string $code)
+    {
+        $category = $this->categoryRepository->findOneByField('code', $code);
+        if (! $category) {
+            return $this->modelNotFoundResponse(trans('admin::app.catalog.categories.not-found', ['code' => $code]));
+        }
+        $requestData = request()->only(['parent', 'additional_data']);
+        $parentId = null;
+        if (isset($requestData['parent'])) {
+            $parentId = $this->getParentIdByCode($requestData['parent']);
+        }
+        unset($requestData['parent']);
+        $requestData['parent_id'] = $parentId;
+        $validator = $this->categoryValidator->validate($requestData, $category->id);
+        if ($validator instanceof \Illuminate\Validation\Validator && $validator->fails()) {
+            return $this->validateErrorResponse($validator);
+        }
+        try {
+            $this->sanitizeInput($requestData);
+            Event::dispatch('catalog.category.update.before', $category->id);
+            $category = $this->categoryRepository->update($requestData, $category->id);
+            Event::dispatch('catalog.category.update.after', $category);
+
+            return $this->successResponse(
+                trans('admin::app.catalog.categories.update-success'),
+                Response::HTTP_OK
+            );
+        } catch (\Exception $e) {
+            return $this->storeExceptionLog($e);
+        }
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @return \Illuminate\Http\JsonResponse

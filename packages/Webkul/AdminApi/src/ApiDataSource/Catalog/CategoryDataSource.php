@@ -15,7 +15,7 @@ class CategoryDataSource extends ApiDataSource
      */
     protected $sortColumn = 'categories.id';
 
-    const equal_operator = '=';
+    const EQUALOPERATOR = '=';
 
     /**
      * Create a new DataSource instance.
@@ -109,7 +109,7 @@ class CategoryDataSource extends ApiDataSource
         $requestedFilters = [
             'code' => [
                 [
-                    'operator' => self::equal_operator,
+                    'operator' => self::EQUALOPERATOR,
                     'value'    => $code,
                 ],
             ],

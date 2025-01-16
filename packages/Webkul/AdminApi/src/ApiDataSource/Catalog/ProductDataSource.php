@@ -17,7 +17,7 @@ class ProductDataSource extends ApiDataSource
      */
     protected $sortColumn = 'products.id';
 
-    const equal_operator = '=';
+    const EQUALOPERATOR = '=';
 
     /**
      * Create a new DataSource instance.
@@ -97,7 +97,7 @@ class ProductDataSource extends ApiDataSource
         $requestedFilters = [
             'sku' => [
                 [
-                    'operator' => self::equal_operator,
+                    'operator' => self::EQUALOPERATOR,
                     'value'    => $code,
                 ],
             ],

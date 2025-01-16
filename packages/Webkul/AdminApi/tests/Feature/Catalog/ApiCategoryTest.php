@@ -199,6 +199,81 @@ it('should return 404 if category not found for delete', function () {
         ->assertJsonFragment(['message' =>  trans('admin::app.catalog.categories.not-found', ['code' => (string) $nonExistingCode])]);
 });
 
+it('should partially update the category and its parent', function () {
+    $category = Category::factory()->create();
+    $parent = Category::factory()->create();
+    $locale = Locale::where('status', 1)->first();
+    $updatedData = [
+        'parent'          => $parent->code,
+        'additional_data' => [
+            'locale_specific' => [
+                $locale->code => [
+                    'name' => 'Updated Category Name',
+                ],
+            ],
+        ],
+    ];
+    $this->withHeaders($this->headers)
+        ->json('PATCH', route('admin.api.categories.patch', ['code' => $category->code]), $updatedData)
+        ->assertStatus(200)
+        ->assertJsonStructure([
+            'success',
+            'message',
+        ])
+        ->assertJsonFragment(['success' => true]);
+    $this->assertDatabaseHas($this->getFullTableName(Category::class), [
+        'code'      => $category->code,
+        'parent_id' => $parent->id,
+    ]);
+    $actualAdditionalData = Category::where('code', $category->code)->value('additional_data');
+    $expectedAdditionalData = json_encode($updatedData['additional_data']);
+    if (! is_string($actualAdditionalData)) {
+        $actualAdditionalData = json_encode($actualAdditionalData);
+    }
+    $this->assertEquals($expectedAdditionalData, $actualAdditionalData);
+});
+
+it('should return 404 if category not found for patch', function () {
+    $nonExistingCode = 'non-existing-code';
+    $response = $this->withHeaders($this->headers)
+        ->json('PATCH', route('admin.api.categories.patch', ['code' => 'non-existing-code']), [
+            'parent' => 'null',
+        ]);
+    $response->assertStatus(404)
+        ->assertJsonStructure([
+            'success',
+            'message',
+        ])
+        ->assertJsonFragment(['success' => false])
+        ->assertJsonFragment(['message' => trans('admin::app.catalog.categories.not-found', ['code' => (string) $nonExistingCode])]);
+});
+
+it('should successfully patch the category', function () {
+    $category = Category::factory()->create(['code' => 'existing-code']);
+    $response = $this->withHeaders($this->headers)
+        ->json('PATCH', route('admin.api.categories.patch', ['code' => 'existing-code']), [
+            'parent' => 'null',
+        ]);
+    $response->assertStatus(200)
+        ->assertJsonStructure([
+            'success',
+            'message',
+        ])
+        ->assertJsonFragment(['success' => true])
+        ->assertJsonFragment(['message' => trans('admin::app.catalog.categories.update-success')]);
+});
+
+it('should return 401 if user is unauthorized', function () {
+    $this->headers['Authorization'] = 'invalid-token';
+
+    $response = $this->withHeaders($this->headers)
+        ->json('PATCH', route('admin.api.categories.patch', ['code' => 'existing-code']), [
+            'parent' => 'null',
+        ]);
+    $response->assertStatus(401)
+        ->assertJsonFragment(['message' => 'Unauthenticated.']);
+});
+
 it('should give validation message if category trying to add parent to a root category', function () {
     $locale = Locale::where('status', 1)->first();
     $channel = Channel::factory()->create();
