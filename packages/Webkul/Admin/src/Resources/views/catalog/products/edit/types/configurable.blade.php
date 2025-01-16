@@ -106,7 +106,7 @@
                                 v-for='(attribute, index) in superAttributes'
                             >
                                 <x-admin::form.control-group.label class="required">
-                                    @{{ attribute.name }}
+                                    @{{ attribute.name || attribute.code }}
                                 </x-admin::form.control-group.label>
 
                                 <x-admin::form.control-group.control

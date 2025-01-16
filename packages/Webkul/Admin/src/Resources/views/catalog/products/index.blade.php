@@ -350,7 +350,7 @@
                                                 class="flex items-center py-1 px-2 bg-violet-100 rounded text-violet-700 font-semibold"
                                                 v-for="attribute in attributes"
                                             >
-                                                @{{ attribute.name }}
+                                                @{{ attribute.name || attribute.code }}
 
                                                 <span
                                                     class="icon-cancel cursor-pointer text-lg text-violet-700 ltr:ml-1.5 rtl:mr-1.5 dark:!text-violet-700"
