@@ -354,6 +354,79 @@ it('should patch the data for specific locales without affecting other locales d
     $this->assertEquals($expectedAdditionalData, $updatedCategoryFromDb->additional_data);
 });
 
+it('should patch the checkbox type category fields value in the category', function () {
+    $category = Category::factory()->create();
+
+    $categoryField = CategoryField::factory()->create(['value_per_locale' => false, 'type' => 'checkbox', 'status' => 1]);
+
+    $options = $categoryField->options()->pluck('code')->implode(',');
+
+    $updatedCategory = [
+        'code' => $category->code,
+        'parent' => $category->parent->code,
+        'additional_data' => [
+            'common' => [
+                $categoryField->code => $options,
+            ],
+            'locale_specific' => [],
+        ],
+    ];
+
+    $this->withHeaders($this->headers)
+        ->json('PATCH', route('admin.api.categories.patch', ['code' => $category->code]), $updatedCategory)
+        ->assertStatus(200)
+        ->assertJsonStructure([
+            'success',
+            'message',
+        ])
+        ->assertJsonFragment(['success' => true]);
+
+    $updatedCategoryFromDb = Category::where('code', $updatedCategory['code'])->first();
+    $fieldValue = $updatedCategory['additional_data']['common'][$categoryField->code];
+    $updatedValue = $updatedCategoryFromDb->additional_data['common'][$categoryField->code];
+
+    $this->assertEquals($fieldValue, $updatedValue);
+});
+
+it('should patch the textarea type category fields value in the category', function () {
+    $category = Category::factory()->create();
+    $locale = Locale::where('status', 1)->first();
+    
+    $categoryField = CategoryField::factory()->create(['status' => 1, 'value_per_locale' => false, 'type' => 'textarea']);
+
+    $updatedCategory = [
+        'code' => $category->code,
+        'parent' => $category->parent->code,
+        'additional_data' => [
+            'common' => [
+                $categoryField->code => fake()->sentence(), 
+            ],
+            'locale_specific' => [
+                $locale->code => [
+                    'name' => 'TestCategory',
+                ],
+            ],
+        ],
+    ];
+
+    $this->withHeaders($this->headers)
+        ->json('PATCH', route('admin.api.categories.patch', ['code' => $category->code]), $updatedCategory)
+        ->assertStatus(200)
+        ->assertJsonStructure([
+            'success',
+            'message',
+        ])
+        ->assertJsonFragment(['success' => true]);
+
+    $updatedCategoryFromDb = Category::where('code', $updatedCategory['code'])->first();
+
+    $fieldValue = $updatedCategory['additional_data']['common'][$categoryField->code];
+    $updatedValue = $updatedCategoryFromDb->additional_data['common'][$categoryField->code];
+
+    $this->assertEquals($fieldValue, $updatedValue);
+    $this->assertDatabaseHas($this->getFullTableName(Category::class), ['code' => $category->code]);
+});
+
 it('should give validation message if category trying to add parent to a root category', function () {
     $locale = Locale::where('status', 1)->first();
     $channel = Channel::factory()->create();
