@@ -66,7 +66,7 @@ abstract class AbstractImporter
         self::ERROR_CODE_COLUMNS_NUMBER      => 'data_transfer::app.validation.errors.column-numbers',
     ];
 
-    public const BATCH_SIZE = 100;
+    public const BATCH_SIZE = 1;
 
     /**
      * Is linking required
@@ -349,7 +349,7 @@ abstract class AbstractImporter
                 $typeBatches['index'][] = new IndexBatchJob($batch);
             }
         }
-
+        
         $chain[] = Bus::batch($typeBatches['import']);
 
         if (! empty($typeBatches['link'])) {
@@ -367,11 +367,15 @@ abstract class AbstractImporter
         $chain[] = new CompletedJob($this->import, $this->import->id);
 
         $queueName = $this->getQueue();
-
+        
         if ($queueName) {
-            Bus::chain($chain)->onQueue($queueName)->dispatch();
+            Bus::chain($chain)->onQueue($queueName)->catch(function ($exception) {
+                dd('A job in the chain failed: ' ,$exception);
+            })->dispatch();
         } else {
-            Bus::chain($chain)->dispatch();
+            Bus::chain($chain)->catch(function ($exception) {
+                dd('A job in the chain failed: ' ,$exception);
+            })->dispatch();
         }
 
         return true;

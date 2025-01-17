@@ -146,4 +146,12 @@ class MagicAIController extends Controller
             ], 500);
         }
     }
+
+    public function defaultPrompt()
+    {
+        return new JsonResponse([
+            'prompts' => config('default_prompts'),
+        ]);
+    }
+
 }

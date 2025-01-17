@@ -31,5 +31,15 @@ class MagicAIServiceProvider extends ServiceProvider
         $this->app->singleton('magic_ai', function () {
             return new MagicAI;
         });
+
+        $this->registerConfig();
+    }
+
+    /**
+     * Register configuration.
+     */
+    public function registerConfig(): void
+    {
+        $this->mergeConfigFrom(dirname(__DIR__).'/Config/default_prompts.php', 'default_prompts');
     }
 }

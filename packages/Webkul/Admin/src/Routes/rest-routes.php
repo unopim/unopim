@@ -44,6 +44,8 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
         Route::post('content', 'content')->name('admin.magic_ai.content');
 
         Route::post('image', 'image')->name('admin.magic_ai.image');
+
+        Route::get('default-prompt', 'defaultPrompt')->name('admin.magic_ai.default_prompt');
     });
 
     /**

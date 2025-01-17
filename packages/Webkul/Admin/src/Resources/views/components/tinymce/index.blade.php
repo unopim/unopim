@@ -47,6 +47,26 @@
                             <x-admin::form.control-group.error control-name="model"></x-admin::form.control-group.error>
                         </x-admin::form.control-group>
 
+                        <!-- default prompt -->
+                        <x-admin::form.control-group>
+                            <x-admin::form.control-group.label class="required">
+                                @lang('admin::app.components.tinymce.ai-generation.default-prompt')
+                            </x-admin::form.control-group.label>
+                            <x-admin::form.control-group.control
+                                type="select"
+                                name="model"
+                                rules="required"
+                                :label="trans('admin::app.components.tinymce.ai-generation.default-prompt')"
+                                ::options="defaultPrompts"
+                                track-by="prompt"
+                                label-by="title"
+                                @input="onChangePrompt"
+                            >
+                            </x-admin::form.control-group.control>
+
+                            <x-admin::form.control-group.error control-name="model"></x-admin::form.control-group.error>
+                        </x-admin::form.control-group>
+
                         <!-- Prompt -->
                         <x-admin::form.control-group>
                             <x-admin::form.control-group.label class="required">
@@ -163,6 +183,7 @@
                     },
 
                     aiModels: [],
+                    defaultPrompts: [],
                     suggestionValues: [],
                     resourceId: "{{ request()->id }}",
                     entityName: "{{ $attributes->get('entity-name', 'attribute') }}",
@@ -332,6 +353,10 @@
                     if (this.aiModels.length === 0) {
                         this.fetchModels();
                     }
+
+                    if (this.defaultPrompts.length === 0) {
+                        this.fetchDefaultPrompts();
+                    }
                 },
 
                 toggleMagicAIModal() {
@@ -372,6 +397,15 @@
                     }
                 },
 
+                async fetchDefaultPrompts() {
+                    try {
+                        const response = await axios.get("{{ route('admin.magic_ai.default_prompt') }}");
+                        this.defaultPrompts = response.data.prompts;
+                    } catch (error) {
+                        console.error("Failed to fetch AI models:", error);
+                    }
+                },
+
                 async fetchSuggestionValues(text, cb) {
                     if (!text && this.suggestionValues.length) {
                         cb(this.suggestionValues);
@@ -383,6 +417,10 @@
                     this.suggestionValues = data;
 
                     cb(this.suggestionValues);
+                },
+
+                onChangePrompt(value) {
+                    this.ai.prompt = JSON.parse(value)?.prompt;
                 },
 
                 generate(params, { resetForm, resetField, setErrors }) {

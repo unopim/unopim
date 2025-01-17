@@ -342,9 +342,13 @@ abstract class AbstractExporter
         $queueName = $this->getQueue();
 
         if ($queueName) {
-            Bus::chain($chain)->onQueue($queueName)->dispatch();
+            Bus::chain($chain)->onQueue($queueName)->catch(function ($exception) {
+                dd('A job in the chain failed: ' . $exception->getMessage());
+            })->dispatch();
         } else {
-            Bus::chain($chain)->dispatch();
+            Bus::chain($chain)->catch(function ($exception) {
+                dd('A job in the chain failed: ' . $exception->getMessage());
+            })->dispatch();
         }
 
         return true;

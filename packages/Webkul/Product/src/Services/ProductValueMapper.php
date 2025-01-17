@@ -78,7 +78,7 @@ class ProductValueMapper
      *
      * @return string|null
      */
-    protected function getCategories(array $data)
+    public function getCategories(array $data)
     {
         if (
             ! array_key_exists('values', $data)
@@ -97,7 +97,7 @@ class ProductValueMapper
      *
      * @return string|null
      */
-    protected function getAssociations(array $data, string $type)
+    public function getAssociations(array $data, string $type)
     {
         if (
             ! array_key_exists('values', $data)
