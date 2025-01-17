@@ -220,19 +220,14 @@ class CategoryController extends ApiController
                     }
 
                 }
-                $data = $category->forceFill(['additional_data' => $existingAdditionalData]);
+                $category->additional_data = json_encode($existingAdditionalData);
             }
-
-            if ($category->save()) {
-                Event::dispatch('catalog.category.update.after', $category);
-
-                return $this->successResponse(
-                    trans('admin::app.catalog.categories.update-success'),
-                    Response::HTTP_OK
-                );
-            } else {
-                return $this->errorResponse(trans('admin::app.catalog.categories.update-failed'), Response::HTTP_INTERNAL_SERVER_ERROR);
-            }
+            $this->categoryRepository->update($requestData, $category->id);
+            Event::dispatch('catalog.category.update.after', $category);
+            return $this->successResponse(
+                trans('admin::app.catalog.categories.update-success'),
+                Response::HTTP_OK
+            );
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
         }
