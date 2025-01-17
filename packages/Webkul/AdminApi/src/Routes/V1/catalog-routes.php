@@ -62,7 +62,7 @@ Route::group([
         Route::post('', 'store')->name('admin.api.categories.store');
         Route::put('{code}', 'update')->name('admin.api.categories.update');
         Route::delete('{code}', 'delete')->name('admin.api.categories.delete');
-        Route::patch('{code}', 'patch')->name('admin.api.categories.patch');
+        Route::patch('{code}', 'partialUpdate')->name('admin.api.categories.patch');
     });
 
     /** Media API Routes */

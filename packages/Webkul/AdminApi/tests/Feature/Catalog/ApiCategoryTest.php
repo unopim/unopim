@@ -282,7 +282,7 @@ it('should patch the data for all locales for category patch', function () {
 
     $data = [];
     foreach ($locales as $locale) {
-        $data[$locale] = ['name' => 'Updated name ' . $locale];
+        $data[$locale] = ['name' => 'Updated name '.$locale];
     }
 
     $updatedCategory = [
@@ -302,7 +302,7 @@ it('should patch the data for all locales for category patch', function () {
         ->assertJsonFragment(['success' => true]);
 
     $category = Category::where('code', $category->code)->first();
-    
+
     $this->assertEquals($updatedCategory['additional_data'], $category->additional_data);
 });
 
@@ -314,19 +314,19 @@ it('should patch the data for specific locales without affecting other locales d
     $category = Category::factory()->create([
         'additional_data' => [
             'locale_specific' => [
-                $locales[0] => ['name' => 'Existing name for ' . $locales[0]],
-                $locales[1] => ['name' => 'Existing name for ' . $locales[1]],
+                $locales[0] => ['name' => 'Existing name for '.$locales[0]],
+                $locales[1] => ['name' => 'Existing name for '.$locales[1]],
             ],
         ],
     ]);
 
     $data = [
-        $locales[1] => ['name' => 'Updated name for ' . $locales[1]],
-        $locales[2] => ['name' => 'Updated name for ' . $locales[2]],
+        $locales[1] => ['name' => 'Updated name for '.$locales[1]],
+        $locales[2] => ['name' => 'Updated name for '.$locales[2]],
     ];
 
     $updatedCategory = [
-        'parent' => $category->parent->code,
+        'parent'          => $category->parent->code,
         'additional_data' => [
             'locale_specific' => $data,
         ],
@@ -345,9 +345,9 @@ it('should patch the data for specific locales without affecting other locales d
 
     $expectedAdditionalData = [
         'locale_specific' => [
-            $locales[0] => ['name' => 'Existing name for ' . $locales[0]], // Should remain unchanged
-            $locales[1] => ['name' => 'Updated name for ' . $locales[1]], // Should be updated
-            $locales[2] => ['name' => 'Updated name for ' . $locales[2]], // Should be added
+            $locales[0] => ['name' => 'Existing name for '.$locales[0]], // Should remain unchanged
+            $locales[1] => ['name' => 'Updated name for '.$locales[1]], // Should be updated
+            $locales[2] => ['name' => 'Updated name for '.$locales[2]], // Should be added
         ],
     ];
 
@@ -362,8 +362,8 @@ it('should patch the checkbox type category fields value in the category', funct
     $options = $categoryField->options()->pluck('code')->implode(',');
 
     $updatedCategory = [
-        'code' => $category->code,
-        'parent' => $category->parent->code,
+        'code'            => $category->code,
+        'parent'          => $category->parent->code,
         'additional_data' => [
             'common' => [
                 $categoryField->code => $options,
@@ -391,15 +391,15 @@ it('should patch the checkbox type category fields value in the category', funct
 it('should patch the textarea type category fields value in the category', function () {
     $category = Category::factory()->create();
     $locale = Locale::where('status', 1)->first();
-    
+
     $categoryField = CategoryField::factory()->create(['status' => 1, 'value_per_locale' => false, 'type' => 'textarea']);
 
     $updatedCategory = [
-        'code' => $category->code,
-        'parent' => $category->parent->code,
+        'code'            => $category->code,
+        'parent'          => $category->parent->code,
         'additional_data' => [
             'common' => [
-                $categoryField->code => fake()->sentence(), 
+                $categoryField->code => fake()->sentence(),
             ],
             'locale_specific' => [
                 $locale->code => [
