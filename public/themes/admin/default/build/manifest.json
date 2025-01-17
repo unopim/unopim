@@ -1,11 +1,11 @@
 {
   "src/Resources/assets/css/app.css": {
-    "file": "assets/app-5afe43d9.css",
+    "file": "assets/app-91065a6e.css",
     "isEntry": true,
     "src": "src/Resources/assets/css/app.css"
   },
   "src/Resources/assets/fonts/unopim-admin.woff": {
-    "file": "assets/unopim-admin-ac35ebd3.woff",
+    "file": "assets/unopim-admin-29e10bc4.woff",
     "src": "src/Resources/assets/fonts/unopim-admin.woff"
   },
   "src/Resources/assets/images/dark_logo.svg": {

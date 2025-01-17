@@ -69,18 +69,7 @@
                                     class="absolute bottom-2.5 left-1 text-gray-400 cursor-pointer text-2xl"
                                     @click="openSuggestions"
                                 >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        class="h-5 w-5"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                    >
-                                        <path
-                                            d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 3a7 7 0 1 1 0 14c-2.28 0-4-1.72-4-4v-1a1 1 0 0 1 1-1h1a1 1 0 1 1 0 2H9v1c0 1.105.895 2 2 2a5 5 0 1 0 0-10c-2.38 0-4.5 1.62-4.5 4 0 .276.224.5.5.5h2.5a.5.5 0 0 0 0-1H7.077c.567-1.718 2.262-3 4.423-3a7 7 0 0 1 0 14c-3.86 0-7-3.14-7-7s3.14-7 7-7zm2 5.5v1c0 .552-.448 1-1 1h-1a1 1 0 1 1 0-2h1c.552 0 1 .448 1 1z"
-                                        />
-                                    </svg>
+                                    <span class="icon-at"></span>
                                 </div>
                             </div>
 
