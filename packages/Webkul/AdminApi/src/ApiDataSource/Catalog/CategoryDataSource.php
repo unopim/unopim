@@ -100,6 +100,32 @@ class CategoryDataSource extends ApiDataSource
         ];
     }
 
+    // Delete Category by its code
+    public function deleteByCode(string $code)
+    {
+        $this->prepareForSingleData();
+        $requestedFilters = [
+            'code' => [
+                [
+                    'operator' => $this->operators['EQUALS'],
+                    'value'    => $code,
+                ],
+            ],
+        ];
+        $category = $this->processRequestedFilters($requestedFilters)->first();
+        if (! $category) {
+            throw new ModelNotFoundException(
+                trans('admin::app.catalog.categories.not-found', ['code' => (string) $code])
+            );
+        }
+        $category->delete();
+
+        return [
+            'message' => trans('admin::app.catalog.categories.delete-success'),
+            'code'    => $category['code'],
+        ];
+    }
+
     /**
      * Applies the specified operator to the query builder based on the given column and value.
      *
