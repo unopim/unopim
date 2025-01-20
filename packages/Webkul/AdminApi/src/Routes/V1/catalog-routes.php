@@ -85,6 +85,7 @@ Route::group([
         Route::post('', 'store')->name('admin.api.products.store');
         Route::put('{code}', 'update')->name('admin.api.products.update');
         Route::delete('{code}', 'delete')->name('admin.api.products.delete');
+        Route::patch('{sku}', 'partialUpdate')->name('admin.api.products.patch');
 
     });
 

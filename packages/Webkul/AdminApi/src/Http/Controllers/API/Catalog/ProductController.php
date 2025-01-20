@@ -138,6 +138,50 @@ class ProductController extends ApiController
     }
 
     /**
+     * Partisal Updates the simple product.
+     */
+    public function patchProduct(Product $product, array $data)
+    {
+        foreach ($data as $key => $value) {
+            if (property_exists($product, $key)) {
+                $product->$key = $value;
+            }
+        }
+
+        if (isset($data['values'])) {
+            if (is_string($product->values)) {
+                $existingValues = json_decode($product->values, true) ?? []; 
+            } else {
+                // $existingValues = $product->values;
+                $existingValues = $product->values ?? [];
+            }
+  
+
+            $updatedValues = $this->mergeValues($existingValues, $data['values']);
+        
+            $product->values = $updatedValues; 
+        }
+
+        $product->saveOrFail();
+
+        return $product;
+    }
+
+    private function mergeValues(array $existing, array $new)
+    {
+        foreach ($new as $key => $value) {
+            if (is_array($value) && isset($existing[$key]) && is_array($existing[$key])) {
+            
+                $existing[$key] = $this->mergeValues($existing[$key], $value);
+            } else {
+                $existing[$key] = $value;
+            }
+        }
+
+        return $existing;
+    }
+
+    /**
      * Updates the variants of a configurable product.
      *
      * @param  Product  $product  The parent product model.
