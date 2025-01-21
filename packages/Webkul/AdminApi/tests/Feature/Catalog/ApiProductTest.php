@@ -333,7 +333,7 @@ it('should partially update the product associations', function () {
 
     $response = $this->withHeaders($this->headers)
         ->json('PATCH', route('admin.api.products.patch', ['sku' => $product->sku]), $updatedProductData);
- 
+
     $response->assertStatus(200)
         ->assertJsonStructure([
             'success',
@@ -361,7 +361,7 @@ it('should partially update the locale specific attribute in product', function 
 
     $data = [];
     foreach ($locales as $locale) {
-        $data[$locale] = [$attribute->code => 'Test ' . $locale];
+        $data[$locale] = [$attribute->code => 'Test '.$locale];
     }
 
     $updatedProductData = [

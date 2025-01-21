@@ -224,6 +224,7 @@ class CategoryController extends ApiController
             }
             $this->categoryRepository->update($requestData, $category->id);
             Event::dispatch('catalog.category.update.after', $category);
+
             return $this->successResponse(
                 trans('admin::app.catalog.categories.update-success'),
                 Response::HTTP_OK

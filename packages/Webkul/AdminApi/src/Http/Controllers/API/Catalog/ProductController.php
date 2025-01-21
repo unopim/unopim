@@ -150,16 +150,15 @@ class ProductController extends ApiController
 
         if (isset($data['values'])) {
             if (is_string($product->values)) {
-                $existingValues = json_decode($product->values, true) ?? []; 
+                $existingValues = json_decode($product->values, true) ?? [];
             } else {
                 // $existingValues = $product->values;
                 $existingValues = $product->values ?? [];
             }
-  
 
             $updatedValues = $this->mergeValues($existingValues, $data['values']);
-        
-            $product->values = $updatedValues; 
+
+            $product->values = $updatedValues;
         }
 
         $product->saveOrFail();
@@ -171,7 +170,7 @@ class ProductController extends ApiController
     {
         foreach ($new as $key => $value) {
             if (is_array($value) && isset($existing[$key]) && is_array($existing[$key])) {
-            
+
                 $existing[$key] = $this->mergeValues($existing[$key], $value);
             } else {
                 $existing[$key] = $value;

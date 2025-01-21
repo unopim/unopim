@@ -95,5 +95,6 @@ Route::group([
         Route::get('{code}', 'get')->name('admin.api.configrable_products.get');
         Route::post('', 'store')->name('admin.api.configrable_products.store');
         Route::put('{code}', 'update')->name('admin.api.configrable_products.update');
+        Route::patch('{code}', 'partialUpdate')->name('admin.api.configrable_products.patch');
     });
 });

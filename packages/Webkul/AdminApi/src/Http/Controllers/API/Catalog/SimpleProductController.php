@@ -185,11 +185,10 @@ class SimpleProductController extends ProductController
     }
 
     /**
-    * Partial Update the specified resource in storage.
-    *
-    * @return \Illuminate\Http\JsonResponse
-    */
-
+     * Partial Update the specified resource in storage.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function partialUpdate(string $sku)
     {
         $validator = Validator::make(request()->all(), [
@@ -223,7 +222,7 @@ class SimpleProductController extends ProductController
             return $this->successResponse(
                 trans('admin::app.catalog.products.update-success'),
                 Response::HTTP_OK,
-                
+
             );
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
