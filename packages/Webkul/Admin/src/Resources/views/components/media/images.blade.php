@@ -120,7 +120,7 @@
                                         @click="resetAIModal(); toggleImageAIModal(); $refs.choiceImageModal.close()"
                                     >
                                         <div class="flex flex-col">
-                                            <div class="flex gap-1 p-3 border rounded-md rounded-sm text-sm">
+                                            <div class="flex gap-1 p-3 border rounded-md text-sm">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                                     <g clip-path="url(#clip0_3148_2242)"> <path fill-rule="evenodd" clip-rule="evenodd" d="M12.1484 9.31989L9.31995 12.1483L19.9265 22.7549L22.755 19.9265L12.1484 9.31989ZM12.1484 10.7341L10.7342 12.1483L13.5626 14.9767L14.9768 13.5625L12.1484 10.7341Z" fill="#27272A"/>
                                                         <path d="M11.0877 3.30949L13.5625 4.44748L16.0374 3.30949L14.8994 5.78436L16.0374 8.25924L13.5625 7.12124L11.0877 8.25924L12.2257 5.78436L11.0877 3.30949Z" fill="#27272A"/>
@@ -147,7 +147,7 @@
                                         :for="$.uid + '_imageInput_ai'"
                                     >
                                         <div class="flex flex-col">
-                                            <div class="flex gap-1 p-3 border rounded-md rounded-sm text-sm">
+                                            <div class="flex gap-1 p-3 border rounded-md text-sm">
                                                 <span class="icon-export text-xl"></span>
 
                                                 <span class="text-gray-600 text-sm font-semibold">Upload from Device</span>
@@ -170,11 +170,9 @@
                             <!-- Modal Footer -->
                             <x-slot:footer>
                                 <div class="flex gap-x-2.5 items-center">
-                                    <template>
-                                        <button class="secondary-button">
-                                            @lang('admin::app.components.media.images.ai-generation.generate')
-                                        </button>
-                                    </template>
+                                    <button class="secondary-button">
+                                        @lang('Cancel')
+                                    </button>
                                 </div>
                             </x-slot>
                         </x-admin::modal>

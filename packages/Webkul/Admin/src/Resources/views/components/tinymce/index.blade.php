@@ -30,99 +30,81 @@
                     <!-- Modal Content -->
                     <x-slot:content>
                         <!-- LLM Model -->
-                        <x-admin::form.control-group>
-                            <x-admin::form.control-group.label class="required">
-                                @lang('admin::app.components.tinymce.ai-generation.model')
-                            </x-admin::form.control-group.label>
-                            <x-admin::form.control-group.control
-                                type="select"
-                                name="model"
-                                rules="required"
-                                v-model="ai.model"
-                                :label="trans('admin::app.components.tinymce.ai-generation.model')"
-                                ::options="aiModels"
-                            >
-                            </x-admin::form.control-group.control>
-
-                            <x-admin::form.control-group.error control-name="model"></x-admin::form.control-group.error>
-                        </x-admin::form.control-group>
-
-                        <!-- default prompt -->
-                        <x-admin::form.control-group>
-                            <x-admin::form.control-group.label class="required">
-                                @lang('admin::app.components.tinymce.ai-generation.default-prompt')
-                            </x-admin::form.control-group.label>
-                            <x-admin::form.control-group.control
-                                type="select"
-                                name="model"
-                                rules="required"
-                                :label="trans('admin::app.components.tinymce.ai-generation.default-prompt')"
-                                ::options="defaultPrompts"
-                                track-by="prompt"
-                                label-by="title"
-                                @input="onChangePrompt"
-                            >
-                            </x-admin::form.control-group.control>
-
-                            <x-admin::form.control-group.error control-name="model"></x-admin::form.control-group.error>
-                        </x-admin::form.control-group>
-
-                        <!-- Prompt -->
-                        <x-admin::form.control-group>
-                            <x-admin::form.control-group.label class="required">
-                                @lang('admin::app.components.tinymce.ai-generation.prompt')
-                            </x-admin::form.control-group.label>
-
-                            <div class="relative w-full">
+                        <div v-show="! ai.content">
+                            <x-admin::form.control-group if="aiModels.length">
+                                <x-admin::form.control-group.label class="required">
+                                    @lang('admin::app.components.tinymce.ai-generation.model')
+                                </x-admin::form.control-group.label>
                                 <x-admin::form.control-group.control
-                                    type="textarea"
-                                    class="h-[180px]"
-                                    name="prompt"
+                                    type="select"
+                                    name="model"
                                     rules="required"
-                                    v-model="ai.prompt"
-                                    ref="promptInput"
-                                    :label="trans('admin::app.components.tinymce.ai-generation.prompt')"
-                                />
-                                
-                                <!-- Icon inside textarea -->
-                                <div 
-                                    class="absolute bottom-2.5 left-1 text-gray-400 cursor-pointer text-2xl"
-                                    @click="openSuggestions"
+                                    ::value="ai.model"
+                                    v-model="ai.model"
+                                    :label="trans('admin::app.components.tinymce.ai-generation.model')"
+                                    ::options="aiModels"
+                                    track-by="id"
+                                    label-by="label"
                                 >
-                                    <span class="icon-at"></span>
-                                </div>
-                            </div>
+                                </x-admin::form.control-group.control>
 
-                            <x-admin::form.control-group.error control-name="prompt" />
-                        </x-admin::form.control-group>
+                                <x-admin::form.control-group.error control-name="model"></x-admin::form.control-group.error>
+                            </x-admin::form.control-group>
 
+                            <!-- default prompt -->
+                            <x-admin::form.control-group>
+                                <x-admin::form.control-group.label class="required">
+                                    @lang('admin::app.components.tinymce.ai-generation.default-prompt')
+                                </x-admin::form.control-group.label>
+                                <x-admin::form.control-group.control
+                                    type="select"
+                                    name="model"
+                                    rules="required"
+                                    :label="trans('admin::app.components.tinymce.ai-generation.default-prompt')"
+                                    ::options="defaultPrompts"
+                                    track-by="prompt"
+                                    label-by="title"
+                                    @input="onChangePrompt"
+                                >
+                                </x-admin::form.control-group.control>
 
-                        <!-- Modal Submission -->
-                        <div class="flex gap-x-2.5 items-center">
-                            <button
-                                type="submit"
-                                class="secondary-button"
-                            >
-                                <!-- Spinner -->
-                                <template v-if="isLoading">
-                                    <img
-                                        class="animate-spin h-5 w-5 text-violet-700"
-                                        src="{{ unopim_asset('images/spinner.svg') }}"
+                                <x-admin::form.control-group.error control-name="model"></x-admin::form.control-group.error>
+                            </x-admin::form.control-group>
+
+                            <!-- Prompt -->
+                            <x-admin::form.control-group>
+                                <x-admin::form.control-group.label class="required">
+                                    @lang('admin::app.components.tinymce.ai-generation.prompt')
+                                </x-admin::form.control-group.label>
+
+                                <div class="relative w-full">
+                                    <x-admin::form.control-group.control
+                                        type="textarea"
+                                        class="h-[180px]"
+                                        name="prompt"
+                                        rules="required"
+                                        v-model="ai.prompt"
+                                        ref="promptInput"
+                                        :label="trans('admin::app.components.tinymce.ai-generation.prompt')"
                                     />
+                                    
+                                    <!-- Icon inside textarea -->
+                                    <div 
+                                        class="absolute bottom-2.5 left-1 text-gray-400 cursor-pointer text-2xl"
+                                        @click="openSuggestions"
+                                    >
+                                        <span class="icon-at"></span>
+                                    </div>
+                                </div>
 
-                                    @lang('admin::app.components.tinymce.ai-generation.generating')
-                                </template>
-
-                                <template v-else>
-                                    <span class="icon-magic text-2xl text-violet-700"></span>
-
-                                    @lang('admin::app.components.tinymce.ai-generation.generate')
-                                </template>
-                            </button>
+                                <x-admin::form.control-group.error control-name="prompt" />
+                            </x-admin::form.control-group>
                         </div>
 
+                       
+
                         <!-- Generated Content -->
-                        <x-admin::form.control-group class="mt-5">
+                        <x-admin::form.control-group class="mt-5" v-show="ai.content">
                             <x-admin::form.control-group.label class="text-left">
                                 @lang('admin::app.components.tinymce.ai-generation.generated-content')
                             </x-admin::form.control-group.label>
@@ -143,14 +125,57 @@
                     <!-- Modal Footer -->
                     <x-slot:footer>
                         <div class="flex gap-x-2.5 items-center">
-                            <button
-                                type="button"
-                                class="primary-button"
-                                :disabled="!ai.content"
-                                @click="apply"
-                            >
-                                @lang('admin::app.components.tinymce.ai-generation.apply')
-                            </button>
+                            <template v-if="! ai.content">
+                                <button
+                                    type="submit"
+                                    class="secondary-button"
+                                >
+                                    <!-- Spinner -->
+                                    <template v-if="isLoading">
+                                        <img
+                                            class="animate-spin h-5 w-5 text-violet-700"
+                                            src="{{ unopim_asset('images/spinner.svg') }}"
+                                        />
+
+                                        @lang('admin::app.components.tinymce.ai-generation.generating')
+                                    </template>
+
+                                    <template v-else>
+                                        <span class="icon-magic text-2xl text-violet-700"></span>
+
+                                        @lang('admin::app.components.tinymce.ai-generation.generate')
+                                    </template>
+                                </button>
+                            </template>
+
+                            <template v-else>
+                                <button class="secondary-button">
+                                    <!-- Spinner -->
+                                    <template v-if="isLoading">
+                                        <img
+                                            class="animate-spin h-5 w-5 text-violet-700"
+                                            src="{{ unopim_asset('images/spinner.svg') }}"
+                                        />
+
+                                        @lang('admin::app.components.media.images.ai-generation.regenerating')
+                                    </template>
+
+                                    <template v-else>
+                                        <span class="icon-magic text-2xl text-violet-700"></span>
+                                        
+                                        @lang('admin::app.components.media.images.ai-generation.regenerate')
+                                    </template>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="primary-button"
+                                    :disabled="!ai.content"
+                                    @click="apply"
+                                >
+                                    @lang('admin::app.components.tinymce.ai-generation.apply')
+                                </button>
+                            </template>
                         </div>
                     </x-slot>
                 </x-admin::modal>
@@ -175,7 +200,7 @@
                     ai: {
                         enabled: Boolean("{{ core()->getConfigData('general.magic_ai.settings.enabled') }}"),
 
-                        model: null,
+                        model: 'gpt-4-1106-preview',
 
                         prompt: null,
 
@@ -184,6 +209,7 @@
 
                     aiModels: [],
                     defaultPrompts: [],
+                    selectedModel: 'gpt-4-1106-preview',
                     suggestionValues: [],
                     resourceId: "{{ request()->id }}",
                     entityName: "{{ $attributes->get('entity-name', 'attribute') }}",
@@ -391,7 +417,9 @@
                 async fetchModels() {
                     try {
                         const response = await axios.get("{{ route('admin.magic_ai.available_model') }}");
-                        this.aiModels = response.data.models;
+                        this.aiModels = response.data.models.filter(model => model.id !== 'dall-e-2' && model.id !== 'dall-e-3');
+                        this.ai.model = this.aiModels[0].id;
+                        console.log(this.ai.model, 'ai.model')
                     } catch (error) {
                         console.error("Failed to fetch AI models:", error);
                     }
