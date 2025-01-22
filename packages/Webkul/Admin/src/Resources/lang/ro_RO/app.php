@@ -1966,7 +1966,51 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => 'Prompt implicit',
             ],
+        ],
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Descriere detaliată a produsului',
+            'prompt' => 'Scrie o descriere detaliată a @name, incluzând caracteristicile, beneficiile, specificațiile tehnice și instrucțiunile de utilizare.',
+        ],
+        'overview' => [
+            'title'  => 'Prezentare generală a produsului',
+            'prompt' => 'Creează o prezentare detaliată a @name, evidențiind caracteristicile principale, avantajele și publicul țintă, cum ar fi @brand și @color.',
+        ],
+        'features' => [
+            'title'  => 'Caracteristici și beneficii ale produsului',
+            'prompt' => 'Listează caracteristicile și beneficiile principale ale @name, explicând cum adaugă valoare vieții clientului.',
+        ],
+        'technical' => [
+            'title'  => 'Specificații tehnice ale produsului',
+            'prompt' => 'Furnizează o listă detaliată de specificații tehnice pentru @name, incluzând dimensiuni, materiale și compatibilitate.',
+        ],
+        'care' => [
+            'title'  => 'Îngrijirea și întreținerea produsului',
+            'prompt' => 'Scrie un ghid despre cum să îngrijești și să întreții @name, incluzând sfaturi pentru curățare, depozitare și depanare.',
+        ],
+        'tagline' => [
+            'title'  => 'Sloganul produsului',
+            'prompt' => 'Scrie un slogan captivant și concis pentru @name care să surprindă esența și beneficiile acestuia.',
+        ],
+        'summary' => [
+            'title'  => 'Rezumatul produsului',
+            'prompt' => 'Rezumă caracteristicile și beneficiile principale ale @name în 50-60 de cuvinte.',
+        ],
+        'headline' => [
+            'title'  => 'Titlul produsului',
+            'prompt' => 'Creează un titlu atrăgător pentru @name care să evidențieze punctul său unic de vânzare.',
+        ],
+        'brief' => [
+            'title'  => 'Descriere sumară a produsului',
+            'prompt' => 'Scrie o descriere scurtă și concisă a @name, concentrându-te pe principalele beneficii și publicul țintă.',
+        ],
+        'elevator' => [
+            'title'  => 'Pitch scurt pentru produs',
+            'prompt' => 'Elaborează un pitch scurt pentru @name, rezumând scopul, beneficiile și punctul său unic de vânzare în 30-40 de cuvinte.',
         ],
     ],
 ];

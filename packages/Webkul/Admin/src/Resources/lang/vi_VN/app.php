@@ -1937,7 +1937,51 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => 'Lời nhắc mặc định',
             ],
+        ],
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Mô tả chi tiết sản phẩm',
+            'prompt' => 'Viết một mô tả chi tiết về @name, bao gồm các tính năng, lợi ích, thông số kỹ thuật và hướng dẫn sử dụng.',
+        ],
+        'overview' => [
+            'title'  => 'Tổng quan về sản phẩm',
+            'prompt' => 'Tạo một tổng quan chi tiết về @name, làm nổi bật các tính năng chính, ưu điểm và đối tượng mục tiêu như @brand và @color.',
+        ],
+        'features' => [
+            'title'  => 'Tính năng và lợi ích của sản phẩm',
+            'prompt' => 'Liệt kê các tính năng chính và lợi ích của @name, giải thích cách chúng mang lại giá trị cho cuộc sống của khách hàng.',
+        ],
+        'technical' => [
+            'title'  => 'Thông số kỹ thuật sản phẩm',
+            'prompt' => 'Cung cấp danh sách chi tiết các thông số kỹ thuật của @name, bao gồm kích thước, vật liệu và khả năng tương thích.',
+        ],
+        'care' => [
+            'title'  => 'Chăm sóc và bảo dưỡng sản phẩm',
+            'prompt' => 'Viết hướng dẫn về cách chăm sóc và bảo dưỡng @name, bao gồm các mẹo về làm sạch, lưu trữ và khắc phục sự cố.',
+        ],
+        'tagline' => [
+            'title'  => 'Khẩu hiệu sản phẩm',
+            'prompt' => 'Viết một khẩu hiệu ngắn gọn và thu hút cho @name, nêu bật bản chất và lợi ích của sản phẩm.',
+        ],
+        'summary' => [
+            'title'  => 'Tóm tắt sản phẩm',
+            'prompt' => 'Tóm tắt các tính năng và lợi ích chính của @name trong 50-60 từ.',
+        ],
+        'headline' => [
+            'title'  => 'Tiêu đề sản phẩm',
+            'prompt' => 'Tạo một tiêu đề hấp dẫn cho @name, làm nổi bật điểm bán hàng độc đáo của nó.',
+        ],
+        'brief' => [
+            'title'  => 'Mô tả ngắn gọn về sản phẩm',
+            'prompt' => 'Viết một mô tả ngắn gọn về @name, tập trung vào các lợi ích chính và đối tượng mục tiêu.',
+        ],
+        'elevator' => [
+            'title'  => 'Lời chào ngắn gọn sản phẩm',
+            'prompt' => 'Tạo một lời chào ngắn gọn cho @name, tóm tắt mục đích, lợi ích và điểm bán hàng độc đáo của sản phẩm trong 30-40 từ.',
         ],
     ],
 ];

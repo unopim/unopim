@@ -1824,6 +1824,7 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => 'Standardaufforderung',
             ],
         ],
     ],
@@ -1973,5 +1974,48 @@ return [
         'false'   => 'Falsch',
         'enable'  => 'Aktiviert',
         'disable' => 'Deaktiviert',
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Detaillierte Produktbeschreibung',
+            'prompt' => 'Schreiben Sie eine umfassende Beschreibung von @name, einschließlich seiner Funktionen, Vorteile, technischen Spezifikationen und Gebrauchsanweisungen.',
+        ],
+        'overview' => [
+            'title'  => 'Produktübersicht',
+            'prompt' => 'Erstellen Sie eine detaillierte Übersicht über @name, die die wichtigsten Funktionen, Vorteile und die Zielgruppe wie @brand und @color hervorhebt.',
+        ],
+        'features' => [
+            'title'  => 'Produktfunktionen und Vorteile',
+            'prompt' => 'Listen Sie die wichtigsten Funktionen und Vorteile von @name auf und erklären Sie, wie sie das Leben des Kunden bereichern.',
+        ],
+        'technical' => [
+            'title'  => 'Technische Spezifikationen des Produkts',
+            'prompt' => 'Geben Sie eine detaillierte Liste der technischen Spezifikationen von @name an, einschließlich Abmessungen, Materialien und Kompatibilität.',
+        ],
+        'care' => [
+            'title'  => 'Pflege und Wartung des Produkts',
+            'prompt' => 'Schreiben Sie eine Anleitung, wie @name gepflegt und gewartet wird, einschließlich Tipps zur Reinigung, Lagerung und Fehlerbehebung.',
+        ],
+        'tagline' => [
+            'title'  => 'Produktslogan',
+            'prompt' => 'Schreiben Sie einen einprägsamen und prägnanten Slogan für @name, der das Wesen und die Vorteile des Produkts einfängt.',
+        ],
+        'summary' => [
+            'title'  => 'Produktzusammenfassung',
+            'prompt' => 'Fassen Sie die wichtigsten Funktionen und Vorteile von @name in 50-60 Wörtern zusammen.',
+        ],
+        'headline' => [
+            'title'  => 'Produktschlagzeile',
+            'prompt' => 'Erstellen Sie eine aufmerksamkeitsstarke Schlagzeile für @name, die den einzigartigen Verkaufsaspekt hervorhebt.',
+        ],
+        'brief' => [
+            'title'  => 'Produktbeschreibung',
+            'prompt' => 'Schreiben Sie eine kurze und präzise Beschreibung von @name, die sich auf die wichtigsten Vorteile und die Zielgruppe konzentriert.',
+        ],
+        'elevator' => [
+            'title'  => 'Kurzer Produktpitch',
+            'prompt' => 'Erstellen Sie einen kurzen Pitch für @name, der Zweck, Vorteile und das Alleinstellungsmerkmal in 30-40 Wörtern zusammenfasst.',
+        ],
     ],
 ];

@@ -149,9 +149,18 @@ class MagicAIController extends Controller
 
     public function defaultPrompt()
     {
+        $prompts = config('default_prompts');
+        $translatedPrompts = [];
+
+        foreach ($prompts as $value) {
+            $translatedPrompts[] = [
+                'prompt' => trans($value['prompt']),
+                'title'  => trans($value['title']),
+            ];
+        }
+
         return new JsonResponse([
-            'prompts' => config('default_prompts'),
+            'prompts' => $translatedPrompts,
         ]);
     }
-
 }

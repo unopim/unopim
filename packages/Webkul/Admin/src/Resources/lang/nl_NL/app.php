@@ -2272,6 +2272,7 @@ return [
                 'orca-mini'              => 'Orka mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'De lava',
+                'default-prompt'         => 'Standaard prompt',
             ],
         ],
     ],
@@ -2423,5 +2424,48 @@ return [
         'false'    => 'Vals',
         'enable'   => 'Ingeschakeld',
         'disable'  => 'Gehandicapt',
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Gedetailleerde productbeschrijving',
+            'prompt' => 'Schrijf een uitgebreide beschrijving van @name, inclusief kenmerken, voordelen, technische specificaties en gebruiksinstructies.',
+        ],
+        'overview' => [
+            'title'  => 'Productoverzicht',
+            'prompt' => 'Maak een gedetailleerd overzicht van @name, met de nadruk op de belangrijkste kenmerken, voordelen en doelgroep zoals @brand en @color.',
+        ],
+        'features' => [
+            'title'  => 'Productkenmerken en voordelen',
+            'prompt' => 'Lijst de belangrijkste kenmerken en voordelen van @name op en leg uit hoe deze waarde toevoegen aan het leven van de klant.',
+        ],
+        'technical' => [
+            'title'  => 'Product technische specificaties',
+            'prompt' => 'Geef een gedetailleerde lijst van de technische specificaties van @name, inclusief afmetingen, materialen en compatibiliteit.',
+        ],
+        'care' => [
+            'title'  => 'Productzorg en onderhoud',
+            'prompt' => 'Schrijf een gids voor het verzorgen en onderhouden van @name, inclusief tips voor schoonmaken, opslag en probleemoplossing.',
+        ],
+        'tagline' => [
+            'title'  => 'Product taglijn',
+            'prompt' => 'Schrijf een pakkende en beknopte taglijn voor @name die de essentie en voordelen ervan vastlegt.',
+        ],
+        'summary' => [
+            'title'  => 'Product samenvatting',
+            'prompt' => 'Vat de belangrijkste kenmerken en voordelen van @name samen in 50-60 woorden.',
+        ],
+        'headline' => [
+            'title'  => 'Productkop',
+            'prompt' => 'Maak een opvallende kop voor @name die het unieke verkoopargument benadrukt.',
+        ],
+        'brief' => [
+            'title'  => 'Productbeschrijving',
+            'prompt' => 'Schrijf een beknopte en bondige beschrijving van @name, met de focus op de belangrijkste voordelen en de doelgroep.',
+        ],
+        'elevator' => [
+            'title'  => 'Product Elevator Pitch',
+            'prompt' => 'Schrijf een korte elevator pitch voor @name, samenvattend het doel, de voordelen en het unieke verkoopargument in 30-40 woorden.',
+        ],
     ],
 ];

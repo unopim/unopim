@@ -1966,7 +1966,51 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => 'Prompt predefinito',
             ],
+        ],
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Descrizione Dettagliata del Prodotto',
+            'prompt' => 'Scrivi una descrizione completa di @name, includendo le sue caratteristiche, benefici, specifiche tecniche e istruzioni per l\'uso.',
+        ],
+        'overview' => [
+            'title'  => 'Panoramica del Prodotto',
+            'prompt' => 'Crea una panoramica dettagliata di @name, evidenziando le sue caratteristiche principali, i vantaggi e il pubblico target come @brand e @color.',
+        ],
+        'features' => [
+            'title'  => 'Caratteristiche e Benefici del Prodotto',
+            'prompt' => 'Elenca le caratteristiche principali e i benefici di @name, spiegando come queste aggiungano valore alla vita del cliente.',
+        ],
+        'technical' => [
+            'title'  => 'Specifiche Tecniche del Prodotto',
+            'prompt' => 'Fornisci un elenco dettagliato delle specifiche tecniche di @name, includendo dimensioni, materiali e compatibilità.',
+        ],
+        'care' => [
+            'title'  => 'Cura e Manutenzione del Prodotto',
+            'prompt' => 'Scrivi una guida su come prendersi cura e mantenere @name, includendo consigli per la pulizia, lo stoccaggio e la risoluzione dei problemi.',
+        ],
+        'tagline' => [
+            'title'  => 'Slogan del Prodotto',
+            'prompt' => 'Scrivi uno slogan accattivante e conciso per @name che catturi la sua essenza e i suoi benefici.',
+        ],
+        'summary' => [
+            'title'  => 'Riepilogo del Prodotto',
+            'prompt' => 'Riassumi le caratteristiche e i benefici principali di @name in 50-60 parole.',
+        ],
+        'headline' => [
+            'title'  => 'Titolo del Prodotto',
+            'prompt' => 'Crea un titolo accattivante per @name che evidenzi il suo punto di vendita unico.',
+        ],
+        'brief' => [
+            'title'  => 'Sintesi del Prodotto',
+            'prompt' => 'Scrivi una descrizione breve e concisa di @name, concentrandoti sui suoi principali vantaggi e sul pubblico target.',
+        ],
+        'elevator' => [
+            'title'  => 'Elevator Pitch del Prodotto',
+            'prompt' => 'Crea un elevator pitch conciso per @name, riassumendo il suo scopo, i benefici e il suo punto di vendita unico in 30-40 parole.',
         ],
     ],
 ];

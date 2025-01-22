@@ -1842,6 +1842,7 @@ return [
                 'orca-mini'              => 'Orca mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'Lava',
+                'default-prompt'         => 'Permintaan default',
             ],
         ],
     ],
@@ -1997,5 +1998,48 @@ return [
         'false'   => 'PALSU',
         'enable'  => 'Diaktifkan',
         'disable' => 'Dengan disabilitas',
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Deskripsi Detail Produk',
+            'prompt' => 'Tuliskan deskripsi komprehensif tentang @name, termasuk fitur, manfaat, spesifikasi teknis, dan petunjuk penggunaan.',
+        ],
+        'overview' => [
+            'title'  => 'Ringkasan Produk',
+            'prompt' => 'Buatlah gambaran umum @name, menyoroti fitur utama, keuntungan, dan audiens target seperti @brand dan @color.',
+        ],
+        'features' => [
+            'title'  => 'Fitur dan Manfaat Produk',
+            'prompt' => 'Daftarkan fitur utama dan manfaat @name, menjelaskan bagaimana fitur-fitur tersebut memberi nilai tambah pada kehidupan pelanggan.',
+        ],
+        'technical' => [
+            'title'  => 'Spesifikasi Teknis Produk',
+            'prompt' => 'Berikan daftar spesifikasi teknis lengkap untuk @name, termasuk dimensi, bahan, dan kompatibilitas.',
+        ],
+        'care' => [
+            'title'  => 'Perawatan dan Pemeliharaan Produk',
+            'prompt' => 'Tuliskan panduan tentang cara merawat dan memelihara @name, termasuk tips untuk pembersihan, penyimpanan, dan pemecahan masalah.',
+        ],
+        'tagline' => [
+            'title'  => 'Tagline Produk',
+            'prompt' => 'Buatlah tagline yang menarik dan singkat untuk @name yang menangkap esensi dan manfaatnya.',
+        ],
+        'summary' => [
+            'title'  => 'Ringkasan Produk',
+            'prompt' => 'Ringkaslah fitur dan manfaat utama @name dalam 50-60 kata.',
+        ],
+        'headline' => [
+            'title'  => 'Judul Produk',
+            'prompt' => 'Buatlah judul yang menarik perhatian untuk @name yang menyoroti keunggulan uniknya.',
+        ],
+        'brief' => [
+            'title'  => 'Deskripsi Singkat Produk',
+            'prompt' => 'Tuliskan deskripsi singkat tentang @name, dengan fokus pada keunggulan utama dan audiens targetnya.',
+        ],
+        'elevator' => [
+            'title'  => 'Elevator Pitch Produk',
+            'prompt' => 'Buat elevator pitch yang singkat untuk @name, merangkum tujuan, manfaat, dan keunggulan uniknya dalam 30-40 kata.',
+        ],
     ],
 ];

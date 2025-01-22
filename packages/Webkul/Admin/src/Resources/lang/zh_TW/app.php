@@ -1937,7 +1937,51 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => '預設提示',
             ],
+        ],
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => '產品詳細描述',
+            'prompt' => '撰寫@name的詳細描述，包括其特徵、優勢、技術規格和使用說明。',
+        ],
+        'overview' => [
+            'title'  => '產品概覽',
+            'prompt' => '創建@name的詳細概覽，突出其主要特徵、優勢和目標受眾，如@brand和@color。',
+        ],
+        'features' => [
+            'title'  => '產品特徵與優勢',
+            'prompt' => '列出@name的主要特徵與優勢，並解釋它們如何為客戶的生活增添價值。',
+        ],
+        'technical' => [
+            'title'  => '產品技術規格',
+            'prompt' => '提供@name的詳細技術規格清單，包括尺寸、材料和相容性。',
+        ],
+        'care' => [
+            'title'  => '產品護理與維護',
+            'prompt' => '撰寫@name的護理與維護指南，包括清潔、儲存和故障排除的建議。',
+        ],
+        'tagline' => [
+            'title'  => '產品標語',
+            'prompt' => '為@name寫一個簡潔有吸引力的標語，捕捉其精髓和優勢。',
+        ],
+        'summary' => [
+            'title'  => '產品摘要',
+            'prompt' => '用50-60個字總結@name的主要特徵和優勢。',
+        ],
+        'headline' => [
+            'title'  => '產品標題',
+            'prompt' => '為@name創建一個引人注目的標題，突顯其獨特的銷售點。',
+        ],
+        'brief' => [
+            'title'  => '產品簡介',
+            'prompt' => '撰寫@name的簡短介紹，專注於其主要優勢和目標受眾。',
+        ],
+        'elevator' => [
+            'title'  => '產品電梯簡報',
+            'prompt' => '為@name創建一個簡短的電梯簡報，在30-40個字中總結其目的、優勢和獨特的銷售點。',
         ],
     ],
 ];

@@ -31,29 +31,32 @@
                     <x-slot:content>
                         <!-- LLM Model -->
                         <div v-show="! ai.content">
-                            <x-admin::form.control-group if="aiModels.length">
-                                <x-admin::form.control-group.label class="required">
-                                    @lang('admin::app.components.tinymce.ai-generation.model')
-                                </x-admin::form.control-group.label>
-                                <x-admin::form.control-group.control
-                                    type="select"
-                                    name="model"
-                                    rules="required"
-                                    ::value="ai.model"
-                                    v-model="ai.model"
-                                    :label="trans('admin::app.components.tinymce.ai-generation.model')"
-                                    ::options="aiModels"
-                                    track-by="id"
-                                    label-by="label"
-                                >
-                                </x-admin::form.control-group.control>
+                            <template v-if="aiModels.length">
+                                <x-admin::form.control-group >
+                                    <x-admin::form.control-group.label class="required">
+                                        @lang('admin::app.components.tinymce.ai-generation.model')
+                                    </x-admin::form.control-group.label>
+                                    <x-admin::form.control-group.control
+                                        type="select"
+                                        name="model"
+                                        rules="required"
+                                        ::value="selectedModel"
+                                        v-model="ai.model"
+                                        :label="trans('admin::app.components.tinymce.ai-generation.model')"
+                                        ::options="aiModels"
+                                        track-by="id"
+                                        label-by="label"
+                                    >
+                                    </x-admin::form.control-group.control>
 
-                                <x-admin::form.control-group.error control-name="model"></x-admin::form.control-group.error>
-                            </x-admin::form.control-group>
+                                    <x-admin::form.control-group.error control-name="model"></x-admin::form.control-group.error>
+                                </x-admin::form.control-group>
+                            </template>
+                            
 
                             <!-- default prompt -->
                             <x-admin::form.control-group>
-                                <x-admin::form.control-group.label class="required">
+                                <x-admin::form.control-group.label>
                                     @lang('admin::app.components.tinymce.ai-generation.default-prompt')
                                 </x-admin::form.control-group.label>
                                 <x-admin::form.control-group.control
@@ -200,7 +203,7 @@
                     ai: {
                         enabled: Boolean("{{ core()->getConfigData('general.magic_ai.settings.enabled') }}"),
 
-                        model: 'gpt-4-1106-preview',
+                        model: null,
 
                         prompt: null,
 
@@ -209,7 +212,7 @@
 
                     aiModels: [],
                     defaultPrompts: [],
-                    selectedModel: 'gpt-4-1106-preview',
+                    selectedModel: null,
                     suggestionValues: [],
                     resourceId: "{{ request()->id }}",
                     entityName: "{{ $attributes->get('entity-name', 'attribute') }}",
@@ -375,19 +378,19 @@
 
                 magicAIModalToggle() {
                     this.$refs.magicAIModal.toggle();
-
-                    if (this.aiModels.length === 0) {
-                        this.fetchModels();
-                    }
-
-                    if (this.defaultPrompts.length === 0) {
-                        this.fetchDefaultPrompts();
-                    }
                 },
 
                 toggleMagicAIModal() {
                     this.$nextTick(() => {
                         if (this.$refs.promptInput) {
+                            if (this.aiModels.length === 0) {
+                                this.fetchModels();
+                            }
+
+                            if (this.defaultPrompts.length === 0) {
+                                this.fetchDefaultPrompts();
+                            }
+
                             const tribute = this.$tribute.init({
                                 values: this.fetchSuggestionValues,
                                 lookup: 'name',
@@ -398,6 +401,8 @@
                             });
                             
                             tribute.attach(this.$refs.promptInput);
+
+                            
                         }
                     });
                 },
@@ -418,8 +423,7 @@
                     try {
                         const response = await axios.get("{{ route('admin.magic_ai.available_model') }}");
                         this.aiModels = response.data.models.filter(model => model.id !== 'dall-e-2' && model.id !== 'dall-e-3');
-                        this.ai.model = this.aiModels[0].id;
-                        console.log(this.ai.model, 'ai.model')
+                        this.selectedModel = this.aiModels[0].id;
                     } catch (error) {
                         console.error("Failed to fetch AI models:", error);
                     }

@@ -214,25 +214,28 @@
                             <x-slot:content>
                                 <div v-show="! ai.images.length">
                                     <!-- Model -->
-                                    <x-admin::form.control-group>
-                                        <x-admin::form.control-group.label class="required">
-                                            @lang('admin::app.components.media.images.ai-generation.model')
-                                        </x-admin::form.control-group.label>
+                                    <template v-if="aiModels.length">
+                                        <x-admin::form.control-group>
+                                            <x-admin::form.control-group.label class="required">
+                                                @lang('admin::app.components.media.images.ai-generation.model')
+                                            </x-admin::form.control-group.label>
 
-                                        <x-admin::form.control-group.control
-                                            type="select"
-                                            name="model"
-                                            rules="required"
-                                            v-model="ai.model"
-                                            ::options="aiModels"
-                                            track-by="value"
-                                            label-by="label"
-                                            :label="trans('admin::app.components.media.images.ai-generation.model')"
-                                        >
-                                        </x-admin::form.control-group.control>
+                                            <x-admin::form.control-group.control
+                                                type="select"
+                                                name="model"
+                                                rules="required"
+                                                ::value="selectedModel"
+                                                v-model="ai.model"
+                                                ::options="aiModels"
+                                                track-by="id"
+                                                label-by="label"
+                                                :label="trans('admin::app.components.media.images.ai-generation.model')"
+                                            >
+                                            </x-admin::form.control-group.control>
 
-                                        <x-admin::form.control-group.error control-name="model" />
-                                    </x-admin::form.control-group>
+                                            <x-admin::form.control-group.error control-name="model" />
+                                        </x-admin::form.control-group>
+                                    </template>
                                     <!-- Prompt -->
                                     <x-admin::form.control-group>
                                         <x-admin::form.control-group.label class="required">
@@ -533,6 +536,7 @@
 
                     aiModels: [],
                     suggestionValues: [],
+                    selectedModel: null,
                     resourceId: "{{ request()->id }}",
                     entityName: "{{ $attributes->get('entity-name', 'attribute') }}",
                 }
@@ -619,6 +623,10 @@
                     this.$refs.magicAIImageModal.open();
                     this.$nextTick(() => {
                         if (this.$refs.imagePromptInput) {
+                            if (this.aiModels.length === 0) {
+                                this.fetchModels();
+                            }
+
                             const tribute = this.$tribute.init({
                                 values: this.fetchSuggestionValues,
                                 lookup: 'name',
@@ -631,8 +639,6 @@
                             tribute.attach(this.$refs.imagePromptInput);
                         }
                     });
-
-                    this.fetchModels();
                 },
 
                 async fetchModels() {
@@ -640,6 +646,7 @@
                         const response = await axios.get("{{ route('admin.magic_ai.available_model') }}");
 
                         this.aiModels = response.data.models.filter(model => model.id === 'dall-e-2' || model.id === 'dall-e-3');
+                        this.selectedModel = this.aiModels[0].id;
                     } catch (error) {
                         console.error("Failed to fetch AI models:", error);
                     }

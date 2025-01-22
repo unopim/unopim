@@ -349,7 +349,7 @@ abstract class AbstractImporter
                 $typeBatches['index'][] = new IndexBatchJob($batch);
             }
         }
-        
+
         $chain[] = Bus::batch($typeBatches['import']);
 
         if (! empty($typeBatches['link'])) {
@@ -367,7 +367,7 @@ abstract class AbstractImporter
         $chain[] = new CompletedJob($this->import, $this->import->id);
 
         $queueName = $this->getQueue();
-        
+
         if ($queueName) {
             Bus::chain($chain)->onQueue($queueName)->dispatch();
         } else {

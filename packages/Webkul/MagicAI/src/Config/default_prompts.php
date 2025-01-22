@@ -2,34 +2,34 @@
 
 return [
     [
-        'title' => 'Detailed Product Description',
-        'prompt' => 'Write a comprehensive description of @name, including its features, benefits, technical specifications, and usage instructions.'
+        'title'  => 'admin::app.default-prompt.detailed.title',
+        'prompt' => 'admin::app.default-prompt.detailed.prompt',
     ], [
-        'title' => 'Product Overview',
-        'prompt' => 'Create a detailed overview of @name, highlighting its key features, advantages, and target audience like @brand and @color.'
+        'title'  => 'admin::app.default-prompt.overview.title',
+        'prompt' => 'admin::app.default-prompt.overview.prompt',
     ], [
-        'title' => 'Product Features and Benefits',
-        'prompt' => 'List the key features and benefits of @name, explaining how they add value to the customer\'s life.'
+        'title'  => 'admin::app.default-prompt.features.title',
+        'prompt' => 'admin::app.default-prompt.features.prompt',
     ], [
-        'title' => 'Product Technical Specifications',
-        'prompt' => 'Provide a detailed list of technical specifications for @name, including dimensions, materials, and compatibility.'
+        'title'  => 'admin::app.default-prompt.technical.title',
+        'prompt' => 'admin::app.default-prompt.technical.prompt',
     ], [
-        'title' => 'Product Care and Maintenance',
-        'prompt' => 'Write a guide on how to care for and maintain @name, including tips for cleaning, storage, and troubleshooting.'
+        'title'  => 'admin::app.default-prompt.care.title',
+        'prompt' => 'admin::app.default-prompt.care.prompt',
     ], [
-        'title' => 'Product Tagline',
-        'prompt' => 'Write a catchy and concise tagline for @name that captures its essence and benefits.'
+        'title'  => 'admin::app.default-prompt.tagline.title',
+        'prompt' => 'admin::app.default-prompt.tagline.prompt',
     ], [
-        'title' => 'Product Summary',
-        'prompt' => 'Summarize the key features and benefits of @name in 50-60 words.'
+        'title'  => 'admin::app.default-prompt.summary.title',
+        'prompt' => 'admin::app.default-prompt.summary.prompt',
     ], [
-        'title' => 'Product Headline',
-        'prompt' => 'Create a attention-grabbing headline for @name that highlights its unique selling point.'
+        'title'  => 'admin::app.default-prompt.headline.title',
+        'prompt' => 'admin::app.default-prompt.headline.prompt',
     ], [
-        'title' => 'Product Brief',
-        'prompt' => 'Write a brief and concise description of @name, focusing on its key advantages and target audience.'
+        'title'  => 'admin::app.default-prompt.brief.title',
+        'prompt' => 'admin::app.default-prompt.brief.prompt',
     ], [
-        'title' => 'Product Elevator Pitch',
-        'prompt' => 'Craft a concise elevator pitch for @name, summarizing its purpose, benefits, and unique selling point in 30-40 words.'
-    ],    
+        'title'  => 'admin::app.default-prompt.elevator.title',
+        'prompt' => 'admin::app.default-prompt.elevator.prompt',
+    ],
 ];

@@ -1966,7 +1966,51 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => 'Domyślny prompt',
             ],
+        ],
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Szczegółowy opis produktu',
+            'prompt' => 'Napisz szczegółowy opis @name, uwzględniając cechy, korzyści, specyfikacje techniczne oraz instrukcje użytkowania.',
+        ],
+        'overview' => [
+            'title'  => 'Przegląd produktu',
+            'prompt' => 'Stwórz szczegółowy przegląd @name, podkreślając jego kluczowe cechy, zalety i docelową grupę odbiorców, takich jak @brand i @color.',
+        ],
+        'features' => [
+            'title'  => 'Cechy i korzyści produktu',
+            'prompt' => 'Wypisz kluczowe cechy i korzyści @name, wyjaśniając, jak dodają one wartość życiu klienta.',
+        ],
+        'technical' => [
+            'title'  => 'Specyfikacje techniczne produktu',
+            'prompt' => 'Podaj szczegółową listę specyfikacji technicznych dla @name, w tym wymiary, materiały i kompatybilność.',
+        ],
+        'care' => [
+            'title'  => 'Pielęgnacja i konserwacja produktu',
+            'prompt' => 'Napisz przewodnik dotyczący pielęgnacji i konserwacji @name, w tym wskazówki dotyczące czyszczenia, przechowywania i rozwiązywania problemów.',
+        ],
+        'tagline' => [
+            'title'  => 'Hasło reklamowe produktu',
+            'prompt' => 'Napisz chwytliwe i zwięzłe hasło reklamowe dla @name, które uchwyci jego istotę i korzyści.',
+        ],
+        'summary' => [
+            'title'  => 'Podsumowanie produktu',
+            'prompt' => 'Podsumuj kluczowe cechy i korzyści @name w 50-60 słowach.',
+        ],
+        'headline' => [
+            'title'  => 'Nagłówek produktu',
+            'prompt' => 'Stwórz przyciągający uwagę nagłówek dla @name, który podkreśli jego unikalną cechę sprzedaży.',
+        ],
+        'brief' => [
+            'title'  => 'Krótki opis produktu',
+            'prompt' => 'Napisz krótki i zwięzły opis @name, koncentrując się na jego głównych zaletach i grupie docelowej.',
+        ],
+        'elevator' => [
+            'title'  => 'Elevator Pitch produktu',
+            'prompt' => 'Stwórz krótki elevator pitch dla @name, podsumowując jego cel, korzyści i unikalną cechę sprzedaży w 30-40 słowach.',
         ],
     ],
 ];

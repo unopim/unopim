@@ -1965,7 +1965,51 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => 'Oletuskehotus',
             ],
+        ],
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Yksityiskohtainen Tuotekuvaus',
+            'prompt' => 'Kirjoita kattava kuvaus @name:stä, sisältäen sen ominaisuudet, hyödyt, tekniset tiedot ja käyttöohjeet.',
+        ],
+        'overview' => [
+            'title'  => 'Tuotteen Yleiskatsaus',
+            'prompt' => 'Luo yksityiskohtainen yleiskatsaus @name:stä, korostaen sen keskeisiä ominaisuuksia, etuja ja kohdeyleisöä kuten @brand ja @color.',
+        ],
+        'features' => [
+            'title'  => 'Tuotteen Ominaisuudet ja Hyödyt',
+            'prompt' => 'Listaa @name:n keskeiset ominaisuudet ja hyödyt, selittäen kuinka ne lisäävät arvoa asiakkaan elämään.',
+        ],
+        'technical' => [
+            'title'  => 'Tuotteen Tekninen Erityispiirteet',
+            'prompt' => 'Tarjoa yksityiskohtainen lista @name:n teknisistä ominaisuuksista, mukaan lukien mitat, materiaalit ja yhteensopivuus.',
+        ],
+        'care' => [
+            'title'  => 'Tuotteen Hoito ja Ylläpito',
+            'prompt' => 'Kirjoita opas, kuinka hoitaa ja ylläpitää @name:a, mukaan lukien vinkkejä puhdistukseen, säilytykseen ja vianmääritykseen.',
+        ],
+        'tagline' => [
+            'title'  => 'Tuotteen Iskulause',
+            'prompt' => 'Kirjoita houkutteleva ja ytimekäs iskulause @name:lle, joka vangitsee sen olennaisuuden ja hyödyt.',
+        ],
+        'summary' => [
+            'title'  => 'Tuotteen Yhteenveto',
+            'prompt' => 'Tiivistä @name:n keskeiset ominaisuudet ja hyödyt 50-60 sanassa.',
+        ],
+        'headline' => [
+            'title'  => 'Tuotteen Otsikko',
+            'prompt' => 'Luo huomion herättävä otsikko @name:lle, joka korostaa sen ainutlaatuista myyntivalttia.',
+        ],
+        'brief' => [
+            'title'  => 'Tuotteen Yhteenveto',
+            'prompt' => 'Kirjoita lyhyt ja ytimekäs kuvaus @name:stä, keskittyen sen tärkeimpiin etuihin ja kohdeyleisöön.',
+        ],
+        'elevator' => [
+            'title'  => 'Tuotteen Hissipuhe',
+            'prompt' => 'Laadi ytimekäs hissipuhe @name:stä, tiivistäen sen tarkoituksen, hyödyt ja ainutlaatuisen myyntivaltin 30-40 sanassa.',
         ],
     ],
 ];

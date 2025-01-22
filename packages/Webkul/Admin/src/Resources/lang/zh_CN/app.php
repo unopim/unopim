@@ -1819,6 +1819,7 @@ return [
                 'orca-mini'              => 'Orca mini',
                 'vicuna'                 => '维库纳',
                 'llava'                  => '熔岩',
+                'default-prompt'         => '默认提示',
             ],
         ],
     ],
@@ -1974,5 +1975,48 @@ return [
         'false'    => '错误的',
         'enable'   => '启用',
         'disable'  => '残疾人',
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => '产品详细描述',
+            'prompt' => '撰写 @name 的全面描述，包括其特点、优势、技术规格和使用说明。',
+        ],
+        'overview' => [
+            'title'  => '产品概述',
+            'prompt' => '创建 @name 的详细概述，突出其关键功能、优势以及目标受众，例如 @brand 和 @color。',
+        ],
+        'features' => [
+            'title'  => '产品特点和优势',
+            'prompt' => '列出 @name 的关键特点和优势，解释它们如何为客户生活增值。',
+        ],
+        'technical' => [
+            'title'  => '产品技术规格',
+            'prompt' => '提供 @name 的详细技术规格列表，包括尺寸、材料和兼容性。',
+        ],
+        'care' => [
+            'title'  => '产品保养和维护',
+            'prompt' => '撰写关于如何保养和维护 @name 的指南，包括清洁、存储和故障排除技巧。',
+        ],
+        'tagline' => [
+            'title'  => '产品标语',
+            'prompt' => '为 @name 写一句简短且吸引人的标语，抓住其精髓和优势。',
+        ],
+        'summary' => [
+            'title'  => '产品摘要',
+            'prompt' => '用 50-60 字总结 @name 的关键特点和优势。',
+        ],
+        'headline' => [
+            'title'  => '产品标题',
+            'prompt' => '为 @name 创建一个吸引人的标题，突出其独特卖点。',
+        ],
+        'brief' => [
+            'title'  => '简要描述',
+            'prompt' => '简明扼要地描述 @name，重点介绍其主要优势和目标受众。',
+        ],
+        'elevator' => [
+            'title'  => '电梯演讲',
+            'prompt' => '为 @name 撰写简短的电梯演讲，在 30-40 字内总结其用途、优势和独特卖点。',
+        ],
     ],
 ];

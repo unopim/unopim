@@ -1966,7 +1966,51 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => 'Default Prompt',
             ],
+        ],
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Detaylı Ürün Açıklaması',
+            'prompt' => '@name için özelliklerini, faydalarını, teknik özelliklerini ve kullanım talimatlarını içeren detaylı bir açıklama yazın.',
+        ],
+        'overview' => [
+            'title'  => 'Ürün Genel Bakışı',
+            'prompt' => '@name için detaylı bir genel bakış oluşturun, temel özelliklerini, avantajlarını ve @brand ile @color gibi hedef kitlesini vurgulayın.',
+        ],
+        'features' => [
+            'title'  => 'Ürün Özellikleri ve Faydaları',
+            'prompt' => '@name’in temel özelliklerini ve faydalarını listeleyin, müşterinin hayatına nasıl değer kattığını açıklayın.',
+        ],
+        'technical' => [
+            'title'  => 'Ürün Teknik Özellikleri',
+            'prompt' => '@name için boyutlar, malzemeler ve uyumluluk dahil olmak üzere detaylı bir teknik özellikler listesi sağlayın.',
+        ],
+        'care' => [
+            'title'  => 'Ürün Bakımı ve Koruması',
+            'prompt' => '@name’in nasıl bakımının yapılacağına ve korunacağına dair temizlik, depolama ve sorun giderme ipuçlarını içeren bir rehber yazın.',
+        ],
+        'tagline' => [
+            'title'  => 'Ürün Sloganı',
+            'prompt' => '@name için özünü ve faydalarını yakalayan etkileyici ve kısa bir slogan yazın.',
+        ],
+        'summary' => [
+            'title'  => 'Ürün Özeti',
+            'prompt' => '@name’in temel özelliklerini ve faydalarını 50-60 kelime ile özetleyin.',
+        ],
+        'headline' => [
+            'title'  => 'Ürün Başlığı',
+            'prompt' => '@name için dikkat çekici bir başlık oluşturun, benzersiz satış noktasını vurgulayın.',
+        ],
+        'brief' => [
+            'title'  => 'Ürün Kısa Açıklaması',
+            'prompt' => '@name için kısa ve öz bir açıklama yazın, temel avantajlarına ve hedef kitlesine odaklanın.',
+        ],
+        'elevator' => [
+            'title'  => 'Ürün Kısa Tanıtımı',
+            'prompt' => '@name için amacı, faydaları ve benzersiz satış noktasını 30-40 kelimeyle özetleyen kısa bir tanıtım hazırlayın.',
         ],
     ],
 ];

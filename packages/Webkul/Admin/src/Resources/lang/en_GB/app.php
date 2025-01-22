@@ -1970,7 +1970,51 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => 'Default Prompt',
             ],
+        ],
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Detailed Product Description',
+            'prompt' => 'Write a comprehensive description of @name, including its features, benefits, technical specifications, and usage instructions.',
+        ],
+        'overview' => [
+            'title'  => 'Product Overview',
+            'prompt' => 'Create a detailed overview of @name, highlighting its key features, advantages, and target audience like @brand and @color.',
+        ],
+        'features' => [
+            'title'  => 'Product Features and Benefits',
+            'prompt' => 'List the key features and benefits of @name, explaining how they add value to the customer\'s life.',
+        ],
+        'technical' => [
+            'title'  => 'Technical Specifications',
+            'prompt' => 'Provide a detailed list of technical specifications for @name, including dimensions, materials, and compatibility.',
+        ],
+        'care' => [
+            'title'  => 'Care and Maintenance',
+            'prompt' => 'Write a guide on how to care for and maintain @name, including tips for cleaning, storage, and troubleshooting.',
+        ],
+        'tagline' => [
+            'title'  => 'Tagline',
+            'prompt' => 'Write a catchy and concise tagline for @name that captures its essence and benefits.',
+        ],
+        'summary' => [
+            'title'  => 'Summary',
+            'prompt' => 'Summarise the key features and benefits of @name in 50-60 words.',
+        ],
+        'headline' => [
+            'title'  => 'Headline',
+            'prompt' => 'Create an attention-grabbing headline for @name that highlights its unique selling point.',
+        ],
+        'brief' => [
+            'title'  => 'Brief Description',
+            'prompt' => 'Write a brief and concise description of @name, focusing on its key advantages and target audience.',
+        ],
+        'elevator' => [
+            'title'  => 'Elevator Pitch',
+            'prompt' => 'Craft a concise elevator pitch for @name, summarising its purpose, benefits, and unique selling point in 30-40 words.',
         ],
     ],
 ];

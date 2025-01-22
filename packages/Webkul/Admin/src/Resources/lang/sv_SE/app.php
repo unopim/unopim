@@ -1966,7 +1966,51 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => 'Standardprompt',
             ],
+        ],
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Detaljerad produktbeskrivning',
+            'prompt' => 'Skriv en detaljerad beskrivning av @name, inklusive dess funktioner, fördelar, tekniska specifikationer och användarinstruktioner.',
+        ],
+        'overview' => [
+            'title'  => 'Produktöversikt',
+            'prompt' => 'Skapa en detaljerad översikt av @name, som lyfter fram dess viktigaste funktioner, fördelar och målgrupp, som @brand och @color.',
+        ],
+        'features' => [
+            'title'  => 'Produktfunktioner och fördelar',
+            'prompt' => 'Lista de viktigaste funktionerna och fördelarna med @name, och förklara hur de tillför värde till kundens liv.',
+        ],
+        'technical' => [
+            'title'  => 'Produktens tekniska specifikationer',
+            'prompt' => 'Ge en detaljerad lista över tekniska specifikationer för @name, inklusive mått, material och kompatibilitet.',
+        ],
+        'care' => [
+            'title'  => 'Skötsel och underhåll av produkten',
+            'prompt' => 'Skriv en guide om hur du tar hand om och underhåller @name, inklusive tips för rengöring, förvaring och felsökning.',
+        ],
+        'tagline' => [
+            'title'  => 'Produktslogan',
+            'prompt' => 'Skriv en catchy och kort slogan för @name som fångar dess essens och fördelar.',
+        ],
+        'summary' => [
+            'title'  => 'Produktsammandrag',
+            'prompt' => 'Sammanfatta de viktigaste funktionerna och fördelarna med @name i 50-60 ord.',
+        ],
+        'headline' => [
+            'title'  => 'Produkttitel',
+            'prompt' => 'Skapa en uppmärksamhetsväckande titel för @name som lyfter fram dess unika försäljningspunkt.',
+        ],
+        'brief' => [
+            'title'  => 'Kort produktbeskrivning',
+            'prompt' => 'Skriv en kort och koncis beskrivning av @name, med fokus på dess viktigaste fördelar och målgrupp.',
+        ],
+        'elevator' => [
+            'title'  => 'Produktpitch',
+            'prompt' => 'Skapa en kort pitch för @name, som sammanfattar dess syfte, fördelar och unika försäljningspunkt i 30-40 ord.',
         ],
     ],
 ];
