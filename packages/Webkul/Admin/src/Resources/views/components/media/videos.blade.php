@@ -288,7 +288,7 @@
                 if (videoInput.files == undefined) {
                     return;
                 }
-                console.log(videoInput.files, videoInput);
+
                 const validFiles = Array.from(videoInput.files).every(file => file.type.includes('video/'));
 
                 if (!validFiles) {
