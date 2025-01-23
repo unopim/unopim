@@ -300,6 +300,10 @@
     .icon-drag:before {
         content: "\e91b";
     }
+
+    .icon-at:before {
+        content: "\e938";
+    }
     /** Icons END */
 
     .custom-select {
