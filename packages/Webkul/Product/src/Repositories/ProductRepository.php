@@ -4,8 +4,6 @@ namespace Webkul\Product\Repositories;
 
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Core\Eloquent\Repository;
@@ -20,7 +18,6 @@ class ProductRepository extends Repository
      */
     public function __construct(
         protected AttributeRepository $attributeRepository,
-        protected ElasticSearchRepository $elasticSearchRepository,
         Container $container
     ) {
         parent::__construct($container);
@@ -161,20 +158,6 @@ class ProductRepository extends Repository
      */
     public function findBySlug($slug)
     {
-        if (core()->getConfigData('catalog.products.storefront.search_mode') == 'elastic') {
-            request()->query->add(['url_key' => $slug]);
-
-            $indices = $this->elasticSearchRepository->search(null, [
-                'type'  => '',
-                'from'  => 0,
-                'limit' => 1,
-                'sort'  => 'id',
-                'order' => 'desc',
-            ]);
-
-            return $this->find(current($indices['ids']));
-        }
-
         return $this->findByAttributeCode('url_key', $slug);
     }
 
@@ -208,10 +191,6 @@ class ProductRepository extends Repository
      */
     public function getAll()
     {
-        if (core()->getConfigData('catalog.products.storefront.search_mode') == 'elastic') {
-            return $this->searchFromElastic();
-        }
-
         return $this->searchFromDatabase();
     }
 
@@ -269,64 +248,6 @@ class ProductRepository extends Repository
         });
 
         return [$query];
-    }
-
-    /**
-     * Search product from elastic search.
-     *
-     * To Do (@devansh-webkul): Need to reduce all the request query from this repo and provide
-     * good request parameter with an array type as an argument. Make a clean pull request for
-     * this to have track record.
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function searchFromElastic()
-    {
-        $params = request()->input();
-
-        [$query, $indices, $limit, $currentPage] = $this->queryBuilderFromElastic($params);
-
-        $items = $indices['total'] ? $query->get() : [];
-
-        $results = new LengthAwarePaginator($items, $indices['total'], $limit, $currentPage, [
-            'path'  => request()->url(),
-            'query' => request()->query(),
-        ]);
-
-        return $results;
-    }
-
-    public function queryBuilderFromElastic($params)
-    {
-        $currentPage = Paginator::resolveCurrentPage('page');
-
-        $limit = $this->getPerPageLimit($params);
-
-        $sortOptions = $this->getSortOptions($params);
-
-        $indices = $this->elasticSearchRepository->search($params['category_id'] ?? null, [
-            'type'  => $params['type'] ?? '',
-            'from'  => ($currentPage * $limit) - $limit,
-            'limit' => $limit,
-            'sort'  => $sortOptions['sort'],
-            'order' => $sortOptions['order'],
-        ]);
-
-        $query = $this->with([
-            'attribute_family',
-            'parent',
-            'super_attributes',
-        ])->scopeQuery(function ($query) use ($indices) {
-            $qb = $query->distinct()
-                ->whereIn('products.id', $indices['ids']);
-
-            // Sort collection
-            $qb->orderBy(DB::raw('FIELD(id, '.implode(',', $indices['ids']).')'));
-
-            return $qb;
-        });
-
-        return [$query, $indices, $limit, $currentPage];
     }
 
     /**

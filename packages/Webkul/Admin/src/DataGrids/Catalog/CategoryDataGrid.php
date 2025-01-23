@@ -3,7 +3,10 @@
 namespace Webkul\Admin\DataGrids\Catalog;
 
 use Illuminate\Database\Query\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Webkul\Core\Facades\ElasticSearch;
 use Webkul\Core\Models\Locale;
 use Webkul\DataGrid\DataGrid;
 
@@ -145,6 +148,153 @@ class CategoryDataGrid extends DataGrid
                 'options' => ['actionType' => 'delete'],
             ]);
         }
+    }
+
+    /**
+     * Process request.
+     */
+    public function processRequest(): void
+    {
+        if (! env('ELASTICSEARCH_ENABLED', false)) {
+            parent::processRequest();
+
+            return;
+        }
+
+        try {
+            $params = $this->validatedRequest();
+            $pagination = $params['pagination'];
+
+            $indexPrefix = env('ELASTICSEARCH_INDEX_PREFIX') ? env('ELASTICSEARCH_INDEX_PREFIX') : env('APP_NAME');
+
+            $results = Elasticsearch::search([
+                'index' => strtolower($indexPrefix.'_categories'),
+                'body'  => [
+                    'from'          => ($pagination['page'] * $pagination['per_page']) - $pagination['per_page'],
+                    'size'          => $pagination['per_page'],
+                    'stored_fields' => [],
+                    'query'         => [
+                        'bool' => $this->getElasticFilters($params['filters'] ?? []) ?: new \stdClass,
+                    ],
+                    'sort'          => $this->getElasticSort($params['sort'] ?? []),
+                ],
+            ]);
+
+            $totalResults = Elasticsearch::count([
+                'index' => strtolower($indexPrefix.'_categories'),
+                'body'  => [
+                    'query' => [
+                        'bool' => $this->getElasticFilters($params['filters'] ?? []) ?: new \stdClass,
+                    ],
+                ],
+            ]);
+
+            $ids = collect($results['hits']['hits'])->pluck('_id')->toArray();
+
+            $this->queryBuilder->whereIn('cat.id', $ids)
+                ->orderBy(DB::raw('FIELD('.DB::getTablePrefix().'cat.id, '.implode(',', $ids).')'));
+
+            $total = $totalResults['count'];
+
+            $this->paginator = new LengthAwarePaginator(
+                $total ? $this->queryBuilder->get() : [],
+                $total,
+                $pagination['per_page'],
+                $pagination['page'],
+                [
+                    'path'  => request()->url(),
+                    'query' => [],
+                ]
+            );
+        } catch (\Exception $e) {
+            if (str_contains($e->getMessage(), 'index_not_found_exception')) {
+                Log::error('Elasticsearch index not found. Please create an index first.');
+                parent::processRequest();
+
+                return;
+            } else {
+                throw $e;
+            }
+        }
+    }
+
+    /**
+     * Process request.
+     */
+    protected function getElasticFilters($params): array
+    {
+        $filters = [];
+
+        foreach ($params as $attribute => $value) {
+            if (in_array($attribute, ['channel', 'locale'])) {
+                continue;
+            }
+
+            if ($attribute == 'all') {
+                $attribute = 'name';
+            }
+
+            $value = array_filter($value, function ($val) {
+                return $val !== null && $val !== '';
+            });
+
+            if (count($value) > 0) {
+                $filters['filter'][] = $this->getFilterValue($attribute, $value);
+            }
+        }
+
+        return $filters;
+    }
+
+    /**
+     * Return applied filters
+     */
+    public function getFilterValue(mixed $attribute, mixed $values): array
+    {
+        switch ($attribute) {
+            case 'name':
+                return [
+                    'terms' => [
+                        'name' => $values,
+                    ],
+                ];
+
+            case 'code':
+                return [
+                    'terms' => [
+                        'code' => $values,
+                    ],
+                ];
+
+            default:
+                return [
+                    'terms' => [
+                        $attribute => $values,
+                    ],
+                ];
+        }
+    }
+
+    /**
+     * Process request.
+     */
+    protected function getElasticSort($params): array
+    {
+        $sort = $params['column'] ?? $this->primaryColumn;
+
+        if ($sort == 'name') {
+            $sort .= '.keyword';
+        }
+
+        if ($sort == 'code') {
+            $sort .= '.keyword';
+        }
+
+        return [
+            $sort => [
+                'order' => $params['order'] ?? $this->sortOrder,
+            ],
+        ];
     }
 
     /**

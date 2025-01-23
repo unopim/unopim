@@ -5,6 +5,7 @@ namespace Webkul\Core;
 use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\ClientBuilder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 
 class ElasticSearch
 {
@@ -26,6 +27,10 @@ class ElasticSearch
      */
     protected function makeConnection(?string $name = null): Client
     {
+        if (! config('elasticsearch.connection')) {
+            throw new \Exception('ElasticSearch is disabled in the env file.');
+        }
+
         $connection = $name ?: $this->getDefaultConnection();
 
         $config = $this->getConnectionConfig($connection);
@@ -68,7 +73,34 @@ class ElasticSearch
             }
         }
 
-        return $clientBuilder->build();
+        $client = $clientBuilder->build();
+
+        // Now, after establishing the connection, update the index settings
+        $this->updateMaxResultWindow($client);
+
+        return $client;
+    }
+
+    private function updateMaxResultWindow(Client $client)
+    {
+        // Setting the max_result_window to a large value
+        $params = [
+            'index' => '_all',
+            'body'  => [
+                'index' => [
+                    'max_result_window' => 1000000000,
+                ],
+            ],
+        ];
+
+        try {
+            $response = $client->indices()->putSettings($params);
+
+            Log::error("Max result window updated successfully.\n");
+        } catch (\Exception $e) {
+
+            Log::error('Error updating max_result_window: '.$e->getMessage()."\n");
+        }
     }
 
     /**
@@ -76,7 +108,22 @@ class ElasticSearch
      */
     public function getDefaultConnection(): string
     {
-        return config('elasticsearch.connection');
+        $connection = '';
+        if (
+            config('elasticsearch.connections.default.hosts')[0]
+            && ! config('elasticsearch.connections.api.key')
+        ) {
+            $connection = 'default';
+        } elseif (
+            config('elasticsearch.connections.default.hosts')[0]
+            && config('elasticsearch.connections.api.key')
+        ) {
+            $connection = 'api';
+        } elseif (config('elasticsearch.connections.cloud.id')) {
+            $connection = 'cloud';
+        }
+
+        return $connection;
     }
 
     /**
@@ -96,6 +143,21 @@ class ElasticSearch
         }
 
         return $config;
+    }
+
+    public static function testConnection(): bool
+    {
+        try {
+            $instance = new self;
+            $client = $instance->makeConnection();
+            $client->info();
+
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Elasticsearch connection test failed: '.$e->getMessage());
+
+            return false;
+        }
     }
 
     /**

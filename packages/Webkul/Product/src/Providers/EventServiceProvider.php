@@ -11,12 +11,4 @@ class EventServiceProvider extends ServiceProvider
      *
      * @var array
      */
-    protected $listen = [
-        'catalog.product.update.after'  => [
-            'Webkul\Product\Listeners\Product@afterUpdate',
-        ],
-        'catalog.product.delete.before' => [
-            'Webkul\Product\Listeners\Product@beforeDelete',
-        ],
-    ];
 }
