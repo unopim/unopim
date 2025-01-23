@@ -317,7 +317,7 @@
     </script>
 
     <script type="text/x-template" id="v-media-image-item-template">
-        <div class="grid justify-items-center min-w-[120px] max-h-[120px] relative rounded overflow-hidden transition-all hover:border-gray-400 group"  :style="{'width': this.width, 'height': this.height}">
+        <div class="grid justify-items-center min-w-[120px] max-h-[120px] relative rounded overflow-hidden transition-all hover:border-gray-400 group cursor-grab"  :style="{'width': this.width, 'height': this.height}">
             <!-- Image Preview -->
             <img
                 :src="image.url"

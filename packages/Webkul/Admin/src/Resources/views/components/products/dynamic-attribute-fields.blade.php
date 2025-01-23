@@ -148,13 +148,31 @@
                 @break
             @case('gallery')
                 @php
-                    $savedImages = ! empty($value) ? array_map(function ($image, $index) {
+                    $savedData = ! empty($value) ? array_map(function ($image, $index) {
                         return [
                             'id'    => uniqid(),
                             'url'   => Storage::url($image),
                             'value' => $image,
                         ];
                     }, (array)$value, array_keys((array)$value)) : [];
+
+                    $images = [];
+                    $videos = [];
+                    
+                    foreach ($savedData as $item) {
+                        $filePath = public_path('storage/' . $item['value']);
+
+                        // Check if the file exists
+                        if (file_exists($filePath)) {
+                            $mimeType = mime_content_type($filePath);
+
+                            if (str_starts_with($mimeType, 'video/')) {
+                                $videos[] = $item;
+                            } elseif (str_starts_with($mimeType, 'image/')) {
+                                $images[] = $item;
+                            }
+                        }
+                    }
                 @endphp
 
                 @if (! empty($value))
@@ -167,9 +185,17 @@
                     ::class="[errors && errors['{{ $fieldName }}'] ? 'border !border-red-600 hover:border-red-600' : '']"
                     :id="$field->code"
                     ::rules="{{ $field->getValidationsField() }}"
-                    :uploaded-images="! empty($value) ? $savedImages : []"
+                    :uploaded-images="! empty($value) ? $images : []"
                     :allow-multiple=true
                     width='210px'
+                />
+                <x-admin::media.videos
+                    name="{{ $fieldName }}"
+                    ::class="[errors && errors['{{ $fieldName }}'] ? 'border !border-red-600 hover:border-red-600' : '']"
+                    :id="$field->code"
+                    ::rules="{{ $field->getValidationsField() }}"
+                    :allow-multiple=true
+                    :uploaded-videos="! empty($value) ? $videos : []"
                 />
                 @break
             @case('file')
