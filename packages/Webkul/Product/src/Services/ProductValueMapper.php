@@ -13,7 +13,7 @@ class ProductValueMapper
     {
         if (
             ! array_key_exists('values', $data)
-            || ! array_key_exists('common', $data['values'])
+            || ! array_key_exists('common', $data['values'] ?? [])
         ) {
             return [];
         }
@@ -30,7 +30,7 @@ class ProductValueMapper
     {
         if (
             ! array_key_exists('values', $data)
-            || ! array_key_exists('locale_specific', $data['values'])
+            || ! array_key_exists('locale_specific', $data['values'] ?? [])
         ) {
             return [];
         }
@@ -47,7 +47,7 @@ class ProductValueMapper
     {
         if (
             ! array_key_exists('values', $data)
-            || ! array_key_exists('channel_specific', $data['values'])
+            || ! array_key_exists('channel_specific', $data['values'] ?? [])
         ) {
             return [];
         }
@@ -64,7 +64,7 @@ class ProductValueMapper
     {
         if (
             ! array_key_exists('values', $data)
-            || ! array_key_exists('channel_locale_specific', $data['values'])
+            || ! array_key_exists('channel_locale_specific', $data['values'] ?? [])
         ) {
             return [];
         }
@@ -82,7 +82,7 @@ class ProductValueMapper
     {
         if (
             ! array_key_exists('values', $data)
-            || ! array_key_exists('categories', $data['values'])
+            || ! array_key_exists('categories', $data['values'] ?? [])
             || ! is_array($data['values']['categories'])
         ) {
             return;
@@ -101,7 +101,7 @@ class ProductValueMapper
     {
         if (
             ! array_key_exists('values', $data)
-            || ! array_key_exists('associations', $data['values'])
+            || ! array_key_exists('associations', $data['values'] ?? [])
             || ! is_array($data['values']['associations'])
             || ! array_key_exists($type, $data['values']['associations'])
         ) {
