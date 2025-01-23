@@ -48,7 +48,7 @@ class CategoryIndexer extends Command
                     $category->syncOriginal();
 
                     $categoryArray = $category->toArray();
-                    
+
                     if (
                         isset(json_decode($categoryDB->additional_data)->locale_specific)
                         && isset(((array) json_decode($categoryDB->additional_data)->locale_specific)[core()->getRequestedLocaleCode()])
