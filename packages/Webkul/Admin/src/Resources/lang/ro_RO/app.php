@@ -1893,11 +1893,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Adaugă Imagine',
-                'ai-add-image-btn'  => 'Magic AI',
-                'ai-btn-info'       => 'Generează Imagine',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Doar fișiere imagini (.jpeg, .jpg, .png, ..) sunt permise.',
+                'add-image-btn'      => 'Adaugă Imagine',
+                'generate-with-ai'   => 'Generează cu IA',
+                'upload-from-device' => 'Încarcă de pe dispozitiv',
+                'cancel'             => 'Anulează',
+                'ai-add-image-btn'   => 'Magic AI',
+                'ai-btn-info'        => 'Generează Imagine',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Doar fișiere imagini (.jpeg, .jpg, .png, ..) sunt permise.',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

@@ -1751,11 +1751,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Añadir imagen',
-                'ai-add-image-btn'  => 'Magia que tienes',
-                'ai-btn-info'       => 'Generar imagen',
-                'allowed-types'     => 'PNG, JPEG, JPG',
-                'not-allowed-error' => 'Solo se permiten archivos de imágenes (.jpeg, .jpg, .png, ..).',
+                'add-image-btn'      => 'Añadir imagen',
+                'generate-with-ai'   => 'Generar con IA',
+                'upload-from-device' => 'Subir desde el dispositivo',
+                'cancel'             => 'Cancelar',
+                'ai-add-image-btn'   => 'Magia que tienes',
+                'ai-btn-info'        => 'Generar imagen',
+                'allowed-types'      => 'PNG, JPEG, JPG',
+                'not-allowed-error'  => 'Solo se permiten archivos de imágenes (.jpeg, .jpg, .png, ..).',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

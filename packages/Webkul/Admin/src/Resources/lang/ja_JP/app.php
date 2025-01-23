@@ -1752,11 +1752,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => '画像を追加',
-                'ai-add-image-btn'  => 'Magic AI',
-                'ai-btn-info'       => '画像の生成',
-                'allowed-types'     => 'png、jpeg、jpg',
-                'not-allowed-error' => '画像ファイル (.jpeg、.jpg、.png、..) のみが許可されます。',
+                'add-image-btn'      => '画像を追加',
+                'generate-with-ai'   => 'AIで生成',
+                'upload-from-device' => 'デバイスからアップロード',
+                'cancel'             => 'キャンセル',
+                'ai-add-image-btn'   => 'Magic AI',
+                'ai-btn-info'        => '画像の生成',
+                'allowed-types'      => 'png、jpeg、jpg',
+                'not-allowed-error'  => '画像ファイル (.jpeg、.jpg、.png、..) のみが許可されます。',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

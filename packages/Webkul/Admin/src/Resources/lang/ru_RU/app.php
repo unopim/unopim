@@ -2197,7 +2197,11 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Добавить изображение',
+                'add-image-btn'      => 'Добавить изображение',
+                'generate-with-ai'   => 'Создать с помощью ИИ',
+                'upload-from-device' => 'Загрузить с устройства',
+                'cancel'             => 'Отмена',
+
                 'ai-add-image-btn'  => 'У тебя волшебство',
                 'ai-btn-info'       => 'Генерировать изображение',
                 'allowed-types'     => 'Png, JPEG, JPG',

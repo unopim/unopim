@@ -2198,12 +2198,15 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'छवि जोड़ें',
-                'ai-add-image-btn'  => 'जादू आपके पास है',
-                'ai-btn-info'       => 'छवि उत्पन्न करें',
-                'allowed-types'     => 'पीएनजी, जेपीईजी, जेपीजी',
-                'not-allowed-error' => 'केवल चित्र फ़ाइलें (.jpeg, .jpg, .png, ..) की अनुमति है।',
-                'ai-generation'     => [
+                'add-image-btn'      => 'छवि जोड़ें',
+                'generate-with-ai'   => 'एआई के साथ जेनरेट करें',
+                'upload-from-device' => 'डिवाइस से अपलोड करें',
+                'cancel'             => 'रद्द करें',
+                'ai-add-image-btn'   => 'जादू आपके पास है',
+                'ai-btn-info'        => 'छवि उत्पन्न करें',
+                'allowed-types'      => 'पीएनजी, जेपीईजी, जेपीजी',
+                'not-allowed-error'  => 'केवल चित्र फ़ाइलें (.jpeg, .jpg, .png, ..) की अनुमति है।',
+                'ai-generation'      => [
                     '1024x1024'        => '1024x1024',
                     '1024x1792'        => '1024x1792',
                     '1792x1024'        => '1792x1024',

@@ -1893,11 +1893,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Görsel Ekle',
-                'ai-add-image-btn'  => 'Sihirli AI',
-                'ai-btn-info'       => 'Görsel Oluştur',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Sadece görsel dosyalar (.jpeg, .jpg, .png, ..) kabul edilmektedir.',
+                'add-image-btn'      => 'Görsel Ekle',
+                'generate-with-ai'   => 'Yapay Zeka ile Oluştur',
+                'upload-from-device' => 'Cihazdan Yükle',
+                'cancel'             => 'İptal',
+                'ai-add-image-btn'   => 'Sihirli AI',
+                'ai-btn-info'        => 'Görsel Oluştur',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Sadece görsel dosyalar (.jpeg, .jpg, .png, ..) kabul edilmektedir.',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

@@ -1747,11 +1747,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Añadir imagen',
-                'ai-add-image-btn'  => 'Magic AI',
-                'ai-btn-info'       => 'Generar imagen',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Solo se permiten archivos de imagen (.jpeg, .jpg, .png, ..)',
+                'add-image-btn'      => 'Añadir imagen',
+                'generate-with-ai'   => 'Generar amb IA',
+                'upload-from-device' => 'Carregar des del dispositiu',
+                'cancel'             => 'Cancel·lar',
+                'ai-add-image-btn'   => 'Magic AI',
+                'ai-btn-info'        => 'Generar imagen',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Solo se permiten archivos de imagen (.jpeg, .jpg, .png, ..)',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

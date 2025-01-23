@@ -1893,11 +1893,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => '이미지 추가',
-                'ai-add-image-btn'  => '마법 AI',
-                'ai-btn-info'       => '이미지 생성',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => '이미지 파일만 허용됩니다 (.jpeg, .jpg, .png, ..).',
+                'add-image-btn'      => '이미지 추가',
+                'generate-with-ai'   => 'AI로 생성',
+                'upload-from-device' => '장치에서 업로드',
+                'cancel'             => '취소',
+                'ai-add-image-btn'   => '마법 AI',
+                'ai-btn-info'        => '이미지 생성',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => '이미지 파일만 허용됩니다 (.jpeg, .jpg, .png, ..).',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

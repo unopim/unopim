@@ -1746,11 +1746,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => '添加图片',
-                'ai-add-image-btn'  => '你有魔术',
-                'ai-btn-info'       => '生成图像',
-                'allowed-types'     => 'PNG，JPEG，JPG',
-                'not-allowed-error' => '仅允许图像文件（.jpeg，.jpg，.png，..）。',
+                'add-image-btn'      => '添加图片',
+                'generate-with-ai'   => '使用 AI 生成',
+                'upload-from-device' => '从设备上传',
+                'cancel'             => '取消',
+                'ai-add-image-btn'   => '你有魔术',
+                'ai-btn-info'        => '生成图像',
+                'allowed-types'      => 'PNG，JPEG，JPG',
+                'not-allowed-error'  => '仅允许图像文件（.jpeg，.jpg，.png，..）。',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

@@ -2199,11 +2199,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Зураг нэмэх',
-                'ai-add-image-btn'  => 'Чамд ид шид байна',
-                'ai-btn-info'       => 'Зураг үүсгэх',
-                'allowed-types'     => 'PNG, JPEG, JPG',
-                'not-allowed-error' => 'Зөвхөн зураг (.jpeg, .jpeg, .jpg, .jpg, .png, .png, ..png, ..) Зөвшөөрөгдсөн.',
+                'add-image-btn'      => 'Зураг нэмэх',
+                'generate-with-ai'   => 'AI ашиглан үүсгэх',
+                'upload-from-device' => 'Төхөөрөмжөөс хуулж оруулах',
+                'cancel'             => 'Цуцлах',
+                'ai-add-image-btn'   => 'Чамд ид шид байна',
+                'ai-btn-info'        => 'Зураг үүсгэх',
+                'allowed-types'      => 'PNG, JPEG, JPG',
+                'not-allowed-error'  => 'Зөвхөн зураг (.jpeg, .jpeg, .jpg, .jpg, .png, .png, ..png, ..) Зөвшөөрөгдсөн.',
 
                 'ai-generation' => [
                     '1024X1024'        => '1024X1024',

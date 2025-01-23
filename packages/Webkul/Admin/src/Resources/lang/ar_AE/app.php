@@ -2199,11 +2199,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'إضافة صورة',
-                'ai-add-image-btn'  => 'الذكاء الاصطناعي السحري',
-                'ai-btn-info'       => 'توليد الصورة',
-                'allowed-types'     => 'بابوا نيو غينيا، الحياة السياسية في فرنسا، JPG',
-                'not-allowed-error' => 'يُسمح فقط بملفات الصور (.jpeg، .jpg، .png، ..).',
+                'add-image-btn'      => 'إضافة صورة',
+                'generate-with-ai'   => 'إنشاء باستخدام الذكاء الاصطناعي',
+                'upload-from-device' => 'تحميل من الجهاز',
+                'cancel'             => 'إلغاء',
+                'ai-add-image-btn'   => 'الذكاء الاصطناعي السحري',
+                'ai-btn-info'        => 'توليد الصورة',
+                'allowed-types'      => 'بابوا نيو غينيا، الحياة السياسية في فرنسا، JPG',
+                'not-allowed-error'  => 'يُسمح فقط بملفات الصور (.jpeg، .jpg، .png، ..).',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

@@ -1893,11 +1893,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Додати зображення',
-                'ai-add-image-btn'  => 'Магічний AI',
-                'ai-btn-info'       => 'Огенрация Изображения',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Дозволені тільки зображення файли (.jpeg, .jpg, .png, ..)',
+                'add-image-btn'      => 'Додати зображення',
+                'generate-with-ai'   => 'Створити за допомогою ШІ',
+                'upload-from-device' => 'Завантажити з пристрою',
+                'cancel'             => 'Скасувати',
+                'ai-add-image-btn'   => 'Магічний AI',
+                'ai-btn-info'        => 'Огенрация Изображения',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Дозволені тільки зображення файли (.jpeg, .jpg, .png, ..)',
             ],
 
             'videos' => [

@@ -1894,11 +1894,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Tilføj billede',
-                'ai-add-image-btn'  => 'Magic AI',
-                'ai-btn-info'       => 'Generer billede',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Kun billedfiler (.jpeg, .jpg, .png, ..) er tilladt.',
+                'add-image-btn'      => 'Tilføj billede',
+                'generate-with-ai'   => 'Generer med AI',
+                'upload-from-device' => 'Upload fra enhed',
+                'cancel'             => 'Annuller',
+                'ai-add-image-btn'   => 'Magic AI',
+                'ai-btn-info'        => 'Generer billede',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Kun billedfiler (.jpeg, .jpg, .png, ..) er tilladt.',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

@@ -1893,11 +1893,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => '添加圖片',
-                'ai-add-image-btn'  => '魔法AI',
-                'ai-btn-info'       => '生成圖片',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => '僅允許圖片文件 (.jpeg, .jpg, .png, ..)。',
+                'add-image-btn'      => '添加圖片',
+                'generate-with-ai'   => '使用 AI 生成',
+                'upload-from-device' => '從設備上傳',
+                'cancel'             => '取消',
+                'ai-add-image-btn'   => '魔法AI',
+                'ai-btn-info'        => '生成圖片',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => '僅允許圖片文件 (.jpeg, .jpg, .png, ..)。',
             ],
 
             'videos' => [

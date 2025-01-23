@@ -1893,11 +1893,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Agregar imagen',
-                'ai-add-image-btn'  => 'Inteligencia AI',
-                'ai-btn-info'       => 'Generar imagen',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Solo se permiten archivos de imagen (.jpeg, .jpg, .png, ..).',
+                'add-image-btn'      => 'Agregar imagen',
+                'generate-with-ai'   => 'Generar con IA',
+                'upload-from-device' => 'Subir desde el dispositivo',
+                'cancel'             => 'Cancelar',
+                'ai-add-image-btn'   => 'Inteligencia AI',
+                'ai-btn-info'        => 'Generar imagen',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Solo se permiten archivos de imagen (.jpeg, .jpg, .png, ..).',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

@@ -1893,11 +1893,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Legg til bilde',
-                'ai-add-image-btn'  => 'Magisk AI',
-                'ai-btn-info'       => 'Generer bilde',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Bare bildestørrelser (.jpeg, .jpg, .png, ..) er tillatt.',
+                'add-image-btn'      => 'Legg til bilde',
+                'generate-with-ai'   => 'Generer med AI',
+                'upload-from-device' => 'Last opp fra enhet',
+                'cancel'             => 'Avbryt',
+                'ai-add-image-btn'   => 'Magisk AI',
+                'ai-btn-info'        => 'Generer bilde',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Bare bildestørrelser (.jpeg, .jpg, .png, ..) er tillatt.',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

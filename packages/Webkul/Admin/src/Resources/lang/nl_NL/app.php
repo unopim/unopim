@@ -2199,11 +2199,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Voeg afbeelding toe',
-                'ai-add-image-btn'  => 'Magie die je hebt',
-                'ai-btn-info'       => 'Afbeelding genereren',
-                'allowed-types'     => 'PNG, JPEG, JPG',
-                'not-allowed-error' => 'Alleen afbeeldingenbestanden (.JPEG, .JPG, .png, ..) zijn toegestaan.',
+                'add-image-btn'      => 'Voeg afbeelding toe',
+                'generate-with-ai'   => 'Genereren met AI',
+                'upload-from-device' => 'Uploaden vanaf apparaat',
+                'cancel'             => 'Annuleren',
+                'ai-add-image-btn'   => 'Magie die je hebt',
+                'ai-btn-info'        => 'Afbeelding genereren',
+                'allowed-types'      => 'PNG, JPEG, JPG',
+                'not-allowed-error'  => 'Alleen afbeeldingenbestanden (.JPEG, .JPG, .png, ..) zijn toegestaan.',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

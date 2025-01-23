@@ -134,7 +134,7 @@
                                                     </defs> 
                                                 </svg>
 
-                                                <span class="text-gray-600 text-sm font-semibold">Generate with AI</span>
+                                                <span class="text-gray-600 text-sm font-semibold">@lang('admin::app.components.media.images.generate-with-ai')</span>
                                             </div>
                                             
                                         </div>
@@ -150,7 +150,7 @@
                                             <div class="flex gap-1 p-3 border rounded-md text-sm">
                                                 <span class="icon-export text-xl"></span>
 
-                                                <span class="text-gray-600 text-sm font-semibold">Upload from Device</span>
+                                                <span class="text-gray-600 text-sm font-semibold">@lang('admin::app.components.media.images.upload-from-device')</span>
                                             </div>
                                             
                                         </div>
@@ -170,9 +170,9 @@
                             <!-- Modal Footer -->
                             <x-slot:footer>
                                 <div class="flex gap-x-2.5 items-center">
-                                    <button class="secondary-button">
-                                        @lang('Cancel')
-                                    </button>
+                                    <a href="#" @click="$refs.choiceImageModal.close()" class="secondary-button">
+                                        @lang('admin::app.components.media.images.cancel')
+                                    </a>
                                 </div>
                             </x-slot>
                         </x-admin::modal>

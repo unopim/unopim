@@ -1892,11 +1892,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Lisää kuva',
-                'ai-add-image-btn'  => 'Magic AI',
-                'ai-btn-info'       => 'Luo kuva',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Vain kuva tiedostot (.jpeg, .jpg, .png, ..) ovat sallittuja.',
+                'add-image-btn'      => 'Lisää kuva',
+                'generate-with-ai'   => 'Luo tekoälyllä',
+                'upload-from-device' => 'Lataa laitteelta',
+                'cancel'             => 'Peruuta',
+                'ai-add-image-btn'   => 'Magic AI',
+                'ai-btn-info'        => 'Luo kuva',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Vain kuva tiedostot (.jpeg, .jpg, .png, ..) ovat sallittuja.',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

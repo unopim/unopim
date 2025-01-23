@@ -1751,11 +1751,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Ajouter une image',
-                'ai-add-image-btn'  => 'Magic AI',
-                'ai-btn-info'       => 'Générer une image',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Seuls les fichiers d\'images (.jpeg, .jpg, .png, ..) sont autorisés.',
+                'add-image-btn'      => 'Ajouter une image',
+                'generate-with-ai'   => 'Générer avec l’IA',
+                'upload-from-device' => 'Télécharger depuis l’appareil',
+                'cancel'             => 'Annuler',
+                'ai-add-image-btn'   => 'Magic AI',
+                'ai-btn-info'        => 'Générer une image',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Seuls les fichiers d\'images (.jpeg, .jpg, .png, ..) sont autorisés.',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

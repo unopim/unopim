@@ -1893,11 +1893,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Thêm ảnh',
-                'ai-add-image-btn'  => 'AI ma thuật',
-                'ai-btn-info'       => 'Tạo ảnh',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Chỉ cho phép các tệp hình ảnh (.jpeg, .jpg, .png, ..)',
+                'add-image-btn'      => 'Thêm ảnh',
+                'generate-with-ai'   => 'Tạo bằng AI',
+                'upload-from-device' => 'Tải lên từ thiết bị',
+                'cancel'             => 'Hủy',
+                'ai-add-image-btn'   => 'AI ma thuật',
+                'ai-btn-info'        => 'Tạo ảnh',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Chỉ cho phép các tệp hình ảnh (.jpeg, .jpg, .png, ..)',
             ],
 
             'videos' => [

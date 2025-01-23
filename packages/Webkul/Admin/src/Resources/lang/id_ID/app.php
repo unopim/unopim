@@ -1769,11 +1769,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Menambahkan gambar',
-                'ai-add-image-btn'  => 'Sihir yang Anda miliki',
-                'ai-btn-info'       => 'Menghasilkan gambar',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Hanya file gambar (.jpeg, .jpg, .png, ..) diizinkan.',
+                'add-image-btn'      => 'Menambahkan gambar',
+                'generate-with-ai'   => 'Hasilkan dengan AI',
+                'upload-from-device' => 'Unggah dari Perangkat',
+                'cancel'             => 'Batalkan',
+                'ai-add-image-btn'   => 'Sihir yang Anda miliki',
+                'ai-btn-info'        => 'Menghasilkan gambar',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Hanya file gambar (.jpeg, .jpg, .png, ..) diizinkan.',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

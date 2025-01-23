@@ -1893,11 +1893,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Add Image',
-                'ai-add-image-btn'  => 'Magic AI',
-                'ai-btn-info'       => 'Generate Image',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Only images files (.jpeg, .jpg, .png, ..) are allowed.',
+                'add-image-btn'      => 'Add Image',
+                'generate-with-ai'   => 'Gumawa gamit ang AI',
+                'upload-from-device' => 'I-upload mula sa device',
+                'cancel'             => 'Kanselahin',
+                'ai-add-image-btn'   => 'Magic AI',
+                'ai-btn-info'        => 'Generate Image',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Only images files (.jpeg, .jpg, .png, ..) are allowed.',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

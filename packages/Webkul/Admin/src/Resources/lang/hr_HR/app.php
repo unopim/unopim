@@ -1893,11 +1893,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Dodaj sliku',
-                'ai-add-image-btn'  => 'Magija AI',
-                'ai-btn-info'       => 'Generiraj sliku',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Dozvoljeni su samo datoteke s slikama (.jpeg, .jpg, .png, ..).',
+                'add-image-btn'      => 'Dodaj sliku',
+                'ai-add-image-btn'   => 'Magija AI',
+                'generate-with-ai'   => 'Generiraj s AI-om',
+                'upload-from-device' => 'Prenesi s uređaja',
+                'cancel'             => 'Odustani',
+                'ai-btn-info'        => 'Generiraj sliku',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Dozvoljeni su samo datoteke s slikama (.jpeg, .jpg, .png, ..).',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',
