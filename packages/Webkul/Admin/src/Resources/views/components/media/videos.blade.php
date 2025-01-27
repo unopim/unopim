@@ -82,6 +82,7 @@
                 class="w-[210px] h-[120px] object-cover"
                 ref="videoPreview"
                 v-if="video.url.length > 0"
+                :key="video.url"
             >
                 <source :src="video.url" type="video/mp4">
             </video>
