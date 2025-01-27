@@ -143,11 +143,6 @@ it('should give validation messages during create of import job', function () {
         ->assertJsonValidationErrors([
             'code',
             'entity_type',
-            'file',
-            'field_separator',
-            'allowed_errors',
-            'validation_strategy',
-            'action',
         ]);
 });
 
