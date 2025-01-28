@@ -1893,6 +1893,7 @@ return [
                 'ai-add-image-btn'  => 'Magic AI',
                 'ai-btn-info'       => 'Generate Image',
                 'allowed-types'     => 'png, jpeg, jpg',
+                'upload-media-btn'  => 'Upload Media',
                 'not-allowed-error' => 'Only images files (.jpeg, .jpg, .png, ..) are allowed.',
 
                 'ai-generation' => [

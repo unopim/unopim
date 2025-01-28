@@ -1895,6 +1895,7 @@ return [
                 'ai-add-image-btn'  => 'Magija AI',
                 'ai-btn-info'       => 'Generiraj sliku',
                 'allowed-types'     => 'png, jpeg, jpg',
+                'upload-media-btn'  => 'Prenesi medije',
                 'not-allowed-error' => 'Dozvoljeni su samo datoteke s slikama (.jpeg, .jpg, .png, ..).',
 
                 'ai-generation' => [

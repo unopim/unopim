@@ -1895,6 +1895,7 @@ return [
                 'ai-add-image-btn'  => 'Magisk AI',
                 'ai-btn-info'       => 'Generer bilde',
                 'allowed-types'     => 'png, jpeg, jpg',
+                'upload-media-btn'  => 'Last opp medier',
                 'not-allowed-error' => 'Bare bildestørrelser (.jpeg, .jpg, .png, ..) er tillatt.',
 
                 'ai-generation' => [

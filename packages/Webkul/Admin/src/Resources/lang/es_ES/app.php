@@ -1749,6 +1749,7 @@ return [
                 'ai-add-image-btn'  => 'Magia que tienes',
                 'ai-btn-info'       => 'Generar imagen',
                 'allowed-types'     => 'PNG, JPEG, JPG',
+                'upload-media-btn'  => 'Subir medios',
                 'not-allowed-error' => 'Solo se permiten archivos de imágenes (.jpeg, .jpg, .png, ..).',
 
                 'ai-generation' => [

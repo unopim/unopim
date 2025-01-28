@@ -2200,6 +2200,7 @@ return [
                 'ai-add-image-btn'  => 'Magie die je hebt',
                 'ai-btn-info'       => 'Afbeelding genereren',
                 'allowed-types'     => 'PNG, JPEG, JPG',
+                'upload-media-btn'  => 'Media uploaden',
                 'not-allowed-error' => 'Alleen afbeeldingenbestanden (.JPEG, .JPG, .png, ..) zijn toegestaan.',
 
                 'ai-generation' => [

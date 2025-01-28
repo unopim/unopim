@@ -148,31 +148,19 @@
                 @break
             @case('gallery')
                 @php
-                    $savedData = ! empty($value) ? array_map(function ($image, $index) {
+                    $savedData = !empty($value) ? array_map(function ($image, $index) {
+                        $filePath = public_path('storage/' . $image);
+                        $mimeType = file_exists($filePath) ? mime_content_type($filePath) : null;
+                        $fileName = basename($filePath);
+
                         return [
                             'id'    => uniqid(),
                             'url'   => Storage::url($image),
                             'value' => $image,
+                            'type'  => $mimeType,
+                            'name'  => $fileName,
                         ];
                     }, (array)$value, array_keys((array)$value)) : [];
-
-                    $images = [];
-                    $videos = [];
-                    
-                    foreach ($savedData as $item) {
-                        $filePath = public_path('storage/' . $item['value']);
-
-                        // Check if the file exists
-                        if (file_exists($filePath)) {
-                            $mimeType = mime_content_type($filePath);
-
-                            if (str_starts_with($mimeType, 'video/')) {
-                                $videos[] = $item;
-                            } elseif (str_starts_with($mimeType, 'image/')) {
-                                $images[] = $item;
-                            }
-                        }
-                    }
                 @endphp
 
                 @if (! empty($value))
@@ -180,22 +168,14 @@
                     <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
-                <x-admin::media.images
+                <x-admin::media.gallery
                     name="{{ $fieldName }}"
                     ::class="[errors && errors['{{ $fieldName }}'] ? 'border !border-red-600 hover:border-red-600' : '']"
                     :id="$field->code"
                     ::rules="{{ $field->getValidationsField() }}"
-                    :uploaded-images="! empty($value) ? $images : []"
+                    :uploaded-images="! empty($value) ? $savedData : []"
                     :allow-multiple=true
                     width='210px'
-                />
-                <x-admin::media.videos
-                    name="{{ $fieldName }}"
-                    ::class="[errors && errors['{{ $fieldName }}'] ? 'border !border-red-600 hover:border-red-600' : '']"
-                    :id="$field->code"
-                    ::rules="{{ $field->getValidationsField() }}"
-                    :allow-multiple=true
-                    :uploaded-videos="! empty($value) ? $videos : []"
                 />
                 @break
             @case('file')

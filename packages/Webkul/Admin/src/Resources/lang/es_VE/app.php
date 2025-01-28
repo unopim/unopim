@@ -1895,6 +1895,7 @@ return [
                 'ai-add-image-btn'  => 'Inteligencia AI',
                 'ai-btn-info'       => 'Generar imagen',
                 'allowed-types'     => 'png, jpeg, jpg',
+                'upload-media-btn'  => 'Subir medios',
                 'not-allowed-error' => 'Solo se permiten archivos de imagen (.jpeg, .jpg, .png, ..).',
 
                 'ai-generation' => [

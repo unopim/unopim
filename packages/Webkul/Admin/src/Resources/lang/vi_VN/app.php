@@ -1895,6 +1895,7 @@ return [
                 'ai-add-image-btn'  => 'AI ma thuật',
                 'ai-btn-info'       => 'Tạo ảnh',
                 'allowed-types'     => 'png, jpeg, jpg',
+                'upload-media-btn'  => 'Tải lên phương tiện',
                 'not-allowed-error' => 'Chỉ cho phép các tệp hình ảnh (.jpeg, .jpg, .png, ..)',
             ],
 

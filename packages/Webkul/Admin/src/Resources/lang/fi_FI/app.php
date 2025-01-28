@@ -1894,6 +1894,7 @@ return [
                 'ai-add-image-btn'  => 'Magic AI',
                 'ai-btn-info'       => 'Luo kuva',
                 'allowed-types'     => 'png, jpeg, jpg',
+                'upload-media-btn'  => 'Lataa mediaa',
                 'not-allowed-error' => 'Vain kuva tiedostot (.jpeg, .jpg, .png, ..) ovat sallittuja.',
 
                 'ai-generation' => [

@@ -1750,6 +1750,7 @@ return [
                 'ai-add-image-btn'  => 'Magic AI',
                 'ai-btn-info'       => '画像の生成',
                 'allowed-types'     => 'png、jpeg、jpg',
+                'upload-media-btn'  => 'メディアをアップロード',
                 'not-allowed-error' => '画像ファイル (.jpeg、.jpg、.png、..) のみが許可されます。',
 
                 'ai-generation' => [

@@ -1895,6 +1895,7 @@ return [
                 'ai-add-image-btn'  => 'Magiczna AI',
                 'ai-btn-info'       => 'Wygeneruj obraz',
                 'allowed-types'     => 'png, jpeg, jpg',
+                'upload-media-btn'  => 'Prześlij media',
                 'not-allowed-error' => 'Tylko pliki graficzne (.jpeg, .jpg, .png, ..) są dozwolone.',
 
                 'ai-generation' => [

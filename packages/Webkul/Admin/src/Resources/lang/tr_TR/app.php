@@ -1895,6 +1895,7 @@ return [
                 'ai-add-image-btn'  => 'Sihirli AI',
                 'ai-btn-info'       => 'Görsel Oluştur',
                 'allowed-types'     => 'png, jpeg, jpg',
+                'upload-media-btn'  => 'Medya Yükle',
                 'not-allowed-error' => 'Sadece görsel dosyalar (.jpeg, .jpg, .png, ..) kabul edilmektedir.',
 
                 'ai-generation' => [

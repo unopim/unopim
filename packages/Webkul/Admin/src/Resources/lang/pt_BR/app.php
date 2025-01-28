@@ -1895,6 +1895,7 @@ return [
                 'ai-add-image-btn'  => 'Magia AI',
                 'ai-btn-info'       => 'Gerar Imagem',
                 'allowed-types'     => 'png, jpeg, jpg',
+                'upload-media-btn'  => 'Fazer upload de mídia',
                 'not-allowed-error' => 'Apenas arquivos de imagem (.jpeg, .jpg, .png, ..) são permitidos.',
 
                 'ai-generation' => [

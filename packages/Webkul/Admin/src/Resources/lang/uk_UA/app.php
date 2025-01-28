@@ -1895,6 +1895,7 @@ return [
                 'ai-add-image-btn'  => 'Магічний AI',
                 'ai-btn-info'       => 'Огенрация Изображения',
                 'allowed-types'     => 'png, jpeg, jpg',
+                'upload-media-btn'  => 'Завантажити медіа',
                 'not-allowed-error' => 'Дозволені тільки зображення файли (.jpeg, .jpg, .png, ..)',
             ],
 

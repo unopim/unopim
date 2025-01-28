@@ -1767,6 +1767,7 @@ return [
                 'ai-add-image-btn'  => 'Sihir yang Anda miliki',
                 'ai-btn-info'       => 'Menghasilkan gambar',
                 'allowed-types'     => 'png, jpeg, jpg',
+                'upload-media-btn'  => 'Unggah Media',
                 'not-allowed-error' => 'Hanya file gambar (.jpeg, .jpg, .png, ..) diizinkan.',
 
                 'ai-generation' => [

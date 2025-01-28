@@ -1895,6 +1895,7 @@ return [
                 'ai-add-image-btn'  => 'Magic AI',
                 'ai-btn-info'       => 'Generează Imagine',
                 'allowed-types'     => 'png, jpeg, jpg',
+                'upload-media-btn'  => 'Încarcă media',
                 'not-allowed-error' => 'Doar fișiere imagini (.jpeg, .jpg, .png, ..) sunt permise.',
 
                 'ai-generation' => [

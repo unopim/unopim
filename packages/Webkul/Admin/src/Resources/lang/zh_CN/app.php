@@ -1744,6 +1744,7 @@ return [
                 'ai-add-image-btn'  => '你有魔术',
                 'ai-btn-info'       => '生成图像',
                 'allowed-types'     => 'PNG，JPEG，JPG',
+                'upload-media-btn'  => '上传媒体',
                 'not-allowed-error' => '仅允许图像文件（.jpeg，.jpg，.png，..）。',
 
                 'ai-generation' => [

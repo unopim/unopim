@@ -2199,6 +2199,7 @@ return [
                 'ai-add-image-btn'  => 'जादू आपके पास है',
                 'ai-btn-info'       => 'छवि उत्पन्न करें',
                 'allowed-types'     => 'पीएनजी, जेपीईजी, जेपीजी',
+                'upload-media-btn'  => 'मीडिया अपलोड करें',
                 'not-allowed-error' => 'केवल चित्र फ़ाइलें (.jpeg, .jpg, .png, ..) की अनुमति है।',
                 'ai-generation'     => [
                     '1024x1024'        => '1024x1024',

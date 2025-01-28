@@ -2200,6 +2200,7 @@ return [
                 'ai-add-image-btn'  => 'الذكاء الاصطناعي السحري',
                 'ai-btn-info'       => 'توليد الصورة',
                 'allowed-types'     => 'بابوا نيو غينيا، الحياة السياسية في فرنسا، JPG',
+                'upload-media-btn'  => 'رفع الوسائط',
                 'not-allowed-error' => 'يُسمح فقط بملفات الصور (.jpeg، .jpg، .png، ..).',
 
                 'ai-generation' => [

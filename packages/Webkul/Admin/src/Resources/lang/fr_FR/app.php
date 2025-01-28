@@ -1749,6 +1749,7 @@ return [
                 'ai-add-image-btn'  => 'Magic AI',
                 'ai-btn-info'       => 'Générer une image',
                 'allowed-types'     => 'png, jpeg, jpg',
+                'upload-media-btn'  => 'Téléverser des médias',
                 'not-allowed-error' => 'Seuls les fichiers d\'images (.jpeg, .jpg, .png, ..) sont autorisés.',
 
                 'ai-generation' => [

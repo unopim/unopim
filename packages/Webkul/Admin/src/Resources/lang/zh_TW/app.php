@@ -1895,6 +1895,7 @@ return [
                 'ai-add-image-btn'  => '魔法AI',
                 'ai-btn-info'       => '生成圖片',
                 'allowed-types'     => 'png, jpeg, jpg',
+                'upload-media-btn'  => '上傳媒體',
                 'not-allowed-error' => '僅允許圖片文件 (.jpeg, .jpg, .png, ..)。',
             ],
 
