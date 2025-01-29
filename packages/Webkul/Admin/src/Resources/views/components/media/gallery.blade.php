@@ -22,8 +22,26 @@
 <script type="text/x-template" id="v-media-gallery-template">
     <!-- Panel Content -->
     <div class="grid">
-        <div class="flex flex-wrap gap-1">
-            <!-- Upload Image Button -->
+        <div class="flex flex-wrap flex-col gap-1">
+            <!-- Uploaded Images -->
+            <draggable
+                class="flex flex-wrap gap-1"
+                ghost-class="draggable-ghost"
+                v-bind="{animation: 200}"
+                :list="images"
+                item-key="id">
+                <template #item="{ element, index }">
+                    <v-media-gallery-item
+                        :allowMultiple="{{ $allowMultiple ? true : false }}"
+                        :name="name"
+                        :index="index"
+                        :image="element"
+                        :width="width"
+                        :height="height"
+                        @onRemove="remove($event)">
+                    </v-media-gallery-item>
+                </template>
+            </draggable>
             <template v-if="allowMultiple || images.length == 0">
                 <!-- AI Image Generation Button -->
                 <label
@@ -74,26 +92,6 @@
                     </div>
                 </label>
             </template>
-
-            <!-- Uploaded Images -->
-            <draggable
-                class="flex flex-wrap gap-1 mt-2"
-                ghost-class="draggable-ghost"
-                v-bind="{animation: 200}"
-                :list="images"
-                item-key="id">
-                <template #item="{ element, index }">
-                    <v-media-gallery-item
-                        :allowMultiple="{{ $allowMultiple ? true : false }}"
-                        :name="name"
-                        :index="index"
-                        :image="element"
-                        :width="width"
-                        :height="height"
-                        @onRemove="remove($event)">
-                    </v-media-gallery-item>
-                </template>
-            </draggable>
 
             <x-admin::form
                 v-slot="{ meta, errors, handleSubmit }"
@@ -306,10 +304,11 @@
 </script>
 
 <script type="text/x-template" id="v-media-gallery-item-template">
+    <div class="flex gap-1.6 max-w-max py-1.5 ltr:pr-1.5 rtl:pl-1.5 rounded text-gray-600 dark:text-gray-300 group cursor-pointer">
+    <i class="icon-drag text-4xl transition-all group-hover:text-gray-700"></i>
     <div v-if="image.type.startsWith('image/')" 
-     class="grid justify-items-center max-w-[210px] min-w-[210px] relative border border-dashed border-gray-300 dark:border-cherry-800 rounded transition-all hover:border-gray-400 group cursor-grab"  
+     class="grid justify-items-center max-w-[210px] min-w-[210px] relative border border-dashed border-gray-300 dark:border-cherry-800 rounded transition-all hover:border-gray-400 group "  
      :style="{'width': this.width}">
-    
     <!-- Image Preview -->
         <img
             :src="image.url" :type="image.type"
@@ -324,6 +323,11 @@
                 <span
                     class="icon-delete text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
                     @click="remove"
+                ></span>
+
+                <span
+                    class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                    @click="showFullScreen"
                 ></span>
 
                 <label
@@ -346,6 +350,30 @@
                 />
             </div>
         </div>
+        <!-- Fullscreen Image Modal -->
+        <div v-if="isFullScreen"
+            ref="fullScreenContainer"
+            style="display: flex; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 1000;"
+            @keydown.esc="closeFullScreen"
+            tabindex="0"
+        >
+            <div style="position: relative; width: 100%; height: 100%; max-width: 90%; max-height: 90%; display: flex; justify-content: center; align-items: center;">  
+                <!-- Full-Screen Image -->
+                <img 
+                    :src="image.url" 
+                    style="max-width: 100%; max-height: 100%; object-contain; border-radius: 8px;"
+                />
+
+                <!-- Close Button -->
+                <button
+                    style="position: absolute; top: 0.5rem; right: 0.5rem; background-color: rgba(0, 0, 0, 0.7); color: white; border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; transition: background-color 0.3s ease;"
+                    @click="closeFullScreen"
+                >
+                    ✕
+                </button>
+            </div>
+        </div>
+
          <!-- Image Name -->
         <label class="mt-1 grid text-sm text-gray-600 dark:text-gray-300 font-semibold text-center break-all" :key="image.url">
                 @{{ image.name }}
@@ -353,7 +381,7 @@
     </div>
 
     <div v-else-if="image.type.startsWith('video/')" 
-        class="grid justify-items-center max-w-[210px] min-w-[210px] relative border border-dashed border-gray-300 dark:border-cherry-800 rounded transition-all hover:border-gray-400 group cursor-grab">
+        class="grid justify-items-center max-w-[210px] min-w-[210px] relative border border-dashed border-gray-300 dark:border-cherry-800 rounded transition-all hover:border-gray-400 group">
         <!-- Video Preview -->
         <video
             class="w-[210px] h-[120px] object-cover"
@@ -361,7 +389,7 @@
             v-if="image.url.length > 0"
             :key="image.url"
         >
-            <source :src="image.url" type="video/mp4">
+            <source :src="image.url" :type="image.type">
         </video>
 
         <div class="flex flex-col justify-between invisible w-full max-h-[120px] p-3 bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 transition-all group-hover:visible">
@@ -446,10 +474,11 @@
                 </div>
         </div>
          <!-- Image Name -->
-        <label class="mt-1 text-xs text-gray-600 dark:text-gray-300 font-semibold text-center break-all" :key="image.url">
+        <label class="mt-1 text-sm text-gray-600 dark:text-gray-300 font-semibold text-center break-all" :key="image.url">
                 @{{ image.name }}
         </label>
     </div>
+</div>
 </script>
 
 <script type="module">
@@ -697,6 +726,7 @@
 
             closeFullScreen() {
                 this.isFullScreen = false;
+                this.enlargedImage = null;
             },
 
             remove() {
