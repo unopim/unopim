@@ -66,20 +66,22 @@
 
                 <!-- Upload Image Button -->
                 <label
-                    class="grid justify-items-center items-center w-full h-[120px] max-w-[210px] max-h-[120px] border border-dashed dark:border-gray-300 rounded cursor-pointer transition-all hover:border-gray-400 border-gray-300"
+                    v-if="images.length == 0"
+                    class="grid justify-items-center items-center w-full h-[120px] max-w-[210px] max-h-[120px] border border-dashed dark:border-cherry-800 rounded cursor-pointer transition-all hover:border-gray-400 border-gray-300"
                     :style="{'max-width': this.width, 'max-height': this.height}"
                     :for="$.uid + '_imageInput'">
-                    <div class="flex flex-col items-center">
+                    <div class="flex flex-col items-center justify-center">
                         <span class="icon-image text-2xl"></span>
 
-                        <p class="grid text-sm text-gray-600 dark:text-gray-300 font-semibold text-center">
+                        <p class="grid text-sm text-gray-700 dark:text-gray-300 font-semibold text-center">
                             @lang('admin::app.components.media.images.upload-media-btn')
-                            <span class="text-xs">
+                            <span class="text-xs mt-1 text-gray-600 dark:text-gray-300 font-medium text-center">
                                 @lang('admin::app.components.media.images.allowed-types')
                             </span>
-                            <span class="text-xs">
+                            <span class="text-xs text-gray-600 dark:text-gray-300 font-medium text-center">
                                 @lang('admin::app.components.media.videos.allowed-types')
                             </span>
+
                         </p>
 
                         <input
@@ -92,6 +94,37 @@
                             @change="add" />
                     </div>
                 </label>
+                <div v-else class="flex gap-1.6 max-w-max py-1.5 ltr:pr-1.5 rtl:pl-1.5 group cursor-pointer text-gray-600 dark:text-gray-300 group border border-dashed border-gray-300 dark:border-cherry-800 rounded transition-all hover:border-gray-400">
+                    <i class="icon-drag text-4xl transition-all group-hover:text-gray-700 invisible"></i>
+                    <label
+                        class="grid justify-items-center items-center w-[210px] h-[120px] "
+                        :style="{'max-width': '210px', 'max-height': this.height}"
+                        :for="$.uid + '_imageInput'">
+                        <div class="flex flex-col items-center">
+                            <span class="icon-image text-2xl"></span>
+
+                            <p class="grid text-sm text-gray-600 dark:text-gray-300 font-semibold text-center">
+                                @lang('admin::app.components.media.images.upload-media-btn')
+                                <span class="text-xs mt-2 text-gray-600 dark:text-gray-300 font-medium text-center">
+                                    @lang('admin::app.components.media.images.allowed-types')
+                                </span>
+                                <span class="text-xs text-gray-600 dark:text-gray-300 font-medium text-center">
+                                    @lang('admin::app.components.media.videos.allowed-types')
+                                </span>
+
+                            </p>
+
+                            <input
+                                type="file"
+                                class="hidden"
+                                :id="$.uid + '_imageInput'"
+                                accept="image/*, video/*"
+                                :multiple="allowMultiple"
+                                :ref="$.uid + '_imageInput'"
+                                @change="add" />
+                        </div>
+                    </label>
+                </div>
             </template>
 
             <x-admin::form
@@ -305,10 +338,10 @@
 </script>
 
 <script type="text/x-template" id="v-media-gallery-item-template">
-    <div class="flex gap-1.6 max-w-max py-1.5 ltr:pr-1.5 rtl:pl-1.5 rounded text-gray-600 dark:text-gray-300 group cursor-pointer">
-    <i class="icon-drag text-4xl transition-all group-hover:text-gray-700"></i>
+    <div class="flex gap-1.6 max-w-max py-1.5 ltr:pr-1.5 rtl:pl-1.5 text-gray-600 dark:text-gray-300 group border border-dashed border-gray-300 dark:border-cherry-800 rounded transition-all hover:border-gray-400 group-hover:visible">
+    <i class="icon-drag text-4xl transition-all group-hover:text-gray-700 cursor-pointer"></i>
     <div v-if="image.type.startsWith('image/')" 
-     class="grid justify-items-center max-w-[210px] min-w-[210px] relative border border-dashed border-gray-300 dark:border-cherry-800 rounded transition-all hover:border-gray-400 group "  
+     class="grid justify-items-center max-w-[210px] min-w-[210px] relative"
      :style="{'width': this.width}">
     <!-- Image Preview -->
         <img
@@ -358,16 +391,16 @@
             @keydown.esc="closeFullScreen"
             tabindex="0"
         >
-            <div style="position: relative; width: 100%; height: 100%; max-width: 90%; max-height: 90%; display: flex; justify-content: center; align-items: center;">  
+            <div style="position: relative; width: 100%; height: 100%; max-height:90%; display: flex; justify-content: center; align-items: center;">  
                 <!-- Full-Screen Image -->
                 <img 
                     :src="image.url" 
-                    style="max-width: 100%; max-height: 100%; object-contain; border-radius: 8px;"
+                    style="max-width: 100%; max-height: 90%; object-contain; border-radius: 8px;"
                 />
 
                 <!-- Close Button -->
                 <button
-                    style="position: absolute; top: 0.5rem; right: 0.5rem; background-color: rgba(0, 0, 0, 0.7); color: white; border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; transition: background-color 0.3s ease;"
+                    style="position: absolute; top: 1.5rem; right: 0.5rem; background-color: rgba(0, 0, 0, 0.7); color: white; border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; transition: background-color 0.3s ease;"
                     @click="closeFullScreen"
                 >
                     ✕
@@ -376,13 +409,13 @@
         </div>
 
          <!-- Image Name -->
-        <label class="mt-1 grid text-sm text-gray-600 dark:text-gray-300 font-semibold text-center break-all" :key="image.url">
-                @{{ image.name }}
+        <label class="mt-1 grid text-xs text-gray-700 dark:text-gray-300 font-medium text-center break-all" :key="image.url">
+                @{{ getDisplayFileName(image.name) }}
         </label>
     </div>
 
     <div v-else-if="image.type.startsWith('video/')" 
-        class="grid justify-items-center max-w-[210px] min-w-[210px] relative border border-dashed border-gray-300 dark:border-cherry-800 rounded transition-all hover:border-gray-400 group">
+        class="grid justify-items-center max-w-[210px] min-w-[210px] relative">
         <!-- Video Preview -->
         <video
             class="w-[210px] h-[120px] object-cover"
@@ -405,33 +438,11 @@
                     @click="remove"
                 ></span>
 
-                <!-- Play Pause Button -->
+                <!-- Full Screen Button -->
                 <span
-                    class="text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
-                    :class="[isPlaying ? 'icon-pause': 'icon-play']"
-                    @click="playPause"
-                ></span>
-
-                <!-- Full-Screen Button -->
-                <span 
-                    class="cursor-pointer p-1.5 hover:bg-violet-100 dark:hover:bg-gray-800 rounded-md"
+                    class="icon-play text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
                     @click="showFullScreen"
-                >
-                    <svg 
-                        xmlns="http://www.w3.org/2000/svg" 
-                        class="h-6 w-6 text-gray-600 dark:text-gray-300" 
-                        fill="none" 
-                        viewBox="0 0 24 24" 
-                        stroke="currentColor" 
-                        stroke-width="2"
-                    >
-                        <path 
-                            stroke-linecap="round" 
-                            stroke-linejoin="round" 
-                            d="M4 8V5a1 1 0 011-1h3m8 0h3a1 1 0 011 1v3m0 8v3a1 1 0 01-1 1h-3m-8 0H5a1 1 0 01-1-1v-3"
-                        />
-                    </svg>
-                </span>
+                ></span>
 
                 <!-- Edit Button -->
                 <label
@@ -460,23 +471,23 @@
                 @keydown.esc="closeFullScreen"
                 tabindex="0"
             >
-                <div style="position: relative; width: 100%; height: 100%; max-width: 90%; max-height: 90%; display: flex; justify-content: center; align-items: center;">
+                <div style="position: relative; width: 100%; height: 100%; max-height:90%; display: flex; justify-content: center; align-items: center;">
                     <!-- Full-Screen Video -->
-                    <video style="max-width: 100%; max-height: 100%;" controls autoplay>
+                    <video style="max-width: 100%; max-height: 90%;" controls autoplay>
                         <source :src="image.url" type="video/mp4">
                     </video>
                         <!-- Close Button -->
                     <button
-                        style="position: absolute; top: 0.5rem; right: 0.5rem; background-color: rgba(0, 0, 0, 0.7); color: white; border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; transition: background-color 0.3s ease;"
+                        style="position: absolute; top: 1.5rem; right: 0.5rem; background-color: rgba(0, 0, 0, 0.7); color: white; border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; transition: background-color 0.3s ease;"
                         @click="closeFullScreen"
                         >
                         ✕
                     </button>
                 </div>
         </div>
-         <!-- Image Name -->
-        <label class="mt-1 text-sm text-gray-600 dark:text-gray-300 font-semibold text-center break-all" :key="image.url">
-                @{{ image.name }}
+         <!-- Video Name -->
+        <label class="mt-1 text-xs text-gray-700 dark:text-gray-300 font-medium text-center break-all" :key="image.url">
+                @{{ getDisplayFileName(image.name) }}
         </label>
     </div>
 </div>
@@ -679,7 +690,6 @@
 
         data() {
             return {
-                isPlaying: false,
                 isFullScreen: false,
             }
         },
@@ -749,24 +759,19 @@
 
                 reader.onload = (e) => {
                     this.image.url = e.target.result;
+
                     this.image.name = file.name;
                 }
 
                 reader.readAsDataURL(file);
             },
 
-            playPause() {
-                let videoPreview = this.$refs.videoPreview;
-
-                if (videoPreview.paused == true) {
-                    this.isPlaying = true;
-
-                    videoPreview.play();
-                } else {
-                    this.isPlaying = false;
-
-                    videoPreview.pause();
+            getDisplayFileName(fileName) {
+                if (fileName.length > 29) {
+                    return fileName.substring(0, 20) + '...' + fileName.substring(fileName.lastIndexOf('.'));
                 }
+
+                return fileName;
             }
         }
     });
