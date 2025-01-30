@@ -28,6 +28,7 @@
                 class="flex flex-wrap gap-1"
                 ghost-class="draggable-ghost"
                 v-bind="{animation: 200}"
+                handle=".icon-drag"
                 :list="images"
                 item-key="id">
                 <template #item="{ element, index }">
