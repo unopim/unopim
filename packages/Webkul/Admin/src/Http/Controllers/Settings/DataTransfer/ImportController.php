@@ -7,16 +7,18 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ImportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\DataTransfer\Contracts\Validator\JobInstances\JobValidator;
 use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Jobs\Import\ImportTrackBatch;
 use Webkul\DataTransfer\Repositories\JobInstancesRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
-use Webkul\DataTransfer\Rules\SeparatorTypes;
 
 class ImportController extends Controller
 {
     const TYPE = 'import';
+
+    const IMPORTERS = 'importers';
 
     /**
      * Create a new controller instance.
@@ -51,7 +53,9 @@ class ImportController extends Controller
      */
     public function create()
     {
-        return view('admin::settings.data-transfer.imports.create');
+        $importerConfig = config(self::IMPORTERS);
+
+        return view('admin::settings.data-transfer.imports.create', compact('importerConfig'));
     }
 
     /**
@@ -61,16 +65,13 @@ class ImportController extends Controller
      */
     public function store()
     {
-        $importers = array_keys(config('importers'));
+        $importerConfig = config(self::IMPORTERS);
+
+        $importers = array_keys($importerConfig);
 
         $this->validate(request(), [
             'code'                => 'required|unique:job_instances,code',
             'entity_type'         => 'required|in:'.implode(',', $importers),
-            'action'              => 'required:in:append,delete',
-            'validation_strategy' => 'required:in:stop-on-errors,skip-errors',
-            'allowed_errors'      => 'required|integer|min:0',
-            'field_separator'     => ['required', new SeparatorTypes],
-            'file'                => 'required|mimes:csv,xls,xlsx,txt',
         ], ['file.mimes' => trans('core::validation.file-type')]);
 
         Event::dispatch('data_transfer.imports.create.before');
@@ -79,23 +80,39 @@ class ImportController extends Controller
             'code',
             'entity_type',
             'action',
-            'validation_strategy',
+            'file',
             'validation_strategy',
             'allowed_errors',
             'field_separator',
             'images_directory_path',
+            'filters',
         ]);
+
+        $jobValidator = isset($importerConfig[$data['entity_type']]['validator']) ? app($importerConfig[$data['entity_type']]['validator']) : null;
+
+        if ($jobValidator instanceof JobValidator) {
+            $jobValidator->validate($data);
+        }
+
+        $fileData = [
+            'type'   => self::TYPE,
+            'action' => 'append',
+        ];
+
+        if (isset($importerConfig[$data['entity_type']]['has_file_options'])) {
+            $fileData = [
+                'file_path' => request()->file('file')->storeAs(
+                    'imports',
+                    time().'-'.request()->file('file')->getClientOriginalName(),
+                    'private'
+                ),
+                'type'      => self::TYPE,
+            ];
+        }
 
         $import = $this->jobInstancesRepository->create(
             array_merge(
-                [
-                    'file_path' => request()->file('file')->storeAs(
-                        'imports',
-                        time().'-'.request()->file('file')->getClientOriginalName(),
-                        'private'
-                    ),
-                    'type' => self::TYPE,
-                ],
+                $fileData,
                 $data
             )
         );
@@ -114,9 +131,11 @@ class ImportController extends Controller
      */
     public function edit(int $id)
     {
+        $importerConfig = config(self::IMPORTERS);
+
         $import = $this->jobInstancesRepository->findOrFail($id);
 
-        return view('admin::settings.data-transfer.imports.edit', compact('import'));
+        return view('admin::settings.data-transfer.imports.edit', compact('import', 'importerConfig'));
     }
 
     /**
@@ -126,22 +145,18 @@ class ImportController extends Controller
      */
     public function update(int $id)
     {
-        $importers = array_keys(config('importers'));
+        $importerConfig = config(self::IMPORTERS);
+
+        $importers = array_keys($importerConfig);
 
         $import = $this->jobInstancesRepository->findOrFail($id);
 
         $this->validate(request(), [
             'code'                => 'required',
             'entity_type'         => 'required|in:'.implode(',', $importers),
-            'action'              => 'required:in:append,delete',
-            'validation_strategy' => 'required:in:stop-on-errors,skip-errors',
-            'allowed_errors'      => 'required|integer|min:0',
-            'field_separator'     => ['required', new SeparatorTypes],
-            'file'                => 'mimes:csv,xls,xlsx,txt',
         ], ['file.mimes' => trans('core::validation.file-type')]);
 
         Event::dispatch('data_transfer.imports.update.before');
-
         $data = array_merge(
             request()->only([
                 'entity_type',
@@ -151,6 +166,7 @@ class ImportController extends Controller
                 'allowed_errors',
                 'field_separator',
                 'images_directory_path',
+                'filters',
             ]),
             [
                 'state'                => 'pending',
@@ -166,6 +182,10 @@ class ImportController extends Controller
             ]
         );
 
+        $jobValidator = isset($importerConfig[$data['entity_type']]['validator']) ? app($importerConfig[$data['entity_type']]['validator']) : null;
+        if ($jobValidator instanceof JobValidator) {
+            $jobValidator->validate($data, ['id' => $id]);
+        }
         Storage::disk('private')->delete($import->error_file_path ?? '');
 
         if (request()->file('file') && request()->file('file')->isValid()) {
