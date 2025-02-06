@@ -366,9 +366,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 }, $value);
             }
 
-            $value = array_filter($value, function ($val) {
-                return $val !== null && $val !== '';
-            });
+            $value = array_filter($value);
 
             if (count($value) > 0) {
                 $filters['filter'][] = $this->getFilterValue($attribute, $value);
