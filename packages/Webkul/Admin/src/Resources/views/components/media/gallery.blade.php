@@ -348,6 +348,19 @@
             :src="image.url" :type="image.type"
             class="w-[210px] h-[120px] object-cover"
         />
+        <x-admin::fullscreen-modal ref="mediaPreviewModal">
+            <x-slot:header>
+                    <p class="text-sm text-gray-800 dark:text-white font-bold"><span> @{{ getDisplayFileName(image.name) }} </span></p>
+            </x-slot>
+            <x-slot:content>
+                <div>
+                    <img
+                        :src="image.url"
+                        class="w-full h-full object-cover object-top"
+                    />
+                </div>
+            </x-slot>
+        </x-admin::fullscreen-modal>
 
         <div class="flex flex-col justify-between invisible w-full max-h-[120px] p-3 bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 transition-all group-hover:visible">
             <!-- Image Name -->
@@ -361,7 +374,7 @@
 
                 <span
                     class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
-                    @click="showFullScreen"
+                    @click="previewMedia"
                 ></span>
 
                 <label
@@ -384,29 +397,6 @@
                 />
             </div>
         </div>
-        <!-- Fullscreen Image Modal -->
-        <div v-if="isFullScreen"
-            ref="fullScreenContainer"
-            style="display: flex; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 1000;"
-            @keydown.esc="closeFullScreen"
-            tabindex="0"
-        >
-            <div style="position: relative; width: 100%; height: 100%; max-height:90%; display: flex; justify-content: center; align-items: center;">  
-                <!-- Full-Screen Image -->
-                <img 
-                    :src="image.url" 
-                    style="max-width: 100%; max-height: 90%; object-contain; border-radius: 8px;"
-                />
-
-                <!-- Close Button -->
-                <button
-                    style="position: absolute; top: 1.5rem; right: 0.5rem; background-color: rgba(0, 0, 0, 0.7); color: white; border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; transition: background-color 0.3s ease;"
-                    @click="closeFullScreen"
-                >
-                    ✕
-                </button>
-            </div>
-        </div>
 
          <!-- Image Name -->
         <label class="mt-1 grid text-xs text-gray-700 dark:text-gray-300 font-medium text-center break-all" :key="image.url">
@@ -426,6 +416,19 @@
             <source :src="image.url" :type="image.type">
         </video>
 
+        <x-admin::fullscreen-modal ref="mediaPreviewModal">
+            <x-slot:header>
+                    <p class="text-sm text-gray-800 dark:text-white font-bold"><span> @{{ getDisplayFileName(image.name) }} </span></p>
+            </x-slot>
+            <x-slot:content>
+                <div >
+                    <video class="w-full h-full" controls autoplay>
+                        <source :src="image.url" type="video/mp4">
+                    </video>
+                </div>
+            </x-slot>
+        </x-admin::fullscreen-modal>
+
         <div class="flex flex-col justify-between invisible w-full max-h-[120px] p-3 bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 transition-all group-hover:visible">
             <!-- Video Name -->
             <p class="text-xs text-gray-600 dark:text-gray-300 font-semibold break-all"></p>
@@ -441,7 +444,7 @@
                 <!-- Full Screen Button -->
                 <span
                     class="icon-play text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
-                    @click="showFullScreen"
+                    @click="previewMedia"
                 ></span>
 
                 <!-- Edit Button -->
@@ -464,26 +467,6 @@
                     @change="edit"
                 />
             </div>
-        </div>
-        <div v-if="isFullScreen"
-                ref="fullScreenContainer"
-                style="display: flex; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 1000;"
-                @keydown.esc="closeFullScreen"
-                tabindex="0"
-            >
-                <div style="position: relative; width: 100%; height: 100%; max-height:90%; display: flex; justify-content: center; align-items: center;">
-                    <!-- Full-Screen Video -->
-                    <video style="max-width: 100%; max-height: 90%;" controls autoplay>
-                        <source :src="image.url" type="video/mp4">
-                    </video>
-                        <!-- Close Button -->
-                    <button
-                        style="position: absolute; top: 1.5rem; right: 0.5rem; background-color: rgba(0, 0, 0, 0.7); color: white; border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; transition: background-color 0.3s ease;"
-                        @click="closeFullScreen"
-                        >
-                        ✕
-                    </button>
-                </div>
         </div>
          <!-- Video Name -->
         <label class="mt-1 text-xs text-gray-700 dark:text-gray-300 font-medium text-center break-all" :key="image.url">
@@ -688,12 +671,6 @@
 
         props: ['allowMultiple', 'index', 'image', 'name', 'width', 'height'],
 
-        data() {
-            return {
-                isFullScreen: false,
-            }
-        },
-
         mounted() {
             if (this.image.file instanceof File) {
                 this.setFile(this.image.file);
@@ -728,16 +705,12 @@
                 this.readFile(imageInput.files[0]);
             },
 
-            showFullScreen() {
-                this.isFullScreen = true;
-                this.$nextTick(() => {
-                    this.$refs.fullScreenContainer.focus();
-                });
+            previewMedia() {
+                this.$refs.mediaPreviewModal.toggle();
             },
 
-            closeFullScreen() {
-                this.isFullScreen = false;
-                this.enlargedImage = null;
+            closeImageModal() {
+                this.$refs.mediaPreviewModal.close();
             },
 
             remove() {
