@@ -21,7 +21,7 @@ class Reindexer extends Command
     {
         if (config('elasticsearch.connection')) {
             if ($this->confirm('This action will clear all indexes for this project. Do you want to continue? (y/n) or', false)) {
-                $indexPrefix = config('elasticsearch.prefix');
+                $indexPrefix = config('elasticsearch.prefix') ? config('elasticsearch.prefix') : config('app.name');
 
                 $start = microtime(true);
 

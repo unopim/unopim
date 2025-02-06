@@ -17,7 +17,7 @@ class CategoryDataGrid extends DataGrid
      *
      * @var string
      */
-    protected $primaryColumn = 'category_id';
+    protected $primaryColumn = 'id';
 
     /**
      * Default sort column of datagrid.
@@ -165,7 +165,7 @@ class CategoryDataGrid extends DataGrid
             $params = $this->validatedRequest();
             $pagination = $params['pagination'];
 
-            $indexPrefix = env('ELASTICSEARCH_INDEX_PREFIX') ? env('ELASTICSEARCH_INDEX_PREFIX') : env('APP_NAME');
+            $indexPrefix = config('elasticsearch.prefix') ? config('elasticsearch.prefix') : config('app.name');
 
             $results = Elasticsearch::search([
                 'index' => strtolower($indexPrefix.'_categories'),

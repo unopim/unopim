@@ -264,7 +264,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             $params = $this->validatedRequest();
             $pagination = $params['pagination'];
 
-            $indexPrefix = env('ELASTICSEARCH_INDEX_PREFIX') ? env('ELASTICSEARCH_INDEX_PREFIX') : env('APP_NAME');
+            $indexPrefix = config('elasticsearch.prefix') ? config('elasticsearch.prefix') : config('app.name');
 
             try {
                 $results = Elasticsearch::search([

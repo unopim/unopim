@@ -24,7 +24,7 @@ class CategoryIndexer extends Command
     public function handle()
     {
         if (config('elasticsearch.connection')) {
-            $indexPrefix = config('elasticsearch.prefix');
+            $indexPrefix = config('elasticsearch.prefix') ? config('elasticsearch.prefix') : config('app.name');
 
             $start = microtime(true);
 
