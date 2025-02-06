@@ -18,6 +18,8 @@ class ImportController extends Controller
 {
     const TYPE = 'import';
 
+    const IMPORTERS = 'importers';
+
     /**
      * Create a new controller instance.
      *
@@ -51,7 +53,7 @@ class ImportController extends Controller
      */
     public function create()
     {
-        $importerConfig = config('importers');
+        $importerConfig = config(self::IMPORTERS);
 
         return view('admin::settings.data-transfer.imports.create', compact('importerConfig'));
     }
@@ -63,7 +65,7 @@ class ImportController extends Controller
      */
     public function store()
     {
-        $importerConfig = config('importers');
+        $importerConfig = config(self::IMPORTERS);
 
         $importers = array_keys($importerConfig);
 
@@ -129,7 +131,7 @@ class ImportController extends Controller
      */
     public function edit(int $id)
     {
-        $importerConfig = config('importers');
+        $importerConfig = config(self::IMPORTERS);
 
         $import = $this->jobInstancesRepository->findOrFail($id);
 
@@ -143,7 +145,7 @@ class ImportController extends Controller
      */
     public function update(int $id)
     {
-        $importerConfig = config('importers');
+        $importerConfig = config(self::IMPORTERS);
 
         $importers = array_keys($importerConfig);
 

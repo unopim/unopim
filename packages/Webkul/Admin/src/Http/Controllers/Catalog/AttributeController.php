@@ -143,7 +143,7 @@ class AttributeController extends Controller
         if ($this->attributeCanBeDeleted($id) > 0) {
             return new JsonResponse([
                 'message' => trans('admin::app.catalog.attributes.index.datagrid.delete-attribute-failure'),
-            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         try {
