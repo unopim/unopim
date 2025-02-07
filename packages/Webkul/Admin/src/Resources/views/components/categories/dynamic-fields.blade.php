@@ -128,6 +128,7 @@
                     ::rules="{{ $field->getValidationsField() }}"
                     :uploaded-images="! empty($value) ? [$savedImage] : []"
                     width='210px'
+                    entity-name="category_field"
                 />
                 @break
             @case('file')

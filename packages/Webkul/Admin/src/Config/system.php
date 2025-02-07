@@ -1,5 +1,7 @@
 <?php
 
+use Webkul\MagicAI\MagicAI;
+
 return [
     /**
      * General.
@@ -26,6 +28,22 @@ return [
                 'title'         => 'admin::app.configuration.index.general.magic-ai.settings.enabled',
                 'type'          => 'boolean',
             ], [
+                'name'          => 'ai_platform',
+                'title'         => 'AI Platforms',
+                'type'          => 'select',
+                'options'       => [
+                    [
+                        'title' => 'Openai',
+                        'value' => MagicAI::MAGIC_OPEN_AI,
+                    ], [
+                        'title' => 'Groq',
+                        'value' => MagicAI::MAGIC_GROQ_AI,
+                    ], [
+                        'title' => 'Ollama',
+                        'value' => MagicAI::MAGIC_OLLAMA_AI,
+                    ],
+                ],
+            ], [
                 'name'          => 'api_key',
                 'title'         => 'admin::app.configuration.index.general.magic-ai.settings.api-key',
                 'type'          => 'password',
@@ -37,6 +55,23 @@ return [
                 'name'          => 'api_domain',
                 'title'         => 'admin::app.configuration.index.general.magic-ai.settings.llm-api-domain',
                 'type'          => 'text',
+            ], [
+                'name'          => 'api_model',
+                'title'         => 'admin::app.configuration.index.general.magic-ai.settings.api-model',
+                'type'          => 'blade',
+                'path'          => 'admin::configuration.magic-ai.field.model',
+            ],
+        ],
+    ], [
+        'key'    => 'general.magic_ai.image_generation',
+        'name'   => 'admin::app.configuration.index.general.magic-ai.image-generation.title',
+        'info'   => 'admin::app.configuration.index.general.magic-ai.image-generation.title-info',
+        'sort'   => 1,
+        'fields' => [
+            [
+                'name'          => 'enabled',
+                'title'         => 'admin::app.configuration.index.general.magic-ai.image-generation.enabled',
+                'type'          => 'boolean',
             ],
         ],
     ],

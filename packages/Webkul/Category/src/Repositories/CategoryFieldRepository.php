@@ -4,6 +4,7 @@ namespace Webkul\Category\Repositories;
 
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 use Webkul\Category\Contracts\CategoryField;
 use Webkul\Core\Eloquent\Repository;
 
@@ -111,5 +112,24 @@ class CategoryFieldRepository extends Repository
     public function queryBuilder()
     {
         return $this->with(['translations']);
+    }
+
+    /**
+     * Get Category field list by search query
+     */
+    public function getCategoryFieldListBySearch(string $search, array $columns = ['*']): array
+    {
+        return DB::table('category_fields')
+            ->select($columns)
+            ->leftJoin('category_field_translations as requested_category_field_translation', function ($join) {
+                $join->on('requested_category_field_translation.category_field_id', '=', 'category_fields.id')
+                    ->where('requested_category_field_translation.locale', '=', core()->getRequestedLocaleCode());
+            })
+            ->where(function ($query) use ($search) {
+                $query->where('category_fields.code', 'LIKE', '%'.$search.'%')
+                    ->orWhere('requested_category_field_translation.name', 'LIKE', '%'.$search.'%');
+            })
+            ->get()
+            ->toArray();
     }
 }

@@ -47,6 +47,7 @@ import Flatpickr from "./plugins/flatpickr";
 import VeeValidate from "./plugins/vee-validate";
 import Draggable from "./plugins/draggable";
 import Multiselect from './plugins/multiselect';
+import Tribute from "./plugins/tribute";
 
 [
     Admin,
@@ -57,6 +58,7 @@ import Multiselect from './plugins/multiselect';
     VeeValidate,
     Draggable,
     Multiselect,
+    Tribute,
 ].forEach((plugin) => app.use(plugin));
 
 

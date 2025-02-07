@@ -54,7 +54,14 @@
 
                     <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
                         @foreach ($item['fields'] as $field)
-                            @include ('admin::configuration.field-type')
+                            @if (
+                                $field['type'] == 'blade'
+                                && view()->exists($path = $field['path'])
+                            )
+                                {!! view($path, compact('field', 'item'))->render() !!}
+                            @else 
+                                @include ('admin::configuration.field-type')
+                            @endif
                         
                             @php ($hint = $field['title'] . '-hint')
 
