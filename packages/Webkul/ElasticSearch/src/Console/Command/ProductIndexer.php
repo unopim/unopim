@@ -65,10 +65,11 @@ class ProductIndexer extends Command
             $progressBar = new ProgressBar($this->output, $totalProducts);
 
             $dbProductIds = [];
-            $elasticProduct = $this->getProductUpdates($productIndex, $this);
 
             for ($offset = 0; $offset < $totalProducts; $offset += self::BATCH_SIZE) {
                 $products = DB::table('products')->offset($offset)->limit(self::BATCH_SIZE)->get();
+
+                $elasticProduct = $this->getProductUpdates($productIndex, $this, $products->pluck('id')->toArray());
 
                 if ($products->isNotEmpty()) {
                     if ($offset === 0) {
@@ -187,9 +188,8 @@ class ProductIndexer extends Command
         }
     }
 
-    public function getProductUpdates($productIndex, $command = null)
+    public function getProductUpdates($productIndex, $command = null, array $searchIds = [])
     {
-        $scrollSize = 10000;
         $elasticProduct = [];
 
         try {
@@ -198,42 +198,16 @@ class ProductIndexer extends Command
                 'body'  => [
                     '_source' => ['updated_at'],
                     'query'   => [
-                        'match_all' => new \stdClass,
+                        'ids' => [
+                            'values' => $searchIds,
+                        ],
                     ],
-                    'size' => $scrollSize,
+                    'size' => self::BATCH_SIZE,
                 ],
-                'scroll' => '10m',
             ]);
-
-            $scrollId = $response['_scroll_id'];
 
             foreach ($response['hits']['hits'] as $hit) {
                 $elasticProduct[(int) $hit['_id']] = $hit['_source']['updated_at'];
-            }
-
-            while (true) {
-                $response = Elasticsearch::scroll([
-                    'scroll_id' => $scrollId,
-                    'scroll'    => '10m',
-                ]);
-
-                if (empty($response['hits']['hits'])) {
-                    break;
-                }
-
-                foreach ($response['hits']['hits'] as $hit) {
-                    $elasticProduct[(int) $hit['_id']] = $hit['_source']['updated_at'];
-                }
-            }
-
-            try {
-                Elasticsearch::clearScroll([
-                    'scroll_id' => $scrollId,
-                ]);
-            } catch (\Exception $e) {
-                Log::channel('elasticsearch')->error('Exception while clearing scroll: ', [
-                    'error' => $e->getMessage(),
-                ]);
             }
         } catch (\Exception $e) {
             if (str_contains($e->getMessage(), 'index_not_found_exception')) {
