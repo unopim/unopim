@@ -9,6 +9,7 @@ use Webkul\ElasticSearch\Console\Command\ProductIndexer;
 use Webkul\ElasticSearch\Console\Command\Reindexer;
 use Webkul\ElasticSearch\Observers\Category;
 use Webkul\ElasticSearch\Observers\Product;
+use Webkul\ElasticSearch\SearchQueryBuilder;
 use Webkul\Product\Models\Product as Products;
 
 class ElasticSearchServiceProvider extends ServiceProvider
@@ -39,6 +40,7 @@ class ElasticSearchServiceProvider extends ServiceProvider
     public function register()
     {
         $this->registerCommands();
+        $this->registerFacades();
     }
 
     /**
@@ -53,5 +55,12 @@ class ElasticSearchServiceProvider extends ServiceProvider
                 Reindexer::class,
             ]);
         }
+    }
+
+    public function registerFacades(): void
+    {
+        $this->app->singleton('search-query-builder', function ($app) {
+            return new SearchQueryBuilder();
+        });
     }
 }

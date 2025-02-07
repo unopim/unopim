@@ -410,4 +410,18 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
 
         return $rules;
     }
+
+    /**
+     * Get Attribute  scope
+     */
+    public function getScope(): string
+    {
+        return ($this->value_per_locale && $this->value_per_channel) 
+        ? 'channel_locale_specific' 
+        : ($this->value_per_locale 
+            ? 'locale_specific' 
+            : ($this->value_per_channel 
+                ? 'channel_specific' 
+                : 'common'));
+    }
 }

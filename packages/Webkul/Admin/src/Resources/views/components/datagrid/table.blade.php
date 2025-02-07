@@ -10,7 +10,7 @@
         id="v-datagrid-table-template"
     >
         <div class="w-full">
-            <div class="table-responsive grid w-full box-shadow rounded bg-white dark:bg-cherry-900 overflow-hidden">
+            <div class="table-responsive grid w-full box-shadow rounded bg-white dark:bg-cherry-900 overflow-x-auto">
                 <slot name="header">
                     <template v-if="$parent.isLoading">
                         <x-admin::shimmer.datagrid.table.head :isMultiRow="$isMultiRow" />
@@ -19,7 +19,7 @@
                     <template v-else>
                         <div
                             class="row grid gap-2.5 min-h-[47px] px-4 py-2.5 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 bg-violet-50 dark:bg-cherry-900 font-semibold items-center"
-                            :style="`grid-template-columns: repeat(${gridsCount}, minmax(0, 1fr))`"
+                            :style="`grid-template-columns: repeat(${gridsCount}, minmax(80px, 1fr))`"
                         >
                             <!-- Mass Actions -->
                             <p v-if="$parent.available.massActions.length">
@@ -84,12 +84,13 @@
                     <template v-else>
                         <template v-if="$parent.available.records.length">
                             <div
-                                class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
+                                class="row grid gap-2.5 items-center px-4 py-4 cursor-pointer border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
                                 v-for="record in $parent.available.records"
-                                :style="`grid-template-columns: repeat(${gridsCount}, minmax(0, 1fr))`"
+                                :style="`grid-template-columns: repeat(${gridsCount}, minmax(80px, 1fr))`"
+                                @click="$parent.performAction(record.actions.find(action => action.index === 'edit'))"
                             >
                                 <!-- Mass Actions -->
-                                <p v-if="$parent.available.massActions.length">
+                                <p v-if="$parent.available.massActions.length" @click.stop>
                                     <label :for="`mass_action_select_record_${record[$parent.available.meta.primary_column]}`">
                                         <input
                                             type="checkbox"
@@ -126,6 +127,7 @@
                                 <!-- Actions -->
                                 <div
                                     class="flex gap-2.5 items-center justify-end select-none"
+                                    @click.stop
                                 >
                                     <p
                                         class="text-gray-600 dark:text-gray-300"
