@@ -130,6 +130,9 @@ class Installer extends Command
         $this->warn('Step: Linking storage directory...');
         $this->call('storage:link');
 
+        $this->warn('Step: Clearing elasticsearch index...');
+        $this->call('elastic:clear');
+
         $this->warn('Step: Indexing categories to elastic search...');
         $this->call('category:index');
 
