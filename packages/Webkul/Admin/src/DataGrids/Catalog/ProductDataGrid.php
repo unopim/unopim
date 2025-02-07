@@ -293,6 +293,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                             'sort'          => $this->sortAttributeFamilyByKey($params['sort'] ?? []),
                         ],
                     ]);
+                } else {
+                    report($e);
+
+                    throw $e;
                 }
             }
 
@@ -408,10 +412,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 $filters = [];
 
                 foreach ($values as $value) {
-                    $filters['bool']['should'][] = [
-                        'match_phrase_prefix' => [
-                            'sku' => $value,
-                        ],
+                    $filters['wildcard'] = [
+                        'sku' => '*'.$value.'*',
                     ];
                 }
 
