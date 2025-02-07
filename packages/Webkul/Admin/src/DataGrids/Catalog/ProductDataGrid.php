@@ -366,7 +366,9 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 }, $value);
             }
 
-            $value = array_filter($value);
+            $value = array_filter($value, function ($val) {
+                return $val !== null && $val !== '';
+            });
 
             if (count($value) > 0) {
                 $filters['filter'][] = $this->getFilterValue($attribute, $value);
@@ -397,6 +399,11 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 ];
 
             case 'sku':
+                return [
+                    'terms' => [
+                        'sku.keyword' => $values,
+                    ],
+                ];
             case 'name':
                 $filters = [];
 
