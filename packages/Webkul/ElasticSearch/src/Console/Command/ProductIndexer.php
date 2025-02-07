@@ -82,7 +82,11 @@ class ProductIndexer extends Command
                     foreach ($products as $productDB) {
                         $product = new Product;
 
-                        $product->forceFill((array) $productDB);
+                        $productDB = (array) $productDB;
+
+                        $productDB['values'] = is_string($productDB['values']) ? json_decode($productDB['values'], true) : $productDB['values'];
+
+                        $product->forceFill($productDB);
                         $product->syncOriginal();
 
                         $productId = $product->id;

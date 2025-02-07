@@ -17,17 +17,21 @@ class Product
 
     public function __construct()
     {
-        $this->indexPrefix = env('ELASTICSEARCH_INDEX_PREFIX') ? env('ELASTICSEARCH_INDEX_PREFIX') : env('APP_NAME');
+        $this->indexPrefix = config('elasticsearch.prefix') ? config('elasticsearch.prefix') : config('app.name');
     }
 
     public function created(Products $product)
     {
-        if (env('ELASTICSEARCH_ENABLED', false)) {
+        if (config('elasticsearch.connection')) {
+            $productArray = $product->toArray();
+
+            $productArray['status'] = ! isset($productArray['status']) ? 1 : $productArray['status'];
+
             try {
                 Elasticsearch::index([
                     'index' => strtolower($this->indexPrefix.'_products'),
                     'id'    => $product->id,
-                    'body'  => $product->toArray(),
+                    'body'  => $productArray,
                 ]);
             } catch (\Exception $e) {
                 Log::channel('elasticsearch')->error('Exception while creating id: '.$product->id.' in '.$this->indexPrefix.'_categories index: ', [
@@ -41,7 +45,7 @@ class Product
 
     public function updated(Products $product)
     {
-        if (env('ELASTICSEARCH_ENABLED', false)) {
+        if (config('elasticsearch.connection')) {
             try {
                 Elasticsearch::index([
                     'index' => strtolower($this->indexPrefix.'_products'),
@@ -60,7 +64,7 @@ class Product
 
     public function deleted(Products $product)
     {
-        if (env('ELASTICSEARCH_ENABLED', false)) {
+        if (config('elasticsearch.connection')) {
             try {
                 Elasticsearch::delete([
                     'index' => strtolower($this->indexPrefix.'_products'),

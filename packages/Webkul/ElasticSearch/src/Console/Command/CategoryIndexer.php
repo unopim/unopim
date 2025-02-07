@@ -49,6 +49,8 @@ class CategoryIndexer extends Command
 
                     $categoryArray = $category->toArray();
 
+                    $categoryArray['additional_data'] = is_string($categoryArray['additional_data']) ? json_decode($categoryArray['additional_data'], true) : $categoryArray['additional_data'];
+
                     if (
                         isset(json_decode($categoryDB->additional_data)->locale_specific)
                         && isset(((array) json_decode($categoryDB->additional_data)->locale_specific)[core()->getRequestedLocaleCode()])

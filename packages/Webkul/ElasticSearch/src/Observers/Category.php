@@ -17,12 +17,12 @@ class Category
 
     public function __construct()
     {
-        $this->indexPrefix = env('ELASTICSEARCH_INDEX_PREFIX') ? env('ELASTICSEARCH_INDEX_PREFIX') : env('APP_NAME');
+        $this->indexPrefix = config('elasticsearch.prefix') ? config('elasticsearch.prefix') : config('app.name');
     }
 
     public function created(Categories $category)
     {
-        if (env('ELASTICSEARCH_ENABLED', false)) {
+        if (config('elasticsearch.connection')) {
             try {
                 Elasticsearch::index([
                     'index' => strtolower($this->indexPrefix.'_categories'),
@@ -41,7 +41,7 @@ class Category
 
     public function updated(Categories $category)
     {
-        if (env('ELASTICSEARCH_ENABLED', false)) {
+        if (config('elasticsearch.connection')) {
             try {
                 Elasticsearch::index([
                     'index' => strtolower($this->indexPrefix.'_categories'),
@@ -60,7 +60,7 @@ class Category
 
     public function deleted(Categories $category)
     {
-        if (env('ELASTICSEARCH_ENABLED', false)) {
+        if (config('elasticsearch.connection')) {
             try {
                 Elasticsearch::delete([
                     'index' => strtolower($this->indexPrefix.'_categories'),
