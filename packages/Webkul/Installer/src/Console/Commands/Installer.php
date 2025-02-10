@@ -490,7 +490,7 @@ class Installer extends Command
 
         config([
             'elasticsearch.connection'                => $this->getEnvAtRuntime('ELASTICSEARCH_CONNECTION'),
-            'enabled'                                 => $this->getEnvAtRuntime('ELASTICSEARCH_ENABLED'),
+            'elasticsearch.enabled'                   => $this->getEnvAtRuntime('ELASTICSEARCH_ENABLED'),
             'elasticsearch.prefix'                    => $elasticsearchPrefix,
             'elasticsearch.connections.default.hosts' => [$this->getEnvAtRuntime('ELASTICSEARCH_HOST')],
             'elasticsearch.connections.default.user'  => $this->getEnvAtRuntime('ELASTICSEARCH_USER'),
