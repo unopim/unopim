@@ -412,16 +412,42 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
     }
 
     /**
+     * Get attribute filter type
+     */
+    public function getFilterType()
+    {
+        $filterType = 'string';
+
+        switch ($this->type) {
+            case self::BOOLEAN_FIELD_TYPE:
+                $filterType = 'boolean';
+                break;
+            case self::DATETIME_FIELD_TYPE:
+                $filterType = 'datetime_range';
+                break;
+            case self::DATE_FIELD_TYPE:
+                $filterType = 'date_range';
+                break;
+            case self::SELECT_FIELD_TYPE:
+            case self::MULTISELECT_FIELD_TYPE:
+                $filterType = 'dropdown';
+                break;
+        }
+
+        return $filterType;
+    }
+
+    /**
      * Get Attribute  scope
      */
-    public function getScope(): string
+    public function getScope(?string $locale = null, ?string $channel = null): string
     {
-        return ($this->value_per_locale && $this->value_per_channel) 
-        ? 'channel_locale_specific' 
-        : ($this->value_per_locale 
-            ? 'locale_specific' 
-            : ($this->value_per_channel 
-                ? 'channel_specific' 
+        return ($this->value_per_locale && $this->value_per_channel)
+        ? sprintf('channel_locale_specific.%s.%s', $channel, $locale)
+        : ($this->value_per_locale
+            ? sprintf('locale_specific.%s', $locale)
+            : ($this->value_per_channel
+                ? sprintf('channel_specific.%s', $channel)
                 : 'common'));
     }
 }

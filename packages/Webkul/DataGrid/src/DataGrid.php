@@ -48,6 +48,13 @@ abstract class DataGrid
     protected $columns = [];
 
     /**
+     * Custom columns.
+     *
+     * @var array
+     */
+    protected $customColumns = [];
+
+    /**
      * Actions.
      *
      * @var array
@@ -116,6 +123,14 @@ abstract class DataGrid
     public function getColumns(): array
     {
         return $this->columns;
+    }
+
+    /**
+     * Get custom columns.
+     */
+    public function getCustomColumns(): array
+    {
+        return $this->customColumns;
     }
 
     /**

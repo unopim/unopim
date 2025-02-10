@@ -5,18 +5,17 @@ namespace Webkul\Product\ElasticSearch\Filter;
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\ElasticSearch\Contracts\FilterInterface;
 use Webkul\ElasticSearch\Filter\Operators;
-use Webkul\ElasticSearch\QueryString;
 
 /**
- * Text filter for an Elasticsearch query
+ * Boolean filter for an Elasticsearch query
  */
-class TextFilter extends AbstractAttributeFilter implements FilterInterface
+class BooleanFilter extends AbstractAttributeFilter implements FilterInterface
 {
     /**
      * @param  array  $supportedFields
      */
     public function __construct(
-        array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[0], AttributeTypes::ATTRIBUTE_TYPES[4], AttributeTypes::ATTRIBUTE_TYPES[5]],
+        array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[3]],
         array $supportedOperators = [Operators::IN_LIST, Operators::CONTAINS]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;
@@ -50,15 +49,13 @@ class TextFilter extends AbstractAttributeFilter implements FilterInterface
 
                 $this->searchQueryBuilder::addFilter($clause);
                 break;
-
-            case Operators::CONTAINS:
-                $escapedValue = QueryString::escapeValue(current((array) $value));
+            case Operators::EQUALS:
                 $clause = [
-                    'query_string' => [
-                        'default_field' => $attributePath,
-                        'query'         => '*'.$escapedValue.'*',
+                    'terms' => [
+                        $attributePath => $value,
                     ],
                 ];
+
                 $this->searchQueryBuilder::addFilter($clause);
                 break;
         }

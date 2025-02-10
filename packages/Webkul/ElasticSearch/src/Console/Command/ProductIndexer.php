@@ -53,10 +53,10 @@ class ProductIndexer extends Command
                         )
                         || ! isset($elasticProduct[$product->id])
                     ) {
-                        
+
                         $productData = $product->toArray();
                         $productData['values'] = json_decode($productData['values'], true);
-                        
+
                         Elasticsearch::index([
                             'index' => $productIndex,
                             'id'    => $product->id,

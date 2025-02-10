@@ -60,7 +60,7 @@ class ElasticSearchServiceProvider extends ServiceProvider
     public function registerFacades(): void
     {
         $this->app->singleton('search-query-builder', function ($app) {
-            return new SearchQueryBuilder();
+            return new SearchQueryBuilder;
         });
     }
 }

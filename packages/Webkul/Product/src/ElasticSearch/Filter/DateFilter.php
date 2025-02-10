@@ -5,18 +5,17 @@ namespace Webkul\Product\ElasticSearch\Filter;
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\ElasticSearch\Contracts\FilterInterface;
 use Webkul\ElasticSearch\Filter\Operators;
-use Webkul\ElasticSearch\QueryString;
 
 /**
- * Text filter for an Elasticsearch query
+ * Date filter for an Elasticsearch query
  */
-class TextFilter extends AbstractAttributeFilter implements FilterInterface
+class DateFilter extends AbstractAttributeFilter implements FilterInterface
 {
     /**
      * @param  array  $supportedFields
      */
     public function __construct(
-        array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[0], AttributeTypes::ATTRIBUTE_TYPES[4], AttributeTypes::ATTRIBUTE_TYPES[5]],
+        array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[6], AttributeTypes::ATTRIBUTE_TYPES[7]],
         array $supportedOperators = [Operators::IN_LIST, Operators::CONTAINS]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;
@@ -38,27 +37,34 @@ class TextFilter extends AbstractAttributeFilter implements FilterInterface
             throw new \LogicException('The search query builder is not initialized in the filter.');
         }
 
+        $attributeCode = $attribute->code;
+
         $attributePath = $this->getAttributePath($attribute, $locale, $channel);
 
         switch ($operator) {
             case Operators::IN_LIST:
                 $clause = [
                     'terms' => [
-                        $attributePath => $value,
+                        $attributePath => array_map(function ($data) use ($attributeCode) {
+                            return $this->getFormattedDateTime($attributeCode, $data);
+                        }, $value),
                     ],
                 ];
 
                 $this->searchQueryBuilder::addFilter($clause);
                 break;
 
-            case Operators::CONTAINS:
-                $escapedValue = QueryString::escapeValue(current((array) $value));
+            case Operators::BETWEEN:
+                $values = array_values($value);
                 $clause = [
-                    'query_string' => [
-                        'default_field' => $attributePath,
-                        'query'         => '*'.$escapedValue.'*',
+                    'range' => [
+                        $attributePath => [
+                            'gte' => $this->getFormattedDateTime($attributeCode, $values[0]),
+                            'lte' => $this->getFormattedDateTime($attributeCode, $values[1]),
+                        ],
                     ],
                 ];
+
                 $this->searchQueryBuilder::addFilter($clause);
                 break;
         }

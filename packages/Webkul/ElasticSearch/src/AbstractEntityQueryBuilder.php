@@ -3,6 +3,7 @@
 namespace Webkul\ElasticSearch;
 
 use Webkul\ElasticSearch\Contracts\QueryBuilderInterface;
+use Webkul\ElasticSearch\Facades\SearchQuery;
 
 abstract class AbstractEntityQueryBuilder implements QueryBuilderInterface
 {
@@ -30,13 +31,12 @@ abstract class AbstractEntityQueryBuilder implements QueryBuilderInterface
      */
     public function getQueryBuilder()
     {
-        if (null === $this->qb) {
+        if ($this->qb === null) {
             throw new \LogicException('Query builder must be configured');
         }
 
         return $this->qb;
     }
-
 
     /**
      * {@inheritdoc}
@@ -61,7 +61,9 @@ abstract class AbstractEntityQueryBuilder implements QueryBuilderInterface
      */
     protected function addFieldFilter($filter, $field, $operator, $value, array $context)
     {
-        
+        $filter->setQueryBuilder(new SearchQuery);
+        $filter->addFieldFilter($field, $operator, $value, $context);
+
         return $this;
     }
 }

@@ -2,12 +2,12 @@
 
 namespace Webkul\Product\ElasticSearch\Cursor;
 
-use Webkul\ElasticSearch\Contracts\CursorFactoryInterface;
 use Webkul\Core\Facades\ElasticSearch;
-use Webkul\ElasticSearch\ResultCursor;
+use Webkul\ElasticSearch\Contracts\CursorFactoryInterface;
 use Webkul\ElasticSearch\ElasticsearchResult;
+use Webkul\ElasticSearch\ResultCursor;
 
-class ResultCursorFactory implements CursorFactoryInterface 
+class ResultCursorFactory implements CursorFactoryInterface
 {
     /**
      * {@inheritdoc}
@@ -21,7 +21,7 @@ class ResultCursorFactory implements CursorFactoryInterface
 
         $esQuery['sort'] = isset($esQuery['sort']) ? array_merge($esQuery['sort'], $sort) : $sort;
         $esQuery['stored_fields'] = [];
-        if (!isset($esQuery['query'])) {
+        if (! isset($esQuery['query'])) {
             $esQuery['query']['bool'] = new \stdClass;
         }
 
@@ -29,7 +29,7 @@ class ResultCursorFactory implements CursorFactoryInterface
             'index' => $options['index'],
             'body'  => $esQuery,
         ];
-        
+
         try {
             $results = Elasticsearch::search($requestParam);
         } catch (\Exception $e) {
@@ -46,15 +46,13 @@ class ResultCursorFactory implements CursorFactoryInterface
         ]);
 
         $totalCount = $totalResults['count'];
-        
+
         $ids = collect($results['hits']['hits'])->pluck('_id')->toArray();
 
         return new ResultCursor($ids, $totalCount, new ElasticsearchResult($results['hits']['hits'] ?? []));
     }
 
     /**
-     * @param array $options
-     *
      * @return array
      */
     protected static function resolveOptions(array $options)
@@ -62,11 +60,12 @@ class ResultCursorFactory implements CursorFactoryInterface
         $indexPrefix = env('ELASTICSEARCH_INDEX_PREFIX') ? env('ELASTICSEARCH_INDEX_PREFIX') : env('APP_NAME');
 
         $options['page'] = $options['page'] ?? 1;
-        $options['per_page'] = $options['per_page']?? 10;
+        $options['per_page'] = $options['per_page'] ?? 10;
         $options['sort'] = $options['sort'] ?? [];
         $options['filters'] = $options['filters'] ?? [];
 
         $options['index'] = strtolower($indexPrefix.'_products');
+
         return $options;
     }
 }

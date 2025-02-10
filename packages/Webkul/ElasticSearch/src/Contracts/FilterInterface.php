@@ -12,8 +12,7 @@ interface FilterInterface
     /**
      * This filter supports the operator
      *
-     * @param string $operator
-     *
+     * @param  string  $operator
      * @return bool
      */
     public function supportsOperator($operator);

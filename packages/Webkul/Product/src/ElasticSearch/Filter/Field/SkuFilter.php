@@ -1,50 +1,51 @@
 <?php
 
-namespace Webkul\Product\ElasticSearch\Filter;
+namespace Webkul\Product\ElasticSearch\Filter\Field;
 
-use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\ElasticSearch\Contracts\FilterInterface;
 use Webkul\ElasticSearch\Filter\Operators;
 use Webkul\ElasticSearch\QueryString;
 
 /**
- * Text filter for an Elasticsearch query
+ * Sku filter for an Elasticsearch query
  */
-class TextFilter extends AbstractAttributeFilter implements FilterInterface
+class SkuFilter extends AbstractFieldFilter implements FilterInterface
 {
-    /**
-     * @param  array  $supportedFields
-     */
+    const FIELD = 'sku';
+
     public function __construct(
-        array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[0], AttributeTypes::ATTRIBUTE_TYPES[4], AttributeTypes::ATTRIBUTE_TYPES[5]],
-        array $supportedOperators = [Operators::IN_LIST, Operators::CONTAINS]
+        array $supportedFields = [self::FIELD],
+        array $supportedOperators = [Operators::IN_LIST]
     ) {
-        $this->supportedAttributeTypes = $supportedAttributeTypes;
         $this->supportedOperators = $supportedOperators;
+        $this->supportedFields = $supportedFields;
+
     }
 
     /**
      * {@inheritdoc}
      */
-    public function addAttributeFilter(
-        $attribute,
-        $operator,
-        $value,
-        $locale = null,
-        $channel = null,
-        $options = []
-    ) {
+    public function addFieldFilter($field, $operator, $value, $locale = null, $channel = null, $options = [])
+    {
         if ($this->searchQueryBuilder === null) {
             throw new \LogicException('The search query builder is not initialized in the filter.');
         }
 
-        $attributePath = $this->getAttributePath($attribute, $locale, $channel);
+        if (! in_array($field, $this->supportedFields)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Unsupported field name for sku filter, only "%s" are supported, "%s" given',
+                    implode(',', $this->supportedFields),
+                    $field
+                )
+            );
+        }
 
         switch ($operator) {
             case Operators::IN_LIST:
                 $clause = [
                     'terms' => [
-                        $attributePath => $value,
+                        $field => $value,
                     ],
                 ];
 
@@ -55,7 +56,7 @@ class TextFilter extends AbstractAttributeFilter implements FilterInterface
                 $escapedValue = QueryString::escapeValue(current((array) $value));
                 $clause = [
                     'query_string' => [
-                        'default_field' => $attributePath,
+                        'default_field' => $field,
                         'query'         => '*'.$escapedValue.'*',
                     ],
                 ];

@@ -4,6 +4,16 @@ namespace Webkul\Product\Providers;
 
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
+use Webkul\Product\ElasticSearch\Filter\BooleanFilter;
+use Webkul\Product\ElasticSearch\Filter\DateFilter;
+use Webkul\Product\ElasticSearch\Filter\Field\DateTimeFilter;
+use Webkul\Product\ElasticSearch\Filter\Field\FamilyFilter;
+use Webkul\Product\ElasticSearch\Filter\Field\IdFilter;
+use Webkul\Product\ElasticSearch\Filter\Field\ParentFilter;
+use Webkul\Product\ElasticSearch\Filter\Field\SkuFilter;
+use Webkul\Product\ElasticSearch\Filter\Field\StatusFilter;
+use Webkul\Product\ElasticSearch\Filter\Field\TypeFilter;
+use Webkul\Product\ElasticSearch\Filter\TextFilter;
 use Webkul\Product\Facades\ProductImage as ProductImageFacade;
 use Webkul\Product\Facades\ProductVideo as ProductVideoFacade;
 use Webkul\Product\Facades\ValueSetter as ProductValueSetter;
@@ -12,7 +22,6 @@ use Webkul\Product\Observers\ProductObserver;
 use Webkul\Product\ProductImage;
 use Webkul\Product\ProductVideo;
 use Webkul\Product\ValueSetter;
-use Webkul\Product\ElasticSearch\Filter\TextFilter;
 
 class ProductServiceProvider extends ServiceProvider
 {
@@ -89,8 +98,22 @@ class ProductServiceProvider extends ServiceProvider
 
     protected function registerTags(): void
     {
+        // Register elasticSearch attribute type filters
         $this->app->tag([
             TextFilter::class,
+            BooleanFilter::class,
+            DateFilter::class,
         ], 'attribute.filters');
+
+        // Register elasticSearch product fields filters
+        $this->app->tag([
+            TypeFilter::class,
+            StatusFilter::class,
+            IdFilter::class,
+            FamilyFilter::class,
+            SkuFilter::class,
+            DateTimeFilter::class,
+            ParentFilter::class,
+        ], 'product.field.filters');
     }
 }

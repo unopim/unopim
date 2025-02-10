@@ -3,18 +3,18 @@
 namespace Webkul\Product\Query;
 
 use Illuminate\Support\Facades\DB;
-use Webkul\Attribute\Services\AttributeService; 
+use Webkul\Attribute\Services\AttributeService;
 use Webkul\ElasticSearch\AbstractEntityQueryBuilder;
-use Webkul\Product\ElasticSearch\Filter\FilterRegistry;
 use Webkul\ElasticSearch\Facades\SearchQuery;
+use Webkul\Product\ElasticSearch\Filter\FilterRegistry;
 
 class ProductQueryBuilder extends AbstractEntityQueryBuilder
 {
     public function __construct(
         protected AttributeService $attributeService,
         protected FilterRegistry $filterRegistry
-    ) {
-    }
+    ) {}
+
     /**
      * Prepare query builder.
      *
@@ -34,15 +34,26 @@ class ProductQueryBuilder extends AbstractEntityQueryBuilder
      */
     public function addFilter($field, $operator, $value, array $context = [])
     {
-        $attribute = $this->attributeService->findAttributeByCode($field);
-        
+        $attribute = null;
+        $filter = $this->filterRegistry->getFieldFilter($field, $operator);
+
         $filterType = 'field';
 
-        if (!$attribute) {
-            // $this->addFieldFilter($field, $operator, $value, $context);
+        if (! $filter) {
+            $attribute = $this->attributeService->findAttributeByCode($field);
+            if ($attribute) {
+                $filterType = 'attribute';
+                $filter = $this->filterRegistry->getAttributeFilter($attribute, $operator);
+            }
+        }
+
+        if (! $filter) {
+            throw new \Exception("No matching filter found for field: {$field}");
+        }
+
+        if (! $attribute) {
+            $this->addFieldFilter($filter, $field, $operator, $value, $context);
         } else {
-            $filterType = 'attribute';
-            $filter = $this->filterRegistry->getAttributeFilter($attribute, $operator);
             $this->addAttributeFilter($filter, $attribute, $operator, $value, $context);
         }
 
@@ -51,7 +62,7 @@ class ProductQueryBuilder extends AbstractEntityQueryBuilder
             'operator' => $operator,
             'value'    => $value,
             'context'  => $context,
-            'type'     => $filterType
+            'type'     => $filterType,
         ];
 
         return $this;
@@ -68,10 +79,10 @@ class ProductQueryBuilder extends AbstractEntityQueryBuilder
         array $context
     ) {
         $locale = $attribute->value_per_locale ? $context['locale'] : null;
-        $scope = $attribute->value_per_channel ? $context['scope'] : null;
+        $channel = $attribute->value_per_channel ? $context['channel'] : null;
 
-        $filter->setQueryBuilder(new SearchQuery());
-        $filter->addAttributeFilter($attribute, $operator, $value, $locale, $scope, $context);
+        $filter->setQueryBuilder(new SearchQuery);
+        $filter->addAttributeFilter($attribute, $operator, $value, $locale, $channel, $context);
 
         return $this;
     }

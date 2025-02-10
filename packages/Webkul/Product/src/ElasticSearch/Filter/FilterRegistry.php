@@ -2,9 +2,8 @@
 
 namespace Webkul\Product\ElasticSearch\Filter;
 
-use Webkul\Attribute\Services\AttributeService; 
-use Webkul\Product\Contracts\FilterRegistryInterface;
 use Illuminate\Contracts\Container\Container;
+use Webkul\Product\Contracts\FilterRegistryInterface;
 
 class FilterRegistry implements FilterRegistryInterface
 {
@@ -15,6 +14,7 @@ class FilterRegistry implements FilterRegistryInterface
     public function __construct(Container $app)
     {
         $this->attributeFilters = collect($app->tagged('attribute.filters'));
+        $this->fieldFilters = collect($app->tagged('product.field.filters'));
     }
 
     /**
@@ -52,11 +52,11 @@ class FilterRegistry implements FilterRegistryInterface
      */
     public function getFieldFilter($field, $operator)
     {
-        // foreach ($this->fieldFilters as $filter) {
-        //     if ($filter->supportsField($field) && $filter->supportsOperator($operator)) {
-        //         return $filter;
-        //     }
-        // }
+        foreach ($this->fieldFilters as $filter) {
+            if ($filter->supportsField($field)) {
+                return $filter;
+            }
+        }
 
         return null;
     }

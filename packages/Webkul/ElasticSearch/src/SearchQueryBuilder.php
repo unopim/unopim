@@ -33,7 +33,6 @@ class SearchQueryBuilder
     /**
      * Adds a must_not clause to the query
      *
-     * @param array $clause
      *
      * @return SearchQueryBuilder
      */
@@ -47,7 +46,6 @@ class SearchQueryBuilder
     /**
      * Adds a filter clause to the query
      *
-     * @param array $clause
      *
      * @return SearchQueryBuilder
      */
@@ -94,7 +92,6 @@ class SearchQueryBuilder
      * was (A = 1 || A = 2) && (B = 1 || B = 2)
      *
      *
-     * @param array $clause
      *
      * @return SearchQueryBuilder
      */
@@ -108,7 +105,6 @@ class SearchQueryBuilder
     /**
      * Adds a sort clause to the query
      *
-     * @param array $sort
      *
      * @return $this
      */
@@ -133,34 +129,30 @@ class SearchQueryBuilder
 
     /**
      * Returns an Elastic search Query
-     *
-     * @param array $source
-     *
-     * @return array
      */
     public function getQuery(array $source = []): array
     {
 
         $searchQuery = [];
 
-        if (!empty($this->filterClauses)) {
+        if (! empty($this->filterClauses)) {
             $searchQuery['query']['constant_score']['filter']['bool']['filter'] = $this->filterClauses;
         }
 
-        if (!empty($this->mustNotClauses)) {
+        if (! empty($this->mustNotClauses)) {
             $searchQuery['query']['constant_score']['filter']['bool']['must_not'] = $this->mustNotClauses;
         }
 
-        if (!empty($this->shouldClauses)) {
+        if (! empty($this->shouldClauses)) {
             $searchQuery['query']['constant_score']['filter']['bool']['should'] = $this->shouldClauses;
             $searchQuery['query']['constant_score']['filter']['bool']['minimum_should_match'] = 1;
         }
 
-        if (!empty($this->sortClauses)) {
+        if (! empty($this->sortClauses)) {
             $searchQuery['sort'] = $this->sortClauses;
         }
 
-        if (!empty($this->aggsClauses)) {
+        if (! empty($this->aggsClauses)) {
             $searchQuery['aggs'] = $this->aggsClauses;
         }
 

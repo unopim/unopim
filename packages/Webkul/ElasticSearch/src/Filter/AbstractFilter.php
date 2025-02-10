@@ -2,8 +2,9 @@
 
 namespace Webkul\ElasticSearch\Filter;
 
+use Carbon\Carbon;
+use Carbon\Exceptions\InvalidFormatException;
 use Webkul\ElasticSearch\Contracts\FilterInterface;
-
 use Webkul\ElasticSearch\Facades\SearchQuery;
 
 abstract class AbstractFilter implements FilterInterface
@@ -35,12 +36,31 @@ abstract class AbstractFilter implements FilterInterface
      */
     public function setQueryBuilder($searchQueryBuilder)
     {
-        if (!$searchQueryBuilder instanceof SearchQuery) {
+        if (! $searchQueryBuilder instanceof SearchQuery) {
             throw new \InvalidArgumentException(
                 sprintf('Query builder should be an instance of "%s"', SearchQuery::class)
             );
         }
 
         $this->searchQueryBuilder = $searchQueryBuilder;
+    }
+
+    protected function getFormattedDateTime($field, $value)
+    {
+        try {
+            $utcTimeZone = 'UTC';
+
+            $dateTime = Carbon::parse($value, $utcTimeZone);
+        } catch (InvalidFormatException $e) {
+            throw new \LogicException(
+                sprintf(
+                    'Invalid date format for field "%s", expected "Y-m-d H:i:s", but "%s" given',
+                    $field,
+                    $value
+                )
+            );
+        }
+
+        return $dateTime->setTimezone($utcTimeZone)->toIso8601String();
     }
 }
