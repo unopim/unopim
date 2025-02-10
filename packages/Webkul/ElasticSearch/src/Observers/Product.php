@@ -17,12 +17,12 @@ class Product
 
     public function __construct()
     {
-        $this->indexPrefix = config('elasticsearch.prefix') ? config('elasticsearch.prefix') : config('app.name');
+        $this->indexPrefix = config('elasticsearch.prefix');
     }
 
     public function created(Products $product)
     {
-        if (config('elasticsearch.connection')) {
+        if (config('elasticsearch.enabled')) {
             $productArray = $product->toArray();
 
             $productArray['status'] = ! isset($productArray['status']) ? 1 : $productArray['status'];
@@ -45,7 +45,7 @@ class Product
 
     public function updated(Products $product)
     {
-        if (config('elasticsearch.connection')) {
+        if (config('elasticsearch.enabled')) {
             try {
                 Elasticsearch::index([
                     'index' => strtolower($this->indexPrefix.'_products'),
@@ -64,7 +64,7 @@ class Product
 
     public function deleted(Products $product)
     {
-        if (config('elasticsearch.connection')) {
+        if (config('elasticsearch.enabled')) {
             try {
                 Elasticsearch::delete([
                     'index' => strtolower($this->indexPrefix.'_products'),

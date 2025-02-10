@@ -19,9 +19,9 @@ class Reindexer extends Command
 
     public function handle()
     {
-        if (config('elasticsearch.connection')) {
+        if (config('elasticsearch.enabled')) {
             if ($this->confirm('This action will clear all indexes for this project. Do you want to continue? (y/n) or', false)) {
-                $indexPrefix = config('elasticsearch.prefix') ? config('elasticsearch.prefix') : config('app.name');
+                $indexPrefix = config('elasticsearch.prefix');
 
                 $start = microtime(true);
 
@@ -80,7 +80,7 @@ class Reindexer extends Command
         } else {
             $this->warn('ELASTICSEARCH IS NOT ENABLED.');
 
-            Log::channel('elasticsearch')->warning('ELASTICSEARCH IS NOT ENABLE.');
+            Log::channel('elasticsearch')->warning('ELASTICSEARCH IS NOT ENABLED.');
         }
     }
 }

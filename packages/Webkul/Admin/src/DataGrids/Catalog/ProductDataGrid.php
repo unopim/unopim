@@ -252,7 +252,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     public function processRequest(): void
     {
-        if (! env('ELASTICSEARCH_ENABLED', false)) {
+        if (! config('elasticsearch.enabled')) {
             parent::processRequest();
 
             return;
@@ -264,7 +264,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             $params = $this->validatedRequest();
             $pagination = $params['pagination'];
 
-            $indexPrefix = config('elasticsearch.prefix') ? config('elasticsearch.prefix') : config('app.name');
+            $indexPrefix = config('elasticsearch.prefix');
 
             try {
                 $results = Elasticsearch::search([

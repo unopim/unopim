@@ -27,7 +27,7 @@ class ElasticSearch
      */
     protected function makeConnection(?string $name = null): Client
     {
-        if (! config('elasticsearch.connection')) {
+        if (! config('elasticsearch.enabled')) {
             throw new \Exception('ElasticSearch is disabled in the env file.');
         }
 
@@ -108,22 +108,7 @@ class ElasticSearch
      */
     public function getDefaultConnection(): string
     {
-        $connection = '';
-        if (
-            config('elasticsearch.connections.default.hosts')[0]
-            && ! config('elasticsearch.connections.api.key')
-        ) {
-            $connection = 'default';
-        } elseif (
-            config('elasticsearch.connections.default.hosts')[0]
-            && config('elasticsearch.connections.api.key')
-        ) {
-            $connection = 'api';
-        } elseif (config('elasticsearch.connections.cloud.id')) {
-            $connection = 'cloud';
-        }
-
-        return $connection;
+        return config('elasticsearch.connection');
     }
 
     /**

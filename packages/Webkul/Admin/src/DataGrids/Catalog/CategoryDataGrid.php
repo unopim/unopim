@@ -155,7 +155,7 @@ class CategoryDataGrid extends DataGrid
      */
     public function processRequest(): void
     {
-        if (! env('ELASTICSEARCH_ENABLED', false)) {
+        if (! config('elasticsearch.enabled')) {
             parent::processRequest();
 
             return;
@@ -165,7 +165,7 @@ class CategoryDataGrid extends DataGrid
             $params = $this->validatedRequest();
             $pagination = $params['pagination'];
 
-            $indexPrefix = config('elasticsearch.prefix') ? config('elasticsearch.prefix') : config('app.name');
+            $indexPrefix = config('elasticsearch.prefix');
 
             $results = Elasticsearch::search([
                 'index' => strtolower($indexPrefix.'_categories'),

@@ -323,7 +323,17 @@ class Installer extends Command
     protected function askForElasticSearchDetails()
     {
         $elasticSearchDetails = [
-            'ELASTICSEARCH_ENABLED' => 'true',
+            'ELASTICSEARCH_ENABLED' => select(
+                label: 'Do you want to enable Elastic Search?',
+                options: ['yes', 'no'],
+                default: env('ELASTICSEARCH_ENABLED', 'false')
+            ) === 'yes' ? 'true' : 'false',
+
+            'ELASTICSEARCH_CONNECTION' => select(
+                label: 'Please select the Elastic Search connection',
+                options: ['default', 'api', 'cloud'],
+                default: env('ELASTICSEARCH_CONNECTION', 'default') ?: 'default'
+            ),
 
             'ELASTICSEARCH_HOST' => text(
                 label: 'Please enter the Elastic Search host',
@@ -479,7 +489,8 @@ class Installer extends Command
         $elasticsearchPrefix = $this->getEnvAtRuntime('ELASTICSEARCH_INDEX_PREFIX') != '' ? $this->getEnvAtRuntime('ELASTICSEARCH_INDEX_PREFIX') : $this->getEnvAtRuntime('APP_NAME');
 
         config([
-            'elasticsearch.connection'                => $this->getEnvAtRuntime('ELASTICSEARCH_ENABLED'),
+            'elasticsearch.connection'                => $this->getEnvAtRuntime('ELASTICSEARCH_CONNECTION'),
+            'enabled'                                 => $this->getEnvAtRuntime('ELASTICSEARCH_ENABLED'),
             'elasticsearch.prefix'                    => $elasticsearchPrefix,
             'elasticsearch.connections.default.hosts' => [$this->getEnvAtRuntime('ELASTICSEARCH_HOST')],
             'elasticsearch.connections.default.user'  => $this->getEnvAtRuntime('ELASTICSEARCH_USER'),
