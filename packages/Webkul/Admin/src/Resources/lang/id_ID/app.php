@@ -504,6 +504,7 @@ return [
                     'inactive'       => 'Tidak aktif',
                     'name'           => 'Nama tampilan',
                     'no-of-products' => 'Jumlah produk',
+                    'category-name'  => 'Nama',
                     'position'       => 'Posisi',
                     'status'         => 'Terlihat di menu',
                     'update-status'  => 'Memperbaharui status',
