@@ -261,8 +261,9 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $requestedParams = $this->validatedRequest();
 
         try {
-            $params = $this->validatedRequest();
-            $pagination = $params['pagination'];
+            $pagination = $requestedParams['pagination'] ?? [];
+            $pagination['per_page'] ??= $this->itemsPerPage;
+            $pagination['page'] ??= 1;
 
             $indexPrefix = config('elasticsearch.prefix');
 
@@ -273,10 +274,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                         'from'          => ($pagination['page'] * $pagination['per_page']) - $pagination['per_page'],
                         'size'          => $pagination['per_page'],
                         'stored_fields' => [],
+                        'sort'          => $this->getElasticSort($requestedParams['sort'] ?? []),
                         'query'         => [
-                            'bool' => $this->getElasticFilters($params['filters'] ?? []) ?: new \stdClass,
+                            'bool' => $this->getElasticFilters($requestedParams['filters'] ?? []) ?: new \stdClass,
                         ],
-                        'sort'          => $this->getElasticSort($params['sort'] ?? []),
                     ],
                 ]);
             } catch (\Exception $e) {
@@ -287,10 +288,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                             'from'          => ($pagination['page'] * $pagination['per_page']) - $pagination['per_page'],
                             'size'          => $pagination['per_page'],
                             'stored_fields' => [],
+                            'sort'          => $this->sortAttributeFamilyByKey($requestedParams['sort'] ?? []),
                             'query'         => [
-                                'bool' => $this->getElasticFilters($params['filters'] ?? []) ?: new \stdClass,
+                                'bool' => $this->getElasticFilters($requestedParams['filters'] ?? []) ?: new \stdClass,
                             ],
-                            'sort'          => $this->sortAttributeFamilyByKey($params['sort'] ?? []),
                         ],
                     ]);
                 } else {
@@ -299,15 +300,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                     throw $e;
                 }
             }
-
-            $totalResults = Elasticsearch::count([
-                'index' => strtolower($indexPrefix.'_products'),
-                'body'  => [
-                    'query' => [
-                        'bool' => $this->getElasticFilters($params['filters'] ?? []) ?: new \stdClass,
-                    ],
-                ],
-            ]);
 
             $ids = collect($results['hits']['hits'])->pluck('_id')->toArray();
 
@@ -324,7 +316,14 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 return;
             }
 
-            $total = $totalResults['count'];
+            $total = Elasticsearch::count([
+                'index' => strtolower($indexPrefix.'_products'),
+                'body'  => [
+                    'query' => [
+                        'bool' => $this->getElasticFilters($requestedParams['filters'] ?? []) ?: new \stdClass,
+                    ],
+                ],
+            ])['count'];
 
             $this->paginator = new LengthAwarePaginator(
                 $total ? $this->queryBuilder->get() : [],

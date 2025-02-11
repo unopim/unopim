@@ -96,9 +96,8 @@ class ElasticSearch
         try {
             $response = $client->indices()->putSettings($params);
 
-            Log::error("Max result window updated successfully.\n");
+            Log::info("Max result window updated successfully.\n");
         } catch (\Exception $e) {
-
             Log::error('Error updating max_result_window: '.$e->getMessage()."\n");
         }
     }
