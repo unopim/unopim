@@ -502,6 +502,7 @@ return [
                     'id'             => 'ID',
                     'inactive'       => 'Inactive',
                     'name'           => 'Display Name',
+                    'category-name'  => 'Name',
                     'no-of-products' => 'Number of Products',
                     'position'       => 'Position',
                     'status'         => 'Visible In Menu',
