@@ -40,7 +40,7 @@
                 >
                     <div
                         class="flex items-center select-none"
-                        v-for="(columnGroup, index) in ['name', 'code']"
+                        v-for="(columnGroup, index) in ['display_name', 'category_name', 'code']"
                     >
                         @if ($hasPermission)
                             <label
@@ -144,8 +144,10 @@
                                 </div>
                         @endif
 
-                        <p v-text="record.name" class="text-nowrap overflow-hidden text-ellipsis hover:text-wrap"></p>
+                        <p v-text="record.display_name" class="text-nowrap overflow-hidden text-ellipsis hover:text-wrap"></p>
                     </div>
+
+                    <p v-text="record.category_name" class="text-nowrap overflow-hidden text-ellipsis hover:text-wrap"></p>
 
                     <p v-text="record.code"></p>
 
