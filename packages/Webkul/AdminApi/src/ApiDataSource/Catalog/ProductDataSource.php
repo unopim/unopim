@@ -17,6 +17,8 @@ class ProductDataSource extends ApiDataSource
      */
     protected $sortColumn = 'products.id';
 
+    const EQUALOPERATOR = '=';
+
     /**
      * Create a new DataSource instance.
      *
@@ -84,6 +86,34 @@ class ProductDataSource extends ApiDataSource
         }
 
         return $this->normalizeProduct($product);
+    }
+
+    /**
+     * Delete category field by its code.
+     */
+    public function deleteByCode(string $code)
+    {
+        $this->prepareForSingleData();
+        $requestedFilters = [
+            'sku' => [
+                [
+                    'operator' => self::EQUALOPERATOR,
+                    'value'    => $code,
+                ],
+            ],
+        ];
+        $product = $this->processRequestedFilters($requestedFilters)->first();
+        if (! $product) {
+            throw new ModelNotFoundException(
+                trans('admin::app.catalog.products.product-not-found', ['sku' => (string) $code])
+            );
+        }
+        $product->delete();
+
+        return [
+            'message' => trans('admin::app.catalog.products.delete-success'),
+            'sku'     => $product['sku'],
+        ];
     }
 
     public function getSuperAttributes($data)

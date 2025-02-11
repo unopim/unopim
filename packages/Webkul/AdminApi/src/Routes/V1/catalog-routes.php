@@ -61,6 +61,8 @@ Route::group([
         Route::get('{code}', 'get')->name('admin.api.categories.get');
         Route::post('', 'store')->name('admin.api.categories.store');
         Route::put('{code}', 'update')->name('admin.api.categories.update');
+        Route::delete('{code}', 'delete')->name('admin.api.categories.delete');
+        Route::patch('{code}', 'partialUpdate')->name('admin.api.categories.patch');
     });
 
     /** Media API Routes */
@@ -82,6 +84,9 @@ Route::group([
         Route::get('{code}', 'get')->name('admin.api.products.get');
         Route::post('', 'store')->name('admin.api.products.store');
         Route::put('{code}', 'update')->name('admin.api.products.update');
+        Route::delete('{code}', 'delete')->name('admin.api.products.delete');
+        Route::patch('{sku}', 'partialUpdate')->name('admin.api.products.patch');
+
     });
 
     /** Configurable Products API Routes */
@@ -90,5 +95,6 @@ Route::group([
         Route::get('{code}', 'get')->name('admin.api.configrable_products.get');
         Route::post('', 'store')->name('admin.api.configrable_products.store');
         Route::put('{code}', 'update')->name('admin.api.configrable_products.update');
+        Route::patch('{code}', 'partialUpdate')->name('admin.api.configrable_products.patch');
     });
 });
