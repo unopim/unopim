@@ -34,6 +34,14 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
 
     const CHECKBOX_FIELD_TYPE = 'checkbox';
 
+    const FILE_ATTRIBUTE_TYPE = 'file';
+
+    const IMAGE_ATTRIBUTE_TYPE = 'image';
+
+    const PRICE_ATTRIBUTE_TYPE = 'price';
+
+    const GALLERY_ATTRIBUTE_TYPE = 'gallery';
+
     public $translatedAttributes = ['name'];
 
     protected $historyTags = ['attribute'];
@@ -416,8 +424,6 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
      */
     public function getFilterType()
     {
-        $filterType = 'string';
-
         switch ($this->type) {
             case self::BOOLEAN_FIELD_TYPE:
                 $filterType = 'boolean';
@@ -431,6 +437,16 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
             case self::SELECT_FIELD_TYPE:
             case self::MULTISELECT_FIELD_TYPE:
                 $filterType = 'dropdown';
+                break;
+            case self::IMAGE_ATTRIBUTE_TYPE:
+            case self::GALLERY_ATTRIBUTE_TYPE:
+                $filterType = 'image';
+                break;
+            case self::PRICE_FIELD_TYPE:
+                $filterType = 'price';
+                break;
+            default:
+                $filterType = 'string';
                 break;
         }
 
@@ -449,5 +465,22 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
             : ($this->value_per_channel
                 ? sprintf('channel_specific.%s', $channel)
                 : 'common'));
+    }
+
+    /**
+     * Get the options by option code and locale.
+     */
+    public function getOptionsByCodeAndLocale($codes, $locale = null)
+    {
+        $locale = $locale ?? core()->getRequestedLocaleCode();
+
+        return $this->options()
+            ->leftJoin('attribute_option_translations as aot', function ($join) use ($locale) {
+                $join->on('aot.attribute_option_id', '=', 'attribute_options.id')
+                    ->where('aot.locale', $locale);
+            })
+            ->whereIn('attribute_options.code', $codes)
+            ->select('attribute_options.*', 'aot.label')
+            ->get();
     }
 }

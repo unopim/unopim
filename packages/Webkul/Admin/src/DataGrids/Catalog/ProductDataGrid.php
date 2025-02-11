@@ -20,6 +20,7 @@ use Webkul\Product\ElasticSearch\Cursor\ResultCursorFactory;
 use Webkul\Product\Normalizer\ProductAttributeValuesNormalizer;
 use Webkul\Product\Query\ProductQueryBuilder;
 use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Services\AttributeValueNormalizer;
 use Webkul\Product\Type\AbstractType;
 
 class ProductDataGrid extends DataGrid implements ExportableInterface
@@ -40,6 +41,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
     protected $sortColumn = 'updated_at';
 
+    protected $dynamicColumns = ['gallery3', 'multiselect', 'color', 'size',  'datetime', 'price'];
+
     /**
      * Constructor for the class.
      *
@@ -51,7 +54,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         protected ChannelRepository $channelRepository,
         protected ProductAttributeValuesNormalizer $valuesNormalizer,
         protected AttributeService $attributeService,
-        protected ProductQueryBuilder $productQueryBuilder
+        protected ProductQueryBuilder $productQueryBuilder,
+        protected AttributeValueNormalizer $attributeValueNormalizer,
     ) {}
 
     /**
@@ -206,19 +210,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
     public function prepareAttributeColumns()
     {
-        $this->addAttributeColumn([
-            'index'      => 'image1',
-            'label'      => trans('Images'),
-            'type'       => 'string',
-            'searchable' => false,
-            'filterable' => false,
-            'sortable'   => false,
-            'closure'    => function ($value, $row) {
-                return '<img src="'.Storage::url($value).'" alt="Image" style="width: 50px; height: 50px; object-fit: cover;">';
-            },
-        ]);
-
-        foreach (['datetime', 'product_number', 'color', 'size', 'collection', 'stock', 'brand', 'vendor', 'weight', 'height', 'width', 'length', 'cost', 'price'] as $attribute) {
+        foreach ($this->dynamicColumns as $attribute) {
             $attribute = $this->attributeService->findAttributeByCode($attribute);
             if (! $attribute) {
                 continue;
@@ -245,6 +237,21 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                         'value' => false,
                     ],
                 ];
+            }
+
+            if ($filterType == 'price') {
+                $column['options'] = array_map(function ($currency) {
+                    return [
+                        'label' => ! empty($currency->name) ? $currency->name : '['.$currency->code.']',
+                        'value' => $currency->code,
+                    ];
+                }, core()->getAllActiveCurrencies()->all());
+            }
+
+            if ($filterType == 'image') {
+                $column['closure'] = function ($value, $row) {
+                    return '<img src="'.Storage::url(is_array($value) ? $value[0] : $value).'" alt="Image" style="width: 50px; height: 50px; object-fit: cover;">';
+                };
             }
 
             if ($filterType == 'dropdown') {
@@ -468,6 +475,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 $operator = Operators::BETWEEN;
                 $value = current($value);
                 break;
+            case 'price':
+                $operator = Operators::EQUALS;
+                $value = current($value);
+                break;
             default:
                 $operator = Operators::IN_LIST;
                 break;
@@ -499,6 +510,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'attribute_family' => 'attribute_family_id',
             'product_id'       => 'id',
             'updated_at'       => 'updated_at',
+            'status'           => 'status',
         ];
 
         $sort = $sortMapping[$sort] ?? $this->getElasticRawValuesSort($sort);
@@ -749,7 +761,12 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     protected function processRawValues(object &$record): void
     {
         $rawValues = json_decode($record->raw_values, true);
-        $values = $this->formatProductValues($rawValues, core()->getRequestedLocaleCode(), core()->getRequestedChannelCode());
+        $values = $this->attributeValueNormalizer->normalize($rawValues, [
+            'locale'                 => core()->getRequestedLocaleCode(),
+            'channel'                => core()->getRequestedChannelCode(),
+            'format'                 => 'datagrid',
+            'processed_on_attribute' => $this->dynamicColumns,
+        ]);
 
         unset($record->raw_values);
 

@@ -36,14 +36,13 @@ class PriceFilter extends AbstractAttributeFilter implements FilterInterface
         if ($this->searchQueryBuilder === null) {
             throw new \LogicException('The search query builder is not initialized in the filter.');
         }
-
         $attributePath = $this->getAttributePath($attribute, $locale, $channel);
 
         switch ($operator) {
-            case Operators::IN_LIST:
+            case Operators::EQUALS:
                 $clause = [
-                    'terms' => [
-                        $attributePath => $value,
+                    'term' => [
+                        sprintf('%s.%s', $attributePath, $value[0]) => $value[1],
                     ],
                 ];
 

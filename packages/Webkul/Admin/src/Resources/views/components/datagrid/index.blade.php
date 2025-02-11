@@ -480,7 +480,41 @@
                                 }
 
                                 break;
+                            case 'price':
+                                let {
+                                    field
+                                } = additional;
 
+                                if (appliedColumn) {
+                                    let appliedValue = appliedColumn.value[0];
+
+                                    if (field.name == 'currency') {
+                                        appliedValue[0] = requestedValue;
+                                    }
+
+                                    if (field.name == 'amount') {
+                                        appliedValue[1] = requestedValue;
+                                    }
+                                    
+                                    appliedColumn.value = [appliedValue];
+                                } else {
+                                    let appliedValue = [column.options[0]?.value, ''];
+
+                                    if (field.name == 'currency') {
+                                        appliedValue[0] = requestedValue;
+                                    }
+                                    
+                                    if (field.name == 'amount') {
+                                        appliedValue[1] = requestedValue;
+                                    }
+
+                                    this.applied.filters.columns.push({
+                                        index: column.index,
+                                        value: [appliedValue]
+                                    });
+                                }
+
+                                break;
                             default:
                                 if (appliedColumn) {
                                     appliedColumn.value.push(requestedValue);

@@ -13,6 +13,7 @@ use Webkul\Product\ElasticSearch\Filter\Field\ParentFilter;
 use Webkul\Product\ElasticSearch\Filter\Field\SkuFilter;
 use Webkul\Product\ElasticSearch\Filter\Field\StatusFilter;
 use Webkul\Product\ElasticSearch\Filter\Field\TypeFilter;
+use Webkul\Product\ElasticSearch\Filter\PriceFilter;
 use Webkul\Product\ElasticSearch\Filter\TextFilter;
 use Webkul\Product\Facades\ProductImage as ProductImageFacade;
 use Webkul\Product\Facades\ProductVideo as ProductVideoFacade;
@@ -103,6 +104,7 @@ class ProductServiceProvider extends ServiceProvider
             TextFilter::class,
             BooleanFilter::class,
             DateFilter::class,
+            PriceFilter::class,
         ], 'attribute.filters');
 
         // Register elasticSearch product fields filters
