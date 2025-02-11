@@ -126,6 +126,67 @@ it('should update the user with image', function () {
     ]);
 });
 
+it('should not remove image when user is updated', function () {
+    $this->loginAsAdmin();
+
+    $admin = Admin::factory()->create([
+        'email'        => 'update@example.com',
+        'password'     => Hash::make('password'),
+        'ui_locale_id' => 1,
+        'image'        => 'user/2/image.jpg',
+    ]);
+
+    $response = $this->put(route('admin.settings.users.update'), [
+        'id'           => $admin->id,
+        'email'        => 'update@example.com',
+        'name'         => 'testadmin',
+        'status'       => 1,
+        'role_id'      => 1,
+        'timezone'     => 'Asia/Kolkata',
+        'ui_locale_id' => 1,
+        'password'     => '',
+        'image'        => 'user/2/image.jpg',
+    ]);
+
+    $response->assertStatus(200);
+
+    $this->assertDatabaseHas($this->getFullTableName(Admin::class), [
+        'name'  => 'testadmin',
+        'email' => 'update@example.com',
+        'image' => 'user/2/image.jpg',
+    ]);
+});
+
+it('should remove image if image is removed', function () {
+    $this->loginAsAdmin();
+
+    $admin = Admin::factory()->create([
+        'email'        => 'update@example.com',
+        'password'     => Hash::make('password'),
+        'ui_locale_id' => 1,
+        'image'        => 'user/2/image2.jpg',
+    ]);
+
+    $response = $this->put(route('admin.settings.users.update'), [
+        'id'           => $admin->id,
+        'email'        => 'update@example.com',
+        'name'         => 'testadmin',
+        'status'       => 1,
+        'role_id'      => 1,
+        'timezone'     => 'Asia/Kolkata',
+        'ui_locale_id' => 1,
+        'password'     => '',
+    ]);
+
+    $response->assertStatus(200);
+
+    $this->assertDatabaseHas($this->getFullTableName(Admin::class), [
+        'name'  => 'testadmin',
+        'email' => 'update@example.com',
+        'image' => null,
+    ]);
+});
+
 it('should delete the user', function () {
     $this->loginAsAdmin();
 
