@@ -28,7 +28,7 @@ class Product
             $productArray['status'] = ! isset($productArray['status']) ? 1 : $productArray['status'];
 
             try {
-                Elasticsearch::index([
+                ElasticSearch::index([
                     'index' => strtolower($this->indexPrefix.'_products'),
                     'id'    => $product->id,
                     'body'  => $productArray,
@@ -47,7 +47,7 @@ class Product
     {
         if (config('elasticsearch.enabled')) {
             try {
-                Elasticsearch::index([
+                ElasticSearch::index([
                     'index' => strtolower($this->indexPrefix.'_products'),
                     'id'    => $product->id,
                     'body'  => $product->toArray(),
@@ -66,7 +66,7 @@ class Product
     {
         if (config('elasticsearch.enabled')) {
             try {
-                Elasticsearch::delete([
+                ElasticSearch::delete([
                     'index' => strtolower($this->indexPrefix.'_products'),
                     'id'    => $product->id,
                 ]);

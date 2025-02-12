@@ -39,7 +39,7 @@ class ProductIndexer extends Command
                 Log::channel('elasticsearch')->info('No product found in the database. Attempting to delete the index if it exists:-');
 
                 try {
-                    Elasticsearch::indices()->delete(['index' => $productIndex]);
+                    ElasticSearch::indices()->delete(['index' => $productIndex]);
                     $this->info($productIndex.' index deleted successfully.');
 
                     Log::channel('elasticsearch')->info($productIndex.' index deleted successfully.');
@@ -115,7 +115,7 @@ class ProductIndexer extends Command
                     }
 
                     if ($productsToUpdate) {
-                        Elasticsearch::bulk($productsToUpdate);
+                        ElasticSearch::bulk($productsToUpdate);
                     }
                 }
             }
@@ -128,7 +128,7 @@ class ProductIndexer extends Command
 
             $this->info('Checking for stale products to delete...');
 
-            $elasticProductIds = collect(Elasticsearch::search([
+            $elasticProductIds = collect(ElasticSearch::search([
                 'index' => $productIndex,
                 'body'  => [
                     '_source' => false,
@@ -163,7 +163,7 @@ class ProductIndexer extends Command
                     }
 
                     if ($deleteProducts) {
-                        Elasticsearch::bulk($deleteProducts);
+                        ElasticSearch::bulk($deleteProducts);
                     }
                 }
 
@@ -193,7 +193,7 @@ class ProductIndexer extends Command
         $elasticProduct = [];
 
         try {
-            $response = Elasticsearch::search([
+            $response = ElasticSearch::search([
                 'index' => $productIndex,
                 'body'  => [
                     '_source' => ['updated_at'],

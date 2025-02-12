@@ -30,7 +30,7 @@ class Reindexer extends Command
                 $categoryIndex = strtolower($indexPrefix.'_categories');
 
                 try {
-                    Elasticsearch::indices()->delete(['index' => $productIndex]);
+                    ElasticSearch::indices()->delete(['index' => $productIndex]);
                     $this->info($productIndex.' index deleted successfully.');
 
                     Log::channel('elasticsearch')->info($productIndex.' index deleted successfully.');
@@ -51,7 +51,7 @@ class Reindexer extends Command
                 }
 
                 try {
-                    Elasticsearch::indices()->delete(['index' => $categoryIndex]);
+                    ElasticSearch::indices()->delete(['index' => $categoryIndex]);
                     $this->info($categoryIndex.' index deleted successfully.');
 
                     Log::channel('elasticsearch')->info($categoryIndex.' index deleted successfully.');

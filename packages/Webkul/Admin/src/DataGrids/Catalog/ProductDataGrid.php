@@ -268,7 +268,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             $indexPrefix = config('elasticsearch.prefix');
 
             try {
-                $results = Elasticsearch::search([
+                $results = ElasticSearch::search([
                     'index' => strtolower($indexPrefix.'_products'),
                     'body'  => [
                         'from'          => ($pagination['page'] * $pagination['per_page']) - $pagination['per_page'],
@@ -282,7 +282,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 ]);
             } catch (\Exception $e) {
                 if (str_contains($e->getMessage(), 'attribute_family_id')) {
-                    $results = Elasticsearch::search([
+                    $results = ElasticSearch::search([
                         'index' => strtolower($indexPrefix.'_products'),
                         'body'  => [
                             'from'          => ($pagination['page'] * $pagination['per_page']) - $pagination['per_page'],
@@ -316,7 +316,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 return;
             }
 
-            $total = Elasticsearch::count([
+            $total = ElasticSearch::count([
                 'index' => strtolower($indexPrefix.'_products'),
                 'body'  => [
                     'query' => [

@@ -24,7 +24,7 @@ class Category
     {
         if (config('elasticsearch.enabled')) {
             try {
-                Elasticsearch::index([
+                ElasticSearch::index([
                     'index' => strtolower($this->indexPrefix.'_categories'),
                     'id'    => $category->id,
                     'body'  => $category->toArray(),
@@ -43,7 +43,7 @@ class Category
     {
         if (config('elasticsearch.enabled')) {
             try {
-                Elasticsearch::index([
+                ElasticSearch::index([
                     'index' => strtolower($this->indexPrefix.'_categories'),
                     'id'    => $category->id,
                     'body'  => $category->toArray(),
@@ -62,7 +62,7 @@ class Category
     {
         if (config('elasticsearch.enabled')) {
             try {
-                Elasticsearch::delete([
+                ElasticSearch::delete([
                     'index' => strtolower($this->indexPrefix.'_categories'),
                     'id'    => $category->id,
                 ]);

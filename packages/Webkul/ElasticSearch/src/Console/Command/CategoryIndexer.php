@@ -76,7 +76,7 @@ class CategoryIndexer extends Command
                     }
 
                     if (isset($categoriesToUpdate['body']) && count($categoriesToUpdate['body']) === self::BATCH_SIZE) {
-                        Elasticsearch::bulk($categoriesToUpdate);
+                        ElasticSearch::bulk($categoriesToUpdate);
 
                         $categoriesToUpdate['body'] = [];
                     }
@@ -85,7 +85,7 @@ class CategoryIndexer extends Command
                 }
 
                 if (isset($categoriesToUpdate['body']) && count($categoriesToUpdate['body'])) {
-                    Elasticsearch::bulk($categoriesToUpdate);
+                    ElasticSearch::bulk($categoriesToUpdate);
                 }
 
                 $progressBar->finish();
@@ -97,7 +97,7 @@ class CategoryIndexer extends Command
 
                 $this->info('Checking for stale categories to delete...');
 
-                $elasticCategoryIds = collect(Elasticsearch::search([
+                $elasticCategoryIds = collect(ElasticSearch::search([
                     'index' => $categoryIndex,
                     'body'  => [
                         '_source' => false,
@@ -126,7 +126,7 @@ class CategoryIndexer extends Command
                         ];
 
                         if (isset($deleteCategories['body']) && count($deleteCategories['body']) === self::BATCH_SIZE) {
-                            Elasticsearch::bulk($deleteCategories);
+                            ElasticSearch::bulk($deleteCategories);
 
                             $deleteCategories['body'] = [];
                         }
@@ -135,7 +135,7 @@ class CategoryIndexer extends Command
                     }
 
                     if (isset($deleteCategories['body']) && count($deleteCategories['body'])) {
-                        Elasticsearch::bulk($deleteCategories);
+                        ElasticSearch::bulk($deleteCategories);
                     }
 
                     $deleteProgressBar->finish();
@@ -153,7 +153,7 @@ class CategoryIndexer extends Command
                 Log::channel('elasticsearch')->info('No category found in the database. Attempting to delete the index if it exists:-');
 
                 try {
-                    Elasticsearch::indices()->delete(['index' => $categoryIndex]);
+                    ElasticSearch::indices()->delete(['index' => $categoryIndex]);
                     $this->info($categoryIndex.' index deleted successfully.');
 
                     Log::channel('elasticsearch')->info($categoryIndex.' index deleted successfully.');
@@ -190,7 +190,7 @@ class CategoryIndexer extends Command
         $elasticCategory = [];
 
         try {
-            $response = Elasticsearch::search([
+            $response = ElasticSearch::search([
                 'index' => $categoryIndex,
                 'body'  => [
                     '_source' => ['updated_at'],
@@ -209,7 +209,7 @@ class CategoryIndexer extends Command
             }
 
             while (true) {
-                $response = Elasticsearch::scroll([
+                $response = ElasticSearch::scroll([
                     'scroll_id' => $scrollId,
                     'scroll'    => '10m',
                 ]);
@@ -224,7 +224,7 @@ class CategoryIndexer extends Command
             }
 
             try {
-                Elasticsearch::clearScroll([
+                ElasticSearch::clearScroll([
                     'scroll_id' => $scrollId,
                 ]);
             } catch (\Exception $e) {

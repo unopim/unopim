@@ -175,7 +175,7 @@ class CategoryDataGrid extends DataGrid
 
             $indexPrefix = config('elasticsearch.prefix');
 
-            $results = Elasticsearch::search([
+            $results = ElasticSearch::search([
                 'index' => strtolower($indexPrefix.'_categories'),
                 'body'  => [
                     'from'          => ($pagination['page'] * $pagination['per_page']) - $pagination['per_page'],
@@ -193,7 +193,7 @@ class CategoryDataGrid extends DataGrid
             $this->queryBuilder->whereIn('cat.id', $ids)
                 ->orderBy(DB::raw('FIELD('.DB::getTablePrefix().'cat.id, '.implode(',', $ids).')'));
 
-            $total = Elasticsearch::count([
+            $total = ElasticSearch::count([
                 'index' => strtolower($indexPrefix.'_categories'),
                 'body'  => [
                     'query' => [
