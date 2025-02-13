@@ -186,6 +186,53 @@
                     </p>
                 </div>
             </div>
+
+            <!-- sync -->
+            <div v-else-if="column.options.type === 'sync'">
+                <div class="flex items-center justify-between">
+                    <p
+                        class="text-sm font-medium leading-6 dark:text-white text-gray-800"
+                        v-text="column.label"
+                    >
+                    </p>
+
+                    <div
+                        class="flex items-center gap-x-1.5"
+                        @click="removeAppliedColumnAllValues(column.index)"
+                    >
+                        <p
+                            class="cursor-pointer text-xs font-medium leading-6 text-violet-700"
+                            v-if="hasAnyAppliedColumnValues(column.index)"
+                        >
+                            @lang('admin::app.components.datagrid.filters.custom-filters.clear-all')
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mb-2 mt-1.5">
+                    <v-datagrid-sync-dropdown
+                        :datagrid-id="available.id"
+                        :column="column"
+                        @select-option="filterPage($event, column)"
+                    >
+                    </v-datagrid-sync-dropdown>
+                </div>
+
+                <div class="mb-4 flex gap-2 flex-wrap">
+                    <p
+                        class="flex items-center rounded bg-violet-100 px-2 py-1 font-semibold text-violet-700"
+                        v-for="appliedColumnValue in getAppliedColumnValues(column.index)"
+                    >
+                        <span v-text="appliedColumnValue"></span>
+
+                        <span
+                            class="icon-cancel cursor-pointer text-lg text-violet-700 ltr:ml-1.5 rtl:mr-1.5 dark:!text-violet-700"
+                            @click="removeAppliedColumnValue(column.index, appliedColumnValue)"
+                        >
+                        </span>
+                    </p>
+                </div>
+            </div>
         </div>
 
         <!-- Date Range -->
@@ -273,7 +320,7 @@
         </div>
 
         <!-- Price -->
-        <div v-if="column.type === 'price'">
+        <div v-else-if="column.type === 'price'">
             <div class="flex items-center justify-between">
                     <p
                         class="text-sm font-medium leading-6 dark:text-white"
@@ -608,6 +655,41 @@
                             value: option.value
                         }
                     });
+                },
+            }
+        });
+    </script>
+
+    <script type="text/x-template" id="v-datagrid-sync-dropdown-template">
+        <x-admin::form.control-group.control
+            type="select"
+            ::ref="'filter_' + column.index" 
+            name="whitelist_attribute"
+            :label="trans('maker_checker::app.configuration.fields.whitelist_attribute')"
+            track-by="code"
+            label-by="label"
+            async="true"
+            ::list-route="column.options.route"
+            ::query-params="column.options.params"
+            @select-option="selectOption($event, column.index)"
+        />
+    </script>
+
+    <script type="module">
+        app.component('v-datagrid-sync-dropdown', {
+            template: '#v-datagrid-sync-dropdown-template',
+
+            props: ['datagridId', 'column'],
+            methods: {
+                selectOption(option, index) {
+                    this.searchedOptions = [];
+
+                    this.$emit('select-option', {
+                        target: {
+                            value: option.target.value.code
+                        }
+                    });
+                    this.$refs[`filter_${index}`].selectedValue = null;
                 },
             }
         });
