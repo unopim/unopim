@@ -352,6 +352,7 @@ return [
                 'yes'                   => 'Ja',
                 'same-code-error'       => 'De optiecode moet uniek zijn.',
                 'usable-in-grid'        => 'Bruikbaar in het rooster',
+                'is-filterable'         => 'Is filterbaar',
 
                 'option'                => [
                     'color'    => 'Kleurstaal',
@@ -418,6 +419,7 @@ return [
                 'yes'                   => 'Ja',
                 'same-code-error'       => 'De optiecode moet uniek zijn.',
                 'usable-in-grid'        => 'Bruikbaar in het rooster',
+                'is-filterable'         => 'Is filterbaar',
 
                 'option' => [
                     'color'    => 'Kleurstaal',

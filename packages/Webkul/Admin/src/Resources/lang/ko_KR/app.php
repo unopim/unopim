@@ -353,6 +353,7 @@ return [
                 'yes'                   => '예',
                 'same-code-error'       => '옵션 코드는 고유해야 합니다.',
                 'usable-in-grid'        => '그리드에서 사용 가능',
+                'is-filterable'         => '필터링 가능',
 
                 'option' => [
                     'color'    => '샘플 색상',
@@ -419,6 +420,7 @@ return [
                 'yes'                   => '예',
                 'same-code-error'       => '옵션 코드는 고유해야 합니다.',
                 'usable-in-grid'        => '그리드에서 사용 가능',
+                'is-filterable'         => '필터링 가능',
 
                 'option' => [
                     'color'    => '샘플 색상',

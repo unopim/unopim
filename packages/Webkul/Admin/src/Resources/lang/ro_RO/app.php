@@ -353,6 +353,7 @@ return [
                 'yes'                   => 'Da',
                 'same-code-error'       => 'Codul opțiunii trebuie să fie unic.',
                 'usable-in-grid'        => 'Utilizabil în grilă',
+                'is-filterable'         => 'Este filtrabil',
 
                 'option' => [
                     'color'    => 'Eșantion de culoare',
@@ -419,6 +420,7 @@ return [
                 'yes'                   => 'Da',
                 'same-code-error'       => 'Codul opțiunii trebuie să fie unic.',
                 'usable-in-grid'        => 'Utilizabil în grilă',
+                'is-filterable'         => 'Este filtrabil',
 
                 'option' => [
                     'color'    => 'Eșantion de culoare',

@@ -353,6 +353,7 @@ return [
                 'yes'                   => 'Evet',
                 'same-code-error'       => 'Seçenek kodu benzersiz olmalıdır.',
                 'usable-in-grid'        => 'Izgarada Kullanılabilir',
+                'is-filterable'         => 'Filtrelenebilir',
 
                 'option' => [
                     'color'    => 'Renk Örneği',
@@ -419,6 +420,7 @@ return [
                 'yes'                   => 'Evet',
                 'same-code-error'       => 'Seçenek kodu benzersiz olmalıdır.',
                 'usable-in-grid'        => 'Izgarada Kullanılabilir',
+                'is-filterable'         => 'Filtrelenebilir',
 
                 'option' => [
                     'color'    => 'Renk Örneği',

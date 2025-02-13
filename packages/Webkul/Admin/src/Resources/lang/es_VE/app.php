@@ -353,6 +353,7 @@ return [
                 'yes'                   => 'Sí',
                 'same-code-error'       => 'El código de opción debe ser único.',
                 'usable-in-grid'        => 'Utilizable en cuadrícula',
+                'is-filterable'         => 'Es filtrable',
 
                 'option' => [
                     'color'    => 'Muestra de color',
@@ -419,6 +420,7 @@ return [
                 'yes'                   => 'Sí',
                 'same-code-error'       => 'El código de opción debe ser único.',
                 'usable-in-grid'        => 'Utilizable en cuadrícula',
+                'is-filterable'         => 'Es filtrable',
 
                 'option' => [
                     'color'    => 'Muestra de color',

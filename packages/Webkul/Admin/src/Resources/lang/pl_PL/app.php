@@ -353,6 +353,7 @@ return [
                 'yes'                   => 'Tak',
                 'same-code-error'       => 'Kod opcji musi być unikalny.',
                 'usable-in-grid'        => 'Można używać w siatce',
+                'is-filterable'         => 'Jest filtrowalne',
 
                 'option' => [
                     'color'    => 'Kolor próbki',
@@ -419,6 +420,7 @@ return [
                 'yes'                   => 'Tak',
                 'same-code-error'       => 'Kod opcji musi być unikalny.',
                 'usable-in-grid'        => 'Można używać w siatce',
+                'is-filterable'         => 'Jest filtrowalne',
 
                 'option' => [
                     'color'    => 'Kolor próbki',

@@ -353,6 +353,7 @@ return [
                 'yes'                   => 'Sí',
                 'same-code-error'       => 'El codi de l\'opció ha de ser únic.',
                 'usable-in-grid'        => 'Útil a la graella',
+                'is-filterable'         => 'És filtrable',
 
                 'option' => [
                     'color'    => 'Muestra de color',
@@ -419,6 +420,7 @@ return [
                 'yes'                   => 'Sí',
                 'same-code-error'       => 'El codi de l\'opció ha de ser únic.',
                 'usable-in-grid'        => 'Útil a la graella',
+                'is-filterable'         => 'És filtrable',
 
                 'option' => [
                     'color'    => 'Muestra de color',

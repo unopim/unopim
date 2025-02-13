@@ -353,6 +353,7 @@ return [
                 'yes'                   => 'Yes',
                 'same-code-error'       => 'The option code must be unique.',
                 'usable-in-grid'        => 'Usable in grid',
+                'is-filterable'         => 'Is Filterable',
 
                 'option' => [
                     'color'    => 'Color Swatch',
@@ -419,6 +420,7 @@ return [
                 'yes'                   => 'Yes',
                 'same-code-error'       => 'The option code must be unique.',
                 'usable-in-grid'        => 'Usable in grid',
+                'is-filterable'         => 'Is Filterable',
 
                 'option' => [
                     'color'    => 'Color Swatch',

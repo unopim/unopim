@@ -353,6 +353,7 @@ return [
                 'yes'                   => 'Có',
                 'same-code-error'       => 'Mã của tuỳ chọn phải duy nhất.',
                 'usable-in-grid'        => 'Có thể sử dụng trong lưới',
+                'is-filterable'         => 'Có thể lọc',
 
                 'option' => [
                     'color'    => 'Mẫu màu sắc',
@@ -419,6 +420,7 @@ return [
                 'yes'                   => 'Có',
                 'same-code-error'       => 'Mã của tuỳ chọn phải duy nhất.',
                 'usable-in-grid'        => 'Có thể sử dụng trong lưới',
+                'is-filterable'         => 'Có thể lọc',
 
                 'option' => [
                     'color'    => 'Mẫu màu sắc',

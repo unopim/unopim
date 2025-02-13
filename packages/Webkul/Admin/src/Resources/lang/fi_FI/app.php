@@ -353,6 +353,7 @@ return [
                 'yes'                   => 'Kyllä',
                 'same-code-error'       => 'Vaihtoehdon koodin tulee olla ainutlaatuinen.',
                 'usable-in-grid'        => 'Käytettävissä ruudukossa',
+                'is-filterable'         => 'On suodatettavissa',
 
                 'option' => [
                     'color'    => 'Väriä',
@@ -419,6 +420,7 @@ return [
                 'yes'                   => 'Kyllä',
                 'same-code-error'       => 'Vaihtoehdon koodin tulee olla ainutlaatuinen.',
                 'usable-in-grid'        => 'Käytettävissä ruudukossa',
+                'is-filterable'         => 'On suodatettavissa',
 
                 'option' => [
                     'color'    => 'Väriä',

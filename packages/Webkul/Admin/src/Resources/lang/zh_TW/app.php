@@ -353,6 +353,7 @@ return [
                 'yes'                   => '是',
                 'same-code-error'       => '選項代碼必須唯一。',
                 'usable-in-grid'        => '可在網格中使用',
+                'is-filterable'         => '可篩選',
 
                 'option' => [
                     'color'    => '顏色樣本',
@@ -419,6 +420,7 @@ return [
                 'yes'                   => '是',
                 'same-code-error'       => '選項代碼必須唯一。',
                 'usable-in-grid'        => '可在網格中使用',
+                'is-filterable'         => '可篩選',
 
                 'option' => [
                     'color'    => '顏色樣本',

@@ -353,6 +353,7 @@ return [
                 'yes'                   => 'Sì',
                 'same-code-error'       => 'Il codice dell\'opzione deve essere unico.',
                 'usable-in-grid'        => 'Usabile nella griglia',
+                'is-filterable'         => 'È filtrabile',
 
                 'option' => [
                     'color'    => 'Colore campione',

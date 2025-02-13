@@ -353,6 +353,7 @@ return [
                 'yes'                   => 'はい',
                 'same-code-error'       => 'オプション コードは一意である必要があります。',
                 'usable-in-grid'        => 'グリッドで使用可能',
+                'is-filterable'         => 'フィルタリング可能',
 
                 'option' => [
                     'color'    => 'カラー スウォッチ',

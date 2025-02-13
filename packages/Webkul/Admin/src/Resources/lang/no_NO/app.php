@@ -353,6 +353,7 @@ return [
                 'yes'                   => 'Ja',
                 'same-code-error'       => 'Alternativkoden må være unik.',
                 'usable-in-grid'        => 'Brukes i rutenett',
+                'is-filterable'         => 'Er filtrerbar',
 
                 'option' => [
                     'color'    => 'Fargeprøve',
@@ -419,6 +420,7 @@ return [
                 'yes'                   => 'Ja',
                 'same-code-error'       => 'Alternativkoden må være unik.',
                 'usable-in-grid'        => 'Brukes i rutenett',
+                'is-filterable'         => 'Er filtrerbar',
 
                 'option' => [
                     'color'    => 'Fargeprøve',

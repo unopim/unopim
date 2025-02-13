@@ -353,6 +353,7 @@ return [
                 'yes'                   => 'Sim',
                 'same-code-error'       => 'O código da opção precisa ser único.',
                 'usable-in-grid'        => 'Usável na grade',
+                'is-filterable'         => 'É filtrável',
 
                 'option' => [
                     'color'    => 'Amostra de cor',
@@ -419,7 +420,7 @@ return [
                 'yes'                   => 'Sim',
                 'same-code-error'       => 'O código da opção precisa ser único.',
                 'usable-in-grid'        => 'Usável na grade',
-
+                'is-filterable'         => 'É filtrável',
                 'option' => [
                     'color'    => 'Amostra de cor',
                     'dropdown' => 'Menu suspenso',

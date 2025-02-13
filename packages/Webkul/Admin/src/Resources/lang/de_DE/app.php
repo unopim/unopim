@@ -353,7 +353,7 @@ return [
                 'yes'                   => 'Ja',
                 'same-code-error'       => 'Der Optionscode muss eindeutig sein.',
                 'usable-in-grid'        => 'Verwendbar im Raster',
-
+                'is-filterable'         => 'Ist filterbar',
                 'option' => [
                     'color'    => 'Farbfeld',
                     'dropdown' => 'Dropdown',
@@ -419,6 +419,7 @@ return [
                 'yes'                   => 'Ja',
                 'same-code-error'       => 'Der Optionscode muss eindeutig sein.',
                 'usable-in-grid'        => 'Verwendbar im Raster',
+                'is-filterable'         => 'Ist filterbar',
 
                 'option' => [
                     'color'    => 'Farbfeld',

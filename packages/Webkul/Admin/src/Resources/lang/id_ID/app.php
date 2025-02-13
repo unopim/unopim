@@ -353,6 +353,7 @@ return [
                 'yes'                   => 'Ya',
                 'same-code-error'       => 'Kode opsi harus unik.',
                 'usable-in-grid'        => 'Dapat digunakan dalam grid',
+                'is-filterable'         => 'Dapat difilter',
 
                 'option' => [
                     'color'    => 'Color Swatch',
@@ -419,6 +420,7 @@ return [
                 'yes'                   => 'Ya',
                 'same-code-error'       => 'Kode opsi harus unik.',
                 'usable-in-grid'        => 'Dapat digunakan dalam grid',
+                'is-filterable'         => 'Dapat difilter',
 
                 'option' => [
                     'color'    => 'Color Swatch',

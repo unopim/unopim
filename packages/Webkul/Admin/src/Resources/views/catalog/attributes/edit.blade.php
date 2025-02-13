@@ -559,6 +559,35 @@
                                         :value="(boolean) $valuePerChannel"
                                     />
                                 </x-admin::form.control-group>
+
+                                <!-- Filterable  -->
+                                <x-admin::form.control-group class="flex gap-2.5 items-center !mb-2 select-none">
+                                    @php
+                                        $isFilterable = old('is_filterable') ?? $attribute->is_filterable;
+                                    @endphp
+
+                                    <x-admin::form.control-group.control
+                                        type="hidden"
+                                        name="is_filterable"
+                                        value="0"
+                                    />
+
+                                    <x-admin::form.control-group.control
+                                        type="checkbox"
+                                        name="is_filterable"
+                                        id="is_filterable"
+                                        for="is_filterable"
+                                        value="1"
+                                        :checked="(boolean) $isFilterable"
+                                    />
+
+                                    <label
+                                        class="text-xs text-gray-600 dark:text-gray-300 font-medium cursor-pointer"
+                                        for="is_filterable"
+                                    >
+                                        @lang('admin::app.catalog.attributes.edit.is-filterable')
+                                    </label>
+                                </x-admin::form.control-group>
                             </x-slot>
                         </x-admin::accordion>
 

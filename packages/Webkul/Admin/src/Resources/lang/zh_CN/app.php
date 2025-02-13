@@ -353,6 +353,7 @@ return [
                 'yes'                   => '是的',
                 'same-code-error'       => '选项代码必须是唯一的。',
                 'usable-in-grid'        => '可在网格中使用',
+                'is-filterable'         => '可筛选',
 
                 'option'                => [
                     'color'    => '色板',
@@ -419,6 +420,7 @@ return [
                 'yes'                   => '是的',
                 'same-code-error'       => '选项代码必须是唯一的。',
                 'usable-in-grid'        => '可在网格中使用',
+                'is-filterable'         => '可筛选',
 
                 'option' => [
                     'color'    => '色板',

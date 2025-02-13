@@ -353,6 +353,7 @@ return [
                 'yes'                   => 'Da',
                 'same-code-error'       => 'Kod opcije mora biti jedinstven.',
                 'usable-in-grid'        => 'Upotrebljivo u mreži',
+                'is-filterable'         => 'Je filtrabilno',
 
                 'option' => [
                     'color'    => 'Boja uzorka',
@@ -419,6 +420,7 @@ return [
                 'yes'                   => 'Da',
                 'same-code-error'       => 'Kod opcije mora biti jedinstven.',
                 'usable-in-grid'        => 'Upotrebljivo u mreži',
+                'is-filterable'         => 'Je filtrabilno',
 
                 'option' => [
                     'color'    => 'Boja uzorka',

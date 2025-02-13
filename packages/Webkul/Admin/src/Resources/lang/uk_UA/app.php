@@ -353,6 +353,7 @@ return [
                 'yes'                   => 'Так',
                 'same-code-error'       => 'Код опції має бути унікальним.',
                 'usable-in-grid'        => 'Доступно в сітці',
+                'is-filterable'         => 'Фільтрований',
 
                 'option' => [
                     'color'    => 'Колір шаблону',
@@ -419,6 +420,7 @@ return [
                 'yes'                   => 'Так',
                 'same-code-error'       => 'Код опції має бути унікальним.',
                 'usable-in-grid'        => 'Доступно в сітці',
+                'is-filterable'         => 'Фільтрований',
 
                 'option' => [
                     'color'    => 'Колір шаблону',
