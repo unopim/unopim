@@ -664,8 +664,8 @@
         <x-admin::form.control-group.control
             type="select"
             ::ref="'filter_' + column.index" 
-            name="whitelist_attribute"
-            :label="trans('maker_checker::app.configuration.fields.whitelist_attribute')"
+            name="'filter_' + column.index"
+            ::label="column.label || column.index"
             track-by="code"
             label-by="label"
             async="true"
