@@ -2,7 +2,7 @@
 
 namespace Webkul\Product\Contracts;
 
-interface Normalizer
+interface NormalizerInterface
 {
     /**
      * Normalize the given attribute value.

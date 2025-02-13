@@ -3,9 +3,9 @@
 namespace Webkul\Attribute\Services\Normalizers;
 
 use Webkul\Attribute\Contracts\Attribute;
-use Webkul\Attribute\Contracts\AttributeNormalizer as NormalizerContract;
+use Webkul\Attribute\Contracts\AttributeNormalizerInterface;
 
-abstract class AbstractNormalizer implements NormalizerContract
+abstract class AbstractNormalizer implements AttributeNormalizerInterface
 {
     abstract public function getData(mixed $data, ?Attribute $attribute = null, array $options = []);
 

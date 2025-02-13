@@ -22,9 +22,12 @@ use Webkul\Product\Query\ProductQueryBuilder;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Services\AttributeValueNormalizer;
 use Webkul\Product\Type\AbstractType;
+use Webkul\Admin\Traits\AttributeColumnTrait;
 
 class ProductDataGrid extends DataGrid implements ExportableInterface
 {
+    use AttributeColumnTrait;
+
     /**
      * Prepare query builder.
      *
@@ -210,64 +213,14 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
     public function prepareAttributeColumns()
     {
-        foreach ($this->dynamicColumns as $attribute) {
-            $attribute = $this->attributeService->findAttributeByCode($attribute);
+        foreach ($this->dynamicColumns as $attributeCode) {
+            $attribute = $this->attributeService->findAttributeByCode($attributeCode);
+
             if (! $attribute) {
                 continue;
             }
 
-            $filterType = $attribute->getFilterType();
-            $column = [
-                'index'      => $attribute->code,
-                'label'      => ! empty($attribute->name) ? $attribute->name : '['.$attribute->code.']',
-                'type'       => $filterType,
-                'searchable' => false,
-                'filterable' => true,
-                'sortable'   => true,
-            ];
-
-            if ($filterType == 'boolean') {
-                $column['options'] = [
-                    [
-                        'label' => trans('Yes'),
-                        'value' => true,
-                    ],
-                    [
-                        'label' => trans('No'),
-                        'value' => false,
-                    ],
-                ];
-            }
-
-            if ($filterType == 'price') {
-                $column['options'] = array_map(function ($currency) {
-                    return [
-                        'label' => ! empty($currency->name) ? $currency->name : '['.$currency->code.']',
-                        'value' => $currency->code,
-                    ];
-                }, core()->getAllActiveCurrencies()->all());
-            }
-
-            if ($filterType == 'image') {
-                $column['closure'] = function ($value, $row) {
-                    return '<img src="'.Storage::url(is_array($value) ? $value[0] : $value).'" alt="Image" style="width: 50px; height: 50px; object-fit: cover;">';
-                };
-            }
-
-            if ($filterType == 'dropdown') {
-                $column['options']['type'] = 'searchable';
-                $column['options']['params']['column']['label'] = 'name';
-                $column['options']['params']['column']['value'] = 'code';
-                $column['options']['params']['repository'] = 'Webkul\Attribute\Repositories\AttributeRepository';
-                $column['options']['params']['handler'] = 'getAttributeListBySearch';
-                // $column['options']['params']['options'] = $attribute->options->map(function ($option) {
-                //     return [
-                //         'label' => !empty($option->label) ? $option->label : '[' . $option->code . ']',
-                //         'value' => $option->code,
-                //     ];
-                // })->toArray();
-            }
-
+            $column = $this->buildColumnDefinition($attribute);
             $this->addAttributeColumn($column);
         }
     }

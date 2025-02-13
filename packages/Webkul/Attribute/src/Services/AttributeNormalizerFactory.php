@@ -3,7 +3,7 @@
 namespace Webkul\Attribute\Services;
 
 use Illuminate\Contracts\Container\Container;
-use Webkul\Attribute\Contracts\AttributeNormalizer;
+use Webkul\Attribute\Contracts\AttributeNormalizerInterface;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Services\Normalizers\DefaultNormalizer;
 use Webkul\Attribute\Services\Normalizers\OptionNormalizer;
@@ -24,7 +24,7 @@ class AttributeNormalizerFactory
         $this->app = $app;
     }
 
-    public function getNormalizer(string $type): AttributeNormalizer
+    public function getNormalizer(string $type): AttributeNormalizerInterface
     {
         if (isset($this->normalizers[$type])) {
             return $this->app->make($this->normalizers[$type]);
