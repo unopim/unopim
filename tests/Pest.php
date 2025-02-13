@@ -19,7 +19,6 @@ uses(Webkul\DataGrid\Tests\DataGridTestCase::class)->in('../packages/Webkul/Data
 uses(Webkul\Installer\Tests\UserCreateCommandTestCase::class)->in('../packages/Webkul/Installer/tests');
 uses(Webkul\Core\Tests\CoreTestCase::class)->in('../packages/Webkul/ElasticSearch/tests');
 
-
 /*
 |--------------------------------------------------------------------------
 | Expectations
