@@ -2,6 +2,7 @@
 
 namespace Webkul\ElasticSearch\Observers;
 
+use Elastic\Elasticsearch\Exception\ElasticsearchException;
 use Illuminate\Support\Facades\Log;
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\Product\Models\Product as Products;
@@ -33,7 +34,7 @@ class Product
                     'id'    => $product->id,
                     'body'  => $productArray,
                 ]);
-            } catch (\Exception $e) {
+            } catch (ElasticsearchException $e) {
                 Log::channel('elasticsearch')->error('Exception while creating id: '.$product->id.' in '.$this->indexPrefix.'_categories index: ', [
                     'error' => $e->getMessage(),
                 ]);
@@ -52,7 +53,7 @@ class Product
                     'id'    => $product->id,
                     'body'  => $product->toArray(),
                 ]);
-            } catch (\Exception $e) {
+            } catch (ElasticsearchException $e) {
                 Log::channel('elasticsearch')->error('Exception while updating id: '.$product->id.' in '.$this->indexPrefix.'_categories index: ', [
                     'error' => $e->getMessage(),
                 ]);
@@ -70,7 +71,7 @@ class Product
                     'index' => strtolower($this->indexPrefix.'_products'),
                     'id'    => $product->id,
                 ]);
-            } catch (\Exception $e) {
+            } catch (ElasticsearchException $e) {
                 Log::channel('elasticsearch')->error('Exception while deleting id: '.$product->id.' from '.$this->indexPrefix.'_categories index: ', [
                     'error' => $e->getMessage(),
                 ]);

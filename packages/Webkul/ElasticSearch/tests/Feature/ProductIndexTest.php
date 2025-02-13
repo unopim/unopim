@@ -1,8 +1,8 @@
 <?php
 
 use PHPUnit\Framework\ExpectationFailedException;
-use Webkul\Category\Models\Category;
 use Webkul\Core\Facades\ElasticSearch;
+use Webkul\Product\Models\Product;
 
 beforeEach(function () {
     config([
@@ -18,7 +18,7 @@ beforeEach(function () {
         ->andReturn($elasticClientMock);
 });
 
-it('should index category in elastic search', function () {
+it('should index product in elastic search', function () {
     ElasticSearch::shouldReceive('search')->andReturn([
         'hits' => [
             'total' => 0,
@@ -41,33 +41,33 @@ it('should index category in elastic search', function () {
 
         $this->assertArrayHasKey('index', $args['body'][0]);
 
-        $this->assertEquals('testing_categories', $args['body'][0]['index']['_index']);
+        $this->assertEquals('testing_products', $args['body'][0]['index']['_index']);
 
         $this->assertArrayHasKey('id', $args['body'][1]);
 
         return is_array($args) && ! empty($args['body']);
     });
 
-    Artisan::call('category:index');
+    Artisan::call('product:index');
 });
 
-it('should index the category to elastic when category is created', function () {
-    $category = new Category;
+it('should index the product to elastic when product is created', function () {
+    $product = new Product;
 
-    $category->forceFill(Category::factory()->definition());
+    $product->forceFill(Product::factory()->definition());
 
-    /** This is called after the category->save function is called so here category id is available */
+    /** This is called after the product->save function is called so here product id is available */
     ElasticSearch::shouldReceive('index')
         ->once()
-        ->withArgs(function ($args) use ($category) {
+        ->withArgs(function ($args) use ($product) {
             try {
                 $this->assertArrayHasKey('index', $args);
                 $this->assertArrayHasKey('id', $args);
                 $this->assertArrayHasKey('body', $args);
 
-                $this->assertEquals('testing_categories', $args['index']);
-                $this->assertEquals($category->id, $args['id']);
-                $this->assertEquals($category->toArray(), $args['body']);
+                $this->assertEquals('testing_products', $args['index']);
+                $this->assertEquals($product->id, $args['id']);
+                $this->assertEquals($product->toArray(), $args['body']);
             } catch (ExpectationFailedException $e) {
                 throw $e;
             }
@@ -75,26 +75,26 @@ it('should index the category to elastic when category is created', function () 
             return is_array($args) && ! empty($args['body']);
         });
 
-    $category->save();
+    $product->save();
 });
 
-it('should index the category to elastic when category is updated', function () {
-    $category = Category::latest()->first();
+it('should index the product to elastic when product is updated', function () {
+    $product = Product::latest()->first();
 
-    $category->code = 'root_test_______';
+    $product->sku = 'product_sku_test_____';
 
     ElasticSearch::shouldReceive('index')
         ->once()
-        ->withArgs(function ($args) use ($category) {
+        ->withArgs(function ($args) use ($product) {
             try {
                 $this->assertArrayHasKey('index', $args);
                 $this->assertArrayHasKey('id', $args);
                 $this->assertArrayHasKey('body', $args);
 
-                $this->assertEquals('testing_categories', $args['index']);
+                $this->assertEquals('testing_products', $args['index']);
 
-                $this->assertEquals($category->id, $args['id']);
-                $this->assertEquals($category->toArray(), $args['body']);
+                $this->assertEquals($product->id, $args['id']);
+                $this->assertEquals($product->toArray(), $args['body']);
             } catch (ExpectationFailedException $e) {
                 $this->fail($e->getMessage());
             }
@@ -102,21 +102,21 @@ it('should index the category to elastic when category is updated', function () 
             return true;
         });
 
-    $category->save();
+    $product->save();
 });
 
-it('should remove category from elastic when category is deleted', function () {
-    $category = Category::latest()->first();
+it('should remove product from elastic when product is deleted', function () {
+    $product = Product::latest()->first();
 
     ElasticSearch::shouldReceive('delete')
         ->once()
-        ->withArgs(function ($args) use ($category) {
+        ->withArgs(function ($args) use ($product) {
             try {
                 $this->assertArrayHasKey('index', $args);
                 $this->assertArrayHasKey('id', $args);
 
-                $this->assertEquals('testing_categories', $args['index']);
-                $this->assertEquals($category->id, $args['id']);
+                $this->assertEquals('testing_products', $args['index']);
+                $this->assertEquals($product->id, $args['id']);
             } catch (ExpectationFailedException $e) {
                 $this->fail($e->getMessage());
             }
@@ -124,5 +124,5 @@ it('should remove category from elastic when category is deleted', function () {
             return true;
         });
 
-    $category->delete();
+    $product->delete();
 });
