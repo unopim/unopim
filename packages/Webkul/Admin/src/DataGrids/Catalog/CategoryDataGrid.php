@@ -16,7 +16,7 @@ class CategoryDataGrid extends DataGrid
      *
      * @var string
      */
-    protected $primaryColumn = 'id';
+    protected $primaryColumn = 'category_id';
 
     /**
      * Default sort column of datagrid.
@@ -315,6 +315,10 @@ class CategoryDataGrid extends DataGrid
 
         if ($sort == 'code') {
             $sort .= '.keyword';
+        }
+
+        if ($sort === 'category_id') {
+            $sort = '_id';
         }
 
         return [
