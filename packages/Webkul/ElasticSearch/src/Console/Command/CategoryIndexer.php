@@ -14,7 +14,7 @@ class CategoryIndexer extends Command
 {
     const BATCH_SIZE = 10000;
 
-    protected $signature = 'category:index';
+    protected $signature = 'unopim:category:index';
 
     protected $description = 'Index all categories into Elasticsearch';
 
@@ -54,8 +54,6 @@ class CategoryIndexer extends Command
                     $categoryArray = $category->toArray();
 
                     $categoryArray['additional_data'] = is_string($categoryArray['additional_data']) ? json_decode($categoryArray['additional_data'], true) : $categoryArray['additional_data'];
-
-                    unset($categoryArray['name']);
 
                     if (
                         (

@@ -54,7 +54,7 @@ it('should index product in elastic search', function () {
         return is_array($args) && ! empty($args['body']);
     });
 
-    Artisan::call('product:index');
+    Artisan::call('unopim:product:index');
 });
 
 it('should index the product to elastic when product is created', function () {

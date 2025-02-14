@@ -90,12 +90,12 @@
     From the command line, run the command which you created to index your new table:
     _ex:_
 ~~~
-        php artisan newtable:index
+        php artisan unopim:newtable:index
 ~~~
 
 2. Re-index the Table (Optional):
 
     If you need to re-index the new table, use the following command to clear the index:
 ~~~
-        php artisan elastic:clear
+        php artisan unopim:elastic:clear
 ~~~

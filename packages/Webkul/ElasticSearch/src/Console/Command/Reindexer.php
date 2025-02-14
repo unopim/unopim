@@ -8,7 +8,7 @@ use Webkul\Core\Facades\ElasticSearch;
 
 class Reindexer extends Command
 {
-    protected $signature = 'elastic:clear';
+    protected $signature = 'unopim:elastic:clear';
 
     protected $description = 'Clear all indexes for this project from Elasticsearch.';
 

@@ -48,7 +48,7 @@ it('should index category in elastic search', function () {
         return is_array($args) && ! empty($args['body']);
     });
 
-    Artisan::call('category:index');
+    Artisan::call('unopim:category:index');
 });
 
 it('should index the category to elastic when category is created', function () {

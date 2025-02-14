@@ -39,8 +39,6 @@ class Product
                     'error' => $e->getMessage(),
                 ]);
             }
-        } else {
-            Log::channel('elasticsearch')->warning('A product was created while Elasticsearch is disabled. Please enable Elasticsearch and run "php artisan product:index" to index the product.');
         }
     }
 
@@ -58,8 +56,6 @@ class Product
                     'error' => $e->getMessage(),
                 ]);
             }
-        } else {
-            Log::channel('elasticsearch')->warning('A product was updated while Elasticsearch is disabled. Please enable Elasticsearch and run "php artisan product:index" to update the product.');
         }
     }
 
@@ -76,8 +72,6 @@ class Product
                     'error' => $e->getMessage(),
                 ]);
             }
-        } else {
-            Log::channel('elasticsearch')->warning('A product was deleted while Elasticsearch is disabled. Please enable Elasticsearch and run "php artisan product:index" to delete the product.');
         }
     }
 }

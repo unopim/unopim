@@ -131,13 +131,13 @@ class Installer extends Command
         $this->call('storage:link');
 
         $this->warn('Step: Clearing elasticsearch index...');
-        $this->call('elastic:clear');
+        $this->call('unopim:elastic:clear');
 
         $this->warn('Step: Indexing categories to elastic search...');
-        $this->call('category:index');
+        $this->call('unopim:category:index');
 
         $this->warn('Step: Indexing products to elastic search...');
-        $this->call('product:index');
+        $this->call('unopim:product:index');
 
         $this->warn('Step: Clearing cached bootstrap files...');
         $this->call('optimize:clear');

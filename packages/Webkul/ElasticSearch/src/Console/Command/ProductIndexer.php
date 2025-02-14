@@ -14,7 +14,7 @@ class ProductIndexer extends Command
 {
     const BATCH_SIZE = 10000;
 
-    protected $signature = 'product:index';
+    protected $signature = 'unopim:product:index';
 
     protected $description = 'Index all products into Elasticsearch';
 

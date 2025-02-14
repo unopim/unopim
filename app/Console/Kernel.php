@@ -23,10 +23,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('product:index')->dailyAt('00:01');
-        $schedule->command('product:index')->dailyAt('12:01');
-        $schedule->command('category:index')->dailyAt('00:01');
-        $schedule->command('category:index')->dailyAt('12:01');
+        $schedule->command('unopim:product:index')->dailyAt('00:01');
+        $schedule->command('unopim:product:index')->dailyAt('12:01');
+        $schedule->command('unopim:category:index')->dailyAt('00:01');
+        $schedule->command('unopim:category:index')->dailyAt('12:01');
     }
 
     /**

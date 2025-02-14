@@ -35,8 +35,6 @@ class Category
                     'error' => $e->getMessage(),
                 ]);
             }
-        } else {
-            Log::channel('elasticsearch')->warning('A category was created while Elasticsearch is disabled. Please enable Elasticsearch and run "php artisan category:index" to index the category.');
         }
     }
 
@@ -54,8 +52,6 @@ class Category
                     'error' => $e->getMessage(),
                 ]);
             }
-        } else {
-            Log::channel('elasticsearch')->warning('A category was updated while Elasticsearch is disabled. Please enable Elasticsearch and run "php artisan category:index" to update the category.');
         }
     }
 
@@ -72,8 +68,6 @@ class Category
                     'error' => $e->getMessage(),
                 ]);
             }
-        } else {
-            Log::channel('elasticsearch')->warning('A category was deleted while Elasticsearch is disabled. Please enable Elasticsearch and run "php artisan category:index" to delete the category.');
         }
     }
 }
