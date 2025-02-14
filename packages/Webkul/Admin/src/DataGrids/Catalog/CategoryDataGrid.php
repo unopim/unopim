@@ -281,8 +281,18 @@ class CategoryDataGrid extends DataGrid
                 ];
             case 'category_name':
                 return [
-                    'terms' => [
-                        'additional_data.locale_specific.'.$localeCode.'.name.keyword' => $values,
+                    'bool' => [
+                        'should' => [
+                            [
+                                'terms' => [
+                                    'additional_data.locale_specific.'.$localeCode.'.name.keyword' => $values,
+                                ],
+                            ], [
+                                'terms' => [
+                                    'name.keyword' => $values,
+                                ],
+                            ],
+                        ],
                     ],
                 ];
 

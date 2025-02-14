@@ -107,13 +107,15 @@ class Installer extends Command
         $this->warn('Step: Generating key...');
         $this->call('key:generate');
 
-        $this->warn('Step: Testing ElasticSearch Connection...');
-        if (! ElasticSearch::testConnection()) {
-            $this->error('Verify that the correct credentials are provided to establish a connection with ElasticSearch.');
+        if (config('elasticsearch.enabled') == 'true') {
+            $this->warn('Step: Testing ElasticSearch Connection...');
+            if (! ElasticSearch::testConnection()) {
+                $this->error('Verify that the correct credentials are provided to establish a connection with ElasticSearch.');
 
-            return;
-        } else {
-            $this->info('Elastic Search Connected successfully');
+                return;
+            } else {
+                $this->info('Elastic Search Connected successfully');
+            }
         }
 
         $this->warn('Step: Migrating all tables...');
@@ -130,14 +132,16 @@ class Installer extends Command
         $this->warn('Step: Linking storage directory...');
         $this->call('storage:link');
 
-        $this->warn('Step: Clearing elasticsearch index...');
-        $this->call('unopim:elastic:clear');
+        if (config('elasticsearch.enabled') == 'true') {
+            $this->warn('Step: Clearing elasticsearch index...');
+            $this->call('unopim:elastic:clear');
 
-        $this->warn('Step: Indexing categories to elastic search...');
-        $this->call('unopim:category:index');
+            $this->warn('Step: Indexing categories to elastic search...');
+            $this->call('unopim:category:index');
 
-        $this->warn('Step: Indexing products to elastic search...');
-        $this->call('unopim:product:index');
+            $this->warn('Step: Indexing products to elastic search...');
+            $this->call('unopim:product:index');
+        }
 
         $this->warn('Step: Clearing cached bootstrap files...');
         $this->call('optimize:clear');
