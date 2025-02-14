@@ -19,6 +19,12 @@ beforeEach(function () {
 });
 
 it('should index product in elastic search', function () {
+    config(['elasticsearch.enabled' => false]);
+
+    $product = Product::factory()->create();
+
+    config(['elasticsearch.enabled' => true]);
+
     ElasticSearch::shouldReceive('search')->andReturn([
         'hits' => [
             'total' => 0,
@@ -79,7 +85,11 @@ it('should index the product to elastic when product is created', function () {
 });
 
 it('should index the product to elastic when product is updated', function () {
-    $product = Product::latest()->first();
+    config(['elasticsearch.enabled' => false]);
+
+    $product = Product::factory()->create();
+
+    config(['elasticsearch.enabled' => true]);
 
     $product->sku = 'product_sku_test_____';
 
@@ -106,7 +116,11 @@ it('should index the product to elastic when product is updated', function () {
 });
 
 it('should remove product from elastic when product is deleted', function () {
-    $product = Product::latest()->first();
+    config(['elasticsearch.enabled' => false]);
+
+    $product = Product::factory()->create();
+
+    config(['elasticsearch.enabled' => true]);
 
     ElasticSearch::shouldReceive('delete')
         ->once()
