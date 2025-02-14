@@ -3,9 +3,12 @@
 return [
 
     /**
-     * Here you can specify the connection to use when building a client.
+     * Here you can connection status and prefix to use when building a client.
      */
-    'connection' => 'default',
+    'connection' => env('ELASTICSEARCH_CONNECTION', 'default') ?: 'default',
+
+    'enabled'    => env('ELASTICSEARCH_ENABLED', false) == 'true' ? true : false,
+    'prefix'     => env('ELASTICSEARCH_INDEX_PREFIX', env('APP_NAME')) ?: config('app.name'),
 
     /**
      * These are the available connections parameters that you can use to connect

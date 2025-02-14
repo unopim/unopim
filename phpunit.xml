@@ -32,6 +32,10 @@
         <testsuite name="Installer Test">
             <directory suffix="Test.php">./packages/Webkul/Installer/tests/Feature</directory>
         </testsuite>
+
+        <testsuite name="ElasticSearch Feature Tests">
+            <directory suffix="Test.php">./packages/Webkul/ElasticSearch/tests/Feature</directory>
+        </testsuite>
     </testsuites>
 
     <source>

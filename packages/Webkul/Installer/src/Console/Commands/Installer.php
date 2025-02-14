@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
+use Webkul\Core\ElasticSearch;
 use Webkul\Installer\Database\Seeders\DatabaseSeeder as UnoPimDatabaseSeeder;
 use Webkul\Installer\Events\ComposerEvents;
 
@@ -106,6 +107,17 @@ class Installer extends Command
         $this->warn('Step: Generating key...');
         $this->call('key:generate');
 
+        if (config('elasticsearch.enabled') == 'true') {
+            $this->warn('Step: Testing ElasticSearch Connection...');
+            if (! ElasticSearch::testConnection()) {
+                $this->error('Verify that the correct credentials are provided to establish a connection with ElasticSearch.');
+
+                return;
+            } else {
+                $this->info('Elastic Search Connected successfully');
+            }
+        }
+
         $this->warn('Step: Migrating all tables...');
         $this->call('migrate:fresh');
 
@@ -119,6 +131,17 @@ class Installer extends Command
 
         $this->warn('Step: Linking storage directory...');
         $this->call('storage:link');
+
+        if (config('elasticsearch.enabled') == 'true') {
+            $this->warn('Step: Clearing elasticsearch index...');
+            $this->call('unopim:elastic:clear');
+
+            $this->warn('Step: Indexing categories to elastic search...');
+            $this->call('unopim:category:index');
+
+            $this->warn('Step: Indexing products to elastic search...');
+            $this->call('unopim:product:index');
+        }
 
         $this->warn('Step: Clearing cached bootstrap files...');
         $this->call('optimize:clear');
@@ -161,6 +184,8 @@ class Installer extends Command
             $applicationDetails = $this->askForApplicationDetails();
 
             $this->askForDatabaseDetails();
+
+            $this->askForElasticSearchDetails();
 
             return $applicationDetails;
         } catch (\Exception $e) {
@@ -297,6 +322,61 @@ class Installer extends Command
     }
 
     /**
+     * Add the Elastic Search credentials to the .env file.
+     */
+    protected function askForElasticSearchDetails()
+    {
+        $elasticSearchDetails = [
+            'ELASTICSEARCH_ENABLED' => select(
+                label: 'Do you want to enable Elastic Search?',
+                options: ['yes', 'no'],
+                default: env('ELASTICSEARCH_ENABLED', 'false')
+            ) === 'yes' ? 'true' : 'false',
+
+            'ELASTICSEARCH_CONNECTION' => select(
+                label: 'Please select the Elastic Search connection',
+                options: ['default', 'api', 'cloud'],
+                default: env('ELASTICSEARCH_CONNECTION', 'default') ?: 'default'
+            ),
+
+            'ELASTICSEARCH_HOST' => text(
+                label: 'Please enter the Elastic Search host',
+                default: env('ELASTICSEARCH_HOST', ''),
+            ),
+
+            'ELASTICSEARCH_USER' => text(
+                label: 'Please enter the Elastic Search user',
+                default: env('ELASTICSEARCH_USER', ''),
+            ),
+
+            'ELASTICSEARCH_PASS' => password(
+                label: 'Please enter the Elastic Search password',
+            ),
+
+            'ELASTICSEARCH_API_KEY' => text(
+                label: 'Please enter the Elastic Search API key',
+                default: env('ELASTICSEARCH_API_KEY', ''),
+            ),
+
+            'ELASTICSEARCH_CLOUD_ID' => text(
+                label: 'Please enter your Elastic Search Cloud ID',
+                default: env('ELASTICSEARCH_CLOUD_ID', ''),
+            ),
+
+            'ELASTICSEARCH_INDEX_PREFIX' => text(
+                label: 'Please enter your Elastic Search Index Prefix',
+                default: env('ELASTICSEARCH_INDEX_PREFIX', ''),
+            ),
+        ];
+
+        foreach ($elasticSearchDetails as $key => $value) {
+            if ($value) {
+                $this->envUpdate($key, $value);
+            }
+        }
+    }
+
+    /**
      * Create a admin credentials.
      *
      * @return mixed
@@ -406,6 +486,26 @@ class Installer extends Command
         ]);
 
         DB::purge($databaseConnection);
+
+        /**
+         * Setting elasticsearch configurations.
+         */
+        $elasticsearchPrefix = $this->getEnvAtRuntime('ELASTICSEARCH_INDEX_PREFIX') != '' ? $this->getEnvAtRuntime('ELASTICSEARCH_INDEX_PREFIX') : $this->getEnvAtRuntime('APP_NAME');
+
+        config([
+            'elasticsearch.connection'                => $this->getEnvAtRuntime('ELASTICSEARCH_CONNECTION'),
+            'elasticsearch.enabled'                   => $this->getEnvAtRuntime('ELASTICSEARCH_ENABLED'),
+            'elasticsearch.prefix'                    => $elasticsearchPrefix,
+            'elasticsearch.connections.default.hosts' => [$this->getEnvAtRuntime('ELASTICSEARCH_HOST')],
+            'elasticsearch.connections.default.user'  => $this->getEnvAtRuntime('ELASTICSEARCH_USER'),
+            'elasticsearch.connections.default.pass'  => $this->getEnvAtRuntime('ELASTICSEARCH_PASS'),
+            'elasticsearch.connections.api.hosts'     => [$this->getEnvAtRuntime('ELASTICSEARCH_HOST')],
+            'elasticsearch.connections.api.key'       => $this->getEnvAtRuntime('ELASTICSEARCH_API_KEY'),
+            'elasticsearch.connections.cloud.api_key' => $this->getEnvAtRuntime('ELASTICSEARCH_API_KEY'),
+            'elasticsearch.connections.cloud.id'      => $this->getEnvAtRuntime('ELASTICSEARCH_CLOUD_ID'),
+            'elasticsearch.connections.cloud.user'    => $this->getEnvAtRuntime('ELASTICSEARCH_USER'),
+            'elasticsearch.connections.cloud.pass'    => $this->getEnvAtRuntime('ELASTICSEARCH_PASS'),
+        ]);
 
         $this->info('Configuration loaded...');
     }
