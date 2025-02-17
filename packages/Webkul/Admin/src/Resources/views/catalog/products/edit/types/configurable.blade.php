@@ -820,7 +820,7 @@
                     let optionErrors = false;
 
                     for (const attribute of this.superAttributes) {
-                        if( params[attribute.code].length === 0){
+                        if (params[attribute.code].length === 0) {
                             setErrors({
                                 [attribute.code]: requiredTranslation.replace(':attribute', attribute.code),
                             });
