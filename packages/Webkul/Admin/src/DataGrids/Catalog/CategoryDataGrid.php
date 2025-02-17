@@ -59,12 +59,12 @@ class CategoryDataGrid extends DataGrid
                 'cat.id as category_id',
                 'cat.code as code',
                 DB::raw('(CASE WHEN JSON_EXTRACT('.$tablePrefix."cat.additional_data, '$.locale_specific.".$localeCode.".name') IS NOT NULL THEN REPLACE(JSON_EXTRACT(".$tablePrefix."cat.additional_data, '$.locale_specific.".$localeCode.".name'), '\"', '') ELSE CONCAT('[', ".$tablePrefix."cat.code, ']') END) as category_name"),
-                DB::raw('CategoryNameTable.name as display_name'),
+                DB::raw('category_display_names.name as display_name'),
             )
-            ->leftJoin(DB::raw("({$subQuery->toSql()}) as CategoryNameTable"), function ($leftJoin) {
-                $leftJoin->on('cat.id', '=', DB::raw('CategoryNameTable.id'));
+            ->leftJoin(DB::raw("({$subQuery->toSql()}) as category_display_names"), function ($leftJoin) {
+                $leftJoin->on('cat.id', '=', DB::raw('category_display_names.id'));
             })
-            ->groupBy('cat.id', 'cat.code', DB::raw('CategoryNameTable.name'));
+            ->groupBy('cat.id', 'cat.code', DB::raw('category_display_names.name'));
 
         $this->addFilter('category_name', DB::raw('CASE WHEN JSON_EXTRACT('.$tablePrefix."cat.additional_data, '$.locale_specific.".$localeCode.".name') IS NOT NULL THEN REPLACE(JSON_EXTRACT(".$tablePrefix."cat.additional_data, '$.locale_specific.".$localeCode.".name'), '\"', '') ELSE CONCAT('[', ".$tablePrefix."cat.code, ']') END"));
 
@@ -185,6 +185,7 @@ class CategoryDataGrid extends DataGrid
                     'query'         => [
                         'bool' => $this->getElasticFilters($params['filters'] ?? []) ?: new \stdClass,
                     ],
+                    'track_total_hits' => true,
                 ],
             ]);
 
@@ -193,14 +194,7 @@ class CategoryDataGrid extends DataGrid
             $this->queryBuilder->whereIn('cat.id', $ids)
                 ->orderBy(DB::raw('FIELD('.DB::getTablePrefix().'cat.id, '.implode(',', $ids).')'));
 
-            $total = ElasticSearch::count([
-                'index' => strtolower($indexPrefix.'_categories'),
-                'body'  => [
-                    'query' => [
-                        'bool' => $this->getElasticFilters($params['filters'] ?? []) ?: new \stdClass,
-                    ],
-                ],
-            ])['count'];
+            $total = $results['hits']['total']['value'];
 
             $this->paginator = new LengthAwarePaginator(
                 $total ? $this->queryBuilder->get() : [],
@@ -359,6 +353,6 @@ class CategoryDataGrid extends DataGrid
         )
         SELECT id, parent_id, name
         FROM tree_view
-        ) as CategoryNameTable'));
+        ) as category_display_names'));
     }
 }

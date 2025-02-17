@@ -278,6 +278,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                         'query'         => [
                             'bool' => $this->getElasticFilters($requestedParams['filters'] ?? []) ?: new \stdClass,
                         ],
+                        'track_total_hits' => true,
                     ],
                 ]);
             } catch (\Exception $e) {
@@ -292,6 +293,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                             'query'         => [
                                 'bool' => $this->getElasticFilters($requestedParams['filters'] ?? []) ?: new \stdClass,
                             ],
+                            'track_total_hits' => true,
                         ],
                     ]);
                 } else {
@@ -316,14 +318,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 return;
             }
 
-            $total = ElasticSearch::count([
-                'index' => strtolower($indexPrefix.'_products'),
-                'body'  => [
-                    'query' => [
-                        'bool' => $this->getElasticFilters($requestedParams['filters'] ?? []) ?: new \stdClass,
-                    ],
-                ],
-            ])['count'];
+            $total = $results['hits']['total']['value'];
 
             $this->paginator = new LengthAwarePaginator(
                 $total ? $this->queryBuilder->get() : [],
@@ -338,12 +333,9 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         } catch (\Exception $e) {
             if (str_contains($e->getMessage(), 'index_not_found_exception')) {
                 Log::error('Elasticsearch index not found. Please create an index first.');
-                parent::processRequest();
-
-                return;
-            } else {
-                throw $e;
             }
+
+            throw $e;
         }
     }
 
