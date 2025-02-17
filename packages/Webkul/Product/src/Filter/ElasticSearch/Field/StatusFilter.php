@@ -1,16 +1,17 @@
 <?php
 
-namespace Webkul\Product\ElasticSearch\Filter\Field;
+namespace Webkul\Product\Filter\ElasticSearch\Field;
 
 use Webkul\ElasticSearch\Contracts\FilterInterface;
 use Webkul\ElasticSearch\Filter\Operators;
+use Webkul\Product\Filter\AbstractFieldFilter;
 
 /**
- * Parent filter for an Elasticsearch query
+ * Status filter for an Elasticsearch query
  */
-class ParentFilter extends AbstractFieldFilter implements FilterInterface
+class StatusFilter extends AbstractFieldFilter implements FilterInterface
 {
-    const FIELD = 'parent_id';
+    const FIELD = 'status';
 
     public function __construct(
         array $supportedFields = [self::FIELD],
@@ -33,7 +34,7 @@ class ParentFilter extends AbstractFieldFilter implements FilterInterface
         if (! in_array($field, $this->supportedFields)) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    'Unsupported field name for parent filter, only "%s" are supported, "%s" given',
+                    'Unsupported field name for sku filter, only "%s" are supported, "%s" given',
                     implode(',', $this->supportedFields),
                     $field
                 )

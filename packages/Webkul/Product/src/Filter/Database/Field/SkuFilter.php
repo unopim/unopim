@@ -1,10 +1,11 @@
 <?php
 
-namespace Webkul\Product\ElasticSearch\Filter\Field;
+namespace Webkul\Product\Filter\Database\Field;
 
 use Webkul\ElasticSearch\Contracts\FilterInterface;
 use Webkul\ElasticSearch\Filter\Operators;
 use Webkul\ElasticSearch\QueryString;
+use Webkul\Product\Filter\AbstractFieldFilter;
 
 /**
  * Sku filter for an Elasticsearch query
@@ -43,24 +44,17 @@ class SkuFilter extends AbstractFieldFilter implements FilterInterface
 
         switch ($operator) {
             case Operators::IN_LIST:
-                $clause = [
-                    'terms' => [
-                        $field => $value,
-                    ],
-                ];
+                $this->searchQueryBuilder->whereIn('products.sku', $value);
 
-                $this->searchQueryBuilder::addFilter($clause);
                 break;
-
             case Operators::CONTAINS:
-                $escapedValue = QueryString::escapeValue(current((array) $value));
-                $clause = [
-                    'query_string' => [
-                        'default_field' => $field,
-                        'query'         => '*'.$escapedValue.'*',
-                    ],
-                ];
-                $this->searchQueryBuilder::addFilter($clause);
+                $this->searchQueryBuilder->where(function ($query) use ($value) {
+                    foreach ($value as $val) {
+                        $escapedValue = QueryString::escapeValue($val);
+                        $query->orWhere('products.sku', 'LIKE', "%{$escapedValue}%");
+                    }
+                });
+                
                 break;
         }
 

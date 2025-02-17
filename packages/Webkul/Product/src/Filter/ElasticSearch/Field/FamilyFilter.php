@@ -1,9 +1,10 @@
 <?php
 
-namespace Webkul\Product\ElasticSearch\Filter\Field;
+namespace Webkul\Product\Filter\ElasticSearch\Field;
 
 use Webkul\ElasticSearch\Contracts\FilterInterface;
 use Webkul\ElasticSearch\Filter\Operators;
+use Webkul\Product\Filter\AbstractFieldFilter;
 
 /**
  * Family filter for an Elasticsearch query

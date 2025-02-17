@@ -4,17 +4,24 @@ namespace Webkul\Product\Providers;
 
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
-use Webkul\Product\ElasticSearch\Filter\BooleanFilter;
-use Webkul\Product\ElasticSearch\Filter\DateFilter;
-use Webkul\Product\ElasticSearch\Filter\Field\DateTimeFilter;
-use Webkul\Product\ElasticSearch\Filter\Field\FamilyFilter;
-use Webkul\Product\ElasticSearch\Filter\Field\IdFilter;
-use Webkul\Product\ElasticSearch\Filter\Field\ParentFilter;
-use Webkul\Product\ElasticSearch\Filter\Field\SkuFilter;
-use Webkul\Product\ElasticSearch\Filter\Field\StatusFilter;
-use Webkul\Product\ElasticSearch\Filter\Field\TypeFilter;
-use Webkul\Product\ElasticSearch\Filter\PriceFilter;
-use Webkul\Product\ElasticSearch\Filter\TextFilter;
+use Webkul\Product\Filter\ElasticSearch\BooleanFilter as ElasticSearchBooleanFilter;
+use Webkul\Product\Filter\ElasticSearch\DateFilter as ElasticSearchDateFilter;
+use Webkul\Product\Filter\ElasticSearch\Field\DateTimeFilter as ElasticSearchDateTimeFilter;
+use Webkul\Product\Filter\ElasticSearch\Field\FamilyFilter as ElasticSearchFamilyFilter;
+use Webkul\Product\Filter\ElasticSearch\Field\IdFilter as ElasticSearchIdFilter;
+use Webkul\Product\Filter\ElasticSearch\Field\ParentFilter as ElasticSearchParentFilter;
+use Webkul\Product\Filter\ElasticSearch\Field\SkuFilter as ElasticSearchSkuFilter;
+use Webkul\Product\Filter\ElasticSearch\Field\StatusFilter as ElasticSearchStatusFilter;
+use Webkul\Product\Filter\ElasticSearch\Field\TypeFilter as ElasticSearchTypeFilter;
+use Webkul\Product\Filter\ElasticSearch\PriceFilter as ElasticSearchPriceFilter;
+use Webkul\Product\Filter\ElasticSearch\TextFilter as ElasticSearchTextFilter;
+use Webkul\Product\Filter\Database\Field\FamilyFilter as DatabaseFamilyFilter;
+use Webkul\Product\Filter\Database\Field\IdFilter as DatabaseIdFilter;
+use Webkul\Product\Filter\Database\Field\ParentFilter as DatabaseParentFilter;
+use Webkul\Product\Filter\Database\Field\SkuFilter as DatabaseSkuFilter;
+use Webkul\Product\Filter\Database\Field\StatusFilter as DatabaseStatusFilter;
+use Webkul\Product\Filter\Database\Field\TypeFilter as DatabaseTypeFilter;
+use Webkul\Product\Filter\Database\Field\DateTimeFilter as DatabaseDateTimeFilter;
 use Webkul\Product\Facades\ProductImage as ProductImageFacade;
 use Webkul\Product\Facades\ProductVideo as ProductVideoFacade;
 use Webkul\Product\Facades\ValueSetter as ProductValueSetter;
@@ -101,21 +108,32 @@ class ProductServiceProvider extends ServiceProvider
     {
         // Register elasticSearch attribute type filters
         $this->app->tag([
-            TextFilter::class,
-            BooleanFilter::class,
-            DateFilter::class,
-            PriceFilter::class,
-        ], 'attribute.filters');
+            ElasticSearchTextFilter::class,
+            ElasticSearchBooleanFilter::class,
+            ElasticSearchDateFilter::class,
+            ElasticSearchPriceFilter::class,
+        ], 'elasticsearch.attribute.filters');
 
         // Register elasticSearch product fields filters
         $this->app->tag([
-            TypeFilter::class,
-            StatusFilter::class,
-            IdFilter::class,
-            FamilyFilter::class,
-            SkuFilter::class,
-            DateTimeFilter::class,
-            ParentFilter::class,
-        ], 'product.field.filters');
+            ElasticSearchTypeFilter::class,
+            ElasticSearchStatusFilter::class,
+            ElasticSearchIdFilter::class,
+            ElasticSearchFamilyFilter::class,
+            ElasticSearchSkuFilter::class,
+            ElasticSearchDateTimeFilter::class,
+            ElasticSearchParentFilter::class,
+        ], 'elasticsearch.product.field.filters');
+
+        // Register database product fields filters
+        $this->app->tag([
+            DatabaseFamilyFilter::class,
+            DatabaseIdFilter::class,
+            DatabaseSkuFilter::class,
+            DatabaseStatusFilter::class,
+            DatabaseTypeFilter::class,
+            DatabaseParentFilter::class,
+            DatabaseDateTimeFilter::class,
+        ], 'database.product.field.filters');
     }
 }

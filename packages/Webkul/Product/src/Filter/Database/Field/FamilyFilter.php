@@ -1,16 +1,17 @@
 <?php
 
-namespace Webkul\Product\ElasticSearch\Filter\Field;
+namespace Webkul\Product\Filter\Database\Field;
 
 use Webkul\ElasticSearch\Contracts\FilterInterface;
 use Webkul\ElasticSearch\Filter\Operators;
+use Webkul\Product\Filter\AbstractFieldFilter;
 
 /**
- * Product type filter for an Elasticsearch query
+ * Family filter for an Database query
  */
-class TypeFilter extends AbstractFieldFilter implements FilterInterface
+class FamilyFilter extends AbstractFieldFilter implements FilterInterface
 {
-    const FIELD = 'type';
+    const FIELD = 'attribute_family';
 
     public function __construct(
         array $supportedFields = [self::FIELD],
@@ -29,11 +30,11 @@ class TypeFilter extends AbstractFieldFilter implements FilterInterface
         if ($this->searchQueryBuilder === null) {
             throw new \LogicException('The search query builder is not initialized in the filter.');
         }
-
+        
         if (! in_array($field, $this->supportedFields)) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    'Unsupported field name for type filter, only "%s" are supported, "%s" given',
+                    'Unsupported field name for family filter, only "%s" are supported, "%s" given',
                     implode(',', $this->supportedFields),
                     $field
                 )
@@ -42,15 +43,10 @@ class TypeFilter extends AbstractFieldFilter implements FilterInterface
 
         switch ($operator) {
             case Operators::IN_LIST:
-                $clause = [
-                    'terms' => [
-                        $field => $value,
-                    ],
-                ];
-
-                $this->searchQueryBuilder::addFilter($clause);
+                $this->searchQueryBuilder->whereIn('products.attribute_family_id', $value);
                 break;
         }
+        
 
         return $this;
     }

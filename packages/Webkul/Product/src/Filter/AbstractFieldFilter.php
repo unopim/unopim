@@ -1,8 +1,6 @@
 <?php
 
-namespace Webkul\Product\ElasticSearch\Filter\Field;
-
-use Webkul\ElasticSearch\Filter\AbstractFilter;
+namespace Webkul\Product\Filter;
 
 abstract class AbstractFieldFilter extends AbstractFilter
 {

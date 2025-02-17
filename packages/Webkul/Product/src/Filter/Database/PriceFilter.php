@@ -1,21 +1,21 @@
 <?php
 
-namespace Webkul\Product\ElasticSearch\Filter;
+namespace Webkul\Product\Filter\Database;
 
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\ElasticSearch\Contracts\FilterInterface;
 use Webkul\ElasticSearch\Filter\Operators;
 
 /**
- * Boolean filter for an Elasticsearch query
+ * Price filter for an Database query
  */
-class BooleanFilter extends AbstractAttributeFilter implements FilterInterface
+class PriceFilter extends AbstractDatabaseAttributeFilter implements FilterInterface
 {
     /**
      * @param  array  $supportedFields
      */
     public function __construct(
-        array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[3]],
+        array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[2]],
         array $supportedOperators = [Operators::IN_LIST, Operators::CONTAINS]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;
@@ -36,23 +36,13 @@ class BooleanFilter extends AbstractAttributeFilter implements FilterInterface
         if ($this->searchQueryBuilder === null) {
             throw new \LogicException('The search query builder is not initialized in the filter.');
         }
-
         $attributePath = $this->getAttributePath($attribute, $locale, $channel);
 
         switch ($operator) {
-            case Operators::IN_LIST:
-                $clause = [
-                    'terms' => [
-                        $attributePath => $value,
-                    ],
-                ];
-
-                $this->searchQueryBuilder::addFilter($clause);
-                break;
             case Operators::EQUALS:
                 $clause = [
-                    'terms' => [
-                        $attributePath => $value,
+                    'term' => [
+                        sprintf('%s.%s', $attributePath, $value[0]) => $value[1],
                     ],
                 ];
 

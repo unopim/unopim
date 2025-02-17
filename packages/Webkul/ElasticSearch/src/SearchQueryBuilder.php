@@ -2,6 +2,8 @@
 
 namespace Webkul\ElasticSearch;
 
+use Webkul\ElasticSearch\Contracts\SearchQueryInterface;
+
 /** *
  *
  * This stateful class holds the multiple parts of an Elastic Search search query.
@@ -13,7 +15,7 @@ namespace Webkul\ElasticSearch;
  * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html
  * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html
  */
-class SearchQueryBuilder
+class SearchQueryBuilder implements SearchQueryInterface
 {
     /** @var array */
     private $mustNotClauses = [];

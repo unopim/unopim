@@ -1,9 +1,10 @@
 <?php
 
-namespace Webkul\Product\ElasticSearch\Filter\Field;
+namespace Webkul\Product\Filter\Database\Field;
 
 use Webkul\ElasticSearch\Contracts\FilterInterface;
 use Webkul\ElasticSearch\Filter\Operators;
+use Webkul\Product\Filter\AbstractFieldFilter;
 
 /**
  * Status filter for an Elasticsearch query
@@ -42,13 +43,7 @@ class StatusFilter extends AbstractFieldFilter implements FilterInterface
 
         switch ($operator) {
             case Operators::IN_LIST:
-                $clause = [
-                    'terms' => [
-                        $field => $value,
-                    ],
-                ];
-
-                $this->searchQueryBuilder::addFilter($clause);
+                $this->searchQueryBuilder->whereIn(sprintf('products.%s', $field), $value);
                 break;
         }
 

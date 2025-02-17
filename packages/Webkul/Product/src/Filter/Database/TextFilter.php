@@ -1,21 +1,22 @@
 <?php
 
-namespace Webkul\Product\ElasticSearch\Filter;
+namespace Webkul\Product\Filter\Database;
 
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\ElasticSearch\Contracts\FilterInterface;
 use Webkul\ElasticSearch\Filter\Operators;
+use Webkul\ElasticSearch\QueryString;
 
 /**
- * Price filter for an Elasticsearch query
+ * Text filter for an Database query
  */
-class PriceFilter extends AbstractAttributeFilter implements FilterInterface
+class TextFilter extends AbstractDatabaseAttributeFilter implements FilterInterface
 {
     /**
      * @param  array  $supportedFields
      */
     public function __construct(
-        array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[2]],
+        array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[0], AttributeTypes::ATTRIBUTE_TYPES[4], AttributeTypes::ATTRIBUTE_TYPES[5]],
         array $supportedOperators = [Operators::IN_LIST, Operators::CONTAINS]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;
@@ -36,16 +37,28 @@ class PriceFilter extends AbstractAttributeFilter implements FilterInterface
         if ($this->searchQueryBuilder === null) {
             throw new \LogicException('The search query builder is not initialized in the filter.');
         }
+
         $attributePath = $this->getAttributePath($attribute, $locale, $channel);
 
         switch ($operator) {
-            case Operators::EQUALS:
+            case Operators::IN_LIST:
                 $clause = [
-                    'term' => [
-                        sprintf('%s.%s', $attributePath, $value[0]) => $value[1],
+                    'terms' => [
+                        $attributePath => $value,
                     ],
                 ];
 
+                $this->searchQueryBuilder::addFilter($clause);
+                break;
+
+            case Operators::CONTAINS:
+                $escapedValue = QueryString::escapeValue(current((array) $value));
+                $clause = [
+                    'query_string' => [
+                        'default_field' => $attributePath,
+                        'query'         => '*'.$escapedValue.'*',
+                    ],
+                ];
                 $this->searchQueryBuilder::addFilter($clause);
                 break;
         }

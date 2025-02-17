@@ -1,16 +1,17 @@
 <?php
 
-namespace Webkul\Product\ElasticSearch\Filter\Field;
+namespace Webkul\Product\Filter\ElasticSearch\Field;
 
 use Webkul\ElasticSearch\Contracts\FilterInterface;
 use Webkul\ElasticSearch\Filter\Operators;
+use Webkul\Product\Filter\AbstractFieldFilter;
 
 /**
- * Id filter for an Elasticsearch query
+ * Product type filter for an Elasticsearch query
  */
-class IdFilter extends AbstractFieldFilter implements FilterInterface
+class TypeFilter extends AbstractFieldFilter implements FilterInterface
 {
-    const FIELD = 'product_id';
+    const FIELD = 'type';
 
     public function __construct(
         array $supportedFields = [self::FIELD],
@@ -33,7 +34,7 @@ class IdFilter extends AbstractFieldFilter implements FilterInterface
         if (! in_array($field, $this->supportedFields)) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    'Unsupported field name for id filter, only "%s" are supported, "%s" given',
+                    'Unsupported field name for type filter, only "%s" are supported, "%s" given',
                     implode(',', $this->supportedFields),
                     $field
                 )
@@ -44,7 +45,7 @@ class IdFilter extends AbstractFieldFilter implements FilterInterface
             case Operators::IN_LIST:
                 $clause = [
                     'terms' => [
-                        'id' => $value,
+                        $field => $value,
                     ],
                 ];
 

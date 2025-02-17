@@ -33,4 +33,9 @@ class AttributeService
 
         return $attribute;
     }
+
+    public function findAttributeByCodes(array $codes): array
+    {
+        return $this->attributeRepository->findWhereIn('code', $codes)->all();
+    }
 }

@@ -1,12 +1,13 @@
 <?php
 
-namespace Webkul\Product\ElasticSearch\Filter\Field;
+namespace Webkul\Product\Filter\Database\Field;
 
 use Webkul\ElasticSearch\Contracts\FilterInterface;
 use Webkul\ElasticSearch\Filter\Operators;
+use Webkul\Product\Filter\AbstractFieldFilter;
 
 /**
- * DateTime filter for an Elasticsearch query
+ * DateTime filter for an Database query
  */
 class DateTimeFilter extends AbstractFieldFilter implements FilterInterface
 {
@@ -44,29 +45,14 @@ class DateTimeFilter extends AbstractFieldFilter implements FilterInterface
 
         switch ($operator) {
             case Operators::IN_LIST:
-                $clause = [
-                    'terms' => [
-                        $field => array_map(function ($data) use ($field) {
-                            return $this->getFormattedDateTime($field, $data);
-                        }, $value),
-                    ],
-                ];
-
-                $this->searchQueryBuilder::addFilter($clause);
+                $this->searchQueryBuilder->whereIn(sprintf('products.%s', $field), $value);
                 break;
 
             case Operators::BETWEEN:
-                $values = array_values($value);
-                $clause = [
-                    'range' => [
-                        $field => [
-                            'gte' => $this->getFormattedDateTime($field, $values[0]),
-                            'lte' => $this->getFormattedDateTime($field, $values[1]),
-                        ],
-                    ],
-                ];
-
-                $this->searchQueryBuilder::addFilter($clause);
+                $this->searchQueryBuilder->whereBetween(sprintf('products.%s', $field), [
+                    ($value[0] ?? '').' 00:00:01',
+                    ($value[1] ?? '').' 23:59:59',
+                ]);
                 break;
         }
 

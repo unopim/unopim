@@ -23,6 +23,8 @@ use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Services\AttributeValueNormalizer;
 use Webkul\Product\Type\AbstractType;
 use Webkul\Admin\Traits\AttributeColumnTrait;
+use Webkul\Product\Factories\ProductQueryBuilderFactory;
+use Webkul\Product\Facades\DatabaseSearchQuery;
 
 class ProductDataGrid extends DataGrid implements ExportableInterface
 {
@@ -42,9 +44,13 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     protected $primaryColumn = 'product_id';
 
-    protected $sortColumn = 'updated_at';
+    protected $sortColumn = 'products.updated_at';
+
+    protected $elasticSearchSortColumn = 'updated_at';
 
     protected $dynamicColumns = ['gallery3', 'multiselect', 'color', 'size',  'datetime', 'price'];
+
+    protected $productQueryBuilder;
 
     /**
      * Constructor for the class.
@@ -57,9 +63,9 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         protected ChannelRepository $channelRepository,
         protected ProductAttributeValuesNormalizer $valuesNormalizer,
         protected AttributeService $attributeService,
-        protected ProductQueryBuilder $productQueryBuilder,
         protected AttributeValueNormalizer $attributeValueNormalizer,
-    ) {}
+    ) {
+    }
 
     /**
      * Prepare query builder.
@@ -70,8 +76,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     {
         $tablePrefix = DB::getTablePrefix();
 
-        $this->prepareQuery = $this->productQueryBuilder->prepareQueryBuilder();
-
+        $this->prepareQuery = ProductQueryBuilderFactory::make()->prepareQueryBuilder();
+        
         $queryBuilder = $this->prepareQuery->getQueryBuilder();
 
         $queryBuilder->leftJoin('attribute_family_translations as attribute_family_name', function ($join) {
@@ -84,6 +90,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'products.status',
                 'products.type',
                 'parent_products.sku as parent',
+                'products.created_at',
+                'products.updated_at',
                 DB::raw('
                     JSON_MERGE(
                         COALESCE(`parent_products`.`values`, "{}"),
@@ -160,6 +168,15 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         ]);
 
         $this->addColumn([
+            'index'      => 'updated_at',
+            'label'      => trans('updated_at'),
+            'type'       => 'date_range',
+            'searchable' => false,
+            'filterable' => true,
+            'sortable'   => true,
+        ]);
+
+        $this->addColumn([
             'index'      => 'status',
             'label'      => trans('admin::app.catalog.products.index.datagrid.status'),
             'type'       => 'dropdown',
@@ -213,13 +230,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
     public function prepareAttributeColumns()
     {
-        foreach ($this->dynamicColumns as $attributeCode) {
-            $attribute = $this->attributeService->findAttributeByCode($attributeCode);
-
-            if (! $attribute) {
-                continue;
-            }
-
+        $attributes = $this->attributeService->findAttributeByCodes($this->dynamicColumns);
+        foreach ($attributes as $attribute) {
             $column = $this->buildColumnDefinition($attribute);
             $this->addAttributeColumn($column);
         }
@@ -326,7 +338,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     public function processRequest(): void
     {
-        if (! env('ELASTICSEARCH_ENABLED', false)) {
+        if (! core()->isElasticsearchEnabled()) {
             parent::processRequest();
 
             return;
@@ -385,6 +397,53 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function processRequestedFilters(array $requestedFilters)
+    {
+        $context = [
+            'locale'  => core()->getRequestedLocaleCode(),
+            'channel' => core()->getRequestedChannelCode(),
+        ];
+
+        $queryBuilder = $this->prepareQuery->setQueryBuilder($this->queryBuilder);
+        // dd($requestedFilters);
+        foreach ($requestedFilters as $requestedColumn => $requestedValues) {
+            // if ($requestedColumn === 'all') {
+            //     $this->queryBuilder->where(function ($scopeQueryBuilder) use ($requestedValues) {
+            //         foreach ($requestedValues as $value) {
+            //             collect($this->columns)
+            //                 ->filter(fn ($column) => $column->searchable && $column->type !== ColumnTypeEnum::BOOLEAN->value)
+            //                 ->each(fn ($column) => $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), 'LIKE', '%'.$value.'%'));
+            //         }
+            //     });
+            // } else {
+            //     $column = collect($this->columns)->first(fn ($c) => $c->index === $requestedColumn);
+
+            // }
+
+            if (in_array($requestedColumn, ['channel', 'locale'])) {
+                continue;
+            }
+
+            if ($requestedColumn == 'all') {
+                $requestedColumn = 'name';
+                $operator = Operators::CONTAINS;
+            } else {
+                [$operator, $value] = $this->getOperatorAndValue($requestedColumn, $requestedValues);
+            }
+
+            $this->addFilterValue($queryBuilder, $requestedColumn, $value, $operator, $context);
+        }
+
+        if (!empty($requestedFilters)) {
+            $this->queryBuilder = $this->prepareQuery->getQueryBuilder();
+        }
+
+        return $this->queryBuilder;
+    }
+
+    /**
      * Process request.
      */
     protected function setElasticFilters($params)
@@ -393,6 +452,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'locale'  => core()->getRequestedLocaleCode(),
             'channel' => core()->getRequestedChannelCode(),
         ];
+
+        $queryBuilder = $this->prepareQuery->setQueryBuilder($this->queryBuilder);
 
         foreach ($params as $attribute => $value) {
             if (in_array($attribute, ['channel', 'locale'])) {
@@ -406,7 +467,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 [$operator, $value] = $this->getOperatorAndValue($attribute, $value);
             }
 
-            $this->addFilterValue($attribute, $value, $operator, $context);
+            $this->addFilterValue($queryBuilder, $attribute, $value, $operator, $context);
         }
     }
 
@@ -443,10 +504,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     /**
      * Return applied filters
      */
-    public function addFilterValue(mixed $attribute, mixed $values, string $operator, array $context = []): void
+    public function addFilterValue(mixed $queryBuilder, mixed $attribute, mixed $values, string $operator, array $context = []): void
     {
-        $queryBuilder = $this->prepareQuery->setQueryBuilder($this->queryBuilder);
-
         $queryBuilder->addFilter($attribute, $operator, $values, $context);
     }
 
@@ -455,7 +514,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     protected function setElasticSort($params)
     {
-        $sort = $params['column'] ?? $this->sortColumn;
+        $sort = $params['column'] ?? $this->elasticSearchSortColumn;
 
         $sortMapping = [
             'type'             => 'type.keyword',
@@ -490,25 +549,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         }
 
         return sprintf('values.%s.%s.keyword', $attribute->getScope(), $attribute->code);
-    }
-
-    /**
-     * Process request.
-     */
-    protected function sortAttributeFamilyByKey($params): array
-    {
-        $sort = $params['column'] ?? $this->primaryColumn;
-
-        if ($sort == 'attribute_family') {
-            $sort = 'attribute_family_id';
-            $sort .= '.keyword';
-        }
-
-        return [
-            $sort => [
-                'order' => $params['order'] ?? $this->sortOrder,
-            ],
-        ];
     }
 
     /**
@@ -713,6 +753,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     protected function processRawValues(object &$record): void
     {
+        if (empty($this->customColumns)) {
+            return;
+        }
+        
         $rawValues = json_decode($record->raw_values, true);
         $values = $this->attributeValueNormalizer->normalize($rawValues, [
             'locale'                 => core()->getRequestedLocaleCode(),

@@ -87,7 +87,7 @@
                                 class="row grid gap-2.5 items-center px-4 py-4 cursor-pointer border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
                                 v-for="record in $parent.available.records"
                                 :style="`grid-template-columns: repeat(${gridsCount}, minmax(80px, 1fr))`"
-                                @click="$parent.performAction(record.actions.find(action => action.index === 'edit'))"
+                                @click="handleRowClick($event, record)"
                             >
                                 <!-- Mass Actions -->
                                 <p v-if="$parent.available.massActions.length" @click.stop>
@@ -179,6 +179,15 @@
                     return count;
                 },
             },
+
+            methods: {
+                handleRowClick(event, record) {
+                    // Ensure the click event only fires if the clicked element is the row itself
+                    if (event.target === event.currentTarget) {
+                        this.$parent.performAction(record.actions.find(action => action.index === 'edit'));
+                    }
+                }
+            }
         });
     </script>
 @endpushOnce

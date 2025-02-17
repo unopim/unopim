@@ -1,22 +1,11 @@
 <?php
 
-namespace Webkul\Product\ElasticSearch\Filter;
+namespace Webkul\Product\Filter\ElasticSearch;
 
-use Webkul\ElasticSearch\Filter\AbstractFilter;
+use Webkul\Product\Filter\AbstractAttributeFilter;
 
-abstract class AbstractAttributeFilter extends AbstractFilter
+abstract class AbstractElasticSearchAttributeFilter extends AbstractAttributeFilter
 {
-    /** @var string[] */
-    protected $supportedAttributeTypes;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsAttribute($attribute)
-    {
-        return in_array($attribute->type, $this->supportedAttributeTypes);
-    }
-
     // /**
     //  * {@inheritdoc}
     //  */
