@@ -42,24 +42,24 @@ class TextFilter extends AbstractDatabaseAttributeFilter implements FilterInterf
 
         switch ($operator) {
             case Operators::IN_LIST:
-                $clause = [
-                    'terms' => [
-                        $attributePath => $value,
-                    ],
-                ];
+                $this->searchQueryBuilder->whereRaw(
+                    sprintf("JSON_UNQUOTE(JSON_EXTRACT(%s, '%s')) REGEXP ?", $this->getSearchTablePath($options), $attributePath),
+                    is_array($value) ? implode('|', $value) : $value
+                );
 
-                $this->searchQueryBuilder::addFilter($clause);
                 break;
 
             case Operators::CONTAINS:
-                $escapedValue = QueryString::escapeValue(current((array) $value));
-                $clause = [
-                    'query_string' => [
-                        'default_field' => $attributePath,
-                        'query'         => '*'.$escapedValue.'*',
-                    ],
-                ];
-                $this->searchQueryBuilder::addFilter($clause);
+                $this->searchQueryBuilder->where(function ($query) use ($attributePath, $options, $value) {
+                    foreach ($value as $val) {
+                        $escapedValue = strtolower(QueryString::escapeValue($val));
+                        $query->orWhereRaw(
+                            sprintf("LOWER(JSON_UNQUOTE(JSON_EXTRACT(%s, '%s'))) LIKE ?", $this->getSearchTablePath($options), $attributePath),
+                            "%$escapedValue%"
+                        );
+                    }
+                });
+
                 break;
         }
 

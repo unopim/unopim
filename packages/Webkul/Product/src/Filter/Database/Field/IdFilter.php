@@ -43,7 +43,7 @@ class IdFilter extends AbstractFieldFilter implements FilterInterface
 
         switch ($operator) {
             case Operators::IN_LIST:
-                $this->searchQueryBuilder->whereIn('products.id', $value);
+                $this->searchQueryBuilder->whereIn(sprintf('%s.%s', $this->getSearchTablePath($options), 'id'), $value);
                 break;
         }
 

@@ -11,7 +11,7 @@ use Webkul\Product\Filter\AbstractFieldFilter;
  */
 class ParentFilter extends AbstractFieldFilter implements FilterInterface
 {
-    const FIELD = 'parent_id';
+    const FIELD = 'parent';
 
     public function __construct(
         array $supportedFields = [self::FIELD],
@@ -45,7 +45,7 @@ class ParentFilter extends AbstractFieldFilter implements FilterInterface
             case Operators::IN_LIST:
                 $clause = [
                     'terms' => [
-                        $field => $value,
+                        'parent_id' => $this->getParentIdsBySkus($value, $options),
                     ],
                 ];
 

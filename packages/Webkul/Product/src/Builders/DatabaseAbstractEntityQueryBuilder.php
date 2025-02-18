@@ -61,6 +61,17 @@ abstract class DatabaseAbstractEntityQueryBuilder implements QueryBuilderInterfa
     protected function addFieldFilter($filter, $field, $operator, $value, array $context)
     {
         $filter->setQueryBuilder($this->getQueryBuilder());
+
+        if (! $filter->supportsOperator($operator)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Unsupported operator. Only "%s" are supported, but "%s" was given.',
+                    implode(',', $filter->getOperators()),
+                    $operator
+                )
+            );
+        }
+
         $filter->addFieldFilter($field, $operator, $value, $context);
 
         return $this;

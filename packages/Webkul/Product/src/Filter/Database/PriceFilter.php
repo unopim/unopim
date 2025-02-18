@@ -36,17 +36,16 @@ class PriceFilter extends AbstractDatabaseAttributeFilter implements FilterInter
         if ($this->searchQueryBuilder === null) {
             throw new \LogicException('The search query builder is not initialized in the filter.');
         }
+
         $attributePath = $this->getAttributePath($attribute, $locale, $channel);
 
         switch ($operator) {
             case Operators::EQUALS:
-                $clause = [
-                    'term' => [
-                        sprintf('%s.%s', $attributePath, $value[0]) => $value[1],
-                    ],
-                ];
+                $this->searchQueryBuilder->whereRaw(
+                    sprintf("JSON_UNQUOTE(JSON_EXTRACT(%s, '%s')) REGEXP ?", $this->getSearchTablePath($options), sprintf('%s.%s', $attributePath, $value[0])),
+                    $value[1]
+                );
 
-                $this->searchQueryBuilder::addFilter($clause);
                 break;
         }
 

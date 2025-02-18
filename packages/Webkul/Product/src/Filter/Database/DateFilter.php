@@ -37,35 +37,26 @@ class DateFilter extends AbstractDatabaseAttributeFilter implements FilterInterf
             throw new \LogicException('The search query builder is not initialized in the filter.');
         }
 
-        $attributeCode = $attribute->code;
-
         $attributePath = $this->getAttributePath($attribute, $locale, $channel);
 
         switch ($operator) {
             case Operators::IN_LIST:
-                $clause = [
-                    'terms' => [
-                        $attributePath => array_map(function ($data) use ($attributeCode) {
-                            return $this->getFormattedDateTime($attributeCode, $data);
-                        }, $value),
-                    ],
-                ];
+                $this->searchQueryBuilder->whereRaw(
+                    sprintf("JSON_UNQUOTE(JSON_EXTRACT(%s, '%s')) REGEXP ?", $this->getSearchTablePath($options), $attributePath),
+                    is_array($value) ? implode('|', $value) : $value
+                );
 
-                $this->searchQueryBuilder::addFilter($clause);
                 break;
 
             case Operators::BETWEEN:
-                $values = array_values($value);
-                $clause = [
-                    'range' => [
-                        $attributePath => [
-                            'gte' => $this->getFormattedDateTime($attributeCode, $values[0]),
-                            'lte' => $this->getFormattedDateTime($attributeCode, $values[1]),
-                        ],
-                    ],
-                ];
+                $this->searchQueryBuilder->whereRaw(
+                    sprintf("JSON_UNQUOTE(JSON_EXTRACT(%s, '%s')) BETWEEN ? AND ?", $this->getSearchTablePath($options), $attributePath),
+                    [
+                        ($value[0] ?? '').' 00:00:01',
+                        ($value[1] ?? '').' 23:59:59',
+                    ]
+                );
 
-                $this->searchQueryBuilder::addFilter($clause);
                 break;
         }
 

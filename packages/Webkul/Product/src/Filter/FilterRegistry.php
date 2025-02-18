@@ -25,36 +25,6 @@ class FilterRegistry implements FilterRegistryInterface
     /**
      * {@inheritdoc}
      */
-    public function addFilter($field, $operator, $value, array $context = [])
-    {
-        // $attribute = $this->attributeService->findAttributeByCode($field);
-
-        // if (!$attribute) {
-        //     $this->addFieldFilter($field, $operator, $value, $context);
-        // } else {
-        //     $this->addAttributeFilter($field, $operator, $value, $context);
-        // }
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getFilter($code, $operator)
-    {
-        // $attribute = $this->attributeService->findAttributeByCode($code);
-
-        // if (null !== $attribute) {
-        //     return $this->getAttributeFilter($attribute, $operator);
-        // }
-
-        // return $this->getFieldFilter($code, $operator);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getFieldFilter($field, $operator)
     {
         foreach ($this->fieldFilters as $filter) {

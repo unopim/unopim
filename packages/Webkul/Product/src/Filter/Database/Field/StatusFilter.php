@@ -43,7 +43,7 @@ class StatusFilter extends AbstractFieldFilter implements FilterInterface
 
         switch ($operator) {
             case Operators::IN_LIST:
-                $this->searchQueryBuilder->whereIn(sprintf('products.%s', $field), $value);
+                $this->searchQueryBuilder->whereIn(sprintf('%s.%s', $this->getSearchTablePath($options), $field), $value);
                 break;
         }
 

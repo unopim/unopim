@@ -6,16 +6,13 @@ use Webkul\Product\Filter\AbstractAttributeFilter;
 
 abstract class AbstractDatabaseAttributeFilter extends AbstractAttributeFilter
 {
-    // /**
-    //  * {@inheritdoc}
-    //  */
-    // public function supportsOperator($operator)
-    // {
-    //     return in_array($operator, $this->supportedOperators);
-    // }
-
     protected function getAttributePath($attribute, ?string $locale = null, ?string $channel = null)
     {
-        return sprintf('values->%s->%s', $attribute->getScope($locale, $channel), $attribute->code);
+        return sprintf('$.%s.%s', $attribute->getScope($locale, $channel), $attribute->code);
+    }
+
+    protected function getSearchTablePath(array $options = [])
+    {
+        return $options['search_table_path'] ?? 'products.values';
     }
 }

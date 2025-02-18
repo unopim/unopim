@@ -16,7 +16,7 @@ class BooleanFilter extends AbstractDatabaseAttributeFilter implements FilterInt
      */
     public function __construct(
         array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[3]],
-        array $supportedOperators = [Operators::IN_LIST, Operators::CONTAINS]
+        array $supportedOperators = [Operators::IN_LIST, Operators::EQUALS]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;
         $this->supportedOperators = $supportedOperators;
@@ -41,22 +41,18 @@ class BooleanFilter extends AbstractDatabaseAttributeFilter implements FilterInt
 
         switch ($operator) {
             case Operators::IN_LIST:
-                $clause = [
-                    'terms' => [
-                        $attributePath => $value,
-                    ],
-                ];
+                $this->searchQueryBuilder->whereRaw(
+                    sprintf("JSON_UNQUOTE(JSON_EXTRACT(%s, '%s')) REGEXP ?", $this->getSearchTablePath($options), $attributePath),
+                    is_array($value) ? implode('|', $value) : $value
+                );
 
-                $this->searchQueryBuilder::addFilter($clause);
                 break;
             case Operators::EQUALS:
-                $clause = [
-                    'terms' => [
-                        $attributePath => $value,
-                    ],
-                ];
+                $this->searchQueryBuilder->whereRaw(
+                    sprintf("JSON_UNQUOTE(JSON_EXTRACT(%s, '%s')) REGEXP ?", $this->getSearchTablePath($options), $attributePath),
+                    is_array($value) ? implode('|', $value) : $value
+                );
 
-                $this->searchQueryBuilder::addFilter($clause);
                 break;
         }
 

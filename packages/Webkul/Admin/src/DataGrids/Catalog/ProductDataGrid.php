@@ -7,7 +7,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
+use Webkul\Admin\Traits\AttributeColumnTrait;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Services\AttributeService;
 use Webkul\Core\Repositories\ChannelRepository;
@@ -17,14 +17,11 @@ use Webkul\DataGrid\DataGrid;
 use Webkul\ElasticSearch\Facades\SearchQuery;
 use Webkul\ElasticSearch\Filter\Operators;
 use Webkul\Product\ElasticSearch\Cursor\ResultCursorFactory;
+use Webkul\Product\Factories\ProductQueryBuilderFactory;
 use Webkul\Product\Normalizer\ProductAttributeValuesNormalizer;
-use Webkul\Product\Query\ProductQueryBuilder;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Services\AttributeValueNormalizer;
 use Webkul\Product\Type\AbstractType;
-use Webkul\Admin\Traits\AttributeColumnTrait;
-use Webkul\Product\Factories\ProductQueryBuilderFactory;
-use Webkul\Product\Facades\DatabaseSearchQuery;
 
 class ProductDataGrid extends DataGrid implements ExportableInterface
 {
@@ -48,7 +45,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
     protected $elasticSearchSortColumn = 'updated_at';
 
-    protected $dynamicColumns = ['gallery3', 'multiselect', 'color', 'size',  'datetime', 'price'];
+    protected $dynamicColumns = ['name', 'gallery3', 'multiselect', 'color', 'size',  'datetime', 'price'];
 
     protected $productQueryBuilder;
 
@@ -64,8 +61,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         protected ProductAttributeValuesNormalizer $valuesNormalizer,
         protected AttributeService $attributeService,
         protected AttributeValueNormalizer $attributeValueNormalizer,
-    ) {
-    }
+    ) {}
 
     /**
      * Prepare query builder.
@@ -77,7 +73,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $tablePrefix = DB::getTablePrefix();
 
         $this->prepareQuery = ProductQueryBuilderFactory::make()->prepareQueryBuilder();
-        
+
         $queryBuilder = $this->prepareQuery->getQueryBuilder();
 
         $queryBuilder->leftJoin('attribute_family_translations as attribute_family_name', function ($join) {
@@ -90,13 +86,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'products.status',
                 'products.type',
                 'parent_products.sku as parent',
-                'products.created_at',
-                'products.updated_at',
                 DB::raw('
-                    JSON_MERGE(
-                        COALESCE(`parent_products`.`values`, "{}"),
-                        COALESCE(`products`.`values`, "{}")
-                    ) as raw_values
+                    COALESCE(`products`.`values`, `parent_products`.`values`) as raw_values
                 '),
                 DB::raw('
                     CASE 
@@ -107,12 +98,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                     END as attribute_family
                 ')
             );
-
-        $this->addFilter('product_id', 'products.id');
-        $this->addFilter('attribute_family', 'af.id');
-        $this->addFilter('sku', 'products.sku');
-        $this->addFilter('status', 'products.status');
-        $this->addFilter('type', 'products.type');
 
         return $queryBuilder;
     }
@@ -154,7 +139,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'label'      => trans('admin::app.catalog.products.index.datagrid.parent'),
             'type'       => 'string',
             'searchable' => false,
-            'filterable' => false,
+            'filterable' => true,
             'sortable'   => true,
         ]);
 
@@ -162,15 +147,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'index'      => 'product_id',
             'label'      => trans('admin::app.catalog.products.index.datagrid.id'),
             'type'       => 'integer',
-            'searchable' => false,
-            'filterable' => true,
-            'sortable'   => true,
-        ]);
-
-        $this->addColumn([
-            'index'      => 'updated_at',
-            'label'      => trans('updated_at'),
-            'type'       => 'date_range',
             'searchable' => false,
             'filterable' => true,
             'sortable'   => true,
@@ -231,6 +207,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     public function prepareAttributeColumns()
     {
         $attributes = $this->attributeService->findAttributeByCodes($this->dynamicColumns);
+
         foreach ($attributes as $attribute) {
             $column = $this->buildColumnDefinition($attribute);
             $this->addAttributeColumn($column);
@@ -429,6 +406,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             if ($requestedColumn == 'all') {
                 $requestedColumn = 'name';
                 $operator = Operators::CONTAINS;
+                $value = $requestedValues;
             } else {
                 [$operator, $value] = $this->getOperatorAndValue($requestedColumn, $requestedValues);
             }
@@ -436,7 +414,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             $this->addFilterValue($queryBuilder, $requestedColumn, $value, $operator, $context);
         }
 
-        if (!empty($requestedFilters)) {
+        if (! empty($requestedFilters)) {
             $this->queryBuilder = $this->prepareQuery->getQueryBuilder();
         }
 
@@ -756,7 +734,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         if (empty($this->customColumns)) {
             return;
         }
-        
+
         $rawValues = json_decode($record->raw_values, true);
         $values = $this->attributeValueNormalizer->normalize($rawValues, [
             'locale'                 => core()->getRequestedLocaleCode(),

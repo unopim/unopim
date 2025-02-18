@@ -30,7 +30,7 @@ class FamilyFilter extends AbstractFieldFilter implements FilterInterface
         if ($this->searchQueryBuilder === null) {
             throw new \LogicException('The search query builder is not initialized in the filter.');
         }
-        
+
         if (! in_array($field, $this->supportedFields)) {
             throw new \InvalidArgumentException(
                 sprintf(
@@ -43,10 +43,9 @@ class FamilyFilter extends AbstractFieldFilter implements FilterInterface
 
         switch ($operator) {
             case Operators::IN_LIST:
-                $this->searchQueryBuilder->whereIn('products.attribute_family_id', $value);
+                $this->searchQueryBuilder->whereIn(sprintf('%s.%s', $this->getSearchTablePath($options), 'attribute_family_id'), $value);
                 break;
         }
-        
 
         return $this;
     }

@@ -45,14 +45,16 @@ class DateTimeFilter extends AbstractFieldFilter implements FilterInterface
 
         switch ($operator) {
             case Operators::IN_LIST:
-                $this->searchQueryBuilder->whereIn(sprintf('products.%s', $field), $value);
+                $this->searchQueryBuilder->whereIn(sprintf('%s.%s', $this->getSearchTablePath($options), $field), $value);
+
                 break;
 
             case Operators::BETWEEN:
-                $this->searchQueryBuilder->whereBetween(sprintf('products.%s', $field), [
+                $this->searchQueryBuilder->whereBetween(sprintf('%s.%s', $this->getSearchTablePath($options), $field), [
                     ($value[0] ?? '').' 00:00:01',
                     ($value[1] ?? '').' 23:59:59',
                 ]);
+
                 break;
         }
 

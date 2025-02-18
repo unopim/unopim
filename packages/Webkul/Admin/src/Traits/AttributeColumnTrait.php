@@ -29,7 +29,6 @@ trait AttributeColumnTrait
     /**
      * Apply specific filter type options to the column.
      *
-     * @param  array  $column
      * @param  object  $attribute
      * @return array
      */
@@ -63,7 +62,7 @@ trait AttributeColumnTrait
 
     protected function getPriceOptions()
     {
-        return array_map(fn($currency) => [
+        return array_map(fn ($currency) => [
             'label' => $currency->name ?: '['.$currency->code.']',
             'value' => $currency->code,
         ], core()->getAllActiveCurrencies()->all());
@@ -71,8 +70,7 @@ trait AttributeColumnTrait
 
     protected function getImageClosure()
     {
-        return fn($value) =>
-            '<img src="'.Storage::url(is_array($value) ? $value[0] : $value).'" alt="Image" style="width: 50px; height: 50px; object-fit: cover;">';
+        return fn ($value) => '<img src="'.Storage::url(is_array($value) ? $value[0] : $value).'" alt="Image" style="width: 50px; height: 50px; object-fit: cover;">';
     }
 
     protected function getDropdownOptions($attribute)

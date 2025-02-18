@@ -16,7 +16,7 @@ class SkuFilter extends AbstractFieldFilter implements FilterInterface
 
     public function __construct(
         array $supportedFields = [self::FIELD],
-        array $supportedOperators = [Operators::IN_LIST]
+        array $supportedOperators = [Operators::IN_LIST, Operators::CONTAINS]
     ) {
         $this->supportedOperators = $supportedOperators;
         $this->supportedFields = $supportedFields;
@@ -44,17 +44,17 @@ class SkuFilter extends AbstractFieldFilter implements FilterInterface
 
         switch ($operator) {
             case Operators::IN_LIST:
-                $this->searchQueryBuilder->whereIn('products.sku', $value);
+                $this->searchQueryBuilder->whereIn(sprintf('%s.%s', $this->getSearchTablePath($options), $field), $value);
 
                 break;
             case Operators::CONTAINS:
-                $this->searchQueryBuilder->where(function ($query) use ($value) {
+                $this->searchQueryBuilder->where(function ($query) use ($options, $field, $value) {
                     foreach ($value as $val) {
                         $escapedValue = QueryString::escapeValue($val);
-                        $query->orWhere('products.sku', 'LIKE', "%{$escapedValue}%");
+                        $query->orWhere(sprintf('%s.%s', $this->getSearchTablePath($options), $field), 'LIKE', "%{$escapedValue}%");
                     }
                 });
-                
+
                 break;
         }
 

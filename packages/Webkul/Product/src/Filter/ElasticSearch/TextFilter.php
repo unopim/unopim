@@ -59,6 +59,7 @@ class TextFilter extends AbstractElasticSearchAttributeFilter implements FilterI
                         'query'         => '*'.$escapedValue.'*',
                     ],
                 ];
+
                 $this->searchQueryBuilder::addFilter($clause);
                 break;
         }

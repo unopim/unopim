@@ -11,7 +11,7 @@ use Webkul\Product\Filter\AbstractFieldFilter;
  */
 class ParentFilter extends AbstractFieldFilter implements FilterInterface
 {
-    const FIELD = 'parent_id';
+    const FIELD = 'parent';
 
     public function __construct(
         array $supportedFields = [self::FIELD],
@@ -43,7 +43,10 @@ class ParentFilter extends AbstractFieldFilter implements FilterInterface
 
         switch ($operator) {
             case Operators::IN_LIST:
-                $this->searchQueryBuilder->whereIn(sprintf('products.%s', $field), $value);
+                $this->searchQueryBuilder->whereIn(
+                    sprintf('%s.%s', $this->getSearchTablePath($options), 'parent_id'),
+                    $this->getParentIdsBySkus($value, $options)
+                );
                 break;
         }
 

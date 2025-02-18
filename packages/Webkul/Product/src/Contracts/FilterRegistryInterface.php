@@ -8,11 +8,6 @@ namespace Webkul\Product\Contracts;
 interface FilterRegistryInterface
 {
     /**
-     * Get the filter (field or attribute)
-     */
-    public function getFilter($code, $operator);
-
-    /**
      * Get the field filter
      */
     public function getFieldFilter($field, $operator);

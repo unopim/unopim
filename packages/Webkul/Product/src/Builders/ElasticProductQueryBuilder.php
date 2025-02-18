@@ -31,6 +31,17 @@ class ElasticProductQueryBuilder extends AbstractEntityQueryBuilder
         $channel = $attribute->value_per_channel ? $context['channel'] : null;
 
         $filter->setQueryBuilder(new SearchQuery);
+
+        if (! $filter->supportsOperator($operator)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Unsupported operator. Only "%s" are supported, but "%s" was given.',
+                    implode(',', $filter->getOperators()),
+                    $operator
+                )
+            );
+        }
+
         $filter->addAttributeFilter($attribute, $operator, $value, $locale, $channel, $context);
 
         return $this;

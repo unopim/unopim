@@ -420,7 +420,7 @@ return [
                 'same-code-error'       => 'يجب أن يكون رمز الخيار فريدًا.',
                 'usable-in-grid'        => 'قابلة للاستخدام في الشبكة',
                 'is-filterable'         => 'قابل للتصفية',
-                
+
                 'option' => [
                     'color'    => 'تغيير الالوان',
                     'dropdown' => 'اسقاط',

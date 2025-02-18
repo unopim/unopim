@@ -4,6 +4,20 @@ namespace Webkul\Product\Providers;
 
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
+use Webkul\Product\Facades\ProductImage as ProductImageFacade;
+use Webkul\Product\Facades\ProductVideo as ProductVideoFacade;
+use Webkul\Product\Facades\ValueSetter as ProductValueSetter;
+use Webkul\Product\Filter\Database\BooleanFilter as DatabaseBooleanFilter;
+use Webkul\Product\Filter\Database\DateFilter as DatabaseDateFilter;
+use Webkul\Product\Filter\Database\Field\DateTimeFilter as DatabaseDateTimeFilter;
+use Webkul\Product\Filter\Database\Field\FamilyFilter as DatabaseFamilyFilter;
+use Webkul\Product\Filter\Database\Field\IdFilter as DatabaseIdFilter;
+use Webkul\Product\Filter\Database\Field\ParentFilter as DatabaseParentFilter;
+use Webkul\Product\Filter\Database\Field\SkuFilter as DatabaseSkuFilter;
+use Webkul\Product\Filter\Database\Field\StatusFilter as DatabaseStatusFilter;
+use Webkul\Product\Filter\Database\Field\TypeFilter as DatabaseTypeFilter;
+use Webkul\Product\Filter\Database\PriceFilter as DatabasePriceFilter;
+use Webkul\Product\Filter\Database\TextFilter as DatabaseTextFilter;
 use Webkul\Product\Filter\ElasticSearch\BooleanFilter as ElasticSearchBooleanFilter;
 use Webkul\Product\Filter\ElasticSearch\DateFilter as ElasticSearchDateFilter;
 use Webkul\Product\Filter\ElasticSearch\Field\DateTimeFilter as ElasticSearchDateTimeFilter;
@@ -15,16 +29,6 @@ use Webkul\Product\Filter\ElasticSearch\Field\StatusFilter as ElasticSearchStatu
 use Webkul\Product\Filter\ElasticSearch\Field\TypeFilter as ElasticSearchTypeFilter;
 use Webkul\Product\Filter\ElasticSearch\PriceFilter as ElasticSearchPriceFilter;
 use Webkul\Product\Filter\ElasticSearch\TextFilter as ElasticSearchTextFilter;
-use Webkul\Product\Filter\Database\Field\FamilyFilter as DatabaseFamilyFilter;
-use Webkul\Product\Filter\Database\Field\IdFilter as DatabaseIdFilter;
-use Webkul\Product\Filter\Database\Field\ParentFilter as DatabaseParentFilter;
-use Webkul\Product\Filter\Database\Field\SkuFilter as DatabaseSkuFilter;
-use Webkul\Product\Filter\Database\Field\StatusFilter as DatabaseStatusFilter;
-use Webkul\Product\Filter\Database\Field\TypeFilter as DatabaseTypeFilter;
-use Webkul\Product\Filter\Database\Field\DateTimeFilter as DatabaseDateTimeFilter;
-use Webkul\Product\Facades\ProductImage as ProductImageFacade;
-use Webkul\Product\Facades\ProductVideo as ProductVideoFacade;
-use Webkul\Product\Facades\ValueSetter as ProductValueSetter;
 use Webkul\Product\Models\ProductProxy;
 use Webkul\Product\Observers\ProductObserver;
 use Webkul\Product\ProductImage;
@@ -124,6 +128,14 @@ class ProductServiceProvider extends ServiceProvider
             ElasticSearchDateTimeFilter::class,
             ElasticSearchParentFilter::class,
         ], 'elasticsearch.product.field.filters');
+
+        // Register database attribute type filters
+        $this->app->tag([
+            DatabaseTextFilter::class,
+            DatabaseBooleanFilter::class,
+            DatabaseDateFilter::class,
+            DatabasePriceFilter::class,
+        ], 'database.attribute.filters');
 
         // Register database product fields filters
         $this->app->tag([

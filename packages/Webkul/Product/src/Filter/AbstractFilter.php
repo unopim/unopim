@@ -16,7 +16,7 @@ abstract class AbstractFilter extends BaseAbstractFilter
 
             return;
         }
-        
+
         $this->searchQueryBuilder = $searchQueryBuilder;
     }
 }

@@ -421,7 +421,7 @@ return [
                 'same-code-error'       => 'O código da opção precisa ser único.',
                 'usable-in-grid'        => 'Usável na grade',
                 'is-filterable'         => 'É filtrável',
-                'option' => [
+                'option'                => [
                     'color'    => 'Amostra de cor',
                     'dropdown' => 'Menu suspenso',
                     'image'    => 'Amostra de imagem',
