@@ -70,7 +70,7 @@ trait AttributeColumnTrait
 
     protected function getImageClosure()
     {
-        return fn ($value) => '<img src="'.Storage::url(is_array($value) ? $value[0] : $value).'" alt="Image" style="width: 50px; height: 50px; object-fit: cover;">';
+        return fn ($value) => ! empty($value) ? Storage::url(is_array($value) ? $value[0] : $value) : '';
     }
 
     protected function getDropdownOptions($attribute)

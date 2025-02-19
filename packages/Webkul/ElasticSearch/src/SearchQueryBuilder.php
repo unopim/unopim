@@ -25,6 +25,9 @@ class SearchQueryBuilder
     private $shouldClauses = [];
 
     /** @var array */
+    private $mustClauses = [];
+
+    /** @var array */
     private $sortClauses = [];
 
     /** @var array */
@@ -102,6 +105,13 @@ class SearchQueryBuilder
         return $this;
     }
 
+    public function addMust(array $clause)
+    {
+        $this->mustClauses[] = $clause;
+
+        return $this;
+    }
+
     /**
      * Adds a sort clause to the query
      *
@@ -137,6 +147,10 @@ class SearchQueryBuilder
 
         if (! empty($this->filterClauses)) {
             $searchQuery['query']['constant_score']['filter']['bool']['filter'] = $this->filterClauses;
+        }
+
+        if (! empty($this->mustClauses)) {
+            $searchQuery['query']['constant_score']['filter']['bool']['must'] = $this->mustClauses;
         }
 
         if (! empty($this->mustNotClauses)) {

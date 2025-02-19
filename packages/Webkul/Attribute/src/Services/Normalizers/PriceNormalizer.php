@@ -33,6 +33,6 @@ class PriceNormalizer extends AbstractNormalizer implements AttributeNormalizerI
             $format[] = core()->currencySymbol($key).' '.$value;
         }
 
-        return implode(',', $format);
+        return implode(', ', $format);
     }
 }

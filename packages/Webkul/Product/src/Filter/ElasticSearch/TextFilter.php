@@ -44,7 +44,7 @@ class TextFilter extends AbstractElasticSearchAttributeFilter implements FilterI
             case Operators::IN_LIST:
                 $clause = [
                     'terms' => [
-                        $attributePath => $value,
+                        $attributePath => QueryString::escapeArrayValue($value),
                     ],
                 ];
 

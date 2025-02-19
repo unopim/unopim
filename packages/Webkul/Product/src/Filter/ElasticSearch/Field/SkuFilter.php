@@ -46,7 +46,7 @@ class SkuFilter extends AbstractFieldFilter implements FilterInterface
             case Operators::IN_LIST:
                 $clause = [
                     'terms' => [
-                        $field => $value,
+                        $field => QueryString::escapeArrayValue($value),
                     ],
                 ];
 

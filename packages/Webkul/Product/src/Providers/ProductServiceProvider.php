@@ -20,6 +20,7 @@ use Webkul\Product\Filter\Database\PriceFilter as DatabasePriceFilter;
 use Webkul\Product\Filter\Database\TextFilter as DatabaseTextFilter;
 use Webkul\Product\Filter\ElasticSearch\BooleanFilter as ElasticSearchBooleanFilter;
 use Webkul\Product\Filter\ElasticSearch\DateFilter as ElasticSearchDateFilter;
+use Webkul\Product\Filter\ElasticSearch\DateTimeFilter as ElasticSearchDateTimeAttributeFilter;
 use Webkul\Product\Filter\ElasticSearch\Field\DateTimeFilter as ElasticSearchDateTimeFilter;
 use Webkul\Product\Filter\ElasticSearch\Field\FamilyFilter as ElasticSearchFamilyFilter;
 use Webkul\Product\Filter\ElasticSearch\Field\IdFilter as ElasticSearchIdFilter;
@@ -115,6 +116,7 @@ class ProductServiceProvider extends ServiceProvider
             ElasticSearchTextFilter::class,
             ElasticSearchBooleanFilter::class,
             ElasticSearchDateFilter::class,
+            ElasticSearchDateTimeAttributeFilter::class,
             ElasticSearchPriceFilter::class,
         ], 'elasticsearch.attribute.filters');
 

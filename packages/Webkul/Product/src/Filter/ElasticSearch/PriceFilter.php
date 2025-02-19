@@ -16,7 +16,7 @@ class PriceFilter extends AbstractElasticSearchAttributeFilter implements Filter
      */
     public function __construct(
         array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[2]],
-        array $supportedOperators = [Operators::IN_LIST, Operators::CONTAINS]
+        array $supportedOperators = [Operators::IN_LIST, Operators::EQUALS]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;
         $this->supportedOperators = $supportedOperators;

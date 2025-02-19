@@ -16,7 +16,7 @@ class DateFilter extends AbstractDatabaseAttributeFilter implements FilterInterf
      */
     public function __construct(
         array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[6], AttributeTypes::ATTRIBUTE_TYPES[7]],
-        array $supportedOperators = [Operators::IN_LIST, Operators::CONTAINS]
+        array $supportedOperators = [Operators::IN_LIST, Operators::BETWEEN]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;
         $this->supportedOperators = $supportedOperators;

@@ -16,11 +16,8 @@ class AttributeValueNormalizer implements NormalizerInterface
 
     /**
      * Normalize the given attribute value.
-     *
-     * @param  mixed  $value
-     * @return mixed
      */
-    public function normalize($data, array $options = [])
+    public function normalize(mixed $data, array $options = []): ?array
     {
         $channel = $options['channel'] ?? null;
         $locale = $options['locale'] ?? null;

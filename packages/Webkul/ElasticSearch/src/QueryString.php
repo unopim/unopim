@@ -17,4 +17,9 @@ class QueryString
 
         return preg_replace($regex, '\\\$0', $value);
     }
+
+    public static function escapeArrayValue(?array $values): array
+    {
+        return array_map(fn ($value) => is_string($value) ? strtolower($value) : $value, $values);
+    }
 }

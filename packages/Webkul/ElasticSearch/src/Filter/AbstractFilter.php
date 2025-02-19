@@ -45,7 +45,7 @@ abstract class AbstractFilter implements FilterInterface
         $this->searchQueryBuilder = $searchQueryBuilder;
     }
 
-    protected function getFormattedDateTime($field, $value)
+    protected function getFormattedDateTime(string $field, string $value): string
     {
         try {
             $utcTimeZone = 'UTC';

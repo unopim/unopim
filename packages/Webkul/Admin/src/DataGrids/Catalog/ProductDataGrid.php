@@ -45,7 +45,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
     protected $elasticSearchSortColumn = 'updated_at';
 
-    protected $dynamicColumns = ['name', 'gallery3', 'multiselect', 'color', 'size',  'datetime', 'price'];
+    protected $dynamicColumns = ['gallery3', 'name', 'price', 'multiselect', 'color', 'tax', 'Date', 'datetime'];
 
     protected $productQueryBuilder;
 
@@ -85,6 +85,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'products.id as product_id',
                 'products.status',
                 'products.type',
+                'products.updated_at',
                 'parent_products.sku as parent',
                 DB::raw('
                     COALESCE(`products`.`values`, `parent_products`.`values`) as raw_values
@@ -331,7 +332,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             $this->setElasticFilters($params['filters'] ?? []);
 
             $esQuery = SearchQuery::getQuery();
-
             $result = ResultCursorFactory::createCursor($esQuery, $params);
 
             $ids = $result->getIds();
@@ -378,53 +378,48 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     public function processRequestedFilters(array $requestedFilters)
     {
-        $context = [
-            'locale'  => core()->getRequestedLocaleCode(),
-            'channel' => core()->getRequestedChannelCode(),
-        ];
-
-        $queryBuilder = $this->prepareQuery->setQueryBuilder($this->queryBuilder);
-        // dd($requestedFilters);
-        foreach ($requestedFilters as $requestedColumn => $requestedValues) {
-            // if ($requestedColumn === 'all') {
-            //     $this->queryBuilder->where(function ($scopeQueryBuilder) use ($requestedValues) {
-            //         foreach ($requestedValues as $value) {
-            //             collect($this->columns)
-            //                 ->filter(fn ($column) => $column->searchable && $column->type !== ColumnTypeEnum::BOOLEAN->value)
-            //                 ->each(fn ($column) => $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), 'LIKE', '%'.$value.'%'));
-            //         }
-            //     });
-            // } else {
-            //     $column = collect($this->columns)->first(fn ($c) => $c->index === $requestedColumn);
-
-            // }
-
-            if (in_array($requestedColumn, ['channel', 'locale'])) {
-                continue;
-            }
-
-            if ($requestedColumn == 'all') {
-                $requestedColumn = 'name';
-                $operator = Operators::CONTAINS;
-                $value = $requestedValues;
-            } else {
-                [$operator, $value] = $this->getOperatorAndValue($requestedColumn, $requestedValues);
-            }
-
-            $this->addFilterValue($queryBuilder, $requestedColumn, $value, $operator, $context);
+        if (empty($requestedFilters)) {
+            return $this->queryBuilder;
         }
 
-        if (! empty($requestedFilters)) {
-            $this->queryBuilder = $this->prepareQuery->getQueryBuilder();
+        $this->processFilters($requestedFilters);
+
+        return $this->prepareQuery->getQueryBuilder();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function processRequestedSorting($requestedSort)
+    {
+        $sortColumn = $requestedSort['column'] ?? $this->sortColumn ?? $this->primaryColumn;
+        $sortOrder = $requestedSort['order'] ?? $this->sortOrder;
+
+        if ($attributePath = $this->getAttributePathForSort($sortColumn)) {
+            return $this->queryBuilder->orderByRaw(
+                sprintf("JSON_EXTRACT(products.values, '%s') + 0 %s", $attributePath, $sortOrder)
+            );
         }
 
-        return $this->queryBuilder;
+        return $this->queryBuilder->orderBy($sortColumn, $sortOrder);
     }
 
     /**
      * Process request.
      */
     protected function setElasticFilters($params)
+    {
+        if (empty($params)) {
+            return;
+        }
+
+        $this->processFilters($params);
+    }
+
+    /**
+     * Processes the filters applied to the datagrid.
+     */
+    protected function processFilters(array $params): void
     {
         $context = [
             'locale'  => core()->getRequestedLocaleCode(),
@@ -438,14 +433,22 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 continue;
             }
 
-            if ($attribute == 'all') {
-                $attribute = 'name';
-                $operator = Operators::CONTAINS;
-            } else {
-                [$operator, $value] = $this->getOperatorAndValue($attribute, $value);
+            if ($attribute === 'all') {
+                $this->addFilterValue(
+                    $queryBuilder,
+                    'name',
+                    $value,
+                    Operators::CONTAINS,
+                    $context
+                );
+
+                continue;
             }
 
-            $this->addFilterValue($queryBuilder, $attribute, $value, $operator, $context);
+            [$operator, $value] = $this->getOperatorAndValue($attribute, $value);
+            if ($operator) {
+                $this->addFilterValue($queryBuilder, $attribute, $value, $operator, $context);
+            }
         }
     }
 
@@ -456,7 +459,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         });
 
         if (empty($column)) {
-            throw new \LogicException(sprintf('Unsupported column name: %s for filter', $attribute));
+            return;
         }
 
         $column = reset($column);
@@ -503,7 +506,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'status'           => 'status',
         ];
 
-        $sort = $sortMapping[$sort] ?? $this->getElasticRawValuesSort($sort);
+        $sort = $sortMapping[$sort] ?? $this->getAttributePathForSort($sort, 'elasticsearch');
 
         SearchQuery::addSort([
             $sort => [
@@ -518,15 +521,24 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     /**
      *  Process request. sort order by attribute
      */
-    protected function getElasticRawValuesSort($attribute): string
+    protected function getAttributePathForSort($attributeCode, string $searchEngine = 'database')
     {
-        $attribute = $this->attributeService->findAttributeByCode($attribute);
+        $attribute = $this->attributeService->findAttributeByCode($attributeCode);
 
         if (! $attribute) {
-            return $attribute;
+            return null;
         }
 
-        return sprintf('values.%s.%s.keyword', $attribute->getScope(), $attribute->code);
+        $locale = core()->getRequestedLocaleCode();
+        $channel = core()->getRequestedChannelCode();
+
+        $path = sprintf('$.%s.%s', $attribute->getScope($locale, $channel), $attribute->code);
+
+        if ($searchEngine == 'elasticsearch') {
+            return sprintf('values.%s.%s.keyword', $attribute->getScope($locale, $channel), $attribute->code);
+        }
+
+        return $path;
     }
 
     /**

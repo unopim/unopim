@@ -7,15 +7,15 @@ use Webkul\ElasticSearch\Contracts\FilterInterface;
 use Webkul\ElasticSearch\Filter\Operators;
 
 /**
- * Date filter for an Elasticsearch query
+ * DateTime filter for an Elasticsearch query
  */
-class DateFilter extends AbstractElasticSearchAttributeFilter implements FilterInterface
+class DateTimeFilter extends AbstractElasticSearchAttributeFilter implements FilterInterface
 {
     /**
      * @param  array  $supportedFields
      */
     public function __construct(
-        array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[7]],
+        array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[6]],
         array $supportedOperators = [Operators::IN_LIST, Operators::BETWEEN]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;
@@ -58,14 +58,14 @@ class DateFilter extends AbstractElasticSearchAttributeFilter implements FilterI
                 $values = array_values($value);
                 $clause = [
                     'range' => [
-                        $attributePath => [
+                        "$attributePath.keyword" => [
                             'gte' => $this->getFormattedDateTime($attributeCode, $values[0]),
                             'lte' => $this->getFormattedDateTime($attributeCode, $values[1]),
                         ],
                     ],
                 ];
 
-                $this->searchQueryBuilder::addFilter($clause);
+                $this->searchQueryBuilder::addMust($clause);
                 break;
         }
 

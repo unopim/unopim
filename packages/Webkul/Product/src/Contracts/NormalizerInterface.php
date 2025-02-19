@@ -9,5 +9,5 @@ interface NormalizerInterface
      *
      * @return mixed
      */
-    public function normalize(mixed $value, array $options = []);
+    public function normalize(mixed $value, array $options = []): ?array;
 }
