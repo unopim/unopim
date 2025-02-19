@@ -108,21 +108,37 @@
                                 </p>
 
                                 <!-- Columns -->
-                                <p
-                                    class="break-words"
-                                    v-for="column in $parent.available.columns"
-                                    v-html="record[column.index]"
+                                 <template
                                     v-if="record.is_closure"
-                                >
-                                </p>
-
-                                <p
-                                    class="break-words"
                                     v-for="column in $parent.available.columns"
-                                    v-html="record[column.index]"
+                                 >
+                                    <template v-if="column.type === 'image'">
+                                        <img 
+                                        :src="record[column.index] ? record[column.index] : '{{ unopim_asset('images/product-placeholders/size.svg') }}'" 
+                                        alt="Thumbnail" 
+                                        width="74"
+                                        height="74"
+                                        class="h-[120px] max-w-[60px] min-w-[60px] max-h-[60px] min-h-[60px] rounded-lg border border-gray-300 shadow-sm object-cover"
+                                    />
+                                    </template>
+                                    <p
+                                        v-else
+                                        class="break-words"
+                                        v-html="record[column.index]"
+                                    >
+                                    </p>
+                                 </template>
+                                
+                                <template
                                     v-else
+                                    v-for="column in $parent.available.columns"
                                 >
-                                </p>
+                                    <p
+                                        class="break-words"
+                                        v-html="record[column.index]"
+                                    >
+                                    </p>
+                                </template>
 
                                 <!-- Actions -->
                                 <div
