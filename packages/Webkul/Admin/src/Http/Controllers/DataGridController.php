@@ -39,4 +39,13 @@ class DataGridController extends Controller
             ->where($column->options['params']['column']['label'], 'LIKE', '%'.$params['search'].'%')
             ->get();
     }
+
+    public function manageColumns()
+    {
+        dd(request()->all());
+        $params = $this->validate(request(), [
+            'datagrid_id' => ['required'],
+            'columns'     => ['required', 'array'],
+        ]);
+    }
 }

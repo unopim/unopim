@@ -28,6 +28,11 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
     Route::get('datagrid/look-up', [DataGridController::class, 'lookUp'])->name('admin.datagrid.look_up');
 
     /**
+     * Manage Columns routes.
+     */
+    Route::post('datagrid/manage-columns', [DataGridController::class, 'manageColumns'])->name('admin.datagrid.manage_columns');
+
+    /**
      * Tinymce file upload handler.
      */
     Route::post('tinymce/upload', [TinyMCEController::class, 'upload'])->name('admin.tinymce.upload');
