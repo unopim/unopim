@@ -8,6 +8,7 @@ use Webkul\Admin\Http\Controllers\TinyMCEController;
 use Webkul\Admin\Http\Controllers\User\AccountController;
 use Webkul\Admin\Http\Controllers\User\SessionController;
 use Webkul\HistoryControl\Http\Controllers\HistoryController;
+use Webkul\Admin\Http\Controllers\VueJsSelect\SelectOptionsController;
 
 /**
  * Extra routes.
@@ -71,4 +72,9 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
     });
 
     Route::delete('logout', [SessionController::class, 'destroy'])->name('admin.session.destroy');
+
+    /**
+     * Select options routes.
+     */
+    Route::get('vue-js-select/select-options', [SelectOptionsController::class, 'getOptions'])->name('admin.vue_js_select.select.options');
 });
