@@ -146,6 +146,8 @@
 
                             this.applied.filters = currentDatagrid.applied.filters;
 
+                            this.applied.managedColumns = currentDatagrid.applied.managedColumns;
+
                             if (urlParams.has('search')) {
                                 let searchAppliedColumn = this.findAppliedColumn('all');
 
@@ -189,6 +191,9 @@
                         params.filters[column.index] = column.value;
                     });
 
+                    params.managedColumns = this.applied.managedColumns;
+
+
                     this.isLoading = true;
 
                     this.$refs['filterDrawer'].close();
@@ -208,7 +213,8 @@
                                 mass_actions,
                                 search_placeholder,
                                 records,
-                                meta
+                                meta,
+                                managedColumns
                             } = response.data;
 
                             this.available.id = id;
@@ -224,6 +230,8 @@
                             this.available.meta = meta;
 
                             this.available.searchPlaceholder = search_placeholder;
+
+                            this.applied.managedColumns = managedColumns;
 
                             this.setCurrentSelectionMode();
 
@@ -528,6 +536,11 @@
                                 break;
                         }
                     }
+                },
+
+                managedColumns(columns) {
+                    this.applied.managedColumns = columns;
+                    this.get();
                 },
 
                 //================================================================

@@ -45,9 +45,18 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
     protected $elasticSearchSortColumn = 'updated_at';
 
-    protected $dynamicColumns = ['gallery3', 'name', 'price', 'multiselect', 'color', 'tax', 'Date', 'datetime'];
+    protected $dynamicColumns = [];
 
     protected $productQueryBuilder;
+
+    protected $defaultColumns = [
+        'sku',
+        'attribute_family',
+        'parent',
+        'product_id',
+        'status',
+        'type',
+    ];
 
     /**
      * Constructor for the class.
@@ -103,6 +112,80 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         return $queryBuilder;
     }
 
+    public function getPropertyColumns()
+    {
+        return [
+            'sku' => [
+                'index' => 'sku',
+                'label' => trans('admin::app.catalog.products.index.datagrid.sku'),
+                'type' => 'string',
+                'searchable' => true,
+                'filterable' => true,
+                'sortable'   => true,
+            ],
+            'attribute_family' => [
+                'index' => 'attribute_family',
+                'label' => trans('admin::app.catalog.products.index.datagrid.attribute-family'),
+                'type' => 'dropdown',
+                'options' => [
+                    'type' => 'basic',
+                    'params' => [
+                        'options' => $this->attributeFamilyRepository->all(['code as label', 'id as value'])->toArray(),
+                    ],
+                ],
+                'searchable' => false,
+                'filterable' => true,
+                'sortable' => true,
+            ],
+            'status' =>[
+                'index' => 'status',
+                'label' => trans('admin::app.catalog.products.index.datagrid.status'),
+                'type' => 'boolean',
+                'searchable' => false,
+                'filterable' => true,
+                'sortable' => true,
+                'wrapper' => function ($value) {
+                    return $value ? 'true' : 'false';
+                },
+            ],
+            'parent' => [
+                'index'      => 'parent',
+                'label'      => trans('admin::app.catalog.products.index.datagrid.parent'),
+                'type'       => 'string',
+                'searchable' => false,
+                'filterable' => true,
+                'sortable'   => true,
+            ],
+            'product_id' => [
+                'index'      => 'product_id',
+                'label'      => trans('admin::app.catalog.products.index.datagrid.id'),
+                'type'       => 'integer',
+                'searchable' => false,
+                'filterable' => true,
+                'sortable'   => true,
+            ],
+            'type' => [
+                'index'   => 'type',
+                'label'   => trans('admin::app.catalog.products.index.datagrid.type'),
+                'type'    => 'dropdown',
+                'options' => [
+                    'type' => 'basic',
+    
+                    'params' => [
+                        'options' => collect(config('product_types'))
+                            ->map(fn ($type) => ['label' => trans($type['name']), 'value' => $type['key']])
+                            ->values()
+                            ->toArray(),
+                    ],
+                ],
+                'closure'    => fn ($row) => trans('product::app.type.'.$row->type),
+                'searchable' => false,
+                'filterable' => true,
+                'sortable'   => true,
+            ],
+        ];
+    }
+
     /**
      * Prepare columns.
      *
@@ -110,109 +193,31 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     public function prepareColumns()
     {
-        $this->addColumn([
-            'index'      => 'sku',
-            'label'      => trans('admin::app.catalog.products.index.datagrid.sku'),
-            'type'       => 'string',
-            'searchable' => true,
-            'filterable' => true,
-            'sortable'   => true,
-        ]);
+        $managedColumns = request()->get('managedColumns');
+        $this->defaultColumns = $managedColumns ?? $this->defaultColumns;
+        
+        $propertyColumns = $this->getPropertyColumns();
 
-        $this->addColumn([
-            'index'   => 'attribute_family',
-            'label'   => trans('admin::app.catalog.products.index.datagrid.attribute-family'),
-            'type'    => 'dropdown',
-            'options' => [
-                'type' => 'basic',
 
-                'params' => [
-                    'options' => $this->attributeFamilyRepository->all(['code as label', 'id as value'])->toArray(),
-                ],
-            ],
-            'searchable' => false,
-            'filterable' => true,
-            'sortable'   => true,
-        ]);
+        foreach ($this->defaultColumns as $column) {
+            if (!isset($propertyColumns[$column])) {
+                $this->prepareAttributeColumns($column);
+                continue;
+            }
 
-        $this->addColumn([
-            'index'      => 'parent',
-            'label'      => trans('admin::app.catalog.products.index.datagrid.parent'),
-            'type'       => 'string',
-            'searchable' => false,
-            'filterable' => true,
-            'sortable'   => true,
-        ]);
-
-        $this->addColumn([
-            'index'      => 'product_id',
-            'label'      => trans('admin::app.catalog.products.index.datagrid.id'),
-            'type'       => 'integer',
-            'searchable' => false,
-            'filterable' => true,
-            'sortable'   => true,
-        ]);
-
-        $this->addColumn([
-            'index'      => 'status',
-            'label'      => trans('admin::app.catalog.products.index.datagrid.status'),
-            'type'       => 'dropdown',
-            'searchable' => false,
-            'filterable' => true,
-            'sortable'   => true,
-            'options'    => [
-                'type' => 'basic',
-
-                'params' => [
-                    'options' => [
-                        [
-                            'label' => trans('admin::app.common.enable'),
-                            'value' => 1,
-                        ], [
-                            'label' => trans('admin::app.common.disable'),
-                            'value' => 0,
-                        ],
-                    ],
-                ],
-            ],
-            'closure' => function ($row) {
-                return $row->status
-                    ? "<span class='label-active'>".trans('admin::app.common.enable').'</span>'
-                    : "<span class='label-info'>".trans('admin::app.common.disable').'</span>';
-            },
-        ]);
-
-        $this->addColumn([
-            'index'   => 'type',
-            'label'   => trans('admin::app.catalog.products.index.datagrid.type'),
-            'type'    => 'dropdown',
-            'options' => [
-                'type' => 'basic',
-
-                'params' => [
-                    'options' => collect(config('product_types'))
-                        ->map(fn ($type) => ['label' => trans($type['name']), 'value' => $type['key']])
-                        ->values()
-                        ->toArray(),
-                ],
-            ],
-            'closure'    => fn ($row) => trans('product::app.type.'.$row->type),
-            'searchable' => false,
-            'filterable' => true,
-            'sortable'   => true,
-        ]);
-
-        $this->prepareAttributeColumns();
+            $this->addColumn($propertyColumns[$column]);;
+        }
     }
 
-    public function prepareAttributeColumns()
+    public function prepareAttributeColumns($column)
     {
-        $attributes = $this->attributeService->findAttributeByCodes($this->dynamicColumns);
+        $attribute = $this->attributeService->findAttributeByCode($column);
 
-        foreach ($attributes as $attribute) {
-            $column = $this->buildColumnDefinition($attribute);
-            $this->addAttributeColumn($column);
+        if (! $attribute) {
+            return;
         }
+
+        $this->addAttributeColumn($this->buildColumnDefinition($attribute));
     }
 
     /**
@@ -724,6 +729,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'mass_actions'       => $this->massActions,
             'search_placeholder' => __($this->searchPlaceholder),
             'records'            => $paginator['data'],
+            'managedColumns'      => request()->get('managedColumns'),
             'meta'               => [
                 'primary_column'   => $this->primaryColumn,
                 'default_order'    => $this->sortColumn,

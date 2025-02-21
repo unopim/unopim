@@ -30,29 +30,6 @@ class ResultCursorFactory implements CursorFactoryInterface
             'body'  => $esQuery,
         ];
 
-        $searchParams = [
-            'index' => 'vipin_products',
-            'body'  => [
-                'query' => [
-                    'bool' => [
-                        'must' => [
-                            [
-                                'range' => [
-                                    'values.common.datetime.keyword' => [
-                                        'gte'    => '2025-02-10 00:00:00',
-                                        'lte'    => '2025-02-15 23:59:59',
-                                        'format' => 'yyyy-MM-dd HH:mm:ss',
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ];
-
-        // dd($requestParam, $searchParams);
-
         try {
             $results = Elasticsearch::search($requestParam);
         } catch (\Exception $e) {

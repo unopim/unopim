@@ -27,6 +27,7 @@
                     <x-admin::modal
                         ref="manageColumnsModal"
                         type="large"
+                        @toggle="getColumnsList"
                     >
                         <!-- Modal Toggle -->
                         <x-slot:toggle>
@@ -130,10 +131,10 @@
                                                                 >
                                                                 </span>
 
-                                                                <input
-                                                                    type="hidden"
-                                                                    :name="'selected_columns[' + element.code + '][position]'"
-                                                                    :value="index + 1"
+                                                                <input 
+                                                                    type="hidden" 
+                                                                    :name="'selected_columns[]'" 
+                                                                    :value="element.code" 
                                                                 />
                                                                 
                                                             </div>
@@ -175,12 +176,7 @@
                     available: null,
 
                     applied: null,
-                    selectedColumns: [
-                        {
-                            code: "name",
-                            label: "Name",
-                        },
-                    ],
+                    selectedColumns: [],
                     columnList: [
                         {
                             code: "name",
@@ -207,6 +203,7 @@
                             label: "Updated At",
                         },
                     ],
+                    viewedColumns: [],
                 };
             },
 
@@ -221,53 +218,50 @@
             },
 
             mounted() {
-                console.log("mounted", this.datagridId);
-                // this.registerEvents();
+                this.normalizeSelectedColumns();
             },
 
             watch: {
-                format(value) {
-                    this.format = this.parseValue(value)?.id ?? this.format;
+                selectedColumns: {
+                    handler(newVal) {
+                    this.viewedColumns = newVal.map(el => el.code);
+                    },
+                    deep: true,
+                    immediate: true,
                 }
             },
 
             methods: {
-                registerEvents() {
-                    this.$emitter.on('change-datagrid', this.updateProperties);
-                },
-
-                updateProperties({available, applied }) {
-                    this.available = available;
-
-                    this.applied = applied;
-                },
-
                 applyColumns() {
-                    let formData = new FormData(this.$refs.manageColumnsForm);
-                    // formData.append("datagrid_id", this.datagridId);
+                    this.$parent.managedColumns(this.viewedColumns)
+                },
 
-                    this.$axios.post("{{ route('admin.datagrid.manage_columns') }}", formData)
-                    .then((response) => {
-                        this.$refs.manageColumnsModal.close();
-
-                        // this.loadDirectories();
-
-
-                        this.$emitter.emit('add-flash', {
-                            type: 'success',
-                            message: response.data.message
-                        });
-
-                        resetForm();
-                    })
-                    .catch(error => {
-                        this.$emitter.emit('add-flash', {
-                            type: 'error',
-                            message: error.response.data.message
-                        });
+                normalizeSelectedColumns() {
+                    this.selectedColumns = this.$parent.available.columns.map((el) => {
+                        return {
+                            code: el.index,
+                            label: el.label,
+                        };
                     });
                 },
 
+                getColumnsList() {
+                    const params = {
+                        entityName: 'attributes',
+                        page: 1,
+                    };
+
+                    this.$axios
+                        .get('{{ route('admin.vue_js_select.select.options') }}', {
+                            params
+                        })
+                        .then(({
+                            data
+                        }) => {
+                            console.log(data);
+                            this.columnList = data.options;
+                        });
+                },
             },
         });
     </script>
