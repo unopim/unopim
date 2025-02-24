@@ -2,17 +2,20 @@
 
 namespace Webkul\Product\Filter;
 
-abstract class AbstractFieldFilter extends AbstractFilter
+use Illuminate\Support\Facades\DB;
+use Webkul\ElasticSearch\Contracts\PropertyFilterInterface;
+
+abstract class AbstractPropertyFilter extends AbstractFilter implements PropertyFilterInterface
 {
     /** @var array */
-    protected $supportedFields = [];
+    protected $supportedProperties = [];
 
     /**
      * {@inheritdoc}
      */
-    public function supportsField($field)
+    public function supportsProperty($property)
     {
-        return in_array($field, $this->supportedFields);
+        return in_array($property, $this->supportedProperties);
     }
 
     /**
@@ -29,13 +32,20 @@ abstract class AbstractFieldFilter extends AbstractFilter
     protected function getParentIdsBySkus(array $skus, array $options = [])
     {
         $table = $this->getSearchTablePath($options);
-        $parentQuery = clone $this->searchQueryBuilder;
-
-        return $parentQuery
+        
+        return DB::table($table)
             ->select("$table.id")
             ->whereIn("$table.sku", $skus)
-            ->orWhere("$table.type", config('product_types.configurable.key'))
+            ->Where("$table.type", config('product_types.configurable.key'))
             ->pluck('id')
             ->toArray();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProperties()
+    {
+        return $this->supportedProperties;
     }
 }

@@ -1,42 +1,41 @@
 <?php
 
-namespace Webkul\Product\Filter\ElasticSearch\Field;
+namespace Webkul\Product\Filter\ElasticSearch\Property;
 
-use Webkul\ElasticSearch\Contracts\FilterInterface;
 use Webkul\ElasticSearch\Filter\Operators;
-use Webkul\Product\Filter\AbstractFieldFilter;
+use Webkul\Product\Filter\AbstractPropertyFilter;
 
 /**
- * Id filter for an Elasticsearch query
+ * Family filter for an Elasticsearch query
  */
-class IdFilter extends AbstractFieldFilter implements FilterInterface
+class FamilyFilter extends AbstractPropertyFilter
 {
-    const FIELD = 'product_id';
+    const PROPERTY = 'attribute_family';
 
     public function __construct(
-        array $supportedFields = [self::FIELD],
+        array $supportedProperties = [self::PROPERTY],
         array $supportedOperators = [Operators::IN_LIST]
     ) {
         $this->supportedOperators = $supportedOperators;
-        $this->supportedFields = $supportedFields;
+        $this->supportedProperties = $supportedProperties;
 
     }
 
     /**
      * {@inheritdoc}
      */
-    public function addFieldFilter($field, $operator, $value, $locale = null, $channel = null, $options = [])
+    public function addPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = [])
     {
         if ($this->searchQueryBuilder === null) {
             throw new \LogicException('The search query builder is not initialized in the filter.');
         }
 
-        if (! in_array($field, $this->supportedFields)) {
+        if (! in_array($property, $this->supportedProperties)) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    'Unsupported field name for id filter, only "%s" are supported, "%s" given',
-                    implode(',', $this->supportedFields),
-                    $field
+                    'Unsupported property name for family filter, only "%s" are supported, "%s" given',
+                    implode(',', $this->supportedProperties),
+                    $property
                 )
             );
         }
@@ -45,7 +44,7 @@ class IdFilter extends AbstractFieldFilter implements FilterInterface
             case Operators::IN_LIST:
                 $clause = [
                     'terms' => [
-                        'id' => $value,
+                        'attribute_family_id' => $value,
                     ],
                 ];
 

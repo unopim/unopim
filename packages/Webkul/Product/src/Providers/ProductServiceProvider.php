@@ -9,25 +9,25 @@ use Webkul\Product\Facades\ProductVideo as ProductVideoFacade;
 use Webkul\Product\Facades\ValueSetter as ProductValueSetter;
 use Webkul\Product\Filter\Database\BooleanFilter as DatabaseBooleanFilter;
 use Webkul\Product\Filter\Database\DateFilter as DatabaseDateFilter;
-use Webkul\Product\Filter\Database\Field\DateTimeFilter as DatabaseDateTimeFilter;
-use Webkul\Product\Filter\Database\Field\FamilyFilter as DatabaseFamilyFilter;
-use Webkul\Product\Filter\Database\Field\IdFilter as DatabaseIdFilter;
-use Webkul\Product\Filter\Database\Field\ParentFilter as DatabaseParentFilter;
-use Webkul\Product\Filter\Database\Field\SkuFilter as DatabaseSkuFilter;
-use Webkul\Product\Filter\Database\Field\StatusFilter as DatabaseStatusFilter;
-use Webkul\Product\Filter\Database\Field\TypeFilter as DatabaseTypeFilter;
+use Webkul\Product\Filter\Database\Property\DateTimeFilter as DatabaseDateTimeFilter;
+use Webkul\Product\Filter\Database\Property\FamilyFilter as DatabaseFamilyFilter;
+use Webkul\Product\Filter\Database\Property\IdFilter as DatabaseIdFilter;
+use Webkul\Product\Filter\Database\Property\ParentFilter as DatabaseParentFilter;
+use Webkul\Product\Filter\Database\Property\SkuFilter as DatabaseSkuFilter;
+use Webkul\Product\Filter\Database\Property\StatusFilter as DatabaseStatusFilter;
+use Webkul\Product\Filter\Database\Property\TypeFilter as DatabaseTypeFilter;
 use Webkul\Product\Filter\Database\PriceFilter as DatabasePriceFilter;
 use Webkul\Product\Filter\Database\TextFilter as DatabaseTextFilter;
 use Webkul\Product\Filter\ElasticSearch\BooleanFilter as ElasticSearchBooleanFilter;
 use Webkul\Product\Filter\ElasticSearch\DateFilter as ElasticSearchDateFilter;
 use Webkul\Product\Filter\ElasticSearch\DateTimeFilter as ElasticSearchDateTimeAttributeFilter;
-use Webkul\Product\Filter\ElasticSearch\Field\DateTimeFilter as ElasticSearchDateTimeFilter;
-use Webkul\Product\Filter\ElasticSearch\Field\FamilyFilter as ElasticSearchFamilyFilter;
-use Webkul\Product\Filter\ElasticSearch\Field\IdFilter as ElasticSearchIdFilter;
-use Webkul\Product\Filter\ElasticSearch\Field\ParentFilter as ElasticSearchParentFilter;
-use Webkul\Product\Filter\ElasticSearch\Field\SkuFilter as ElasticSearchSkuFilter;
-use Webkul\Product\Filter\ElasticSearch\Field\StatusFilter as ElasticSearchStatusFilter;
-use Webkul\Product\Filter\ElasticSearch\Field\TypeFilter as ElasticSearchTypeFilter;
+use Webkul\Product\Filter\ElasticSearch\Property\DateTimeFilter as ElasticSearchDateTimeFilter;
+use Webkul\Product\Filter\ElasticSearch\Property\FamilyFilter as ElasticSearchFamilyFilter;
+use Webkul\Product\Filter\ElasticSearch\Property\IdFilter as ElasticSearchIdFilter;
+use Webkul\Product\Filter\ElasticSearch\Property\ParentFilter as ElasticSearchParentFilter;
+use Webkul\Product\Filter\ElasticSearch\Property\SkuFilter as ElasticSearchSkuFilter;
+use Webkul\Product\Filter\ElasticSearch\Property\StatusFilter as ElasticSearchStatusFilter;
+use Webkul\Product\Filter\ElasticSearch\Property\TypeFilter as ElasticSearchTypeFilter;
 use Webkul\Product\Filter\ElasticSearch\PriceFilter as ElasticSearchPriceFilter;
 use Webkul\Product\Filter\ElasticSearch\TextFilter as ElasticSearchTextFilter;
 use Webkul\Product\Models\ProductProxy;
@@ -118,9 +118,9 @@ class ProductServiceProvider extends ServiceProvider
             ElasticSearchDateFilter::class,
             ElasticSearchDateTimeAttributeFilter::class,
             ElasticSearchPriceFilter::class,
-        ], 'elasticsearch.attribute.filters');
+        ], 'unopim.elasticsearch.attribute.filters');
 
-        // Register elasticSearch product fields filters
+        // Register elasticSearch product Properties filters
         $this->app->tag([
             ElasticSearchTypeFilter::class,
             ElasticSearchStatusFilter::class,
@@ -129,7 +129,7 @@ class ProductServiceProvider extends ServiceProvider
             ElasticSearchSkuFilter::class,
             ElasticSearchDateTimeFilter::class,
             ElasticSearchParentFilter::class,
-        ], 'elasticsearch.product.field.filters');
+        ], 'unopim.elasticsearch.product.property.filters');
 
         // Register database attribute type filters
         $this->app->tag([
@@ -137,9 +137,9 @@ class ProductServiceProvider extends ServiceProvider
             DatabaseBooleanFilter::class,
             DatabaseDateFilter::class,
             DatabasePriceFilter::class,
-        ], 'database.attribute.filters');
+        ], 'unopim.database.attribute.filters');
 
-        // Register database product fields filters
+        // Register database product Properties filters
         $this->app->tag([
             DatabaseFamilyFilter::class,
             DatabaseIdFilter::class,
@@ -148,6 +148,6 @@ class ProductServiceProvider extends ServiceProvider
             DatabaseTypeFilter::class,
             DatabaseParentFilter::class,
             DatabaseDateTimeFilter::class,
-        ], 'database.product.field.filters');
+        ], 'unopim.database.product.property.filters');
     }
 }

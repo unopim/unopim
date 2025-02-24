@@ -177,32 +177,7 @@
 
                     applied: null,
                     selectedColumns: [],
-                    columnList: [
-                        {
-                            code: "name",
-                            label: "Name",
-                        },
-                        {
-                            code: "email",
-                            label: "Email",
-                        },
-                        {
-                            code: "phone",
-                            label: "Phone",
-                        },
-                        {
-                            code: "status",
-                            label: "Status",
-                        },
-                        {
-                            code: "created_at",
-                            label: "Created At",
-                        },
-                        {
-                            code: "updated_at",
-                            label: "Updated At",
-                        },
-                    ],
+                    columnList: [],
                     viewedColumns: [],
                 };
             },
@@ -249,6 +224,7 @@
                     const params = {
                         entityName: 'attributes',
                         page: 1,
+                        limit: 10000,
                     };
 
                     this.$axios

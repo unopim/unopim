@@ -1,10 +1,11 @@
 <?php
 
-namespace Webkul\Product\Builders;
+namespace Webkul\ElasticSearch;
 
 use Webkul\ElasticSearch\Contracts\QueryBuilderInterface;
+use Webkul\ElasticSearch\Facades\SearchQuery;
 
-abstract class DatabaseAbstractEntityQueryBuilder implements QueryBuilderInterface
+abstract class AbstractFilterableQueryBuilder implements QueryBuilderInterface
 {
     /** @var mixed */
     protected $qb;
@@ -13,7 +14,7 @@ abstract class DatabaseAbstractEntityQueryBuilder implements QueryBuilderInterfa
 
     abstract public function prepareQueryBuilder();
 
-    abstract public function addFilter($field, $operator, $value, array $context = []);
+    abstract public function addFilter($property, $operator, $value, array $context = []);
 
     /**
      * {@inheritdoc}
@@ -48,19 +49,19 @@ abstract class DatabaseAbstractEntityQueryBuilder implements QueryBuilderInterfa
     /**
      * {@inheritdoc}
      */
-    public function addSorter($field, $direction, array $context = [])
+    public function addSorter($property, $direction, array $context = [])
     {
-        $this->qb->addSort($field, $direction, $context);
+        $this->qb->addSort($property, $direction, $context);
 
         return $this;
     }
 
     /**
-     * Add a filter condition on a field
+     * Add a filter condition on a property
      */
-    protected function addFieldFilter($filter, $field, $operator, $value, array $context)
+    protected function addPropertyFilter($filter, $property, $operator, $value, array $context)
     {
-        $filter->setQueryBuilder($this->getQueryBuilder());
+        $filter->setQueryBuilder(new SearchQuery);
 
         if (! $filter->supportsOperator($operator)) {
             throw new \InvalidArgumentException(
@@ -72,7 +73,7 @@ abstract class DatabaseAbstractEntityQueryBuilder implements QueryBuilderInterfa
             );
         }
 
-        $filter->addFieldFilter($field, $operator, $value, $context);
+        $filter->addPropertyFilter($property, $operator, $value, $context);
 
         return $this;
     }

@@ -8,9 +8,9 @@ namespace Webkul\Product\Contracts;
 interface FilterRegistryInterface
 {
     /**
-     * Get the field filter
+     * Get the property filter
      */
-    public function getFieldFilter($field, $operator);
+    public function getPropertyFilter($property, $operator);
 
     /**
      * Get the attribute filter
@@ -18,9 +18,9 @@ interface FilterRegistryInterface
     public function getAttributeFilter($attribute, $operator);
 
     /**
-     * Returns all field filters
+     * Returns all property filters
      */
-    public function getFieldFilters();
+    public function getPropertyFilters();
 
     /**
      * Returns all attribute filters

@@ -3,16 +3,16 @@
 namespace Webkul\Product\Builders;
 
 use Webkul\Attribute\Services\AttributeService;
-use Webkul\Product\Filter\FilterRegistry;
-use Webkul\Product\Traits\ProductQueryBuilder;
+use Webkul\Product\Filter\FilterManager;
+use Webkul\Product\Traits\ProductQueryFilter;
 
-class DatabaseProductQueryBuilder extends DatabaseAbstractEntityQueryBuilder
+class DatabaseProductQueryBuilder extends AbstractFilterableQueryBuilder
 {
-    use ProductQueryBuilder;
+    use ProductQueryFilter;
 
     public function __construct(
         protected AttributeService $attributeService,
-        protected FilterRegistry $filterRegistry
+        protected FilterManager $filterManager
     ) {}
 
     /**

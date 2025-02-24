@@ -12,7 +12,7 @@ use Webkul\ElasticSearch\Filter\Operators;
 class DateFilter extends AbstractDatabaseAttributeFilter implements FilterInterface
 {
     /**
-     * @param  array  $supportedFields
+     * @param  array  $supportedProperties
      */
     public function __construct(
         array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[6], AttributeTypes::ATTRIBUTE_TYPES[7]],

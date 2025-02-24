@@ -5,30 +5,30 @@ namespace Webkul\Product\Filter;
 use Illuminate\Contracts\Container\Container;
 use Webkul\Product\Contracts\FilterRegistryInterface;
 
-class FilterRegistry implements FilterRegistryInterface
+class FilterManager implements FilterRegistryInterface
 {
     protected $attributeFilters;
 
-    protected $fieldFilters;
+    protected $propertyFilters;
 
     public function __construct(Container $app)
     {
         $this->attributeFilters = core()->isElasticsearchEnabled()
-            ? collect($app->tagged('elasticsearch.attribute.filters'))
-            : collect($app->tagged('database.attribute.filters'));
+            ? collect($app->tagged('unopim.elasticsearch.attribute.filters'))
+            : collect($app->tagged('unopim.database.attribute.filters'));
 
-        $this->fieldFilters = core()->isElasticsearchEnabled()
-            ? collect($app->tagged('elasticsearch.product.field.filters'))
-            : collect($app->tagged('database.product.field.filters'));
+        $this->propertyFilters = core()->isElasticsearchEnabled()
+            ? collect($app->tagged('unopim.elasticsearch.product.property.filters'))
+            : collect($app->tagged('unopim.database.product.property.filters'));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getFieldFilter($field, $operator)
+    public function getPropertyFilter($property, $operator)
     {
-        foreach ($this->fieldFilters as $filter) {
-            if ($filter->supportsField($field)) {
+        foreach ($this->propertyFilters as $filter) {
+            if ($filter->supportsProperty($property)) {
                 return $filter;
             }
         }
@@ -53,9 +53,9 @@ class FilterRegistry implements FilterRegistryInterface
     /**
      * {@inheritdoc}
      */
-    public function getFieldFilters()
+    public function getPropertyFilters()
     {
-        return $this->fieldFilters;
+        return $this->propertyFilters;
     }
 
     /**

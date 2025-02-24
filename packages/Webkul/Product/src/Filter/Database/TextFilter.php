@@ -13,7 +13,7 @@ use Webkul\ElasticSearch\QueryString;
 class TextFilter extends AbstractDatabaseAttributeFilter implements FilterInterface
 {
     /**
-     * @param  array  $supportedFields
+     * @param  array  $supportedProperties
      */
     public function __construct(
         array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[0], AttributeTypes::ATTRIBUTE_TYPES[4], AttributeTypes::ATTRIBUTE_TYPES[5]],

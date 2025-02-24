@@ -38,9 +38,10 @@ class AbstractOptionsController extends Controller
         string $entityName,
         int|string $page,
         string $query = '',
-        ?array $queryParams = []
-    )
-    {
+        ?array $queryParams = [],
+        int $limit = self::DEFAULT_PER_PAGE,
+        bool $isPaginate = true
+    ) {
         $repository = $this->getEntityRepository($entityName);
 
         if (isset($queryParams['filters']) && is_array($queryParams['filters'])) {
@@ -52,12 +53,16 @@ class AbstractOptionsController extends Controller
         }
 
         $initializeValues = isset($queryParams['identifiers']['columnName']) ? $queryParams['identifiers'] : [];
-           
+
         if (! empty($initializeValues)) {
             $repository = $this->applyInitialValues($repository, $initializeValues);
         }
- 
-        return $repository->orderBy('id')->paginate(self::DEFAULT_PER_PAGE, ['*'], 'paginate', $page);
+
+        if ($isPaginate) {
+            return $repository->orderBy('id')->paginate($limit, ['*'], 'paginate', $page);
+        } else {
+            return $repository->orderBy('id')->get();
+        }
     }
 
     /**

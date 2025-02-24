@@ -3,18 +3,18 @@
 namespace Webkul\Product\Builders;
 
 use Webkul\Attribute\Services\AttributeService;
-use Webkul\ElasticSearch\AbstractEntityQueryBuilder;
+use Webkul\ElasticSearch\AbstractFilterableQueryBuilder as ElasticSearchAbstractFilterableQueryBuilder;
 use Webkul\ElasticSearch\Facades\SearchQuery;
-use Webkul\Product\Filter\FilterRegistry;
-use Webkul\Product\Traits\ProductQueryBuilder;
+use Webkul\Product\Filter\FilterManager;
+use Webkul\Product\Traits\ProductQueryFilter;
 
-class ElasticProductQueryBuilder extends AbstractEntityQueryBuilder
+class ElasticProductQueryBuilder extends ElasticSearchAbstractFilterableQueryBuilder
 {
-    use ProductQueryBuilder;
+    use ProductQueryFilter;
 
     public function __construct(
         protected AttributeService $attributeService,
-        protected FilterRegistry $filterRegistry
+        protected FilterManager $filterManager
     ) {}
 
     /**

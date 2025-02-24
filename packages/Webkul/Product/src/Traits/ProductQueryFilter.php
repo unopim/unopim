@@ -4,7 +4,7 @@ namespace Webkul\Product\Traits;
 
 use Illuminate\Support\Facades\DB;
 
-trait ProductQueryBuilder
+trait ProductQueryFilter
 {
     /**
      * Prepare query builder.
@@ -23,33 +23,33 @@ trait ProductQueryBuilder
     /**
      * {@inheritdoc}
      */
-    public function addFilter($field, $operator, $value, array $context = [])
+    public function addFilter($property, $operator, $value, array $context = [])
     {
         $attribute = null;
-        $filter = $this->filterRegistry->getFieldFilter($field, $operator);
+        $filter = $this->filterManager->getPropertyFilter($property, $operator);
 
-        $filterType = 'field';
+        $filterType = 'property';
 
         if (! $filter) {
-            $attribute = $this->attributeService->findAttributeByCode($field);
+            $attribute = $this->attributeService->findAttributeByCode($property);
             if ($attribute) {
                 $filterType = 'attribute';
-                $filter = $this->filterRegistry->getAttributeFilter($attribute, $operator);
+                $filter = $this->filterManager->getAttributeFilter($attribute, $operator);
             }
         }
 
         if (! $filter) {
-            throw new \Exception("No matching filter found for field: {$field}");
+            throw new \Exception("No matching filter found for property: {$property}");
         }
 
         if (! $attribute) {
-            $this->addFieldFilter($filter, $field, $operator, $value, $context);
+            $this->addPropertyFilter($filter, $property, $operator, $value, $context);
         } else {
             $this->addAttributeFilter($filter, $attribute, $operator, $value, $context);
         }
 
         $this->rawFilters[] = [
-            'field'    => $field,
+            'property'    => $property,
             'operator' => $operator,
             'value'    => $value,
             'context'  => $context,
