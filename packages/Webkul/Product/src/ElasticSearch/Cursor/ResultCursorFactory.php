@@ -59,8 +59,8 @@ class ResultCursorFactory implements CursorFactoryInterface
     {
         $indexPrefix = env('ELASTICSEARCH_INDEX_PREFIX') ? env('ELASTICSEARCH_INDEX_PREFIX') : env('APP_NAME');
 
-        $options['page'] = $options['page'] ?? 1;
-        $options['per_page'] = $options['per_page'] ?? 10;
+        $options['page'] = $options['pagination']['page'] ?? 1;
+        $options['per_page'] = $options['pagination']['per_page'] ?? 10;
         $options['sort'] = $options['sort'] ?? [];
         $options['filters'] = $options['filters'] ?? [];
 

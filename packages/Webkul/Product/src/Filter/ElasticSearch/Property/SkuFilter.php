@@ -57,7 +57,7 @@ class SkuFilter extends AbstractPropertyFilter
                 $clause = [
                     'query_string' => [
                         'default_Property' => $property,
-                        'query'         => '*'.$escapedValue.'*',
+                        'query'            => '*'.$escapedValue.'*',
                     ],
                 ];
                 $this->searchQueryBuilder::addFilter($clause);

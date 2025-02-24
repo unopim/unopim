@@ -2,13 +2,10 @@
 
 namespace Webkul\Admin\Http\Controllers\VueJsSelect;
 
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Core\Eloquent\TranslatableModel;
-
-
 
 class AbstractOptionsController extends Controller
 {
@@ -20,7 +17,6 @@ class AbstractOptionsController extends Controller
     public function __construct(
         protected AttributeRepository $attributeRepository,
     ) {}
-
 
     protected function getEntityRepository($entityName)
     {
@@ -75,7 +71,6 @@ class AbstractOptionsController extends Controller
         return $translation?->label ?? $translation?->name;
     }
 
-    
     /**
      * format option for select component
      */
@@ -90,7 +85,6 @@ class AbstractOptionsController extends Controller
             ...$option->makeHidden(['translations'])->toArray(),
         ];
     }
-
 
     /**
      * Apply Filters according to query on the query builder object

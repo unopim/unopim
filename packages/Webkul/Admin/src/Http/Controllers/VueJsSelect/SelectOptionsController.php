@@ -3,7 +3,6 @@
 namespace Webkul\Admin\Http\Controllers\VueJsSelect;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class SelectOptionsController extends AbstractOptionsController
 {
@@ -14,7 +13,7 @@ class SelectOptionsController extends AbstractOptionsController
         $limit = request()->get('limit', self::DEFAULT_PER_PAGE);
         $query = request()->get('query') ?? '';
         $queryParams = request()->except(['page', 'query', 'entityName']);
-        
+
         $options = $this->getOptionsByParams($entityName, $page, $query, $queryParams, $limit);
         $currentLocaleCode = core()->getRequestedLocaleCode();
         $formattedOptions = [];

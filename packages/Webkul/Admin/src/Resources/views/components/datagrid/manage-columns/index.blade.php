@@ -62,39 +62,44 @@
                                                 @lang('Available Columns')
                                             </p>
                                         </div>
-                                            <draggable
-                                                class="h-[calc(100vh-285px)] pb-[16px] overflow-auto ltr:border-r rtl:border-l border-gray-200"
-                                                ghost-class="draggable-ghost"
-                                                handle=".icon-drag"
-                                                v-bind="{animation: 200}"
-                                                :list="availableColumns"
-                                                item-key="code"
-                                                group="groups"
-                                            >
-                                                <template #item="{ element, index }">
-                                                    <div class="">
-                                                        <!-- Group Container -->
-                                                        <div class="flex items-center group">
-                                                            <div
-                                                                class="text-[20px] rounded-[6px] cursor-pointer transition-all hover:bg-violet-50 dark:hover:bg-cherry-800 group-hover:text-gray-800"
-                                                            >
-                                                                <div
-                                                                    class="flex gap-[6px] max-w-max py-[6px] ltr:pr-[6px] rtl:pl-[6px] rounded transition-all text-gray-600 dark:text-gray-300 group cursor-pointer"
-                                                                >
-                                                                    <i class="icon-drag text-xl transition-all group-hover:text-gray-800 dark:group-hover:text-white cursor-grab"></i>
+                                        <div v-if="loading" class="grid gap-y-2.5 pt-3">
+                                            <div v-for="n in 10" :key="n" class="shimmer w-[302px] h-6"></div>
+                                        </div>
 
-                                                                    <span
-                                                                        class="text-sm font-regular transition-all group-hover:text-gray-800 dark:group-hover:text-white max-xl:text-xs"
-                                                                        v-text="element.label"
-                                                                    >
-                                                                    </span>
-                                                                    
-                                                                </div>
+                                        <draggable
+                                            class="h-[calc(100vh-285px)] pb-[16px] pt-3 overflow-auto ltr:border-r rtl:border-l border-gray-200"
+                                            ghost-class="draggable-ghost"
+                                            handle=".icon-drag"
+                                            v-bind="{animation: 200}"
+                                            :list="availableColumns"
+                                            item-key="code"
+                                            group="groups"
+                                            v-if="!loading"
+                                        >
+                                            <template #item="{ element, index }">
+                                                <div class="">
+                                                    <!-- Group Container -->
+                                                    <div class="flex items-center group">
+                                                        <div
+                                                            class="text-[20px] rounded-[6px] cursor-pointer transition-all hover:bg-violet-50 dark:hover:bg-cherry-800 group-hover:text-gray-800"
+                                                        >
+                                                            <div
+                                                                class="flex gap-[6px] max-w-max py-[6px] ltr:pr-[6px] rtl:pl-[6px] rounded transition-all text-gray-600 dark:text-gray-300 group cursor-pointer"
+                                                            >
+                                                                <i class="icon-drag text-xl transition-all group-hover:text-gray-800 dark:group-hover:text-white cursor-grab"></i>
+
+                                                                <span
+                                                                    class="text-sm font-regular transition-all group-hover:text-gray-800 dark:group-hover:text-white max-xl:text-xs"
+                                                                    v-text="element.label"
+                                                                >
+                                                                </span>
+                                                                
                                                             </div>
                                                         </div>
-                                                    </div>  
-                                                </template>
-                                            </draggable>
+                                                    </div>
+                                                </div>  
+                                            </template>
+                                        </draggable>
                                     </div>
                                     <!-- Right Side -->
                                     <div class="flex flex-col gap-y-2">
@@ -105,7 +110,7 @@
                                         </div>
 
                                         <draggable
-                                            class="h-[calc(100vh-285px)] pb-[16px] overflow-auto border-gray-200"
+                                            class="h-[calc(100vh-285px)] pb-[16px] pt-3 overflow-auto border-gray-200"
                                             ghost-class="draggable-ghost"
                                             handle=".icon-drag"
                                             v-bind="{animation: 200}"
@@ -171,9 +176,7 @@
 
             data() {
                 return {
-                    format: 'xls',
-
-                    available: null,
+                    loading: false,
 
                     applied: null,
                     selectedColumns: [],
@@ -226,6 +229,7 @@
                         page: 1,
                         limit: 10000,
                     };
+                    this.loading = true;
 
                     this.$axios
                         .get('{{ route('admin.vue_js_select.select.options') }}', {
@@ -234,8 +238,8 @@
                         .then(({
                             data
                         }) => {
-                            console.log(data);
                             this.columnList = data.options;
+                            this.loading = false;
                         });
                 },
             },

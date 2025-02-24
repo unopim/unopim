@@ -19,6 +19,9 @@ class AttributeNormalizerFactory
 
     protected Container $app;
 
+    /** @var array<string, AttributeNormalizerInterface> */
+    protected array $instances = [];
+
     public function __construct(Container $app)
     {
         $this->app = $app;
@@ -26,10 +29,11 @@ class AttributeNormalizerFactory
 
     public function getNormalizer(string $type): AttributeNormalizerInterface
     {
-        if (isset($this->normalizers[$type])) {
-            return $this->app->make($this->normalizers[$type]);
+        if (! isset($this->instances[$type])) {
+            $class = $this->normalizers[$type] ?? DefaultNormalizer::class;
+            $this->instances[$type] = $this->app->make($class);
         }
 
-        return $this->app->make(DefaultNormalizer::class);
+        return $this->instances[$type];
     }
 }

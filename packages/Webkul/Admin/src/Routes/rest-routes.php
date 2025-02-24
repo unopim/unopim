@@ -7,8 +7,8 @@ use Webkul\Admin\Http\Controllers\MagicAIController;
 use Webkul\Admin\Http\Controllers\TinyMCEController;
 use Webkul\Admin\Http\Controllers\User\AccountController;
 use Webkul\Admin\Http\Controllers\User\SessionController;
-use Webkul\HistoryControl\Http\Controllers\HistoryController;
 use Webkul\Admin\Http\Controllers\VueJsSelect\SelectOptionsController;
+use Webkul\HistoryControl\Http\Controllers\HistoryController;
 
 /**
  * Extra routes.

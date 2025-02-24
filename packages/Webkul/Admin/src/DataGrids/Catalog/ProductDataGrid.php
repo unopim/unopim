@@ -45,7 +45,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
     protected $elasticSearchSortColumn = 'updated_at';
 
-    protected $dynamicColumns = [];
+    protected $attributeColumns = [];
 
     protected $productQueryBuilder;
 
@@ -116,36 +116,52 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     {
         return [
             'sku' => [
-                'index' => 'sku',
-                'label' => trans('admin::app.catalog.products.index.datagrid.sku'),
-                'type' => 'string',
+                'index'      => 'sku',
+                'label'      => trans('admin::app.catalog.products.index.datagrid.sku'),
+                'type'       => 'string',
                 'searchable' => true,
                 'filterable' => true,
                 'sortable'   => true,
             ],
             'attribute_family' => [
-                'index' => 'attribute_family',
-                'label' => trans('admin::app.catalog.products.index.datagrid.attribute-family'),
-                'type' => 'dropdown',
+                'index'   => 'attribute_family',
+                'label'   => trans('admin::app.catalog.products.index.datagrid.attribute-family'),
+                'type'    => 'dropdown',
                 'options' => [
-                    'type' => 'basic',
+                    'type'   => 'basic',
                     'params' => [
                         'options' => $this->attributeFamilyRepository->all(['code as label', 'id as value'])->toArray(),
                     ],
                 ],
                 'searchable' => false,
                 'filterable' => true,
-                'sortable' => true,
+                'sortable'   => true,
             ],
-            'status' =>[
-                'index' => 'status',
-                'label' => trans('admin::app.catalog.products.index.datagrid.status'),
-                'type' => 'boolean',
+            'status' => [
+                'index'      => 'status',
+                'label'      => trans('admin::app.catalog.products.index.datagrid.status'),
+                'type'       => 'boolean',
                 'searchable' => false,
                 'filterable' => true,
-                'sortable' => true,
-                'wrapper' => function ($value) {
-                    return $value ? 'true' : 'false';
+                'sortable'   => true,
+                'options'    => [
+                    'type'   => 'basic',
+                    'params' => [
+                        'options' => [
+                            [
+                                'label' => trans('admin::app.common.enable'),
+                                'value' => 1,
+                            ], [
+                                'label' => trans('admin::app.common.disable'),
+                                'value' => 0,
+                            ],
+                        ],
+                    ],
+                ],
+                'closure' => function ($row) {
+                    return $row->status
+                        ? "<span class='label-active'>".trans('admin::app.common.enable').'</span>'
+                        : "<span class='label-info'>".trans('admin::app.common.disable').'</span>';
                 },
             ],
             'parent' => [
@@ -170,7 +186,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'type'    => 'dropdown',
                 'options' => [
                     'type' => 'basic',
-    
+
                     'params' => [
                         'options' => collect(config('product_types'))
                             ->map(fn ($type) => ['label' => trans($type['name']), 'value' => $type['key']])
@@ -195,17 +211,18 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     {
         $managedColumns = request()->get('managedColumns');
         $this->defaultColumns = $managedColumns ?? $this->defaultColumns;
-        
+
         $propertyColumns = $this->getPropertyColumns();
 
-
         foreach ($this->defaultColumns as $column) {
-            if (!isset($propertyColumns[$column])) {
+            if (! isset($propertyColumns[$column])) {
                 $this->prepareAttributeColumns($column);
+                $this->attributeColumns[] = $column;
+
                 continue;
             }
 
-            $this->addColumn($propertyColumns[$column]);;
+            $this->addColumn($propertyColumns[$column]);
         }
     }
 
@@ -217,24 +234,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             return;
         }
 
-        $this->addAttributeColumn($this->buildColumnDefinition($attribute));
-    }
-
-    /**
-     * Add column.
-     */
-    public function addAttributeColumn(array $column): void
-    {
-        $this->customColumns[] = new Column(
-            index: $column['index'],
-            label: $column['label'],
-            type: $column['type'],
-            options: $column['options'] ?? null,
-            searchable: $column['searchable'],
-            filterable: $column['filterable'],
-            sortable: $column['sortable'],
-            closure: $column['closure'] ?? null,
-        );
+        $this->addColumn($this->buildColumnDefinition($attribute));
     }
 
     /**
@@ -459,7 +459,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
     protected function getOperatorAndValue($attribute, $value)
     {
-        $column = array_filter(array_merge($this->columns, $this->customColumns), function ($column) use ($attribute) {
+        $column = array_filter($this->columns, function ($column) use ($attribute) {
             return $column->index === $attribute;
         });
 
@@ -723,14 +723,14 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         }
 
         return [
-            'id'                 => Crypt::encryptString(get_called_class()),
-            'columns'            => array_merge($this->columns, $this->customColumns),
-            'actions'            => $this->actions,
-            'mass_actions'       => $this->massActions,
-            'search_placeholder' => __($this->searchPlaceholder),
-            'records'            => $paginator['data'],
+            'id'                  => Crypt::encryptString(get_called_class()),
+            'columns'             => $this->columns,
+            'actions'             => $this->actions,
+            'mass_actions'        => $this->massActions,
+            'search_placeholder'  => __($this->searchPlaceholder),
+            'records'             => $paginator['data'],
             'managedColumns'      => request()->get('managedColumns'),
-            'meta'               => [
+            'meta'                => [
                 'primary_column'   => $this->primaryColumn,
                 'default_order'    => $this->sortColumn,
                 'from'             => $paginator['from'],
@@ -749,7 +749,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     protected function processRawValues(object &$record): void
     {
-        if (empty($this->customColumns)) {
+        if (empty($this->attributeColumns)) {
             return;
         }
 
@@ -758,12 +758,17 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'locale'                 => core()->getRequestedLocaleCode(),
             'channel'                => core()->getRequestedChannelCode(),
             'format'                 => 'datagrid',
-            'processed_on_attribute' => $this->dynamicColumns,
+            'processed_on_attribute' => ! empty($this->attributeColumns) ?? false,
+            'attribute_codes'        => $this->attributeColumns,
         ]);
 
         unset($record->raw_values);
 
-        foreach ($this->customColumns as $column) {
+        foreach ($this->columns as $column) {
+            if (! in_array($column->index, $this->attributeColumns)) {
+                continue;
+            }
+
             if ($closure = $column->closure) {
                 $record->{$column->index} = $closure($values[$column->index] ?? null, $record);
 

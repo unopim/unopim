@@ -50,10 +50,10 @@ trait ProductQueryFilter
 
         $this->rawFilters[] = [
             'property'    => $property,
-            'operator' => $operator,
-            'value'    => $value,
-            'context'  => $context,
-            'type'     => $filterType,
+            'operator'    => $operator,
+            'value'       => $value,
+            'context'     => $context,
+            'type'        => $filterType,
         ];
 
         return $this;

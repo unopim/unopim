@@ -476,11 +476,12 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
         $locale = $locale ?? core()->getRequestedLocaleCode();
 
         return $this->options()
-            ->leftJoin('attribute_option_translations as aot', function ($join) use ($locale) {
-                $join->on('aot.attribute_option_id', '=', 'attribute_options.id')
-                    ->where('aot.locale', $locale);
-            })
+            ->leftJoin('attribute_option_translations as aot', 'aot.attribute_option_id', 'attribute_options.id')
             ->whereIn('attribute_options.code', $codes)
+            ->where(function ($query) use ($locale) {
+                $query->where('aot.locale', $locale)
+                    ->orWhereNull('aot.locale'); // Fallback if translation not found
+            })
             ->select('attribute_options.*', 'aot.label')
             ->get();
     }

@@ -39,11 +39,14 @@ class OptionNormalizer extends AbstractNormalizer implements AttributeNormalizer
      */
     protected function getOptions(array $data, ?Attribute $attribute, array $options = []): array
     {
-        return $attribute
-            ->getOptionsByCodeAndLocale($data, $options['locale'] ?? null)
-            ->pluck('label', 'code')
-            ->map(fn ($label, $code) => $label ?? $code)
-            ->values()
-            ->toArray();
+        if (! $attribute || empty($data)) {
+            return [];
+        }
+
+        $locale = $options['locale'] ?? null;
+
+        return $attribute->getOptionsByCodeAndLocale($data, $locale)
+            ->map(fn ($option) => $option->label ?? "[{$option->code}]")
+            ->all();
     }
 }

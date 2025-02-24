@@ -32,7 +32,7 @@ abstract class AbstractPropertyFilter extends AbstractFilter implements Property
     protected function getParentIdsBySkus(array $skus, array $options = [])
     {
         $table = $this->getSearchTablePath($options);
-        
+
         return DB::table($table)
             ->select("$table.id")
             ->whereIn("$table.sku", $skus)

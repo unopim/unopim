@@ -2,7 +2,6 @@
 
 namespace Webkul\Product\Filter\ElasticSearch\Property;
 
-use Webkul\ElasticSearch\Contracts\FilterInterface;
 use Webkul\ElasticSearch\Filter\Operators;
 use Webkul\Product\Filter\AbstractPropertyFilter;
 
