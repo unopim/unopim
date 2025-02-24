@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "390de0e2911fee2e2b3a1e12b5ea8674",
+    "content-hash": "4f162af48cdb8d00ae9886d69972c229",
     "packages": [
         {
             "name": "astrotomic/laravel-translatable",
@@ -10389,6 +10389,51 @@
                 "source": "https://github.com/ua-parser/uap-php/tree/v3.9.14"
             },
             "time": "2020-10-02T23:36:20+00:00"
+        },
+        {
+            "name": "unopim/dam",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/unopim/unopim-digital-asset-management.git",
+                "reference": "d9cef5fcbaa663b819561b74be05881294633b00"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/unopim/unopim-digital-asset-management/zipball/d9cef5fcbaa663b819561b74be05881294633b00",
+                "reference": "d9cef5fcbaa663b819561b74be05881294633b00",
+                "shasum": ""
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": [],
+                    "providers": [
+                        "Webkul\\DAM\\Providers\\DAMServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webkul\\DAM\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Webkul",
+                    "email": "support@webkul.com"
+                }
+            ],
+            "description": "Unopim Digital Asset Management (DAM) is a flexible solution for managing digital assets in the Unopim PIM ecosystem. Key features include file and directory management, asset upload, preview, and deletion, advanced metadata tagging, collaboration tools, and CSV/XLSX export/import for asset assignment.",
+            "support": {
+                "issues": "https://github.com/unopim/unopim-digital-asset-management/issues",
+                "source": "https://github.com/unopim/unopim-digital-asset-management/tree/v1.0.0"
+            },
+            "time": "2024-12-02T13:43:31+00:00"
         },
         {
             "name": "vlucas/phpdotenv",

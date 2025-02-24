@@ -55,14 +55,38 @@ class CategoryController extends ApiController
     {
         try {
             $deleted = app(CategoryDataSource::class)->deleteByCode($code);
+
             if ($deleted) {
-                return response()->json(['success' => true, 'message' => trans('admin::app.catalog.categories.delete-success'), 'code' => $code], 200);
-            } else {
-                return response()->json(['success' => false, 'message' => trans('admin::app.catalog.categories.delete-failed'), 'code' => $code], 404);
+                return response()->json([
+                    'success' => true,
+                    'message' => trans('admin::app.catalog.categories.delete-success'),
+                    'code'    => $code,
+                ], 200);
             }
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'code'    => $code,
+            ], 404);
         } catch (\Exception $e) {
+
+            if ($e->getMessage() === trans('admin::app.catalog.categories.delete-category-root')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => trans('admin::app.catalog.categories.delete-category-root'),
+                    'code'    => $code,
+                ], 403);
+            }
+
             return $this->storeExceptionLog($e);
         }
+
+        return response()->json([
+            'success' => false,
+            'message' => trans('admin::app.catalog.categories.delete-failed'),
+            'code'    => $code,
+        ], 404);
     }
 
     /**
@@ -210,14 +234,14 @@ class CategoryController extends ApiController
                 $existingAdditionalData = $category->additional_data;
                 foreach ($requestData['additional_data'] as $key => $value) {
                     if (array_key_exists($key, $existingAdditionalData)) {
-                        if (is_array($existingAdditionalData[$key]) && is_array($value)) {
-                            $existingAdditionalData[$key] = array_merge($existingAdditionalData[$key], $value);
-                        } else {
-                            $existingAdditionalData[$key] = $value;
-                        }
-                    } else {
-                        $existingAdditionalData[$key] = $value;
+                        $existingAdditionalData[$key] = is_array($existingAdditionalData[$key]) && is_array($value)
+                            ? array_merge($existingAdditionalData[$key], $value)
+                            : $value;
+
+                        continue;
                     }
+
+                    $existingAdditionalData[$key] = $value;
 
                 }
                 $category->additional_data = json_encode($existingAdditionalData);

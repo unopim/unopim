@@ -42,7 +42,12 @@ class SimpleProductController extends ProductController
     public function delete(string $code): JsonResponse
     {
         try {
+            Event::dispatch('catalog.product.delete.before', $code);
+
             $deleted = app(SimpleProductDataSource::class)->deleteByCode($code);
+
+            Event::dispatch('catalog.product.delete.after', $code);
+
             if ($deleted) {
                 return response()->json(['success' => true, 'message' => trans('admin::app.catalog.products.delete-success'), 'code' => $code], 200);
             } else {

@@ -152,7 +152,6 @@ class ProductController extends ApiController
             if (is_string($product->values)) {
                 $existingValues = json_decode($product->values, true) ?? [];
             } else {
-                // $existingValues = $product->values;
                 $existingValues = $product->values ?? [];
             }
 
