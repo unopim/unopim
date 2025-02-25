@@ -2,12 +2,12 @@
 
 namespace Webkul\ElasticSearch\Contracts;
 
-interface FilterInterface
+interface Filter
 {
     /**
      * Inject the query builder
      */
-    public function setQueryBuilder($queryBuilder);
+    public function setQueryManager($queryBuilder);
 
     /**
      * This filter supports the operator
@@ -15,12 +15,12 @@ interface FilterInterface
      * @param  string  $operator
      * @return bool
      */
-    public function supportsOperator($operator);
+    public function isOperatorAllowed($operator);
 
     /**
      * Filter operators
      *
      * @return array
      */
-    public function getOperators();
+    public function getAllowedOperators();
 }

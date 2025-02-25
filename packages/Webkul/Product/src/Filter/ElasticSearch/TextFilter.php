@@ -3,24 +3,23 @@
 namespace Webkul\Product\Filter\ElasticSearch;
 
 use Webkul\Attribute\Rules\AttributeTypes;
-use Webkul\ElasticSearch\Contracts\FilterInterface;
-use Webkul\ElasticSearch\Filter\Operators;
+use Webkul\ElasticSearch\Enums\FilterOperators;
 use Webkul\ElasticSearch\QueryString;
 
 /**
  * Text filter for an Elasticsearch query
  */
-class TextFilter extends AbstractElasticSearchAttributeFilter implements FilterInterface
+class TextFilter extends AbstractElasticSearchAttributeFilter
 {
     /**
      * @param  array  $supportedProperties
      */
     public function __construct(
         array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[0], AttributeTypes::ATTRIBUTE_TYPES[4], AttributeTypes::ATTRIBUTE_TYPES[5]],
-        array $supportedOperators = [Operators::IN_LIST, Operators::CONTAINS]
+        array $allowedOperators = [FilterOperators::IN, FilterOperators::CONTAINS]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;
-        $this->supportedOperators = $supportedOperators;
+        $this->allowedOperators = $allowedOperators;
     }
 
     /**
@@ -34,24 +33,24 @@ class TextFilter extends AbstractElasticSearchAttributeFilter implements FilterI
         $channel = null,
         $options = []
     ) {
-        if ($this->searchQueryBuilder === null) {
+        if ($this->queryBuilder === null) {
             throw new \LogicException('The search query builder is not initialized in the filter.');
         }
 
-        $attributePath = $this->getAttributePath($attribute, $locale, $channel);
+        $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
 
         switch ($operator) {
-            case Operators::IN_LIST:
+            case FilterOperators::IN:
                 $clause = [
                     'terms' => [
                         $attributePath => QueryString::escapeArrayValue($value),
                     ],
                 ];
 
-                $this->searchQueryBuilder::addFilter($clause);
+                $this->queryBuilder::where($clause);
                 break;
 
-            case Operators::CONTAINS:
+            case FilterOperators::CONTAINS:
                 $escapedValue = QueryString::escapeValue(current((array) $value));
                 $clause = [
                     'query_string' => [
@@ -60,7 +59,7 @@ class TextFilter extends AbstractElasticSearchAttributeFilter implements FilterI
                     ],
                 ];
 
-                $this->searchQueryBuilder::addFilter($clause);
+                $this->queryBuilder::where($clause);
                 break;
         }
 

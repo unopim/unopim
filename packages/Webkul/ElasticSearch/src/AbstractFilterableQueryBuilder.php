@@ -2,10 +2,10 @@
 
 namespace Webkul\ElasticSearch;
 
-use Webkul\ElasticSearch\Contracts\QueryBuilderInterface;
-use Webkul\ElasticSearch\Facades\SearchQuery;
+use Webkul\ElasticSearch\Contracts\QueryBuilder as QueryBuilderContract;
+use Webkul\ElasticSearch\Facades\ElasticSearchQuery;
 
-abstract class AbstractFilterableQueryBuilder implements QueryBuilderInterface
+abstract class AbstractFilterableQueryBuilder implements QueryBuilderContract
 {
     /** @var mixed */
     protected $qb;
@@ -14,12 +14,12 @@ abstract class AbstractFilterableQueryBuilder implements QueryBuilderInterface
 
     abstract public function prepareQueryBuilder();
 
-    abstract public function addFilter($property, $operator, $value, array $context = []);
+    abstract public function applyFilter($property, $operator, $value, array $context = []);
 
     /**
      * {@inheritdoc}
      */
-    public function setQueryBuilder($queryBuilder)
+    public function setQueryManager($queryBuilder)
     {
         $this->qb = $queryBuilder;
 
@@ -29,10 +29,10 @@ abstract class AbstractFilterableQueryBuilder implements QueryBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function getQueryBuilder()
+    public function getQueryManager()
     {
         if ($this->qb === null) {
-            throw new \LogicException('Query builder must be configured');
+            throw new \LogicException('Query manager must be configured');
         }
 
         return $this->qb;
@@ -59,21 +59,21 @@ abstract class AbstractFilterableQueryBuilder implements QueryBuilderInterface
     /**
      * Add a filter condition on a property
      */
-    protected function addPropertyFilter($filter, $property, $operator, $value, array $context)
+    protected function applyPropertyFilter($filter, $property, $operator, $value, array $context)
     {
-        $filter->setQueryBuilder(new SearchQuery);
+        $filter->setQueryManager(new ElasticSearchQuery);
 
-        if (! $filter->supportsOperator($operator)) {
+        if (! $filter->isOperatorAllowed($operator)) {
             throw new \InvalidArgumentException(
                 sprintf(
                     'Unsupported operator. Only "%s" are supported, but "%s" was given.',
-                    implode(',', $filter->getOperators()),
+                    implode(',', $filter->getAllowedOperators()),
                     $operator
                 )
             );
         }
 
-        $filter->addPropertyFilter($property, $operator, $value, $context);
+        $filter->applyPropertyFilter($property, $operator, $value, $context);
 
         return $this;
     }

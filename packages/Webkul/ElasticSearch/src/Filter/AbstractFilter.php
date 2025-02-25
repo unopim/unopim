@@ -4,45 +4,45 @@ namespace Webkul\ElasticSearch\Filter;
 
 use Carbon\Carbon;
 use Carbon\Exceptions\InvalidFormatException;
-use Webkul\ElasticSearch\Contracts\FilterInterface;
-use Webkul\ElasticSearch\Facades\SearchQuery;
+use Webkul\ElasticSearch\Contracts\Filter as FilterContract;
+use Webkul\ElasticSearch\Facades\ElasticSearchQuery;
 
-abstract class AbstractFilter implements FilterInterface
+abstract class AbstractFilter implements FilterContract
 {
-    /** @var SearchQuery */
-    protected $searchQueryBuilder = null;
+    /** @var ElasticSearchQuery */
+    protected $queryBuilder = null;
 
     /** @var array */
-    protected $supportedOperators = [];
+    protected $allowedOperators = [];
 
     /**
      * {@inheritdoc}
      */
-    public function supportsOperator($operator)
+    public function isOperatorAllowed($operator)
     {
-        return in_array($operator, $this->supportedOperators);
+        return in_array($operator, $this->allowedOperators);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getOperators()
+    public function getAllowedOperators()
     {
-        return $this->supportedOperators;
+        return $this->allowedOperators;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setQueryBuilder($searchQueryBuilder)
+    public function setQueryManager($queryBuilder)
     {
-        if (! $searchQueryBuilder instanceof SearchQuery) {
+        if (! $queryBuilder instanceof ElasticSearchQuery) {
             throw new \InvalidArgumentException(
-                sprintf('Query builder should be an instance of "%s"', SearchQuery::class)
+                sprintf('Query builder should be an instance of "%s"', ElasticSearchQuery::class)
             );
         }
 
-        $this->searchQueryBuilder = $searchQueryBuilder;
+        $this->queryBuilder = $queryBuilder;
     }
 
     protected function getFormattedDateTime(string $field, string $value): string

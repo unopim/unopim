@@ -28,13 +28,13 @@ class DatabaseProductQueryBuilder extends AbstractFilterableQueryBuilder
         $locale = $attribute->value_per_locale ? $context['locale'] : null;
         $channel = $attribute->value_per_channel ? $context['channel'] : null;
 
-        $filter->setQueryBuilder($this->getQueryBuilder());
+        $filter->setQueryManager($this->getQueryManager());
 
-        if (! $filter->supportsOperator($operator)) {
+        if (! $filter->isOperatorAllowed($operator)) {
             throw new \InvalidArgumentException(
                 sprintf(
                     'Unsupported operator. Only "%s" are supported, but "%s" was given.',
-                    implode(',', $filter->getOperators()),
+                    implode(',', $filter->getAllowedOperators()),
                     $operator
                 )
             );

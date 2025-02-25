@@ -6,7 +6,7 @@ use Webkul\Product\Filter\AbstractAttributeFilter;
 
 abstract class AbstractDatabaseAttributeFilter extends AbstractAttributeFilter
 {
-    protected function getAttributePath($attribute, ?string $locale = null, ?string $channel = null)
+    protected function getScopedAttributePath($attribute, ?string $locale = null, ?string $channel = null)
     {
         return sprintf('$.%s.%s', $attribute->getScope($locale, $channel), $attribute->code);
     }

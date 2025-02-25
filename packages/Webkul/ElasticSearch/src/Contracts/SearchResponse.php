@@ -2,10 +2,10 @@
 
 namespace Webkul\ElasticSearch\Contracts;
 
-interface ResultInterface
+interface SearchResponse
 {
     /**
      * @return mixed
      */
-    public function getRawResult();
+    public function getResponseData();
 }

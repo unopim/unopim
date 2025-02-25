@@ -3,9 +3,9 @@
 namespace Webkul\Product\Filter;
 
 use Illuminate\Support\Facades\DB;
-use Webkul\ElasticSearch\Contracts\PropertyFilterInterface;
+use Webkul\ElasticSearch\Contracts\PropertyFilter as PropertyFilterContract;
 
-abstract class AbstractPropertyFilter extends AbstractFilter implements PropertyFilterInterface
+abstract class AbstractPropertyFilter extends AbstractFilter implements PropertyFilterContract
 {
     /** @var array */
     protected $supportedProperties = [];

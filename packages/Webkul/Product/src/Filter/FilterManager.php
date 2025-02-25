@@ -3,9 +3,9 @@
 namespace Webkul\Product\Filter;
 
 use Illuminate\Contracts\Container\Container;
-use Webkul\Product\Contracts\FilterRegistryInterface;
+use Webkul\Product\Contracts\FilterManager as FilterManagerContract;
 
-class FilterManager implements FilterRegistryInterface
+class FilterManager implements FilterManagerContract
 {
     protected $attributeFilters;
 

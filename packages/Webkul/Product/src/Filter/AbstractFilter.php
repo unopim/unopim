@@ -9,14 +9,14 @@ abstract class AbstractFilter extends BaseAbstractFilter
     /**
      * {@inheritdoc}
      */
-    public function setQueryBuilder($searchQueryBuilder)
+    public function setQueryManager($queryBuilder)
     {
         if (core()->isElasticsearchEnabled()) {
-            parent::setQueryBuilder($searchQueryBuilder);
+            parent::setQueryManager($queryBuilder);
 
             return;
         }
 
-        $this->searchQueryBuilder = $searchQueryBuilder;
+        $this->queryBuilder = $queryBuilder;
     }
 }

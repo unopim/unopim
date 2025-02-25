@@ -2,7 +2,7 @@
 
 namespace Webkul\Product\Filter\Database\Property;
 
-use Webkul\ElasticSearch\Filter\Operators;
+use Webkul\ElasticSearch\Enums\FilterOperators;
 use Webkul\Product\Filter\AbstractPropertyFilter;
 
 /**
@@ -16,9 +16,9 @@ class DateTimeFilter extends AbstractPropertyFilter
 
     public function __construct(
         array $supportedProperties = [self::CREATED_AT_PROPERTY, self::UPDATED_AT_PROPERTY],
-        array $supportedOperators = [Operators::IN_LIST, Operators::BETWEEN]
+        array $allowedOperators = [FilterOperators::IN, FilterOperators::RANGE]
     ) {
-        $this->supportedOperators = $supportedOperators;
+        $this->allowedOperators = $allowedOperators;
         $this->supportedProperties = $supportedProperties;
 
     }
@@ -26,9 +26,9 @@ class DateTimeFilter extends AbstractPropertyFilter
     /**
      * {@inheritdoc}
      */
-    public function addPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = [])
+    public function applyPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = [])
     {
-        if ($this->searchQueryBuilder === null) {
+        if ($this->queryBuilder === null) {
             throw new \LogicException('The search query builder is not initialized in the filter.');
         }
 
@@ -43,13 +43,13 @@ class DateTimeFilter extends AbstractPropertyFilter
         }
 
         switch ($operator) {
-            case Operators::IN_LIST:
-                $this->searchQueryBuilder->whereIn(sprintf('%s.%s', $this->getSearchTablePath($options), $property), $value);
+            case FilterOperators::IN:
+                $this->queryBuilder->whereIn(sprintf('%s.%s', $this->getSearchTablePath($options), $property), $value);
 
                 break;
 
-            case Operators::BETWEEN:
-                $this->searchQueryBuilder->whereBetween(sprintf('%s.%s', $this->getSearchTablePath($options), $property), [
+            case FilterOperators::RANGE:
+                $this->queryBuilder->whereBetween(sprintf('%s.%s', $this->getSearchTablePath($options), $property), [
                     ($value[0] ?? '').' 00:00:01',
                     ($value[1] ?? '').' 23:59:59',
                 ]);

@@ -3,23 +3,22 @@
 namespace Webkul\Product\Filter\ElasticSearch;
 
 use Webkul\Attribute\Rules\AttributeTypes;
-use Webkul\ElasticSearch\Contracts\FilterInterface;
-use Webkul\ElasticSearch\Filter\Operators;
+use Webkul\ElasticSearch\Enums\FilterOperators;
 
 /**
  * Date filter for an Elasticsearch query
  */
-class DateFilter extends AbstractElasticSearchAttributeFilter implements FilterInterface
+class DateFilter extends AbstractElasticSearchAttributeFilter
 {
     /**
      * @param  array  $supportedProperties
      */
     public function __construct(
         array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[7]],
-        array $supportedOperators = [Operators::IN_LIST, Operators::BETWEEN]
+        array $allowedOperators = [FilterOperators::IN, FilterOperators::RANGE]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;
-        $this->supportedOperators = $supportedOperators;
+        $this->allowedOperators = $allowedOperators;
     }
 
     /**
@@ -33,16 +32,16 @@ class DateFilter extends AbstractElasticSearchAttributeFilter implements FilterI
         $channel = null,
         $options = []
     ) {
-        if ($this->searchQueryBuilder === null) {
+        if ($this->queryBuilder === null) {
             throw new \LogicException('The search query builder is not initialized in the filter.');
         }
 
         $attributeCode = $attribute->code;
 
-        $attributePath = $this->getAttributePath($attribute, $locale, $channel);
+        $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
 
         switch ($operator) {
-            case Operators::IN_LIST:
+            case FilterOperators::IN:
                 $clause = [
                     'terms' => [
                         $attributePath => array_map(function ($data) use ($attributeCode) {
@@ -51,10 +50,10 @@ class DateFilter extends AbstractElasticSearchAttributeFilter implements FilterI
                     ],
                 ];
 
-                $this->searchQueryBuilder::addFilter($clause);
+                $this->queryBuilder::where($clause);
                 break;
 
-            case Operators::BETWEEN:
+            case FilterOperators::RANGE:
                 $values = array_values($value);
                 $clause = [
                     'range' => [
@@ -65,7 +64,7 @@ class DateFilter extends AbstractElasticSearchAttributeFilter implements FilterI
                     ],
                 ];
 
-                $this->searchQueryBuilder::addFilter($clause);
+                $this->queryBuilder::where($clause);
                 break;
         }
 

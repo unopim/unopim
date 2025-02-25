@@ -1,18 +1,19 @@
 <?php
 
-namespace Webkul\Product\ElasticSearch\Cursor;
+namespace Webkul\Product\Factories\ElasticSearch\Cursor;
 
 use Webkul\Core\Facades\ElasticSearch;
-use Webkul\ElasticSearch\Contracts\CursorFactoryInterface;
-use Webkul\ElasticSearch\ElasticsearchResult;
-use Webkul\ElasticSearch\ResultCursor;
+use Webkul\ElasticSearch\Contracts\CursorFactory as CursorFactoryContract;
+use Webkul\ElasticSearch\Contracts\ResultCursor as ResultCursorContract;
+use Webkul\ElasticSearch\ResultIterator;
+use Webkul\ElasticSearch\SearchResponse;
 
-class ResultCursorFactory implements CursorFactoryInterface
+class ResultCursorFactory implements CursorFactoryContract
 {
     /**
      * {@inheritdoc}
      */
-    public static function createCursor($esQuery, array $options = [])
+    public static function createCursor($esQuery, array $options = []): ResultCursorContract
     {
         $options = self::resolveOptions($options);
         $sort = ['id' => 'asc'];
@@ -49,7 +50,7 @@ class ResultCursorFactory implements CursorFactoryInterface
 
         $ids = collect($results['hits']['hits'])->pluck('_id')->toArray();
 
-        return new ResultCursor($ids, $totalCount, new ElasticsearchResult($results['hits']['hits'] ?? []));
+        return new ResultIterator($ids, $totalCount, new SearchResponse($results['hits']['hits'] ?? []));
     }
 
     /**

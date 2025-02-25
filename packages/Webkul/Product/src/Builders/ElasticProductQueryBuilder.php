@@ -4,7 +4,7 @@ namespace Webkul\Product\Builders;
 
 use Webkul\Attribute\Services\AttributeService;
 use Webkul\ElasticSearch\AbstractFilterableQueryBuilder as ElasticSearchAbstractFilterableQueryBuilder;
-use Webkul\ElasticSearch\Facades\SearchQuery;
+use Webkul\ElasticSearch\Facades\ElasticSearchQuery;
 use Webkul\Product\Filter\FilterManager;
 use Webkul\Product\Traits\ProductQueryFilter;
 
@@ -30,13 +30,13 @@ class ElasticProductQueryBuilder extends ElasticSearchAbstractFilterableQueryBui
         $locale = $attribute->value_per_locale ? $context['locale'] : null;
         $channel = $attribute->value_per_channel ? $context['channel'] : null;
 
-        $filter->setQueryBuilder(new SearchQuery);
+        $filter->setQueryManager(new ElasticSearchQuery);
 
-        if (! $filter->supportsOperator($operator)) {
+        if (! $filter->isOperatorAllowed($operator)) {
             throw new \InvalidArgumentException(
                 sprintf(
                     'Unsupported operator. Only "%s" are supported, but "%s" was given.',
-                    implode(',', $filter->getOperators()),
+                    implode(',', $filter->getAllowedOperators()),
                     $operator
                 )
             );

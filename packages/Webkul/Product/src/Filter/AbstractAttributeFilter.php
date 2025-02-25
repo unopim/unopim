@@ -7,7 +7,7 @@ abstract class AbstractAttributeFilter extends AbstractFilter
     /** @var string[] */
     protected $supportedAttributeTypes;
 
-    abstract protected function getAttributePath($attribute, ?string $locale = null, ?string $channel = null);
+    abstract protected function getScopedAttributePath($attribute, ?string $locale = null, ?string $channel = null);
 
     /**
      * {@inheritdoc}

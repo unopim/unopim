@@ -4,10 +4,10 @@ namespace Webkul\Product\Services;
 
 use Webkul\Attribute\Services\AttributeNormalizerFactory;
 use Webkul\Attribute\Services\AttributeService;
-use Webkul\Product\Contracts\NormalizerInterface;
+use Webkul\Product\Contracts\Normalizer as NormalizerContract;
 use Webkul\Product\Type\AbstractType;
 
-class AttributeValueNormalizer implements NormalizerInterface
+class AttributeValueNormalizer implements NormalizerContract
 {
     public function __construct(
         protected AttributeService $attributeService,

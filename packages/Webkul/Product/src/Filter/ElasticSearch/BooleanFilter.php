@@ -3,23 +3,22 @@
 namespace Webkul\Product\Filter\ElasticSearch;
 
 use Webkul\Attribute\Rules\AttributeTypes;
-use Webkul\ElasticSearch\Contracts\FilterInterface;
-use Webkul\ElasticSearch\Filter\Operators;
+use Webkul\ElasticSearch\Enums\FilterOperators;
 
 /**
  * Boolean filter for an Elasticsearch query
  */
-class BooleanFilter extends AbstractElasticSearchAttributeFilter implements FilterInterface
+class BooleanFilter extends AbstractElasticSearchAttributeFilter
 {
     /**
      * @param  array  $supportedProperties
      */
     public function __construct(
         array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[3]],
-        array $supportedOperators = [Operators::IN_LIST, Operators::CONTAINS]
+        array $allowedOperators = [FilterOperators::IN, FilterOperators::CONTAINS]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;
-        $this->supportedOperators = $supportedOperators;
+        $this->allowedOperators = $allowedOperators;
     }
 
     /**
@@ -33,30 +32,30 @@ class BooleanFilter extends AbstractElasticSearchAttributeFilter implements Filt
         $channel = null,
         $options = []
     ) {
-        if ($this->searchQueryBuilder === null) {
+        if ($this->queryBuilder === null) {
             throw new \LogicException('The search query builder is not initialized in the filter.');
         }
 
-        $attributePath = $this->getAttributePath($attribute, $locale, $channel);
+        $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
 
         switch ($operator) {
-            case Operators::IN_LIST:
+            case FilterOperators::IN:
                 $clause = [
                     'terms' => [
                         $attributePath => $value,
                     ],
                 ];
 
-                $this->searchQueryBuilder::addFilter($clause);
+                $this->queryBuilder::where($clause);
                 break;
-            case Operators::EQUALS:
+            case FilterOperators::EQUAL:
                 $clause = [
                     'terms' => [
                         $attributePath => $value,
                     ],
                 ];
 
-                $this->searchQueryBuilder::addFilter($clause);
+                $this->queryBuilder::where($clause);
                 break;
         }
 

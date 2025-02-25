@@ -2,7 +2,7 @@
 
 namespace Webkul\Product\Filter\Database\Property;
 
-use Webkul\ElasticSearch\Filter\Operators;
+use Webkul\ElasticSearch\Enums\FilterOperators;
 use Webkul\Product\Filter\AbstractPropertyFilter;
 
 /**
@@ -14,9 +14,9 @@ class StatusFilter extends AbstractPropertyFilter
 
     public function __construct(
         array $supportedProperties = [self::PROPERTY],
-        array $supportedOperators = [Operators::IN_LIST]
+        array $allowedOperators = [FilterOperators::IN]
     ) {
-        $this->supportedOperators = $supportedOperators;
+        $this->allowedOperators = $allowedOperators;
         $this->supportedProperties = $supportedProperties;
 
     }
@@ -24,9 +24,9 @@ class StatusFilter extends AbstractPropertyFilter
     /**
      * {@inheritdoc}
      */
-    public function addPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = [])
+    public function applyPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = [])
     {
-        if ($this->searchQueryBuilder === null) {
+        if ($this->queryBuilder === null) {
             throw new \LogicException('The search query builder is not initialized in the filter.');
         }
 
@@ -42,7 +42,7 @@ class StatusFilter extends AbstractPropertyFilter
 
         switch ($operator) {
             case Operators::IN_LIST:
-                $this->searchQueryBuilder->whereIn(sprintf('%s.%s', $this->getSearchTablePath($options), $property), $value);
+                $this->queryBuilder->whereIn(sprintf('%s.%s', $this->getSearchTablePath($options), $property), $value);
                 break;
         }
 

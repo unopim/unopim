@@ -2,12 +2,12 @@
 
 namespace Webkul\ElasticSearch\Contracts;
 
-interface PropertyFilterInterface extends FilterInterface
+interface PropertyFilter extends Filter
 {
     /**
      * Add an attribute to filter
      */
-    public function addPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = []);
+    public function applyPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = []);
 
     /**
      * This filter supports the property

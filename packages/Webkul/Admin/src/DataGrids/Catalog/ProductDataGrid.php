@@ -14,9 +14,9 @@ use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\DataGrid\Column;
 use Webkul\DataGrid\Contracts\ExportableInterface;
 use Webkul\DataGrid\DataGrid;
-use Webkul\ElasticSearch\Facades\SearchQuery;
-use Webkul\ElasticSearch\Filter\Operators;
-use Webkul\Product\ElasticSearch\Cursor\ResultCursorFactory;
+use Webkul\ElasticSearch\Enums\FilterOperators;
+use Webkul\ElasticSearch\Facades\ElasticSearchQuery;
+use Webkul\Product\Factories\ElasticSearch\Cursor\ResultCursorFactory;
 use Webkul\Product\Factories\ProductQueryBuilderFactory;
 use Webkul\Product\Normalizer\ProductAttributeValuesNormalizer;
 use Webkul\Product\Repositories\ProductRepository;
@@ -83,7 +83,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $this->prepareQuery = ProductQueryBuilderFactory::make()->prepareQueryBuilder();
 
-        $queryBuilder = $this->prepareQuery->getQueryBuilder();
+        $queryBuilder = $this->prepareQuery->getQueryManager();
 
         $queryBuilder->leftJoin('attribute_family_translations as attribute_family_name', function ($join) {
             $join->on('attribute_family_name.attribute_family_id', '=', 'af.id')
@@ -112,6 +112,11 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         return $queryBuilder;
     }
 
+    /**
+     * Property column list.
+     *
+     * @return array
+     */
     public function getPropertyColumns()
     {
         return [
@@ -336,10 +341,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             $this->setElasticSort($params['sort'] ?? []);
             $this->setElasticFilters($params['filters'] ?? []);
 
-            $esQuery = SearchQuery::getQuery();
+            $esQuery = ElasticSearchQuery::build();
             $result = ResultCursorFactory::createCursor($esQuery, $params);
 
-            $ids = $result->getIds();
+            $ids = $result->getAllIds();
 
             $this->queryBuilder->whereIn('products.id', $ids)
                 ->orderBy(DB::raw('FIELD('.DB::getTablePrefix().'products.id, '.implode(',', $ids).')'));
@@ -389,7 +394,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $this->processFilters($requestedFilters);
 
-        return $this->prepareQuery->getQueryBuilder();
+        return $this->prepareQuery->getQueryManager();
     }
 
     /**
@@ -430,8 +435,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'locale'  => core()->getRequestedLocaleCode(),
             'channel' => core()->getRequestedChannelCode(),
         ];
-
-        $queryBuilder = $this->prepareQuery->setQueryBuilder($this->queryBuilder);
+        
+        $queryBuilder = $this->prepareQuery->setQueryManager($this->queryBuilder);
 
         foreach ($params as $attribute => $value) {
             if (in_array($attribute, ['channel', 'locale'])) {
@@ -439,11 +444,11 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             }
 
             if ($attribute === 'all') {
-                $this->addFilterValue(
+                $this->applyFilterValue(
                     $queryBuilder,
                     'name',
                     $value,
-                    Operators::CONTAINS,
+                    FilterOperators::CONTAINS,
                     $context
                 );
 
@@ -452,7 +457,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
             [$operator, $value] = $this->getOperatorAndValue($attribute, $value);
             if ($operator) {
-                $this->addFilterValue($queryBuilder, $attribute, $value, $operator, $context);
+                $this->applyFilterValue($queryBuilder, $attribute, $value, $operator, $context);
             }
         }
     }
@@ -472,15 +477,15 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         switch ($column->type) {
             case 'datetime_range':
             case 'date_range':
-                $operator = Operators::BETWEEN;
+                $operator = FilterOperators::RANGE;
                 $value = current($value);
                 break;
             case 'price':
-                $operator = Operators::EQUALS;
+                $operator = FilterOperators::EQUAL;
                 $value = current($value);
                 break;
             default:
-                $operator = Operators::IN_LIST;
+                $operator = FilterOperators::IN;
                 break;
         }
 
@@ -490,9 +495,9 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     /**
      * Return applied filters
      */
-    public function addFilterValue(mixed $queryBuilder, mixed $attribute, mixed $values, string $operator, array $context = []): void
+    public function applyFilterValue(mixed $queryBuilder, mixed $attribute, mixed $values, FilterOperators $operator, array $context = []): void
     {
-        $queryBuilder->addFilter($attribute, $operator, $values, $context);
+        $queryBuilder->applyFilter($attribute, $operator, $values, $context);
     }
 
     /**
@@ -513,7 +518,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $sort = $sortMapping[$sort] ?? $this->getAttributePathForSort($sort, 'elasticsearch');
 
-        SearchQuery::addSort([
+        ElasticSearchQuery::orderBy([
             $sort => [
                 'order'         => $params['order'] ?? $this->sortOrder,
                 'missing'       => '_last',

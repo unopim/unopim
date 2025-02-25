@@ -4,10 +4,10 @@ namespace Webkul\ElasticSearch\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
-class SearchQuery extends Facade
+class ElasticSearchQuery extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return 'search-query-builder';
+        return 'elastic-search-query';
     }
 }

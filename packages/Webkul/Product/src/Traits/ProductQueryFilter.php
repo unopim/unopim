@@ -23,7 +23,7 @@ trait ProductQueryFilter
     /**
      * {@inheritdoc}
      */
-    public function addFilter($property, $operator, $value, array $context = [])
+    public function applyFilter($property, $operator, $value, array $context = [])
     {
         $attribute = null;
         $filter = $this->filterManager->getPropertyFilter($property, $operator);
@@ -43,7 +43,7 @@ trait ProductQueryFilter
         }
 
         if (! $attribute) {
-            $this->addPropertyFilter($filter, $property, $operator, $value, $context);
+            $this->applyPropertyFilter($filter, $property, $operator, $value, $context);
         } else {
             $this->addAttributeFilter($filter, $attribute, $operator, $value, $context);
         }

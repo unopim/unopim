@@ -2,7 +2,7 @@
 
 namespace Webkul\Product\Filter\ElasticSearch\Property;
 
-use Webkul\ElasticSearch\Filter\Operators;
+use Webkul\ElasticSearch\Enums\FilterOperators;
 use Webkul\ElasticSearch\QueryString;
 use Webkul\Product\Filter\AbstractPropertyFilter;
 
@@ -15,9 +15,9 @@ class SkuFilter extends AbstractPropertyFilter
 
     public function __construct(
         array $supportedProperties = [self::PROPERTY],
-        array $supportedOperators = [Operators::IN_LIST]
+        array $allowedOperators = [FilterOperators::IN]
     ) {
-        $this->supportedOperators = $supportedOperators;
+        $this->allowedOperators = $allowedOperators;
         $this->supportedProperties = $supportedProperties;
 
     }
@@ -25,9 +25,9 @@ class SkuFilter extends AbstractPropertyFilter
     /**
      * {@inheritdoc}
      */
-    public function addPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = [])
+    public function applyPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = [])
     {
-        if ($this->searchQueryBuilder === null) {
+        if ($this->queryBuilder === null) {
             throw new \LogicException('The search query builder is not initialized in the filter.');
         }
 
@@ -42,17 +42,17 @@ class SkuFilter extends AbstractPropertyFilter
         }
 
         switch ($operator) {
-            case Operators::IN_LIST:
+            case FilterOperators::IN:
                 $clause = [
                     'terms' => [
                         $property => QueryString::escapeArrayValue($value),
                     ],
                 ];
 
-                $this->searchQueryBuilder::addFilter($clause);
+                $this->queryBuilder::where($clause);
                 break;
 
-            case Operators::CONTAINS:
+            case FilterOperators::CONTAINS:
                 $escapedValue = QueryString::escapeValue(current((array) $value));
                 $clause = [
                     'query_string' => [
@@ -60,7 +60,7 @@ class SkuFilter extends AbstractPropertyFilter
                         'query'            => '*'.$escapedValue.'*',
                     ],
                 ];
-                $this->searchQueryBuilder::addFilter($clause);
+                $this->queryBuilder::where($clause);
                 break;
         }
 

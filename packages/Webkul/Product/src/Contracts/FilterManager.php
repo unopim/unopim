@@ -3,9 +3,9 @@
 namespace Webkul\Product\Contracts;
 
 /**
- * Register filters useable on product query builder
+ * Manager filters useable on product query builder
  */
-interface FilterRegistryInterface
+interface FilterManager
 {
     /**
      * Get the property filter

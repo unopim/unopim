@@ -3,23 +3,22 @@
 namespace Webkul\Product\Filter\ElasticSearch;
 
 use Webkul\Attribute\Rules\AttributeTypes;
-use Webkul\ElasticSearch\Contracts\FilterInterface;
-use Webkul\ElasticSearch\Filter\Operators;
+use Webkul\ElasticSearch\Enums\FilterOperators;
 
 /**
  * Price filter for an Elasticsearch query
  */
-class PriceFilter extends AbstractElasticSearchAttributeFilter implements FilterInterface
+class PriceFilter extends AbstractElasticSearchAttributeFilter
 {
     /**
      * @param  array  $supportedProperties
      */
     public function __construct(
         array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[2]],
-        array $supportedOperators = [Operators::IN_LIST, Operators::EQUALS]
+        array $allowedOperators = [FilterOperators::IN, FilterOperators::EQUAL]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;
-        $this->supportedOperators = $supportedOperators;
+        $this->allowedOperators = $allowedOperators;
     }
 
     /**
@@ -33,20 +32,20 @@ class PriceFilter extends AbstractElasticSearchAttributeFilter implements Filter
         $channel = null,
         $options = []
     ) {
-        if ($this->searchQueryBuilder === null) {
+        if ($this->queryBuilder === null) {
             throw new \LogicException('The search query builder is not initialized in the filter.');
         }
-        $attributePath = $this->getAttributePath($attribute, $locale, $channel);
+        $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
 
         switch ($operator) {
-            case Operators::EQUALS:
+            case FilterOperators::EQUAL:
                 $clause = [
                     'term' => [
                         sprintf('%s.%s', $attributePath, $value[0]) => $value[1],
                     ],
                 ];
 
-                $this->searchQueryBuilder::addFilter($clause);
+                $this->queryBuilder::where($clause);
                 break;
         }
 
