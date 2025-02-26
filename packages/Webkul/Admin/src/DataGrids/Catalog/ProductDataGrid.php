@@ -435,7 +435,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'locale'  => core()->getRequestedLocaleCode(),
             'channel' => core()->getRequestedChannelCode(),
         ];
-        
+
         $queryBuilder = $this->prepareQuery->setQueryManager($this->queryBuilder);
 
         foreach ($params as $attribute => $value) {
@@ -444,13 +444,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             }
 
             if ($attribute === 'all') {
-                $this->applyFilterValue(
-                    $queryBuilder,
-                    'name',
-                    $value,
-                    FilterOperators::CONTAINS,
-                    $context
-                );
+                $queryBuilder->applySkuOrUnfilteredFilter(['sku', 'name'], FilterOperators::WILDCARD, $value, $context);
 
                 continue;
             }

@@ -122,4 +122,17 @@ class AbstractOptionsController extends Controller
             is_array($initializeValues['values']) ? $initializeValues['values'] : [$initializeValues['values']]
         );
     }
+
+    /**
+     * Translation for the models label to be used for search
+     */
+    protected function getTranslationColumnName(string $entityName): string
+    {
+        return match ($entityName) {
+            'category_fields' => 'name',
+            'channel'         => 'name',
+            'attributes'      => 'name',
+            default           => 'label'
+        };
+    }
 }

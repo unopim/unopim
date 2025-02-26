@@ -61,6 +61,17 @@ class TextFilter extends AbstractElasticSearchAttributeFilter
 
                 $this->queryBuilder::where($clause);
                 break;
+
+            case FilterOperators::WILDCARD:
+                $escapedValue = QueryString::escapeValue(current((array) $value));
+                $clause = [
+                    'wildcard' => [
+                        $attributePath => $escapedValue,
+                    ],
+                ];
+
+                $this->queryBuilder::where($clause);
+                break;
         }
 
         return $this;

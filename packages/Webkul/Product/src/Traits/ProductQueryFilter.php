@@ -58,4 +58,15 @@ trait ProductQueryFilter
 
         return $this;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function applySkuOrUnfilteredFilter($property, $operator, $value, array $context = [])
+    {
+        $filter = $this->filterManager->getSkuOrUnfilteredFilter();
+        $this->applyUnfilteredFilter($filter, $property, $operator, $value, $context);
+
+        return $this;
+    }
 }

@@ -46,4 +46,22 @@ class ElasticProductQueryBuilder extends ElasticSearchAbstractFilterableQueryBui
 
         return $this;
     }
+
+    /**
+     * Add a filter condition on an universal attribute
+     */
+    protected function applyUnfilteredFilter(
+        $filter,
+        $attribute,
+        $operator,
+        $value,
+        array $context
+    ) {
+
+        $filter->setQueryManager(new ElasticSearchQuery);
+
+        $filter->applyUnfilteredFilter($attribute, $operator, $value, $context);
+
+        return $this;
+    }
 }

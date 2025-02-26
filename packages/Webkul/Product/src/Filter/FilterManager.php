@@ -4,6 +4,7 @@ namespace Webkul\Product\Filter;
 
 use Illuminate\Contracts\Container\Container;
 use Webkul\Product\Contracts\FilterManager as FilterManagerContract;
+use Webkul\Product\Filter\ElasticSearch\SkuOrUniversalFilter;
 
 class FilterManager implements FilterManagerContract
 {
@@ -48,6 +49,11 @@ class FilterManager implements FilterManagerContract
         }
 
         return null;
+    }
+
+    public function getSkuOrUnfilteredFilter()
+    {
+        return app(SkuOrUniversalFilter::class);
     }
 
     /**

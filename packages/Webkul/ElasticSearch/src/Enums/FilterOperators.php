@@ -24,6 +24,7 @@ enum FilterOperators: string
     case LESS_THAN_OR_EQUAL = 'lte';
     case EQUAL = 'eq';
     case NOT_EQUAL = 'neq';
+    case WILDCARD = 'wildcard';
 
     /**
      * Get the label for each operator.
@@ -51,6 +52,7 @@ enum FilterOperators: string
             self::LESS_THAN_OR_EQUAL    => 'Less than or equal to',
             self::EQUAL                 => 'Equal',
             self::NOT_EQUAL             => 'Not equal',
+            self::WILDCARD              => 'Wildcard',
         };
     }
 }

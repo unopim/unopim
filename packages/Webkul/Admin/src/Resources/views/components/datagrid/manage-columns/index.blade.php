@@ -65,7 +65,6 @@
                                         <div v-if="loading" class="grid gap-y-2.5 pt-3">
                                             <div v-for="n in 10" :key="n" class="shimmer w-[302px] h-6"></div>
                                         </div>
-
                                         <draggable
                                             class="h-[calc(100vh-285px)] pb-[16px] pt-3 overflow-auto ltr:border-r rtl:border-l border-gray-200"
                                             ghost-class="draggable-ghost"
@@ -100,6 +99,25 @@
                                                 </div>  
                                             </template>
                                         </draggable>
+
+                                        <!-- Prev & Next Page Button -->
+                                        <div 
+                                            class="flex gap-1 items-left justify-left mt-2.5"
+                                            v-if="!loading"
+                                        >
+                                            <a @click="previousPage">
+                                                <div class="inline-flex gap-x-1 items-center justify-between w-full max-w-max ltr:ml-2 rtl:mr-2 p-1.5 bg-white dark:bg-cherry-800 border rounded-md dark:border-cherry-800 text-gray-600 dark:text-gray-300 text-center cursor-pointer transition-all hover:border hover:bg-violet-50 dark:hover:bg-cherry-800 marker:shadow appearance-none focus:ring-2 focus:outline-none focus:ring-black">
+                                                    <span class="icon-chevron-left text-2xl"></span>
+                                                </div>
+                                            </a>
+
+                                            <a @click="nextPage">
+                                                <div
+                                                    class="inline-flex gap-x-1 items-center justify-between w-full max-w-max ltr:ml-2 rtl:mr-2 p-1.5 bg-white dark:bg-cherry-800 border rounded-md dark:border-cherry-800 text-gray-600 dark:text-gray-300 text-center cursor-pointer transition-all hover:border hover:bg-violet-50 dark:hover:bg-cherry-800 marker:shadow appearance-none focus:ring-2 focus:outline-none focus:ring-black">
+                                                    <span class="icon-chevron-right text-2xl"></span>
+                                                </div>
+                                            </a>
+                                        </div>
                                     </div>
                                     <!-- Right Side -->
                                     <div class="flex flex-col gap-y-2">
@@ -182,6 +200,11 @@
                     selectedColumns: [],
                     columnList: [],
                     viewedColumns: [],
+                    currentPage: 1,
+                    limit: 25,
+                    totalPages: 1,
+                    searchQuery: "",
+                    debounceTimeout: null,
                 };
             },
 
@@ -226,9 +249,11 @@
                 getColumnsList() {
                     const params = {
                         entityName: 'attributes',
-                        page: 1,
-                        limit: 10000,
+                        page: this.currentPage,
+                        limit: this.limit,
+                        query: this.searchQuery,
                     };
+
                     this.loading = true;
 
                     this.$axios
@@ -239,8 +264,35 @@
                             data
                         }) => {
                             this.columnList = data.options;
+                            this.totalPages = data.lastPage;
                             this.loading = false;
                         });
+                },
+
+                handleSearch() {
+                    if (this.debounceTimeout) {
+                        clearTimeout(this.debounceTimeout); // Clear the previous timeout
+                    }
+
+                    // Set a new timeout to call the API after 300ms of inactivity
+                    this.debounceTimeout = setTimeout(() => {
+                        this.currentPage = 1; // Reset to the first page when searching
+                        this.getColumnsList(); // Fetch data with the new search query
+                    }, 300);
+                },
+
+                previousPage() {
+                    if (this.currentPage > 1) {
+                        this.currentPage--;
+                        this.getColumnsList();
+                    }
+                },
+                
+                nextPage() {
+                    if (this.currentPage < this.totalPages) {
+                        this.currentPage++;
+                        this.getColumnsList();
+                    }
                 },
             },
         });

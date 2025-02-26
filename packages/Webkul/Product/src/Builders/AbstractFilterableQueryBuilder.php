@@ -31,7 +31,7 @@ abstract class AbstractFilterableQueryBuilder implements QueryBuilderContract
     public function getQueryManager()
     {
         if ($this->qb === null) {
-            throw new \LogicException('Query builder must be configured');
+            throw new \LogicException('Query manager must be configured');
         }
 
         return $this->qb;
