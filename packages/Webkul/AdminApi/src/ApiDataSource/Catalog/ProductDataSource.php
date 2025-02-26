@@ -151,7 +151,7 @@ class ProductDataSource extends ApiDataSource
 
         switch ($requestedColumn) {
             case 'parent':
-                $scopeQueryBuilder->where($filterTable.'parent_id', $this->getParentIdByCode($scopeQueryBuilder, $value['value']));
+                $scopeQueryBuilder->orWhere($filterTable.'parent_id', $this->getParentIdByCode($scopeQueryBuilder, $value['value']));
                 break;
             case 'family':
                 $scopeQueryBuilder = $this->filterByFamily($scopeQueryBuilder, $value['operator'], $value['value']);
@@ -160,7 +160,7 @@ class ProductDataSource extends ApiDataSource
                 $scopeQueryBuilder = $this->filterByCategories($scopeQueryBuilder, $value['operator'], $filterTable, $value['value']);
                 break;
             default:
-                $scopeQueryBuilder->where($filterTable.$requestedColumn, $value['value']);
+                $scopeQueryBuilder->orWhere($filterTable.$requestedColumn, $value['value']);
                 break;
         }
 
@@ -201,9 +201,9 @@ class ProductDataSource extends ApiDataSource
     {
         $scopeQueryBuilder->whereHas('attribute_family', function ($query) use ($operator, $code) {
             if ($this->operators['IN_LIST'] == $operator) {
-                $query->whereIn('attribute_families.code', $code);
+                $query->orWhereIn('attribute_families.code', $code);
             } else {
-                $query->whereNotIn('attribute_families.code', $code);
+                $query->orWhereNotIn('attribute_families.code', $code);
             }
 
             return $query;
@@ -221,9 +221,9 @@ class ProductDataSource extends ApiDataSource
     protected function filterByCategories(Builder $scopeQueryBuilder, string $operator, string $filterTable, array $value)
     {
         if ($this->operators['IN_LIST'] == $operator) {
-            $scopeQueryBuilder->whereJsonContains($filterTable.'values->categories', $value);
+            $scopeQueryBuilder->orWhereJsonContains($filterTable.'values->categories', $value);
         } else {
-            $scopeQueryBuilder->whereJsonDoesntContain($filterTable.'values->categories', $value);
+            $scopeQueryBuilder->orWhereJsonDoesntContain($filterTable.'values->categories', $value);
         }
 
         return $scopeQueryBuilder;

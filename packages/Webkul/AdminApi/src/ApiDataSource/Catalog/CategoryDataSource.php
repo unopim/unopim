@@ -115,20 +115,20 @@ class CategoryDataSource extends ApiDataSource
         if ($this->operators['EQUALS'] == $value['operator']) {
             // Apply the 'equals' operator to the query builder.
             if ($requestedColumn == 'parent') {
-                $scopeQueryBuilder->where($filterTable.'parent_id', $this->getParentIdByCode($scopeQueryBuilder, $value['value']));
+                $scopeQueryBuilder->orWhere($filterTable.'parent_id', $this->getParentIdByCode($scopeQueryBuilder, $value['value']));
             } else {
-                $scopeQueryBuilder->where($filterTable.$requestedColumn, $value['value']);
+                $scopeQueryBuilder->orWhere($filterTable.$requestedColumn, $value['value']);
             }
         }
 
         if ($this->operators['IN_LIST'] == $value['operator']) {
             // Apply the 'in list' operator to the query builder.
-            $scopeQueryBuilder->whereIn($filterTable.$requestedColumn, $value['value']);
+            $scopeQueryBuilder->orWhereIn($filterTable.$requestedColumn, $value['value']);
         }
 
         if ($this->operators['NOT_IN_LIST'] == $value['operator']) {
             // Apply the 'not in list' operator to the query builder.
-            $scopeQueryBuilder->hereNotIn($filterTable.$requestedColumn, $value['value']);
+            $scopeQueryBuilder->orWhereNotIn($filterTable.$requestedColumn, $value['value']);
         }
 
         // Return the updated query builder instance.
