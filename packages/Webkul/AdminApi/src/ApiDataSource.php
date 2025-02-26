@@ -113,9 +113,11 @@ abstract class ApiDataSource
             $this->setDefaultFilters($scopeQueryBuilder);
 
             foreach ($requestedFilters as $requestedColumn => $requestedValues) {
-                foreach ($requestedValues as $value) {
-                    $scopeQueryBuilder = $this->operatorByFilter($scopeQueryBuilder, $requestedColumn, $value);
-                }
+                $scopeQueryBuilder->where(function ($query) use ($requestedValues, $requestedColumn) {
+                    foreach ($requestedValues as $value) {
+                        $query = $this->operatorByFilter($query, $requestedColumn, $value);
+                    }
+                });
             }
 
             return $scopeQueryBuilder;
