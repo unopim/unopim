@@ -92,10 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => 'Le :name a déjà été pris.',
-                'create-btn'     => 'Créer un produit',
-                'title'          => 'Produits',
-                'magic-ai-error' => 'Veuillez vérifier les informations d\'identification de Magic AI et vous assurer que le bon modèle est sélectionné.',
+                'already-taken'             => 'Le :name a déjà été pris.',
+                'create-btn'                => 'Créer un produit',
+                'title'                     => 'Produits',
+                'magic-ai-error'            => 'Veuillez vérifier les informations d\'identification de Magic AI et vous assurer que le bon modèle est sélectionné.',
+                'magic-ai-validate-error'   => 'Veuillez vérifier les informations d\'identification de Magic AI.',
+                'magic-ai-validate-success' => 'Identifiants Magic AI validés avec succès',
 
                 'create' => [
                     'back-btn'                          => 'Retour',
@@ -321,7 +323,6 @@ return [
                 'file'                  => 'Déposer',
                 'general'               => 'Général',
                 'image'                 => 'Image',
-                'gallery'               => 'Galerie',
                 'input-options'         => 'Options d\'entrée',
                 'input-validation'      => 'Validation d\'entrée',
                 'is-comparable'         => 'L\'attribut est comparable',
@@ -387,7 +388,6 @@ return [
                 'file'                  => 'Déposer',
                 'general'               => 'Général',
                 'image'                 => 'Image',
-                'gallery'               => 'Galerie',
                 'input-options'         => 'Options d\'entrée',
                 'input-validation'      => 'Validation d\'entrée',
                 'is-comparable'         => 'L\'attribut est comparable',
@@ -1525,6 +1525,12 @@ return [
                         'title'          => 'réglages généraux',
                         'title-info'     => 'Améliorez votre expérience avec la fonction Magic AI en entrant votre clé API exclusive et en indiquant l\'organisation pertinente pour l\'intégration sans effort.Saisissez la commande sur vos informations d\'identification OpenAI et personnalisez les paramètres en fonction de vos besoins spécifiques.',
                     ],
+
+                    'image-generation' => [
+                        'enabled'    => 'Activé',
+                        'title'      => 'Génération d\'images',
+                        'title-info' => 'Cette fonctionnalité activera Magic AI pour chaque téléchargement d\'image, où vous souhaitez générer des images à l\'aide de DALL-E.<br/><br/>Lorsque cette option est activée, accédez à n\'importe quel téléchargement d\'image pour générer une image.',
+                    ],
                 ],
             ],
         ],
@@ -1747,11 +1753,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Ajouter une image',
-                'ai-add-image-btn'  => 'Magic AI',
-                'ai-btn-info'       => 'Générer une image',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Seuls les fichiers d\'images (.jpeg, .jpg, .png, ..) sont autorisés.',
+                'add-image-btn'      => 'Ajouter une image',
+                'generate-with-ai'   => 'Générer avec l’IA',
+                'upload-from-device' => 'Télécharger depuis l’appareil',
+                'cancel'             => 'Annuler',
+                'ai-add-image-btn'   => 'Magic AI',
+                'ai-btn-info'        => 'Générer une image',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Seuls les fichiers d\'images (.jpeg, .jpg, .png, ..) sont autorisés.',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',
@@ -1820,6 +1829,7 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'La lave',
+                'default-prompt'         => 'Default Prompt',
             ],
         ],
     ],
@@ -1948,5 +1958,57 @@ return [
         'false'   => 'FAUX',
         'enable'  => 'Activé',
         'disable' => 'Désactivé',
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Description détaillée du produit',
+            'prompt' => 'Rédigez une description complète de @name, incluant ses caractéristiques, avantages, spécifications techniques et instructions d\'utilisation.',
+        ],
+
+        'overview' => [
+            'title'  => 'Aperçu du produit',
+            'prompt' => 'Créez un aperçu détaillé de @name, mettant en avant ses caractéristiques principales, ses avantages et son public cible comme @brand et @color.',
+        ],
+
+        'features' => [
+            'title'  => 'Caractéristiques et avantages',
+            'prompt' => 'Listez les principales caractéristiques et avantages de @name, expliquant comment ils ajoutent de la valeur à la vie du client.',
+        ],
+
+        'technical' => [
+            'title'  => 'Spécifications techniques',
+            'prompt' => 'Fournissez une liste détaillée des spécifications techniques de @name, incluant les dimensions, les matériaux et la compatibilité.',
+        ],
+
+        'care' => [
+            'title'  => 'Entretien et maintenance',
+            'prompt' => 'Écrivez un guide sur l\'entretien de @name, y compris des conseils de nettoyage, de stockage et de dépannage.',
+        ],
+
+        'tagline' => [
+            'title'  => 'Slogan du produit',
+            'prompt' => 'Rédigez un slogan accrocheur et concis pour @name qui reflète son essence et ses avantages.',
+        ],
+
+        'summary' => [
+            'title'  => 'Résumé du produit',
+            'prompt' => 'Résumé des principales caractéristiques et avantages de @name en 50-60 mots.',
+        ],
+
+        'headline' => [
+            'title'  => 'Titre du produit',
+            'prompt' => 'Créez un titre accrocheur pour @name qui met en avant son argument de vente unique.',
+        ],
+
+        'brief' => [
+            'title'  => 'Description brève',
+            'prompt' => 'Rédigez une description concise de @name en mettant l\'accent sur ses avantages clés.',
+        ],
+
+        'elevator' => [
+            'title'  => 'Pitch du produit',
+            'prompt' => 'Créez un pitch succinct pour @name, résumant son but et ses avantages en 30-40 mots.',
+        ],
     ],
 ];

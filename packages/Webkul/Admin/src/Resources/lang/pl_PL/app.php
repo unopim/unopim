@@ -92,10 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name jest już zajęte.',
-                'create-btn'     => 'Utwórz produkt',
-                'title'          => 'Produkty',
-                'magic-ai-error' => 'Sprawdź dane uwierzytelniające Magic AI i upewnij się, że wybrano odpowiedni model.',
+                'already-taken'             => ':name jest już zajęte.',
+                'create-btn'                => 'Utwórz produkt',
+                'title'                     => 'Produkty',
+                'magic-ai-error'            => 'Sprawdź dane uwierzytelniające Magic AI i upewnij się, że wybrano odpowiedni model.',
+                'magic-ai-validate-error'   => 'Magic AIの認証情報を確認してください。',
+                'magic-ai-validate-success' => 'Magic AIの認証情報が正常に検証されました。',
 
                 'create' => [
                     'back-btn'                          => 'Wstecz',
@@ -1892,11 +1894,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Dodaj obraz',
-                'ai-add-image-btn'  => 'Magiczna AI',
-                'ai-btn-info'       => 'Wygeneruj obraz',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Tylko pliki graficzne (.jpeg, .jpg, .png, ..) są dozwolone.',
+                'add-image-btn'      => 'Dodaj obraz',
+                'generate-with-ai'   => 'Generuj za pomocą AI',
+                'upload-from-device' => 'Prześlij z urządzenia',
+                'cancel'             => 'Anuluj',
+                'ai-add-image-btn'   => 'Magiczna AI',
+                'ai-btn-info'        => 'Wygeneruj obraz',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Tylko pliki graficzne (.jpeg, .jpg, .png, ..) są dozwolone.',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',
@@ -1965,7 +1970,51 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => 'Domyślny prompt',
             ],
+        ],
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Szczegółowy opis produktu',
+            'prompt' => 'Napisz szczegółowy opis @name, uwzględniając cechy, korzyści, specyfikacje techniczne oraz instrukcje użytkowania.',
+        ],
+        'overview' => [
+            'title'  => 'Przegląd produktu',
+            'prompt' => 'Stwórz szczegółowy przegląd @name, podkreślając jego kluczowe cechy, zalety i docelową grupę odbiorców, takich jak @brand i @color.',
+        ],
+        'features' => [
+            'title'  => 'Cechy i korzyści produktu',
+            'prompt' => 'Wypisz kluczowe cechy i korzyści @name, wyjaśniając, jak dodają one wartość życiu klienta.',
+        ],
+        'technical' => [
+            'title'  => 'Specyfikacje techniczne produktu',
+            'prompt' => 'Podaj szczegółową listę specyfikacji technicznych dla @name, w tym wymiary, materiały i kompatybilność.',
+        ],
+        'care' => [
+            'title'  => 'Pielęgnacja i konserwacja produktu',
+            'prompt' => 'Napisz przewodnik dotyczący pielęgnacji i konserwacji @name, w tym wskazówki dotyczące czyszczenia, przechowywania i rozwiązywania problemów.',
+        ],
+        'tagline' => [
+            'title'  => 'Hasło reklamowe produktu',
+            'prompt' => 'Napisz chwytliwe i zwięzłe hasło reklamowe dla @name, które uchwyci jego istotę i korzyści.',
+        ],
+        'summary' => [
+            'title'  => 'Podsumowanie produktu',
+            'prompt' => 'Podsumuj kluczowe cechy i korzyści @name w 50-60 słowach.',
+        ],
+        'headline' => [
+            'title'  => 'Nagłówek produktu',
+            'prompt' => 'Stwórz przyciągający uwagę nagłówek dla @name, który podkreśli jego unikalną cechę sprzedaży.',
+        ],
+        'brief' => [
+            'title'  => 'Krótki opis produktu',
+            'prompt' => 'Napisz krótki i zwięzły opis @name, koncentrując się na jego głównych zaletach i grupie docelowej.',
+        ],
+        'elevator' => [
+            'title'  => 'Elevator Pitch produktu',
+            'prompt' => 'Stwórz krótki elevator pitch dla @name, podsumowując jego cel, korzyści i unikalną cechę sprzedaży w 30-40 słowach.',
         ],
     ],
 ];

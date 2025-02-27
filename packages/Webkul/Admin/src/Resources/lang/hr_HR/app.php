@@ -92,10 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name je već zauzet.',
-                'create-btn'     => 'Stvori proizvod',
-                'title'          => 'Proizvodi',
-                'magic-ai-error' => 'Molimo provjerite Magic AI vjerodajnice i odaberite ispravan model.',
+                'already-taken'             => ':name je već zauzet.',
+                'create-btn'                => 'Stvori proizvod',
+                'title'                     => 'Proizvodi',
+                'magic-ai-error'            => 'Molimo provjerite Magic AI vjerodajnice i odaberite ispravan model.',
+                'magic-ai-validate-error'   => 'Provjerite vjerodajnice za Magic AI.',
+                'magic-ai-validate-success' => 'Magic AI vjerodajnice uspješno su potvrđene',
 
                 'create' => [
                     'back-btn'                          => 'Natrag',
@@ -1892,11 +1894,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Dodaj sliku',
-                'ai-add-image-btn'  => 'Magija AI',
-                'ai-btn-info'       => 'Generiraj sliku',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Dozvoljeni su samo datoteke s slikama (.jpeg, .jpg, .png, ..).',
+                'add-image-btn'      => 'Dodaj sliku',
+                'ai-add-image-btn'   => 'Magija AI',
+                'generate-with-ai'   => 'Generiraj s AI-om',
+                'upload-from-device' => 'Prenesi s uređaja',
+                'cancel'             => 'Odustani',
+                'ai-btn-info'        => 'Generiraj sliku',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Dozvoljeni su samo datoteke s slikama (.jpeg, .jpg, .png, ..).',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',
@@ -1965,7 +1970,51 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => 'Zadani upit',
             ],
+        ],
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Detaljan Opis Proizvoda',
+            'prompt' => 'Napišite sveobuhvatan opis @name, uključujući njegove značajke, prednosti, tehničke specifikacije i upute za uporabu.',
+        ],
+        'overview' => [
+            'title'  => 'Pregled Proizvoda',
+            'prompt' => 'Kreirajte detaljan pregled @name, naglašavajući njegove ključne značajke, prednosti i ciljanu publiku poput @brand i @color.',
+        ],
+        'features' => [
+            'title'  => 'Značajke i Prednosti Proizvoda',
+            'prompt' => 'Nabrojite ključne značajke i prednosti @name, objašnjavajući kako dodaju vrijednost životu kupca.',
+        ],
+        'technical' => [
+            'title'  => 'Tehničke Specifikacije Proizvoda',
+            'prompt' => 'Pružite detaljan popis tehničkih specifikacija za @name, uključujući dimenzije, materijale i kompatibilnost.',
+        ],
+        'care' => [
+            'title'  => 'Briga i Održavanje Proizvoda',
+            'prompt' => 'Napišite vodič kako brinuti i održavati @name, uključujući savjete za čišćenje, pohranu i rješavanje problema.',
+        ],
+        'tagline' => [
+            'title'  => 'Slogan Proizvoda',
+            'prompt' => 'Napišite privlačan i sažet slogan za @name koji hvata njegovu bit i prednosti.',
+        ],
+        'summary' => [
+            'title'  => 'Sažetak Proizvoda',
+            'prompt' => 'Sažmite ključne značajke i prednosti @name u 50-60 riječi.',
+        ],
+        'headline' => [
+            'title'  => 'Naslov Proizvoda',
+            'prompt' => 'Kreirajte privlačan naslov za @name koji ističe njegov jedinstveni prodajni argument.',
+        ],
+        'brief' => [
+            'title'  => 'Kratak Opis Proizvoda',
+            'prompt' => 'Napišite kratak i sažet opis @name, fokusirajući se na njegove ključne prednosti i ciljanu publiku.',
+        ],
+        'elevator' => [
+            'title'  => 'Elevator Pitch Proizvoda',
+            'prompt' => 'Izradite sažet elevator pitch za @name, sumirajući njegovu svrhu, prednosti i jedinstveni prodajni argument u 30-40 riječi.',
         ],
     ],
 ];

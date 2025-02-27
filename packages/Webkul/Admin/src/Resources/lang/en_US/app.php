@@ -92,10 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => 'The :name has already been taken.',
-                'create-btn'     => 'Create Product',
-                'title'          => 'Products',
-                'magic-ai-error' => 'Please verify the Magic AI credentials and ensure the correct model is selected.',
+                'already-taken'             => 'The :name has already been taken.',
+                'create-btn'                => 'Create Product',
+                'title'                     => 'Products',
+                'magic-ai-error'            => 'Please verify the Magic AI credentials and ensure the correct model is selected.',
+                'magic-ai-validate-error'   => 'Please verify the Magic AI credentials.',
+                'magic-ai-validate-success' => 'Magic AI credentials validated successfully',
 
                 'create' => [
                     'back-btn'                          => 'Back',
@@ -321,7 +323,6 @@ return [
                 'file'                  => 'File',
                 'general'               => 'General',
                 'image'                 => 'Image',
-                'gallery'               => 'Gallery',
                 'input-options'         => 'Input Options',
                 'input-validation'      => 'Input Validation',
                 'is-comparable'         => 'Attribute is comparable',
@@ -387,7 +388,6 @@ return [
                 'file'                  => 'File',
                 'general'               => 'General',
                 'image'                 => 'Image',
-                'gallery'               => 'Gallery',
                 'input-options'         => 'Input Options',
                 'input-validation'      => 'Input Validation',
                 'is-comparable'         => 'Attribute is comparable',
@@ -1521,8 +1521,15 @@ return [
                         'enabled'        => 'Enabled',
                         'llm-api-domain' => 'LLM API Domain',
                         'organization'   => 'Organization ID',
+                        'api-model'      => 'Models',
                         'title'          => 'General Settings',
                         'title-info'     => 'Enhance your experience with the Magic AI feature by entering your exclusive API Key and indicating the pertinent Organization for effortless integration. Seize command over your OpenAI credentials and customize the settings according to your specific needs.',
+                    ],
+
+                    'image-generation' => [
+                        'enabled'    => 'Enabled',
+                        'title'      => 'Image Generation',
+                        'title-info' => 'This feature will enable the Magic AI for every image upload, where you want to generate images using DALL-E.<br/><br/>When Enable, go to any image upload to generate image.',
                     ],
                 ],
             ],
@@ -1746,11 +1753,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Add Image',
-                'ai-add-image-btn'  => 'Magic AI',
-                'ai-btn-info'       => 'Generate Image',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Only images files (.jpeg, .jpg, .png, ..) are allowed.',
+                'add-image-btn'      => 'Add Image',
+                'generate-with-ai'   => 'Generate with AI',
+                'upload-from-device' => 'Upload from Device',
+                'cancel'             => 'Cancel',
+                'ai-add-image-btn'   => 'Magic AI',
+                'ai-btn-info'        => 'Generate Image',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Only images files (.jpeg, .jpg, .png, ..) are allowed.',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',
@@ -1819,6 +1829,7 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => 'Default Prompt',
             ],
         ],
     ],
@@ -1962,11 +1973,63 @@ return [
     ],
 
     'common' => [
-        'yes'     => 'Yes',
-        'no'      => 'No',
-        'true'    => 'True',
-        'false'   => 'False',
-        'enable'  => 'Enabled',
-        'disable' => 'Disabled',
+        'yes'            => 'Yes',
+        'no'             => 'No',
+        'true'           => 'True',
+        'false'          => 'False',
+        'enable'         => 'Enabled',
+        'disable'        => 'Disabled',
+        'no-match-found' => 'No Match Found!',
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Detailed Product Description',
+            'prompt' => 'Write a comprehensive description of @name, including its features, benefits, technical specifications, and usage instructions.',
+        ],
+
+        'overview' => [
+            'title'  => 'Product Overview',
+            'prompt' => 'Create a detailed overview of @name, highlighting its key features, advantages, and target audience like @brand and @color.',
+        ],
+
+        'features' => [
+            'title'  => 'Product Features and Benefits',
+            'prompt' => 'List the key features and benefits of @name, explaining how they add value to the customer\'s life.',
+        ],
+        'technical' => [
+            'title'  => 'Product Technical Specifications',
+            'prompt' => 'Provide a detailed list of technical specifications for @name, including dimensions, materials, and compatibility.',
+        ],
+
+        'care' => [
+            'title'  => 'Product Care and Maintenance',
+            'prompt' => 'Write a guide on how to care for and maintain @name, including tips for cleaning, storage, and troubleshooting.',
+        ],
+
+        'tagline' => [
+            'title'  => 'Product Tagline',
+            'prompt' => 'Write a catchy and concise tagline for @name that captures its essence and benefits.',
+        ],
+
+        'summary' => [
+            'title'  => 'Product Summary',
+            'prompt' => 'Summarize the key features and benefits of @name in 50-60 words.',
+        ],
+
+        'headline' => [
+            'title'  => 'Product Headline',
+            'prompt' => 'Create an attention-grabbing headline for @name that highlights its unique selling point.',
+        ],
+
+        'brief' => [
+            'title'  => 'Product Brief',
+            'prompt' => 'Write a brief and concise description of @name, focusing on its key advantages and target audience.',
+        ],
+
+        'elevator' => [
+            'title'  => 'Product Elevator Pitch',
+            'prompt' => 'Craft a concise elevator pitch for @name, summarizing its purpose, benefits, and unique selling point in 30-40 words.',
+        ],
     ],
 ];

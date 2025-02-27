@@ -92,10 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name telah diambil.',
-                'create-btn'     => 'Buat Produk',
-                'title'          => 'Produk',
-                'magic-ai-error' => 'Harap verifikasi kredensial Magic AI dan pastikan model yang benar dipilih.',
+                'already-taken'             => ':name telah diambil.',
+                'create-btn'                => 'Buat Produk',
+                'title'                     => 'Produk',
+                'magic-ai-error'            => 'Harap verifikasi kredensial Magic AI dan pastikan model yang benar dipilih.',
+                'magic-ai-validate-error'   => 'Silakan periksa kredensial Magic AI.',
+                'magic-ai-validate-success' => 'Kredensial Magic AI berhasil diverifikasi.',
 
                 'create' => [
                     'back-btn'                          => 'Kembali',
@@ -321,7 +323,6 @@ return [
                 'file'                  => 'Mengajukan',
                 'general'               => 'Umum',
                 'image'                 => 'Gambar',
-                'gallery'               => 'Galeri',
                 'input-options'         => 'Opsi input',
                 'input-validation'      => 'Validasi input',
                 'is-comparable'         => 'Atribut sebanding',
@@ -387,7 +388,6 @@ return [
                 'file'                  => 'Mengajukan',
                 'general'               => 'Umum',
                 'image'                 => 'Gambar',
-                'gallery'               => 'Galeri',
                 'input-options'         => 'Opsi input',
                 'input-validation'      => 'Validasi input',
                 'is-comparable'         => 'Atribut sebanding',
@@ -1526,6 +1526,12 @@ return [
                         'title'          => 'Pengaturan Umum',
                         'title-info'     => 'Tingkatkan pengalaman Anda dengan fitur AI ajaib dengan memasukkan kunci API eksklusif Anda dan menunjukkan organisasi terkait untuk integrasi yang mudah.Rebut perintah atas kredensial OpenAI Anda dan sesuaikan pengaturan sesuai dengan kebutuhan spesifik Anda.',
                     ],
+
+                    'image-generation' => [
+                        'enabled'    => 'Diaktifkan',
+                        'title'      => 'Pembuatan Gambar',
+                        'title-info' => 'Fitur ini akan mengaktifkan Magic AI untuk setiap unggahan gambar, di mana Anda ingin menghasilkan gambar menggunakan DALL-E.<br/><br/>Jika Diaktifkan, buka unggahan gambar mana pun untuk menghasilkan gambar.',
+                    ],
                 ],
             ],
         ],
@@ -1765,11 +1771,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Menambahkan gambar',
-                'ai-add-image-btn'  => 'Sihir yang Anda miliki',
-                'ai-btn-info'       => 'Menghasilkan gambar',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Hanya file gambar (.jpeg, .jpg, .png, ..) diizinkan.',
+                'add-image-btn'      => 'Menambahkan gambar',
+                'generate-with-ai'   => 'Hasilkan dengan AI',
+                'upload-from-device' => 'Unggah dari Perangkat',
+                'cancel'             => 'Batalkan',
+                'ai-add-image-btn'   => 'Sihir yang Anda miliki',
+                'ai-btn-info'        => 'Menghasilkan gambar',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Hanya file gambar (.jpeg, .jpg, .png, ..) diizinkan.',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',
@@ -1838,6 +1847,7 @@ return [
                 'orca-mini'              => 'Orca mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'Lava',
+                'default-prompt'         => 'Permintaan default',
             ],
         ],
     ],
@@ -1993,5 +2003,48 @@ return [
         'false'   => 'PALSU',
         'enable'  => 'Diaktifkan',
         'disable' => 'Dengan disabilitas',
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Deskripsi Detail Produk',
+            'prompt' => 'Tuliskan deskripsi komprehensif tentang @name, termasuk fitur, manfaat, spesifikasi teknis, dan petunjuk penggunaan.',
+        ],
+        'overview' => [
+            'title'  => 'Ringkasan Produk',
+            'prompt' => 'Buatlah gambaran umum @name, menyoroti fitur utama, keuntungan, dan audiens target seperti @brand dan @color.',
+        ],
+        'features' => [
+            'title'  => 'Fitur dan Manfaat Produk',
+            'prompt' => 'Daftarkan fitur utama dan manfaat @name, menjelaskan bagaimana fitur-fitur tersebut memberi nilai tambah pada kehidupan pelanggan.',
+        ],
+        'technical' => [
+            'title'  => 'Spesifikasi Teknis Produk',
+            'prompt' => 'Berikan daftar spesifikasi teknis lengkap untuk @name, termasuk dimensi, bahan, dan kompatibilitas.',
+        ],
+        'care' => [
+            'title'  => 'Perawatan dan Pemeliharaan Produk',
+            'prompt' => 'Tuliskan panduan tentang cara merawat dan memelihara @name, termasuk tips untuk pembersihan, penyimpanan, dan pemecahan masalah.',
+        ],
+        'tagline' => [
+            'title'  => 'Tagline Produk',
+            'prompt' => 'Buatlah tagline yang menarik dan singkat untuk @name yang menangkap esensi dan manfaatnya.',
+        ],
+        'summary' => [
+            'title'  => 'Ringkasan Produk',
+            'prompt' => 'Ringkaslah fitur dan manfaat utama @name dalam 50-60 kata.',
+        ],
+        'headline' => [
+            'title'  => 'Judul Produk',
+            'prompt' => 'Buatlah judul yang menarik perhatian untuk @name yang menyoroti keunggulan uniknya.',
+        ],
+        'brief' => [
+            'title'  => 'Deskripsi Singkat Produk',
+            'prompt' => 'Tuliskan deskripsi singkat tentang @name, dengan fokus pada keunggulan utama dan audiens targetnya.',
+        ],
+        'elevator' => [
+            'title'  => 'Elevator Pitch Produk',
+            'prompt' => 'Buat elevator pitch yang singkat untuk @name, merangkum tujuan, manfaat, dan keunggulan uniknya dalam 30-40 kata.',
+        ],
     ],
 ];

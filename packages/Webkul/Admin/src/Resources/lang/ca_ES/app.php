@@ -92,10 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => 'El :name ja està en ús.',
-                'create-btn'     => 'Crear Producte',
-                'title'          => 'Productes',
-                'magic-ai-error' => 'Si us plau, verifiqueu les credencials de Magic AI i assegureu-vos que el model seleccionat sigui correcte.',
+                'already-taken'             => 'El :name ja està en ús.',
+                'create-btn'                => 'Crear Producte',
+                'title'                     => 'Productes',
+                'magic-ai-error'            => 'Si us plau, verifiqueu les credencials de Magic AI i assegureu-vos que el model seleccionat sigui correcte.',
+                'magic-ai-validate-error'   => 'Verifiqueu les credencials de Magic AI.',
+                'magic-ai-validate-success' => 'Les credencials de Magic AI s\'han validat correctament',
 
                 'create' => [
                     'back-btn'                          => 'Enrere',
@@ -1746,11 +1748,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Añadir imagen',
-                'ai-add-image-btn'  => 'Magic AI',
-                'ai-btn-info'       => 'Generar imagen',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Solo se permiten archivos de imagen (.jpeg, .jpg, .png, ..)',
+                'add-image-btn'      => 'Añadir imagen',
+                'generate-with-ai'   => 'Generar amb IA',
+                'upload-from-device' => 'Carregar des del dispositiu',
+                'cancel'             => 'Cancel·lar',
+                'ai-add-image-btn'   => 'Magic AI',
+                'ai-btn-info'        => 'Generar imagen',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Solo se permiten archivos de imagen (.jpeg, .jpg, .png, ..)',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',
@@ -1819,6 +1824,7 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => 'Sol·licitud per defecte',
             ],
         ],
     ],
@@ -1968,5 +1974,58 @@ return [
         'false'   => 'Fals',
         'enable'  => 'Activat',
         'disable' => 'Desactivat',
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Description détaillée du produit',
+            'prompt' => 'Rédigez une description complète de @name, incluant ses caractéristiques, avantages, spécifications techniques et instructions d\'utilisation.',
+        ],
+
+        'overview' => [
+            'title'  => 'Aperçu du produit',
+            'prompt' => 'Créez un aperçu détaillé de @name, mettant en avant ses caractéristiques principales, ses avantages et son public cible comme @brand et @color.',
+        ],
+
+        'features' => [
+            'title'  => 'Caractéristiques et avantages',
+            'prompt' => 'Listez les principales caractéristiques et avantages de @name, expliquant comment ils ajoutent de la valeur à la vie du client.',
+        ],
+
+        'technical' => [
+            'title'  => 'Spécifications techniques',
+            'prompt' => 'Fournissez une liste détaillée des spécifications techniques de @name, incluant les dimensions, les matériaux et la compatibilité.',
+        ],
+
+        'care' => [
+            'title'  => 'Entretien et maintenance',
+            'prompt' => 'Écrivez un guide sur l\'entretien de @name, y compris des conseils de nettoyage, de stockage et de dépannage.',
+        ],
+
+        'tagline' => [
+            'title'  => 'Slogan du produit',
+            'prompt' => 'Rédigez un slogan accrocheur et concis pour @name qui reflète son essence et ses avantages.',
+        ],
+
+        'summary' => [
+            'title'  => 'Résumé du produit',
+            'prompt' => 'Résumé des principales caractéristiques et avantages de @name en 50-60 mots.',
+        ],
+
+        'headline' => [
+            'title'  => 'Titre du produit',
+            'prompt' => 'Créez un titre accrocheur pour @name qui met en avant son argument de vente unique.',
+        ],
+
+        'brief' => [
+            'title'  => 'Description brève',
+            'prompt' => 'Rédigez une description concise de @name en mettant l\'accent sur ses avantages clés.',
+        ],
+
+        'elevator' => [
+            'title'  => 'Pitch du produit',
+            'prompt' => 'Créez un pitch succinct pour @name, résumant son but et ses avantages en 30-40 mots.',
+        ],
+
     ],
 ];

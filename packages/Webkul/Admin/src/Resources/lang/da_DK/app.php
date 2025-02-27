@@ -92,10 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name er allerede taget.',
-                'create-btn'     => 'Opret Produkt',
-                'title'          => 'Produkter',
-                'magic-ai-error' => 'Venligst bekræft Magic AI-legitimationsoplysningerne og sørg for, at den korrekte model er valgt.',
+                'already-taken'             => ':name er allerede taget.',
+                'create-btn'                => 'Opret Produkt',
+                'title'                     => 'Produkter',
+                'magic-ai-error'            => 'Venligst bekræft Magic AI-legitimationsoplysningerne og sørg for, at den korrekte model er valgt.',
+                'magic-ai-validate-error'   => 'Bekræft venligst Magic AI-legitimationsoplysningerne.',
+                'magic-ai-validate-success' => 'Magic AI-legitimationsoplysninger valideret',
 
                 'create' => [
                     'back-btn'                          => 'Tilbage',
@@ -1893,11 +1895,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Tilføj billede',
-                'ai-add-image-btn'  => 'Magic AI',
-                'ai-btn-info'       => 'Generer billede',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Kun billedfiler (.jpeg, .jpg, .png, ..) er tilladt.',
+                'add-image-btn'      => 'Tilføj billede',
+                'generate-with-ai'   => 'Generer med AI',
+                'upload-from-device' => 'Upload fra enhed',
+                'cancel'             => 'Annuller',
+                'ai-add-image-btn'   => 'Magic AI',
+                'ai-btn-info'        => 'Generer billede',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Kun billedfiler (.jpeg, .jpg, .png, ..) er tilladt.',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',
@@ -1966,7 +1971,51 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => 'Standard prompt',
             ],
+        ],
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Detaljeret produktbeskrivelse',
+            'prompt' => 'Skriv en omfattende beskrivelse af @name, inklusiv funktioner, fordele, tekniske specifikationer og brugsvejledninger.',
+        ],
+        'overview' => [
+            'title'  => 'Produktoversigt',
+            'prompt' => 'Opret en detaljeret oversigt over @name, der fremhæver dets nøglefunktioner, fordele og målgruppe som @brand og @color.',
+        ],
+        'features' => [
+            'title'  => 'Produktfunktioner og fordele',
+            'prompt' => 'Liste over nøglefunktioner og fordele ved @name, og forklar hvordan de tilføjer værdi til kundens liv.',
+        ],
+        'technical' => [
+            'title'  => 'Tekniske specifikationer for produktet',
+            'prompt' => 'Giv en detaljeret liste over tekniske specifikationer for @name, inklusiv dimensioner, materialer og kompatibilitet.',
+        ],
+        'care' => [
+            'title'  => 'Pleje og vedligeholdelse af produktet',
+            'prompt' => 'Skriv en guide om, hvordan du plejer og vedligeholder @name, inklusive tips til rengøring, opbevaring og fejlfinding.',
+        ],
+        'tagline' => [
+            'title'  => 'Produkt tagline',
+            'prompt' => 'Skriv en fængende og kort tagline til @name, der indfanger dets essens og fordele.',
+        ],
+        'summary' => [
+            'title'  => 'Produktsammendrag',
+            'prompt' => 'Opsummer nøglefunktionerne og fordelene ved @name i 50-60 ord.',
+        ],
+        'headline' => [
+            'title'  => 'Produktoverskrift',
+            'prompt' => 'Lav en opmærksomhedsskabende overskrift til @name, der fremhæver dets unikke salgsargument.',
+        ],
+        'brief' => [
+            'title'  => 'Produktbrief',
+            'prompt' => 'Skriv en kort og præcis beskrivelse af @name, med fokus på dets fordele og målgruppe.',
+        ],
+        'elevator' => [
+            'title'  => 'Elevatortale for produkt',
+            'prompt' => 'Skriv en kort elevatortale for @name, der opsummerer dets formål, fordele og unikke salgsargument på 30-40 ord.',
         ],
     ],
 ];

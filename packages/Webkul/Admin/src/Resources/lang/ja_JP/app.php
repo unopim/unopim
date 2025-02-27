@@ -92,10 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name はすでに使用されています。',
-                'create-btn'     => '製品の作成',
-                'title'          => '製品',
-                'magic-ai-error' => 'Magic AI の資格情報を確認し、正しいモデルが選択されていることを確認してください。',
+                'already-taken'             => ':name はすでに使用されています。',
+                'create-btn'                => '製品の作成',
+                'title'                     => '製品',
+                'magic-ai-error'            => 'Magic AI の資格情報を確認し、正しいモデルが選択されていることを確認してください。',
+                'magic-ai-validate-error'   => 'Magic AIの認証情報を確認してください。',
+                'magic-ai-validate-success' => 'Magic AIの認証情報が正常に検証されました。',
 
                 'create' => [
                     'back-btn'                          => '戻る',
@@ -321,7 +323,6 @@ return [
                 'file'                  => 'ファイル',
                 'general'               => '一般',
                 'image'                 => '画像',
-                'gallery'               => 'ギャラリー',
                 'input-options'         => '入力オプション',
                 'input-validation'      => '入力検証',
                 'is-comparable'         => '属性は比較可能です',
@@ -387,7 +388,6 @@ return [
                 'file'                  => 'ファイル',
                 'general'               => '一般',
                 'image'                 => '画像',
-                'gallery'               => 'ギャラリー',
                 'input-options'         => '入力オプション',
                 'input-validation'      => '入力検証',
                 'is-comparable'         => '属性は比較可能です',
@@ -1526,6 +1526,12 @@ return [
                         'title'          => '一般設定',
                         'title-info'     => '専用の API キーを入力し、関連する組織を指定して簡単に統合することで、Magic AI 機能のエクスペリエンスが向上します。OpenAI 資格情報を制御して、特定のニーズに応じて設定をカスタマイズします。',
                     ],
+
+                    'image-generation' => [
+                        'enabled'    => '有効',
+                        'title'      => '画像生成',
+                        'title-info' => 'この機能は、DALL-E を使用して画像を生成するすべての画像アップロードで Magic AI を有効にします。<br/><br/>有効にすると、任意の画像アップロードに移動して画像を生成します。',
+                    ],
                 ],
             ],
         ],
@@ -1748,11 +1754,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => '画像を追加',
-                'ai-add-image-btn'  => 'Magic AI',
-                'ai-btn-info'       => '画像の生成',
-                'allowed-types'     => 'png、jpeg、jpg',
-                'not-allowed-error' => '画像ファイル (.jpeg、.jpg、.png、..) のみが許可されます。',
+                'add-image-btn'      => '画像を追加',
+                'generate-with-ai'   => 'AIで生成',
+                'upload-from-device' => 'デバイスからアップロード',
+                'cancel'             => 'キャンセル',
+                'ai-add-image-btn'   => 'Magic AI',
+                'ai-btn-info'        => '画像の生成',
+                'allowed-types'      => 'png、jpeg、jpg',
+                'not-allowed-error'  => '画像ファイル (.jpeg、.jpg、.png、..) のみが許可されます。',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',
@@ -1821,6 +1830,7 @@ return [
                 'orca-mini'              => 'オルカ ミニ',
                 'vicuna'                 => 'ビクーニャ',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => 'デフォルトのプロンプト',
             ],
         ],
     ],
@@ -1970,5 +1980,48 @@ return [
         'false'   => '間違い',
         'enable'  => '有効',
         'disable' => '無効',
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => '製品詳細説明',
+            'prompt' => '@nameの詳細な説明を作成してください。特徴、利点、技術仕様、使用方法を含めてください。',
+        ],
+        'overview' => [
+            'title'  => '製品概要',
+            'prompt' => '@nameの詳細な概要を作成し、主要な特徴、利点、ターゲットオーディエンス（例：@brand、@color）を強調してください。',
+        ],
+        'features' => [
+            'title'  => '製品の特徴と利点',
+            'prompt' => '@nameの主な特徴と利点をリストアップし、それらが顧客の生活にどのように価値を加えるかを説明してください。',
+        ],
+        'technical' => [
+            'title'  => '製品技術仕様',
+            'prompt' => '@nameの技術仕様を詳細にリストアップしてください。寸法、材料、互換性などを含めてください。',
+        ],
+        'care' => [
+            'title'  => '製品の手入れとメンテナンス',
+            'prompt' => '@nameの手入れとメンテナンスに関するガイドを作成してください。掃除、保管、トラブルシューティングのヒントを含めてください。',
+        ],
+        'tagline' => [
+            'title'  => '製品のキャッチフレーズ',
+            'prompt' => '@nameの本質と利点を捉えた魅力的で簡潔なキャッチフレーズを作成してください。',
+        ],
+        'summary' => [
+            'title'  => '製品の概要',
+            'prompt' => '@nameの主要な特徴と利点を50-60語で要約してください。',
+        ],
+        'headline' => [
+            'title'  => '製品の見出し',
+            'prompt' => '@nameのユニークな売りを強調した注目を集める見出しを作成してください。',
+        ],
+        'brief' => [
+            'title'  => '製品の簡潔な説明',
+            'prompt' => '@nameの主要な利点とターゲットオーディエンスに焦点を当てた簡潔な説明を作成してください。',
+        ],
+        'elevator' => [
+            'title'  => '製品のエレベーターピッチ',
+            'prompt' => '@nameの目的、利点、ユニークな売りを30-40語で要約した簡潔なエレベーターピッチを作成してください。',
+        ],
     ],
 ];

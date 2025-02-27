@@ -92,10 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name은(는) 이미 사용되었습니다.',
-                'create-btn'     => '제품 만들기',
-                'title'          => '제품',
-                'magic-ai-error' => 'Magic AI 자격 증명이 올바른지 확인하고 올바른 모델이 선택되었는지 확인하세요.',
+                'already-taken'             => ':name은(는) 이미 사용되었습니다.',
+                'create-btn'                => '제품 만들기',
+                'title'                     => '제품',
+                'magic-ai-error'            => 'Magic AI 자격 증명이 올바른지 확인하고 올바른 모델이 선택되었는지 확인하세요.',
+                'magic-ai-validate-error'   => 'Magic AI 자격 증명을 확인하세요.',
+                'magic-ai-validate-success' => 'Magic AI 자격 증명이 성공적으로 확인되었습니다.',
 
                 'create' => [
                     'back-btn'                          => '뒤로',
@@ -1892,11 +1894,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => '이미지 추가',
-                'ai-add-image-btn'  => '마법 AI',
-                'ai-btn-info'       => '이미지 생성',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => '이미지 파일만 허용됩니다 (.jpeg, .jpg, .png, ..).',
+                'add-image-btn'      => '이미지 추가',
+                'generate-with-ai'   => 'AI로 생성',
+                'upload-from-device' => '장치에서 업로드',
+                'cancel'             => '취소',
+                'ai-add-image-btn'   => '마법 AI',
+                'ai-btn-info'        => '이미지 생성',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => '이미지 파일만 허용됩니다 (.jpeg, .jpg, .png, ..).',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',
@@ -1965,7 +1970,51 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => '기본 프롬프트',
             ],
+        ],
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => '제품 상세 설명',
+            'prompt' => '@name의 종합적인 설명을 작성하십시오. 기능, 장점, 기술 사양 및 사용 방법을 포함하세요.',
+        ],
+        'overview' => [
+            'title'  => '제품 개요',
+            'prompt' => '@name의 주요 특징, 장점, 그리고 @brand와 @color와 같은 대상 고객을 강조하는 자세한 개요를 작성하세요.',
+        ],
+        'features' => [
+            'title'  => '제품 기능 및 장점',
+            'prompt' => '@name의 주요 기능 및 장점을 나열하고, 그것들이 고객의 삶에 어떻게 가치를 더하는지 설명하세요.',
+        ],
+        'technical' => [
+            'title'  => '제품 기술 사양',
+            'prompt' => '@name의 기술 사양을 자세히 나열하세요. 치수, 재료 및 호환성을 포함하세요.',
+        ],
+        'care' => [
+            'title'  => '제품 관리 및 유지보수',
+            'prompt' => '@name의 관리 및 유지보수에 대한 가이드를 작성하세요. 청소, 보관 및 문제 해결 팁을 포함하세요.',
+        ],
+        'tagline' => [
+            'title'  => '제품 태그라인',
+            'prompt' => '@name의 본질과 장점을 잘 표현한 매력적이고 간결한 태그라인을 작성하세요.',
+        ],
+        'summary' => [
+            'title'  => '제품 요약',
+            'prompt' => '@name의 주요 기능과 장점을 50-60단어로 요약하세요.',
+        ],
+        'headline' => [
+            'title'  => '제품 제목',
+            'prompt' => '@name의 독특한 판매 포인트를 강조하는 주목할 만한 제목을 작성하세요.',
+        ],
+        'brief' => [
+            'title'  => '제품 간단한 설명',
+            'prompt' => '@name의 주요 장점과 대상 고객을 중심으로 간단하고 간결한 설명을 작성하세요.',
+        ],
+        'elevator' => [
+            'title'  => '제품 Elevator Pitch',
+            'prompt' => '@name의 목적, 장점 및 독특한 판매 포인트를 30-40단어로 요약한 간단한 Elevator Pitch를 작성하세요.',
         ],
     ],
 ];
