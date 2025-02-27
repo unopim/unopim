@@ -44,8 +44,7 @@
         "pusher/pusher-php-server": "^7.0",
         "shetabit/visitor": "^4.1",
         "spatie/laravel-responsecache": "^7.4",
-        "symfony/intl": "^6.4",
-        "unopim/dam": "^1.0"
+        "symfony/intl": "^6.4"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.8",

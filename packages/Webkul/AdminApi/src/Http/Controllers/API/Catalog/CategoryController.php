@@ -4,6 +4,7 @@ namespace Webkul\AdminApi\Http\Controllers\API\Catalog;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Validation\Validator;
 use Symfony\Component\HttpFoundation\Response;
 use Webkul\AdminApi\ApiDataSource\Catalog\CategoryDataSource;
 use Webkul\AdminApi\Http\Controllers\API\ApiController;
@@ -108,7 +109,7 @@ class CategoryController extends ApiController
 
         $validator = $this->categoryValidator->validate($requestData);
 
-        if ($validator instanceof \Illuminate\Validation\Validator && $validator->fails()) {
+        if ($validator instanceof Validator && $validator->fails()) {
             return $this->validateErrorResponse($validator);
         }
 
@@ -151,7 +152,7 @@ class CategoryController extends ApiController
 
         $validator = $this->categoryValidator->validate($requestData, $id);
 
-        if ($validator instanceof \Illuminate\Validation\Validator && $validator->fails()) {
+        if ($validator instanceof Validator && $validator->fails()) {
             return $this->validateErrorResponse($validator);
         }
 
@@ -219,7 +220,7 @@ class CategoryController extends ApiController
         $requestData['parent_id'] = $parentId;
 
         $validator = $this->categoryValidator->validate($requestData, $category->id);
-        if ($validator instanceof \Illuminate\Validation\Validator && $validator->fails()) {
+        if ($validator instanceof Validator && $validator->fails()) {
             return $this->validateErrorResponse($validator);
         }
 

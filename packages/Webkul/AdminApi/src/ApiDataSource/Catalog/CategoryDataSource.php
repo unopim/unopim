@@ -104,7 +104,11 @@ class CategoryDataSource extends ApiDataSource
         ];
     }
 
-    // Delete Category by its code
+    /**
+     * Delete Category by its code.
+     *
+     * @param  string  $code  The unique code of the category field.
+     */
     public function deleteByCode(string $code)
     {
         $this->prepareForSingleData();
@@ -126,7 +130,6 @@ class CategoryDataSource extends ApiDataSource
         }
 
         if ($this->isRelatedToChannel($category->id)) {
-
             throw new \Exception(trans('admin::app.catalog.categories.delete-category-root'));
         }
 
