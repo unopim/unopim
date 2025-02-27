@@ -129,7 +129,7 @@
                         v-for="appliedColumnValue in getAppliedColumnValues(column.index)"
                     >
                         <!-- Retrieving the label from the options based on the applied column value. -->
-                        <span v-text="column.options.params.options.find((option => option.value == appliedColumnValue)).label"></span>
+                        <span v-text="column.options.params.options.find((option => option.value == appliedColumnValue))?.label"></span>
 
                         <span
                             class="icon-cancel cursor-pointer text-lg text-violet-700 ltr:ml-1.5 rtl:mr-1.5 dark:!text-violet-700"

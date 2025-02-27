@@ -246,6 +246,7 @@ abstract class DataGrid
                                 $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), 'LIKE', '%'.$value.'%');
                             }
                         });
+                        break;
 
                     case ColumnTypeEnum::INTEGER->value:
                         $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues) {
@@ -253,6 +254,7 @@ abstract class DataGrid
                                 $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), $value);
                             }
                         });
+                        break;
 
                     case ColumnTypeEnum::DROPDOWN->value:
                         $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues) {
@@ -260,7 +262,6 @@ abstract class DataGrid
                                 $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), $value);
                             }
                         });
-
                         break;
 
                     case ColumnTypeEnum::DATE_RANGE->value:
@@ -272,15 +273,14 @@ abstract class DataGrid
                                 ]);
                             }
                         });
-
                         break;
+
                     case ColumnTypeEnum::DATE_TIME_RANGE->value:
                         $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues) {
                             foreach ($requestedValues as $value) {
                                 $scopeQueryBuilder->whereBetween($column->getDatabaseColumnName(), [$value[0] ?? '', $value[1] ?? '']);
                             }
                         });
-
                         break;
 
                     default:
@@ -289,7 +289,6 @@ abstract class DataGrid
                                 $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), 'LIKE', '%'.$value.'%');
                             }
                         });
-
                         break;
                 }
             }

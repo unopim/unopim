@@ -690,7 +690,7 @@
                         }
                     },
                     storeOptions(params, { resetForm }) {
-                        let existAlready = this.options.findIndex(item => item.params.code === params.code);
+                        let existAlready = this.options.findIndex(item => item.params.code.toLowerCase() === params.code.toLowerCase());
 
                         if (params.id) {
                             let foundIndex = this.options.findIndex(item => item.id === params.id);

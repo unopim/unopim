@@ -1,44 +1,43 @@
 <x-admin::layouts>
     <x-slot:title>
         @lang('admin::app.catalog.products.index.title')
-    </x-slot>
+        </x-slot>
 
-    <div class="flex gap-4 justify-between items-center max-sm:flex-wrap">
-        <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-            @lang('admin::app.catalog.products.index.title')
-        </p>
+        <div class="flex gap-4 justify-between items-center max-sm:flex-wrap">
+            <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
+                @lang('admin::app.catalog.products.index.title')
+            </p>
 
-        <div class="flex gap-x-2.5 items-center">
-            <!-- Export Modal -->
-            <x-admin::datagrid.export src="{{ route('admin.catalog.products.index') }}" />
+            <div class="flex gap-x-2.5 items-center">
+                <!-- Export Modal -->
+                <x-admin::datagrid.export src="{{ route('admin.catalog.products.index') }}" />
 
-            {!! view_render_event('unopim.admin.catalog.products.create.before') !!}
+                {!! view_render_event('unopim.admin.catalog.products.create.before') !!}
 
-            @if (bouncer()->hasPermission('catalog.products.create'))
+                @if (bouncer()->hasPermission('catalog.products.create'))
                 <v-create-product-form>
                     <button
                         type="button"
-                        class="primary-button"
-                    >
+                        class="primary-button">
                         @lang('admin::app.catalog.products.index.create-btn')
                     </button>
                 </v-create-product-form>
-            @endif
+                @endif
 
-            {!! view_render_event('unopim.admin.catalog.products.create.after') !!}
+                {!! view_render_event('unopim.admin.catalog.products.create.after') !!}
+            </div>
         </div>
-    </div>
 
-    {!! view_render_event('unopim.admin.catalog.products.list.before') !!}
+        {!! view_render_event('unopim.admin.catalog.products.list.before') !!}
 
     <!-- Datagrid -->
     <x-admin::datagrid src="{{ route('admin.catalog.products.index') }}" :isMultiRow="true">
       
     </x-admin::datagrid>
 
-    {!! view_render_event('unopim.admin.catalog.products.list.after') !!}
+        {!! view_render_event('unopim.admin.catalog.products.list.after') !!}
 
-    @pushOnce('scripts')
+        @pushOnce('scripts')
         <script type="text/x-template" id="v-create-product-form-template">
             <div>
                 <!-- Product Create Button -->
@@ -183,7 +182,7 @@
                                                 class="flex items-center py-1 px-2 bg-violet-100 rounded text-violet-700 font-semibold"
                                                 v-for="attribute in attributes"
                                             >
-                                                @{{ attribute.name }}
+                                                @{{ attribute.name || '[' + attribute.code + ']' }}
 
                                                 <span
                                                     class="icon-cancel cursor-pointer text-lg text-violet-700 ltr:ml-1.5 rtl:mr-1.5 dark:!text-violet-700"
@@ -238,7 +237,9 @@
                 },
 
                 methods: {
-                    create(params, { setErrors }) {
+                    create(params, {
+                        setErrors
+                    }) {
                         let formData = new FormData(this.$refs.productCreateForm);
 
                         this.attributes.forEach(attribute => {
@@ -284,5 +285,5 @@
                 }
             })
         </script>
-    @endPushOnce
+        @endPushOnce
 </x-admin::layouts>

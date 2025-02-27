@@ -335,8 +335,9 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $requestedParams = $this->validatedRequest();
 
         try {
-            $params = $this->validatedRequest();
-            $pagination = $params['pagination'];
+            $pagination = $requestedParams['pagination'] ?? [];
+            $pagination['per_page'] ??= $this->itemsPerPage;
+            $pagination['page'] ??= 1;
 
             $this->setElasticSort($params['sort'] ?? []);
             $this->setElasticFilters($params['filters'] ?? []);
@@ -374,12 +375,9 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         } catch (\Exception $e) {
             if (str_contains($e->getMessage(), 'index_not_found_exception')) {
                 Log::error('Elasticsearch index not found. Please create an index first.');
-                parent::processRequest();
-
-                return;
-            } else {
-                throw $e;
             }
+
+            throw $e;
         }
     }
 

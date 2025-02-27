@@ -12,7 +12,9 @@ use Webkul\Core\Facades\ElasticSearch;
 
 class CategoryIndexer extends Command
 {
-    protected $signature = 'category:index';
+    const BATCH_SIZE = 10000;
+
+    protected $signature = 'unopim:category:index';
 
     protected $description = 'Index all categories into Elasticsearch';
 
@@ -23,7 +25,7 @@ class CategoryIndexer extends Command
 
     public function handle()
     {
-        if (config('elasticsearch.connection')) {
+        if (config('elasticsearch.enabled')) {
             $indexPrefix = config('elasticsearch.prefix');
 
             $start = microtime(true);
@@ -41,6 +43,8 @@ class CategoryIndexer extends Command
                 $progressBar = new ProgressBar($this->output, count($categories));
                 $progressBar->start();
 
+                $categoriesToUpdate = [];
+
                 foreach ($categories as $categoryDB) {
                     $category = new Category;
 
@@ -49,13 +53,7 @@ class CategoryIndexer extends Command
 
                     $categoryArray = $category->toArray();
 
-                    if (
-                        isset(json_decode($categoryDB->additional_data)->locale_specific)
-                        && isset(((array) json_decode($categoryDB->additional_data)->locale_specific)[core()->getRequestedLocaleCode()])
-                        && isset(((array) ((array) json_decode($categoryDB->additional_data)->locale_specific)[core()->getRequestedLocaleCode()])['name'])
-                    ) {
-                        $categoryArray['name'] = ((array) ((array) ((array) json_decode($categoryDB->additional_data))['locale_specific'])[core()->getRequestedLocaleCode()])['name'] ?? $category->name;
-                    }
+                    $categoryArray['additional_data'] = is_string($categoryArray['additional_data']) ? json_decode($categoryArray['additional_data'], true) : $categoryArray['additional_data'];
 
                     if (
                         (
@@ -64,16 +62,32 @@ class CategoryIndexer extends Command
                         )
                         || ! isset($elasticCategory[$category->id])
                     ) {
-                        Elasticsearch::index([
-                            'index' => $categoryIndex,
-                            'id'    => $category->id,
-                            'body'  => $categoryArray,
-                        ]);
+
+                        $categoriesToUpdate['body'][] = [
+                            'index' => [
+                                '_index' => $categoryIndex,
+                                '_id'    => $category->id,
+                            ],
+                        ];
+
+                        $categoriesToUpdate['body'][] = $categoryArray;
                     }
+
+                    if (isset($categoriesToUpdate['body']) && count($categoriesToUpdate['body']) === self::BATCH_SIZE) {
+                        ElasticSearch::bulk($categoriesToUpdate);
+
+                        $categoriesToUpdate['body'] = [];
+                    }
+
                     $progressBar->advance();
                 }
 
+                if (isset($categoriesToUpdate['body']) && count($categoriesToUpdate['body'])) {
+                    ElasticSearch::bulk($categoriesToUpdate);
+                }
+
                 $progressBar->finish();
+
                 $this->newLine();
                 $this->info('Category indexing completed.');
 
@@ -81,7 +95,7 @@ class CategoryIndexer extends Command
 
                 $this->info('Checking for stale categories to delete...');
 
-                $elasticCategoryIds = collect(Elasticsearch::search([
+                $elasticCategoryIds = collect(ElasticSearch::search([
                     'index' => $categoryIndex,
                     'body'  => [
                         '_source' => false,
@@ -99,12 +113,27 @@ class CategoryIndexer extends Command
                     $deleteProgressBar = new ProgressBar($this->output, count($categoriesToDelete));
                     $deleteProgressBar->start();
 
+                    $deleteCategories = [];
+
                     foreach ($categoriesToDelete as $categoryId) {
-                        Elasticsearch::delete([
-                            'index' => $categoryIndex,
-                            'id'    => $categoryId,
-                        ]);
+                        $deleteCategories['body'][] = [
+                            'delete' => [
+                                '_index' => $categoryIndex,
+                                '_id'    => $categoryId,
+                            ],
+                        ];
+
+                        if (isset($deleteCategories['body']) && count($deleteCategories['body']) === self::BATCH_SIZE) {
+                            ElasticSearch::bulk($deleteCategories);
+
+                            $deleteCategories['body'] = [];
+                        }
+
                         $deleteProgressBar->advance();
+                    }
+
+                    if (isset($deleteCategories['body']) && count($deleteCategories['body'])) {
+                        ElasticSearch::bulk($deleteCategories);
                     }
 
                     $deleteProgressBar->finish();
@@ -122,7 +151,7 @@ class CategoryIndexer extends Command
                 Log::channel('elasticsearch')->info('No category found in the database. Attempting to delete the index if it exists:-');
 
                 try {
-                    Elasticsearch::indices()->delete(['index' => $categoryIndex]);
+                    ElasticSearch::indices()->delete(['index' => $categoryIndex]);
                     $this->info($categoryIndex.' index deleted successfully.');
 
                     Log::channel('elasticsearch')->info($categoryIndex.' index deleted successfully.');
@@ -159,7 +188,7 @@ class CategoryIndexer extends Command
         $elasticCategory = [];
 
         try {
-            $response = Elasticsearch::search([
+            $response = ElasticSearch::search([
                 'index' => $categoryIndex,
                 'body'  => [
                     '_source' => ['updated_at'],
@@ -178,7 +207,7 @@ class CategoryIndexer extends Command
             }
 
             while (true) {
-                $response = Elasticsearch::scroll([
+                $response = ElasticSearch::scroll([
                     'scroll_id' => $scrollId,
                     'scroll'    => '10m',
                 ]);
@@ -193,7 +222,7 @@ class CategoryIndexer extends Command
             }
 
             try {
-                Elasticsearch::clearScroll([
+                ElasticSearch::clearScroll([
                     'scroll_id' => $scrollId,
                 ]);
             } catch (\Exception $e) {

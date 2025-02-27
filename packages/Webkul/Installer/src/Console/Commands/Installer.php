@@ -107,13 +107,15 @@ class Installer extends Command
         $this->warn('Step: Generating key...');
         $this->call('key:generate');
 
-        $this->warn('Step: Testing ElasticSearch Connection...');
-        if (! ElasticSearch::testConnection()) {
-            $this->error('Verify that the correct credentials are provided to establish a connection with ElasticSearch.');
+        if (config('elasticsearch.enabled') == 'true') {
+            $this->warn('Step: Testing ElasticSearch Connection...');
+            if (! ElasticSearch::testConnection()) {
+                $this->error('Verify that the correct credentials are provided to establish a connection with ElasticSearch.');
 
-            return;
-        } else {
-            $this->info('Elastic Search Connected successfully');
+                return;
+            } else {
+                $this->info('Elastic Search Connected successfully');
+            }
         }
 
         $this->warn('Step: Migrating all tables...');
@@ -130,11 +132,16 @@ class Installer extends Command
         $this->warn('Step: Linking storage directory...');
         $this->call('storage:link');
 
-        $this->warn('Step: Indexing categories to elastic search...');
-        $this->call('category:index');
+        if (config('elasticsearch.enabled') == 'true') {
+            $this->warn('Step: Clearing elasticsearch index...');
+            $this->call('unopim:elastic:clear');
 
-        $this->warn('Step: Indexing products to elastic search...');
-        $this->call('product:index');
+            $this->warn('Step: Indexing categories to elastic search...');
+            $this->call('unopim:category:index');
+
+            $this->warn('Step: Indexing products to elastic search...');
+            $this->call('unopim:product:index');
+        }
 
         $this->warn('Step: Clearing cached bootstrap files...');
         $this->call('optimize:clear');
@@ -320,7 +327,17 @@ class Installer extends Command
     protected function askForElasticSearchDetails()
     {
         $elasticSearchDetails = [
-            'ELASTICSEARCH_ENABLED' => 'true',
+            'ELASTICSEARCH_ENABLED' => select(
+                label: 'Do you want to enable Elastic Search?',
+                options: ['yes', 'no'],
+                default: env('ELASTICSEARCH_ENABLED', 'false')
+            ) === 'yes' ? 'true' : 'false',
+
+            'ELASTICSEARCH_CONNECTION' => select(
+                label: 'Please select the Elastic Search connection',
+                options: ['default', 'api', 'cloud'],
+                default: env('ELASTICSEARCH_CONNECTION', 'default') ?: 'default'
+            ),
 
             'ELASTICSEARCH_HOST' => text(
                 label: 'Please enter the Elastic Search host',
@@ -476,7 +493,8 @@ class Installer extends Command
         $elasticsearchPrefix = $this->getEnvAtRuntime('ELASTICSEARCH_INDEX_PREFIX') != '' ? $this->getEnvAtRuntime('ELASTICSEARCH_INDEX_PREFIX') : $this->getEnvAtRuntime('APP_NAME');
 
         config([
-            'elasticsearch.connection'                => $this->getEnvAtRuntime('ELASTICSEARCH_ENABLED'),
+            'elasticsearch.connection'                => $this->getEnvAtRuntime('ELASTICSEARCH_CONNECTION'),
+            'elasticsearch.enabled'                   => $this->getEnvAtRuntime('ELASTICSEARCH_ENABLED'),
             'elasticsearch.prefix'                    => $elasticsearchPrefix,
             'elasticsearch.connections.default.hosts' => [$this->getEnvAtRuntime('ELASTICSEARCH_HOST')],
             'elasticsearch.connections.default.user'  => $this->getEnvAtRuntime('ELASTICSEARCH_USER'),
