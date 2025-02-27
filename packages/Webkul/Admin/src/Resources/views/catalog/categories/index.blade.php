@@ -40,7 +40,7 @@
                 >
                     <div
                         class="flex items-center select-none"
-                        v-for="(columnGroup, index) in ['name', 'code']"
+                        v-for="(columnGroup, index) in ['display_name', 'category_name', 'code']"
                     >
                         @if ($hasPermission)
                             <label
@@ -135,17 +135,19 @@
                                     class="hidden peer"
                                     v-model="applied.massActions.indices"
                                     @change="setCurrentSelectionMode"
-                                    >
-                                    
-                                    <label
+                                >
+                                <label
                                     class="icon-checkbox-normal rounded-md text-2xl cursor-pointer peer-checked:icon-checkbox-check peer-checked:text-violet-700"
                                     :for="`mass_action_select_record_${record.category_id}`"
-                                    ></label>
-                                </div>
+                                >
+                                </label>
+                            </div>
                         @endif
 
-                        <p v-text="record.name" class="text-nowrap overflow-hidden text-ellipsis hover:text-wrap"></p>
+                        <p v-text="record.display_name" class="text-nowrap overflow-hidden text-ellipsis hover:text-wrap"></p>
                     </div>
+
+                    <p v-text="record.category_name" class="text-nowrap overflow-hidden text-ellipsis hover:text-wrap"></p>
 
                     <p v-text="record.code"></p>
 

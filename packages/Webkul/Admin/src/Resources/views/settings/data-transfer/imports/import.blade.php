@@ -56,15 +56,18 @@
                             {{ $import->code }}
                         </span>
                     </p>
+
+                    @if (! empty($import->file_path))
                     <p class="flex gap-2 items-center dark:text-white">
                         <i class="text-2xl text-orange-600 dark:text-orange-600! bg-orange-200 rounded-full"></i>
                         <span class="font-bold">
                             @lang('admin::app.settings.data-transfer.imports.import.file_path') :  
                         </span>
                         <span class="text-gray-600 dark:text-white">
-                            @lang($import->file_path)
+                            {{ $import->file_path }}
                         </span>
                     </p>
+                    @endif
 
                     <p class="flex gap-2 items-center dark:text-white">
                         <i class="text-2xl text-orange-600 dark:text-orange-600! bg-orange-200 rounded-full "></i>

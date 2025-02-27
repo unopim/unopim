@@ -381,7 +381,7 @@ abstract class AbstractExporter
             || count($batchRows)
         ) {
             if (
-                count($batchRows) == self::BATCH_SIZE
+                count($batchRows) == static::BATCH_SIZE
                 || ! $results->valid()
             ) {
                 $this->exportBatchRepository->create([

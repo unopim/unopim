@@ -749,7 +749,7 @@
                         if (foundIndex !== -1) {
                             this.optionsData.splice(foundIndex, 1, params);
                         } else {
-                            let existAlready = this.optionsData.findIndex(item => item.code === params.code);
+                            let existAlready = this.optionsData.findIndex(item => item.code.toLowerCase() === params.code.toLowerCase());
 
                             if (existAlready !== -1) {
                                 this.$emitter.emit('add-flash', { type: 'warning', message: "@lang('admin::app.catalog.attributes.edit.same-code-error')" });

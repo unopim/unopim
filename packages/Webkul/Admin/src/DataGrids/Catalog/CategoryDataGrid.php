@@ -3,8 +3,10 @@
 namespace Webkul\Admin\DataGrids\Catalog;
 
 use Illuminate\Database\Query\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
-use Webkul\Core\Models\Locale;
+use Illuminate\Support\Facades\Log;
+use Webkul\Core\Facades\ElasticSearch;
 use Webkul\DataGrid\DataGrid;
 
 class CategoryDataGrid extends DataGrid
@@ -46,28 +48,25 @@ class CategoryDataGrid extends DataGrid
      */
     public function prepareQueryBuilder()
     {
-        if (core()->getRequestedLocaleCode() === 'all') {
-            $whereInLocales = Locale::query()->pluck('code')->toArray();
-        } else {
-            $whereInLocales = [core()->getRequestedLocaleCode()];
-        }
-
         $tablePrefix = DB::getTablePrefix();
 
-        $subQuery = $this->getSubQuery($whereInLocales, $tablePrefix);
+        $localeCode = core()->getRequestedLocaleCode();
+
+        $subQuery = $this->getSubQuery($localeCode, $tablePrefix);
 
         $queryBuilder = DB::table('categories as cat')
             ->select(
                 'cat.id as category_id',
                 'cat.code as code',
-                DB::raw('CategoryNameTable.name as name'),
+                DB::raw('(CASE WHEN JSON_EXTRACT('.$tablePrefix."cat.additional_data, '$.locale_specific.".$localeCode.".name') IS NOT NULL THEN REPLACE(JSON_EXTRACT(".$tablePrefix."cat.additional_data, '$.locale_specific.".$localeCode.".name'), '\"', '') ELSE CONCAT('[', ".$tablePrefix."cat.code, ']') END) as category_name"),
+                DB::raw('category_display_names.name as display_name'),
             )
-            ->leftJoin(DB::raw("({$subQuery->toSql()}) as CategoryNameTable"), function ($leftJoin) {
-                $leftJoin->on('cat.id', '=', DB::raw('CategoryNameTable.id'));
+            ->leftJoin(DB::raw("({$subQuery->toSql()}) as category_display_names"), function ($leftJoin) {
+                $leftJoin->on('cat.id', '=', DB::raw('category_display_names.id'));
             })
-            ->groupBy('cat.id', 'cat.code', DB::raw('CategoryNameTable.name'));
+            ->groupBy('cat.id', 'cat.code', DB::raw('category_display_names.name'));
 
-        $this->addFilter('name', DB::raw('CategoryNameTable.name'));
+        $this->addFilter('category_name', DB::raw('CASE WHEN JSON_EXTRACT('.$tablePrefix."cat.additional_data, '$.locale_specific.".$localeCode.".name') IS NOT NULL THEN REPLACE(JSON_EXTRACT(".$tablePrefix."cat.additional_data, '$.locale_specific.".$localeCode.".name'), '\"', '') ELSE CONCAT('[', ".$tablePrefix."cat.code, ']') END"));
 
         return $queryBuilder;
     }
@@ -80,8 +79,17 @@ class CategoryDataGrid extends DataGrid
     public function prepareColumns()
     {
         $this->addColumn([
-            'index'      => 'name',
+            'index'      => 'display_name',
             'label'      => trans('admin::app.catalog.categories.index.datagrid.name'),
+            'type'       => 'string',
+            'searchable' => false,
+            'filterable' => false,
+            'sortable'   => false,
+        ]);
+
+        $this->addColumn([
+            'index'      => 'category_name',
+            'label'      => trans('admin::app.catalog.categories.index.datagrid.category-name'),
             'type'       => 'string',
             'searchable' => true,
             'filterable' => true,
@@ -148,28 +156,203 @@ class CategoryDataGrid extends DataGrid
     }
 
     /**
+     * Process request.
+     */
+    public function processRequest(): void
+    {
+        if (! config('elasticsearch.enabled')) {
+            parent::processRequest();
+
+            return;
+        }
+
+        try {
+            $params = $this->validatedRequest();
+
+            $pagination = $params['pagination'] ?? [];
+            $pagination['per_page'] ??= $this->itemsPerPage;
+            $pagination['page'] ??= 1;
+
+            $indexPrefix = config('elasticsearch.prefix');
+
+            $results = ElasticSearch::search([
+                'index' => strtolower($indexPrefix.'_categories'),
+                'body'  => [
+                    'from'          => ($pagination['page'] * $pagination['per_page']) - $pagination['per_page'],
+                    'size'          => $pagination['per_page'],
+                    'stored_fields' => [],
+                    'sort'          => $this->getElasticSort($params['sort'] ?? []),
+                    'query'         => [
+                        'bool' => $this->getElasticFilters($params['filters'] ?? []) ?: new \stdClass,
+                    ],
+                    'track_total_hits' => true,
+                ],
+            ]);
+
+            $ids = collect($results['hits']['hits'])->pluck('_id')->toArray();
+
+            $this->queryBuilder->whereIn('cat.id', $ids)
+                ->orderBy(DB::raw('FIELD('.DB::getTablePrefix().'cat.id, '.implode(',', $ids).')'));
+
+            $total = $results['hits']['total']['value'];
+
+            $this->paginator = new LengthAwarePaginator(
+                $total ? $this->queryBuilder->get() : [],
+                $total,
+                $pagination['per_page'],
+                $pagination['page'],
+                [
+                    'path'  => request()->url(),
+                    'query' => [],
+                ]
+            );
+        } catch (\Exception $e) {
+            if (str_contains($e->getMessage(), 'index_not_found_exception')) {
+                Log::error('Elasticsearch index not found. Please create an index first.');
+                parent::processRequest();
+
+                return;
+            } else {
+                throw $e;
+            }
+        }
+    }
+
+    /**
+     * Process request.
+     */
+    protected function getElasticFilters(array $params): array
+    {
+        $filters = [];
+
+        $localeCode = core()->getRequestedLocaleCode();
+
+        foreach ($params as $attribute => $value) {
+            if (in_array($attribute, ['channel', 'locale'])) {
+                continue;
+            }
+
+            if ($attribute == 'all') {
+                $attribute = 'name';
+            }
+
+            $value = array_filter($value, function ($val) {
+                return $val !== null && $val !== '';
+            });
+
+            if (count($value) > 0) {
+                $filters['filter'][] = $this->getFilterValue($attribute, $value, $localeCode);
+            }
+        }
+
+        return $filters;
+    }
+
+    /**
+     * Return applied filters
+     */
+    public function getFilterValue(mixed $attribute, mixed $values, string $localeCode): array
+    {
+        switch ($attribute) {
+            /** For Grid search filter the parameter is sent as name */
+            case 'name':
+                $values = current($values);
+
+                return [
+                    'bool' => [
+                        'should' => [
+                            [
+                                'wildcard' => [
+                                    'additional_data.locale_specific.'.$localeCode.'.name.keyword' => '*'.$values.'*',
+                                ],
+                            ], [
+                                'wildcard' => [
+                                    'code' => '*'.$values.'*',
+                                ],
+                            ],
+                        ],
+                    ],
+                ];
+            case 'category_name':
+                return [
+                    'bool' => [
+                        'should' => [
+                            [
+                                'terms' => [
+                                    'additional_data.locale_specific.'.$localeCode.'.name.keyword' => $values,
+                                ],
+                            ], [
+                                'terms' => [
+                                    'name.keyword' => $values,
+                                ],
+                            ],
+                        ],
+                    ],
+                ];
+
+            case 'code':
+                return [
+                    'terms' => [
+                        'code' => $values,
+                    ],
+                ];
+
+            default:
+                return [
+                    'terms' => [
+                        $attribute => $values,
+                    ],
+                ];
+        }
+    }
+
+    /**
+     * Process request.
+     */
+    protected function getElasticSort($params): array
+    {
+        $sort = $params['column'] ?? $this->primaryColumn;
+
+        if ($sort == 'name') {
+            $sort .= '.keyword';
+        }
+
+        if ($sort == 'code') {
+            $sort .= '.keyword';
+        }
+
+        if ($sort === 'category_id') {
+            $sort = '_id';
+        }
+
+        return [
+            $sort => [
+                'order' => $params['order'] ?? $this->sortOrder,
+            ],
+        ];
+    }
+
+    /**
      * Creates a query to fetch the parent names of the categories
      */
-    private function getSubQuery(array $locale, string $tablePrefix): Builder
+    private function getSubQuery(string $locale, string $tablePrefix): Builder
     {
-        $locales = implode(', ', $locale);
-
         return DB::table(DB::raw("(WITH RECURSIVE tree_view AS (
             SELECT id,
                 parent_id,
-                (CASE WHEN JSON_EXTRACT(additional_data, '$.locale_specific.".$locales.".name') IS NOT NULL THEN REPLACE(JSON_EXTRACT(additional_data, '$.locale_specific.".$locales.".name'), '\"', '') ELSE CONCAT('[', code, ']') END) as name
+                (CASE WHEN JSON_UNQUOTE(JSON_EXTRACT(additional_data, '$.locale_specific.".$locale.".name')) IS NOT NULL THEN REPLACE(JSON_UNQUOTE(JSON_EXTRACT(additional_data, '$.locale_specific.".$locale.".name')), '\"', '') ELSE CONCAT('[', code, ']') END) as name
             FROM ".$tablePrefix."categories
             WHERE parent_id IS NULL
             UNION ALL
 
             SELECT parent.id,
                 parent.parent_id,
-                CONCAT(tree_view.name, ' / ', (CASE WHEN JSON_EXTRACT(additional_data, '$.locale_specific.".$locales.".name') IS NOT NULL THEN REPLACE(JSON_EXTRACT(additional_data, '$.locale_specific.".$locales.".name'), '\"', '') ELSE CONCAT('[', code, ']') END)) AS name
+                CONCAT(tree_view.name, ' / ', (CASE WHEN JSON_UNQUOTE(JSON_EXTRACT(additional_data, '$.locale_specific.".$locale.".name')) IS NOT NULL THEN REPLACE(JSON_UNQUOTE(JSON_EXTRACT(additional_data, '$.locale_specific.".$locale.".name')), '\"', '') ELSE CONCAT('[', code, ']') END)) AS name
             FROM ".$tablePrefix.'categories parent
             JOIN tree_view ON parent.parent_id = tree_view.id
         )
         SELECT id, parent_id, name
         FROM tree_view
-        ) as CategoryNameTable'));
+        ) as category_display_names'));
     }
 }

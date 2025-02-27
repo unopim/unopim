@@ -60,6 +60,10 @@ class AdminApiServiceProvider extends ServiceProvider
     protected function registerConfig()
     {
         $this->mergeConfigFrom(
+            dirname(__DIR__).'/Config/api.php', 'api'
+        );
+
+        $this->mergeConfigFrom(
             dirname(__DIR__).'/Config/api-acl.php', 'api-acl'
         );
 
@@ -104,10 +108,10 @@ class AdminApiServiceProvider extends ServiceProvider
         Passport::useClientModel(\Webkul\AdminApi\Models\Client::class);
 
         // Set access token TTL
-        Passport::tokensExpireIn(Carbon::now()->addMinutes(60));
+        Passport::tokensExpireIn(Carbon::now()->addSeconds(config('api.access_token_ttl')));
 
         // // Set refresh token TTL
-        Passport::refreshTokensExpireIn(Carbon::now()->addMinutes(60));
+        Passport::refreshTokensExpireIn(Carbon::now()->addSeconds(config('api.refresh_token_ttl')));
 
         $this->app->bind(\Laravel\Passport\ClientRepository::class, \Webkul\AdminApi\Repositories\ClientRepository::class);
     }
