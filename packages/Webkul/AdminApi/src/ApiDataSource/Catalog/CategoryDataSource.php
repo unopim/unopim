@@ -135,6 +135,11 @@ class CategoryDataSource extends ApiDataSource
         return true;
     }
 
+    private function isRelatedToChannel(int $categoryId): bool
+    {
+        return (bool) $this->channelRepository->pluck('root_category_id')->contains($categoryId);
+    }
+
     /**
      * Applies the specified operator to the query builder based on the given column and value.
      *
