@@ -75,7 +75,7 @@
 
             <!-- Add Variant Form Modal -->
             <x-admin::form
-                v-slot="{ meta, errors, handleSubmit }"
+                v-slot="{ meta, errors, handleSubmit, setErrors }"
                 as="div"
             >
                 <form @submit="handleSubmit($event, addVariant)" ref="variantCreateForm">
@@ -106,7 +106,7 @@
                                 v-for='(attribute, index) in superAttributes'
                             >
                                 <x-admin::form.control-group.label class="required">
-                                    @{{ attribute.name }}
+                                    @{{ attribute.name || '[' + attribute.code + ']' }}
                                 </x-admin::form.control-group.label>
 
                                 <x-admin::form.control-group.control
@@ -787,7 +787,7 @@
             },
 
             methods: {
-                async addVariant(params, { resetForm }) {
+                async addVariant(params, { resetForm, setErrors }) {
                     let formData = new FormData(this.$refs.variantCreateForm);
 
                     for (const key of formData.keys()) {
@@ -816,8 +816,22 @@
                         return;
                     }
 
+                    let requiredTranslation = "@lang('validation.required')";
+                    let optionErrors = false;
+
                     for (const attribute of this.superAttributes) {
+                        if (params[attribute.code].length === 0) {
+                            setErrors({
+                                [attribute.code]: requiredTranslation.replace(':attribute', attribute.code),
+                            });
+                            optionErrors = true;
+                        }
+
                         configurableValues[attribute.code] = params[attribute.code];
+                    }
+
+                    if (optionErrors) {
+                        return;
                     }
 
                     let isUnique = await this.isUniqueVariant({sku: params.sku, variantAttributes: configurableValues});
@@ -867,7 +881,7 @@
 
                             return false;
                         });
-                }
+                },
             }
         });
 
@@ -976,7 +990,7 @@
 
                             return false;
                         });
-                }
+                },
             }
         });
     </script>

@@ -198,6 +198,10 @@ class Exporter extends AbstractExporter
                     $attributeValues[$attributeCode] = implode(', ', $existingFilePath);
                 }
             }
+
+            if (is_array($attributeValues[$attributeCode] ?? null)) {
+                $attributeValues[$attributeCode] = implode(', ', $attributeValues[$attributeCode]);
+            }
         }
 
         return $attributeValues;

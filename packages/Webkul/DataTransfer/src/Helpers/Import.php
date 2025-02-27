@@ -170,14 +170,15 @@ class Import
     /**
      * Returns source helper instance.
      */
-    public function getSource(): AbstractSource
+    public function getSource(): ?AbstractSource
     {
+        $source = null;
         if (Str::contains($this->import->file_path, '.csv')) {
             $source = new CSVSource(
                 $this->import->file_path,
                 $this->import->field_separator,
             );
-        } else {
+        } elseif (Str::contains($this->import->file_path, '.xlsx') || Str::contains($this->import->file_path, '.xls')) {
             $source = new ExcelSource(filePath: $this->import->file_path);
         }
 
@@ -206,11 +207,9 @@ class Import
             $source = $this->getSource();
 
             $typeImporter = $this->getTypeImporter()->setSource($source);
-
             $typeImporter->validateData();
         } catch (\Exception $e) {
             $state = self::STATE_FAILED;
-
             $this->errorHelper->addError(
                 AbstractImporter::ERROR_CODE_SYSTEM_EXCEPTION,
                 null,
@@ -219,16 +218,31 @@ class Import
             );
         }
 
-        $import = $this->jobTrackRepository->update([
+        $updatedData = [
             'state'                => $state,
             'processed_rows_count' => $this->getProcessedRowsCount(),
             'invalid_rows_count'   => $this->errorHelper->getInvalidRowsCount(),
             'errors_count'         => $this->errorHelper->getErrorsCount(),
             'errors'               => $this->getFormattedErrors(),
             'error_file_path'      => $this->uploadErrorReport(),
-        ], $this->import->id);
+        ];
+
+        if ($this->getProcessedRowsCount() === 0 && empty($this->getFormattedErrors())) {
+            $updatedData['state'] = self::STATE_COMPLETED;
+            $updatedData['summary'] = [
+                'created' => 0,
+                'updated' => 0,
+                'deleted' => 0,
+            ];
+        }
+
+        $import = $this->jobTrackRepository->update($updatedData, $this->import->id);
 
         $this->setImport($import);
+
+        if ($state == self::STATE_FAILED) {
+            Event::dispatch('data_transfer.import.validate.state_failed', $import);
+        }
 
         return $this;
     }
@@ -581,7 +595,6 @@ class Import
 
         if (! $this->typeImporter) {
             $importerConfig = config('importers.'.$jobInstance->entity_type);
-
             $this->typeImporter = app()->make($importerConfig['importer'])
                 ->setImport($this->import)
                 ->setLogger($this->jobLogger)

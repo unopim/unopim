@@ -26,6 +26,8 @@
                 </div>
 
                 <div class="flex gap-x-2.5 items-center">
+                    {!! view_render_event('unopim.pdf.product.edit.actions.before', ['product' => $product]) !!}
+
                     <!-- Back Button -->
                     <a
                         href="{{ route('admin.catalog.products.index') }}"
