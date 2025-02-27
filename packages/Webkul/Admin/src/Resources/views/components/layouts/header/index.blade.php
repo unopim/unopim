@@ -39,6 +39,17 @@
                 ></span>
             </div>
         </v-dark>
+
+        <!-- Notification Component -->
+        <v-notifications {{ $attributes }}>
+            <span class="flex relative">
+                <span 
+                    class="icon-notification p-1.5 rounded-md text-2xl cursor-pointer transition-all hover:bg-gray-100 dark:hover:bg-gray-950" 
+                    title="@lang('admin::app.components.layouts.header.notifications')"
+                >
+                </span>
+            </span>
+        </v-notifications>
    
         <!-- Admin profile -->
         <x-admin::dropdown position="bottom-right">
@@ -166,6 +177,136 @@
 </x-admin::drawer>
 
 @pushOnce('scripts')
+
+    <script type="text/x-template" id="v-notifications-template">
+        <x-admin::dropdown position="bottom-right">
+            <!-- Notification Toggle -->
+            <x-slot:toggle>
+                <span class="flex relative">
+                    <span
+                        class="icon-notification p-1.5 rounded-md text-2xl text-red cursor-pointer transition-all hover:bg-gray-100 dark:hover:bg-gray-950" 
+                        title="@lang('admin::app.components.layouts.header.notifications')"
+                    >
+                    </span>
+                
+                    <span
+                        class="flex justify-center items-center min-w-5 h-5 absolute -top-2 p-1.5 ltr:left-5 rtl:right-5 bg-violet-400 rounded-full text-white text-[10px] font-semibold leading-[9px] cursor-pointer"
+                        v-text="totalUnRead"
+                        v-if="totalUnRead"
+                    >
+                    </span>
+                </span>
+            </x-slot>
+
+            <!-- Notification Content -->
+            <x-slot:content class="p-5 w-[360px] max-w-[360px] max-h-[calc(100vh-130px)] overflow-auto journal-scroll !p-0">
+                <!-- Header -->
+                <div class="text-base  p-3 text-gray-800 dark:text-gray-300 font-bold border-b dark:border-gray-800">
+                    @lang('admin::app.notifications.title')
+                </div>
+
+                <!-- Content -->
+                <div class="grid">
+                    <a
+                        class="flex gap-1.5 items-start p-3 border-b dark:border-gray-800 last:border-b-0"
+                        v-for="userNotification in userNotifications"
+                        :key="userNotification.notification.id"
+                        :href="'{{ route('admin.notification.viewed_notification', ':id') }}'.replace(':id', userNotification.notification.id)"
+                        :class="{
+                            'bg-gray-100 dark:bg-gray-950': userNotification.read === 1,
+                            'hover:bg-gray-50 dark:hover:bg-gray-950': true,
+                        }"
+                    >
+                        <div class="grid gap-3">
+                            <p 
+                                class="text-sm text-gray-800 dark:text-slate-50 font-semibold"
+                                v-text="userNotification.notification.title"
+                            ></p>
+
+                            <p 
+                                class="text-sm text-gray-600 dark:text-gray-300"
+                                v-html="userNotification.notification.description"
+                            ></p>
+                            
+                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                                @{{ userNotification.notification.created_at_human }}
+                            </p>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Footer -->
+                <div class="flex gap-1.5 justify-between h-[47px] py-4 px-6 border-t dark:border-gray-800">
+                    <a
+                        href="{{ route('admin.notification.index') }}"
+                        class="text-sm text-violet-700 font-semibold cursor-pointer transition-all hover:underline"
+                    >
+                        @lang('admin::app.notifications.view-all')
+                    </a>
+
+                    <a
+                        class="text-sm text-violet-700 font-semibold cursor-pointer transition-all hover:underline"
+                        v-if="userNotifications?.length"
+                        @click="readAll()"
+                    >
+                        @lang('admin::app.notifications.read-all')
+                    </a>
+                </div>
+            </x-slot>
+        </x-admin::dropdown>
+    </script>
+
+    <script type="module">
+        app.component('v-notifications', {
+            template: '#v-notifications-template',
+
+                props: [
+                    'getReadAllUrl',
+                    'readAllTitle',
+                ],
+
+                data() {
+                    return {
+                        userNotifications: [],
+
+                        totalUnRead: 0,
+                    }
+                },
+
+                mounted() {
+                    this.getNotification();
+                    this.userNotifications = setInterval(this.getNotification, 15000);
+                },
+
+                methods: {
+                    getNotification() {
+                        this.$axios.get('{{ route('admin.notification.get_notification') }}', {
+                                params: {
+                                    limit: 5
+                                }
+                            })
+                            .then((response) => {
+                                this.userNotifications = response.data.search_results.data;
+
+                                this.totalUnRead =   response.data.total_unread;
+                            })
+                            .catch(error => console.log(error))
+                    },
+
+                    readAll() {
+                        this.$axios.post('{{ route('admin.notification.read_all') }}')
+                            .then((response) => {
+                                this.notifications = response.data.search_results.data;
+
+                                this.totalUnRead = response.data.total_unread;
+
+                            this.$emitter.emit('add-flash', { type: 'success', message: response.data.success_message });
+                        })
+                        .catch((error) => {});
+                },
+            },
+        });
+    </script>
 
     <script type="text/x-template" id="v-dark-template">
         <div class="flex">
