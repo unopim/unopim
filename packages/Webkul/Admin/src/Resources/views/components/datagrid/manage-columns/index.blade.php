@@ -62,8 +62,8 @@
                                                 @lang('Available Columns')
                                             </p>
                                         </div>
-                                        <div v-if="loading" class="grid gap-y-2.5 pt-3">
-                                            <div v-for="n in 10" :key="n" class="shimmer w-[302px] h-6"></div>
+                                        <div v-if="loading" class="grid gap-y-2.5 pt-3 h-[calc(100vh-285px)] pb-[16px] pt-3 overflow-auto ">
+                                            <div v-for="n in 25" :key="n" class="shimmer w-[302px] h-[38px] rounded-md"></div>
                                         </div>
                                         <draggable
                                             class="h-[calc(100vh-285px)] pb-[16px] pt-3 overflow-auto ltr:border-r rtl:border-l border-gray-200"
@@ -101,6 +101,10 @@
                                         </draggable>
 
                                         <!-- Prev & Next Page Button -->
+                                        <div v-if="loading" class="flex gap-x-2.5 pt-3">
+                                            <div v-for="n in 2" :key="n" class="shimmer w-[38px] h-[38px] rounded-md"></div>
+                                        </div>
+
                                         <div 
                                             class="flex gap-1 items-left justify-left mt-2.5"
                                             v-if="!loading"

@@ -44,4 +44,22 @@ class DatabaseProductQueryBuilder extends AbstractFilterableQueryBuilder
 
         return $this;
     }
+
+    /**
+     * Add a filter condition on an universal attribute
+     */
+    protected function applyUnfilteredFilter(
+        $filter,
+        $attribute,
+        $operator,
+        $value,
+        array $context
+    ) {
+
+        $filter->setQueryManager($this->getQueryManager());
+
+        $filter->applyUnfilteredFilter($attribute, $operator, $value, $context);
+
+        return $this;
+    }
 }

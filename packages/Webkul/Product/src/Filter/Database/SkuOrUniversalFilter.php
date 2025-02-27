@@ -1,6 +1,6 @@
 <?php
 
-namespace Webkul\Product\Filter\ElasticSearch;
+namespace Webkul\Product\Filter\Database;
 
 use Webkul\Attribute\Services\AttributeService;
 use Webkul\ElasticSearch\QueryString;
@@ -8,7 +8,7 @@ use Webkul\ElasticSearch\QueryString;
 /**
  * Sku or name filter for an Elasticsearch query
  */
-class SkuOrUniversalFilter extends AbstractElasticSearchAttributeFilter
+class SkuOrUniversalFilter extends AbstractDatabaseAttributeFilter
 {
     public function __construct(
         protected AttributeService $attributeService,
@@ -27,8 +27,6 @@ class SkuOrUniversalFilter extends AbstractElasticSearchAttributeFilter
             throw new \LogicException('The search query builder is not initialized in the filter.');
         }
 
-        $clauses = [];
-
         foreach ($fields as $attribute) {
             $attribute = $this->attributeService->findAttributeByCode($attribute);
             if (! $attribute) {
@@ -41,28 +39,11 @@ class SkuOrUniversalFilter extends AbstractElasticSearchAttributeFilter
             $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
             $escapedValue = QueryString::escapeValue(current((array) $value));
 
-            $clauses[] = [
-                'wildcard' => [
-                    $attributePath.'.keyword' => '*'.$escapedValue.'*',
-                ],
-            ];
-
-            $clauses[] = [
-                'query_string' => [
-                    'default_field'    => $attributePath,
-                    'query'            => '*'.$escapedValue.'*',
-                    'analyze_wildcard' => true,
-                    'default_operator' => 'AND',
-                    'fuzziness'        => 'AUTO',
-                ],
-            ];
+            $this->queryBuilder->orWhereRaw(
+                sprintf("LOWER(JSON_UNQUOTE(JSON_EXTRACT(%s, '%s'))) LIKE ?", $this->getSearchTablePath($options), $attributePath),
+                "%$escapedValue%"
+            );
         }
-
-        $this->queryBuilder::where(['bool' => [
-            'should'               => $clauses,
-            'minimum_should_match' => 1,
-        ],
-        ]);
 
         return $this;
     }

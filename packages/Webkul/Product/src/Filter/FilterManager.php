@@ -4,6 +4,7 @@ namespace Webkul\Product\Filter;
 
 use Illuminate\Contracts\Container\Container;
 use Webkul\Product\Contracts\FilterManager as FilterManagerContract;
+use Webkul\Product\Filter\Database\SkuOrUniversalFilter as DatabaseSkuOrUniversalFilter;
 use Webkul\Product\Filter\ElasticSearch\SkuOrUniversalFilter;
 
 class FilterManager implements FilterManagerContract
@@ -51,9 +52,14 @@ class FilterManager implements FilterManagerContract
         return null;
     }
 
+    /**
+     * Get filter sku or universal attribute filter.
+     */
     public function getSkuOrUnfilteredFilter()
     {
-        return app(SkuOrUniversalFilter::class);
+        return core()->isElasticsearchEnabled()
+           ? app(SkuOrUniversalFilter::class)
+           : app(DatabaseSkuOrUniversalFilter::class);
     }
 
     /**
