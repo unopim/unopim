@@ -35,8 +35,8 @@ class ProductIndexer extends Command
             $totalProducts = DB::table('products')->count();
 
             if ($totalProducts === 0) {
-                $this->info('No product found in the database. Attempting to delete the index if it exists:-');
-                Log::channel('elasticsearch')->info('No product found in the database. Attempting to delete the index if it exists:-');
+                $this->info('No products found in the database. Attempting to reset the index if it exists.');
+                Log::channel('elasticsearch')->info('No products found in the database. Attempting to reset the index if it exists.');
 
                 try {
                     ElasticSearch::indices()->delete(['index' => $productIndex]);
@@ -57,6 +57,23 @@ class ProductIndexer extends Command
 
                         throw $e;
                     }
+                }
+
+                try {
+                    ElasticSearch::indices()->create([
+                        'index' => $productIndex,
+                        'body' => [
+                            'mappings' => $this->getUnopimProductMapping()
+                        ],
+                    ]);
+
+                    $this->info($productIndex . ' index recreated successfully.');
+                    Log::channel('elasticsearch')->info($productIndex . ' index recreated successfully.');
+                } catch (\Exception $e) {
+                    Log::channel('elasticsearch')->error('Exception while recreating ' . $productIndex . ' index.', [
+                        'error' => $e->getMessage(),
+                    ]);
+                    throw $e;
                 }
 
                 return;
@@ -225,5 +242,51 @@ class ProductIndexer extends Command
         }
 
         return $elasticProduct;
+    }
+
+
+    private function getUnopimProductMapping()
+    {
+        return [
+            'properties' => [
+                'attribute_family' => [
+                    'properties' => [
+                        'code' => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
+                        'id' => ['type' => 'long'],
+                        'name' => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
+                        'status' => ['type' => 'long'],
+                        'translations' => [
+                            'properties' => [
+                                'attribute_family_id' => ['type' => 'long'],
+                                'id' => ['type' => 'long'],
+                                'locale' => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
+                                'name' => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
+                            ],
+                        ],
+                    ],
+                ],
+                'attribute_family_id' => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
+                'created_at' => ['type' => 'date'],
+                'id' => ['type' => 'long'],
+                'sku' => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
+                'status' => ['type' => 'long'],
+                'type' => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
+                'updated_at' => ['type' => 'date'],
+                'values' => [
+                    'properties' => [
+                        'channel_locale_specific' => [
+                            'properties' => [
+
+                            ],
+                        ],
+                        'common' => [
+                            'properties' => [
+
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 }
