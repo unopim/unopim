@@ -8,7 +8,8 @@ return [
             'password'               => 'Mật khẩu',
             'submit-btn'             => 'Đăng nhập',
             'title'                  => 'Đăng nhập',
-            'powered-by-description' => 'Được cung cấp bởi :unopim, một dự án mã nguồn mở của :webkul.',
+            'powered-by'             => 'Được cung cấp bởi :unopim,',
+            'open-source-project-by' => 'Dự án mã nguồn mở của :webkul.',
         ],
 
         'forget-password' => [
@@ -21,7 +22,8 @@ return [
                 'sign-in-link'           => 'Quay lại Đăng nhập?',
                 'submit-btn'             => 'Đặt lại',
                 'title'                  => 'Khôi phục mật khẩu',
-                'powered-by-description' => 'Được cung cấp bởi :unopim, một dự án mã nguồn mở của :webkul.',
+                'powered-by'             => 'Được cung cấp bởi :unopim,',
+                'open-source-project-by' => 'Dự án mã nguồn mở của :webkul.',
             ],
         ],
 
@@ -32,7 +34,8 @@ return [
             'password'               => 'Mật khẩu',
             'submit-btn'             => 'Đặt lại mật khẩu',
             'title'                  => 'Đặt lại mật khẩu',
-            'powered-by-description' => 'Được cung cấp bởi :unopim, một dự án mã nguồn mở của :webkul.',
+            'powered-by'             => 'Được cung cấp bởi :unopim,',
+            'open-source-project-by' => 'Dự án mã nguồn mở của :webkul.',
         ],
     ],
 

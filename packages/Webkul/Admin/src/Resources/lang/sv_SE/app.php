@@ -8,7 +8,8 @@ return [
             'password'               => 'Lösenord',
             'submit-btn'             => 'Logga in',
             'title'                  => 'Logga in',
-            'powered-by-description' => 'Drivs av :unopim, ett open-source-projekt av :webkul.',
+            'powered-by'             => 'Drivs av :unopim,',
+            'open-source-project-by' => 'Ett open-source-projekt av :webkul.',
         ],
 
         'forget-password' => [
@@ -21,7 +22,8 @@ return [
                 'sign-in-link'           => 'Tillbaka till inloggning?',
                 'submit-btn'             => 'Återställ',
                 'title'                  => 'Återställ lösenord',
-                'powered-by-description' => 'Drivs av :unopim, ett open-source-projekt av :webkul.',
+                'powered-by'             => 'Drivs av :unopim,',
+                'open-source-project-by' => 'Ett open-source-projekt av :webkul.',
             ],
         ],
 
@@ -32,7 +34,8 @@ return [
             'password'               => 'Lösenord',
             'submit-btn'             => 'Återställ lösenord',
             'title'                  => 'Återställ lösenord',
-            'powered-by-description' => 'Drivs av :unopim, ett open-source-projekt av :webkul.',
+            'powered-by'             => 'Drivs av :unopim,',
+            'open-source-project-by' => 'Ett open-source-projekt av :webkul.',
         ],
     ],
 

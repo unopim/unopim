@@ -8,7 +8,8 @@ return [
             'password'               => '密碼',
             'submit-btn'             => '登入',
             'title'                  => '登入',
-            'powered-by-description' => '由 :unopim 提供支援，:webkul 的開源專案。',
+            'powered-by'             => '由 :unopim 提供,',
+            'open-source-project-by' => '由 :webkul 開源專案提供。',
         ],
 
         'forget-password' => [
@@ -21,7 +22,8 @@ return [
                 'sign-in-link'           => '返回登入？',
                 'submit-btn'             => '重設',
                 'title'                  => '恢復密碼',
-                'powered-by-description' => '由 :unopim 提供支援，:webkul 的開源專案。',
+                'powered-by'             => '由 :unopim 提供,',
+                'open-source-project-by' => '由 :webkul 開源專案提供。',
             ],
         ],
 
@@ -32,7 +34,8 @@ return [
             'password'               => '密碼',
             'submit-btn'             => '重置密碼',
             'title'                  => '重置密碼',
-            'powered-by-description' => '由 :unopim 提供支援，:webkul 的開源專案。',
+            'powered-by'             => '由 :unopim 提供,',
+            'open-source-project-by' => '由 :webkul 開源專案提供。',
         ],
     ],
 

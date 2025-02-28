@@ -8,7 +8,8 @@ return [
             'password'               => 'Нууц үг',
             'submit-btn'             => 'Нэвтрэх',
             'title'                  => 'Нэвтрэх',
-            'powered-by-description' => ':unopim-ээр ажилладаг, :webkul-ийн нээлттэй эхийн төсөл.',
+            'powered-by'             => ':unopim-аас дэмжигдсэн,',
+            'open-source-project-by' => ':webkul-ийн нээлттэй эхийн төсөл.',
         ],
 
         'forget-password' => [
@@ -21,7 +22,8 @@ return [
                 'sign-in-link'           => 'Нэвтрэхийн тулд буцах уу?',
                 'submit-btn'             => 'Нөөц',
                 'title'                  => 'Нууц үгээ сэрэмж сэргээх',
-                'powered-by-description' => ':unopim-ээр ажилладаг, :webkul-ийн нээлттэй эхийн төсөл.',
+                'powered-by'             => ':unopim-аас дэмжигдсэн,',
+                'open-source-project-by' => ':webkul-ийн нээлттэй эхийн төсөл.',
             ],
         ],
 
@@ -32,7 +34,8 @@ return [
             'password'               => 'Нууц үг',
             'submit-btn'             => 'Нууц үгээ анхны байдалд нь оруулж',
             'title'                  => 'Нууц үгээ анхны байдалд нь оруулж',
-            'powered-by-description' => ':unopim-ээр ажилладаг, :webkul-ийн нээлттэй эхийн төсөл.',
+            'powered-by'             => ':unopim-аас дэмжигдсэн,',
+            'open-source-project-by' => ':webkul-ийн нээлттэй эхийн төсөл.',
         ],
     ],
 

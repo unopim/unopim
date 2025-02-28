@@ -8,7 +8,8 @@ return [
             'password'               => 'Senha',
             'submit-btn'             => 'Entrar',
             'title'                  => 'Entrar',
-            'powered-by-description' => 'Desenvolvido por :unopim, um projeto de código aberto da :webkul.',
+            'powered-by'             => 'Desenvolvido por :unopim,',
+            'open-source-project-by' => 'Um projeto de código aberto de :webkul.',
         ],
 
         'forget-password' => [
@@ -21,7 +22,8 @@ return [
                 'sign-in-link'           => 'Voltar para a tela de login?',
                 'submit-btn'             => 'Redefinir',
                 'title'                  => 'Recuperar senha',
-                'powered-by-description' => 'Desenvolvido por :unopim, um projeto de código aberto da :webkul.',
+                'powered-by'             => 'Desenvolvido por :unopim,',
+                'open-source-project-by' => 'Um projeto de código aberto de :webkul.',
             ],
         ],
 
@@ -32,7 +34,8 @@ return [
             'password'               => 'Senha',
             'submit-btn'             => 'Redefinir senha',
             'title'                  => 'Redefinir senha',
-            'powered-by-description' => 'Desenvolvido por :unopim, um projeto de código aberto da :webkul.',
+            'powered-by'             => 'Desenvolvido por :unopim,',
+            'open-source-project-by' => 'Um projeto de código aberto de :webkul.',
         ],
     ],
 

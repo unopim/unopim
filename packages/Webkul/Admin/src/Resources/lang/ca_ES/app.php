@@ -8,7 +8,8 @@ return [
             'password'               => 'Contrasenya',
             'submit-btn'             => 'Iniciar sessió',
             'title'                  => 'Iniciar sessió',
-            'powered-by-description' => 'Amb tecnologia de :unopim, un projecte de codi obert de :webkul.',
+            'powered-by'             => 'Funciona amb :unopim,',
+            'open-source-project-by' => 'Un projecte de codi obert per :webkul.',
         ],
 
         'forget-password' => [
@@ -21,7 +22,8 @@ return [
                 'sign-in-link'           => 'Tornar a Iniciar sessió?',
                 'submit-btn'             => 'Restablir',
                 'title'                  => 'Recuperar contrasenya',
-                'powered-by-description' => 'Amb tecnologia de :unopim, un projecte de codi obert de :webkul.',
+                'powered-by'             => 'Funciona amb :unopim,',
+                'open-source-project-by' => 'Un projecte de codi obert per :webkul.',
             ],
         ],
 
@@ -32,7 +34,8 @@ return [
             'password'               => 'Contrasenya',
             'submit-btn'             => 'Restablir contrasenya',
             'title'                  => 'Restablir contrasenya',
-            'powered-by-description' => 'Amb tecnologia de :unopim, un projecte de codi obert de :webkul.',
+            'powered-by'             => 'Funciona amb :unopim,',
+            'open-source-project-by' => 'Un projecte de codi obert per :webkul.',
         ],
     ],
 

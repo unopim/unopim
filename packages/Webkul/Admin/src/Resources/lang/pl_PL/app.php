@@ -8,7 +8,8 @@ return [
             'password'               => 'Hasło',
             'submit-btn'             => 'Zaloguj się',
             'title'                  => 'Zaloguj się',
-            'powered-by-description' => 'Zasilane przez :unopim, projekt open-source stworzony przez :webkul.',
+            'powered-by'             => 'Zasilane przez :unopim,',
+            'open-source-project-by' => 'Projekt open-source autorstwa :webkul.',
         ],
 
         'forget-password' => [
@@ -21,7 +22,8 @@ return [
                 'sign-in-link'           => 'Wracasz do logowania?',
                 'submit-btn'             => 'Resetuj',
                 'title'                  => 'Odzyskaj hasło',
-                'powered-by-description' => 'Zasilane przez :unopim, projekt open-source stworzony przez :webkul.',
+                'powered-by'             => 'Zasilane przez :unopim,',
+                'open-source-project-by' => 'Projekt open-source autorstwa :webkul.',
             ],
         ],
 
@@ -32,7 +34,8 @@ return [
             'password'               => 'Hasło',
             'submit-btn'             => 'Resetuj hasło',
             'title'                  => 'Resetuj hasło',
-            'powered-by-description' => 'Zasilane przez :unopim, projekt open-source stworzony przez :webkul.',
+            'powered-by'             => 'Zasilane przez :unopim,',
+            'open-source-project-by' => 'Projekt open-source autorstwa :webkul.',
         ],
     ],
 

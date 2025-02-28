@@ -8,7 +8,8 @@ return [
             'password'               => 'Password',
             'submit-btn'             => 'Mag-sign In',
             'title'                  => 'Mag-sign In',
-            'powered-by-description' => 'Pinapagana ng :unopim, isang open-source na proyekto ng :webkul.',
+            'powered-by'             => 'Pinapatakbo ng :unopim,',
+            'open-source-project-by' => 'Isang open-source na proyekto ng :webkul.',
         ],
 
         'forget-password' => [
@@ -21,7 +22,8 @@ return [
                 'sign-in-link'           => 'Bumalik sa Mag-sign In?',
                 'submit-btn'             => 'I-reset',
                 'title'                  => 'I-recover ang password',
-                'powered-by-description' => 'Pinapagana ng :unopim, isang open-source na proyekto ng :webkul.',
+                'powered-by'             => 'Pinapatakbo ng :unopim,',
+                'open-source-project-by' => 'Isang open-source na proyekto ng :webkul.',
             ],
         ],
 
@@ -32,7 +34,8 @@ return [
             'password'               => 'Password',
             'submit-btn'             => 'I-reset ang Password',
             'title'                  => 'I-reset ang Password',
-            'powered-by-description' => 'Pinapagana ng :unopim, isang open-source na proyekto ng :webkul.',
+            'powered-by'             => 'Pinapatakbo ng :unopim,',
+            'open-source-project-by' => 'Isang open-source na proyekto ng :webkul.',
         ],
     ],
 

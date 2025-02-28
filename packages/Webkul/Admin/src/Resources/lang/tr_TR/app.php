@@ -8,7 +8,8 @@ return [
             'password'               => 'Şifre',
             'submit-btn'             => 'Giriş Yap',
             'title'                  => 'Giriş Yap',
-            'powered-by-description' => ':unopim tarafından desteklenmektedir, :webkul tarafından geliştirilen bir açık kaynak projesi.',
+            'powered-by'             => ':unopim tarafından desteklenmektedir,',
+            'open-source-project-by' => ':webkul tarafından sunulan açık kaynak projesi.',
         ],
 
         'forget-password' => [
@@ -21,7 +22,8 @@ return [
                 'sign-in-link'           => 'Geri Giriş Yap?',
                 'submit-btn'             => 'Sıfırla',
                 'title'                  => 'Parolayı Geri Al',
-                'powered-by-description' => ':unopim tarafından desteklenmektedir, :webkul tarafından geliştirilen bir açık kaynak projesi.',
+                'powered-by'             => ':unopim tarafından desteklenmektedir,',
+                'open-source-project-by' => ':webkul tarafından sunulan açık kaynak projesi.',
             ],
         ],
 
@@ -32,7 +34,8 @@ return [
             'password'               => 'Şifre',
             'submit-btn'             => 'Şifreyi Sıfırla',
             'title'                  => 'Şifreyi Sıfırla',
-            'powered-by-description' => ':unopim tarafından desteklenmektedir, :webkul tarafından geliştirilen bir açık kaynak projesi.',
+            'powered-by'             => ':unopim tarafından desteklenmektedir,',
+            'open-source-project-by' => ':webkul tarafından sunulan açık kaynak projesi.',
         ],
     ],
 

@@ -8,7 +8,8 @@ return [
             'password'               => 'パスワード',
             'submit-btn'             => 'サインイン',
             'title'                  => 'サインイン',
-            'powered-by-description' => ':unopim によって提供された、:webkul によるオープンソースプロジェクト。',
+            'powered-by'             => ':unopim によって提供,',
+            'open-source-project-by' => ':webkul によるオープンソースプロジェクトです。',
         ],
 
         'forget-password' => [
@@ -21,7 +22,8 @@ return [
                 'sign-in-link'           => 'サインインに戻りますか?',
                 'submit-btn'             => 'リセット',
                 'title'                  => 'パスワードを回復',
-                'powered-by-description' => ':unopim によって提供された、:webkul によるオープンソースプロジェクト。',
+                'powered-by'             => ':unopim によって提供,',
+                'open-source-project-by' => ':webkul によるオープンソースプロジェクトです。',
             ],
         ],
 
@@ -32,7 +34,8 @@ return [
             'password'               => 'パスワード',
             'submit-btn'             => 'パスワードのリセット',
             'title'                  => 'パスワードのリセット',
-            'powered-by-description' => ':unopim によって提供された、:webkul によるオープンソースプロジェクト。',
+            'powered-by'             => ':unopim によって提供,',
+            'open-source-project-by' => ':webkul によるオープンソースプロジェクトです。',
         ],
     ],
 

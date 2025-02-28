@@ -8,7 +8,8 @@ return [
             'password'               => 'Adgangskode',
             'submit-btn'             => 'Log ind',
             'title'                  => 'Log ind',
-            'powered-by-description' => 'Drevet af :unopim, et open-source projekt af :webkul.',
+            'powered-by'             => 'Drevet af :unopim,',
+            'open-source-project-by' => 'Et open source-projekt af :webkul.',
         ],
 
         'forget-password' => [
@@ -21,7 +22,8 @@ return [
                 'sign-in-link'           => 'Tilbage til log ind?',
                 'submit-btn'             => 'Nulstil',
                 'title'                  => 'Gendan adgangskode',
-                'powered-by-description' => 'Drevet af :unopim, et open-source projekt af :webkul.',
+                'powered-by'             => 'Drevet af :unopim,',
+                'open-source-project-by' => 'Et open source-projekt af :webkul.',
             ],
         ],
 
@@ -32,7 +34,8 @@ return [
             'password'               => 'Adgangskode',
             'submit-btn'             => 'Nulstil adgangskode',
             'title'                  => 'Nulstil adgangskode',
-            'powered-by-description' => 'Drevet af :unopim, et open-source projekt af :webkul.',
+            'powered-by'             => 'Drevet af :unopim,',
+            'open-source-project-by' => 'Et open source-projekt af :webkul.',
         ],
     ],
 

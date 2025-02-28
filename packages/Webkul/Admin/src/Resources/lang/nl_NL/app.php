@@ -8,7 +8,8 @@ return [
             'password'               => 'Wachtwoord',
             'submit-btn'             => 'Aanmelden',
             'title'                  => 'Aanmelden',
-            'powered-by-description' => 'Aangedreven door :unopim, een open-source project van :webkul.',
+            'powered-by'             => 'Aangedreven door :unopim,',
+            'open-source-project-by' => 'Een open-source project van :webkul.',
         ],
 
         'forget-password' => [
@@ -21,7 +22,8 @@ return [
                 'sign-in-link'           => 'Terug om aan te melden?',
                 'submit-btn'             => 'Reset',
                 'title'                  => 'Herstel het wachtwoord',
-                'powered-by-description' => 'Aangedreven door :unopim, een open-source project van :webkul.',
+                'powered-by'             => 'Aangedreven door :unopim,',
+                'open-source-project-by' => 'Een open-source project van :webkul.',
             ],
         ],
 
@@ -32,7 +34,8 @@ return [
             'password'               => 'Wachtwoord',
             'submit-btn'             => 'Reset wachtwoord',
             'title'                  => 'Reset wachtwoord',
-            'powered-by-description' => 'Aangedreven door :unopim, een open-source project van :webkul.',
+            'powered-by'             => 'Aangedreven door :unopim,',
+            'open-source-project-by' => 'Een open-source project van :webkul.',
         ],
     ],
 

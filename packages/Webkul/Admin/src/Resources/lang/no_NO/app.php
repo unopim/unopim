@@ -8,7 +8,8 @@ return [
             'password'               => 'Passord',
             'submit-btn'             => 'Logg inn',
             'title'                  => 'Logg inn',
-            'powered-by-description' => 'Drevet av :unopim, et åpen kildekode-prosjekt av :webkul.',
+            'powered-by'             => 'Drevet av :unopim,',
+            'open-source-project-by' => 'Et åpen kilde-prosjekt av :webkul.',
         ],
 
         'forget-password' => [
@@ -21,7 +22,8 @@ return [
                 'sign-in-link'           => 'Tilbake til innlogging?',
                 'submit-btn'             => 'Tilbakestill',
                 'title'                  => 'Gjenopprett passord',
-                'powered-by-description' => 'Drevet av :unopim, et åpen kildekode-prosjekt av :webkul.',
+                'powered-by'             => 'Drevet av :unopim,',
+                'open-source-project-by' => 'Et åpen kilde-prosjekt av :webkul.',
             ],
         ],
 
@@ -32,7 +34,8 @@ return [
             'password'               => 'Passord',
             'submit-btn'             => 'Tilbakestill passord',
             'title'                  => 'Tilbakestill passord',
-            'powered-by-description' => 'Drevet av :unopim, et åpen kildekode-prosjekt av :webkul.',
+            'powered-by'             => 'Drevet av :unopim,',
+            'open-source-project-by' => 'Et åpen kilde-prosjekt av :webkul.',
         ],
     ],
 

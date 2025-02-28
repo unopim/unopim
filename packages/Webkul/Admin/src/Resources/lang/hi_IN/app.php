@@ -8,7 +8,8 @@ return [
             'password'               => 'पासवर्ड',
             'submit-btn'             => 'दाखिल करना',
             'title'                  => 'दाखिल करना',
-            'powered-by-description' => ':unopim द्वारा संचालित, :webkul द्वारा एक ओपन-सोर्स प्रोजेक्ट।',
+            'powered-by'             => ':unopim द्वारा संचालित,',
+            'open-source-project-by' => ':webkul द्वारा एक ओपन-सोर्स प्रोजेक्ट.',
         ],
 
         'forget-password' => [
@@ -21,7 +22,8 @@ return [
                 'sign-in-link'           => 'वापस साइन इन करने के लिए?',
                 'submit-btn'             => 'रीसेट',
                 'title'                  => 'पासवर्ड की वसूली',
-                'powered-by-description' => ':unopim द्वारा संचालित, :webkul द्वारा एक ओपन-सोर्स प्रोजेक्ट।',
+                'powered-by'             => ':unopim द्वारा संचालित,',
+                'open-source-project-by' => ':webkul द्वारा एक ओपन-सोर्स प्रोजेक्ट.',
             ],
         ],
 
@@ -32,7 +34,8 @@ return [
             'password'               => 'पासवर्ड',
             'submit-btn'             => 'पासवर्ड रीसेट',
             'title'                  => 'पासवर्ड रीसेट',
-            'powered-by-description' => ':unopim द्वारा संचालित, :webkul द्वारा एक ओपन-सोर्स प्रोजेक्ट।',
+            'powered-by'             => ':unopim द्वारा संचालित,',
+            'open-source-project-by' => ':webkul द्वारा एक ओपन-सोर्स प्रोजेक्ट.',
         ],
     ],
 

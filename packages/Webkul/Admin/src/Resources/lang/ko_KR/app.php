@@ -8,7 +8,8 @@ return [
             'password'               => '비밀번호',
             'submit-btn'             => '로그인',
             'title'                  => '로그인',
-            'powered-by-description' => ':unopim 제공, :webkul의 오픈 소스 프로젝트입니다.',
+            'powered-by'             => ':unopim 제공,',
+            'open-source-project-by' => ':webkul의 오픈 소스 프로젝트입니다.',
         ],
 
         'forget-password' => [
@@ -21,7 +22,8 @@ return [
                 'sign-in-link'           => '로그인 화면으로 돌아가기?',
                 'submit-btn'             => '재설정',
                 'title'                  => '비밀번호 복구',
-                'powered-by-description' => ':unopim 제공, :webkul의 오픈 소스 프로젝트입니다.',
+                'powered-by'             => ':unopim 제공,',
+                'open-source-project-by' => ':webkul의 오픈 소스 프로젝트입니다.',
             ],
         ],
 
@@ -32,7 +34,8 @@ return [
             'password'               => '비밀번호',
             'submit-btn'             => '비밀번호 재설정',
             'title'                  => '비밀번호 재설정',
-            'powered-by-description' => ':unopim 제공, :webkul의 오픈 소스 프로젝트입니다.',
+            'powered-by'             => ':unopim 제공,',
+            'open-source-project-by' => ':webkul의 오픈 소스 프로젝트입니다.',
         ],
     ],
 

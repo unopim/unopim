@@ -8,7 +8,8 @@ return [
             'password'               => 'Salasana',
             'submit-btn'             => 'Kirjaudu sisään',
             'title'                  => 'Kirjaudu sisään',
-            'powered-by-description' => 'Toimii :unopim:n avulla, avoimen lähdekoodin projekti :webkul:lta.',
+            'powered-by'             => 'Toimii :unopim:lla,',
+            'open-source-project-by' => 'Avoimen lähdekoodin projekti :webkul:lta.',
         ],
 
         'forget-password' => [
@@ -21,7 +22,8 @@ return [
                 'sign-in-link'           => 'Takaisin kirjautumiseen?',
                 'submit-btn'             => 'Palauta',
                 'title'                  => 'Palauta salasana',
-                'powered-by-description' => 'Toimii :unopim:n avulla, avoimen lähdekoodin projekti :webkul:lta.',
+                'powered-by'             => 'Toimii :unopim:lla,',
+                'open-source-project-by' => 'Avoimen lähdekoodin projekti :webkul:lta.',
             ],
         ],
 
@@ -32,7 +34,8 @@ return [
             'password'               => 'Salasana',
             'submit-btn'             => 'Palauta salasana',
             'title'                  => 'Palauta salasana',
-            'powered-by-description' => 'Toimii :unopim:n avulla, avoimen lähdekoodin projekti :webkul:lta.',
+            'powered-by'             => 'Toimii :unopim:lla,',
+            'open-source-project-by' => 'Avoimen lähdekoodin projekti :webkul:lta.',
         ],
     ],
 

@@ -8,7 +8,8 @@ return [
             'password'               => 'Password',
             'submit-btn'             => 'Accedi',
             'title'                  => 'Accedi',
-            'powered-by-description' => 'Offerto da :unopim, un progetto open-source di :webkul.',
+            'powered-by'             => 'Alimentato da :unopim,',
+            'open-source-project-by' => 'Un progetto open-source di :webkul.',
         ],
 
         'forget-password' => [
@@ -21,7 +22,8 @@ return [
                 'sign-in-link'           => 'Torna ad Accedi?',
                 'submit-btn'             => 'Resetta',
                 'title'                  => 'Recupera password',
-                'powered-by-description' => 'Offerto da :unopim, un progetto open-source di :webkul.',
+                'powered-by'             => 'Alimentato da :unopim,',
+                'open-source-project-by' => 'Un progetto open-source di :webkul.',
             ],
         ],
 
@@ -32,7 +34,8 @@ return [
             'password'               => 'Password',
             'submit-btn'             => 'Reimposta password',
             'title'                  => 'Reimposta password',
-            'powered-by-description' => 'Offerto da :unopim, un progetto open-source di :webkul.',
+            'powered-by'             => 'Alimentato da :unopim,',
+            'open-source-project-by' => 'Un progetto open-source di :webkul.',
         ],
     ],
 

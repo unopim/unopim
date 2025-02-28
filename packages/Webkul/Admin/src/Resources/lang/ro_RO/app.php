@@ -8,7 +8,8 @@ return [
             'password'               => 'Parolă',
             'submit-btn'             => 'Conectare',
             'title'                  => 'Conectare',
-            'powered-by-description' => 'Alimentat de :unopim, un proiect open-source de :webkul.',
+            'powered-by'             => 'Alimentat de :unopim,',
+            'open-source-project-by' => 'Un proiect open-source realizat de :webkul.',
         ],
 
         'forget-password' => [
@@ -21,7 +22,8 @@ return [
                 'sign-in-link'           => 'Înapoi la Conectare?',
                 'submit-btn'             => 'Resetare',
                 'title'                  => 'Recuperare parolă',
-                'powered-by-description' => 'Alimentat de :unopim, un proiect open-source de :webkul.',
+                'powered-by'             => 'Alimentat de :unopim,',
+                'open-source-project-by' => 'Un proiect open-source realizat de :webkul.',
             ],
         ],
 
@@ -32,7 +34,8 @@ return [
             'password'               => 'Parolă',
             'submit-btn'             => 'Resetare parolă',
             'title'                  => 'Resetare parolă',
-            'powered-by-description' => 'Alimentat de :unopim, un proiect open-source de :webkul.',
+            'powered-by'             => 'Alimentat de :unopim,',
+            'open-source-project-by' => 'Un proiect open-source realizat de :webkul.',
         ],
     ],
 

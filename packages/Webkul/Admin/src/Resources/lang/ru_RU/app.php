@@ -8,7 +8,8 @@ return [
             'password'               => 'Пароль',
             'submit-btn'             => 'Войти',
             'title'                  => 'Войти',
-            'powered-by-description' => 'Работает на :unopim, проект с открытым исходным кодом от :webkul.',
+            'powered-by'             => 'Под управлением :unopim,',
+            'open-source-project-by' => 'Проект с открытым исходным кодом от :webkul.',
         ],
 
         'forget-password' => [
@@ -21,7 +22,8 @@ return [
                 'sign-in-link'           => 'Вернуться, чтобы войти в систему?',
                 'submit-btn'             => 'Перезагрузить',
                 'title'                  => 'Восстановить пароль',
-                'powered-by-description' => 'Работает на :unopim, проект с открытым исходным кодом от :webkul.',
+                'powered-by'             => 'Под управлением :unopim,',
+                'open-source-project-by' => 'Проект с открытым исходным кодом от :webkul.',
             ],
         ],
 
@@ -32,7 +34,8 @@ return [
             'password'               => 'Пароль',
             'submit-btn'             => 'Сброс пароля',
             'title'                  => 'Сброс пароля',
-            'powered-by-description' => 'Работает на :unopim, проект с открытым исходным кодом от :webkul.',
+            'powered-by'             => 'Под управлением :unopim,',
+            'open-source-project-by' => 'Проект с открытым исходным кодом от :webkul.',
         ],
     ],
 

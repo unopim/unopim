@@ -15,7 +15,7 @@
                 />
             @else
                 <img
-                    class="w-max" 
+                    class="w-max"
                     src="{{ unopim_asset('images/logo.svg') }}"
                     alt="{{ config('app.name') }}"
                 />
@@ -39,10 +39,10 @@
 
                             <x-admin::form.control-group.control
                                 type="email"
-                                class="w-[254px] max-w-full" 
+                                class="w-[254px] max-w-full"
                                 id="email"
-                                name="email" 
-                                rules="required|email" 
+                                name="email"
+                                rules="required|email"
                                 :value="old('email')"
                                 :label="trans('admin::app.users.forget-password.create.email')"
                                 :placeholder="trans('admin::app.users.forget-password.create.email')"
@@ -54,7 +54,7 @@
 
                     <div class="flex justify-between items-center p-4">
                         <!-- Back to Sign In link -->
-                        <a 
+                        <a
                             class="text-xs text-violet-700 font-semibold leading-6 cursor-pointer"
                             href="{{ route('admin.session.create') }}"
                         >
@@ -62,7 +62,7 @@
                         </a>
 
                         <!-- Form Submit Button -->
-                        <button 
+                        <button
                             class="primary-button">
                             @lang('admin::app.users.forget-password.create.submit-btn')
                         </button>
@@ -71,12 +71,21 @@
             </div>
 
             <!-- Powered By -->
-            <div class="text-xs text-gray-800 dark:text-white font-medium">
-                @lang('admin::app.users.forget-password.create.powered-by-description', [
-                    'unopim' => '<a class="text-violet-700 hover:underline" href="https://unopim.com/" target="_blank">Unopim</a>',
-                    'webkul' => '<a class="text-violet-700 hover:underline" href="https://webkul.com/" target="_blank">Webkul</a>',
-                ])
+            <div class="absolute bottom-6 inset-x-0 text-xs text-gray-800 dark:text-white font-medium flex flex-col items-center">
+                <div>
+                    @lang('admin::app.users.forget-password.create.powered-by', [
+                        'unopim' => '<a class="text-violet-700 hover:underline" href="https://unopim.com/" target="_blank">Unopim</a>'
+                    ])
+                </div>
+                <div>
+                    <div class="text-xs text-gray-800 dark:text-white font-medium">
+                        @lang('admin::app.users.forget-password.create.open-source-project-by', [
+                            'webkul' => '<a class="text-violet-700 hover:underline" href="https://webkul.com/" target="_blank">Webkul</a>',
+                        ])
+                    </div>
+                </div>
             </div>
+
         </div>
     </div>
 </x-admin::layouts.anonymous>

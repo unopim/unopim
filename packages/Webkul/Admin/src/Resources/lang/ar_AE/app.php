@@ -8,7 +8,8 @@ return [
             'password'               => 'كلمة المرور',
             'submit-btn'             => 'تسجيل الدخول',
             'title'                  => 'تسجيل الدخول',
-            'powered-by-description' => 'مدعوم من :unopim، مشروع مفتوح المصدر بواسطة :webkul.',
+            'powered-by'             => 'مدعوم من :unopim,',
+            'open-source-project-by' => 'مشروع مفتوح المصدر بواسطة :webkul.',
         ],
 
         'forget-password' => [
@@ -21,7 +22,8 @@ return [
                 'sign-in-link'           => 'العودة لتسجيل الدخول؟',
                 'submit-btn'             => 'إعادة ضبط',
                 'title'                  => 'إستعادة كلمة المرور',
-                'powered-by-description' => 'مدعوم من :unopim، مشروع مفتوح المصدر بواسطة :webkul.',
+                'powered-by'             => 'مدعوم من :unopim,',
+                'open-source-project-by' => 'مشروع مفتوح المصدر بواسطة :webkul.',
             ],
         ],
 
@@ -32,7 +34,8 @@ return [
             'password'               => 'كلمة المرور',
             'submit-btn'             => 'إعادة تعيين كلمة المرور',
             'title'                  => 'إعادة تعيين كلمة المرور',
-            'powered-by-description' => 'مدعوم من :unopim، مشروع مفتوح المصدر بواسطة :webkul.',
+            'powered-by'             => 'مدعوم من :unopim,',
+            'open-source-project-by' => 'مشروع مفتوح المصدر بواسطة :webkul.',
         ],
     ],
 

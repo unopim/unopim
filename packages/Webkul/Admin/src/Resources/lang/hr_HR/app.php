@@ -8,7 +8,8 @@ return [
             'password'               => 'Lozinka',
             'submit-btn'             => 'Prijavite se',
             'title'                  => 'Prijavite se',
-            'powered-by-description' => 'Pokreće :unopim, projekt otvorenog koda tvrtke :webkul.',
+            'powered-by'             => 'Pokreće :unopim,',
+            'open-source-project-by' => 'Projekt otvorenog koda od :webkul.',
         ],
 
         'forget-password' => [
@@ -21,7 +22,8 @@ return [
                 'sign-in-link'           => 'Natrag na prijavu?',
                 'submit-btn'             => 'Poništi',
                 'title'                  => 'Oporavite lozinku',
-                'powered-by-description' => 'Pokreće :unopim, projekt otvorenog koda tvrtke :webkul.',
+                'powered-by'             => 'Pokreće :unopim,',
+                'open-source-project-by' => 'Projekt otvorenog koda od :webkul.',
             ],
         ],
 
@@ -32,7 +34,8 @@ return [
             'password'               => 'Lozinka',
             'submit-btn'             => 'Poništi lozinku',
             'title'                  => 'Poništi lozinku',
-            'powered-by-description' => 'Pokreće :unopim, projekt otvorenog koda tvrtke :webkul.',
+            'powered-by'             => 'Pokreće :unopim,',
+            'open-source-project-by' => 'Projekt otvorenog koda od :webkul.',
         ],
     ],
 

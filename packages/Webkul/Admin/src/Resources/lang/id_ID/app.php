@@ -8,7 +8,8 @@ return [
             'password'               => 'Kata sandi',
             'submit-btn'             => 'Masuk',
             'title'                  => 'Masuk',
-            'powered-by-description' => 'Ditenagai oleh :unopim, proyek sumber terbuka oleh :webkul.',
+            'powered-by'             => 'Didukung oleh :unopim,',
+            'open-source-project-by' => 'Proyek open-source oleh :webkul.',
         ],
 
         'forget-password' => [
@@ -21,7 +22,8 @@ return [
                 'sign-in-link'           => 'Kembali untuk Masuk?',
                 'submit-btn'             => 'Mengatur ulang',
                 'title'                  => 'Pulihkan Kata Sandi',
-                'powered-by-description' => 'Ditenagai oleh :unopim, proyek sumber terbuka oleh :webkul.',
+                'powered-by'             => 'Didukung oleh :unopim,',
+                'open-source-project-by' => 'Proyek open-source oleh :webkul.',
             ],
         ],
 
@@ -32,7 +34,8 @@ return [
             'password'               => 'Kata sandi',
             'submit-btn'             => 'Setel ulang kata sandi',
             'title'                  => 'Setel ulang kata sandi',
-            'powered-by-description' => 'Ditenagai oleh :unopim, proyek sumber terbuka oleh :webkul.',
+            'powered-by'             => 'Didukung oleh :unopim,',
+            'open-source-project-by' => 'Proyek open-source oleh :webkul.',
         ],
     ],
 
