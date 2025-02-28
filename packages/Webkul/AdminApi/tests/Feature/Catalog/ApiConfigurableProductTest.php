@@ -732,3 +732,218 @@ it('should store the associations value when updating configurable product', fun
         $this->assertEquals($value, $configurableProduct->values['associations'][$type] ?? '');
     }
 });
+
+it('should patch the price attribute value when patching configurable product', function () {
+    $attribute = Attribute::factory()->create(['type' => 'price']);
+
+    $product = Product::factory()->configurable()->create();
+
+    $family = AttributeFamily::where('id', $product->attribute_family_id);
+
+    $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
+
+    $attributeCode = $attribute->code;
+
+    $value = [];
+
+    foreach (core()->getDefaultChannel()->currencies as $currency) {
+        $value[$currency->code] = (string) random_int(1, 1000);
+    }
+
+    $updatedproduct = [
+        'sku'    => $product->sku,
+        'parent' => null,
+        'family' => $family->first()->code,
+        'values' => [
+            'common' => [
+                'sku'          => $product->sku,
+                $attributeCode => $value,
+            ],
+        ],
+    ];
+
+    $this->withHeaders($this->headers)->json('PATCH', route('admin.api.configrable_products.patch', ['code' => $updatedproduct['sku']]), $updatedproduct)
+        ->assertStatus(200)
+        ->assertJsonStructure([
+            'success',
+            'message',
+        ])
+        ->assertJsonFragment(['success' => true]);
+
+    $product->refresh();
+
+    $this->assertEquals($value, $product->values['common'][$attributeCode] ?? '');
+});
+
+it('should patch the boolean attribute value when patching configurable product', function () {
+    $attribute = Attribute::factory()->create(['type' => 'boolean']);
+
+    $product = Product::factory()->configurable()->create();
+
+    $family = AttributeFamily::where('id', $product->attribute_family_id);
+
+    $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
+
+    $attributeCode = $attribute->code;
+
+    $value = 'true';
+
+    $updatedproduct = [
+        'sku'    => $product->sku,
+        'parent' => null,
+        'family' => $family->first()->code,
+        'values' => [
+            'common' => [
+                'sku'          => $product->sku,
+                $attributeCode => $value,
+            ],
+        ],
+    ];
+
+    $this->withHeaders($this->headers)->json('PATCH', route('admin.api.configrable_products.patch', ['code' => $updatedproduct['sku']]), $updatedproduct)
+        ->assertStatus(200)
+        ->assertJsonStructure([
+            'success',
+            'message',
+        ])
+        ->assertJsonFragment(['success' => true]);
+
+    $product->refresh();
+
+    $this->assertEquals($value, $product->values['common'][$attributeCode] ?? '');
+});
+
+it('should patch the associations value when patching configurable product', function () {
+    $configurableProduct = Product::factory()->configurable()->create();
+
+    $product = Product::factory()->configurable()->create();
+
+    $value = [$product->sku];
+
+    $updatedproduct = [
+        'sku'    => $configurableProduct->sku,
+        'parent' => null,
+        'family' => $configurableProduct->attribute_family->code,
+        'values' => [
+            'common' => [
+                'sku'          => $configurableProduct->sku,
+            ],
+            'associations' => [
+                'related_products' => $value,
+                'cross_sells'      => $value,
+                'up_sells'         => $value,
+            ],
+        ],
+    ];
+
+    $this->withHeaders($this->headers)->json('PATCH', route('admin.api.configrable_products.patch', ['code' => $updatedproduct['sku']]), $updatedproduct)
+        ->assertStatus(200)
+        ->assertJsonStructure([
+            'success',
+            'message',
+        ])
+        ->assertJsonFragment(['success' => true]);
+
+    $configurableProduct->refresh();
+
+    $this->assertArrayHasKey('associations', $configurableProduct->values);
+
+    foreach (['related_products', 'cross_sells', 'up_sells'] as $type) {
+        $this->assertEquals($value, $configurableProduct->values['associations'][$type] ?? '');
+    }
+});
+
+it('should patch the gallery attribute value when patching configurable product', function () {
+    $product = Product::factory()->configurable()->create();
+    $attribute = Attribute::factory()->create(['type' => 'gallery']);
+    Storage::fake();
+
+    $updatedProduct = [
+        'sku'       => $product->sku,
+        'file'      => [
+            UploadedFile::fake()->image('product.jpg'),
+            UploadedFile::fake()->image('product2.jpg'),
+            UploadedFile::fake()->image('product3.jpg'),
+        ],
+        'attribute' => $attribute->code,
+    ];
+
+    $response = $this->withHeaders($this->headers)->json('POST', route('admin.api.media-files.product.store'), $updatedProduct);
+    $response->assertStatus(200);
+
+    if (! $response->status() === 200) {
+        test()->skip('Media is not exported.');
+    }
+
+    $family = AttributeFamily::where('id', $product->attribute_family_id);
+
+    $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
+
+    $attributeCode = $attribute->code;
+
+    $updatedproduct = [
+        'sku'    => $product->sku,
+        'parent' => null,
+        'family' => $family->first()->code,
+        'values' => [
+            'common' => [
+                'sku'          => $product->sku,
+                $attributeCode => explode(',', $response->json()['data']['filePath']),
+            ],
+        ],
+    ];
+
+    $this->withHeaders($this->headers)->json('PATCH', route('admin.api.products.patch', ['sku' => $updatedproduct['sku']]), $updatedproduct)
+        ->assertStatus(200)
+        ->assertJsonStructure([
+            'success',
+            'message',
+        ])
+        ->assertJsonFragment(['success' => true]);
+
+    $product->refresh();
+
+    $this->assertNotEmpty($product->values['common'][$attributeCode] ?? '');
+
+    foreach ($product->values['common'][$attributeCode] as $media) {
+        $this->assertTrue(Storage::exists($media));
+    }
+});
+
+it('should patch the date time attribute value when patching configurable product', function () {
+    $attribute = Attribute::factory()->create(['type' => 'datetime']);
+
+    $product = Product::factory()->configurable()->create();
+
+    $family = AttributeFamily::where('id', $product->attribute_family_id);
+
+    $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
+
+    $attributeCode = $attribute->code;
+
+    $value = '2024-09-04 12:00:00';
+
+    $updatedproduct = [
+        'sku'    => $product->sku,
+        'parent' => null,
+        'family' => $family->first()->code,
+        'values' => [
+            'common' => [
+                'sku'          => $product->sku,
+                $attributeCode => $value,
+            ],
+        ],
+    ];
+
+    $this->withHeaders($this->headers)->json('PATCH', route('admin.api.configrable_products.patch', ['code' => $updatedproduct['sku']]), $updatedproduct)
+        ->assertStatus(200)
+        ->assertJsonStructure([
+            'success',
+            'message',
+        ])
+        ->assertJsonFragment(['success' => true]);
+
+    $product->refresh();
+
+    $this->assertEquals($value, $product->values['common'][$attributeCode] ?? '');
+});

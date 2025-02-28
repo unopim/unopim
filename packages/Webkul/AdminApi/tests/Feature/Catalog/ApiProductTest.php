@@ -228,6 +228,168 @@ it('should update the product', function () {
     $this->assertEquals([$category->code], $product->values['categories'] ?? '');
 });
 
+it('should delete the product', function () {
+    $product = Product::factory()->simple()->create();
+    $response = $this->withHeaders($this->headers)
+        ->json('DELETE', route('admin.api.products.delete', ['code' => $product->sku]));
+    $response->assertStatus(200)
+        ->assertJsonStructure([
+            'success',
+            'message',
+        ])
+        ->assertJsonFragment(['success' => true]);
+    $this->assertDatabaseMissing($this->getFullTableName(Product::class), [
+        'sku' => $product->sku,
+    ]);
+});
+
+it('should return 404 if product not found for delete', function () {
+    $nonExistingSku = 'non-existing-sku';
+    $response = $this->withHeaders($this->headers)
+        ->json('DELETE', route('admin.api.products.delete', ['code' => 'non-existing-sku']));
+
+    $response->assertStatus(404)
+        ->assertJsonStructure([
+            'success',
+            'message',
+        ])
+        ->assertJsonFragment(['success' => false])
+        ->assertJsonFragment(['message' =>  trans('admin::app.catalog.products.product-not-found', ['sku' => (string) $nonExistingSku])]);
+});
+
+it('should patch the product successfully', function () {
+    $product = Product::factory()->simple()->create();
+
+    $family = AttributeFamily::find($product->attribute_family_id);
+
+    $attribute = Attribute::factory()->create(['value_per_locale' => false, 'value_per_channel' => false, 'type' => 'text']);
+
+    $family->first()->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
+
+    $updatedproduct = [
+        'sku'    => $product->sku,
+        'parent' => null,
+        'family' => $family->first()->code,
+        'values' => [
+            'common' => [
+                'sku' => $product->sku,
+            ],
+        ],
+    ];
+    $response = $this->withHeaders($this->headers)
+        ->json('PATCH', route('admin.api.products.patch', ['sku' => $product->sku]), $updatedproduct);
+
+    $response->assertStatus(200)
+        ->assertJsonStructure([
+            'success',
+            'message',
+        ])
+        ->assertJsonFragment(['success' => true, 'message' => trans('admin::app.catalog.products.update-success')]);
+
+    $product->refresh();
+
+    $this->assertDatabaseHas($this->getFullTableName(Product::class), [
+        'sku'                 => $product->sku,
+        'attribute_family_id' => $family->first()->id,
+    ]);
+});
+
+it('should return validation errors for invalid data', function () {
+    $product = Product::factory()->create();
+
+    $response = $this->withHeaders($this->headers)
+        ->json('PATCH', route('admin.api.products.patch', ['sku' => $product->sku]), [
+            'values' => [
+                'common' => [
+                ],
+            ],
+        ]);
+
+    $response->assertStatus(422)
+        ->assertJsonValidationErrors(['values.common.sku']);
+});
+
+it('should partially update the product associations', function () {
+    $product = Product::factory()->simple()->create();
+    $family = AttributeFamily::where('id', $product->attribute_family_id)->first();
+    $attribute = Attribute::factory()->create(['value_per_locale' => false, 'value_per_channel' => false, 'type' => 'text']);
+    $family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
+    $products = Product::factory()->simple()->createMany(2);
+    $value = [$products->last()->sku];
+
+    $updatedProductData = [
+        'parent' => null,
+        'family' => $family->code,
+        'values' => [
+            'common' => [
+                'sku' => $product->sku,
+            ],
+            'associations' => [
+                'related_products' => $value,
+                'up_sells'         => $value,
+            ],
+        ],
+    ];
+
+    $response = $this->withHeaders($this->headers)
+        ->json('PATCH', route('admin.api.products.patch', ['sku' => $product->sku]), $updatedProductData);
+
+    $response->assertStatus(200)
+        ->assertJsonStructure([
+            'success',
+            'message',
+        ])
+        ->assertJsonFragment(['success' => true]);
+
+    $product->refresh();
+
+    $this->assertArrayHasKey('associations', $product->values);
+
+    foreach (['related_products', 'up_sells'] as $type) {
+        $this->assertEquals($value, $product->values['associations'][$type] ?? []);
+    }
+});
+
+it('should partially update the locale specific attribute in product', function () {
+    $product = Product::factory()->simple()->create();
+
+    $family = AttributeFamily::where('id', $product->attribute_family_id)->first();
+    $attribute = Attribute::factory()->create(['value_per_locale' => true, 'value_per_channel' => false, 'type' => 'text']);
+    $family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
+
+    $locales = Locale::where('status', 1)->limit(2)->pluck('code')->toArray();
+
+    $data = [];
+    foreach ($locales as $locale) {
+        $data[$locale] = [$attribute->code => 'Test '.$locale];
+    }
+
+    $updatedProductData = [
+        'parent' => null,
+        'family' => $family->code,
+        'values' => [
+            'common' => [
+                'sku' => $product->sku,
+            ],
+            'locale_specific' => $data,
+        ],
+    ];
+
+    $response = $this->withHeaders($this->headers)
+        ->json('PATCH', route('admin.api.products.patch', ['sku' => $product->sku]), $updatedProductData);
+
+    $response->assertStatus(200)
+        ->assertJsonStructure([
+            'success',
+            'message',
+        ])
+        ->assertJsonFragment(['success' => true]);
+
+    $product->refresh();
+
+    $this->assertEquals($data, $product->values['locale_specific'] ?? []);
+});
+
 it('should update the product associations', function () {
     $product = Product::factory()->simple()->create();
 

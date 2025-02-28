@@ -5,6 +5,7 @@ namespace Webkul\AdminApi\ApiDataSource\Catalog;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Webkul\AdminApi\ApiDataSource;
 use Webkul\Category\Repositories\CategoryRepository;
+use Webkul\Core\Repositories\ChannelRepository;
 
 class CategoryDataSource extends ApiDataSource
 {
@@ -20,7 +21,10 @@ class CategoryDataSource extends ApiDataSource
      *
      * @return void
      */
-    public function __construct(protected CategoryRepository $categoryRepository) {}
+    public function __construct(
+        protected CategoryRepository $categoryRepository,
+        protected ChannelRepository $channelRepository,
+    ) {}
 
     /**
      * Prepares the query builder for API requests.
@@ -98,6 +102,45 @@ class CategoryDataSource extends ApiDataSource
             'parent'          => $data['parent_category']['code'] ?? null,
             'additional_data' => $category['additional_data'],
         ];
+    }
+
+    /**
+     * Delete Category by its code.
+     *
+     * @param  string  $code  The unique code of the category field.
+     */
+    public function deleteByCode(string $code)
+    {
+        $this->prepareForSingleData();
+        $requestedFilters = [
+            'code' => [
+                [
+                    'operator' => $this->operators['EQUALS'],
+                    'value'    => $code,
+                ],
+            ],
+        ];
+
+        $category = $this->processRequestedFilters($requestedFilters)->first();
+
+        if (! $category) {
+            throw new ModelNotFoundException(
+                trans('admin::app.catalog.categories.not-found', ['code' => (string) $code])
+            );
+        }
+
+        if ($this->isRelatedToChannel($category->id)) {
+            throw new \Exception(trans('admin::app.catalog.categories.delete-category-root'));
+        }
+
+        $category->delete();
+
+        return true;
+    }
+
+    private function isRelatedToChannel(int $categoryId): bool
+    {
+        return (bool) $this->channelRepository->pluck('root_category_id')->contains($categoryId);
     }
 
     /**
