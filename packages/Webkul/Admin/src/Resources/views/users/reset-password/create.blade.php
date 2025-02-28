@@ -114,6 +114,14 @@
                     </div>
                 </x-admin::form>
             </div>
+
+            <!-- Powered By -->
+            <div class="text-xs text-gray-800 dark:text-white font-medium">
+                @lang('admin::app.users.reset-password.powered-by-description', [
+                    'unopim' => '<a class="text-violet-700 hover:underline" href="https://unopim.com/" target="_blank">Unopim</a>',
+                    'webkul' => '<a class="text-violet-700 hover:underline" href="https://webkul.com/" target="_blank">Webkul</a>',
+                ])
+            </div>
         </div>
     </div>
 </x-admin::layouts.anonymous>
