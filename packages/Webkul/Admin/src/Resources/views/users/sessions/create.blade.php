@@ -104,8 +104,7 @@
                     'webkul' => '<a class="text-violet-700 hover:underline" href="https://webkul.com/" target="_blank">Webkul</a>',
                 ])
             </div>
-        </div>
-        
+        </div>  
     </div>
 
     @push('scripts')
