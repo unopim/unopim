@@ -35,6 +35,27 @@ class MagicAIController extends Controller
     }
 
     /**
+     * Validate the AI credential.
+     */
+    public function validateCredential(): JsonResponse
+    {
+        $this->validate(request(), [
+            'api_domain' => 'required',
+        ]);
+
+        try {
+            return new JsonResponse([
+                'models'  => AIModel::validate(),
+                'message' => trans('admin::app.catalog.products.index.magic-ai-validate-success'),
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse([
+                'message' => trans('admin::app.catalog.products.index.magic-ai-validate-error'),
+            ], 500);
+        }
+    }
+
+    /**
      * Get the AI available model.
      */
     public function availableModel(): JsonResponse
