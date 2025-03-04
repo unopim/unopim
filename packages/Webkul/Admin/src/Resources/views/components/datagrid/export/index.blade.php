@@ -144,6 +144,8 @@
                         this.applied.filters.columns.forEach(column => {
                             params.filters[column.index] = column.value;
                         });
+
+                        params.filters.indices = this.applied.massActions.indices;
     
                         this.$axios
                             .get(this.src, {

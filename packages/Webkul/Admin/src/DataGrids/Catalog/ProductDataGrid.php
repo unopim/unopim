@@ -204,6 +204,22 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'filterable' => true,
                 'sortable'   => true,
             ],
+            'updated_at' => [
+                'index'      => 'updated_at',
+                'label'      => trans('admin::app.catalog.products.index.datagrid.updated-at'),
+                'type'       => 'datetime',
+                'searchable' => false,
+                'filterable' => true,
+                'sortable'   => true,
+            ],
+            'created_at' => [
+                'index'      => 'created_at',
+                'label'      => trans('admin::app.catalog.products.index.datagrid.created-at'),
+                'type'       => 'datetime',
+                'searchable' => false,
+                'filterable' => true,
+                'sortable'   => true,
+            ],
         ];
     }
 
@@ -339,11 +355,11 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             $pagination['per_page'] ??= $this->itemsPerPage;
             $pagination['page'] ??= 1;
 
-            $this->setElasticSort($params['sort'] ?? []);
-            $this->setElasticFilters($params['filters'] ?? []);
+            $this->setElasticSort($requestedParams['sort'] ?? []);
+            $this->setElasticFilters($requestedParams['filters'] ?? []);
 
             $esQuery = ElasticSearchQuery::build();
-            $result = ResultCursorFactory::createCursor($esQuery, $params);
+            $result = ResultCursorFactory::createCursor($esQuery, $requestedParams);
 
             $ids = $result->getAllIds();
 
@@ -443,6 +459,12 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
             if ($attribute === 'all') {
                 $queryBuilder->applySkuOrUnfilteredFilter(['sku', 'name'], FilterOperators::WILDCARD, $value, $context);
+
+                continue;
+            }
+
+            if ($attribute === 'indices') {
+                $this->applyFilterValue($queryBuilder, 'product_id', $value, FilterOperators::IN, $context);
 
                 continue;
             }
