@@ -59,11 +59,7 @@ class CategoryController extends ApiController
         $category = $this->categoryRepository->findOneByField('code', $code);
 
         if (! $category) {
-            return response()->json([
-                'success' => false,
-                'message' => trans('admin::app.catalog.categories.not-found', ['code' => (string) $code]),
-                'code'    => $code,
-            ], 404);
+            return $this->modelNotFoundResponse(trans('admin::app.catalog.categories.not-found', ['code' => $code]));
         }
 
         if ($this->isRelatedToChannel($category->id)) {
@@ -144,7 +140,7 @@ class CategoryController extends ApiController
     {
         $category = $this->categoryRepository->findOneByField('code', $code);
         if (! $category) {
-            return $this->modelNotFoundResponse(trans('admin::app.catalog.category.not-found', ['code' => $code]));
+            return $this->modelNotFoundResponse(trans('admin::app.catalog.categories.not-found', ['code' => $code]));
         }
 
         $requestData = request()->only(['parent', 'additional_data']);

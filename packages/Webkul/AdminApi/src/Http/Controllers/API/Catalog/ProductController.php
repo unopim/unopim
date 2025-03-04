@@ -138,7 +138,7 @@ class ProductController extends ApiController
     }
 
     /**
-     * Partisal Updates the simple product.
+     * Partial Updates the simple product.
      */
     public function patchProduct(Product $product, array $data)
     {

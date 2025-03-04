@@ -39,27 +39,16 @@ class SimpleProductController extends ProductController
     /**
      * Delete the single product
      */
-    public function delete(string $sku): JsonResponse
+    public function delete(string $code): JsonResponse
     {
         try {
-            try {
+            $product = $this->findProductOr404($code);
 
-                $product = $this->findProductOr404($sku);
-
-            } catch (\Exception $e) {
-
-                return response()->json([
-                    'success' => false,
-                    'message' => trans('admin::app.catalog.products.product-not-found', ['sku' => (string) $sku]),
-                    'sku'     => $sku,
-                ], 404);
-            }
-
-            Event::dispatch('catalog.product.delete.before', $sku);
+            Event::dispatch('catalog.product.delete.before', $code);
 
             $product->delete();
 
-            Event::dispatch('catalog.product.delete.after', $sku);
+            Event::dispatch('catalog.product.delete.after', $code);
 
             return response()->json([
                 'message' => trans('admin::app.catalog.products.delete-success'),
@@ -67,12 +56,7 @@ class SimpleProductController extends ProductController
             ], 200);
 
         } catch (\Exception $e) {
-
-            return response()->json([
-                'success' => false,
-                'message' => trans('admin::app.catalog.products.delete-failed'),
-                'sku'     => $sku,
-            ], 500);
+            return $this->storeExceptionLog($e);
         }
     }
 
