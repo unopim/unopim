@@ -20,7 +20,9 @@ class CategoryDataSource extends ApiDataSource
      *
      * @return void
      */
-    public function __construct(protected CategoryRepository $categoryRepository) {}
+    public function __construct(
+        protected CategoryRepository $categoryRepository,
+    ) {}
 
     /**
      * Prepares the query builder for API requests.

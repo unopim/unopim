@@ -170,6 +170,263 @@ it('should update the name of the category', function () {
         ->assertJsonFragment(['success' => true]);
 });
 
+it('should delete the category', function () {
+    $rootCategory = Category::factory()->create(['parent_id' => null]);
+    $category = Category::factory()->create(['parent_id' => $rootCategory->id]);
+    $response = $this->withHeaders($this->headers)
+        ->json('DELETE', route('admin.api.categories.delete', ['code' => $category->code]));
+    $response->assertStatus(200)
+        ->assertJsonStructure([
+            'success',
+            'message',
+        ])
+        ->assertJsonFragment(['success' => true]);
+    $this->assertDatabaseMissing($this->getFullTableName(Category::class), [
+        'code' => $category->code,
+    ]);
+});
+
+it('should return 404 if category not found for delete', function () {
+    $nonExistingCode = 'non-existing-code';
+    $response = $this->withHeaders($this->headers)
+        ->json('DELETE', route('admin.api.categories.delete', ['code' => 'non-existing-code']));
+    $response->assertStatus(404)
+        ->assertJsonStructure([
+            'success',
+            'message',
+        ])
+        ->assertJsonFragment(['success' => false])
+        ->assertJsonFragment(['message' =>  trans('admin::app.catalog.categories.not-found', ['code' => (string) $nonExistingCode])]);
+});
+
+it('should partially update the category and its parent', function () {
+    $category = Category::factory()->create();
+    $parent = Category::factory()->create();
+    $locale = Locale::where('status', 1)->first();
+    $updatedData = [
+        'parent'          => $parent->code,
+        'additional_data' => [
+            'locale_specific' => [
+                $locale->code => [
+                    'name' => 'Updated Category Name',
+                ],
+            ],
+        ],
+    ];
+    $this->withHeaders($this->headers)
+        ->json('PATCH', route('admin.api.categories.patch', ['code' => $category->code]), $updatedData)
+        ->assertStatus(200)
+        ->assertJsonStructure([
+            'success',
+            'message',
+        ])
+        ->assertJsonFragment(['success' => true]);
+    $this->assertDatabaseHas($this->getFullTableName(Category::class), [
+        'code'      => $category->code,
+        'parent_id' => $parent->id,
+    ]);
+    $actualAdditionalData = Category::where('code', $category->code)->value('additional_data');
+    $expectedAdditionalData = json_encode($updatedData['additional_data']);
+    if (! is_string($actualAdditionalData)) {
+        $actualAdditionalData = json_encode($actualAdditionalData);
+    }
+    $this->assertEquals($expectedAdditionalData, $actualAdditionalData);
+});
+
+it('should return 404 if category not found for patch', function () {
+    $nonExistingCode = 'non-existing-code';
+    $response = $this->withHeaders($this->headers)
+        ->json('PATCH', route('admin.api.categories.patch', ['code' => 'non-existing-code']), [
+            'parent' => 'null',
+        ]);
+    $response->assertStatus(404)
+        ->assertJsonStructure([
+            'success',
+            'message',
+        ])
+        ->assertJsonFragment(['success' => false])
+        ->assertJsonFragment(['message' => trans('admin::app.catalog.categories.not-found', ['code' => (string) $nonExistingCode])]);
+});
+
+it('should successfully patch the category', function () {
+    $category = Category::factory()->create(['code' => 'existing-code']);
+    $response = $this->withHeaders($this->headers)
+        ->json('PATCH', route('admin.api.categories.patch', ['code' => 'existing-code']), [
+            'parent' => 'null',
+        ]);
+    $response->assertStatus(200)
+        ->assertJsonStructure([
+            'success',
+            'message',
+        ])
+        ->assertJsonFragment(['success' => true])
+        ->assertJsonFragment(['message' => trans('admin::app.catalog.categories.update-success')]);
+});
+
+it('should return 401 if user is unauthorized', function () {
+    $this->headers['Authorization'] = 'invalid-token';
+
+    $response = $this->withHeaders($this->headers)
+        ->json('PATCH', route('admin.api.categories.patch', ['code' => 'existing-code']), [
+            'parent' => 'null',
+        ]);
+    $response->assertStatus(401)
+        ->assertJsonFragment(['message' => 'Unauthenticated.']);
+});
+
+it('should patch the data for all locales for category patch', function () {
+    $category = Category::factory()->create();
+
+    Locale::whereIn('code', ['fr_FR', 'es_ES', 'de_DE'])->update(['status' => 1]);
+    $locales = Locale::where('status', 1)->limit(3)->pluck('code')->toArray();
+
+    $data = [];
+    foreach ($locales as $locale) {
+        $data[$locale] = ['name' => 'Updated name '.$locale];
+    }
+
+    $updatedCategory = [
+        'parent'          => $category->parent->code,
+        'additional_data' => [
+            'locale_specific' => $data,
+        ],
+    ];
+
+    $this->withHeaders($this->headers)
+        ->json('PATCH', route('admin.api.categories.patch', ['code' => $category->code]), $updatedCategory)
+        ->assertStatus(200)
+        ->assertJsonStructure([
+            'success',
+            'message',
+        ])
+        ->assertJsonFragment(['success' => true]);
+
+    $category = Category::where('code', $category->code)->first();
+
+    $this->assertEquals($updatedCategory['additional_data'], $category->additional_data);
+});
+
+it('should patch the data for specific locales without affecting other locales data', function () {
+
+    Locale::whereIn('code', ['fr_FR', 'es_ES', 'de_DE'])->update(['status' => 1]);
+    $locales = Locale::where('status', 1)->limit(3)->pluck('code')->toArray();
+
+    $category = Category::factory()->create([
+        'additional_data' => [
+            'locale_specific' => [
+                $locales[0] => ['name' => 'Existing name for '.$locales[0]],
+                $locales[1] => ['name' => 'Existing name for '.$locales[1]],
+            ],
+        ],
+    ]);
+
+    $data = [
+        $locales[1] => ['name' => 'Updated name for '.$locales[1]],
+        $locales[2] => ['name' => 'Updated name for '.$locales[2]],
+    ];
+
+    $updatedCategory = [
+        'parent'          => $category->parent->code,
+        'additional_data' => [
+            'locale_specific' => $data,
+        ],
+    ];
+
+    $this->withHeaders($this->headers)
+        ->json('PATCH', route('admin.api.categories.patch', ['code' => $category->code]), $updatedCategory)
+        ->assertStatus(200)
+        ->assertJsonStructure([
+            'success',
+            'message',
+        ])
+        ->assertJsonFragment(['success' => true]);
+
+    $updatedCategoryFromDb = Category::where('code', $category->code)->first();
+
+    $expectedAdditionalData = [
+        'locale_specific' => [
+            $locales[0] => ['name' => 'Existing name for '.$locales[0]], // Should remain unchanged
+            $locales[1] => ['name' => 'Updated name for '.$locales[1]], // Should be updated
+            $locales[2] => ['name' => 'Updated name for '.$locales[2]], // Should be added
+        ],
+    ];
+
+    $this->assertEquals($expectedAdditionalData, $updatedCategoryFromDb->additional_data);
+});
+
+it('should patch the checkbox type category fields value in the category', function () {
+    $category = Category::factory()->create();
+
+    $categoryField = CategoryField::factory()->create(['value_per_locale' => false, 'type' => 'checkbox', 'status' => 1]);
+
+    $options = $categoryField->options()->pluck('code')->implode(',');
+
+    $updatedCategory = [
+        'code'            => $category->code,
+        'parent'          => $category->parent->code,
+        'additional_data' => [
+            'common' => [
+                $categoryField->code => $options,
+            ],
+            'locale_specific' => [],
+        ],
+    ];
+
+    $this->withHeaders($this->headers)
+        ->json('PATCH', route('admin.api.categories.patch', ['code' => $category->code]), $updatedCategory)
+        ->assertStatus(200)
+        ->assertJsonStructure([
+            'success',
+            'message',
+        ])
+        ->assertJsonFragment(['success' => true]);
+
+    $updatedCategoryFromDb = Category::where('code', $updatedCategory['code'])->first();
+    $fieldValue = $updatedCategory['additional_data']['common'][$categoryField->code];
+    $updatedValue = $updatedCategoryFromDb->additional_data['common'][$categoryField->code];
+
+    $this->assertEquals($fieldValue, $updatedValue);
+});
+
+it('should patch the textarea type category fields value in the category', function () {
+    $category = Category::factory()->create();
+    $locale = Locale::where('status', 1)->first();
+
+    $categoryField = CategoryField::factory()->create(['status' => 1, 'value_per_locale' => false, 'type' => 'textarea']);
+
+    $updatedCategory = [
+        'code'            => $category->code,
+        'parent'          => $category->parent->code,
+        'additional_data' => [
+            'common' => [
+                $categoryField->code => fake()->sentence(),
+            ],
+            'locale_specific' => [
+                $locale->code => [
+                    'name' => 'TestCategory',
+                ],
+            ],
+        ],
+    ];
+
+    $this->withHeaders($this->headers)
+        ->json('PATCH', route('admin.api.categories.patch', ['code' => $category->code]), $updatedCategory)
+        ->assertStatus(200)
+        ->assertJsonStructure([
+            'success',
+            'message',
+        ])
+        ->assertJsonFragment(['success' => true]);
+
+    $updatedCategoryFromDb = Category::where('code', $updatedCategory['code'])->first();
+
+    $fieldValue = $updatedCategory['additional_data']['common'][$categoryField->code];
+    $updatedValue = $updatedCategoryFromDb->additional_data['common'][$categoryField->code];
+
+    $this->assertEquals($fieldValue, $updatedValue);
+    $this->assertDatabaseHas($this->getFullTableName(Category::class), ['code' => $category->code]);
+});
+
 it('should give validation message if category trying to add parent to a root category', function () {
     $locale = Locale::where('status', 1)->first();
     $channel = Channel::factory()->create();

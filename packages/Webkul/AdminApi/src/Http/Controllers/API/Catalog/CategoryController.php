@@ -4,12 +4,14 @@ namespace Webkul\AdminApi\Http\Controllers\API\Catalog;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Validation\Validator;
 use Symfony\Component\HttpFoundation\Response;
 use Webkul\AdminApi\ApiDataSource\Catalog\CategoryDataSource;
 use Webkul\AdminApi\Http\Controllers\API\ApiController;
 use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Category\Validator\Catalog\CategoryValidator;
+use Webkul\Core\Repositories\ChannelRepository;
 
 class CategoryController extends ApiController
 {
@@ -21,7 +23,8 @@ class CategoryController extends ApiController
     public function __construct(
         protected CategoryRepository $categoryRepository,
         protected CategoryFieldRepository $categoryFieldRepository,
-        protected CategoryValidator $categoryValidator
+        protected CategoryValidator $categoryValidator,
+        protected ChannelRepository $channelRepository,
     ) {}
 
     /**
@@ -49,6 +52,48 @@ class CategoryController extends ApiController
     }
 
     /**
+     * Delete the single resource.
+     */
+    public function delete(string $code): JsonResponse
+    {
+        $category = $this->categoryRepository->findOneByField('code', $code);
+
+        if (! $category) {
+            return $this->modelNotFoundResponse(trans('admin::app.catalog.categories.not-found', ['code' => $code]));
+        }
+
+        if ($this->isRelatedToChannel($category->id)) {
+            return response()->json([
+                'success' => false,
+                'message' => trans('admin::app.catalog.categories.delete-category-root'),
+                'code'    => $code,
+            ], 400);
+        }
+
+        try {
+            $category->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => trans('admin::app.catalog.categories.delete-success'),
+                'code'    => $code,
+            ], 200);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => trans('admin::app.catalog.categories.delete-failed'),
+                'code'    => $code,
+            ], 500);
+        }
+    }
+
+    private function isRelatedToChannel(int $categoryId): bool
+    {
+        return (bool) $this->channelRepository->pluck('root_category_id')->contains($categoryId);
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @return \Illuminate\Http\JsonResponse
@@ -67,7 +112,7 @@ class CategoryController extends ApiController
 
         $validator = $this->categoryValidator->validate($requestData);
 
-        if ($validator instanceof \Illuminate\Validation\Validator && $validator->fails()) {
+        if ($validator instanceof Validator && $validator->fails()) {
             return $this->validateErrorResponse($validator);
         }
 
@@ -95,7 +140,7 @@ class CategoryController extends ApiController
     {
         $category = $this->categoryRepository->findOneByField('code', $code);
         if (! $category) {
-            return $this->modelNotFoundResponse(trans('admin::app.catalog.category.not-found', ['code' => $code]));
+            return $this->modelNotFoundResponse(trans('admin::app.catalog.categories.not-found', ['code' => $code]));
         }
 
         $requestData = request()->only(['parent', 'additional_data']);
@@ -110,7 +155,7 @@ class CategoryController extends ApiController
 
         $validator = $this->categoryValidator->validate($requestData, $id);
 
-        if ($validator instanceof \Illuminate\Validation\Validator && $validator->fails()) {
+        if ($validator instanceof Validator && $validator->fails()) {
             return $this->validateErrorResponse($validator);
         }
 
@@ -153,6 +198,67 @@ class CategoryController extends ApiController
                     $requestData['additional_data']['common'][$code] = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
                 }
             }
+        }
+    }
+
+    /**
+     * Patch the resource.
+     */
+    public function partialUpdate(string $code)
+    {
+
+        $category = $this->categoryRepository->findOneByField('code', $code);
+        if (! $category) {
+            return $this->modelNotFoundResponse(trans('admin::app.catalog.categories.not-found', ['code' => $code]));
+        }
+
+        $requestData = request()->only(['parent', 'additional_data']);
+        $parentId = null;
+
+        if (isset($requestData['parent'])) {
+            $parentId = $this->getParentIdByCode($requestData['parent']);
+        }
+
+        unset($requestData['parent']);
+        $requestData['parent_id'] = $parentId;
+
+        $validator = $this->categoryValidator->validate($requestData, $category->id);
+        if ($validator instanceof Validator && $validator->fails()) {
+            return $this->validateErrorResponse($validator);
+        }
+
+        try {
+            $this->sanitizeInput($requestData);
+            Event::dispatch('catalog.category.update.before', $category->id);
+            if (isset($requestData['parent_id'])) {
+                $category->parent_id = $requestData['parent_id'];
+            }
+
+            if (isset($requestData['additional_data'])) {
+                $existingAdditionalData = $category->additional_data;
+                foreach ($requestData['additional_data'] as $key => $value) {
+                    if (array_key_exists($key, $existingAdditionalData)) {
+                        $existingAdditionalData[$key] = is_array($existingAdditionalData[$key]) && is_array($value)
+                            ? array_merge($existingAdditionalData[$key], $value)
+                            : $value;
+
+                        continue;
+                    }
+
+                    $existingAdditionalData[$key] = $value;
+
+                }
+                $category->additional_data = json_encode($existingAdditionalData);
+            }
+            $this->categoryRepository->update($requestData, $category->id);
+            Event::dispatch('catalog.category.update.after', $category);
+
+            return $this->successResponse(
+                trans('admin::app.catalog.categories.update-success'),
+                Response::HTTP_OK
+            );
+        } catch (\Exception $e) {
+            return $this->storeExceptionLog($e);
         }
     }
 

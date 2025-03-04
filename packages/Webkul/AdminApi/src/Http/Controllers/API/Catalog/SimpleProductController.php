@@ -37,6 +37,31 @@ class SimpleProductController extends ProductController
     }
 
     /**
+     * Delete the single product
+     */
+    public function delete(string $code): JsonResponse
+    {
+        try {
+            $product = $this->findProductOr404($code);
+
+            Event::dispatch('catalog.product.delete.before', $code);
+
+            $product->delete();
+
+            Event::dispatch('catalog.product.delete.after', $code);
+
+            return response()->json([
+                'success' => true,
+                'message' => trans('admin::app.catalog.products.delete-success'),
+                'sku'     => $product['sku'],
+            ], 200);
+
+        } catch (\Exception $e) {
+            return $this->storeExceptionLog($e);
+        }
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @return \Illuminate\Http\JsonResponse
@@ -161,6 +186,51 @@ class SimpleProductController extends ProductController
             return $this->successResponse(
                 trans('admin::app.catalog.products.update-success'),
                 Response::HTTP_OK
+            );
+        } catch (\Exception $e) {
+            return $this->storeExceptionLog($e);
+        }
+    }
+
+    /**
+     * Partial Update the specified resource in storage.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function partialUpdate(string $sku)
+    {
+        $validator = Validator::make(request()->all(), [
+            'parent'            => ['nullable', 'string'],
+            'family'            => ['nullable', 'string'],
+            'additional'        => ['nullable', 'array'],
+            'values'            => ['nullable', 'array'],
+            'values.common.sku' => ['required'],
+        ]);
+
+        if ($validator->fails()) {
+            return $this->validateErrorResponse($validator);
+        }
+
+        $data = request()->only([
+            'parent',
+            'family',
+            'additional',
+            'values',
+        ]);
+
+        try {
+            $product = $this->findProductOr404($sku);
+
+            Event::dispatch('catalog.product.patch.update.before', $product->id);
+
+            $product = $this->patchProduct($product, $data);
+
+            Event::dispatch('catalog.product.patch.update.after', $product);
+
+            return $this->successResponse(
+                trans('admin::app.catalog.products.update-success'),
+                Response::HTTP_OK,
+
             );
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
