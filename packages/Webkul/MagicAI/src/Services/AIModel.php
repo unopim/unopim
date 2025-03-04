@@ -136,6 +136,7 @@ class AIModel
         }
 
         try {
+            $this->baseUri = $credentials['api_domain'] ?? $this->baseUri;
             $baseUri = BaseUri::from($this->baseUri ?: 'api.openai.com')->toString();
             $modelEndpoint = self::MODEL_ENDPOINTS[$credentials['api_platform'] ?? core()->getConfigData('general.magic_ai.settings.ai_platform')] ?? null;
             $response = $this->client->get(sprintf('%s%s', $baseUri, $modelEndpoint), [
@@ -144,11 +145,20 @@ class AIModel
                     'Content-Type'  => 'application/json',
                 ],
             ]);
-
+            
             $body = $response->getBody();
             $data = json_decode($body, true);
 
-            return $data['data'] ?? [];
+            $formattedModels = [];
+
+            foreach (($data['data'] ?? []) as $model) {
+                $formattedModels[] = [
+                    'id'    => $model['id'],
+                    'label' => $model['id'],
+                ];
+            }
+
+            return $formattedModels;
         } catch (\Exception $e) {
             throw $e;
             report($e);
