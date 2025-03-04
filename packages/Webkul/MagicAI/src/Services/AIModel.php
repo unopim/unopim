@@ -79,6 +79,14 @@ class AIModel
     }
 
     /**
+     * Gets the list of models.
+     */
+    public static function validate(): array
+    {
+        return self::getInstance()->validateCredential();
+    }
+
+    /**
      * Gets the list of models from the API.
      */
     private function getModelList(): array
@@ -100,6 +108,39 @@ class AIModel
             $response = $this->client->get(sprintf('%s%s', $baseUri, $modelEndpoint), [
                 'headers' => [
                     'Authorization' => 'Bearer '.$this->apiKey,
+                    'Content-Type'  => 'application/json',
+                ],
+            ]);
+
+            $body = $response->getBody();
+            $data = json_decode($body, true);
+
+            return $data['data'] ?? [];
+        } catch (\Exception $e) {
+            throw $e;
+            report($e);
+
+            return [];
+        }
+    }
+
+    /**
+     * Validate the AI credential.
+     */
+    public function validateCredential()
+    {
+        $credentials = request()->all();
+
+        if (isset($credentials['api_platform']) && $credentials['api_platform'] == 'ollama') {
+            return self::DEFAULT_MODELS;
+        }
+
+        try {
+            $baseUri = BaseUri::from($this->baseUri ?: 'api.openai.com')->toString();
+            $modelEndpoint = self::MODEL_ENDPOINTS[$credentials['api_platform'] ?? core()->getConfigData('general.magic_ai.settings.ai_platform')] ?? null;
+            $response = $this->client->get(sprintf('%s%s', $baseUri, $modelEndpoint), [
+                'headers' => [
+                    'Authorization' => 'Bearer '.$credentials['api_key'],
                     'Content-Type'  => 'application/json',
                 ],
             ]);
