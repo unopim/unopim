@@ -11,7 +11,6 @@ use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Helpers\Exporters\AbstractExporter;
 use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
-use Webkul\Product\Facades\ProductValueMapper as ProductValueMapperFacade;
 
 class Exporter extends AbstractExporter
 {
@@ -104,11 +103,11 @@ class Exporter extends AbstractExporter
         foreach ($batch->data as $rowData) {
             foreach ($this->channelsAndLocales as $channel => $locales) {
                 foreach ($locales as $locale) {
-                    $commonFields = ProductValueMapperFacade::getCommonFields($rowData);
+                    $commonFields = $this->getCommonFields($rowData);
                     unset($commonFields['sku']);
-                    $localeSpecificFields = ProductValueMapperFacade::getLocaleSpecificFields($rowData, $locale);
-                    $channelSpecificFields = ProductValueMapperFacade::getChannelSpecificFields($rowData, $channel);
-                    $channelLocaleSpecificFields = ProductValueMapperFacade::getChannelLocaleSpecificFields($rowData, $channel, $locale);
+                    $localeSpecificFields = $this->getLocaleSpecificFields($rowData, $locale);
+                    $channelSpecificFields = $this->getChannelSpecificFields($rowData, $channel);
+                    $channelLocaleSpecificFields = $this->getChannelLocaleSpecificFields($rowData, $channel, $locale);
                     // Merge common and locale-specific fields before array_merge
                     $mergedFields = array_merge($commonFields, $localeSpecificFields, $channelSpecificFields, $channelLocaleSpecificFields);
                     $values = $this->setAttributesValues($mergedFields, $filePath);
@@ -122,10 +121,10 @@ class Exporter extends AbstractExporter
                         'parent'                  => $rowData['parent']['sku'] ?? null,
                         'attribute_family'        => $rowData['attribute_family']['code'] ?? null,
                         'configurable_attributes' => $this->getSuperAttributes($rowData),
-                        'categories'              => ProductValueMapperFacade::getCategories($rowData),
-                        'up_sells'                => ProductValueMapperFacade::getAssociations($rowData, 'up_sells'),
-                        'cross_sells'             => ProductValueMapperFacade::getAssociations($rowData, 'cross_sells'),
-                        'related_products'        => ProductValueMapperFacade::getAssociations($rowData, 'related_products'),
+                        'categories'              => $this->getCategories($rowData),
+                        'up_sells'                => $this->getAssociations($rowData, 'up_sells'),
+                        'cross_sells'             => $this->getAssociations($rowData, 'cross_sells'),
+                        'related_products'        => $this->getAssociations($rowData, 'related_products'),
                     ], $values);
 
                     $products[] = $data;
@@ -198,8 +197,123 @@ class Exporter extends AbstractExporter
                     $attributeValues[$attributeCode] = implode(', ', $existingFilePath);
                 }
             }
+
+            if (is_array($attributeValues[$attributeCode] ?? null)) {
+                $attributeValues[$attributeCode] = implode(', ', $attributeValues[$attributeCode]);
+            }
         }
 
         return $attributeValues;
+    }
+
+    /**
+     * Retrieves and formats the common fields for a product.
+     *
+     *
+     * @return array
+     */
+    protected function getCommonFields(array $data)
+    {
+        if (
+            ! array_key_exists('values', $data)
+            || ! array_key_exists('common', $data['values'])
+        ) {
+            return [];
+        }
+
+        return $data['values']['common'];
+    }
+
+    /**
+     * Retrieves and formats the locale-specific fields for a product.
+     *
+     * @param  string  $channel
+     * @return array
+     */
+    protected function getLocaleSpecificFields(array $data, $locale)
+    {
+        if (
+            ! array_key_exists('values', $data)
+            || ! array_key_exists('locale_specific', $data['values'])
+        ) {
+            return [];
+        }
+
+        return $data['values']['locale_specific'][$locale] ?? [];
+    }
+
+    /**
+     * Retrieves and formats the channel-specific fields for a product.
+     *
+     * @param  string  $channel
+     * @return array
+     */
+    protected function getChannelSpecificFields(array $data, $channel)
+    {
+        if (
+            ! array_key_exists('values', $data)
+            || ! array_key_exists('channel_specific', $data['values'])
+        ) {
+            return [];
+        }
+
+        return $data['values']['channel_specific'][$channel] ?? [];
+    }
+
+    /**
+     * Retrieves and formats the channel-locale-specific fields for a product.
+     *
+     *
+     * @return array
+     */
+    protected function getChannelLocaleSpecificFields(array $data, string $channel, string $locale)
+    {
+        if (
+            ! array_key_exists('values', $data)
+            || ! array_key_exists('channel_locale_specific', $data['values'])
+        ) {
+            return [];
+        }
+
+        return $data['values']['channel_locale_specific'][$channel][$locale] ?? [];
+    }
+
+    /**
+     * Retrieves and formats the categories associated with a product.
+     *
+     *
+     * @return string|null
+     */
+    protected function getCategories(array $data)
+    {
+        if (
+            ! array_key_exists('values', $data)
+            || ! array_key_exists('categories', $data['values'])
+            || ! is_array($data['values']['categories'])
+        ) {
+            return;
+        }
+
+        return implode(',', $data['values']['categories']);
+    }
+
+    /**
+     * Retrieves and formats the associated products for a given data row and type.
+     *
+     *
+     * @return string|null
+     */
+    protected function getAssociations(array $data, string $type)
+    {
+        if (
+            ! array_key_exists('values', $data)
+            || ! array_key_exists('associations', $data['values'])
+            || ! is_array($data['values']['associations'])
+            || ! array_key_exists($type, $data['values']['associations'])
+        ) {
+            return;
+        }
+
+        return implode(',', $data['values']['associations'][$type]) ?? null;
     }
 }

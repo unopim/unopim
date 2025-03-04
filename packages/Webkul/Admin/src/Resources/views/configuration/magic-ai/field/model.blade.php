@@ -62,6 +62,7 @@
                     api_key: "{{ core()->getConfigData('general.magic_ai.settings.api_key') }}",
                     api_domain: "{{ core()->getConfigData('general.magic_ai.settings.api_domain') }}",
                     api_platform: "{{ core()->getConfigData('general.magic_ai.settings.ai_platform') }}",
+                    enabled: "{{ core()->getConfigData('general.magic_ai.settings.enabled') }}",
                 },
 
                 value: this.value,
@@ -71,6 +72,11 @@
         },
         mounted() {
             this.$emitter.on('config-value-changed', (data) => {
+                if (data.fieldName == 'general[magic_ai][settings][enabled]') {
+                    this.aiCredentials.enabled = data.value;
+                    this.isValid = false;
+                }
+
                 if (data.fieldName == 'general[magic_ai][settings][ai_platform]') {
                     this.aiCredentials.api_platform = this.parseJson(data.value)?.value;
                     this.isValid = false;
@@ -100,7 +106,7 @@
             },
             async validated() {
                 try {
-                    const response = await axios.get("{{ route('admin.magic_ai.model') }}", {
+                    const response = await axios.get("{{ route('admin.magic_ai.validate_credential') }}", {
                         params: this.aiCredentials
                     });
 

@@ -2,9 +2,12 @@
 
 namespace Webkul\Admin\DataGrids\Catalog;
 
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
+use Webkul\Core\Facades\ElasticSearch;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\DataGrid\Contracts\ExportableInterface;
 use Webkul\DataGrid\DataGrid;
@@ -30,7 +33,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         protected AttributeFamilyRepository $attributeFamilyRepository,
         protected ProductRepository $productRepository,
         protected ChannelRepository $channelRepository,
-        protected ProductAttributeValuesNormalizer $valuesNormalizer
+        protected ProductAttributeValuesNormalizer $valuesNormalizer,
     ) {}
 
     /**
@@ -59,7 +62,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             );
 
         $this->addFilter('product_id', 'products.id');
-        $this->addFilter('attribute_family', 'af.code');
+        $this->addFilter('attribute_family', 'af.id');
         $this->addFilter('sku', 'products.sku');
         $this->addFilter('status', 'products.status');
         $this->addFilter('type', 'products.type');
@@ -91,7 +94,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'type' => 'basic',
 
                 'params' => [
-                    'options' => $this->attributeFamilyRepository->all(['code as label', 'code as value'])->toArray(),
+                    'options' => $this->attributeFamilyRepository->all(['code as label', 'id as value'])->toArray(),
                 ],
             ],
             'searchable' => false,
@@ -242,6 +245,227 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 ],
             ]);
         }
+    }
+
+    /**
+     * Process request.
+     */
+    public function processRequest(): void
+    {
+        if (! config('elasticsearch.enabled')) {
+            parent::processRequest();
+
+            return;
+        }
+
+        $requestedParams = $this->validatedRequest();
+
+        try {
+            $pagination = $requestedParams['pagination'] ?? [];
+            $pagination['per_page'] ??= $this->itemsPerPage;
+            $pagination['page'] ??= 1;
+
+            $indexPrefix = config('elasticsearch.prefix');
+
+            try {
+                $results = ElasticSearch::search([
+                    'index' => strtolower($indexPrefix.'_products'),
+                    'body'  => [
+                        'from'          => ($pagination['page'] * $pagination['per_page']) - $pagination['per_page'],
+                        'size'          => $pagination['per_page'],
+                        'stored_fields' => [],
+                        'sort'          => $this->getElasticSort($requestedParams['sort'] ?? []),
+                        'query'         => [
+                            'bool' => $this->getElasticFilters($requestedParams['filters'] ?? []) ?: new \stdClass,
+                        ],
+                        'track_total_hits' => true,
+                    ],
+                ]);
+            } catch (\Exception $e) {
+                if (str_contains($e->getMessage(), 'attribute_family_id')) {
+                    $results = ElasticSearch::search([
+                        'index' => strtolower($indexPrefix.'_products'),
+                        'body'  => [
+                            'from'          => ($pagination['page'] * $pagination['per_page']) - $pagination['per_page'],
+                            'size'          => $pagination['per_page'],
+                            'stored_fields' => [],
+                            'sort'          => $this->sortAttributeFamilyByKey($requestedParams['sort'] ?? []),
+                            'query'         => [
+                                'bool' => $this->getElasticFilters($requestedParams['filters'] ?? []) ?: new \stdClass,
+                            ],
+                            'track_total_hits' => true,
+                        ],
+                    ]);
+                } else {
+                    report($e);
+
+                    throw $e;
+                }
+            }
+
+            $ids = collect($results['hits']['hits'])->pluck('_id')->toArray();
+
+            $this->queryBuilder->whereIn('products.id', $ids)
+                ->orderBy(DB::raw('FIELD('.DB::getTablePrefix().'products.id, '.implode(',', $ids).')'));
+
+            if (isset($requestedParams['export']) && (bool) $requestedParams['export']) {
+                $this->exportable = true;
+
+                $gridData = $this instanceof ExportableInterface ? $this->getExportableData($requestedParams) : $this->queryBuilder->get();
+
+                $this->setExportFile($gridData, $requestedParams['format']);
+
+                return;
+            }
+
+            $total = $results['hits']['total']['value'];
+
+            $this->paginator = new LengthAwarePaginator(
+                $total ? $this->queryBuilder->get() : [],
+                $total,
+                $pagination['per_page'],
+                $pagination['page'],
+                [
+                    'path'  => request()->url(),
+                    'query' => [],
+                ]
+            );
+        } catch (\Exception $e) {
+            if (str_contains($e->getMessage(), 'index_not_found_exception')) {
+                Log::error('Elasticsearch index not found. Please create an index first.');
+            }
+
+            throw $e;
+        }
+    }
+
+    /**
+     * Process request.
+     */
+    protected function getElasticFilters($params): array
+    {
+        $filters = [];
+
+        foreach ($params as $attribute => $value) {
+            if (in_array($attribute, ['channel', 'locale'])) {
+                continue;
+            }
+
+            if ($attribute == 'all') {
+                $attribute = 'name';
+            }
+
+            if ($attribute === 'product_id') {
+                $value = array_map(function ($val) {
+                    return is_numeric($val) ? $val : 0;
+                }, $value);
+            }
+
+            $value = array_filter($value, function ($val) {
+                return $val !== null && $val !== '';
+            });
+
+            if (count($value) > 0) {
+                $filters['filter'][] = $this->getFilterValue($attribute, $value);
+            }
+        }
+
+        return $filters;
+    }
+
+    /**
+     * Return applied filters
+     */
+    public function getFilterValue(mixed $attribute, mixed $values): array
+    {
+        switch ($attribute) {
+            case 'product_id':
+                return [
+                    'terms' => [
+                        'id' => $values,
+                    ],
+                ];
+
+            case 'attribute_family':
+                return [
+                    'terms' => [
+                        'attribute_family_id' => $values,
+                    ],
+                ];
+
+            case 'sku':
+                return [
+                    'terms' => [
+                        'sku.keyword' => $values,
+                    ],
+                ];
+            case 'name':
+                $filters = [];
+
+                foreach ($values as $value) {
+                    $filters['wildcard'] = [
+                        'sku' => '*'.$value.'*',
+                    ];
+                }
+
+                return $filters;
+
+            default:
+                return [
+                    'terms' => [
+                        $attribute => $values,
+                    ],
+                ];
+        }
+    }
+
+    /**
+     * Process request.
+     */
+    protected function getElasticSort($params): array
+    {
+        $sort = $params['column'] ?? $this->primaryColumn;
+
+        if ($sort == 'type') {
+            $sort .= '.keyword';
+        }
+
+        if ($sort == 'sku') {
+            $sort .= '.keyword';
+        }
+
+        if ($sort == 'attribute_family') {
+            $sort = 'attribute_family_id';
+        }
+
+        if ($sort == 'product_id') {
+            $sort = 'id';
+        }
+
+        return [
+            $sort => [
+                'order' => $params['order'] ?? $this->sortOrder,
+            ],
+        ];
+    }
+
+    /**
+     * Process request.
+     */
+    protected function sortAttributeFamilyByKey($params): array
+    {
+        $sort = $params['column'] ?? $this->primaryColumn;
+
+        if ($sort == 'attribute_family') {
+            $sort = 'attribute_family_id';
+            $sort .= '.keyword';
+        }
+
+        return [
+            $sort => [
+                'order' => $params['order'] ?? $this->sortOrder,
+            ],
+        ];
     }
 
     /**

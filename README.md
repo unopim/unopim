@@ -163,7 +163,7 @@ If you discover any security vulnerabilities, please follow our [Security Policy
 
 ## 📝 License
 
-UnoPim is open-source software licensed under the [Open Software License (OSL) 3.0](LICENSE.txt).
+UnoPim is open-source software distributed under the [MIT License](LICENSE).
 
 ## 🙏 Acknowledgements
 
