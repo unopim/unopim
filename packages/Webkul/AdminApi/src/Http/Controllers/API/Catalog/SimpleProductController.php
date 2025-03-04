@@ -51,6 +51,7 @@ class SimpleProductController extends ProductController
             Event::dispatch('catalog.product.delete.after', $code);
 
             return response()->json([
+                'success' => true,
                 'message' => trans('admin::app.catalog.products.delete-success'),
                 'sku'     => $product['sku'],
             ], 200);
