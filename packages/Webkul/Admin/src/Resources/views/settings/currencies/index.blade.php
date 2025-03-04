@@ -115,7 +115,7 @@
                                 <a @click="performAction(record.actions.find(action => action.index === 'delete'))">
                                     <span
                                         :class="record.actions.find(action => action.index === 'delete')?.icon"
-                                        title="@lang('admin::app.settings.currencies.index.datagrid.edit')"
+                                        title="@lang('admin::app.settings.currencies.index.datagrid.delete')"
                                         class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
                                     >
                                     </span>

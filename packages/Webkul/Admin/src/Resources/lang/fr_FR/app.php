@@ -70,7 +70,7 @@ return [
             'profile-image'     => 'Image de profil',
             'save-btn'          => 'Enregistrer le compte',
             'title'             => 'Mon compte',
-            'ui-locale'         => 'Langue interface',
+            'ui-locale'         => 'Langue de l\'interface',
             'update-success'    => 'Compte mis à jour avec succès',
             'upload-image-info' => 'Télécharger une image de profil (110px x 110px)',
             'user-timezone'     => 'Fuseau horaire',
@@ -88,7 +88,7 @@ return [
             'total-groups'     => 'Groupes',
             'total-categories' => 'Catégories',
             'total-products'   => 'Produits',
-            'settings-details' => 'Structure de catalogue',
+            'settings-details' => 'Structure du catalogue',
             'total-locales'    => 'Langues',
             'total-currencies' => 'Devises',
             'total-channels'   => 'Canaux',
@@ -174,19 +174,19 @@ return [
 
                 'links' => [
                     'related-products' => [
-                        'empty-info' => 'Produits associés.',
+                        'empty-info' => 'Produits associés (related)',
                         'info'       => 'Produits associés au produit consulté.',
                         'title'      => 'Produits associés',
                     ],
 
                     'up-sells' => [
-                        'empty-info' => 'Vente incitative.',
+                        'empty-info' => 'Vente incitative (up-selling)',
                         'info'       => 'Produits plus chers ou plus haut de gamme.',
                         'title'      => 'Vente incitative',
                     ],
 
                     'cross-sells' => [
-                        'empty-info' => 'Vente additionnelle.',
+                        'empty-info' => 'Vente additionnelle (cross-selling)',
                         'info'       => 'Produits supplémentaires à proposer aux clients.',
                         'title'      => 'Vente additionnelle',
                     ],
@@ -194,7 +194,7 @@ return [
                     'add-btn'           => 'Ajouter',
                     'delete'            => 'Supprimer',
                     'empty-info'        => 'Ajouter rapidement des produits :type.',
-                    'empty-title'       => 'Ajouter le produit',
+                    'empty-title'       => 'Ajouter un produit',
                     'image-placeholder' => 'Image du produit',
                     'sku'               => 'sku - :sku',
                     'title'             => 'Associations',
@@ -288,13 +288,13 @@ return [
                 'title'      => 'Attributs',
 
                 'datagrid' => [
-                    'channel-based'            => 'Basé sur le canal',
+                    'channel-based'            => 'Valeur par canal',
                     'code'                     => 'Code',
-                    'created-at'               => 'Créé à',
+                    'created-at'               => 'Créé le',
                     'delete'                   => 'Supprimer',
                     'edit'                     => 'Modifier',
                     'id'                       => 'Identifiant',
-                    'locale-based'             => 'Basé sur les langues',
+                    'locale-based'             => 'Valeur par langue',
                     'mass-delete-success'      => 'Attribut(s) supprimé(s) avec succès',
                     'name'                     => 'Nom',
                     'required'                 => 'Requis',
@@ -537,7 +537,7 @@ return [
                 'slug'                => 'Slug',
                 'title'               => 'Ajouter une nouvelle catégorie',
                 'visible-in-menu'     => 'Visible dans le menu',
-                'right-section'       => 'Section de configuration',
+                'right-section'       => 'Section configuration',
                 'left-section'        => 'Section générale',
             ],
 
@@ -556,8 +556,8 @@ return [
                 'slug'                   => 'Slug',
                 'title'                  => 'Modifier la catégorie',
                 'visible-in-menu'        => 'Visible dans le menu',
-                'right-section'          => 'Section de configuration',
-                'left-section'           => 'Section générale',
+                'right-section'          => 'Configuration',
+                'left-section'           => 'Générale',
             ],
 
             'category'             => 'Catégorie',
@@ -654,9 +654,9 @@ return [
                 'value-per-locale'    => 'Valeur par langue',
                 'yes'                 => 'Oui',
                 'status'              => 'Statut',
-                'set-section'         => 'Section d\'affichage',
-                'set-section-left'    => 'Section générale',
-                'set-section-right'   => 'Section de configuration',
+                'set-section'         => 'Affichage',
+                'set-section-left'    => 'Section générale (colonne gauche)',
+                'set-section-right'   => 'Section configuration (colonne droite)',
                 'settings'            => 'Paramètres',
                 'same-code-error'     => 'Le code d\'option doit être unique.',
 
@@ -719,9 +719,9 @@ return [
                 'value-per-locale'    => 'Valeur par langue',
                 'yes'                 => 'Oui',
                 'status'              => 'Statut',
-                'set-section'         => 'Section d\'affichage',
-                'set-section-left'    => 'Section générale',
-                'set-section-right'   => 'Section de configuration',
+                'set-section'         => 'Affichage',
+                'set-section-left'    => 'Section générale (colonne gauche)',
+                'set-section-right'   => 'Section configuration (colonne droite)',
                 'settings'            => 'Paramètres',
                 'same-code-error'     => 'Le code d\'option doit être unique.',
 
@@ -900,12 +900,12 @@ return [
                     'title' => 'Modifier le langage',
                 ],
 
-                'create-success'    => 'Le langage ont été créés avec succès.',
+                'create-success'    => 'Le langage a été créé avec succès.',
                 'delete-failed'     => 'Erreur lors de la suppression du langage.',
                 'delete-success'    => 'Le langage a été supprimé avec succès.',
                 'delete-warning'    => 'Êtes-vous sûr de vouloir effectuer cette action ?',
                 'last-delete-error' => 'Au moins une langue est requise.',
-                'update-success'    => 'Le langage a mis à jour avec succès.',
+                'update-success'    => 'Le langage a été mis à jour avec succès.',
             ],
         ],
 
@@ -1317,7 +1317,7 @@ return [
                 'currencies-and-locales' => 'Devises et langues',
                 'description'            => 'Description',
                 'design'                 => 'Design',
-                'ui-locale'              => 'Langue interface',
+                'ui-locale'              => 'Langue de l\'interface',
                 'favicon'                => 'Favicon',
                 'favicon-size'           => 'La résolution de l\'image doit être de 16px x 16px',
                 'general'                => 'Général',
@@ -1351,7 +1351,7 @@ return [
                 'currencies-and-locales' => 'Devises et langues',
                 'default-currency'       => 'devise par défaut',
                 'description'            => 'Description',
-                'ui-locale'              => 'Langue interface',
+                'ui-locale'              => 'Langue de l\'interface',
                 'design'                 => 'Design',
                 'favicon'                => 'Favicon',
                 'favicon-size'           => 'La résolution de l\'image doit être de 16px x 16px',
@@ -1800,7 +1800,7 @@ return [
             ],
 
             'files' => [
-                'add-file-btn'      => 'Ajouter le fichier',
+                'add-file-btn'      => 'Ajouter un fichier',
                 'allowed-types'     => 'pdf',
                 'not-allowed-error' => 'Seuls les fichiers PDF sont autorisés',
             ],
@@ -1921,16 +1921,16 @@ return [
     'export' => [
         'csv'        => 'CSV',
         'download'   => 'Télécharger',
-        'export'     => 'Export rapide',
+        'export'     => 'Exporter',
         'no-records' => 'Rien à exporter',
-        'xls'        => 'Xls',
-        'xlsx'       => 'Xlsx',
+        'xls'        => 'XLS',
+        'xlsx'       => 'XLSX',
     ],
 
     'validations' => [
-        'slug-being-used' => 'Cette limace est utilisée dans les catégories ou les produits.',
-        'slug-reserved'   => 'Cette limace est réservée.',
-        'invalid-locale'  => 'locales invalides :locales',
+        'slug-being-used' => 'Le slug est utilisé dans les catégories ou les produits.',
+        'slug-reserved'   => 'Le slug est réservé.',
+        'invalid-locale'  => 'Langages invalides :locales',
     ],
 
     'footer' => [
@@ -1938,7 +1938,7 @@ return [
     ],
 
     'emails' => [
-        'dear'   => 'Cher :admin_name',
+        'dear'   => 'Bonjour :admin_name',
         'thanks' => 'Si vous avez besoin d\'aide, veuillez nous contacter à <a href=":link" style=":style">:email</a>.<br/>Merci!',
 
         'admin' => [
