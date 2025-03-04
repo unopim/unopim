@@ -145,7 +145,7 @@ class AIModel
                     'Content-Type'  => 'application/json',
                 ],
             ]);
-            
+
             $body = $response->getBody();
             $data = json_decode($body, true);
 
