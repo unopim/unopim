@@ -4,7 +4,7 @@ return [
     'importers' => [
 
         'products' => [
-            'title' => 'Produkte',
+            'title' => 'Produits',
 
             'validation' => [
                 'errors' => [
@@ -27,7 +27,7 @@ return [
             ],
         ],
         'categories' => [
-            'title'      => 'Kategorien',
+            'title'      => 'Catégories',
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'Sie können die Stammkategorie, die einem Kanal zugeordnet ist, nicht löschen',
@@ -39,7 +39,7 @@ return [
     'exporters' => [
 
         'products' => [
-            'title' => 'Produkte',
+            'title' => 'Produits',
 
             'validation' => [
                 'errors' => [
@@ -52,7 +52,7 @@ return [
             ],
         ],
         'categories' => [
-            'title' => 'Kategorien',
+            'title' => 'Catégories',
         ],
     ],
 
