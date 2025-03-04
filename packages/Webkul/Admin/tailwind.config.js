@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-    content: ["./src/Resources/**/*.blade.php", "./src/Resources/**/*.js"],
+    content: ["./src/Resources/**/*.blade.php", "./src/Resources/**/*.css", "./src/Resources/**/*.js"],
 
     theme: {
         container: {
@@ -42,7 +42,7 @@ module.exports = {
             }
         },
     },
-    
+
     darkMode: 'class',
 
     plugins: [],
