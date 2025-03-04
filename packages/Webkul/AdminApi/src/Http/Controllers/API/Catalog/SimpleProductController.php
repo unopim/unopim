@@ -39,22 +39,40 @@ class SimpleProductController extends ProductController
     /**
      * Delete the single product
      */
-    public function delete(string $code): JsonResponse
+    public function delete(string $sku): JsonResponse
     {
         try {
-            Event::dispatch('catalog.product.delete.before', $code);
+            try {
 
-            $deleted = app(SimpleProductDataSource::class)->deleteByCode($code);
+                $product = $this->findProductOr404($sku);
 
-            Event::dispatch('catalog.product.delete.after', $code);
+            } catch (\Exception $e) {
 
-            if ($deleted) {
-                return response()->json(['success' => true, 'message' => trans('admin::app.catalog.products.delete-success'), 'code' => $code], 200);
-            } else {
-                return response()->json(['success' => false, 'message' => trans('admin::app.catalog.products.delete-failed'), 'code' => $code], 404);
+                return response()->json([
+                    'success' => false,
+                    'message' => trans('admin::app.catalog.products.product-not-found', ['sku' => (string) $sku]),
+                    'sku'     => $sku,
+                ], 404);
             }
+
+            Event::dispatch('catalog.product.delete.before', $sku);
+
+            $product->delete();
+
+            Event::dispatch('catalog.product.delete.after', $sku);
+
+            return response()->json([
+                'message' => trans('admin::app.catalog.products.delete-success'),
+                'sku'     => $product['sku'],
+            ], 200);
+
         } catch (\Exception $e) {
-            return $this->storeExceptionLog($e, $code);
+
+            return response()->json([
+                'success' => false,
+                'message' => trans('admin::app.catalog.products.delete-failed'),
+                'sku'     => $sku,
+            ], 500);
         }
     }
 

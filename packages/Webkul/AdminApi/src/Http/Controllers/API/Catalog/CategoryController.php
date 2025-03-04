@@ -11,6 +11,7 @@ use Webkul\AdminApi\Http\Controllers\API\ApiController;
 use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Category\Validator\Catalog\CategoryValidator;
+use Webkul\Core\Repositories\ChannelRepository;
 
 class CategoryController extends ApiController
 {
@@ -22,7 +23,8 @@ class CategoryController extends ApiController
     public function __construct(
         protected CategoryRepository $categoryRepository,
         protected CategoryFieldRepository $categoryFieldRepository,
-        protected CategoryValidator $categoryValidator
+        protected CategoryValidator $categoryValidator,
+        protected ChannelRepository $channelRepository,
     ) {}
 
     /**
@@ -54,40 +56,45 @@ class CategoryController extends ApiController
      */
     public function delete(string $code): JsonResponse
     {
-        try {
-            $deleted = app(CategoryDataSource::class)->deleteByCode($code);
+        $category = $this->categoryRepository->findOneByField('code', $code);
 
-            if ($deleted) {
-                return response()->json([
-                    'success' => true,
-                    'message' => trans('admin::app.catalog.categories.delete-success'),
-                    'code'    => $code,
-                ], 200);
-            }
-        } catch (ModelNotFoundException $e) {
+        if (! $category) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
+                'message' => trans('admin::app.catalog.categories.not-found', ['code' => (string) $code]),
                 'code'    => $code,
             ], 404);
-        } catch (\Exception $e) {
-
-            if ($e->getMessage() === trans('admin::app.catalog.categories.delete-category-root')) {
-                return response()->json([
-                    'success' => false,
-                    'message' => trans('admin::app.catalog.categories.delete-category-root'),
-                    'code'    => $code,
-                ], 403);
-            }
-
-            return $this->storeExceptionLog($e);
         }
 
-        return response()->json([
-            'success' => false,
-            'message' => trans('admin::app.catalog.categories.delete-failed'),
-            'code'    => $code,
-        ], 404);
+        if ($this->isRelatedToChannel($category->id)) {
+            return response()->json([
+                'success' => false,
+                'message' => trans('admin::app.catalog.categories.delete-category-root'),
+                'code'    => $code,
+            ], 400);
+        }
+
+        try {
+            $category->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => trans('admin::app.catalog.categories.delete-success'),
+                'code'    => $code,
+            ], 200);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => trans('admin::app.catalog.categories.delete-failed'),
+                'code'    => $code,
+            ], 500);
+        }
+    }
+
+    private function isRelatedToChannel(int $categoryId): bool
+    {
+        return (bool) $this->channelRepository->pluck('root_category_id')->contains($categoryId);
     }
 
     /**
