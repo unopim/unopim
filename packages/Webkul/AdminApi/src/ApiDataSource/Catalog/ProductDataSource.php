@@ -17,8 +17,6 @@ class ProductDataSource extends ApiDataSource
      */
     protected $sortColumn = 'products.id';
 
-    const EQUALOPERATOR = '=';
-
     /**
      * Create a new DataSource instance.
      *
