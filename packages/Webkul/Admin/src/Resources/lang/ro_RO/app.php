@@ -92,10 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name este deja utilizat.',
-                'create-btn'     => 'Creează produs',
-                'title'          => 'Produse',
-                'magic-ai-error' => 'Verificați credențialele Magic AI și asigurați-vă că modelul corect este selectat.',
+                'already-taken'             => ':name este deja utilizat.',
+                'create-btn'                => 'Creează produs',
+                'title'                     => 'Produse',
+                'magic-ai-error'            => 'Verificați credențialele Magic AI și asigurați-vă că modelul corect este selectat.',
+                'magic-ai-validate-error'   => 'Vă rugăm să verificați acreditările Magic AI.',
+                'magic-ai-validate-success' => 'Acreditările Magic AI au fost validate cu succes.',
 
                 'create' => [
                     'back-btn'                          => 'Înapoi',
@@ -1894,11 +1896,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Adaugă Imagine',
-                'ai-add-image-btn'  => 'Magic AI',
-                'ai-btn-info'       => 'Generează Imagine',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Doar fișiere imagini (.jpeg, .jpg, .png, ..) sunt permise.',
+                'add-image-btn'      => 'Adaugă Imagine',
+                'generate-with-ai'   => 'Generează cu IA',
+                'upload-from-device' => 'Încarcă de pe dispozitiv',
+                'cancel'             => 'Anulează',
+                'ai-add-image-btn'   => 'Magic AI',
+                'ai-btn-info'        => 'Generează Imagine',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Doar fișiere imagini (.jpeg, .jpg, .png, ..) sunt permise.',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',
@@ -1967,7 +1972,51 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => 'Prompt implicit',
             ],
+        ],
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Descriere detaliată a produsului',
+            'prompt' => 'Scrie o descriere detaliată a @name, incluzând caracteristicile, beneficiile, specificațiile tehnice și instrucțiunile de utilizare.',
+        ],
+        'overview' => [
+            'title'  => 'Prezentare generală a produsului',
+            'prompt' => 'Creează o prezentare detaliată a @name, evidențiind caracteristicile principale, avantajele și publicul țintă, cum ar fi @brand și @color.',
+        ],
+        'features' => [
+            'title'  => 'Caracteristici și beneficii ale produsului',
+            'prompt' => 'Listează caracteristicile și beneficiile principale ale @name, explicând cum adaugă valoare vieții clientului.',
+        ],
+        'technical' => [
+            'title'  => 'Specificații tehnice ale produsului',
+            'prompt' => 'Furnizează o listă detaliată de specificații tehnice pentru @name, incluzând dimensiuni, materiale și compatibilitate.',
+        ],
+        'care' => [
+            'title'  => 'Îngrijirea și întreținerea produsului',
+            'prompt' => 'Scrie un ghid despre cum să îngrijești și să întreții @name, incluzând sfaturi pentru curățare, depozitare și depanare.',
+        ],
+        'tagline' => [
+            'title'  => 'Sloganul produsului',
+            'prompt' => 'Scrie un slogan captivant și concis pentru @name care să surprindă esența și beneficiile acestuia.',
+        ],
+        'summary' => [
+            'title'  => 'Rezumatul produsului',
+            'prompt' => 'Rezumă caracteristicile și beneficiile principale ale @name în 50-60 de cuvinte.',
+        ],
+        'headline' => [
+            'title'  => 'Titlul produsului',
+            'prompt' => 'Creează un titlu atrăgător pentru @name care să evidențieze punctul său unic de vânzare.',
+        ],
+        'brief' => [
+            'title'  => 'Descriere sumară a produsului',
+            'prompt' => 'Scrie o descriere scurtă și concisă a @name, concentrându-te pe principalele beneficii și publicul țintă.',
+        ],
+        'elevator' => [
+            'title'  => 'Pitch scurt pentru produs',
+            'prompt' => 'Elaborează un pitch scurt pentru @name, rezumând scopul, beneficiile și punctul său unic de vânzare în 30-40 de cuvinte.',
         ],
     ],
 ];

@@ -92,10 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => 'El :name nombre ya ha sido tomado.',
-                'create-btn'     => 'Crear productos',
-                'title'          => 'Productos',
-                'magic-ai-error' => 'Verifique las credenciales de Magic AI y asegúrese de seleccionar el modelo correcto.',
+                'already-taken'             => 'El :name nombre ya ha sido tomado.',
+                'create-btn'                => 'Crear productos',
+                'title'                     => 'Productos',
+                'magic-ai-error'            => 'Verifique las credenciales de Magic AI y asegúrese de seleccionar el modelo correcto.',
+                'magic-ai-validate-error'   => 'Verifique las credenciales de Magic AI.',
+                'magic-ai-validate-success' => 'Credenciales de Magic AI validadas con éxito',
 
                 'create' => [
                     'back-btn'                          => 'Atrás',
@@ -321,7 +323,6 @@ return [
                 'file'                  => 'Archivo',
                 'general'               => 'General',
                 'image'                 => 'Imagen',
-                'gallery'               => 'Galería',
                 'input-options'         => 'Opciones de entrada',
                 'input-validation'      => 'Validación de entrada',
                 'is-comparable'         => 'El atributo es comparable',
@@ -388,7 +389,6 @@ return [
                 'file'                  => 'Archivo',
                 'general'               => 'General',
                 'image'                 => 'Imagen',
-                'gallery'               => 'Galería',
                 'input-options'         => 'Opciones de entrada',
                 'input-validation'      => 'Validación de entrada',
                 'is-comparable'         => 'El atributo es comparable',
@@ -1525,6 +1525,12 @@ return [
                         'title'          => 'Configuración general',
                         'title-info'     => 'Mejore su experiencia con la función Magic AI ingresando su clave API exclusiva e indicando la organización pertinente para la integración sin esfuerzo.Aproveche el comando sobre sus credenciales de OpenAI y personalice la configuración de acuerdo con sus necesidades específicas.',
                     ],
+
+                    'image-generation' => [
+                        'enabled'    => 'Activado',
+                        'title'      => 'Generación de imágenes',
+                        'title-info' => 'Esta función habilitará Magic AI para cada carga de imagen, donde desee generar imágenes usando DALL-E.<br/><br/>Cuando esté habilitado, vaya a cualquier carga de imagen para generar una imagen.',
+                    ],
                 ],
             ],
         ],
@@ -1749,11 +1755,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Añadir imagen',
-                'ai-add-image-btn'  => 'Magia que tienes',
-                'ai-btn-info'       => 'Generar imagen',
-                'allowed-types'     => 'PNG, JPEG, JPG',
-                'not-allowed-error' => 'Solo se permiten archivos de imágenes (.jpeg, .jpg, .png, ..).',
+                'add-image-btn'      => 'Añadir imagen',
+                'generate-with-ai'   => 'Generar con IA',
+                'upload-from-device' => 'Subir desde el dispositivo',
+                'cancel'             => 'Cancelar',
+                'ai-add-image-btn'   => 'Magia que tienes',
+                'ai-btn-info'        => 'Generar imagen',
+                'allowed-types'      => 'PNG, JPEG, JPG',
+                'not-allowed-error'  => 'Solo se permiten archivos de imágenes (.jpeg, .jpg, .png, ..).',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',
@@ -1822,6 +1831,7 @@ return [
                 'orca-mini'              => 'Orca mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'La lava',
+                'default-prompt'         => 'Default Prompt',
             ],
         ],
     ],
@@ -1976,5 +1986,48 @@ return [
         'false'   => 'FALSO',
         'enable'  => 'Enabled',
         'disable' => 'Disabled',
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Descripción Detallada del Producto',
+            'prompt' => 'Escribe una descripción completa de @name, incluyendo sus características, beneficios, especificaciones técnicas e instrucciones de uso.',
+        ],
+        'overview' => [
+            'title'  => 'Descripción General del Producto',
+            'prompt' => 'Crea una descripción general detallada de @name, destacando sus características clave, ventajas y público objetivo como @brand y @color.',
+        ],
+        'features' => [
+            'title'  => 'Características y Beneficios del Producto',
+            'prompt' => 'Enumera las características clave y los beneficios de @name, explicando cómo agregan valor a la vida del cliente.',
+        ],
+        'technical' => [
+            'title'  => 'Especificaciones Técnicas',
+            'prompt' => 'Proporciona una lista detallada de especificaciones técnicas de @name, incluyendo dimensiones, materiales y compatibilidad.',
+        ],
+        'care' => [
+            'title'  => 'Cuidado y Mantenimiento',
+            'prompt' => 'Escribe una guía sobre cómo cuidar y mantener @name, incluyendo consejos para limpieza, almacenamiento y resolución de problemas.',
+        ],
+        'tagline' => [
+            'title'  => 'Eslogan',
+            'prompt' => 'Escribe un eslogan breve y atractivo para @name que capture su esencia y beneficios.',
+        ],
+        'summary' => [
+            'title'  => 'Resumen',
+            'prompt' => 'Resume las características y beneficios clave de @name en 50-60 palabras.',
+        ],
+        'headline' => [
+            'title'  => 'Titular del Producto',
+            'prompt' => 'Crea un titular llamativo para @name que destaque su punto de venta único.',
+        ],
+        'brief' => [
+            'title'  => 'Descripción Breve',
+            'prompt' => 'Escribe una descripción breve y concisa de @name, enfocándote en sus ventajas clave y público objetivo.',
+        ],
+        'elevator' => [
+            'title'  => 'Pitch de Producto',
+            'prompt' => 'Redacta un breve pitch para @name, resumiendo su propósito, beneficios y punto de venta único en 30-40 palabras.',
+        ],
     ],
 ];

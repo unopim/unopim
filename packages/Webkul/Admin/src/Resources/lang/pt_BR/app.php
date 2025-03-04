@@ -92,10 +92,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name já está em uso.',
-                'create-btn'     => 'Criar produto',
-                'title'          => 'Produtos',
-                'magic-ai-error' => 'Verifique as credenciais do Magic AI e certifique-se de que o modelo correto está selecionado.',
+                'already-taken'             => ':name já está em uso.',
+                'create-btn'                => 'Criar produto',
+                'title'                     => 'Produtos',
+                'magic-ai-error'            => 'Verifique as credenciais do Magic AI e certifique-se de que o modelo correto está selecionado.',
+                'magic-ai-validate-error'   => 'Por favor, verifique as credenciais do Magic AI.',
+                'magic-ai-validate-success' => 'Credenciais do Magic AI validadas com sucesso.',
 
                 'create' => [
                     'back-btn'                          => 'Voltar',
@@ -1894,11 +1896,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Adicionar Imagem',
-                'ai-add-image-btn'  => 'Magia AI',
-                'ai-btn-info'       => 'Gerar Imagem',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Apenas arquivos de imagem (.jpeg, .jpg, .png, ..) são permitidos.',
+                'add-image-btn'      => 'Adicionar Imagem',
+                'generate-with-ai'   => 'Gerar com IA',
+                'upload-from-device' => 'Fazer upload do dispositivo',
+                'cancel'             => 'Cancelar',
+                'ai-add-image-btn'   => 'Magia AI',
+                'ai-btn-info'        => 'Gerar Imagem',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Apenas arquivos de imagem (.jpeg, .jpg, .png, ..) são permitidos.',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',
@@ -1967,7 +1972,51 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => 'Prompt padrão',
             ],
+        ],
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Descrição Detalhada do Produto',
+            'prompt' => 'Escreva uma descrição abrangente de @name, incluindo suas características, benefícios, especificações técnicas e instruções de uso.',
+        ],
+        'overview' => [
+            'title'  => 'Visão Geral do Produto',
+            'prompt' => 'Crie uma visão geral detalhada de @name, destacando suas principais características, vantagens e público-alvo como @brand e @color.',
+        ],
+        'features' => [
+            'title'  => 'Características e Benefícios do Produto',
+            'prompt' => 'Liste as principais características e benefícios de @name, explicando como eles agregam valor à vida do cliente.',
+        ],
+        'technical' => [
+            'title'  => 'Especificações Técnicas',
+            'prompt' => 'Forneça uma lista detalhada de especificações técnicas de @name, incluindo dimensões, materiais e compatibilidade.',
+        ],
+        'care' => [
+            'title'  => 'Cuidados e Manutenção',
+            'prompt' => 'Escreva um guia sobre como cuidar e manter @name, incluindo dicas para limpeza, armazenamento e solução de problemas.',
+        ],
+        'tagline' => [
+            'title'  => 'Slogan',
+            'prompt' => 'Crie um slogan atraente e conciso para @name que capture sua essência e benefícios.',
+        ],
+        'summary' => [
+            'title'  => 'Resumo do Produto',
+            'prompt' => 'Resuma as principais características e benefícios de @name em 50-60 palavras.',
+        ],
+        'headline' => [
+            'title'  => 'Manchete do Produto',
+            'prompt' => 'Crie uma manchete chamativa para @name que destaque seu diferencial.',
+        ],
+        'brief' => [
+            'title'  => 'Descrição Breve',
+            'prompt' => 'Escreva uma descrição breve e concisa de @name, focando em suas principais vantagens e público-alvo.',
+        ],
+        'elevator' => [
+            'title'  => 'Elevator Pitch',
+            'prompt' => 'Crie um pitch rápido para @name, resumindo seu propósito, benefícios e diferencial em 30-40 palavras.',
         ],
     ],
 ];
