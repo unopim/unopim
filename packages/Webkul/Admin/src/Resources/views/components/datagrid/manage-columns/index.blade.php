@@ -202,6 +202,30 @@
 
                     applied: null,
                     selectedColumns: [],
+                    properties: [
+                        {
+                            'code': 'attribute_family',
+                            'label': 'Attribute Family',
+                        }, {
+                            'code': 'status',
+                            'label': 'Status',
+                        }, {
+                            'code': 'parent',
+                            'label': 'Parent',
+                        }, {
+                            'code': 'product_id',
+                            'label': 'Product ID',
+                        }, {
+                            'code': 'type',
+                            'label': 'Type',
+                        }, {
+                            'code': 'created_at',
+                            'label': 'Created At',
+                        }, {
+                            'code': 'updated_at',
+                            'label': 'Updated At',
+                        },
+                    ],
                     columnList: [],
                     viewedColumns: [],
                     currentPage: 1,
@@ -267,7 +291,7 @@
                         .then(({
                             data
                         }) => {
-                            this.columnList = data.options;
+                            this.columnList = [...this.properties, ...data.options];
                             this.totalPages = data.lastPage;
                             this.loading = false;
                         });

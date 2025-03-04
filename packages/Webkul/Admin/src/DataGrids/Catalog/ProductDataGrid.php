@@ -694,6 +694,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             $record = $this->sanitizeRow($record);
 
             foreach ($this->columns as $column) {
+                if (in_array($column->index, $this->attributeColumns)) {
+                    continue;
+                }
+
                 if ($closure = $column->closure) {
                     $record->{$column->index} = $closure($record);
 
