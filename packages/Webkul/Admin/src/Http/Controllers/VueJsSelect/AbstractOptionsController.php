@@ -5,7 +5,12 @@ namespace Webkul\Admin\Http\Controllers\VueJsSelect;
 use Illuminate\Database\Eloquent\Model;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Attribute\Repositories\AttributeRepository;
+use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\Core\Eloquent\TranslatableModel;
+use Webkul\Core\Repositories\ChannelRepository;
+use Webkul\Core\Repositories\CurrencyRepository;
+use Webkul\Core\Repositories\LocaleRepository;
+
 
 class AbstractOptionsController extends Controller
 {
@@ -16,12 +21,21 @@ class AbstractOptionsController extends Controller
      */
     public function __construct(
         protected AttributeRepository $attributeRepository,
+        protected LocaleRepository $localeRepository,
+        protected CurrencyRepository $currencyRepository,
+        protected ChannelRepository $channelRepository,
+        protected CategoryFieldRepository $categoryFieldRepository
     ) {}
 
     protected function getEntityRepository($entityName)
     {
         return match ($entityName) {
-            'attributes'         => $this->attributeRepository,
+            'attributes'      => $this->attributeRepository,
+            'locale'          => $this->localeRepository,
+            'currency'        => $this->currencyRepository,
+            'channel'         => $this->channelRepository,
+            'category_fields' => $this->categoryFieldRepository,
+
             default              => throw new \Exception('Not implemented for '.$entityName)
         };
 

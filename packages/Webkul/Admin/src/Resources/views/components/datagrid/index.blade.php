@@ -147,6 +147,7 @@
                             this.applied.filters = currentDatagrid.applied.filters;
 
                             this.applied.managedColumns = currentDatagrid.applied.managedColumns;
+                            this.applied.manageableColumn = currentDatagrid.applied.manageableColumn;
 
                             if (urlParams.has('search')) {
                                 let searchAppliedColumn = this.findAppliedColumn('all');
@@ -192,6 +193,7 @@
                     });
 
                     params.managedColumns = this.applied.managedColumns;
+                    params.manageableColumn = this.applied.manageableColumn;
 
 
                     this.isLoading = true;
@@ -214,6 +216,7 @@
                                 search_placeholder,
                                 records,
                                 meta,
+                                manageableColumn,
                                 managedColumns
                             } = response.data;
 
@@ -232,6 +235,7 @@
                             this.available.searchPlaceholder = search_placeholder;
 
                             this.applied.managedColumns = managedColumns;
+                            this.available.manageableColumn = manageableColumn;
 
                             this.setCurrentSelectionMode();
 

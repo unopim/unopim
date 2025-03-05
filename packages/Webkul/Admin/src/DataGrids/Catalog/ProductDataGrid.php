@@ -11,7 +11,6 @@ use Webkul\Admin\Traits\AttributeColumnTrait;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Services\AttributeService;
 use Webkul\Core\Repositories\ChannelRepository;
-use Webkul\DataGrid\Column;
 use Webkul\DataGrid\Contracts\ExportableInterface;
 use Webkul\DataGrid\DataGrid;
 use Webkul\ElasticSearch\Enums\FilterOperators;
@@ -59,6 +58,11 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     ];
 
     /**
+     * {@inheritdoc}
+     */
+    protected bool $manageableColumn = true;
+
+    /**
      * Constructor for the class.
      *
      * @return void
@@ -79,6 +83,13 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     public function prepareQueryBuilder()
     {
+        $weight = 330.0000;
+
+        $formatter = new \NumberFormatter('de_DE', \NumberFormatter::DECIMAL);
+        $formatter->setAttribute(\NumberFormatter::FRACTION_DIGITS, 1);
+
+        dd($formatter->format($weight));
+
         $tablePrefix = DB::getTablePrefix();
 
         $this->prepareQuery = ProductQueryBuilderFactory::make()->prepareQueryBuilder();
@@ -89,25 +100,25 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             $join->on('attribute_family_name.attribute_family_id', '=', 'af.id')
                 ->where('attribute_family_name.locale', '=', core()->getRequestedLocaleCode());
         })
-            ->select(
-                'products.sku',
-                'products.id as product_id',
-                'products.status',
-                'products.type',
-                'products.updated_at',
-                'parent_products.sku as parent',
-                DB::raw('
-                    COALESCE(`products`.`values`, `parent_products`.`values`) as raw_values
-                '),
-                DB::raw('
-                    CASE 
-                        WHEN '.$tablePrefix.'attribute_family_name.name IS NULL 
-                            OR CHAR_LENGTH(TRIM('.$tablePrefix.'attribute_family_name.name)) < 1 
-                        THEN CONCAT("[", '.$tablePrefix.'af.code, "]") 
-                        ELSE '.$tablePrefix.'attribute_family_name.name 
-                    END as attribute_family
-                ')
-            );
+        ->select(
+            'products.sku',
+            'products.id as product_id',
+            'products.status',
+            'products.type',
+            'products.updated_at',
+            'parent_products.sku as parent',
+            DB::raw('
+                COALESCE(`products`.`values`, `parent_products`.`values`) as raw_values
+            '),
+            DB::raw('
+                CASE 
+                    WHEN '.$tablePrefix.'attribute_family_name.name IS NULL 
+                        OR CHAR_LENGTH(TRIM('.$tablePrefix.'attribute_family_name.name)) < 1 
+                    THEN CONCAT("[", '.$tablePrefix.'af.code, "]") 
+                    ELSE '.$tablePrefix.'attribute_family_name.name 
+                END as attribute_family
+            ')
+        );
 
         return $queryBuilder;
     }
@@ -230,8 +241,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     public function prepareColumns()
     {
-        $managedColumns = request()->get('managedColumns');
-        $this->defaultColumns = $managedColumns ?? $this->defaultColumns;
+        $this->managedColumns = request()->get('managedColumns', []);
+        $this->defaultColumns = !empty($this->managedColumns)
+            ? $this->managedColumns
+            : $this->defaultColumns;
 
         $propertyColumns = $this->getPropertyColumns();
 
@@ -752,7 +765,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'mass_actions'        => $this->massActions,
             'search_placeholder'  => __($this->searchPlaceholder),
             'records'             => $paginator['data'],
-            'managedColumns'      => request()->get('managedColumns'),
+            'manageableColumn'   => $this->manageableColumn,
+            'managedColumns'     => $this->managedColumns,
             'meta'                => [
                 'primary_column'   => $this->primaryColumn,
                 'default_order'    => $this->sortColumn,

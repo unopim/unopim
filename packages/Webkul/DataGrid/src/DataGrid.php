@@ -86,6 +86,16 @@ abstract class DataGrid
     protected bool $exportable = false;
 
     /**
+     * Manageable column.
+     */
+    protected bool $manageableColumn = false;
+
+    /**
+     * Managed columns.
+     */
+    protected $managedColumns = [];
+
+    /**
      * Export meta information.
      */
     protected mixed $exportFile = null;
@@ -425,6 +435,8 @@ abstract class DataGrid
             'columns'            => $this->columns,
             'actions'            => $this->actions,
             'mass_actions'       => $this->massActions,
+            'manageableColumn'   => $this->manageableColumn,
+            'managedColumns'     => $this->managedColumns,
             'search_placeholder' => __($this->searchPlaceholder),
             'records'            => $paginator['data'],
             'meta'               => [
