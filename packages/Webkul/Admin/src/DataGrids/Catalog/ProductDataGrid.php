@@ -475,7 +475,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     {
         $this->queryBuilder = $this->queryBuilder->addSelect('products.values', 'af.code as attribute_family');
 
-        $gridData = $this->queryBuilder->paginate(
+        $gridData = ! empty($parameters['productIds']) ? $this->queryBuilder->get() : $this->queryBuilder->paginate(
             perPage: $parameters['pagination']['per_page'] ?? $this->itemsPerPage,
             page: $parameters['pagination']['page'] ?? 1
         );

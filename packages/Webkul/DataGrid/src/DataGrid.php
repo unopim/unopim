@@ -215,9 +215,10 @@ abstract class DataGrid
             'pagination'  => ['sometimes', 'required', 'array'],
             'export'      => ['sometimes', 'required', 'boolean'],
             'format'      => ['sometimes', 'required', 'in:csv,xls,xlsx'],
+            'productIds'  => ['sometimes', 'array'],
         ]);
 
-        return request()->only(['filters', 'sort', 'pagination', 'export', 'format']);
+        return request()->only(['filters', 'sort', 'pagination', 'export', 'format', 'productIds']);
     }
 
     /**
@@ -334,9 +335,12 @@ abstract class DataGrid
          */
         $requestedParams = $this->validatedRequest();
 
-        $this->queryBuilder = $this->processRequestedFilters($requestedParams['filters'] ?? []);
-
-        $this->queryBuilder = $this->processRequestedSorting($requestedParams['sort'] ?? []);
+        if (! empty($requestedParams['productIds'])) {
+            $this->queryBuilder->whereIn('products.id', $requestedParams['productIds']);
+        } else {
+            $this->queryBuilder = $this->processRequestedFilters($requestedParams['filters'] ?? []);
+            $this->queryBuilder = $this->processRequestedSorting($requestedParams['sort'] ?? []);
+        }
 
         /**
          * The `export` parameter is validated as a boolean in the `validatedRequest`. An `empty` function will not work,
