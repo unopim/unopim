@@ -212,8 +212,7 @@ class SimpleProductController extends ProductController
         }
 
         $data = request()->only([
-            'parent',
-            'family',
+            'status',
             'additional',
             'values',
         ]);
@@ -221,11 +220,11 @@ class SimpleProductController extends ProductController
         try {
             $product = $this->findProductOr404($sku);
 
-            Event::dispatch('catalog.product.patch.update.before', $product->id);
+            Event::dispatch('catalog.product.update.before', $product->id);
 
             $product = $this->patchProduct($product, $data);
 
-            Event::dispatch('catalog.product.patch.update.after', $product);
+            Event::dispatch('catalog.product.update.after', $product);
 
             return $this->successResponse(
                 trans('admin::app.catalog.products.update-success'),

@@ -2,6 +2,7 @@
 
 namespace Webkul\AdminApi\Http\Controllers\API\Catalog;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
@@ -142,20 +143,21 @@ class ProductController extends ApiController
      */
     public function patchProduct(Product $product, array $data)
     {
-        foreach ($data as $key => $value) {
-            if (property_exists($product, $key)) {
-                $product->$key = $value;
+        foreach (['additional', 'status'] as $key) {
+            if (isset($data[$key])) {
+                $product->{$key} = $data[$key];
             }
         }
 
-        if (isset($data['values'])) {
-            if (is_string($product->values)) {
-                $existingValues = json_decode($product->values, true) ?? [];
-            } else {
-                $existingValues = $product->values ?? [];
-            }
+        $attributes = $product->getEditableAttributes()
+            ->where('enable_wysiwyg', '==', 1)
+            ->where('type', '==', 'textarea')
+            ->keyBy('code');
 
-            $updatedValues = $this->mergeValues($existingValues, $data['values']);
+        if (isset($data['values'])) {
+            $existingValues = is_string($product->values) ? json_decode($product->values, true) ?? [] : $product->values ?? [];
+
+            $updatedValues = $this->mergeValues($existingValues, $data['values'], $attributes);
 
             $product->values = $updatedValues;
         }
@@ -165,15 +167,20 @@ class ProductController extends ApiController
         return $product;
     }
 
-    private function mergeValues(array $existing, array $new)
+    private function mergeValues(array $existing, array $new, Collection $attributes)
     {
         foreach ($new as $key => $value) {
             if (is_array($value) && isset($existing[$key]) && is_array($existing[$key])) {
+                $existing[$key] = $this->mergeValues($existing[$key], $value, $attributes);
 
-                $existing[$key] = $this->mergeValues($existing[$key], $value);
-            } else {
-                $existing[$key] = $value;
+                continue;
             }
+
+            if (isset($attributes[$key])) {
+                $value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+            }
+
+            $existing[$key] = $value;
         }
 
         return $existing;

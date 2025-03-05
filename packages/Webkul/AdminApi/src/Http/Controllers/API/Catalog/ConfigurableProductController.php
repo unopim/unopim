@@ -166,11 +166,9 @@ class ConfigurableProductController extends ProductController
     public function partialUpdate(string $sku)
     {
         $validator = Validator::make(request()->all(), [
-            'parent'            => ['nullable', 'string'],
-            'family'            => ['nullable', 'string'],
+            'status'            => ['nullable', 'boolean'],
             'additional'        => ['nullable', 'array'],
             'values'            => ['nullable', 'array'],
-            'values.common.sku' => ['required'],
         ]);
 
         if ($validator->fails()) {
@@ -178,16 +176,19 @@ class ConfigurableProductController extends ProductController
         }
 
         $data = request()->only([
-            'parent',
-            'family',
+            'status',
             'additional',
             'values',
-            'super_attributes',
-            'variants',
         ]);
+
         try {
             $product = $this->findProductOr404($sku);
+
+            Event::dispatch('catalog.product.update.before', $product->id);
+
             $product = $this->patchProduct($product, $data);
+
+            Event::dispatch('catalog.product.update.after', $product);
 
             return $this->successResponse(
                 trans('admin::app.catalog.products.update-success'),
