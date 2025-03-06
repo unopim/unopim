@@ -41,7 +41,7 @@ class StatusFilter extends AbstractPropertyFilter
         }
 
         switch ($operator) {
-            case Operators::IN_LIST:
+            case FilterOperators::IN:
                 $this->queryBuilder->whereIn(sprintf('%s.%s', $this->getSearchTablePath($options), $property), $value);
                 break;
         }

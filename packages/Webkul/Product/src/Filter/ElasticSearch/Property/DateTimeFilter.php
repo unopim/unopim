@@ -60,8 +60,8 @@ class DateTimeFilter extends AbstractPropertyFilter
                 $clause = [
                     'range' => [
                         $property => [
-                            'gte' => $this->getFormattedDateTime($property, $values[0]),
-                            'lte' => $this->getFormattedDateTime($property, $values[1]),
+                            'gte' => $this->getFormattedDateTime($property, ($values[0] ?? '').' 00:00:01'),
+                            'lte' => $this->getFormattedDateTime($property, ($values[1] ?? '').' 23:59:59'),
                         ],
                     ],
                 ];

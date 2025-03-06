@@ -216,7 +216,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'created_at' => [
                 'index'      => 'created_at',
                 'label'      => trans('admin::app.catalog.products.index.datagrid.created-at'),
-                'type'       => 'datetime',
+                'type'       => 'date_range',
                 'searchable' => false,
                 'filterable' => true,
                 'sortable'   => true,
@@ -224,7 +224,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'updated_at' => [
                 'index'      => 'updated_at',
                 'label'      => trans('admin::app.catalog.products.index.datagrid.updated-at'),
-                'type'       => 'datetime',
+                'type'       => 'date_range',
                 'searchable' => false,
                 'filterable' => true,
                 'sortable'   => true,

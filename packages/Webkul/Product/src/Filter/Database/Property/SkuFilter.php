@@ -42,11 +42,11 @@ class SkuFilter extends AbstractPropertyFilter
         }
 
         switch ($operator) {
-            case Operators::IN_LIST:
+            case FilterOperators::IN:
                 $this->queryBuilder->whereIn(sprintf('%s.%s', $this->getSearchTablePath($options), $property), $value);
 
                 break;
-            case Operators::CONTAINS:
+            case FilterOperators::CONTAINS:
                 $this->queryBuilder->where(function ($query) use ($options, $property, $value) {
                     foreach ($value as $val) {
                         $escapedValue = QueryString::escapeValue($val);
