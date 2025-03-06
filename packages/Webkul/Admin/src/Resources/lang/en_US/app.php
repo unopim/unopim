@@ -148,6 +148,8 @@ return [
                     'update-status'          => 'Update Status',
                     'parent'                 => 'Parent',
                     'parent-identifier'      => 'Parent: :sku',
+                    'created-at'             => 'Created At',
+                    'updated-at'             => 'Updated At',
                 ],
             ],
 

@@ -194,8 +194,6 @@
         app.component('v-datagrid-manage-columns', {
             template: '#v-datagrid-manage-columns-template',
 
-            props: ['src', 'datagridId'],
-
             data() {
                 return {
                     loading: false,
@@ -214,11 +212,7 @@
 
             computed: {
                 availableColumns: function() {
-                    return this.columnList.filter((column) => {
-                        return !this.selectedColumns.find((selectedColumn) => {
-                            return selectedColumn.code === column.code;
-                        });
-                    });
+                    return this.columnList;
                 },
             },
 
@@ -252,7 +246,8 @@
 
                 getColumnsList() {
                     const params = {
-                        entityName: 'attributes',
+                        entityName: this.$parent.available.meta.managedColumn.entityName || 'attributes',
+                        source: this.$parent.available.meta.managedColumn.source || 'product',
                         page: this.currentPage,
                         limit: this.limit,
                         query: this.searchQuery,
@@ -260,14 +255,24 @@
 
                     this.loading = true;
 
+                    if (!this.$parent.available.meta.managedColumn.route) {
+                        this.columnList = this.$parent.available.columns;
+                        this.loading = false;
+                    }
+
                     this.$axios
-                        .get('{{ route('admin.vue_js_select.select.options') }}', {
+                        .get(this.$parent.available.meta.managedColumn.route, {
                             params
                         })
                         .then(({
                             data
                         }) => {
-                            this.columnList = [...this.selectedColumns, ...data.options];
+                            this.columnList = data.options.filter((column) => {
+                                const columnKey = column.code || column.index; 
+                                return !this.selectedColumns.some((selectedColumn) => {
+                                    return selectedColumn.code == columnKey;
+                                });
+                            });
                             this.totalPages = data.lastPage;
                             this.loading = false;
                         });

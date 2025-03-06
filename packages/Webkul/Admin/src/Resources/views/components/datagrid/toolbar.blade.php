@@ -131,7 +131,7 @@
         <!-- Right Toolbar -->
         <div class="flex items-center gap-x-4">
             <!-- Manage Columns -->
-             <template v-if="available.manageableColumn">
+             <template v-if="available.meta.managedColumn?.enabled">
                 <x-admin::datagrid.manage-columns />
              </template>
             

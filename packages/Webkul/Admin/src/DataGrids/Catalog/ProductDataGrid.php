@@ -50,17 +50,22 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
     protected $defaultColumns = [
         'sku',
+        'image',
+        'name',
         'attribute_family',
-        'parent',
-        'product_id',
         'status',
         'type',
     ];
 
     /**
-     * {@inheritdoc}
+     * Manageable column.
      */
     protected bool $manageableColumn = true;
+
+    /**
+     * Managed columns.
+     */
+    protected $managedColumns = [];
 
     /**
      * Constructor for the class.
@@ -83,13 +88,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     public function prepareQueryBuilder()
     {
-        $weight = 330.0000;
-
-        $formatter = new \NumberFormatter('de_DE', \NumberFormatter::DECIMAL);
-        $formatter->setAttribute(\NumberFormatter::FRACTION_DIGITS, 1);
-
-        dd($formatter->format($weight));
-
         $tablePrefix = DB::getTablePrefix();
 
         $this->prepareQuery = ProductQueryBuilderFactory::make()->prepareQueryBuilder();
@@ -100,17 +98,17 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             $join->on('attribute_family_name.attribute_family_id', '=', 'af.id')
                 ->where('attribute_family_name.locale', '=', core()->getRequestedLocaleCode());
         })
-        ->select(
-            'products.sku',
-            'products.id as product_id',
-            'products.status',
-            'products.type',
-            'products.updated_at',
-            'parent_products.sku as parent',
-            DB::raw('
+            ->select(
+                'products.sku',
+                'products.id as product_id',
+                'products.status',
+                'products.type',
+                'products.updated_at',
+                'parent_products.sku as parent',
+                DB::raw('
                 COALESCE(`products`.`values`, `parent_products`.`values`) as raw_values
             '),
-            DB::raw('
+                DB::raw('
                 CASE 
                     WHEN '.$tablePrefix.'attribute_family_name.name IS NULL 
                         OR CHAR_LENGTH(TRIM('.$tablePrefix.'attribute_family_name.name)) < 1 
@@ -118,7 +116,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                     ELSE '.$tablePrefix.'attribute_family_name.name 
                 END as attribute_family
             ')
-        );
+            );
 
         return $queryBuilder;
     }
@@ -215,17 +213,17 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'filterable' => true,
                 'sortable'   => true,
             ],
-            'updated_at' => [
-                'index'      => 'updated_at',
-                'label'      => trans('admin::app.catalog.products.index.datagrid.updated-at'),
+            'created_at' => [
+                'index'      => 'created_at',
+                'label'      => trans('admin::app.catalog.products.index.datagrid.created-at'),
                 'type'       => 'datetime',
                 'searchable' => false,
                 'filterable' => true,
                 'sortable'   => true,
             ],
-            'created_at' => [
-                'index'      => 'created_at',
-                'label'      => trans('admin::app.catalog.products.index.datagrid.created-at'),
+            'updated_at' => [
+                'index'      => 'updated_at',
+                'label'      => trans('admin::app.catalog.products.index.datagrid.updated-at'),
                 'type'       => 'datetime',
                 'searchable' => false,
                 'filterable' => true,
@@ -242,7 +240,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     public function prepareColumns()
     {
         $this->managedColumns = request()->get('managedColumns', []);
-        $this->defaultColumns = !empty($this->managedColumns)
+        $this->defaultColumns = ! empty($this->managedColumns)
             ? $this->managedColumns
             : $this->defaultColumns;
 
@@ -765,8 +763,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'mass_actions'        => $this->massActions,
             'search_placeholder'  => __($this->searchPlaceholder),
             'records'             => $paginator['data'],
-            'manageableColumn'   => $this->manageableColumn,
-            'managedColumns'     => $this->managedColumns,
             'meta'                => [
                 'primary_column'   => $this->primaryColumn,
                 'default_order'    => $this->sortColumn,
@@ -777,6 +773,11 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'per_page'         => $paginator['per_page'],
                 'current_page'     => $paginator['current_page'],
                 'last_page'        => $paginator['last_page'],
+                'managedColumn'    => [
+                    'enabled' => $this->manageableColumn,
+                    'columns' => $this->managedColumns,
+                    'route'   => route('admin.datagrid.available_columns'),
+                ],
             ],
         ];
     }

@@ -11,7 +11,6 @@ use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Repositories\CurrencyRepository;
 use Webkul\Core\Repositories\LocaleRepository;
 
-
 class AbstractOptionsController extends Controller
 {
     const DEFAULT_PER_PAGE = 20;

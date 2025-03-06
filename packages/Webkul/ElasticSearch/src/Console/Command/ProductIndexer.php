@@ -62,15 +62,15 @@ class ProductIndexer extends Command
                 try {
                     ElasticSearch::indices()->create([
                         'index' => $productIndex,
-                        'body' => [
-                            'mappings' => $this->getUnopimProductMapping()
+                        'body'  => [
+                            'mappings' => $this->getUnopimProductMapping(),
                         ],
                     ]);
 
-                    $this->info($productIndex . ' index recreated successfully.');
-                    Log::channel('elasticsearch')->info($productIndex . ' index recreated successfully.');
+                    $this->info($productIndex.' index recreated successfully.');
+                    Log::channel('elasticsearch')->info($productIndex.' index recreated successfully.');
                 } catch (\Exception $e) {
-                    Log::channel('elasticsearch')->error('Exception while recreating ' . $productIndex . ' index.', [
+                    Log::channel('elasticsearch')->error('Exception while recreating '.$productIndex.' index.', [
                         'error' => $e->getMessage(),
                     ]);
                     throw $e;
@@ -244,35 +244,34 @@ class ProductIndexer extends Command
         return $elasticProduct;
     }
 
-
     private function getUnopimProductMapping()
     {
         return [
             'properties' => [
                 'attribute_family' => [
                     'properties' => [
-                        'code' => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
-                        'id' => ['type' => 'long'],
-                        'name' => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
-                        'status' => ['type' => 'long'],
+                        'code'         => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
+                        'id'           => ['type' => 'long'],
+                        'name'         => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
+                        'status'       => ['type' => 'long'],
                         'translations' => [
                             'properties' => [
                                 'attribute_family_id' => ['type' => 'long'],
-                                'id' => ['type' => 'long'],
-                                'locale' => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
-                                'name' => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
+                                'id'                  => ['type' => 'long'],
+                                'locale'              => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
+                                'name'                => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
                             ],
                         ],
                     ],
                 ],
                 'attribute_family_id' => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
-                'created_at' => ['type' => 'date'],
-                'id' => ['type' => 'long'],
-                'sku' => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
-                'status' => ['type' => 'long'],
-                'type' => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
-                'updated_at' => ['type' => 'date'],
-                'values' => [
+                'created_at'          => ['type' => 'date'],
+                'id'                  => ['type' => 'long'],
+                'sku'                 => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
+                'status'              => ['type' => 'long'],
+                'type'                => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
+                'updated_at'          => ['type' => 'date'],
+                'values'              => [
                     'properties' => [
                         'channel_locale_specific' => [
                             'properties' => [

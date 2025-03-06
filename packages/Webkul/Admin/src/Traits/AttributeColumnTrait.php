@@ -55,8 +55,8 @@ trait AttributeColumnTrait
     protected function getBooleanOptions()
     {
         return [
-            ['label' => trans('Yes'), 'value' => true],
-            ['label' => trans('No'), 'value' => false],
+            ['label' => trans('admin::app.common.enable'), 'value' => true],
+            ['label' => trans('admin::app.common.disable'), 'value' => false],
         ];
     }
 

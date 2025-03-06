@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Webkul\Admin\Http\Controllers\DashboardController;
 use Webkul\Admin\Http\Controllers\DataGridController;
 use Webkul\Admin\Http\Controllers\MagicAIController;
+use Webkul\Admin\Http\Controllers\ManageColumnController;
 use Webkul\Admin\Http\Controllers\TinyMCEController;
 use Webkul\Admin\Http\Controllers\User\AccountController;
 use Webkul\Admin\Http\Controllers\User\SessionController;
@@ -29,9 +30,9 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
     Route::get('datagrid/look-up', [DataGridController::class, 'lookUp'])->name('admin.datagrid.look_up');
 
     /**
-     * Manage Columns routes.
+     * Available Columns routes.
      */
-    Route::post('datagrid/manage-columns', [DataGridController::class, 'manageColumns'])->name('admin.datagrid.manage_columns');
+    Route::get('datagrid/available-columns', [ManageColumnController::class, 'availableColumns'])->name('admin.datagrid.available_columns');
 
     /**
      * Tinymce file upload handler.

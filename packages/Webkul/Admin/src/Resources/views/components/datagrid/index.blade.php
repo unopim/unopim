@@ -146,8 +146,7 @@
 
                             this.applied.filters = currentDatagrid.applied.filters;
 
-                            this.applied.managedColumns = currentDatagrid.applied.managedColumns;
-                            this.applied.manageableColumn = currentDatagrid.applied.manageableColumn;
+                            this.available.meta = currentDatagrid.available.meta;
 
                             if (urlParams.has('search')) {
                                 let searchAppliedColumn = this.findAppliedColumn('all');
@@ -192,8 +191,8 @@
                         params.filters[column.index] = column.value;
                     });
 
-                    params.managedColumns = this.applied.managedColumns;
-                    params.manageableColumn = this.applied.manageableColumn;
+                    params.managedColumns = this.available.meta?.managedColumn?.columns;
+                    params.manageableColumn = this.available.meta?.managedColumn?.columns;
 
 
                     this.isLoading = true;
@@ -234,8 +233,8 @@
 
                             this.available.searchPlaceholder = search_placeholder;
 
-                            this.applied.managedColumns = managedColumns;
-                            this.available.manageableColumn = manageableColumn;
+                            // this.applied.managedColumns = meta?.managedColumn?.columns;
+                            // this.available.manageableColumn = meta?.managedColumn.enabled;
 
                             this.setCurrentSelectionMode();
 
@@ -543,7 +542,7 @@
                 },
 
                 managedColumns(columns) {
-                    this.applied.managedColumns = columns;
+                    this.available.meta.managedColumn.columns = columns;
                     this.get();
                 },
 
