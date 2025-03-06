@@ -118,13 +118,13 @@
             <!-- Powered By -->
             <div class="absolute bottom-6 inset-x-0 text-xs text-gray-800 dark:text-white font-medium flex flex-col items-center">
                 <div>
-                    @lang('admin::app.users.reset-password.create.powered-by', [
+                    @lang('admin::app.users.reset-password.powered-by', [
                         'unopim' => '<a class="text-violet-700 hover:underline" href="https://unopim.com/" target="_blank">Unopim</a>'
                     ])
                 </div>
                 <div>
                     <div class="text-xs text-gray-800 dark:text-white font-medium">
-                        @lang('admin::app.users.reset-password.create.open-source-project-by', [
+                        @lang('admin::app.users.reset-password.open-source-project-by', [
                             'webkul' => '<a class="text-violet-700 hover:underline" href="https://webkul.com/" target="_blank">Webkul</a>',
                         ])
                     </div>
