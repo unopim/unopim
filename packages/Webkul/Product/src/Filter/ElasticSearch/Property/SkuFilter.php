@@ -15,7 +15,7 @@ class SkuFilter extends AbstractPropertyFilter
 
     public function __construct(
         array $supportedProperties = [self::PROPERTY],
-        array $allowedOperators = [FilterOperators::IN]
+        array $allowedOperators = [FilterOperators::IN, FilterOperators::CONTAINS]
     ) {
         $this->allowedOperators = $allowedOperators;
         $this->supportedProperties = $supportedProperties;
@@ -53,13 +53,13 @@ class SkuFilter extends AbstractPropertyFilter
                 break;
 
             case FilterOperators::CONTAINS:
-                $escapedValue = QueryString::escapeValue(current((array) $value));
                 $clause = [
                     'query_string' => [
-                        'default_Property' => $property,
-                        'query'            => '*'.$escapedValue.'*',
+                        'default_field' => $property,
+                        'query'            => '*'.implode('* OR *', $value).'*',
                     ],
                 ];
+                
                 $this->queryBuilder::where($clause);
                 break;
         }

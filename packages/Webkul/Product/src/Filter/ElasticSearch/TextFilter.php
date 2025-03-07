@@ -43,7 +43,7 @@ class TextFilter extends AbstractElasticSearchAttributeFilter
             case FilterOperators::IN:
                 $clause = [
                     'terms' => [
-                        $attributePath => QueryString::escapeArrayValue($value),
+                        $attributePath => $value,
                     ],
                 ];
 
@@ -51,11 +51,10 @@ class TextFilter extends AbstractElasticSearchAttributeFilter
                 break;
 
             case FilterOperators::CONTAINS:
-                $escapedValue = QueryString::escapeValue(current((array) $value));
                 $clause = [
                     'query_string' => [
                         'default_field' => $attributePath,
-                        'query'         => '*'.$escapedValue.'*',
+                        'query'            => '*'.implode('* OR *', $value).'*',
                     ],
                 ];
 

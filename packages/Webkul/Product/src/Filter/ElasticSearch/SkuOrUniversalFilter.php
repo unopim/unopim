@@ -43,17 +43,7 @@ class SkuOrUniversalFilter extends AbstractElasticSearchAttributeFilter
 
             $clauses[] = [
                 'wildcard' => [
-                    $attributePath.'.keyword' => '*'.$escapedValue.'*',
-                ],
-            ];
-
-            $clauses[] = [
-                'query_string' => [
-                    'default_field'    => $attributePath,
-                    'query'            => '*'.$escapedValue.'*',
-                    'analyze_wildcard' => true,
-                    'default_operator' => 'AND',
-                    'fuzziness'        => 'AUTO',
+                    $attributePath => '*'.$escapedValue.'*',
                 ],
             ];
         }

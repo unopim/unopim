@@ -25,7 +25,7 @@
                     :style="typeStyles[flash.type]['icon']"
                 ></span>
 
-                @{{ flash.message }}
+                <span v-html="flash.message"></span>
             </p>
 
 			<span

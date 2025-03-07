@@ -13,24 +13,25 @@ class ResultCursorFactory implements CursorFactoryContract
     /**
      * {@inheritdoc}
      */
-    public static function createCursor($esQuery, array $options = []): ResultCursorContract
+    public static function createCursor($query, array $options = []): ResultCursorContract
     {
         $options = self::resolveOptions($options);
         $sort = ['id' => 'asc'];
-        $esQuery['size'] = $options['per_page'];
-        $esQuery['from'] = ($options['page'] * $options['per_page']) - $options['per_page'];
+        $query['track_total_hits'] = true;
+        $query['size'] = $options['per_page'];
+        $query['from'] = ($options['page'] * $options['per_page']) - $options['per_page'];
 
-        $esQuery['sort'] = isset($esQuery['sort']) ? array_merge($esQuery['sort'], $sort) : $sort;
-        $esQuery['stored_fields'] = [];
-        if (! isset($esQuery['query'])) {
-            $esQuery['query']['bool'] = new \stdClass;
+        $query['sort'] = isset($query['sort']) ? array_merge($query['sort'], $sort) : $sort;
+        $query['stored_fields'] = [];
+        if (! isset($query['query'])) {
+            $query['query']['bool'] = new \stdClass;
         }
 
         $requestParam = [
             'index' => $options['index'],
-            'body'  => $esQuery,
+            'body'  => $query,
         ];
-
+        
         try {
             $results = Elasticsearch::search($requestParam);
         } catch (\Exception $e) {
@@ -39,14 +40,7 @@ class ResultCursorFactory implements CursorFactoryContract
             }
         }
 
-        $totalResults = Elasticsearch::count([
-            'index' => $options['index'],
-            'body'  => [
-                'query' => $esQuery['query'],
-            ],
-        ]);
-
-        $totalCount = $totalResults['count'];
+        $totalCount = $results['hits']['total']['value'] ?? 0;
 
         $ids = collect($results['hits']['hits'])->pluck('_id')->toArray();
 

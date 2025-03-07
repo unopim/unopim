@@ -10,7 +10,7 @@ class CategoryAdditionalDataMapper
      *
      * @return array
      */
-    protected function getCommonFields(array $data)
+    public function getCommonFields(array $data)
     {
         if (! is_array($data['additional_data'])) {
             return [];
@@ -29,7 +29,7 @@ class CategoryAdditionalDataMapper
      * @param  string  $locale
      * @return array
      */
-    protected function getLocaleSpecificFields(array $data, $locale)
+    public function getLocaleSpecificFields(array $data, $locale)
     {
         if (! is_array($data['additional_data'])) {
             return [];

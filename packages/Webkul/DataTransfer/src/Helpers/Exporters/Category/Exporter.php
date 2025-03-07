@@ -3,7 +3,6 @@
 namespace Webkul\DataTransfer\Helpers\Exporters\Category;
 
 use Illuminate\Support\Facades\Event;
-use Webkul\Category\Facades\CategoryAdditionalDataMapper as CategoryAdditionalDataMapperFacade;
 use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\Category\Validator\FieldValidator;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
@@ -83,8 +82,8 @@ class Exporter extends AbstractExporter
             $productCounts = $this->productCountsByCategory($rowData['code']);
 
             foreach ($locales as $locale) {
-                $commonFields = CategoryAdditionalDataMapperFacade::getCommonFields($rowData);
-                $localeSpecificFields = CategoryAdditionalDataMapperFacade::getLocaleSpecificFields($rowData, $locale);
+                $commonFields = $this->getCommonFields($rowData);
+                $localeSpecificFields = $this->getLocaleSpecificFields($rowData, $locale);
                 // Merge common and locale-specific fields before array_merge
                 $mergedFields = array_merge($commonFields, $localeSpecificFields);
                 $additionalData = $this->setFieldsAdditionalData($mergedFields, $filePath);
@@ -131,6 +130,44 @@ class Exporter extends AbstractExporter
         }
 
         return $fieldValues;
+    }
+
+    /**
+     * Retrieves common fields from the given data array.
+     *
+     *
+     * @return array
+     */
+    protected function getCommonFields(array $data)
+    {
+        if (! is_array($data['additional_data'])) {
+            return [];
+        }
+
+        if (! array_key_exists('additional_data', $data) || ! array_key_exists('common', $data['additional_data'])) {
+            return [];
+        }
+
+        return $data['additional_data']['common'];
+    }
+
+    /**
+     * Retrieves locale-specific fields from the given data array.
+     *
+     * @param  string  $locale
+     * @return array
+     */
+    protected function getLocaleSpecificFields(array $data, $locale)
+    {
+        if (! is_array($data['additional_data'])) {
+            return [];
+        }
+
+        if (! array_key_exists('additional_data', $data) || ! array_key_exists('locale_specific', $data['additional_data'])) {
+            return [];
+        }
+
+        return $data['additional_data']['locale_specific'][$locale] ?? [];
     }
 
     /**
