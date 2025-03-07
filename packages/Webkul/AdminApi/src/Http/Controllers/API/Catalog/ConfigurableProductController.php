@@ -166,9 +166,9 @@ class ConfigurableProductController extends ProductController
     public function partialUpdate(string $sku)
     {
         $validator = Validator::make(request()->all(), [
-            'status'            => ['nullable', 'boolean'],
-            'additional'        => ['nullable', 'array'],
-            'values'            => ['nullable', 'array'],
+            'status'     => ['nullable', 'boolean'],
+            'additional' => ['nullable', 'array'],
+            'values'     => ['nullable', 'array'],
         ]);
 
         if ($validator->fails()) {
@@ -184,6 +184,10 @@ class ConfigurableProductController extends ProductController
         try {
             $product = $this->findProductOr404($sku);
 
+            if (! empty($data[AbstractType::PRODUCT_VALUES_KEY])) {
+                $this->valuesValidator->validateOnlyExistingSectionData(data: $data[AbstractType::PRODUCT_VALUES_KEY], productId: $product->id);
+            }
+
             Event::dispatch('catalog.product.update.before', $product->id);
 
             $product = $this->patchProduct($product, $data);
@@ -195,6 +199,8 @@ class ConfigurableProductController extends ProductController
                 Response::HTTP_OK,
 
             );
+        } catch (ValidationException $e) {
+            return $this->validateErrorResponse($e->validator->errors()->messages());
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
         }

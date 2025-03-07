@@ -157,7 +157,7 @@ class ProductController extends ApiController
         if (isset($data['values'])) {
             $existingValues = is_string($product->values) ? json_decode($product->values, true) ?? [] : $product->values ?? [];
 
-            $updatedValues = $this->mergeValues($existingValues, $data['values'], $attributes);
+            $updatedValues = $this->mergeValues($existingValues, $data[ProductAbstractType::PRODUCT_VALUES_KEY], $attributes);
 
             $product->values = $updatedValues;
         }
