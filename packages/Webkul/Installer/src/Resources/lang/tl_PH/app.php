@@ -1,19 +1,19 @@
 <?php
 
 return [
-    'seeders'   => [
+    'seeders' => [
         'attribute' => [
             'attribute-families' => 'Pamantayan',
             'attribute-groups'   => [
-                'description'       => 'Pagsusuri',
-                'general'           => 'Pangkalahatan',
-                'inventories'       => 'Ala-ala',
-                'meta-description'  => 'Meta Paglalarawan',
-                'price'             => 'Presyo',
-                'technical'         => 'Teknikal',
-                'shipping'          => 'Pagpapadala',
+                'description'      => 'Pagsusuri',
+                'general'          => 'Pangkalahatan',
+                'inventories'      => 'Ala-ala',
+                'meta-description' => 'Meta Paglalarawan',
+                'price'            => 'Presyo',
+                'technical'        => 'Teknikal',
+                'shipping'         => 'Pagpapadala',
             ],
-            'attributes'         => [
+            'attributes' => [
                 'brand'                => 'Tatak',
                 'color'                => 'Kulay',
                 'cost'                 => 'Gastos',
@@ -43,7 +43,7 @@ return [
                 'weight'               => 'Timbang',
                 'width'                => 'Lapad',
             ],
-            'attribute-options'  => [
+            'attribute-options' => [
                 'black'  => 'Itim',
                 'green'  => 'Berde',
                 'l'      => 'L',
@@ -55,7 +55,7 @@ return [
                 'yellow' => 'Dilaw',
             ],
         ],
-        'category'  => [
+        'category' => [
             'categories' => [
                 'description' => 'Pangunahin kategorya pagsusuri',
                 'name'        => 'Pangunahing',
@@ -65,13 +65,13 @@ return [
                 'description' => 'Paglalarawan',
             ],
         ],
-        'cms'       => [
+        'cms' => [
             'pages' => [
-                'about-us'         => [
+                'about-us' => [
                     'content' => 'Tungkol sa amin pahina nilalaman',
                     'title'   => 'Tungkol sa amin',
                 ],
-                'contact-us'       => [
+                'contact-us' => [
                     'content' => 'Makipag-ugnayan sa amin pahina nilalaman',
                     'title'   => 'Makipag-ugnayan sa amin',
                 ],
@@ -79,23 +79,23 @@ return [
                     'content' => 'Serbisyo sa kustomer pahina nilalaman',
                     'title'   => 'Serbisyo sa kustomer',
                 ],
-                'payment-policy'   => [
+                'payment-policy' => [
                     'content' => 'Polisiya sa pagbabayad pahina nilalaman',
                     'title'   => 'Polisiya sa pagbabayad',
                 ],
-                'privacy-policy'   => [
+                'privacy-policy' => [
                     'content' => 'Patakaran sa privacy pahina nilalaman',
                     'title'   => 'Patakaran sa privacy',
                 ],
-                'refund-policy'    => [
+                'refund-policy' => [
                     'content' => 'Patakaran sa refund pahina nilalaman',
                     'title'   => 'Patakaran sa refund',
                 ],
-                'return-policy'    => [
+                'return-policy' => [
                     'content' => 'Patakaran sa pagbalik pahina nilalaman',
                     'title'   => 'Patakaran sa pagbalik',
                 ],
-                'shipping-policy'  => [
+                'shipping-policy' => [
                     'content' => 'Patakaran sa pagpapadala pahina nilalaman',
                     'title'   => 'Patakaran sa pagpapadala',
                 ],
@@ -103,18 +103,18 @@ return [
                     'content' => 'Tuntunin pahina nilalaman',
                     'title'   => 'Tuntunin',
                 ],
-                'terms-of-use'     => [
+                'terms-of-use' => [
                     'content' => 'Tuntunin ng paggamit pahina nilalaman',
                     'title'   => 'Tuntunin ng paggamit',
                 ],
-                'whats-new'        => [
+                'whats-new' => [
                     'content' => 'Ano ang bagong pahina nilalaman',
                     'title'   => 'Ano ang bagong',
                 ],
             ],
         ],
-        'core'      => [
-            'channels'   => [
+        'core' => [
+            'channels' => [
                 'meta-title'       => 'Demo store',
                 'meta-keywords'    => 'Demo store meta keywords',
                 'meta-description' => 'Demo store meta description',
@@ -136,7 +136,7 @@ return [
                 'USD' => 'United States dollar',
             ],
         ],
-        'customer'  => [
+        'customer' => [
             'customer-groups' => [
                 'general'   => 'Pangkalahatan',
                 'guest'     => 'Bisita',
@@ -148,32 +148,32 @@ return [
                 'name' => 'Pamantayan',
             ],
         ],
-        'shop'      => [
+        'shop' => [
             'theme-customizations' => [
-                'all-products'           => [
+                'all-products' => [
                     'name'    => 'Lahat ng produkto',
                     'options' => [
                         'title' => 'Lahat ng produkto',
                     ],
                 ],
-                'bold-collections'       => [
+                'bold-collections' => [
                     'content' => [
                         'btn-title'   => 'Tingnan lahat',
                         'description' => 'Galugarin ang aming mga bagong bold na koleksyon! Itaas ang iyong estilo na may mga draybo na disenyo at mga makulay na kulay. Tuklasin ang mga kamangha-manghang mga disenyo at draybo na kulay na nagdidirekta ng iyong aparador. Maghanda na upang yakapin ang hindi pangkaraniwan!',
                         'title'       => 'Maghanda para sa aming mga bagong bold na koleksyon!',
                     ],
-                    'name'    => 'Mga draybo na koleksyon',
+                    'name' => 'Mga draybo na koleksyon',
                 ],
                 'categories-collections' => [
                     'name' => 'Mga koleksyon ng kategorya',
                 ],
-                'featured-collections'   => [
+                'featured-collections' => [
                     'name'    => 'Mga tampok na koleksyon',
                     'options' => [
                         'title' => 'Mga tampok na produkto',
                     ],
                 ],
-                'footer-links'           => [
+                'footer-links' => [
                     'name'    => 'Mga link sa ibaba',
                     'options' => [
                         'about-us'         => 'Tungkol sa amin',
@@ -189,48 +189,48 @@ return [
                         'whats-new'        => 'Ano ang bagong',
                     ],
                 ],
-                'game-container'         => [
+                'game-container' => [
                     'content' => [
                         'sub-title-1' => 'Mga koleksyon namin',
                         'sub-title-2' => 'Mga koleksyon namin',
                         'title'       => 'Maglaro kasama ang aming mga bagong paglulunsad!',
                     ],
-                    'name'    => 'Laro container',
+                    'name' => 'Laro container',
                 ],
-                'image-carousel'         => [
+                'image-carousel' => [
                     'name'    => 'Image carousel',
                     'sliders' => [
                         'title' => 'Maghanda para sa isang bagong koleksyon',
                     ],
                 ],
-                'new-products'           => [
+                'new-products' => [
                     'name'    => 'Mga bagong produkto',
                     'options' => [
                         'title' => 'Mga bagong produkto',
                     ],
                 ],
-                'offer-information'      => [
+                'offer-information' => [
                     'content' => [
                         'title' => 'SIMULAN ANG 40% DISKON SA IYONG UNANG PAGBILI',
                     ],
                     'name' => 'Impormasyon sa alok',
                 ],
-                'services-content'       => [
+                'services-content' => [
                     'description' => [
                         'emi-available-info'   => 'Pondo ng pagpopondo nang walang dagdag na bayad ay magagamit sa lahat ng pangunahing mga credit card',
                         'free-shipping-info'   => 'Libre ang pagpapadala para sa lahat ng mga order',
                         'product-replace-info' => 'Madaling pagpapalit ng produkto!',
                         'time-support-info'    => 'Dedikadong suporta 24/7 sa pamamagitan ng chat at email',
                     ],
-                    'name'        => 'Nilalaman ng serbisyo',
-                    'title'       => [
+                    'name'  => 'Nilalaman ng serbisyo',
+                    'title' => [
                         'emi-available'   => 'EMI Magagamit',
                         'free-shipping'   => 'Libre ang pagpapadala',
                         'product-replace' => 'Pagpapalit ng produkto',
                         'time-support'    => 'Suporta 24/7',
                     ],
                 ],
-                'top-collections'        => [
+                'top-collections' => [
                     'content' => [
                         'sub-title-1' => 'Mga koleksyon namin',
                         'sub-title-2' => 'Mga koleksyon namin',
@@ -240,11 +240,11 @@ return [
                         'sub-title-6' => 'Mga koleksyon namin',
                         'title'       => 'Maghanda para sa isang laro sa aming mga bagong paglulunsad!',
                     ],
-                    'name'    => 'Pangunahing koleksyon',
+                    'name' => 'Pangunahing koleksyon',
                 ],
             ],
         ],
-        'user'      => [
+        'user' => [
             'roles' => [
                 'description' => 'Ang role na ito ay magkakaroon ng lahat ng mga access',
                 'name'        => 'Administrator',
@@ -306,17 +306,17 @@ return [
             ],
 
             'installation-processing' => [
-                'unopim'            => 'Pag-install ng UnoPim',
-                'unopim-info'       => 'Ang paglikha ng mga talahanayan sa database ay maaaring tumagal ng ilang minuto.',
-                'title'             => 'Proseso ng Pag-install',
+                'unopim'      => 'Pag-install ng UnoPim',
+                'unopim-info' => 'Ang paglikha ng mga talahanayan sa database ay maaaring tumagal ng ilang minuto.',
+                'title'       => 'Proseso ng Pag-install',
             ],
 
             'installation-completed' => [
-                'admin-panel'                   => 'Panel ng Administrador',
-                'unopim-forums'                 => 'Mga Forum ng UnoPim',
-                'explore-unopim-extensions'     => 'Galugarin ang Mga Extension ng UnoPim',
-                'title-info'                    => 'Ang UnoPim ay matagumpay na na-install.',
-                'title'                         => 'Pag-install Nakumpleto',
+                'admin-panel'               => 'Panel ng Administrador',
+                'unopim-forums'             => 'Mga Forum ng UnoPim',
+                'explore-unopim-extensions' => 'Galugarin ang Mga Extension ng UnoPim',
+                'title-info'                => 'Ang UnoPim ay matagumpay na na-install.',
+                'title'                     => 'Pag-install Nakumpleto',
             ],
 
             'ready-for-installation' => [
@@ -360,38 +360,19 @@ return [
                 'xml'         => 'XML',
             ],
 
-            'arabic'                    => 'Arabic',
-            'back'                      => 'Bumalik',
-            'unopim-info'               => 'Proyektong Komunidad',
-            'unopim-logo'               => 'UnoPim Logo',
-            'unopim'                    => 'UnoPim',
-            'bengali'                   => 'Bengali',
-            'chinese'                   => 'Chinese',
-            'continue'                  => 'Magpatuloy',
-            'dutch'                     => 'Dutch',
-            'english'                   => 'English',
-            'french'                    => 'French',
-            'german'                    => 'German',
-            'hebrew'                    => 'Hebrew',
-            'hindi'                     => 'Hindi',
-            'installation-description'  => 'Ang pag-install ng UnoPim ay binubuo ng ilang mga hakbang. Narito ang isang pangkalahatang-ideya:',
-            'wizard-language'           => 'Wika ng Wizard ng Pag-install',
-            'installation-info'         => 'Salamat sa pagdating!',
-            'installation-title'        => 'Maligayang pagdating sa Pag-install',
-            'italian'                   => 'Italian',
-            'japanese'                  => 'Japanese',
-            'persian'                   => 'Persian',
-            'polish'                    => 'Polish',
-            'portuguese'                => 'Portuguese',
-            'russian'                   => 'Russian',
-            'save-configuration'        => 'I-save ang Configuration',
-            'sinhala'                   => 'Sinhala',
-            'skip'                      => 'I-skip',
-            'spanish'                   => 'Spanish',
-            'title'                     => 'UnoPim Installation Wizard',
-            'turkish'                   => 'Turkish',
-            'ukrainian'                 => 'Ukrainian',
-            'webkul'                    => 'Webkul',
+            'back'                     => 'Bumalik',
+            'unopim-info'              => 'Proyektong Komunidad',
+            'unopim-logo'              => 'UnoPim Logo',
+            'unopim'                   => 'UnoPim',
+            'continue'                 => 'Magpatuloy',
+            'installation-description' => 'Ang pag-install ng UnoPim ay binubuo ng ilang mga hakbang. Narito ang isang pangkalahatang-ideya:',
+            'wizard-language'          => 'Wika ng Wizard ng Pag-install',
+            'installation-info'        => 'Salamat sa pagdating!',
+            'installation-title'       => 'Maligayang pagdating sa Pag-install',
+            'save-configuration'       => 'I-save ang Configuration',
+            'skip'                     => 'I-skip',
+            'title'                    => 'UnoPim Installation Wizard',
+            'webkul'                   => 'Webkul',
         ],
     ],
 ];
