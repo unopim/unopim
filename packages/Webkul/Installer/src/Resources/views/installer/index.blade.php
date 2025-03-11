@@ -865,7 +865,7 @@
                                         </x-installer::form.control-group.label>
 
                                         <!-- Allowed Locales -->
-                                        @foreach ($locales as $key => $locale)
+                                        @foreach ($locales as $key)
                                             <x-installer::form.control-group class="flex gap-2.5 w-max !mb-0 p-1.5 cursor-pointer select-none">
                                                 @php
                                                     $selectedOption = ($key == config('app.locale'));
@@ -1100,7 +1100,7 @@
                                             :aria-label="trans('installer::app.installer.index.environment-configuration.default-locale')"
                                             :label="trans('installer::app.installer.index.environment-configuration.default-locale')"
                                         >
-                                            @foreach ($locales as $value => $label)
+                                            @foreach ($locales as $value)
                                                 <option value="{{ $value }}">
                                                     {{ Locale::getDisplayName($value, app()->getLocale()) }}
                                                 </option>
