@@ -225,7 +225,7 @@
                                                 name="model"
                                                 rules="required"
                                                 ::value="selectedModel"
-                                                v-model="ai.model"
+                                                v-model="selectedModel"
                                                 ::options="aiModels"
                                                 track-by="id"
                                                 label-by="label"
@@ -273,7 +273,7 @@
                                         <x-admin::form.control-group.control
                                             type="text"
                                             name="n"
-                                            rules="required"
+                                            rules="required|max_value:10|min_value:1"
                                             v-model="ai.n"
                                             :label="trans('admin::app.components.media.images.ai-generation.number-of-images')"
                                         />
