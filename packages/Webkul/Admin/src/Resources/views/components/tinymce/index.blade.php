@@ -397,7 +397,7 @@
                                 fillAttr: 'code',
                                 noMatchTemplate: "@lang('admin::app.common.no-match-found')",
                                 selectTemplate: (item) => `@${item.original.code}`,
-                                menuItemTemplate: (item) => `<div class="p-1.5 rounded-md text-base cursor-pointer transition-all max-sm:place-self-center">${item.original.name || item.original.code}</div>`,
+                                menuItemTemplate: (item) => `<div class="p-1.5 rounded-md text-base cursor-pointer transition-all max-sm:place-self-center">${item.original.name || '[' + item.original.code + ']'}</div>`,
                             });
                             
                             tribute.attach(this.$refs.promptInput);
