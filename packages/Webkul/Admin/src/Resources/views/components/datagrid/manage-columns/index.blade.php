@@ -4,7 +4,15 @@
     {{ $attributes }}
 >
     <div class="transparent-button ">
-        @lang('Manage Columns')
+        <div
+            class="relative inline-flex w-full max-w-max ltr:pl-3 rtl:pr-3 ltr:pr-5 rtl:pl-5 cursor-pointer select-none appearance-none items-center justify-between gap-x-1 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-900 px-1 py-1.5 text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:border-gray-400 dark:hover:border-gray-400 focus:outline-none focus:ring-2"
+        >
+            <span class="icon-manage-column text-2xl"></span>
+
+            <span>
+                @lang('admin::app.components.datagrid.toolbar.manage-columns.title')
+            </span>
+        </div>
     </div>
 </v-datagrid-manage-columns>
 
@@ -35,8 +43,10 @@
                                 <div
                                     class="relative inline-flex w-full max-w-max ltr:pl-3 rtl:pr-3 ltr:pr-5 rtl:pl-5 cursor-pointer select-none appearance-none items-center justify-between gap-x-1 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-900 px-1 py-1.5 text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:border-gray-400 dark:hover:border-gray-400 focus:outline-none focus:ring-2"
                                 >
+                                    <span class="icon-manage-column text-2xl"></span>
+
                                     <span>
-                                        @lang('Manage Columns')
+                                        @lang('admin::app.components.datagrid.toolbar.manage-columns.title')
                                     </span>
                                 </div>
 
@@ -48,7 +58,7 @@
                         <!-- Modal Header -->
                         <x-slot:header>
                             <p class="text-lg text-gray-800 dark:text-white font-bold">
-                                @lang('Manage Columns')
+                                @lang('admin::app.components.datagrid.toolbar.manage-columns.title')
                             </p>
                         </x-slot>
 
@@ -59,7 +69,7 @@
                                     <div class="flex flex-col gap-y-2">
                                         <div class="flex items-center justify-between">
                                             <p class="text-base text-gray-800 dark:text-white font-bold">
-                                                @lang('Available Columns')
+                                                @lang('admin::app.components.datagrid.toolbar.available-columns.title')
                                             </p>
                                         </div>
                                         <div v-if="loading" class="grid gap-y-2.5 pt-3 h-[calc(100vh-285px)] pb-[16px] pt-3 overflow-auto ">
@@ -127,7 +137,7 @@
                                     <div class="flex flex-col gap-y-2">
                                         <div class="flex items-center justify-between mt-2.5">
                                             <p class="text-base text-gray-800 dark:text-white font-bold">
-                                                @lang('Selected Columns')
+                                                @lang('admin::app.components.datagrid.toolbar.selected-columns.title')
                                             </p>
                                         </div>
 
@@ -181,7 +191,7 @@
                                 type="submit"
                                 class="primary-button"
                             >
-                                @lang('Apply')
+                                @lang('admin::app.components.datagrid.toolbar.apply-btn')
                             </button>
                         </x-slot>
                     </x-admin::modal>
@@ -197,8 +207,6 @@
             data() {
                 return {
                     loading: false,
-
-                    applied: null,
                     selectedColumns: [],
                     columnList: [],
                     viewedColumns: [],
@@ -276,18 +284,6 @@
                             this.totalPages = data.lastPage;
                             this.loading = false;
                         });
-                },
-
-                handleSearch() {
-                    if (this.debounceTimeout) {
-                        clearTimeout(this.debounceTimeout); // Clear the previous timeout
-                    }
-
-                    // Set a new timeout to call the API after 300ms of inactivity
-                    this.debounceTimeout = setTimeout(() => {
-                        this.currentPage = 1; // Reset to the first page when searching
-                        this.getColumnsList(); // Fetch data with the new search query
-                    }, 300);
                 },
 
                 previousPage() {

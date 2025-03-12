@@ -114,7 +114,7 @@
                                  >
                                     <template v-if="column.type === 'image'">
                                         <img 
-                                        :src="record[column.index] ? record[column.index] : '{{ unopim_asset('images/product-placeholders/size.svg') }}'" 
+                                        :src="record[column.index] ? record[column.index] : '{{ unopim_asset('images/placeholder.svg') }}'" 
                                         alt="Thumbnail" 
                                         width="74"
                                         height="74"

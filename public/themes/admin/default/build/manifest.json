@@ -1,11 +1,11 @@
 {
   "src/Resources/assets/css/app.css": {
-    "file": "assets/app-53495778.css",
+    "file": "assets/app-77386b41.css",
     "isEntry": true,
     "src": "src/Resources/assets/css/app.css"
   },
   "src/Resources/assets/fonts/unopim-admin.woff": {
-    "file": "assets/unopim-admin-29e10bc4.woff",
+    "file": "assets/unopim-admin-5931adbe.woff",
     "src": "src/Resources/assets/fonts/unopim-admin.woff"
   },
   "src/Resources/assets/images/dark_logo.svg": {
@@ -60,6 +60,10 @@
     "file": "assets/logo-aaa4be89.svg",
     "src": "src/Resources/assets/images/logo.svg"
   },
+  "src/Resources/assets/images/placeholder.svg": {
+    "file": "assets/placeholder-344299ce.svg",
+    "src": "src/Resources/assets/images/placeholder.svg"
+  },
   "src/Resources/assets/images/product-placeholders/front.svg": {
     "file": "assets/front-93490c30.svg",
     "src": "src/Resources/assets/images/product-placeholders/front.svg"
@@ -100,7 +104,7 @@
     "css": [
       "assets/app-9e2a2734.css"
     ],
-    "file": "assets/app-33959b5f.js",
+    "file": "assets/app-6c87633d.js",
     "isEntry": true,
     "src": "src/Resources/assets/js/app.js"
   }
