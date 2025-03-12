@@ -58,7 +58,7 @@
                         <!-- Modal Header -->
                         <x-slot:header>
                             <p class="text-lg text-gray-800 dark:text-white font-bold">
-                                @lang('admin::app.components.datagrid.toolbar.manage-columns.title')
+                                @lang('admin::app.components.datagrid.manage-columns.title')
                             </p>
                         </x-slot>
 
@@ -69,7 +69,7 @@
                                     <div class="flex flex-col gap-y-2">
                                         <div class="flex items-center justify-between">
                                             <p class="text-base text-gray-800 dark:text-white font-bold">
-                                                @lang('admin::app.components.datagrid.toolbar.available-columns.title')
+                                                @lang('admin::app.components.datagrid.manage-columns.available-columns')
                                             </p>
                                         </div>
                                         <div v-if="loading" class="grid gap-y-2.5 pt-3 h-[calc(100vh-285px)] pb-[16px] pt-3 overflow-auto ">
@@ -137,7 +137,7 @@
                                     <div class="flex flex-col gap-y-2">
                                         <div class="flex items-center justify-between mt-2.5">
                                             <p class="text-base text-gray-800 dark:text-white font-bold">
-                                                @lang('admin::app.components.datagrid.toolbar.selected-columns.title')
+                                                @lang('admin::app.components.datagrid.manage-columns.selected-columns')
                                             </p>
                                         </div>
 
@@ -191,7 +191,7 @@
                                 type="submit"
                                 class="primary-button"
                             >
-                                @lang('admin::app.components.datagrid.toolbar.apply-btn')
+                                @lang('admin::app.components.datagrid.manage-columns.apply-btn')
                             </button>
                         </x-slot>
                     </x-admin::modal>
