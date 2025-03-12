@@ -15,9 +15,10 @@ export default {
                     trigger: "@",
                     lookup: "key",
                     fillAttr: "value",
-                    containerClass: 'tribute-container bg-white border border-gray-300 px-4 py-2 rounded shadow-lg z-[99999] min-w-[210px] max-w-[360px] max-h-[50vh] overflow-y-auto',
+                    selectClass: 'highlighted-tribute-item',
+                    containerClass: 'tribute-container bg-white border border-gray-300 px-4 py-2 rounded shadow-lg z-[99999] min-w-[210px] max-w-[360px] max-h-[50vh] overflow-y-auto dark:bg-cherry-800 dark:text-white',
                     selectTemplate: (item) => `@${item.original.value}`,
-                    menuItemTemplate: (item) => `<div class="p-1.5 rounded-md text-base cursor-pointer transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center">${item.original.key}</div>`,
+                    menuItemTemplate: (item) => `<div class="p-1.5 rounded-md text-base cursor-pointer transition-all max-sm:place-self-center">${item.original.key}</div>`,
                     noMatchTemplate: null,
                 };
 

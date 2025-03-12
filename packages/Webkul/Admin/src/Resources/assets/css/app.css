@@ -418,6 +418,10 @@
     .CodeMirror {
         @apply !h-[calc(100vh-367px)]
     }
+
+    .highlighted-tribute-item {
+        @apply bg-violet-100 dark:bg-cherry-600 rounded-md;
+    }
 }
 
 .tox .tox-toolbar__group:last-child button {

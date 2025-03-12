@@ -121,7 +121,7 @@
                                     >
                                         <div class="flex flex-col">
                                             <div class="flex gap-1 p-3 border rounded-md text-sm">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" class="dark:invert">
                                                     <g clip-path="url(#clip0_3148_2242)"> <path fill-rule="evenodd" clip-rule="evenodd" d="M12.1484 9.31989L9.31995 12.1483L19.9265 22.7549L22.755 19.9265L12.1484 9.31989ZM12.1484 10.7341L10.7342 12.1483L13.5626 14.9767L14.9768 13.5625L12.1484 10.7341Z" fill="#27272A"/>
                                                         <path d="M11.0877 3.30949L13.5625 4.44748L16.0374 3.30949L14.8994 5.78436L16.0374 8.25924L13.5625 7.12124L11.0877 8.25924L12.2257 5.78436L11.0877 3.30949Z" fill="#27272A"/>
                                                         <path d="M2.39219 2.39217L5.78438 3.95197L9.17656 2.39217L7.61677 5.78436L9.17656 9.17655L5.78438 7.61676L2.39219 9.17655L3.95198 5.78436L2.39219 2.39217Z" fill="#27272A"/>
@@ -129,12 +129,12 @@
                                                     </g> 
                                                     <defs> 
                                                         <clipPath id="clip0_3148_2242">
-                                                            <rect width="24" height="24" fill="white"/>
+                                                            <rect width="24" height="24"/>
                                                         </clipPath> 
                                                     </defs> 
                                                 </svg>
 
-                                                <span class="text-gray-600 text-sm font-semibold">@lang('admin::app.components.media.images.generate-with-ai')</span>
+                                                <span class="text-gray-600 dark:text-slate-50 text-sm font-semibold">@lang('admin::app.components.media.images.generate-with-ai')</span>
                                             </div>
                                             
                                         </div>
@@ -150,7 +150,7 @@
                                             <div class="flex gap-1 p-3 border rounded-md text-sm">
                                                 <span class="icon-export text-xl"></span>
 
-                                                <span class="text-gray-600 text-sm font-semibold">@lang('admin::app.components.media.images.upload-from-device')</span>
+                                                <span class="text-gray-600 dark:text-slate-50 text-sm font-semibold">@lang('admin::app.components.media.images.upload-from-device')</span>
                                             </div>
                                             
                                         </div>
@@ -647,7 +647,7 @@
                                 fillAttr: 'code',
                                 noMatchTemplate: "@lang('admin::app.common.no-match-found')",
                                 selectTemplate: (item) => `@${item.original.code}`,
-                                menuItemTemplate: (item) => `<div class="p-1.5 rounded-md text-base cursor-pointer transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center">${item.original.name || item.original.code}</div>`,
+                                menuItemTemplate: (item) => `<div class="p-1.5 rounded-md text-base cursor-pointer transition-all max-sm:place-self-center">${item.original.name || item.original.code}</div>`,
                             });
                             
                             tribute.attach(this.$refs.imagePromptInput);
