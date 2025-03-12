@@ -710,6 +710,8 @@
                     params.resource_type = this.getResourceType();
                     params.field_type = 'image';
                     params.model = this.ai.model;
+                    params.channel = "{{ core()->getRequestedChannelCode() }}";
+                    params.locale = "{{ core()->getRequestedLocaleCode() }}";
 
                     this.$axios.post("{{ route('admin.magic_ai.image') }}", params)
                         .then(response => {

@@ -472,6 +472,8 @@
                         resource_id: this.resourceId,
                         resource_type: this.getResourceType(),
                         field_type: 'tinymce',
+                        locale: "{{ core()->getRequestedLocaleCode() }}",
+                        channel: "{{ core()->getRequestedChannelCode() }}",
                     })
                         .then(response => {
                             this.isLoading = false;

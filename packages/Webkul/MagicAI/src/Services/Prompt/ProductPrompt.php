@@ -37,12 +37,12 @@ class ProductPrompt extends AbstractPrompt
         $product = $this->getProductById($productId);
         $productData = $product->toArray();
         $locale = core()->getRequestedLocaleCode();
-        $channel = 'default';
+        $channel = core()->getRequestedChannelCode();
 
         $values = array_merge(
             ProductValueMapperFacade::getChannelLocaleSpecificFields($productData, $channel, $locale),
             ProductValueMapperFacade::getLocaleSpecificFields($productData, $locale),
-            ProductValueMapperFacade::getChannelSpecificFields($productData, $locale),
+            ProductValueMapperFacade::getChannelSpecificFields($productData, $channel),
             ProductValueMapperFacade::getCommonFields($productData)
         );
 
