@@ -437,6 +437,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
                 break;
             case self::SELECT_FIELD_TYPE:
             case self::MULTISELECT_FIELD_TYPE:
+            case self::CHECKBOX_FIELD_TYPE:
                 $filterType = 'dropdown';
                 break;
             case self::IMAGE_ATTRIBUTE_TYPE:

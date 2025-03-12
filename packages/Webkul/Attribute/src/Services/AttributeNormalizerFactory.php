@@ -12,9 +12,10 @@ use Webkul\Attribute\Services\Normalizers\PriceNormalizer;
 class AttributeNormalizerFactory
 {
     protected array $normalizers = [
-        Attribute::PRICE_FIELD_TYPE       => PriceNormalizer::class,
-        Attribute::SELECT_FIELD_TYPE      => OptionNormalizer::class,
-        Attribute::MULTISELECT_FIELD_TYPE => OptionNormalizer::class,
+        Attribute::PRICE_FIELD_TYPE         => PriceNormalizer::class,
+        Attribute::SELECT_FIELD_TYPE        => OptionNormalizer::class,
+        Attribute::MULTISELECT_FIELD_TYPE   => OptionNormalizer::class,
+        Attribute::CHECKBOX_FIELD_TYPE      => OptionNormalizer::class,
     ];
 
     protected Container $app;

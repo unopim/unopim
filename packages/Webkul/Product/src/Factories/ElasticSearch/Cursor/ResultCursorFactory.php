@@ -31,7 +31,7 @@ class ResultCursorFactory implements CursorFactoryContract
             'index' => $options['index'],
             'body'  => $query,
         ];
-        
+
         try {
             $results = Elasticsearch::search($requestParam);
         } catch (\Exception $e) {

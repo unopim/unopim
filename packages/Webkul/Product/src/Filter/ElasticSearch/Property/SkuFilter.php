@@ -55,11 +55,11 @@ class SkuFilter extends AbstractPropertyFilter
             case FilterOperators::CONTAINS:
                 $clause = [
                     'query_string' => [
-                        'default_field' => $property,
+                        'default_field'    => $property,
                         'query'            => '*'.implode('* OR *', $value).'*',
                     ],
                 ];
-                
+
                 $this->queryBuilder::where($clause);
                 break;
         }
