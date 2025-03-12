@@ -59,24 +59,11 @@ class ProductIndexer extends Command
                     }
                 }
 
-                try {
-                    ElasticSearch::indices()->create([
-                        'index' => $productIndex,
-                        'body'  => [
-                            'mappings' => $this->getUnopimProductMapping(),
-                        ],
-                    ]);
-
-                    $this->info($productIndex.' index recreated successfully.');
-                    Log::channel('elasticsearch')->info($productIndex.' index recreated successfully.');
-                } catch (\Exception $e) {
-                    Log::channel('elasticsearch')->error('Exception while recreating '.$productIndex.' index.', [
-                        'error' => $e->getMessage(),
-                    ]);
-                    throw $e;
-                }
-
                 return;
+            }
+
+            if (! $this->hasIndex($productIndex)) {
+                $this->elasticConfiguration($productIndex);
             }
 
             $progressBar = new ProgressBar($this->output, $totalProducts);
@@ -244,6 +231,32 @@ class ProductIndexer extends Command
         return $elasticProduct;
     }
 
+    public function hasIndex($productIndex): bool
+    {
+        return ElasticSearch::indices()->exists(['index' => $productIndex])->asBool();
+    }
+
+    public function elasticConfiguration($productIndex)
+    {
+        try {
+            ElasticSearch::indices()->create([
+                'index' => $productIndex,
+                'body'  => [
+                    'settings' => $this->getUnopimProductSetting(),
+                    'mappings' => $this->getUnopimProductMapping(),
+                ],
+            ]);
+
+            $this->info($productIndex.' index recreated successfully.');
+            Log::channel('elasticsearch')->info($productIndex.' index recreated successfully.');
+        } catch (\Exception $e) {
+            Log::channel('elasticsearch')->error('Exception while recreating '.$productIndex.' index.', [
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
+    }
+
     private function getUnopimProductMapping()
     {
         return [
@@ -267,22 +280,121 @@ class ProductIndexer extends Command
                 'attribute_family_id' => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
                 'created_at'          => ['type' => 'date'],
                 'id'                  => ['type' => 'long'],
-                'sku'                 => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
+                'sku'                 => [
+                    'type'       => 'keyword',
+                    'normalizer' => 'sku_normalizer',
+                ],
                 'status'              => ['type' => 'long'],
                 'type'                => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
                 'updated_at'          => ['type' => 'date'],
-                'values'              => [
-                    'properties' => [
-                        'channel_locale_specific' => [
-                            'properties' => [
-
+            ],
+            'dynamic_templates' => [
+                [
+                    'common_fields_object' => [
+                        'path_match'         => 'values.common.*',
+                        'match_mapping_type' => 'object',
+                        'mapping'            => [
+                            'type' => 'object',
+                        ],
+                    ],
+                ], [
+                    'common_fields' => [
+                        'path_match' => 'values.common.*',
+                        'mapping'    => [
+                            'type'       => 'keyword',
+                            'normalizer' => 'string_normalizer',
+                        ],
+                    ],
+                ], [
+                    'locale_specific_object' => [
+                        'path_match'         => 'values.locale_specific.*',
+                        'match_mapping_type' => 'object',
+                        'mapping'            => [
+                            'type' => 'object',
+                        ],
+                    ],
+                ], [
+                    'locale_specific' => [
+                        'path_match' => 'values.locale_specific.*.*',
+                        'mapping'    => [
+                            'type'       => 'keyword',
+                            'normalizer' => 'string_normalizer',
+                        ],
+                    ],
+                ], [
+                    'channel_specific_object' => [
+                        'path_match'         => 'values.channel_specific.*',
+                        'match_mapping_type' => 'object',
+                        'mapping'            => [
+                            'type' => 'object',
+                        ],
+                    ],
+                ], [
+                    'channel_specific' => [
+                        'path_match' => 'values.channel_specific.*.*',
+                        'mapping'    => [
+                            'type'       => 'keyword',
+                            'normalizer' => 'string_normalizer',
+                        ],
+                    ],
+                ], [
+                    'channel_locale_specific_object' => [
+                        'path_match'         => 'values.channel_locale_specific.*.*',
+                        'match_mapping_type' => 'object',
+                        'mapping'            => [
+                            'type' => 'object',
+                        ],
+                    ],
+                ], [
+                    'channel_locale_specific_text' => [
+                        'path_match' => 'values.channel_locale_specific.*.*.*',
+                        'mapping'    => [
+                            'type'   => 'text',
+                            'fields' => [
+                                'keyword' => [
+                                    'type'       => 'keyword',
+                                    'normalizer' => 'string_normalizer',
+                                ],
                             ],
                         ],
-                        'common' => [
-                            'properties' => [
-
-                            ],
+                    ],
+                ], [
+                    'other_dynamic_fields' => [
+                        'path_match'         => 'values.*',
+                        'match_mapping_type' => 'object',
+                        'mapping'            => [
+                            'type' => 'object',
                         ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    private function getUnopimProductSetting()
+    {
+        return [
+            'analysis' => [
+                'char_filter' => [
+                    'newline_remover' => [
+                        'type'     => 'mapping',
+                        'mappings' => ['\\n => '],
+                    ],
+                ],
+                'analyzer' => [
+                    'my_analyzer' => [
+                        'tokenizer' => 'standard',
+                        'filter'    => ['lowercase'],
+                    ],
+                ],
+                'normalizer' => [
+                    'sku_normalizer' => [
+                        'filter' => ['lowercase'],
+                    ],
+
+                    'string_normalizer' => [
+                        'char_filter' => ['newline_remover'],
+                        'filter'      => ['lowercase'],
                     ],
                 ],
             ],
