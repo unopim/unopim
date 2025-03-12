@@ -444,7 +444,7 @@
                         return;
                     }
 
-                    const response = await fetch(`{{ route('admin.magic_ai.suggestion_values') }}?query=${text}&&entity_name=${this.entityName}`);
+                    const response = await fetch(`{{ route('admin.magic_ai.suggestion_values') }}?query=${text}&&entity_name=${this.entityName}}&&locale={{ core()->getRequestedLocaleCode() }}`);
                     const data = await response.json();
                     this.suggestionValues = data;
 
