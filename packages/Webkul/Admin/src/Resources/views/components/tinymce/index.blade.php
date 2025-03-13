@@ -61,8 +61,7 @@
                                 </x-admin::form.control-group.label>
                                 <x-admin::form.control-group.control
                                     type="select"
-                                    name="model"
-                                    rules="required"
+                                    name="default_prompt"
                                     :label="trans('admin::app.components.tinymce.ai-generation.default-prompt')"
                                     ::options="defaultPrompts"
                                     track-by="prompt"
@@ -71,7 +70,7 @@
                                 >
                                 </x-admin::form.control-group.control>
 
-                                <x-admin::form.control-group.error control-name="model"></x-admin::form.control-group.error>
+                                <x-admin::form.control-group.error control-name="default_prompt"></x-admin::form.control-group.error>
                             </x-admin::form.control-group>
 
                             <!-- Prompt -->

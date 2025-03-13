@@ -224,8 +224,8 @@
                                                 type="select"
                                                 name="model"
                                                 rules="required"
-                                                ::value="selectedModel"
-                                                v-model="selectedModel"
+                                                ::value="ai.model"
+                                                v-model="ai.model"
                                                 ::options="aiModels"
                                                 track-by="id"
                                                 label-by="label"
@@ -660,7 +660,7 @@
                         const response = await axios.get("{{ route('admin.magic_ai.available_model') }}");
 
                         this.aiModels = response.data.models.filter(model => model.id === 'dall-e-2' || model.id === 'dall-e-3');
-                        this.selectedModel = this.aiModels[0].id;
+                        this.ai.model = this.aiModels[0].id;
                     } catch (error) {
                         console.error("Failed to fetch AI models:", error);
                     }
@@ -762,7 +762,7 @@
 
                         prompt: null,
 
-                        model: 'dall-e-2',
+                        model: this.aiModels[0] ? this.aiModels[0].id : '',
 
                         n: 1,
 
