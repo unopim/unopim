@@ -214,28 +214,26 @@
                             <x-slot:content>
                                 <div v-show="! ai.images.length">
                                     <!-- Model -->
-                                    <template v-if="aiModels.length">
-                                        <x-admin::form.control-group>
-                                            <x-admin::form.control-group.label class="required">
-                                                @lang('admin::app.components.media.images.ai-generation.model')
-                                            </x-admin::form.control-group.label>
+                                    <x-admin::form.control-group>
+                                        <x-admin::form.control-group.label class="required">
+                                            @lang('admin::app.components.media.images.ai-generation.model')
+                                        </x-admin::form.control-group.label>
 
-                                            <x-admin::form.control-group.control
-                                                type="select"
-                                                name="model"
-                                                rules="required"
-                                                ::value="ai.model"
-                                                v-model="ai.model"
-                                                ::options="aiModels"
-                                                track-by="id"
-                                                label-by="label"
-                                                :label="trans('admin::app.components.media.images.ai-generation.model')"
-                                            >
-                                            </x-admin::form.control-group.control>
+                                        <x-admin::form.control-group.control
+                                            type="select"
+                                            name="model"
+                                            rules="required"
+                                            ::value="ai.model"
+                                            v-model="ai.model"
+                                            ::options="aiModels"
+                                            track-by="id"
+                                            label-by="label"
+                                            :label="trans('admin::app.components.media.images.ai-generation.model')"
+                                        >
+                                        </x-admin::form.control-group.control>
 
-                                            <x-admin::form.control-group.error control-name="model" />
-                                        </x-admin::form.control-group>
-                                    </template>
+                                        <x-admin::form.control-group.error control-name="model" />
+                                    </x-admin::form.control-group>
                                     <!-- Prompt -->
                                     <x-admin::form.control-group>
                                         <x-admin::form.control-group.label class="required">
@@ -660,7 +658,7 @@
                         const response = await axios.get("{{ route('admin.magic_ai.available_model') }}");
 
                         this.aiModels = response.data.models.filter(model => model.id === 'dall-e-2' || model.id === 'dall-e-3');
-                        this.ai.model = this.aiModels[0].id;
+                        this.ai.model = this.aiModels[0] ? this.aiModels[0].id : '';
                     } catch (error) {
                         console.error("Failed to fetch AI models:", error);
                     }
