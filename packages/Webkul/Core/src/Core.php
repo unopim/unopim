@@ -1027,12 +1027,4 @@ class Core
             return '['.$currency.']';
         }
     }
-
-    /**
-     * Check if Elasticsearch is enabled.
-     */
-    public function isElasticsearchEnabled(): bool
-    {
-        return env('ELASTICSEARCH_ENABLED', false);
-    }
 }

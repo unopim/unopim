@@ -11,7 +11,7 @@ abstract class AbstractFilter extends BaseAbstractFilter
      */
     public function setQueryManager($queryBuilder)
     {
-        if (core()->isElasticsearchEnabled()) {
+        if (config('elasticsearch.enabled')) {
             parent::setQueryManager($queryBuilder);
 
             return;

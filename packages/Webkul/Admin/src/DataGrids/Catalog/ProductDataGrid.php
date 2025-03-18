@@ -353,7 +353,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     public function processRequest(): void
     {
-        if (! core()->isElasticsearchEnabled()) {
+        if (! config('elasticsearch.enabled')) {
             parent::processRequest();
 
             return;

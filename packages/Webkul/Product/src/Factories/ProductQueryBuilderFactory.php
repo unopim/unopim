@@ -9,7 +9,7 @@ class ProductQueryBuilderFactory
 {
     public static function make()
     {
-        return core()->isElasticsearchEnabled()
+        return config('elasticsearch.enabled')
             ? app(ElasticProductQueryBuilder::class)
             : app(DatabaseProductQueryBuilder::class);
     }
