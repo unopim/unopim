@@ -19,7 +19,7 @@ trait AttributeColumnTrait
             'label'      => $attribute->name ?: '['.$attribute->code.']',
             'type'       => $attribute->getFilterType(),
             'searchable' => false,
-            'filterable' => $attribute->is_filterable,
+            'filterable' => $attribute->is_filterable ?? false,
             'sortable'   => true,
         ];
 

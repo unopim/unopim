@@ -36,8 +36,8 @@ class ElasticProductQueryBuilder extends ElasticSearchAbstractFilterableQueryBui
             throw new \InvalidArgumentException(
                 sprintf(
                     'Unsupported operator. Only "%s" are supported, but "%s" was given.',
-                    implode(',', $filter->getAllowedOperators()),
-                    $operator
+                    implode(',', array_map(fn($allowOperator) => $allowOperator->value, $filter->getAllowedOperators())),
+                    $operator->value,
                 )
             );
         }
