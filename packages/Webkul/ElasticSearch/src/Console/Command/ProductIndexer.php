@@ -62,7 +62,7 @@ class ProductIndexer extends Command
                 return;
             }
 
-            if (!$this->hasIndex($productIndex)) {
+            if (! $this->hasIndex($productIndex)) {
                 $this->elasticConfiguration($productIndex);
             }
 
@@ -231,7 +231,7 @@ class ProductIndexer extends Command
         return $elasticProduct;
     }
 
-    public function hasIndex($productIndex):bool
+    public function hasIndex($productIndex): bool
     {
         return ElasticSearch::indices()->exists(['index' => $productIndex])->asBool();
     }
@@ -291,68 +291,68 @@ class ProductIndexer extends Command
             'dynamic_templates' => [
                 [
                     'common_fields_object' => [
-                        'path_match' => 'values.common.*',
+                        'path_match'         => 'values.common.*',
                         'match_mapping_type' => 'object',
-                        'mapping' => [
+                        'mapping'            => [
                             'type' => 'object',
                         ],
                     ],
                 ], [
                     'common_fields' => [
                         'path_match' => 'values.common.*',
-                        'mapping' => [
-                            'type' => 'keyword',
+                        'mapping'    => [
+                            'type'       => 'keyword',
                             'normalizer' => 'string_normalizer',
                         ],
                     ],
                 ], [
                     'locale_specific_object' => [
-                        'path_match' => 'values.locale_specific.*',
+                        'path_match'         => 'values.locale_specific.*',
                         'match_mapping_type' => 'object',
-                        'mapping' => [
+                        'mapping'            => [
                             'type' => 'object',
                         ],
                     ],
                 ], [
                     'locale_specific' => [
                         'path_match' => 'values.locale_specific.*.*',
-                        'mapping' => [
+                        'mapping'    => [
                             'type'       => 'keyword',
                             'normalizer' => 'string_normalizer',
                         ],
                     ],
                 ], [
                     'channel_specific_object' => [
-                        'path_match' => 'values.channel_specific.*',
+                        'path_match'         => 'values.channel_specific.*',
                         'match_mapping_type' => 'object',
-                        'mapping' => [
+                        'mapping'            => [
                             'type' => 'object',
                         ],
                     ],
                 ], [
                     'channel_specific' => [
                         'path_match' => 'values.channel_specific.*.*',
-                        'mapping' => [
+                        'mapping'    => [
                             'type'       => 'keyword',
                             'normalizer' => 'string_normalizer',
                         ],
                     ],
                 ], [
                     'channel_locale_specific_object' => [
-                        'path_match' => 'values.channel_locale_specific.*.*',
+                        'path_match'         => 'values.channel_locale_specific.*.*',
                         'match_mapping_type' => 'object',
-                        'mapping' => [
+                        'mapping'            => [
                             'type' => 'object',
                         ],
                     ],
                 ], [
                     'channel_locale_specific_text' => [
                         'path_match' => 'values.channel_locale_specific.*.*.*',
-                        'mapping' => [
-                            'type' => 'text',
+                        'mapping'    => [
+                            'type'   => 'text',
                             'fields' => [
                                 'keyword' => [
-                                    'type' => 'keyword',
+                                    'type'       => 'keyword',
                                     'normalizer' => 'string_normalizer',
                                 ],
                             ],
@@ -377,9 +377,9 @@ class ProductIndexer extends Command
             'analysis' => [
                 'char_filter' => [
                     'newline_remover' => [
-                        'type' => 'mapping',
-                        'mappings' => ["\\n => "]
-                    ]
+                        'type'     => 'mapping',
+                        'mappings' => ['\\n => '],
+                    ],
                 ],
                 'analyzer' => [
                     'my_analyzer' => [
@@ -394,7 +394,7 @@ class ProductIndexer extends Command
 
                     'string_normalizer' => [
                         'char_filter' => ['newline_remover'],
-                        'filter' => ['lowercase'],
+                        'filter'      => ['lowercase'],
                     ],
                 ],
             ],

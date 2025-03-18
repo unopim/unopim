@@ -33,7 +33,7 @@ class DatabaseProductQueryBuilder extends AbstractFilterableQueryBuilder
         if (! $filter->isOperatorAllowed($operator)) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    implode(',', array_map(fn($allowOperator) => $allowOperator->value, $filter->getAllowedOperators())),
+                    implode(',', array_map(fn ($allowOperator) => $allowOperator->value, $filter->getAllowedOperators())),
                     $operator->value,
                 )
             );

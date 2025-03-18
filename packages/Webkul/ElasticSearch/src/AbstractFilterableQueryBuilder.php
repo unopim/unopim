@@ -67,7 +67,7 @@ abstract class AbstractFilterableQueryBuilder implements QueryBuilderContract
             throw new \InvalidArgumentException(
                 sprintf(
                     'Unsupported operator. Only "%s" are supported, but "%s" was given.',
-                    implode(',', array_map(fn($allowOperator) => $allowOperator->value, $filter->getAllowedOperators())),
+                    implode(',', array_map(fn ($allowOperator) => $allowOperator->value, $filter->getAllowedOperators())),
                     $operator->value,
                 )
             );
