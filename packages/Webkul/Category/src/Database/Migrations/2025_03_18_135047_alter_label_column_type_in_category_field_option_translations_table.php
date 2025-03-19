@@ -22,8 +22,10 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('category_field_option_translations', function (Blueprint $table) {
-            $table->dropIndex('label');
+            $table->dropIndex('category_field_option_translations_label');
+        });
 
+        Schema::table('category_field_option_translations', function (Blueprint $table) {
             $table->text('label')->nullable()->change();
         });
     }

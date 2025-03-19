@@ -22,8 +22,10 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('attribute_group_translations', function (Blueprint $table) {
-            $table->dropIndex('name');
+            $table->dropIndex('attribute_group_translations_name');
+        });
 
+        Schema::table('attribute_group_translations', function (Blueprint $table) {
             $table->text('name')->nullable()->change();
         });
     }
