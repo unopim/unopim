@@ -215,9 +215,10 @@ abstract class DataGrid
             'pagination'  => ['sometimes', 'required', 'array'],
             'export'      => ['sometimes', 'required', 'boolean'],
             'format'      => ['sometimes', 'required', 'in:csv,xls,xlsx'],
+            'productIds'  => ['sometimes', 'array'],
         ]);
 
-        return request()->only(['filters', 'sort', 'pagination', 'export', 'format']);
+        return request()->only(['filters', 'sort', 'pagination', 'export', 'format', 'productIds']);
     }
 
     /**
@@ -246,6 +247,7 @@ abstract class DataGrid
                                 $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), 'LIKE', '%'.$value.'%');
                             }
                         });
+                        break;
 
                     case ColumnTypeEnum::INTEGER->value:
                         $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues) {
@@ -253,6 +255,7 @@ abstract class DataGrid
                                 $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), $value);
                             }
                         });
+                        break;
 
                     case ColumnTypeEnum::DROPDOWN->value:
                         $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues) {
@@ -260,7 +263,6 @@ abstract class DataGrid
                                 $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), $value);
                             }
                         });
-
                         break;
 
                     case ColumnTypeEnum::DATE_RANGE->value:
@@ -272,15 +274,14 @@ abstract class DataGrid
                                 ]);
                             }
                         });
-
                         break;
+
                     case ColumnTypeEnum::DATE_TIME_RANGE->value:
                         $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues) {
                             foreach ($requestedValues as $value) {
                                 $scopeQueryBuilder->whereBetween($column->getDatabaseColumnName(), [$value[0] ?? '', $value[1] ?? '']);
                             }
                         });
-
                         break;
 
                     default:
@@ -289,7 +290,6 @@ abstract class DataGrid
                                 $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), 'LIKE', '%'.$value.'%');
                             }
                         });
-
                         break;
                 }
             }
@@ -335,9 +335,12 @@ abstract class DataGrid
          */
         $requestedParams = $this->validatedRequest();
 
-        $this->queryBuilder = $this->processRequestedFilters($requestedParams['filters'] ?? []);
-
-        $this->queryBuilder = $this->processRequestedSorting($requestedParams['sort'] ?? []);
+        if (! empty($requestedParams['productIds'])) {
+            $this->queryBuilder->whereIn('products.id', $requestedParams['productIds']);
+        } else {
+            $this->queryBuilder = $this->processRequestedFilters($requestedParams['filters'] ?? []);
+            $this->queryBuilder = $this->processRequestedSorting($requestedParams['sort'] ?? []);
+        }
 
         /**
          * The `export` parameter is validated as a boolean in the `validatedRequest`. An `empty` function will not work,

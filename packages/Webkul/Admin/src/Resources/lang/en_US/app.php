@@ -3,33 +3,39 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                => 'Email Address',
-            'forget-password-link' => 'Forget Password ?',
-            'password'             => 'Password',
-            'submit-btn'           => 'Sign In',
-            'title'                => 'Sign In',
+            'email'                  => 'Email Address',
+            'forget-password-link'   => 'Forget Password ?',
+            'password'               => 'Password',
+            'submit-btn'             => 'Sign In',
+            'title'                  => 'Sign In',
+            'powered-by'             => 'Powered by :unopim,',
+            'open-source-project-by' => 'An open-source project by :webkul.',
         ],
 
         'forget-password' => [
             'create' => [
-                'email'                => 'Registered Email',
-                'email-not-exist'      => 'Email Not Exists',
-                'page-title'           => 'Forget Password',
-                'reset-link-sent'      => 'Reset Password link sent',
-                'email-settings-error' => 'Email could not be sent. Please check your email configuration details',
-                'sign-in-link'         => 'Back to Sign In ?',
-                'submit-btn'           => 'Reset',
-                'title'                => 'Recover Password',
+                'email'                  => 'Registered Email',
+                'email-not-exist'        => 'Email Not Exists',
+                'page-title'             => 'Forget Password',
+                'reset-link-sent'        => 'Reset Password link sent',
+                'email-settings-error'   => 'Email could not be sent. Please check your email configuration details',
+                'sign-in-link'           => 'Back to Sign In ?',
+                'submit-btn'             => 'Reset',
+                'title'                  => 'Recover Password',
+                'powered-by'             => 'Powered by :unopim,',
+                'open-source-project-by' => 'An open-source project by :webkul.',
             ],
         ],
 
         'reset-password' => [
-            'back-link-title'  => 'Back to Sign In ?',
-            'confirm-password' => 'Confirm Password',
-            'email'            => 'Registered Email',
-            'password'         => 'Password',
-            'submit-btn'       => 'Reset Password',
-            'title'            => 'Reset Password',
+            'back-link-title'        => 'Back to Sign In ?',
+            'confirm-password'       => 'Confirm Password',
+            'email'                  => 'Registered Email',
+            'password'               => 'Password',
+            'submit-btn'             => 'Reset Password',
+            'title'                  => 'Reset Password',
+            'powered-by'             => 'Powered by :unopim,',
+            'open-source-project-by' => 'An open-source project by :webkul.',
         ],
     ],
 
@@ -92,10 +98,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => 'The :name has already been taken.',
-                'create-btn'     => 'Create Product',
-                'title'          => 'Products',
-                'magic-ai-error' => 'Please verify the Magic AI credentials and ensure the correct model is selected.',
+                'already-taken'             => 'The :name has already been taken.',
+                'create-btn'                => 'Create Product',
+                'title'                     => 'Products',
+                'magic-ai-error'            => 'Please verify the Magic AI credentials and ensure the correct model is selected.',
+                'magic-ai-validate-error'   => 'Please verify the Magic AI credentials.',
+                'magic-ai-validate-success' => 'Magic AI credentials validated successfully',
 
                 'create' => [
                     'back-btn'                          => 'Back',
@@ -140,6 +148,8 @@ return [
                     'update-status'          => 'Update Status',
                     'parent'                 => 'Parent',
                     'parent-identifier'      => 'Parent: :sku',
+                    'created-at'             => 'Created At',
+                    'updated-at'             => 'Updated At',
                 ],
             ],
 
@@ -280,20 +290,21 @@ return [
                 'title'      => 'Attributes',
 
                 'datagrid' => [
-                    'channel-based'       => 'Channel Based',
-                    'code'                => 'Code',
-                    'created-at'          => 'Created At',
-                    'delete'              => 'Delete',
-                    'edit'                => 'Edit',
-                    'id'                  => 'ID',
-                    'locale-based'        => 'Locale Based',
-                    'mass-delete-success' => 'Selected Attribute Deleted Successfully',
-                    'name'                => 'Name',
-                    'required'            => 'Required',
-                    'type'                => 'Type',
-                    'unique'              => 'Unique',
-                    'delete-failed'       => 'This attribute can not be deleted.',
-                    'mass-delete-failed'  => 'Selected attributes can not be deleted.',
+                    'channel-based'            => 'Channel Based',
+                    'code'                     => 'Code',
+                    'created-at'               => 'Created At',
+                    'delete'                   => 'Delete',
+                    'edit'                     => 'Edit',
+                    'id'                       => 'ID',
+                    'locale-based'             => 'Locale Based',
+                    'mass-delete-success'      => 'Selected Attribute Deleted Successfully',
+                    'name'                     => 'Name',
+                    'required'                 => 'Required',
+                    'type'                     => 'Type',
+                    'unique'                   => 'Unique',
+                    'delete-failed'            => 'This attribute can not be deleted.',
+                    'mass-delete-failed'       => 'Selected attributes can not be deleted.',
+                    'delete-attribute-failure' => 'This attribute cannot be removed because it is in use for configurable products',
                 ],
             ],
 
@@ -320,7 +331,6 @@ return [
                 'file'                  => 'File',
                 'general'               => 'General',
                 'image'                 => 'Image',
-                'gallery'               => 'Gallery',
                 'input-options'         => 'Input Options',
                 'input-validation'      => 'Input Validation',
                 'is-comparable'         => 'Attribute is comparable',
@@ -353,6 +363,7 @@ return [
                 'yes'                   => 'Yes',
                 'same-code-error'       => 'The option code must be unique.',
                 'usable-in-grid'        => 'Usable in grid',
+                'is-filterable'         => 'Is Filterable',
 
                 'option' => [
                     'color'    => 'Color Swatch',
@@ -386,7 +397,6 @@ return [
                 'file'                  => 'File',
                 'general'               => 'General',
                 'image'                 => 'Image',
-                'gallery'               => 'Gallery',
                 'input-options'         => 'Input Options',
                 'input-validation'      => 'Input Validation',
                 'is-comparable'         => 'Attribute is comparable',
@@ -419,6 +429,7 @@ return [
                 'yes'                   => 'Yes',
                 'same-code-error'       => 'The option code must be unique.',
                 'usable-in-grid'        => 'Usable in grid',
+                'is-filterable'         => 'Is Filterable',
 
                 'option' => [
                     'color'    => 'Color Swatch',
@@ -502,6 +513,7 @@ return [
                     'id'             => 'ID',
                     'inactive'       => 'Inactive',
                     'name'           => 'Display Name',
+                    'category-name'  => 'Name',
                     'no-of-products' => 'Number of Products',
                     'position'       => 'Position',
                     'status'         => 'Visible In Menu',
@@ -1494,12 +1506,12 @@ return [
 
     'configuration' => [
         'index' => [
-            'delete'                       => 'Delete',
-            'no-result-found'              => 'No result found',
-            'save-btn'                     => 'Save Configuration',
-            'save-message'                 => 'Configuration saved successfully',
-            'search'                       => 'Search',
-            'title'                        => 'Configuration',
+            'delete'          => 'Delete',
+            'no-result-found' => 'No result found',
+            'save-btn'        => 'Save Configuration',
+            'save-message'    => 'Configuration saved successfully',
+            'search'          => 'Search',
+            'title'           => 'Configuration',
 
             'general' => [
                 'info'  => '',
@@ -1519,8 +1531,15 @@ return [
                         'enabled'        => 'Enabled',
                         'llm-api-domain' => 'LLM API Domain',
                         'organization'   => 'Organization ID',
+                        'api-model'      => 'Models',
                         'title'          => 'General Settings',
                         'title-info'     => 'Enhance your experience with the Magic AI feature by entering your exclusive API Key and indicating the pertinent Organization for effortless integration. Seize command over your OpenAI credentials and customize the settings according to your specific needs.',
+                    ],
+
+                    'image-generation' => [
+                        'enabled'    => 'Enabled',
+                        'title'      => 'Image Generation',
+                        'title-info' => 'This feature will enable the Magic AI for every image upload, where you want to generate images using DALL-E.<br/><br/>When Enable, go to any image upload to generate image.',
                     ],
                 ],
             ],
@@ -1597,34 +1616,34 @@ return [
             ],
 
             'sidebar' => [
-                'attribute-families'       => 'Attribute Families',
-                'attribute-groups'         => 'Attribute Groups',
-                'attributes'               => 'Attributes',
-                'history'                  => 'History',
-                'edit-section'             => 'Data',
-                'general'                  => 'General',
-                'catalog'                  => 'Catalog',
-                'categories'               => 'Categories',
-                'category_fields'          => 'Category Fields',
-                'channels'                 => 'Channels',
-                'collapse'                 => 'Collapse',
-                'configure'                => 'Configuration',
-                'currencies'               => 'Currencies',
-                'dashboard'                => 'Dashboard',
-                'data-transfer'            => 'Data Transfer',
-                'groups'                   => 'Groups',
-                'tracker'                  => 'Job Tracker',
-                'imports'                  => 'Imports',
-                'exports'                  => 'Exports',
-                'locales'                  => 'Locales',
-                'magic-ai'                 => 'Magic AI',
-                'mode'                     => 'Dark Mode',
-                'products'                 => 'Products',
-                'roles'                    => 'Roles',
-                'settings'                 => 'Settings',
-                'themes'                   => 'Themes',
-                'users'                    => 'Users',
-                'integrations'             => 'Integrations',
+                'attribute-families' => 'Attribute Families',
+                'attribute-groups'   => 'Attribute Groups',
+                'attributes'         => 'Attributes',
+                'history'            => 'History',
+                'edit-section'       => 'Data',
+                'general'            => 'General',
+                'catalog'            => 'Catalog',
+                'categories'         => 'Categories',
+                'category_fields'    => 'Category Fields',
+                'channels'           => 'Channels',
+                'collapse'           => 'Collapse',
+                'configure'          => 'Configuration',
+                'currencies'         => 'Currencies',
+                'dashboard'          => 'Dashboard',
+                'data-transfer'      => 'Data Transfer',
+                'groups'             => 'Groups',
+                'tracker'            => 'Job Tracker',
+                'imports'            => 'Imports',
+                'exports'            => 'Exports',
+                'locales'            => 'Locales',
+                'magic-ai'           => 'Magic AI',
+                'mode'               => 'Dark Mode',
+                'products'           => 'Products',
+                'roles'              => 'Roles',
+                'settings'           => 'Settings',
+                'themes'             => 'Themes',
+                'users'              => 'Users',
+                'integrations'       => 'Integrations',
             ],
         ],
 
@@ -1659,6 +1678,10 @@ return [
 
                 'search' => [
                     'title' => 'Search',
+                ],
+
+                'manage-columns' => [
+                    'title' => 'Manage Columns',
                 ],
             ],
 
@@ -1698,6 +1721,13 @@ return [
             'table' => [
                 'actions'              => 'Actions',
                 'no-records-available' => 'No Records Available.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Manage columns',
+                'available-columns' => 'Available Columns',
+                'selected-columns'  => 'Selected Columns',
+                'apply-btn'         => 'Apply',
             ],
         ],
 
@@ -1744,11 +1774,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Add Image',
-                'ai-add-image-btn'  => 'Magic AI',
-                'ai-btn-info'       => 'Generate Image',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Only images files (.jpeg, .jpg, .png, ..) are allowed.',
+                'add-image-btn'      => 'Add Image',
+                'generate-with-ai'   => 'Generate with AI',
+                'upload-from-device' => 'Upload from Device',
+                'cancel'             => 'Cancel',
+                'ai-add-image-btn'   => 'Magic AI',
+                'ai-btn-info'        => 'Generate Image',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Only images files (.jpeg, .jpg, .png, ..) are allowed.',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',
@@ -1817,6 +1850,7 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => 'Default Prompt',
             ],
         ],
     ],
@@ -1960,11 +1994,63 @@ return [
     ],
 
     'common' => [
-        'yes'     => 'Yes',
-        'no'      => 'No',
-        'true'    => 'True',
-        'false'   => 'False',
-        'enable'  => 'Enabled',
-        'disable' => 'Disabled',
+        'yes'            => 'Yes',
+        'no'             => 'No',
+        'true'           => 'True',
+        'false'          => 'False',
+        'enable'         => 'Enabled',
+        'disable'        => 'Disabled',
+        'no-match-found' => 'No Match Found!',
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Detailed Product Description',
+            'prompt' => 'Write a comprehensive description of @name, including its features, benefits, technical specifications, and usage instructions.',
+        ],
+
+        'overview' => [
+            'title'  => 'Product Overview',
+            'prompt' => 'Create a detailed overview of @name, highlighting its key features, advantages, and target audience like @brand and @color.',
+        ],
+
+        'features' => [
+            'title'  => 'Product Features and Benefits',
+            'prompt' => 'List the key features and benefits of @name, explaining how they add value to the customer\'s life.',
+        ],
+        'technical' => [
+            'title'  => 'Product Technical Specifications',
+            'prompt' => 'Provide a detailed list of technical specifications for @name, including dimensions, materials, and compatibility.',
+        ],
+
+        'care' => [
+            'title'  => 'Product Care and Maintenance',
+            'prompt' => 'Write a guide on how to care for and maintain @name, including tips for cleaning, storage, and troubleshooting.',
+        ],
+
+        'tagline' => [
+            'title'  => 'Product Tagline',
+            'prompt' => 'Write a catchy and concise tagline for @name that captures its essence and benefits.',
+        ],
+
+        'summary' => [
+            'title'  => 'Product Summary',
+            'prompt' => 'Summarize the key features and benefits of @name in 50-60 words.',
+        ],
+
+        'headline' => [
+            'title'  => 'Product Headline',
+            'prompt' => 'Create an attention-grabbing headline for @name that highlights its unique selling point.',
+        ],
+
+        'brief' => [
+            'title'  => 'Product Brief',
+            'prompt' => 'Write a brief and concise description of @name, focusing on its key advantages and target audience.',
+        ],
+
+        'elevator' => [
+            'title'  => 'Product Elevator Pitch',
+            'prompt' => 'Craft a concise elevator pitch for @name, summarizing its purpose, benefits, and unique selling point in 30-40 words.',
+        ],
     ],
 ];

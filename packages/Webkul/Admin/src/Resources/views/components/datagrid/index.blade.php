@@ -146,6 +146,8 @@
 
                             this.applied.filters = currentDatagrid.applied.filters;
 
+                            this.available.meta = currentDatagrid.available.meta;
+
                             if (urlParams.has('search')) {
                                 let searchAppliedColumn = this.findAppliedColumn('all');
 
@@ -189,6 +191,10 @@
                         params.filters[column.index] = column.value;
                     });
 
+                    params.managedColumns = this.available.meta?.managedColumn?.columns;
+                    params.manageableColumn = this.available.meta?.managedColumn?.columns;
+
+
                     this.isLoading = true;
 
                     this.$refs['filterDrawer'].close();
@@ -208,7 +214,9 @@
                                 mass_actions,
                                 search_placeholder,
                                 records,
-                                meta
+                                meta,
+                                manageableColumn,
+                                managedColumns
                             } = response.data;
 
                             this.available.id = id;
@@ -224,6 +232,9 @@
                             this.available.meta = meta;
 
                             this.available.searchPlaceholder = search_placeholder;
+
+                            // this.applied.managedColumns = meta?.managedColumn?.columns;
+                            // this.available.manageableColumn = meta?.managedColumn.enabled;
 
                             this.setCurrentSelectionMode();
 
@@ -397,7 +408,7 @@
                         this.get();
                     }
                 },
-                 
+
                 runFilters() {
                     this.get();
                 },
@@ -480,7 +491,41 @@
                                 }
 
                                 break;
+                            case 'price':
+                                let {
+                                    field
+                                } = additional;
 
+                                if (appliedColumn) {
+                                    let appliedValue = appliedColumn.value[0];
+
+                                    if (field.name == 'currency') {
+                                        appliedValue[0] = requestedValue;
+                                    }
+
+                                    if (field.name == 'amount') {
+                                        appliedValue[1] = requestedValue;
+                                    }
+
+                                    appliedColumn.value = [appliedValue];
+                                } else {
+                                    let appliedValue = [column.options[0]?.value, ''];
+
+                                    if (field.name == 'currency') {
+                                        appliedValue[0] = requestedValue;
+                                    }
+
+                                    if (field.name == 'amount') {
+                                        appliedValue[1] = requestedValue;
+                                    }
+
+                                    this.applied.filters.columns.push({
+                                        index: column.index,
+                                        value: [appliedValue]
+                                    });
+                                }
+
+                                break;
                             default:
                                 if (appliedColumn) {
                                     appliedColumn.value.push(requestedValue);
@@ -494,6 +539,11 @@
                                 break;
                         }
                     }
+                },
+
+                managedColumns(columns) {
+                    this.available.meta.managedColumn.columns = columns;
+                    this.get();
                 },
 
                 //================================================================
@@ -746,6 +796,10 @@
 
                 // refactor when not in that much use case...
                 performAction(action) {
+                    if (!action) {
+                        return;
+                    }
+
                     const method = action.method.toLowerCase();
 
                     switch (method) {

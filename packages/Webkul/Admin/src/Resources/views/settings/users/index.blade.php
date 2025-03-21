@@ -545,7 +545,7 @@
                                 this.data = {
                                     ...response.data,
                                         images: response.data.user.image_url
-                                        ? [{ id: 'image', url: response.data.user.image_url }]
+                                        ? [{ id: 'image', url: response.data.user.image_url, value: response.data.user.image }]
                                         : [],
                                         user: {
                                             ...response.data.user,

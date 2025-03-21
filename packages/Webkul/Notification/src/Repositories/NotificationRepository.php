@@ -22,11 +22,21 @@ class NotificationRepository extends Repository
      */
     public function getParamsData($params)
     {
-        $notifications = [];
+        $user = auth()->user();
 
-        $statusCounts = [];
+        $query = $user->notifications()
+            ->with('notification');
+        if (isset($params['read']) && isset($params['limit'])) {
+            $query->where('read', $params['read'])->limit($params['limit']);
+        } elseif (isset($params['limit'])) {
+            $query->limit($params['limit']);
+        }
 
-        return ['notifications' => $notifications, 'status_counts' => $statusCounts];
+        $notifications = $query->latest()->paginate($params['limit'] ?? 10);
+
+        $totalUnread = $query->where('read', '0')->count();
+
+        return ['notifications' => $notifications, 'total_unread' => $totalUnread];
     }
 
     /**
@@ -36,11 +46,15 @@ class NotificationRepository extends Repository
      */
     public function getAll()
     {
+        $user = auth()->user();
 
-        $notifications = [];
+        $query = $user->notifications()
+            ->with('notification');
 
-        $statusCounts = [];
+        $notifications = $query->latest()->paginate($params['limit'] ?? 10);
 
-        return ['notifications' => $notifications, 'status_counts' => $statusCounts];
+        $totalUnread = $query->count();
+
+        return ['notifications' => $notifications, 'total_unread' => $totalUnread];
     }
 }

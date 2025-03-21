@@ -34,6 +34,14 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
 
     const CHECKBOX_FIELD_TYPE = 'checkbox';
 
+    const FILE_ATTRIBUTE_TYPE = 'file';
+
+    const IMAGE_ATTRIBUTE_TYPE = 'image';
+
+    const PRICE_ATTRIBUTE_TYPE = 'price';
+
+    const GALLERY_ATTRIBUTE_TYPE = 'gallery';
+
     public $translatedAttributes = ['name'];
 
     protected $historyTags = ['attribute'];
@@ -49,6 +57,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
         'regex_pattern',
         'value_per_locale',
         'value_per_channel',
+        'is_filterable',
     ];
 
     /**
@@ -409,5 +418,72 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
         }
 
         return $rules;
+    }
+
+    /**
+     * Get attribute filter type
+     */
+    public function getFilterType()
+    {
+        switch ($this->type) {
+            case self::BOOLEAN_FIELD_TYPE:
+                $filterType = 'boolean';
+                break;
+            case self::DATETIME_FIELD_TYPE:
+                $filterType = 'datetime_range';
+                break;
+            case self::DATE_FIELD_TYPE:
+                $filterType = 'date_range';
+                break;
+            case self::SELECT_FIELD_TYPE:
+            case self::MULTISELECT_FIELD_TYPE:
+            case self::CHECKBOX_FIELD_TYPE:
+                $filterType = 'dropdown';
+                break;
+            case self::IMAGE_ATTRIBUTE_TYPE:
+            case self::GALLERY_ATTRIBUTE_TYPE:
+                $filterType = 'image';
+                break;
+            case self::PRICE_FIELD_TYPE:
+                $filterType = 'price';
+                break;
+            default:
+                $filterType = 'string';
+                break;
+        }
+
+        return $filterType;
+    }
+
+    /**
+     * Get Attribute  scope
+     */
+    public function getScope(?string $locale = null, ?string $channel = null): string
+    {
+        return ($this->value_per_locale && $this->value_per_channel)
+        ? sprintf('channel_locale_specific.%s.%s', $channel, $locale)
+        : ($this->value_per_locale
+            ? sprintf('locale_specific.%s', $locale)
+            : ($this->value_per_channel
+                ? sprintf('channel_specific.%s', $channel)
+                : 'common'));
+    }
+
+    /**
+     * Get the options by option code and locale.
+     */
+    public function getOptionsByCodeAndLocale($codes, $locale = null)
+    {
+        $locale = $locale ?? core()->getRequestedLocaleCode();
+
+        return $this->options()
+            ->leftJoin('attribute_option_translations as aot', 'aot.attribute_option_id', 'attribute_options.id')
+            ->whereIn('attribute_options.code', $codes)
+            ->where(function ($query) use ($locale) {
+                $query->where('aot.locale', $locale)
+                    ->orWhereNull('aot.locale'); // Fallback if translation not found
+            })
+            ->select('attribute_options.*', 'aot.label')
+            ->get();
     }
 }

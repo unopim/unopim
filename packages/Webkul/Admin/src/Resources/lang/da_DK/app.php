@@ -3,33 +3,39 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                => 'E-mailadresse',
-            'forget-password-link' => 'Glemt adgangskode?',
-            'password'             => 'Adgangskode',
-            'submit-btn'           => 'Log ind',
-            'title'                => 'Log ind',
+            'email'                  => 'E-mailadresse',
+            'forget-password-link'   => 'Glemt adgangskode?',
+            'password'               => 'Adgangskode',
+            'submit-btn'             => 'Log ind',
+            'title'                  => 'Log ind',
+            'powered-by'             => 'Drevet af :unopim,',
+            'open-source-project-by' => 'Et open source-projekt af :webkul.',
         ],
 
         'forget-password' => [
             'create' => [
-                'email'                => 'Registreret e-mail',
-                'email-not-exist'      => 'E-mail eksisterer ikke',
-                'page-title'           => 'Glemt adgangskode',
-                'reset-link-sent'      => 'Link til nulstilling af adgangskode sendt',
-                'email-settings-error' => 'E-mail kunne ikke sendes. Tjek venligst dine e-mailindstillinger',
-                'sign-in-link'         => 'Tilbage til log ind?',
-                'submit-btn'           => 'Nulstil',
-                'title'                => 'Gendan adgangskode',
+                'email'                  => 'Registreret e-mail',
+                'email-not-exist'        => 'E-mail eksisterer ikke',
+                'page-title'             => 'Glemt adgangskode',
+                'reset-link-sent'        => 'Link til nulstilling af adgangskode sendt',
+                'email-settings-error'   => 'E-mail kunne ikke sendes. Tjek venligst dine e-mailindstillinger',
+                'sign-in-link'           => 'Tilbage til log ind?',
+                'submit-btn'             => 'Nulstil',
+                'title'                  => 'Gendan adgangskode',
+                'powered-by'             => 'Drevet af :unopim,',
+                'open-source-project-by' => 'Et open source-projekt af :webkul.',
             ],
         ],
 
         'reset-password' => [
-            'back-link-title'  => 'Tilbage til log ind?',
-            'confirm-password' => 'Bekræft adgangskode',
-            'email'            => 'Registreret e-mail',
-            'password'         => 'Adgangskode',
-            'submit-btn'       => 'Nulstil adgangskode',
-            'title'            => 'Nulstil adgangskode',
+            'back-link-title'        => 'Tilbage til log ind?',
+            'confirm-password'       => 'Bekræft adgangskode',
+            'email'                  => 'Registreret e-mail',
+            'password'               => 'Adgangskode',
+            'submit-btn'             => 'Nulstil adgangskode',
+            'title'                  => 'Nulstil adgangskode',
+            'powered-by'             => 'Drevet af :unopim,',
+            'open-source-project-by' => 'Et open source-projekt af :webkul.',
         ],
     ],
 
@@ -92,10 +98,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name er allerede taget.',
-                'create-btn'     => 'Opret Produkt',
-                'title'          => 'Produkter',
-                'magic-ai-error' => 'Venligst bekræft Magic AI-legitimationsoplysningerne og sørg for, at den korrekte model er valgt.',
+                'already-taken'             => ':name er allerede taget.',
+                'create-btn'                => 'Opret Produkt',
+                'title'                     => 'Produkter',
+                'magic-ai-error'            => 'Venligst bekræft Magic AI-legitimationsoplysningerne og sørg for, at den korrekte model er valgt.',
+                'magic-ai-validate-error'   => 'Bekræft venligst Magic AI-legitimationsoplysningerne.',
+                'magic-ai-validate-success' => 'Magic AI-legitimationsoplysninger valideret',
 
                 'create' => [
                     'back-btn'                          => 'Tilbage',
@@ -353,6 +361,7 @@ return [
                 'yes'                   => 'Ja',
                 'same-code-error'       => 'Mulighedskoden skal være unik.',
                 'usable-in-grid'        => 'Brugbar i gitter',
+                'is-filterable'         => 'Er filtrerbar',
 
                 'option' => [
                     'color'    => 'Farveprøve',
@@ -419,6 +428,7 @@ return [
                 'yes'                   => 'Ja',
                 'same-code-error'       => 'Mulighedskoden skal være unik.',
                 'usable-in-grid'        => 'Brugbar i gitter',
+                'is-filterable'         => 'Er filtrerbar',
 
                 'option' => [
                     'color'    => 'Farveprøve',
@@ -504,6 +514,7 @@ return [
                     'name'           => 'Visningsnavn',
                     'no-of-products' => 'Antal produkter',
                     'position'       => 'Position',
+                    'category-name'  => 'Navn',
                     'status'         => 'Synlig i menu',
                     'update-status'  => 'Opdater status',
                 ],
@@ -954,7 +965,7 @@ return [
         'data-transfer' => [
             'tracker' => [
                 'index' => [
-                    'title'    => 'Jobovervågning',
+                    'title' => 'Jobovervågning',
 
                     'datagrid' => [
                         'id'                   => 'ID',
@@ -1642,12 +1653,12 @@ return [
 
     'configuration' => [
         'index' => [
-            'delete'                       => 'Slet',
-            'no-result-found'              => 'Ingen resultater fundet',
-            'save-btn'                     => 'Gem konfiguration',
-            'save-message'                 => 'Konfiguration gemt med succes',
-            'search'                       => 'Søg',
-            'title'                        => 'Konfiguration',
+            'delete'          => 'Slet',
+            'no-result-found' => 'Ingen resultater fundet',
+            'save-btn'        => 'Gem konfiguration',
+            'save-message'    => 'Konfiguration gemt med succes',
+            'search'          => 'Søg',
+            'title'           => 'Konfiguration',
 
             'general' => [
                 'info'  => '',
@@ -1745,34 +1756,34 @@ return [
             ],
 
             'sidebar' => [
-                'attribute-families'       => 'Attributfamilier',
-                'attribute-groups'         => 'Attributgrupper',
-                'attributes'               => 'Attributter',
-                'history'                  => 'Historik',
-                'edit-section'             => 'Data',
-                'general'                  => 'Generelt',
-                'catalog'                  => 'Katalog',
-                'categories'               => 'Kategorier',
-                'category_fields'          => 'Kategorifelter',
-                'channels'                 => 'Kanaler',
-                'collapse'                 => 'Kollaps',
-                'configure'                => 'Konfiguration',
-                'currencies'               => 'Valutaer',
-                'dashboard'                => 'Dashboard',
-                'data-transfer'            => 'Dataoverførsel',
-                'groups'                   => 'Grupper',
-                'tracker'                  => 'Jobsporing',
-                'imports'                  => 'Importer',
-                'exports'                  => 'Eksporter',
-                'locales'                  => 'Lokaliseringer',
-                'magic-ai'                 => 'Magic AI',
-                'mode'                     => 'Mørk tilstand',
-                'products'                 => 'Produkter',
-                'roles'                    => 'Roller',
-                'settings'                 => 'Indstillinger',
-                'themes'                   => 'Temaer',
-                'users'                    => 'Brugere',
-                'integrations'             => 'Integrationer',
+                'attribute-families' => 'Attributfamilier',
+                'attribute-groups'   => 'Attributgrupper',
+                'attributes'         => 'Attributter',
+                'history'            => 'Historik',
+                'edit-section'       => 'Data',
+                'general'            => 'Generelt',
+                'catalog'            => 'Katalog',
+                'categories'         => 'Kategorier',
+                'category_fields'    => 'Kategorifelter',
+                'channels'           => 'Kanaler',
+                'collapse'           => 'Kollaps',
+                'configure'          => 'Konfiguration',
+                'currencies'         => 'Valutaer',
+                'dashboard'          => 'Dashboard',
+                'data-transfer'      => 'Dataoverførsel',
+                'groups'             => 'Grupper',
+                'tracker'            => 'Jobsporing',
+                'imports'            => 'Importer',
+                'exports'            => 'Eksporter',
+                'locales'            => 'Lokaliseringer',
+                'magic-ai'           => 'Magic AI',
+                'mode'               => 'Mørk tilstand',
+                'products'           => 'Produkter',
+                'roles'              => 'Roller',
+                'settings'           => 'Indstillinger',
+                'themes'             => 'Temaer',
+                'users'              => 'Brugere',
+                'integrations'       => 'Integrationer',
             ],
         ],
 
@@ -1892,11 +1903,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Tilføj billede',
-                'ai-add-image-btn'  => 'Magic AI',
-                'ai-btn-info'       => 'Generer billede',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Kun billedfiler (.jpeg, .jpg, .png, ..) er tilladt.',
+                'add-image-btn'      => 'Tilføj billede',
+                'generate-with-ai'   => 'Generer med AI',
+                'upload-from-device' => 'Upload fra enhed',
+                'cancel'             => 'Annuller',
+                'ai-add-image-btn'   => 'Magic AI',
+                'ai-btn-info'        => 'Generer billede',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Kun billedfiler (.jpeg, .jpg, .png, ..) er tilladt.',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',
@@ -1965,7 +1979,51 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => 'Standard prompt',
             ],
+        ],
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Detaljeret produktbeskrivelse',
+            'prompt' => 'Skriv en omfattende beskrivelse af @name, inklusiv funktioner, fordele, tekniske specifikationer og brugsvejledninger.',
+        ],
+        'overview' => [
+            'title'  => 'Produktoversigt',
+            'prompt' => 'Opret en detaljeret oversigt over @name, der fremhæver dets nøglefunktioner, fordele og målgruppe som @brand og @color.',
+        ],
+        'features' => [
+            'title'  => 'Produktfunktioner og fordele',
+            'prompt' => 'Liste over nøglefunktioner og fordele ved @name, og forklar hvordan de tilføjer værdi til kundens liv.',
+        ],
+        'technical' => [
+            'title'  => 'Tekniske specifikationer for produktet',
+            'prompt' => 'Giv en detaljeret liste over tekniske specifikationer for @name, inklusiv dimensioner, materialer og kompatibilitet.',
+        ],
+        'care' => [
+            'title'  => 'Pleje og vedligeholdelse af produktet',
+            'prompt' => 'Skriv en guide om, hvordan du plejer og vedligeholder @name, inklusive tips til rengøring, opbevaring og fejlfinding.',
+        ],
+        'tagline' => [
+            'title'  => 'Produkt tagline',
+            'prompt' => 'Skriv en fængende og kort tagline til @name, der indfanger dets essens og fordele.',
+        ],
+        'summary' => [
+            'title'  => 'Produktsammendrag',
+            'prompt' => 'Opsummer nøglefunktionerne og fordelene ved @name i 50-60 ord.',
+        ],
+        'headline' => [
+            'title'  => 'Produktoverskrift',
+            'prompt' => 'Lav en opmærksomhedsskabende overskrift til @name, der fremhæver dets unikke salgsargument.',
+        ],
+        'brief' => [
+            'title'  => 'Produktbrief',
+            'prompt' => 'Skriv en kort og præcis beskrivelse af @name, med fokus på dets fordele og målgruppe.',
+        ],
+        'elevator' => [
+            'title'  => 'Elevatortale for produkt',
+            'prompt' => 'Skriv en kort elevatortale for @name, der opsummerer dets formål, fordele og unikke salgsargument på 30-40 ord.',
         ],
     ],
 ];

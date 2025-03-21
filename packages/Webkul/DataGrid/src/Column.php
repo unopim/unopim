@@ -53,6 +53,7 @@ class Column
                 break;
 
             case ColumnTypeEnum::DROPDOWN->value:
+            case ColumnTypeEnum::PRICE->value:
                 $this->setFormOptions($this->options);
 
                 break;

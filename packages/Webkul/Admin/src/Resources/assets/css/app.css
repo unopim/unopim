@@ -51,18 +51,18 @@
         text-transform: none;
         line-height: 1;
         @apply text-gray-600;
-        
+
         /* Better Font Rendering =========== */
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         line-height: 1 !important;
-    }    
+    }
 
     html.dark [class^="icon-"],
     html.dark [class*=" icon-"]{
        @apply text-slate-50;
     }
-    
+
     html.dark .active [class^="icon-"],
     html.dark .active [class*=" icon-"]{
         @apply text-violet-700;
@@ -77,9 +77,9 @@
     }
 
     .word-break {
-        word-break: break-word; 
+        word-break: break-word;
     }
-     
+
     p {
         @apply text-[14px] !leading-[17px];
     }
@@ -131,7 +131,7 @@
         background-clip: content-box;
     }
 
-    /** Icons */ 
+    /** Icons */
     .icon-product:before {
         content: "\e92b";
     }
@@ -182,7 +182,7 @@
     }
     .icon-processing:before {
         content: "\e92a";
-    }  
+    }
     .icon-dot:before {
         content: "\e923";
     }
@@ -246,6 +246,9 @@
     .icon-dark:before {
         content: "\e90a";
     }
+    .icon-notification:before {
+        content: "\e937";
+    }
     .icon-dashboard:before {
         content: "\e90b";
     }
@@ -299,6 +302,14 @@
     }
     .icon-drag:before {
         content: "\e91b";
+    }
+
+    .icon-at:before {
+        content: "\e938";
+    }
+
+    .icon-manage-column:before {
+        content: "\e93a";
     }
     /** Icons END */
 
@@ -463,5 +474,3 @@
 .multiselect__content-wrapper, .multiselect__tags, .multiselect__input, .multiselect__single {
     @apply bg-violet-100 dark:bg-cherry-900 dark:!text-slate-50 dark:hover:border-slate-300 dark:border-gray-600;
 }
-
-

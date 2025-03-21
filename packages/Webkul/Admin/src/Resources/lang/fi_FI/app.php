@@ -3,33 +3,39 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                => 'Sähköpostiosoite',
-            'forget-password-link' => 'Unohtuiko salasana?',
-            'password'             => 'Salasana',
-            'submit-btn'           => 'Kirjaudu sisään',
-            'title'                => 'Kirjaudu sisään',
+            'email'                  => 'Sähköpostiosoite',
+            'forget-password-link'   => 'Unohtuiko salasana?',
+            'password'               => 'Salasana',
+            'submit-btn'             => 'Kirjaudu sisään',
+            'title'                  => 'Kirjaudu sisään',
+            'powered-by'             => 'Toimii :unopim:lla,',
+            'open-source-project-by' => 'Avoimen lähdekoodin projekti :webkul:lta.',
         ],
 
         'forget-password' => [
             'create' => [
-                'email'                => 'Rekisteröity sähköposti',
-                'email-not-exist'      => 'Sähköpostiosoitetta ei löydy',
-                'page-title'           => 'Unohtunut salasana',
-                'reset-link-sent'      => 'Salasanan palautuslinkki lähetetty',
-                'email-settings-error' => 'Sähköpostia ei voitu lähettää. Tarkista sähköpostiasetukset',
-                'sign-in-link'         => 'Takaisin kirjautumiseen?',
-                'submit-btn'           => 'Palauta',
-                'title'                => 'Palauta salasana',
+                'email'                  => 'Rekisteröity sähköposti',
+                'email-not-exist'        => 'Sähköpostiosoitetta ei löydy',
+                'page-title'             => 'Unohtunut salasana',
+                'reset-link-sent'        => 'Salasanan palautuslinkki lähetetty',
+                'email-settings-error'   => 'Sähköpostia ei voitu lähettää. Tarkista sähköpostiasetukset',
+                'sign-in-link'           => 'Takaisin kirjautumiseen?',
+                'submit-btn'             => 'Palauta',
+                'title'                  => 'Palauta salasana',
+                'powered-by'             => 'Toimii :unopim:lla,',
+                'open-source-project-by' => 'Avoimen lähdekoodin projekti :webkul:lta.',
             ],
         ],
 
         'reset-password' => [
-            'back-link-title'  => 'Takaisin kirjautumiseen?',
-            'confirm-password' => 'Vahvista salasana',
-            'email'            => 'Rekisteröity sähköposti',
-            'password'         => 'Salasana',
-            'submit-btn'       => 'Palauta salasana',
-            'title'            => 'Palauta salasana',
+            'back-link-title'        => 'Takaisin kirjautumiseen?',
+            'confirm-password'       => 'Vahvista salasana',
+            'email'                  => 'Rekisteröity sähköposti',
+            'password'               => 'Salasana',
+            'submit-btn'             => 'Palauta salasana',
+            'title'                  => 'Palauta salasana',
+            'powered-by'             => 'Toimii :unopim:lla,',
+            'open-source-project-by' => 'Avoimen lähdekoodin projekti :webkul:lta.',
         ],
     ],
 
@@ -92,10 +98,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name on jo otettu.',
-                'create-btn'     => 'Luo tuote',
-                'title'          => 'Tuotteet',
-                'magic-ai-error' => 'Varmista, että Magic AI -tunnukset ovat oikein ja että oikea malli on valittu.',
+                'already-taken'             => ':name on jo otettu.',
+                'create-btn'                => 'Luo tuote',
+                'title'                     => 'Tuotteet',
+                'magic-ai-error'            => 'Varmista, että Magic AI -tunnukset ovat oikein ja että oikea malli on valittu.',
+                'magic-ai-validate-error'   => 'Tarkista Magic AI -kirjautumistiedot.',
+                'magic-ai-validate-success' => 'Magic AI -tunnistetiedot tarkistettu onnistuneesti',
 
                 'create' => [
                     'back-btn'                          => 'Takaisin',
@@ -353,6 +361,7 @@ return [
                 'yes'                   => 'Kyllä',
                 'same-code-error'       => 'Vaihtoehdon koodin tulee olla ainutlaatuinen.',
                 'usable-in-grid'        => 'Käytettävissä ruudukossa',
+                'is-filterable'         => 'On suodatettavissa',
 
                 'option' => [
                     'color'    => 'Väriä',
@@ -419,6 +428,7 @@ return [
                 'yes'                   => 'Kyllä',
                 'same-code-error'       => 'Vaihtoehdon koodin tulee olla ainutlaatuinen.',
                 'usable-in-grid'        => 'Käytettävissä ruudukossa',
+                'is-filterable'         => 'On suodatettavissa',
 
                 'option' => [
                     'color'    => 'Väriä',
@@ -504,6 +514,7 @@ return [
                     'name'           => 'Näytön nimi',
                     'no-of-products' => 'Tuotteiden määrä',
                     'position'       => 'Sijainti',
+                    'category-name'  => 'Nimi',
                     'status'         => 'Näkyvä valikossa',
                     'update-status'  => 'Päivitä tila',
                 ],
@@ -1640,12 +1651,12 @@ return [
 
     'configuration' => [
         'index' => [
-            'delete'                       => 'Poista',
-            'no-result-found'              => 'Ei tuloksia löytynyt',
-            'save-btn'                     => 'Tallenna konfiguraatio',
-            'save-message'                 => 'Konfiguraatio tallennettiin onnistuneesti',
-            'search'                       => 'Hae',
-            'title'                        => 'Konfiguraatio',
+            'delete'          => 'Poista',
+            'no-result-found' => 'Ei tuloksia löytynyt',
+            'save-btn'        => 'Tallenna konfiguraatio',
+            'save-message'    => 'Konfiguraatio tallennettiin onnistuneesti',
+            'search'          => 'Hae',
+            'title'           => 'Konfiguraatio',
 
             'general' => [
                 'info'  => '',
@@ -1743,34 +1754,34 @@ return [
             ],
 
             'sidebar' => [
-                'attribute-families'       => 'Attribuuttiperheet',
-                'attribute-groups'         => 'Attribuuttiryhmät',
-                'attributes'               => 'Attribuutit',
-                'history'                  => 'Historia',
-                'edit-section'             => 'Tiedot',
-                'general'                  => 'Yleinen',
-                'catalog'                  => 'Tuoteluettelo',
-                'categories'               => 'Kategoriat',
-                'category_fields'          => 'Kategoriakentät',
-                'channels'                 => 'Kanavat',
-                'collapse'                 => 'Pudota alas',
-                'configure'                => 'Konfiguroi',
-                'currencies'               => 'Valuutat',
-                'dashboard'                => 'Ohjauspaneeli',
-                'data-transfer'            => 'Tietojen siirto',
-                'groups'                   => 'Ryhmät',
-                'tracker'                  => 'Työn seurantapaneeli',
-                'imports'                  => 'Tuo',
-                'exports'                  => 'Vie',
-                'locales'                  => 'Paikallisuudet',
-                'magic-ai'                 => 'Magic AI',
-                'mode'                     => 'Tumma tila',
-                'products'                 => 'Tuotteet',
-                'roles'                    => 'Roolit',
-                'settings'                 => 'Asetukset',
-                'themes'                   => 'Teemat',
-                'users'                    => 'Käyttäjät',
-                'integrations'             => 'Integraatiot',
+                'attribute-families' => 'Attribuuttiperheet',
+                'attribute-groups'   => 'Attribuuttiryhmät',
+                'attributes'         => 'Attribuutit',
+                'history'            => 'Historia',
+                'edit-section'       => 'Tiedot',
+                'general'            => 'Yleinen',
+                'catalog'            => 'Tuoteluettelo',
+                'categories'         => 'Kategoriat',
+                'category_fields'    => 'Kategoriakentät',
+                'channels'           => 'Kanavat',
+                'collapse'           => 'Pudota alas',
+                'configure'          => 'Konfiguroi',
+                'currencies'         => 'Valuutat',
+                'dashboard'          => 'Ohjauspaneeli',
+                'data-transfer'      => 'Tietojen siirto',
+                'groups'             => 'Ryhmät',
+                'tracker'            => 'Työn seurantapaneeli',
+                'imports'            => 'Tuo',
+                'exports'            => 'Vie',
+                'locales'            => 'Paikallisuudet',
+                'magic-ai'           => 'Magic AI',
+                'mode'               => 'Tumma tila',
+                'products'           => 'Tuotteet',
+                'roles'              => 'Roolit',
+                'settings'           => 'Asetukset',
+                'themes'             => 'Teemat',
+                'users'              => 'Käyttäjät',
+                'integrations'       => 'Integraatiot',
             ],
         ],
 
@@ -1890,11 +1901,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Lisää kuva',
-                'ai-add-image-btn'  => 'Magic AI',
-                'ai-btn-info'       => 'Luo kuva',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Vain kuva tiedostot (.jpeg, .jpg, .png, ..) ovat sallittuja.',
+                'add-image-btn'      => 'Lisää kuva',
+                'generate-with-ai'   => 'Luo tekoälyllä',
+                'upload-from-device' => 'Lataa laitteelta',
+                'cancel'             => 'Peruuta',
+                'ai-add-image-btn'   => 'Magic AI',
+                'ai-btn-info'        => 'Luo kuva',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Vain kuva tiedostot (.jpeg, .jpg, .png, ..) ovat sallittuja.',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',
@@ -1963,7 +1977,51 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => 'Oletuskehotus',
             ],
+        ],
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Yksityiskohtainen Tuotekuvaus',
+            'prompt' => 'Kirjoita kattava kuvaus @name:stä, sisältäen sen ominaisuudet, hyödyt, tekniset tiedot ja käyttöohjeet.',
+        ],
+        'overview' => [
+            'title'  => 'Tuotteen Yleiskatsaus',
+            'prompt' => 'Luo yksityiskohtainen yleiskatsaus @name:stä, korostaen sen keskeisiä ominaisuuksia, etuja ja kohdeyleisöä kuten @brand ja @color.',
+        ],
+        'features' => [
+            'title'  => 'Tuotteen Ominaisuudet ja Hyödyt',
+            'prompt' => 'Listaa @name:n keskeiset ominaisuudet ja hyödyt, selittäen kuinka ne lisäävät arvoa asiakkaan elämään.',
+        ],
+        'technical' => [
+            'title'  => 'Tuotteen Tekninen Erityispiirteet',
+            'prompt' => 'Tarjoa yksityiskohtainen lista @name:n teknisistä ominaisuuksista, mukaan lukien mitat, materiaalit ja yhteensopivuus.',
+        ],
+        'care' => [
+            'title'  => 'Tuotteen Hoito ja Ylläpito',
+            'prompt' => 'Kirjoita opas, kuinka hoitaa ja ylläpitää @name:a, mukaan lukien vinkkejä puhdistukseen, säilytykseen ja vianmääritykseen.',
+        ],
+        'tagline' => [
+            'title'  => 'Tuotteen Iskulause',
+            'prompt' => 'Kirjoita houkutteleva ja ytimekäs iskulause @name:lle, joka vangitsee sen olennaisuuden ja hyödyt.',
+        ],
+        'summary' => [
+            'title'  => 'Tuotteen Yhteenveto',
+            'prompt' => 'Tiivistä @name:n keskeiset ominaisuudet ja hyödyt 50-60 sanassa.',
+        ],
+        'headline' => [
+            'title'  => 'Tuotteen Otsikko',
+            'prompt' => 'Luo huomion herättävä otsikko @name:lle, joka korostaa sen ainutlaatuista myyntivalttia.',
+        ],
+        'brief' => [
+            'title'  => 'Tuotteen Yhteenveto',
+            'prompt' => 'Kirjoita lyhyt ja ytimekäs kuvaus @name:stä, keskittyen sen tärkeimpiin etuihin ja kohdeyleisöön.',
+        ],
+        'elevator' => [
+            'title'  => 'Tuotteen Hissipuhe',
+            'prompt' => 'Laadi ytimekäs hissipuhe @name:stä, tiivistäen sen tarkoituksen, hyödyt ja ainutlaatuisen myyntivaltin 30-40 sanassa.',
         ],
     ],
 ];

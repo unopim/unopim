@@ -1,211 +1,43 @@
 <x-admin::layouts>
     <x-slot:title>
         @lang('admin::app.catalog.products.index.title')
-    </x-slot>
+        </x-slot>
 
-    <div class="flex gap-4 justify-between items-center max-sm:flex-wrap">
-        <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-            @lang('admin::app.catalog.products.index.title')
-        </p>
+        <div class="flex gap-4 justify-between items-center max-sm:flex-wrap">
+            <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
+                @lang('admin::app.catalog.products.index.title')
+            </p>
 
-        <div class="flex gap-x-2.5 items-center">
-            <!-- Export Modal -->
-            <x-admin::datagrid.export src="{{ route('admin.catalog.products.index') }}" />
+            <div class="flex gap-x-2.5 items-center">
+                <!-- Export Modal -->
+                <x-admin::datagrid.export src="{{ route('admin.catalog.products.index') }}" />
 
-            {!! view_render_event('unopim.admin.catalog.products.create.before') !!}
+                {!! view_render_event('unopim.admin.catalog.products.create.before') !!}
 
-            @if (bouncer()->hasPermission('catalog.products.create'))
+                @if (bouncer()->hasPermission('catalog.products.create'))
                 <v-create-product-form>
                     <button
                         type="button"
-                        class="primary-button"
-                    >
+                        class="primary-button">
                         @lang('admin::app.catalog.products.index.create-btn')
                     </button>
                 </v-create-product-form>
-            @endif
+                @endif
 
-            {!! view_render_event('unopim.admin.catalog.products.create.after') !!}
+                {!! view_render_event('unopim.admin.catalog.products.create.after') !!}
+            </div>
         </div>
-    </div>
 
-    {!! view_render_event('unopim.admin.catalog.products.list.before') !!}
+        {!! view_render_event('unopim.admin.catalog.products.list.before') !!}
 
     <!-- Datagrid -->
     <x-admin::datagrid src="{{ route('admin.catalog.products.index') }}" :isMultiRow="true">
-        <!-- Datagrid Header -->
-        @php
-            $hasPermission = bouncer()->hasPermission('catalog.products.edit') || bouncer()->hasPermission('catalog.products.delete');
-        @endphp
 
-        <template #header="{ columns, records, sortPage, selectAllRecords, applied, isLoading}">
-            <template v-if="! isLoading">
-                <div class="row grid grid-cols-[2fr_1fr_1fr] grid-rows-1 items-center px-4 py-2.5 border-b bg-violet-50 dark:bg-cherry-900 dark:border-cherry-800 ">
-                    <div
-                        class="flex gap-2.5 items-center select-none"
-                        v-for="(columnGroup, index) in [['product_id', 'sku', 'attribute_family'], ['status', 'type']]"
-                    >
-                        @if ($hasPermission)
-                            <label
-                                class="flex gap-1 items-center w-max cursor-pointer select-none"
-                                for="mass_action_select_all_records"
-                                v-if="! index"
-                            >
-                                <input
-                                    type="checkbox"
-                                    name="mass_action_select_all_records"
-                                    id="mass_action_select_all_records"
-                                    class="hidden peer"
-                                    :checked="['all', 'partial'].includes(applied.massActions.meta.mode)"
-                                    @change="selectAllRecords"
-                                >
-
-                                <span
-                                    class="icon-checkbox-normal cursor-pointer rounded-md text-2xl"
-                                    :class="[
-                                        applied.massActions.meta.mode === 'all' ? 'peer-checked:icon-checkbox-check peer-checked:text-violet-700' : (
-                                            applied.massActions.meta.mode === 'partial' ? 'peer-checked:icon-checkbox-partial peer-checked:text-violet-700' : ''
-                                        ),
-                                    ]"
-                                >
-                                </span>
-                            </label>
-                        @endif
-
-                        <p class="text-gray-600 dark:text-gray-300">
-                            <span class="[&>*]:after:content-['_/_']">
-                                <template v-for="column in columnGroup">
-                                    <span
-                                        class="after:content-['/'] last:after:content-['']"
-                                        :class="{
-                                            'text-gray-800 dark:text-white font-medium': applied.sort.column == column,
-                                            'cursor-pointer hover:text-gray-800 dark:hover:text-white': columns.find(columnTemp => columnTemp.index === column)?.sortable,
-                                        }"
-                                        @click="
-                                            columns.find(columnTemp => columnTemp.index === column)?.sortable ? sortPage(columns.find(columnTemp => columnTemp.index === column)): {}
-                                        "
-                                    >
-                                        @{{ columns.find(columnTemp => columnTemp.index === column)?.label }}
-                                    </span>
-                                </template>
-                            </span>
-
-                            <i
-                                class="ltr:ml-1.5 rtl:mr-1.5 text-base text-gray-800 dark:text-white align-text-bottom"
-                                :class="[applied.sort.order === 'asc' ? 'icon-down-stat': 'icon-up-stat']"
-                                v-if="columnGroup.includes(applied.sort.column)"
-                            ></i>
-                        </p>
-                    </div>
-
-                    <!-- Actions -->
-                    <div class="flex gap-2.5 items-center justify-end select-none">
-                        <p
-                            class="text-gray-600 dark:text-gray-300"
-                        >
-                            @lang('admin::app.components.datagrid.table.actions')
-                        </p>
-                    </div>
-                </div>
-            </template>
-
-            <!-- Datagrid Head Shimmer -->
-            <template v-else>
-                <x-admin::shimmer.datagrid.table.head :isMultiRow="true" />
-            </template>
-        </template>
-
-        <!-- Datagrid Body -->
-        <template #body="{ columns, records, performAction, setCurrentSelectionMode, applied, isLoading }">
-            <template v-if="! isLoading">
-                <div
-                    class="row grid grid-cols-[2fr_1fr_1fr] grid-rows-1 px-4 py-2.5 border-b dark:border-cherry-800  transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
-                    v-for="record in records"
-                >
-                    <!-- Name, SKU, Attribute Family Columns -->
-                    <div class="flex gap-2.5">
-                        @if ($hasPermission)
-                            <input
-                                type="checkbox"
-                                :name="`mass_action_select_record_${record.product_id}`"
-                                :id="`mass_action_select_record_${record.product_id}`"
-                                :value="record.product_id"
-                                class="hidden peer"
-                                v-model="applied.massActions.indices"
-                                @change="setCurrentSelectionMode"
-                            >
-
-                            <label
-                                class="icon-checkbox-normal rounded-md text-2xl cursor-pointer peer-checked:icon-checkbox-check peer-checked:text-violet-700"
-                                :for="`mass_action_select_record_${record.product_id}`"
-                            ></label>
-                        @endif
-
-                        <div class="flex flex-col gap-1.5">
-                            <p class="text-gray-600 dark:text-gray-300">
-                                @{{ "@lang('admin::app.catalog.products.index.datagrid.id-value')".replace(':id', record.product_id) }}
-                            </p>
-                            <p
-                                class="text-gray-600 dark:text-gray-300"
-                            >
-                                @{{ "@lang('admin::app.catalog.products.index.datagrid.sku-value')".replace(':sku', record.sku) }}
-                            </p>
-
-                            <p
-                                class="text-gray-600 dark:text-gray-300"
-                            >
-                                @{{ "@lang('admin::app.catalog.products.index.datagrid.attribute-family-value')".replace(':attribute_family', record.attribute_family) }}
-                            </p>
-                        </div>
-                    </div>
-
-                    <!--  Status and type -->
-                    <div class="flex gap-1.5 overflow-hidden">
-                        <div class="flex flex-col gap-1.5">
-                            <!-- Status Column -->
-                            <p v-html="record.status"></p>
-
-                            <p
-                                class="text-gray-600 dark:text-gray-300"
-                                v-text="record.type"
-                            >
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Status, Category, Type Columns -->
-                    <div class="flex gap-x-4 justify-between items-center">
-                        <div class="flex flex-col gap-1.5">
-                            
-                        </div>
-
-                        <div class="flex gap-1.5 items-center">
-                            <span
-                                class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
-                                :class="action.icon"
-                                v-text="!action.icon ? action.title : ''"
-                                v-for="action in record.actions"
-                                :title="action.title ?? ''"
-                                @click="performAction(action)"
-                            >
-                            </span>
-                        </div>
-                    </div>
-
-                    
-                </div>
-            </template>
-
-            <!-- Datagrid Body Shimmer -->
-            <template v-else>
-                <x-admin::shimmer.datagrid.table.body :isMultiRow="true" />
-            </template>
-        </template>
     </x-admin::datagrid>
 
-    {!! view_render_event('unopim.admin.catalog.products.list.after') !!}
+        {!! view_render_event('unopim.admin.catalog.products.list.after') !!}
 
-    @pushOnce('scripts')
+        @pushOnce('scripts')
         <script type="text/x-template" id="v-create-product-form-template">
             <div>
                 <!-- Product Create Button -->
@@ -280,7 +112,7 @@
 
                                         <x-admin::form.control-group.error control-name="type" />
                                     </x-admin::form.control-group>
-                                    
+
                                     @php
                                         $types = [];
                                         foreach($families as $family) {
@@ -289,11 +121,11 @@
                                                 'label' => ! empty($family->name) ? $family->name : '[' . $family->code . ']',
                                             ];
                                         }
-                                        
+
                                         $typesJson = json_encode($types);
 
                                     @endphp
-                                    
+
                                     <!-- Attribute Family Id -->
                                     <x-admin::form.control-group>
                                         <x-admin::form.control-group.label class="required">
@@ -309,7 +141,7 @@
                                             track-by="id"
                                             label-by="label"
                                         >
-                                            
+
                                         </x-admin::form.control-group.control>
 
                                         <x-admin::form.control-group.error control-name="attribute_family_id" />
@@ -350,7 +182,7 @@
                                                 class="flex items-center py-1 px-2 bg-violet-100 rounded text-violet-700 font-semibold"
                                                 v-for="attribute in attributes"
                                             >
-                                                @{{ attribute.name }}
+                                                @{{ attribute.name || '[' + attribute.code + ']' }}
 
                                                 <span
                                                     class="icon-cancel cursor-pointer text-lg text-violet-700 ltr:ml-1.5 rtl:mr-1.5 dark:!text-violet-700"
@@ -405,7 +237,9 @@
                 },
 
                 methods: {
-                    create(params, { setErrors }) {
+                    create(params, {
+                        setErrors
+                    }) {
                         let formData = new FormData(this.$refs.productCreateForm);
 
                         this.attributes.forEach(attribute => {
@@ -451,5 +285,5 @@
                 }
             })
         </script>
-    @endPushOnce
+        @endPushOnce
 </x-admin::layouts>

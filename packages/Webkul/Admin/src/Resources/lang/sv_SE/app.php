@@ -3,33 +3,39 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                => 'E-postadress',
-            'forget-password-link' => 'Glömt lösenord?',
-            'password'             => 'Lösenord',
-            'submit-btn'           => 'Logga in',
-            'title'                => 'Logga in',
+            'email'                  => 'E-postadress',
+            'forget-password-link'   => 'Glömt lösenord?',
+            'password'               => 'Lösenord',
+            'submit-btn'             => 'Logga in',
+            'title'                  => 'Logga in',
+            'powered-by'             => 'Drivs av :unopim,',
+            'open-source-project-by' => 'Ett open-source-projekt av :webkul.',
         ],
 
         'forget-password' => [
             'create' => [
-                'email'                => 'Registrerad e-post',
-                'email-not-exist'      => 'E-postadress finns inte',
-                'page-title'           => 'Glömt lösenord',
-                'reset-link-sent'      => 'Länk för att återställa lösenord skickad',
-                'email-settings-error' => 'E-post kunde inte skickas. Kontrollera din e-postkonfiguration',
-                'sign-in-link'         => 'Tillbaka till inloggning?',
-                'submit-btn'           => 'Återställ',
-                'title'                => 'Återställ lösenord',
+                'email'                  => 'Registrerad e-post',
+                'email-not-exist'        => 'E-postadress finns inte',
+                'page-title'             => 'Glömt lösenord',
+                'reset-link-sent'        => 'Länk för att återställa lösenord skickad',
+                'email-settings-error'   => 'E-post kunde inte skickas. Kontrollera din e-postkonfiguration',
+                'sign-in-link'           => 'Tillbaka till inloggning?',
+                'submit-btn'             => 'Återställ',
+                'title'                  => 'Återställ lösenord',
+                'powered-by'             => 'Drivs av :unopim,',
+                'open-source-project-by' => 'Ett open-source-projekt av :webkul.',
             ],
         ],
 
         'reset-password' => [
-            'back-link-title'  => 'Tillbaka till inloggning?',
-            'confirm-password' => 'Bekräfta lösenord',
-            'email'            => 'Registrerad e-post',
-            'password'         => 'Lösenord',
-            'submit-btn'       => 'Återställ lösenord',
-            'title'            => 'Återställ lösenord',
+            'back-link-title'        => 'Tillbaka till inloggning?',
+            'confirm-password'       => 'Bekräfta lösenord',
+            'email'                  => 'Registrerad e-post',
+            'password'               => 'Lösenord',
+            'submit-btn'             => 'Återställ lösenord',
+            'title'                  => 'Återställ lösenord',
+            'powered-by'             => 'Drivs av :unopim,',
+            'open-source-project-by' => 'Ett open-source-projekt av :webkul.',
         ],
     ],
 
@@ -92,10 +98,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name är redan i bruk.',
-                'create-btn'     => 'Skapa produkt',
-                'title'          => 'Produkter',
-                'magic-ai-error' => 'Kontrollera Magic AI-uppgifterna och se till att rätt modell är vald.',
+                'already-taken'             => ':name är redan i bruk.',
+                'create-btn'                => 'Skapa produkt',
+                'title'                     => 'Produkter',
+                'magic-ai-error'            => 'Kontrollera Magic AI-uppgifterna och se till att rätt modell är vald.',
+                'magic-ai-validate-error'   => 'Vänligen kontrollera Magic AI-referenserna.',
+                'magic-ai-validate-success' => 'Magic AI-referenserna validerades framgångsrikt.',
 
                 'create' => [
                     'back-btn'                          => 'Tillbaka',
@@ -353,6 +361,7 @@ return [
                 'yes'                   => 'Ja',
                 'same-code-error'       => 'Alternativets kod måste vara unik.',
                 'usable-in-grid'        => 'Kan användas i rutnät',
+                'is-filterable'         => 'Är filtrerbar',
 
                 'option' => [
                     'color'    => 'Färgväljare',
@@ -419,6 +428,7 @@ return [
                 'yes'                   => 'Ja',
                 'same-code-error'       => 'Alternativets kod måste vara unik.',
                 'usable-in-grid'        => 'Kan användas i rutnät',
+                'is-filterable'         => 'Är filtrerbar',
 
                 'option' => [
                     'color'    => 'Färgväljare',
@@ -504,6 +514,7 @@ return [
                     'name'           => 'Visningsnamn',
                     'no-of-products' => 'Antal produkter',
                     'position'       => 'Position',
+                    'category-name'  => 'اسم',
                     'status'         => 'Synlig i menyn',
                     'update-status'  => 'Uppdatera status',
                 ],
@@ -1641,12 +1652,12 @@ return [
 
     'configuration' => [
         'index' => [
-            'delete'                       => 'Radera',
-            'no-result-found'              => 'Inget resultat hittades',
-            'save-btn'                     => 'Spara Konfiguration',
-            'save-message'                 => 'Konfigurationen sparades framgångsrikt',
-            'search'                       => 'Sök',
-            'title'                        => 'Konfiguration',
+            'delete'          => 'Radera',
+            'no-result-found' => 'Inget resultat hittades',
+            'save-btn'        => 'Spara Konfiguration',
+            'save-message'    => 'Konfigurationen sparades framgångsrikt',
+            'search'          => 'Sök',
+            'title'           => 'Konfiguration',
 
             'general' => [
                 'info'  => '',
@@ -1744,34 +1755,34 @@ return [
             ],
 
             'sidebar' => [
-                'attribute-families'       => 'Attributfamiljer',
-                'attribute-groups'         => 'Attributgrupper',
-                'attributes'               => 'Attribut',
-                'history'                  => 'Historik',
-                'edit-section'             => 'Data',
-                'general'                  => 'Allmänt',
-                'catalog'                  => 'Katalog',
-                'categories'               => 'Kategorier',
-                'category_fields'          => 'Kategorifält',
-                'channels'                 => 'Kanaler',
-                'collapse'                 => 'Kollapsa',
-                'configure'                => 'Konfiguration',
-                'currencies'               => 'Valutor',
-                'dashboard'                => 'Instrumentpanel',
-                'data-transfer'            => 'Dataöverföring',
-                'groups'                   => 'Grupper',
-                'tracker'                  => 'Jobb Tracker',
-                'imports'                  => 'Importer',
-                'exports'                  => 'Exporter',
-                'locales'                  => 'Lokaliseringsinställningar',
-                'magic-ai'                 => 'Magic AI',
-                'mode'                     => 'Mörkt Läge',
-                'products'                 => 'Produkter',
-                'roles'                    => 'Roller',
-                'settings'                 => 'Inställningar',
-                'themes'                   => 'Teman',
-                'users'                    => 'Användare',
-                'integrations'             => 'Integrationer',
+                'attribute-families' => 'Attributfamiljer',
+                'attribute-groups'   => 'Attributgrupper',
+                'attributes'         => 'Attribut',
+                'history'            => 'Historik',
+                'edit-section'       => 'Data',
+                'general'            => 'Allmänt',
+                'catalog'            => 'Katalog',
+                'categories'         => 'Kategorier',
+                'category_fields'    => 'Kategorifält',
+                'channels'           => 'Kanaler',
+                'collapse'           => 'Kollapsa',
+                'configure'          => 'Konfiguration',
+                'currencies'         => 'Valutor',
+                'dashboard'          => 'Instrumentpanel',
+                'data-transfer'      => 'Dataöverföring',
+                'groups'             => 'Grupper',
+                'tracker'            => 'Jobb Tracker',
+                'imports'            => 'Importer',
+                'exports'            => 'Exporter',
+                'locales'            => 'Lokaliseringsinställningar',
+                'magic-ai'           => 'Magic AI',
+                'mode'               => 'Mörkt Läge',
+                'products'           => 'Produkter',
+                'roles'              => 'Roller',
+                'settings'           => 'Inställningar',
+                'themes'             => 'Teman',
+                'users'              => 'Användare',
+                'integrations'       => 'Integrationer',
             ],
         ],
 
@@ -1891,11 +1902,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Lägg Till Bild',
-                'ai-add-image-btn'  => 'Magic AI',
-                'ai-btn-info'       => 'Generera Bild',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Endast bildfiler (.jpeg, .jpg, .png, ..) är tillåtna.',
+                'add-image-btn'      => 'Lägg Till Bild',
+                'generate-with-ai'   => 'Generera med AI',
+                'upload-from-device' => 'Ladda upp från enhet',
+                'cancel'             => 'Avbryt',
+                'ai-add-image-btn'   => 'Magic AI',
+                'ai-btn-info'        => 'Generera Bild',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Endast bildfiler (.jpeg, .jpg, .png, ..) är tillåtna.',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',
@@ -1964,7 +1978,51 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => 'Standardprompt',
             ],
+        ],
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Detaljerad produktbeskrivning',
+            'prompt' => 'Skriv en detaljerad beskrivning av @name, inklusive dess funktioner, fördelar, tekniska specifikationer och användarinstruktioner.',
+        ],
+        'overview' => [
+            'title'  => 'Produktöversikt',
+            'prompt' => 'Skapa en detaljerad översikt av @name, som lyfter fram dess viktigaste funktioner, fördelar och målgrupp, som @brand och @color.',
+        ],
+        'features' => [
+            'title'  => 'Produktfunktioner och fördelar',
+            'prompt' => 'Lista de viktigaste funktionerna och fördelarna med @name, och förklara hur de tillför värde till kundens liv.',
+        ],
+        'technical' => [
+            'title'  => 'Produktens tekniska specifikationer',
+            'prompt' => 'Ge en detaljerad lista över tekniska specifikationer för @name, inklusive mått, material och kompatibilitet.',
+        ],
+        'care' => [
+            'title'  => 'Skötsel och underhåll av produkten',
+            'prompt' => 'Skriv en guide om hur du tar hand om och underhåller @name, inklusive tips för rengöring, förvaring och felsökning.',
+        ],
+        'tagline' => [
+            'title'  => 'Produktslogan',
+            'prompt' => 'Skriv en catchy och kort slogan för @name som fångar dess essens och fördelar.',
+        ],
+        'summary' => [
+            'title'  => 'Produktsammandrag',
+            'prompt' => 'Sammanfatta de viktigaste funktionerna och fördelarna med @name i 50-60 ord.',
+        ],
+        'headline' => [
+            'title'  => 'Produkttitel',
+            'prompt' => 'Skapa en uppmärksamhetsväckande titel för @name som lyfter fram dess unika försäljningspunkt.',
+        ],
+        'brief' => [
+            'title'  => 'Kort produktbeskrivning',
+            'prompt' => 'Skriv en kort och koncis beskrivning av @name, med fokus på dess viktigaste fördelar och målgrupp.',
+        ],
+        'elevator' => [
+            'title'  => 'Produktpitch',
+            'prompt' => 'Skapa en kort pitch för @name, som sammanfattar dess syfte, fördelar och unika försäljningspunkt i 30-40 ord.',
         ],
     ],
 ];

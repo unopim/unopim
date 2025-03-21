@@ -2,6 +2,7 @@
 
 namespace Webkul\Attribute\Services;
 
+use Illuminate\Database\Eloquent\Collection;
 use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Repositories\AttributeRepository;
 
@@ -32,5 +33,16 @@ class AttributeService
         }
 
         return $attribute;
+    }
+
+    /**
+     * Retrieves a collection of Attribute objects based on the provided attribute codes.
+     */
+    public function findAttributeByCodes(array $codes): ?Collection
+    {
+        return $this->attributeRepository
+            ->whereIn('code', $codes)
+            ->orderByRaw("FIELD(code, '".implode("', '", $codes)."')")
+            ->get();
     }
 }

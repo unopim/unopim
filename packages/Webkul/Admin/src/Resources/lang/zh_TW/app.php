@@ -3,33 +3,39 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                => '電子郵件地址',
-            'forget-password-link' => '忘記密碼？',
-            'password'             => '密碼',
-            'submit-btn'           => '登入',
-            'title'                => '登入',
+            'email'                  => '電子郵件地址',
+            'forget-password-link'   => '忘記密碼？',
+            'password'               => '密碼',
+            'submit-btn'             => '登入',
+            'title'                  => '登入',
+            'powered-by'             => '由 :unopim 提供,',
+            'open-source-project-by' => '由 :webkul 開源專案提供。',
         ],
 
         'forget-password' => [
             'create' => [
-                'email'                => '已註冊的電子郵件',
-                'email-not-exist'      => '電子郵件不存在',
-                'page-title'           => '忘記密碼',
-                'reset-link-sent'      => '重置密碼鏈接已發送',
-                'email-settings-error' => '無法發送電子郵件。請檢查您的電子郵件配置詳情',
-                'sign-in-link'         => '返回登入？',
-                'submit-btn'           => '重設',
-                'title'                => '恢復密碼',
+                'email'                  => '已註冊的電子郵件',
+                'email-not-exist'        => '電子郵件不存在',
+                'page-title'             => '忘記密碼',
+                'reset-link-sent'        => '重置密碼鏈接已發送',
+                'email-settings-error'   => '無法發送電子郵件。請檢查您的電子郵件配置詳情',
+                'sign-in-link'           => '返回登入？',
+                'submit-btn'             => '重設',
+                'title'                  => '恢復密碼',
+                'powered-by'             => '由 :unopim 提供,',
+                'open-source-project-by' => '由 :webkul 開源專案提供。',
             ],
         ],
 
         'reset-password' => [
-            'back-link-title'  => '返回登入？',
-            'confirm-password' => '確認密碼',
-            'email'            => '已註冊的電子郵件',
-            'password'         => '密碼',
-            'submit-btn'       => '重置密碼',
-            'title'            => '重置密碼',
+            'back-link-title'        => '返回登入？',
+            'confirm-password'       => '確認密碼',
+            'email'                  => '已註冊的電子郵件',
+            'password'               => '密碼',
+            'submit-btn'             => '重置密碼',
+            'title'                  => '重置密碼',
+            'powered-by'             => '由 :unopim 提供,',
+            'open-source-project-by' => '由 :webkul 開源專案提供。',
         ],
     ],
 
@@ -92,10 +98,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name 已經被使用。',
-                'create-btn'     => '創建產品',
-                'title'          => '產品',
-                'magic-ai-error' => '檢查您的 Magic AI 賬戶，並確保已選擇正確的模型。',
+                'already-taken'             => ':name 已經被使用。',
+                'create-btn'                => '創建產品',
+                'title'                     => '產品',
+                'magic-ai-error'            => '檢查您的 Magic AI 賬戶，並確保已選擇正確的模型。',
+                'magic-ai-validate-error'   => '請驗證 Magic AI 憑證。',
+                'magic-ai-validate-success' => 'Magic AI 憑證驗證成功。',
 
                 'create' => [
                     'back-btn'                          => '返回',
@@ -353,6 +361,7 @@ return [
                 'yes'                   => '是',
                 'same-code-error'       => '選項代碼必須唯一。',
                 'usable-in-grid'        => '可在網格中使用',
+                'is-filterable'         => '可篩選',
 
                 'option' => [
                     'color'    => '顏色樣本',
@@ -419,6 +428,7 @@ return [
                 'yes'                   => '是',
                 'same-code-error'       => '選項代碼必須唯一。',
                 'usable-in-grid'        => '可在網格中使用',
+                'is-filterable'         => '可篩選',
 
                 'option' => [
                     'color'    => '顏色樣本',
@@ -504,6 +514,7 @@ return [
                     'name'           => '顯示名稱',
                     'no-of-products' => '產品數量',
                     'position'       => '位置',
+                    'category-name'  => '名稱',
                     'status'         => '顯示於菜單中',
                     'update-status'  => '更新狀態',
                 ],
@@ -1641,12 +1652,12 @@ return [
 
     'configuration' => [
         'index' => [
-            'delete'                       => '刪除',
-            'no-result-found'              => '未找到結果',
-            'save-btn'                     => '保存配置',
-            'save-message'                 => '配置成功保存',
-            'search'                       => '搜尋',
-            'title'                        => '配置',
+            'delete'          => '刪除',
+            'no-result-found' => '未找到結果',
+            'save-btn'        => '保存配置',
+            'save-message'    => '配置成功保存',
+            'search'          => '搜尋',
+            'title'           => '配置',
 
             'general' => [
                 'info'  => '',
@@ -1744,34 +1755,34 @@ return [
             ],
 
             'sidebar' => [
-                'attribute-families'       => '屬性族群',
-                'attribute-groups'         => '屬性群組',
-                'attributes'               => '屬性',
-                'history'                  => '歷史',
-                'edit-section'             => '資料',
-                'general'                  => '一般',
-                'catalog'                  => '目錄',
-                'categories'               => '分類',
-                'category_fields'          => '分類字段',
-                'channels'                 => '頻道',
-                'collapse'                 => '折疊',
-                'configure'                => '配置',
-                'currencies'               => '貨幣',
-                'dashboard'                => '儀表板',
-                'data-transfer'            => '數據傳輸',
-                'groups'                   => '群組',
-                'tracker'                  => '工作跟踪器',
-                'imports'                  => '導入',
-                'exports'                  => '出口',
-                'locales'                  => '語言地區',
-                'magic-ai'                 => '魔法AI',
-                'mode'                     => '黑暗模式',
-                'products'                 => '產品',
-                'roles'                    => '角色',
-                'settings'                 => '設置',
-                'themes'                   => '主題',
-                'users'                    => '用戶',
-                'integrations'             => '集成',
+                'attribute-families' => '屬性族群',
+                'attribute-groups'   => '屬性群組',
+                'attributes'         => '屬性',
+                'history'            => '歷史',
+                'edit-section'       => '資料',
+                'general'            => '一般',
+                'catalog'            => '目錄',
+                'categories'         => '分類',
+                'category_fields'    => '分類字段',
+                'channels'           => '頻道',
+                'collapse'           => '折疊',
+                'configure'          => '配置',
+                'currencies'         => '貨幣',
+                'dashboard'          => '儀表板',
+                'data-transfer'      => '數據傳輸',
+                'groups'             => '群組',
+                'tracker'            => '工作跟踪器',
+                'imports'            => '導入',
+                'exports'            => '出口',
+                'locales'            => '語言地區',
+                'magic-ai'           => '魔法AI',
+                'mode'               => '黑暗模式',
+                'products'           => '產品',
+                'roles'              => '角色',
+                'settings'           => '設置',
+                'themes'             => '主題',
+                'users'              => '用戶',
+                'integrations'       => '集成',
             ],
         ],
 
@@ -1891,11 +1902,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => '添加圖片',
-                'ai-add-image-btn'  => '魔法AI',
-                'ai-btn-info'       => '生成圖片',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => '僅允許圖片文件 (.jpeg, .jpg, .png, ..)。',
+                'add-image-btn'      => '添加圖片',
+                'generate-with-ai'   => '使用 AI 生成',
+                'upload-from-device' => '從設備上傳',
+                'cancel'             => '取消',
+                'ai-add-image-btn'   => '魔法AI',
+                'ai-btn-info'        => '生成圖片',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => '僅允許圖片文件 (.jpeg, .jpg, .png, ..)。',
             ],
 
             'videos' => [
@@ -1935,7 +1949,51 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => '預設提示',
             ],
+        ],
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => '產品詳細描述',
+            'prompt' => '撰寫@name的詳細描述，包括其特徵、優勢、技術規格和使用說明。',
+        ],
+        'overview' => [
+            'title'  => '產品概覽',
+            'prompt' => '創建@name的詳細概覽，突出其主要特徵、優勢和目標受眾，如@brand和@color。',
+        ],
+        'features' => [
+            'title'  => '產品特徵與優勢',
+            'prompt' => '列出@name的主要特徵與優勢，並解釋它們如何為客戶的生活增添價值。',
+        ],
+        'technical' => [
+            'title'  => '產品技術規格',
+            'prompt' => '提供@name的詳細技術規格清單，包括尺寸、材料和相容性。',
+        ],
+        'care' => [
+            'title'  => '產品護理與維護',
+            'prompt' => '撰寫@name的護理與維護指南，包括清潔、儲存和故障排除的建議。',
+        ],
+        'tagline' => [
+            'title'  => '產品標語',
+            'prompt' => '為@name寫一個簡潔有吸引力的標語，捕捉其精髓和優勢。',
+        ],
+        'summary' => [
+            'title'  => '產品摘要',
+            'prompt' => '用50-60個字總結@name的主要特徵和優勢。',
+        ],
+        'headline' => [
+            'title'  => '產品標題',
+            'prompt' => '為@name創建一個引人注目的標題，突顯其獨特的銷售點。',
+        ],
+        'brief' => [
+            'title'  => '產品簡介',
+            'prompt' => '撰寫@name的簡短介紹，專注於其主要優勢和目標受眾。',
+        ],
+        'elevator' => [
+            'title'  => '產品電梯簡報',
+            'prompt' => '為@name創建一個簡短的電梯簡報，在30-40個字中總結其目的、優勢和獨特的銷售點。',
         ],
     ],
 ];

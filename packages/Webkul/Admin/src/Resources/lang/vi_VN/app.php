@@ -3,33 +3,39 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                => 'Địa chỉ Email',
-            'forget-password-link' => 'Quên mật khẩu?',
-            'password'             => 'Mật khẩu',
-            'submit-btn'           => 'Đăng nhập',
-            'title'                => 'Đăng nhập',
+            'email'                  => 'Địa chỉ Email',
+            'forget-password-link'   => 'Quên mật khẩu?',
+            'password'               => 'Mật khẩu',
+            'submit-btn'             => 'Đăng nhập',
+            'title'                  => 'Đăng nhập',
+            'powered-by'             => 'Được cung cấp bởi :unopim,',
+            'open-source-project-by' => 'Dự án mã nguồn mở của :webkul.',
         ],
 
         'forget-password' => [
             'create' => [
-                'email'                => 'Email đã đăng ký',
-                'email-not-exist'      => 'Email không tồn tại',
-                'page-title'           => 'Quên mật khẩu',
-                'reset-link-sent'      => 'Liên kết đặt lại mật khẩu đã được gửi',
-                'email-settings-error' => 'Email không thể gửi. Vui lòng kiểm tra cài đặt email của bạn',
-                'sign-in-link'         => 'Quay lại Đăng nhập?',
-                'submit-btn'           => 'Đặt lại',
-                'title'                => 'Khôi phục mật khẩu',
+                'email'                  => 'Email đã đăng ký',
+                'email-not-exist'        => 'Email không tồn tại',
+                'page-title'             => 'Quên mật khẩu',
+                'reset-link-sent'        => 'Liên kết đặt lại mật khẩu đã được gửi',
+                'email-settings-error'   => 'Email không thể gửi. Vui lòng kiểm tra cài đặt email của bạn',
+                'sign-in-link'           => 'Quay lại Đăng nhập?',
+                'submit-btn'             => 'Đặt lại',
+                'title'                  => 'Khôi phục mật khẩu',
+                'powered-by'             => 'Được cung cấp bởi :unopim,',
+                'open-source-project-by' => 'Dự án mã nguồn mở của :webkul.',
             ],
         ],
 
         'reset-password' => [
-            'back-link-title'  => 'Quay lại Đăng nhập?',
-            'confirm-password' => 'Xác nhận mật khẩu',
-            'email'            => 'Email đã đăng ký',
-            'password'         => 'Mật khẩu',
-            'submit-btn'       => 'Đặt lại mật khẩu',
-            'title'            => 'Đặt lại mật khẩu',
+            'back-link-title'        => 'Quay lại Đăng nhập?',
+            'confirm-password'       => 'Xác nhận mật khẩu',
+            'email'                  => 'Email đã đăng ký',
+            'password'               => 'Mật khẩu',
+            'submit-btn'             => 'Đặt lại mật khẩu',
+            'title'                  => 'Đặt lại mật khẩu',
+            'powered-by'             => 'Được cung cấp bởi :unopim,',
+            'open-source-project-by' => 'Dự án mã nguồn mở của :webkul.',
         ],
     ],
 
@@ -92,10 +98,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name đã được sử dụng.',
-                'create-btn'     => 'Tạo sản phẩm',
-                'title'          => 'Sản phẩm',
-                'magic-ai-error' => 'Kiểm tra lại thông tin Magic AI của bạn và đảm bảo rằng mô hình chính xác đã được chọn.',
+                'already-taken'             => ':name đã được sử dụng.',
+                'create-btn'                => 'Tạo sản phẩm',
+                'title'                     => 'Sản phẩm',
+                'magic-ai-error'            => 'Kiểm tra lại thông tin Magic AI của bạn và đảm bảo rằng mô hình chính xác đã được chọn.',
+                'magic-ai-validate-error'   => 'Vui lòng kiểm tra thông tin đăng nhập Magic AI.',
+                'magic-ai-validate-success' => 'Thông tin đăng nhập Magic AI đã được xác thực thành công.',
 
                 'create' => [
                     'back-btn'                          => 'Quay lại',
@@ -353,6 +361,7 @@ return [
                 'yes'                   => 'Có',
                 'same-code-error'       => 'Mã của tuỳ chọn phải duy nhất.',
                 'usable-in-grid'        => 'Có thể sử dụng trong lưới',
+                'is-filterable'         => 'Có thể lọc',
 
                 'option' => [
                     'color'    => 'Mẫu màu sắc',
@@ -419,6 +428,7 @@ return [
                 'yes'                   => 'Có',
                 'same-code-error'       => 'Mã của tuỳ chọn phải duy nhất.',
                 'usable-in-grid'        => 'Có thể sử dụng trong lưới',
+                'is-filterable'         => 'Có thể lọc',
 
                 'option' => [
                     'color'    => 'Mẫu màu sắc',
@@ -504,6 +514,7 @@ return [
                     'name'           => 'Tên hiển thị',
                     'no-of-products' => 'Số sản phẩm',
                     'position'       => 'Vị trí',
+                    'category-name'  => 'Tên',
                     'status'         => 'Hiển thị trong menu',
                     'update-status'  => 'Cập nhật trạng thái',
                 ],
@@ -1641,12 +1652,12 @@ return [
 
     'configuration' => [
         'index' => [
-            'delete'                       => 'Xóa',
-            'no-result-found'              => 'Không tìm thấy kết quả nào',
-            'save-btn'                     => 'Lưu cấu hình',
-            'save-message'                 => 'Cấu hình đã được lưu thành công',
-            'search'                       => 'Tìm kiếm',
-            'title'                        => 'Cấu hình',
+            'delete'          => 'Xóa',
+            'no-result-found' => 'Không tìm thấy kết quả nào',
+            'save-btn'        => 'Lưu cấu hình',
+            'save-message'    => 'Cấu hình đã được lưu thành công',
+            'search'          => 'Tìm kiếm',
+            'title'           => 'Cấu hình',
 
             'general' => [
                 'info'  => '',
@@ -1744,34 +1755,34 @@ return [
             ],
 
             'sidebar' => [
-                'attribute-families'       => 'Nhóm thuộc tính',
-                'attribute-groups'         => 'Nhóm thuộc tính',
-                'attributes'               => 'Thuộc tính',
-                'history'                  => 'Lịch sử',
-                'edit-section'             => 'Dữ liệu',
-                'general'                  => 'Chung',
-                'catalog'                  => 'Danh mục',
-                'categories'               => 'Danh mục',
-                'category_fields'          => 'Các trường danh mục',
-                'channels'                 => 'Kênh',
-                'collapse'                 => 'Gập lại',
-                'configure'                => 'Cấu hình',
-                'currencies'               => 'Tiền tệ',
-                'dashboard'                => 'Bảng điều khiển',
-                'data-transfer'            => 'Chuyển dữ liệu',
-                'groups'                   => 'Nhóm',
-                'tracker'                  => 'Theo dõi công việc',
-                'imports'                  => 'Nhập khẩu',
-                'exports'                  => 'Xuất khẩu',
-                'locales'                  => 'Cài đặt địa phương',
-                'magic-ai'                 => 'AI ma thuật',
-                'mode'                     => 'Chế độ tối',
-                'products'                 => 'Sản phẩm',
-                'roles'                    => 'Vai trò',
-                'settings'                 => 'Cài đặt',
-                'themes'                   => 'Chủ đề',
-                'users'                    => 'Người dùng',
-                'integrations'             => 'Tích hợp',
+                'attribute-families' => 'Nhóm thuộc tính',
+                'attribute-groups'   => 'Nhóm thuộc tính',
+                'attributes'         => 'Thuộc tính',
+                'history'            => 'Lịch sử',
+                'edit-section'       => 'Dữ liệu',
+                'general'            => 'Chung',
+                'catalog'            => 'Danh mục',
+                'categories'         => 'Danh mục',
+                'category_fields'    => 'Các trường danh mục',
+                'channels'           => 'Kênh',
+                'collapse'           => 'Gập lại',
+                'configure'          => 'Cấu hình',
+                'currencies'         => 'Tiền tệ',
+                'dashboard'          => 'Bảng điều khiển',
+                'data-transfer'      => 'Chuyển dữ liệu',
+                'groups'             => 'Nhóm',
+                'tracker'            => 'Theo dõi công việc',
+                'imports'            => 'Nhập khẩu',
+                'exports'            => 'Xuất khẩu',
+                'locales'            => 'Cài đặt địa phương',
+                'magic-ai'           => 'AI ma thuật',
+                'mode'               => 'Chế độ tối',
+                'products'           => 'Sản phẩm',
+                'roles'              => 'Vai trò',
+                'settings'           => 'Cài đặt',
+                'themes'             => 'Chủ đề',
+                'users'              => 'Người dùng',
+                'integrations'       => 'Tích hợp',
             ],
         ],
 
@@ -1891,11 +1902,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Thêm ảnh',
-                'ai-add-image-btn'  => 'AI ma thuật',
-                'ai-btn-info'       => 'Tạo ảnh',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Chỉ cho phép các tệp hình ảnh (.jpeg, .jpg, .png, ..)',
+                'add-image-btn'      => 'Thêm ảnh',
+                'generate-with-ai'   => 'Tạo bằng AI',
+                'upload-from-device' => 'Tải lên từ thiết bị',
+                'cancel'             => 'Hủy',
+                'ai-add-image-btn'   => 'AI ma thuật',
+                'ai-btn-info'        => 'Tạo ảnh',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Chỉ cho phép các tệp hình ảnh (.jpeg, .jpg, .png, ..)',
             ],
 
             'videos' => [
@@ -1935,7 +1949,51 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => 'Lời nhắc mặc định',
             ],
+        ],
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Mô tả chi tiết sản phẩm',
+            'prompt' => 'Viết một mô tả chi tiết về @name, bao gồm các tính năng, lợi ích, thông số kỹ thuật và hướng dẫn sử dụng.',
+        ],
+        'overview' => [
+            'title'  => 'Tổng quan về sản phẩm',
+            'prompt' => 'Tạo một tổng quan chi tiết về @name, làm nổi bật các tính năng chính, ưu điểm và đối tượng mục tiêu như @brand và @color.',
+        ],
+        'features' => [
+            'title'  => 'Tính năng và lợi ích của sản phẩm',
+            'prompt' => 'Liệt kê các tính năng chính và lợi ích của @name, giải thích cách chúng mang lại giá trị cho cuộc sống của khách hàng.',
+        ],
+        'technical' => [
+            'title'  => 'Thông số kỹ thuật sản phẩm',
+            'prompt' => 'Cung cấp danh sách chi tiết các thông số kỹ thuật của @name, bao gồm kích thước, vật liệu và khả năng tương thích.',
+        ],
+        'care' => [
+            'title'  => 'Chăm sóc và bảo dưỡng sản phẩm',
+            'prompt' => 'Viết hướng dẫn về cách chăm sóc và bảo dưỡng @name, bao gồm các mẹo về làm sạch, lưu trữ và khắc phục sự cố.',
+        ],
+        'tagline' => [
+            'title'  => 'Khẩu hiệu sản phẩm',
+            'prompt' => 'Viết một khẩu hiệu ngắn gọn và thu hút cho @name, nêu bật bản chất và lợi ích của sản phẩm.',
+        ],
+        'summary' => [
+            'title'  => 'Tóm tắt sản phẩm',
+            'prompt' => 'Tóm tắt các tính năng và lợi ích chính của @name trong 50-60 từ.',
+        ],
+        'headline' => [
+            'title'  => 'Tiêu đề sản phẩm',
+            'prompt' => 'Tạo một tiêu đề hấp dẫn cho @name, làm nổi bật điểm bán hàng độc đáo của nó.',
+        ],
+        'brief' => [
+            'title'  => 'Mô tả ngắn gọn về sản phẩm',
+            'prompt' => 'Viết một mô tả ngắn gọn về @name, tập trung vào các lợi ích chính và đối tượng mục tiêu.',
+        ],
+        'elevator' => [
+            'title'  => 'Lời chào ngắn gọn sản phẩm',
+            'prompt' => 'Tạo một lời chào ngắn gọn cho @name, tóm tắt mục đích, lợi ích và điểm bán hàng độc đáo của sản phẩm trong 30-40 từ.',
         ],
     ],
 ];

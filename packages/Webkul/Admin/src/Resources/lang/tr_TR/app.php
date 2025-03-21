@@ -3,33 +3,39 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                => 'E-posta Adresi',
-            'forget-password-link' => 'Şifreyi Unuttunuz mu?',
-            'password'             => 'Şifre',
-            'submit-btn'           => 'Giriş Yap',
-            'title'                => 'Giriş Yap',
+            'email'                  => 'E-posta Adresi',
+            'forget-password-link'   => 'Şifreyi Unuttunuz mu?',
+            'password'               => 'Şifre',
+            'submit-btn'             => 'Giriş Yap',
+            'title'                  => 'Giriş Yap',
+            'powered-by'             => ':unopim tarafından desteklenmektedir,',
+            'open-source-project-by' => ':webkul tarafından sunulan açık kaynak projesi.',
         ],
 
         'forget-password' => [
             'create' => [
-                'email'                => 'Kayıtlı E-posta',
-                'email-not-exist'      => 'E-posta bulunamadı',
-                'page-title'           => 'Şifreyi Unuttum',
-                'reset-link-sent'      => 'Şifre sıfırlama bağlantısı gönderildi',
-                'email-settings-error' => 'E-posta gönderilemedi. Lütfen e-posta ayarlarınızı kontrol edin',
-                'sign-in-link'         => 'Geri Giriş Yap?',
-                'submit-btn'           => 'Sıfırla',
-                'title'                => 'Parolayı Geri Al',
+                'email'                  => 'Kayıtlı E-posta',
+                'email-not-exist'        => 'E-posta bulunamadı',
+                'page-title'             => 'Şifreyi Unuttum',
+                'reset-link-sent'        => 'Şifre sıfırlama bağlantısı gönderildi',
+                'email-settings-error'   => 'E-posta gönderilemedi. Lütfen e-posta ayarlarınızı kontrol edin',
+                'sign-in-link'           => 'Geri Giriş Yap?',
+                'submit-btn'             => 'Sıfırla',
+                'title'                  => 'Parolayı Geri Al',
+                'powered-by'             => ':unopim tarafından desteklenmektedir,',
+                'open-source-project-by' => ':webkul tarafından sunulan açık kaynak projesi.',
             ],
         ],
 
         'reset-password' => [
-            'back-link-title'  => 'Geri Giriş Yap?',
-            'confirm-password' => 'Şifreyi Onayla',
-            'email'            => 'Kayıtlı E-posta',
-            'password'         => 'Şifre',
-            'submit-btn'       => 'Şifreyi Sıfırla',
-            'title'            => 'Şifreyi Sıfırla',
+            'back-link-title'        => 'Geri Giriş Yap?',
+            'confirm-password'       => 'Şifreyi Onayla',
+            'email'                  => 'Kayıtlı E-posta',
+            'password'               => 'Şifre',
+            'submit-btn'             => 'Şifreyi Sıfırla',
+            'title'                  => 'Şifreyi Sıfırla',
+            'powered-by'             => ':unopim tarafından desteklenmektedir,',
+            'open-source-project-by' => ':webkul tarafından sunulan açık kaynak projesi.',
         ],
     ],
 
@@ -92,10 +98,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name zaten kullanılıyor.',
-                'create-btn'     => 'Ürün oluştur',
-                'title'          => 'Ürünler',
-                'magic-ai-error' => 'Magic AI kimlik bilgilerinizi kontrol edin ve doğru modelin seçildiğinden emin olun.',
+                'already-taken'             => ':name zaten kullanılıyor.',
+                'create-btn'                => 'Ürün oluştur',
+                'title'                     => 'Ürünler',
+                'magic-ai-error'            => 'Magic AI kimlik bilgilerinizi kontrol edin ve doğru modelin seçildiğinden emin olun.',
+                'magic-ai-validate-error'   => 'Lütfen Magic AI kimlik bilgilerini doğrulayın.',
+                'magic-ai-validate-success' => 'Magic AI kimlik bilgileri başarıyla doğrulandı.',
 
                 'create' => [
                     'back-btn'                          => 'Geri',
@@ -353,6 +361,7 @@ return [
                 'yes'                   => 'Evet',
                 'same-code-error'       => 'Seçenek kodu benzersiz olmalıdır.',
                 'usable-in-grid'        => 'Izgarada Kullanılabilir',
+                'is-filterable'         => 'Filtrelenebilir',
 
                 'option' => [
                     'color'    => 'Renk Örneği',
@@ -419,6 +428,7 @@ return [
                 'yes'                   => 'Evet',
                 'same-code-error'       => 'Seçenek kodu benzersiz olmalıdır.',
                 'usable-in-grid'        => 'Izgarada Kullanılabilir',
+                'is-filterable'         => 'Filtrelenebilir',
 
                 'option' => [
                     'color'    => 'Renk Örneği',
@@ -504,6 +514,7 @@ return [
                     'name'           => 'Görünen ad',
                     'no-of-products' => 'Ürün sayısı',
                     'position'       => 'Pozisyon',
+                    'category-name'  => 'İsim',
                     'status'         => 'Menüde görünür',
                     'update-status'  => 'Durumu güncelle',
                 ],
@@ -1641,12 +1652,12 @@ return [
 
     'configuration' => [
         'index' => [
-            'delete'                       => 'Sil',
-            'no-result-found'              => 'Sonuç bulunamadı',
-            'save-btn'                     => 'Konfigürasyonu Kaydet',
-            'save-message'                 => 'Konfigürasyon başarıyla kaydedildi',
-            'search'                       => 'Ara',
-            'title'                        => 'Konfigürasyon',
+            'delete'          => 'Sil',
+            'no-result-found' => 'Sonuç bulunamadı',
+            'save-btn'        => 'Konfigürasyonu Kaydet',
+            'save-message'    => 'Konfigürasyon başarıyla kaydedildi',
+            'search'          => 'Ara',
+            'title'           => 'Konfigürasyon',
 
             'general' => [
                 'info'  => '',
@@ -1744,34 +1755,34 @@ return [
             ],
 
             'sidebar' => [
-                'attribute-families'       => 'Öznitelik Aileleri',
-                'attribute-groups'         => 'Öznitelik Grupları',
-                'attributes'               => 'Öznitelikler',
-                'history'                  => 'Geçmiş',
-                'edit-section'             => 'Veri',
-                'general'                  => 'Genel',
-                'catalog'                  => 'Katalog',
-                'categories'               => 'Kategoriler',
-                'category_fields'          => 'Kategori Alanları',
-                'channels'                 => 'Kanallar',
-                'collapse'                 => 'Daralt',
-                'configure'                => 'Yapılandırma',
-                'currencies'               => 'Para Birimleri',
-                'dashboard'                => 'Gözatıcı',
-                'data-transfer'            => 'Veri Transferi',
-                'groups'                   => 'Gruplar',
-                'tracker'                  => 'İş Takipçisi',
-                'imports'                  => 'İthalatlar',
-                'exports'                  => 'İhracatlar',
-                'locales'                  => 'Yerelleştirmeler',
-                'magic-ai'                 => 'Sihirli AI',
-                'mode'                     => 'Karanlık Mod',
-                'products'                 => 'Ürünler',
-                'roles'                    => 'Roller',
-                'settings'                 => 'Ayarlar',
-                'themes'                   => 'Temalar',
-                'users'                    => 'Kullanıcılar',
-                'integrations'             => 'Entegrasyonlar',
+                'attribute-families' => 'Öznitelik Aileleri',
+                'attribute-groups'   => 'Öznitelik Grupları',
+                'attributes'         => 'Öznitelikler',
+                'history'            => 'Geçmiş',
+                'edit-section'       => 'Veri',
+                'general'            => 'Genel',
+                'catalog'            => 'Katalog',
+                'categories'         => 'Kategoriler',
+                'category_fields'    => 'Kategori Alanları',
+                'channels'           => 'Kanallar',
+                'collapse'           => 'Daralt',
+                'configure'          => 'Yapılandırma',
+                'currencies'         => 'Para Birimleri',
+                'dashboard'          => 'Gözatıcı',
+                'data-transfer'      => 'Veri Transferi',
+                'groups'             => 'Gruplar',
+                'tracker'            => 'İş Takipçisi',
+                'imports'            => 'İthalatlar',
+                'exports'            => 'İhracatlar',
+                'locales'            => 'Yerelleştirmeler',
+                'magic-ai'           => 'Sihirli AI',
+                'mode'               => 'Karanlık Mod',
+                'products'           => 'Ürünler',
+                'roles'              => 'Roller',
+                'settings'           => 'Ayarlar',
+                'themes'             => 'Temalar',
+                'users'              => 'Kullanıcılar',
+                'integrations'       => 'Entegrasyonlar',
             ],
         ],
 
@@ -1891,11 +1902,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Görsel Ekle',
-                'ai-add-image-btn'  => 'Sihirli AI',
-                'ai-btn-info'       => 'Görsel Oluştur',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Sadece görsel dosyalar (.jpeg, .jpg, .png, ..) kabul edilmektedir.',
+                'add-image-btn'      => 'Görsel Ekle',
+                'generate-with-ai'   => 'Yapay Zeka ile Oluştur',
+                'upload-from-device' => 'Cihazdan Yükle',
+                'cancel'             => 'İptal',
+                'ai-add-image-btn'   => 'Sihirli AI',
+                'ai-btn-info'        => 'Görsel Oluştur',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Sadece görsel dosyalar (.jpeg, .jpg, .png, ..) kabul edilmektedir.',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',
@@ -1964,7 +1978,51 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => 'Default Prompt',
             ],
+        ],
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Detaylı Ürün Açıklaması',
+            'prompt' => '@name için özelliklerini, faydalarını, teknik özelliklerini ve kullanım talimatlarını içeren detaylı bir açıklama yazın.',
+        ],
+        'overview' => [
+            'title'  => 'Ürün Genel Bakışı',
+            'prompt' => '@name için detaylı bir genel bakış oluşturun, temel özelliklerini, avantajlarını ve @brand ile @color gibi hedef kitlesini vurgulayın.',
+        ],
+        'features' => [
+            'title'  => 'Ürün Özellikleri ve Faydaları',
+            'prompt' => '@name’in temel özelliklerini ve faydalarını listeleyin, müşterinin hayatına nasıl değer kattığını açıklayın.',
+        ],
+        'technical' => [
+            'title'  => 'Ürün Teknik Özellikleri',
+            'prompt' => '@name için boyutlar, malzemeler ve uyumluluk dahil olmak üzere detaylı bir teknik özellikler listesi sağlayın.',
+        ],
+        'care' => [
+            'title'  => 'Ürün Bakımı ve Koruması',
+            'prompt' => '@name’in nasıl bakımının yapılacağına ve korunacağına dair temizlik, depolama ve sorun giderme ipuçlarını içeren bir rehber yazın.',
+        ],
+        'tagline' => [
+            'title'  => 'Ürün Sloganı',
+            'prompt' => '@name için özünü ve faydalarını yakalayan etkileyici ve kısa bir slogan yazın.',
+        ],
+        'summary' => [
+            'title'  => 'Ürün Özeti',
+            'prompt' => '@name’in temel özelliklerini ve faydalarını 50-60 kelime ile özetleyin.',
+        ],
+        'headline' => [
+            'title'  => 'Ürün Başlığı',
+            'prompt' => '@name için dikkat çekici bir başlık oluşturun, benzersiz satış noktasını vurgulayın.',
+        ],
+        'brief' => [
+            'title'  => 'Ürün Kısa Açıklaması',
+            'prompt' => '@name için kısa ve öz bir açıklama yazın, temel avantajlarına ve hedef kitlesine odaklanın.',
+        ],
+        'elevator' => [
+            'title'  => 'Ürün Kısa Tanıtımı',
+            'prompt' => '@name için amacı, faydaları ve benzersiz satış noktasını 30-40 kelimeyle özetleyen kısa bir tanıtım hazırlayın.',
         ],
     ],
 ];

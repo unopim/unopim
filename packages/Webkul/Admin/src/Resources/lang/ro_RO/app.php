@@ -3,33 +3,39 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                => 'Adresă de e-mail',
-            'forget-password-link' => 'Ai uitat parola?',
-            'password'             => 'Parolă',
-            'submit-btn'           => 'Conectare',
-            'title'                => 'Conectare',
+            'email'                  => 'Adresă de e-mail',
+            'forget-password-link'   => 'Ai uitat parola?',
+            'password'               => 'Parolă',
+            'submit-btn'             => 'Conectare',
+            'title'                  => 'Conectare',
+            'powered-by'             => 'Alimentat de :unopim,',
+            'open-source-project-by' => 'Un proiect open-source realizat de :webkul.',
         ],
 
         'forget-password' => [
             'create' => [
-                'email'                => 'E-mail înregistrat',
-                'email-not-exist'      => 'E-mail nu există',
-                'page-title'           => 'Ai uitat parola',
-                'reset-link-sent'      => 'Link de resetare a parolei trimis',
-                'email-settings-error' => 'E-mailul nu a putut fi trimis. Vă rugăm să verificați setările de e-mail',
-                'sign-in-link'         => 'Înapoi la Conectare?',
-                'submit-btn'           => 'Resetare',
-                'title'                => 'Recuperare parolă',
+                'email'                  => 'E-mail înregistrat',
+                'email-not-exist'        => 'E-mail nu există',
+                'page-title'             => 'Ai uitat parola',
+                'reset-link-sent'        => 'Link de resetare a parolei trimis',
+                'email-settings-error'   => 'E-mailul nu a putut fi trimis. Vă rugăm să verificați setările de e-mail',
+                'sign-in-link'           => 'Înapoi la Conectare?',
+                'submit-btn'             => 'Resetare',
+                'title'                  => 'Recuperare parolă',
+                'powered-by'             => 'Alimentat de :unopim,',
+                'open-source-project-by' => 'Un proiect open-source realizat de :webkul.',
             ],
         ],
 
         'reset-password' => [
-            'back-link-title'  => 'Înapoi la Conectare?',
-            'confirm-password' => 'Confirmați parola',
-            'email'            => 'E-mail înregistrat',
-            'password'         => 'Parolă',
-            'submit-btn'       => 'Resetare parolă',
-            'title'            => 'Resetare parolă',
+            'back-link-title'        => 'Înapoi la Conectare?',
+            'confirm-password'       => 'Confirmați parola',
+            'email'                  => 'E-mail înregistrat',
+            'password'               => 'Parolă',
+            'submit-btn'             => 'Resetare parolă',
+            'title'                  => 'Resetare parolă',
+            'powered-by'             => 'Alimentat de :unopim,',
+            'open-source-project-by' => 'Un proiect open-source realizat de :webkul.',
         ],
     ],
 
@@ -92,10 +98,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name este deja utilizat.',
-                'create-btn'     => 'Creează produs',
-                'title'          => 'Produse',
-                'magic-ai-error' => 'Verificați credențialele Magic AI și asigurați-vă că modelul corect este selectat.',
+                'already-taken'             => ':name este deja utilizat.',
+                'create-btn'                => 'Creează produs',
+                'title'                     => 'Produse',
+                'magic-ai-error'            => 'Verificați credențialele Magic AI și asigurați-vă că modelul corect este selectat.',
+                'magic-ai-validate-error'   => 'Vă rugăm să verificați acreditările Magic AI.',
+                'magic-ai-validate-success' => 'Acreditările Magic AI au fost validate cu succes.',
 
                 'create' => [
                     'back-btn'                          => 'Înapoi',
@@ -353,6 +361,7 @@ return [
                 'yes'                   => 'Da',
                 'same-code-error'       => 'Codul opțiunii trebuie să fie unic.',
                 'usable-in-grid'        => 'Utilizabil în grilă',
+                'is-filterable'         => 'Este filtrabil',
 
                 'option' => [
                     'color'    => 'Eșantion de culoare',
@@ -419,6 +428,7 @@ return [
                 'yes'                   => 'Da',
                 'same-code-error'       => 'Codul opțiunii trebuie să fie unic.',
                 'usable-in-grid'        => 'Utilizabil în grilă',
+                'is-filterable'         => 'Este filtrabil',
 
                 'option' => [
                     'color'    => 'Eșantion de culoare',
@@ -504,6 +514,7 @@ return [
                     'name'           => 'Nume vizibil',
                     'no-of-products' => 'Număr de produse',
                     'position'       => 'Poziție',
+                    'category-name'  => 'Nume',
                     'status'         => 'Vizibil în meniu',
                     'update-status'  => 'Actualizează statusul',
                 ],
@@ -1641,12 +1652,12 @@ return [
 
     'configuration' => [
         'index' => [
-            'delete'                       => 'Șterge',
-            'no-result-found'              => 'Nicio rezultată găsită',
-            'save-btn'                     => 'Salvează Configurația',
-            'save-message'                 => 'Configurația salvată cu succes',
-            'search'                       => 'Caută',
-            'title'                        => 'Configurație',
+            'delete'          => 'Șterge',
+            'no-result-found' => 'Nicio rezultată găsită',
+            'save-btn'        => 'Salvează Configurația',
+            'save-message'    => 'Configurația salvată cu succes',
+            'search'          => 'Caută',
+            'title'           => 'Configurație',
 
             'general' => [
                 'info'  => '',
@@ -1744,34 +1755,34 @@ return [
             ],
 
             'sidebar' => [
-                'attribute-families'       => 'Familii de Atribute',
-                'attribute-groups'         => 'Grupuri de Atribute',
-                'attributes'               => 'Atribute',
-                'history'                  => 'Istoric',
-                'edit-section'             => 'Date',
-                'general'                  => 'General',
-                'catalog'                  => 'Catalog',
-                'categories'               => 'Categorii',
-                'category_fields'          => 'Câmpuri de Categorii',
-                'channels'                 => 'Canale',
-                'collapse'                 => 'Colapsare',
-                'configure'                => 'Configurare',
-                'currencies'               => 'Monede',
-                'dashboard'                => 'Tablou de bord',
-                'data-transfer'            => 'Transfer de Date',
-                'groups'                   => 'Grupe',
-                'tracker'                  => 'Suport pentru sarcini',
-                'imports'                  => 'Importuri',
-                'exports'                  => 'Exporturi',
-                'locales'                  => 'Locale',
-                'magic-ai'                 => 'Magic AI',
-                'mode'                     => 'Mod Întunecat',
-                'products'                 => 'Produse',
-                'roles'                    => 'Roluri',
-                'settings'                 => 'Setări',
-                'themes'                   => 'Teme',
-                'users'                    => 'Utilizatori',
-                'integrations'             => 'Integrare',
+                'attribute-families' => 'Familii de Atribute',
+                'attribute-groups'   => 'Grupuri de Atribute',
+                'attributes'         => 'Atribute',
+                'history'            => 'Istoric',
+                'edit-section'       => 'Date',
+                'general'            => 'General',
+                'catalog'            => 'Catalog',
+                'categories'         => 'Categorii',
+                'category_fields'    => 'Câmpuri de Categorii',
+                'channels'           => 'Canale',
+                'collapse'           => 'Colapsare',
+                'configure'          => 'Configurare',
+                'currencies'         => 'Monede',
+                'dashboard'          => 'Tablou de bord',
+                'data-transfer'      => 'Transfer de Date',
+                'groups'             => 'Grupe',
+                'tracker'            => 'Suport pentru sarcini',
+                'imports'            => 'Importuri',
+                'exports'            => 'Exporturi',
+                'locales'            => 'Locale',
+                'magic-ai'           => 'Magic AI',
+                'mode'               => 'Mod Întunecat',
+                'products'           => 'Produse',
+                'roles'              => 'Roluri',
+                'settings'           => 'Setări',
+                'themes'             => 'Teme',
+                'users'              => 'Utilizatori',
+                'integrations'       => 'Integrare',
             ],
         ],
 
@@ -1891,11 +1902,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Adaugă Imagine',
-                'ai-add-image-btn'  => 'Magic AI',
-                'ai-btn-info'       => 'Generează Imagine',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Doar fișiere imagini (.jpeg, .jpg, .png, ..) sunt permise.',
+                'add-image-btn'      => 'Adaugă Imagine',
+                'generate-with-ai'   => 'Generează cu IA',
+                'upload-from-device' => 'Încarcă de pe dispozitiv',
+                'cancel'             => 'Anulează',
+                'ai-add-image-btn'   => 'Magic AI',
+                'ai-btn-info'        => 'Generează Imagine',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Doar fișiere imagini (.jpeg, .jpg, .png, ..) sunt permise.',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',
@@ -1964,7 +1978,51 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => 'Prompt implicit',
             ],
+        ],
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Descriere detaliată a produsului',
+            'prompt' => 'Scrie o descriere detaliată a @name, incluzând caracteristicile, beneficiile, specificațiile tehnice și instrucțiunile de utilizare.',
+        ],
+        'overview' => [
+            'title'  => 'Prezentare generală a produsului',
+            'prompt' => 'Creează o prezentare detaliată a @name, evidențiind caracteristicile principale, avantajele și publicul țintă, cum ar fi @brand și @color.',
+        ],
+        'features' => [
+            'title'  => 'Caracteristici și beneficii ale produsului',
+            'prompt' => 'Listează caracteristicile și beneficiile principale ale @name, explicând cum adaugă valoare vieții clientului.',
+        ],
+        'technical' => [
+            'title'  => 'Specificații tehnice ale produsului',
+            'prompt' => 'Furnizează o listă detaliată de specificații tehnice pentru @name, incluzând dimensiuni, materiale și compatibilitate.',
+        ],
+        'care' => [
+            'title'  => 'Îngrijirea și întreținerea produsului',
+            'prompt' => 'Scrie un ghid despre cum să îngrijești și să întreții @name, incluzând sfaturi pentru curățare, depozitare și depanare.',
+        ],
+        'tagline' => [
+            'title'  => 'Sloganul produsului',
+            'prompt' => 'Scrie un slogan captivant și concis pentru @name care să surprindă esența și beneficiile acestuia.',
+        ],
+        'summary' => [
+            'title'  => 'Rezumatul produsului',
+            'prompt' => 'Rezumă caracteristicile și beneficiile principale ale @name în 50-60 de cuvinte.',
+        ],
+        'headline' => [
+            'title'  => 'Titlul produsului',
+            'prompt' => 'Creează un titlu atrăgător pentru @name care să evidențieze punctul său unic de vânzare.',
+        ],
+        'brief' => [
+            'title'  => 'Descriere sumară a produsului',
+            'prompt' => 'Scrie o descriere scurtă și concisă a @name, concentrându-te pe principalele beneficii și publicul țintă.',
+        ],
+        'elevator' => [
+            'title'  => 'Pitch scurt pentru produs',
+            'prompt' => 'Elaborează un pitch scurt pentru @name, rezumând scopul, beneficiile și punctul său unic de vânzare în 30-40 de cuvinte.',
         ],
     ],
 ];

@@ -3,33 +3,39 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                => 'Dirección de correo electrónico',
-            'forget-password-link' => '¿Olvidaste tu contraseña?',
-            'password'             => 'Contraseña',
-            'submit-btn'           => 'Iniciar sesión',
-            'title'                => 'Iniciar sesión',
+            'email'                  => 'Dirección de correo electrónico',
+            'forget-password-link'   => '¿Olvidaste tu contraseña?',
+            'password'               => 'Contraseña',
+            'submit-btn'             => 'Iniciar sesión',
+            'title'                  => 'Iniciar sesión',
+            'powered-by'             => 'Desarrollado por :unopim,',
+            'open-source-project-by' => 'Un proyecto de código abierto de :webkul.',
         ],
 
         'forget-password' => [
             'create' => [
-                'email'                => 'Correo registrado',
-                'email-not-exist'      => 'Correo electrónico no existe',
-                'page-title'           => 'Olvidé mi contraseña',
-                'reset-link-sent'      => 'Enlace de restablecimiento de contraseña enviado',
-                'email-settings-error' => 'No se pudo enviar el correo electrónico. Por favor, revisa la configuración de tu correo electrónico',
-                'sign-in-link'         => '¿Volver a Iniciar sesión?',
-                'submit-btn'           => 'Restablecer',
-                'title'                => 'Recuperar contraseña',
+                'email'                  => 'Correo registrado',
+                'email-not-exist'        => 'Correo electrónico no existe',
+                'page-title'             => 'Olvidé mi contraseña',
+                'reset-link-sent'        => 'Enlace de restablecimiento de contraseña enviado',
+                'email-settings-error'   => 'No se pudo enviar el correo electrónico. Por favor, revisa la configuración de tu correo electrónico',
+                'sign-in-link'           => '¿Volver a Iniciar sesión?',
+                'submit-btn'             => 'Restablecer',
+                'title'                  => 'Recuperar contraseña',
+                'powered-by'             => 'Desarrollado por :unopim,',
+                'open-source-project-by' => 'Un proyecto de código abierto de :webkul.',
             ],
         ],
 
         'reset-password' => [
-            'back-link-title'  => '¿Volver a Iniciar sesión?',
-            'confirm-password' => 'Confirmar contraseña',
-            'email'            => 'Correo registrado',
-            'password'         => 'Contraseña',
-            'submit-btn'       => 'Restablecer contraseña',
-            'title'            => 'Restablecer contraseña',
+            'back-link-title'        => '¿Volver a Iniciar sesión?',
+            'confirm-password'       => 'Confirmar contraseña',
+            'email'                  => 'Correo registrado',
+            'password'               => 'Contraseña',
+            'submit-btn'             => 'Restablecer contraseña',
+            'title'                  => 'Restablecer contraseña',
+            'powered-by'             => 'Desarrollado por :unopim,',
+            'open-source-project-by' => 'Un proyecto de código abierto de :webkul.',
         ],
     ],
 
@@ -92,10 +98,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name ya está en uso.',
-                'create-btn'     => 'Crear producto',
-                'title'          => 'Productos',
-                'magic-ai-error' => 'Verifica tus credenciales de Magic AI y asegúrate de que se haya seleccionado el modelo correcto.',
+                'already-taken'             => ':name ya está en uso.',
+                'create-btn'                => 'Crear producto',
+                'title'                     => 'Productos',
+                'magic-ai-error'            => 'Verifica tus credenciales de Magic AI y asegúrate de que se haya seleccionado el modelo correcto.',
+                'magic-ai-validate-error'   => 'Verifique las credenciales de Magic AI.',
+                'magic-ai-validate-success' => 'Credenciales de Magic AI validadas con éxito',
 
                 'create' => [
                     'back-btn'                          => 'Volver',
@@ -353,6 +361,7 @@ return [
                 'yes'                   => 'Sí',
                 'same-code-error'       => 'El código de opción debe ser único.',
                 'usable-in-grid'        => 'Utilizable en cuadrícula',
+                'is-filterable'         => 'Es filtrable',
 
                 'option' => [
                     'color'    => 'Muestra de color',
@@ -419,6 +428,7 @@ return [
                 'yes'                   => 'Sí',
                 'same-code-error'       => 'El código de opción debe ser único.',
                 'usable-in-grid'        => 'Utilizable en cuadrícula',
+                'is-filterable'         => 'Es filtrable',
 
                 'option' => [
                     'color'    => 'Muestra de color',
@@ -504,6 +514,7 @@ return [
                     'name'           => 'Nombre para mostrar',
                     'no-of-products' => 'Cantidad de productos',
                     'position'       => 'Posición',
+                    'category-name'  => 'Nombre',
                     'status'         => 'Mostrar en el menú',
                     'update-status'  => 'Actualizar estado',
                 ],
@@ -1641,12 +1652,12 @@ return [
 
     'configuration' => [
         'index' => [
-            'delete'                       => 'Eliminar',
-            'no-result-found'              => 'No se encontraron resultados',
-            'save-btn'                     => 'Guardar configuración',
-            'save-message'                 => 'Configuración guardada exitosamente',
-            'search'                       => 'Buscar',
-            'title'                        => 'Configuración',
+            'delete'          => 'Eliminar',
+            'no-result-found' => 'No se encontraron resultados',
+            'save-btn'        => 'Guardar configuración',
+            'save-message'    => 'Configuración guardada exitosamente',
+            'search'          => 'Buscar',
+            'title'           => 'Configuración',
 
             'general' => [
                 'info'  => '',
@@ -1744,34 +1755,34 @@ return [
             ],
 
             'sidebar' => [
-                'attribute-families'       => 'Familias de atributos',
-                'attribute-groups'         => 'Grupos de atributos',
-                'attributes'               => 'Atributos',
-                'history'                  => 'Historial',
-                'edit-section'             => 'Datos',
-                'general'                  => 'General',
-                'catalog'                  => 'Catálogo',
-                'categories'               => 'Categorías',
-                'category_fields'          => 'Campos de categoría',
-                'channels'                 => 'Canales',
-                'collapse'                 => 'Colapsar',
-                'configure'                => 'Configuración',
-                'currencies'               => 'Monedas',
-                'dashboard'                => 'Tablero',
-                'data-transfer'            => 'Transferencia de datos',
-                'groups'                   => 'Grupos',
-                'tracker'                  => 'Seguidor de trabajos',
-                'imports'                  => 'Importaciones',
-                'exports'                  => 'Exportaciones',
-                'locales'                  => 'Localizaciones',
-                'magic-ai'                 => 'Inteligencia AI',
-                'mode'                     => 'Modo oscuro',
-                'products'                 => 'Productos',
-                'roles'                    => 'Roles',
-                'settings'                 => 'Configuraciones',
-                'themes'                   => 'Temas',
-                'users'                    => 'Usuarios',
-                'integrations'             => 'Integraciones',
+                'attribute-families' => 'Familias de atributos',
+                'attribute-groups'   => 'Grupos de atributos',
+                'attributes'         => 'Atributos',
+                'history'            => 'Historial',
+                'edit-section'       => 'Datos',
+                'general'            => 'General',
+                'catalog'            => 'Catálogo',
+                'categories'         => 'Categorías',
+                'category_fields'    => 'Campos de categoría',
+                'channels'           => 'Canales',
+                'collapse'           => 'Colapsar',
+                'configure'          => 'Configuración',
+                'currencies'         => 'Monedas',
+                'dashboard'          => 'Tablero',
+                'data-transfer'      => 'Transferencia de datos',
+                'groups'             => 'Grupos',
+                'tracker'            => 'Seguidor de trabajos',
+                'imports'            => 'Importaciones',
+                'exports'            => 'Exportaciones',
+                'locales'            => 'Localizaciones',
+                'magic-ai'           => 'Inteligencia AI',
+                'mode'               => 'Modo oscuro',
+                'products'           => 'Productos',
+                'roles'              => 'Roles',
+                'settings'           => 'Configuraciones',
+                'themes'             => 'Temas',
+                'users'              => 'Usuarios',
+                'integrations'       => 'Integraciones',
             ],
         ],
 
@@ -1891,11 +1902,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Agregar imagen',
-                'ai-add-image-btn'  => 'Inteligencia AI',
-                'ai-btn-info'       => 'Generar imagen',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Solo se permiten archivos de imagen (.jpeg, .jpg, .png, ..).',
+                'add-image-btn'      => 'Agregar imagen',
+                'generate-with-ai'   => 'Generar con IA',
+                'upload-from-device' => 'Subir desde el dispositivo',
+                'cancel'             => 'Cancelar',
+                'ai-add-image-btn'   => 'Inteligencia AI',
+                'ai-btn-info'        => 'Generar imagen',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Solo se permiten archivos de imagen (.jpeg, .jpg, .png, ..).',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',
@@ -1964,7 +1978,51 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => 'Solicitud predeterminada',
             ],
+        ],
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Descripción Detallada del Producto',
+            'prompt' => 'Escribe una descripción completa de @name, incluyendo sus características, beneficios, especificaciones técnicas e instrucciones de uso.',
+        ],
+        'overview' => [
+            'title'  => 'Descripción General del Producto',
+            'prompt' => 'Crea una descripción general de @name, destacando sus características clave, ventajas y público objetivo como @brand y @color.',
+        ],
+        'features' => [
+            'title'  => 'Características y Beneficios del Producto',
+            'prompt' => 'Lista las características clave y los beneficios de @name, explicando cómo agregan valor a la vida del cliente.',
+        ],
+        'technical' => [
+            'title'  => 'Especificaciones Técnicas del Producto',
+            'prompt' => 'Proporciona una lista detallada de las especificaciones técnicas de @name, incluyendo dimensiones, materiales y compatibilidad.',
+        ],
+        'care' => [
+            'title'  => 'Cuidado y Mantenimiento del Producto',
+            'prompt' => 'Escribe una guía sobre cómo cuidar y mantener @name, incluyendo consejos para su limpieza, almacenamiento y solución de problemas.',
+        ],
+        'tagline' => [
+            'title'  => 'Eslogan del Producto',
+            'prompt' => 'Escribe un eslogan atractivo y conciso para @name que capture su esencia y beneficios.',
+        ],
+        'summary' => [
+            'title'  => 'Resumen del Producto',
+            'prompt' => 'Resume las características y beneficios clave de @name en 50-60 palabras.',
+        ],
+        'headline' => [
+            'title'  => 'Titular del Producto',
+            'prompt' => 'Crea un titular llamativo para @name que destaque su punto único de venta.',
+        ],
+        'brief' => [
+            'title'  => 'Breve del Producto',
+            'prompt' => 'Escribe una descripción breve y concisa de @name, enfocándote en sus principales ventajas y público objetivo.',
+        ],
+        'elevator' => [
+            'title'  => 'Discurso Rápido del Producto',
+            'prompt' => 'Crea un discurso rápido y conciso para @name, resumiendo su propósito, beneficios y punto único de venta en 30-40 palabras.',
         ],
     ],
 ];

@@ -491,6 +491,24 @@
                                         @lang('admin::app.catalog.attributes.edit.value-per-channel')
                                     </label>
                                 </x-admin::form.control-group>
+
+                                <!-- Filterable  -->
+                                <x-admin::form.control-group class="flex gap-2.5 items-center !mb-2 select-none">
+                                    <x-admin::form.control-group.control
+                                        type="checkbox"
+                                        name="is_filterable"
+                                        id="is_filterable"
+                                        for="is_filterable"
+                                        value="1"
+                                    />
+
+                                    <label
+                                        class="text-xs text-gray-600 dark:text-gray-300 font-medium cursor-pointer"
+                                        for="is_filterable"
+                                    >
+                                        @lang('admin::app.catalog.attributes.create.is-filterable')
+                                    </label>
+                                </x-admin::form.control-group>
                             </x-slot>
                         </x-admin::accordion>
                     </div>
@@ -672,7 +690,7 @@
                         }
                     },
                     storeOptions(params, { resetForm }) {
-                        let existAlready = this.options.findIndex(item => item.params.code === params.code);
+                        let existAlready = this.options.findIndex(item => item.params.code.toLowerCase() === params.code.toLowerCase());
 
                         if (params.id) {
                             let foundIndex = this.options.findIndex(item => item.id === params.id);

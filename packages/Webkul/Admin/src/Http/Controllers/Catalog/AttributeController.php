@@ -3,6 +3,7 @@
 namespace Webkul\Admin\Http\Controllers\Catalog;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Webkul\Admin\DataGrids\Catalog\AttributeDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
@@ -139,6 +140,12 @@ class AttributeController extends Controller
             ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
+        if ($this->attributeCanBeDeleted($id) > 0) {
+            return new JsonResponse([
+                'message' => trans('admin::app.catalog.attributes.index.datagrid.delete-attribute-failure'),
+            ], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
         try {
             Event::dispatch('catalog.attribute.delete.before', $id);
 
@@ -154,6 +161,16 @@ class AttributeController extends Controller
 
             return new JsonResponse(['message' => $e->getMessage()], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    /**
+     * attribute can't be deleted for super attributes
+     */
+    public function attributeCanBeDeleted(int $id): int
+    {
+        return DB::table('product_super_attributes')
+            ->where('attribute_id', $id)
+            ->count();
     }
 
     /**

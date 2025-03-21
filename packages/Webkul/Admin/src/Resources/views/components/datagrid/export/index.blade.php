@@ -125,6 +125,8 @@
                             format: this.format,
     
                             sort: {},
+
+                            productIds: this?.applied?.massActions?.indices,
     
                             filters: {},
 

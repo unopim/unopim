@@ -3,33 +3,39 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                => 'Email Address',
-            'forget-password-link' => 'Nakalimutan ang password?',
-            'password'             => 'Password',
-            'submit-btn'           => 'Mag-sign In',
-            'title'                => 'Mag-sign In',
+            'email'                  => 'Email Address',
+            'forget-password-link'   => 'Nakalimutan ang password?',
+            'password'               => 'Password',
+            'submit-btn'             => 'Mag-sign In',
+            'title'                  => 'Mag-sign In',
+            'powered-by'             => 'Pinapatakbo ng :unopim,',
+            'open-source-project-by' => 'Isang open-source na proyekto ng :webkul.',
         ],
 
         'forget-password' => [
             'create' => [
-                'email'                => 'Nai-rehistro na Email',
-                'email-not-exist'      => 'Walang ganitong Email',
-                'page-title'           => 'Nakalimutan ang password',
-                'reset-link-sent'      => 'Link para sa pag-reset ng password ay naipadala',
-                'email-settings-error' => 'Hindi mapadala ang Email. Pakitingnan ang inyong email configuration details',
-                'sign-in-link'         => 'Bumalik sa Mag-sign In?',
-                'submit-btn'           => 'I-reset',
-                'title'                => 'I-recover ang password',
+                'email'                  => 'Nai-rehistro na Email',
+                'email-not-exist'        => 'Walang ganitong Email',
+                'page-title'             => 'Nakalimutan ang password',
+                'reset-link-sent'        => 'Link para sa pag-reset ng password ay naipadala',
+                'email-settings-error'   => 'Hindi mapadala ang Email. Pakitingnan ang inyong email configuration details',
+                'sign-in-link'           => 'Bumalik sa Mag-sign In?',
+                'submit-btn'             => 'I-reset',
+                'title'                  => 'I-recover ang password',
+                'powered-by'             => 'Pinapatakbo ng :unopim,',
+                'open-source-project-by' => 'Isang open-source na proyekto ng :webkul.',
             ],
         ],
 
         'reset-password' => [
-            'back-link-title'  => 'Bumalik sa Mag-sign In?',
-            'confirm-password' => 'Kumpirmahin ang Password',
-            'email'            => 'Nai-rehistro na Email',
-            'password'         => 'Password',
-            'submit-btn'       => 'I-reset ang Password',
-            'title'            => 'I-reset ang Password',
+            'back-link-title'        => 'Bumalik sa Mag-sign In?',
+            'confirm-password'       => 'Kumpirmahin ang Password',
+            'email'                  => 'Nai-rehistro na Email',
+            'password'               => 'Password',
+            'submit-btn'             => 'I-reset ang Password',
+            'title'                  => 'I-reset ang Password',
+            'powered-by'             => 'Pinapatakbo ng :unopim,',
+            'open-source-project-by' => 'Isang open-source na proyekto ng :webkul.',
         ],
     ],
 
@@ -92,10 +98,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name ay ginagamit na.',
-                'create-btn'     => 'Gumawa ng produkto',
-                'title'          => 'Mga Produkto',
-                'magic-ai-error' => 'Tiyakin na tama ang kredensyal ng Magic AI at ang tamang modelo ay napili.',
+                'already-taken'             => ':name ay ginagamit na.',
+                'create-btn'                => 'Gumawa ng produkto',
+                'title'                     => 'Mga Produkto',
+                'magic-ai-error'            => 'Tiyakin na tama ang kredensyal ng Magic AI at ang tamang modelo ay napili.',
+                'magic-ai-validate-error'   => 'Paki-verify ang mga kredensyal ng Magic AI.',
+                'magic-ai-validate-success' => 'Matagumpay na na-validate ang mga kredensyal ng Magic AI.',
 
                 'create' => [
                     'back-btn'                          => 'Bumalik',
@@ -353,6 +361,7 @@ return [
                 'yes'                   => 'Oo',
                 'same-code-error'       => 'Ang code ng opsyon ay dapat na natangi.',
                 'usable-in-grid'        => 'Magagamit sa grid',
+                'is-filterable'         => 'Nafifilter',
 
                 'option' => [
                     'color'    => 'Color Swatch',
@@ -419,6 +428,7 @@ return [
                 'yes'                   => 'Oo',
                 'same-code-error'       => 'Ang code ng opsyon ay dapat na natangi.',
                 'usable-in-grid'        => 'Magagamit sa grid',
+                'is-filterable'         => 'Nafifilter',
 
                 'option' => [
                     'color'    => 'Color Swatch',
@@ -504,6 +514,7 @@ return [
                     'name'           => 'Pangalan ng ipapakita',
                     'no-of-products' => 'Bilang ng mga produkto',
                     'position'       => 'Posisyon',
+                    'category-name'  => 'Pangalan',
                     'status'         => 'Makikita sa menu',
                     'update-status'  => 'I-update ang status',
                 ],
@@ -1641,12 +1652,12 @@ return [
 
     'configuration' => [
         'index' => [
-            'delete'                       => 'Tanggalin',
-            'no-result-found'              => 'Walang resulta',
-            'save-btn'                     => 'I-save ang Configurations',
-            'save-message'                 => 'Nai-save na ang Configuration',
-            'search'                       => 'Maghanap',
-            'title'                        => 'Configurations',
+            'delete'          => 'Tanggalin',
+            'no-result-found' => 'Walang resulta',
+            'save-btn'        => 'I-save ang Configurations',
+            'save-message'    => 'Nai-save na ang Configuration',
+            'search'          => 'Maghanap',
+            'title'           => 'Configurations',
 
             'general' => [
                 'info'  => '',
@@ -1744,34 +1755,34 @@ return [
             ],
 
             'sidebar' => [
-                'attribute-families'       => 'Attribute Families',
-                'attribute-groups'         => 'Attribute Groups',
-                'attributes'               => 'Attributes',
-                'history'                  => 'History',
-                'edit-section'             => 'Data',
-                'general'                  => 'General',
-                'catalog'                  => 'Catalog',
-                'categories'               => 'Categories',
-                'category_fields'          => 'Category Fields',
-                'channels'                 => 'Channels',
-                'collapse'                 => 'Collapse',
-                'configure'                => 'Configuration',
-                'currencies'               => 'Currencies',
-                'dashboard'                => 'Dashboard',
-                'data-transfer'            => 'Data Transfer',
-                'groups'                   => 'Groups',
-                'tracker'                  => 'Job Tracker',
-                'imports'                  => 'Imports',
-                'exports'                  => 'Exports',
-                'locales'                  => 'Locales',
-                'magic-ai'                 => 'Magic AI',
-                'mode'                     => 'Dark Mode',
-                'products'                 => 'Products',
-                'roles'                    => 'Roles',
-                'settings'                 => 'Settings',
-                'themes'                   => 'Themes',
-                'users'                    => 'Users',
-                'integrations'             => 'Integrations',
+                'attribute-families' => 'Attribute Families',
+                'attribute-groups'   => 'Attribute Groups',
+                'attributes'         => 'Attributes',
+                'history'            => 'History',
+                'edit-section'       => 'Data',
+                'general'            => 'General',
+                'catalog'            => 'Catalog',
+                'categories'         => 'Categories',
+                'category_fields'    => 'Category Fields',
+                'channels'           => 'Channels',
+                'collapse'           => 'Collapse',
+                'configure'          => 'Configuration',
+                'currencies'         => 'Currencies',
+                'dashboard'          => 'Dashboard',
+                'data-transfer'      => 'Data Transfer',
+                'groups'             => 'Groups',
+                'tracker'            => 'Job Tracker',
+                'imports'            => 'Imports',
+                'exports'            => 'Exports',
+                'locales'            => 'Locales',
+                'magic-ai'           => 'Magic AI',
+                'mode'               => 'Dark Mode',
+                'products'           => 'Products',
+                'roles'              => 'Roles',
+                'settings'           => 'Settings',
+                'themes'             => 'Themes',
+                'users'              => 'Users',
+                'integrations'       => 'Integrations',
             ],
         ],
 
@@ -1891,11 +1902,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Add Image',
-                'ai-add-image-btn'  => 'Magic AI',
-                'ai-btn-info'       => 'Generate Image',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Only images files (.jpeg, .jpg, .png, ..) are allowed.',
+                'add-image-btn'      => 'Add Image',
+                'generate-with-ai'   => 'Gumawa gamit ang AI',
+                'upload-from-device' => 'I-upload mula sa device',
+                'cancel'             => 'Kanselahin',
+                'ai-add-image-btn'   => 'Magic AI',
+                'ai-btn-info'        => 'Generate Image',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Only images files (.jpeg, .jpg, .png, ..) are allowed.',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',
@@ -1964,7 +1978,51 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => 'Varsayılan istem',
             ],
+        ],
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Detalyadong Paglalarawan ng Produkto',
+            'prompt' => 'Sumulat ng detalyadong paglalarawan para sa @name, kasama ang mga tampok, benepisyo, teknikal na detalye, at mga tagubilin sa paggamit.',
+        ],
+        'overview' => [
+            'title'  => 'Pangkalahatang-ideya ng Produkto',
+            'prompt' => 'Gumawa ng detalyadong pangkalahatang-ideya ng @name, itampok ang mga pangunahing tampok, benepisyo, at target na audience tulad ng @brand at @color.',
+        ],
+        'features' => [
+            'title'  => 'Mga Tampok at Benepisyo ng Produkto',
+            'prompt' => 'Ilahad ang mga pangunahing tampok at benepisyo ng @name, ipaliwanag kung paano ito nagbibigay ng halaga sa buhay ng customer.',
+        ],
+        'technical' => [
+            'title'  => 'Mga Teknikal na Detalye ng Produkto',
+            'prompt' => 'Magbigay ng detalyadong listahan ng mga teknikal na detalye para sa @name, kasama ang sukat, materyales, at pagiging tugma.',
+        ],
+        'care' => [
+            'title'  => 'Pag-aalaga at Pagpapanatili ng Produkto',
+            'prompt' => 'Sumulat ng gabay kung paano alagaan at panatilihin ang @name, kasama ang mga tips sa paglilinis, pag-iimbak, at pag-aayos ng mga problema.',
+        ],
+        'tagline' => [
+            'title'  => 'Tagline ng Produkto',
+            'prompt' => 'Sumulat ng maikli at nakakaakit na tagline para sa @name na nagpapakita ng esensya at benepisyo nito.',
+        ],
+        'summary' => [
+            'title'  => 'Buod ng Produkto',
+            'prompt' => 'Ibuod ang mga pangunahing tampok at benepisyo ng @name sa 50-60 na salita.',
+        ],
+        'headline' => [
+            'title'  => 'Pamagat ng Produkto',
+            'prompt' => 'Gumawa ng nakakaakit na pamagat para sa @name na itinatampok ang natatanging selling point nito.',
+        ],
+        'brief' => [
+            'title'  => 'Maikling Paglalarawan ng Produkto',
+            'prompt' => 'Sumulat ng maikli at malinaw na paglalarawan ng @name, na nakatuon sa mga pangunahing benepisyo at target na audience.',
+        ],
+        'elevator' => [
+            'title'  => 'Maikling Pitch ng Produkto',
+            'prompt' => 'Gumawa ng maikling pitch para sa @name, na naglalahad ng layunin, benepisyo, at natatanging selling point nito sa 30-40 na salita.',
         ],
     ],
 ];

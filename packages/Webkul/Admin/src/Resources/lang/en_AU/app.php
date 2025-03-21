@@ -3,33 +3,39 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                => 'Email Address',
-            'forget-password-link' => 'Forgot Password?',
-            'password'             => 'Password',
-            'submit-btn'           => 'Sign In',
-            'title'                => 'Sign In',
+            'email'                  => 'Email Address',
+            'forget-password-link'   => 'Forgot Password?',
+            'password'               => 'Password',
+            'submit-btn'             => 'Sign In',
+            'title'                  => 'Sign In',
+            'powered-by'             => 'Powered by :unopim,',
+            'open-source-project-by' => 'An open-source project by :webkul.',
         ],
 
         'forget-password' => [
             'create' => [
-                'email'                => 'Registered Email',
-                'email-not-exist'      => 'Email Does Not Exist',
-                'page-title'           => 'Forgot Password',
-                'reset-link-sent'      => 'Reset Password link sent',
-                'email-settings-error' => 'Email could not be sent. Please check your email configuration details',
-                'sign-in-link'         => 'Back to Sign In?',
-                'submit-btn'           => 'Reset',
-                'title'                => 'Recover Password',
+                'email'                  => 'Registered Email',
+                'email-not-exist'        => 'Email Does Not Exist',
+                'page-title'             => 'Forgot Password',
+                'reset-link-sent'        => 'Reset Password link sent',
+                'email-settings-error'   => 'Email could not be sent. Please check your email configuration details',
+                'sign-in-link'           => 'Back to Sign In?',
+                'submit-btn'             => 'Reset',
+                'title'                  => 'Recover Password',
+                'powered-by'             => 'Powered by :unopim,',
+                'open-source-project-by' => 'An open-source project by :webkul.',
             ],
         ],
 
         'reset-password' => [
-            'back-link-title'  => 'Back to Sign In?',
-            'confirm-password' => 'Confirm Password',
-            'email'            => 'Registered Email',
-            'password'         => 'Password',
-            'submit-btn'       => 'Reset Password',
-            'title'            => 'Reset Password',
+            'back-link-title'        => 'Back to Sign In?',
+            'confirm-password'       => 'Confirm Password',
+            'email'                  => 'Registered Email',
+            'password'               => 'Password',
+            'submit-btn'             => 'Reset Password',
+            'title'                  => 'Reset Password',
+            'powered-by'             => 'Powered by :unopim,',
+            'open-source-project-by' => 'An open-source project by :webkul.',
         ],
     ],
 
@@ -92,10 +98,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name has already been taken.',
-                'create-btn'     => 'Create Product',
-                'title'          => 'Products',
-                'magic-ai-error' => 'Please verify the Magic AI credentials and ensure the correct model is selected.',
+                'already-taken'             => ':name has already been taken.',
+                'create-btn'                => 'Create Product',
+                'title'                     => 'Products',
+                'magic-ai-error'            => 'Please verify the Magic AI credentials and ensure the correct model is selected.',
+                'magic-ai-validate-error'   => 'Please verify the Magic AI credentials.',
+                'magic-ai-validate-success' => 'Magic AI credentials validated successfully',
 
                 'create' => [
                     'back-btn'                          => 'Back',
@@ -353,6 +361,7 @@ return [
                 'yes'                   => 'Yes',
                 'same-code-error'       => 'The option code must be unique.',
                 'usable-in-grid'        => 'Usable in grid',
+                'is-filterable'         => 'Is filterable',
 
                 'option' => [
                     'color'    => 'Colour Swatch',
@@ -419,6 +428,7 @@ return [
                 'yes'                   => 'Yes',
                 'same-code-error'       => 'The option code must be unique.',
                 'usable-in-grid'        => 'Usable in grid',
+                'is-filterable'         => 'Is filterable',
 
                 'option' => [
                     'color'    => 'Colour Swatch',
@@ -503,6 +513,7 @@ return [
                     'inactive'       => 'Inactive',
                     'name'           => 'Display Name',
                     'no-of-products' => 'Number of Products',
+                    'category-name'  => 'Name',
                     'position'       => 'Position',
                     'status'         => 'Visible in Menu',
                     'update-status'  => 'Update Status',
@@ -1639,12 +1650,12 @@ return [
 
     'configuration' => [
         'index' => [
-            'delete'                       => 'Delete',
-            'no-result-found'              => 'No results found',
-            'save-btn'                     => 'Save Configuration',
-            'save-message'                 => 'Configuration saved successfully',
-            'search'                       => 'Search',
-            'title'                        => 'Configuration',
+            'delete'          => 'Delete',
+            'no-result-found' => 'No results found',
+            'save-btn'        => 'Save Configuration',
+            'save-message'    => 'Configuration saved successfully',
+            'search'          => 'Search',
+            'title'           => 'Configuration',
 
             'general' => [
                 'info'  => '',
@@ -1742,34 +1753,34 @@ return [
             ],
 
             'sidebar' => [
-                'attribute-families'       => 'Attribute Families',
-                'attribute-groups'         => 'Attribute Groups',
-                'attributes'               => 'Attributes',
-                'history'                  => 'History',
-                'edit-section'             => 'Data',
-                'general'                  => 'General',
-                'catalog'                  => 'Catalog',
-                'categories'               => 'Categories',
-                'category_fields'          => 'Category Fields',
-                'channels'                 => 'Channels',
-                'collapse'                 => 'Collapse',
-                'configure'                => 'Configuration',
-                'currencies'               => 'Currencies',
-                'dashboard'                => 'Dashboard',
-                'data-transfer'            => 'Data Transfer',
-                'groups'                   => 'Groups',
-                'tracker'                  => 'Job Tracker',
-                'imports'                  => 'Imports',
-                'exports'                  => 'Exports',
-                'locales'                  => 'Locales',
-                'magic-ai'                 => 'Magic AI',
-                'mode'                     => 'Dark Mode',
-                'products'                 => 'Products',
-                'roles'                    => 'Roles',
-                'settings'                 => 'Settings',
-                'themes'                   => 'Themes',
-                'users'                    => 'Users',
-                'integrations'             => 'Integrations',
+                'attribute-families' => 'Attribute Families',
+                'attribute-groups'   => 'Attribute Groups',
+                'attributes'         => 'Attributes',
+                'history'            => 'History',
+                'edit-section'       => 'Data',
+                'general'            => 'General',
+                'catalog'            => 'Catalog',
+                'categories'         => 'Categories',
+                'category_fields'    => 'Category Fields',
+                'channels'           => 'Channels',
+                'collapse'           => 'Collapse',
+                'configure'          => 'Configuration',
+                'currencies'         => 'Currencies',
+                'dashboard'          => 'Dashboard',
+                'data-transfer'      => 'Data Transfer',
+                'groups'             => 'Groups',
+                'tracker'            => 'Job Tracker',
+                'imports'            => 'Imports',
+                'exports'            => 'Exports',
+                'locales'            => 'Locales',
+                'magic-ai'           => 'Magic AI',
+                'mode'               => 'Dark Mode',
+                'products'           => 'Products',
+                'roles'              => 'Roles',
+                'settings'           => 'Settings',
+                'themes'             => 'Themes',
+                'users'              => 'Users',
+                'integrations'       => 'Integrations',
             ],
         ],
 
@@ -1889,11 +1900,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Add Image',
-                'ai-add-image-btn'  => 'Magic AI',
-                'ai-btn-info'       => 'Generate Image',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Only images files (.jpeg, .jpg, .png, ..) are allowed.',
+                'add-image-btn'      => 'Add Image',
+                'generate-with-ai'   => 'Generate with AI',
+                'upload-from-device' => 'Upload from Device',
+                'cancel'             => 'Cancel',
+                'ai-add-image-btn'   => 'Magic AI',
+                'ai-btn-info'        => 'Generate Image',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Only images files (.jpeg, .jpg, .png, ..) are allowed.',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',
@@ -1962,7 +1976,51 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => 'Default Prompt',
             ],
+        ],
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Detailed Product Description',
+            'prompt' => 'Write a comprehensive description of @name, including its features, benefits, technical specifications, and usage instructions.',
+        ],
+        'overview' => [
+            'title'  => 'Product Overview',
+            'prompt' => 'Create a detailed overview of @name, highlighting its key features, advantages, and target audience like @brand and @color.',
+        ],
+        'features' => [
+            'title'  => 'Product Features and Benefits',
+            'prompt' => 'List the key features and benefits of @name, explaining how they add value to the customer\'s life.',
+        ],
+        'technical' => [
+            'title'  => 'Product Technical Specifications',
+            'prompt' => 'Provide a detailed list of technical specifications for @name, including dimensions, materials, and compatibility.',
+        ],
+        'care' => [
+            'title'  => 'Product Care and Maintenance',
+            'prompt' => 'Write a guide on how to care for and maintain @name, including tips for cleaning, storage, and troubleshooting.',
+        ],
+        'tagline' => [
+            'title'  => 'Product Tagline',
+            'prompt' => 'Write a catchy and concise tagline for @name that captures its essence and benefits.',
+        ],
+        'summary' => [
+            'title'  => 'Product Summary',
+            'prompt' => 'Summarise the key features and benefits of @name in 50-60 words.',
+        ],
+        'headline' => [
+            'title'  => 'Product Headline',
+            'prompt' => 'Create an attention-grabbing headline for @name that highlights its unique selling point.',
+        ],
+        'brief' => [
+            'title'  => 'Product Brief',
+            'prompt' => 'Write a brief and concise description of @name, focusing on its key advantages and target audience.',
+        ],
+        'elevator' => [
+            'title'  => 'Product Elevator Pitch',
+            'prompt' => 'Craft a concise elevator pitch for @name, summarising its purpose, benefits, and unique selling point in 30-40 words.',
         ],
     ],
 ];

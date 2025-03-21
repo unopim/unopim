@@ -3,33 +3,39 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                => 'Adresa e-pošte',
-            'forget-password-link' => 'Zaboravili ste lozinku?',
-            'password'             => 'Lozinka',
-            'submit-btn'           => 'Prijavite se',
-            'title'                => 'Prijavite se',
+            'email'                  => 'Adresa e-pošte',
+            'forget-password-link'   => 'Zaboravili ste lozinku?',
+            'password'               => 'Lozinka',
+            'submit-btn'             => 'Prijavite se',
+            'title'                  => 'Prijavite se',
+            'powered-by'             => 'Pokreće :unopim,',
+            'open-source-project-by' => 'Projekt otvorenog koda od :webkul.',
         ],
 
         'forget-password' => [
             'create' => [
-                'email'                => 'Registrirana e-pošta',
-                'email-not-exist'      => 'E-pošta ne postoji',
-                'page-title'           => 'Zaboravljena lozinka',
-                'reset-link-sent'      => 'Poslana poveznica za poništavanje lozinke',
-                'email-settings-error' => 'E-pošta nije mogla biti poslana. Provjerite postavke e-pošte',
-                'sign-in-link'         => 'Natrag na prijavu?',
-                'submit-btn'           => 'Poništi',
-                'title'                => 'Oporavite lozinku',
+                'email'                  => 'Registrirana e-pošta',
+                'email-not-exist'        => 'E-pošta ne postoji',
+                'page-title'             => 'Zaboravljena lozinka',
+                'reset-link-sent'        => 'Poslana poveznica za poništavanje lozinke',
+                'email-settings-error'   => 'E-pošta nije mogla biti poslana. Provjerite postavke e-pošte',
+                'sign-in-link'           => 'Natrag na prijavu?',
+                'submit-btn'             => 'Poništi',
+                'title'                  => 'Oporavite lozinku',
+                'powered-by'             => 'Pokreće :unopim,',
+                'open-source-project-by' => 'Projekt otvorenog koda od :webkul.',
             ],
         ],
 
         'reset-password' => [
-            'back-link-title'  => 'Natrag na prijavu?',
-            'confirm-password' => 'Potvrdite lozinku',
-            'email'            => 'Registrirana e-pošta',
-            'password'         => 'Lozinka',
-            'submit-btn'       => 'Poništi lozinku',
-            'title'            => 'Poništi lozinku',
+            'back-link-title'        => 'Natrag na prijavu?',
+            'confirm-password'       => 'Potvrdite lozinku',
+            'email'                  => 'Registrirana e-pošta',
+            'password'               => 'Lozinka',
+            'submit-btn'             => 'Poništi lozinku',
+            'title'                  => 'Poništi lozinku',
+            'powered-by'             => 'Pokreće :unopim,',
+            'open-source-project-by' => 'Projekt otvorenog koda od :webkul.',
         ],
     ],
 
@@ -92,10 +98,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name je već zauzet.',
-                'create-btn'     => 'Stvori proizvod',
-                'title'          => 'Proizvodi',
-                'magic-ai-error' => 'Molimo provjerite Magic AI vjerodajnice i odaberite ispravan model.',
+                'already-taken'             => ':name je već zauzet.',
+                'create-btn'                => 'Stvori proizvod',
+                'title'                     => 'Proizvodi',
+                'magic-ai-error'            => 'Molimo provjerite Magic AI vjerodajnice i odaberite ispravan model.',
+                'magic-ai-validate-error'   => 'Provjerite vjerodajnice za Magic AI.',
+                'magic-ai-validate-success' => 'Magic AI vjerodajnice uspješno su potvrđene',
 
                 'create' => [
                     'back-btn'                          => 'Natrag',
@@ -353,6 +361,7 @@ return [
                 'yes'                   => 'Da',
                 'same-code-error'       => 'Kod opcije mora biti jedinstven.',
                 'usable-in-grid'        => 'Upotrebljivo u mreži',
+                'is-filterable'         => 'Je filtrabilno',
 
                 'option' => [
                     'color'    => 'Boja uzorka',
@@ -419,6 +428,7 @@ return [
                 'yes'                   => 'Da',
                 'same-code-error'       => 'Kod opcije mora biti jedinstven.',
                 'usable-in-grid'        => 'Upotrebljivo u mreži',
+                'is-filterable'         => 'Je filtrabilno',
 
                 'option' => [
                     'color'    => 'Boja uzorka',
@@ -504,6 +514,7 @@ return [
                     'name'           => 'Prikazano ime',
                     'no-of-products' => 'Broj proizvoda',
                     'position'       => 'Pozicija',
+                    'category-name'  => 'Ime',
                     'status'         => 'Vidljivo u izborniku',
                     'update-status'  => 'Ažuriraj status',
                 ],
@@ -1641,12 +1652,12 @@ return [
 
     'configuration' => [
         'index' => [
-            'delete'                       => 'Izbriši',
-            'no-result-found'              => 'Nema rezultata',
-            'save-btn'                     => 'Spremi konfiguraciju',
-            'save-message'                 => 'Konfiguracija uspješno spremljena',
-            'search'                       => 'Pretraži',
-            'title'                        => 'Konfiguracija',
+            'delete'          => 'Izbriši',
+            'no-result-found' => 'Nema rezultata',
+            'save-btn'        => 'Spremi konfiguraciju',
+            'save-message'    => 'Konfiguracija uspješno spremljena',
+            'search'          => 'Pretraži',
+            'title'           => 'Konfiguracija',
 
             'general' => [
                 'info'  => '',
@@ -1744,34 +1755,34 @@ return [
             ],
 
             'sidebar' => [
-                'attribute-families'       => 'Grupe atributa',
-                'attribute-groups'         => 'Grupe atributa',
-                'attributes'               => 'Atributi',
-                'history'                  => 'Povijest',
-                'edit-section'             => 'Podaci',
-                'general'                  => 'Općenito',
-                'catalog'                  => 'Katalog',
-                'categories'               => 'Kategorije',
-                'category_fields'          => 'Polja kategorija',
-                'channels'                 => 'Kanali',
-                'collapse'                 => 'Smanji',
-                'configure'                => 'Konfiguracija',
-                'currencies'               => 'Valute',
-                'dashboard'                => 'Nadzorna ploča',
-                'data-transfer'            => 'Prijenos podataka',
-                'groups'                   => 'Grupe',
-                'tracker'                  => 'Praćenje zadataka',
-                'imports'                  => 'Uvozi',
-                'exports'                  => 'Izvozi',
-                'locales'                  => 'Lokacije',
-                'magic-ai'                 => 'Magija AI',
-                'mode'                     => 'Tamni način rada',
-                'products'                 => 'Proizvodi',
-                'roles'                    => 'Uloge',
-                'settings'                 => 'Postavke',
-                'themes'                   => 'Teme',
-                'users'                    => 'Korisnici',
-                'integrations'             => 'Integracije',
+                'attribute-families' => 'Grupe atributa',
+                'attribute-groups'   => 'Grupe atributa',
+                'attributes'         => 'Atributi',
+                'history'            => 'Povijest',
+                'edit-section'       => 'Podaci',
+                'general'            => 'Općenito',
+                'catalog'            => 'Katalog',
+                'categories'         => 'Kategorije',
+                'category_fields'    => 'Polja kategorija',
+                'channels'           => 'Kanali',
+                'collapse'           => 'Smanji',
+                'configure'          => 'Konfiguracija',
+                'currencies'         => 'Valute',
+                'dashboard'          => 'Nadzorna ploča',
+                'data-transfer'      => 'Prijenos podataka',
+                'groups'             => 'Grupe',
+                'tracker'            => 'Praćenje zadataka',
+                'imports'            => 'Uvozi',
+                'exports'            => 'Izvozi',
+                'locales'            => 'Lokacije',
+                'magic-ai'           => 'Magija AI',
+                'mode'               => 'Tamni način rada',
+                'products'           => 'Proizvodi',
+                'roles'              => 'Uloge',
+                'settings'           => 'Postavke',
+                'themes'             => 'Teme',
+                'users'              => 'Korisnici',
+                'integrations'       => 'Integracije',
             ],
         ],
 
@@ -1891,11 +1902,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => 'Dodaj sliku',
-                'ai-add-image-btn'  => 'Magija AI',
-                'ai-btn-info'       => 'Generiraj sliku',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => 'Dozvoljeni su samo datoteke s slikama (.jpeg, .jpg, .png, ..).',
+                'add-image-btn'      => 'Dodaj sliku',
+                'ai-add-image-btn'   => 'Magija AI',
+                'generate-with-ai'   => 'Generiraj s AI-om',
+                'upload-from-device' => 'Prenesi s uređaja',
+                'cancel'             => 'Odustani',
+                'ai-btn-info'        => 'Generiraj sliku',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Dozvoljeni su samo datoteke s slikama (.jpeg, .jpg, .png, ..).',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',
@@ -1964,7 +1978,51 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => 'Zadani upit',
             ],
+        ],
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => 'Detaljan Opis Proizvoda',
+            'prompt' => 'Napišite sveobuhvatan opis @name, uključujući njegove značajke, prednosti, tehničke specifikacije i upute za uporabu.',
+        ],
+        'overview' => [
+            'title'  => 'Pregled Proizvoda',
+            'prompt' => 'Kreirajte detaljan pregled @name, naglašavajući njegove ključne značajke, prednosti i ciljanu publiku poput @brand i @color.',
+        ],
+        'features' => [
+            'title'  => 'Značajke i Prednosti Proizvoda',
+            'prompt' => 'Nabrojite ključne značajke i prednosti @name, objašnjavajući kako dodaju vrijednost životu kupca.',
+        ],
+        'technical' => [
+            'title'  => 'Tehničke Specifikacije Proizvoda',
+            'prompt' => 'Pružite detaljan popis tehničkih specifikacija za @name, uključujući dimenzije, materijale i kompatibilnost.',
+        ],
+        'care' => [
+            'title'  => 'Briga i Održavanje Proizvoda',
+            'prompt' => 'Napišite vodič kako brinuti i održavati @name, uključujući savjete za čišćenje, pohranu i rješavanje problema.',
+        ],
+        'tagline' => [
+            'title'  => 'Slogan Proizvoda',
+            'prompt' => 'Napišite privlačan i sažet slogan za @name koji hvata njegovu bit i prednosti.',
+        ],
+        'summary' => [
+            'title'  => 'Sažetak Proizvoda',
+            'prompt' => 'Sažmite ključne značajke i prednosti @name u 50-60 riječi.',
+        ],
+        'headline' => [
+            'title'  => 'Naslov Proizvoda',
+            'prompt' => 'Kreirajte privlačan naslov za @name koji ističe njegov jedinstveni prodajni argument.',
+        ],
+        'brief' => [
+            'title'  => 'Kratak Opis Proizvoda',
+            'prompt' => 'Napišite kratak i sažet opis @name, fokusirajući se na njegove ključne prednosti i ciljanu publiku.',
+        ],
+        'elevator' => [
+            'title'  => 'Elevator Pitch Proizvoda',
+            'prompt' => 'Izradite sažet elevator pitch za @name, sumirajući njegovu svrhu, prednosti i jedinstveni prodajni argument u 30-40 riječi.',
         ],
     ],
 ];

@@ -3,33 +3,39 @@
 return [
     'users' => [
         'sessions' => [
-            'email'                => '이메일 주소',
-            'forget-password-link' => '비밀번호를 잊으셨나요?',
-            'password'             => '비밀번호',
-            'submit-btn'           => '로그인',
-            'title'                => '로그인',
+            'email'                  => '이메일 주소',
+            'forget-password-link'   => '비밀번호를 잊으셨나요?',
+            'password'               => '비밀번호',
+            'submit-btn'             => '로그인',
+            'title'                  => '로그인',
+            'powered-by'             => ':unopim 제공,',
+            'open-source-project-by' => ':webkul의 오픈 소스 프로젝트입니다.',
         ],
 
         'forget-password' => [
             'create' => [
-                'email'                => '등록된 이메일',
-                'email-not-exist'      => '이메일이 존재하지 않습니다',
-                'page-title'           => '비밀번호 찾기',
-                'reset-link-sent'      => '비밀번호 재설정 링크가 전송되었습니다',
-                'email-settings-error' => '이메일을 보낼 수 없습니다. 이메일 설정을 확인해주세요',
-                'sign-in-link'         => '로그인 화면으로 돌아가기?',
-                'submit-btn'           => '재설정',
-                'title'                => '비밀번호 복구',
+                'email'                  => '등록된 이메일',
+                'email-not-exist'        => '이메일이 존재하지 않습니다',
+                'page-title'             => '비밀번호 찾기',
+                'reset-link-sent'        => '비밀번호 재설정 링크가 전송되었습니다',
+                'email-settings-error'   => '이메일을 보낼 수 없습니다. 이메일 설정을 확인해주세요',
+                'sign-in-link'           => '로그인 화면으로 돌아가기?',
+                'submit-btn'             => '재설정',
+                'title'                  => '비밀번호 복구',
+                'powered-by'             => ':unopim 제공,',
+                'open-source-project-by' => ':webkul의 오픈 소스 프로젝트입니다.',
             ],
         ],
 
         'reset-password' => [
-            'back-link-title'  => '로그인 화면으로 돌아가기?',
-            'confirm-password' => '비밀번호 확인',
-            'email'            => '등록된 이메일',
-            'password'         => '비밀번호',
-            'submit-btn'       => '비밀번호 재설정',
-            'title'            => '비밀번호 재설정',
+            'back-link-title'        => '로그인 화면으로 돌아가기?',
+            'confirm-password'       => '비밀번호 확인',
+            'email'                  => '등록된 이메일',
+            'password'               => '비밀번호',
+            'submit-btn'             => '비밀번호 재설정',
+            'title'                  => '비밀번호 재설정',
+            'powered-by'             => ':unopim 제공,',
+            'open-source-project-by' => ':webkul의 오픈 소스 프로젝트입니다.',
         ],
     ],
 
@@ -92,10 +98,12 @@ return [
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken'  => ':name은(는) 이미 사용되었습니다.',
-                'create-btn'     => '제품 만들기',
-                'title'          => '제품',
-                'magic-ai-error' => 'Magic AI 자격 증명이 올바른지 확인하고 올바른 모델이 선택되었는지 확인하세요.',
+                'already-taken'             => ':name은(는) 이미 사용되었습니다.',
+                'create-btn'                => '제품 만들기',
+                'title'                     => '제품',
+                'magic-ai-error'            => 'Magic AI 자격 증명이 올바른지 확인하고 올바른 모델이 선택되었는지 확인하세요.',
+                'magic-ai-validate-error'   => 'Magic AI 자격 증명을 확인하세요.',
+                'magic-ai-validate-success' => 'Magic AI 자격 증명이 성공적으로 확인되었습니다.',
 
                 'create' => [
                     'back-btn'                          => '뒤로',
@@ -353,6 +361,7 @@ return [
                 'yes'                   => '예',
                 'same-code-error'       => '옵션 코드는 고유해야 합니다.',
                 'usable-in-grid'        => '그리드에서 사용 가능',
+                'is-filterable'         => '필터링 가능',
 
                 'option' => [
                     'color'    => '샘플 색상',
@@ -419,6 +428,7 @@ return [
                 'yes'                   => '예',
                 'same-code-error'       => '옵션 코드는 고유해야 합니다.',
                 'usable-in-grid'        => '그리드에서 사용 가능',
+                'is-filterable'         => '필터링 가능',
 
                 'option' => [
                     'color'    => '샘플 색상',
@@ -504,6 +514,7 @@ return [
                     'name'           => '표시 이름',
                     'no-of-products' => '제품 수',
                     'position'       => '위치',
+                    'category-name'  => '이름',
                     'status'         => '메뉴에 표시',
                     'update-status'  => '상태 업데이트',
                 ],
@@ -1641,12 +1652,12 @@ return [
 
     'configuration' => [
         'index' => [
-            'delete'                       => '삭제',
-            'no-result-found'              => '결과를 찾을 수 없음',
-            'save-btn'                     => '구성 저장',
-            'save-message'                 => '구성 성공적으로 저장됨',
-            'search'                       => '검색',
-            'title'                        => '구성',
+            'delete'          => '삭제',
+            'no-result-found' => '결과를 찾을 수 없음',
+            'save-btn'        => '구성 저장',
+            'save-message'    => '구성 성공적으로 저장됨',
+            'search'          => '검색',
+            'title'           => '구성',
 
             'general' => [
                 'info'  => '',
@@ -1744,34 +1755,34 @@ return [
             ],
 
             'sidebar' => [
-                'attribute-families'       => '속성 그룹',
-                'attribute-groups'         => '속성 그룹',
-                'attributes'               => '속성',
-                'history'                  => '이력',
-                'edit-section'             => '데이터',
-                'general'                  => '일반',
-                'catalog'                  => '카탈로그',
-                'categories'               => '카테고리',
-                'category_fields'          => '카테고리 필드',
-                'channels'                 => '채널',
-                'collapse'                 => '축소',
-                'configure'                => '구성',
-                'currencies'               => '통화',
-                'dashboard'                => '대시보드',
-                'data-transfer'            => '데이터 전송',
-                'groups'                   => '그룹',
-                'tracker'                  => '작업 트래커',
-                'imports'                  => '수입',
-                'exports'                  => '수출',
-                'locales'                  => '로컬',
-                'magic-ai'                 => '마법 AI',
-                'mode'                     => '다크 모드',
-                'products'                 => '제품',
-                'roles'                    => '역할',
-                'settings'                 => '설정',
-                'themes'                   => '테마',
-                'users'                    => '사용자',
-                'integrations'             => '통합',
+                'attribute-families' => '속성 그룹',
+                'attribute-groups'   => '속성 그룹',
+                'attributes'         => '속성',
+                'history'            => '이력',
+                'edit-section'       => '데이터',
+                'general'            => '일반',
+                'catalog'            => '카탈로그',
+                'categories'         => '카테고리',
+                'category_fields'    => '카테고리 필드',
+                'channels'           => '채널',
+                'collapse'           => '축소',
+                'configure'          => '구성',
+                'currencies'         => '통화',
+                'dashboard'          => '대시보드',
+                'data-transfer'      => '데이터 전송',
+                'groups'             => '그룹',
+                'tracker'            => '작업 트래커',
+                'imports'            => '수입',
+                'exports'            => '수출',
+                'locales'            => '로컬',
+                'magic-ai'           => '마법 AI',
+                'mode'               => '다크 모드',
+                'products'           => '제품',
+                'roles'              => '역할',
+                'settings'           => '설정',
+                'themes'             => '테마',
+                'users'              => '사용자',
+                'integrations'       => '통합',
             ],
         ],
 
@@ -1891,11 +1902,14 @@ return [
 
         'media' => [
             'images' => [
-                'add-image-btn'     => '이미지 추가',
-                'ai-add-image-btn'  => '마법 AI',
-                'ai-btn-info'       => '이미지 생성',
-                'allowed-types'     => 'png, jpeg, jpg',
-                'not-allowed-error' => '이미지 파일만 허용됩니다 (.jpeg, .jpg, .png, ..).',
+                'add-image-btn'      => '이미지 추가',
+                'generate-with-ai'   => 'AI로 생성',
+                'upload-from-device' => '장치에서 업로드',
+                'cancel'             => '취소',
+                'ai-add-image-btn'   => '마법 AI',
+                'ai-btn-info'        => '이미지 생성',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => '이미지 파일만 허용됩니다 (.jpeg, .jpg, .png, ..).',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',
@@ -1964,7 +1978,51 @@ return [
                 'orca-mini'              => 'Orca Mini',
                 'vicuna'                 => 'Vicuna',
                 'llava'                  => 'LLaVA',
+                'default-prompt'         => '기본 프롬프트',
             ],
+        ],
+    ],
+
+    'default-prompt' => [
+        'detailed' => [
+            'title'  => '제품 상세 설명',
+            'prompt' => '@name의 종합적인 설명을 작성하십시오. 기능, 장점, 기술 사양 및 사용 방법을 포함하세요.',
+        ],
+        'overview' => [
+            'title'  => '제품 개요',
+            'prompt' => '@name의 주요 특징, 장점, 그리고 @brand와 @color와 같은 대상 고객을 강조하는 자세한 개요를 작성하세요.',
+        ],
+        'features' => [
+            'title'  => '제품 기능 및 장점',
+            'prompt' => '@name의 주요 기능 및 장점을 나열하고, 그것들이 고객의 삶에 어떻게 가치를 더하는지 설명하세요.',
+        ],
+        'technical' => [
+            'title'  => '제품 기술 사양',
+            'prompt' => '@name의 기술 사양을 자세히 나열하세요. 치수, 재료 및 호환성을 포함하세요.',
+        ],
+        'care' => [
+            'title'  => '제품 관리 및 유지보수',
+            'prompt' => '@name의 관리 및 유지보수에 대한 가이드를 작성하세요. 청소, 보관 및 문제 해결 팁을 포함하세요.',
+        ],
+        'tagline' => [
+            'title'  => '제품 태그라인',
+            'prompt' => '@name의 본질과 장점을 잘 표현한 매력적이고 간결한 태그라인을 작성하세요.',
+        ],
+        'summary' => [
+            'title'  => '제품 요약',
+            'prompt' => '@name의 주요 기능과 장점을 50-60단어로 요약하세요.',
+        ],
+        'headline' => [
+            'title'  => '제품 제목',
+            'prompt' => '@name의 독특한 판매 포인트를 강조하는 주목할 만한 제목을 작성하세요.',
+        ],
+        'brief' => [
+            'title'  => '제품 간단한 설명',
+            'prompt' => '@name의 주요 장점과 대상 고객을 중심으로 간단하고 간결한 설명을 작성하세요.',
+        ],
+        'elevator' => [
+            'title'  => '제품 Elevator Pitch',
+            'prompt' => '@name의 목적, 장점 및 독특한 판매 포인트를 30-40단어로 요약한 간단한 Elevator Pitch를 작성하세요.',
         ],
     ],
 ];

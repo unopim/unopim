@@ -76,6 +76,10 @@ class ImportTrackBatch implements ShouldQueue
             try {
                 $importHelper->start(null, $this->queue);
             } catch (\Exception $e) {
+                $this->importBatch->state = ImportHelper::STATE_FAILED;
+                $this->importBatch->errors = [$e->getMessage()];
+                $this->importBatch->save();
+
                 \Log::error('Import process failed: '.$e->getMessage());
 
                 return;
