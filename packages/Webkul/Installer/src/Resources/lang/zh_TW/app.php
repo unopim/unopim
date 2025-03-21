@@ -1,19 +1,19 @@
 <?php
 
 return [
-    'seeders'   => [
+    'seeders' => [
         'attribute' => [
             'attribute-families' => '屬性家族',
             'attribute-groups'   => [
-                'description'       => '描述',
-                'general'           => '一般',
-                'inventories'       => '庫存',
-                'meta-description'  => 'Meta 描述',
-                'price'             => '價格',
-                'technical'         => '技術',
-                'shipping'          => '運送',
+                'description'      => '描述',
+                'general'          => '一般',
+                'inventories'      => '庫存',
+                'meta-description' => 'Meta 描述',
+                'price'            => '價格',
+                'technical'        => '技術',
+                'shipping'         => '運送',
             ],
-            'attributes'         => [
+            'attributes' => [
                 'brand'                => '品牌',
                 'color'                => '顏色',
                 'cost'                 => '成本',
@@ -43,7 +43,7 @@ return [
                 'weight'               => '重量',
                 'width'                => '寬度',
             ],
-            'attribute-options'  => [
+            'attribute-options' => [
                 'black'  => '黑色',
                 'green'  => '綠色',
                 'l'      => '大',
@@ -55,7 +55,7 @@ return [
                 'yellow' => '黃色',
             ],
         ],
-        'category'  => [
+        'category' => [
             'categories' => [
                 'description' => '分類描述',
                 'name'        => '主要分類',
@@ -65,13 +65,13 @@ return [
                 'description' => '描述',
             ],
         ],
-        'cms'       => [
+        'cms' => [
             'pages' => [
-                'about-us'         => [
+                'about-us' => [
                     'content' => '關於我們的內容',
                     'title'   => '關於我們',
                 ],
-                'contact-us'       => [
+                'contact-us' => [
                     'content' => '聯繫我們的內容',
                     'title'   => '聯絡我們',
                 ],
@@ -79,23 +79,23 @@ return [
                     'content' => '客服中心內容',
                     'title'   => '客戶服務',
                 ],
-                'payment-policy'   => [
+                'payment-policy' => [
                     'content' => '付款政策內容',
                     'title'   => '付款政策',
                 ],
-                'privacy-policy'   => [
+                'privacy-policy' => [
                     'content' => '隱私政策內容',
                     'title'   => '隱私政策',
                 ],
-                'refund-policy'    => [
+                'refund-policy' => [
                     'content' => '退款政策內容',
                     'title'   => '退款政策',
                 ],
-                'return-policy'    => [
+                'return-policy' => [
                     'content' => '退貨政策內容',
                     'title'   => '退貨政策',
                 ],
-                'shipping-policy'  => [
+                'shipping-policy' => [
                     'content' => '運送政策內容',
                     'title'   => '運送政策',
                 ],
@@ -103,18 +103,18 @@ return [
                     'content' => '條款和條件內容',
                     'title'   => '條款與條件',
                 ],
-                'terms-of-use'     => [
+                'terms-of-use' => [
                     'content' => '使用條款內容',
                     'title'   => '使用條款',
                 ],
-                'whats-new'        => [
+                'whats-new' => [
                     'content' => '最新內容',
                     'title'   => '最新消息',
                 ],
             ],
         ],
-        'core'      => [
-            'channels'   => [
+        'core' => [
+            'channels' => [
                 'meta-title'       => '商店展示',
                 'meta-keywords'    => '商店展示的 meta 關鍵字',
                 'meta-description' => '商店展示的 meta 描述',
@@ -136,7 +136,7 @@ return [
                 'USD' => '美元',
             ],
         ],
-        'customer'  => [
+        'customer' => [
             'customer-groups' => [
                 'general'   => '一般',
                 'guest'     => '訪客',
@@ -148,32 +148,32 @@ return [
                 'name' => '標準',
             ],
         ],
-        'shop'      => [
+        'shop' => [
             'theme-customizations' => [
-                'all-products'           => [
+                'all-products' => [
                     'name'    => '所有產品',
                     'options' => [
                         'title' => '所有產品',
                     ],
                 ],
-                'bold-collections'       => [
+                'bold-collections' => [
                     'content' => [
                         'btn-title'   => '查看所有',
                         'description' => '探索我們的新穎集合！提升你的風格，增加鮮艷的顏色和大膽的設計。豐富你的衣櫥，使用鮮明的印花和飽和的顏色。準備開始一次大膽的旅程！',
                         'title'       => '準備迎接我們的新大膽系列！',
                     ],
-                    'name'    => '大膽系列',
+                    'name' => '大膽系列',
                 ],
                 'categories-collections' => [
                     'name' => '按分類集合',
                 ],
-                'featured-collections'   => [
+                'featured-collections' => [
                     'name'    => '特色系列',
                     'options' => [
                         'title' => '特色產品',
                     ],
                 ],
-                'footer-links'           => [
+                'footer-links' => [
                     'name'    => '頁腳連結',
                     'options' => [
                         'about-us'         => '關於我們',
@@ -189,48 +189,48 @@ return [
                         'whats-new'        => '最新消息',
                     ],
                 ],
-                'game-container'         => [
+                'game-container' => [
                     'content' => [
                         'sub-title-1' => '我們的系列',
                         'sub-title-2' => '我們的系列',
                         'title'       => '玩新產品吧！',
                     ],
-                    'name'    => '遊戲容器',
+                    'name' => '遊戲容器',
                 ],
-                'image-carousel'         => [
+                'image-carousel' => [
                     'name'    => '圖片輪播',
                     'sliders' => [
                         'title' => '準備迎接新系列',
                     ],
                 ],
-                'new-products'           => [
+                'new-products' => [
                     'name'    => '新產品',
                     'options' => [
                         'title' => '新產品',
                     ],
                 ],
-                'offer-information'      => [
+                'offer-information' => [
                     'content' => [
                         'title' => '開始瀏覽 %40 折扣，第一筆購買！',
                     ],
                     'name' => '優惠信息',
                 ],
-                'services-content'       => [
+                'services-content' => [
                     'description' => [
                         'emi-available-info'   => '所有主要信用卡均提供免費金融機構',
                         'free-shipping-info'   => '所有訂單免費配送',
                         'product-replace-info' => '產品替換簡單！',
                         'time-support-info'    => '24/7在線聊天和電子郵件專屬支持',
                     ],
-                    'name'        => '服務內容',
-                    'title'       => [
+                    'name'  => '服務內容',
+                    'title' => [
                         'emi-available'   => '免費金融機構',
                         'free-shipping'   => '免費配送',
                         'product-replace' => '產品替換',
                         'time-support'    => '24/7 支持',
                     ],
                 ],
-                'top-collections'        => [
+                'top-collections' => [
                     'content' => [
                         'sub-title-1' => '我們的系列',
                         'sub-title-2' => '我們的系列',
@@ -240,11 +240,11 @@ return [
                         'sub-title-6' => '我們的系列',
                         'title'       => '玩新產品吧！',
                     ],
-                    'name'    => '特色系列',
+                    'name' => '特色系列',
                 ],
             ],
         ],
-        'user'      => [
+        'user' => [
             'roles' => [
                 'description' => '此角色將獲得所有功能的訪問權限',
                 'name'        => '管理員',
@@ -305,17 +305,17 @@ return [
             ],
 
             'installation-processing' => [
-                'unopim'            => '正在安裝 UnoPim',
-                'unopim-info'       => '正在建立資料庫表，這可能需要幾分鐘。',
-                'title'             => '安裝中',
+                'unopim'      => '正在安裝 UnoPim',
+                'unopim-info' => '正在建立資料庫表，這可能需要幾分鐘。',
+                'title'       => '安裝中',
             ],
 
             'installation-completed' => [
-                'admin-panel'                   => '管理面板',
-                'unopim-forums'                 => 'UnoPim 論壇',
-                'explore-unopim-extensions'     => '探索 UnoPim 擴展功能',
-                'title-info'                    => 'UnoPim 已成功安裝。',
-                'title'                         => '安裝完成',
+                'admin-panel'               => '管理面板',
+                'unopim-forums'             => 'UnoPim 論壇',
+                'explore-unopim-extensions' => '探索 UnoPim 擴展功能',
+                'title-info'                => 'UnoPim 已成功安裝。',
+                'title'                     => '安裝完成',
             ],
 
             'ready-for-installation' => [
@@ -359,38 +359,19 @@ return [
                 'xml'         => 'XML',
             ],
 
-            'arabic'                    => '阿拉伯語',
-            'back'                      => '返回',
-            'unopim-info'               => '社區項目',
-            'unopim-logo'               => 'UnoPim 標誌',
-            'unopim'                    => 'UnoPim',
-            'bengali'                   => '孟加拉語',
-            'chinese'                   => '中文',
-            'continue'                  => '繼續',
-            'dutch'                     => '荷蘭語',
-            'english'                   => '英語',
-            'french'                    => '法語',
-            'german'                    => '德語',
-            'hebrew'                    => '希伯來語',
-            'hindi'                     => '印地語',
-            'installation-description'  => 'UnoPim 的安裝過程包括幾個步驟。以下是概述：',
-            'wizard-language'           => '安裝嚮導語言',
-            'installation-info'         => '我們很高興見到您！',
-            'installation-title'        => '安裝 UnoPim',
-            'italian'                   => '義大利語',
-            'japanese'                  => '日語',
-            'persian'                   => '波斯語',
-            'polish'                    => '波蘭語',
-            'portuguese'                => '葡萄牙語',
-            'russian'                   => '俄語',
-            'save-configuration'        => '保存配置',
-            'sinhala'                   => '僧伽羅語',
-            'skip'                      => '跳過',
-            'spanish'                   => '西班牙語',
-            'title'                     => 'UnoPim 安裝程序',
-            'turkish'                   => '土耳其語',
-            'ukrainian'                 => '烏克蘭語',
-            'webkul'                    => 'Webkul',
+            'back'                     => '返回',
+            'unopim-info'              => '社區項目',
+            'unopim-logo'              => 'UnoPim 標誌',
+            'unopim'                   => 'UnoPim',
+            'continue'                 => '繼續',
+            'installation-description' => 'UnoPim 的安裝過程包括幾個步驟。以下是概述：',
+            'wizard-language'          => '安裝嚮導語言',
+            'installation-info'        => '我們很高興見到您！',
+            'installation-title'       => '安裝 UnoPim',
+            'save-configuration'       => '保存配置',
+            'skip'                     => '跳過',
+            'title'                    => 'UnoPim 安裝程序',
+            'webkul'                   => 'Webkul',
         ],
     ],
 ];

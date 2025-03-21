@@ -44,37 +44,37 @@
 
     @php
         $locales = [
-            'ar_AE' => 'Arabic (United Arab Emirates)',
-            'ca_ES' => 'Catalan (Spain)',
-            'da_DK' => 'Danish (Denmark)',
-            'de_DE' => 'German (Germany)',
-            'en_AU' => 'English (Australia)',
-            'en_GB' => 'English (United Kingdom)',
-            'en_NZ' => 'English (New Zealand)',
-            'en_US' => 'English (United States)',
-            'es_ES' => 'Spanish (Spain)',
-            'es_VE' => 'Spanish (Venezuela)',
-            'fi_FI' => 'Finnish (Finland)',
-            'fr_FR' => 'French (France)',
-            'hi_IN' => 'Hindi (India)',
-            'hr_HR' => 'Croatian (Croatia)',
-            'it_IT' => 'Italian (Italy)',
-            'ja_JP' => 'Japanese (Japan)',
-            'ko_KR' => 'Korean (South Korea)',
-            'nl_NL' => 'Dutch (Netherlands)',
-            'no_NO' => 'Norwegian (Norway)',
-            'pl_PL' => 'Polish (Poland)',
-            'pt_BR' => 'Portuguese (Brazil)',
-            'pt_PT' => 'Portuguese (Portugal)',
-            'ro_RO' => 'Romanian (Romania)',
-            'ru_RU' => 'Russian (Russia)',
-            'sv_SE' => 'Swedish (Sweden)',
-            'tl_PH' => 'Tagalog (Philippines)',
-            'tr_TR' => 'Turkish (Turkey)',
-            'uk_UA' => 'Ukrainian (Ukraine)',
-            'vi_VN' => 'Vietnamese (Vietnam)',
-            'zh_CN' => 'Chinese (China)',
-            'zh_TW' => 'Chinese (Taiwan)',
+            'ar_AE',
+            'ca_ES',
+            'da_DK',
+            'de_DE',
+            'en_AU',
+            'en_GB',
+            'en_NZ',
+            'en_US',
+            'es_ES',
+            'es_VE',
+            'fi_FI',
+            'fr_FR',
+            'hi_IN',
+            'hr_HR',
+            'it_IT',
+            'ja_JP',
+            'ko_KR',
+            'nl_NL',
+            'no_NO',
+            'pl_PL',
+            'pt_BR',
+            'pt_PT',
+            'ro_RO',
+            'ru_RU',
+            'sv_SE',
+            'tl_PH',
+            'tr_TR',
+            'uk_UA',
+            'vi_VN',
+            'zh_CN',
+            'zh_TW',
         ];
 
         $currencies = [
@@ -323,9 +323,9 @@
                                                     @lang('installer::app.installer.index.start.select-locale')
                                                 </option>
 
-                                                @foreach ($locales as $value => $label)
+                                                @foreach ($locales as $value)
                                                     <option value="{{ $value }}">
-                                                        @lang("installer::app.installer.index.$label")
+                                                        {{ Locale::getDisplayName($value, app()->getLocale()) }}
                                                     </option>
                                                 @endforeach
                                             </x-installer::form.control-group.control>
@@ -821,9 +821,9 @@
                                             :aria-label="trans('installer::app.installer.index.environment-configuration.default-locale')"
                                             :label="trans('installer::app.installer.index.environment-configuration.default-locale')"
                                         >
-                                            @foreach ($locales as $value => $label)
+                                            @foreach ($locales as $value)
                                                 <option value="{{ $value }}">
-                                                    @lang("installer::app.installer.index.$label")
+                                                {{ Locale::getDisplayName($value, app()->getLocale()) }}
                                                 </option>
                                             @endforeach
                                         </x-installer::form.control-group.control>
@@ -865,7 +865,7 @@
                                         </x-installer::form.control-group.label>
 
                                         <!-- Allowed Locales -->
-                                        @foreach ($locales as $key => $locale)
+                                        @foreach ($locales as $key)
                                             <x-installer::form.control-group class="flex gap-2.5 w-max !mb-0 p-1.5 cursor-pointer select-none">
                                                 @php
                                                     $selectedOption = ($key == config('app.locale'));
@@ -892,7 +892,7 @@
                                                     for="allowed_locale[{{ $key }}]"
                                                     class="!text-[14px] !font-semibold cursor-pointer"
                                                 >
-                                                    @lang("installer::app.installer.index.$locale")
+                                                    {{ Locale::getDisplayName($key, app()->getLocale()) }}
                                                 </x-installer::form.control-group.label>
                                             </x-installer::form.control-group>
                                         @endforeach
@@ -1100,9 +1100,9 @@
                                             :aria-label="trans('installer::app.installer.index.environment-configuration.default-locale')"
                                             :label="trans('installer::app.installer.index.environment-configuration.default-locale')"
                                         >
-                                            @foreach ($locales as $value => $label)
+                                            @foreach ($locales as $value)
                                                 <option value="{{ $value }}">
-                                                    @lang("installer::app.installer.index.$label")
+                                                    {{ Locale::getDisplayName($value, app()->getLocale()) }}
                                                 </option>
                                             @endforeach
                                         </x-installer::form.control-group.control>

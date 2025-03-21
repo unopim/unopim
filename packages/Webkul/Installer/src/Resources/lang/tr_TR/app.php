@@ -1,19 +1,19 @@
 <?php
 
 return [
-    'seeders'   => [
+    'seeders' => [
         'attribute' => [
             'attribute-families' => 'Aileler',
             'attribute-groups'   => [
-                'description'       => 'Tanım',
-                'general'           => 'Genel',
-                'inventories'       => 'Envanterler',
-                'meta-description'  => 'Meta Açıklama',
-                'price'             => 'Fiyat',
-                'technical'         => 'Teknik',
-                'shipping'          => 'Nakliye',
+                'description'      => 'Tanım',
+                'general'          => 'Genel',
+                'inventories'      => 'Envanterler',
+                'meta-description' => 'Meta Açıklama',
+                'price'            => 'Fiyat',
+                'technical'        => 'Teknik',
+                'shipping'         => 'Nakliye',
             ],
-            'attributes'         => [
+            'attributes' => [
                 'brand'                => 'Marka',
                 'color'                => 'Renk',
                 'cost'                 => 'Maliyet',
@@ -43,7 +43,7 @@ return [
                 'weight'               => 'Ağırlık',
                 'width'                => 'Genişlik',
             ],
-            'attribute-options'  => [
+            'attribute-options' => [
                 'black'  => 'Siyah',
                 'green'  => 'Yeşil',
                 'l'      => 'L',
@@ -55,7 +55,7 @@ return [
                 'yellow' => 'Sarı',
             ],
         ],
-        'category'  => [
+        'category' => [
             'categories' => [
                 'description' => 'Ana kategori tanımları',
                 'name'        => 'Ana',
@@ -65,13 +65,13 @@ return [
                 'description' => 'Açıklama',
             ],
         ],
-        'cms'       => [
+        'cms' => [
             'pages' => [
-                'about-us'         => [
+                'about-us' => [
                     'content' => 'Hakkımızda sayfası içeriği',
                     'title'   => 'Hakkımızda',
                 ],
-                'contact-us'       => [
+                'contact-us' => [
                     'content' => 'İletişim sayfası içeriği',
                     'title'   => 'İletişim',
                 ],
@@ -79,23 +79,23 @@ return [
                     'content' => 'Müşteri hizmetleri sayfası içeriği',
                     'title'   => 'Müşteri Hizmetleri',
                 ],
-                'payment-policy'   => [
+                'payment-policy' => [
                     'content' => 'Ödeme politikası sayfası içeriği',
                     'title'   => 'Ödeme Politikası',
                 ],
-                'privacy-policy'   => [
+                'privacy-policy' => [
                     'content' => 'Gizlilik politikası sayfası içeriği',
                     'title'   => 'Gizlilik Politikası',
                 ],
-                'refund-policy'    => [
+                'refund-policy' => [
                     'content' => 'İade politikası sayfası içeriği',
                     'title'   => 'İade Politikası',
                 ],
-                'return-policy'    => [
+                'return-policy' => [
                     'content' => 'İade politikası sayfası içeriği',
                     'title'   => 'İade Politikası',
                 ],
-                'shipping-policy'  => [
+                'shipping-policy' => [
                     'content' => 'Nakliye politikası sayfası içeriği',
                     'title'   => 'Nakliye Politikası',
                 ],
@@ -103,18 +103,18 @@ return [
                     'content' => 'Şartlar sayfası içeriği',
                     'title'   => 'Şartlar ve Koşullar',
                 ],
-                'terms-of-use'     => [
+                'terms-of-use' => [
                     'content' => 'Kullanım koşulları sayfası içeriği',
                     'title'   => 'Kullanım Koşulları',
                 ],
-                'whats-new'        => [
+                'whats-new' => [
                     'content' => 'Yeni ne var sayfası içeriği',
                     'title'   => 'Yeni Ne Var',
                 ],
             ],
         ],
-        'core'      => [
-            'channels'   => [
+        'core' => [
+            'channels' => [
                 'meta-title'       => 'Demo Mağazası',
                 'meta-keywords'    => 'Demo Mağazası Meta Anahtar Kelimeleri',
                 'meta-description' => 'Demo Mağazası Meta Açıklaması',
@@ -136,7 +136,7 @@ return [
                 'USD' => 'ABD Doları',
             ],
         ],
-        'customer'  => [
+        'customer' => [
             'customer-groups' => [
                 'general'   => 'Genel',
                 'guest'     => 'Ziyaretçi',
@@ -148,32 +148,32 @@ return [
                 'name' => 'Standart',
             ],
         ],
-        'shop'      => [
+        'shop' => [
             'theme-customizations' => [
-                'all-products'           => [
+                'all-products' => [
                     'name'    => 'Tüm Ürünler',
                     'options' => [
                         'title' => 'Tüm Ürünler',
                     ],
                 ],
-                'bold-collections'       => [
+                'bold-collections' => [
                     'content' => [
                         'btn-title'   => 'Tümünü Gör',
                         'description' => 'Yeni cesur koleksiyonlarımızı keşfedin! Stilinizi yükseltin, cesur tasarımlar ve parlak renklerle. Muhteşem desenler ve canlı renkler ile dolaplarınıza farklı bir hava katın. Cesur bir başlangıç için hazır olun!',
                         'title'       => 'Yeni Cesur Koleksiyonlarımıza Hazırlanın!',
                     ],
-                    'name'    => 'Cesur Koleksiyonlar',
+                    'name' => 'Cesur Koleksiyonlar',
                 ],
                 'categories-collections' => [
                     'name' => 'Kategori Koleksiyonları',
                 ],
-                'featured-collections'   => [
+                'featured-collections' => [
                     'name'    => 'Öne Çıkan Koleksiyonlar',
                     'options' => [
                         'title' => 'Öne Çıkan Ürünler',
                     ],
                 ],
-                'footer-links'           => [
+                'footer-links' => [
                     'name'    => 'Alt Bağlantılar',
                     'options' => [
                         'about-us'         => 'Hakkımızda',
@@ -189,48 +189,48 @@ return [
                         'whats-new'        => 'Yeni Ne Var',
                     ],
                 ],
-                'game-container'         => [
+                'game-container' => [
                     'content' => [
                         'sub-title-1' => 'Koleksiyonlarımız',
                         'sub-title-2' => 'Koleksiyonlarımız',
                         'title'       => 'Yeni Ürünlerle Oynayın!',
                     ],
-                    'name'    => 'Oyun Kabini',
+                    'name' => 'Oyun Kabini',
                 ],
-                'image-carousel'         => [
+                'image-carousel' => [
                     'name'    => 'Resim Karuseli',
                     'sliders' => [
                         'title' => 'Yeni Bir Koleksiyon için Hazırlanın',
                     ],
                 ],
-                'new-products'           => [
+                'new-products' => [
                     'name'    => 'Yeni Ürünler',
                     'options' => [
                         'title' => 'Yeni Ürünler',
                     ],
                 ],
-                'offer-information'      => [
+                'offer-information' => [
                     'content' => [
                         'title' => 'İLK ALIŞVERİŞİNİZDE %40 İNDİRİM BAŞLAYIN!',
                     ],
                     'name' => 'Teklif Bilgisi',
                 ],
-                'services-content'       => [
+                'services-content' => [
                     'description' => [
                         'emi-available-info'   => 'Tüm ana kredi kartları için ek ücret olmadan finansman imkanı mevcuttur',
                         'free-shipping-info'   => 'Tüm siparişler için ücretsiz gönderim',
                         'product-replace-info' => 'Ürün değişikliği kolaydır!',
                         'time-support-info'    => 'Canlı sohbet ve e-posta aracılığıyla 7/24 özel destek',
                     ],
-                    'name'        => 'Hizmet İçeriği',
-                    'title'       => [
+                    'name'  => 'Hizmet İçeriği',
+                    'title' => [
                         'emi-available'   => 'EMI Mevcut',
                         'free-shipping'   => 'Ücretsiz Gönderim',
                         'product-replace' => 'Ürün Değiştirme',
                         'time-support'    => 'Destek 7/24',
                     ],
                 ],
-                'top-collections'        => [
+                'top-collections' => [
                     'content' => [
                         'sub-title-1' => 'Koleksiyonlarımız',
                         'sub-title-2' => 'Koleksiyonlarımız',
@@ -240,11 +240,11 @@ return [
                         'sub-title-6' => 'Koleksiyonlarımız',
                         'title'       => 'Yeni Ürünlerle Bir Oyun Oynayın!',
                     ],
-                    'name'    => 'Öne Çıkan Koleksiyonlar',
+                    'name' => 'Öne Çıkan Koleksiyonlar',
                 ],
             ],
         ],
-        'user'      => [
+        'user' => [
             'roles' => [
                 'description' => 'Bu rol tüm erişimlere sahip olacak',
                 'name'        => 'Yönetici',
@@ -306,17 +306,17 @@ return [
             ],
 
             'installation-processing' => [
-                'unopim'            => 'UnoPim Kurulumu',
-                'unopim-info'       => 'Veritabanı tabloları oluşturuluyor, bu işlem birkaç dakika sürebilir.',
-                'title'             => 'Kurulum İşlemi',
+                'unopim'      => 'UnoPim Kurulumu',
+                'unopim-info' => 'Veritabanı tabloları oluşturuluyor, bu işlem birkaç dakika sürebilir.',
+                'title'       => 'Kurulum İşlemi',
             ],
 
             'installation-completed' => [
-                'admin-panel'                   => 'Yönetici Paneli',
-                'unopim-forums'                 => 'UnoPim Forumları',
-                'explore-unopim-extensions'     => 'UnoPim Eklentilerini Keşfet',
-                'title-info'                    => 'UnoPim başarıyla yüklendi.',
-                'title'                         => 'Kurulum Tamamlandı',
+                'admin-panel'               => 'Yönetici Paneli',
+                'unopim-forums'             => 'UnoPim Forumları',
+                'explore-unopim-extensions' => 'UnoPim Eklentilerini Keşfet',
+                'title-info'                => 'UnoPim başarıyla yüklendi.',
+                'title'                     => 'Kurulum Tamamlandı',
             ],
 
             'ready-for-installation' => [
@@ -360,38 +360,19 @@ return [
                 'xml'         => 'XML',
             ],
 
-            'arabic'                    => 'Arapça',
-            'back'                      => 'Geri',
-            'unopim-info'               => 'Topluluk Projesi',
-            'unopim-logo'               => 'UnoPim Logo',
-            'unopim'                    => 'UnoPim',
-            'bengali'                   => 'Bengali',
-            'chinese'                   => 'Çince',
-            'continue'                  => 'Devam Et',
-            'dutch'                     => 'Felemenkçe',
-            'english'                   => 'İngilizce',
-            'french'                    => 'Fransızca',
-            'german'                    => 'Almanca',
-            'hebrew'                    => 'İbranice',
-            'hindi'                     => 'Hintçe',
-            'installation-description'  => 'UnoPim kurulum süreci birkaç adımdan oluşur. Aşağıda özetlenmiştir:',
-            'wizard-language'           => 'Kurulum Sihirbazı Dili',
-            'installation-info'         => 'Bize katıldığınız için teşekkür ederiz!',
-            'installation-title'        => 'Kurulum Başlangıcı',
-            'italian'                   => 'İtalyanca',
-            'japanese'                  => 'Japonca',
-            'persian'                   => 'Farsça',
-            'polish'                    => 'Lehçe',
-            'portuguese'                => 'Portekizce',
-            'russian'                   => 'Rusça',
-            'save-configuration'        => 'Yapılandırmayı Kaydet',
-            'sinhala'                   => 'Sinhala',
-            'skip'                      => 'Atla',
-            'spanish'                   => 'İspanyolca',
-            'title'                     => 'UnoPim Kurulum Sihirbazı',
-            'turkish'                   => 'Türkçe',
-            'ukrainian'                 => 'Ukraynaca',
-            'webkul'                    => 'Webkul',
+            'back'                     => 'Geri',
+            'unopim-info'              => 'Topluluk Projesi',
+            'unopim-logo'              => 'UnoPim Logo',
+            'unopim'                   => 'UnoPim',
+            'continue'                 => 'Devam Et',
+            'installation-description' => 'UnoPim kurulum süreci birkaç adımdan oluşur. Aşağıda özetlenmiştir:',
+            'wizard-language'          => 'Kurulum Sihirbazı Dili',
+            'installation-info'        => 'Bize katıldığınız için teşekkür ederiz!',
+            'installation-title'       => 'Kurulum Başlangıcı',
+            'save-configuration'       => 'Yapılandırmayı Kaydet',
+            'skip'                     => 'Atla',
+            'title'                    => 'UnoPim Kurulum Sihirbazı',
+            'webkul'                   => 'Webkul',
         ],
     ],
 ];

@@ -1,19 +1,19 @@
 <?php
 
 return [
-    'seeders'   => [
+    'seeders' => [
         'attribute' => [
             'attribute-families' => 'Standard',
             'attribute-groups'   => [
-                'description'       => 'Beskrivelse',
-                'general'           => 'Generell',
-                'inventories'       => 'Lager',
-                'meta-description'  => 'Meta-beskrivelse',
-                'price'             => 'Pris',
-                'technical'         => 'Teknisk',
-                'shipping'          => 'Frakt',
+                'description'      => 'Beskrivelse',
+                'general'          => 'Generell',
+                'inventories'      => 'Lager',
+                'meta-description' => 'Meta-beskrivelse',
+                'price'            => 'Pris',
+                'technical'        => 'Teknisk',
+                'shipping'         => 'Frakt',
             ],
-            'attributes'         => [
+            'attributes' => [
                 'brand'                => 'Merke',
                 'color'                => 'Farge',
                 'cost'                 => 'Kostnad',
@@ -43,7 +43,7 @@ return [
                 'weight'               => 'Vekt',
                 'width'                => 'Bredde',
             ],
-            'attribute-options'  => [
+            'attribute-options' => [
                 'black'  => 'Svart',
                 'green'  => 'Grønn',
                 'l'      => 'L',
@@ -55,7 +55,7 @@ return [
                 'yellow' => 'Gul',
             ],
         ],
-        'category'  => [
+        'category' => [
             'categories' => [
                 'description' => 'Hovedkategori beskrivelse',
                 'name'        => 'Hovedkategori',
@@ -65,13 +65,13 @@ return [
                 'description' => 'Beskrivelse',
             ],
         ],
-        'cms'       => [
+        'cms' => [
             'pages' => [
-                'about-us'         => [
+                'about-us' => [
                     'content' => 'Om oss-sideinnhold',
                     'title'   => 'Om oss',
                 ],
-                'contact-us'       => [
+                'contact-us' => [
                     'content' => 'Kontakt oss-sideinnhold',
                     'title'   => 'Kontakt oss',
                 ],
@@ -79,23 +79,23 @@ return [
                     'content' => 'Kundeservice-sideinnhold',
                     'title'   => 'Kundeservice',
                 ],
-                'payment-policy'   => [
+                'payment-policy' => [
                     'content' => 'Betalingspolicy-sideinnhold',
                     'title'   => 'Betalingspolicy',
                 ],
-                'privacy-policy'   => [
+                'privacy-policy' => [
                     'content' => 'Personvernerklæring-sideinnhold',
                     'title'   => 'Personvernerklæring',
                 ],
-                'refund-policy'    => [
+                'refund-policy' => [
                     'content' => 'Refusjonspolitikk-sideinnhold',
                     'title'   => 'Refusjonspolitikk',
                 ],
-                'return-policy'    => [
+                'return-policy' => [
                     'content' => 'Returpolitikk-sideinnhold',
                     'title'   => 'Returpolitikk',
                 ],
-                'shipping-policy'  => [
+                'shipping-policy' => [
                     'content' => 'Fraktpolicy-sideinnhold',
                     'title'   => 'Fraktpolicy',
                 ],
@@ -103,18 +103,18 @@ return [
                     'content' => 'Vilkår og betingelser-sideinnhold',
                     'title'   => 'Vilkår og betingelser',
                 ],
-                'terms-of-use'     => [
+                'terms-of-use' => [
                     'content' => 'Vilkår for bruk-sideinnhold',
                     'title'   => 'Vilkår for bruk',
                 ],
-                'whats-new'        => [
+                'whats-new' => [
                     'content' => 'Hva er nytt sideinnhold',
                     'title'   => 'Hva er nytt',
                 ],
             ],
         ],
-        'core'      => [
-            'channels'   => [
+        'core' => [
+            'channels' => [
                 'meta-title'       => 'Demo butikk',
                 'meta-keywords'    => 'Demo butikk meta ord',
                 'meta-description' => 'Demo butikk meta beskrivelse',
@@ -136,7 +136,7 @@ return [
                 'USD' => 'US Dollar',
             ],
         ],
-        'customer'  => [
+        'customer' => [
             'customer-groups' => [
                 'general'   => 'Generell',
                 'guest'     => 'Gjest',
@@ -148,32 +148,32 @@ return [
                 'name' => 'Standard',
             ],
         ],
-        'shop'      => [
+        'shop' => [
             'theme-customizations' => [
-                'all-products'           => [
+                'all-products' => [
                     'name'    => 'Alle produkter',
                     'options' => [
                         'title' => 'Alle produkter',
                     ],
                 ],
-                'bold-collections'       => [
+                'bold-collections' => [
                     'content' => [
                         'btn-title'   => 'Vis alle',
                         'description' => 'Presenting the new Bold collection! Step up your style game with daring designs and vibrant colors. Define your outfit in a whole new way with bold patterns and statement hues. Get ready for special moments with our bold collection!',
                         'title'       => 'Meet the new Bold collection!',
                     ],
-                    'name'    => 'Bold Collection',
+                    'name' => 'Bold Collection',
                 ],
                 'categories-collections' => [
                     'name' => 'Categories Collection',
                 ],
-                'featured-collections'   => [
+                'featured-collections' => [
                     'name'    => 'Featured Collection',
                     'options' => [
                         'title' => 'Featured Products',
                     ],
                 ],
-                'footer-links'           => [
+                'footer-links' => [
                     'name'    => 'Footer Links',
                     'options' => [
                         'about-us'         => 'About Us',
@@ -189,48 +189,48 @@ return [
                         'whats-new'        => 'What\'s New',
                     ],
                 ],
-                'game-container'         => [
+                'game-container' => [
                     'content' => [
                         'sub-title-1' => 'Our Collections',
                         'sub-title-2' => 'Our Collections',
                         'title'       => 'Prepare for a game with our new additions!',
                     ],
-                    'name'    => 'Game Container',
+                    'name' => 'Game Container',
                 ],
-                'image-carousel'         => [
+                'image-carousel' => [
                     'name'    => 'Image Carousel',
                     'sliders' => [
                         'title' => 'Get ready to meet the new collection',
                     ],
                 ],
-                'new-products'           => [
+                'new-products' => [
                     'name'    => 'New Products',
                     'options' => [
                         'title' => 'New Products',
                     ],
                 ],
-                'offer-information'      => [
+                'offer-information' => [
                     'content' => [
                         'title' => 'Up to 40% off on first orders! SHOP NOW',
                     ],
                     'name' => 'Offer Information',
                 ],
-                'services-content'       => [
+                'services-content' => [
                     'description' => [
                         'emi-available-info'   => 'Available EMI on all major credit cards',
                         'free-shipping-info'   => 'Enjoy free shipping on all orders',
                         'product-replace-info' => 'Easy replacement available!',
                         'time-support-info'    => 'Dedicated 24/7 support via chat and email',
                     ],
-                    'name'        => 'Services Content',
-                    'title'       => [
+                    'name'  => 'Services Content',
+                    'title' => [
                         'emi-available'   => 'EMI Available',
                         'free-shipping'   => 'Free Shipping',
                         'product-replace' => 'Product Replacement',
                         'time-support'    => '24/7 Support',
                     ],
                 ],
-                'top-collections'        => [
+                'top-collections' => [
                     'content' => [
                         'sub-title-1' => 'Our Collections',
                         'sub-title-2' => 'Our Collections',
@@ -240,11 +240,11 @@ return [
                         'sub-title-6' => 'Our Collections',
                         'title'       => 'Prepare for a game with our new additions!',
                     ],
-                    'name'    => 'Top Collections',
+                    'name' => 'Top Collections',
                 ],
             ],
         ],
-        'user'      => [
+        'user' => [
             'roles' => [
                 'description' => 'This role will have all access',
                 'name'        => 'Administrator',
@@ -306,17 +306,17 @@ return [
             ],
 
             'installation-processing' => [
-                'unopim'            => 'Installerer UnoPim',
-                'unopim-info'       => 'Oppretter databasetabeller, dette kan ta litt tid',
-                'title'             => 'Installerer',
+                'unopim'      => 'Installerer UnoPim',
+                'unopim-info' => 'Oppretter databasetabeller, dette kan ta litt tid',
+                'title'       => 'Installerer',
             ],
 
             'installation-completed' => [
-                'admin-panel'                   => 'Administratorpanel',
-                'unopim-forums'                 => 'UnoPim-forum',
-                'explore-unopim-extensions'     => 'Utforsk UnoPim-utvidelser',
-                'title-info'                    => 'UnoPim ble installert vellykket.',
-                'title'                         => 'Installasjonen fullført',
+                'admin-panel'               => 'Administratorpanel',
+                'unopim-forums'             => 'UnoPim-forum',
+                'explore-unopim-extensions' => 'Utforsk UnoPim-utvidelser',
+                'title-info'                => 'UnoPim ble installert vellykket.',
+                'title'                     => 'Installasjonen fullført',
             ],
 
             'ready-for-installation' => [
@@ -360,38 +360,19 @@ return [
                 'xml'         => 'XML',
             ],
 
-            'arabic'                    => 'Arabisk',
-            'back'                      => 'Tilbake',
-            'unopim-info'               => 'Fellesskapsprosjekt',
-            'unopim-logo'               => 'UnoPim-logo',
-            'unopim'                    => 'UnoPim',
-            'bengali'                   => 'Bengali',
-            'chinese'                   => 'Kinesisk',
-            'continue'                  => 'Fortsett',
-            'dutch'                     => 'Nederlandsk',
-            'english'                   => 'Engelsk',
-            'french'                    => 'Fransk',
-            'german'                    => 'Tysk',
-            'hebrew'                    => 'Hebraisk',
-            'hindi'                     => 'Hindi',
-            'installation-description'  => 'Installasjonen av UnoPim består av flere trinn. Her er en oversikt:',
-            'wizard-language'           => 'Språk for installasjonsveiviser',
-            'installation-info'         => 'Takk for at du er her!',
-            'installation-title'        => 'Velkommen til installasjonen',
-            'italian'                   => 'Italiensk',
-            'japanese'                  => 'Japansk',
-            'persian'                   => 'Persisk',
-            'polish'                    => 'Polsk',
-            'portuguese'                => 'Brasiliansk portugisisk',
-            'russian'                   => 'Russisk',
-            'save-configuration'        => 'Lagre konfigurasjon',
-            'sinhala'                   => 'Sinhala',
-            'skip'                      => 'Hopp over',
-            'spanish'                   => 'Spansk',
-            'title'                     => 'UnoPim Installasjonsveiviser',
-            'turkish'                   => 'Tyrkisk',
-            'ukrainian'                 => 'Ukrainsk',
-            'webkul'                    => 'Webkul',
+            'back'                     => 'Tilbake',
+            'unopim-info'              => 'Fellesskapsprosjekt',
+            'unopim-logo'              => 'UnoPim-logo',
+            'unopim'                   => 'UnoPim',
+            'continue'                 => 'Fortsett',
+            'installation-description' => 'Installasjonen av UnoPim består av flere trinn. Her er en oversikt:',
+            'wizard-language'          => 'Språk for installasjonsveiviser',
+            'installation-info'        => 'Takk for at du er her!',
+            'installation-title'       => 'Velkommen til installasjonen',
+            'save-configuration'       => 'Lagre konfigurasjon',
+            'skip'                     => 'Hopp over',
+            'title'                    => 'UnoPim Installasjonsveiviser',
+            'webkul'                   => 'Webkul',
         ],
     ],
 ];

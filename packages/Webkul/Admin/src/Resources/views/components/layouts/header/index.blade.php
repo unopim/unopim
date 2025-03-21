@@ -207,32 +207,34 @@
 
                 <!-- Content -->
                 <div class="grid">
-                    <a
-                        class="flex gap-1.5 items-start p-3 border-b dark:border-gray-800 last:border-b-0"
-                        v-for="userNotification in userNotifications"
-                        :key="userNotification.notification.id"
-                        :href="'{{ route('admin.notification.viewed_notification', ':id') }}'.replace(':id', userNotification.notification.id)"
-                        :class="{
-                            'bg-gray-100 dark:bg-gray-950': userNotification.read === 1,
-                            'hover:bg-gray-50 dark:hover:bg-gray-950': true,
-                        }"
-                    >
-                        <div class="grid gap-3">
-                            <p 
-                                class="text-sm text-gray-800 dark:text-slate-50 font-semibold"
-                                v-text="userNotification.notification.title"
-                            ></p>
-
-                            <p 
-                                class="text-sm text-gray-600 dark:text-gray-300"
-                                v-html="userNotification.notification.description"
-                            ></p>
-                            
-                            <p class="text-sm text-gray-500 dark:text-gray-400">
-                                @{{ userNotification.notification.created_at_human }}
-                            </p>
-                        </div>
-                    </a>
+                    <div v-for="userNotification in userNotifications">
+                        <a
+                            v-if="userNotification.notification?.id"
+                            class="flex gap-1.5 items-start p-3 border-b dark:border-gray-800 last:border-b-0"
+                            :key="userNotification.notification.id"
+                            :href="'{{ route('admin.notification.viewed_notification', ':id') }}'.replace(':id', userNotification.notification.id)"
+                            :class="{
+                                'bg-gray-100 dark:bg-cherry-800': userNotification.read === 1,
+                                'hover:bg-gray-50 dark:hover:bg-gray-950': true,
+                            }"
+                        >
+                            <div class="grid gap-3">
+                                <p 
+                                    class="text-sm text-gray-800 dark:text-slate-50 font-semibold"
+                                    v-text="userNotification.notification.title"
+                                ></p>
+    
+                                <p 
+                                    class="text-sm text-gray-600 dark:text-gray-300"
+                                    v-html="userNotification.notification.description"
+                                ></p>
+                                
+                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                    @{{ userNotification.notification.created_at_human }}
+                                </p>
+                            </div>
+                        </a>
+                    </div>
                 </div>
 
                 <!-- Footer -->

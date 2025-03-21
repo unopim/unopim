@@ -328,6 +328,7 @@ return [
                 'enable-wysiwyg'        => 'Enable Wysiwyg Editor',
                 'file'                  => 'File',
                 'general'               => 'General',
+                'gallery'               => 'Gallery',
                 'image'                 => 'Image',
                 'input-options'         => 'Input Options',
                 'input-validation'      => 'Input Validation',

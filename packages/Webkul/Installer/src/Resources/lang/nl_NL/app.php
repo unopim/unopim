@@ -1,23 +1,23 @@
 <?php
 
 return [
-    'seeders'   => [
+    'seeders' => [
         'attribute' => [
             'attribute-families' => [
                 'default' => 'Standaard',
             ],
 
-            'attribute-groups'   => [
-                'description'       => 'Beschrijving',
-                'general'           => 'Algemeen',
-                'inventories'       => 'Voorraden',
-                'meta-description'  => 'Metabeschrijving',
-                'price'             => 'Prijs',
-                'technical'         => 'Technisch',
-                'shipping'          => 'Verzending',
+            'attribute-groups' => [
+                'description'      => 'Beschrijving',
+                'general'          => 'Algemeen',
+                'inventories'      => 'Voorraden',
+                'meta-description' => 'Metabeschrijving',
+                'price'            => 'Prijs',
+                'technical'        => 'Technisch',
+                'shipping'         => 'Verzending',
             ],
 
-            'attributes'         => [
+            'attributes' => [
                 'brand'                => 'Merk',
                 'color'                => 'Kleur',
                 'cost'                 => 'Kosten',
@@ -48,7 +48,7 @@ return [
                 'width'                => 'Breedte',
             ],
 
-            'attribute-options'  => [
+            'attribute-options' => [
                 'black'  => 'Zwart',
                 'green'  => 'Groente',
                 'l'      => 'L',
@@ -61,7 +61,7 @@ return [
             ],
         ],
 
-        'category'  => [
+        'category' => [
             'categories' => [
                 'description' => 'Beschrijving van hoofdcategorie',
                 'name'        => 'Wortel',
@@ -73,14 +73,14 @@ return [
             ],
         ],
 
-        'cms'       => [
+        'cms' => [
             'pages' => [
-                'about-us'         => [
+                'about-us' => [
                     'content' => 'Over ons Pagina-inhoud',
                     'title'   => 'Over ons',
                 ],
 
-                'contact-us'       => [
+                'contact-us' => [
                     'content' => 'Neem contact met ons op Pagina-inhoud',
                     'title'   => 'Neem contact met ons op',
                 ],
@@ -90,27 +90,27 @@ return [
                     'title'   => 'Klantenservice',
                 ],
 
-                'payment-policy'   => [
+                'payment-policy' => [
                     'content' => 'Betalingsbeleid Pagina-inhoud',
                     'title'   => 'Betalingsbeleid',
                 ],
 
-                'privacy-policy'   => [
+                'privacy-policy' => [
                     'content' => 'Pagina-inhoud privacybeleid',
                     'title'   => 'Privacybeleid',
                 ],
 
-                'refund-policy'    => [
+                'refund-policy' => [
                     'content' => 'Pagina-inhoud van het restitutiebeleid',
                     'title'   => 'Terugbetalingsbeleid',
                 ],
 
-                'return-policy'    => [
+                'return-policy' => [
                     'content' => 'Inhoud van de pagina Retourbeleid',
                     'title'   => 'Retourbeleid',
                 ],
 
-                'shipping-policy'  => [
+                'shipping-policy' => [
                     'content' => 'Verzendbeleid Pagina-inhoud',
                     'title'   => 'Verzendbeleid',
                 ],
@@ -120,20 +120,20 @@ return [
                     'title'   => 'Algemene voorwaarden',
                 ],
 
-                'terms-of-use'     => [
+                'terms-of-use' => [
                     'content' => 'Gebruiksvoorwaarden Pagina-inhoud',
                     'title'   => 'Gebruiksvoorwaarden',
                 ],
 
-                'whats-new'        => [
+                'whats-new' => [
                     'content' => 'Wat is er nieuw pagina-inhoud',
                     'title'   => 'Wat is er nieuw',
                 ],
             ],
         ],
 
-        'core'      => [
-            'channels'   => [
+        'core' => [
+            'channels' => [
                 'meta-title'       => 'Demo winkel',
                 'meta-keywords'    => 'Metazoekwoord voor demowinkel',
                 'meta-description' => 'Metabeschrijving van de demowinkel',
@@ -157,7 +157,7 @@ return [
             ],
         ],
 
-        'customer'  => [
+        'customer' => [
             'customer-groups' => [
                 'general'   => 'Algemeen',
                 'guest'     => 'Gast',
@@ -171,40 +171,40 @@ return [
             ],
         ],
 
-        'shop'      => [
+        'shop' => [
             'theme-customizations' => [
-                'all-products'           => [
-                    'name'    => 'Alle producten',
+                'all-products' => [
+                    'name' => 'Alle producten',
 
                     'options' => [
                         'title' => 'Alle producten',
                     ],
                 ],
 
-                'bold-collections'       => [
+                'bold-collections' => [
                     'content' => [
                         'btn-title'   => 'Bekijk alles',
                         'description' => 'Maak kennis met onze nieuwe gewaagde collecties! Verhoog uw stijl met gedurfde ontwerpen en levendige uitspraken. Ontdek opvallende patronen en opvallende kleuren die je garderobe opnieuw definiëren. Maak je klaar om het buitengewone te omarmen!',
                         'title'       => 'Maak je klaar voor onze nieuwe Bold Collections!',
                     ],
 
-                    'name'    => 'Gedurfde collecties',
+                    'name' => 'Gedurfde collecties',
                 ],
 
                 'categories-collections' => [
                     'name' => 'Categorieën Collecties',
                 ],
 
-                'featured-collections'   => [
-                    'name'    => 'Uitgelichte collecties',
+                'featured-collections' => [
+                    'name' => 'Uitgelichte collecties',
 
                     'options' => [
                         'title' => 'Uitgelichte producten',
                     ],
                 ],
 
-                'footer-links'           => [
-                    'name'    => 'Voettekstlinks',
+                'footer-links' => [
+                    'name' => 'Voettekstlinks',
 
                     'options' => [
                         'about-us'         => 'Over ons',
@@ -221,33 +221,33 @@ return [
                     ],
                 ],
 
-                'game-container'         => [
+                'game-container' => [
                     'content' => [
                         'sub-title-1' => 'Onze collecties',
                         'sub-title-2' => 'Onze collecties',
                         'title'       => 'Het spel met onze nieuwe toevoegingen!',
                     ],
 
-                    'name'    => 'Spelcontainer',
+                    'name' => 'Spelcontainer',
                 ],
 
-                'image-carousel'         => [
-                    'name'    => 'Afbeeldingscarrousel',
+                'image-carousel' => [
+                    'name' => 'Afbeeldingscarrousel',
 
                     'sliders' => [
                         'title' => 'Maak je klaar voor de nieuwe collectie',
                     ],
                 ],
 
-                'new-products'           => [
-                    'name'    => 'Nieuwe producten',
+                'new-products' => [
+                    'name' => 'Nieuwe producten',
 
                     'options' => [
                         'title' => 'Nieuwe producten',
                     ],
                 ],
 
-                'offer-information'      => [
+                'offer-information' => [
                     'content' => [
                         'title' => 'Ontvang TOT 40% KORTING op uw 1e bestelling SHOP NU',
                     ],
@@ -255,7 +255,7 @@ return [
                     'name' => 'Informatie aanbieden',
                 ],
 
-                'services-content'       => [
+                'services-content' => [
                     'description' => [
                         'emi-available-info'   => 'Gratis EMI beschikbaar op alle gangbare creditcards',
                         'free-shipping-info'   => 'Geniet van gratis verzending op alle bestellingen',
@@ -263,9 +263,9 @@ return [
                         'time-support-info'    => 'Toegewijde 24/7 ondersteuning via chat en e-mail',
                     ],
 
-                    'name'        => 'Diensten Inhoud',
+                    'name' => 'Diensten Inhoud',
 
-                    'title'       => [
+                    'title' => [
                         'emi-available'   => 'Em beschikbaar',
                         'free-shipping'   => 'Gratis verzending',
                         'product-replace' => 'Product vervangen',
@@ -273,7 +273,7 @@ return [
                     ],
                 ],
 
-                'top-collections'        => [
+                'top-collections' => [
                     'content' => [
                         'sub-title-1' => 'Onze collecties',
                         'sub-title-2' => 'Onze collecties',
@@ -284,12 +284,12 @@ return [
                         'title'       => 'Het spel met onze nieuwe toevoegingen!',
                     ],
 
-                    'name'    => 'Topcollecties',
+                    'name' => 'Topcollecties',
                 ],
             ],
         ],
 
-        'user'      => [
+        'user' => [
             'roles' => [
                 'description' => 'Gebruikers met deze rol hebben alle toegang',
                 'name'        => 'Beheerder',
@@ -351,21 +351,21 @@ return [
                 'warning-message'     => 'Pas op! De instellingen voor uw standaardsysteemtalen en de standaardvaluta zijn permanent en kunnen nooit meer worden gewijzigd.',
             ],
 
-            'installation-processing'   => [
-                'unopim'            => 'Installatie UnoPim',
-                'unopim-info'       => 'Het maken van de databasetabellen kan even duren',
-                'title'             => 'Installatie',
+            'installation-processing' => [
+                'unopim'      => 'Installatie UnoPim',
+                'unopim-info' => 'Het maken van de databasetabellen kan even duren',
+                'title'       => 'Installatie',
             ],
 
-            'installation-completed'    => [
-                'admin-panel'                   => 'Beheerderspaneel',
-                'unopim-forums'                 => 'UnoPim-forum',
-                'explore-unopim-extensions'     => 'Ontdek de UnoPim-extensie',
-                'title-info'                    => 'UnoPim is succesvol op uw systeem geïnstalleerd.',
-                'title'                         => 'Installatie voltooid',
+            'installation-completed' => [
+                'admin-panel'               => 'Beheerderspaneel',
+                'unopim-forums'             => 'UnoPim-forum',
+                'explore-unopim-extensions' => 'Ontdek de UnoPim-extensie',
+                'title-info'                => 'UnoPim is succesvol op uw systeem geïnstalleerd.',
+                'title'                     => 'Installatie voltooid',
             ],
 
-            'ready-for-installation'    => [
+            'ready-for-installation' => [
                 'create-databsae-table'   => 'Maak de databasetabel',
                 'install-info-button'     => 'Klik op onderstaande knop om',
                 'install-info'            => 'UnoPim voor installatie',
@@ -375,7 +375,7 @@ return [
                 'title'                   => 'Klaar voor installatie',
             ],
 
-            'start'                     => [
+            'start' => [
                 'locale'        => 'Lokaal',
                 'main'          => 'Begin',
                 'select-locale' => 'Selecteer Landinstelling',
@@ -383,7 +383,7 @@ return [
                 'welcome-title' => 'Welkom bij UnoPim :version',
             ],
 
-            'server-requirements'       => [
+            'server-requirements' => [
                 'calendar'    => 'Kalender',
                 'ctype'       => 'cType',
                 'curl'        => 'krul',
@@ -406,38 +406,19 @@ return [
                 'xml'         => 'XML',
             ],
 
-            'arabic'                    => 'Arabisch',
-            'back'                      => 'Rug',
-            'unopim-info'               => 'een gemeenschapsproject van',
-            'unopim-logo'               => 'UnoPim-logo',
-            'unopim'                    => 'UnoPim',
-            'bengali'                   => 'Bengaals',
-            'chinese'                   => 'Chinese',
-            'continue'                  => 'Doorgaan',
-            'dutch'                     => 'Nederlands',
-            'english'                   => 'Engels',
-            'french'                    => 'Frans',
-            'german'                    => 'Duits',
-            'hebrew'                    => 'Hebreeuws',
-            'hindi'                     => 'Hindi',
-            'installation-description'  => 'De installatie van UnoPim omvat doorgaans verschillende stappen. Hier is een algemeen overzicht van het installatieproces voor UnoPim:',
-            'wizard-language'           => 'Taal van de installatiewizard',
-            'installation-info'         => 'We zijn blij je hier te zien!',
-            'installation-title'        => 'Welkom bij Installatie',
-            'italian'                   => 'Italiaans',
-            'japanese'                  => 'Japanse',
-            'persian'                   => 'Perzisch',
-            'polish'                    => 'Pools',
-            'portuguese'                => 'Braziliaans Portugees',
-            'russian'                   => 'Russisch',
-            'save-configuration'        => 'Configuratie opslaan',
-            'sinhala'                   => 'Singalees',
-            'skip'                      => 'Overslaan',
-            'spanish'                   => 'Spaans',
-            'title'                     => 'UnoPim-installatieprogramma',
-            'turkish'                   => 'Turks',
-            'ukrainian'                 => 'Oekraïens',
-            'webkul'                    => 'Webkul',
+            'back'                     => 'Rug',
+            'unopim-info'              => 'een gemeenschapsproject van',
+            'unopim-logo'              => 'UnoPim-logo',
+            'unopim'                   => 'UnoPim',
+            'continue'                 => 'Doorgaan',
+            'installation-description' => 'De installatie van UnoPim omvat doorgaans verschillende stappen. Hier is een algemeen overzicht van het installatieproces voor UnoPim:',
+            'wizard-language'          => 'Taal van de installatiewizard',
+            'installation-info'        => 'We zijn blij je hier te zien!',
+            'installation-title'       => 'Welkom bij Installatie',
+            'save-configuration'       => 'Configuratie opslaan',
+            'skip'                     => 'Overslaan',
+            'title'                    => 'UnoPim-installatieprogramma',
+            'webkul'                   => 'Webkul',
         ],
     ],
 ];

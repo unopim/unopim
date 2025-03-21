@@ -220,9 +220,9 @@ class AttributeRepository extends Repository
     /**
      * Get Attribute list by search query
      */
-    public function getAttributeListBySearch(string $search, array $columns = ['*']): array
+    public function getAttributeListBySearch(string $search, array $columns = ['*'], array $excludeTypes = []): array
     {
-        return DB::table('attributes')
+        $query = DB::table('attributes')
             ->select($columns)
             ->leftJoin('attribute_translations as attribute_name', function ($join) {
                 $join->on('attribute_name.attribute_id', '=', 'attributes.id')
@@ -231,8 +231,12 @@ class AttributeRepository extends Repository
             ->where(function ($query) use ($search) {
                 $query->where('attributes.code', 'LIKE', '%'.$search.'%')
                     ->orWhere('attribute_name.name', 'LIKE', '%'.$search.'%');
-            })
-            ->get()
-            ->toArray();
+            });
+
+        if ($excludeTypes) {
+            $query->whereNotIn('attributes.type', $excludeTypes);
+        }
+
+        return $query->get()->toArray();
     }
 }

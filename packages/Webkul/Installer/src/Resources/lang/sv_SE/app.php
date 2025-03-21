@@ -1,19 +1,19 @@
 <?php
 
 return [
-    'seeders'   => [
+    'seeders' => [
         'attribute' => [
             'attribute-families' => 'Standard',
             'attribute-groups'   => [
-                'description'       => 'Beskrivning',
-                'general'           => 'Allmän',
-                'inventories'       => 'Inventarier',
-                'meta-description'  => 'Meta Beskrivning',
-                'price'             => 'Pris',
-                'technical'         => 'Teknisk',
-                'shipping'          => 'Frakt',
+                'description'      => 'Beskrivning',
+                'general'          => 'Allmän',
+                'inventories'      => 'Inventarier',
+                'meta-description' => 'Meta Beskrivning',
+                'price'            => 'Pris',
+                'technical'        => 'Teknisk',
+                'shipping'         => 'Frakt',
             ],
-            'attributes'         => [
+            'attributes' => [
                 'brand'                => 'Märke',
                 'color'                => 'Färg',
                 'cost'                 => 'Kostnad',
@@ -43,7 +43,7 @@ return [
                 'weight'               => 'Vikt',
                 'width'                => 'Bredd',
             ],
-            'attribute-options'  => [
+            'attribute-options' => [
                 'black'  => 'Svart',
                 'green'  => 'Grön',
                 'l'      => 'L',
@@ -55,7 +55,7 @@ return [
                 'yellow' => 'Gul',
             ],
         ],
-        'category'  => [
+        'category' => [
             'categories' => [
                 'description' => 'Rotkategoribeskrivning',
                 'name'        => 'Rot',
@@ -65,13 +65,13 @@ return [
                 'description' => 'Beskrivning',
             ],
         ],
-        'cms'       => [
+        'cms' => [
             'pages' => [
-                'about-us'         => [
+                'about-us' => [
                     'content' => 'Om oss sida innehåll',
                     'title'   => 'Om oss',
                 ],
-                'contact-us'       => [
+                'contact-us' => [
                     'content' => 'Kontakt oss sida innehåll',
                     'title'   => 'Kontakta oss',
                 ],
@@ -79,23 +79,23 @@ return [
                     'content' => 'Kundservice sida innehåll',
                     'title'   => 'Kundservice',
                 ],
-                'payment-policy'   => [
+                'payment-policy' => [
                     'content' => 'Betalningspolicy sida innehåll',
                     'title'   => 'Betalningspolicy',
                 ],
-                'privacy-policy'   => [
+                'privacy-policy' => [
                     'content' => 'Sekretesspolicy sida innehåll',
                     'title'   => 'Sekretesspolicy',
                 ],
-                'refund-policy'    => [
+                'refund-policy' => [
                     'content' => 'Återbetalningspolicy sida innehåll',
                     'title'   => 'Återbetalningspolicy',
                 ],
-                'return-policy'    => [
+                'return-policy' => [
                     'content' => 'Returpolicy sida innehåll',
                     'title'   => 'Returpolicy',
                 ],
-                'shipping-policy'  => [
+                'shipping-policy' => [
                     'content' => 'Fraktpolicy sida innehåll',
                     'title'   => 'Fraktpolicy',
                 ],
@@ -103,18 +103,18 @@ return [
                     'content' => 'Villkor sida innehåll',
                     'title'   => 'Villkor',
                 ],
-                'terms-of-use'     => [
+                'terms-of-use' => [
                     'content' => 'Villkor för användning sida innehåll',
                     'title'   => 'Villkor för användning',
                 ],
-                'whats-new'        => [
+                'whats-new' => [
                     'content' => 'Vad är nytt sida innehåll',
                     'title'   => 'Vad är nytt',
                 ],
             ],
         ],
-        'core'      => [
-            'channels'   => [
+        'core' => [
+            'channels' => [
                 'meta-title'       => 'Demobutik',
                 'meta-keywords'    => 'Demobutik nyckelord',
                 'meta-description' => 'Demobutik meta beskrivning',
@@ -136,7 +136,7 @@ return [
                 'USD' => 'Amerikansk dollar',
             ],
         ],
-        'customer'  => [
+        'customer' => [
             'customer-groups' => [
                 'general'   => 'Allmänt',
                 'guest'     => 'Gäst',
@@ -148,32 +148,32 @@ return [
                 'name' => 'Standard',
             ],
         ],
-        'shop'      => [
+        'shop' => [
             'theme-customizations' => [
-                'all-products'           => [
+                'all-products' => [
                     'name'    => 'Alla produkter',
                     'options' => [
                         'title' => 'Alla produkter',
                     ],
                 ],
-                'bold-collections'       => [
+                'bold-collections' => [
                     'content' => [
                         'btn-title'   => 'Visa alla',
                         'description' => 'Utforska våra nya modiga kollektioner! Höj din stil med djärva mönster och vibrerande färger. Upptäck slående mönster och djärva toner som redefinierar din garderob. Gör dig redo att omfamna det extraordinära!',
                         'title'       => 'Förbered dig för våra nya djärva kollektioner!',
                     ],
-                    'name'    => 'Djärva kollektioner',
+                    'name' => 'Djärva kollektioner',
                 ],
                 'categories-collections' => [
                     'name' => 'Kategoriens kollektioner',
                 ],
-                'featured-collections'   => [
+                'featured-collections' => [
                     'name'    => 'Utvalda kollektioner',
                     'options' => [
                         'title' => 'Utvalda produkter',
                     ],
                 ],
-                'footer-links'           => [
+                'footer-links' => [
                     'name'    => 'Sidfotslänkar',
                     'options' => [
                         'about-us'         => 'Om oss',
@@ -189,48 +189,48 @@ return [
                         'whats-new'        => 'Vad är nytt',
                     ],
                 ],
-                'game-container'         => [
+                'game-container' => [
                     'content' => [
                         'sub-title-1' => 'Våra kollektioner',
                         'sub-title-2' => 'Våra kollektioner',
                         'title'       => 'Spela med våra nya släpp!',
                     ],
-                    'name'    => 'Spelcontainer',
+                    'name' => 'Spelcontainer',
                 ],
-                'image-carousel'         => [
+                'image-carousel' => [
                     'name'    => 'Bildkarusell',
                     'sliders' => [
                         'title' => 'Förbered dig för en ny kollektion',
                     ],
                 ],
-                'new-products'           => [
+                'new-products' => [
                     'name'    => 'Nya produkter',
                     'options' => [
                         'title' => 'Nya produkter',
                     ],
                 ],
-                'offer-information'      => [
+                'offer-information' => [
                     'content' => [
                         'title' => 'BÖRJA MED 40% RABATT PÅ DITT FÖRSTA KÖP',
                     ],
                     'name' => 'Erbjudande information',
                 ],
-                'services-content'       => [
+                'services-content' => [
                     'description' => [
                         'emi-available-info'   => 'Finansiering utan extra kostnad finns tillgänglig på alla större kreditkort',
                         'free-shipping-info'   => 'Fri frakt på alla beställningar',
                         'product-replace-info' => 'Lätt produktutbyte tillgängligt!',
                         'time-support-info'    => 'Dedikerad support dygnet runt via chatt och e-post',
                     ],
-                    'name'        => 'Tjänsteinnehåll',
-                    'title'       => [
+                    'name'  => 'Tjänsteinnehåll',
+                    'title' => [
                         'emi-available'   => 'EMI Tillgänglig',
                         'free-shipping'   => 'Fri frakt',
                         'product-replace' => 'Produktbyte',
                         'time-support'    => 'Support dygnet runt',
                     ],
                 ],
-                'top-collections'        => [
+                'top-collections' => [
                     'content' => [
                         'sub-title-1' => 'Våra kollektioner',
                         'sub-title-2' => 'Våra kollektioner',
@@ -240,11 +240,11 @@ return [
                         'sub-title-6' => 'Våra kollektioner',
                         'title'       => 'Förbered dig för ett spel med våra nya lanseringar!',
                     ],
-                    'name'    => 'Huvudkollektioner',
+                    'name' => 'Huvudkollektioner',
                 ],
             ],
         ],
-        'user'      => [
+        'user' => [
             'roles' => [
                 'description' => 'Denna roll kommer att ha alla åtkomster',
                 'name'        => 'Administratör',
@@ -306,17 +306,17 @@ return [
             ],
 
             'installation-processing' => [
-                'unopim'            => 'Installerar UnoPim',
-                'unopim-info'       => 'Skapar tabeller i databasen, detta kan ta några minuter.',
-                'title'             => 'Installationsprocess',
+                'unopim'      => 'Installerar UnoPim',
+                'unopim-info' => 'Skapar tabeller i databasen, detta kan ta några minuter.',
+                'title'       => 'Installationsprocess',
             ],
 
             'installation-completed' => [
-                'admin-panel'                   => 'Administrationspanel',
-                'unopim-forums'                 => 'UnoPim Forum',
-                'explore-unopim-extensions'     => 'Utforska UnoPim-tillägg',
-                'title-info'                    => 'UnoPim har installerats framgångsrikt.',
-                'title'                         => 'Installation Slutförd',
+                'admin-panel'               => 'Administrationspanel',
+                'unopim-forums'             => 'UnoPim Forum',
+                'explore-unopim-extensions' => 'Utforska UnoPim-tillägg',
+                'title-info'                => 'UnoPim har installerats framgångsrikt.',
+                'title'                     => 'Installation Slutförd',
             ],
 
             'ready-for-installation' => [
@@ -360,38 +360,19 @@ return [
                 'xml'         => 'XML',
             ],
 
-            'arabic'                    => 'Arabiska',
-            'back'                      => 'Tillbaka',
-            'unopim-info'               => 'Gemenskapsprojekt',
-            'unopim-logo'               => 'UnoPim-logotyp',
-            'unopim'                    => 'UnoPim',
-            'bengali'                   => 'Bengaliska',
-            'chinese'                   => 'Kinesiska',
-            'continue'                  => 'Fortsätt',
-            'dutch'                     => 'Holländska',
-            'english'                   => 'Engelska',
-            'french'                    => 'Franska',
-            'german'                    => 'Tyska',
-            'hebrew'                    => 'Hebreiska',
-            'hindi'                     => 'Hindi',
-            'installation-description'  => 'Installationen av UnoPim består av flera steg. Här är en översikt:',
-            'wizard-language'           => 'Installationsassistentens Språk',
-            'installation-info'         => 'Tack för att du är här!',
-            'installation-title'        => 'Välkommen till Installationen',
-            'italian'                   => 'Italienska',
-            'japanese'                  => 'Japanska',
-            'persian'                   => 'Persiska',
-            'polish'                    => 'Polska',
-            'portuguese'                => 'Portugisiska',
-            'russian'                   => 'Ryska',
-            'save-configuration'        => 'Spara Konfiguration',
-            'sinhala'                   => 'Singalesiska',
-            'skip'                      => 'Hoppa Över',
-            'spanish'                   => 'Spanska',
-            'title'                     => 'UnoPim Installationsassistent',
-            'turkish'                   => 'Turkiska',
-            'ukrainian'                 => 'Ukrainska',
-            'webkul'                    => 'Webkul',
+            'back'                     => 'Tillbaka',
+            'unopim-info'              => 'Gemenskapsprojekt',
+            'unopim-logo'              => 'UnoPim-logotyp',
+            'unopim'                   => 'UnoPim',
+            'continue'                 => 'Fortsätt',
+            'installation-description' => 'Installationen av UnoPim består av flera steg. Här är en översikt:',
+            'wizard-language'          => 'Installationsassistentens Språk',
+            'installation-info'        => 'Tack för att du är här!',
+            'installation-title'       => 'Välkommen till Installationen',
+            'save-configuration'       => 'Spara Konfiguration',
+            'skip'                     => 'Hoppa Över',
+            'title'                    => 'UnoPim Installationsassistent',
+            'webkul'                   => 'Webkul',
         ],
     ],
 ];

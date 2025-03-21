@@ -780,13 +780,15 @@
                     editOptions(value) {
                         this.optionIsNew = false;
 
+                        const cloned = JSON.parse(JSON.stringify(value));
+
                         this.swatchValue = {
-                            image: value.swatch_value_url
-                            ? [{ id: value.id, url: value.swatch_value_url }]
+                            image: cloned.swatch_value_url
+                            ? [{ id: cloned.id, url: cloned.swatch_value_url }]
                             : [],
                         };
 
-                        this.$refs.modelForm.setValues(value);
+                        this.$refs.modelForm.setValues(cloned);
 
                         this.$refs.addOptionsRow.toggle();
                     },

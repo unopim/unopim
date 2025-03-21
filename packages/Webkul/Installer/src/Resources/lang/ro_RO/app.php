@@ -1,19 +1,19 @@
 <?php
 
 return [
-    'seeders'   => [
+    'seeders' => [
         'attribute' => [
             'attribute-families' => 'Default',
             'attribute-groups'   => [
-                'description'       => 'Descriere',
-                'general'           => 'General',
-                'inventories'       => 'Inventare',
-                'meta-description'  => 'Meta descriere',
-                'price'             => 'Preț',
-                'technical'         => 'Tehnic',
-                'shipping'          => 'Transport',
+                'description'      => 'Descriere',
+                'general'          => 'General',
+                'inventories'      => 'Inventare',
+                'meta-description' => 'Meta descriere',
+                'price'            => 'Preț',
+                'technical'        => 'Tehnic',
+                'shipping'         => 'Transport',
             ],
-            'attributes'         => [
+            'attributes' => [
                 'brand'                => 'Marca',
                 'color'                => 'Culoare',
                 'cost'                 => 'Cost',
@@ -43,7 +43,7 @@ return [
                 'weight'               => 'Greutate',
                 'width'                => 'Lățime',
             ],
-            'attribute-options'  => [
+            'attribute-options' => [
                 'black'  => 'Negru',
                 'green'  => 'Verde',
                 'l'      => 'L',
@@ -55,7 +55,7 @@ return [
                 'yellow' => 'Galben',
             ],
         ],
-        'category'  => [
+        'category' => [
             'categories' => [
                 'description' => 'Descrierea categoriei rădăcină',
                 'name'        => 'Rădăcină',
@@ -65,13 +65,13 @@ return [
                 'description' => 'Descriere',
             ],
         ],
-        'cms'       => [
+        'cms' => [
             'pages' => [
-                'about-us'         => [
+                'about-us' => [
                     'content' => 'Conținut pagină despre noi',
                     'title'   => 'Despre noi',
                 ],
-                'contact-us'       => [
+                'contact-us' => [
                     'content' => 'Conținut pagină contact',
                     'title'   => 'Contactează-ne',
                 ],
@@ -79,23 +79,23 @@ return [
                     'content' => 'Conținut pagină serviciu clienți',
                     'title'   => 'Serviciu client',
                 ],
-                'payment-policy'   => [
+                'payment-policy' => [
                     'content' => 'Conținut pagină politică plată',
                     'title'   => 'Politica de plată',
                 ],
-                'privacy-policy'   => [
+                'privacy-policy' => [
                     'content' => 'Conținut pagină politică confidențialitate',
                     'title'   => 'Politica de confidențialitate',
                 ],
-                'refund-policy'    => [
+                'refund-policy' => [
                     'content' => 'Conținut pagină politică rambursare',
                     'title'   => 'Politica de rambursare',
                 ],
-                'return-policy'    => [
+                'return-policy' => [
                     'content' => 'Conținut pagină politică returnare',
                     'title'   => 'Politica de returnare',
                 ],
-                'shipping-policy'  => [
+                'shipping-policy' => [
                     'content' => 'Conținut pagină politică transport',
                     'title'   => 'Politica de transport',
                 ],
@@ -103,18 +103,18 @@ return [
                     'content' => 'Conținut pagină termeni și condiții',
                     'title'   => 'Termeni și condiții',
                 ],
-                'terms-of-use'     => [
+                'terms-of-use' => [
                     'content' => 'Conținut pagină termeni de utilizare',
                     'title'   => 'Termeni de utilizare',
                 ],
-                'whats-new'        => [
+                'whats-new' => [
                     'content' => 'Conținut pagină ce este nou',
                     'title'   => 'Ce este nou',
                 ],
             ],
         ],
-        'core'      => [
-            'channels'   => [
+        'core' => [
+            'channels' => [
                 'meta-title'       => 'Magazin demo',
                 'meta-keywords'    => 'Cuvinte cheie meta magazin demo',
                 'meta-description' => 'Descriere meta magazin demo',
@@ -136,7 +136,7 @@ return [
                 'USD' => 'Dolar american',
             ],
         ],
-        'customer'  => [
+        'customer' => [
             'customer-groups' => [
                 'general'   => 'General',
                 'guest'     => 'Invitat',
@@ -148,32 +148,32 @@ return [
                 'name' => 'Default',
             ],
         ],
-        'shop'      => [
+        'shop' => [
             'theme-customizations' => [
-                'all-products'           => [
+                'all-products' => [
                     'name'    => 'Toate produsele',
                     'options' => [
                         'title' => 'Toate produsele',
                     ],
                 ],
-                'bold-collections'       => [
+                'bold-collections' => [
                     'content' => [
                         'btn-title'   => 'Vezi toate',
                         'description' => 'Descoperă colecțiile îndrăznețe ale noastre! Elevă-ți stilul cu designuri îndrăznețe și culori vibrante. Explorează modele îndrăznețe și tonuri strălucitoare care îți vor defini garderoba. Pregătește-te să îmbrățișezi extraordinarul!',
                         'title'       => 'Pregătește-te pentru colecțiile îndrăznețe noi!',
                     ],
-                    'name'    => 'Colecții îndrăznețe',
+                    'name' => 'Colecții îndrăznețe',
                 ],
                 'categories-collections' => [
                     'name' => 'Colecțiile de categorii',
                 ],
-                'featured-collections'   => [
+                'featured-collections' => [
                     'name'    => 'Colecții recomandate',
                     'options' => [
                         'title' => 'Produse recomandate',
                     ],
                 ],
-                'footer-links'           => [
+                'footer-links' => [
                     'name'    => 'Linkuri de subsol',
                     'options' => [
                         'about-us'         => 'Despre noi',
@@ -189,48 +189,48 @@ return [
                         'whats-new'        => 'Ce este nou',
                     ],
                 ],
-                'game-container'         => [
+                'game-container' => [
                     'content' => [
                         'sub-title-1' => 'Colecțiile noastre',
                         'sub-title-2' => 'Colecțiile noastre',
                         'title'       => 'Jocul cu noile noastre adăugiri!',
                     ],
-                    'name'    => 'Container de joc',
+                    'name' => 'Container de joc',
                 ],
-                'image-carousel'         => [
+                'image-carousel' => [
                     'name'    => 'Carousel de imagini',
                     'sliders' => [
                         'title' => 'Pregătește-te pentru noua colecție',
                     ],
                 ],
-                'new-products'           => [
+                'new-products' => [
                     'name'    => 'Produse noi',
                     'options' => [
                         'title' => 'Produse noi',
                     ],
                 ],
-                'offer-information'      => [
+                'offer-information' => [
                     'content' => [
                         'title' => 'ÎNCEPĂND CU 40% DISCOUNT PE PRIMUL TĂU COMANDĂ',
                     ],
                     'name' => 'Informații despre oferte',
                 ],
-                'services-content'       => [
+                'services-content' => [
                     'description' => [
                         'emi-available-info'   => 'Finanțare fără costuri disponibilă pe toate cardurile de credit majore',
                         'free-shipping-info'   => 'Transport gratuit pentru toate comenzile',
                         'product-replace-info' => 'Înlocuire produs ușoară disponibilă!',
                         'time-support-info'    => 'Suport dedicat 24/7 prin chat și e-mail',
                     ],
-                    'name'        => 'Conținutul serviciilor',
-                    'title'       => [
+                    'name'  => 'Conținutul serviciilor',
+                    'title' => [
                         'emi-available'   => 'EMI disponibil',
                         'free-shipping'   => 'Transport gratuit',
                         'product-replace' => 'Înlocuire produs',
                         'time-support'    => 'Suport 24/7',
                     ],
                 ],
-                'top-collections'        => [
+                'top-collections' => [
                     'content' => [
                         'sub-title-1' => 'Nostre colecții',
                         'sub-title-2' => 'Nostre colecții',
@@ -240,11 +240,11 @@ return [
                         'sub-title-6' => 'Nostre colecții',
                         'title'       => 'Pregătește-te pentru un joc cu noile noastre lansări!',
                     ],
-                    'name'    => 'Colecții principale',
+                    'name' => 'Colecții principale',
                 ],
             ],
         ],
-        'user'      => [
+        'user' => [
             'roles' => [
                 'description' => 'Această rolă va avea toate accesurile',
                 'name'        => 'Administrator',
@@ -306,17 +306,17 @@ return [
             ],
 
             'installation-processing' => [
-                'unopim'            => 'Instalare UnoPim',
-                'unopim-info'       => 'Crearea tabelelor în baza de date poate dura câteva minute.',
-                'title'             => 'Proces de Instalare',
+                'unopim'      => 'Instalare UnoPim',
+                'unopim-info' => 'Crearea tabelelor în baza de date poate dura câteva minute.',
+                'title'       => 'Proces de Instalare',
             ],
 
             'installation-completed' => [
-                'admin-panel'                   => 'Panou Administrativ',
-                'unopim-forums'                 => 'Forumuri UnoPim',
-                'explore-unopim-extensions'     => 'Explorează Extensiile UnoPim',
-                'title-info'                    => 'UnoPim a fost instalat cu succes.',
-                'title'                         => 'Instalare Finalizată',
+                'admin-panel'               => 'Panou Administrativ',
+                'unopim-forums'             => 'Forumuri UnoPim',
+                'explore-unopim-extensions' => 'Explorează Extensiile UnoPim',
+                'title-info'                => 'UnoPim a fost instalat cu succes.',
+                'title'                     => 'Instalare Finalizată',
             ],
 
             'ready-for-installation' => [
@@ -360,38 +360,19 @@ return [
                 'xml'         => 'XML',
             ],
 
-            'arabic'                    => 'Arabă',
-            'back'                      => 'Înapoi',
-            'unopim-info'               => 'Proiect Comunitar',
-            'unopim-logo'               => 'Logo UnoPim',
-            'unopim'                    => 'UnoPim',
-            'bengali'                   => 'Bengaleză',
-            'chinese'                   => 'Chineză',
-            'continue'                  => 'Continuare',
-            'dutch'                     => 'Olandeză',
-            'english'                   => 'Engleză',
-            'french'                    => 'Franceză',
-            'german'                    => 'Germană',
-            'hebrew'                    => 'Ebraică',
-            'hindi'                     => 'Hindi',
-            'installation-description'  => 'Instalarea UnoPim constă în mai mulți pași. Iată o prezentare generală:',
-            'wizard-language'           => 'Limbă Asistent Instalare',
-            'installation-info'         => 'Vă mulțumim pentru că sunteți aici!',
-            'installation-title'        => 'Bine ați venit la Instalare',
-            'italian'                   => 'Italiană',
-            'japanese'                  => 'Japoneză',
-            'persian'                   => 'Persană',
-            'polish'                    => 'Poloneză',
-            'portuguese'                => 'Portugheză',
-            'russian'                   => 'Rusă',
-            'save-configuration'        => 'Salvează Configurația',
-            'sinhala'                   => 'Singaleză',
-            'skip'                      => 'Sari Peste',
-            'spanish'                   => 'Spaniolă',
-            'title'                     => 'Asistent de Instalare UnoPim',
-            'turkish'                   => 'Turcă',
-            'ukrainian'                 => 'Ucraineană',
-            'webkul'                    => 'Webkul',
+            'back'                     => 'Înapoi',
+            'unopim-info'              => 'Proiect Comunitar',
+            'unopim-logo'              => 'Logo UnoPim',
+            'unopim'                   => 'UnoPim',
+            'continue'                 => 'Continuare',
+            'installation-description' => 'Instalarea UnoPim constă în mai mulți pași. Iată o prezentare generală:',
+            'wizard-language'          => 'Limbă Asistent Instalare',
+            'installation-info'        => 'Vă mulțumim pentru că sunteți aici!',
+            'installation-title'       => 'Bine ați venit la Instalare',
+            'save-configuration'       => 'Salvează Configurația',
+            'skip'                     => 'Sari Peste',
+            'title'                    => 'Asistent de Instalare UnoPim',
+            'webkul'                   => 'Webkul',
         ],
     ],
 ];

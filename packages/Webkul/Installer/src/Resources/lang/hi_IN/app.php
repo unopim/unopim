@@ -1,23 +1,23 @@
 <?php
 
 return [
-    'seeders'   => [
+    'seeders' => [
         'attribute' => [
             'attribute-families' => [
                 'default' => 'गलती करना',
             ],
 
-            'attribute-groups'   => [
-                'description'       => 'विवरण',
-                'general'           => 'सामान्य',
-                'inventories'       => 'सूची',
-                'meta-description'  => 'मेटा विवरण',
-                'price'             => 'कीमत',
-                'technical'         => 'तकनीकी',
-                'shipping'          => 'शिपिंग',
+            'attribute-groups' => [
+                'description'      => 'विवरण',
+                'general'          => 'सामान्य',
+                'inventories'      => 'सूची',
+                'meta-description' => 'मेटा विवरण',
+                'price'            => 'कीमत',
+                'technical'        => 'तकनीकी',
+                'shipping'         => 'शिपिंग',
             ],
 
-            'attributes'         => [
+            'attributes' => [
                 'brand'                => 'ब्रांड',
                 'color'                => 'रंग',
                 'cost'                 => 'लागत',
@@ -48,7 +48,7 @@ return [
                 'width'                => 'चौड़ाई',
             ],
 
-            'attribute-options'  => [
+            'attribute-options' => [
                 'black'  => 'काला',
                 'green'  => 'हरा',
                 'l'      => 'एल',
@@ -61,7 +61,7 @@ return [
             ],
         ],
 
-        'category'  => [
+        'category' => [
             'categories' => [
                 'description' => 'मूल श्रेणी विवरण',
                 'name'        => 'जड़',
@@ -73,14 +73,14 @@ return [
             ],
         ],
 
-        'cms'       => [
+        'cms' => [
             'pages' => [
-                'about-us'         => [
+                'about-us' => [
                     'content' => 'हमारे बारे में पृष्ठ सामग्री',
                     'title'   => 'हमारे बारे में',
                 ],
 
-                'contact-us'       => [
+                'contact-us' => [
                     'content' => 'हमसे संपर्क करें पृष्ठ सामग्री',
                     'title'   => 'हमसे संपर्क करें',
                 ],
@@ -90,27 +90,27 @@ return [
                     'title'   => 'ग्राहक सेवा',
                 ],
 
-                'payment-policy'   => [
+                'payment-policy' => [
                     'content' => 'भुगतान नीति पृष्ठ सामग्री',
                     'title'   => 'भुगतान की नीति',
                 ],
 
-                'privacy-policy'   => [
+                'privacy-policy' => [
                     'content' => 'गोपनीयता नीति पृष्ठ सामग्री',
                     'title'   => 'गोपनीयता नीति',
                 ],
 
-                'refund-policy'    => [
+                'refund-policy' => [
                     'content' => 'धनवापसी नीति पृष्ठ सामग्री',
                     'title'   => 'भुगतान वापसी की नीति',
                 ],
 
-                'return-policy'    => [
+                'return-policy' => [
                     'content' => 'वापसी नीति पृष्ठ सामग्री',
                     'title'   => 'वापसी नीति',
                 ],
 
-                'shipping-policy'  => [
+                'shipping-policy' => [
                     'content' => 'शिपिंग नीति पृष्ठ सामग्री',
                     'title'   => 'शिपिंग नीति',
                 ],
@@ -120,20 +120,20 @@ return [
                     'title'   => 'नियम एवं शर्तें',
                 ],
 
-                'terms-of-use'     => [
+                'terms-of-use' => [
                     'content' => 'उपयोग की शर्तें पृष्ठ सामग्री',
                     'title'   => 'उपयोग की शर्तें',
                 ],
 
-                'whats-new'        => [
+                'whats-new' => [
                     'content' => 'नया पृष्ठ सामग्री क्या है',
                     'title'   => 'नया क्या है',
                 ],
             ],
         ],
 
-        'core'      => [
-            'channels'   => [
+        'core' => [
+            'channels' => [
                 'meta-title'       => 'डेमो स्टोर',
                 'meta-keywords'    => 'डेमो स्टोर मेटा कीवर्ड',
                 'meta-description' => 'डेमो स्टोर मेटा विवरण',
@@ -157,7 +157,7 @@ return [
             ],
         ],
 
-        'customer'  => [
+        'customer' => [
             'customer-groups' => [
                 'general'   => 'सामान्य',
                 'guest'     => 'अतिथि',
@@ -171,40 +171,40 @@ return [
             ],
         ],
 
-        'shop'      => [
+        'shop' => [
             'theme-customizations' => [
-                'all-products'           => [
-                    'name'    => 'सभी प्रोडक्ट',
+                'all-products' => [
+                    'name' => 'सभी प्रोडक्ट',
 
                     'options' => [
                         'title' => 'सभी प्रोडक्ट',
                     ],
                 ],
 
-                'bold-collections'       => [
+                'bold-collections' => [
                     'content' => [
                         'btn-title'   => 'सभी को देखें',
                         'description' => 'पेश है हमारे नए बोल्ड कलेक्शन! साहसी डिज़ाइन और जीवंत कथनों के साथ अपनी शैली को उन्नत करें। आकर्षक पैटर्न और बोल्ड रंगों का अन्वेषण करें जो आपकी अलमारी को फिर से परिभाषित करते हैं। असाधारण को अपनाने के लिए तैयार हो जाइए!',
                         'title'       => 'हमारे नए बोल्ड कलेक्शन के लिए तैयार हो जाइए!',
                     ],
 
-                    'name'    => 'बोल्ड कलेक्शन',
+                    'name' => 'बोल्ड कलेक्शन',
                 ],
 
                 'categories-collections' => [
                     'name' => 'श्रेणियाँ संग्रह',
                 ],
 
-                'featured-collections'   => [
-                    'name'    => 'विशेष संग्रह',
+                'featured-collections' => [
+                    'name' => 'विशेष संग्रह',
 
                     'options' => [
                         'title' => 'विशेष रुप से प्रदर्शित प्रोडक्टस',
                     ],
                 ],
 
-                'footer-links'           => [
-                    'name'    => 'फ़ुटर लिंक',
+                'footer-links' => [
+                    'name' => 'फ़ुटर लिंक',
 
                     'options' => [
                         'about-us'         => 'हमारे बारे में',
@@ -221,33 +221,33 @@ return [
                     ],
                 ],
 
-                'game-container'         => [
+                'game-container' => [
                     'content' => [
                         'sub-title-1' => 'हमारे संग्रह',
                         'sub-title-2' => 'हमारे संग्रह',
                         'title'       => 'हमारे नए अतिरिक्त के साथ खेल!',
                     ],
 
-                    'name'    => 'गेम कंटेनर',
+                    'name' => 'गेम कंटेनर',
                 ],
 
-                'image-carousel'         => [
-                    'name'    => 'छवि हिंडोला',
+                'image-carousel' => [
+                    'name' => 'छवि हिंडोला',
 
                     'sliders' => [
                         'title' => 'नए संग्रह के लिए तैयार हो जाइए',
                     ],
                 ],
 
-                'new-products'           => [
-                    'name'    => 'नये उत्पाद',
+                'new-products' => [
+                    'name' => 'नये उत्पाद',
 
                     'options' => [
                         'title' => 'नये उत्पाद',
                     ],
                 ],
 
-                'offer-information'      => [
+                'offer-information' => [
                     'content' => [
                         'title' => 'अपने पहले ऑर्डर की खरीदारी पर अभी 40% तक की छूट पाएं',
                     ],
@@ -255,7 +255,7 @@ return [
                     'name' => 'जानकारी प्रदान करें',
                 ],
 
-                'services-content'       => [
+                'services-content' => [
                     'description' => [
                         'emi-available-info'   => 'सभी प्रमुख क्रेडिट कार्ड पर नो कॉस्ट ईएमआई उपलब्ध है',
                         'free-shipping-info'   => 'सभी आदेश पर मुफ्त शिपिंग का आनंद लें',
@@ -263,9 +263,9 @@ return [
                         'time-support-info'    => 'चैट और ईमेल के माध्यम से समर्पित 24/7 सहायता',
                     ],
 
-                    'name'        => 'सेवाएँ सामग्री',
+                    'name' => 'सेवाएँ सामग्री',
 
-                    'title'       => [
+                    'title' => [
                         'emi-available'   => 'ईएमआई उपलब्ध',
                         'free-shipping'   => 'मुफ़्त शिपिंग',
                         'product-replace' => 'उत्पाद बदलें',
@@ -273,7 +273,7 @@ return [
                     ],
                 ],
 
-                'top-collections'        => [
+                'top-collections' => [
                     'content' => [
                         'sub-title-1' => 'हमारे संग्रह',
                         'sub-title-2' => 'हमारे संग्रह',
@@ -284,12 +284,12 @@ return [
                         'title'       => 'हमारे नए अतिरिक्त के साथ खेल!',
                     ],
 
-                    'name'    => 'शीर्ष संग्रह',
+                    'name' => 'शीर्ष संग्रह',
                 ],
             ],
         ],
 
-        'user'      => [
+        'user' => [
             'roles' => [
                 'description' => 'इस भूमिका के उपयोगकर्ताओं के पास सभी पहुंच होगी',
                 'name'        => 'प्रशासक',
@@ -351,21 +351,21 @@ return [
                 'warning-message'     => 'सावधान! आपकी डिफ़ॉल्ट सिस्टम भाषाओं के साथ-साथ डिफ़ॉल्ट मुद्रा की सेटिंग्स स्थायी हैं और इन्हें फिर कभी नहीं बदला जा सकता है।',
             ],
 
-            'installation-processing'   => [
-                'unopim'            => 'स्थापना यूनोपिम',
-                'unopim-info'       => 'डेटाबेस तालिकाएँ बनाने में कुछ क्षण लग सकते हैं',
-                'title'             => 'इंस्टालेशन',
+            'installation-processing' => [
+                'unopim'      => 'स्थापना यूनोपिम',
+                'unopim-info' => 'डेटाबेस तालिकाएँ बनाने में कुछ क्षण लग सकते हैं',
+                'title'       => 'इंस्टालेशन',
             ],
 
-            'installation-completed'    => [
-                'admin-panel'                   => 'व्यवस्थापक पैनल',
-                'unopim-forums'                 => 'यूनोपिम फोरम',
-                'explore-unopim-extensions'     => 'यूनोपिम एक्सटेंशन का अन्वेषण करें',
-                'title-info'                    => 'UnoPim आपके सिस्टम पर सफलतापूर्वक इंस्टॉल हो गया है।',
-                'title'                         => 'स्थापना पूर्ण हुई',
+            'installation-completed' => [
+                'admin-panel'               => 'व्यवस्थापक पैनल',
+                'unopim-forums'             => 'यूनोपिम फोरम',
+                'explore-unopim-extensions' => 'यूनोपिम एक्सटेंशन का अन्वेषण करें',
+                'title-info'                => 'UnoPim आपके सिस्टम पर सफलतापूर्वक इंस्टॉल हो गया है।',
+                'title'                     => 'स्थापना पूर्ण हुई',
             ],
 
-            'ready-for-installation'    => [
+            'ready-for-installation' => [
                 'create-databsae-table'   => 'डेटाबेस तालिका बनाएं',
                 'install-info-button'     => 'के लिए नीचे दिए गए बटन पर क्लिक करें',
                 'install-info'            => 'स्थापना के लिए यूनोपिम',
@@ -375,7 +375,7 @@ return [
                 'title'                   => 'इंस्टालेशन के लिए तैयार',
             ],
 
-            'start'                     => [
+            'start' => [
                 'locale'        => 'स्थान',
                 'main'          => 'शुरू',
                 'select-locale' => 'स्थान का चयन करें',
@@ -383,7 +383,7 @@ return [
                 'welcome-title' => 'यूनोपिम में आपका स्वागत है :version',
             ],
 
-            'server-requirements'       => [
+            'server-requirements' => [
                 'calendar'    => 'कैलेंडर',
                 'ctype'       => 'cप्रकार',
                 'curl'        => 'कर्ल',
@@ -406,38 +406,19 @@ return [
                 'xml'         => 'एक्सएमएल',
             ],
 
-            'arabic'                    => 'अरबी',
-            'back'                      => 'पीछे',
-            'unopim-info'               => 'द्वारा एक सामुदायिक परियोजना',
-            'unopim-logo'               => 'यूनोपिम लोगो',
-            'unopim'                    => 'यूनोपिम',
-            'bengali'                   => 'बंगाली',
-            'chinese'                   => 'चीनी',
-            'continue'                  => 'जारी रखना',
-            'dutch'                     => 'डच',
-            'english'                   => 'अंग्रेज़ी',
-            'french'                    => 'फ़्रेंच',
-            'german'                    => 'जर्मन',
-            'hebrew'                    => 'यहूदी',
-            'hindi'                     => 'हिंदी',
-            'installation-description'  => 'UnoPim इंस्टालेशन में आम तौर पर कई चरण शामिल होते हैं। यहां UnoPim के लिए इंस्टॉलेशन प्रक्रिया की सामान्य रूपरेखा दी गई है:',
-            'wizard-language'           => 'संस्थापन विज़ार्ड भाषा',
-            'installation-info'         => 'हम आपको यहाँ देखकर प्रसन्न हैं!',
-            'installation-title'        => 'इंस्टालेशन में आपका स्वागत है',
-            'italian'                   => 'इतालवी',
-            'japanese'                  => 'जापानी',
-            'persian'                   => 'फ़ारसी',
-            'polish'                    => 'पोलिश',
-            'portuguese'                => 'ब्राज़ीलियाई पुर्तगाली',
-            'russian'                   => 'रूसी',
-            'save-configuration'        => 'कॉन्फ़िगरेशन सहेजें',
-            'sinhala'                   => 'सिंहली',
-            'skip'                      => 'छोडना',
-            'spanish'                   => 'स्पैनिश',
-            'title'                     => 'यूनोपिम इंस्टॉलर',
-            'turkish'                   => 'तुर्की',
-            'ukrainian'                 => 'यूक्रेनी',
-            'webkul'                    => 'वेबकुल',
+            'back'                     => 'पीछे',
+            'unopim-info'              => 'द्वारा एक सामुदायिक परियोजना',
+            'unopim-logo'              => 'यूनोपिम लोगो',
+            'unopim'                   => 'यूनोपिम',
+            'continue'                 => 'जारी रखना',
+            'installation-description' => 'UnoPim इंस्टालेशन में आम तौर पर कई चरण शामिल होते हैं। यहां UnoPim के लिए इंस्टॉलेशन प्रक्रिया की सामान्य रूपरेखा दी गई है:',
+            'wizard-language'          => 'संस्थापन विज़ार्ड भाषा',
+            'installation-info'        => 'हम आपको यहाँ देखकर प्रसन्न हैं!',
+            'installation-title'       => 'इंस्टालेशन में आपका स्वागत है',
+            'save-configuration'       => 'कॉन्फ़िगरेशन सहेजें',
+            'skip'                     => 'छोडना',
+            'title'                    => 'यूनोपिम इंस्टॉलर',
+            'webkul'                   => 'वेबकुल',
         ],
     ],
 ];

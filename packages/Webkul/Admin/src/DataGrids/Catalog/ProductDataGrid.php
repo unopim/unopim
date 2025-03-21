@@ -260,6 +260,14 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $requestedParams = $this->validatedRequest();
 
+        if (! empty($requestedParams['productIds']) && isset($requestedParams['export']) && (bool) $requestedParams['export']) {
+            $this->queryBuilder->whereIn('products.id', $requestedParams['productIds']);
+
+            $this->exportData($requestedParams);
+
+            return;
+        }
+
         try {
             $pagination = $requestedParams['pagination'] ?? [];
             $pagination['per_page'] ??= $this->itemsPerPage;
@@ -309,11 +317,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 ->orderBy(DB::raw('FIELD('.DB::getTablePrefix().'products.id, '.implode(',', $ids).')'));
 
             if (isset($requestedParams['export']) && (bool) $requestedParams['export']) {
-                $this->exportable = true;
-
-                $gridData = $this instanceof ExportableInterface ? $this->getExportableData($requestedParams) : $this->queryBuilder->get();
-
-                $this->setExportFile($gridData, $requestedParams['format']);
+                $this->exportData($requestedParams);
 
                 return;
             }
@@ -394,11 +398,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 ];
 
             case 'sku':
-                return [
-                    'terms' => [
-                        'sku.keyword' => $values,
-                    ],
-                ];
             case 'name':
                 $filters = [];
 
@@ -597,5 +596,17 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $productArray['status'] = $productArray['status'] ? 'true' : 'false';
 
         return $productArray;
+    }
+
+    /**
+     * Export data to file
+     */
+    protected function exportData(array $requestedParams): void
+    {
+        $this->exportable = true;
+
+        $gridData = $this instanceof ExportableInterface ? $this->getExportableData($requestedParams) : $this->queryBuilder->get();
+
+        $this->setExportFile($gridData, $requestedParams['format']);
     }
 }

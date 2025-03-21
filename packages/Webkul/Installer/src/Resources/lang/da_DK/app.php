@@ -1,23 +1,23 @@
 <?php
 
 return [
-    'seeders'   => [
+    'seeders' => [
         'attribute' => [
             'attribute-families' => [
                 'default' => 'Standard',
             ],
 
-            'attribute-groups'   => [
-                'description'       => 'Beskrivelse',
-                'general'           => 'Generel',
-                'inventories'       => 'Lager',
-                'meta-description'  => 'Meta Beskrivelse',
-                'price'             => 'Pris',
-                'technical'         => 'Teknisk',
-                'shipping'          => 'Fragt',
+            'attribute-groups' => [
+                'description'      => 'Beskrivelse',
+                'general'          => 'Generel',
+                'inventories'      => 'Lager',
+                'meta-description' => 'Meta Beskrivelse',
+                'price'            => 'Pris',
+                'technical'        => 'Teknisk',
+                'shipping'         => 'Fragt',
             ],
 
-            'attributes'         => [
+            'attributes' => [
                 'brand'                => 'Mærke',
                 'color'                => 'Farve',
                 'cost'                 => 'Omkostning',
@@ -48,7 +48,7 @@ return [
                 'width'                => 'Bredde',
             ],
 
-            'attribute-options'  => [
+            'attribute-options' => [
                 'black'  => 'Sort',
                 'green'  => 'Grøn',
                 'l'      => 'L',
@@ -61,7 +61,7 @@ return [
             ],
         ],
 
-        'category'  => [
+        'category' => [
             'categories' => [
                 'description' => 'Rod Kategori Beskrivelse',
                 'name'        => 'Rod',
@@ -73,14 +73,14 @@ return [
             ],
         ],
 
-        'cms'       => [
+        'cms' => [
             'pages' => [
-                'about-us'         => [
+                'about-us' => [
                     'content' => 'Om Os Side Indhold',
                     'title'   => 'Om Os',
                 ],
 
-                'contact-us'       => [
+                'contact-us' => [
                     'content' => 'Kontakt Os Side Indhold',
                     'title'   => 'Kontakt Os',
                 ],
@@ -90,27 +90,27 @@ return [
                     'title'   => 'Kunde Service',
                 ],
 
-                'payment-policy'   => [
+                'payment-policy' => [
                     'content' => 'Betalingspolitik Side Indhold',
                     'title'   => 'Betalingspolitik',
                 ],
 
-                'privacy-policy'   => [
+                'privacy-policy' => [
                     'content' => 'Fortrolighedspolitik Side Indhold',
                     'title'   => 'Fortrolighedspolitik',
                 ],
 
-                'refund-policy'    => [
+                'refund-policy' => [
                     'content' => 'Refusion Politik Side Indhold',
                     'title'   => 'Refusion Politik',
                 ],
 
-                'return-policy'    => [
+                'return-policy' => [
                     'content' => 'Returneringspolitik Side Indhold',
                     'title'   => 'Returneringspolitik',
                 ],
 
-                'shipping-policy'  => [
+                'shipping-policy' => [
                     'content' => 'Fragtpolitik Side Indhold',
                     'title'   => 'Fragtpolitik',
                 ],
@@ -120,20 +120,20 @@ return [
                     'title'   => 'Vilkår & Betingelser',
                 ],
 
-                'terms-of-use'     => [
+                'terms-of-use' => [
                     'content' => 'Brugsbetingelser Side Indhold',
                     'title'   => 'Brugsbetingelser',
                 ],
 
-                'whats-new'        => [
+                'whats-new' => [
                     'content' => 'Hvad er Nyt side indhold',
                     'title'   => 'Hvad er Nyt',
                 ],
             ],
         ],
 
-        'core'      => [
-            'channels'   => [
+        'core' => [
+            'channels' => [
                 'meta-title'       => 'Demo butik',
                 'meta-keywords'    => 'Demo butik meta nøgleord',
                 'meta-description' => 'Demo butik meta beskrivelse',
@@ -157,7 +157,7 @@ return [
             ],
         ],
 
-        'customer'  => [
+        'customer' => [
             'customer-groups' => [
                 'general'   => 'Generel',
                 'guest'     => 'Gæst',
@@ -171,40 +171,40 @@ return [
             ],
         ],
 
-        'shop'      => [
+        'shop' => [
             'theme-customizations' => [
-                'all-products'           => [
-                    'name'    => 'Alle Produkter',
+                'all-products' => [
+                    'name' => 'Alle Produkter',
 
                     'options' => [
                         'title' => 'Alle Produkter',
                     ],
                 ],
 
-                'bold-collections'       => [
+                'bold-collections' => [
                     'content' => [
                         'btn-title'   => 'Se Alle',
                         'description' => 'Præsenterer Vores Nye Dristige Samlinger! Forhæv din stil med dristige designs og livlige udtryk. Udforsk markante mønstre og dristige farver, der gendefinerer din garderobe. Gør dig klar til at omfavne det ekstraordinære!',
                         'title'       => 'Gør dig klar til vores nye Dristige Samlinger!',
                     ],
 
-                    'name'    => 'Dristige Samlinger',
+                    'name' => 'Dristige Samlinger',
                 ],
 
                 'categories-collections' => [
                     'name' => 'Kategorier Samlinger',
                 ],
 
-                'featured-collections'   => [
-                    'name'    => 'Fremhævede Samlinger',
+                'featured-collections' => [
+                    'name' => 'Fremhævede Samlinger',
 
                     'options' => [
                         'title' => 'Fremhævede Produkter',
                     ],
                 ],
 
-                'footer-links'           => [
-                    'name'    => 'Footer Links',
+                'footer-links' => [
+                    'name' => 'Footer Links',
 
                     'options' => [
                         'about-us'         => 'Om Os',
@@ -221,33 +221,33 @@ return [
                     ],
                 ],
 
-                'game-container'         => [
+                'game-container' => [
                     'content' => [
                         'sub-title-1' => 'Vores Samlinger',
                         'sub-title-2' => 'Vores Samlinger',
                         'title'       => 'Spillet med vores nye tilføjelser!',
                     ],
 
-                    'name'    => 'Spil Container',
+                    'name' => 'Spil Container',
                 ],
 
-                'image-carousel'         => [
-                    'name'    => 'Billed Carousel',
+                'image-carousel' => [
+                    'name' => 'Billed Carousel',
 
                     'sliders' => [
                         'title' => 'Gør dig klar til Nye Samlinger',
                     ],
                 ],
 
-                'new-products'           => [
-                    'name'    => 'Nye Produkter',
+                'new-products' => [
+                    'name' => 'Nye Produkter',
 
                     'options' => [
                         'title' => 'Nye Produkter',
                     ],
                 ],
 
-                'offer-information'      => [
+                'offer-information' => [
                     'content' => [
                         'title' => 'Få OP TIL 40% RABAT på din 1. ordre HANDL NU',
                     ],
@@ -255,7 +255,7 @@ return [
                     'name' => 'Tilbud Information',
                 ],
 
-                'services-content'       => [
+                'services-content' => [
                     'description' => [
                         'emi-available-info'   => 'Ingen omkostninger EMI tilgængelig på alle større kreditkort',
                         'free-shipping-info'   => 'Gratis forsendelse på alle ordrer',
@@ -263,9 +263,9 @@ return [
                         'time-support-info'    => 'Dedikeret 24/7 support via chat og e-mail',
                     ],
 
-                    'name'        => 'Tjenester Indhold',
+                    'name' => 'Tjenester Indhold',
 
-                    'title'       => [
+                    'title' => [
                         'emi-available'   => 'Emi Tilgængelig',
                         'free-shipping'   => 'Gratis Forsendelse',
                         'product-replace' => 'Produkt Erstatning',
@@ -273,7 +273,7 @@ return [
                     ],
                 ],
 
-                'top-collections'        => [
+                'top-collections' => [
                     'content' => [
                         'sub-title-1' => 'Vores Samlinger',
                         'sub-title-2' => 'Vores Samlinger',
@@ -284,12 +284,12 @@ return [
                         'title'       => 'Spillet med vores nye tilføjelser!',
                     ],
 
-                    'name'    => 'Top Samlinger',
+                    'name' => 'Top Samlinger',
                 ],
             ],
         ],
 
-        'user'      => [
+        'user' => [
             'roles' => [
                 'description' => 'Denne rollebrugere vil have alle adgang',
                 'name'        => 'Administrator',
@@ -352,17 +352,17 @@ return [
             ],
 
             'installation-processing' => [
-                'unopim'            => 'UnoPim Installation',
-                'unopim-info'       => 'Opretter databasetabeller, dette kan tage et øjeblik',
-                'title'             => 'Installation',
+                'unopim'      => 'UnoPim Installation',
+                'unopim-info' => 'Opretter databasetabeller, dette kan tage et øjeblik',
+                'title'       => 'Installation',
             ],
 
             'installation-completed' => [
-                'admin-panel'                   => 'Administratorpanel',
-                'unopim-forums'                 => 'UnoPim Forum',
-                'explore-unopim-extensions'     => 'Udforsk UnoPim-udvidelser',
-                'title-info'                    => 'UnoPim er blevet installeret korrekt på dit system.',
-                'title'                         => 'Installation fuldført',
+                'admin-panel'               => 'Administratorpanel',
+                'unopim-forums'             => 'UnoPim Forum',
+                'explore-unopim-extensions' => 'Udforsk UnoPim-udvidelser',
+                'title-info'                => 'UnoPim er blevet installeret korrekt på dit system.',
+                'title'                     => 'Installation fuldført',
             ],
 
             'ready-for-installation' => [
@@ -406,38 +406,19 @@ return [
                 'xml'         => 'XML',
             ],
 
-            'arabic'                    => 'Arabisk',
-            'back'                      => 'Tilbage',
-            'unopim-info'               => 'Et fællesskabsprojekt af',
-            'unopim-logo'               => 'UnoPim Logo',
-            'unopim'                    => 'UnoPim',
-            'bengali'                   => 'Bengali',
-            'chinese'                   => 'Kinesisk',
-            'continue'                  => 'Fortsæt',
-            'dutch'                     => 'Hollandsk',
-            'english'                   => 'Engelsk',
-            'french'                    => 'Fransk',
-            'german'                    => 'Tysk',
-            'hebrew'                    => 'Hebraisk',
-            'hindi'                     => 'Hindi',
-            'installation-description'  => 'UnoPim installationen omfatter flere trin. Her er et generelt overblik:',
-            'wizard-language'           => 'Installationsguide sprog',
-            'installation-info'         => 'Vi er glade for at se dig her!',
-            'installation-title'        => 'Velkommen til installation',
-            'italian'                   => 'Italiensk',
-            'japanese'                  => 'Japansk',
-            'persian'                   => 'Persisk',
-            'polish'                    => 'Polsk',
-            'portuguese'                => 'Brasiliansk portugisisk',
-            'russian'                   => 'Russisk',
-            'save-configuration'        => 'Gem konfiguration',
-            'sinhala'                   => 'Singalesisk',
-            'skip'                      => 'Spring over',
-            'spanish'                   => 'Spansk',
-            'title'                     => 'UnoPim Installationsguide',
-            'turkish'                   => 'Tyrkisk',
-            'ukrainian'                 => 'Ukrainsk',
-            'webkul'                    => 'Webkul',
+            'back'                     => 'Tilbage',
+            'unopim-info'              => 'Et fællesskabsprojekt af',
+            'unopim-logo'              => 'UnoPim Logo',
+            'unopim'                   => 'UnoPim',
+            'continue'                 => 'Fortsæt',
+            'installation-description' => 'UnoPim installationen omfatter flere trin. Her er et generelt overblik:',
+            'wizard-language'          => 'Installationsguide sprog',
+            'installation-info'        => 'Vi er glade for at se dig her!',
+            'installation-title'       => 'Velkommen til installation',
+            'save-configuration'       => 'Gem konfiguration',
+            'skip'                     => 'Spring over',
+            'title'                    => 'UnoPim Installationsguide',
+            'webkul'                   => 'Webkul',
         ],
     ],
 ];

@@ -1,19 +1,19 @@
 <?php
 
 return [
-    'seeders'   => [
+    'seeders' => [
         'attribute' => [
             'attribute-families' => 'Сім’ї атрибутів',
             'attribute-groups'   => [
-                'description'       => 'Опис',
-                'general'           => 'Загальні',
-                'inventories'       => 'Запаси',
-                'meta-description'  => 'Мета Опис',
-                'price'             => 'Ціна',
-                'technical'         => 'Технічні',
-                'shipping'          => 'Доставка',
+                'description'      => 'Опис',
+                'general'          => 'Загальні',
+                'inventories'      => 'Запаси',
+                'meta-description' => 'Мета Опис',
+                'price'            => 'Ціна',
+                'technical'        => 'Технічні',
+                'shipping'         => 'Доставка',
             ],
-            'attributes'         => [
+            'attributes' => [
                 'brand'                => 'Бренд',
                 'color'                => 'Колір',
                 'cost'                 => 'Вартість',
@@ -43,7 +43,7 @@ return [
                 'weight'               => 'Вага',
                 'width'                => 'Ширина',
             ],
-            'attribute-options'  => [
+            'attribute-options' => [
                 'black'  => 'Чорний',
                 'green'  => 'Зелений',
                 'l'      => 'L',
@@ -55,7 +55,7 @@ return [
                 'yellow' => 'Жовтий',
             ],
         ],
-        'category'  => [
+        'category' => [
             'categories' => [
                 'description' => 'Опис категорій',
                 'name'        => 'Головна',
@@ -65,13 +65,13 @@ return [
                 'description' => 'Опис',
             ],
         ],
-        'cms'       => [
+        'cms' => [
             'pages' => [
-                'about-us'         => [
+                'about-us' => [
                     'content' => 'Зміст сторінки «Про нас»',
                     'title'   => 'Про нас',
                 ],
-                'contact-us'       => [
+                'contact-us' => [
                     'content' => 'Зміст сторінки «Зв’язатися з нами»',
                     'title'   => 'Зв’язатися з нами',
                 ],
@@ -79,23 +79,23 @@ return [
                     'content' => 'Зміст сторінки «Служба підтримки клієнтів»',
                     'title'   => 'Служба підтримки клієнтів',
                 ],
-                'payment-policy'   => [
+                'payment-policy' => [
                     'content' => 'Зміст сторінки «Оплата»',
                     'title'   => 'Оплата',
                 ],
-                'privacy-policy'   => [
+                'privacy-policy' => [
                     'content' => 'Зміст сторінки «Політика конфіденційності»',
                     'title'   => 'Політика конфіденційності',
                 ],
-                'refund-policy'    => [
+                'refund-policy' => [
                     'content' => 'Зміст сторінки «Політика повернення»',
                     'title'   => 'Політика повернення',
                 ],
-                'return-policy'    => [
+                'return-policy' => [
                     'content' => 'Зміст сторінки «Політика повернення товару»',
                     'title'   => 'Політика повернення товару',
                 ],
-                'shipping-policy'  => [
+                'shipping-policy' => [
                     'content' => 'Зміст сторінки «Політика доставки»',
                     'title'   => 'Політика доставки',
                 ],
@@ -103,18 +103,18 @@ return [
                     'content' => 'Зміст сторінки «Умови»',
                     'title'   => 'Умови',
                 ],
-                'terms-of-use'     => [
+                'terms-of-use' => [
                     'content' => 'Зміст сторінки «Умови використання»',
                     'title'   => 'Умови використання',
                 ],
-                'whats-new'        => [
+                'whats-new' => [
                     'content' => 'Зміст сторінки «Що нового»',
                     'title'   => 'Що нового',
                 ],
             ],
         ],
-        'core'      => [
-            'channels'   => [
+        'core' => [
+            'channels' => [
                 'meta-title'       => 'Демо Магазин',
                 'meta-keywords'    => 'Мета Ключові слова Демо Магазину',
                 'meta-description' => 'Мета Опис Демо Магазину',
@@ -136,7 +136,7 @@ return [
                 'USD' => 'Долар США',
             ],
         ],
-        'customer'  => [
+        'customer' => [
             'customer-groups' => [
                 'general'   => 'Загальний',
                 'guest'     => 'Гість',
@@ -148,32 +148,32 @@ return [
                 'name' => 'Стандарт',
             ],
         ],
-        'shop'      => [
+        'shop' => [
             'theme-customizations' => [
-                'all-products'           => [
+                'all-products' => [
                     'name'    => 'Усі продукти',
                     'options' => [
                         'title' => 'Усі продукти',
                     ],
                 ],
-                'bold-collections'       => [
+                'bold-collections' => [
                     'content' => [
                         'btn-title'   => 'Переглянути все',
                         'description' => 'Досліджуйте наші нові сміливі колекції! Підніміть свій стиль, додаючи яскраві кольори і сміливі дизайни. Додайте різноманітності у ваш гардероб з нашими сміливими принтами і насиченими кольорами. Готуйтеся до сміливого початку!',
                         'title'       => 'Готуйтеся до наших нових сміливих колекцій!',
                     ],
-                    'name'    => 'Сміливі колекції',
+                    'name' => 'Сміливі колекції',
                 ],
                 'categories-collections' => [
                     'name' => 'Колекції за категоріями',
                 ],
-                'featured-collections'   => [
+                'featured-collections' => [
                     'name'    => 'Рекомендовані колекції',
                     'options' => [
                         'title' => 'Рекомендовані продукти',
                     ],
                 ],
-                'footer-links'           => [
+                'footer-links' => [
                     'name'    => 'Посилання внизу',
                     'options' => [
                         'about-us'         => 'Про нас',
@@ -189,48 +189,48 @@ return [
                         'whats-new'        => 'Що нового',
                     ],
                 ],
-                'game-container'         => [
+                'game-container' => [
                     'content' => [
                         'sub-title-1' => 'Наші колекції',
                         'sub-title-2' => 'Наші колекції',
                         'title'       => 'Грайте з новими продуктами!',
                     ],
-                    'name'    => 'Гральний контейнер',
+                    'name' => 'Гральний контейнер',
                 ],
-                'image-carousel'         => [
+                'image-carousel' => [
                     'name'    => 'Карусель зображень',
                     'sliders' => [
                         'title' => 'Підготуйтеся до нової колекції',
                     ],
                 ],
-                'new-products'           => [
+                'new-products' => [
                     'name'    => 'Нові продукти',
                     'options' => [
                         'title' => 'Нові продукти',
                     ],
                 ],
-                'offer-information'      => [
+                'offer-information' => [
                     'content' => [
                         'title' => 'ПОЧНИТЕ НАВІГАЦІЮ З %40 ЗНИЖКОЮ НА ПЕРШУ ПОКУПКУ!',
                     ],
                     'name' => 'Інформація про пропозицію',
                 ],
-                'services-content'       => [
+                'services-content' => [
                     'description' => [
                         'emi-available-info'   => 'Фінансування без додаткової плати для всіх основних кредитних карт',
                         'free-shipping-info'   => 'Безкоштовна доставка для всіх замовлень',
                         'product-replace-info' => 'Заміна продукту здійснюється легко!',
                         'time-support-info'    => 'Спеціальна підтримка 24/7 через живий чат і електронну пошту',
                     ],
-                    'name'        => 'Зміст послуг',
-                    'title'       => [
+                    'name'  => 'Зміст послуг',
+                    'title' => [
                         'emi-available'   => 'Фінансування доступне',
                         'free-shipping'   => 'Безкоштовна доставка',
                         'product-replace' => 'Заміна продукту',
                         'time-support'    => 'Підтримка 24/7',
                     ],
                 ],
-                'top-collections'        => [
+                'top-collections' => [
                     'content' => [
                         'sub-title-1' => 'Наші колекції',
                         'sub-title-2' => 'Наші колекції',
@@ -240,11 +240,11 @@ return [
                         'sub-title-6' => 'Наші колекції',
                         'title'       => 'Грайте з новими продуктами!',
                     ],
-                    'name'    => 'Рекомендовані колекції',
+                    'name' => 'Рекомендовані колекції',
                 ],
             ],
         ],
-        'user'      => [
+        'user' => [
             'roles' => [
                 'description' => 'Ця роль матиме доступ до всіх можливостей',
                 'name'        => 'Адміністратор',
@@ -306,17 +306,17 @@ return [
             ],
 
             'installation-processing' => [
-                'unopim'            => 'Установка UnoPim',
-                'unopim-info'       => 'Створення таблиць бази даних може зайняти кілька хвилин.',
-                'title'             => 'Процес установки',
+                'unopim'      => 'Установка UnoPim',
+                'unopim-info' => 'Створення таблиць бази даних може зайняти кілька хвилин.',
+                'title'       => 'Процес установки',
             ],
 
             'installation-completed' => [
-                'admin-panel'                   => 'Панель адміністратора',
-                'unopim-forums'                 => 'Форуми UnoPim',
-                'explore-unopim-extensions'     => 'Досліджуйте розширення UnoPim',
-                'title-info'                    => 'UnoPim успішно встановлено.',
-                'title'                         => 'Установка завершена',
+                'admin-panel'               => 'Панель адміністратора',
+                'unopim-forums'             => 'Форуми UnoPim',
+                'explore-unopim-extensions' => 'Досліджуйте розширення UnoPim',
+                'title-info'                => 'UnoPim успішно встановлено.',
+                'title'                     => 'Установка завершена',
             ],
 
             'ready-for-installation' => [
@@ -360,38 +360,19 @@ return [
                 'xml'         => 'XML',
             ],
 
-            'arabic'                    => 'Арабська',
-            'back'                      => 'Назад',
-            'unopim-info'               => 'Проєкт громади',
-            'unopim-logo'               => 'Логотип UnoPim',
-            'unopim'                    => 'UnoPim',
-            'bengali'                   => 'Бенгальська',
-            'chinese'                   => 'Китайська',
-            'continue'                  => 'Продовжити',
-            'dutch'                     => 'Голландська',
-            'english'                   => 'Англійська',
-            'french'                    => 'Французька',
-            'german'                    => 'Німецька',
-            'hebrew'                    => 'Іврит',
-            'hindi'                     => 'Хінді',
-            'installation-description'  => 'Установка UnoPim складається з кількох кроків. Ось короткий огляд:',
-            'wizard-language'           => 'Мова майстра установки',
-            'installation-info'         => 'Дякуємо за приєднання!',
-            'installation-title'        => 'Встановлення UnoPim',
-            'italian'                   => 'Італійська',
-            'japanese'                  => 'Японська',
-            'persian'                   => 'Перська',
-            'polish'                    => 'Польська',
-            'portuguese'                => 'Португальська',
-            'russian'                   => 'Російська',
-            'save-configuration'        => 'Зберегти конфігурацію',
-            'sinhala'                   => 'Сінгалезька',
-            'skip'                      => 'Пропустити',
-            'spanish'                   => 'Іспанська',
-            'title'                     => 'Майстер установки UnoPim',
-            'turkish'                   => 'Турецька',
-            'ukrainian'                 => 'Українська',
-            'webkul'                    => 'Webkul',
+            'back'                     => 'Назад',
+            'unopim-info'              => 'Проєкт громади',
+            'unopim-logo'              => 'Логотип UnoPim',
+            'unopim'                   => 'UnoPim',
+            'continue'                 => 'Продовжити',
+            'installation-description' => 'Установка UnoPim складається з кількох кроків. Ось короткий огляд:',
+            'wizard-language'          => 'Мова майстра установки',
+            'installation-info'        => 'Дякуємо за приєднання!',
+            'installation-title'       => 'Встановлення UnoPim',
+            'save-configuration'       => 'Зберегти конфігурацію',
+            'skip'                     => 'Пропустити',
+            'title'                    => 'Майстер установки UnoPim',
+            'webkul'                   => 'Webkul',
         ],
     ],
 ];

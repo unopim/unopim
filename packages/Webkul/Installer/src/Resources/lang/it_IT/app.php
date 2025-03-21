@@ -1,19 +1,19 @@
 <?php
 
 return [
-    'seeders'   => [
+    'seeders' => [
         'attribute' => [
             'attribute-families' => 'Default',
             'attribute-groups'   => [
-                'description'       => 'Descrizione',
-                'general'           => 'Generale',
-                'inventories'       => 'Inventari',
-                'meta-description'  => 'Meta Descrizione',
-                'price'             => 'Prezzo',
-                'technical'         => 'Tecnico',
-                'shipping'          => 'Spedizione',
+                'description'      => 'Descrizione',
+                'general'          => 'Generale',
+                'inventories'      => 'Inventari',
+                'meta-description' => 'Meta Descrizione',
+                'price'            => 'Prezzo',
+                'technical'        => 'Tecnico',
+                'shipping'         => 'Spedizione',
             ],
-            'attributes'         => [
+            'attributes' => [
                 'brand'                => 'Marca',
                 'color'                => 'Colore',
                 'cost'                 => 'Costo',
@@ -43,7 +43,7 @@ return [
                 'weight'               => 'Peso',
                 'width'                => 'Larghezza',
             ],
-            'attribute-options'  => [
+            'attribute-options' => [
                 'black'  => 'Nero',
                 'green'  => 'Verde',
                 'l'      => 'L',
@@ -55,7 +55,7 @@ return [
                 'yellow' => 'Giallo',
             ],
         ],
-        'category'  => [
+        'category' => [
             'categories' => [
                 'description' => 'Descrizione Categoria Radice',
                 'name'        => 'Radice',
@@ -65,13 +65,13 @@ return [
                 'description' => 'Descrizione',
             ],
         ],
-        'cms'       => [
+        'cms' => [
             'pages' => [
-                'about-us'         => [
+                'about-us' => [
                     'content' => 'Contenuto della pagina Chi Siamo',
                     'title'   => 'Chi Siamo',
                 ],
-                'contact-us'       => [
+                'contact-us' => [
                     'content' => 'Contenuto della pagina Contattaci',
                     'title'   => 'Contattaci',
                 ],
@@ -79,23 +79,23 @@ return [
                     'content' => 'Contenuto della pagina Servizio Clienti',
                     'title'   => 'Servizio Clienti',
                 ],
-                'payment-policy'   => [
+                'payment-policy' => [
                     'content' => 'Contenuto della pagina Politica di Pagamento',
                     'title'   => 'Politica di Pagamento',
                 ],
-                'privacy-policy'   => [
+                'privacy-policy' => [
                     'content' => 'Contenuto della pagina Politica sulla Privacy',
                     'title'   => 'Politica sulla Privacy',
                 ],
-                'refund-policy'    => [
+                'refund-policy' => [
                     'content' => 'Contenuto della pagina Politica di Rimborso',
                     'title'   => 'Politica di Rimborso',
                 ],
-                'return-policy'    => [
+                'return-policy' => [
                     'content' => 'Contenuto della pagina Politica di Reso',
                     'title'   => 'Politica di Reso',
                 ],
-                'shipping-policy'  => [
+                'shipping-policy' => [
                     'content' => 'Contenuto della pagina Politica di Spedizione',
                     'title'   => 'Politica di Spedizione',
                 ],
@@ -103,18 +103,18 @@ return [
                     'content' => 'Contenuto della pagina Termini e Condizioni',
                     'title'   => 'Termini e Condizioni',
                 ],
-                'terms-of-use'     => [
+                'terms-of-use' => [
                     'content' => 'Contenuto della pagina Condizioni d\'uso',
                     'title'   => 'Condizioni d\'uso',
                 ],
-                'whats-new'        => [
+                'whats-new' => [
                     'content' => 'Contenuto della pagina Novità',
                     'title'   => 'Novità',
                 ],
             ],
         ],
-        'core'      => [
-            'channels'   => [
+        'core' => [
+            'channels' => [
                 'meta-title'       => 'Negozio dimostrativo',
                 'meta-keywords'    => 'Meta parole chiave negozio dimostrativo',
                 'meta-description' => 'Meta descrizione negozio dimostrativo',
@@ -136,7 +136,7 @@ return [
                 'USD' => 'Dollaro USA',
             ],
         ],
-        'customer'  => [
+        'customer' => [
             'customer-groups' => [
                 'general'   => 'Generale',
                 'guest'     => 'Ospite',
@@ -148,32 +148,32 @@ return [
                 'name' => 'Predefinito',
             ],
         ],
-        'shop'      => [
+        'shop' => [
             'theme-customizations' => [
-                'all-products'           => [
+                'all-products' => [
                     'name'    => 'Tutti i Prodotti',
                     'options' => [
                         'title' => 'Tutti i Prodotti',
                     ],
                 ],
-                'bold-collections'       => [
+                'bold-collections' => [
                     'content' => [
                         'btn-title'   => 'Vedi Tutti',
                         'description' => 'Scopri le nostre nuove collezioni audaci! Elevate il tuo stile con design audaci e colori vivaci. Esplora motivi accattivanti e colori che definiscono il tuo guardaroba. Preparati a abbracciare l\'extraordinario!',
                         'title'       => 'Preparati per le nostre nuove Collezioni Audaci!',
                     ],
-                    'name'    => 'Collezioni Audaci',
+                    'name' => 'Collezioni Audaci',
                 ],
                 'categories-collections' => [
                     'name' => 'Collezioni per Categoria',
                 ],
-                'featured-collections'   => [
+                'featured-collections' => [
                     'name'    => 'Collezioni In Evidenza',
                     'options' => [
                         'title' => 'Prodotti In Evidenza',
                     ],
                 ],
-                'footer-links'           => [
+                'footer-links' => [
                     'name'    => 'Link nel Piede di Pagina',
                     'options' => [
                         'about-us'         => 'Chi Siamo',
@@ -189,48 +189,48 @@ return [
                         'whats-new'        => 'Novità',
                     ],
                 ],
-                'game-container'         => [
+                'game-container' => [
                     'content' => [
                         'sub-title-1' => 'Le nostre Collezioni',
                         'sub-title-2' => 'Le nostre Collezioni',
                         'title'       => 'Il gioco con le nostre nuove aggiunte!',
                     ],
-                    'name'    => 'Contenitore di Gioco',
+                    'name' => 'Contenitore di Gioco',
                 ],
-                'image-carousel'         => [
+                'image-carousel' => [
                     'name'    => 'Carosello Immagini',
                     'sliders' => [
                         'title' => 'Preparati per la Nuova Collezione',
                     ],
                 ],
-                'new-products'           => [
+                'new-products' => [
                     'name'    => 'Nuovi Prodotti',
                     'options' => [
                         'title' => 'Nuovi Prodotti',
                     ],
                 ],
-                'offer-information'      => [
+                'offer-information' => [
                     'content' => [
                         'title' => 'Fino al 40% di Sconto sul Tuo Primo Ordine ACQUISTA ORA',
                     ],
                     'name' => 'Informazioni sull\'Offerta',
                 ],
-                'services-content'       => [
+                'services-content' => [
                     'description' => [
                         'emi-available-info'   => 'Disponibile EMI senza costi aggiuntivi su tutte le principali carte di credito',
                         'free-shipping-info'   => 'Goditi la spedizione gratuita su tutti gli ordini',
                         'product-replace-info' => 'Sostituzione facile dei prodotti disponibile!',
                         'time-support-info'    => 'Supporto dedicato 24/7 via chat ed email',
                     ],
-                    'name'        => 'Contenuto dei Servizi',
-                    'title'       => [
+                    'name'  => 'Contenuto dei Servizi',
+                    'title' => [
                         'emi-available'   => 'EMI Disponibile',
                         'free-shipping'   => 'Spedizione Gratuita',
                         'product-replace' => 'Sostituzione Prodotto',
                         'time-support'    => 'Supporto 24/7',
                     ],
                 ],
-                'top-collections'        => [
+                'top-collections' => [
                     'content' => [
                         'sub-title-1' => 'Le nostre Collezioni',
                         'sub-title-2' => 'Le nostre Collezioni',
@@ -240,11 +240,11 @@ return [
                         'sub-title-6' => 'Le nostre Collezioni',
                         'title'       => 'Il gioco con le nostre nuove aggiunte!',
                     ],
-                    'name'    => 'Collezioni di Tendenza',
+                    'name' => 'Collezioni di Tendenza',
                 ],
             ],
         ],
-        'user'      => [
+        'user' => [
             'roles' => [
                 'description' => 'Questo ruolo avrà tutto l\'accesso',
                 'name'        => 'Amministratore',
@@ -306,17 +306,17 @@ return [
             ],
 
             'installation-processing' => [
-                'unopim'            => 'Installazione UnoPim',
-                'unopim-info'       => 'Creazione delle tabelle del database, potrebbe richiedere del tempo',
-                'title'             => 'Installazione',
+                'unopim'      => 'Installazione UnoPim',
+                'unopim-info' => 'Creazione delle tabelle del database, potrebbe richiedere del tempo',
+                'title'       => 'Installazione',
             ],
 
             'installation-completed' => [
-                'admin-panel'                   => 'Pannello Amministratore',
-                'unopim-forums'                 => 'Forum UnoPim',
-                'explore-unopim-extensions'     => 'Esplora le Estensioni UnoPim',
-                'title-info'                    => 'UnoPim è stato installato con successo.',
-                'title'                         => 'Installazione Completata',
+                'admin-panel'               => 'Pannello Amministratore',
+                'unopim-forums'             => 'Forum UnoPim',
+                'explore-unopim-extensions' => 'Esplora le Estensioni UnoPim',
+                'title-info'                => 'UnoPim è stato installato con successo.',
+                'title'                     => 'Installazione Completata',
             ],
 
             'ready-for-installation' => [
@@ -360,38 +360,19 @@ return [
                 'xml'         => 'XML',
             ],
 
-            'arabic'                    => 'Arabo',
-            'back'                      => 'Indietro',
-            'unopim-info'               => 'Progetto Comunitario',
-            'unopim-logo'               => 'Logo UnoPim',
-            'unopim'                    => 'UnoPim',
-            'bengali'                   => 'Bengalese',
-            'chinese'                   => 'Cinese',
-            'continue'                  => 'Continua',
-            'dutch'                     => 'Olandese',
-            'english'                   => 'Inglese',
-            'french'                    => 'Francese',
-            'german'                    => 'Tedesco',
-            'hebrew'                    => 'Ebraico',
-            'hindi'                     => 'Hindi',
-            'installation-description'  => 'L\'installazione di UnoPim comporta diversi passaggi. Qui una panoramica:',
-            'wizard-language'           => 'Lingua del Wizard di Installazione',
-            'installation-info'         => 'Siamo felici di vederti qui!',
-            'installation-title'        => 'Benvenuto nell\'Installazione',
-            'italian'                   => 'Italiano',
-            'japanese'                  => 'Giapponese',
-            'persian'                   => 'Persiano',
-            'polish'                    => 'Polacco',
-            'portuguese'                => 'Portoghese Brasiliano',
-            'russian'                   => 'Russo',
-            'save-configuration'        => 'Salva Configurazione',
-            'sinhala'                   => 'Sinhala',
-            'skip'                      => 'Salta',
-            'spanish'                   => 'Spagnolo',
-            'title'                     => 'Wizard di Installazione UnoPim',
-            'turkish'                   => 'Turco',
-            'ukrainian'                 => 'Ucraino',
-            'webkul'                    => 'Webkul',
+            'back'                     => 'Indietro',
+            'unopim-info'              => 'Progetto Comunitario',
+            'unopim-logo'              => 'Logo UnoPim',
+            'unopim'                   => 'UnoPim',
+            'continue'                 => 'Continua',
+            'installation-description' => 'L\'installazione di UnoPim comporta diversi passaggi. Qui una panoramica:',
+            'wizard-language'          => 'Lingua del Wizard di Installazione',
+            'installation-info'        => 'Siamo felici di vederti qui!',
+            'installation-title'       => 'Benvenuto nell\'Installazione',
+            'save-configuration'       => 'Salva Configurazione',
+            'skip'                     => 'Salta',
+            'title'                    => 'Wizard di Installazione UnoPim',
+            'webkul'                   => 'Webkul',
         ],
     ],
 ];

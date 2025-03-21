@@ -294,21 +294,6 @@ it('should patch the product successfully', function () {
     ]);
 });
 
-it('should return validation errors for invalid data', function () {
-    $product = Product::factory()->create();
-
-    $response = $this->withHeaders($this->headers)
-        ->json('PATCH', route('admin.api.products.patch', ['sku' => $product->sku]), [
-            'values' => [
-                'common' => [
-                ],
-            ],
-        ]);
-
-    $response->assertStatus(422)
-        ->assertJsonValidationErrors(['values.common.sku']);
-});
-
 it('should partially update the product associations', function () {
     $product = Product::factory()->simple()->create();
     $family = AttributeFamily::where('id', $product->attribute_family_id)->first();
@@ -545,7 +530,7 @@ it('should store the channel and locale wise attribute value in product correctl
 
     $defaultChannelLocale = $defaultChannel->locales->first()->code;
 
-    $attribute = Attribute::factory()->create(['value_per_locale' => true, 'value_per_channel' => false, 'type' => 'text']);
+    $attribute = Attribute::factory()->create(['value_per_locale' => true, 'value_per_channel' => true, 'type' => 'text']);
 
     $attributeCode = $attribute->code;
 

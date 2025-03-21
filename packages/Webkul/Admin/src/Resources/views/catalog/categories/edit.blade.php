@@ -155,7 +155,7 @@
                                         value-field="id"
                                         id-field="id"
                                         :items="json_encode($categories)"
-                                        :value="json_encode($category->parent_id)"
+                                        :value="old('parent_id') ?? json_encode($category->parent_id)"
                                         :fallback-locale="config('app.fallback_locale')"
                                     >
                                     </x-admin::tree.view>

@@ -917,9 +917,11 @@
 
             methods: {
                 optionName(attribute, optionCode) {
-                    return attribute.options.find((option) => {
+                    let attributeOption = attribute.options.find((option) => {
                         return option.code == optionCode;
-                    })?.label;
+                    })
+
+                    return attributeOption.label ? attributeOption.label : '[' + optionCode + ']';
                 },
 
                 async update(params) {
