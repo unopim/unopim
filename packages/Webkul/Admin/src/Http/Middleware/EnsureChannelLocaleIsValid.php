@@ -9,8 +9,8 @@ use Illuminate\Http\Request;
  * Middleware to validate that the requested locale is available for the current requested channel.
  * If the locale is not available, it redirects to the first available locale for that channel.
  */
-class EnsureChannelLocaleIsValid {
-
+class EnsureChannelLocaleIsValid
+{
     /**
      * Handle the incoming request.
      *
@@ -20,7 +20,7 @@ class EnsureChannelLocaleIsValid {
      *
      * @param  \Illuminate\Http\Request  $request  The HTTP request instance
      * @param  \Closure  $next  The next middleware/handler in the pipeline
-     * @return mixed  Response or redirect
+     * @return mixed Response or redirect
      */
     public function handle(Request $request, Closure $next)
     {
@@ -30,7 +30,7 @@ class EnsureChannelLocaleIsValid {
         $route = $request->route();
 
         // Check that the locale is available in the current channel
-        if($requestedChannel->locales()->where('code', $requestedLocaleCode)->first() === null) {
+        if ($requestedChannel->locales()->where('code', $requestedLocaleCode)->first() === null) {
             // Get all route parameters
             $parameters = $route->parameters();
 
@@ -44,9 +44,9 @@ class EnsureChannelLocaleIsValid {
             $routeName = $route->getName();
 
             // If route has name, redirect with parameters
-            if($routeName !== null) {
+            if ($routeName !== null) {
                 return redirect()->route($routeName, $parameters);
-            } else if($route->getActionName() !== null) {
+            } elseif ($route->getActionName() !== null) {
                 // For routes without names, use the current URL but update query parameters
                 return redirect()->action($route->getActionName(), $parameters);
             } else {
@@ -58,5 +58,4 @@ class EnsureChannelLocaleIsValid {
         // If the locale is valid for this channel, continue with the request
         return $next($request);
     }
-
 }
