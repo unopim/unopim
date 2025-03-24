@@ -371,7 +371,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             $this->setElasticFilters($requestedParams['filters'] ?? []);
 
             $esQuery = ElasticSearchQuery::build();
-            dd($esQuery);
+
             $result = ResultCursorFactory::createCursor($esQuery, $requestedParams);
 
             $ids = $result->getAllIds();
@@ -434,7 +434,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         if ($attributePath = $this->getAttributePathForSort($sortColumn)) {
             return $this->queryBuilder->orderByRaw(
-                sprintf("JSON_EXTRACT(products.values, '%s') + 0 %s", $attributePath, $sortOrder)
+                sprintf("JSON_UNQUOTE(JSON_EXTRACT(products.values, '%s')) %s", $attributePath, $sortOrder)
             );
         }
 
@@ -543,6 +543,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'sku'              => 'sku',
             'attribute_family' => 'attribute_family_id',
             'product_id'       => 'id',
+            'parent'           => 'parent_id',
             'updated_at'       => 'updated_at',
             'created_at'       => 'created_at',
             'status'           => 'status',
@@ -565,6 +566,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     protected function getAttributePathForSort($attributeCode, string $searchEngine = 'database')
     {
+
         $attribute = $this->attributeService->findAttributeByCode($attributeCode);
 
         if (! $attribute) {
@@ -577,7 +579,11 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $path = sprintf('$.%s.%s', $attribute->getScope($locale, $channel), $attribute->code);
 
         if ($searchEngine == 'elasticsearch') {
-            return sprintf('values.%s.%s.keyword', $attribute->getScope($locale, $channel), $attribute->code);
+            if ($attribute->type === 'price') {
+                return sprintf('values.%s.%s.ADP', $attribute->getScope($locale, $channel), $attribute->code);
+            } else {
+                return sprintf('values.%s.%s.keyword', $attribute->getScope($locale, $channel), $attribute->code);
+            }
         }
 
         return $path;

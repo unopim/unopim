@@ -276,7 +276,7 @@ class ProductIndexer extends Command
                         ],
                     ],
                 ],
-                'attribute_family_id' => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
+                'attribute_family_id' => ['type' => 'keyword', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
                 'created_at'          => ['type' => 'date'],
                 'id'                  => ['type' => 'long'],
                 'sku'                 => [
@@ -286,6 +286,32 @@ class ProductIndexer extends Command
                 'status'              => ['type' => 'long'],
                 'type'                => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
                 'updated_at'          => ['type' => 'date'],
+
+                'values' => [
+                    'properties' => [
+                        'channel_locale_specific' => [
+                            'properties' => [
+                                'default' => [
+                                    'properties' => [
+                                        'en_US' => [
+                                            'properties' => [
+                                                'price' => [
+                                                    'properties' => [
+                                                        'ADP' => [
+                                                            'type' => 'float',
+                                                        ],
+                                                    ],
+                                                ],
+
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+
             ],
             'dynamic_templates' => [
                 [
@@ -298,8 +324,9 @@ class ProductIndexer extends Command
                     ],
                 ], [
                     'common_fields' => [
-                        'path_match' => 'values.common.*',
-                        'mapping'    => [
+                        'path_match'         => 'values.common.*',
+                        'match_mapping_type' => 'object',
+                        'mapping'            => [
                             'type'       => 'keyword',
                             'normalizer' => 'string_normalizer',
                         ],
@@ -330,8 +357,9 @@ class ProductIndexer extends Command
                     ],
                 ], [
                     'channel_specific' => [
-                        'path_match' => 'values.channel_specific.*.*',
-                        'mapping'    => [
+                        'path_match'         => 'values.channel_specific.*.*',
+                        'match_mapping_type' => 'object',
+                        'mapping'            => [
                             'type'       => 'keyword',
                             'normalizer' => 'string_normalizer',
                         ],
@@ -394,6 +422,10 @@ class ProductIndexer extends Command
                     'string_normalizer' => [
                         'char_filter' => ['newline_remover'],
                         'filter'      => ['lowercase'],
+                    ],
+                    'url_normalizer' => [
+                        'type'  => 'custom',
+                        'filter'=> ['lowercase', 'asciifolding'],
                     ],
                 ],
             ],
