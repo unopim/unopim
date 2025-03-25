@@ -575,12 +575,13 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $locale = core()->getRequestedLocaleCode();
         $channel = core()->getRequestedChannelCode();
+        $currency = core()->getAllActiveCurrencies();
 
         $path = sprintf('$.%s.%s', $attribute->getScope($locale, $channel), $attribute->code);
 
         if ($searchEngine == 'elasticsearch') {
             if ($attribute->type === 'price') {
-                return sprintf('values.%s.%s.ADP', $attribute->getScope($locale, $channel), $attribute->code);
+                return sprintf('values.%s.%s.%s', $attribute->getScope($locale, $channel), $attribute->code, $currency[0]['code']);
             } else {
                 return sprintf('values.%s.%s.keyword', $attribute->getScope($locale, $channel), $attribute->code);
             }

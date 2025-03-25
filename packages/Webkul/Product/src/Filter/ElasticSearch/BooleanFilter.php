@@ -38,6 +38,10 @@ class BooleanFilter extends AbstractElasticSearchAttributeFilter
 
         $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
 
+        for ($i = 0; $i < count($value); $i++) {
+            $value[$i] = ($value[$i] == '1') ? true : false;
+        }
+
         switch ($operator) {
             case FilterOperators::IN:
                 $clause = [

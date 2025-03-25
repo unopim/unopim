@@ -51,12 +51,19 @@ class ParentFilter extends AbstractPropertyFilter
                 $this->queryBuilder::where($clause);
                 break;
             case FilterOperators::CONTAINS:
+
                 $clause = [
-                    'query_string' => [
-                        'default_field'    => $property,
-                        'query'            => '*'.implode('* OR *', $value).'*',
+                    'terms' => [
+                        'parent_id' => $this->getParentIdsBySkus($value, $options),
                     ],
                 ];
+
+                // $clause = [
+                //     'query_string' => [
+                //         'default_field'    => $property,
+                //         'query'            => '*'.implode('* OR *', $value).'*',
+                //     ],
+                // ];
 
                 $this->queryBuilder::where($clause);
                 break;

@@ -287,31 +287,6 @@ class ProductIndexer extends Command
                 'type'                => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
                 'updated_at'          => ['type' => 'date'],
 
-                'values' => [
-                    'properties' => [
-                        'channel_locale_specific' => [
-                            'properties' => [
-                                'default' => [
-                                    'properties' => [
-                                        'en_US' => [
-                                            'properties' => [
-                                                'price' => [
-                                                    'properties' => [
-                                                        'ADP' => [
-                                                            'type' => 'float',
-                                                        ],
-                                                    ],
-                                                ],
-
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-
             ],
             'dynamic_templates' => [
                 [
@@ -347,7 +322,19 @@ class ProductIndexer extends Command
                             'normalizer' => 'string_normalizer',
                         ],
                     ],
-                ], [
+                ],  [
+                    'channel_specific_cost' => [
+                        'path_match' => 'values.channel_specific.*.*.*',
+                        'mapping'    => [
+                            'type'   => 'float',
+                            'fields' => [
+                                'keyword' => [
+                                    'type'       => 'float',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],  [
                     'channel_specific_object' => [
                         'path_match'         => 'values.channel_specific.*',
                         'match_mapping_type' => 'object',
@@ -355,7 +342,7 @@ class ProductIndexer extends Command
                             'type' => 'object',
                         ],
                     ],
-                ], [
+                ],  [
                     'channel_specific' => [
                         'path_match'         => 'values.channel_specific.*.*',
                         'match_mapping_type' => 'object',
@@ -370,6 +357,18 @@ class ProductIndexer extends Command
                         'match_mapping_type' => 'object',
                         'mapping'            => [
                             'type' => 'object',
+                        ],
+                    ],
+                ], [
+                    'channel_locale_specific_price' => [
+                        'path_match' => 'values.channel_locale_specific.*.*.*.*',
+                        'mapping'    => [
+                            'type'   => 'float',
+                            'fields' => [
+                                'keyword' => [
+                                    'type'       => 'float',
+                                ],
+                            ],
                         ],
                     ],
                 ], [
