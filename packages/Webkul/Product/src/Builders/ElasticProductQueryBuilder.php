@@ -42,6 +42,14 @@ class ElasticProductQueryBuilder extends ElasticSearchAbstractFilterableQueryBui
             );
         }
 
+        if ($attribute->type == 'select') {
+            if (is_array($value)) {
+                $value = array_map('strtolower', $value);
+            } else {
+                $value = strtolower($value);
+            }
+        }
+
         $filter->addAttributeFilter($attribute, $operator, $value, $locale, $channel, $context);
 
         return $this;

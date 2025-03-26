@@ -483,6 +483,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             }
 
             [$operator, $value] = $this->getOperatorAndValue($attribute, $value);
+
             if ($operator) {
                 $this->applyFilterValue($queryBuilder, $attribute, $value, $operator, $context);
             }

@@ -25,6 +25,7 @@ class DatabaseProductQueryBuilder extends AbstractFilterableQueryBuilder
         $value,
         array $context
     ) {
+
         $locale = $attribute->value_per_locale ? $context['locale'] : null;
         $channel = $attribute->value_per_channel ? $context['channel'] : null;
 
@@ -37,6 +38,12 @@ class DatabaseProductQueryBuilder extends AbstractFilterableQueryBuilder
                     $operator->value,
                 )
             );
+        }
+
+        if ($attribute->type == 'boolean') {
+            for ($i = 0; $i < count($value); $i++) {
+                $value[$i] = ($value[$i] == '1') ? 'true' : 'false';
+            }
         }
 
         $filter->addAttributeFilter($attribute, $operator, $value, $locale, $channel, $context);

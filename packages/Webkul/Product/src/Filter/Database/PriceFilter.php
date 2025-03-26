@@ -15,7 +15,7 @@ class PriceFilter extends AbstractDatabaseAttributeFilter
      */
     public function __construct(
         array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[2]],
-        array $allowedOperators = [FilterOperators::IN, FilterOperators::CONTAINS]
+        array $allowedOperators = [FilterOperators::IN, FilterOperators::EQUAL]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;
         $this->allowedOperators = $allowedOperators;
@@ -40,6 +40,14 @@ class PriceFilter extends AbstractDatabaseAttributeFilter
 
         switch ($operator) {
             case FilterOperators::IN:
+                $this->queryBuilder->whereRaw(
+                    sprintf("JSON_UNQUOTE(JSON_EXTRACT(%s, '%s')) REGEXP ?", $this->getSearchTablePath($options), sprintf('%s.%s', $attributePath, $value[0])),
+                    $value[1]
+                );
+
+                break;
+
+            case FilterOperators::EQUAL:
                 $this->queryBuilder->whereRaw(
                     sprintf("JSON_UNQUOTE(JSON_EXTRACT(%s, '%s')) REGEXP ?", $this->getSearchTablePath($options), sprintf('%s.%s', $attributePath, $value[0])),
                     $value[1]

@@ -322,7 +322,7 @@ class ProductIndexer extends Command
                             'normalizer' => 'string_normalizer',
                         ],
                     ],
-                ],  [
+                ], [
                     'channel_specific_cost' => [
                         'path_match' => 'values.channel_specific.*.*.*',
                         'mapping'    => [
@@ -334,7 +334,7 @@ class ProductIndexer extends Command
                             ],
                         ],
                     ],
-                ],  [
+                ], [
                     'channel_specific_object' => [
                         'path_match'         => 'values.channel_specific.*',
                         'match_mapping_type' => 'object',
@@ -342,21 +342,13 @@ class ProductIndexer extends Command
                             'type' => 'object',
                         ],
                     ],
-                ],  [
+                ], [
                     'channel_specific' => [
                         'path_match'         => 'values.channel_specific.*.*',
                         'match_mapping_type' => 'object',
                         'mapping'            => [
                             'type'       => 'keyword',
                             'normalizer' => 'string_normalizer',
-                        ],
-                    ],
-                ], [
-                    'channel_locale_specific_object' => [
-                        'path_match'         => 'values.channel_locale_specific.*.*',
-                        'match_mapping_type' => 'object',
-                        'mapping'            => [
-                            'type' => 'object',
                         ],
                     ],
                 ], [
@@ -369,6 +361,14 @@ class ProductIndexer extends Command
                                     'type'       => 'float',
                                 ],
                             ],
+                        ],
+                    ],
+                ], [
+                    'channel_locale_specific_object' => [
+                        'path_match'         => 'values.channel_locale_specific.*.*',
+                        'match_mapping_type' => 'object',
+                        'mapping'            => [
+                            'type' => 'object',
                         ],
                     ],
                 ], [
