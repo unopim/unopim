@@ -23,7 +23,7 @@ it('should store the channel and locale wise attribute value in product correctl
 
     $defaultChannelLocale = $defaultChannel->locales->first()->code;
 
-    $attribute = Attribute::factory()->create(['value_per_locale' => true, 'value_per_channel' => false, 'type' => 'text']);
+    $attribute = Attribute::factory()->create(['value_per_locale' => true, 'value_per_channel' => true, 'type' => 'text']);
 
     $attributeCode = $attribute->code;
 

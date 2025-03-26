@@ -1,23 +1,23 @@
 <?php
 
 return [
-    'seeders'   => [
+    'seeders' => [
         'attribute' => [
             'attribute-families' => [
                 'default' => 'تقصير',
             ],
 
-            'attribute-groups'   => [
-                'description'       => 'وصف',
-                'general'           => 'عام',
-                'inventories'       => 'المخزونات',
-                'meta-description'  => 'وصف ميتا',
-                'price'             => 'سعر',
-                'technical'         => 'اِصطِلاحِيّ',
-                'shipping'          => 'شحن',
+            'attribute-groups' => [
+                'description'      => 'وصف',
+                'general'          => 'عام',
+                'inventories'      => 'المخزونات',
+                'meta-description' => 'وصف ميتا',
+                'price'            => 'سعر',
+                'technical'        => 'اِصطِلاحِيّ',
+                'shipping'         => 'شحن',
             ],
 
-            'attributes'         => [
+            'attributes' => [
                 'brand'                => 'ماركة',
                 'color'                => 'لون',
                 'cost'                 => 'يكلف',
@@ -48,7 +48,7 @@ return [
                 'width'                => 'عرض',
             ],
 
-            'attribute-options'  => [
+            'attribute-options' => [
                 'black'  => 'أسود',
                 'green'  => 'أخضر',
                 'l'      => 'ل',
@@ -61,7 +61,7 @@ return [
             ],
         ],
 
-        'category'  => [
+        'category' => [
             'categories' => [
                 'description' => 'وصف فئة الجذر',
                 'name'        => 'جذر',
@@ -73,14 +73,14 @@ return [
             ],
         ],
 
-        'cms'       => [
+        'cms' => [
             'pages' => [
-                'about-us'         => [
+                'about-us' => [
                     'content' => 'معلومات عنا محتوى الصفحة',
                     'title'   => 'معلومات عنا',
                 ],
 
-                'contact-us'       => [
+                'contact-us' => [
                     'content' => 'اتصل بنا محتوى الصفحة',
                     'title'   => 'اتصل بنا',
                 ],
@@ -90,27 +90,27 @@ return [
                     'title'   => 'خدمة العملاء',
                 ],
 
-                'payment-policy'   => [
+                'payment-policy' => [
                     'content' => 'محتوى صفحة سياسة الدفع',
                     'title'   => 'سياسة الدفع',
                 ],
 
-                'privacy-policy'   => [
+                'privacy-policy' => [
                     'content' => 'محتوى صفحة سياسة الخصوصية',
                     'title'   => 'سياسة الخصوصية',
                 ],
 
-                'refund-policy'    => [
+                'refund-policy' => [
                     'content' => 'محتوى صفحة سياسة استرداد الأموال',
                     'title'   => 'سياسة استرداد الأموال',
                 ],
 
-                'return-policy'    => [
+                'return-policy' => [
                     'content' => 'محتوى صفحة سياسة الإرجاع',
                     'title'   => 'سياسة العائدات',
                 ],
 
-                'shipping-policy'  => [
+                'shipping-policy' => [
                     'content' => 'محتوى صفحة سياسة الشحن',
                     'title'   => 'سياسة الشحن',
                 ],
@@ -120,20 +120,20 @@ return [
                     'title'   => 'الشروط والأحكام',
                 ],
 
-                'terms-of-use'     => [
+                'terms-of-use' => [
                     'content' => 'شروط الاستخدام محتوى الصفحة',
                     'title'   => 'شروط الاستخدام',
                 ],
 
-                'whats-new'        => [
+                'whats-new' => [
                     'content' => 'ما هو محتوى الصفحة الجديد',
                     'title'   => 'ما هو الجديد',
                 ],
             ],
         ],
 
-        'core'      => [
-            'channels'   => [
+        'core' => [
+            'channels' => [
                 'meta-title'       => 'متجر تجريبي',
                 'meta-keywords'    => 'الكلمة الرئيسية التعريفية للمتجر التجريبي',
                 'meta-description' => 'الوصف التعريفي للمتجر التجريبي',
@@ -157,7 +157,7 @@ return [
             ],
         ],
 
-        'customer'  => [
+        'customer' => [
             'customer-groups' => [
                 'general'   => 'عام',
                 'guest'     => 'ضيف',
@@ -171,40 +171,40 @@ return [
             ],
         ],
 
-        'shop'      => [
+        'shop' => [
             'theme-customizations' => [
-                'all-products'           => [
-                    'name'    => 'جميع المنتجات',
+                'all-products' => [
+                    'name' => 'جميع المنتجات',
 
                     'options' => [
                         'title' => 'جميع المنتجات',
                     ],
                 ],
 
-                'bold-collections'       => [
+                'bold-collections' => [
                     'content' => [
                         'btn-title'   => 'عرض الكل',
                         'description' => 'نقدم لكم مجموعاتنا الجريئة الجديدة! ارتقي بأسلوبك من خلال التصاميم الجريئة والبيانات النابضة بالحياة. اكتشف الأنماط المذهلة والألوان الجريئة التي تعيد تعريف خزانة ملابسك. استعد لاحتضان ما هو غير عادي!',
                         'title'       => 'استعدوا لمجموعاتنا الجريئة الجديدة!',
                     ],
 
-                    'name'    => 'مجموعات جريئة',
+                    'name' => 'مجموعات جريئة',
                 ],
 
                 'categories-collections' => [
                     'name' => 'الفئات المجموعات',
                 ],
 
-                'featured-collections'   => [
-                    'name'    => 'مجموعات مميزة',
+                'featured-collections' => [
+                    'name' => 'مجموعات مميزة',
 
                     'options' => [
                         'title' => 'المنتجات المميزة',
                     ],
                 ],
 
-                'footer-links'           => [
-                    'name'    => 'روابط التذييل',
+                'footer-links' => [
+                    'name' => 'روابط التذييل',
 
                     'options' => [
                         'about-us'         => 'معلومات عنا',
@@ -221,33 +221,33 @@ return [
                     ],
                 ],
 
-                'game-container'         => [
+                'game-container' => [
                     'content' => [
                         'sub-title-1' => 'مجموعاتنا',
                         'sub-title-2' => 'مجموعاتنا',
                         'title'       => 'اللعبة مع إضافاتنا الجديدة!',
                     ],
 
-                    'name'    => 'حاوية اللعبة',
+                    'name' => 'حاوية اللعبة',
                 ],
 
-                'image-carousel'         => [
-                    'name'    => 'صورة دائري',
+                'image-carousel' => [
+                    'name' => 'صورة دائري',
 
                     'sliders' => [
                         'title' => 'استعد للمجموعة الجديدة',
                     ],
                 ],
 
-                'new-products'           => [
-                    'name'    => 'منتجات جديدة',
+                'new-products' => [
+                    'name' => 'منتجات جديدة',
 
                     'options' => [
                         'title' => 'منتجات جديدة',
                     ],
                 ],
 
-                'offer-information'      => [
+                'offer-information' => [
                     'content' => [
                         'title' => 'احصل على خصم يصل إلى 40% على طلبك الأول تسوق الآن',
                     ],
@@ -255,7 +255,7 @@ return [
                     'name' => 'معلومات العرض',
                 ],
 
-                'services-content'       => [
+                'services-content' => [
                     'description' => [
                         'emi-available-info'   => 'لا تتوفر تكلفة EMI على جميع بطاقات الائتمان الرئيسية',
                         'free-shipping-info'   => 'استمتع بالشحن المجاني لجميع الطلبات',
@@ -263,9 +263,9 @@ return [
                         'time-support-info'    => 'دعم مخصص على مدار 24 ساعة طوال أيام الأسبوع عبر الدردشة والبريد الإلكتروني',
                     ],
 
-                    'name'        => 'محتوى الخدمات',
+                    'name' => 'محتوى الخدمات',
 
-                    'title'       => [
+                    'title' => [
                         'emi-available'   => 'إيمي متاح',
                         'free-shipping'   => 'ًالشحن مجانا',
                         'product-replace' => 'استبدال المنتج',
@@ -273,7 +273,7 @@ return [
                     ],
                 ],
 
-                'top-collections'        => [
+                'top-collections' => [
                     'content' => [
                         'sub-title-1' => 'مجموعاتنا',
                         'sub-title-2' => 'مجموعاتنا',
@@ -284,12 +284,12 @@ return [
                         'title'       => 'اللعبة مع إضافاتنا الجديدة!',
                     ],
 
-                    'name'    => 'أفضل المجموعات',
+                    'name' => 'أفضل المجموعات',
                 ],
             ],
         ],
 
-        'user'      => [
+        'user' => [
             'roles' => [
                 'description' => 'سيكون لمستخدمي هذا الدور حق الوصول الكامل',
                 'name'        => 'المسؤول',
@@ -351,21 +351,21 @@ return [
                 'warning-message'     => 'احذر! تعد إعدادات لغات النظام الافتراضية وكذلك العملة الافتراضية دائمة ولا يمكن تغييرها مرة أخرى.',
             ],
 
-            'installation-processing'   => [
-                'unopim'            => 'تثبيت أونوبيم',
-                'unopim-info'       => 'إنشاء جداول قاعدة البيانات، قد يستغرق ذلك بضع دقائق',
-                'title'             => 'تثبيت',
+            'installation-processing' => [
+                'unopim'      => 'تثبيت أونوبيم',
+                'unopim-info' => 'إنشاء جداول قاعدة البيانات، قد يستغرق ذلك بضع دقائق',
+                'title'       => 'تثبيت',
             ],
 
-            'installation-completed'    => [
-                'admin-panel'                   => 'لوحة الإدارة',
-                'unopim-forums'                 => 'منتدى أونوبيم',
-                'explore-unopim-extensions'     => 'اكتشف ملحق UnoPim',
-                'title-info'                    => 'تم تثبيت UnoPim بنجاح على نظامك.',
-                'title'                         => 'اكتمل التثبيت',
+            'installation-completed' => [
+                'admin-panel'               => 'لوحة الإدارة',
+                'unopim-forums'             => 'منتدى أونوبيم',
+                'explore-unopim-extensions' => 'اكتشف ملحق UnoPim',
+                'title-info'                => 'تم تثبيت UnoPim بنجاح على نظامك.',
+                'title'                     => 'اكتمل التثبيت',
             ],
 
-            'ready-for-installation'    => [
+            'ready-for-installation' => [
                 'create-databsae-table'   => 'إنشاء جدول قاعدة البيانات',
                 'install-info-button'     => 'انقر فوق الزر أدناه ل',
                 'install-info'            => 'UnoPim للتثبيت',
@@ -375,7 +375,7 @@ return [
                 'title'                   => 'جاهز للتثبيت',
             ],
 
-            'start'                     => [
+            'start' => [
                 'locale'        => 'لغة',
                 'main'          => 'يبدأ',
                 'select-locale' => 'حدد اللغة',
@@ -383,7 +383,7 @@ return [
                 'welcome-title' => 'مرحبا بكم في UnoPim :version',
             ],
 
-            'server-requirements'       => [
+            'server-requirements' => [
                 'calendar'    => 'تقويم',
                 'ctype'       => 'cType',
                 'curl'        => 'حليقة',
@@ -406,38 +406,19 @@ return [
                 'xml'         => 'XML',
             ],
 
-            'arabic'                    => 'عربي',
-            'back'                      => 'خلف',
-            'unopim-info'               => 'مشروع مجتمعي بقلم',
-            'unopim-logo'               => 'شعار أونوبيم',
-            'unopim'                    => 'Unopim',
-            'bengali'                   => 'البنغالية',
-            'chinese'                   => 'الصينية',
-            'continue'                  => 'يكمل',
-            'dutch'                     => 'هولندي',
-            'english'                   => 'إنجليزي',
-            'french'                    => 'فرنسي',
-            'german'                    => 'الألمانية',
-            'hebrew'                    => 'العبرية',
-            'hindi'                     => 'الهندية',
-            'installation-description'  => 'يتضمن تثبيت UnoPim عادةً عدة خطوات. فيما يلي مخطط عام لعملية تثبيت UnoPim:',
-            'wizard-language'           => 'لغة معالج التثبيت',
-            'installation-info'         => 'نحن سعداء لرؤيتك هنا!',
-            'installation-title'        => 'مرحبا بكم في التثبيت',
-            'italian'                   => 'ايطالي',
-            'japanese'                  => 'اليابانية',
-            'persian'                   => 'الفارسية',
-            'polish'                    => 'بولندي',
-            'portuguese'                => 'البرتغالية البرازيلية',
-            'russian'                   => 'الروسية',
-            'save-configuration'        => 'حفظ التكوين',
-            'sinhala'                   => 'السنهالية',
-            'skip'                      => 'يتخطى',
-            'spanish'                   => 'الأسبانية',
-            'title'                     => 'المثبت أونوبيم',
-            'turkish'                   => 'تركي',
-            'ukrainian'                 => 'الأوكرانية',
-            'webkul'                    => 'Webkul',
+            'back'                     => 'خلف',
+            'unopim-info'              => 'مشروع مجتمعي بقلم',
+            'unopim-logo'              => 'شعار أونوبيم',
+            'unopim'                   => 'Unopim',
+            'continue'                 => 'يكمل',
+            'installation-description' => 'يتضمن تثبيت UnoPim عادةً عدة خطوات. فيما يلي مخطط عام لعملية تثبيت UnoPim:',
+            'wizard-language'          => 'لغة معالج التثبيت',
+            'installation-info'        => 'نحن سعداء لرؤيتك هنا!',
+            'installation-title'       => 'مرحبا بكم في التثبيت',
+            'save-configuration'       => 'حفظ التكوين',
+            'skip'                     => 'يتخطى',
+            'title'                    => 'المثبت أونوبيم',
+            'webkul'                   => 'Webkul',
         ],
     ],
 ];

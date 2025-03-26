@@ -206,7 +206,6 @@ class CategoryController extends ApiController
      */
     public function partialUpdate(string $code)
     {
-
         $category = $this->categoryRepository->findOneByField('code', $code);
         if (! $category) {
             return $this->modelNotFoundResponse(trans('admin::app.catalog.categories.not-found', ['code' => $code]));
@@ -229,7 +228,9 @@ class CategoryController extends ApiController
 
         try {
             $this->sanitizeInput($requestData);
+
             Event::dispatch('catalog.category.update.before', $category->id);
+
             if (isset($requestData['parent_id'])) {
                 $category->parent_id = $requestData['parent_id'];
             }
@@ -246,11 +247,11 @@ class CategoryController extends ApiController
                     }
 
                     $existingAdditionalData[$key] = $value;
-
                 }
                 $category->additional_data = json_encode($existingAdditionalData);
             }
             $this->categoryRepository->update($requestData, $category->id);
+
             Event::dispatch('catalog.category.update.after', $category);
 
             return $this->successResponse(

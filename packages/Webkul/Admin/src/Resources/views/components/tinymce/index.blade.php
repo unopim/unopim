@@ -61,8 +61,7 @@
                                 </x-admin::form.control-group.label>
                                 <x-admin::form.control-group.control
                                     type="select"
-                                    name="model"
-                                    rules="required"
+                                    name="default_prompt"
                                     :label="trans('admin::app.components.tinymce.ai-generation.default-prompt')"
                                     ::options="defaultPrompts"
                                     track-by="prompt"
@@ -71,7 +70,7 @@
                                 >
                                 </x-admin::form.control-group.control>
 
-                                <x-admin::form.control-group.error control-name="model"></x-admin::form.control-group.error>
+                                <x-admin::form.control-group.error control-name="default_prompt"></x-admin::form.control-group.error>
                             </x-admin::form.control-group>
 
                             <!-- Prompt -->
@@ -223,7 +222,7 @@
                 this.init();
 
                 this.$emitter.on('change-theme', (theme) => {
-                    tinymce.activeEditor.destroy();
+                    tinymce.get(0).destroy();
 
                     this.currentSkin = (theme === 'dark') ? 'oxide-dark' : 'oxide';
                     this.currentContentCSS = (theme === 'dark') ? 'dark' : 'default';
@@ -397,7 +396,7 @@
                                 fillAttr: 'code',
                                 noMatchTemplate: "@lang('admin::app.common.no-match-found')",
                                 selectTemplate: (item) => `@${item.original.code}`,
-                                menuItemTemplate: (item) => `<div class="p-1.5 rounded-md text-base cursor-pointer transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center">${item.original.name || item.original.code}</div>`,
+                                menuItemTemplate: (item) => `<div class="p-1.5 rounded-md text-base cursor-pointer transition-all max-sm:place-self-center">${item.original.name || '[' + item.original.code + ']'}</div>`,
                             });
                             
                             tribute.attach(this.$refs.promptInput);
@@ -444,7 +443,7 @@
                         return;
                     }
 
-                    const response = await fetch(`{{ route('admin.magic_ai.suggestion_values') }}?query=${text}&&entity_name=${this.entityName}`);
+                    const response = await fetch(`{{ route('admin.magic_ai.suggestion_values') }}?query=${text}&&entity_name=${this.entityName}}&&locale={{ core()->getRequestedLocaleCode() }}`);
                     const data = await response.json();
                     this.suggestionValues = data;
 
@@ -472,6 +471,8 @@
                         resource_id: this.resourceId,
                         resource_type: this.getResourceType(),
                         field_type: 'tinymce',
+                        locale: "{{ core()->getRequestedLocaleCode() }}",
+                        channel: "{{ core()->getRequestedChannelCode() }}",
                     })
                         .then(response => {
                             this.isLoading = false;
