@@ -5,6 +5,7 @@ namespace Webkul\Product\Validator\Rule;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Validator;
+use Webkul\Attribute\Contracts\Attribute;
 
 class AttributeValueRule implements ValidationRule
 {
@@ -29,7 +30,7 @@ class AttributeValueRule implements ValidationRule
 
         $productAttribute = $this->attributeService->findAttributeByCode($attributeCode);
 
-        if (! $productAttribute) {
+        if (! $this->isExpectedAttribute($productAttribute, $channel, $locale)) {
             $fail(sprintf('Unexpected Attribute %s', $attributeCode));
 
             return;
@@ -85,5 +86,29 @@ class AttributeValueRule implements ValidationRule
             'locale'        => null,
             'attributeCode' => $data[1],
         ];
+    }
+
+    /**
+     * Checks if the attribute is expected this section or not
+     */
+    protected function isExpectedAttribute(?Attribute $attribute, ?string $channel, ?string $locale): bool
+    {
+        if (! $attribute) {
+            return false;
+        }
+
+        if ($attribute->isLocaleAndChannelBasedAttribute()) {
+            return ! empty($channel) && ! empty($locale);
+        }
+
+        if ($attribute->isChannelBasedAttribute()) {
+            return ! empty($channel) && empty($locale);
+        }
+
+        if ($attribute->isLocaleBasedAttribute()) {
+            return ! empty($locale) && empty($channel);
+        }
+
+        return empty($channel) && empty($locale);
     }
 }

@@ -1,23 +1,23 @@
 <?php
 
 return [
-    'seeders'   => [
+    'seeders' => [
         'attribute' => [
             'attribute-families' => [
                 'default' => 'Zadano',
             ],
 
-            'attribute-groups'   => [
-                'description'       => 'Opis',
-                'general'           => 'Općenito',
-                'inventories'       => 'Inventar',
-                'meta-description'  => 'Meta Opis',
-                'price'             => 'Cijena',
-                'technical'         => 'Tehnički',
-                'shipping'          => 'Dostava',
+            'attribute-groups' => [
+                'description'      => 'Opis',
+                'general'          => 'Općenito',
+                'inventories'      => 'Inventar',
+                'meta-description' => 'Meta Opis',
+                'price'            => 'Cijena',
+                'technical'        => 'Tehnički',
+                'shipping'         => 'Dostava',
             ],
 
-            'attributes'         => [
+            'attributes' => [
                 'brand'                => 'Brend',
                 'color'                => 'Boja',
                 'cost'                 => 'Trošak',
@@ -48,7 +48,7 @@ return [
                 'width'                => 'Širina',
             ],
 
-            'attribute-options'  => [
+            'attribute-options' => [
                 'black'  => 'Crna',
                 'green'  => 'Zelena',
                 'l'      => 'L',
@@ -61,7 +61,7 @@ return [
             ],
         ],
 
-        'category'  => [
+        'category' => [
             'categories' => [
                 'description' => 'Opis glavne kategorije',
                 'name'        => 'Glavna',
@@ -73,14 +73,14 @@ return [
             ],
         ],
 
-        'cms'       => [
+        'cms' => [
             'pages' => [
-                'about-us'         => [
+                'about-us' => [
                     'content' => 'Sadržaj stranice O Nama',
                     'title'   => 'O Nama',
                 ],
 
-                'contact-us'       => [
+                'contact-us' => [
                     'content' => 'Sadržaj stranice Kontaktirajte Nas',
                     'title'   => 'Kontaktirajte Nas',
                 ],
@@ -90,27 +90,27 @@ return [
                     'title'   => 'Korisnička Podrška',
                 ],
 
-                'payment-policy'   => [
+                'payment-policy' => [
                     'content' => 'Sadržaj stranice Pravila Plaćanja',
                     'title'   => 'Pravila Plaćanja',
                 ],
 
-                'privacy-policy'   => [
+                'privacy-policy' => [
                     'content' => 'Sadržaj stranice Pravila Privatnosti',
                     'title'   => 'Pravila Privatnosti',
                 ],
 
-                'refund-policy'    => [
+                'refund-policy' => [
                     'content' => 'Sadržaj stranice Pravila Povrata Novca',
                     'title'   => 'Pravila Povrata Novca',
                 ],
 
-                'return-policy'    => [
+                'return-policy' => [
                     'content' => 'Sadržaj stranice Pravila Povrata',
                     'title'   => 'Pravila Povrata',
                 ],
 
-                'shipping-policy'  => [
+                'shipping-policy' => [
                     'content' => 'Sadržaj stranice Pravila Dostave',
                     'title'   => 'Pravila Dostave',
                 ],
@@ -120,20 +120,20 @@ return [
                     'title'   => 'Uvjeti i Odredbe',
                 ],
 
-                'terms-of-use'     => [
+                'terms-of-use' => [
                     'content' => 'Sadržaj stranice Uvjeti Korištenja',
                     'title'   => 'Uvjeti Korištenja',
                 ],
 
-                'whats-new'        => [
+                'whats-new' => [
                     'content' => 'Sadržaj stranice Što je Novo',
                     'title'   => 'Što je Novo',
                 ],
             ],
         ],
 
-        'core'      => [
-            'channels'   => [
+        'core' => [
+            'channels' => [
                 'meta-title'       => 'Demo Trgovina',
                 'meta-keywords'    => 'Demo Trgovina Ključne Riječi',
                 'meta-description' => 'Demo Trgovina Meta Opis',
@@ -157,7 +157,7 @@ return [
             ],
         ],
 
-        'customer'  => [
+        'customer' => [
             'customer-groups' => [
                 'general'   => 'Općenito',
                 'guest'     => 'Gost',
@@ -171,40 +171,40 @@ return [
             ],
         ],
 
-        'shop'      => [
+        'shop' => [
             'theme-customizations' => [
-                'all-products'           => [
-                    'name'    => 'Svi Proizvodi',
+                'all-products' => [
+                    'name' => 'Svi Proizvodi',
 
                     'options' => [
                         'title' => 'Svi Proizvodi',
                     ],
                 ],
 
-                'bold-collections'       => [
+                'bold-collections' => [
                     'content' => [
                         'btn-title'   => 'Pogledaj Sve',
                         'description' => 'Predstavljamo naše nove Smjele Kolekcije! Istaknite se odvažnim dizajnom i živim bojama.',
                         'title'       => 'Spremni za naše nove Smjele Kolekcije!',
                     ],
 
-                    'name'    => 'Smjele Kolekcije',
+                    'name' => 'Smjele Kolekcije',
                 ],
 
                 'categories-collections' => [
                     'name' => 'Kolekcije Kategorija',
                 ],
 
-                'featured-collections'   => [
-                    'name'    => 'Istaknute Kolekcije',
+                'featured-collections' => [
+                    'name' => 'Istaknute Kolekcije',
 
                     'options' => [
                         'title' => 'Istaknuti Proizvodi',
                     ],
                 ],
 
-                'footer-links'           => [
-                    'name'    => 'Linkovi u Podnožju',
+                'footer-links' => [
+                    'name' => 'Linkovi u Podnožju',
 
                     'options' => [
                         'about-us'         => 'O Nama',
@@ -221,33 +221,33 @@ return [
                     ],
                 ],
 
-                'game-container'         => [
+                'game-container' => [
                     'content' => [
                         'sub-title-1' => 'Naše Kolekcije',
                         'sub-title-2' => 'Naše Kolekcije',
                         'title'       => 'Igrajte se s našim novim dodacima!',
                     ],
 
-                    'name'    => 'Game Container',
+                    'name' => 'Game Container',
                 ],
 
-                'image-carousel'         => [
-                    'name'    => 'Karusel Slika',
+                'image-carousel' => [
+                    'name' => 'Karusel Slika',
 
                     'sliders' => [
                         'title' => 'Pripremite se za novu kolekciju',
                     ],
                 ],
 
-                'new-products'           => [
-                    'name'    => 'Novi Proizvodi',
+                'new-products' => [
+                    'name' => 'Novi Proizvodi',
 
                     'options' => [
                         'title' => 'Novi Proizvodi',
                     ],
                 ],
 
-                'offer-information'      => [
+                'offer-information' => [
                     'content' => [
                         'title' => 'Ostvarite DO 40% POPUSTA na prvu narudžbu KUPITE SADA',
                     ],
@@ -255,7 +255,7 @@ return [
                     'name' => 'Informacije o Ponudi',
                 ],
 
-                'services-content'       => [
+                'services-content' => [
                     'description' => [
                         'emi-available-info'   => 'Bez kamatne rate dostupne za sve glavne kreditne kartice',
                         'free-shipping-info'   => 'Uživajte u besplatnoj dostavi na sve narudžbe',
@@ -263,9 +263,9 @@ return [
                         'time-support-info'    => 'Posvećena 24/7 podrška putem chata i e-maila',
                     ],
 
-                    'name'        => 'Sadržaj Usluga',
+                    'name' => 'Sadržaj Usluga',
 
-                    'title'       => [
+                    'title' => [
                         'emi-available'   => 'EMI Dostupan',
                         'free-shipping'   => 'Besplatna Dostava',
                         'product-replace' => 'Zamjena Proizvoda',
@@ -273,7 +273,7 @@ return [
                     ],
                 ],
 
-                'top-collections'        => [
+                'top-collections' => [
                     'content' => [
                         'sub-title-1' => 'Naše Kolekcije',
                         'sub-title-2' => 'Naše Kolekcije',
@@ -284,12 +284,12 @@ return [
                         'title'       => 'Igrajte se s našim novim dodacima!',
                     ],
 
-                    'name'    => 'Najbolje Kolekcije',
+                    'name' => 'Najbolje Kolekcije',
                 ],
             ],
         ],
 
-        'user'      => [
+        'user' => [
             'roles' => [
                 'description' => 'Ova uloga omogućuje korisnicima potpuni pristup',
                 'name'        => 'Administrator',
@@ -352,17 +352,17 @@ return [
             ],
 
             'installation-processing' => [
-                'unopim'            => 'Instalacija UnoPim-a',
-                'unopim-info'       => 'Kreiranje tablica baze podataka, ovo može potrajati.',
-                'title'             => 'Instalacija',
+                'unopim'      => 'Instalacija UnoPim-a',
+                'unopim-info' => 'Kreiranje tablica baze podataka, ovo može potrajati.',
+                'title'       => 'Instalacija',
             ],
 
             'installation-completed' => [
-                'admin-panel'                   => 'Administratorska Ploča',
-                'unopim-forums'                 => 'UnoPim Forumi',
-                'explore-unopim-extensions'     => 'Istraži UnoPim Proširenja',
-                'title-info'                    => 'UnoPim je uspješno instaliran.',
-                'title'                         => 'Instalacija Dovršena',
+                'admin-panel'               => 'Administratorska Ploča',
+                'unopim-forums'             => 'UnoPim Forumi',
+                'explore-unopim-extensions' => 'Istraži UnoPim Proširenja',
+                'title-info'                => 'UnoPim je uspješno instaliran.',
+                'title'                     => 'Instalacija Dovršena',
             ],
 
             'ready-for-installation' => [
@@ -406,38 +406,19 @@ return [
                 'xml'         => 'XML',
             ],
 
-            'arabic'                    => 'Arapski',
-            'back'                      => 'Natrag',
-            'unopim-info'               => 'Projekt Zajednice',
-            'unopim-logo'               => 'UnoPim Logo',
-            'unopim'                    => 'UnoPim',
-            'bengali'                   => 'Bengalski',
-            'chinese'                   => 'Kineski',
-            'continue'                  => 'Nastavi',
-            'dutch'                     => 'Nizozemski',
-            'english'                   => 'Engleski',
-            'french'                    => 'Francuski',
-            'german'                    => 'Njemački',
-            'hebrew'                    => 'Hebrejski',
-            'hindi'                     => 'Hindski',
-            'installation-description'  => 'UnoPim instalacija obično uključuje nekoliko koraka. Evo sažetka:',
-            'wizard-language'           => 'Jezik Čarobnjaka za Instalaciju',
-            'installation-info'         => 'Drago nam je što ste ovdje!',
-            'installation-title'        => 'Dobrodošli u Instalaciju',
-            'italian'                   => 'Talijanski',
-            'japanese'                  => 'Japanski',
-            'persian'                   => 'Perzijski',
-            'polish'                    => 'Poljski',
-            'portuguese'                => 'Brazilski Portugalski',
-            'russian'                   => 'Ruski',
-            'save-configuration'        => 'Spremi Konfiguraciju',
-            'sinhala'                   => 'Sinhala',
-            'skip'                      => 'Preskoči',
-            'spanish'                   => 'Španjolski',
-            'title'                     => 'UnoPim Instalacijski Program',
-            'turkish'                   => 'Turski',
-            'ukrainian'                 => 'Ukrajinski',
-            'webkul'                    => 'Webkul',
+            'back'                     => 'Natrag',
+            'unopim-info'              => 'Projekt Zajednice',
+            'unopim-logo'              => 'UnoPim Logo',
+            'unopim'                   => 'UnoPim',
+            'continue'                 => 'Nastavi',
+            'installation-description' => 'UnoPim instalacija obično uključuje nekoliko koraka. Evo sažetka:',
+            'wizard-language'          => 'Jezik Čarobnjaka za Instalaciju',
+            'installation-info'        => 'Drago nam je što ste ovdje!',
+            'installation-title'       => 'Dobrodošli u Instalaciju',
+            'save-configuration'       => 'Spremi Konfiguraciju',
+            'skip'                     => 'Preskoči',
+            'title'                    => 'UnoPim Instalacijski Program',
+            'webkul'                   => 'Webkul',
         ],
     ],
 ];

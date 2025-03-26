@@ -1,23 +1,23 @@
 <?php
 
 return [
-    'seeders'   => [
+    'seeders' => [
         'attribute' => [
             'attribute-families' => [
                 'default' => 'Oletus',
             ],
 
-            'attribute-groups'   => [
-                'description'       => 'Kuvaus',
-                'general'           => 'Yleinen',
-                'inventories'       => 'Varastot',
-                'meta-description'  => 'Meta Kuvaus',
-                'price'             => 'Hinta',
-                'technical'         => 'Tekninen',
-                'shipping'          => 'Toimitus',
+            'attribute-groups' => [
+                'description'      => 'Kuvaus',
+                'general'          => 'Yleinen',
+                'inventories'      => 'Varastot',
+                'meta-description' => 'Meta Kuvaus',
+                'price'            => 'Hinta',
+                'technical'        => 'Tekninen',
+                'shipping'         => 'Toimitus',
             ],
 
-            'attributes'         => [
+            'attributes' => [
                 'brand'                => 'Brändi',
                 'color'                => 'Väri',
                 'cost'                 => 'Kustannus',
@@ -48,7 +48,7 @@ return [
                 'width'                => 'Leveys',
             ],
 
-            'attribute-options'  => [
+            'attribute-options' => [
                 'black'  => 'Musta',
                 'green'  => 'Vihreä',
                 'l'      => 'L',
@@ -61,7 +61,7 @@ return [
             ],
         ],
 
-        'category'  => [
+        'category' => [
             'categories' => [
                 'description' => 'Juuri Kategorian Kuvaus',
                 'name'        => 'Juuri',
@@ -73,14 +73,14 @@ return [
             ],
         ],
 
-        'cms'       => [
+        'cms' => [
             'pages' => [
-                'about-us'         => [
+                'about-us' => [
                     'content' => 'Tietoja Meistä Sivun Sisältö',
                     'title'   => 'Tietoja Meistä',
                 ],
 
-                'contact-us'       => [
+                'contact-us' => [
                     'content' => 'Ota Yhteyttä Sivun Sisältö',
                     'title'   => 'Ota Yhteyttä',
                 ],
@@ -90,27 +90,27 @@ return [
                     'title'   => 'Asiakaspalvelu',
                 ],
 
-                'payment-policy'   => [
+                'payment-policy' => [
                     'content' => 'Maksupolitiikan Sivun Sisältö',
                     'title'   => 'Maksupolitiikka',
                 ],
 
-                'privacy-policy'   => [
+                'privacy-policy' => [
                     'content' => 'Yksityisyydensuojan Sivun Sisältö',
                     'title'   => 'Yksityisyys',
                 ],
 
-                'refund-policy'    => [
+                'refund-policy' => [
                     'content' => 'Palautuspolitiikan Sivun Sisältö',
                     'title'   => 'Palautuspolitiikka',
                 ],
 
-                'return-policy'    => [
+                'return-policy' => [
                     'content' => 'Palautuskäytännön Sivun Sisältö',
                     'title'   => 'Palautuskäytäntö',
                 ],
 
-                'shipping-policy'  => [
+                'shipping-policy' => [
                     'content' => 'Toimituskäytännön Sivun Sisältö',
                     'title'   => 'Toimituskäytäntö',
                 ],
@@ -120,20 +120,20 @@ return [
                     'title'   => 'Ehdot ja Käytännöt',
                 ],
 
-                'terms-of-use'     => [
+                'terms-of-use' => [
                     'content' => 'Käyttöehdot Sivun Sisältö',
                     'title'   => 'Käyttöehdot',
                 ],
 
-                'whats-new'        => [
+                'whats-new' => [
                     'content' => 'Uutuudet Sivun Sisältö',
                     'title'   => 'Uutuudet',
                 ],
             ],
         ],
 
-        'core'      => [
-            'channels'   => [
+        'core' => [
+            'channels' => [
                 'meta-title'       => 'Demo Store',
                 'meta-keywords'    => 'Demo Store Meta Avainsanat',
                 'meta-description' => 'Demo Store Meta Kuvaus',
@@ -157,7 +157,7 @@ return [
             ],
         ],
 
-        'customer'  => [
+        'customer' => [
             'customer-groups' => [
                 'general'   => 'Yleinen',
                 'guest'     => 'Vieras',
@@ -171,40 +171,40 @@ return [
             ],
         ],
 
-        'shop'      => [
+        'shop' => [
             'theme-customizations' => [
-                'all-products'           => [
-                    'name'    => 'Kaikki Tuotteet',
+                'all-products' => [
+                    'name' => 'Kaikki Tuotteet',
 
                     'options' => [
                         'title' => 'Kaikki Tuotteet',
                     ],
                 ],
 
-                'bold-collections'       => [
+                'bold-collections' => [
                     'content' => [
                         'btn-title'   => 'Näytä Kaikki',
                         'description' => 'Tervetuloa Uusiin Bold Kokoelmiin! Kohenna tyyliäsi rohkeilla malleilla ja kirkkailla väreillä. Tutustu silmiinpistäviin kuvioihin ja rohkeisiin väreihin, jotka määrittelevät vaatekaapin uudelleen. Ole valmis omaksumaan poikkeukselliset!',
                         'title'       => 'Valmistaudu Uusiin Bold Kokoelmiin!',
                     ],
 
-                    'name'    => 'Bold Kokoelmat',
+                    'name' => 'Bold Kokoelmat',
                 ],
 
                 'categories-collections' => [
                     'name' => 'Luokkien Kokoelmat',
                 ],
 
-                'featured-collections'   => [
-                    'name'    => 'Esitellyt Kokoelmat',
+                'featured-collections' => [
+                    'name' => 'Esitellyt Kokoelmat',
 
                     'options' => [
                         'title' => 'Esitellyt Tuotteet',
                     ],
                 ],
 
-                'footer-links'           => [
-                    'name'    => 'Jalkaliittymät',
+                'footer-links' => [
+                    'name' => 'Jalkaliittymät',
 
                     'options' => [
                         'about-us'         => 'Tietoja Meistä',
@@ -221,33 +221,33 @@ return [
                     ],
                 ],
 
-                'game-container'         => [
+                'game-container' => [
                     'content' => [
                         'sub-title-1' => 'Kokoelmat',
                         'sub-title-2' => 'Kokoelmat',
                         'title'       => 'Peli Uusilla Lisäyksillämme!',
                     ],
 
-                    'name'    => 'Peli Astia',
+                    'name' => 'Peli Astia',
                 ],
 
-                'image-carousel'         => [
-                    'name'    => 'Kuva-Galleria',
+                'image-carousel' => [
+                    'name' => 'Kuva-Galleria',
 
                     'sliders' => [
                         'title' => 'Valmistaudu Uuteen Kokoelmaan',
                     ],
                 ],
 
-                'new-products'           => [
-                    'name'    => 'Uudet Tuotteet',
+                'new-products' => [
+                    'name' => 'Uudet Tuotteet',
 
                     'options' => [
                         'title' => 'Uudet Tuotteet',
                     ],
                 ],
 
-                'offer-information'      => [
+                'offer-information' => [
                     'content' => [
                         'title' => 'SAAVUTTA 40% ALENNUS ENSIMMÄISELLÄ TILAUKSELLASI, OSTA NYT',
                     ],
@@ -255,7 +255,7 @@ return [
                     'name' => 'Tarjous Tiedot',
                 ],
 
-                'services-content'       => [
+                'services-content' => [
                     'description' => [
                         'emi-available-info'   => 'Ei kustannuksia EMI kaikkien pääluottokorttien osalta',
                         'free-shipping-info'   => 'Vapaat toimitukset kaikille tilauksille',
@@ -263,9 +263,9 @@ return [
                         'time-support-info'    => 'Omistautunut 24/7 tuki chatissa ja sähköpostitse',
                     ],
 
-                    'name'        => 'Palvelut Sisältö',
+                    'name' => 'Palvelut Sisältö',
 
-                    'title'       => [
+                    'title' => [
                         'emi-available'   => 'EMI Saatavilla',
                         'free-shipping'   => 'Vapaa Toimitus',
                         'product-replace' => 'Tuote Vaihto',
@@ -273,7 +273,7 @@ return [
                     ],
                 ],
 
-                'top-collections'        => [
+                'top-collections' => [
                     'content' => [
                         'sub-title-1' => 'Kokoelmat',
                         'sub-title-2' => 'Kokoelmat',
@@ -284,12 +284,12 @@ return [
                         'title'       => 'Peli Uusilla Lisäyksillämme!',
                     ],
 
-                    'name'    => 'Ylä Kokoelmat',
+                    'name' => 'Ylä Kokoelmat',
                 ],
             ],
         ],
 
-        'user'      => [
+        'user' => [
             'roles' => [
                 'description' => 'Tämä rooli antaa käyttäjälle kaikki oikeudet',
                 'name'        => 'Ylläpitäjä',
@@ -352,17 +352,17 @@ return [
             ],
 
             'installation-processing' => [
-                'unopim'            => 'UnoPim Asennus',
-                'unopim-info'       => 'Tietokantataulukoiden luominen, tämä voi kestää hetken',
-                'title'             => 'Asennus',
+                'unopim'      => 'UnoPim Asennus',
+                'unopim-info' => 'Tietokantataulukoiden luominen, tämä voi kestää hetken',
+                'title'       => 'Asennus',
             ],
 
             'installation-completed' => [
-                'admin-panel'                   => 'Ylläpitäjän Paneeli',
-                'unopim-forums'                 => 'UnoPim Foorumit',
-                'explore-unopim-extensions'     => 'Tutustu UnoPim Laajennuksiin',
-                'title-info'                    => 'UnoPim on onnistuneesti asennettu järjestelmään.',
-                'title'                         => 'Asennus Valmis',
+                'admin-panel'               => 'Ylläpitäjän Paneeli',
+                'unopim-forums'             => 'UnoPim Foorumit',
+                'explore-unopim-extensions' => 'Tutustu UnoPim Laajennuksiin',
+                'title-info'                => 'UnoPim on onnistuneesti asennettu järjestelmään.',
+                'title'                     => 'Asennus Valmis',
             ],
 
             'ready-for-installation' => [
@@ -406,38 +406,19 @@ return [
                 'xml'         => 'XML',
             ],
 
-            'arabic'                    => 'Arabia',
-            'back'                      => 'Takaisin',
-            'unopim-info'               => 'Yhteisöprojekti',
-            'unopim-logo'               => 'UnoPim Logo',
-            'unopim'                    => 'UnoPim',
-            'bengali'                   => 'Bengali',
-            'chinese'                   => 'Kiina',
-            'continue'                  => 'Jatka',
-            'dutch'                     => 'Hollanti',
-            'english'                   => 'Englanti',
-            'french'                    => 'Ranska',
-            'german'                    => 'Saksa',
-            'hebrew'                    => 'Heprea',
-            'hindi'                     => 'Hindi',
-            'installation-description'  => 'UnoPimin asennus sisältää useita vaiheita. Tässä yleiskatsaus:',
-            'wizard-language'           => 'Asennusohjelman kieli',
-            'installation-info'         => 'Mukava nähdä sinut täällä!',
-            'installation-title'        => 'Tervetuloa Asennukseen',
-            'italian'                   => 'Italia',
-            'japanese'                  => 'Japani',
-            'persian'                   => 'Persia',
-            'polish'                    => 'Puola',
-            'portuguese'                => 'Portugalin Portugali',
-            'russian'                   => 'Venäjä',
-            'save-configuration'        => 'Tallenna Konfiguraatio',
-            'sinhala'                   => 'Sinhala',
-            'skip'                      => 'Ohita',
-            'spanish'                   => 'Espanja',
-            'title'                     => 'UnoPim Asennusohjelma',
-            'turkish'                   => 'Turkki',
-            'ukrainian'                 => 'Ukraina',
-            'webkul'                    => 'Webkul',
+            'back'                     => 'Takaisin',
+            'unopim-info'              => 'Yhteisöprojekti',
+            'unopim-logo'              => 'UnoPim Logo',
+            'unopim'                   => 'UnoPim',
+            'continue'                 => 'Jatka',
+            'installation-description' => 'UnoPimin asennus sisältää useita vaiheita. Tässä yleiskatsaus:',
+            'wizard-language'          => 'Asennusohjelman kieli',
+            'installation-info'        => 'Mukava nähdä sinut täällä!',
+            'installation-title'       => 'Tervetuloa Asennukseen',
+            'save-configuration'       => 'Tallenna Konfiguraatio',
+            'skip'                     => 'Ohita',
+            'title'                    => 'UnoPim Asennusohjelma',
+            'webkul'                   => 'Webkul',
         ],
     ],
 ];

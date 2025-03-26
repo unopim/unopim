@@ -1,23 +1,23 @@
 <?php
 
 return [
-    'seeders'   => [
+    'seeders' => [
         'attribute' => [
             'attribute-families' => [
                 'default' => '默认',
             ],
 
-            'attribute-groups'   => [
-                'description'       => '描述',
-                'general'           => '一般的',
-                'inventories'       => '库存',
-                'meta-description'  => '元描述',
-                'price'             => '价格',
-                'technical'         => '技术的',
-                'shipping'          => '船运',
+            'attribute-groups' => [
+                'description'      => '描述',
+                'general'          => '一般的',
+                'inventories'      => '库存',
+                'meta-description' => '元描述',
+                'price'            => '价格',
+                'technical'        => '技术的',
+                'shipping'         => '船运',
             ],
 
-            'attributes'         => [
+            'attributes' => [
                 'brand'                => '品牌',
                 'color'                => '颜色',
                 'cost'                 => '成本',
@@ -48,7 +48,7 @@ return [
                 'width'                => '宽度',
             ],
 
-            'attribute-options'  => [
+            'attribute-options' => [
                 'black'  => '黑色的',
                 'green'  => '绿色的',
                 'l'      => 'L',
@@ -61,7 +61,7 @@ return [
             ],
         ],
 
-        'category'  => [
+        'category' => [
             'categories' => [
                 'description' => '根类别描述',
                 'name'        => '根',
@@ -73,14 +73,14 @@ return [
             ],
         ],
 
-        'cms'       => [
+        'cms' => [
             'pages' => [
-                'about-us'         => [
+                'about-us' => [
                     'content' => '关于我们页面内容',
                     'title'   => '关于我们',
                 ],
 
-                'contact-us'       => [
+                'contact-us' => [
                     'content' => '联系我们页面内容',
                     'title'   => '联系我们',
                 ],
@@ -90,27 +90,27 @@ return [
                     'title'   => '客户服务',
                 ],
 
-                'payment-policy'   => [
+                'payment-policy' => [
                     'content' => '付款政策页面内容',
                     'title'   => '付款政策',
                 ],
 
-                'privacy-policy'   => [
+                'privacy-policy' => [
                     'content' => '隐私政策页面内容',
                     'title'   => '隐私政策',
                 ],
 
-                'refund-policy'    => [
+                'refund-policy' => [
                     'content' => '退款政策页面内容',
                     'title'   => '退款政策',
                 ],
 
-                'return-policy'    => [
+                'return-policy' => [
                     'content' => '退货政策页面内容',
                     'title'   => '退货政策',
                 ],
 
-                'shipping-policy'  => [
+                'shipping-policy' => [
                     'content' => '运输政策页面内容',
                     'title'   => '运输政策',
                 ],
@@ -120,20 +120,20 @@ return [
                     'title'   => '条款及条件',
                 ],
 
-                'terms-of-use'     => [
+                'terms-of-use' => [
                     'content' => '使用条款页面内容',
                     'title'   => '使用条款',
                 ],
 
-                'whats-new'        => [
+                'whats-new' => [
                     'content' => '新增内容页面内容',
                     'title'   => '什么是新的',
                 ],
             ],
         ],
 
-        'core'      => [
-            'channels'   => [
+        'core' => [
+            'channels' => [
                 'meta-title'       => '示范店',
                 'meta-keywords'    => '演示商店元关键字',
                 'meta-description' => '演示商店元描述',
@@ -157,7 +157,7 @@ return [
             ],
         ],
 
-        'customer'  => [
+        'customer' => [
             'customer-groups' => [
                 'general'   => '一般的',
                 'guest'     => '客人',
@@ -171,40 +171,40 @@ return [
             ],
         ],
 
-        'shop'      => [
+        'shop' => [
             'theme-customizations' => [
-                'all-products'           => [
-                    'name'    => '所有产品',
+                'all-products' => [
+                    'name' => '所有产品',
 
                     'options' => [
                         'title' => '所有产品',
                     ],
                 ],
 
-                'bold-collections'       => [
+                'bold-collections' => [
                     'content' => [
                         'btn-title'   => '查看全部',
                         'description' => '隆重推出我们大胆的新系列！通过大胆的设计和充满活力的宣言提升您的风格。探索引人注目的图案和大胆的色彩，重新定义您的衣柜。准备好拥抱非凡吧！',
                         'title'       => '准备好迎接我们新的大胆系列吧！',
                     ],
 
-                    'name'    => '大胆系列',
+                    'name' => '大胆系列',
                 ],
 
                 'categories-collections' => [
                     'name' => '类别 收藏',
                 ],
 
-                'featured-collections'   => [
-                    'name'    => '特色收藏',
+                'featured-collections' => [
+                    'name' => '特色收藏',
 
                     'options' => [
                         'title' => '特色产品',
                     ],
                 ],
 
-                'footer-links'           => [
-                    'name'    => '页脚链接',
+                'footer-links' => [
+                    'name' => '页脚链接',
 
                     'options' => [
                         'about-us'         => '关于我们',
@@ -221,33 +221,33 @@ return [
                     ],
                 ],
 
-                'game-container'         => [
+                'game-container' => [
                     'content' => [
                         'sub-title-1' => '我们的系列',
                         'sub-title-2' => '我们的系列',
                         'title'       => '游戏新增了我们的新内容！',
                     ],
 
-                    'name'    => '游戏容器',
+                    'name' => '游戏容器',
                 ],
 
-                'image-carousel'         => [
-                    'name'    => '图像轮播',
+                'image-carousel' => [
+                    'name' => '图像轮播',
 
                     'sliders' => [
                         'title' => '为新系列做好准备',
                     ],
                 ],
 
-                'new-products'           => [
-                    'name'    => '新产品',
+                'new-products' => [
+                    'name' => '新产品',
 
                     'options' => [
                         'title' => '新产品',
                     ],
                 ],
 
-                'offer-information'      => [
+                'offer-information' => [
                     'content' => [
                         'title' => '第一份订单可享受高达 40% 的折扣 现在购买',
                     ],
@@ -255,7 +255,7 @@ return [
                     'name' => '优惠资讯',
                 ],
 
-                'services-content'       => [
+                'services-content' => [
                     'description' => [
                         'emi-available-info'   => '所有主要信用卡均提供免费 EMI',
                         'free-shipping-info'   => '所有订单均可享受免费送货服务',
@@ -263,9 +263,9 @@ return [
                         'time-support-info'    => '通过聊天和电子邮件提供 24/7 专门支持',
                     ],
 
-                    'name'        => '服务内容',
+                    'name' => '服务内容',
 
-                    'title'       => [
+                    'title' => [
                         'emi-available'   => '艾米可用',
                         'free-shipping'   => '免运费',
                         'product-replace' => '产品更换',
@@ -273,7 +273,7 @@ return [
                     ],
                 ],
 
-                'top-collections'        => [
+                'top-collections' => [
                     'content' => [
                         'sub-title-1' => '我们的系列',
                         'sub-title-2' => '我们的系列',
@@ -284,12 +284,12 @@ return [
                         'title'       => '游戏新增了我们的新内容！',
                     ],
 
-                    'name'    => '热门收藏',
+                    'name' => '热门收藏',
                 ],
             ],
         ],
 
-        'user'      => [
+        'user' => [
             'roles' => [
                 'description' => '该角色用户将拥有所有访问权限',
                 'name'        => '行政人员',
@@ -351,21 +351,21 @@ return [
                 'warning-message'     => '提防！默认系统语言和默认货币的设置是永久性的，不能再次更改。',
             ],
 
-            'installation-processing'   => [
-                'unopim'            => '安装 UnoPim',
-                'unopim-info'       => '创建数据库表，这可能需要一些时间',
-                'title'             => '安装',
+            'installation-processing' => [
+                'unopim'      => '安装 UnoPim',
+                'unopim-info' => '创建数据库表，这可能需要一些时间',
+                'title'       => '安装',
             ],
 
-            'installation-completed'    => [
-                'admin-panel'                   => '管理面板',
-                'unopim-forums'                 => 'UnoPim 论坛',
-                'explore-unopim-extensions'     => '探索 UnoPim 扩展',
-                'title-info'                    => 'UnoPim 已成功安装在您的系统上。',
-                'title'                         => '安装完成',
+            'installation-completed' => [
+                'admin-panel'               => '管理面板',
+                'unopim-forums'             => 'UnoPim 论坛',
+                'explore-unopim-extensions' => '探索 UnoPim 扩展',
+                'title-info'                => 'UnoPim 已成功安装在您的系统上。',
+                'title'                     => '安装完成',
             ],
 
-            'ready-for-installation'    => [
+            'ready-for-installation' => [
                 'create-databsae-table'   => '创建数据库表',
                 'install-info-button'     => '点击下面的按钮即可',
                 'install-info'            => 'UnoPim 安装',
@@ -375,7 +375,7 @@ return [
                 'title'                   => '准备安装',
             ],
 
-            'start'                     => [
+            'start' => [
                 'locale'        => '语言环境',
                 'main'          => '开始',
                 'select-locale' => '选择区域设置',
@@ -383,7 +383,7 @@ return [
                 'welcome-title' => '欢迎来到乌诺皮姆 :version',
             ],
 
-            'server-requirements'       => [
+            'server-requirements' => [
                 'calendar'    => '日历',
                 'ctype'       => '类型',
                 'curl'        => '卷曲',
@@ -406,38 +406,19 @@ return [
                 'xml'         => 'XML',
             ],
 
-            'arabic'                    => '阿拉伯',
-            'back'                      => '后退',
-            'unopim-info'               => '社区项目',
-            'unopim-logo'               => '乌诺皮姆标志',
-            'unopim'                    => '乌诺皮姆',
-            'bengali'                   => '孟加拉',
-            'chinese'                   => '中国人',
-            'continue'                  => '继续',
-            'dutch'                     => '荷兰语',
-            'english'                   => '英语',
-            'french'                    => '法语',
-            'german'                    => '德语',
-            'hebrew'                    => '希伯来语',
-            'hindi'                     => '印地语',
-            'installation-description'  => 'UnoPim 安装通常涉及几个步骤。以下是 UnoPim 安装过程的概要：',
-            'wizard-language'           => '安装向导语言',
-            'installation-info'         => '我们很高兴在这里见到您！',
-            'installation-title'        => '欢迎来到安装',
-            'italian'                   => '意大利语',
-            'japanese'                  => '日本人',
-            'persian'                   => '波斯语',
-            'polish'                    => '抛光',
-            'portuguese'                => '巴西葡萄牙语',
-            'russian'                   => '俄语',
-            'save-configuration'        => '保存配置',
-            'sinhala'                   => '僧伽罗语',
-            'skip'                      => '跳过',
-            'spanish'                   => '西班牙语',
-            'title'                     => 'UnoPim 安装程序',
-            'turkish'                   => '土耳其',
-            'ukrainian'                 => '乌克兰',
-            'webkul'                    => '韦伯库尔',
+            'back'                     => '后退',
+            'unopim-info'              => '社区项目',
+            'unopim-logo'              => '乌诺皮姆标志',
+            'unopim'                   => '乌诺皮姆',
+            'continue'                 => '继续',
+            'installation-description' => 'UnoPim 安装通常涉及几个步骤。以下是 UnoPim 安装过程的概要：',
+            'wizard-language'          => '安装向导语言',
+            'installation-info'        => '我们很高兴在这里见到您！',
+            'installation-title'       => '欢迎来到安装',
+            'save-configuration'       => '保存配置',
+            'skip'                     => '跳过',
+            'title'                    => 'UnoPim 安装程序',
+            'webkul'                   => '韦伯库尔',
         ],
     ],
 ];

@@ -1,23 +1,23 @@
 <?php
 
 return [
-    'seeders'   => [
+    'seeders' => [
         'attribute' => [
             'attribute-families' => [
                 'default' => 'По умолчанию',
             ],
 
-            'attribute-groups'   => [
-                'description'       => 'Описание',
-                'general'           => 'Общий',
-                'inventories'       => 'Запасы',
-                'meta-description'  => 'Мета-описание',
-                'price'             => 'Цена',
-                'technical'         => 'Технический',
-                'shipping'          => 'Перевозки',
+            'attribute-groups' => [
+                'description'      => 'Описание',
+                'general'          => 'Общий',
+                'inventories'      => 'Запасы',
+                'meta-description' => 'Мета-описание',
+                'price'            => 'Цена',
+                'technical'        => 'Технический',
+                'shipping'         => 'Перевозки',
             ],
 
-            'attributes'         => [
+            'attributes' => [
                 'brand'                => 'Бренд',
                 'color'                => 'Цвет',
                 'cost'                 => 'Расходы',
@@ -48,7 +48,7 @@ return [
                 'width'                => 'Ширина',
             ],
 
-            'attribute-options'  => [
+            'attribute-options' => [
                 'black'  => 'Черный',
                 'green'  => 'Зеленый',
                 'l'      => 'л',
@@ -61,7 +61,7 @@ return [
             ],
         ],
 
-        'category'  => [
+        'category' => [
             'categories' => [
                 'description' => 'Описание корневой категории',
                 'name'        => 'Корень',
@@ -73,14 +73,14 @@ return [
             ],
         ],
 
-        'cms'       => [
+        'cms' => [
             'pages' => [
-                'about-us'         => [
+                'about-us' => [
                     'content' => 'О нас Содержание страницы',
                     'title'   => 'О нас',
                 ],
 
-                'contact-us'       => [
+                'contact-us' => [
                     'content' => 'Свяжитесь с нами Содержание страницы',
                     'title'   => 'Связаться с нами',
                 ],
@@ -90,27 +90,27 @@ return [
                     'title'   => 'Обслуживание клиентов',
                 ],
 
-                'payment-policy'   => [
+                'payment-policy' => [
                     'content' => 'Содержимое страницы политики оплаты',
                     'title'   => 'Политика оплаты',
                 ],
 
-                'privacy-policy'   => [
+                'privacy-policy' => [
                     'content' => 'Содержание страницы политики конфиденциальности',
                     'title'   => 'политика конфиденциальности',
                 ],
 
-                'refund-policy'    => [
+                'refund-policy' => [
                     'content' => 'Содержимое страницы политики возврата',
                     'title'   => 'Политика возврата',
                 ],
 
-                'return-policy'    => [
+                'return-policy' => [
                     'content' => 'Содержимое страницы политики возврата',
                     'title'   => 'Политика возврата',
                 ],
 
-                'shipping-policy'  => [
+                'shipping-policy' => [
                     'content' => 'Содержание страницы политики доставки',
                     'title'   => 'Политика доставки',
                 ],
@@ -120,20 +120,20 @@ return [
                     'title'   => 'Условия использования',
                 ],
 
-                'terms-of-use'     => [
+                'terms-of-use' => [
                     'content' => 'Условия использования Содержание страницы',
                     'title'   => 'Условия эксплуатации',
                 ],
 
-                'whats-new'        => [
+                'whats-new' => [
                     'content' => 'Что нового в контенте страницы',
                     'title'   => 'Что нового',
                 ],
             ],
         ],
 
-        'core'      => [
-            'channels'   => [
+        'core' => [
+            'channels' => [
                 'meta-title'       => 'Демо-магазин',
                 'meta-keywords'    => 'Мета-ключевое слово демо-магазина',
                 'meta-description' => 'Мета-описание демо-магазина',
@@ -157,7 +157,7 @@ return [
             ],
         ],
 
-        'customer'  => [
+        'customer' => [
             'customer-groups' => [
                 'general'   => 'Общий',
                 'guest'     => 'Гость',
@@ -171,40 +171,40 @@ return [
             ],
         ],
 
-        'shop'      => [
+        'shop' => [
             'theme-customizations' => [
-                'all-products'           => [
-                    'name'    => 'Все продукты',
+                'all-products' => [
+                    'name' => 'Все продукты',
 
                     'options' => [
                         'title' => 'Все продукты',
                     ],
                 ],
 
-                'bold-collections'       => [
+                'bold-collections' => [
                     'content' => [
                         'btn-title'   => 'Посмотреть все',
                         'description' => 'Представляем наши новые смелые коллекции! Подчеркните свой стиль смелыми дизайнами и яркими акцентами. Откройте для себя яркие узоры и смелые цвета, которые изменят ваш гардероб. Будьте готовы принять необыкновенное!',
                         'title'       => 'Будьте готовы к нашим новым смелым коллекциям!',
                     ],
 
-                    'name'    => 'Смелые коллекции',
+                    'name' => 'Смелые коллекции',
                 ],
 
                 'categories-collections' => [
                     'name' => 'Категории Коллекции',
                 ],
 
-                'featured-collections'   => [
-                    'name'    => 'Избранные коллекции',
+                'featured-collections' => [
+                    'name' => 'Избранные коллекции',
 
                     'options' => [
                         'title' => 'Рекомендуемые продукты',
                     ],
                 ],
 
-                'footer-links'           => [
-                    'name'    => 'Ссылки в нижнем колонтитуле',
+                'footer-links' => [
+                    'name' => 'Ссылки в нижнем колонтитуле',
 
                     'options' => [
                         'about-us'         => 'О нас',
@@ -221,33 +221,33 @@ return [
                     ],
                 ],
 
-                'game-container'         => [
+                'game-container' => [
                     'content' => [
                         'sub-title-1' => 'Наши коллекции',
                         'sub-title-2' => 'Наши коллекции',
                         'title'       => 'Игра с нашими новыми дополнениями!',
                     ],
 
-                    'name'    => 'Игровой контейнер',
+                    'name' => 'Игровой контейнер',
                 ],
 
-                'image-carousel'         => [
-                    'name'    => 'Карусель изображений',
+                'image-carousel' => [
+                    'name' => 'Карусель изображений',
 
                     'sliders' => [
                         'title' => 'Будьте готовы к новой коллекции',
                     ],
                 ],
 
-                'new-products'           => [
-                    'name'    => 'Новые продукты',
+                'new-products' => [
+                    'name' => 'Новые продукты',
 
                     'options' => [
                         'title' => 'Новые продукты',
                     ],
                 ],
 
-                'offer-information'      => [
+                'offer-information' => [
                     'content' => [
                         'title' => 'Получите СКИДКУ ДО 40% на первый заказ КУПИТЬ СЕЙЧАС',
                     ],
@@ -255,7 +255,7 @@ return [
                     'name' => 'Информация о предложении',
                 ],
 
-                'services-content'       => [
+                'services-content' => [
                     'description' => [
                         'emi-available-info'   => 'Бесплатная EMI доступна для всех основных кредитных карт.',
                         'free-shipping-info'   => 'Наслаждайтесь бесплатной доставкой всех заказов',
@@ -263,9 +263,9 @@ return [
                         'time-support-info'    => 'Выделенная круглосуточная поддержка через чат и электронную почту.',
                     ],
 
-                    'name'        => 'Содержание услуг',
+                    'name' => 'Содержание услуг',
 
-                    'title'       => [
+                    'title' => [
                         'emi-available'   => 'Эми Доступна',
                         'free-shipping'   => 'Бесплатная доставка',
                         'product-replace' => 'Замена продукта',
@@ -273,7 +273,7 @@ return [
                     ],
                 ],
 
-                'top-collections'        => [
+                'top-collections' => [
                     'content' => [
                         'sub-title-1' => 'Наши коллекции',
                         'sub-title-2' => 'Наши коллекции',
@@ -284,12 +284,12 @@ return [
                         'title'       => 'Игра с нашими новыми дополнениями!',
                     ],
 
-                    'name'    => 'Топовые коллекции',
+                    'name' => 'Топовые коллекции',
                 ],
             ],
         ],
 
-        'user'      => [
+        'user' => [
             'roles' => [
                 'description' => 'Пользователи с этой ролью будут иметь весь доступ',
                 'name'        => 'Администратор',
@@ -351,21 +351,21 @@ return [
                 'warning-message'     => 'Остерегаться! Настройки системных языков по умолчанию, а также валюты по умолчанию являются постоянными и не могут быть изменены больше никогда.',
             ],
 
-            'installation-processing'   => [
-                'unopim'            => 'Установка УноПим',
-                'unopim-info'       => 'Создание таблиц базы данных. Это может занять несколько минут.',
-                'title'             => 'Установка',
+            'installation-processing' => [
+                'unopim'      => 'Установка УноПим',
+                'unopim-info' => 'Создание таблиц базы данных. Это может занять несколько минут.',
+                'title'       => 'Установка',
             ],
 
-            'installation-completed'    => [
-                'admin-panel'                   => 'Панель администратора',
-                'unopim-forums'                 => 'Форум UnoPim',
-                'explore-unopim-extensions'     => 'Изучите расширение UnoPim',
-                'title-info'                    => 'UnoPim успешно установлен в вашей системе.',
-                'title'                         => 'Установка завершена',
+            'installation-completed' => [
+                'admin-panel'               => 'Панель администратора',
+                'unopim-forums'             => 'Форум UnoPim',
+                'explore-unopim-extensions' => 'Изучите расширение UnoPim',
+                'title-info'                => 'UnoPim успешно установлен в вашей системе.',
+                'title'                     => 'Установка завершена',
             ],
 
-            'ready-for-installation'    => [
+            'ready-for-installation' => [
                 'create-databsae-table'   => 'Создайте таблицу базы данных',
                 'install-info-button'     => 'Нажмите кнопку ниже, чтобы',
                 'install-info'            => 'UnoPim для установки',
@@ -375,7 +375,7 @@ return [
                 'title'                   => 'Готов к установке',
             ],
 
-            'start'                     => [
+            'start' => [
                 'locale'        => 'Языковой стандарт',
                 'main'          => 'Начинать',
                 'select-locale' => 'Выберите локаль',
@@ -383,7 +383,7 @@ return [
                 'welcome-title' => 'Добро пожаловать в УноПим :version',
             ],
 
-            'server-requirements'       => [
+            'server-requirements' => [
                 'calendar'    => 'Календарь',
                 'ctype'       => 'cType',
                 'curl'        => 'КУЛЬ',
@@ -406,38 +406,19 @@ return [
                 'xml'         => 'XML',
             ],
 
-            'arabic'                    => 'арабский',
-            'back'                      => 'Назад',
-            'unopim-info'               => 'общественный проект от',
-            'unopim-logo'               => 'Логотип УноПим',
-            'unopim'                    => 'UnoPim',
-            'bengali'                   => 'Бенгальский',
-            'chinese'                   => 'китайский',
-            'continue'                  => 'Продолжать',
-            'dutch'                     => 'Голландский',
-            'english'                   => 'Английский',
-            'french'                    => 'Французский',
-            'german'                    => 'немецкий',
-            'hebrew'                    => 'иврит',
-            'hindi'                     => 'хинди',
-            'installation-description'  => 'Установка UnoPim обычно включает в себя несколько шагов. Вот общая схема процесса установки UnoPim:',
-            'wizard-language'           => 'Язык мастера установки',
-            'installation-info'         => 'Мы рады видеть вас здесь!',
-            'installation-title'        => 'Добро пожаловать в установку',
-            'italian'                   => 'итальянский',
-            'japanese'                  => 'японский',
-            'persian'                   => 'персидский',
-            'polish'                    => 'Польский',
-            'portuguese'                => 'Бразильский португальский',
-            'russian'                   => 'Русский',
-            'save-configuration'        => 'Сохранить конфигурацию',
-            'sinhala'                   => 'сингальский',
-            'skip'                      => 'Пропускать',
-            'spanish'                   => 'испанский',
-            'title'                     => 'УноПим Установщик',
-            'turkish'                   => 'турецкий',
-            'ukrainian'                 => 'Украинский',
-            'webkul'                    => 'Webkul',
+            'back'                     => 'Назад',
+            'unopim-info'              => 'общественный проект от',
+            'unopim-logo'              => 'Логотип УноПим',
+            'unopim'                   => 'UnoPim',
+            'continue'                 => 'Продолжать',
+            'installation-description' => 'Установка UnoPim обычно включает в себя несколько шагов. Вот общая схема процесса установки UnoPim:',
+            'wizard-language'          => 'Язык мастера установки',
+            'installation-info'        => 'Мы рады видеть вас здесь!',
+            'installation-title'       => 'Добро пожаловать в установку',
+            'save-configuration'       => 'Сохранить конфигурацию',
+            'skip'                     => 'Пропускать',
+            'title'                    => 'УноПим Установщик',
+            'webkul'                   => 'Webkul',
         ],
     ],
 ];
