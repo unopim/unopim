@@ -1651,7 +1651,6 @@ return [
                 'per-page'  => '每页',
                 'results'   => '：total 结果',
                 'selected'  => '：total 选定',
-
                 'mass-actions' => [
                     'submit'        => '提交',
                     'select-option' => '选择选项',

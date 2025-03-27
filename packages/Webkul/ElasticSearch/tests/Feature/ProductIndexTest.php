@@ -39,6 +39,22 @@ it('should index product in elastic search', function () {
         ],
     ]);
 
+    $indicesMock = Mockery::mock('Elastic\Elasticsearch\Endpoints\Indices');
+
+    ElasticSearch::shouldReceive('indices')->andReturn($indicesMock);
+
+    $indexPrefix = config('elasticsearch.prefix');
+
+    $productIndex = strtolower($indexPrefix.'_products');
+
+    $indicesMockResponse = Mockery::mock('Elastic\Elasticsearch\Response\Elasticsearch');
+
+    $indicesMock->shouldReceive('exists')->with([
+        'index' => $productIndex,
+    ])->andReturn($indicesMockResponse);
+
+    $indicesMockResponse->shouldReceive('asBool')->andReturn(true);
+
     ElasticSearch::shouldReceive('bulk')->between(1, 10000)->withArgs(function ($args) {
         $this->assertIsArray($args);
 
