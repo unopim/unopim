@@ -4,7 +4,6 @@ namespace Webkul\Product\Filter\ElasticSearch;
 
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\ElasticSearch\Enums\FilterOperators;
-use Webkul\ElasticSearch\QueryString;
 
 /**
  * Option filter for an Elasticsearch query

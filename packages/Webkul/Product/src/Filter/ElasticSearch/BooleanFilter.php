@@ -38,28 +38,30 @@ class BooleanFilter extends AbstractElasticSearchAttributeFilter
 
         $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
 
-        for ($i = 0; $i < count($value); $i++) {
-            $value[$i] = ($value[$i] == '1') ? true : false;
-        }
-
         switch ($operator) {
             case FilterOperators::IN:
                 $clause = [
                     'terms' => [
-                        $attributePath => $value,
+                        $attributePath => array_map(function ($val) {
+                            return ($val == '1') ? true : false;
+                        }, $value),
                     ],
                 ];
 
                 $this->queryBuilder::where($clause);
+
                 break;
             case FilterOperators::EQUAL:
                 $clause = [
                     'terms' => [
-                        $attributePath => $value,
+                        $attributePath => array_map(function ($val) {
+                            return ($val == '1') ? true : false;
+                        }, $value),
                     ],
                 ];
 
                 $this->queryBuilder::where($clause);
+
                 break;
         }
 

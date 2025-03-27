@@ -39,23 +39,31 @@ class BooleanFilter extends AbstractDatabaseAttributeFilter implements FilterCon
 
         $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
 
-        for ($i = 0; $i < count($value); $i++) {
-            $value[$i] = ($value[$i] == '1') ? 'true' : 'false';
-        }
-
         switch ($operator) {
             case FilterOperators::IN:
                 $this->queryBuilder->whereRaw(
-                    sprintf("JSON_UNQUOTE(JSON_EXTRACT(%s, '%s')) REGEXP ?", $this->getSearchTablePath($options), $attributePath),
-                    is_array($value) ? implode('|', $value) : $value
+                    sprintf(
+                        "JSON_UNQUOTE(JSON_EXTRACT(%s, '%s')) REGEXP ?",
+                        $this->getSearchTablePath($options),
+                        $attributePath
+                    ),
+                    [is_array($value) ? implode('|', array_map(function ($val) {
+                        return ($val == '1') ? 'true' : 'false';
+                    }, $value)) : (($value == '1') ? 'true' : 'false')]
                 );
 
                 break;
 
             case FilterOperators::EQUAL:
                 $this->queryBuilder->whereRaw(
-                    sprintf("JSON_UNQUOTE(JSON_EXTRACT(%s, '%s')) REGEXP ?", $this->getSearchTablePath($options), $attributePath),
-                    is_array($value) ? implode('|', $value) : $value
+                    sprintf(
+                        "JSON_UNQUOTE(JSON_EXTRACT(%s, '%s')) REGEXP ?",
+                        $this->getSearchTablePath($options),
+                        $attributePath
+                    ),
+                    [is_array($value) ? implode('|', array_map(function ($val) {
+                        return ($val == '1') ? 'true' : 'false';
+                    }, $value)) : (($value == '1') ? 'true' : 'false')]
                 );
 
                 break;

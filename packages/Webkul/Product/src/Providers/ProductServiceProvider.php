@@ -21,6 +21,7 @@ use Webkul\Product\Filter\Database\TextFilter as DatabaseTextFilter;
 use Webkul\Product\Filter\ElasticSearch\BooleanFilter as ElasticSearchBooleanFilter;
 use Webkul\Product\Filter\ElasticSearch\DateFilter as ElasticSearchDateFilter;
 use Webkul\Product\Filter\ElasticSearch\DateTimeFilter as ElasticSearchDateTimeAttributeFilter;
+use Webkul\Product\Filter\ElasticSearch\OptionFilter as ElasticSearchOptionFilter;
 use Webkul\Product\Filter\ElasticSearch\PriceFilter as ElasticSearchPriceFilter;
 use Webkul\Product\Filter\ElasticSearch\Property\DateTimeFilter as ElasticSearchDateTimeFilter;
 use Webkul\Product\Filter\ElasticSearch\Property\FamilyFilter as ElasticSearchFamilyFilter;
@@ -30,7 +31,6 @@ use Webkul\Product\Filter\ElasticSearch\Property\SkuFilter as ElasticSearchSkuFi
 use Webkul\Product\Filter\ElasticSearch\Property\StatusFilter as ElasticSearchStatusFilter;
 use Webkul\Product\Filter\ElasticSearch\Property\TypeFilter as ElasticSearchTypeFilter;
 use Webkul\Product\Filter\ElasticSearch\TextFilter as ElasticSearchTextFilter;
-use Webkul\Product\Filter\ElasticSearch\OptionFilter as ElasticSearchOptionFilter;
 use Webkul\Product\Models\ProductProxy;
 use Webkul\Product\Observers\ProductObserver;
 use Webkul\Product\ProductImage;
