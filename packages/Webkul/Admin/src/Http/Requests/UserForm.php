@@ -43,6 +43,7 @@ class UserForm extends FormRequest
             'ui_locale_id'          => 'required',
             'role_id'               => 'required',
             'timezone'              => 'required',
+            'image.*'               => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
     }
 }
