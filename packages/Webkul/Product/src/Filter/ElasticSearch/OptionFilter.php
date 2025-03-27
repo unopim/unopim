@@ -7,16 +7,16 @@ use Webkul\ElasticSearch\Enums\FilterOperators;
 use Webkul\ElasticSearch\QueryString;
 
 /**
- * Text filter for an Elasticsearch query
+ * Option filter for an Elasticsearch query
  */
-class TextFilter extends AbstractElasticSearchAttributeFilter
+class OptionFilter extends AbstractElasticSearchAttributeFilter
 {
     /**
      * @param  array  $supportedProperties
      */
     public function __construct(
-        array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[0], AttributeTypes::ATTRIBUTE_TYPES[1], AttributeTypes::ATTRIBUTE_TYPES[8], AttributeTypes::ATTRIBUTE_TYPES[9], AttributeTypes::ATTRIBUTE_TYPES[10], AttributeTypes::ATTRIBUTE_TYPES[11]],
-        array $allowedOperators = [FilterOperators::IN, FilterOperators::CONTAINS, FilterOperators::WILDCARD]
+        array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[4], AttributeTypes::ATTRIBUTE_TYPES[5]],
+        array $allowedOperators = [FilterOperators::IN]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;
         $this->allowedOperators = $allowedOperators;
@@ -42,30 +42,9 @@ class TextFilter extends AbstractElasticSearchAttributeFilter
         switch ($operator) {
             case FilterOperators::IN:
                 $clause = [
-                    'terms' => [
-                        $attributePath => $value,
-                    ],
-                ];
-
-                $this->queryBuilder::where($clause);
-                break;
-
-            case FilterOperators::CONTAINS:
-                $clause = [
                     'query_string' => [
                         'default_field'    => $attributePath,
                         'query'            => '*'.implode('* OR *', $value).'*',
-                    ],
-                ];
-
-                $this->queryBuilder::where($clause);
-                break;
-
-            case FilterOperators::WILDCARD:
-                $escapedValue = QueryString::escapeValue(current((array) $value));
-                $clause = [
-                    'wildcard' => [
-                        $attributePath => $escapedValue,
                     ],
                 ];
 

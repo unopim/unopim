@@ -58,13 +58,6 @@ class ParentFilter extends AbstractPropertyFilter
                     ],
                 ];
 
-                // $clause = [
-                //     'query_string' => [
-                //         'default_field'    => $property,
-                //         'query'            => '*'.implode('* OR *', $value).'*',
-                //     ],
-                // ];
-
                 $this->queryBuilder::where($clause);
                 break;
         }

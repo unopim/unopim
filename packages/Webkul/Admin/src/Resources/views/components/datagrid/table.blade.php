@@ -142,7 +142,7 @@
 
                                 <!-- Actions -->
                                 <div
-                                    class="flex gap-2.5 items-center justify-end select-none"
+                                    class="flex gap-2.5 items-center justify-end select-none ml-32"
                                     @click.stop
                                 >
                                     <p

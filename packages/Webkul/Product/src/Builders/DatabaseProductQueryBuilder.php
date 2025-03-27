@@ -40,12 +40,6 @@ class DatabaseProductQueryBuilder extends AbstractFilterableQueryBuilder
             );
         }
 
-        if ($attribute->type == 'boolean') {
-            for ($i = 0; $i < count($value); $i++) {
-                $value[$i] = ($value[$i] == '1') ? 'true' : 'false';
-            }
-        }
-
         $filter->addAttributeFilter($attribute, $operator, $value, $locale, $channel, $context);
 
         return $this;

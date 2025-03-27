@@ -30,6 +30,7 @@ use Webkul\Product\Filter\ElasticSearch\Property\SkuFilter as ElasticSearchSkuFi
 use Webkul\Product\Filter\ElasticSearch\Property\StatusFilter as ElasticSearchStatusFilter;
 use Webkul\Product\Filter\ElasticSearch\Property\TypeFilter as ElasticSearchTypeFilter;
 use Webkul\Product\Filter\ElasticSearch\TextFilter as ElasticSearchTextFilter;
+use Webkul\Product\Filter\ElasticSearch\OptionFilter as ElasticSearchOptionFilter;
 use Webkul\Product\Models\ProductProxy;
 use Webkul\Product\Observers\ProductObserver;
 use Webkul\Product\ProductImage;
@@ -126,6 +127,7 @@ class ProductServiceProvider extends ServiceProvider
             ElasticSearchDateFilter::class,
             ElasticSearchDateTimeAttributeFilter::class,
             ElasticSearchPriceFilter::class,
+            ElasticSearchOptionFilter::class,
         ], 'unopim.elasticsearch.attribute.filters');
 
         // Register elasticSearch product Properties filters
