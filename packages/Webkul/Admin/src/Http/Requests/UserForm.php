@@ -5,6 +5,7 @@ namespace Webkul\Admin\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Core\Rules\AlphaNumericSpace;
+use Webkul\Core\Rules\FileMimeExtensionMatch;
 
 class UserForm extends FormRequest
 {
@@ -43,7 +44,12 @@ class UserForm extends FormRequest
             'ui_locale_id'          => 'required',
             'role_id'               => 'required',
             'timezone'              => 'required',
-            'image.*'               => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image.*'               => [
+                'sometimes',
+                'image',
+                'mimes:jpeg,png,jpg,svg,gif',
+                new FileMimeExtensionMatch,
+            ],
         ];
     }
 }
