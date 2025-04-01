@@ -1,6 +1,32 @@
-# Changelog for v0.1.x
+# v0.2.x
 
-This changelog details the bug fixes included in this release.
+## v0.2.0 - 2025-03-26
+### ✨ **Features**  
+- Added disk parameter to `sanitizeSVG`. [#58](https://github.com/unopim/unopim/pull/58)  
+- Introduced dynamic import job filters. [#80](https://github.com/unopim/unopim/pull/80)  
+- Added in-app and email notifications. [#78](https://github.com/unopim/unopim/pull/78)  
+- New API endpoints for patching and deleting products/categories. [#98](https://github.com/unopim/unopim/pull/98)  
+- Implemented GUI installer for easier setup. [#55](https://github.com/unopim/unopim/pull/55)  
+- Added Magic Image feature. [#100](https://github.com/unopim/unopim/pull/100)  
+- "Powered by" message added to authentication screens. [#110](https://github.com/unopim/unopim/pull/110)  
+
+### 🛠 **Fixes & Enhancements**  
+- Fixed gallery image removal issue. [#90](https://github.com/unopim/unopim/pull/90)  
+- Enabled product status by default. [#89](https://github.com/unopim/unopim/pull/89)  
+- Quick export fix for selected products. [#116](https://github.com/unopim/unopim/pull/116)  
+- Fixed JSON encoding issues with special characters. [#104](https://github.com/unopim/unopim/pull/104)  
+- Prevented HTML entities from showing in flash messages. [#114](https://github.com/unopim/unopim/pull/114)  
+- Improved cumulative filter conditions. [#108](https://github.com/unopim/unopim/pull/108)  
+- Fixed TypeError with filterable dropdown column. [#106](https://github.com/unopim/unopim/pull/106)  
+- Improved CSS styling for GUI installer and image previews. [#73](https://github.com/unopim/unopim/pull/73)  
+
+### 🔄 **Dependency Updates**  
+- Upgraded `phpoffice/phpspreadsheet` to `1.29.9`. [#101](https://github.com/unopim/unopim/pull/101)  
+- Upgraded `league/commonmark` to `2.6.0`. [#74](https://github.com/unopim/unopim/pull/74)  
+- Upgraded `nesbot/carbon` to `2.72.6`. [#93](https://github.com/unopim/unopim/pull/93)  
+
+
+# v0.1.x
 
 ## v0.1.5 - 2024-10-25
 
