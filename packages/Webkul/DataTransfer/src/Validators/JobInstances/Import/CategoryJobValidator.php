@@ -2,6 +2,7 @@
 
 namespace Webkul\DataTransfer\Validators\JobInstances\Import;
 
+use Webkul\Core\Rules\FileMimeExtensionMatch;
 use Webkul\DataTransfer\Rules\SeparatorTypes;
 use Webkul\DataTransfer\Validators\JobInstances\Default\JobValidator;
 
@@ -12,9 +13,13 @@ class CategoryJobValidator extends JobValidator
      */
     public function getRules(array $options): array
     {
-        if (isset($options['id'])) {
-            $this->rules['file'] = 'mimes:csv,xls,xlsx,txt';
-        }
+        $this->rules['file'] = [
+            empty($options['id']) ? 'required' : 'nullable',
+            'mimes:csv,txt,xlsx,xls',
+            'extensions:csv,xlsx,xls',
+            new FileMimeExtensionMatch,
+        ];
+
         $this->rules['field_separator'] = ['required', new SeparatorTypes];
 
         return $this->rules;
