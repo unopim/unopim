@@ -12,7 +12,6 @@ class FileMimeExtensionMatch implements ValidationRule
 {
     /**
      * Validate the file extension and mime type match.
-     *
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
