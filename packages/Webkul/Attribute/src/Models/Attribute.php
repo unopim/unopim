@@ -414,7 +414,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
                 break;
             case AttributeTypes::IMAGE_ATTRIBUTE_TYPE:
             case AttributeTypes::GALLERY_ATTRIBUTE_TYPE:
-                $rules[] = new FileOrImageValidValue(isImage: true );
+                $rules[] = new FileOrImageValidValue(isImage: true);
 
                 break;
         }

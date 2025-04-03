@@ -9,7 +9,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Concerns\ValidatesAttributes;
 
-class FileOrImageValidValue extends FileMimeExtensionMatch implements ValidationRule 
+class FileOrImageValidValue extends FileMimeExtensionMatch implements ValidationRule
 {
     use ValidatesAttributes;
 
