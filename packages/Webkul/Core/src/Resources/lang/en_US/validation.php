@@ -16,4 +16,5 @@ return [
     'seperator-not-supported'      => 'Only , or ; or | is supported as a seperator.',
     'file-type'                    => 'The file must be of type csv,xls,xlsx',
     'file-mime-extension-mismatch' => 'The file extension and mime type do not match. The file extension is :extension and the mime type is :mimeType.',
+    'file-not-exists'              => 'The selected file does not exist :value for the field :attribute.',
 ];

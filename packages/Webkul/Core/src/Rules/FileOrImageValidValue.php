@@ -47,7 +47,7 @@ class FileOrImageValidValue extends FileMimeExtensionMatch implements Validation
         }
 
         if (is_string($value) && ! Storage::exists($value)) {
-            $fail('The selected file does not exist :value for the field :attribute.');
+            $fail('core::validation.file-not-exists')->translate(['value' => $value]);
 
             return;
         }
