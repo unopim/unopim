@@ -15,5 +15,6 @@ return [
     'not-supported'                => ':attribute не поддерживает следующие значения (:unsupported).',
     'seperator-not-supported'      => 'В качестве разделителя поддерживаются только , или ; или |.',
     'file-type'                    => 'Файл должен иметь тип csv,xls,xlsx',
-    'file-mime-extension-mismatch' => 'Расширение файла и MIME-тип не совпадают. Расширение файла: :extension, MIME-тип: :mimeType.',
+    'file-mime-extension-mismatch' => 'Расширение файла и MIME-тип не соответствуют полю :attribute. Расширение файла: :extension, MIME-тип: :mimeType.',
+    'file-not-exists'              => 'Выбранный файл не существует :value для поля :attribute.',
 ];

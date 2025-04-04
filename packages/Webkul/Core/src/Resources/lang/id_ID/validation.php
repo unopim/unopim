@@ -15,5 +15,6 @@ return [
     'not-supported'                => ':attribute tidak mendukung nilai berikut (:unsupported).',
     'seperator-not-supported'      => 'Hanya , atau ; atau | yang didukung sebagai pemisah.',
     'file-type'                    => 'File harus bertipe csv, xls, xlsx',
-    'file-mime-extension-mismatch' => 'Ekstensi file dan tipe MIME tidak cocok. Ekstensi file adalah :extension dan tipe MIME adalah :mimeType.',
+    'file-mime-extension-mismatch' => 'Ekstensi file dan tipe MIME tidak cocok untuk kolom :attribute. Ekstensi file adalah :extension dan tipe MIME adalah :mimeType.',
+    'file-not-exists'              => 'File yang dipilih tidak ada :value untuk kolom :attribute.',
 ];

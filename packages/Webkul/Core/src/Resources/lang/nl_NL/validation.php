@@ -15,5 +15,6 @@ return [
     'not-supported'                => ':attribute ondersteunt de volgende waarden niet (:unsupported).',
     'seperator-not-supported'      => 'Alleen , of ; of | wordt ondersteund als scheidingsteken.',
     'file-type'                    => 'Het bestand moet van het type csv,xls,xlsx zijn',
-    'file-mime-extension-mismatch' => 'De bestandsextensie en MIME-type komen niet overeen. De bestandsextensie is :extension en het MIME-type is :mimeType.',
+    'file-mime-extension-mismatch' => 'De bestandsextensie en MIME-type komen niet overeen voor veld :attribute. De bestandsextensie is :extension en het MIME-type is :mimeType.',
+    'file-not-exists'              => 'Het geselecteerde bestand bestaat niet :value voor veld :attribute.',
 ];

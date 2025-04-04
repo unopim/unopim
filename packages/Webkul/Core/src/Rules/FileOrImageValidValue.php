@@ -9,7 +9,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Concerns\ValidatesAttributes;
 
-class FileOrImageValidValue extends FileMimeExtensionMatch implements ValidationRule
+class FileOrImageValidValue implements ValidationRule
 {
     use ValidatesAttributes;
 
@@ -17,10 +17,13 @@ class FileOrImageValidValue extends FileMimeExtensionMatch implements Validation
 
     const IMAGE_ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
 
+    protected FileMimeExtensionMatch $fileExtensionMatchRule;
+
     public function __construct(
         protected bool $isImage = false,
         protected array $allowedMimes = [],
-        protected array $allowedExtensions = []
+        protected array $allowedExtensions = [],
+        protected bool $isMultiple = false
     ) {
         if (! $this->allowedExtensions) {
             $this->allowedExtensions = $this->isImage ? self::IMAGE_ALLOWED_EXTENSIONS : self::FILE_ALLOWED_EXTENSION;
@@ -29,6 +32,8 @@ class FileOrImageValidValue extends FileMimeExtensionMatch implements Validation
         if (! $this->allowedMimes) {
             $this->allowedMimes = $this->isImage ? self::IMAGE_ALLOWED_EXTENSIONS : self::FILE_ALLOWED_EXTENSION;
         }
+
+        $this->fileExtensionMatchRule = new FileMimeExtensionMatch;
     }
 
     /**
@@ -36,26 +41,34 @@ class FileOrImageValidValue extends FileMimeExtensionMatch implements Validation
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
+        // For gallery attribute during import which has comma separated values
+        if ($this->isMultiple && is_string($value) && str_contains($value, ',')) {
+            $value = explode(', ', $value);
+
+            $value = array_filter($value, 'trim');
+        }
+
+        $this->validateFileOrPath($attribute, $value, $fail);
+
+        if (is_array($value)) {
+            foreach ($value as $fileOrPath) {
+                $this->validateFileOrPath($attribute, $fileOrPath, $fail);
+            }
+        }
+    }
+
+    public function validateFileOrPath(string $attribute, mixed $value, Closure $fail): void
+    {
         if ($this->isValidFileInstance($value)) {
             if (! $this->validateMimeAndExtension($attribute, $value, $fail)) {
                 return;
             }
 
-            parent::validate($attribute, $value, $fail);
-
-            return;
+            $this->fileExtensionMatchRule->validate($attribute, $value, $fail);
         }
 
         if (is_string($value) && ! Storage::exists($value)) {
             $fail('core::validation.file-not-exists')->translate(['value' => $value]);
-
-            return;
-        }
-
-        if (is_array($value)) {
-            foreach ($value as $fileOrPath) {
-                $this->validate($attribute, $fileOrPath, $fail);
-            }
         }
     }
 

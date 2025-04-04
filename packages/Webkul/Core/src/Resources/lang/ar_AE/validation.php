@@ -15,5 +15,6 @@ return [
     'not-supported'                => 'لا يدعم :attribute القيم التالية (:unsupported).',
     'seperator-not-supported'      => 'فقط أو أو ; أو | مدعومة كفاصل.',
     'file-type'                    => 'يجب أن يكون الملف من النوع csv,xls,xlsx',
-    'file-mime-extension-mismatch' => 'امتداد الملف ونوع MIME لا يتطابقان. امتداد الملف هو :extension ونوع MIME هو :mimeType.',
+    'file-mime-extension-mismatch' => 'لا يتطابق امتداد الملف ونوع الـ MIME للحقل :attribute. امتداد الملف هو :extension ونوع الـ MIME هو :mimeType.',
+    'file-not-exists'              => 'الملف المحدد لا يوجد :value للحقل :attribute.',
 ];

@@ -15,5 +15,6 @@ return [
     'not-supported'                => 'Câmpul :attribute nu acceptă următoarele valori (:unsupported).',
     'seperator-not-supported'      => 'Doar , sau ; sau | sunt suportate ca separatori.',
     'file-type'                    => 'Fișierul trebuie să fie de tip csv, xls, xlsx.',
-    'file-mime-extension-mismatch' => 'Extensia fișierului și tipul MIME nu se potrivesc. Extensia fișierului este :extension și tipul MIME este :mimeType.',
+    'file-mime-extension-mismatch' => 'Extensia fișierului și tipul MIME nu se potrivesc pentru câmpul :attribute. Extensia fișierului este :extension și tipul MIME este :mimeType.',
+    'file-not-exists'              => 'Fișierul selectat nu există :value pentru câmpul :attribute.',
 ];

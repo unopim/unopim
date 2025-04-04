@@ -213,6 +213,8 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
             }
         }
 
+        $validations[] = new FileOrImageValidValue(isImage: $this->type != AttributeTypes::FILE_ATTRIBUTE_TYPE, isMultiple: $this->type === 'gallery');
+
         return $validations;
     }
 
@@ -414,7 +416,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
                 break;
             case AttributeTypes::IMAGE_ATTRIBUTE_TYPE:
             case AttributeTypes::GALLERY_ATTRIBUTE_TYPE:
-                $rules[] = new FileOrImageValidValue(isImage: true);
+                $rules[] = new FileOrImageValidValue(isImage: true, isMultiple: $this->type === AttributeTypes::GALLERY_ATTRIBUTE_TYPE);
 
                 break;
         }

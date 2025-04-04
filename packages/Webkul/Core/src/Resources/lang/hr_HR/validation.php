@@ -15,5 +15,6 @@ return [
     'not-supported'                => 'Polje :attribute ne podržava sljedeće vrijednosti (:unsupported).',
     'seperator-not-supported'      => 'Samo , ili ; ili | su podržani kao separator.',
     'file-type'                    => 'Datoteka mora biti tipa csv,xls,xlsx',
-    'file-mime-extension-mismatch' => 'Ekstenzija datoteke i MIME tip se ne podudaraju. Ekstenzija datoteke je :extension, a MIME tip je :mimeType.',
+    'file-mime-extension-mismatch' => 'Ekstenzija datoteke i MIME tip se ne podudaraju za polje :attribute. Ekstenzija datoteke je :extension i MIME tip je :mimeType.',
+    'file-not-exists'              => 'Odabrana datoteka ne postoji :value za polje :attribute.',
 ];

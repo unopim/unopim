@@ -15,5 +15,6 @@ return [
     'not-supported'                => ':attribute ei tue seuraavia arvoja (:unsupported).',
     'seperator-not-supported'      => 'Vain , tai ; tai | on tuettu erottimena.',
     'file-type'                    => 'Tiedoston tyyppi on oltava csv,xls,xlsx',
-    'file-mime-extension-mismatch' => 'Tiedoston laajennus ja MIME-tyyppi eivät täsmää. Tiedoston laajennus on :extension ja MIME-tyyppi on :mimeType.',
+    'file-mime-extension-mismatch' => 'Tiedostopääte ja MIME-tyyppi eivät täsmää kentälle :attribute. Tiedostopääte on :extension ja MIME-tyyppi on :mimeType.',
+    'file-not-exists'              => 'Valittu tiedosto ei ole olemassa :value kentälle :attribute.',
 ];

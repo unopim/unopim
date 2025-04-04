@@ -15,5 +15,6 @@ return [
     'not-supported'                => ':attribute निम्नलिखित मानों का समर्थन नहीं करता है (:unsupported)।',
     'seperator-not-supported'      => 'केवल , या ; या | को विभाजक के रूप में समर्थित किया जाता है।',
     'file-type'                    => 'फ़ाइल csv,xls,xlsx प्रकार की होनी चाहिए',
-    'file-mime-extension-mismatch' => 'फ़ाइल एक्सटेंशन और MIME प्रकार मेल नहीं खाते हैं। फ़ाइल एक्सटेंशन है :extension और MIME प्रकार है :mimeType.',
+    'file-mime-extension-mismatch' => 'फ़ाइल एक्सटेंशन और MIME प्रकार :attribute फ़ील्ड के लिए मेल नहीं खाते। फ़ाइल एक्सटेंशन :extension और MIME प्रकार :mimeType है।',
+    'file-not-exists'              => 'चयनित फ़ाइल मौजूद नहीं है :value फ़ील्ड :attribute के लिए।',
 ];

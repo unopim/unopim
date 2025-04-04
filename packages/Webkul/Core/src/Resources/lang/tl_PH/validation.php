@@ -15,5 +15,6 @@ return [
     'not-supported'                => 'Ang :attribute ay hindi sumusuporta sa mga sumusunod na halaga (:unsupported).',
     'seperator-not-supported'      => 'Ang , o ; o | lamang ang suportado bilang separator.',
     'file-type'                    => 'Ang file ay dapat ng uri csv, xls, xlsx.',
-    'file-mime-extension-mismatch' => 'Hindi tumutugma ang extension ng file at MIME type. Ang extension ng file ay :extension at ang MIME type ay :mimeType.',
+    'file-mime-extension-mismatch' => 'Ang extension ng file at MIME type ay hindi tumutugma para sa field na :attribute. Ang extension ng file ay :extension at ang MIME type ay :mimeType.',
+    'file-not-exists'              => 'Ang napiling file ay hindi umiiral :value para sa field na :attribute.',
 ];

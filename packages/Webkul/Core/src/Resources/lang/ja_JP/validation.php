@@ -15,5 +15,6 @@ return [
     'not-supported'                => ':attribute は次の値 (:unsupported) をサポートしていません。',
     'seperator-not-supported'      => '区切り文字としてサポートされているのは、,、;、または | のみです。',
     'file-type'                    => 'ファイルのタイプは csv、xls、xlsx でなければなりません。',
-    'file-mime-extension-mismatch' => 'ファイル拡張子とMIMEタイプが一致しません。ファイル拡張子は :extension で、MIMEタイプは :mimeType です。',
+    'file-mime-extension-mismatch' => 'ファイル拡張子とMIMEタイプが:attributeフィールドと一致しません。ファイル拡張子は:extension、MIMEタイプは:mimeTypeです。',
+    'file-not-exists'              => '選択されたファイルは:attributeフィールドの:valueが存在しません。',
 ];

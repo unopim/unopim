@@ -15,5 +15,6 @@ return [
     'not-supported'                => 'Pole :attribute nie obsługuje następujących wartości (:unsupported).',
     'seperator-not-supported'      => 'Tylko , lub ; lub | są obsługiwane jako separator.',
     'file-type'                    => 'Plik musi być typu csv, xls, xlsx.',
-    'file-mime-extension-mismatch' => 'Rozszerzenie pliku i typ MIME nie pasują do siebie. Rozszerzenie pliku to :extension, a typ MIME to :mimeType.',
+    'file-mime-extension-mismatch' => 'Rozszerzenie pliku i typ MIME nie pasują do pola :attribute. Rozszerzenie pliku to :extension, a typ MIME to :mimeType.',
+    'file-not-exists'              => 'Wybrany plik nie istnieje :value dla pola :attribute.',
 ];
