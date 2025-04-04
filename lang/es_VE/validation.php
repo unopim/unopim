@@ -41,6 +41,7 @@ return [
     'distinct'       => ':attribute tiene un valor duplicado.',
     'email'          => ':attribute debe ser una dirección de correo electrónico válida.',
     'exists'         => 'El :attribute seleccionado no es válido.',
+    'extensions'     => 'El campo :attribute debe tener una de las siguientes extensiones: :values.',
     'file'           => ':attribute debe ser un archivo.',
     'filled'         => ':attribute debe tener un valor.',
 

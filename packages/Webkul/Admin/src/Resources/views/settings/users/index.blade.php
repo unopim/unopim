@@ -416,6 +416,8 @@
                                 >
                                 </v-media-images>
 
+                                <x-admin::form.control-group.error control-name="image" />
+
                                 <p class="required my-3 text-sm text-gray-400">
                                     @lang('admin::app.settings.users.index.create.upload-image-info')
                                 </p>

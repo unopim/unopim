@@ -42,6 +42,7 @@ return [
     'email'          => ':attribute 는(은) 유효한 이메일 주소여야 합니다.',
     'exists'         => '선택된 :attribute 는(은) 잘못되었습니다.',
     'exists-value'   => ':input 는 존재하지 않습니다.',
+    'extensions'     => ':attribute 필드는 다음 확장자 중 하나를 가져야 합니다: :values.',
     'file'           => ':attribute 는(은) 파일이어야 합니다.',
     'filled'         => ':attribute 필드는 값을 가져야 합니다.',
 

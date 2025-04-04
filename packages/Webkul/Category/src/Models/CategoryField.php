@@ -9,6 +9,7 @@ use Webkul\Category\Contracts\CategoryField as CategoryFieldContract;
 use Webkul\Category\Database\Factories\CategoryFieldFactory;
 use Webkul\Core\Eloquent\TranslatableModel;
 use Webkul\Core\Rules\Decimal;
+use Webkul\Core\Rules\FileOrImageValidValue;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 
@@ -198,6 +199,8 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
                 $validations[] = 'max:'.$retVal.'';
             }
         }
+
+        $validations[] = new FileOrImageValidValue(isImage: $this->type === 'image');
 
         return $validations;
     }

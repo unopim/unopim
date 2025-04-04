@@ -42,6 +42,7 @@ return [
     'email'          => ':attribute нь хүчинтэй имэйл хаяг байх ёстой.',
     'exists'         => 'Сонгосон :attribute буруу байна.',
     'exists-value'   => ':input байхгүй байна.',
+    'extensions'     => ':attribute талбар нь дараах өргөтгөлүүдийн нэгтэй байх ёстой: :values.',
     'file'           => ':attribute нь файл байх ёстой.',
     'filled'         => ':attribute талбар нь утгатай байх ёстой.',
 

@@ -42,6 +42,7 @@ return [
     'email'          => 'Het :attribute moet een geldig e-mailadres zijn.',
     'exists'         => 'Het geselecteerde :attribute is ongeldig.',
     'exists-value'   => 'De :input bestaat niet.',
+    'extensions'     => 'Het :attribute veld moet een van de volgende extensies hebben: :values.',
     'file'           => 'Het :attribute moet een bestand zijn.',
     'filled'         => 'Het veld :attribute moet een waarde hebben.',
 

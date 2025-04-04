@@ -42,6 +42,7 @@ return [
     'email'          => ':attribute एक वैध ईमेल पता होना चाहिए।',
     'exists'         => 'चयनित :attribute अमान्य है।',
     'exists-value'   => ':input मौजूद नहीं है।',
+    'extensions'     => ':attribute फ़ील्ड में निम्नलिखित एक्सटेंशन में से एक होना चाहिए: :values.',
     'file'           => ':attribute एक फ़ाइल होनी चाहिए।',
     'filled'         => ':attribute फ़ील्ड में एक मान होना चाहिए।',
 

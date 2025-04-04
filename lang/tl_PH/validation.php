@@ -41,6 +41,7 @@ return [
     'distinct'       => ':attribute ay may dobleng halaga.',
     'email'          => ':attribute ay kailangang isang valid na email address.',
     'exists'         => 'Ang napiling :attribute ay hindi valid.',
+    'extensions'     => 'Ang :attribute na field ay dapat may isa sa mga sumusunod na extension: :values.',
     'file'           => ':attribute ay kailangang isang file.',
     'filled'         => ':attribute ay kailangang mayroong halaga.',
 

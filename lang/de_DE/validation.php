@@ -42,6 +42,7 @@ return [
     'email'          => 'Das :attribute muss eine gültige E-Mail-Adresse sein.',
     'exists'         => 'Das ausgewählte :attribute ist ungültig.',
     'exists-value'   => 'Die :input existiert nicht.',
+    'extensions'     => 'Das Feld :attribute muss eine der folgenden Erweiterungen haben: :values.',
     'file'           => 'Das :attribute muss eine Datei sein.',
     'filled'         => 'Das Feld :attribute muss einen Wert haben.',
 

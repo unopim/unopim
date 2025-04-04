@@ -41,6 +41,7 @@ return [
     'distinct'       => ':attribute має повторюване значення.',
     'email'          => ':attribute має бути дійсною електронною адресою.',
     'exists'         => 'Вибраний :attribute недійсний.',
+    'extensions'     => 'Поле :attribute повинно мати одне з наступних розширень: :values.',
     'file'           => ':attribute має бути файлом.',
     'filled'         => ':attribute має містити значення.',
 

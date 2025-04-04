@@ -283,6 +283,8 @@ class UserController extends Controller
             return $this->cannotChangeRedirectResponse('role');
         }
 
+        unset($data['image']);
+
         return $data;
     }
 

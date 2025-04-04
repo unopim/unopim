@@ -42,6 +42,7 @@ return [
     'email'                => ':attribute harus berupa alamat email yang valid.',
     'exists'               => ':attribute yang dipilih tidak valid.',
     'exists-value'         => ':input tidak ada.',
+    'extensions'           => 'Field :attribute harus memiliki salah satu ekstensi berikut: :values.',
     'file'                 => ':attribute harus berupa file.',
     'filled'               => 'Bidang :attribute harus memiliki nilai.',
 

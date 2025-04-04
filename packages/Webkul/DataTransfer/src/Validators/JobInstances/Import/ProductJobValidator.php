@@ -12,9 +12,12 @@ class ProductJobValidator extends JobValidator
      */
     public function getRules(array $options): array
     {
-        if (isset($options['id'])) {
-            $this->rules['file'] = 'mimes:csv,xls,xlsx,txt';
-        }
+        $this->rules['file'] = [
+            empty($options['id']) ? 'required' : 'nullable',
+            'mimes:csv,txt,xlsx,xls',
+            'extensions:csv,xlsx,xls',
+        ];
+
         $this->rules['field_separator'] = ['required', new SeparatorTypes];
 
         return $this->rules;
@@ -27,7 +30,6 @@ class ProductJobValidator extends JobValidator
         'action'              => 'required:in:append,delete',
         'validation_strategy' => 'required:in:stop-on-errors,skip-errors',
         'allowed_errors'      => 'required|integer|min:0',
-        'file'                => 'required|mimes:csv,xls,xlsx,txt',
     ];
 
     /**
