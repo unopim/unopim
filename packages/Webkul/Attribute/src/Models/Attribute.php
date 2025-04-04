@@ -213,7 +213,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
             }
         }
 
-        $validations[] = new FileOrImageValidValue(isImage: $this->type != AttributeTypes::FILE_ATTRIBUTE_TYPE, isMultiple: $this->type === 'gallery');
+        $validations[] = new FileOrImageValidValue(isImage: $this->type != AttributeTypes::FILE_ATTRIBUTE_TYPE, isMultiple: $this->type === AttributeTypes::GALLERY_ATTRIBUTE_TYPE);
 
         return $validations;
     }
