@@ -11,6 +11,7 @@ use Webkul\Admin\Http\Requests\MassDestroyRequest;
 use Webkul\Admin\Http\Resources\CategoryTreeResource;
 use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\Category\Repositories\CategoryRepository;
+use Webkul\Category\Validator\Catalog\CategoryRequestValidator;
 use Webkul\Core\Repositories\ChannelRepository;
 
 class CategoryController extends Controller
@@ -24,7 +25,9 @@ class CategoryController extends Controller
         protected ChannelRepository $channelRepository,
         protected CategoryRepository $categoryRepository,
         protected CategoryFieldRepository $categoryFieldRepository
-    ) {}
+    ) {
+        $this->categoryValidator = new CategoryRequestValidator($this->categoryRepository, $this->categoryFieldRepository, $this->channelRepository);
+    }
 
     /**
      * Display a listing of the resource.
@@ -64,6 +67,8 @@ class CategoryController extends Controller
     public function store(CategoryRequest $categoryRequest)
     {
         Event::dispatch('catalog.category.create.before');
+
+        $this->categoryValidator->validate($categoryRequest->only(['code', 'parent_id', 'additional_data']));
 
         $category = $this->categoryRepository->create($categoryRequest->only([
             'code',
@@ -112,6 +117,8 @@ class CategoryController extends Controller
 
             return redirect()->route('admin.catalog.categories.edit', ['id' => $id]);
         }
+
+        $validator = $this->categoryValidator->validate($categoryRequest->only(['code', 'parent_id', 'additional_data']), $id);
 
         $category = $this->categoryRepository->update($categoryRequest->only([
             'locale',

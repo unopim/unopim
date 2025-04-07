@@ -160,7 +160,7 @@ it('should store the multi select type value when creating category', function (
 
     $categoryFieldOptions = $categoryField->options->pluck('code')->toArray();
 
-    $data['additional_data']['common'][$categoryFieldCode] = $categoryFieldOptions;
+    $data['additional_data']['common'][$categoryFieldCode] = implode(', ', $categoryFieldOptions);
 
     $this->post(route('admin.catalog.categories.store'), $data)
         ->assertSessionHas('success', trans('admin::app.catalog.categories.create-success'));
@@ -196,7 +196,7 @@ it('should store the datetime type value when creating category', function () {
 it('should store the date type value when creating category', function () {
     $this->loginAsAdmin();
 
-    $categoryField = CategoryField::factory()->create(['type' => 'datetime']);
+    $categoryField = CategoryField::factory()->create(['type' => 'date']);
 
     $categoryFieldCode = $categoryField->code;
 
@@ -351,7 +351,7 @@ it('should store the multi select type value when updating category', function (
         'parent_id'       => $category->parent_id,
         'additional_data' => [
             'common' => [
-                $categoryFieldCode => $categoryFieldOptions,
+                $categoryFieldCode => implode(',', $categoryFieldOptions),
             ],
         ],
     ];
@@ -425,7 +425,7 @@ it('should store the date type value when updating category', function () {
 it('should store the checkbox type value when updating category', function () {
     $this->loginAsAdmin();
 
-    $categoryField = CategoryField::factory()->create(['type' => 'multiselect']);
+    $categoryField = CategoryField::factory()->create(['type' => 'checkbox']);
 
     $categoryFieldCode = $categoryField->code;
 
@@ -437,7 +437,7 @@ it('should store the checkbox type value when updating category', function () {
         'parent_id'       => $category->parent_id,
         'additional_data' => [
             'common' => [
-                $categoryFieldCode => $categoryFieldOptions,
+                $categoryFieldCode => implode(', ', $categoryFieldOptions),
             ],
         ],
     ];
