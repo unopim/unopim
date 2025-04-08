@@ -170,6 +170,8 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
                 Route::get('edit/{id}', 'edit')->name('admin.settings.data_transfer.exports.edit');
 
+                Route::get('system/edit/{id}', 'edit')->name('admin.settings.data_transfer.systems.edit');
+
                 Route::put('edit/{id}', 'update')->name('admin.settings.data_transfer.exports.update');
 
                 Route::delete('destroy/{id}', 'destroy')->name('admin.settings.data_transfer.exports.delete');

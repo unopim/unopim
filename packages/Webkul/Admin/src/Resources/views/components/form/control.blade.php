@@ -1226,7 +1226,7 @@
                     this.isLoading = true;
 
                     this.params.page++;
-                    
+
                     this.$axios.get(this.listRoute, {params: this.params})
                         .then((result) => {
                             this.optionsList = [...this.optionsList, ...result.data.options];
@@ -1239,7 +1239,7 @@
 
                 initializeValue() {
                     this.isLoading = true;
-                   
+                    
                     this.params.identifiers = {
                         columnName: this.trackBy,
                         values: 'string' == typeof this.selectedValue ? this.selectedValue?.split(',') : this.selectedValue
