@@ -315,8 +315,8 @@ class CategoryDataGrid extends DataGrid
     {
         $sort = $params['column'] ?? $this->primaryColumn;
 
-        if ($sort == 'name') {
-            $sort .= '.keyword';
+        if ($sort == 'category_name') {
+            $sort = 'name.keyword';
         }
 
         if ($sort == 'code') {
@@ -324,7 +324,7 @@ class CategoryDataGrid extends DataGrid
         }
 
         if ($sort === 'category_id') {
-            $sort = '_id';
+            $sort = 'id';
         }
 
         return [
