@@ -324,7 +324,7 @@ class CategoryDataGrid extends DataGrid
         }
 
         if ($sort === 'category_id') {
-            $sort = '_id';
+            $sort = 'id';
         }
 
         return [
