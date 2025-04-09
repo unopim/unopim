@@ -51,10 +51,11 @@ class TextFilter extends AbstractElasticSearchAttributeFilter
                 break;
 
             case FilterOperators::CONTAINS:
+                $escapedQuery = preg_replace('/([+\-&|!(){}[\]^"~*?:\\/])/', '\\\$1', $value);
                 $clause = [
                     'query_string' => [
                         'default_field'    => $attributePath,
-                        'query'            => '*'.implode('* OR *', $value).'*',
+                        'query'            => '*'.implode('* OR *', $escapedQuery).'*',
                     ],
                 ];
 
