@@ -218,7 +218,6 @@
             {{ $attributes->only(['name', ':name', 'value', ':value', 'v-model', 'rules', ':rules', 'label', ':label']) }}
             name="{{ $name }}"
         >
-
                 <v-tagging-handler
                     :taggable=true
                     name="{{ $name }}"
@@ -933,7 +932,6 @@
                     this.isLoading = true;
 
                     this.params.page++;
-
                     this.$axios.get(this.listRoute, {params: this.params})
                         .then((result) => {
                             this.optionsList = [...this.optionsList, ...result.data.options];
@@ -946,7 +944,6 @@
 
                 initializeValue() {
                     this.isLoading = true;
-                    
                     this.params.identifiers = {
                         columnName: this.trackBy,
                         values: 'string' == typeof this.selectedValue ? this.selectedValue?.split(',') : this.selectedValue
@@ -1216,9 +1213,10 @@
                 },
                 onScroll(e) {
                     const element = this.$refs['multiselect__handler__']._.refs.list;
+                    const tolerance = 10;
 
                     if (
-                        (element.scrollHeight - element.scrollTop) == element.clientHeight
+                        (element.scrollHeight - element.scrollTop) - element.clientHeight <= tolerance
                         && this.lastPage > this.params.page
                     ) {
                         this.fetchMore();
@@ -1228,7 +1226,6 @@
                     this.isLoading = true;
 
                     this.params.page++;
-                    
                     this.$axios.get(this.listRoute, {params: this.params})
                         .then((result) => {
                             this.optionsList = [...this.optionsList, ...result.data.options];
@@ -1241,7 +1238,6 @@
 
                 initializeValue() {
                     this.isLoading = true;
-                   
                     this.params.identifiers = {
                         columnName: this.trackBy,
                         values: 'string' == typeof this.selectedValue ? this.selectedValue?.split(',') : this.selectedValue
@@ -1275,7 +1271,6 @@
             }
         });
     </script>
-   
     <script type="text/x-template" id="v-file-uploader-template">
         <div :class="[errors.length ? 'flex items-center justify-center w-full border !border-red-600 hover:border-red-600' : 'flex items-center justify-center w-full']">
             <label :for="$.uid + '_dropzone-file'" class="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-violet-50 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">

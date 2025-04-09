@@ -31,13 +31,13 @@
                     $supportedType = Config('quick_exporters');
                     $options = [];
 
-                    foreach($supportedType as $type => $value) {
+                    foreach ($supportedType as $type => $value) {
                         $options[] = [
                             'id'    => $type,
                             'label' => trans($value['title'])
                         ];
 
-                        if(!empty($value['route'])){
+                        if (! empty($value['route'])) {
                             $supportedType[$type]['route'] = route($value['route']);
                         }
                     }
@@ -219,7 +219,7 @@
                                     this.$refs.exportModal.toggle();
                                 });
                         } else {
-                            if (!params?.productIds?.length) {
+                            if (! params?.productIds?.length) {
                                 this.$emitter.emit('add-flash', {
                                     type: 'warning',
                                     message: '@lang('admin::app.export.product-not-selected')'});
