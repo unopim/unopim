@@ -30,8 +30,8 @@
                             type="button"
                             class="inline-flex w-full cursor-pointer appearance-none items-center justify-between gap-x-2 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2.5 py-1.5 text-center leading-6 text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
                         >
-                            <span 
-                                class="text-sm text-gray-400 dark:text-gray-400" 
+                            <span
+                                class="text-sm text-gray-400 dark:text-gray-400"
                                 v-text="'@lang('admin::app.components.datagrid.filters.select')'"
                             >
                             </span>
@@ -101,8 +101,8 @@
                                 type="button"
                                 class="inline-flex w-full cursor-pointer appearance-none items-center justify-between gap-x-2 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2.5 py-1.5 text-center leading-6 text-gray-600 dark:text-gray-300 transition-all marker:shadow dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 "
                             >
-                                <span 
-                                    class="text-sm text-gray-400 dark:text-gray-400" 
+                                <span
+                                    class="text-sm text-gray-400 dark:text-gray-400"
                                     v-text="'@lang('admin::app.components.datagrid.filters.select')'"
                                 >
                                 </span>
@@ -347,11 +347,8 @@
                         class="block w-full rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2 py-1.5 text-sm leading-6 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
                         :name="column.index"
                         :placeholder="column.label"
-                        @change="filterPage(
-                            $event,
-                            column,
-                            { field: { name: 'amount' }, quickFilter: { isActive: false } }
-                        )"
+                        v-model="priceValue"
+                        @change="checkAndFilter(column)"
                     />
 
                     <x-admin::dropdown>
@@ -361,8 +358,8 @@
                             type="button"
                             class="inline-flex w-full cursor-pointer appearance-none items-center justify-between gap-x-2 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2.5 py-1.5 text-center leading-6 text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
                         >
-                            <span 
-                                class="text-sm text-gray-400 dark:text-gray-400" 
+                            <span
+                                class="text-sm text-gray-400 dark:text-gray-400"
                                 v-text="'@lang('admin::app.components.datagrid.filters.select')'"
                             >
                             </span>
@@ -376,11 +373,8 @@
                         <x-admin::dropdown.menu.item
                             v-for="option in column.options"
                             v-text="option.label"
-                            @click="filterPage(
-                                option.value,
-                                column,
-                                { field: { name: 'currency' }, quickFilter: { isActive: false } }
-                            )"
+                            @click="selectCurrency(option.value,column)"
+
                         >
                         </x-admin::dropdown.menu.item>
                     </x-slot>
@@ -547,7 +541,7 @@
                     class="inline-flex w-full cursor-pointer appearance-none items-center justify-between gap-x-2 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2.5 py-1.5 text-center leading-6 text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
                 >
                     <span
-                        class="text-sm text-gray-400 dark:text-gray-400" 
+                        class="text-sm text-gray-400 dark:text-gray-400"
                         v-text="'@lang('admin::app.components.datagrid.filters.select')'"
                     >
                     </span>
@@ -663,7 +657,7 @@
     <script type="text/x-template" id="v-datagrid-sync-dropdown-template">
         <x-admin::form.control-group.control
             type="select"
-            ::ref="'filter_' + column.index" 
+            ::ref="'filter_' + column.index"
             name="'filter_' + column.index"
             ::label="column.label || column.index"
             track-by="code"

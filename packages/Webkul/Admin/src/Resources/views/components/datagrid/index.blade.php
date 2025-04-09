@@ -509,7 +509,7 @@
 
                                     appliedColumn.value = [appliedValue];
                                 } else {
-                                    let appliedValue = [column.options[0]?.value, ''];
+                                    let appliedValue = [this.selectedCurrency, ''];
 
                                     if (field.name == 'currency') {
                                         appliedValue[0] = requestedValue;
@@ -833,6 +833,22 @@
 
                             break;
                     }
+                },
+
+                checkAndFilter(column) {
+                    if (this.priceValue && this.selectedCurrency) {
+                        this.filterPage(this.priceValue, column, {
+                            field: { name: 'amount', currency: this.selectedCurrency },
+                            quickFilter: { isActive: false }
+                        });
+                        this.priceValue = '';
+                        this.selectedCurrency = '';
+                    }
+                },
+
+                selectCurrency(value,column) {
+                    this.selectedCurrency = value;
+                    this.checkAndFilter(column);
                 },
             },
         });

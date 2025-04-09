@@ -37,6 +37,10 @@ class PriceFilter extends AbstractElasticSearchAttributeFilter
         }
         $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
 
+        if (!is_numeric($value[1])) {
+            throw new \LogicException('Price should contain only numeric values. Given: ' . var_export($value[1], true));
+        }
+
         switch ($operator) {
             case FilterOperators::EQUAL:
                 $clause = [
