@@ -1947,12 +1947,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => '下载',
-        'export'     => '快速导出',
-        'no-records' => '没有什么可导出的',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => '下载',
+        'export'               => '快速导出',
+        'no-records'           => '没有什么可导出的',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => '带媒体',
+        'export-success'       => '导出成功！',
+        'error'                => '发生了一些错误！',
+        'product-not-selected' => '未选择要快速导出的产品',
     ],
 
     'validations' => [

@@ -2396,12 +2396,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => 'Downloaden',
-        'export'     => 'Snel exporteren',
-        'no-records' => 'Niets om te exporteren',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => 'Downloaden',
+        'export'               => 'Snel exporteren',
+        'no-records'           => 'Niets om te exporteren',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'Met media',
+        'export-success'       => 'Export succesvol!',
+        'error'                => 'Er is iets misgegaan!',
+        'product-not-selected' => 'Geen producten geselecteerd voor snelle export',
     ],
 
     'validations' => [

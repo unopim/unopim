@@ -110,6 +110,7 @@
                     :selector="'textarea#' . $attributes->get('id')"
                     :prompt="stripcslashes($attributes->get('prompt', ''))"
                     ::field="field"
+                    :entity-name="$attributes->get('entity-name', '')"
                 >
                 </x-admin::tinymce>
             @endif
@@ -919,9 +920,10 @@
                 },
                 onScroll(e) {
                     const element = this.$refs['taggingselect__handler__']._.refs.list;
+                    const tolerance = 10;
 
                     if (
-                        (element.scrollHeight - element.scrollTop) == element.clientHeight
+                        (element.scrollHeight - element.scrollTop) - element.clientHeight <= tolerance
                         && this.lastPage > this.params.page
                     ) {
                         this.fetchMore();

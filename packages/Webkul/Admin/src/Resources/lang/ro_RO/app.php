@@ -1607,12 +1607,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => 'Descarcă',
-        'export'     => 'Export rapid',
-        'no-records' => 'Nimic de exportat',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => 'Descarcă',
+        'export'               => 'Export rapid',
+        'no-records'           => 'Nimic de exportat',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'Cu media',
+        'export-success'       => 'Export realizat cu succes!',
+        'error'                => 'Ceva n-a mers bine!',
+        'product-not-selected' => 'Nu au fost selectate produse pentru export rapid',
     ],
 
     'validations' => [

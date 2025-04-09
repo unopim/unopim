@@ -34,7 +34,7 @@
                     foreach($supportedType as $type => $value) {
                         $options[] = [
                             'id'    => $type,
-                            'label' => $value['title']
+                            'label' => trans($value['title'])
                         ];
 
                         if(!empty($value['route'])){
@@ -64,7 +64,7 @@
                         </x-admin::form.control-group>
                         <x-admin::form.control-group v-if="!['csv', 'xls', 'xlsx'].includes(format) && format" class="!mb-0">
                             <x-admin::form.control-group.label>
-                               With Media
+                                @lang('admin::app.export.with-media')
                             </x-admin::form.control-group.label>
                             <input
                                 type="hidden"
@@ -222,9 +222,9 @@
                             if (!params?.productIds?.length) {
                                 this.$emitter.emit('add-flash', {
                                     type: 'warning',
-                                    message: 'No products selected for quick export'
-                                });
+                                    message: '@lang('admin::app.export.product-not-selected')'});
                                 this.$refs.exportModal.toggle();
+
                                 return;
                             }
                             const formatType = this.format;
@@ -236,13 +236,13 @@
                                 .then((response) => {
                                     this.$emitter.emit('add-flash', {
                                         type: 'success',
-                                        message: response.data.message || 'Export successful!',
+                                        message: response?.data?.message || '@lang('admin::app.export.export-success')',
                                     });
                                 })
                                 .catch((error) => {
                                     this.$emitter.emit('add-flash', {
                                         type: 'warning',
-                                        message: error.response?.data?.error || 'Something went wrong!',
+                                        message: error?.response?.data?.error || '@lang('admin::app.export.error')',
                                     });
                                 })
                                 .finally(() => {

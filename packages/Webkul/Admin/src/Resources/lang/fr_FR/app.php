@@ -1919,12 +1919,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => 'Télécharger',
-        'export'     => 'Exporter',
-        'no-records' => 'Rien à exporter',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => 'Télécharger',
+        'export'               => 'Exporter',
+        'no-records'           => 'Rien à exporter',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'Avec des médias',
+        'export-success'       => 'Exportation réussie !',
+        'error'                => 'Une erreur s’est produite !',
+        'product-not-selected' => 'Aucun produit sélectionné pour l’exportation rapide',
     ],
 
     'validations' => [

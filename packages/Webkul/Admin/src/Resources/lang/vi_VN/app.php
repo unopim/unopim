@@ -1607,12 +1607,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => 'Tải về',
-        'export'     => 'Xuất nhanh',
-        'no-records' => 'Không có dữ liệu để xuất',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => 'Tải về',
+        'export'               => 'Xuất nhanh',
+        'no-records'           => 'Không có dữ liệu để xuất',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'Với phương tiện',
+        'export-success'       => 'Xuất khẩu thành công!',
+        'error'                => 'Đã xảy ra lỗi!',
+        'product-not-selected' => 'Chưa chọn sản phẩm nào để xuất nhanh',
     ],
 
     'validations' => [

@@ -1607,12 +1607,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => 'Last ned',
-        'export'     => 'Hurtig eksport',
-        'no-records' => 'Ingen poster å eksportere',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => 'Last ned',
+        'export'               => 'Hurtig eksport',
+        'no-records'           => 'Ingen poster å eksportere',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'Med media',
+        'export-success'       => 'Eksporten var vellykket!',
+        'error'                => 'Noe gikk galt!',
+        'product-not-selected' => 'Ingen produkter valgt for hurtig eksport',
     ],
 
     'validations' => [

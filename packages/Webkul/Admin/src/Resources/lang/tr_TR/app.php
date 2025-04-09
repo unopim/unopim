@@ -1607,12 +1607,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => 'İndir',
-        'export'     => 'Hızlı İhracat',
-        'no-records' => 'İhracat edilecek veri yok',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => 'İndir',
+        'export'               => 'Hızlı İhracat',
+        'no-records'           => 'İhracat edilecek veri yok',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'Medya ile',
+        'export-success'       => 'Dışa aktarma başarılı!',
+        'error'                => 'Bir şeyler yanlış gitti!',
+        'product-not-selected' => 'Не вибрано жодного товару для швидкого експорту',
     ],
 
     'validations' => [

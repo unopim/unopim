@@ -1607,12 +1607,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => '下載',
-        'export'     => '快速匯出',
-        'no-records' => '無需匯出資料',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => '下載',
+        'export'               => '快速匯出',
+        'no-records'           => '無需匯出資料',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => '附帶媒體',
+        'export-success'       => '匯出成功！',
+        'error'                => '發生了一些錯誤！',
+        'product-not-selected' => '未選擇要快速匯出的產品',
     ],
 
     'validations' => [

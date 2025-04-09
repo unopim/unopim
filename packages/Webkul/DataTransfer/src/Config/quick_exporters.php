@@ -2,14 +2,14 @@
 
 return [
     'csv' => [
-        'title' => 'CSV',
+        'title' => 'admin::app.export.csv',
     ],
 
     'xls' => [
-        'title' => 'XLS',
+        'title' => 'admin::app.export.xls',
     ],
 
     'xlsx' => [
-        'title' => 'XLSX',
+        'title' => 'admin::app.export.xlsx',
     ],
 ];

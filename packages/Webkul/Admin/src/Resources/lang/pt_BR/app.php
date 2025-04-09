@@ -1607,12 +1607,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => 'Baixar',
-        'export'     => 'Exportação rápida',
-        'no-records' => 'Nada para exportar',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => 'Baixar',
+        'export'               => 'Exportação rápida',
+        'no-records'           => 'Nada para exportar',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'Com mídia',
+        'export-success'       => 'Exportação realizada com sucesso!',
+        'error'                => 'Algo deu errado!',
+        'product-not-selected' => 'Nenhum produto selecionado para exportação rápida',
     ],
 
     'validations' => [
