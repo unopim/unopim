@@ -50,25 +50,16 @@ it('should return validation error for unique values when creating category', fu
 
     $categoryFieldCode = 'categoryValues_uniqueField';
 
-    CategoryField::factory()->create(['code' => $categoryFieldCode, 'is_unique' => 1, 'value_per_locale' => 0, 'type' => 'text']);
+    CategoryField::factory()->create(['status' => 1, 'code' => $categoryFieldCode, 'is_unique' => 1, 'value_per_locale' => 0, 'type' => 'text']);
 
     Category::factory()->create(['additional_data' => ['common' => [$categoryFieldCode => 'Already Present Value']]]);
 
-    $data = [
-        'code'            => 'test_category_1_0_0',
-        'parent_id'       => null,
-        'additional_data' => [
-            'common' => [
-                $categoryFieldCode => 'Already Present Value',
-            ],
-        ],
-        'uniqueFields' => [
-            'additional_data.common.'.$categoryFieldCode => 'additional_data[common]['.$categoryFieldCode.']',
-        ],
-    ];
+    $data = Category::factory()->definition();
+
+    $data['additional_data']['common'] = [$categoryFieldCode => 'Already Present Value'];
 
     $this->post(route('admin.catalog.categories.store'), $data)
-        ->assertInvalid('additional_data.common.categoryValues_uniqueField');
+        ->assertInvalid('additional_data[common][categoryValues_uniqueField]');
 
     $this->assertDatabaseMissing($this->getFullTableName(Category::class), [
         'code' => $data['code'],
@@ -80,26 +71,18 @@ it('should return validation error for unique values when updating category', fu
 
     $categoryFieldCode = 'categoryValues_uniqueField';
 
-    CategoryField::factory()->create(['code' => $categoryFieldCode, 'is_unique' => 1, 'value_per_locale' => 0, 'type' => 'text']);
-
-    $category = Category::first();
+    CategoryField::factory()->create(['status' => 1, 'code' => $categoryFieldCode, 'is_unique' => 1, 'value_per_locale' => 0, 'type' => 'text']);
 
     Category::factory()->create(['additional_data' => ['common' => [$categoryFieldCode => 'Already Present Value']]]);
 
-    $data = [
-        'parent_id'       => $category->parent_id,
-        'additional_data' => [
-            'common' => [
-                $categoryFieldCode => 'Already Present Value',
-            ],
-        ],
-        'uniqueFields' => [
-            'additional_data.common.'.$categoryFieldCode => 'additional_data[common]['.$categoryFieldCode.']',
-        ],
-    ];
+    $category = Category::factory()->create();
+
+    $data = $category->toArray();
+
+    $data['additional_data']['common'] = [$categoryFieldCode => 'Already Present Value'];
 
     $this->put(route('admin.catalog.categories.update', $category->id), $data)
-        ->assertInvalid('additional_data.common.categoryValues_uniqueField');
+        ->assertInvalid('additional_data[common][categoryValues_uniqueField]');
 
     $category->refresh();
 
@@ -110,26 +93,28 @@ it('should return validation error for unique values when updating category', fu
 it('should store the boolean type value when creating category', function () {
     $this->loginAsAdmin();
 
-    $categoryField = CategoryField::factory()->create(['type' => 'boolean']);
+    $categoryField = CategoryField::factory()->create(['status' => 1, 'type' => 'boolean', 'value_per_locale' => 0]);
+
+    $categoryFieldCode = $categoryField->code;
 
     $data = Category::factory()->definition();
 
-    $data['additional_data']['common'][$categoryField->code] = 'true';
+    $data['additional_data']['common'][$categoryFieldCode] = 'true';
 
     $this->post(route('admin.catalog.categories.store'), $data)
         ->assertSessionHas('success', trans('admin::app.catalog.categories.create-success'));
 
     $category = Category::where('code', $data['code'])->first();
 
-    $this->assertNotEmpty($category->additional_data['common'][$categoryField->code] ?? '');
+    $this->assertNotEmpty($category->additional_data['common'][$categoryFieldCode] ?? '');
 
-    $this->assertEquals($category->additional_data['common'][$categoryField->code], 'true');
+    $this->assertEquals($category->additional_data['common'][$categoryFieldCode], 'true');
 });
 
 it('should store the select type value when creating category', function () {
     $this->loginAsAdmin();
 
-    $categoryField = CategoryField::factory()->create(['type' => 'select']);
+    $categoryField = CategoryField::factory()->create(['status' => 1, 'type' => 'select']);
 
     $categoryFieldCode = $categoryField->code;
 
@@ -152,7 +137,7 @@ it('should store the select type value when creating category', function () {
 it('should store the multi select type value when creating category', function () {
     $this->loginAsAdmin();
 
-    $categoryField = CategoryField::factory()->create(['type' => 'multiselect']);
+    $categoryField = CategoryField::factory()->create(['status' => 1, 'type' => 'multiselect']);
 
     $categoryFieldCode = $categoryField->code;
 
@@ -160,7 +145,7 @@ it('should store the multi select type value when creating category', function (
 
     $categoryFieldOptions = $categoryField->options->pluck('code')->toArray();
 
-    $data['additional_data']['common'][$categoryFieldCode] = implode(', ', $categoryFieldOptions);
+    $data['additional_data']['common'][$categoryFieldCode] = implode(',', $categoryFieldOptions);
 
     $this->post(route('admin.catalog.categories.store'), $data)
         ->assertSessionHas('success', trans('admin::app.catalog.categories.create-success'));
@@ -175,7 +160,7 @@ it('should store the multi select type value when creating category', function (
 it('should store the datetime type value when creating category', function () {
     $this->loginAsAdmin();
 
-    $categoryField = CategoryField::factory()->create(['type' => 'datetime']);
+    $categoryField = CategoryField::factory()->create(['status' => 1, 'type' => 'datetime']);
 
     $categoryFieldCode = $categoryField->code;
 
@@ -196,7 +181,7 @@ it('should store the datetime type value when creating category', function () {
 it('should store the date type value when creating category', function () {
     $this->loginAsAdmin();
 
-    $categoryField = CategoryField::factory()->create(['type' => 'date']);
+    $categoryField = CategoryField::factory()->create(['status' => 1, 'type' => 'date']);
 
     $categoryFieldCode = $categoryField->code;
 
@@ -217,7 +202,7 @@ it('should store the date type value when creating category', function () {
 it('should store the checkbox type value when creating category', function () {
     $this->loginAsAdmin();
 
-    $categoryField = CategoryField::factory()->create(['type' => 'multiselect']);
+    $categoryField = CategoryField::factory()->create(['status' => 1, 'type' => 'checkbox']);
 
     $categoryFieldCode = $categoryField->code;
 
@@ -240,7 +225,7 @@ it('should store the checkbox type value when creating category', function () {
 it('should store the image type field value when creating category', function () {
     $this->loginAsAdmin();
 
-    $categoryField = CategoryField::factory()->create(['type' => 'image']);
+    $categoryField = CategoryField::factory()->create(['status' => 1, 'type' => 'image']);
 
     $data = Category::factory()->definition();
 
@@ -261,7 +246,7 @@ it('should store the image type field value when creating category', function ()
 it('should store the file type field value when creating category', function () {
     $this->loginAsAdmin();
 
-    $categoryField = CategoryField::factory()->create(['type' => 'file']);
+    $categoryField = CategoryField::factory()->create(['status' => 1, 'type' => 'file']);
 
     $data = Category::factory()->definition();
 
@@ -283,48 +268,40 @@ it('should store the file type field value when creating category', function () 
 it('should store the boolean type value when updating category', function () {
     $this->loginAsAdmin();
 
-    $categoryField = CategoryField::factory()->create(['type' => 'boolean']);
+    $categoryField = CategoryField::factory()->create(['status' => 1, 'type' => 'boolean']);
 
-    $category = Category::first();
+    $categoryFieldCode = $categoryField->code;
 
-    $data = [
-        'parent_id'       => $category->parent_id,
-        'additional_data' => [
-            'common' => [
-                $categoryField->code => 'true',
-            ],
-        ],
-    ];
+    $category = Category::factory()->create();
+
+    $data = $category->toArray();
+
+    $data['additional_data']['common'] = [$categoryFieldCode => 'true'];
 
     $this->put(route('admin.catalog.categories.update', $category->id), $data)
         ->assertSessionHas('success', trans('admin::app.catalog.categories.update-success'));
 
     $category->refresh();
 
-    $this->assertNotEmpty($category->additional_data['common'][$categoryField->code] ?? '');
+    $this->assertNotEmpty($category->additional_data['common'][$categoryFieldCode] ?? '');
 
-    $this->assertEquals($category->additional_data['common'][$categoryField->code], 'true');
+    $this->assertEquals($category->additional_data['common'][$categoryFieldCode], 'true');
 });
 
 it('should store the select type value when updating category', function () {
     $this->loginAsAdmin();
 
-    $categoryField = CategoryField::factory()->create(['type' => 'select']);
+    $categoryField = CategoryField::factory()->create(['status' => 1, 'type' => 'select']);
 
     $categoryFieldCode = $categoryField->code;
 
     $categoryFieldOption = $categoryField->options->first()->code;
 
-    $category = Category::first();
+    $category = Category::factory()->create();
 
-    $data = [
-        'parent_id'       => $category->parent_id,
-        'additional_data' => [
-            'common' => [
-                $categoryFieldCode => $categoryFieldOption,
-            ],
-        ],
-    ];
+    $data = $category->toArray();
+
+    $data['additional_data']['common'] = [$categoryFieldCode => $categoryFieldOption];
 
     $this->put(route('admin.catalog.categories.update', $category->id), $data)
         ->assertSessionHas('success', trans('admin::app.catalog.categories.update-success'));
@@ -339,22 +316,17 @@ it('should store the select type value when updating category', function () {
 it('should store the multi select type value when updating category', function () {
     $this->loginAsAdmin();
 
-    $categoryField = CategoryField::factory()->create(['type' => 'multiselect']);
+    $categoryField = CategoryField::factory()->create(['status' => 1, 'type' => 'multiselect']);
 
     $categoryFieldCode = $categoryField->code;
 
     $categoryFieldOptions = $categoryField->options->pluck('code')->toArray();
 
-    $category = Category::first();
+    $category = Category::factory()->create();
 
-    $data = [
-        'parent_id'       => $category->parent_id,
-        'additional_data' => [
-            'common' => [
-                $categoryFieldCode => implode(',', $categoryFieldOptions),
-            ],
-        ],
-    ];
+    $data = $category->toArray();
+
+    $data['additional_data']['common'] = [$categoryFieldCode => implode(',', $categoryFieldOptions)];
 
     $this->put(route('admin.catalog.categories.update', $category->id), $data)
         ->assertSessionHas('success', trans('admin::app.catalog.categories.update-success'));
@@ -369,20 +341,15 @@ it('should store the multi select type value when updating category', function (
 it('should store the datetime type value when updating category', function () {
     $this->loginAsAdmin();
 
-    $categoryField = CategoryField::factory()->create(['type' => 'datetime']);
+    $categoryField = CategoryField::factory()->create(['status' => 1, 'type' => 'datetime']);
 
     $categoryFieldCode = $categoryField->code;
 
-    $category = Category::first();
+    $category = Category::factory()->create();
 
-    $data = [
-        'parent_id'       => $category->parent_id,
-        'additional_data' => [
-            'common' => [
-                $categoryFieldCode => '2024-09-02 12:00:00',
-            ],
-        ],
-    ];
+    $data = $category->toArray();
+
+    $data['additional_data']['common'] = [$categoryFieldCode => '2024-09-02 12:00:00'];
 
     $this->put(route('admin.catalog.categories.update', $category->id), $data)
         ->assertSessionHas('success', trans('admin::app.catalog.categories.update-success'));
@@ -397,20 +364,15 @@ it('should store the datetime type value when updating category', function () {
 it('should store the date type value when updating category', function () {
     $this->loginAsAdmin();
 
-    $categoryField = CategoryField::factory()->create(['type' => 'datetime']);
+    $categoryField = CategoryField::factory()->create(['status' => 1, 'type' => 'date']);
 
     $categoryFieldCode = $categoryField->code;
 
-    $category = Category::first();
+    $category = Category::factory()->create();
 
-    $data = [
-        'parent_id'       => $category->parent_id,
-        'additional_data' => [
-            'common' => [
-                $categoryFieldCode => '2024-09-02',
-            ],
-        ],
-    ];
+    $data = $category->toArray();
+
+    $data['additional_data']['common'] = [$categoryFieldCode => '2024-09-02'];
 
     $this->put(route('admin.catalog.categories.update', $category->id), $data)
         ->assertSessionHas('success', trans('admin::app.catalog.categories.update-success'));
@@ -425,22 +387,17 @@ it('should store the date type value when updating category', function () {
 it('should store the checkbox type value when updating category', function () {
     $this->loginAsAdmin();
 
-    $categoryField = CategoryField::factory()->create(['type' => 'checkbox']);
+    $categoryField = CategoryField::factory()->create(['status' => 1, 'type' => 'checkbox']);
 
     $categoryFieldCode = $categoryField->code;
 
     $categoryFieldOptions = $categoryField->options->pluck('code')->toArray();
 
-    $category = Category::first();
+    $category = Category::factory()->create();
 
-    $data = [
-        'parent_id'       => $category->parent_id,
-        'additional_data' => [
-            'common' => [
-                $categoryFieldCode => implode(', ', $categoryFieldOptions),
-            ],
-        ],
-    ];
+    $data = $category->toArray();
+
+    $data['additional_data']['common'] = [$categoryFieldCode => $categoryFieldOptions];
 
     $this->put(route('admin.catalog.categories.update', $category->id), $data)
         ->assertSessionHas('success', trans('admin::app.catalog.categories.update-success'));
@@ -455,22 +412,17 @@ it('should store the checkbox type value when updating category', function () {
 it('should store the image type field value when updating category', function () {
     $this->loginAsAdmin();
 
-    $categoryField = CategoryField::factory()->create(['type' => 'image']);
+    $categoryField = CategoryField::factory()->create(['status' => 1, 'type' => 'image']);
 
-    $category = Category::first();
+    $category = Category::factory()->create();
 
     $categoryFieldCode = $categoryField->code;
 
     Storage::fake();
 
-    $data = [
-        'parent_id'       => $category->parent_id,
-        'additional_data' => [
-            'common' => [
-                $categoryFieldCode => [UploadedFile::fake()->image('category.jpg')],
-            ],
-        ],
-    ];
+    $data = $category->toArray();
+
+    $data['additional_data']['common'] = [$categoryFieldCode => [UploadedFile::fake()->image('category.jpg')]];
 
     $this->put(route('admin.catalog.categories.update', $category->id), $data)
         ->assertSessionHas('success', trans('admin::app.catalog.categories.update-success'));
@@ -485,22 +437,17 @@ it('should store the image type field value when updating category', function ()
 it('should store the file type field value when updating category', function () {
     $this->loginAsAdmin();
 
-    $categoryField = CategoryField::factory()->create(['type' => 'file']);
+    $categoryField = CategoryField::factory()->create(['status' => 1, 'type' => 'file']);
 
-    $category = Category::first();
+    $category = Category::factory()->create();
 
     $categoryFieldCode = $categoryField->code;
 
     Storage::fake();
 
-    $data = [
-        'parent_id'       => $category->parent_id,
-        'additional_data' => [
-            'common' => [
-                $categoryFieldCode => [UploadedFile::fake()->create('category.pdf', 100)],
-            ],
-        ],
-    ];
+    $data = $category->toArray();
+
+    $data['additional_data']['common'] = [$categoryFieldCode => [UploadedFile::fake()->create('category.pdf', 100)]];
 
     $this->put(route('admin.catalog.categories.update', $category->id), $data)
         ->assertSessionHas('success', trans('admin::app.catalog.categories.update-success'));
