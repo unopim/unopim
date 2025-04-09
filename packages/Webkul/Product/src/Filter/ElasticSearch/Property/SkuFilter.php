@@ -53,10 +53,11 @@ class SkuFilter extends AbstractPropertyFilter
                 break;
 
             case FilterOperators::CONTAINS:
+                $escapedQuery = preg_replace('/([+\-&|!(){}[\]^"~*?:\\/])/', '\\\$1', $value);
                 $clause = [
                     'query_string' => [
                         'default_field'    => $property,
-                        'query'            => '*'.implode('* OR *', $value).'*',
+                        'query'            => '*'.implode('* OR *', $escapedQuery).'*',
                     ],
                 ];
 
