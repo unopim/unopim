@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Validator as ValidatorFacade;
 use Illuminate\Validation\Validator;
 use Webkul\Category\Contracts\CategoryField;
 use Webkul\Category\Repositories\CategoryRepository;
+use Webkul\Category\Rules\FieldOption;
 use Webkul\Core\Rules\Code;
 use Webkul\Core\Rules\FileOrImageValidValue;
 
@@ -77,6 +78,10 @@ class CategoryRequestValidator extends CategoryValidator
 
         if ($field->type === self::FILE_FIELD_TYPE || $field->type === self::IMAGE_FIELD_TYPE) {
             $rules = [new FileOrImageValidValue(isImage: $field->type === self::IMAGE_FIELD_TYPE)];
+        }
+
+        if ($field->type === self::CHECKBOX_FIELD_TYPE) {
+            $rules = [new FieldOption($field)];
         }
 
         return $rules;
