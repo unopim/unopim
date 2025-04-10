@@ -458,3 +458,134 @@ it('should store the file type field value when updating category', function () 
 
     $this->assertTrue(Storage::exists($category->additional_data['common'][$categoryFieldCode]));
 });
+
+it('should return validation error for boolean field incorrect value in category update', function () {
+    $this->loginAsAdmin();
+
+    $category = Category::factory()->create();
+
+    $categoryFieldCode = 'categoryValues_boolean';
+
+    $categoryField = CategoryField::factory()->create(['status' => 1, 'value_per_locale' => 0, 'type' => 'boolean', 'code' => $categoryFieldCode]);
+
+    $data = Category::factory()->definition();
+
+    $data['additional_data']['common'][$categoryFieldCode] = 'incorrect_value';
+
+    $this->put(route('admin.catalog.categories.update', $category->id), $data)
+        ->assertInvalid('additional_data[common]['.$categoryFieldCode.']');
+
+    $category->refresh();
+
+    $this->assertNotEquals('incorrect_value', ($category->additional_data['common'][$categoryFieldCode] ?? ''));
+});
+
+it('should return validation error for select field incorrect option value in category update', function () {
+    $this->loginAsAdmin();
+
+    $category = Category::factory()->create();
+
+    $categoryFieldCode = 'categoryValues_select';
+
+    $categoryField = CategoryField::factory()->create(['status' => 1, 'value_per_locale' => 0, 'type' => 'select', 'code' => $categoryFieldCode]);
+
+    $data = Category::factory()->definition();
+
+    $data['additional_data']['common'][$categoryFieldCode] = 'incorrect_option';
+
+    $this->put(route('admin.catalog.categories.update', $category->id), $data)
+        ->assertInvalid('additional_data[common]['.$categoryFieldCode.']');
+
+    $category->refresh();
+
+    $this->assertNotEquals('incorrect_option', ($category->additional_data['common'][$categoryFieldCode] ?? ''));
+});
+
+it('should return validation error for multiselect field incorrect options value in category update', function () {
+    $this->loginAsAdmin();
+
+    $category = Category::factory()->create();
+
+    $categoryFieldCode = 'categoryValues_select';
+
+    $categoryField = CategoryField::factory()->create(['status' => 1, 'value_per_locale' => 0, 'type' => 'multiselect', 'code' => $categoryFieldCode]);
+
+    $data = Category::factory()->definition();
+
+    $data['additional_data']['common'][$categoryFieldCode] = 'incorrect_option1,incorrect option2';
+
+    $this->put(route('admin.catalog.categories.update', $category->id), $data)
+        ->assertInvalid('additional_data[common]['.$categoryFieldCode.']');
+
+    $category->refresh();
+
+    $this->assertNotEquals('incorrect_option1,incorrect option2', ($category->additional_data['common'][$categoryFieldCode] ?? ''));
+});
+
+it('should not allow invalid files upload for image type field', function () {
+    $this->loginAsAdmin();
+
+    $categoryField = CategoryField::factory()->create(['status' => 1, 'type' => 'image']);
+
+    $category = Category::factory()->create();
+
+    $categoryFieldCode = $categoryField->code;
+
+    Storage::fake();
+
+    $invalidFiles = [
+        'php'  => UploadedFile::fake()->create('category.php', 100, 'application/x-php'),
+        'html' => UploadedFile::fake()->create('category.html', 100, 'text/html'),
+    ];
+
+    $invalidData = $category->toArray();
+
+    foreach ($invalidFiles as $extension => $file) {
+        $invalidData['additional_data']['common'] = [$categoryFieldCode => [$file]];
+
+        $this->put(route('admin.catalog.categories.update', $category->id), $invalidData)
+            ->assertInvalid('additional_data[common]['.$categoryFieldCode.']');
+
+        $category->refresh();
+
+        $this->assertEmpty($category->additional_data['common'][$categoryFieldCode] ?? '');
+
+        if (! empty($category->additional_data['common'][$categoryFieldCode])) {
+            Storage::assertMissing($category->additional_data['common'][$categoryFieldCode]);
+        }
+    }
+});
+
+it('should not allow invalid files upload for file type field', function () {
+    $this->loginAsAdmin();
+
+    $categoryField = CategoryField::factory()->create(['status' => 1, 'type' => 'file']);
+
+    $category = Category::factory()->create();
+
+    $categoryFieldCode = $categoryField->code;
+
+    Storage::fake();
+
+    $invalidFiles = [
+        'php'  => UploadedFile::fake()->create('category.php', 100, 'application/x-php'),
+        'html' => UploadedFile::fake()->create('category.html', 100, 'text/html'),
+    ];
+
+    $invalidData = $category->toArray();
+
+    foreach ($invalidFiles as $extension => $file) {
+        $invalidData['additional_data']['common'] = [$categoryFieldCode => [$file]];
+
+        $this->put(route('admin.catalog.categories.update', $category->id), $invalidData)
+            ->assertInvalid('additional_data[common]['.$categoryFieldCode.']');
+
+        $category->refresh();
+
+        $this->assertEmpty($category->additional_data['common'][$categoryFieldCode] ?? '');
+
+        if (! empty($category->additional_data['common'][$categoryFieldCode])) {
+            Storage::assertMissing($category->additional_data['common'][$categoryFieldCode]);
+        }
+    }
+});
