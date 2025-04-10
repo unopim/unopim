@@ -208,6 +208,8 @@ class ProductController extends Controller
 
             Log::debug($e);
 
+            session()->flash('error', trans('admin::app.catalog.products.update-failure'));
+
             throw $e;
         }
 

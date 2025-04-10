@@ -280,6 +280,7 @@ return [
             'product-not-found'       => '":sku" sku-тай бүтээгдэхүүн олдсонгүй',
             'parent-not-found'        => '":sku" sku-тай эцэг эх олдсонгүй',
             'upload-success'          => 'Бүтээгдэхүүний файлыг амжилттай байршуулсан.',
+            'update-failure'          => 'Бүтээгдэхүүнийг шинэчилж чадаагүй.',
         ],
 
         'attributes' => [
@@ -570,6 +571,8 @@ return [
             'not-found'            => '":code" кодтой ангилал олдсонгүй',
             'unknown-fields'       => '":fields" кодтой ангиллын талбар олдсонгүй',
             'upload-success'       => 'Ангилалын файлыг амжилттай байршуулсан.',
+            'create-failure'       => 'Ангилалыг үүсгэж чадаагүй.',
+            'update-failure'       => 'Ангилалыг шинэчилж чадаагүй.',
         ],
 
         'category_fields' => [

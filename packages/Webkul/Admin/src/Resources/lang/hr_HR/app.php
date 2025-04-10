@@ -280,6 +280,7 @@ return [
             'product-not-found'       => 'Proizvod s SKU-om ":sku" nije pronađen',
             'parent-not-found'        => 'Roditelj s SKU-om ":sku" nije pronađen',
             'upload-success'          => 'Datoteka proizvoda uspješno učitana.',
+            'update-failure'          => 'Proizvod nije mogao biti ažuriran.',
         ],
 
         'attributes' => [
@@ -569,6 +570,8 @@ return [
             'not-found'            => 'Kategorija s kodom ":code" nije pronađena',
             'unknown-fields'       => 'Polje kategorije s kodom ":fields" nije pronađeno',
             'upload-success'       => 'Datoteka kategorije uspješno prenesena.',
+            'create-failure'       => 'Kategorija nije mogla biti stvorena.',
+            'update-failure'       => 'Kategorija nije mogla biti ažurirana.',
         ],
 
         'category_fields' => [

@@ -280,6 +280,7 @@ return [
             'product-not-found'       => 'Produk dengan SKU ":sku" tidak dapat ditemukan',
             'parent-not-found'        => 'Orang tua dengan sku ":sku" tidak dapat ditemukan',
             'upload-success'          => 'File produk berhasil diunggah.',
+            'update-failure'          => 'Produk gagal diperbarui.',
         ],
 
         'attributes' => [
@@ -569,6 +570,8 @@ return [
             'not-found'            => 'Kategori dengan kode ":code" tidak dapat ditemukan',
             'unknown-fields'       => 'Bidang kategori dengan kode ":fields" tidak dapat ditemukan',
             'upload-success'       => 'File kategori berhasil diunggah.',
+            'create-failure'       => 'Kategori gagal dibuat.',
+            'update-failure'       => 'Kategori gagal diperbarui.',
         ],
 
         'category_fields' => [

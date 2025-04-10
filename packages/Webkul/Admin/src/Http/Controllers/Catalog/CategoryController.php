@@ -4,6 +4,7 @@ namespace Webkul\Admin\Http\Controllers\Catalog;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Validation\ValidationException;
 use Webkul\Admin\DataGrids\Catalog\CategoryDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\CategoryRequest;
@@ -68,7 +69,13 @@ class CategoryController extends Controller
     {
         Event::dispatch('catalog.category.create.before');
 
-        $this->categoryValidator->validate($categoryRequest->only(['code', 'parent_id', 'additional_data']));
+        try {
+            $this->categoryValidator->validate($categoryRequest->only(['code', 'parent_id', 'additional_data']));
+        } catch (ValidationException $e) {
+            session()->flash('error', trans('admin::app.catalog.categories.create-failure'));
+
+            throw $e;
+        }
 
         $category = $this->categoryRepository->create($categoryRequest->only([
             'code',
@@ -118,7 +125,13 @@ class CategoryController extends Controller
             return redirect()->route('admin.catalog.categories.edit', ['id' => $id]);
         }
 
-        $validator = $this->categoryValidator->validate($categoryRequest->only(['code', 'parent_id', 'additional_data']), $id);
+        try {
+            $this->categoryValidator->validate($categoryRequest->only(['code', 'parent_id', 'additional_data']), $id);
+        } catch (ValidationException $e) {
+            session()->flash('error', trans('admin::app.catalog.categories.update-failure'));
+
+            throw $e;
+        }
 
         $category = $this->categoryRepository->update($categoryRequest->only([
             'locale',

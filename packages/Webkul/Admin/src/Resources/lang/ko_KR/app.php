@@ -280,6 +280,7 @@ return [
             'product-not-found'       => 'SKU ":sku"를 가진 제품을 찾을 수 없습니다.',
             'parent-not-found'        => 'SKU ":sku"를 가진 부모를 찾을 수 없습니다.',
             'upload-success'          => '제품 파일이 성공적으로 업로드되었습니다.',
+            'update-failure'          => '제품을 업데이트할 수 없습니다.',
         ],
 
         'attributes' => [
@@ -569,6 +570,8 @@ return [
             'not-found'            => '코드 ":code"인 카테고리를 찾을 수 없습니다.',
             'unknown-fields'       => '필드 코드 ":fields"인 카테고리를 찾을 수 없습니다.',
             'upload-success'       => '카테고리 파일이 성공적으로 업로드되었습니다.',
+            'create-failure'       => '카테고리를 만들 수 없습니다.',
+            'update-failure'       => '카테고리를 업데이트할 수 없습니다.',
         ],
 
         'category_fields' => [

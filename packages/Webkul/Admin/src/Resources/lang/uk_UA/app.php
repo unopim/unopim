@@ -280,6 +280,7 @@ return [
             'product-not-found'       => 'Продукт із SKU ":sku" не знайдено',
             'parent-not-found'        => 'Продукт із SKU ":sku" не знайдено',
             'upload-success'          => 'Файл продукту успішно завантажено.',
+            'update-failure'          => 'Продукт не вдалося оновити.',
         ],
 
         'attributes' => [
@@ -569,6 +570,8 @@ return [
             'not-found'            => 'Категорія з кодом ":code" не знайдена',
             'unknown-fields'       => 'Невідоме поле для категорії з кодом ":fields"',
             'upload-success'       => 'Файл категорії успішно завантажено',
+            'create-failure'       => 'Категорію не вдалося створити.',
+            'update-failure'       => 'Категорію не вдалося оновити.',
         ],
 
         'category_fields' => [

@@ -280,6 +280,7 @@ return [
             'product-not-found'       => 'SKU के साथ उत्पाद ":sku" नहीं मिला',
             'parent-not-found'        => 'SKU के साथ जनक ":sku" नहीं मिला',
             'upload-success'          => 'उत्पाद फ़ाइल सफलतापूर्वक अपलोड की गई।',
+            'update-failure'          => 'उत्पाद को अद्यतन नहीं किया जा सका।',
         ],
 
         'attributes' => [
@@ -571,6 +572,8 @@ return [
             'not-found'            => 'कोड के साथ श्रेणी ":code" नहीं मिल सकता है',
             'unknown-fields'       => 'कोड के साथ श्रेणी फ़ील्ड ":fields" नहीं मिल सकता है',
             'upload-success'       => 'श्रेणी फ़ाइल सफलतापूर्वक अपलोड की गई।',
+            'create-failure'       => 'श्रेणी को नहीं बनाया जा सका।',
+            'update-failure'       => 'श्रेणी को अद्यतन नहीं किया जा सका।',
         ],
 
         'category_fields' => [

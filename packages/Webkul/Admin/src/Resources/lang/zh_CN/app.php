@@ -280,6 +280,7 @@ return [
             'product-not-found'       => '无法找到 SKU 为“:sku”的产品',
             'parent-not-found'        => '无法找到 SKU 为“:sku”的父级',
             'upload-success'          => '产品文件成功上传。',
+            'update-failure'          => '无法更新产品。',
         ],
 
         'attributes' => [
@@ -568,6 +569,8 @@ return [
             'not-found'            => '找不到代码为“:code”的类别',
             'unknown-fields'       => '无法找到代码为“:fields”的类别字段',
             'upload-success'       => '类别文件成功上传。',
+            'create-failure'       => '无法创建类别。',
+            'update-failure'       => '无法更新类别。',
         ],
 
         'category_fields' => [

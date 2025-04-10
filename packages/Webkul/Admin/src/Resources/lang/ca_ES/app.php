@@ -280,6 +280,7 @@ return [
             'product-not-found'       => 'Producte amb SKU ":sku" no trobat',
             'parent-not-found'        => 'Pare amb SKU ":sku" no trobat',
             'upload-success'          => 'Fitxer de producte carregat correctament.',
+            'update-failure'          => 'No es va poder actualitzar el producte.',
         ],
 
         'attributes' => [
@@ -569,6 +570,8 @@ return [
             'not-found'            => 'No s\'ha pogut trobar la categoria amb codi ":code"',
             'unknown-fields'       => 'No s\'ha pogut trobar el camp de categoria amb codi ":fields"',
             'upload-success'       => 'Fitxer de categoria carregat amb èxit.',
+            'create-failure'       => 'No es va poder crear la categoria.',
+            'update-failure'       => 'No es va poder actualitzar la categoria.',
         ],
 
         'category_fields' => [
