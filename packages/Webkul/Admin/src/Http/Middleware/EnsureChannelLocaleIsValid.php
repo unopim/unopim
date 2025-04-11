@@ -30,15 +30,18 @@ class EnsureChannelLocaleIsValid
         $route = $request->route();
 
         // Check that the locale is available in the current channel
-        if ($requestedChannel->locales()->where('code', $requestedLocaleCode)->first() === null) {
+        if ($requestedChannel?->locales()?->where('code', $requestedLocaleCode)->first() === null) {
             // Get all route parameters
             $parameters = $route->parameters();
 
-            // Update the locale parameter to use the first available locale for this channel
-            $parameters['locale'] = $requestedChannel->locales()->first()->code;
+            // Get default channel when nonexistent channel is requested
+            $requestedChannel ??= core()->getDefaultChannel();
 
             // Ensure channel parameter is set
             $parameters['channel'] = $requestedChannel->code;
+
+            // Update the locale parameter to use the first available locale for this channel
+            $parameters['locale'] = $requestedChannel->locales()->first()->code;
 
             // Return redirect with route parameters and preserving query parameters
             $routeName = $route->getName();
