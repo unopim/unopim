@@ -293,7 +293,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'index'  => 'edit',
                 'icon'   => 'icon-copy',
                 'title'  => trans('admin::app.catalog.products.index.datagrid.copy'),
-                'method' => 'GET',
+                'method' => 'POST',
                 'url'    => function ($row) {
                     return route('admin.catalog.products.copy', $row->product_id);
                 },
@@ -361,6 +361,14 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $requestedParams = $this->validatedRequest();
 
+        if (! empty($requestedParams['productIds']) && isset($requestedParams['export']) && (bool) $requestedParams['export']) {
+            $this->queryBuilder->whereIn('products.id', $requestedParams['productIds']);
+
+            $this->exportData($requestedParams);
+
+            return;
+        }
+
         try {
             $pagination = $requestedParams['pagination'] ?? [];
             $pagination['per_page'] ??= $this->itemsPerPage;
@@ -378,11 +386,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 ->orderBy(DB::raw('FIELD('.DB::getTablePrefix().'products.id, '.implode(',', $ids).')'));
 
             if (isset($requestedParams['export']) && (bool) $requestedParams['export']) {
-                $this->exportable = true;
-
-                $gridData = $this instanceof ExportableInterface ? $this->getExportableData($requestedParams) : $this->queryBuilder->get();
-
-                $this->setExportFile($gridData, $requestedParams['format']);
+                $this->exportData($requestedParams);
 
                 return;
             }

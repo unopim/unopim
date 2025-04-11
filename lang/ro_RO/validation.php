@@ -41,6 +41,7 @@ return [
     'distinct'       => ':attribute are o valoare duplicată.',
     'email'          => ':attribute trebuie să fie o adresă de e-mail validă.',
     'exists'         => ':attribute selectat este invalid.',
+    'extensions'     => 'Câmpul :attribute trebuie să aibă una dintre următoarele extensii: :values.',
     'file'           => ':attribute trebuie să fie un fișier.',
     'filled'         => ':attribute trebuie să aibă o valoare.',
 

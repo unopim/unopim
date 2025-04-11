@@ -117,9 +117,9 @@ class CategoryFieldRepository extends Repository
     /**
      * Get Category field list by search query
      */
-    public function getCategoryFieldListBySearch(string $search, array $columns = ['*']): array
+    public function getCategoryFieldListBySearch(string $search, array $columns = ['*'], array $excludeTypes = []): array
     {
-        return DB::table('category_fields')
+        $query = DB::table('category_fields')
             ->select($columns)
             ->leftJoin('category_field_translations as requested_category_field_translation', function ($join) {
                 $join->on('requested_category_field_translation.category_field_id', '=', 'category_fields.id')
@@ -128,8 +128,12 @@ class CategoryFieldRepository extends Repository
             ->where(function ($query) use ($search) {
                 $query->where('category_fields.code', 'LIKE', '%'.$search.'%')
                     ->orWhere('requested_category_field_translation.name', 'LIKE', '%'.$search.'%');
-            })
-            ->get()
-            ->toArray();
+            });
+
+        if ($excludeTypes) {
+            $query->whereNotIn('category_fields.type', $excludeTypes);
+        }
+
+        return $query->get()->toArray();
     }
 }

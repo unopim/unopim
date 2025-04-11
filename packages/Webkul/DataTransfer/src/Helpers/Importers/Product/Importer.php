@@ -682,7 +682,7 @@ class Importer extends AbstractImporter
     /**
      * Format Product Status
      */
-    protected function getProductStatus(array $rowData, bool $isExsting, $product = null): int
+    protected function getProductStatus(array $rowData, bool $isExisting, $product = null): int
     {
         $status = $rowData['status'] ?? ($isExisting ? $product?->status : 0);
 

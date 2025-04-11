@@ -41,6 +41,7 @@ return [
     'distinct'       => ':attribute, yinelenen bir değere sahiptir.',
     'email'          => ':attribute geçerli bir e-posta adresi olmalıdır.',
     'exists'         => 'Seçilen :attribute geçersiz.',
+    'extensions'     => ':attribute alanı aşağıdaki uzantılardan birine sahip olmalıdır: :values.',
     'file'           => ':attribute bir dosya olmalıdır.',
     'filled'         => ':attribute bir değer içermelidir.',
 

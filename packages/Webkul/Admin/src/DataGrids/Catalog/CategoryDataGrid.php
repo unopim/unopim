@@ -58,7 +58,7 @@ class CategoryDataGrid extends DataGrid
             ->select(
                 'cat.id as category_id',
                 'cat.code as code',
-                DB::raw('(CASE WHEN JSON_EXTRACT('.$tablePrefix."cat.additional_data, '$.locale_specific.".$localeCode.".name') IS NOT NULL THEN REPLACE(JSON_EXTRACT(".$tablePrefix."cat.additional_data, '$.locale_specific.".$localeCode.".name'), '\"', '') ELSE CONCAT('[', ".$tablePrefix."cat.code, ']') END) as category_name"),
+                DB::raw('(CASE WHEN JSON_UNQUOTE(JSON_EXTRACT('.$tablePrefix."cat.additional_data, '$.locale_specific.".$localeCode.".name')) IS NOT NULL THEN REPLACE(JSON_UNQUOTE(JSON_EXTRACT(".$tablePrefix."cat.additional_data, '$.locale_specific.".$localeCode.".name')), '\"', '') ELSE CONCAT('[', ".$tablePrefix."cat.code, ']') END) as category_name"),
                 DB::raw('category_display_names.name as display_name'),
             )
             ->leftJoin(DB::raw("({$subQuery->toSql()}) as category_display_names"), function ($leftJoin) {
@@ -66,7 +66,7 @@ class CategoryDataGrid extends DataGrid
             })
             ->groupBy('cat.id', 'cat.code', DB::raw('category_display_names.name'));
 
-        $this->addFilter('category_name', DB::raw('CASE WHEN JSON_EXTRACT('.$tablePrefix."cat.additional_data, '$.locale_specific.".$localeCode.".name') IS NOT NULL THEN REPLACE(JSON_EXTRACT(".$tablePrefix."cat.additional_data, '$.locale_specific.".$localeCode.".name'), '\"', '') ELSE CONCAT('[', ".$tablePrefix."cat.code, ']') END"));
+        $this->addFilter('category_name', DB::raw('CASE WHEN JSON_UNQUOTE(JSON_EXTRACT('.$tablePrefix."cat.additional_data, '$.locale_specific.".$localeCode.".name')) IS NOT NULL THEN REPLACE(JSON_UNQUOTE(JSON_EXTRACT(".$tablePrefix."cat.additional_data, '$.locale_specific.".$localeCode.".name')), '\"', '') ELSE CONCAT('[', ".$tablePrefix."cat.code, ']') END"));
 
         return $queryBuilder;
     }
@@ -274,16 +274,18 @@ class CategoryDataGrid extends DataGrid
                     ],
                 ];
             case 'category_name':
+                $values = current($values);
+
                 return [
                     'bool' => [
                         'should' => [
                             [
-                                'terms' => [
-                                    'additional_data.locale_specific.'.$localeCode.'.name.keyword' => $values,
+                                'wildcard' => [
+                                    'additional_data.locale_specific.'.$localeCode.'.name' => '*'.$values.'*',
                                 ],
                             ], [
-                                'terms' => [
-                                    'name.keyword' => $values,
+                                'wildcard' => [
+                                    'code' => '*'.$values.'*',
                                 ],
                             ],
                         ],
@@ -292,15 +294,15 @@ class CategoryDataGrid extends DataGrid
 
             case 'code':
                 return [
-                    'terms' => [
-                        'code' => $values,
+                    'wildcard' => [
+                        'code' => '*'.current($values).'*',
                     ],
                 ];
 
             default:
                 return [
-                    'terms' => [
-                        $attribute => $values,
+                    'wildcard' => [
+                        $attribute => '*'.current($values).'*',
                     ],
                 ];
         }
@@ -313,8 +315,8 @@ class CategoryDataGrid extends DataGrid
     {
         $sort = $params['column'] ?? $this->primaryColumn;
 
-        if ($sort == 'name') {
-            $sort .= '.keyword';
+        if ($sort == 'category_name') {
+            $sort = 'name.keyword';
         }
 
         if ($sort == 'code') {
@@ -322,7 +324,7 @@ class CategoryDataGrid extends DataGrid
         }
 
         if ($sort === 'category_id') {
-            $sort = '_id';
+            $sort = 'id';
         }
 
         return [

@@ -42,6 +42,7 @@ return [
     'email'          => 'يجب أن يكون :attribute عنوان بريد إلكتروني صالح.',
     'exists'         => 'السمة المحددة غير صالحة:attribute .',
     'exists-value'   => 'لا يوجد :input.',
+    'extensions'     => 'يجب أن يحتوي حقل :attribute على أحد الامتدادات التالية: :values.',
     'file'           => 'يجب أن يكون :attribute ملفًا.',
     'filled'         => 'يجب أن يحتوي حقل :attribute على قيمة.',
 

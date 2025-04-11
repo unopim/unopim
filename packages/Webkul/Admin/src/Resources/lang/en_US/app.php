@@ -282,6 +282,7 @@ return [
             'product-not-found'       => 'Product with sku ":sku" could not be found',
             'parent-not-found'        => 'Parent with sku ":sku" could not be found',
             'upload-success'          => 'Product file uploaded successfully.',
+            'update-failure'          => 'Product could not be updated.',
         ],
 
         'attributes' => [
@@ -330,6 +331,7 @@ return [
                 'enable-wysiwyg'        => 'Enable Wysiwyg Editor',
                 'file'                  => 'File',
                 'general'               => 'General',
+                'gallery'               => 'Gallery',
                 'image'                 => 'Image',
                 'input-options'         => 'Input Options',
                 'input-validation'      => 'Input Validation',
@@ -572,6 +574,8 @@ return [
             'not-found'            => 'Category with code ":code" could not be found',
             'unknown-fields'       => 'Category Field with code ":fields" could not be found',
             'upload-success'       => 'Category file uploaded successfully.',
+            'create-failure'       => 'Category could not be created.',
+            'update-failure'       => 'Category could not be updated.',
         ],
 
         'category_fields' => [
@@ -1961,12 +1965,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => 'Download',
-        'export'     => 'Quick Export',
-        'no-records' => 'Nothing to export',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => 'Download',
+        'export'               => 'Quick Export',
+        'no-records'           => 'Nothing to export',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'With Media',
+        'export-success'       => 'Export successful!',
+        'error'                => 'Something went wrong!',
+        'product-not-selected' => 'No products selected for quick export',
     ],
 
     'validations' => [

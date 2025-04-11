@@ -7,9 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Webkul\Attribute\Contracts\Attribute as AttributeContract;
 use Webkul\Attribute\Database\Factories\AttributeFactory;
+use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Core\Eloquent\TranslatableModel;
 use Webkul\Core\Rules\BooleanString;
 use Webkul\Core\Rules\Decimal;
+use Webkul\Core\Rules\FileOrImageValidValue;
 use Webkul\Core\Rules\Slug;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
@@ -220,6 +222,8 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
             }
         }
 
+        $validations[] = new FileOrImageValidValue(isImage: $this->type != AttributeTypes::FILE_ATTRIBUTE_TYPE, isMultiple: $this->type === AttributeTypes::GALLERY_ATTRIBUTE_TYPE);
+
         return $validations;
     }
 
@@ -413,6 +417,15 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
                 break;
             case self::CHECKBOX_FIELD_TYPE:
                 $rules[] = new AttributeOptionRule($this);
+
+                break;
+            case AttributeTypes::FILE_ATTRIBUTE_TYPE:
+                $rules[] = new FileOrImageValidValue;
+
+                break;
+            case AttributeTypes::IMAGE_ATTRIBUTE_TYPE:
+            case AttributeTypes::GALLERY_ATTRIBUTE_TYPE:
+                $rules[] = new FileOrImageValidValue(isImage: true, isMultiple: $this->type === AttributeTypes::GALLERY_ATTRIBUTE_TYPE);
 
                 break;
         }

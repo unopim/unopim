@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Support\Str;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Product\Models\Product;
@@ -172,11 +171,13 @@ it('should copy the product successfully', function () {
 
     $product = Product::factory()->simple()->create();
 
-    $response = $this->get(route('admin.catalog.products.copy', $product->id));
+    $productId = $product->id;
 
-    $productId = Str::afterLast($response->getTargetUrl(), '/');
-
-    $response->assertRedirect(route('admin.catalog.products.edit', $productId));
+    $response = $this->post(route('admin.catalog.products.copy', $productId))
+        ->assertSessionHas('success', trans('admin::app.catalog.products.product-copied'))
+        ->assertJsonFragment([
+            'redirect_url' => route('admin.catalog.products.edit', ++$productId),
+        ]);
 
     $this->assertDatabaseHas($this->getFullTableName(Product::class), ['id' => $productId]);
 });

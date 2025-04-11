@@ -280,6 +280,7 @@ return [
             'product-not-found'       => '无法找到 SKU 为“:sku”的产品',
             'parent-not-found'        => '无法找到 SKU 为“:sku”的父级',
             'upload-success'          => '产品文件成功上传。',
+            'update-failure'          => '无法更新产品。',
         ],
 
         'attributes' => [
@@ -570,6 +571,8 @@ return [
             'not-found'            => '找不到代码为“:code”的类别',
             'unknown-fields'       => '无法找到代码为“:fields”的类别字段',
             'upload-success'       => '类别文件成功上传。',
+            'create-failure'       => '无法创建类别。',
+            'update-failure'       => '无法更新类别。',
         ],
 
         'category_fields' => [
@@ -1648,12 +1651,11 @@ return [
             ],
 
             'toolbar' => [
-                'length-of' => '：length 的',
-                '的'         => '的',
-                'per-page'  => '每页',
-                'results'   => '：total 结果',
-                'selected'  => '：total 选定',
-
+                'length-of'    => '：length 的',
+                'of'           => '的',
+                'per-page'     => '每页',
+                'results'      => '：total 结果',
+                'selected'     => '：total 选定',
                 'mass-actions' => [
                     'submit'        => '提交',
                     'select-option' => '选择选项',
@@ -1949,12 +1951,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => '下载',
-        'export'     => '快速导出',
-        'no-records' => '没有什么可导出的',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => '下载',
+        'export'               => '快速导出',
+        'no-records'           => '没有什么可导出的',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => '带媒体',
+        'export-success'       => '导出成功！',
+        'error'                => '发生了一些错误！',
+        'product-not-selected' => '未选择要快速导出的产品',
     ],
 
     'validations' => [

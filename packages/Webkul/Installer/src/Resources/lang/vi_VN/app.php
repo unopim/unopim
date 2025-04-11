@@ -1,19 +1,19 @@
 <?php
 
 return [
-    'seeders'   => [
+    'seeders' => [
         'attribute' => [
             'attribute-families' => 'Các gia đình thuộc tính',
             'attribute-groups'   => [
-                'description'       => 'Mô tả',
-                'general'           => 'Tổng quát',
-                'inventories'       => 'Kho hàng',
-                'meta-description'  => 'Mô tả meta',
-                'price'             => 'Giá',
-                'technical'         => 'Kỹ thuật',
-                'shipping'          => 'Vận chuyển',
+                'description'      => 'Mô tả',
+                'general'          => 'Tổng quát',
+                'inventories'      => 'Kho hàng',
+                'meta-description' => 'Mô tả meta',
+                'price'            => 'Giá',
+                'technical'        => 'Kỹ thuật',
+                'shipping'         => 'Vận chuyển',
             ],
-            'attributes'         => [
+            'attributes' => [
                 'brand'                => 'Thương hiệu',
                 'color'                => 'Màu sắc',
                 'cost'                 => 'Chi phí',
@@ -43,7 +43,7 @@ return [
                 'weight'               => 'Cân nặng',
                 'width'                => 'Chiều rộng',
             ],
-            'attribute-options'  => [
+            'attribute-options' => [
                 'black'  => 'Đen',
                 'green'  => 'Xanh lá cây',
                 'l'      => 'L',
@@ -55,7 +55,7 @@ return [
                 'yellow' => 'Vàng',
             ],
         ],
-        'category'  => [
+        'category' => [
             'categories' => [
                 'description' => 'Mô tả danh mục',
                 'name'        => 'Danh mục chính',
@@ -65,13 +65,13 @@ return [
                 'description' => 'Mô tả',
             ],
         ],
-        'cms'       => [
+        'cms' => [
             'pages' => [
-                'about-us'         => [
+                'about-us' => [
                     'content' => 'Nội dung trang giới thiệu',
                     'title'   => 'Về chúng tôi',
                 ],
-                'contact-us'       => [
+                'contact-us' => [
                     'content' => 'Nội dung trang liên hệ',
                     'title'   => 'Liên hệ với chúng tôi',
                 ],
@@ -79,23 +79,23 @@ return [
                     'content' => 'Nội dung trang dịch vụ khách hàng',
                     'title'   => 'Dịch vụ khách hàng',
                 ],
-                'payment-policy'   => [
+                'payment-policy' => [
                     'content' => 'Nội dung trang chính sách thanh toán',
                     'title'   => 'Chính sách thanh toán',
                 ],
-                'privacy-policy'   => [
+                'privacy-policy' => [
                     'content' => 'Nội dung trang chính sách bảo mật',
                     'title'   => 'Chính sách bảo mật',
                 ],
-                'refund-policy'    => [
+                'refund-policy' => [
                     'content' => 'Nội dung trang chính sách hoàn trả',
                     'title'   => 'Chính sách hoàn trả',
                 ],
-                'return-policy'    => [
+                'return-policy' => [
                     'content' => 'Nội dung trang chính sách trả hàng',
                     'title'   => 'Chính sách trả hàng',
                 ],
-                'shipping-policy'  => [
+                'shipping-policy' => [
                     'content' => 'Nội dung trang chính sách vận chuyển',
                     'title'   => 'Chính sách vận chuyển',
                 ],
@@ -103,18 +103,18 @@ return [
                     'content' => 'Nội dung trang điều khoản',
                     'title'   => 'Điều khoản và điều kiện',
                 ],
-                'terms-of-use'     => [
+                'terms-of-use' => [
                     'content' => 'Nội dung trang điều khoản sử dụng',
                     'title'   => 'Điều khoản sử dụng',
                 ],
-                'whats-new'        => [
+                'whats-new' => [
                     'content' => 'Nội dung trang cập nhật mới',
                     'title'   => 'Cập nhật mới',
                 ],
             ],
         ],
-        'core'      => [
-            'channels'   => [
+        'core' => [
+            'channels' => [
                 'meta-title'       => 'Cửa hàng Demo',
                 'meta-keywords'    => 'Từ khóa meta của cửa hàng Demo',
                 'meta-description' => 'Mô tả meta của cửa hàng Demo',
@@ -136,7 +136,7 @@ return [
                 'USD' => 'Đô la Mỹ',
             ],
         ],
-        'customer'  => [
+        'customer' => [
             'customer-groups' => [
                 'general'   => 'Chung',
                 'guest'     => 'Khách hàng',
@@ -148,32 +148,32 @@ return [
                 'name' => 'Chuẩn',
             ],
         ],
-        'shop'      => [
+        'shop' => [
             'theme-customizations' => [
-                'all-products'           => [
+                'all-products' => [
                     'name'    => 'Tất cả sản phẩm',
                     'options' => [
                         'title' => 'Tất cả sản phẩm',
                     ],
                 ],
-                'bold-collections'       => [
+                'bold-collections' => [
                     'content' => [
                         'btn-title'   => 'Xem tất cả',
                         'description' => 'Khám phá các bộ sưu tập mới mẻ của chúng tôi! Tăng cường phong cách của bạn bằng cách thêm màu sắc tươi sáng và thiết kế táo bạo. Hãy làm phong phú thêm tủ đồ của bạn với những họa tiết tươi sáng và màu sắc đậm. Chuẩn bị để bắt đầu hành trình táo bạo của bạn!',
                         'title'       => 'Chuẩn bị cho các bộ sưu tập táo bạo mới của chúng tôi!',
                     ],
-                    'name'    => 'Bộ sưu tập táo bạo',
+                    'name' => 'Bộ sưu tập táo bạo',
                 ],
                 'categories-collections' => [
                     'name' => 'Bộ sưu tập theo danh mục',
                 ],
-                'featured-collections'   => [
+                'featured-collections' => [
                     'name'    => 'Bộ sưu tập nổi bật',
                     'options' => [
                         'title' => 'Sản phẩm nổi bật',
                     ],
                 ],
-                'footer-links'           => [
+                'footer-links' => [
                     'name'    => 'Liên kết chân trang',
                     'options' => [
                         'about-us'         => 'Về chúng tôi',
@@ -189,48 +189,48 @@ return [
                         'whats-new'        => 'Cập nhật mới',
                     ],
                 ],
-                'game-container'         => [
+                'game-container' => [
                     'content' => [
                         'sub-title-1' => 'Các bộ sưu tập của chúng tôi',
                         'sub-title-2' => 'Các bộ sưu tập của chúng tôi',
                         'title'       => 'Chơi với các sản phẩm mới!',
                     ],
-                    'name'    => 'Container trò chơi',
+                    'name' => 'Container trò chơi',
                 ],
-                'image-carousel'         => [
+                'image-carousel' => [
                     'name'    => 'Carousel hình ảnh',
                     'sliders' => [
                         'title' => 'Chuẩn bị cho bộ sưu tập mới',
                     ],
                 ],
-                'new-products'           => [
+                'new-products' => [
                     'name'    => 'Sản phẩm mới',
                     'options' => [
                         'title' => 'Sản phẩm mới',
                     ],
                 ],
-                'offer-information'      => [
+                'offer-information' => [
                     'content' => [
                         'title' => 'BẮT ĐẦU DUYỆT VỚI %40 GIẢM GIÁ CHO MUA HÀNG ĐẦU TIÊN CỦA BẠN!',
                     ],
                     'name' => 'Thông tin về ưu đãi',
                 ],
-                'services-content'       => [
+                'services-content' => [
                     'description' => [
                         'emi-available-info'   => 'Có cơ hội tài chính miễn phí cho tất cả các thẻ tín dụng chính',
                         'free-shipping-info'   => 'Giao hàng miễn phí cho tất cả các đơn hàng',
                         'product-replace-info' => 'Thay thế sản phẩm dễ dàng!',
                         'time-support-info'    => 'Hỗ trợ đặc biệt 24/7 qua trò chuyện trực tuyến và email',
                     ],
-                    'name'        => 'Nội dung dịch vụ',
-                    'title'       => [
+                    'name'  => 'Nội dung dịch vụ',
+                    'title' => [
                         'emi-available'   => 'Tài chính miễn phí',
                         'free-shipping'   => 'Giao hàng miễn phí',
                         'product-replace' => 'Thay thế sản phẩm',
                         'time-support'    => 'Hỗ trợ 24/7',
                     ],
                 ],
-                'top-collections'        => [
+                'top-collections' => [
                     'content' => [
                         'sub-title-1' => 'Các bộ sưu tập của chúng tôi',
                         'sub-title-2' => 'Các bộ sưu tập của chúng tôi',
@@ -240,11 +240,11 @@ return [
                         'sub-title-6' => 'Các bộ sưu tập của chúng tôi',
                         'title'       => 'Chơi với các sản phẩm mới!',
                     ],
-                    'name'    => 'Các bộ sưu tập nổi bật',
+                    'name' => 'Các bộ sưu tập nổi bật',
                 ],
             ],
         ],
-        'user'      => [
+        'user' => [
             'roles' => [
                 'description' => 'Vai trò này sẽ có quyền truy cập vào tất cả các tính năng',
                 'name'        => 'Quản trị viên',
@@ -306,17 +306,17 @@ return [
             ],
 
             'installation-processing' => [
-                'unopim'            => 'Cài đặt UnoPim',
-                'unopim-info'       => 'Đang tạo các bảng cơ sở dữ liệu, điều này có thể mất vài phút.',
-                'title'             => 'Quá trình cài đặt',
+                'unopim'      => 'Cài đặt UnoPim',
+                'unopim-info' => 'Đang tạo các bảng cơ sở dữ liệu, điều này có thể mất vài phút.',
+                'title'       => 'Quá trình cài đặt',
             ],
 
             'installation-completed' => [
-                'admin-panel'                   => 'Bảng điều khiển quản trị',
-                'unopim-forums'                 => 'Diễn đàn UnoPim',
-                'explore-unopim-extensions'     => 'Khám phá các tiện ích mở rộng UnoPim',
-                'title-info'                    => 'UnoPim đã được cài đặt thành công.',
-                'title'                         => 'Cài đặt hoàn tất',
+                'admin-panel'               => 'Bảng điều khiển quản trị',
+                'unopim-forums'             => 'Diễn đàn UnoPim',
+                'explore-unopim-extensions' => 'Khám phá các tiện ích mở rộng UnoPim',
+                'title-info'                => 'UnoPim đã được cài đặt thành công.',
+                'title'                     => 'Cài đặt hoàn tất',
             ],
 
             'ready-for-installation' => [
@@ -360,38 +360,19 @@ return [
                 'xml'         => 'XML',
             ],
 
-            'arabic'                    => 'Tiếng Ả Rập',
-            'back'                      => 'Trở lại',
-            'unopim-info'               => 'Dự án cộng đồng',
-            'unopim-logo'               => 'Logo UnoPim',
-            'unopim'                    => 'UnoPim',
-            'bengali'                   => 'Tiếng Bengali',
-            'chinese'                   => 'Tiếng Trung',
-            'continue'                  => 'Tiếp tục',
-            'dutch'                     => 'Tiếng Hà Lan',
-            'english'                   => 'Tiếng Anh',
-            'french'                    => 'Tiếng Pháp',
-            'german'                    => 'Tiếng Đức',
-            'hebrew'                    => 'Tiếng Hebrew',
-            'hindi'                     => 'Tiếng Hindi',
-            'installation-description'  => 'Quá trình cài đặt UnoPim bao gồm một số bước. Đây là tổng quan:',
-            'wizard-language'           => 'Ngôn ngữ của Trình hướng dẫn cài đặt',
-            'installation-info'         => 'Cảm ơn bạn đã gia nhập!',
-            'installation-title'        => 'Cài đặt UnoPim',
-            'italian'                   => 'Tiếng Ý',
-            'japanese'                  => 'Tiếng Nhật',
-            'persian'                   => 'Tiếng Ba Tư',
-            'polish'                    => 'Tiếng Ba Lan',
-            'portuguese'                => 'Tiếng Bồ Đào Nha',
-            'russian'                   => 'Tiếng Nga',
-            'save-configuration'        => 'Lưu cấu hình',
-            'sinhala'                   => 'Tiếng Sinhala',
-            'skip'                      => 'Bỏ qua',
-            'spanish'                   => 'Tiếng Tây Ban Nha',
-            'title'                     => 'Trình hướng dẫn cài đặt UnoPim',
-            'turkish'                   => 'Tiếng Thổ Nhĩ Kỳ',
-            'ukrainian'                 => 'Tiếng Ukraina',
-            'webkul'                    => 'Webkul',
+            'back'                     => 'Trở lại',
+            'unopim-info'              => 'Dự án cộng đồng',
+            'unopim-logo'              => 'Logo UnoPim',
+            'unopim'                   => 'UnoPim',
+            'continue'                 => 'Tiếp tục',
+            'installation-description' => 'Quá trình cài đặt UnoPim bao gồm một số bước. Đây là tổng quan:',
+            'wizard-language'          => 'Ngôn ngữ của Trình hướng dẫn cài đặt',
+            'installation-info'        => 'Cảm ơn bạn đã gia nhập!',
+            'installation-title'       => 'Cài đặt UnoPim',
+            'save-configuration'       => 'Lưu cấu hình',
+            'skip'                     => 'Bỏ qua',
+            'title'                    => 'Trình hướng dẫn cài đặt UnoPim',
+            'webkul'                   => 'Webkul',
         ],
     ],
 ];

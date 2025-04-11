@@ -45,6 +45,10 @@ class ProductAttributeValuesNormalizer
                 continue;
             }
 
+            if ($attribute->type === 'gallery' && ! empty($value) && is_array($value)) {
+                $value = implode(', ', $value);
+            }
+
             $values[$attributeCode] = $value;
         }
 

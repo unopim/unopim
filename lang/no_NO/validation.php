@@ -42,6 +42,7 @@ return [
     'email'          => ':attribute må være en gyldig e-postadresse.',
     'exists'         => 'Den valgte :attribute er ugyldig.',
     'exists-value'   => ':input finnes ikke.',
+    'extensions'     => ':attribute-feltet må ha en av følgende filendelser: :values.',
     'file'           => ':attribute må være en fil.',
     'filled'         => ':attribute-feltet må ha en verdi.',
 

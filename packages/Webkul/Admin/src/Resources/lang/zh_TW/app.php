@@ -280,6 +280,7 @@ return [
             'product-not-found'       => '未找到 SKU 為 ":sku" 的產品',
             'parent-not-found'        => '未找到 SKU 為 ":sku" 的父級產品',
             'upload-success'          => '產品文件已成功上傳。',
+            'update-failure'          => '無法更新產品。',
         ],
 
         'attributes' => [
@@ -571,6 +572,8 @@ return [
             'not-found'            => '未找到代碼為 ":code" 的類別',
             'unknown-fields'       => '未找到代碼為 ":fields" 的類別字段',
             'upload-success'       => '類別檔案已成功上傳。',
+            'create-failure'       => '無法創建類別。',
+            'update-failure'       => '無法更新類別。',
         ],
 
         'category_fields' => [
@@ -1609,12 +1612,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => '下載',
-        'export'     => '快速匯出',
-        'no-records' => '無需匯出資料',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => '下載',
+        'export'               => '快速匯出',
+        'no-records'           => '無需匯出資料',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => '附帶媒體',
+        'export-success'       => '匯出成功！',
+        'error'                => '發生了一些錯誤！',
+        'product-not-selected' => '未選擇要快速匯出的產品',
     ],
 
     'validations' => [

@@ -1,19 +1,19 @@
 <?php
 
 return [
-    'seeders'   => [
+    'seeders' => [
         'attribute' => [
             'attribute-families' => '기본',
             'attribute-groups'   => [
-                'description'       => '설명',
-                'general'           => '일반',
-                'inventories'       => '재고',
-                'meta-description'  => '메타 설명',
-                'price'             => '가격',
-                'technical'         => '기술',
-                'shipping'          => '배송',
+                'description'      => '설명',
+                'general'          => '일반',
+                'inventories'      => '재고',
+                'meta-description' => '메타 설명',
+                'price'            => '가격',
+                'technical'        => '기술',
+                'shipping'         => '배송',
             ],
-            'attributes'         => [
+            'attributes' => [
                 'brand'                => '브랜드',
                 'color'                => '색상',
                 'cost'                 => '비용',
@@ -43,7 +43,7 @@ return [
                 'weight'               => '무게',
                 'width'                => '너비',
             ],
-            'attribute-options'  => [
+            'attribute-options' => [
                 'black'  => '검정',
                 'green'  => '초록',
                 'l'      => 'L',
@@ -55,7 +55,7 @@ return [
                 'yellow' => '노랑',
             ],
         ],
-        'category'  => [
+        'category' => [
             'categories' => [
                 'description' => '루트 카테고리 설명',
                 'name'        => '루트',
@@ -65,13 +65,13 @@ return [
                 'description' => '설명',
             ],
         ],
-        'cms'       => [
+        'cms' => [
             'pages' => [
-                'about-us'         => [
+                'about-us' => [
                     'content' => '회사 소개 페이지 콘텐츠',
                     'title'   => '회사 소개',
                 ],
-                'contact-us'       => [
+                'contact-us' => [
                     'content' => '문의하기 페이지 콘텐츠',
                     'title'   => '문의하기',
                 ],
@@ -79,23 +79,23 @@ return [
                     'content' => '고객 서비스 페이지 콘텐츠',
                     'title'   => '고객 서비스',
                 ],
-                'payment-policy'   => [
+                'payment-policy' => [
                     'content' => '결제 정책 페이지 콘텐츠',
                     'title'   => '결제 정책',
                 ],
-                'privacy-policy'   => [
+                'privacy-policy' => [
                     'content' => '개인 정보 보호 정책 페이지 콘텐츠',
                     'title'   => '개인 정보 보호 정책',
                 ],
-                'refund-policy'    => [
+                'refund-policy' => [
                     'content' => '환불 정책 페이지 콘텐츠',
                     'title'   => '환불 정책',
                 ],
-                'return-policy'    => [
+                'return-policy' => [
                     'content' => '반품 정책 페이지 콘텐츠',
                     'title'   => '반품 정책',
                 ],
-                'shipping-policy'  => [
+                'shipping-policy' => [
                     'content' => '배송 정책 페이지 콘텐츠',
                     'title'   => '배송 정책',
                 ],
@@ -103,18 +103,18 @@ return [
                     'content' => '이용 약관 페이지 콘텐츠',
                     'title'   => '이용 약관',
                 ],
-                'terms-of-use'     => [
+                'terms-of-use' => [
                     'content' => '이용 약관 페이지 콘텐츠',
                     'title'   => '이용 약관',
                 ],
-                'whats-new'        => [
+                'whats-new' => [
                     'content' => '새로운 콘텐츠 페이지',
                     'title'   => '새로운 콘텐츠',
                 ],
             ],
         ],
-        'core'      => [
-            'channels'   => [
+        'core' => [
+            'channels' => [
                 'meta-title'       => '데모 상점',
                 'meta-keywords'    => '데모 상점 메타 키워드',
                 'meta-description' => '데모 상점 메타 설명',
@@ -136,7 +136,7 @@ return [
                 'USD' => '미국 달러',
             ],
         ],
-        'customer'  => [
+        'customer' => [
             'customer-groups' => [
                 'general'   => '일반',
                 'guest'     => '게스트',
@@ -148,32 +148,32 @@ return [
                 'name' => '기본',
             ],
         ],
-        'shop'      => [
+        'shop' => [
             'theme-customizations' => [
-                'all-products'           => [
+                'all-products' => [
                     'name'    => '모든 제품',
                     'options' => [
                         'title' => '모든 제품',
                     ],
                 ],
-                'bold-collections'       => [
+                'bold-collections' => [
                     'content' => [
                         'btn-title'   => '모두 보기',
                         'description' => '새로운 Bold 컬렉션을 소개합니다! 스타일을 한 단계 끌어올리고, 도전적인 디자인과 화려한 색상을 통해 의상에 활력을 불어넣어 보세요. 강렬한 패턴과 bold 색상을 통해 당신의 의상을 새롭게 정의하십시오. 특별한 순간을 준비하세요!',
                         'title'       => '새 Bold 컬렉션을 만나보세요!',
                     ],
-                    'name'    => 'Bold 컬렉션',
+                    'name' => 'Bold 컬렉션',
                 ],
                 'categories-collections' => [
                     'name' => '카테고리 컬렉션',
                 ],
-                'featured-collections'   => [
+                'featured-collections' => [
                     'name'    => '주요 컬렉션',
                     'options' => [
                         'title' => '추천 제품',
                     ],
                 ],
-                'footer-links'           => [
+                'footer-links' => [
                     'name'    => '푸터 링크',
                     'options' => [
                         'about-us'         => '회사 소개',
@@ -189,48 +189,48 @@ return [
                         'whats-new'        => '새로운 콘텐츠',
                     ],
                 ],
-                'game-container'         => [
+                'game-container' => [
                     'content' => [
                         'sub-title-1' => '우리의 컬렉션',
                         'sub-title-2' => '우리의 컬렉션',
                         'title'       => '우리의 새로운 추가 사항으로 게임을 준비하세요!',
                     ],
-                    'name'    => '게임 컨테이너',
+                    'name' => '게임 컨테이너',
                 ],
-                'image-carousel'         => [
+                'image-carousel' => [
                     'name'    => '이미지 슬라이더',
                     'sliders' => [
                         'title' => '새로운 컬렉션을 준비하세요',
                     ],
                 ],
-                'new-products'           => [
+                'new-products' => [
                     'name'    => '새로운 제품',
                     'options' => [
                         'title' => '새로운 제품',
                     ],
                 ],
-                'offer-information'      => [
+                'offer-information' => [
                     'content' => [
                         'title' => '최초 주문 시 최대 40% 할인 SHOP NOW',
                     ],
                     'name' => '제안 정보',
                 ],
-                'services-content'       => [
+                'services-content' => [
                     'description' => [
                         'emi-available-info'   => '모든 주요 신용 카드에서 EMI 이용 가능',
                         'free-shipping-info'   => '모든 주문에 무료 배송 제공',
                         'product-replace-info' => '쉽게 교체할 수 있는 제품 제공!',
                         'time-support-info'    => '채팅 및 이메일을 통한 24시간 지원',
                     ],
-                    'name'        => '서비스 콘텐츠',
-                    'title'       => [
+                    'name'  => '서비스 콘텐츠',
+                    'title' => [
                         'emi-available'   => 'EMI 사용 가능',
                         'free-shipping'   => '무료 배송',
                         'product-replace' => '제품 교체',
                         'time-support'    => '24시간 지원',
                     ],
                 ],
-                'top-collections'        => [
+                'top-collections' => [
                     'content' => [
                         'sub-title-1' => '우리의 컬렉션',
                         'sub-title-2' => '우리의 컬렉션',
@@ -240,11 +240,11 @@ return [
                         'sub-title-6' => '우리의 컬렉션',
                         'title'       => '우리의 새로운 추가 사항으로 게임을 준비하세요!',
                     ],
-                    'name'    => '탑 컬렉션',
+                    'name' => '탑 컬렉션',
                 ],
             ],
         ],
-        'user'      => [
+        'user' => [
             'roles' => [
                 'description' => '이 역할을 가진 사용자는 모든 접근 권한을 가집니다',
                 'name'        => '관리자',
@@ -306,17 +306,17 @@ return [
             ],
 
             'installation-processing' => [
-                'unopim'            => 'UnoPim 설치 중',
-                'unopim-info'       => '데이터베이스 테이블을 생성 중입니다. 시간이 걸릴 수 있습니다.',
-                'title'             => '설치 중',
+                'unopim'      => 'UnoPim 설치 중',
+                'unopim-info' => '데이터베이스 테이블을 생성 중입니다. 시간이 걸릴 수 있습니다.',
+                'title'       => '설치 중',
             ],
 
             'installation-completed' => [
-                'admin-panel'                   => '관리자 패널',
-                'unopim-forums'                 => 'UnoPim 포럼',
-                'explore-unopim-extensions'     => 'UnoPim 확장 프로그램 탐색',
-                'title-info'                    => 'UnoPim이 성공적으로 설치되었습니다.',
-                'title'                         => '설치 완료',
+                'admin-panel'               => '관리자 패널',
+                'unopim-forums'             => 'UnoPim 포럼',
+                'explore-unopim-extensions' => 'UnoPim 확장 프로그램 탐색',
+                'title-info'                => 'UnoPim이 성공적으로 설치되었습니다.',
+                'title'                     => '설치 완료',
             ],
 
             'ready-for-installation' => [
@@ -360,38 +360,19 @@ return [
                 'xml'         => 'XML',
             ],
 
-            'arabic'                    => '아랍어',
-            'back'                      => '뒤로',
-            'unopim-info'               => '커뮤니티 프로젝트',
-            'unopim-logo'               => 'UnoPim 로고',
-            'unopim'                    => 'UnoPim',
-            'bengali'                   => '벵골어',
-            'chinese'                   => '중국어',
-            'continue'                  => '계속',
-            'dutch'                     => '네덜란드어',
-            'english'                   => '영어',
-            'french'                    => '프랑스어',
-            'german'                    => '독일어',
-            'hebrew'                    => '히브리어',
-            'hindi'                     => '힌디어',
-            'installation-description'  => 'UnoPim 설치는 여러 단계를 거칩니다. 간략한 개요는 다음과 같습니다:',
-            'wizard-language'           => '설치 마법사 언어',
-            'installation-info'         => '여기 와주셔서 감사합니다!',
-            'installation-title'        => '설치 환영',
-            'italian'                   => '이탈리아어',
-            'japanese'                  => '일본어',
-            'persian'                   => '페르시아어',
-            'polish'                    => '폴란드어',
-            'portuguese'                => '브라질 포르투갈어',
-            'russian'                   => '러시아어',
-            'save-configuration'        => '구성 저장',
-            'sinhala'                   => '신할라어',
-            'skip'                      => '건너뛰기',
-            'spanish'                   => '스페인어',
-            'title'                     => 'UnoPim 설치 마법사',
-            'turkish'                   => '터키어',
-            'ukrainian'                 => '우크라이나어',
-            'webkul'                    => 'Webkul',
+            'back'                     => '뒤로',
+            'unopim-info'              => '커뮤니티 프로젝트',
+            'unopim-logo'              => 'UnoPim 로고',
+            'unopim'                   => 'UnoPim',
+            'continue'                 => '계속',
+            'installation-description' => 'UnoPim 설치는 여러 단계를 거칩니다. 간략한 개요는 다음과 같습니다:',
+            'wizard-language'          => '설치 마법사 언어',
+            'installation-info'        => '여기 와주셔서 감사합니다!',
+            'installation-title'       => '설치 환영',
+            'save-configuration'       => '구성 저장',
+            'skip'                     => '건너뛰기',
+            'title'                    => 'UnoPim 설치 마법사',
+            'webkul'                   => 'Webkul',
         ],
     ],
 ];

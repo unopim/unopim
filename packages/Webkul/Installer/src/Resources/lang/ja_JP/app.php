@@ -1,23 +1,23 @@
 <?php
 
 return [
-    'seeders'   => [
+    'seeders' => [
         'attribute' => [
             'attribute-families' => [
                 'default' => 'デフォルト',
             ],
 
-            'attribute-groups'   => [
-                'description'       => '説明',
-                'general'           => '一般的な',
-                'inventories'       => '在庫',
-                'meta-description'  => 'メタディスクリプション',
-                'price'             => '価格',
-                'technical'         => 'テクニカル',
-                'shipping'          => '配送',
+            'attribute-groups' => [
+                'description'      => '説明',
+                'general'          => '一般的な',
+                'inventories'      => '在庫',
+                'meta-description' => 'メタディスクリプション',
+                'price'            => '価格',
+                'technical'        => 'テクニカル',
+                'shipping'         => '配送',
             ],
 
-            'attributes'         => [
+            'attributes' => [
                 'brand'                => 'ブランド',
                 'color'                => '色',
                 'cost'                 => '料金',
@@ -48,7 +48,7 @@ return [
                 'width'                => '幅',
             ],
 
-            'attribute-options'  => [
+            'attribute-options' => [
                 'black'  => '黒',
                 'green'  => '緑',
                 'l'      => 'L',
@@ -61,7 +61,7 @@ return [
             ],
         ],
 
-        'category'  => [
+        'category' => [
             'categories' => [
                 'description' => 'ルートカテゴリの説明',
                 'name'        => '根',
@@ -73,14 +73,14 @@ return [
             ],
         ],
 
-        'cms'       => [
+        'cms' => [
             'pages' => [
-                'about-us'         => [
+                'about-us' => [
                     'content' => '会社概要ページのコンテンツ',
                     'title'   => '私たちについて',
                 ],
 
-                'contact-us'       => [
+                'contact-us' => [
                     'content' => 'お問い合わせページのコンテンツ',
                     'title'   => 'お問い合わせ',
                 ],
@@ -90,27 +90,27 @@ return [
                     'title'   => '顧客サービス',
                 ],
 
-                'payment-policy'   => [
+                'payment-policy' => [
                     'content' => '支払いポリシーページのコンテンツ',
                     'title'   => '支払いポリシー',
                 ],
 
-                'privacy-policy'   => [
+                'privacy-policy' => [
                     'content' => 'プライバシーポリシーページの内容',
                     'title'   => 'プライバシーポリシー',
                 ],
 
-                'refund-policy'    => [
+                'refund-policy' => [
                     'content' => '返金ポリシーページのコンテンツ',
                     'title'   => '返金ポリシー',
                 ],
 
-                'return-policy'    => [
+                'return-policy' => [
                     'content' => '返品ポリシーページのコンテンツ',
                     'title'   => '返品規則',
                 ],
 
-                'shipping-policy'  => [
+                'shipping-policy' => [
                     'content' => '配送ポリシーページのコンテンツ',
                     'title'   => '配送ポリシー',
                 ],
@@ -120,20 +120,20 @@ return [
                     'title'   => '利用規約',
                 ],
 
-                'terms-of-use'     => [
+                'terms-of-use' => [
                     'content' => '利用規約ページのコンテンツ',
                     'title'   => '利用規約',
                 ],
 
-                'whats-new'        => [
+                'whats-new' => [
                     'content' => '「新着情報」ページのコンテンツ',
                     'title'   => '新着情報',
                 ],
             ],
         ],
 
-        'core'      => [
-            'channels'   => [
+        'core' => [
+            'channels' => [
                 'meta-title'       => 'デモストア',
                 'meta-keywords'    => 'デモストアのメタキーワード',
                 'meta-description' => 'デモストアのメタディスクリプション',
@@ -157,7 +157,7 @@ return [
             ],
         ],
 
-        'customer'  => [
+        'customer' => [
             'customer-groups' => [
                 'general'   => '一般的な',
                 'guest'     => 'ゲスト',
@@ -171,40 +171,40 @@ return [
             ],
         ],
 
-        'shop'      => [
+        'shop' => [
             'theme-customizations' => [
-                'all-products'           => [
-                    'name'    => 'すべての製品',
+                'all-products' => [
+                    'name' => 'すべての製品',
 
                     'options' => [
                         'title' => 'すべての製品',
                     ],
                 ],
 
-                'bold-collections'       => [
+                'bold-collections' => [
                     'content' => [
                         'btn-title'   => 'すべて見る',
                         'description' => '新しい大胆なコレクションをご紹介します!大胆なデザインと鮮やかなステートメントでスタイルを高めましょう。ワードローブを再定義する印象的なパターンと大胆な色を探してください。非日常を受け入れる準備をしましょう！',
                         'title'       => '新しい大胆なコレクションに備えましょう!',
                     ],
 
-                    'name'    => '大胆なコレクション',
+                    'name' => '大胆なコレクション',
                 ],
 
                 'categories-collections' => [
                     'name' => 'カテゴリ コレクション',
                 ],
 
-                'featured-collections'   => [
-                    'name'    => '注目のコレクション',
+                'featured-collections' => [
+                    'name' => '注目のコレクション',
 
                     'options' => [
                         'title' => '注目の製品',
                     ],
                 ],
 
-                'footer-links'           => [
-                    'name'    => 'フッターリンク',
+                'footer-links' => [
+                    'name' => 'フッターリンク',
 
                     'options' => [
                         'about-us'         => '私たちについて',
@@ -221,33 +221,33 @@ return [
                     ],
                 ],
 
-                'game-container'         => [
+                'game-container' => [
                     'content' => [
                         'sub-title-1' => '私たちのコレクション',
                         'sub-title-2' => '私たちのコレクション',
                         'title'       => '新しい追加要素を備えたゲームです！',
                     ],
 
-                    'name'    => 'ゲームコンテナ',
+                    'name' => 'ゲームコンテナ',
                 ],
 
-                'image-carousel'         => [
-                    'name'    => '画像カルーセル',
+                'image-carousel' => [
+                    'name' => '画像カルーセル',
 
                     'sliders' => [
                         'title' => '新しいコレクションの準備をしましょう',
                     ],
                 ],
 
-                'new-products'           => [
-                    'name'    => '新製品',
+                'new-products' => [
+                    'name' => '新製品',
 
                     'options' => [
                         'title' => '新製品',
                     ],
                 ],
 
-                'offer-information'      => [
+                'offer-information' => [
                     'content' => [
                         'title' => '初回注文で最大 40% オフ 今すぐ購入',
                     ],
@@ -255,7 +255,7 @@ return [
                     'name' => 'オファー情報',
                 ],
 
-                'services-content'       => [
+                'services-content' => [
                     'description' => [
                         'emi-available-info'   => 'すべての主要なクレジット カードで無料の EMI をご利用いただけます',
                         'free-shipping-info'   => 'すべてのご注文で送料無料をお楽しみください',
@@ -263,9 +263,9 @@ return [
                         'time-support-info'    => 'チャットとメールによる年中無休の専用サポート',
                     ],
 
-                    'name'        => 'サービス内容',
+                    'name' => 'サービス内容',
 
-                    'title'       => [
+                    'title' => [
                         'emi-available'   => 'エミが利用可能',
                         'free-shipping'   => '送料無料',
                         'product-replace' => '製品の交換',
@@ -273,7 +273,7 @@ return [
                     ],
                 ],
 
-                'top-collections'        => [
+                'top-collections' => [
                     'content' => [
                         'sub-title-1' => '私たちのコレクション',
                         'sub-title-2' => '私たちのコレクション',
@@ -284,12 +284,12 @@ return [
                         'title'       => '新しい追加要素を備えたゲームです！',
                     ],
 
-                    'name'    => 'トップコレクション',
+                    'name' => 'トップコレクション',
                 ],
             ],
         ],
 
-        'user'      => [
+        'user' => [
             'roles' => [
                 'description' => 'この役割のユーザーはすべてのアクセス権を持ちます',
                 'name'        => '管理者',
@@ -351,21 +351,21 @@ return [
                 'warning-message'     => '気をつけて！デフォルトのシステム言語およびデフォルトの通貨の設定は永続的であり、二度と変更することはできません。',
             ],
 
-            'installation-processing'   => [
-                'unopim'            => 'UnoPimのインストール',
-                'unopim-info'       => 'データベーステーブルを作成しています。これには少し時間がかかる場合があります',
-                'title'             => 'インストール',
+            'installation-processing' => [
+                'unopim'      => 'UnoPimのインストール',
+                'unopim-info' => 'データベーステーブルを作成しています。これには少し時間がかかる場合があります',
+                'title'       => 'インストール',
             ],
 
-            'installation-completed'    => [
-                'admin-panel'                   => '管理者パネル',
-                'unopim-forums'                 => 'ウノピムフォーラム',
-                'explore-unopim-extensions'     => 'UnoPim 拡張機能を探索する',
-                'title-info'                    => 'UnoPim はシステムに正常にインストールされました。',
-                'title'                         => 'インストールが完了しました',
+            'installation-completed' => [
+                'admin-panel'               => '管理者パネル',
+                'unopim-forums'             => 'ウノピムフォーラム',
+                'explore-unopim-extensions' => 'UnoPim 拡張機能を探索する',
+                'title-info'                => 'UnoPim はシステムに正常にインストールされました。',
+                'title'                     => 'インストールが完了しました',
             ],
 
-            'ready-for-installation'    => [
+            'ready-for-installation' => [
                 'create-databsae-table'   => 'データベーステーブルを作成する',
                 'install-info-button'     => '下のボタンをクリックしてください',
                 'install-info'            => 'インストール用の UnoPim',
@@ -375,7 +375,7 @@ return [
                 'title'                   => 'インストールの準備ができました',
             ],
 
-            'start'                     => [
+            'start' => [
                 'locale'        => 'ロケール',
                 'main'          => '始める',
                 'select-locale' => 'ロケールの選択',
@@ -383,7 +383,7 @@ return [
                 'welcome-title' => 'UnoPimへようこそ :version',
             ],
 
-            'server-requirements'       => [
+            'server-requirements' => [
                 'calendar'    => 'カレンダー',
                 'ctype'       => 'cタイプ',
                 'curl'        => 'カール',
@@ -406,38 +406,19 @@ return [
                 'xml'         => 'XML',
             ],
 
-            'arabic'                    => 'アラビア語',
-            'back'                      => '戻る',
-            'unopim-info'               => 'によるコミュニティプロジェクト',
-            'unopim-logo'               => 'ウノピムのロゴ',
-            'unopim'                    => 'UnoPim',
-            'bengali'                   => 'ベンガル語',
-            'chinese'                   => '中国語',
-            'continue'                  => '続く',
-            'dutch'                     => 'オランダ語',
-            'english'                   => '英語',
-            'french'                    => 'フランス語',
-            'german'                    => 'ドイツ語',
-            'hebrew'                    => 'ヘブライ語',
-            'hindi'                     => 'ヒンディー語',
-            'installation-description'  => '通常、UnoPim のインストールにはいくつかの手順が必要です。 UnoPim のインストール プロセスの概要は次のとおりです。',
-            'wizard-language'           => 'インストールウィザードの言語',
-            'installation-info'         => '皆様にお会いできて嬉しいです！',
-            'installation-title'        => 'インストールへようこそ',
-            'italian'                   => 'イタリア語',
-            'japanese'                  => '日本語',
-            'persian'                   => 'ペルシア語',
-            'polish'                    => '研磨',
-            'portuguese'                => 'ブラジル系ポルトガル語',
-            'russian'                   => 'ロシア',
-            'save-configuration'        => '設定の保存',
-            'sinhala'                   => 'シンハラ語',
-            'skip'                      => 'スキップ',
-            'spanish'                   => 'スペイン語',
-            'title'                     => 'UnoPim インストーラー',
-            'turkish'                   => 'トルコ語',
-            'ukrainian'                 => 'ウクライナ語',
-            'webkul'                    => 'Webkul',
+            'back'                     => '戻る',
+            'unopim-info'              => 'によるコミュニティプロジェクト',
+            'unopim-logo'              => 'ウノピムのロゴ',
+            'unopim'                   => 'UnoPim',
+            'continue'                 => '続く',
+            'installation-description' => '通常、UnoPim のインストールにはいくつかの手順が必要です。 UnoPim のインストール プロセスの概要は次のとおりです。',
+            'wizard-language'          => 'インストールウィザードの言語',
+            'installation-info'        => '皆様にお会いできて嬉しいです！',
+            'installation-title'       => 'インストールへようこそ',
+            'save-configuration'       => '設定の保存',
+            'skip'                     => 'スキップ',
+            'title'                    => 'UnoPim インストーラー',
+            'webkul'                   => 'Webkul',
         ],
     ],
 ];

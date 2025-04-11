@@ -42,6 +42,7 @@ return [
     'email'          => ':attribute mora biti važeća e-mail adresa.',
     'exists'         => 'Odabrani :attribute je nevažeći.',
     'exists-value'   => ':input ne postoji.',
+    'extensions'     => 'Polje :attribute mora imati jednu od sljedećih ekstenzija: :values.',
     'file'           => ':attribute mora biti datoteka.',
     'filled'         => ':attribute polje mora imati vrijednost.',
 

@@ -42,6 +42,7 @@ return [
     'email'          => ':attribute は有効なメール アドレスである必要があります。',
     'exists'         => '選択した :attribute は無効です。',
     'exists-value'   => ':input が存在しません。',
+    'extensions'     => ':attribute フィールドには次のいずかの拡張子が必要です: :values.',
     'file'           => ':attribute はファイルである必要があります。',
     'filled'         => ':attribute フィールドには値が必要です。',
 

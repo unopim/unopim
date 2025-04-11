@@ -41,6 +41,7 @@ return [
     'distinct'       => ':attribute 有重複的值。',
     'email'          => ':attribute 必須是有效的電子郵件地址。',
     'exists'         => '選擇的 :attribute 無效。',
+    'extensions'     => ':attribute 欄位必須擁有以下擴展名之一：:values.',
     'file'           => ':attribute 必須是檔案。',
     'filled'         => ':attribute 必須有值。',
 

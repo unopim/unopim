@@ -41,6 +41,7 @@ return [
     'distinct'       => ':attribute có giá trị trùng lặp.',
     'email'          => ':attribute phải là một địa chỉ email hợp lệ.',
     'exists'         => ':attribute đã chọn không hợp lệ.',
+    'extensions'     => 'Trường :attribute phải có một trong các phần mở rộng sau: :values.',
     'file'           => ':attribute phải là một tệp tin.',
     'filled'         => ':attribute phải có giá trị.',
 

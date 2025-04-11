@@ -280,6 +280,7 @@ return [
             'product-not-found'       => 'SKU ":sku"를 가진 제품을 찾을 수 없습니다.',
             'parent-not-found'        => 'SKU ":sku"를 가진 부모를 찾을 수 없습니다.',
             'upload-success'          => '제품 파일이 성공적으로 업로드되었습니다.',
+            'update-failure'          => '제품을 업데이트할 수 없습니다.',
         ],
 
         'attributes' => [
@@ -571,6 +572,8 @@ return [
             'not-found'            => '코드 ":code"인 카테고리를 찾을 수 없습니다.',
             'unknown-fields'       => '필드 코드 ":fields"인 카테고리를 찾을 수 없습니다.',
             'upload-success'       => '카테고리 파일이 성공적으로 업로드되었습니다.',
+            'create-failure'       => '카테고리를 만들 수 없습니다.',
+            'update-failure'       => '카테고리를 업데이트할 수 없습니다.',
         ],
 
         'category_fields' => [
@@ -1609,12 +1612,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => '다운로드',
-        'export'     => '빠른 내보내기',
-        'no-records' => '내보낼 기록 없음',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => '다운로드',
+        'export'               => '빠른 내보내기',
+        'no-records'           => '내보낼 기록 없음',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => '미디어 포함',
+        'export-success'       => '내보내기가 성공했습니다!',
+        'error'                => '문제가 발생했습니다!',
+        'product-not-selected' => '빠른 내보내기를 위한 상품이 선택되지 않았습니다',
     ],
 
     'validations' => [
