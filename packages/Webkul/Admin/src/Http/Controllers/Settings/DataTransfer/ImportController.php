@@ -166,6 +166,7 @@ class ImportController extends Controller
                 'allowed_errors',
                 'field_separator',
                 'images_directory_path',
+                'file',
                 'filters',
             ]),
             [

@@ -21,7 +21,7 @@ class FieldOption implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $optionCode = explode(',', $value);
+        $optionCode = is_array($value) ? $value : explode(',', $value);
         $codeNotExists = array_diff($optionCode, $this->getOptionCode());
 
         if (count($codeNotExists) > 0) {

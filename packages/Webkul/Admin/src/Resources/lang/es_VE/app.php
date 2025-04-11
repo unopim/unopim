@@ -280,6 +280,7 @@ return [
             'product-not-found'       => 'Producto con SKU ":sku" no encontrado',
             'parent-not-found'        => 'Producto principal con SKU ":sku" no encontrado',
             'upload-success'          => 'Archivo de producto subido con éxito.',
+            'update-failure'          => 'El producto no se pudo actualizar.',
         ],
 
         'attributes' => [
@@ -569,6 +570,8 @@ return [
             'not-found'            => 'Categoría con código ":code" no encontrada',
             'unknown-fields'       => 'Campo desconocido para la categoría con código ":fields"',
             'upload-success'       => 'Archivo de categoría cargado con éxito',
+            'create-failure'       => 'No se pudo crear la categoría.',
+            'update-failure'       => 'No se pudo actualizar la categoría.',
         ],
 
         'category_fields' => [

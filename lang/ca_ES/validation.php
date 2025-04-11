@@ -42,6 +42,7 @@ return [
     'email'          => 'El :attribute ha de ser una adreça de correu electrònic vàlida.',
     'exists'         => 'L\'atribut seleccionat :attribute no és vàlid.',
     'exists-value'   => 'El :input no existeix.',
+    'extensions'     => 'El camp :attribute ha de tenir una de les següents extensions: :values.',
     'file'           => 'El :attribute ha de ser un arxiu.',
     'filled'         => 'El camp :attribute ha de tenir un valor.',
 

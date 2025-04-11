@@ -280,6 +280,7 @@ return [
             'product-not-found'       => 'SKU「:sku」の製品が見つかりませんでした',
             'parent-not-found'        => 'SKU「:sku」の親が見つかりませんでした',
             'upload-success'          => '製品ファイルが正常にアップロードされました。',
+            'update-failure'          => '商品は更新できませんでした。',
         ],
 
         'attributes' => [
@@ -568,6 +569,8 @@ return [
             'not-found'            => 'コード ":code" のカテゴリが見つかりませんでした',
             'unknown-fields'       => 'コード ":fields" のカテゴリ フィールドが見つかりませんでした',
             'upload-success'       => 'カテゴリ ファイルが正常にアップロードされました。',
+            'create-failure'       => 'カテゴリーを作成できませんでした。',
+            'update-failure'       => 'カテゴリーは更新できませんでした。',
         ],
 
         'category_fields' => [

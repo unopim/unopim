@@ -280,6 +280,7 @@ return [
             'product-not-found'       => 'Produkt mit SKU „:sku“ konnte nicht gefunden werden',
             'parent-not-found'        => 'Übergeordnetes Element mit SKU „:sku“ konnte nicht gefunden werden',
             'upload-success'          => 'Produktdatei erfolgreich hochgeladen.',
+            'update-failure'          => 'Produkt konnte nicht aktualisiert werden.',
         ],
 
         'attributes' => [
@@ -568,6 +569,8 @@ return [
             'not-found'            => 'Kategorie mit Code „:code“ konnte nicht gefunden werden',
             'unknown-fields'       => 'Kategoriefeld mit Code „:fields“ konnte nicht gefunden werden',
             'upload-success'       => 'Kategoriedatei erfolgreich hochgeladen.',
+            'create-failure'       => 'Kategorie konnte nicht erstellt werden.',
+            'update-failure'       => 'Kategorie konnte nicht aktualisiert werden.',
         ],
 
         'category_fields' => [

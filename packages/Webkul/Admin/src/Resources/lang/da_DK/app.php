@@ -280,6 +280,7 @@ return [
             'product-not-found'       => 'Produkt med SKU ":sku" kunne ikke findes',
             'parent-not-found'        => 'Forælder med SKU ":sku" kunne ikke findes',
             'upload-success'          => 'Produktfil uploadet med succes.',
+            'update-failure'          => 'Produktet kunne ikke opdateres.',
         ],
 
         'attributes' => [
@@ -569,6 +570,8 @@ return [
             'not-found'            => 'Kategori med kode ":code" kunne ikke findes',
             'unknown-fields'       => 'Kategori-felt med kode ":fields" kunne ikke findes',
             'upload-success'       => 'Kategorifil uploadet succesfuldt.',
+            'create-failure'       => 'Kategorien kunne ikke oprettes.',
+            'update-failure'       => 'Kategorien kunne ikke opdateres.',
         ],
 
         'category_fields' => [

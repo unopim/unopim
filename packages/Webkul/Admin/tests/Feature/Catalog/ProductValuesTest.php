@@ -680,6 +680,80 @@ it('should store the associations value when updating simple product', function 
     }
 });
 
+it('should not allow upload for invalid files in image attribute for product', function () {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create(['type' => 'image']);
+
+    $product = Product::factory()->simple()->create();
+
+    $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
+
+    $attributeCode = $attribute->code;
+
+    Storage::fake();
+
+    $data = [
+        'sku'    => $product->sku,
+        'values' => [
+            'common' => [
+                $attributeCode => [UploadedFile::fake()->create('product.pdf', 100, 'application/pdf')],
+            ],
+        ],
+    ];
+
+    $this->put(route('admin.catalog.products.update', $product->id), $data)
+        ->assertInvalid('values[common]['.$attributeCode.']');
+
+    $product->refresh();
+
+    $this->assertEmpty($product->values['common'][$attributeCode] ?? '');
+
+    if (! empty($product->values['common'][$attributeCode])) {
+        Storage::assertMissing($product->values['common'][$attributeCode]);
+    }
+});
+
+it('should not allow upload for invalid files in gallery attribute for product', function () {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create(['type' => 'gallery']);
+
+    $product = Product::factory()->simple()->create();
+
+    $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
+
+    $attributeCode = $attribute->code;
+
+    Storage::fake();
+
+    $data = [
+        'sku'    => $product->sku,
+        'values' => [
+            'common' => [
+                $attributeCode => [
+                    UploadedFile::fake()->image('product.jpg'),
+                    UploadedFile::fake()->image('product2.txt'),
+                    UploadedFile::fake()->image('product3.php'),
+                ],
+            ],
+        ],
+    ];
+
+    $this->put(route('admin.catalog.products.update', $product->id), $data)
+        ->assertInvalid('values[common]['.$attributeCode.']');
+
+    $product->refresh();
+
+    $this->assertEmpty($product->values['common'][$attributeCode] ?? '');
+
+    if (! empty($product->values['common'][$attributeCode])) {
+        foreach ($product->values['common'][$attributeCode] as $media) {
+            Storage::assertMissing($media);
+        }
+    }
+});
+
 /** Update cases for the configurable product different attribute type values */
 it('should store the price attribute value when updating configurable product', function () {
     $this->loginAsAdmin();

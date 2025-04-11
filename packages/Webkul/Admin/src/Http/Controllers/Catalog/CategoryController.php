@@ -4,6 +4,7 @@ namespace Webkul\Admin\Http\Controllers\Catalog;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Validation\ValidationException;
 use Webkul\Admin\DataGrids\Catalog\CategoryDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\CategoryRequest;
@@ -11,6 +12,7 @@ use Webkul\Admin\Http\Requests\MassDestroyRequest;
 use Webkul\Admin\Http\Resources\CategoryTreeResource;
 use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\Category\Repositories\CategoryRepository;
+use Webkul\Category\Validator\Catalog\CategoryRequestValidator;
 use Webkul\Core\Repositories\ChannelRepository;
 
 class CategoryController extends Controller
@@ -24,7 +26,9 @@ class CategoryController extends Controller
         protected ChannelRepository $channelRepository,
         protected CategoryRepository $categoryRepository,
         protected CategoryFieldRepository $categoryFieldRepository
-    ) {}
+    ) {
+        $this->categoryValidator = new CategoryRequestValidator($this->categoryRepository, $this->categoryFieldRepository, $this->channelRepository);
+    }
 
     /**
      * Display a listing of the resource.
@@ -64,6 +68,14 @@ class CategoryController extends Controller
     public function store(CategoryRequest $categoryRequest)
     {
         Event::dispatch('catalog.category.create.before');
+
+        try {
+            $this->categoryValidator->validate($categoryRequest->only(['code', 'parent_id', 'additional_data']));
+        } catch (ValidationException $e) {
+            session()->flash('error', trans('admin::app.catalog.categories.create-failure'));
+
+            throw $e;
+        }
 
         $category = $this->categoryRepository->create($categoryRequest->only([
             'code',
@@ -111,6 +123,14 @@ class CategoryController extends Controller
             session()->flash('error', trans('admin::app.catalog.categories.can-not-update'));
 
             return redirect()->route('admin.catalog.categories.edit', ['id' => $id]);
+        }
+
+        try {
+            $this->categoryValidator->validate($categoryRequest->only(['code', 'parent_id', 'additional_data']), $id);
+        } catch (ValidationException $e) {
+            session()->flash('error', trans('admin::app.catalog.categories.update-failure'));
+
+            throw $e;
         }
 
         $category = $this->categoryRepository->update($categoryRequest->only([
