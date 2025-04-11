@@ -32,7 +32,7 @@ class EnsureChannelLocaleIsValid
 
             if ($routeName !== null) {
                 return redirect()->route($routeName, $parameters);
-            } 
+            }
 
             $actionName = $route->getActionName();
 
