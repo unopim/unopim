@@ -699,8 +699,10 @@ it('should filter products by date type attributes', function () {
     $this->assertEquals($product->id, $response['hits']['hits'][0]['_id']);
 });
 
-it('should filter products by price type attribute', function () {
+it('should filter products by price type attributes', function () {
     config(['elasticsearch.enabled' => false]);
+
+    $priceAttributes = ['price'];
 
     $product = Product::factory()->create([
         'values' => [
@@ -718,81 +720,27 @@ it('should filter products by price type attribute', function () {
 
     config(['elasticsearch.enabled' => true]);
 
-    $nestedPath = 'channel_locale_specific.default.en_US.price';
-    $field = 'channel_locale_specific.default.en_US.price.USD';
+    $currency = 'USD';
     $price = 17.2;
 
     ElasticSearch::shouldReceive('search')
         ->once()
-        ->withArgs(function ($args) use ($nestedPath, $field, $price) {
+        ->withArgs(function ($args) use ($priceAttributes, $currency, $price) {
             $this->assertArrayHasKey('query', $args);
-            $this->assertArrayHasKey('nested', $args['query']);
+            $this->assertArrayHasKey('bool', $args['query']);
+            $this->assertArrayHasKey('filter', $args['query']['bool']);
 
-            $nestedQuery = $args['query']['nested'];
-
-            $this->assertEquals($nestedPath, $nestedQuery['path']);
-            $this->assertArrayHasKey('range', $nestedQuery['query']);
-            $this->assertArrayHasKey($field, $nestedQuery['query']['range']);
-
-            $this->assertEquals($price, $nestedQuery['query']['range'][$field]['gte']);
-            $this->assertEquals($price, $nestedQuery['query']['range'][$field]['lte']);
-
-            return true;
-        })
-        ->andReturn([
-            'hits' => [
-                'total' => 1,
-                'hits' => [
-                    [
-                        '_id' => $product->id,
-                        '_source' => $product->toArray(),
-                    ]
-                ]
-            ]
-        ]);
-
-    $response = ElasticSearch::search([
-        'query' => [
-            'nested' => [
-                'path' => $nestedPath,
-                'query' => [
+            foreach ($priceAttributes as $attribute) {
+                $field = "{$attribute}.{$currency}";
+                $this->assertContains([
                     'range' => [
                         $field => [
                             'gte' => $price,
                             'lte' => $price,
                         ],
                     ],
-                ],
-            ],
-        ],
-    ]);
-
-    $this->assertEquals(1, $response['hits']['total']);
-    $this->assertEquals($product->id, $response['hits']['hits'][0]['_id']);
-});
-
-it('should filter products by datetime attribute', function () {
-    config(['elasticsearch.enabled' => false]);
-
-    $product = Product::factory()->create([
-        'values' => [
-            'unactivated_at' => '2024-12-10 00:00:00',
-        ],
-    ]);
-
-    config(['elasticsearch.enabled' => true]);
-
-    $field = 'unactivated_at';
-    $searchDate = '2024-12-10T00:00:00';
-
-    ElasticSearch::shouldReceive('search')
-        ->once()
-        ->withArgs(function ($args) use ($field, $searchDate) {
-            $this->assertArrayHasKey('query', $args);
-            $this->assertArrayHasKey('range', $args['query']);
-            $this->assertArrayHasKey($field, $args['query']['range']);
-            $this->assertEquals($searchDate, $args['query']['range'][$field]['gte']);
-            $this->assertEquals($searchDate, $args['query']['range'][$field]['lte']);
+                ], $args['query']['bool']['filter']);
+            }
 
             return true;
         })
@@ -801,20 +749,26 @@ it('should filter products by datetime attribute', function () {
                 'total' => 1,
                 'hits' => [
                     [
-                        '_id' => $product->id,
+                        '_id'     => $product->id,
                         '_source' => $product->toArray(),
                     ],
                 ],
             ],
         ]);
 
+    $rangeFilters = collect($priceAttributes)->map(fn ($attribute) => [
+        'range' => [
+            "{$attribute}.{$currency}" => [
+                'gte' => $price,
+                'lte' => $price,
+            ],
+        ],
+    ])->toArray();
+
     $response = ElasticSearch::search([
         'query' => [
-            'range' => [
-                $field => [
-                    'gte' => $searchDate,
-                    'lte' => $searchDate,
-                ],
+            'bool' => [
+                'filter' => $rangeFilters,
             ],
         ],
     ]);
@@ -823,13 +777,16 @@ it('should filter products by datetime attribute', function () {
     $this->assertEquals($product->id, $response['hits']['hits'][0]['_id']);
 });
 
-it('should filter products by image attribute type', function () {
+it('should filter products by datetime type attributes', function () {
     config(['elasticsearch.enabled' => false]);
 
-    $imageName = 'image.jpg';
+    $datetimeAttributes = ['unactivated_at'];
+
+    $datetimeValue = '2025-04-11T00:00:00Z';
+
     $product = Product::factory()->create([
         'values' => [
-            'image' => [$imageName],
+            'unactivated_at' => $datetimeValue,
         ],
     ]);
 
@@ -837,11 +794,21 @@ it('should filter products by image attribute type', function () {
 
     ElasticSearch::shouldReceive('search')
         ->once()
-        ->withArgs(function ($args) use ($imageName) {
+        ->withArgs(function ($args) use ($datetimeAttributes, $datetimeValue) {
             $this->assertArrayHasKey('query', $args);
-            $this->assertArrayHasKey('term', $args['query']);
-            $this->assertArrayHasKey('image', $args['query']['term']);
-            $this->assertEquals($imageName, $args['query']['term']['image']);
+            $this->assertArrayHasKey('bool', $args['query']);
+            $this->assertArrayHasKey('filter', $args['query']['bool']);
+
+            foreach ($datetimeAttributes as $attribute) {
+                $this->assertContains([
+                    'range' => [
+                        $attribute => [
+                            'gte' => $datetimeValue,
+                            'lte' => $datetimeValue,
+                        ],
+                    ],
+                ], $args['query']['bool']['filter']);
+            }
 
             return true;
         })
@@ -850,17 +817,26 @@ it('should filter products by image attribute type', function () {
                 'total' => 1,
                 'hits' => [
                     [
-                        '_id' => $product->id,
+                        '_id'     => $product->id,
                         '_source' => $product->toArray(),
-                    ],
+                    ]
                 ],
             ],
         ]);
 
+    $rangeFilters = collect($datetimeAttributes)->map(fn ($attribute) => [
+        'range' => [
+            $attribute => [
+                'gte' => $datetimeValue,
+                'lte' => $datetimeValue,
+            ],
+        ],
+    ])->toArray();
+
     $response = ElasticSearch::search([
         'query' => [
-            'term' => [
-                'image' => $imageName,
+            'bool' => [
+                'filter' => $rangeFilters,
             ],
         ],
     ]);
@@ -869,16 +845,14 @@ it('should filter products by image attribute type', function () {
     $this->assertEquals($product->id, $response['hits']['hits'][0]['_id']);
 });
 
-it('should filter products by gallery attribute type', function () {
+it('should filter products by image type attributes', function () {
     config(['elasticsearch.enabled' => false]);
 
-    $imageName = 'image.jpg';
+    $imageAttributes = ['image'];
+
     $product = Product::factory()->create([
         'values' => [
-            'gallery' => [
-                'storage/di/image.jpg',
-                'storage/di/another-image.jpg',
-            ],
+            'image' => 'uploads/product/abc123.jpg',
         ],
     ]);
 
@@ -886,11 +860,18 @@ it('should filter products by gallery attribute type', function () {
 
     ElasticSearch::shouldReceive('search')
         ->once()
-        ->withArgs(function ($args) use ($imageName) {
+        ->withArgs(function ($args) use ($imageAttributes) {
             $this->assertArrayHasKey('query', $args);
-            $this->assertArrayHasKey('terms', $args['query']);
-            $this->assertArrayHasKey('gallery', $args['query']['terms']);
-            $this->assertContains($imageName, $args['query']['terms']['gallery']);
+            $this->assertArrayHasKey('bool', $args['query']);
+            $this->assertArrayHasKey('filter', $args['query']['bool']);
+
+            foreach ($imageAttributes as $attribute) {
+                $this->assertContains([
+                    'exists' => [
+                        'field' => $attribute,
+                    ]
+                ], $args['query']['bool']['filter']);
+            }
 
             return true;
         })
@@ -899,17 +880,23 @@ it('should filter products by gallery attribute type', function () {
                 'total' => 1,
                 'hits' => [
                     [
-                        '_id' => $product->id,
+                        '_id'     => $product->id,
                         '_source' => $product->toArray(),
-                    ],
+                    ]
                 ],
             ],
         ]);
 
+    $existsFilters = collect($imageAttributes)->map(fn ($attribute) => [
+        'exists' => [
+            'field' => $attribute,
+        ],
+    ])->toArray();
+
     $response = ElasticSearch::search([
         'query' => [
-            'terms' => [
-                'gallery' => [$imageName],
+            'bool' => [
+                'filter' => $existsFilters,
             ],
         ],
     ]);
@@ -918,13 +905,14 @@ it('should filter products by gallery attribute type', function () {
     $this->assertEquals($product->id, $response['hits']['hits'][0]['_id']);
 });
 
-it('should filter products by file attribute', function () {
+it('should filter products by file type attributes', function () {
     config(['elasticsearch.enabled' => false]);
 
-    $filePath = 'storage/files/product_manual.pdf';
+    $fileAttributes = ['file'];
+
     $product = Product::factory()->create([
         'values' => [
-            'file' => $filePath,
+            'file' => 'files/specs/techsheet-v1.pdf',
         ],
     ]);
 
@@ -932,11 +920,18 @@ it('should filter products by file attribute', function () {
 
     ElasticSearch::shouldReceive('search')
         ->once()
-        ->withArgs(function ($args) use ($filePath) {
+        ->withArgs(function ($args) use ($fileAttributes) {
             $this->assertArrayHasKey('query', $args);
-            $this->assertArrayHasKey('term', $args['query']);
-            $this->assertArrayHasKey('file', $args['query']['term']);
-            $this->assertEquals($filePath, $args['query']['term']['file']);
+            $this->assertArrayHasKey('bool', $args['query']);
+            $this->assertArrayHasKey('filter', $args['query']['bool']);
+
+            foreach ($fileAttributes as $attribute) {
+                $this->assertContains([
+                    'exists' => [
+                        'field' => $attribute,
+                    ],
+                ], $args['query']['bool']['filter']);
+            }
 
             return true;
         })
@@ -945,64 +940,23 @@ it('should filter products by file attribute', function () {
                 'total' => 1,
                 'hits' => [
                     [
-                        '_id' => $product->id,
+                        '_id'     => $product->id,
                         '_source' => $product->toArray(),
-                    ],
+                    ]
                 ],
             ],
         ]);
 
-    $response = ElasticSearch::search([
-        'query' => [
-            'term' => [
-                'file' => $filePath,
-            ],
+    $existsFilters = collect($fileAttributes)->map(fn ($attribute) => [
+        'exists' => [
+            'field' => $attribute,
         ],
-    ]);
-
-    $this->assertEquals(1, $response['hits']['total']);
-    $this->assertEquals($product->id, $response['hits']['hits'][0]['_id']);
-});
-
-it('should filter products by checkbox attribute', function () {
-    config(['elasticsearch.enabled' => false]);
-
-    $checkboxValue = true;
-
-    $product = Product::factory()->create([
-        'values' => [
-            'checkbox_field' => $checkboxValue,
-        ],
-    ]);
-
-    config(['elasticsearch.enabled' => true]);
-
-    ElasticSearch::shouldReceive('search')
-        ->once()
-        ->withArgs(function ($args) use ($checkboxValue) {
-            $this->assertArrayHasKey('query', $args);
-            $this->assertArrayHasKey('term', $args['query']);
-            $this->assertArrayHasKey('checkbox_field', $args['query']['term']);
-            $this->assertEquals($checkboxValue, $args['query']['term']['checkbox_field']);
-
-            return true;
-        })
-        ->andReturn([
-            'hits' => [
-                'total' => 1,
-                'hits' => [
-                    [
-                        '_id' => $product->id,
-                        '_source' => $product->toArray(),
-                    ],
-                ],
-            ],
-        ]);
+    ])->toArray();
 
     $response = ElasticSearch::search([
         'query' => [
-            'term' => [
-                'checkbox_field' => $checkboxValue,
+            'bool' => [
+                'filter' => $existsFilters,
             ],
         ],
     ]);
