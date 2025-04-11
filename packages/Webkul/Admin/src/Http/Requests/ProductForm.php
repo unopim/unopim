@@ -4,9 +4,26 @@ namespace Webkul\Admin\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Webkul\Core\Rules\Slug;
+use Webkul\Product\Repositories\ProductRepository;
 
 class ProductForm extends FormRequest
 {
+    /**
+     * Rules.
+     *
+     * @var array
+     */
+    protected $rules;
+
+    /**
+     * Create a new form request instance.
+     *
+     * @return void
+     */
+    public function __construct(
+        protected ProductRepository $productRepository
+    ) {}
+
     /**
      * Determine if the product is authorized to make this request.
      *
@@ -24,9 +41,13 @@ class ProductForm extends FormRequest
      */
     public function rules()
     {
-        return [
-            'sku' => ['required', 'unique:products,sku,'.$this->id, new Slug],
-        ];
+        $product = $this->productRepository->find($this->id);
+
+        $this->rules = $product->getTypeInstance()->getTypeValidationRules();
+
+        $this->rules['sku'] = ['required', 'unique:products,sku,'.$this->id, new Slug];
+
+        return $this->rules;
     }
 
     public function prepareForValidation()
