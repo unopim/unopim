@@ -1607,12 +1607,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => 'Завантажити',
-        'export'     => 'Швидкий експорт',
-        'no-records' => 'Немає записів для експорту',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => 'Завантажити',
+        'export'               => 'Швидкий експорт',
+        'no-records'           => 'Немає записів для експорту',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'З медіа',
+        'export-success'       => 'Експорт успішний!',
+        'error'                => 'Щось пішло не так!',
+        'product-not-selected' => 'Не вибрано жодного товару для швидкого експорту',
     ],
 
     'validations' => [

@@ -17,12 +17,14 @@
         </p>
 
         <!-- Edit Button -->
-        <a
-            href="{{ route(sprintf('admin.settings.data_transfer.%ss.edit', $import->jobInstance->type), $import->jobInstance->id) }}"
-            class="primary-button"
-        >
-            @lang('admin::app.settings.data-transfer.tracker.import.edit-btn')
-        </a>
+        @if ($import->jobInstance->type !== 'system')
+            <a
+                href="{{ route(sprintf('admin.settings.data_transfer.%ss.edit', $import->jobInstance->type), $import->jobInstance->id) }}"
+                class="primary-button"
+            >
+                @lang('admin::app.settings.data-transfer.tracker.import.edit-btn')
+            </a>
+        @endif
     </div>
 
     <!-- Import Vue Compontent -->

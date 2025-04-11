@@ -1607,12 +1607,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => 'I-download',
-        'export'     => 'Quick Export',
-        'no-records' => 'Walang data na i-export',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => 'I-download',
+        'export'               => 'Quick Export',
+        'no-records'           => 'Walang data na i-export',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'May media',
+        'export-success'       => 'Matagumpay ang pag-export!',
+        'error'                => 'May nangyaring mali!',
+        'product-not-selected' => 'Walang produktong napili para sa mabilisang export',
     ],
 
     'validations' => [

@@ -1606,12 +1606,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => 'Lataa',
-        'export'     => 'Nopea vienti',
-        'no-records' => 'Ei mitään vietävää',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => 'Lataa',
+        'export'               => 'Nopea vienti',
+        'no-records'           => 'Ei mitään vietävää',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'Median kanssa',
+        'export-success'       => 'Vienti onnistui!',
+        'error'                => 'Jotain meni pieleen!',
+        'product-not-selected' => 'Tuotteita ei valittu pikavientiin',
     ],
 
     'validations' => [

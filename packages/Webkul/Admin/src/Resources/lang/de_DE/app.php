@@ -1946,12 +1946,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => 'Herunterladen',
-        'export'     => 'Schneller Export',
-        'no-records' => 'Nichts zu exportieren',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => 'Herunterladen',
+        'export'               => 'Schneller Export',
+        'no-records'           => 'Nichts zu exportieren',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'Mit Medien',
+        'export-success'       => 'Export erfolgreich!',
+        'error'                => 'Etwas ist schiefgelaufen!',
+        'product-not-selected' => 'Keine Produkte für den Schnell-Export ausgewählt',
     ],
 
     'validations' => [

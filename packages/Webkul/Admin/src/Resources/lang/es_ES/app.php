@@ -1951,12 +1951,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => 'Descargar',
-        'export'     => 'Exportación rápida',
-        'no-records' => 'Nada para exportar',
-        'xls'        => 'XLS',
-        'xlsx'       => 'Xlsx',
+        'csv'                  => 'CSV',
+        'download'             => 'Descargar',
+        'export'               => 'Exportación rápida',
+        'no-records'           => 'Nada para exportar',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'Xlsx',
+        'with-media'           => 'Con medios',
+        'export-success'       => '¡Exportación realizada con éxito!',
+        'error'                => '¡Algo salió mal!',
+        'product-not-selected' => 'No se seleccionaron productos para la exportación rápida',
     ],
 
     'validations' => [

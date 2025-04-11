@@ -1947,12 +1947,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => 'ダウンロード',
-        'export'     => 'クイックエクスポート',
-        'no-records' => 'エクスポートするものはありません',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => 'ダウンロード',
+        'export'               => 'クイックエクスポート',
+        'no-records'           => 'エクスポートするものはありません',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'メディアあり',
+        'export-success'       => 'エクスポートが成功しました！',
+        'error'                => '問題が発生しました！',
+        'product-not-selected' => 'クイックエクスポート用に商品が選択されていません',
     ],
 
     'validations' => [

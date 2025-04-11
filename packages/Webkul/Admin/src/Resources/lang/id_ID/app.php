@@ -1970,12 +1970,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => 'Unduh',
-        'export'     => 'Ekspor cepat',
-        'no-records' => 'Tidak ada yang bisa diekspor',
-        'xls'        => 'Xls',
-        'xlsx'       => 'Xlsx',
+        'csv'                  => 'CSV',
+        'download'             => 'Unduh',
+        'export'               => 'Ekspor cepat',
+        'no-records'           => 'Tidak ada yang bisa diekspor',
+        'xls'                  => 'Xls',
+        'xlsx'                 => 'Xlsx',
+        'with-media'           => 'Dengan media',
+        'export-success'       => 'Ekspor berhasil!',
+        'error'                => 'Terjadi kesalahan!',
+        'product-not-selected' => 'Tidak ada produk yang dipilih untuk ekspor cepat',
     ],
 
     'validations' => [

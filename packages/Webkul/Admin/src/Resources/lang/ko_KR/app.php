@@ -1607,12 +1607,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => '다운로드',
-        'export'     => '빠른 내보내기',
-        'no-records' => '내보낼 기록 없음',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => '다운로드',
+        'export'               => '빠른 내보내기',
+        'no-records'           => '내보낼 기록 없음',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => '미디어 포함',
+        'export-success'       => '내보내기가 성공했습니다!',
+        'error'                => '문제가 발생했습니다!',
+        'product-not-selected' => '빠른 내보내기를 위한 상품이 선택되지 않았습니다',
     ],
 
     'validations' => [

@@ -2396,12 +2396,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => 'تحميل',
-        'export'     => 'تصدير سريع',
-        'no-records' => 'لا شيء للتصدير',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => 'تحميل',
+        'export'               => 'تصدير سريع',
+        'no-records'           => 'لا شيء للتصدير',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'مع الوسائط',
+        'export-success'       => 'تم التصدير بنجاح!',
+        'error'                => 'حدث خطأ ما!',
+        'product-not-selected' => 'لم يتم تحديد أي منتجات للتصدير السريع',
     ],
 
     'validations' => [

@@ -1607,12 +1607,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => 'Preuzmi',
-        'export'     => 'Brzi izvoz',
-        'no-records' => 'Nema zapisa za izvoz',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => 'Preuzmi',
+        'export'               => 'Brzi izvoz',
+        'no-records'           => 'Nema zapisa za izvoz',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'S medijima',
+        'export-success'       => 'Izvoz je uspješan!',
+        'error'                => 'Nešto je pošlo po zlu!',
+        'product-not-selected' => 'Nema odabranih proizvoda za brzi izvoz',
     ],
 
     'validations' => [

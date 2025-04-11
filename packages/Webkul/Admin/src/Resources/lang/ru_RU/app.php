@@ -2395,12 +2395,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => 'Скачать',
-        'export'     => 'Быстрый экспорт',
-        'no-records' => 'Нечего экспортировать',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => 'Скачать',
+        'export'               => 'Быстрый экспорт',
+        'no-records'           => 'Нечего экспортировать',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'С медиа',
+        'export-success'       => 'Экспорт выполнен успешно!',
+        'error'                => 'Что-то пошло не так!',
+        'product-not-selected' => 'Не выбраны товары для быстрого экспорта',
     ],
 
     'validations' => [

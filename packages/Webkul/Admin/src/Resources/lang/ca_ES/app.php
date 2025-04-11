@@ -1941,12 +1941,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => 'Descarregar',
-        'export'     => 'Exportació ràpida',
-        'no-records' => 'Res per exportar',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => 'Descarregar',
+        'export'               => 'Exportació ràpida',
+        'no-records'           => 'Res per exportar',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'Amb mitjans',
+        'export-success'       => 'Exportació completada amb èxit!',
+        'error'                => 'S\'ha produït un error!',
+        'product-not-selected' => 'No s’han seleccionat productes per a l’exportació ràpida',
     ],
 
     'validations' => [
