@@ -562,6 +562,22 @@ abstract class AbstractType
         return $group->customAttributes($this->product->attribute_family->id)->whereNotIn('code', $this->skipAttributes);
     }
 
+    public function getUniqueAttributes(bool $skipSuperAttribute = true)
+    {
+        $uniqueAttributesQb = $this->product->attribute_family->customAttributes()->where('attributes.is_unique', 1);
+
+        if ($skipSuperAttribute) {
+            $this->skipAttributes = array_merge(
+                $this->product->super_attributes->pluck('code')->toArray(),
+                $this->skipAttributes
+            );
+
+            $uniqueAttributesQb->whereNotIn('attributes.code', $this->skipAttributes);
+        }
+
+        return $uniqueAttributesQb->get();
+    }
+
     /**
      * Returns additional views.
      *

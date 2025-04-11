@@ -2,6 +2,7 @@
 
 namespace Webkul\Product\Type;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Webkul\Admin\Validations\ConfigurableUniqueSku;
 use Webkul\Product\Facades\ProductImage;
@@ -160,10 +161,12 @@ class Configurable extends AbstractType
 
         $productSuperAttributes = $product->super_attributes;
 
+        $uniqueAttributes = $this->getUniqueAttributes();
+
         if (isset($data['variants'])) {
             foreach ($data['variants'] as $variantId => $variantData) {
                 if (Str::contains($variantId, 'variant_')) {
-                    $this->createVariant($product, $productSuperAttributes, $variantData);
+                    $this->createVariant($product, $productSuperAttributes, $variantData, $uniqueAttributes);
                 } else {
                     if (is_numeric($index = $previousVariantIds->search($variantId))) {
                         $previousVariantIds->forget($index);
@@ -191,7 +194,7 @@ class Configurable extends AbstractType
      * @param  array  $data
      * @return \Webkul\Product\Contracts\Product
      */
-    public function createVariant($product, $productSuperAttributes, $data = [])
+    public function createVariant($product, $productSuperAttributes, $data = [], Collection|array $uniqueAttributes = [])
     {
         $variant = $this->productRepository->getModel()->create([
             'parent_id'           => $product->id,
@@ -206,6 +209,16 @@ class Configurable extends AbstractType
             $attrCode = $attribute->code;
 
             $variantValues[self::COMMON_VALUES_KEY][$attrCode] = $data[self::PRODUCT_VALUES_KEY][self::COMMON_VALUES_KEY][$attrCode];
+        }
+
+        foreach ($uniqueAttributes as $unique) {
+            $uniqueValue = $unique->getValueFromProductValues($variantValues, core()->getRequestedChannelCode(), core()->getRequestedLocaleCode());
+
+            if (empty($uniqueValue)) {
+                continue;
+            }
+
+            $unique->setProductValue('', $variantValues, core()->getRequestedChannelCode(), core()->getRequestedLocaleCode());
         }
 
         $variantValues[self::COMMON_VALUES_KEY]['sku'] = $data['sku'];
