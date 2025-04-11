@@ -5,7 +5,6 @@ namespace Webkul\Product\Type;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Webkul\Admin\Validations\ConfigurableUniqueSku;
-use Webkul\Product\Facades\ProductImage;
 
 class Configurable extends AbstractType
 {
@@ -25,20 +24,6 @@ class Configurable extends AbstractType
         'status',
         'tax_category_id',
     ];
-
-    /**
-     * Is a composite product type.
-     *
-     * @var bool
-     */
-    protected $isComposite = true;
-
-    /**
-     * Show quantity box.
-     *
-     * @var bool
-     */
-    protected $showQuantityBox = true;
 
     /**
      * Has child products i.e. variants.
@@ -231,20 +216,6 @@ class Configurable extends AbstractType
     }
 
     /**
-     * @param  mixed  $attribute
-     * @param  mixed  $value
-     * @return array
-     */
-    public function getAttributeTypeValues($attribute, $value)
-    {
-        $attributeTypeFields = array_fill_keys(array_values($attribute->attributeTypeFields), null);
-
-        $attributeTypeFields[$attribute->column_name] = $value;
-
-        return $attributeTypeFields;
-    }
-
-    /**
      * Update variant.
      *
      * @param  int  $id
@@ -329,17 +300,6 @@ class Configurable extends AbstractType
     }
 
     /**
-     * Return true if item can be moved to cart from wishlist.
-     *
-     * @param  \Webkul\Customer\Contracts\Wishlist  $item
-     * @return bool
-     */
-    public function canBeMovedFromWishlistToCart($item)
-    {
-        return isset($item->additional['selected_configurable_option']);
-    }
-
-    /**
      * Compare options.
      *
      * @param  array  $options1
@@ -389,39 +349,5 @@ class Configurable extends AbstractType
         }
 
         return $data;
-    }
-
-    /**
-     * Get actual ordered item.
-     *
-     * @param  \Webkul\Checkout\Contracts\CartItem  $item
-     * @return \Webkul\Checkout\Contracts\CartItem|\Webkul\Sales\Contracts\OrderItem|\Webkul\Sales\Contracts\InvoiceItem|\Webkul\Sales\Contracts\ShipmentItem|\Webkul\Customer\Contracts\Wishlist
-     */
-    public function getOrderedItem($item)
-    {
-        return $item->child;
-    }
-
-    /**
-     * Get product base image.
-     *
-     * @param  \Webkul\Customer\Contracts\Wishlist|\Webkul\Checkout\Contracts\CartItem  $item
-     * @return array
-     */
-    public function getBaseImage($item)
-    {
-        $product = $item->product;
-
-        if ($item instanceof \Webkul\Customer\Contracts\Wishlist) {
-            if (isset($item->additional['selected_configurable_option'])) {
-                $product = $this->productRepository->find($item->additional['selected_configurable_option']);
-            }
-        } else {
-            if (count($item->child->product->images)) {
-                $product = $item->child->product;
-            }
-        }
-
-        return ProductImage::getProductBaseImage($product);
     }
 }

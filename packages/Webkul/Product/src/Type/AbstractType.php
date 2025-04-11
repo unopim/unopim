@@ -47,41 +47,6 @@ abstract class AbstractType
     protected $product;
 
     /**
-     * Is a composite product type.
-     *
-     * @var bool
-     */
-    protected $isComposite = false;
-
-    /**
-     * Is a stockable product type.
-     *
-     * @var bool
-     */
-    protected $isStockable = true;
-
-    /**
-     * Show quantity box.
-     *
-     * @var bool
-     */
-    protected $showQuantityBox = false;
-
-    /**
-     * Is product have sufficient quantity.
-     *
-     * @var bool
-     */
-    protected $haveSufficientQuantity = true;
-
-    /**
-     * Product can be moved from wishlist to cart or not.
-     *
-     * @var bool
-     */
-    protected $canBeMovedFromWishlistToCart = true;
-
-    /**
      * Products of this type can be copied in the admin backend.
      *
      * @var bool
@@ -496,16 +461,6 @@ abstract class AbstractType
     public function getChildrenIds()
     {
         return [];
-    }
-
-    /**
-     * Return true if this product can be composite.
-     *
-     * @return bool
-     */
-    public function isComposite()
-    {
-        return $this->isComposite;
     }
 
     /**
