@@ -218,7 +218,6 @@
             {{ $attributes->only(['name', ':name', 'value', ':value', 'v-model', 'rules', ':rules', 'label', ':label']) }}
             name="{{ $name }}"
         >
-            
                 <v-tagging-handler
                     :taggable=true
                     name="{{ $name }}"
@@ -227,6 +226,26 @@
                     {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label']) }}
                 >
                 </v-tagging-handler>
+            
+        </v-field>
+
+        @break
+
+        @case('taggingselect')
+        <v-field
+            v-slot="{ field, errors }"
+            :class="[errors && errors['{{ $name }}'] ? 'border !border-red-600 hover:border-red-600' : '']"
+            {{ $attributes->only(['name', ':name', 'value', ':value', 'v-model', 'rules', ':rules', 'label', ':label']) }}
+            name="{{ $name }}"
+        >
+        <v-taggingselect-handler
+            :taggable=true
+            name="{{ $name }}"
+            v-bind="field"
+            :class="[errors.length ? 'border border-red-500' : '']"
+            {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label']) }}
+        >
+        </v-taggingselect-handler>
             
         </v-field>
 
@@ -743,6 +762,256 @@
         });
     </script>
 
+
+<script type="text/x-template" id="v-taggingselect-handler-template">
+        <div>
+            <v-multiselect
+                id="ajax"
+                :track-by="trackBy"
+                :label="labelBy"
+                :taggable="true"
+                @tag="addTag"
+                @select="selectOption"
+                @remove="removeOption"
+                :options="formattedOptions"
+                :preserve-search="false"
+                :multiple="true"
+                :searchable="true"
+                :placeholder="placeholder"
+                :close-on-select="false"
+                :clear-on-select="false"
+                :show-no-results="true"
+                :hide-selected="true"
+                :name="name"
+                v-model="selectedValue"
+                v-bind="field"
+                @search-change="handleSearch"
+                @open="openedSelect"
+                @scroll="onScroll"
+                ref="taggingselect__handler__"
+                :loading="isLoading ?? false"
+                :internal-search="false"
+                :disabled="disabled ?? false"
+            >
+            </v-multiselect>   
+            <input
+                v-model="selectedOption"
+                v-validate="'required'"
+                :name="name"
+                type="hidden"
+            >
+        </div>
+    </script>
+
+    <script type="module">
+        app.component('v-taggingselect-handler', {
+            template: '#v-taggingselect-handler-template',
+
+            props: {
+                trackBy: {
+                    type: String,
+                    default: 'id'
+                },
+                labelBy: {
+                    type: String,
+                    default: 'label'
+                },
+                options: Array,
+                label: String,
+                name: String,
+                value: String,
+                field: Array,
+                placeholder: String,
+                entityName: String,
+                attributeId: String,
+                multiple: Boolean,
+                isLoading: Boolean,
+                listRoute: {
+                    type: String,
+                    default: '{{ route('admin.catalog.options.fetch-all')}}'
+                },
+                queryParams: Array,
+            },
+            
+            data() {
+                return {
+                    selectedValue: this.parseValue() ? this.parseOptions().filter(option =>  this.parseValue() instanceof Array && this.parseValue()?.some(valueItem => option[this.trackBy] === valueItem)) : [],
+                    isLoading: false,
+                    optionsList: [],
+                    timeout: null,
+                    delayTime: 500,
+                    lastPage: 1,
+
+                    params: {
+                        entityName: this.entityName,
+                        attributeId: this.attributeId,
+                        page: 1,
+                        locale: "{{ core()->getRequestedLocaleCode() }}",
+                        ...this.queryParams
+                    }
+                }
+            },
+            mounted() {
+                this.$refs['taggingselect__handler__']._.refs.list.addEventListener('scroll', this.onScroll);
+
+                if (this.selectedValue && typeof this.selectedValue != 'object') {
+                    this.initializeValue();
+                }
+            },
+            computed: {
+                formattedOptions() {
+                    return this.optionsList;
+                },
+                selectedOption() {
+                    let selectedOptions = [];
+
+                    this.selectedValue instanceof Array ? this.selectedValue.forEach((item) => {
+                        selectedOptions.push(item[this.trackBy]);
+                    }) : null;
+
+                    return selectedOptions.length > 0 ? selectedOptions : null;
+                },
+                
+            },
+
+            watch: {
+                selectedValue(newValue) {
+                    if (
+                        (newValue instanceof Array && newValue.length < 1) || null == newValue
+                    ) {
+                        this.$emit('input', newValue);
+
+                        return;
+                    }
+
+                    this.$emit('input', JSON.stringify(newValue));
+                },
+            },
+
+            methods: {
+                search(query) {
+                    this.isLoading = true;
+                    this.params.query = query;
+                    this.params.page = 1;
+
+                    this.$axios.get(this.listRoute, {params: this.params})
+                        .then((result) => {
+                            this.optionsList = result.data.options;
+                            this.lastPage = result.data.lastPage;
+                            this.params.page = result.data.page;
+
+                            this.isLoading = false;
+                        })
+                },
+                openedSelect(id) {
+                    if (this.optionsList.length < 1) {
+                        this.isLoading = true;
+
+                        this.$axios.get(this.listRoute, {params: this.params})
+                            .then((result) => {
+                                this.optionsList = result.data.options;
+                                this.lastPage = result.data.lastPage;
+                                this.params.page = result.data.page;
+
+                                this.isLoading = false;
+                            });
+                    }
+                },
+                onScroll(e) {
+                    const element = this.$refs['taggingselect__handler__']._.refs.list;
+                    const tolerance = 10;
+
+                    if (
+                        (element.scrollHeight - element.scrollTop) - element.clientHeight <= tolerance
+                        && this.lastPage > this.params.page
+                    ) {
+                        this.fetchMore();
+                    }
+                },
+                fetchMore() {
+                    this.isLoading = true;
+
+                    this.params.page++;
+                    this.$axios.get(this.listRoute, {params: this.params})
+                        .then((result) => {
+                            this.optionsList = [...this.optionsList, ...result.data.options];
+                            this.lastPage = result.data.lastPage;
+                            this.params.page = result.data.page;
+
+                            this.isLoading = false;
+                        });
+                },
+
+                initializeValue() {
+                    this.isLoading = true;
+                    this.params.identifiers = {
+                        columnName: this.trackBy,
+                        values: 'string' == typeof this.selectedValue ? this.selectedValue?.split(',') : this.selectedValue
+                    };
+
+                    this.$axios.get(this.listRoute, {params: this.params})
+                        .then((result) => {
+                            this.selectedValue = this.multiple ? result.data.options : result.data.options[0];
+
+                            this.params.identifiers = {};
+
+                            this.isLoading = false;
+                        })
+                },
+                handleSearch(query) {
+                    if (null !== this.timer) {
+                        clearTimeout(this.timer);
+                    }
+
+                    this.timer = setTimeout(this.search(query), this.delayTime);
+                },
+
+                parseOptions() {
+                    try {
+                        return this.options ? JSON.parse(this.options) : [];
+                    } catch (error) {
+                        console.error('Error parsing options JSON:', error);
+                        return [];
+                    }
+                },
+                parseValue() {
+                    try {
+                        return this.value ? JSON.parse(this.value) : [];
+                    } catch (error) {
+                        return this.value;
+                    }
+                },
+                addTag (newTag) {
+                    const tag = {
+                        name: newTag,
+                        code: newTag
+                    };
+                    this.formattedOptions.push(tag);
+                    this.selectedValue.push(tag);
+                    this.$emit('add-option', {
+                        target: {
+                            value: tag
+                        }
+                    });
+                },
+                selectOption(tag) {
+                    this.$emit('select-option', {
+                        target: {
+                            value: tag
+                        }
+                    });
+                },
+                removeOption(tag) {
+                    this.$emit('remove-option', {
+                        target: {
+                            value: tag
+                        }
+                    });
+                },                
+            }
+        });
+    </script>
+
     <script type="text/x-template" id="v-async-select-handler-template">
         <div>
             <v-multiselect
@@ -957,7 +1226,6 @@
                     this.isLoading = true;
 
                     this.params.page++;
-
                     this.$axios.get(this.listRoute, {params: this.params})
                         .then((result) => {
                             this.optionsList = [...this.optionsList, ...result.data.options];
@@ -970,7 +1238,6 @@
 
                 initializeValue() {
                     this.isLoading = true;
-                    
                     this.params.identifiers = {
                         columnName: this.trackBy,
                         values: 'string' == typeof this.selectedValue ? this.selectedValue?.split(',') : this.selectedValue
@@ -1004,7 +1271,6 @@
             }
         });
     </script>
- 
     <script type="text/x-template" id="v-file-uploader-template">
         <div :class="[errors.length ? 'flex items-center justify-center w-full border !border-red-600 hover:border-red-600' : 'flex items-center justify-center w-full']">
             <label :for="$.uid + '_dropzone-file'" class="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-violet-50 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">

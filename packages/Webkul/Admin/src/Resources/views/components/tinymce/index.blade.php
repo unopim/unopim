@@ -52,7 +52,7 @@
                                     <x-admin::form.control-group.error control-name="model"></x-admin::form.control-group.error>
                                 </x-admin::form.control-group>
                             </template>
-                            
+
 
                             <!-- default prompt -->
                             <x-admin::form.control-group>
@@ -61,8 +61,7 @@
                                 </x-admin::form.control-group.label>
                                 <x-admin::form.control-group.control
                                     type="select"
-                                    name="model"
-                                    rules="required"
+                                    name="default_prompt"
                                     :label="trans('admin::app.components.tinymce.ai-generation.default-prompt')"
                                     ::options="defaultPrompts"
                                     track-by="prompt"
@@ -71,7 +70,7 @@
                                 >
                                 </x-admin::form.control-group.control>
 
-                                <x-admin::form.control-group.error control-name="model"></x-admin::form.control-group.error>
+                                <x-admin::form.control-group.error control-name="default_prompt"></x-admin::form.control-group.error>
                             </x-admin::form.control-group>
 
                             <!-- Prompt -->
@@ -90,9 +89,9 @@
                                         ref="promptInput"
                                         :label="trans('admin::app.components.tinymce.ai-generation.prompt')"
                                     />
-                                    
+
                                     <!-- Icon inside textarea -->
-                                    <div 
+                                    <div
                                         class="absolute bottom-2.5 left-1 text-gray-400 cursor-pointer text-2xl"
                                         @click="openSuggestions"
                                     >
@@ -104,7 +103,7 @@
                             </x-admin::form.control-group>
                         </div>
 
-                       
+
 
                         <!-- Generated Content -->
                         <x-admin::form.control-group class="mt-5" v-show="ai.content">
@@ -165,7 +164,7 @@
 
                                     <template v-else>
                                         <span class="icon-magic text-2xl text-violet-700"></span>
-                                        
+
                                         @lang('admin::app.components.media.images.ai-generation.regenerate')
                                     </template>
                                 </button>
@@ -189,7 +188,7 @@
     <script type="module">
         app.component('v-tinymce', {
             template: '#v-tinymce-template',
-                
+
             props: ['selector', 'field', 'prompt'],
 
             data() {
@@ -223,7 +222,7 @@
                 this.init();
 
                 this.$emitter.on('change-theme', (theme) => {
-                    tinymce.activeEditor.destroy();
+                    tinymce.get(0).destroy();
 
                     this.currentSkin = (theme === 'dark') ? 'oxide-dark' : 'oxide';
                     this.currentContentCSS = (theme === 'dark') ? 'dark' : 'default';
@@ -240,7 +239,7 @@
                         initTinyMCE: function(extraConfiguration) {
                             let self2 = this;
 
-                            let config = {  
+                            let config = {
                                 relative_urls: false,
                                 menubar: false,
                                 remove_script_host: false,
@@ -397,12 +396,12 @@
                                 fillAttr: 'code',
                                 noMatchTemplate: "@lang('admin::app.common.no-match-found')",
                                 selectTemplate: (item) => `@${item.original.code}`,
-                                menuItemTemplate: (item) => `<div class="p-1.5 rounded-md text-base cursor-pointer transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center">${item.original.name || item.original.code}</div>`,
+                                menuItemTemplate: (item) => `<div class="p-1.5 rounded-md text-base cursor-pointer transition-all max-sm:place-self-center">${item.original.name || '[' + item.original.code + ']'}</div>`,
                             });
-                            
+
                             tribute.attach(this.$refs.promptInput);
 
-                            
+
                         }
                     });
                 },
@@ -444,7 +443,7 @@
                         return;
                     }
 
-                    const response = await fetch(`{{ route('admin.magic_ai.suggestion_values') }}?query=${text}&&entity_name=${this.entityName}`);
+                    const response = await fetch(`{{ route('admin.magic_ai.suggestion_values') }}?query=${text}&&entity_name=${this.entityName}}&&locale={{ core()->getRequestedLocaleCode() }}`);
                     const data = await response.json();
                     this.suggestionValues = data;
 
@@ -472,6 +471,8 @@
                         resource_id: this.resourceId,
                         resource_type: this.getResourceType(),
                         field_type: 'tinymce',
+                        locale: "{{ core()->getRequestedLocaleCode() }}",
+                        channel: "{{ core()->getRequestedChannelCode() }}",
                     })
                         .then(response => {
                             this.isLoading = false;

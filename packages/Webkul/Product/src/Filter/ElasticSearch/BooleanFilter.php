@@ -49,7 +49,6 @@ class BooleanFilter extends AbstractElasticSearchAttributeFilter
                 ];
 
                 $this->queryBuilder::where($clause);
-
                 break;
             case FilterOperators::EQUAL:
                 $clause = [
@@ -61,7 +60,6 @@ class BooleanFilter extends AbstractElasticSearchAttributeFilter
                 ];
 
                 $this->queryBuilder::where($clause);
-
                 break;
         }
 

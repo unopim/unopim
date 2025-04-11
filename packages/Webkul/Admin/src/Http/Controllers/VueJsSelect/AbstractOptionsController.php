@@ -51,7 +51,6 @@ class AbstractOptionsController extends Controller
         int $limit = self::DEFAULT_PER_PAGE,
         bool $isPaginate = true
     ) {
-
         $repository = $this->getEntityRepository($entityName);
 
         if (isset($queryParams['filters']) && is_array($queryParams['filters'])) {

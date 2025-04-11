@@ -280,6 +280,7 @@ return [
             'product-not-found'       => 'Produkt med SKU ":sku" ikke funnet',
             'parent-not-found'        => 'Forelder med SKU ":sku" ikke funnet',
             'upload-success'          => 'Produkt fil lastet opp vellykket.',
+            'update-failure'          => 'Produktet kunne ikke oppdateres.',
         ],
 
         'attributes' => [
@@ -571,6 +572,8 @@ return [
             'not-found'            => 'Kategori med kode ":code" ble ikke funnet',
             'unknown-fields'       => 'Kategori med kode ":fields" ble ikke funnet',
             'upload-success'       => 'Kategori fil ble lastet opp.',
+            'create-failure'       => 'Kategorien kunne ikke opprettes.',
+            'update-failure'       => 'Kategorien kunne ikke oppdateres.',
         ],
 
         'category_fields' => [
@@ -1609,12 +1612,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => 'Last ned',
-        'export'     => 'Hurtig eksport',
-        'no-records' => 'Ingen poster å eksportere',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => 'Last ned',
+        'export'               => 'Hurtig eksport',
+        'no-records'           => 'Ingen poster å eksportere',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'Med media',
+        'export-success'       => 'Eksporten var vellykket!',
+        'error'                => 'Noe gikk galt!',
+        'product-not-selected' => 'Ingen produkter valgt for hurtig eksport',
     ],
 
     'validations' => [

@@ -25,7 +25,6 @@ class DatabaseProductQueryBuilder extends AbstractFilterableQueryBuilder
         $value,
         array $context
     ) {
-
         $locale = $attribute->value_per_locale ? $context['locale'] : null;
         $channel = $attribute->value_per_channel ? $context['channel'] : null;
 

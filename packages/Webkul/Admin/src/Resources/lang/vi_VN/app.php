@@ -280,6 +280,7 @@ return [
             'product-not-found'       => 'Không tìm thấy sản phẩm với SKU ":sku"',
             'parent-not-found'        => 'Không tìm thấy sản phẩm cha với SKU ":sku"',
             'upload-success'          => 'Tệp sản phẩm đã được tải lên thành công.',
+            'update-failure'          => 'Không thể cập nhật sản phẩm.',
         ],
 
         'attributes' => [
@@ -571,6 +572,8 @@ return [
             'not-found'            => 'Không tìm thấy danh mục với mã ":code"',
             'unknown-fields'       => 'Không tìm thấy trường trong danh mục với mã ":fields"',
             'upload-success'       => 'Tệp danh mục đã được tải lên thành công.',
+            'create-failure'       => 'Không thể tạo danh mục.',
+            'update-failure'       => 'Không thể cập nhật danh mục.',
         ],
 
         'category_fields' => [
@@ -1609,12 +1612,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => 'Tải về',
-        'export'     => 'Xuất nhanh',
-        'no-records' => 'Không có dữ liệu để xuất',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => 'Tải về',
+        'export'               => 'Xuất nhanh',
+        'no-records'           => 'Không có dữ liệu để xuất',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'Với phương tiện',
+        'export-success'       => 'Xuất khẩu thành công!',
+        'error'                => 'Đã xảy ra lỗi!',
+        'product-not-selected' => 'Chưa chọn sản phẩm nào để xuất nhanh',
     ],
 
     'validations' => [

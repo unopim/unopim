@@ -41,6 +41,7 @@ return [
     'distinct'       => ':attribute har ett duplicerat värde.',
     'email'          => ':attribute måste vara en giltig e-postadress.',
     'exists'         => ':attribute som valts är ogiltigt.',
+    'extensions'     => 'Fältet :attribute måste ha en av följande filändelser: :values.',
     'file'           => ':attribute måste vara en fil.',
     'filled'         => ':attribute måste ha ett värde.',
 

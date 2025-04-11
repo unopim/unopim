@@ -21,7 +21,7 @@
         "barryvdh/laravel-dompdf": "^2.0.0",
         "diglactic/laravel-breadcrumbs": "^8.0",
         "doctrine/dbal": "^3.0",
-        "elasticsearch/elasticsearch": "^8.10",
+        "elasticsearch/elasticsearch": "^8.17",
         "enshrined/svg-sanitize": "^0.16.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "intervention/image": "^2.4",
@@ -78,7 +78,8 @@
             "Webkul\\Product\\": "packages/Webkul/Product/src",
             "Webkul\\Theme\\": "packages/Webkul/Theme/src",
             "Webkul\\User\\": "packages/Webkul/User/src",
-            "Webkul\\AdminApi\\": "packages/Webkul/AdminApi/src"
+            "Webkul\\AdminApi\\": "packages/Webkul/AdminApi/src",
+            "Webkul\\ElasticSearch\\": "packages/Webkul/ElasticSearch/src"
         }
     },
     "autoload-dev": {

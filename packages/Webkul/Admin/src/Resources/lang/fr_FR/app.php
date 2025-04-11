@@ -280,6 +280,7 @@ return [
             'product-not-found'       => 'Le produit avec le sku ":sku" est introuvable',
             'parent-not-found'        => 'Le produit parent avec le sku ":sku" est introuvable',
             'upload-success'          => 'Fichier produit téléchargé avec succès.',
+            'update-failure'          => 'Le produit n\'a pas pu être mis à jour.',
         ],
 
         'attributes' => [
@@ -571,6 +572,8 @@ return [
             'not-found'            => 'La catégorie avec le code ":code" est introuvable',
             'unknown-fields'       => 'Le champ de catégorie avec le code ":fields" est introuvable',
             'upload-success'       => 'Fichier de catégorie Téléchargé avec succès.',
+            'create-failure'       => 'La catégorie n\'a pas pu être créée.',
+            'update-failure'       => 'La catégorie n\'a pas pu être mise à jour.',
         ],
 
         'category_fields' => [
@@ -1930,12 +1933,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => 'Télécharger',
-        'export'     => 'Exporter',
-        'no-records' => 'Rien à exporter',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => 'Télécharger',
+        'export'               => 'Exporter',
+        'no-records'           => 'Rien à exporter',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'Avec des médias',
+        'export-success'       => 'Exportation réussie !',
+        'error'                => 'Une erreur s’est produite !',
+        'product-not-selected' => 'Aucun produit sélectionné pour l’exportation rapide',
     ],
 
     'validations' => [

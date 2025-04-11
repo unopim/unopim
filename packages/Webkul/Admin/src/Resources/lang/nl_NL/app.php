@@ -280,6 +280,7 @@ return [
             'product-not-found'       => 'Product met Sku ":sku" kon niet worden gevonden',
             'parent-not-found'        => 'Ouder met Sku ":sku" kon niet worden gevonden',
             'upload-success'          => 'Productbestand met succes geüpload.',
+            'update-failure'          => 'Product kon niet worden bijgewerkt.',
         ],
 
         'attributes' => [
@@ -572,6 +573,8 @@ return [
             'not-found'            => 'Categorie met code ":code" kon niet worden gevonden',
             'unknown-fields'       => 'Categorie -veld met code ":fields" kon niet worden gevonden',
             'upload-success'       => 'Categoriebestand met succes geüpload.',
+            'create-failure'       => 'Categorie kon niet worden aangemaakt.',
+            'update-failure'       => 'Categorie kon niet worden bijgewerkt.',
         ],
 
         'category_fields' => [
@@ -2409,12 +2412,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => 'Downloaden',
-        'export'     => 'Snel exporteren',
-        'no-records' => 'Niets om te exporteren',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => 'Downloaden',
+        'export'               => 'Snel exporteren',
+        'no-records'           => 'Niets om te exporteren',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'Met media',
+        'export-success'       => 'Export succesvol!',
+        'error'                => 'Er is iets misgegaan!',
+        'product-not-selected' => 'Geen producten geselecteerd voor snelle export',
     ],
 
     'validations' => [

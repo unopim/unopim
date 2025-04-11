@@ -280,6 +280,7 @@ return [
             'product-not-found'       => '":sku" SKU\'ya sahip ürün bulunamadı',
             'parent-not-found'        => '":sku" SKU\'ya sahip üst ürün bulunamadı',
             'upload-success'          => 'Ürün dosyası başarıyla yüklendi.',
+            'update-failure'          => 'Ürün güncellenemedi.',
         ],
 
         'attributes' => [
@@ -571,6 +572,8 @@ return [
             'not-found'            => '":code" koduna sahip kategori bulunamadı',
             'unknown-fields'       => '":fields" koduna sahip kategori için bilinmeyen alanlar',
             'upload-success'       => 'Kategori dosyası başarıyla yüklendi.',
+            'create-failure'       => 'Kategori oluşturulamadı.',
+            'update-failure'       => 'Kategori güncellenemedi.',
         ],
 
         'category_fields' => [
@@ -1609,12 +1612,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => 'İndir',
-        'export'     => 'Hızlı İhracat',
-        'no-records' => 'İhracat edilecek veri yok',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => 'İndir',
+        'export'               => 'Hızlı İhracat',
+        'no-records'           => 'İhracat edilecek veri yok',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'Medya ile',
+        'export-success'       => 'Dışa aktarma başarılı!',
+        'error'                => 'Bir şeyler yanlış gitti!',
+        'product-not-selected' => 'Не вибрано жодного товару для швидкого експорту',
     ],
 
     'validations' => [

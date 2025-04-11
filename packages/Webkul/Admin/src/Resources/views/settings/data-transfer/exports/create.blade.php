@@ -185,7 +185,7 @@
                     return {
                         fileFormat: 'Csv',
                         selectedFileFormat: "{{ old('filters.file_format') ?? null }}",
-                        entityType: 'categories',
+                        entityType: "{{ old('entity_type') ?? 'categories' }}",
                         exporterConfig: @json($exporterConfig), 
                         filterFields: @json($exporterConfig['categories']['filters']['fields']),
                     };

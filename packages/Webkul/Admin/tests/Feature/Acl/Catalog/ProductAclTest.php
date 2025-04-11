@@ -42,16 +42,21 @@ it('should not be able to copy a product if does not have permission', function 
     $this->loginWithPermissions(permissions: ['catalog', 'catalog.products']);
     $product = Product::factory()->create();
 
-    $this->get(route('admin.catalog.products.copy', ['id' => $product->id]))
+    $this->post(route('admin.catalog.products.copy', ['id' => $product->id]))
         ->assertSeeText('Unauthorized');
 });
 
 it('should be able to copy a product if has permission', function () {
     $this->loginWithPermissions(permissions: ['catalog', 'catalog.products', 'catalog.products.copy']);
-    $product = Product::factory()->create();
+    $product = Product::factory()->simple()->create();
 
-    $this->get(route('admin.catalog.products.copy', $product->id))
-        ->assertStatus(302);
+    $productId = $product->id;
+
+    $this->post(route('admin.catalog.products.copy', $productId))
+        ->assertOk()
+        ->assertJsonFragment([
+            'redirect_url' => route('admin.catalog.products.edit', ++$productId),
+        ]);
 });
 
 it('should not be able to edit a product if does not have permission', function () {

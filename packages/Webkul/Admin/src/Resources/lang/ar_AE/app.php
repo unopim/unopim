@@ -280,6 +280,7 @@ return [
             'product-not-found'       => 'المنتج مع SKU ":SKU" لا يمكن العثور عليها',
             'parent-not-found'        => 'الوالد مع SKU ":SKU" لا يمكن العثور عليها',
             'upload-success'          => 'تم تحميل ملف المنتج بنجاح.',
+            'update-failure'          => 'تعذر تحديث المنتج.',
         ],
 
         'attributes' => [
@@ -572,6 +573,8 @@ return [
             'not-found'            => 'لم يتم العثور على عائلة السمات برمز ":code"',
             'unknown-fields'       => 'لم يتم العثور على حقل الفئة برمز ":fields"',
             'upload-success'       => 'تم تحميل ملف الفئة بنجاح.',
+            'create-failure'       => 'تعذر إنشاء الفئة.',
+            'update-failure'       => 'تعذر تحديث الفئة.',
         ],
 
         'category_fields' => [
@@ -2409,12 +2412,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => 'تحميل',
-        'export'     => 'تصدير سريع',
-        'no-records' => 'لا شيء للتصدير',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => 'تحميل',
+        'export'               => 'تصدير سريع',
+        'no-records'           => 'لا شيء للتصدير',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'مع الوسائط',
+        'export-success'       => 'تم التصدير بنجاح!',
+        'error'                => 'حدث خطأ ما!',
+        'product-not-selected' => 'لم يتم تحديد أي منتجات للتصدير السريع',
     ],
 
     'validations' => [

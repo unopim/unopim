@@ -294,7 +294,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'index'  => 'edit',
                 'icon'   => 'icon-copy',
                 'title'  => trans('admin::app.catalog.products.index.datagrid.copy'),
-                'method' => 'GET',
+                'method' => 'POST',
                 'url'    => function ($row) {
                     return route('admin.catalog.products.copy', $row->product_id);
                 },
@@ -362,6 +362,14 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $requestedParams = $this->validatedRequest();
 
+        if (! empty($requestedParams['productIds']) && isset($requestedParams['export']) && (bool) $requestedParams['export']) {
+            $this->queryBuilder->whereIn('products.id', $requestedParams['productIds']);
+
+            $this->exportData($requestedParams);
+
+            return;
+        }
+
         try {
             $pagination = $requestedParams['pagination'] ?? [];
             $pagination['per_page'] ??= $this->itemsPerPage;
@@ -371,7 +379,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             $this->setElasticFilters($requestedParams['filters'] ?? []);
 
             $esQuery = ElasticSearchQuery::build();
-
             $result = ResultCursorFactory::createCursor($esQuery, $requestedParams);
 
             $ids = $result->getAllIds();
@@ -380,11 +387,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 ->orderBy(DB::raw('FIELD('.DB::getTablePrefix().'products.id, '.implode(',', $ids).')'));
 
             if (isset($requestedParams['export']) && (bool) $requestedParams['export']) {
-                $this->exportable = true;
-
-                $gridData = $this instanceof ExportableInterface ? $this->getExportableData($requestedParams) : $this->queryBuilder->get();
-
-                $this->setExportFile($gridData, $requestedParams['format']);
+                $this->exportData($requestedParams);
 
                 return;
             }
@@ -483,7 +486,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             }
 
             [$operator, $value] = $this->getOperatorAndValue($attribute, $value);
-
             if ($operator) {
                 $this->applyFilterValue($queryBuilder, $attribute, $value, $operator, $context);
             }
@@ -536,7 +538,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     protected function setElasticSort($params)
     {
-
         $sort = $params['column'] ?? $this->elasticSearchSortColumn;
 
         $sortMapping = [
@@ -567,7 +568,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     protected function getAttributePathForSort($attributeCode, string $searchEngine = 'database')
     {
-
         $attribute = $this->attributeService->findAttributeByCode($attributeCode);
 
         if (! $attribute) {
@@ -576,7 +576,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $locale = core()->getRequestedLocaleCode();
         $channel = core()->getRequestedChannelCode();
-        $currency = core()->getAllActiveCurrencies();
 
         $path = sprintf('$.%s.%s', $attribute->getScope($locale, $channel), $attribute->code);
 

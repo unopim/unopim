@@ -277,6 +277,7 @@ return [
             'product-not-found'       => 'Продукт с sku ":sku" не найден',
             'parent-not-found'        => 'Родитель с sku ":sku" не найден',
             'upload-success'          => 'Файл продукта успешно загружен.',
+            'update-failure'          => 'Не удалось обновить продукт.',
         ],
 
         'attributes' => [
@@ -570,6 +571,8 @@ return [
             'not-found'            => 'Категория с кодом ":code" не найдена',
             'unknown-fields'       => 'Поле категории с кодом ":fields" не найдено',
             'upload-success'       => 'Файл категории загружен успешно.',
+            'create-failure'       => 'Не удалось создать категорию.',
+            'update-failure'       => 'Не удалось обновить категорию.',
         ],
 
         'category_fields' => [
@@ -2408,12 +2411,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => 'Скачать',
-        'export'     => 'Быстрый экспорт',
-        'no-records' => 'Нечего экспортировать',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => 'Скачать',
+        'export'               => 'Быстрый экспорт',
+        'no-records'           => 'Нечего экспортировать',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'С медиа',
+        'export-success'       => 'Экспорт выполнен успешно!',
+        'error'                => 'Что-то пошло не так!',
+        'product-not-selected' => 'Не выбраны товары для быстрого экспорта',
     ],
 
     'validations' => [

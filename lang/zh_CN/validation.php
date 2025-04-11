@@ -42,6 +42,7 @@ return [
     'email'          => ':attribute 必须是有效的电子邮件地址。',
     'exists'         => '所选的 :attribute 无效。',
     'exists-value'   => ':input 不存在。',
+    'extensions'     => ':attribute 字段必须具有以下扩展名之一：:values.',
     'file'           => ':attribute 必须是文件。',
     'filled'         => ':attribute 字段必须具有值。',
 

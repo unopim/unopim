@@ -182,7 +182,6 @@
                                         </draggable>
                                     </div>
                                 </div>
-
                         </x-slot>
 
                         <!-- Modal Footer -->
@@ -284,7 +283,6 @@
                             });
                             this.totalPages = data.lastPage;
                             this.loading = false;
-
                         });
                 },
 
@@ -294,7 +292,6 @@
                         this.getColumnsList();
                     }
                 },
-
                 nextPage() {
                     if (this.currentPage < this.totalPages) {
                         this.currentPage++;

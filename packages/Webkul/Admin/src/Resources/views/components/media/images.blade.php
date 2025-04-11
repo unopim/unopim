@@ -26,7 +26,7 @@
             <div class="flex flex-wrap gap-1">
                 <!-- Upload Image Button -->
                 <template v-if="allowMultiple || images.length == 0">
-                    <div 
+                    <div
                         class="flex flex-col w-full max-w-[210px]"
                     >
                         <!-- AI Image Generation -->
@@ -44,7 +44,7 @@
                                     @lang('admin::app.components.media.images.add-image-btn')
                                 </p>
 
-                                
+
                             </div>
                         </label>
 
@@ -121,22 +121,22 @@
                                     >
                                         <div class="flex flex-col">
                                             <div class="flex gap-1 p-3 border rounded-md text-sm">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" class="dark:invert">
                                                     <g clip-path="url(#clip0_3148_2242)"> <path fill-rule="evenodd" clip-rule="evenodd" d="M12.1484 9.31989L9.31995 12.1483L19.9265 22.7549L22.755 19.9265L12.1484 9.31989ZM12.1484 10.7341L10.7342 12.1483L13.5626 14.9767L14.9768 13.5625L12.1484 10.7341Z" fill="#27272A"/>
                                                         <path d="M11.0877 3.30949L13.5625 4.44748L16.0374 3.30949L14.8994 5.78436L16.0374 8.25924L13.5625 7.12124L11.0877 8.25924L12.2257 5.78436L11.0877 3.30949Z" fill="#27272A"/>
                                                         <path d="M2.39219 2.39217L5.78438 3.95197L9.17656 2.39217L7.61677 5.78436L9.17656 9.17655L5.78438 7.61676L2.39219 9.17655L3.95198 5.78436L2.39219 2.39217Z" fill="#27272A"/>
                                                         <path d="M3.30947 11.0877L5.78434 12.2257L8.25922 11.0877L7.12122 13.5626L8.25922 16.0374L5.78434 14.8994L3.30947 16.0374L4.44746 13.5626L3.30947 11.0877Z" fill="#27272A"/>
-                                                    </g> 
-                                                    <defs> 
+                                                    </g>
+                                                    <defs>
                                                         <clipPath id="clip0_3148_2242">
-                                                            <rect width="24" height="24" fill="white"/>
-                                                        </clipPath> 
-                                                    </defs> 
+                                                            <rect width="24" height="24"/>
+                                                        </clipPath>
+                                                    </defs>
                                                 </svg>
 
-                                                <span class="text-gray-600 text-sm font-semibold">@lang('admin::app.components.media.images.generate-with-ai')</span>
+                                                <span class="text-gray-600 dark:text-slate-50 text-sm font-semibold">@lang('admin::app.components.media.images.generate-with-ai')</span>
                                             </div>
-                                            
+
                                         </div>
                                     </label>
                                 </div>
@@ -150,9 +150,9 @@
                                             <div class="flex gap-1 p-3 border rounded-md text-sm">
                                                 <span class="icon-export text-xl"></span>
 
-                                                <span class="text-gray-600 text-sm font-semibold">@lang('admin::app.components.media.images.upload-from-device')</span>
+                                                <span class="text-gray-600 dark:text-slate-50 text-sm font-semibold">@lang('admin::app.components.media.images.upload-from-device')</span>
                                             </div>
-                                            
+
                                         </div>
                                         <input
                                             type="file"
@@ -214,28 +214,26 @@
                             <x-slot:content>
                                 <div v-show="! ai.images.length">
                                     <!-- Model -->
-                                    <template v-if="aiModels.length">
-                                        <x-admin::form.control-group>
-                                            <x-admin::form.control-group.label class="required">
-                                                @lang('admin::app.components.media.images.ai-generation.model')
-                                            </x-admin::form.control-group.label>
+                                    <x-admin::form.control-group>
+                                        <x-admin::form.control-group.label class="required">
+                                            @lang('admin::app.components.media.images.ai-generation.model')
+                                        </x-admin::form.control-group.label>
 
-                                            <x-admin::form.control-group.control
-                                                type="select"
-                                                name="model"
-                                                rules="required"
-                                                ::value="selectedModel"
-                                                v-model="ai.model"
-                                                ::options="aiModels"
-                                                track-by="id"
-                                                label-by="label"
-                                                :label="trans('admin::app.components.media.images.ai-generation.model')"
-                                            >
-                                            </x-admin::form.control-group.control>
+                                        <x-admin::form.control-group.control
+                                            type="select"
+                                            name="model"
+                                            rules="required"
+                                            ::value="ai.model"
+                                            v-model="ai.model"
+                                            ::options="aiModels"
+                                            track-by="id"
+                                            label-by="label"
+                                            :label="trans('admin::app.components.media.images.ai-generation.model')"
+                                        >
+                                        </x-admin::form.control-group.control>
 
-                                            <x-admin::form.control-group.error control-name="model" />
-                                        </x-admin::form.control-group>
-                                    </template>
+                                        <x-admin::form.control-group.error control-name="model" />
+                                    </x-admin::form.control-group>
                                     <!-- Prompt -->
                                     <x-admin::form.control-group>
                                         <x-admin::form.control-group.label class="required">
@@ -252,9 +250,9 @@
                                                 ref="imagePromptInput"
                                                 :label="trans('admin::app.components.media.images.ai-generation.prompt')"
                                             />
-                                            
+
                                             <!-- Icon inside textarea -->
-                                            <div 
+                                            <div
                                                 class="absolute bottom-2.5 left-1 text-gray-400 cursor-pointer text-2xl"
                                                 @click="openSuggestions"
                                             >
@@ -273,7 +271,7 @@
                                         <x-admin::form.control-group.control
                                             type="text"
                                             name="n"
-                                            rules="required"
+                                            rules="required|max_value:10|min_value:1"
                                             v-model="ai.n"
                                             :label="trans('admin::app.components.media.images.ai-generation.number-of-images')"
                                         />
@@ -283,7 +281,7 @@
 
                                     <x-admin::form.control-group>
                                         <x-admin::form.control-group.label class="required">
-                                            @lang('admin::app.components.media.images.ai-generation.size') 
+                                            @lang('admin::app.components.media.images.ai-generation.size')
                                         </x-admin::form.control-group.label>
 
 
@@ -383,7 +381,7 @@
 
                                             <template v-else>
                                                 <span class="icon-magic  text-violet-700"></span>
-                                                
+
                                                 @lang('admin::app.components.media.images.ai-generation.generate')
                                             </template>
                                         </button>
@@ -403,7 +401,7 @@
 
                                             <template v-else>
                                                 <span class="icon-magic text-2xl text-violet-700"></span>
-                                                
+
                                                 @lang('admin::app.components.media.images.ai-generation.regenerate')
                                             </template>
                                         </button>
@@ -490,7 +488,7 @@
 
             props: {
                 name: {
-                    type: String, 
+                    type: String,
                     default: 'images',
                 },
 
@@ -649,9 +647,9 @@
                                 fillAttr: 'code',
                                 noMatchTemplate: "@lang('admin::app.common.no-match-found')",
                                 selectTemplate: (item) => `@${item.original.code}`,
-                                menuItemTemplate: (item) => `<div class="p-1.5 rounded-md text-base cursor-pointer transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center">${item.original.name || item.original.code}</div>`,
+                                menuItemTemplate: (item) => `<div class="p-1.5 rounded-md text-base cursor-pointer transition-all max-sm:place-self-center">${item.original.name || '[' + item.original.code + ']'}</div>`,
                             });
-                            
+
                             tribute.attach(this.$refs.imagePromptInput);
                         }
                     });
@@ -662,7 +660,7 @@
                         const response = await axios.get("{{ route('admin.magic_ai.available_model') }}");
 
                         this.aiModels = response.data.models.filter(model => model.id === 'dall-e-2' || model.id === 'dall-e-3');
-                        this.selectedModel = this.aiModels[0].id;
+                        this.ai.model = this.aiModels[0] ? this.aiModels[0].id : '';
                     } catch (error) {
                         console.error("Failed to fetch AI models:", error);
                     }
@@ -674,7 +672,7 @@
                         return;
                     }
 
-                    const response = await fetch(`{{ route('admin.magic_ai.suggestion_values') }}?query=${text}&&entity_name=${this.entityName}`);
+                    const response = await fetch(`{{ route('admin.magic_ai.suggestion_values') }}?query=${text}&&entity_name=${this.entityName}&&locale={{ core()->getRequestedLocaleCode() }}`);
                     const data = await response.json();
                     this.suggestionValues = data;
 
@@ -712,6 +710,8 @@
                     params.resource_type = this.getResourceType();
                     params.field_type = 'image';
                     params.model = this.ai.model;
+                    params.channel = "{{ core()->getRequestedChannelCode() }}";
+                    params.locale = "{{ core()->getRequestedLocaleCode() }}";
 
                     this.$axios.post("{{ route('admin.magic_ai.image') }}", params)
                         .then(response => {
@@ -745,8 +745,8 @@
                 getBase64ToFile(base64, filename) {
                     var arr = base64.split(','),
                         mime = arr[0].match(/:(.*?);/)[1],
-                        bstr = atob(arr[arr.length - 1]), 
-                        n = bstr.length, 
+                        bstr = atob(arr[arr.length - 1]),
+                        n = bstr.length,
                         u8arr = new Uint8Array(n);
 
                     while (n--) {
@@ -762,7 +762,7 @@
 
                         prompt: null,
 
-                        model: 'dall-e-2',
+                        model: this.aiModels[0] ? this.aiModels[0].id : '',
 
                         n: 1,
 

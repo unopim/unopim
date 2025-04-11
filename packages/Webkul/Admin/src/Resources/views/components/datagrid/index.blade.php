@@ -823,6 +823,12 @@
                                 agree: () => {
                                     this.$axios[method](action.url)
                                         .then(response => {
+                                            if (response.data.redirect_url) {
+                                                window.location.href = response.data.redirect_url;
+
+                                                return;
+                                            }
+
                                             this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
 
                                             this.get();

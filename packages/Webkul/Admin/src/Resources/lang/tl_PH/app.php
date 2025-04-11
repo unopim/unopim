@@ -280,6 +280,7 @@ return [
             'product-not-found'       => 'Hindi nakita ang produkto na may SKU ":sku"',
             'parent-not-found'        => 'Hindi nakita ang magulang na may SKU ":sku"',
             'upload-success'          => 'Matagumpay na na-upload ang produktong file.',
+            'update-failure'          => 'Hindi na-update ang produkto.',
         ],
 
         'attributes' => [
@@ -571,6 +572,8 @@ return [
             'not-found'            => 'Ang kategorya na may kode ":code" ay hindi natagpuan',
             'unknown-fields'       => 'Hindi natagpuang field sa kategorya na may kode ":fields"',
             'upload-success'       => 'Matagumpay na na-upload ang file ng kategorya.',
+            'create-failure'       => 'Hindi nagawa ang kategorya.',
+            'update-failure'       => 'Hindi na-update ang kategorya.',
         ],
 
         'category_fields' => [
@@ -1609,12 +1612,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => 'I-download',
-        'export'     => 'Quick Export',
-        'no-records' => 'Walang data na i-export',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => 'I-download',
+        'export'               => 'Quick Export',
+        'no-records'           => 'Walang data na i-export',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'May media',
+        'export-success'       => 'Matagumpay ang pag-export!',
+        'error'                => 'May nangyaring mali!',
+        'product-not-selected' => 'Walang produktong napili para sa mabilisang export',
     ],
 
     'validations' => [

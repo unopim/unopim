@@ -280,6 +280,7 @@ return [
             'product-not-found'       => 'Tuote SKU:lla ":sku" ei löytynyt',
             'parent-not-found'        => 'Vanhempaa SKU:lla ":sku" ei löytynyt',
             'upload-success'          => 'Tuotetiedosto ladattu onnistuneesti.',
+            'update-failure'          => 'Tuotetta ei voitu päivittää.',
         ],
 
         'attributes' => [
@@ -571,6 +572,8 @@ return [
             'not-found'            => 'Kategoria koodilla ":code" ei löytynyt',
             'unknown-fields'       => 'Kategoriakenttä koodilla ":fields" ei löytynyt',
             'upload-success'       => 'Kategoriatiedosto ladattu onnistuneesti.',
+            'create-failure'       => 'Kategoriaa ei voitu luoda.',
+            'update-failure'       => 'Kategoriaa ei voitu päivittää.',
         ],
 
         'category_fields' => [
@@ -1608,12 +1611,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => 'Lataa',
-        'export'     => 'Nopea vienti',
-        'no-records' => 'Ei mitään vietävää',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => 'Lataa',
+        'export'               => 'Nopea vienti',
+        'no-records'           => 'Ei mitään vietävää',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'Median kanssa',
+        'export-success'       => 'Vienti onnistui!',
+        'error'                => 'Jotain meni pieleen!',
+        'product-not-selected' => 'Tuotteita ei valittu pikavientiin',
     ],
 
     'validations' => [

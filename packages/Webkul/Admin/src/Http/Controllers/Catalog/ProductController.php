@@ -207,6 +207,8 @@ class ProductController extends Controller
 
             Log::debug($e);
 
+            session()->flash('error', trans('admin::app.catalog.products.update-failure'));
+
             throw $e;
         }
 
@@ -233,14 +235,16 @@ class ProductController extends Controller
         try {
             $product = $this->productRepository->copy($id);
         } catch (\Exception $e) {
-            session()->flash('error', $e->getMessage());
-
-            return redirect()->to(route('admin.catalog.products.index'));
+            return new JsonResponse([
+                'message' => $e->getMessage(),
+            ], 400);
         }
 
         session()->flash('success', trans('admin::app.catalog.products.product-copied'));
 
-        return redirect()->route('admin.catalog.products.edit', $product->id);
+        return new JsonResponse([
+            'redirect_url' => route('admin.catalog.products.edit', $product->id),
+        ]);
     }
 
     /**

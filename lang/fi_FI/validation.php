@@ -42,6 +42,7 @@ return [
     'email'          => ':attribute täytyy olla kelvollinen sähköpostiosoite.',
     'exists'         => 'Valittu :attribute on virheellinen.',
     'exists-value'   => ':input ei ole olemassa.',
+    'extensions'     => ':attribute-kentässä on oltava yksi seuraavista laajennuksista: :values.',
     'file'           => ':attribute täytyy olla tiedosto.',
     'filled'         => ':attribute-kenttä täytyy sisältää arvo.',
 

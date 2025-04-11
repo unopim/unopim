@@ -326,7 +326,7 @@ class Export
         $jobInstance = $this->export->jobInstance;
 
         if (! $this->typeExporter) {
-            $exporterConfig = config('exporters.'.$jobInstance->entity_type);
+            $exporterConfig = config('exporters.'.$jobInstance->entity_type) ?? config('quick_exporters.'.$jobInstance->entity_type);
 
             $this->typeExporter = app()->make($exporterConfig['exporter'])
                 ->setExport($this->export)

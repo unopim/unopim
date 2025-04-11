@@ -30,6 +30,7 @@ class DataTransferServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/importers.php', 'importers');
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/exporters.php', 'exporters');
+        $this->mergeConfigFrom(dirname(__DIR__).'/Config/quick_exporters.php', 'quick_exporters');
 
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/actions.php', 'import_settings');
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/actions.php', 'export_settings');

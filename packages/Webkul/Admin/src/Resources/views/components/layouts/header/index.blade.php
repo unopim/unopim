@@ -43,14 +43,14 @@
         <!-- Notification Component -->
         <v-notifications {{ $attributes }}>
             <span class="flex relative">
-                <span 
-                    class="icon-notification p-1.5 rounded-md text-2xl cursor-pointer transition-all hover:bg-gray-100 dark:hover:bg-gray-950" 
+                <span
+                    class="icon-notification p-1.5 rounded-md text-2xl cursor-pointer transition-all hover:bg-gray-100 dark:hover:bg-gray-950"
                     title="@lang('admin::app.components.layouts.header.notifications')"
                 >
                 </span>
             </span>
         </v-notifications>
-   
+
         <!-- Admin profile -->
         <x-admin::dropdown position="bottom-right">
             <x-slot:toggle>
@@ -67,7 +67,7 @@
                         {{ substr($admin->name, 0, 1) }}
                     </button>
                 @endif
-                  
+
             </x-slot>
 
             <!-- Admin Dropdown -->
@@ -151,7 +151,7 @@
                             class="flex gap-2.5 p-1.5 items-center cursor-pointer {{ $menu->getActive($menuItem) == 'active' ? 'bg-violet-100 rounded-lg' : ' hover:bg-violet-50 dark:hover:bg-cherry-800 ' }} peer"
                         >
                             <span class="{{ $menuItem['icon'] }} text-2xl {{ $menu->getActive($menuItem) ? 'text-violet-700' : ''}}"></span>
-                            
+
                             <p class="text-gray-600 dark:text-gray-300 font-semibold whitespace-nowrap {{ $menu->getActive($menuItem) ? 'text-violet-700' : 'text-gray-600'}}">
                                 @lang($menuItem['name'])
                             </p>
@@ -165,7 +165,7 @@
                                         class="text-sm {{ $menu->getActive($subMenuItem) ? 'text-violet-700 dark:text-violet-700':'text-gray-600 dark:text-gray-300' }} whitespace-nowrap py-1  hover:text-violet-700 hover:bg-gray-950"
                                     >
                                         @lang($subMenuItem['name'])
-                                    </a> 
+                                    </a>
                                 @endforeach
                             </div>
                         @endif
@@ -184,11 +184,11 @@
             <x-slot:toggle>
                 <span class="flex relative">
                     <span
-                        class="icon-notification p-1.5 rounded-md text-2xl text-red cursor-pointer transition-all hover:bg-gray-100 dark:hover:bg-gray-950" 
+                        class="icon-notification p-1.5 rounded-md text-2xl text-red cursor-pointer transition-all hover:bg-gray-100 dark:hover:bg-gray-950"
                         title="@lang('admin::app.components.layouts.header.notifications')"
                     >
                     </span>
-                
+
                     <span
                         class="flex justify-center items-center min-w-5 h-5 absolute -top-2 p-1.5 ltr:left-5 rtl:right-5 bg-violet-400 rounded-full text-white text-[10px] font-semibold leading-[9px] cursor-pointer"
                         v-text="totalUnRead"
@@ -207,32 +207,34 @@
 
                 <!-- Content -->
                 <div class="grid">
-                    <a
-                        class="flex gap-1.5 items-start p-3 border-b dark:border-gray-800 last:border-b-0"
-                        v-for="userNotification in userNotifications"
-                        :key="userNotification.notification.id"
-                        :href="'{{ route('admin.notification.viewed_notification', ':id') }}'.replace(':id', userNotification.notification.id)"
-                        :class="{
-                            'bg-gray-100 dark:bg-gray-950': userNotification.read === 1,
-                            'hover:bg-gray-50 dark:hover:bg-gray-950': true,
-                        }"
-                    >
-                        <div class="grid gap-3">
-                            <p 
-                                class="text-sm text-gray-800 dark:text-slate-50 font-semibold"
-                                v-text="userNotification.notification.title"
-                            ></p>
+                    <div v-for="userNotification in userNotifications">
+                        <a
+                            v-if="userNotification.notification?.id"
+                            class="flex gap-1.5 items-start p-3 border-b dark:border-gray-800 last:border-b-0"
+                            :key="userNotification.notification.id"
+                            :href="'{{ route('admin.notification.viewed_notification', ':id') }}'.replace(':id', userNotification.notification.id)"
+                            :class="{
+                                'bg-gray-100 dark:bg-cherry-800': userNotification.read === 1,
+                                'hover:bg-gray-50 dark:hover:bg-gray-950': true,
+                            }"
+                        >
+                            <div class="grid gap-3">
+                                <p
+                                    class="text-sm text-gray-800 dark:text-slate-50 font-semibold"
+                                    v-text="userNotification.notification.title"
+                                ></p>
 
-                            <p 
-                                class="text-sm text-gray-600 dark:text-gray-300"
-                                v-html="userNotification.notification.description"
-                            ></p>
-                            
-                            <p class="text-sm text-gray-500 dark:text-gray-400">
-                                @{{ userNotification.notification.created_at_human }}
-                            </p>
-                        </div>
-                    </a>
+                                <p
+                                    class="text-sm text-gray-600 dark:text-gray-300"
+                                    v-html="userNotification.notification.description"
+                                ></p>
+
+                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                    @{{ userNotification.notification.created_at_human }}
+                                </p>
+                            </div>
+                        </a>
+                    </div>
                 </div>
 
                 <!-- Footer -->

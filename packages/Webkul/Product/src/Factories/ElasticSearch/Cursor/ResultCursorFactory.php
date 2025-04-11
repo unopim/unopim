@@ -33,12 +33,10 @@ class ResultCursorFactory implements CursorFactoryContract
 
         try {
             $results = Elasticsearch::search($requestParam);
-
         } catch (\Exception $e) {
             if (str_contains($e->getMessage(), 'attribute_family_id')) {
                 try {
                     $results = Elasticsearch::search($requestParam);
-
                 } catch (\Exception $retryException) {
                     throw $retryException;
                 }

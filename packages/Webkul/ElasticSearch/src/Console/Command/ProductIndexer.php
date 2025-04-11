@@ -59,6 +59,7 @@ class ProductIndexer extends Command
                     }
                 }
 
+                return;
             }
 
             if (! $this->hasIndex($productIndex)) {
@@ -276,7 +277,7 @@ class ProductIndexer extends Command
                         ],
                     ],
                 ],
-                'attribute_family_id' => ['type' => 'keyword', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
+                'attribute_family_id' => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
                 'created_at'          => ['type' => 'date'],
                 'id'                  => ['type' => 'long'],
                 'sku'                 => [
@@ -286,7 +287,6 @@ class ProductIndexer extends Command
                 'status'              => ['type' => 'long'],
                 'type'                => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
                 'updated_at'          => ['type' => 'date'],
-
             ],
             'dynamic_templates' => [
                 [
@@ -299,9 +299,8 @@ class ProductIndexer extends Command
                     ],
                 ], [
                     'common_fields' => [
-                        'path_match'         => 'values.common.*',
-                        'match_mapping_type' => 'object',
-                        'mapping'            => [
+                        'path_match' => 'values.common.*',
+                        'mapping'    => [
                             'type'       => 'keyword',
                             'normalizer' => 'string_normalizer',
                         ],
@@ -344,9 +343,8 @@ class ProductIndexer extends Command
                     ],
                 ], [
                     'channel_specific' => [
-                        'path_match'         => 'values.channel_specific.*.*',
-                        'match_mapping_type' => 'object',
-                        'mapping'            => [
+                        'path_match' => 'values.channel_specific.*.*',
+                        'mapping'    => [
                             'type'       => 'keyword',
                             'normalizer' => 'string_normalizer',
                         ],

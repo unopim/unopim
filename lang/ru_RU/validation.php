@@ -42,6 +42,7 @@ return [
     'email'          => ':attribute должен быть допустимым адресом электронной почты.',
     'exists'         => 'Выбранный :attribute недопустим.',
     'exists-value'   => ':input не существует.',
+    'extensions'     => 'Поле :attribute должно иметь одно из следующих расширений: :values.',
     'file'           => ':attribute должен быть файлом.',
     'filled'         => 'Поле :attribute должно иметь значение.',
 

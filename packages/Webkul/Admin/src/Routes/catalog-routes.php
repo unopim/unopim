@@ -8,6 +8,7 @@ use Webkul\Admin\Http\Controllers\Catalog\CategoryController;
 use Webkul\Admin\Http\Controllers\Catalog\CategoryFieldController;
 use Webkul\Admin\Http\Controllers\Catalog\Options\AjaxOptionsController;
 use Webkul\Admin\Http\Controllers\Catalog\ProductController;
+use Webkul\Admin\Http\Middleware\EnsureChannelLocaleIsValid;
 
 /**
  * Catalog routes.
@@ -140,9 +141,9 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
             Route::post('create', 'store')->name('admin.catalog.products.store');
 
-            Route::get('copy/{id}', 'copy')->name('admin.catalog.products.copy');
+            Route::post('copy/{id}', 'copy')->name('admin.catalog.products.copy');
 
-            Route::get('edit/{id}', 'edit')->name('admin.catalog.products.edit');
+            Route::get('edit/{id}', 'edit')->name('admin.catalog.products.edit')->middleware(EnsureChannelLocaleIsValid::class);
 
             Route::put('edit/{id}', 'update')->name('admin.catalog.products.update');
 

@@ -280,6 +280,7 @@ return [
             'product-not-found'       => 'Prodotto con SKU ":sku" non trovato',
             'parent-not-found'        => 'Genitore con SKU ":sku" non trovato',
             'upload-success'          => 'File prodotto caricato con successo.',
+            'update-failure'          => 'Il prodotto non è stato aggiornato.',
         ],
 
         'attributes' => [
@@ -570,6 +571,8 @@ return [
             'not-found'            => 'Categoria con codice ":code" non trovata',
             'unknown-fields'       => 'Campo categoria con codice ":fields" non trovato',
             'upload-success'       => 'File della categoria caricato con successo.',
+            'create-failure'       => 'La categoria non è stata creata.',
+            'update-failure'       => 'La categoria non è stata aggiornata.',
         ],
 
         'category_fields' => [
@@ -1608,12 +1611,16 @@ return [
     ],
 
     'export' => [
-        'csv'        => 'CSV',
-        'download'   => 'Download',
-        'export'     => 'Esportazione rapida',
-        'no-records' => 'Nessuna registrazione da esportare',
-        'xls'        => 'XLS',
-        'xlsx'       => 'XLSX',
+        'csv'                  => 'CSV',
+        'download'             => 'Download',
+        'export'               => 'Esportazione rapida',
+        'no-records'           => 'Nessuna registrazione da esportare',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'Con media',
+        'export-success'       => 'Esportazione riuscita!',
+        'error'                => 'Qualcosa è andato storto!',
+        'product-not-selected' => 'Nessun prodotto selezionato per l’esportazione rapida',
     ],
 
     'validations' => [
