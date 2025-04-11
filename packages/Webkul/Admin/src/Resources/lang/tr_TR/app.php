@@ -1818,6 +1818,10 @@ return [
                 'search' => [
                     'title' => 'Ara',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Sütunları yönet',
+                ],
             ],
 
             'filters' => [
@@ -1856,6 +1860,13 @@ return [
             'table' => [
                 'actions'              => 'Eylemler',
                 'no-records-available' => 'Kayıt Bulunamadı.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Sütunları yönet',
+                'available-columns' => 'Kullanılabilir Sütunlar',
+                'selected-columns'  => 'Seçili Sütunlar',
+                'apply-btn'         => 'Uygula',
             ],
         ],
 

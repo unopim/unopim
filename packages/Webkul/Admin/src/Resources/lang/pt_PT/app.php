@@ -1817,6 +1817,10 @@ return [
                 'search' => [
                     'title' => 'Buscar',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Gerir colunas',
+                ],
             ],
 
             'filters' => [
@@ -1855,6 +1859,13 @@ return [
             'table' => [
                 'actions'              => 'Ações',
                 'no-records-available' => 'Nenhum Registro Disponível.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Gerir colunas',
+                'available-columns' => 'Colunas disponíveis',
+                'selected-columns'  => 'Colunas Selecionadas',
+                'apply-btn'         => 'Aplicar',
             ],
         ],
 

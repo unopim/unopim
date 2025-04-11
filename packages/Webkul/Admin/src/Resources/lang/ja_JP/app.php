@@ -1677,6 +1677,10 @@ return [
                 'search' => [
                     'title' => '検索',
                 ],
+
+                'manage-columns' => [
+                    'title' => '列の管理',
+                ],
             ],
 
             'filters' => [
@@ -1715,6 +1719,13 @@ return [
             'table' => [
                 'actions'              => 'アクション',
                 'no-records-available' => '利用可能なレコードはありません。',
+            ],
+
+            'manage-columns' => [
+                'title'             => '列の管理',
+                'available-columns' => '利用可能な列',
+                'selected-columns'  => '選択した列',
+                'apply-btn'         => '適用',
             ],
         ],
 

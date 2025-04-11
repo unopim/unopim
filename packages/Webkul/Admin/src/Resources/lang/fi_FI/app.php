@@ -1817,6 +1817,10 @@ return [
                 'search' => [
                     'title' => 'Etsi',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Hallitse sarakkeita',
+                ],
             ],
 
             'filters' => [
@@ -1855,6 +1859,13 @@ return [
             'table' => [
                 'actions'              => 'Toiminnot',
                 'no-records-available' => 'Ei tallenteita saatavilla.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Hallitse sarakkeita',
+                'available-columns' => 'Saatavilla olevat sarakkeet',
+                'selected-columns'  => 'Valitut sarakkeet',
+                'apply-btn'         => 'Käytä',
             ],
         ],
 

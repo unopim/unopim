@@ -1676,6 +1676,10 @@ return [
                 'search' => [
                     'title' => 'Suchen',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Spalten verwalten',
+                ],
             ],
 
             'filters' => [
@@ -1714,6 +1718,13 @@ return [
             'table' => [
                 'actions'              => 'Aktionen',
                 'no-records-available' => 'Keine Datensätze verfügbar.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Spalten verwalten',
+                'available-columns' => 'Verfügbare Spalten',
+                'selected-columns'  => 'Ausgewählte Spalten',
+                'apply-btn'         => 'Anwenden',
             ],
         ],
 

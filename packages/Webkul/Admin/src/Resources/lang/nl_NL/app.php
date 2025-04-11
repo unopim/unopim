@@ -2125,6 +2125,10 @@ return [
                 'search' => [
                     'title' => 'Zoekopdracht',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Kolommen beheren',
+                ],
             ],
 
             'filters' => [
@@ -2163,6 +2167,13 @@ return [
             'table' => [
                 'actions'              => 'Acties',
                 'no-records-available' => 'Geen records beschikbaar.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Kolommen beheren',
+                'available-columns' => 'Beschikbare kolommen',
+                'selected-columns'  => 'Geselecteerde kolommen',
+                'apply-btn'         => 'Toepassen',
             ],
         ],
 

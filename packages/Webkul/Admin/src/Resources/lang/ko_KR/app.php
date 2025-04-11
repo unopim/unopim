@@ -1818,6 +1818,10 @@ return [
                 'search' => [
                     'title' => '검색',
                 ],
+
+                'manage-columns' => [
+                    'title' => '열 관리',
+                ],
             ],
 
             'filters' => [
@@ -1856,6 +1860,13 @@ return [
             'table' => [
                 'actions'              => '작업',
                 'no-records-available' => '사용 가능한 기록이 없습니다.',
+            ],
+
+            'manage-columns' => [
+                'title'             => '열 관리',
+                'available-columns' => '사용 가능한 열',
+                'selected-columns'  => '선택한 열',
+                'apply-btn'         => '적용',
             ],
         ],
 

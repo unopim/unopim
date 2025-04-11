@@ -1818,6 +1818,10 @@ return [
                 'search' => [
                     'title' => '搜索',
                 ],
+
+                'manage-columns' => [
+                    'title' => '管理列',
+                ],
             ],
 
             'filters' => [
@@ -1856,6 +1860,13 @@ return [
             'table' => [
                 'actions'              => '操作',
                 'no-records-available' => '無可用記錄。',
+            ],
+
+            'manage-columns' => [
+                'title'             => '管理列',
+                'available-columns' => '可用列',
+                'selected-columns'  => '已选择列',
+                'apply-btn'         => '应用',
             ],
         ],
 

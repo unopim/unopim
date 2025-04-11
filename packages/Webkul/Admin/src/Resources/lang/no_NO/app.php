@@ -1818,6 +1818,10 @@ return [
                 'search' => [
                     'title' => 'Søk',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Administrer kolonner',
+                ],
             ],
 
             'filters' => [
@@ -1856,6 +1860,13 @@ return [
             'table' => [
                 'actions'              => 'Handlinger',
                 'no-records-available' => 'Ingen oppføringer tilgjengelig.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Administrer kolonner',
+                'available-columns' => 'Tilgjengelige kolonner',
+                'selected-columns'  => 'Valgte kolonner',
+                'apply-btn'         => 'Søke',
             ],
         ],
 

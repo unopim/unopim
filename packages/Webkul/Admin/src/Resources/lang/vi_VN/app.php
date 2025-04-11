@@ -1818,6 +1818,10 @@ return [
                 'search' => [
                     'title' => 'Tìm kiếm',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Quản lý cột',
+                ],
             ],
 
             'filters' => [
@@ -1856,6 +1860,13 @@ return [
             'table' => [
                 'actions'              => 'Các hành động',
                 'no-records-available' => 'Không có bản ghi nào.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Quản lý cột',
+                'available-columns' => 'Cột có sẵn',
+                'selected-columns'  => 'Cột đã chọn',
+                'apply-btn'         => 'Áp dụng',
             ],
         ],
 

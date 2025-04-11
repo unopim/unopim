@@ -1818,6 +1818,10 @@ return [
                 'search' => [
                     'title' => 'Szukaj',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Zarządzaj kolumnami',
+                ],
             ],
 
             'filters' => [
@@ -1856,6 +1860,13 @@ return [
             'table' => [
                 'actions'              => 'Akcje',
                 'no-records-available' => 'Brak dostępnych rekordów.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Zarządzaj kolumnami',
+                'available-columns' => 'Dostępne kolumny',
+                'selected-columns'  => 'Wybrane kolumny',
+                'apply-btn'         => 'Zastosuj',
             ],
         ],
 

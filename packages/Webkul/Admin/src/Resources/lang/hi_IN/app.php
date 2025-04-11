@@ -2124,6 +2124,10 @@ return [
                 'search' => [
                     'title' => 'खोज',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'कॉलम प्रबंधित करें',
+                ],
             ],
 
             'filters' => [
@@ -2162,6 +2166,13 @@ return [
             'table' => [
                 'actions'              => 'कार्रवाई',
                 'no-records-available' => 'कोई रिकॉर्ड उपलब्ध नहीं है।',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'कॉलम प्रबंधित करें',
+                'available-columns' => 'उपलब्ध कॉलम',
+                'selected-columns'  => 'चयनित कॉलम',
+                'apply-btn'         => 'लागू करें',
             ],
         ],
 

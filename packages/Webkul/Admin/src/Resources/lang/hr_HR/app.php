@@ -1818,6 +1818,10 @@ return [
                 'search' => [
                     'title' => 'Pretraži',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Upravljanje stupcima',
+                ],
             ],
 
             'filters' => [
@@ -1856,6 +1860,13 @@ return [
             'table' => [
                 'actions'              => 'Akcije',
                 'no-records-available' => 'Nema dostupnih zapisa.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Upravljanje stupcima',
+                'available-columns' => 'Dostupni stupci',
+                'selected-columns'  => 'Odabrani stupci',
+                'apply-btn'         => 'primijeniti',
             ],
         ],
 

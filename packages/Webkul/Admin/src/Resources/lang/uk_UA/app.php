@@ -1818,6 +1818,10 @@ return [
                 'search' => [
                     'title' => 'Пошук',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Керувати колонками',
+                ],
             ],
 
             'filters' => [
@@ -1856,6 +1860,13 @@ return [
             'table' => [
                 'actions'              => 'Дії',
                 'no-records-available' => 'Записів немає.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Керувати колонками',
+                'available-columns' => 'Доступні стовпці',
+                'selected-columns'  => 'Вибрані стовпці',
+                'apply-btn'         => 'Застосувати',
             ],
         ],
 

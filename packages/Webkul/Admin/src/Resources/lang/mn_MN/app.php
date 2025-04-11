@@ -2125,6 +2125,10 @@ return [
                 'search' => [
                     'title' => 'Эрэл хайгуул хийх',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Багануудыг удирдах',
+                ],
             ],
 
             'filters' => [
@@ -2163,6 +2167,13 @@ return [
             'table' => [
                 'actions'              => 'Үйлдэл',
                 'no-records-available' => 'Бичлэг байхгүй байна.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Багануудыг удирдах',
+                'available-columns' => 'Боломжтой баганууд',
+                'selected-columns'  => 'Сонгосон баганууд',
+                'apply-btn'         => 'Өргөдөл гаргах',
             ],
         ],
 

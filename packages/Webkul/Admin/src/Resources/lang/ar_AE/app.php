@@ -2125,6 +2125,10 @@ return [
                 'search' => [
                     'title' => 'يبحث',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'إدارة الأعمدة',
+                ],
             ],
 
             'filters' => [
@@ -2163,6 +2167,13 @@ return [
             'table' => [
                 'actions'              => 'أجراءات',
                 'no-records-available' => 'لا توجد سجلات متاحة.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'إدارة الأعمدة',
+                'available-columns' => 'الأعمدة المتاحة',
+                'selected-columns'  => 'الأعمدة المحددة',
+                'apply-btn'         => 'تطبيق',
             ],
         ],
 
