@@ -32,7 +32,7 @@
 
     <!-- Datagrid -->
     <x-admin::datagrid src="{{ route('admin.catalog.products.index') }}" :isMultiRow="true">
-      
+
     </x-admin::datagrid>
 
         {!! view_render_event('unopim.admin.catalog.products.list.after') !!}
@@ -112,7 +112,7 @@
 
                                         <x-admin::form.control-group.error control-name="type" />
                                     </x-admin::form.control-group>
-                                    
+
                                     @php
                                         $types = [];
                                         foreach($families as $family) {
@@ -121,11 +121,11 @@
                                                 'label' => ! empty($family->name) ? $family->name : '[' . $family->code . ']',
                                             ];
                                         }
-                                        
+
                                         $typesJson = json_encode($types);
 
                                     @endphp
-                                    
+
                                     <!-- Attribute Family Id -->
                                     <x-admin::form.control-group>
                                         <x-admin::form.control-group.label class="required">
@@ -141,7 +141,7 @@
                                             track-by="id"
                                             label-by="label"
                                         >
-                                            
+
                                         </x-admin::form.control-group.control>
 
                                         <x-admin::form.control-group.error control-name="attribute_family_id" />

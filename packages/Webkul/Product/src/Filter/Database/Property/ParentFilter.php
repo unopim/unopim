@@ -14,7 +14,7 @@ class ParentFilter extends AbstractPropertyFilter
 
     public function __construct(
         array $supportedProperties = [self::PROPERTY],
-        array $allowedOperators = [FilterOperators::IN]
+        array $allowedOperators = [FilterOperators::IN, FilterOperators::CONTAINS]
     ) {
         $this->allowedOperators = $allowedOperators;
         $this->supportedProperties = $supportedProperties;
@@ -42,6 +42,13 @@ class ParentFilter extends AbstractPropertyFilter
 
         switch ($operator) {
             case FilterOperators::IN:
+                $this->queryBuilder->whereIn(
+                    sprintf('%s.%s', $this->getSearchTablePath($options), 'parent_id'),
+                    $this->getParentIdsBySkus($value, $options)
+                );
+                break;
+
+            case FilterOperators::CONTAINS:
                 $this->queryBuilder->whereIn(
                     sprintf('%s.%s', $this->getSearchTablePath($options), 'parent_id'),
                     $this->getParentIdsBySkus($value, $options)

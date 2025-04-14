@@ -1680,6 +1680,10 @@ return [
                 'search' => [
                     'title' => 'Buscar',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Administrar columnas',
+                ],
             ],
 
             'filters' => [
@@ -1718,6 +1722,13 @@ return [
             'table' => [
                 'actions'              => 'Comportamiento',
                 'no-records-available' => 'No hay registros disponibles.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Administrar columnas',
+                'available-columns' => 'Columnas disponibles',
+                'selected-columns'  => 'Columnas seleccionadas',
+                'apply-btn'         => 'Aplicar',
             ],
         ],
 

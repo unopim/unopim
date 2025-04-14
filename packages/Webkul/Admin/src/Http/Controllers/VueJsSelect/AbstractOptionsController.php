@@ -67,6 +67,11 @@ class AbstractOptionsController extends Controller
             $repository = $this->applyInitialValues($repository, $initializeValues);
         }
 
+        if (isset($queryParams['exclude']) && is_array($queryParams['exclude'])) {
+            $excludeCodes = array_column($queryParams['exclude'], 'code');
+            $repository = $repository->whereNotIn('code', $excludeCodes);
+        }
+
         if ($isPaginate) {
             return $repository->orderBy('id')->paginate($limit, ['*'], 'paginate', $page);
         } else {
@@ -81,7 +86,8 @@ class AbstractOptionsController extends Controller
     {
         $translation = $option->translate($currentLocaleCode);
 
-        return $translation?->label ?? $translation?->name;
+        // return $translation?->label ?? $translation?->name;
+        return $translation ? $translation->name : '';
     }
 
     /**

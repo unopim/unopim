@@ -20,8 +20,7 @@ class ResultCursorFactory implements CursorFactoryContract
         $query['track_total_hits'] = true;
         $query['size'] = $options['per_page'];
         $query['from'] = ($options['page'] * $options['per_page']) - $options['per_page'];
-
-        $query['sort'] = isset($query['sort']) ? array_merge($query['sort'], $sort) : $sort;
+        $query['sort'] = isset($query['sort']) ? $query['sort'] : $sort;
         $query['stored_fields'] = [];
         if (! isset($query['query'])) {
             $query['query']['bool'] = new \stdClass;
@@ -45,7 +44,6 @@ class ResultCursorFactory implements CursorFactoryContract
                 throw $e;
             }
         }
-
         $totalCount = $results['hits']['total']['value'] ?? 0;
 
         $ids = collect($results['hits']['hits'])->pluck('_id')->toArray();

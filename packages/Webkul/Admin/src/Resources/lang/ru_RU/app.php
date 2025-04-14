@@ -2126,6 +2126,10 @@ return [
                 'search' => [
                     'title' => 'Поиск',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Управление столбцами',
+                ],
             ],
 
             'filters' => [
@@ -2164,6 +2168,13 @@ return [
             'table' => [
                 'actions'              => 'Действия',
                 'no-records-available' => 'Нет записей.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Управление столбцами',
+                'available-columns' => 'Доступные столбцы',
+                'selected-columns'  => 'Выбранные столбцы',
+                'apply-btn'         => 'Применить',
             ],
         ],
 

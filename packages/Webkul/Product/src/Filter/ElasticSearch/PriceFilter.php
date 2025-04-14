@@ -37,16 +37,18 @@ class PriceFilter extends AbstractElasticSearchAttributeFilter
         }
         $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
 
-        switch ($operator) {
-            case FilterOperators::EQUAL:
-                $clause = [
-                    'term' => [
-                        sprintf('%s.%s', $attributePath, $value[0]) => $value[1],
-                    ],
-                ];
+        if (!is_numeric($value[1])) {
+            switch ($operator) {
+                case FilterOperators::EQUAL:
+                    $clause = [
+                        'term' => [
+                            sprintf('%s.%s', $attributePath, $value[0]) => $value[1],
+                        ],
+                    ];
 
-                $this->queryBuilder::where($clause);
-                break;
+                    $this->queryBuilder::where($clause);
+                    break;
+            }
         }
 
         return $this;

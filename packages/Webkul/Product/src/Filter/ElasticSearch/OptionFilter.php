@@ -6,16 +6,16 @@ use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\ElasticSearch\Enums\FilterOperators;
 
 /**
- * Boolean filter for an Elasticsearch query
+ * Option filter for an Elasticsearch query
  */
-class BooleanFilter extends AbstractElasticSearchAttributeFilter
+class OptionFilter extends AbstractElasticSearchAttributeFilter
 {
     /**
      * @param  array  $supportedProperties
      */
     public function __construct(
-        array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[3]],
-        array $allowedOperators = [FilterOperators::IN, FilterOperators::CONTAINS]
+        array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[4], AttributeTypes::ATTRIBUTE_TYPES[5]],
+        array $allowedOperators = [FilterOperators::IN]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;
         $this->allowedOperators = $allowedOperators;
@@ -41,21 +41,9 @@ class BooleanFilter extends AbstractElasticSearchAttributeFilter
         switch ($operator) {
             case FilterOperators::IN:
                 $clause = [
-                    'terms' => [
-                        $attributePath => array_map(function ($val) {
-                            return ($val == '1') ? true : false;
-                        }, $value),
-                    ],
-                ];
-
-                $this->queryBuilder::where($clause);
-                break;
-            case FilterOperators::EQUAL:
-                $clause = [
-                    'terms' => [
-                        $attributePath => array_map(function ($val) {
-                            return ($val == '1') ? true : false;
-                        }, $value),
+                    'query_string' => [
+                        'default_field'    => $attributePath,
+                        'query'            => '*'.implode('* OR *', $value).'*',
                     ],
                 ];
 

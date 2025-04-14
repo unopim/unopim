@@ -15,7 +15,7 @@ class TextFilter extends AbstractElasticSearchAttributeFilter
      * @param  array  $supportedProperties
      */
     public function __construct(
-        array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[0], AttributeTypes::ATTRIBUTE_TYPES[4], AttributeTypes::ATTRIBUTE_TYPES[5], AttributeTypes::ATTRIBUTE_TYPES[10]],
+        array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[0], AttributeTypes::ATTRIBUTE_TYPES[1], AttributeTypes::ATTRIBUTE_TYPES[8], AttributeTypes::ATTRIBUTE_TYPES[9], AttributeTypes::ATTRIBUTE_TYPES[10], AttributeTypes::ATTRIBUTE_TYPES[11]],
         array $allowedOperators = [FilterOperators::IN, FilterOperators::CONTAINS, FilterOperators::WILDCARD]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;
@@ -51,10 +51,11 @@ class TextFilter extends AbstractElasticSearchAttributeFilter
                 break;
 
             case FilterOperators::CONTAINS:
+                $escapedQuery = preg_replace('/([+\-&|!(){}[\]^"~*?:\\/])/', '\\\$1', $value);
                 $clause = [
                     'query_string' => [
                         'default_field'    => $attributePath,
-                        'query'            => '*'.implode('* OR *', $value).'*',
+                        'query'            => '*'.implode('* OR *', $escapedQuery).'*',
                     ],
                 ];
 

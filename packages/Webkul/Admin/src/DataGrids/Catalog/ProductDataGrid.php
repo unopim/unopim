@@ -103,17 +103,18 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'products.id as product_id',
                 'products.status',
                 'products.type',
+                'products.created_at',
                 'products.updated_at',
                 'parent_products.sku as parent',
                 DB::raw('
                 COALESCE(`products`.`values`, `parent_products`.`values`) as raw_values
             '),
                 DB::raw('
-                CASE 
-                    WHEN '.$tablePrefix.'attribute_family_name.name IS NULL 
-                        OR CHAR_LENGTH(TRIM('.$tablePrefix.'attribute_family_name.name)) < 1 
-                    THEN CONCAT("[", '.$tablePrefix.'af.code, "]") 
-                    ELSE '.$tablePrefix.'attribute_family_name.name 
+                CASE
+                    WHEN '.$tablePrefix.'attribute_family_name.name IS NULL
+                        OR CHAR_LENGTH(TRIM('.$tablePrefix.'attribute_family_name.name)) < 1
+                    THEN CONCAT("[", '.$tablePrefix.'af.code, "]")
+                    ELSE '.$tablePrefix.'attribute_family_name.name
                 END as attribute_family
             ')
             );
@@ -436,7 +437,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         if ($attributePath = $this->getAttributePathForSort($sortColumn)) {
             return $this->queryBuilder->orderByRaw(
-                sprintf("JSON_EXTRACT(products.values, '%s') + 0 %s", $attributePath, $sortOrder)
+                sprintf("JSON_UNQUOTE(JSON_EXTRACT(products.values, '%s')) %s", $attributePath, $sortOrder)
             );
         }
 
@@ -541,10 +542,12 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $sortMapping = [
             'type'             => 'type.keyword',
-            'sku'              => 'sku.keyword',
+            'sku'              => 'sku',
             'attribute_family' => 'attribute_family_id',
             'product_id'       => 'id',
+            'parent'           => 'parent_id',
             'updated_at'       => 'updated_at',
+            'created_at'       => 'created_at',
             'status'           => 'status',
         ];
 
@@ -577,7 +580,11 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $path = sprintf('$.%s.%s', $attribute->getScope($locale, $channel), $attribute->code);
 
         if ($searchEngine == 'elasticsearch') {
-            return sprintf('values.%s.%s.keyword', $attribute->getScope($locale, $channel), $attribute->code);
+            if ($attribute->type === 'price') {
+                return sprintf('values.%s.%s.%s', $attribute->getScope($locale, $channel), $attribute->code, $currency[0]['code']);
+            } else {
+                return sprintf('values.%s.%s.keyword', $attribute->getScope($locale, $channel), $attribute->code);
+            }
         }
 
         return $path;

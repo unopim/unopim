@@ -22,7 +22,7 @@
         id="v-datagrid-manage-columns-template"
     >
         <div>
-            <x-admin::form 
+            <x-admin::form
                 v-slot="{ meta, errors, handleSubmit }"
                 as="div"
                 ref="modalForm"
@@ -102,11 +102,11 @@
                                                                     v-text="element.label"
                                                                 >
                                                                 </span>
-                                                                
+
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>  
+                                                </div>
                                             </template>
                                         </draggable>
 
@@ -115,7 +115,7 @@
                                             <div v-for="n in 2" :key="n" class="shimmer w-[38px] h-[38px] rounded-md"></div>
                                         </div>
 
-                                        <div 
+                                        <div
                                             class="flex gap-1 items-left justify-left mt-2.5"
                                             v-if="!loading"
                                         >
@@ -168,21 +168,20 @@
                                                                 >
                                                                 </span>
 
-                                                                <input 
-                                                                    type="hidden" 
-                                                                    :name="'selected_columns[]'" 
-                                                                    :value="element.code" 
+                                                                <input
+                                                                    type="hidden"
+                                                                    :name="'selected_columns[]'"
+                                                                    :value="element.code"
                                                                 />
-                                                                
+
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>  
+                                                </div>
                                             </template>
                                         </draggable>
                                     </div>
                                 </div>
-                            
                         </x-slot>
 
                         <!-- Modal Footer -->
@@ -259,6 +258,7 @@
                         page: this.currentPage,
                         limit: this.limit,
                         query: this.searchQuery,
+                        exclude:this.selectedColumns,
                     };
 
                     this.loading = true;
@@ -276,7 +276,7 @@
                             data
                         }) => {
                             this.columnList = data.options.filter((column) => {
-                                const columnKey = column.code || column.index; 
+                                const columnKey = column.code || column.index;
                                 return !this.selectedColumns.some((selectedColumn) => {
                                     return selectedColumn.code == columnKey;
                                 });
@@ -292,7 +292,6 @@
                         this.getColumnsList();
                     }
                 },
-                
                 nextPage() {
                     if (this.currentPage < this.totalPages) {
                         this.currentPage++;
