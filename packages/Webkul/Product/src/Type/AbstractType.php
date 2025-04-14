@@ -3,6 +3,7 @@
 namespace Webkul\Product\Type;
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Attribute\Repositories\AttributeRepository;
@@ -393,7 +394,7 @@ abstract class AbstractType
             ->replicate()
             ->fill(['sku' => 'temporary-sku-'.substr(md5(microtime()), 0, 6)]);
 
-        $values = $copiedProduct->values;
+        $values = $this->filterUniqueAttributeValues($copiedProduct->values ?? []);
 
         $values[self::COMMON_VALUES_KEY]['sku'] = $copiedProduct->sku;
 
@@ -531,6 +532,36 @@ abstract class AbstractType
         }
 
         return $uniqueAttributesQb->get();
+    }
+
+    /**
+     * Filter out the unique attribute values when copying the product or creating a variant.
+     */
+    public function filterUniqueAttributeValues(array $productValues, Collection|array $uniqueAttributes = []): array
+    {
+        if (! $uniqueAttributes) {
+            $uniqueAttributes = $this->getUniqueAttributes();
+        }
+
+        $currentChannel = core()->getRequestedChannelCode();
+
+        $currentLocale = core()->getRequestedLocaleCode();
+
+        foreach ($uniqueAttributes as $unique) {
+            if ($unique->code === 'sku') {
+                continue;
+            }
+
+            $uniqueValue = $unique->getValueFromProductValues($productValues, $currentChannel, $currentLocale);
+
+            if (empty($uniqueValue)) {
+                continue;
+            }
+
+            $unique->setProductValue('', $productValues, $currentChannel, $currentLocale);
+        }
+
+        return $productValues;
     }
 
     /**

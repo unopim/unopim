@@ -196,15 +196,7 @@ class Configurable extends AbstractType
             $variantValues[self::COMMON_VALUES_KEY][$attrCode] = $data[self::PRODUCT_VALUES_KEY][self::COMMON_VALUES_KEY][$attrCode];
         }
 
-        foreach ($uniqueAttributes as $unique) {
-            $uniqueValue = $unique->getValueFromProductValues($variantValues, core()->getRequestedChannelCode(), core()->getRequestedLocaleCode());
-
-            if (empty($uniqueValue)) {
-                continue;
-            }
-
-            $unique->setProductValue('', $variantValues, core()->getRequestedChannelCode(), core()->getRequestedLocaleCode());
-        }
+        $variantValues = $this->filterUniqueAttributeValues($variantValues, $uniqueAttributes);
 
         $variantValues[self::COMMON_VALUES_KEY]['sku'] = $data['sku'];
 
