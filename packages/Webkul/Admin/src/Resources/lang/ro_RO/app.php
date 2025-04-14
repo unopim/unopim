@@ -362,6 +362,7 @@ return [
                 'yes'                   => 'Da',
                 'same-code-error'       => 'Codul opțiunii trebuie să fie unic.',
                 'usable-in-grid'        => 'Utilizabil în grilă',
+                'is-filterable'         => 'Este filtrabil',
 
                 'option' => [
                     'color'    => 'Eșantion de culoare',
@@ -428,6 +429,7 @@ return [
                 'yes'                   => 'Da',
                 'same-code-error'       => 'Codul opțiunii trebuie să fie unic.',
                 'usable-in-grid'        => 'Utilizabil în grilă',
+                'is-filterable'         => 'Este filtrabil',
 
                 'option' => [
                     'color'    => 'Eșantion de culoare',
@@ -1823,6 +1825,10 @@ return [
                 'search' => [
                     'title' => 'Căutare',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Gestionați coloanele',
+                ],
             ],
 
             'filters' => [
@@ -1861,6 +1867,13 @@ return [
             'table' => [
                 'actions'              => 'Acțiuni',
                 'no-records-available' => 'Nu există înregistrări disponibile.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Gestionați coloanele',
+                'available-columns' => 'Coloane disponibile',
+                'selected-columns'  => 'Coloane selectate',
+                'apply-btn'         => 'Aplicați',
             ],
         ],
 

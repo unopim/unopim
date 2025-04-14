@@ -362,6 +362,7 @@ return [
                 'yes'                   => 'Có',
                 'same-code-error'       => 'Mã của tuỳ chọn phải duy nhất.',
                 'usable-in-grid'        => 'Có thể sử dụng trong lưới',
+                'is-filterable'         => 'Có thể lọc',
 
                 'option' => [
                     'color'    => 'Mẫu màu sắc',
@@ -428,6 +429,7 @@ return [
                 'yes'                   => 'Có',
                 'same-code-error'       => 'Mã của tuỳ chọn phải duy nhất.',
                 'usable-in-grid'        => 'Có thể sử dụng trong lưới',
+                'is-filterable'         => 'Có thể lọc',
 
                 'option' => [
                     'color'    => 'Mẫu màu sắc',
@@ -1823,6 +1825,10 @@ return [
                 'search' => [
                     'title' => 'Tìm kiếm',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Quản lý cột',
+                ],
             ],
 
             'filters' => [
@@ -1861,6 +1867,13 @@ return [
             'table' => [
                 'actions'              => 'Các hành động',
                 'no-records-available' => 'Không có bản ghi nào.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Quản lý cột',
+                'available-columns' => 'Cột có sẵn',
+                'selected-columns'  => 'Cột đã chọn',
+                'apply-btn'         => 'Áp dụng',
             ],
         ],
 

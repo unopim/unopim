@@ -736,6 +736,10 @@
 
                 // refactor when not in that much use case...
                 performAction(action) {
+                    if (!action) {
+                        return;
+                    }
+
                     const method = action.method.toLowerCase();
 
                     switch (method) {

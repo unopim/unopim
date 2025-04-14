@@ -74,17 +74,10 @@ class MagicAIController extends Controller
         $entityName = request()->input('entity_name', 'attribute');
 
         if ($entityName === 'category_field') {
-            $data = $this->categoryFieldRepository->getCategoryFieldListBySearch($query, ['code', 'name'], excludeTypes: ['image', 'file']);
+            $data = $this->categoryFieldRepository->getCategoryFieldListBySearch($query, ['code', 'name']);
         } else {
-            $data = $this->attributeRepository->getAttributeListBySearch($query, ['code', 'name'], excludeTypes: ['image', 'gallery', 'file', 'asset']);
+            $data = $this->attributeRepository->getAttributeListBySearch($query, ['code', 'name']);
         }
-
-        $data = array_map(function ($item) {
-            return [
-                'code' => $item->code,
-                'name' => $item->name ? $item->name : '['.$item->code.']',
-            ];
-        }, $data);
 
         return new JsonResponse($data);
     }

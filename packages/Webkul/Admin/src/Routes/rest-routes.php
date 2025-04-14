@@ -4,9 +4,11 @@ use Illuminate\Support\Facades\Route;
 use Webkul\Admin\Http\Controllers\DashboardController;
 use Webkul\Admin\Http\Controllers\DataGridController;
 use Webkul\Admin\Http\Controllers\MagicAIController;
+use Webkul\Admin\Http\Controllers\ManageColumnController;
 use Webkul\Admin\Http\Controllers\TinyMCEController;
 use Webkul\Admin\Http\Controllers\User\AccountController;
 use Webkul\Admin\Http\Controllers\User\SessionController;
+use Webkul\Admin\Http\Controllers\VueJsSelect\SelectOptionsController;
 use Webkul\HistoryControl\Http\Controllers\HistoryController;
 
 /**
@@ -26,6 +28,11 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
      * Datagrid routes.
      */
     Route::get('datagrid/look-up', [DataGridController::class, 'lookUp'])->name('admin.datagrid.look_up');
+
+    /**
+     * Available Columns routes.
+     */
+    Route::get('datagrid/available-columns', [ManageColumnController::class, 'availableColumns'])->name('admin.datagrid.available_columns');
 
     /**
      * Tinymce file upload handler.
@@ -76,4 +83,9 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
     });
 
     Route::delete('logout', [SessionController::class, 'destroy'])->name('admin.session.destroy');
+
+    /**
+     * Select options routes.
+     */
+    Route::get('vue-js-select/select-options', [SelectOptionsController::class, 'getOptions'])->name('admin.vue_js_select.select.options');
 });

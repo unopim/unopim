@@ -362,6 +362,7 @@ return [
                 'yes'                   => 'Ya',
                 'same-code-error'       => 'Kode opsi harus unik.',
                 'usable-in-grid'        => 'Dapat digunakan dalam grid',
+                'is-filterable'         => 'Dapat difilter',
 
                 'option' => [
                     'color'    => 'Color Swatch',
@@ -427,6 +428,7 @@ return [
                 'yes'                   => 'Ya',
                 'same-code-error'       => 'Kode opsi harus unik.',
                 'usable-in-grid'        => 'Dapat digunakan dalam grid',
+                'is-filterable'         => 'Dapat difilter',
 
                 'option' => [
                     'color'    => 'Color Swatch',
@@ -1696,6 +1698,10 @@ return [
                 'search' => [
                     'title' => 'Mencari',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Kelola Kolom',
+                ],
             ],
 
             'filters' => [
@@ -1734,6 +1740,13 @@ return [
             'table' => [
                 'actions'              => 'Tindakan',
                 'no-records-available' => 'Tidak ada catatan yang tersedia.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Kelola kolom',
+                'available-columns' => 'Kolom yang Tersedia',
+                'selected-columns'  => 'Kolom yang Dipilih',
+                'apply-btn'         => 'Terapkan',
             ],
         ],
 

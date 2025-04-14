@@ -33,4 +33,9 @@ enum ColumnTypeEnum: string
      * Date time range.
      */
     case DATE_TIME_RANGE = 'datetime_range';
+
+    /**
+     * Price.
+     */
+    case PRICE = 'price';
 }

@@ -362,6 +362,7 @@ return [
                 'yes'                   => 'Tak',
                 'same-code-error'       => 'Kod opcji musi być unikalny.',
                 'usable-in-grid'        => 'Można używać w siatce',
+                'is-filterable'         => 'Jest filtrowalne',
 
                 'option' => [
                     'color'    => 'Kolor próbki',
@@ -428,6 +429,7 @@ return [
                 'yes'                   => 'Tak',
                 'same-code-error'       => 'Kod opcji musi być unikalny.',
                 'usable-in-grid'        => 'Można używać w siatce',
+                'is-filterable'         => 'Jest filtrowalne',
 
                 'option' => [
                     'color'    => 'Kolor próbki',
@@ -1823,6 +1825,10 @@ return [
                 'search' => [
                     'title' => 'Szukaj',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Zarządzaj kolumnami',
+                ],
             ],
 
             'filters' => [
@@ -1861,6 +1867,13 @@ return [
             'table' => [
                 'actions'              => 'Akcje',
                 'no-records-available' => 'Brak dostępnych rekordów.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Zarządzaj kolumnami',
+                'available-columns' => 'Dostępne kolumny',
+                'selected-columns'  => 'Wybrane kolumny',
+                'apply-btn'         => 'Zastosuj',
             ],
         ],
 
