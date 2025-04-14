@@ -37,7 +37,7 @@ class PriceFilter extends AbstractElasticSearchAttributeFilter
         }
         $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
 
-        if (!is_numeric($value[1])) {
+        if (is_numeric($value[1])) {
             switch ($operator) {
                 case FilterOperators::EQUAL:
                     $clause = [

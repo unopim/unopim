@@ -1,8 +1,7 @@
 <?php
 
-use PHPUnit\Framework\ExpectationFailedException;
-use Webkul\Core\Facades\ElasticSearch;
 use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\Core\Facades\ElasticSearch;
 use Webkul\Product\Models\Product;
 
 beforeEach(function () {
@@ -45,7 +44,7 @@ it('should filter products by sku in elasticsearch', function () {
                 'total' => 1,
                 'hits'  => [
                     [
-                        '_id' => $product->id,
+                        '_id'     => $product->id,
                         '_source' => $product->toArray(),
                     ],
                 ],
@@ -93,7 +92,7 @@ it('should filter products by type (simple or configurable) in elasticsearch', f
                 'total' => 1,
                 'hits'  => [
                     [
-                        '_id' => $product->id,
+                        '_id'     => $product->id,
                         '_source' => $product->toArray(),
                     ],
                 ],
@@ -120,7 +119,7 @@ it('should filter products by status in elasticsearch', function () {
         'values' => [
             'common' => [
                 'status' => 'true',
-            ]
+            ],
         ],
     ]);
 
@@ -141,9 +140,9 @@ it('should filter products by status in elasticsearch', function () {
         ->andReturn([
             'hits' => [
                 'total' => 1,
-                'hits' => [
+                'hits'  => [
                     [
-                        '_id' => $product->id,
+                        '_id'     => $product->id,
                         '_source' => $product->toArray(),
                     ],
                 ],
@@ -230,7 +229,7 @@ it('should filter products by parent_id in elasticsearch', function () {
         ->andReturn([
             'hits' => [
                 'total' => 1,
-                'hits' => [
+                'hits'  => [
                     [
                         '_id'     => $childProduct->id,
                         '_source' => $childProduct->toArray(),
@@ -280,7 +279,7 @@ it('should filter products by created_at in elasticsearch', function () {
                 'total' => 1,
                 'hits'  => [
                     [
-                        '_id' => $product->id,
+                        '_id'     => $product->id,
                         '_source' => $product->toArray(),
                     ],
                 ],
@@ -330,7 +329,7 @@ it('should filter products by updated_at in elasticsearch', function () {
                 'total' => 1,
                 'hits'  => [
                     [
-                        '_id' => $product->id,
+                        '_id'     => $product->id,
                         '_source' => $product->toArray(),
                     ],
                 ],
@@ -420,7 +419,7 @@ it('should filter products by text type attributes', function () {
                 $this->assertContains([
                     'match' => [
                         $attribute => $searchTerm,
-                    ]
+                    ],
                 ], $args['query']['bool']['should']);
             }
 
@@ -429,11 +428,11 @@ it('should filter products by text type attributes', function () {
         ->andReturn([
             'hits' => [
                 'total' => 1,
-                'hits' => [
+                'hits'  => [
                     [
-                        '_id' => $product->id,
+                        '_id'     => $product->id,
                         '_source' => $product->toArray(),
-                    ]
+                    ],
                 ],
             ],
         ]);
@@ -441,13 +440,13 @@ it('should filter products by text type attributes', function () {
     $shouldQueries = collect($textAttributes)->map(fn ($attribute) => [
         'match' => [
             $attribute => $searchTerm,
-        ]
+        ],
     ])->toArray();
 
     $response = ElasticSearch::search([
         'query' => [
             'bool' => [
-                'should' => $shouldQueries,
+                'should'               => $shouldQueries,
                 'minimum_should_match' => 1,
             ],
         ],
@@ -478,7 +477,7 @@ it('should filter products by boolean type attributes', function () {
                 $this->assertContains([
                     'term' => [
                         $attribute => $searchTerm,
-                    ]
+                    ],
                 ], $args['query']['bool']['filter']);
             }
 
@@ -487,11 +486,11 @@ it('should filter products by boolean type attributes', function () {
         ->andReturn([
             'hits' => [
                 'total' => 1,
-                'hits' => [
+                'hits'  => [
                     [
-                        '_id' => $product->id,
+                        '_id'     => $product->id,
                         '_source' => $product->toArray(),
-                    ]
+                    ],
                 ],
             ],
         ]);
@@ -499,7 +498,7 @@ it('should filter products by boolean type attributes', function () {
     $termQueries = collect($booleanAttributes)->map(fn ($attribute) => [
         'term' => [
             $attribute => $searchTerm,
-        ]
+        ],
     ])->toArray();
 
     $response = ElasticSearch::search([
@@ -536,7 +535,7 @@ it('should filter products by multi-select type attributes', function () {
                 $this->assertContains([
                     'terms' => [
                         $attribute => $searchValues,
-                    ]
+                    ],
                 ], $args['query']['bool']['filter']);
             }
 
@@ -545,11 +544,11 @@ it('should filter products by multi-select type attributes', function () {
         ->andReturn([
             'hits' => [
                 'total' => 1,
-                'hits' => [
+                'hits'  => [
                     [
                         '_id'     => $product->id,
                         '_source' => $product->toArray(),
-                    ]
+                    ],
                 ],
             ],
         ]);
@@ -579,8 +578,8 @@ it('should filter products by textarea type attributes', function () {
 
     $product = Product::factory()->create([
         'values' => [
-            'description' => 'This is a detailed description of the product.'
-        ]
+            'description' => 'This is a detailed description of the product.',
+        ],
     ]);
 
     config(['elasticsearch.enabled' => true]);
@@ -598,7 +597,7 @@ it('should filter products by textarea type attributes', function () {
                 $this->assertContains([
                     'match' => [
                         $attribute => $searchTerm,
-                    ]
+                    ],
                 ], $args['query']['bool']['should']);
             }
 
@@ -607,11 +606,11 @@ it('should filter products by textarea type attributes', function () {
         ->andReturn([
             'hits' => [
                 'total' => 1,
-                'hits' => [
+                'hits'  => [
                     [
                         '_id'     => $product->id,
                         '_source' => $product->toArray(),
-                    ]
+                    ],
                 ],
             ],
         ]);
@@ -619,13 +618,13 @@ it('should filter products by textarea type attributes', function () {
     $shouldQueries = collect($textareaAttributes)->map(fn ($attribute) => [
         'match' => [
             $attribute => $searchTerm,
-        ]
+        ],
     ])->toArray();
 
     $response = ElasticSearch::search([
         'query' => [
             'bool' => [
-                'should' => $shouldQueries,
+                'should'               => $shouldQueries,
                 'minimum_should_match' => 1,
             ],
         ],
@@ -660,8 +659,8 @@ it('should filter products by date type attributes', function () {
                     'range' => [
                         $attribute => [
                             'gte' => $searchDate,
-                        ]
-                    ]
+                        ],
+                    ],
                 ], $args['query']['bool']['filter']);
             }
 
@@ -670,9 +669,9 @@ it('should filter products by date type attributes', function () {
         ->andReturn([
             'hits' => [
                 'total' => 1,
-                'hits' => [
+                'hits'  => [
                     [
-                        '_id' => $product->id,
+                        '_id'     => $product->id,
                         '_source' => $product->toArray(),
                     ],
                 ],
@@ -683,8 +682,8 @@ it('should filter products by date type attributes', function () {
         'range' => [
             $attribute => [
                 'gte' => $searchDate,
-            ]
-        ]
+            ],
+        ],
     ])->toArray();
 
     $response = ElasticSearch::search([
@@ -711,11 +710,11 @@ it('should filter products by price type attributes', function () {
                     'en_US' => [
                         'price' => [
                             'USD' => 17.2,
-                        ]
-                    ]
-                ]
-            ]
-        ]
+                        ],
+                    ],
+                ],
+            ],
+        ],
     ]);
 
     config(['elasticsearch.enabled' => true]);
@@ -747,7 +746,7 @@ it('should filter products by price type attributes', function () {
         ->andReturn([
             'hits' => [
                 'total' => 1,
-                'hits' => [
+                'hits'  => [
                     [
                         '_id'     => $product->id,
                         '_source' => $product->toArray(),
@@ -815,11 +814,11 @@ it('should filter products by datetime type attributes', function () {
         ->andReturn([
             'hits' => [
                 'total' => 1,
-                'hits' => [
+                'hits'  => [
                     [
                         '_id'     => $product->id,
                         '_source' => $product->toArray(),
-                    ]
+                    ],
                 ],
             ],
         ]);
@@ -869,7 +868,7 @@ it('should filter products by image type attributes', function () {
                 $this->assertContains([
                     'exists' => [
                         'field' => $attribute,
-                    ]
+                    ],
                 ], $args['query']['bool']['filter']);
             }
 
@@ -878,11 +877,11 @@ it('should filter products by image type attributes', function () {
         ->andReturn([
             'hits' => [
                 'total' => 1,
-                'hits' => [
+                'hits'  => [
                     [
                         '_id'     => $product->id,
                         '_source' => $product->toArray(),
-                    ]
+                    ],
                 ],
             ],
         ]);
@@ -938,11 +937,11 @@ it('should filter products by file type attributes', function () {
         ->andReturn([
             'hits' => [
                 'total' => 1,
-                'hits' => [
+                'hits'  => [
                     [
                         '_id'     => $product->id,
                         '_source' => $product->toArray(),
-                    ]
+                    ],
                 ],
             ],
         ]);
