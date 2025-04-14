@@ -362,6 +362,7 @@ return [
                 'yes'                   => 'Sì',
                 'same-code-error'       => 'Il codice dell\'opzione deve essere unico.',
                 'usable-in-grid'        => 'Usabile nella griglia',
+                'is-filterable'         => 'È filtrabile',
 
                 'option' => [
                     'color'    => 'Colore campione',
@@ -1823,6 +1824,10 @@ return [
                 'search' => [
                     'title' => 'Cerca',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Gestisci colonne',
+                ],
             ],
 
             'filters' => [
@@ -1861,6 +1866,13 @@ return [
             'table' => [
                 'actions'              => 'Azioni',
                 'no-records-available' => 'Nessun record disponibile.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Gestisci colonne',
+                'available-columns' => 'Colonne disponibili',
+                'selected-columns'  => 'Colonne selezionate',
+                'apply-btn'         => 'Applica',
             ],
         ],
 

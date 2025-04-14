@@ -322,6 +322,18 @@ class ProductIndexer extends Command
                         ],
                     ],
                 ], [
+                    'channel_specific_cost' => [
+                        'path_match' => 'values.channel_specific.*.*.*',
+                        'mapping'    => [
+                            'type'   => 'float',
+                            'fields' => [
+                                'keyword' => [
+                                    'type'       => 'float',
+                                ],
+                            ],
+                        ],
+                    ],
+                ], [
                     'channel_specific_object' => [
                         'path_match'         => 'values.channel_specific.*',
                         'match_mapping_type' => 'object',
@@ -335,6 +347,18 @@ class ProductIndexer extends Command
                         'mapping'    => [
                             'type'       => 'keyword',
                             'normalizer' => 'string_normalizer',
+                        ],
+                    ],
+                ], [
+                    'channel_locale_specific_price' => [
+                        'path_match' => 'values.channel_locale_specific.*.*.*.*',
+                        'mapping'    => [
+                            'type'   => 'float',
+                            'fields' => [
+                                'keyword' => [
+                                    'type'       => 'float',
+                                ],
+                            ],
                         ],
                     ],
                 ], [
@@ -395,6 +419,10 @@ class ProductIndexer extends Command
                     'string_normalizer' => [
                         'char_filter' => ['newline_remover'],
                         'filter'      => ['lowercase'],
+                    ],
+                    'url_normalizer' => [
+                        'type'  => 'custom',
+                        'filter'=> ['lowercase', 'asciifolding'],
                     ],
                 ],
             ],

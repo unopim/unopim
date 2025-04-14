@@ -82,7 +82,10 @@
                     v-if="isOpen"
                 >
                     <div class="flex min-h-full items-end justify-center p-4 sm:items-center sm:p-0">
-                        <div class="w-full max-w-[568px] max-h-[96%] overflow-y-auto z-[999] absolute ltr:left-1/2 rtl:right-1/2 top-1/2 rounded-lg bg-white dark:bg-gray-900 box-shadow max-md:w-[90%] ltr:-translate-x-1/2 rtl:translate-x-1/2 -translate-y-1/2">
+                        <div 
+                            class="w-full max-h-[96%] overflow-y-auto z-[999] absolute ltr:left-1/2 rtl:right-1/2 top-1/2 rounded-lg bg-white dark:bg-gray-900 box-shadow max-md:w-[90%] ltr:-translate-x-1/2 rtl:translate-x-1/2 -translate-y-1/2"
+                            :class="modalSize"
+                        >
                             <!-- Header Slot -->
                             <slot
                                 name="header"
@@ -107,12 +110,23 @@
         app.component('v-modal', {
             template: '#v-modal-template',
 
-            props: ['isActive'],
+            props: ['isActive', 'type'],
 
             data() {
                 return {
                     isOpen: this.isActive,
+                    sizeMap: {
+                        small: "max-w-[400px]",
+                        medium: "max-w-[568px]",
+                        large: "max-w-[900px]"
+                    }
                 };
+            },
+
+            computed: {
+                modalSize() {
+                    return this.sizeMap[this.type] || "max-w-[568px]"; // Default to medium
+                }
             },
 
             methods: {

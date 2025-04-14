@@ -362,6 +362,7 @@ return [
                 'yes'                   => 'Sim',
                 'same-code-error'       => 'O código da opção precisa ser único.',
                 'usable-in-grid'        => 'Usável na grade',
+                'is-filterable'         => 'É filtrável',
 
                 'option' => [
                     'color'    => 'Amostra de cor',
@@ -428,6 +429,7 @@ return [
                 'yes'                   => 'Sim',
                 'same-code-error'       => 'O código da opção precisa ser único.',
                 'usable-in-grid'        => 'Usável na grade',
+                'is-filterable'         => 'É filtrável',
 
                 'option' => [
                     'color'    => 'Amostra de cor',
@@ -1823,6 +1825,10 @@ return [
                 'search' => [
                     'title' => 'Buscar',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Gerenciar colunas',
+                ],
             ],
 
             'filters' => [
@@ -1861,6 +1867,13 @@ return [
             'table' => [
                 'actions'              => 'Ações',
                 'no-records-available' => 'Nenhum Registro Disponível.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Gerenciar colunas',
+                'available-columns' => 'Colunas disponíveis',
+                'selected-columns'  => 'Colunas selecionadas',
+                'apply-btn'         => 'Aplicar',
             ],
         ],
 

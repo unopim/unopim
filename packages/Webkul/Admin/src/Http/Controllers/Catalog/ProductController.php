@@ -173,7 +173,6 @@ class ProductController extends Controller
 
         foreach (($product?->parent?->super_attributes ?? []) as $attr) {
             $attrCode = $attr->code;
-
             $configurableValues[$attrCode] = $data['values']['common'][$attrCode];
         }
 

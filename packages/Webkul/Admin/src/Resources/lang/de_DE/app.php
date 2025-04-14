@@ -361,8 +361,8 @@ return [
                 'yes'                   => 'Ja',
                 'same-code-error'       => 'Der Optionscode muss eindeutig sein.',
                 'usable-in-grid'        => 'Verwendbar im Raster',
-
-                'option' => [
+                'is-filterable'         => 'Ist filterbar',
+                'option'                => [
                     'color'    => 'Farbfeld',
                     'dropdown' => 'Dropdown',
                     'image'    => 'Bildfeld',
@@ -426,6 +426,7 @@ return [
                 'yes'                   => 'Ja',
                 'same-code-error'       => 'Der Optionscode muss eindeutig sein.',
                 'usable-in-grid'        => 'Verwendbar im Raster',
+                'is-filterable'         => 'Ist filterbar',
 
                 'option' => [
                     'color'    => 'Farbfeld',
@@ -1678,6 +1679,10 @@ return [
                 'search' => [
                     'title' => 'Suchen',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Spalten verwalten',
+                ],
             ],
 
             'filters' => [
@@ -1716,6 +1721,13 @@ return [
             'table' => [
                 'actions'              => 'Aktionen',
                 'no-records-available' => 'Keine Datensätze verfügbar.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Spalten verwalten',
+                'available-columns' => 'Verfügbare Spalten',
+                'selected-columns'  => 'Ausgewählte Spalten',
+                'apply-btn'         => 'Anwenden',
             ],
         ],
 

@@ -362,6 +362,7 @@ return [
                 'yes'                   => 'Ja',
                 'same-code-error'       => 'Alternativets kod måste vara unik.',
                 'usable-in-grid'        => 'Kan användas i rutnät',
+                'is-filterable'         => 'Är filtrerbar',
 
                 'option' => [
                     'color'    => 'Färgväljare',
@@ -428,6 +429,7 @@ return [
                 'yes'                   => 'Ja',
                 'same-code-error'       => 'Alternativets kod måste vara unik.',
                 'usable-in-grid'        => 'Kan användas i rutnät',
+                'is-filterable'         => 'Är filtrerbar',
 
                 'option' => [
                     'color'    => 'Färgväljare',
@@ -1823,6 +1825,10 @@ return [
                 'search' => [
                     'title' => 'Sök',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Hantera kolumner',
+                ],
             ],
 
             'filters' => [
@@ -1861,6 +1867,13 @@ return [
             'table' => [
                 'actions'              => 'Åtgärder',
                 'no-records-available' => 'Inga poster tillgängliga.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Hantera kolumner',
+                'available-columns' => 'Tillgängliga kolumner',
+                'selected-columns'  => 'Valda kolumner',
+                'apply-btn'         => 'Tillämpas',
             ],
         ],
 

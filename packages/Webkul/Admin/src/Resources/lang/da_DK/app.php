@@ -362,6 +362,7 @@ return [
                 'yes'                   => 'Ja',
                 'same-code-error'       => 'Mulighedskoden skal være unik.',
                 'usable-in-grid'        => 'Brugbar i gitter',
+                'is-filterable'         => 'Er filtrerbar',
 
                 'option' => [
                     'color'    => 'Farveprøve',
@@ -428,6 +429,7 @@ return [
                 'yes'                   => 'Ja',
                 'same-code-error'       => 'Mulighedskoden skal være unik.',
                 'usable-in-grid'        => 'Brugbar i gitter',
+                'is-filterable'         => 'Er filtrerbar',
 
                 'option' => [
                     'color'    => 'Farveprøve',
@@ -1824,6 +1826,10 @@ return [
                 'search' => [
                     'title' => 'Søg',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Administrer kolonner',
+                ],
             ],
 
             'filters' => [
@@ -1862,6 +1868,13 @@ return [
             'table' => [
                 'actions'              => 'Handlinger',
                 'no-records-available' => 'Ingen poster tilgængelige.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Administrer kolonner',
+                'available-columns' => 'Tilgængelige kolonner',
+                'selected-columns'  => 'Udvalgte kolonner',
+                'apply-btn'         => 'Anvende',
             ],
         ],
 

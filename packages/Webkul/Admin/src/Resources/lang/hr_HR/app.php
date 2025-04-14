@@ -362,6 +362,7 @@ return [
                 'yes'                   => 'Da',
                 'same-code-error'       => 'Kod opcije mora biti jedinstven.',
                 'usable-in-grid'        => 'Upotrebljivo u mreži',
+                'is-filterable'         => 'Je filtrabilno',
 
                 'option' => [
                     'color'    => 'Boja uzorka',
@@ -428,6 +429,7 @@ return [
                 'yes'                   => 'Da',
                 'same-code-error'       => 'Kod opcije mora biti jedinstven.',
                 'usable-in-grid'        => 'Upotrebljivo u mreži',
+                'is-filterable'         => 'Je filtrabilno',
 
                 'option' => [
                     'color'    => 'Boja uzorka',
@@ -1823,6 +1825,10 @@ return [
                 'search' => [
                     'title' => 'Pretraži',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Upravljanje stupcima',
+                ],
             ],
 
             'filters' => [
@@ -1861,6 +1867,13 @@ return [
             'table' => [
                 'actions'              => 'Akcije',
                 'no-records-available' => 'Nema dostupnih zapisa.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Upravljanje stupcima',
+                'available-columns' => 'Dostupni stupci',
+                'selected-columns'  => 'Odabrani stupci',
+                'apply-btn'         => 'primijeniti',
             ],
         ],
 
