@@ -172,7 +172,7 @@
             </div>
             <div class="right-column flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
                 <!-- Product Info View Blade File -->
-                @include('admin::catalog.products.edit.product-info', ['product' => $product])
+                @include('admin::catalog.products.edit.product-info')
 
                 <!-- Categories View Blade File -->
                 @include('admin::catalog.products.edit.categories', ['currentLocaleCode' => $currentLocale?->code, 'productCategories' => $product->values['categories'] ?? []])

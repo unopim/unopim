@@ -1,7 +1,3 @@
-@props([
-    'product' => $product,
-])
-
 <!-- Panel -->
 <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
     <!-- Panel Header -->
@@ -33,7 +29,7 @@
                 @lang('Family')
             </label>
             <div class="w-full py-2.5 px-3 border rounded-md text-sm bg-gray-100 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 focus:border-gray-400 dark:bg-cherry-800 dark:border-gray-600">
-                {{ $product->attribute_family_id ? optional($product->attribute_family)->code : '—' }}
+                {{ $product->attribute_family_id ? (! empty($product->attribute_family->name) ? $product->attribute_family->name : $product->attribute_family->code) : '—' }}
             </div>
         </div>
 
@@ -43,7 +39,7 @@
                 @lang('admin::app.catalog.products.edit.product-info.product-type')
             </label>
             <div class="w-full py-2.5 px-3 border rounded-md text-sm bg-gray-100 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 focus:border-gray-400 dark:bg-cherry-800 dark:border-gray-600">
-                {{ $product->type ?? '—' }}
+                {{ ! empty($product->type) ? trans(config('product_types')[$product->type]['name']) : '—' }}
             </div>
         </div>
 
@@ -54,7 +50,7 @@
                     @lang('admin::app.catalog.products.edit.product-info.parent')
                 </label>
                 <div class="w-full py-2.5 px-3 border rounded-md text-sm bg-gray-100 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 focus:border-gray-400 dark:bg-cherry-800 dark:border-gray-600">
-                    {{ optional($product->parent)->sku ?? '—' }}
+                    {{ $product->parent->sku ?? '—' }}
                 </div>
             </div>
         @endif
