@@ -100,7 +100,7 @@ class AttributeRepository extends Repository
      */
     public function validateUserInput($data)
     {
-        if (isset($data['type']) && in_array($data['type'], ['select', 'checkbox', 'multiselect', 'boolean', 'image', 'file'])) {
+        if (isset($data['type']) && $data['type'] !== 'text') {
             unset($data['is_unique']);
         }
 

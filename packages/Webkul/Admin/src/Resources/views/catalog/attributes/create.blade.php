@@ -427,7 +427,7 @@
                                 <!-- Is Unique -->
                                 <x-admin::form.control-group
                                     class="flex gap-2.5 items-center !mb-0 select-none"
-                                    v-if="selectedAttributeType == 'text' || selectedAttributeType == 'date' || selectedAttributeType == 'datetime'"
+                                    v-if="selectedAttributeType == 'text'"
                                 >
                                     <x-admin::form.control-group.control
                                         type="checkbox"
@@ -518,7 +518,7 @@
                     >
                         <!-- Modal Header !-->
                         <x-slot:header>
-                            <p class="text-lg text-gray-800 dark:text-white font-bold" ::data-attr="selectedSwatchType">
+                            <p class="text-lg text-gray-800 dark:text-white font-bold">
                                 @lang('admin::app.catalog.attributes.create.add-option')
                             </p>
                         </x-slot>

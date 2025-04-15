@@ -198,7 +198,7 @@ class ProductController extends ApiController
 
         $productSuperAttributes = $product->super_attributes;
 
-        $productInstance = app(config('product_types.'.$product->type.'.class'));
+        $productInstance = $product->getTypeInstance();
 
         if (isset($data['variants'])) {
             foreach ($data['variants'] as $variantId => $variantData) {
