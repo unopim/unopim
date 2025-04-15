@@ -267,6 +267,16 @@ return [
                         ],
                     ],
                 ],
+
+                'product-info' => [
+                    'title'        => 'Productinformatie',
+                    'status'       => 'Status',
+                    'family'       => 'Familie',
+                    'parent'       => 'Hoofdproduct',
+                    'updated-at'   => 'Laatst bijgewerkt',
+                    'created-at'   => 'Aanmaakdatum',
+                    'product-type' => 'Producttype',
+                ],
             ],
 
             'create-success'          => 'Product met succes gemaakt',

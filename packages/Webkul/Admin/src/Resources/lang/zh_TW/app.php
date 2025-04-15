@@ -267,6 +267,16 @@ return [
                         ],
                     ],
                 ],
+
+                'product-info' => [
+                    'title'        => '產品資訊',
+                    'status'       => '狀態',
+                    'family'       => '系列',
+                    'parent'       => '父產品',
+                    'updated-at'   => '最後更新',
+                    'created-at'   => '創建日期',
+                    'product-type' => '產品類型',
+                ],
             ],
 
             'create-success'          => '產品創建成功',

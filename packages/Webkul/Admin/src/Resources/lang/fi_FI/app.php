@@ -267,6 +267,16 @@ return [
                         ],
                     ],
                 ],
+
+                'product-info' => [
+                    'title'        => 'Tuotetiedot',
+                    'status'       => 'Tila',
+                    'family'       => 'Perhe',
+                    'parent'       => 'Päätuote',
+                    'updated-at'   => 'Päivitetty',
+                    'created-at'   => 'Luotu',
+                    'product-type' => 'Tuotetyyppi',
+                ],
             ],
 
             'create-success'          => 'Tuote luotu onnistuneesti',

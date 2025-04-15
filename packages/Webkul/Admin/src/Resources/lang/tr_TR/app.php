@@ -267,6 +267,16 @@ return [
                         ],
                     ],
                 ],
+
+                'product-info' => [
+                    'title'        => 'Ürün Bilgisi',
+                    'status'       => 'Durum',
+                    'family'       => 'Aile',
+                    'parent'       => 'Üst Ürün',
+                    'updated-at'   => 'Son Güncelleme',
+                    'created-at'   => 'Oluşturulma Tarihi',
+                    'product-type' => 'Ürün Türü',
+                ],
             ],
 
             'create-success'          => 'Ürün başarıyla oluşturuldu',

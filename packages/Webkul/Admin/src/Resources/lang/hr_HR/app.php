@@ -267,6 +267,16 @@ return [
                         ],
                     ],
                 ],
+
+                'product-info' => [
+                    'title'        => 'Informacije o proizvodu',
+                    'status'       => 'Status',
+                    'family'       => 'Obitelj',
+                    'parent'       => 'Roditeljski proizvod',
+                    'updated-at'   => 'Zadnja izmjena',
+                    'created-at'   => 'Datum izrade',
+                    'product-type' => 'Vrsta proizvoda',
+                ],
             ],
 
             'create-success'          => 'Proizvod uspješno stvoren',

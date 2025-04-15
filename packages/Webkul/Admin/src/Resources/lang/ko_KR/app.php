@@ -267,6 +267,16 @@ return [
                         ],
                     ],
                 ],
+
+                'product-info' => [
+                    'title'        => '제품 정보',
+                    'status'       => '상태',
+                    'family'       => '패밀리',
+                    'parent'       => '상위 제품',
+                    'updated-at'   => '최종 업데이트',
+                    'created-at'   => '생성일',
+                    'product-type' => '제품 유형',
+                ],
             ],
 
             'create-success'          => '제품이 성공적으로 생성되었습니다',

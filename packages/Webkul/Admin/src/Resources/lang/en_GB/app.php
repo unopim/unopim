@@ -267,6 +267,16 @@ return [
                         ],
                     ],
                 ],
+
+                'product-info' => [
+                    'title'        => 'Product Info',
+                    'status'       => 'Status',
+                    'family'       => 'Family',
+                    'parent'       => 'Parent Product',
+                    'updated-at'   => 'Last Updated',
+                    'created-at'   => 'Date Created',
+                    'product-type' => 'Product Type',
+                ],
             ],
 
             'create-success'          => 'Product created successfully',

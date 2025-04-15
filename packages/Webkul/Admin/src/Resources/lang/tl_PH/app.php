@@ -267,6 +267,16 @@ return [
                         ],
                     ],
                 ],
+
+                'product-info' => [
+                    'title'        => 'Impormasyon ng Produkto',
+                    'status'       => 'Katayuan',
+                    'family'       => 'Pamilya',
+                    'parent'       => 'Pangunahing Produkto',
+                    'updated-at'   => 'Huling Na-update',
+                    'created-at'   => 'Petsa ng Pagkakalikha',
+                    'product-type' => 'Uri ng Produkto',
+                ],
             ],
 
             'create-success'          => 'Matagumpay na nalikha ang produkto',

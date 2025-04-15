@@ -46,6 +46,7 @@ class ProductForm extends FormRequest
         $this->rules = $product->getTypeInstance()->getTypeValidationRules();
 
         $this->rules['sku'] = ['required', 'unique:products,sku,'.$this->id, new Slug];
+        $this->rules['status'] = ['boolean'];
 
         return $this->rules;
     }
@@ -57,5 +58,9 @@ class ProductForm extends FormRequest
                 'sku' => $this->values['common']['sku'],
             ]);
         }
+
+        $this->merge([
+            'status' => (int) $this->status,
+        ]);
     }
 }
