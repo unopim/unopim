@@ -267,6 +267,16 @@ return [
                         ],
                     ],
                 ],
+
+                'product-info' => [
+                    'title'        => 'Thông tin sản phẩm',
+                    'status'       => 'Trạng thái',
+                    'family'       => 'Gia đình',
+                    'parent'       => 'Sản phẩm cha',
+                    'updated-at'   => 'Cập nhật lần cuối',
+                    'created-at'   => 'Ngày tạo',
+                    'product-type' => 'Loại sản phẩm',
+                ],
             ],
 
             'create-success'          => 'Sản phẩm đã được tạo thành công',

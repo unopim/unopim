@@ -267,6 +267,16 @@ return [
                         ],
                     ],
                 ],
+
+                'product-info' => [
+                    'title'        => 'Informasi Produk',
+                    'status'       => 'Status',
+                    'family'       => 'Keluarga',
+                    'parent'       => 'Produk Induk',
+                    'updated-at'   => 'Tanggal Diperbarui',
+                    'created-at'   => 'Tanggal Dibuat',
+                    'product-type' => 'Tipe Produk',
+                ],
             ],
 
             'create-success'          => 'Produk berhasil dibuat',

@@ -267,6 +267,16 @@ return [
                         ],
                     ],
                 ],
+
+                'product-info' => [
+                    'title'        => '製品情報',
+                    'status'       => 'ステータス',
+                    'family'       => 'ファミリー',
+                    'parent'       => '親製品',
+                    'updated-at'   => '最終更新日',
+                    'created-at'   => '作成日',
+                    'product-type' => '製品タイプ',
+                ],
             ],
 
             'create-success'          => '製品が正常に作成されました',
