@@ -188,15 +188,13 @@ class Configurable extends AbstractType
             'sku'                 => $data['sku'],
         ]);
 
-        $variantValues = $product->values;
+        $variantValues = $this->filterUniqueAttributeValues($product->values, $uniqueAttributes);
 
         foreach ($productSuperAttributes as $attribute) {
             $attrCode = $attribute->code;
 
             $variantValues[self::COMMON_VALUES_KEY][$attrCode] = $data[self::PRODUCT_VALUES_KEY][self::COMMON_VALUES_KEY][$attrCode];
         }
-
-        $variantValues = $this->filterUniqueAttributeValues($variantValues, $uniqueAttributes);
 
         $variantValues[self::COMMON_VALUES_KEY]['sku'] = $data['sku'];
 
