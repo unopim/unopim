@@ -107,7 +107,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'products.updated_at',
                 'parent_products.sku as parent',
                 DB::raw('
-                COALESCE(`products`.`values`, `parent_products`.`values`) as raw_values
+                COALESCE('.$tablePrefix.'products.values, '.$tablePrefix.'parent_products.values) as raw_values
             '),
                 DB::raw('
                 CASE
@@ -560,7 +560,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'unmapped_type' => 'keyword',
             ],
         ]);
-
     }
 
     /**
@@ -575,13 +574,16 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         }
 
         $locale = core()->getRequestedLocaleCode();
-        $channel = core()->getRequestedChannelCode();
+        $channel = core()->getRequestedChannel();
+        $currencyCode = $channel?->currencies?->first()?->code;
+
+        $channel = $channel->code;
 
         $path = sprintf('$.%s.%s', $attribute->getScope($locale, $channel), $attribute->code);
 
         if ($searchEngine == 'elasticsearch') {
             if ($attribute->type === 'price') {
-                return sprintf('values.%s.%s.%s', $attribute->getScope($locale, $channel), $attribute->code, $currency[0]['code']);
+                return sprintf('values.%s.%s.%s', $attribute->getScope($locale, $channel), $attribute->code, $currencyCode);
             } else {
                 return sprintf('values.%s.%s.keyword', $attribute->getScope($locale, $channel), $attribute->code);
             }
@@ -829,5 +831,14 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
             $record->{$column->index} = $values[$column->index] ?? null;
         }
+    }
+
+    protected function exportData(array $requestedParams): void
+    {
+        $this->exportable = true;
+
+        $gridData = $this instanceof ExportableInterface ? $this->getExportableData($requestedParams) : $this->queryBuilder->get();
+
+        $this->setExportFile($gridData, $requestedParams['format']);
     }
 }
