@@ -21,6 +21,7 @@ use Webkul\Product\Filter\Database\TextFilter as DatabaseTextFilter;
 use Webkul\Product\Filter\ElasticSearch\BooleanFilter as ElasticSearchBooleanFilter;
 use Webkul\Product\Filter\ElasticSearch\DateFilter as ElasticSearchDateFilter;
 use Webkul\Product\Filter\ElasticSearch\DateTimeFilter as ElasticSearchDateTimeAttributeFilter;
+use Webkul\Product\Filter\ElasticSearch\OptionFilter as ElasticSearchOptionFilter;
 use Webkul\Product\Filter\ElasticSearch\PriceFilter as ElasticSearchPriceFilter;
 use Webkul\Product\Filter\ElasticSearch\Property\DateTimeFilter as ElasticSearchDateTimeFilter;
 use Webkul\Product\Filter\ElasticSearch\Property\FamilyFilter as ElasticSearchFamilyFilter;
@@ -126,6 +127,7 @@ class ProductServiceProvider extends ServiceProvider
             ElasticSearchDateFilter::class,
             ElasticSearchDateTimeAttributeFilter::class,
             ElasticSearchPriceFilter::class,
+            ElasticSearchOptionFilter::class,
         ], 'unopim.elasticsearch.attribute.filters');
 
         // Register elasticSearch product Properties filters

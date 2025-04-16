@@ -42,8 +42,8 @@ class OptionFilter extends AbstractElasticSearchAttributeFilter
             case FilterOperators::IN:
                 $clause = [
                     'query_string' => [
-                        'default_field'    => $attributePath,
-                        'query'            => '*'.implode('* OR *', $value).'*',
+                        'default_field' => $attributePath,
+                        'query'         => implode(' OR ', $value),
                     ],
                 ];
 
