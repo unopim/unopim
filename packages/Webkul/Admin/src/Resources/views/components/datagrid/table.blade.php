@@ -123,7 +123,7 @@
                                     </template>
                                     <p
                                         v-else
-                                        class="break-words"
+                                        class="break-words text-nowrap overflow-hidden text-ellipsis hover:text-wrap"
                                         v-html="record[column.index]"
                                     >
                                     </p>

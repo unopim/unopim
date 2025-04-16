@@ -277,7 +277,7 @@ class ProductIndexer extends Command
                         ],
                     ],
                 ],
-                'attribute_family_id' => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
+                'attribute_family_id' => ['type' => 'long'],
                 'created_at'          => ['type' => 'date'],
                 'id'                  => ['type' => 'long'],
                 'sku'                 => [
