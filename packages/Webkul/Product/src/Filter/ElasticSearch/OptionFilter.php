@@ -2,6 +2,7 @@
 
 namespace Webkul\Product\Filter\ElasticSearch;
 
+use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\ElasticSearch\Enums\FilterOperators;
 
@@ -43,7 +44,7 @@ class OptionFilter extends AbstractElasticSearchAttributeFilter
                 $clause = [
                     'query_string' => [
                         'default_field' => $attributePath,
-                        'query'         => implode(' OR ', $value),
+                        'query'         => $attribute->type == Attribute::MULTISELECT_FIELD_TYPE ? '*'.implode('* OR *', $value).'*' : implode(' OR ', $value),
                     ],
                 ];
 
