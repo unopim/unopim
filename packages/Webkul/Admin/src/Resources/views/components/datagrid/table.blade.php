@@ -121,9 +121,18 @@
                                         class="h-[120px] max-w-[60px] min-w-[60px] max-h-[60px] min-h-[60px] rounded-lg border border-gray-300 shadow-sm object-cover"
                                     />
                                     </template>
+
+                                    <template v-else-if="typeof record[column.index] === 'string' && record[column.index].length > 25">
+                                        <p
+                                            class="break-words text-nowrap overflow-hidden text-ellipsis hover:text-wrap"
+                                            v-html="record[column.index]"
+                                        >
+                                        </p>
+                                    </template>
+
                                     <p
                                         v-else
-                                        class="break-words text-nowrap overflow-hidden text-ellipsis hover:text-wrap"
+                                        class="break-words"
                                         v-html="record[column.index]"
                                     >
                                     </p>
