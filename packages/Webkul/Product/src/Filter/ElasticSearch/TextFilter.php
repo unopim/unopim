@@ -66,7 +66,7 @@ class TextFilter extends AbstractElasticSearchAttributeFilter
                 $escapedValue = QueryString::escapeValue(current((array) $value));
                 $clause = [
                     'wildcard' => [
-                        $attributePath => $escapedValue,
+                        $attributePath => '*'.$escapedValue.'*',
                     ],
                 ];
 
