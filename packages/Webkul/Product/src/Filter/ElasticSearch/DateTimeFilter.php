@@ -64,7 +64,7 @@ class DateTimeFilter extends AbstractElasticSearchAttributeFilter
                     ],
                 ];
 
-                $this->queryBuilder::addMust($clause);
+                $this->queryBuilder::where($clause);
                 break;
         }
 
