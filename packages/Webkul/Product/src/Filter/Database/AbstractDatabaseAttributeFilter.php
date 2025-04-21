@@ -2,6 +2,7 @@
 
 namespace Webkul\Product\Filter\Database;
 
+use Illuminate\Support\Facades\DB;
 use Webkul\Product\Filter\AbstractAttributeFilter;
 
 abstract class AbstractDatabaseAttributeFilter extends AbstractAttributeFilter
@@ -13,6 +14,6 @@ abstract class AbstractDatabaseAttributeFilter extends AbstractAttributeFilter
 
     protected function getSearchTablePath(array $options = [])
     {
-        return $options['search_table_path'] ?? 'products.values';
+        return $options['search_table_path'] ?? DB::getTablePrefix().'products.values';
     }
 }

@@ -35,7 +35,7 @@ class Product
                     'body'  => $productArray,
                 ]);
             } catch (ElasticsearchException $e) {
-                Log::channel('elasticsearch')->error('Exception while creating id: '.$product->id.' in '.$this->indexPrefix.'_categories index: ', [
+                Log::channel('elasticsearch')->error('Exception while creating id: '.$product->id.' in '.$this->indexPrefix.'_products index: ', [
                     'error' => $e->getMessage(),
                 ]);
             }
@@ -52,7 +52,7 @@ class Product
                     'body'  => $product->toArray(),
                 ]);
             } catch (ElasticsearchException $e) {
-                Log::channel('elasticsearch')->error('Exception while updating id: '.$product->id.' in '.$this->indexPrefix.'_categories index: ', [
+                Log::channel('elasticsearch')->error('Exception while updating id: '.$product->id.' in '.$this->indexPrefix.'_products index: ', [
                     'error' => $e->getMessage(),
                 ]);
             }
@@ -68,7 +68,7 @@ class Product
                     'id'    => $product->id,
                 ]);
             } catch (ElasticsearchException $e) {
-                Log::channel('elasticsearch')->error('Exception while deleting id: '.$product->id.' from '.$this->indexPrefix.'_categories index: ', [
+                Log::channel('elasticsearch')->error('Exception while deleting id: '.$product->id.' from '.$this->indexPrefix.'_products index: ', [
                     'error' => $e->getMessage(),
                 ]);
             }

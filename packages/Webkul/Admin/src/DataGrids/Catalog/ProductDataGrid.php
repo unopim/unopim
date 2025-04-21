@@ -437,7 +437,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         if ($attributePath = $this->getAttributePathForSort($sortColumn)) {
             return $this->queryBuilder->orderByRaw(
-                sprintf("JSON_UNQUOTE(JSON_EXTRACT(products.values, '%s')) %s", $attributePath, $sortOrder)
+                sprintf('JSON_UNQUOTE(JSON_EXTRACT('.DB::getTablePrefix()."products.values, '%s')) %s", $attributePath, $sortOrder)
             );
         }
 
