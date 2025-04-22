@@ -518,7 +518,10 @@ abstract class AbstractType
         return $group->customAttributes($this->product->attribute_family->id)->whereNotIn('code', $this->skipAttributes);
     }
 
-    public function getUniqueAttributes(bool $skipSuperAttribute = true)
+    /**
+     * Retrieve unique attributes for the product according to family.
+     */
+    public function getUniqueAttributes(bool $skipSuperAttribute = true): ?Collection
     {
         $uniqueAttributesQb = $this->product->attribute_family->customAttributes()->where('attributes.is_unique', 1);
 
