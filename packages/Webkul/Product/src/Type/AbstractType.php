@@ -3,6 +3,7 @@
 namespace Webkul\Product\Type;
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Attribute\Repositories\AttributeRepository;
@@ -45,41 +46,6 @@ abstract class AbstractType
      * @var \Webkul\Product\Models\Product
      */
     protected $product;
-
-    /**
-     * Is a composite product type.
-     *
-     * @var bool
-     */
-    protected $isComposite = false;
-
-    /**
-     * Is a stockable product type.
-     *
-     * @var bool
-     */
-    protected $isStockable = true;
-
-    /**
-     * Show quantity box.
-     *
-     * @var bool
-     */
-    protected $showQuantityBox = false;
-
-    /**
-     * Is product have sufficient quantity.
-     *
-     * @var bool
-     */
-    protected $haveSufficientQuantity = true;
-
-    /**
-     * Product can be moved from wishlist to cart or not.
-     *
-     * @var bool
-     */
-    protected $canBeMovedFromWishlistToCart = true;
 
     /**
      * Products of this type can be copied in the admin backend.
@@ -428,7 +394,7 @@ abstract class AbstractType
             ->replicate()
             ->fill(['sku' => 'temporary-sku-'.substr(md5(microtime()), 0, 6)]);
 
-        $values = $copiedProduct->values;
+        $values = $this->filterUniqueAttributeValues($copiedProduct->values ?? []);
 
         $values[self::COMMON_VALUES_KEY]['sku'] = $copiedProduct->sku;
 
@@ -499,16 +465,6 @@ abstract class AbstractType
     }
 
     /**
-     * Return true if this product can be composite.
-     *
-     * @return bool
-     */
-    public function isComposite()
-    {
-        return $this->isComposite;
-    }
-
-    /**
      * Return true if this product can have variants.
      *
      * @return bool
@@ -560,6 +516,55 @@ abstract class AbstractType
         }
 
         return $group->customAttributes($this->product->attribute_family->id)->whereNotIn('code', $this->skipAttributes);
+    }
+
+    /**
+     * Retrieve unique attributes for the product according to family.
+     */
+    public function getUniqueAttributes(bool $skipSuperAttribute = true): ?Collection
+    {
+        $uniqueAttributesQb = $this->product->attribute_family->customAttributes()->where('attributes.is_unique', 1);
+
+        if ($skipSuperAttribute) {
+            $this->skipAttributes = array_merge(
+                $this->product->super_attributes->pluck('code')->toArray(),
+                $this->skipAttributes
+            );
+
+            $uniqueAttributesQb->whereNotIn('attributes.code', $this->skipAttributes);
+        }
+
+        return $uniqueAttributesQb->get();
+    }
+
+    /**
+     * Filter out the unique attribute values when copying the product or creating a variant.
+     */
+    public function filterUniqueAttributeValues(array $productValues, Collection|array $uniqueAttributes = []): array
+    {
+        if (! $uniqueAttributes) {
+            $uniqueAttributes = $this->getUniqueAttributes();
+        }
+
+        $currentChannel = core()->getRequestedChannelCode();
+
+        $currentLocale = core()->getRequestedLocaleCode();
+
+        foreach ($uniqueAttributes as $unique) {
+            if ($unique->code === 'sku') {
+                continue;
+            }
+
+            $uniqueValue = $unique->getValueFromProductValues($productValues, $currentChannel, $currentLocale);
+
+            if (empty($uniqueValue)) {
+                continue;
+            }
+
+            $unique->setProductValue('', $productValues, $currentChannel, $currentLocale);
+        }
+
+        return $productValues;
     }
 
     /**
