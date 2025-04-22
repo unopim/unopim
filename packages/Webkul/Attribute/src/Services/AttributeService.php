@@ -38,11 +38,17 @@ class AttributeService
     /**
      * Retrieves a collection of Attribute objects based on the provided attribute codes.
      */
-    public function findAttributeByCodes(array $codes): ?Collection
+    public function findByCodes(array $codes): ?Collection
     {
-        return $this->attributeRepository
+        $attributes = $this->attributeRepository
             ->whereIn('code', $codes)
             ->orderByRaw("FIELD(code, '".implode("', '", $codes)."')")
             ->get();
+
+        foreach ($attributes as $attribute) {
+            $this->cachedAttributes[$attribute->code] = $attribute;
+        }
+
+        return $attributes;
     }
 }

@@ -14,12 +14,14 @@ trait AttributeColumnTrait
      */
     protected function buildColumnDefinition($attribute)
     {
+        $attributeArray = $attribute->toArray();
+
         $column = [
-            'index'      => $attribute->code,
-            'label'      => $attribute->name ?: '['.$attribute->code.']',
+            'index'      => $attributeArray['code'],
+            'label'      => $attributeArray['name'] ?: '['.$attributeArray['code'].']',
             'type'       => $attribute->getFilterType(),
             'searchable' => false,
-            'filterable' => $attribute->is_filterable ?? false,
+            'filterable' => $attributeArray['is_filterable'] ?? false,
             'sortable'   => true,
         ];
 

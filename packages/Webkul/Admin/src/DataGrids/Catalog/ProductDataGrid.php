@@ -145,7 +145,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'options' => [
                     'type'   => 'basic',
                     'params' => [
-                        'options' => $this->attributeFamilyRepository->all(['code as label', 'id as value'])->toArray(),
+                        'options' => DB::table('attribute_families')->select('code as label', 'id as value')->get(),
                     ],
                 ],
                 'searchable' => false,
@@ -729,7 +729,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     public function formatData(): array
     {
         $paginator = $this->paginator->toArray();
-
         /**
          * TODO: need to handle this...
          */

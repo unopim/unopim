@@ -46,8 +46,14 @@ class OptionNormalizer extends AbstractNormalizer implements AttributeNormalizer
 
         $locale = $options['locale'] ?? null;
 
-        return $attribute->getOptionsByCodeAndLocale($data, $locale)
-            ->map(fn ($option) => $option->label ?? "[{$option->code}]")
-            ->all();
+        $options = $attribute->options()->whereIn('code', $data)->get();
+
+        $formattedOptions = [];
+
+        foreach ($options as $option) {
+            $formattedOptions[] = $option->translations()?->where('locale', $locale)?->first()?->label ?? "[{$option->code}]";
+        }
+
+        return $formattedOptions;
     }
 }
