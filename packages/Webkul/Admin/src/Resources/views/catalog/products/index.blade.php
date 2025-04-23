@@ -265,20 +265,7 @@
 
                                         <x-admin::form.control-group.error control-name="type" />
                                     </x-admin::form.control-group>
-                                    
-                                    @php
-                                        $types = [];
-                                        foreach($families as $family) {
-                                            $types[] = [
-                                                'id'    => $family->id,
-                                                'label' => ! empty($family->name) ? $family->name : '[' . $family->code . ']',
-                                            ];
-                                        }
-                                        
-                                        $typesJson = json_encode($types);
 
-                                    @endphp
-                                    
                                     <!-- Attribute Family Id -->
                                     <x-admin::form.control-group>
                                         <x-admin::form.control-group.label class="required">
@@ -290,11 +277,11 @@
                                             name="attribute_family_id"
                                             rules="required"
                                             :label="trans('admin::app.catalog.products.index.create.family')"
-                                            :options="$typesJson"
+                                            entity-name="attribute_family"
                                             track-by="id"
                                             label-by="label"
+                                            async="true"
                                         >
-                                            
                                         </x-admin::form.control-group.control>
 
                                         <x-admin::form.control-group.error control-name="attribute_family_id" />

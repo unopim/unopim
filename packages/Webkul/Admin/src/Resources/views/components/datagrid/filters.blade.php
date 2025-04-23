@@ -162,29 +162,12 @@
                     </div>
                 </div>
 
-                <div class="mb-2 mt-1.5">
-                    <v-datagrid-searchable-dropdown
+                <v-datagrid-searchable-dropdown
                         :datagrid-id="available.id"
                         :column="column"
                         @select-option="filterPage($event, column)"
                     >
-                    </v-datagrid-searchable-dropdown>
-                </div>
-
-                <div class="mb-4 flex gap-2 flex-wrap">
-                    <p
-                        class="flex items-center rounded bg-violet-100 px-2 py-1 font-semibold text-violet-700"
-                        v-for="appliedColumnValue in getAppliedColumnValues(column.index)"
-                    >
-                        <span v-text="appliedColumnValue"></span>
-
-                        <span
-                            class="icon-cancel cursor-pointer text-lg text-violet-700 ltr:ml-1.5 rtl:mr-1.5 dark:!text-violet-700"
-                            @click="removeAppliedColumnValue(column.index, appliedColumnValue)"
-                        >
-                        </span>
-                    </p>
-                </div>
+                </v-datagrid-searchable-dropdown>
             </div>
         </div>
 
@@ -408,123 +391,111 @@
 
 @pushOnce('scripts')
     <script type="text/x-template" id="v-datagrid-searchable-dropdown-template">
-        <x-admin::dropdown ::close-on-click="false">
-            <!-- Dropdown Toggler -->
-            <x-slot:toggle>
-                <button
-                    type="button"
-                    class="inline-flex w-full cursor-pointer appearance-none items-center justify-between gap-x-2 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2.5 py-1.5 text-center leading-6 text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
+        <template v-if="isLoading">
+    
+        </template>
+        <template v-else>
+            <div class="mb-2 mt-1.5">
+                <x-admin::form.control-group.control
+                    type="select"
+                    ::ref="column.index"
+                    ::name="column?.label"
+                    ::label="column?.label || column.index"
+                    track-by="id"
+                    label-by="label"
+                    async="true"
+                    ::list-route="column.options.route"
+                    ::query-params="column.options.params"
+                    @select-option="selectOption($event, column.index)"
+                />
+            </div>
+
+            <div class="mb-4 flex gap-2 flex-wrap">
+                <p
+                    class="flex items-center rounded bg-violet-100 px-2 py-1 font-semibold text-violet-700"
+                    v-for="appliedColumnValue in getAppliedColumnValues(column.index)"
                 >
+                    <span v-text="getLabel(appliedColumnValue)"></span>
+
                     <span
-                        class="text-sm text-gray-400 dark:text-gray-400" 
-                        v-text="'@lang('admin::app.components.datagrid.filters.select')'"
+                        class="icon-cancel cursor-pointer text-lg text-violet-700 ltr:ml-1.5 rtl:mr-1.5 dark:!text-violet-700"
+                        @click="this.$parent.$parent.$parent.removeAppliedColumnValue(column.index, appliedColumnValue)"
                     >
                     </span>
-
-                    <span class="icon-chevron-down text-2xl"></span>
-                </button>
-            </x-slot>
-
-            <!-- Dropdown Content -->
-            <x-slot:menu>
-                <div class="relative">
-                    <div class="relative rounded">
-                        <ul class="list-reset">
-                            <li class="p-2">
-                                <input
-                                    class="block w-full rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2 py-1.5 text-sm leading-6 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
-                                    @keyup="lookUp($event)"
-                                >
-                            </li>
-
-                            <ul class="p-2">
-                                <li v-if="!isMinimumCharacters">
-                                    <p
-                                        class="block p-2 text-gray-600 dark:text-gray-300"
-                                        v-text="'@lang('admin::app.components.datagrid.filters.dropdown.searchable.atleast-two-chars')'"
-                                    >
-                                    </p>
-                                </li>
-
-                                <li v-else-if="!searchedOptions.length">
-                                    <p
-                                        class="block p-2 text-gray-600 dark:text-gray-300"
-                                        v-text="'@lang('admin::app.components.datagrid.filters.dropdown.searchable.no-results')'"
-                                    >
-                                    </p>
-                                </li>
-
-                                <li
-                                    v-for="option in searchedOptions"
-                                    v-else
-                                >
-                                    <p
-                                        class="text-sm text-gray-600 dark:text-gray-300 p-2 cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800"
-                                        v-text="option.label"
-                                        @click="selectOption(option)"
-                                    >
-                                    </p>
-                                </li>
-                            </ul>
-                        </ul>
-                    </div>
-                </div>
-            </x-slot>
-        </x-admin::dropdown>
+                </p>
+            </div>
+        </template>
     </script>
 
     <script type="module">
         app.component('v-datagrid-searchable-dropdown', {
             template: '#v-datagrid-searchable-dropdown-template',
 
-            props: ['datagridId', 'column'],
+            props: ['column', 'datagridId'],
 
             data() {
                 return {
                     isMinimumCharacters: false,
 
-                    searchedOptions: [],
+                    selectedOptions: [],
+
+                    selectedValues: [],
+
+                    params: {
+                        entityName: this.column.options.params.entityName,
+                        page: 1,
+                        locale: "{{ core()->getRequestedLocaleCode() }}",
+                    },
                 };
             },
 
+            mounted() {
+                this.selectedValues = this.getAppliedColumnValues(this.column.index);
+
+                this.initializeValue();
+            },
+
             methods: {
-                lookUp($event) {
-                    let params = {
-                        datagrid_id: this.datagridId,
-                        column: this.column.index,
-                        search: $event.target.value,
-                    };
-
-                    if (!(params['search'].length > 1)) {
-                        this.searchedOptions = [];
-
-                        this.isMinimumCharacters = false;
-
-                        return;
-                    }
-
-                    this.$axios
-                        .get('{{ route('admin.datagrid.look_up') }}', {
-                            params
-                        })
-                        .then(({
-                            data
-                        }) => {
-                            this.isMinimumCharacters = true;
-
-                            this.searchedOptions = data;
-                        });
-                },
-
-                selectOption(option) {
-                    this.searchedOptions = [];
-
+                selectOption(option, index) {
                     this.$emit('select-option', {
                         target: {
-                            value: option.value
+                            value: option.target.value[this.column.options?.track_by ?? 'id']
                         }
                     });
+
+                    if (option.target.value.id) {
+                        this.selectedOptions.push(option.target.value);
+                    }
+
+                    this.$refs[index].selectedValue = null;
                 },
+
+                initializeValue() {
+                    this.isLoading = true;
+
+                    this.params.identifiers = {
+                        columnName: 'id',
+                        values: this.selectedValues
+                    };
+
+                    this.$axios.get(this.column.options.route, {params: this.params})
+                        .then(result => {
+                            this.params.identifiers = {};
+
+                            this.selectedOptions = result.data.options;
+
+                            this.isLoading = false;
+                        })
+                },
+
+                getLabel(value) {
+                    let option = this.selectedOptions.filter(option => option.id == value)[0] ?? null;
+
+                    return option?.label ?? value;
+                },
+                getAppliedColumnValues(index) {
+                    return this.$parent.$parent.$parent.getAppliedColumnValues(index);
+                }
             }
         });
     </script>
