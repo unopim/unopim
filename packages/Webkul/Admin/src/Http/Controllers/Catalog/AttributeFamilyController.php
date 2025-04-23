@@ -64,8 +64,8 @@ class AttributeFamilyController extends Controller
      */
     private function normalize($attributeFamily = null)
     {
-        $customAttributes = $this->attributeRepository->all(['id', 'code', 'type', 'value_per_locale', 'value_per_channel']);
-        $customAttributeGroups = $this->attributeGroupRepository->all(['id', 'code']);
+        // $customAttributes = []; // $this->attributeRepository->limit(10);
+        // $customAttributeGroups = $this->attributeGroupRepository->all(['id', 'code']);
 
         $currentLocale = core()->getRequestedLocaleCode();
 
@@ -98,53 +98,53 @@ class AttributeFamilyController extends Controller
         })->toArray();
 
         // // Normalize custom attributes data
-        $normalizedCustomAttributes = [];
+        // $normalizedCustomAttributes = [];
 
-        foreach ($customAttributes as $customAttribute) {
-            if (! in_array($customAttribute->code, $this->usedAttributes)) {
-                $this->usedAttributes[] = $customAttribute->code;
+        // foreach ($customAttributes as $customAttribute) {
+        //     if (! in_array($customAttribute->code, $this->usedAttributes)) {
+        //         $this->usedAttributes[] = $customAttribute->code;
 
-                $normalizedCustomAttributes[] = [
-                    'id'              => $customAttribute->id,
-                    'code'            => $customAttribute->code,
-                    'type'            => $customAttribute->type,
-                    'name'            => ! empty($customAttribute->name) ? $customAttribute->name : $customAttribute->code,
-                    'is_configurable' => (! $customAttribute->isLocaleBasedAttribute() && ! $customAttribute->isChannelBasedAttribute()),
-                ];
-            } else {
-                if (
-                    in_array($customAttribute->type, AttributeFamily::ALLOWED_VARIANT_OPTION_TYPES)
-                    && ! $customAttribute->isLocaleBasedAttribute()
-                    && ! $customAttribute->isChannelBasedAttribute()
-                ) {
-                    $variantOptionAttributes[] = [
-                        'id'   => $customAttribute->id,
-                        'code' => $customAttribute->code,
-                        'name' => ! empty($customAttribute->name) ? $customAttribute->name : "[{$customAttribute->code}]",
-                    ];
-                }
-            }
-        }
+        //         $normalizedCustomAttributes[] = [
+        //             'id'              => $customAttribute->id,
+        //             'code'            => $customAttribute->code,
+        //             'type'            => $customAttribute->type,
+        //             'name'            => ! empty($customAttribute->name) ? $customAttribute->name : $customAttribute->code,
+        //             'is_configurable' => (! $customAttribute->isLocaleBasedAttribute() && ! $customAttribute->isChannelBasedAttribute()),
+        //         ];
+        //     } else {
+        //         if (
+        //             in_array($customAttribute->type, AttributeFamily::ALLOWED_VARIANT_OPTION_TYPES)
+        //             && ! $customAttribute->isLocaleBasedAttribute()
+        //             && ! $customAttribute->isChannelBasedAttribute()
+        //         ) {
+        //             $variantOptionAttributes[] = [
+        //                 'id'   => $customAttribute->id,
+        //                 'code' => $customAttribute->code,
+        //                 'name' => ! empty($customAttribute->name) ? $customAttribute->name : "[{$customAttribute->code}]",
+        //             ];
+        //         }
+        //     }
+        // }
 
         // // Normalize custom attribute groups data
-        $normalizedCustomAttributeGroups = [];
-        foreach ($customAttributeGroups as $customAttributeGroup) {
-            if (empty($familyGroupMappings) && $customAttributeGroup->code === self::DEFAULT_GROUP) {
-                $familyGroupMappings[] = [
-                    'id'               => $customAttributeGroup->id,
-                    'code'             => $customAttributeGroup->code,
-                    'name'             => ! empty($customAttributeGroup->name) ? $customAttributeGroup->name : $customAttributeGroup->code,
-                    'customAttributes' => [],
-                ];
-            }
+        // $normalizedCustomAttributeGroups = [];
+        // foreach ($customAttributeGroups as $customAttributeGroup) {
+        //     if (empty($familyGroupMappings) && $customAttributeGroup->code === self::DEFAULT_GROUP) {
+        //         $familyGroupMappings[] = [
+        //             'id'               => $customAttributeGroup->id,
+        //             'code'             => $customAttributeGroup->code,
+        //             'name'             => ! empty($customAttributeGroup->name) ? $customAttributeGroup->name : $customAttributeGroup->code,
+        //             'customAttributes' => [],
+        //         ];
+        //     }
 
-            $normalizedCustomAttributeGroups[] = [
-                'id'               => $customAttributeGroup->id,
-                'code'             => $customAttributeGroup->code,
-                'name'             => ! empty($customAttributeGroup->name) ? $customAttributeGroup->name : $customAttributeGroup->code,
-                'customAttributes' => [],
-            ];
-        }
+        //     $normalizedCustomAttributeGroups[] = [
+        //         'id'               => $customAttributeGroup->id,
+        //         'code'             => $customAttributeGroup->code,
+        //         'name'             => ! empty($customAttributeGroup->name) ? $customAttributeGroup->name : $customAttributeGroup->code,
+        //         'customAttributes' => [],
+        //     ];
+        // }
 
         // Normalize attribute family data
         $normalizedAttributeFamily = [
@@ -157,8 +157,8 @@ class AttributeFamilyController extends Controller
         return [
             'attributeFamily'         => $normalizedAttributeFamily,
             'locales'                 => $locales,
-            'customAttributes'        => $normalizedCustomAttributes,
-            'customAttributeGroups'   => $normalizedCustomAttributeGroups,
+            // 'customAttributes'        => $normalizedCustomAttributes,
+            // 'customAttributeGroups'   => $normalizedCustomAttributeGroups,
             'variantOptionAttributes' => $variantOptionAttributes,
         ];
     }

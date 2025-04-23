@@ -91,11 +91,11 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'label'   => trans('admin::app.catalog.products.index.datagrid.attribute-family'),
             'type'    => 'dropdown',
             'options' => [
-                'type'   => 'searchable',
-                'route' => route('admin.catalog.options.fetch-all'),
+                'type'     => 'searchable',
+                'route'    => route('admin.catalog.options.fetch-all'),
                 'track_by' => 'id',
                 'label_by' => 'code',
-                'params' => [
+                'params'   => [
                     'entityName' => 'attribute_family',
                 ],
             ],

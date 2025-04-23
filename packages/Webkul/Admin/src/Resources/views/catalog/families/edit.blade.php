@@ -164,6 +164,7 @@
                                 @lang('admin::app.catalog.families.edit.assign-first-attribute-group')
                             </p>
                         </div>
+
                         <!-- Draggable Unassigned Attribute Group  -->
                         <draggable
                             id="assigned-attribute-groups"
@@ -260,41 +261,104 @@
                     </div>
 
                     <!-- Unassigned Attributes Container -->
-                    <div class="">
+                    <div>
                         <!-- Unassigned Attributes Header -->
-                        <div class="flex flex-col mb-4">
-                            <p class="text-gray-600 dark:text-gray-300 font-semibold leading-6">
-                                @lang('admin::app.catalog.families.edit.unassigned-attributes')
-                            </p>
+                        <div class="flex justify-between mb-4">
+                            <div>
+                                <p class="text-gray-600 dark:text-gray-300 font-semibold leading-6">
+                                    @lang('admin::app.catalog.families.edit.unassigned-attributes')
+                                </p>
+    
+                                <p class="text-xs text-gray-800 dark:text-white font-medium ">
+                                    @lang('admin::app.catalog.families.edit.unassigned-attributes-info')
+                                </p>
+                            </div>
 
-                            <p class="text-xs text-gray-800 dark:text-white font-medium ">
-                                @lang('admin::app.catalog.families.edit.unassigned-attributes-info')
-                            </p>
+                            <span class="icon-search text-2xl ltr:right-5 rtl:left-3 top-1.5 flex items-center cursor-pointer" v-if="!isSearching" @click="isSearching=true"></span>
+
                         </div>
 
-                        <!-- Draggable Unassigned Attributes -->
-                        <draggable
-                            id="unassigned-attributes"  
-                            class="h-[calc(100vh-285px)] pb-4 overflow-auto"
-                            ghost-class="draggable-ghost"
-                            handle=".icon-drag"
-                            v-bind="{animation: 200}"
-                            :list="unassignedAttributes"
-                            item-key="id"
-                            group="attributes"
-                        >
-                            <template #item="{ element, index }">
-                                   <div class="flex gap-1.5 max-w-max py-1.5 ltr:pr-1.5 rtl:pl-1.5 rounded text-gray-600 dark:text-gray-300 group">
-                                        <i class="icon-drag text-xl transition-all group-hover:text-gray-800 dark:group-hover:text-white cursor-grab"></i>
-                                        <i class="text-xl transition-all group-hover:text-gray-800 dark:group-hover:text-white"></i>
-                                        <span 
-                                            class="text-sm font-regular transition-all group-hover:text-gray-800 dark:group-hover:text-white max-xl:text-xs"
-                                            v-text="element.name"
-                                        >
-                                        </span>
-                                   </div>   
-                            </template>
-                        </draggable>
+                        <template v-if="isLoading">
+                            <div v-if="isLoading" class="grid gap-y-2.5 pt-3 h-[calc(100vh-285px)] pb-[16px] pt-3 overflow-auto ">
+                                <div v-for="n in 35" :key="n" class="shimmer w-[302px] h-[38px] rounded-md"></div>
+                            </div>
+                            <div class="flex gap-1 items-left justify-right mt-2.5">
+                                <div class="shimmer w-[38px] h-[38px] rounded-md"></div>
+                                <div class="shimmer w-[38px] h-[38px] rounded-md"></div>
+                                <div class="shimmer w-[60px] h-[38px] rounded-md"></div>
+                                <div class="shimmer w-[38px] h-[38px] rounded-md"></div>
+                            </div>
+                        </template>
+
+                        <template v-else>
+                            <div class="relative w-full flex items-center justify-center mb-3" :class="isSearching ? '' : 'hidden'">
+                                <input
+                                    type="text"
+                                    class="bg-white dark:bg-cherry-800 border dark:border-cherry-900 rounded-lg block w-full ltr:pl-3 rtl:pr-3 ltr:pr-10 rtl:pl-10 py-1.5 leading-6 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400"
+                                    placeholder="Search"
+                                    v-model.lazy="searchTerm"
+                                    v-debounce="500"
+                                    @keydown.enter.prevent="search($event.target.value)"
+                                />
+
+                                <span class="icon-search text-2xl absolute ltr:right-5 rtl:left-3 top-1.5 flex items-center pointer-events-none"></span>
+                            </div>
+                            <!-- Draggable Unassigned Attributes -->
+                            <draggable
+                                id="unassigned-attributes"  
+                                class="h-[calc(100vh-285px)] pb-4 overflow-auto"
+                                ghost-class="draggable-ghost"
+                                handle=".icon-drag"
+                                v-bind="{animation: 200}"
+                                :list="customAttributes"
+                                item-key="id"
+                                group="attributes"
+                            >
+                                <template #item="{ element, index }">
+                                    <div class="flex gap-1.5 max-w-max py-1.5 ltr:pr-1.5 rtl:pl-1.5 rounded text-gray-600 dark:text-gray-300 group">
+                                            <i class="icon-drag text-xl transition-all group-hover:text-gray-800 dark:group-hover:text-white cursor-grab"></i>
+                                            <i class="text-xl transition-all group-hover:text-gray-800 dark:group-hover:text-white"></i>
+                                            <span 
+                                                class="text-sm font-regular transition-all group-hover:text-gray-800 dark:group-hover:text-white max-xl:text-xs"
+                                                v-text="element.name"
+                                            >
+                                            </span>
+                                    </div>   
+                                </template>
+                            </draggable>
+
+                            <!-- Pagination -->
+                            <div class="flex gap-1 items-left justify-right mt-2.5">
+                                <a @click="changePage(--currentPage)">
+                                    <div class="inline-flex gap-x-1 items-center justify-between w-full max-w-max ltr:ml-2 rtl:mr-2 p-1.5 bg-white dark:bg-cherry-800 border rounded-md dark:border-cherry-800 text-gray-600 dark:text-gray-300 text-center cursor-pointer transition-all hover:border hover:bg-violet-50 dark:hover:bg-cherry-800 marker:shadow appearance-none focus:ring-2 focus:outline-none focus:ring-black">
+                                        <span class="icon-chevron-left text-2xl"></span>
+                                    </div>
+                                </a>
+
+                                <a @click="changePage(++currentPage)">
+                                    <div
+                                        class="inline-flex gap-x-1 items-center justify-between w-full max-w-max ltr:ml-2 rtl:mr-2 p-1.5 bg-white dark:bg-cherry-800 border rounded-md dark:border-cherry-800 text-gray-600 dark:text-gray-300 text-center cursor-pointer transition-all hover:border hover:bg-violet-50 dark:hover:bg-cherry-800 marker:shadow appearance-none focus:ring-2 focus:outline-none focus:ring-black">
+                                        <span class="icon-chevron-right text-2xl"></span>
+                                    </div>
+                                </a>
+
+                                <div class="flex items-center justify-center gap-2.5">
+                                    <input
+                                        type="text"
+                                        class="inline-flex min-h-[38px] max-w-[60px] appearance-none items-center justify-center gap-x-1 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-900 px-3 py-1.5 text-center leading-6 text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:border-gray-400 dark:hover:border-gray-400 focus:outline-none focus:border-gray-400 dark:focus:border-gray-400 max-sm:hidden"
+                                        :value="currentPage"
+                                        @keydown.enter.prevent="changePage($event.target.value)"
+                                    >
+        
+                                    <div class="whitespace-nowrap text-gray-600 dark:text-gray-300">
+                                        <span> @lang('admin::app.components.datagrid.toolbar.of') </span>
+        
+                                        <span v-text="totalPages"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+
                     </div>
                 </div>
 
@@ -325,12 +389,11 @@
                                         name="group"
                                         rules="required"
                                         :label="trans('admin::app.catalog.families.edit.groups')"
-                                        ::options="unassignedAttributeGroups"
+                                        async="true"
+                                        entityName="attribute_group"
                                         track-by="id"
-                                        label-by="name"
-                                    >
-                                        
-                                    </x-admin::form.control-group.control>
+                                        label-by="label"
+                                    />
 
                                     <x-admin::form.control-group.error control-name="group" /> 
                                 </x-admin::form.control-group>
@@ -360,37 +423,40 @@
 
                 data: function () {
                     return {
+                        isLoading: false,
+                        currentPage: 1,
+                        totalPages: 2,
+                        isSearching: false,
                         selectedGroup: {
                             id: null,
                             code: null,
                             name: null,
                         },
-                        currentLocale: @json(core()->getRequestedLocaleCode()),
-                        customAttributes: @json($customAttributes),
-                        customAttributeGroups: @json($customAttributeGroups),
-                        customAttributeFamily: @json($attributeFamily),
+                        getAttributeRoute: "{{ route('admin.catalog.options.fetch-all')}}",
+                        customAttributes: [],
                         familyDefaultGroups: @json($attributeFamily['familyGroupMappings']),
                         dropReverted: false,
+                        searchTerm: '',
+                        params: {},
                     }
                 },
 
                 computed: {
-                    unassignedAttributes() {
-                        return this.customAttributes
-                    },
-
-                    unassignedAttributeGroups() {
-                        return JSON.stringify(this.customAttributeGroups.filter(attributeGroup => {
-                            let attribhuteGroupIsExist = this.findWhere(this.familyDefaultGroups, {code: attributeGroup.code})
-                                if (!attribhuteGroupIsExist) {
-                                    return attributeGroup;
-                                }
-                            }))
-                    },
-
                     defaultFamilyGroups() {
-                        return this.familyDefaultGroups
+                        return this.familyDefaultGroups;
                     },
+
+                    assignedAttributes() {
+                        return this.familyDefaultGroups.map(group => {
+                            return group.customAttributes.map(attribute => {
+                                return attribute.code
+                            })
+                        }).flat();
+                    }
+                },
+
+                mounted() {
+                    this.getAttributes();
                 },
 
                 methods: {
@@ -412,12 +478,6 @@
                         }
                     },
 
-                    findWhere: function(array, criteria) {
-                        return array.find(item => 
-                            Object.keys(criteria).every(key => item[key] === criteria[key])
-                        );
-                    },
-
                     getGroupAttributes(group) {
                         group.customAttributes.forEach((attribute, index) => {
                             attribute.group_id = group.id;
@@ -428,13 +488,18 @@
 
                     assignGroup(params, { resetForm, setErrors }) {
                         const jsonObject = JSON.parse(params.group);
-                        this.familyDefaultGroups.push({
-                            'id': jsonObject.id,
-                            'name': jsonObject.name,
-                            'code': jsonObject.code,
-                            'group_mapping_id' : '',
-                            'customAttributes': [],
-                        });
+                        const index = this.familyDefaultGroups.findIndex(obj => obj.code === jsonObject.code);
+
+                        if (index == -1) {
+                            this.familyDefaultGroups.push({
+                                'id': jsonObject.id,
+                                'name': jsonObject.label,
+                                'code': jsonObject.code,
+                                'group_mapping_id' : '',
+                                'customAttributes': [],
+                            });
+                        }
+
                         resetForm();
 
                         this.$refs.assignGroupModal.close();
@@ -475,6 +540,43 @@
                     onChange(e) {
                         this.$emitter.emit('assigned-attributes-changed', e);
                     },
+
+                    changePage(page) {
+                        if (page > 0 && page <= this.totalPages) {
+                            this.currentPage = page;
+                            this.getAttributes();
+                        }
+                    },
+
+                    getAttributes() {
+                        Object.assign(this.params, {
+                            entityName: 'attributes',
+                            page: this.currentPage,
+                            exclude: {
+                                columnName: 'code',
+                                values: this.assignedAttributes
+                            }
+                        });
+
+                        this.isLoading = true;
+
+                        this.$axios
+                            .get(this.getAttributeRoute, {params: this.params})
+                            .then(result => {
+                                this.customAttributes = result.data.options;
+
+                                this.totalPages = result.data.lastPage;
+
+                                this.isLoading = false;
+                            });
+                    },
+
+                    search(value) {
+                        this.params.query = value;
+                        this.currentPage = 1;
+
+                        this.getAttributes();
+                    }
                 }
             });
         </script>

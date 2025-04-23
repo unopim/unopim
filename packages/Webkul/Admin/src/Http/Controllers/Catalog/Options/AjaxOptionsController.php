@@ -6,7 +6,9 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\JsonResponse;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
+use Webkul\Attribute\Repositories\AttributeGroupRepository;
 use Webkul\Attribute\Repositories\AttributeOptionRepository;
+use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Category\Repositories\CategoryFieldOptionRepository;
 use Webkul\Core\Eloquent\Repository;
 use Webkul\Core\Eloquent\TranslatableModel;
@@ -21,7 +23,9 @@ class AjaxOptionsController extends Controller
     public function __construct(
         protected CategoryFieldOptionRepository $categoryFieldOptionsRepository,
         protected AttributeOptionRepository $attributeOptionsRepository,
-        protected AttributeFamilyRepository $attributeFamilyRepository
+        protected AttributeFamilyRepository $attributeFamilyRepository,
+        protected AttributeGroupRepository $attributeGroupRepository,
+        protected AttributeRepository $attributeRepository
     ) {}
 
     /**
@@ -49,6 +53,7 @@ class AjaxOptionsController extends Controller
                 'id'    => $option->id,
                 'code'  => $option->code,
                 'label' => ! empty($translatedOptionLabel) ? $translatedOptionLabel : "[{$option->code}]",
+                ...$option->makeHidden(['translations'])->toArray(),
             ];
         }
 
@@ -91,6 +96,10 @@ class AjaxOptionsController extends Controller
             );
         }
 
+        if (isset($queryParams['exclude']) && is_array($queryParams['exclude'])) {
+            $repository = $repository->whereNotIn($queryParams['exclude']['columnName'], $queryParams['exclude']['values']);
+        }
+
         return $repository->orderBy('id')->paginate(self::DEFAULT_PER_PAGE, ['*'], 'paginate', $page);
     }
 
@@ -104,6 +113,8 @@ class AjaxOptionsController extends Controller
             'attribute'        => $this->attributeOptionsRepository,
             'category_field'   => $this->categoryFieldOptionsRepository,
             'attribute_family' => $this->attributeFamilyRepository,
+            'attribute_group'  => $this->attributeGroupRepository,
+            'attributes'       => $this->attributeRepository,
             default            => throw new \Exception('Not implemented for '.$entityName)
         };
     }
@@ -114,7 +125,7 @@ class AjaxOptionsController extends Controller
     protected function getTranslationColumnName(string $entityName): string
     {
         return match ($entityName) {
-            'attribute_family' => 'name',
+            'attribute_family', 'attribute_group', 'attributes' => 'name',
             default            => 'label'
         };
     }

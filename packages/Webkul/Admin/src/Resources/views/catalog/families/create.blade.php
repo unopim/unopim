@@ -309,9 +309,10 @@
                                         name="group"
                                         rules="required"
                                         :label="trans('admin::app.catalog.families.create.groups')"
-                                        ::options="unassignedAttributeGroups"
+                                        async="true"
+                                        entityName="attribute_group"
                                         track-by="id"
-                                        label-by="name"
+                                        label-by="label"
                                     >
                                         
                                     </x-admin::form.control-group.control>
