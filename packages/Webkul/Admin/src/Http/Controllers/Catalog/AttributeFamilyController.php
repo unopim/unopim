@@ -8,16 +8,12 @@ use Webkul\Admin\DataGrids\Catalog\AttributeFamilyDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
-use Webkul\Attribute\Repositories\AttributeGroupRepository;
-use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Core\Rules\Code;
 
 class AttributeFamilyController extends Controller
 {
     const DEFAULT_GROUP = 'general';
-
-    protected array $usedAttributes = [];
 
     /**
      * Create a new controller instance.
@@ -26,8 +22,6 @@ class AttributeFamilyController extends Controller
      */
     public function __construct(
         protected AttributeFamilyRepository $attributeFamilyRepository,
-        protected AttributeRepository $attributeRepository,
-        protected AttributeGroupRepository $attributeGroupRepository,
         protected LocaleRepository $localeRepository
     ) {}
 
@@ -64,102 +58,38 @@ class AttributeFamilyController extends Controller
      */
     private function normalize($attributeFamily = null)
     {
-        // $customAttributes = []; // $this->attributeRepository->limit(10);
-        // $customAttributeGroups = $this->attributeGroupRepository->all(['id', 'code']);
-
-        $currentLocale = core()->getRequestedLocaleCode();
-
-        $variantOptionAttributes = [];
-
-        // @TODO: Need to improve this function
-        $familyGroupMappings = $attributeFamily?->attributeFamilyGroupMappings->map(function ($familyGroupMapping) {
+        $familyGroupMappings = $attributeFamily?->attributeFamilyGroupMappings()->with('attributeGroups')->get()->map(function ($familyGroupMapping) {
             $attributeGroup = $familyGroupMapping->attributeGroups->first();
 
             $customAttributes = $attributeGroup->customAttributes($familyGroupMapping->attribute_family_id)->map(function ($attribute) use ($attributeGroup) {
-                $this->usedAttributes[] = $attribute->code;
+                $attributeArray = $attribute->toArray();
 
                 return [
-                    'id'              => $attribute->id,
-                    'code'            => $attribute->code,
-                    'group_id'        => $attributeGroup->id,
-                    'name'            => ! empty($attribute->name) ? $attribute->name : $attribute->code,
-                    'type'            => $attribute->type,
-                    'is_configurable' => (! $attribute->isLocaleBasedAttribute() && ! $attribute->isChannelBasedAttribute()),
+                    'id'       => $attributeArray['id'],
+                    'code'     => $attributeArray['code'],
+                    'group_id' => $attributeGroup->id,
+                    'name'     => ! empty($attributeArray['name']) ? $attributeArray['name'] : '['.$attributeArray['code'].']',
+                    'type'     => $attributeArray['type'],
                 ];
             })->toArray();
 
+            $attributeGroup = $attributeGroup?->toArray() ?? [];
+
             return [
-                'id'               => $attributeGroup->id,
-                'code'             => $attributeGroup->code,
+                'id'               => $attributeGroup['id'],
+                'code'             => $attributeGroup['code'],
                 'group_mapping_id' => $familyGroupMapping->id,
-                'name'             => ! empty($attributeGroup->name) ? $attributeGroup->name : $attributeGroup->code,
+                'name'             => ! empty($attributeGroup['name']) ? $attributeGroup['name'] : '['.$attributeGroup['code'].']',
                 'customAttributes' => $customAttributes,
             ];
         })->toArray();
 
-        // // Normalize custom attributes data
-        // $normalizedCustomAttributes = [];
-
-        // foreach ($customAttributes as $customAttribute) {
-        //     if (! in_array($customAttribute->code, $this->usedAttributes)) {
-        //         $this->usedAttributes[] = $customAttribute->code;
-
-        //         $normalizedCustomAttributes[] = [
-        //             'id'              => $customAttribute->id,
-        //             'code'            => $customAttribute->code,
-        //             'type'            => $customAttribute->type,
-        //             'name'            => ! empty($customAttribute->name) ? $customAttribute->name : $customAttribute->code,
-        //             'is_configurable' => (! $customAttribute->isLocaleBasedAttribute() && ! $customAttribute->isChannelBasedAttribute()),
-        //         ];
-        //     } else {
-        //         if (
-        //             in_array($customAttribute->type, AttributeFamily::ALLOWED_VARIANT_OPTION_TYPES)
-        //             && ! $customAttribute->isLocaleBasedAttribute()
-        //             && ! $customAttribute->isChannelBasedAttribute()
-        //         ) {
-        //             $variantOptionAttributes[] = [
-        //                 'id'   => $customAttribute->id,
-        //                 'code' => $customAttribute->code,
-        //                 'name' => ! empty($customAttribute->name) ? $customAttribute->name : "[{$customAttribute->code}]",
-        //             ];
-        //         }
-        //     }
-        // }
-
-        // // Normalize custom attribute groups data
-        // $normalizedCustomAttributeGroups = [];
-        // foreach ($customAttributeGroups as $customAttributeGroup) {
-        //     if (empty($familyGroupMappings) && $customAttributeGroup->code === self::DEFAULT_GROUP) {
-        //         $familyGroupMappings[] = [
-        //             'id'               => $customAttributeGroup->id,
-        //             'code'             => $customAttributeGroup->code,
-        //             'name'             => ! empty($customAttributeGroup->name) ? $customAttributeGroup->name : $customAttributeGroup->code,
-        //             'customAttributes' => [],
-        //         ];
-        //     }
-
-        //     $normalizedCustomAttributeGroups[] = [
-        //         'id'               => $customAttributeGroup->id,
-        //         'code'             => $customAttributeGroup->code,
-        //         'name'             => ! empty($customAttributeGroup->name) ? $customAttributeGroup->name : $customAttributeGroup->code,
-        //         'customAttributes' => [],
-        //     ];
-        // }
-
-        // Normalize attribute family data
-        $normalizedAttributeFamily = [
-            'family'              => $attributeFamily,
-            'familyGroupMappings' => $familyGroupMappings ?? [],
-        ];
-
-        $locales = $this->localeRepository->getActiveLocales();
-
         return [
-            'attributeFamily'         => $normalizedAttributeFamily,
-            'locales'                 => $locales,
-            // 'customAttributes'        => $normalizedCustomAttributes,
-            // 'customAttributeGroups'   => $normalizedCustomAttributeGroups,
-            'variantOptionAttributes' => $variantOptionAttributes,
+            'locales'         => $this->localeRepository->getActiveLocales(),
+            'attributeFamily' => [
+                'family'              => $attributeFamily,
+                'familyGroupMappings' => $familyGroupMappings ?? [],
+            ],
         ];
     }
 
