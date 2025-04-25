@@ -24,7 +24,7 @@ class MagicAIController extends Controller
     {
         try {
             return new JsonResponse([
-                'models'  => AIModel::getModels(),
+                'models'  => $this->formatModelList(AIModel::getModels()),
                 'message' => trans('admin::app.catalog.products.index.magic-ai-validate-success'),
             ]);
         } catch (\Exception $e) {
@@ -45,7 +45,7 @@ class MagicAIController extends Controller
 
         try {
             return new JsonResponse([
-                'models'  => AIModel::validate(),
+                'models'  => $this->formatModelList(AIModel::validate()),
                 'message' => trans('admin::app.catalog.products.index.magic-ai-validate-success'),
             ]);
         } catch (\Exception $e) {
@@ -74,17 +74,10 @@ class MagicAIController extends Controller
         $entityName = request()->input('entity_name', 'attribute');
 
         if ($entityName === 'category_field') {
-            $data = $this->categoryFieldRepository->getCategoryFieldListBySearch($query, ['code', 'name'], excludeTypes: ['image', 'file']);
+            $data = $this->categoryFieldRepository->getCategoryFieldListBySearch($query, ['code', 'name']);
         } else {
-            $data = $this->attributeRepository->getAttributeListBySearch($query, ['code', 'name'], excludeTypes: ['image', 'gallery', 'file', 'asset']);
+            $data = $this->attributeRepository->getAttributeListBySearch($query, ['code', 'name']);
         }
-
-        $data = array_map(function ($item) {
-            return [
-                'code' => $item->code,
-                'name' => $item->name ? $item->name : '['.$item->code.']',
-            ];
-        }, $data);
 
         return new JsonResponse($data);
     }
@@ -190,5 +183,19 @@ class MagicAIController extends Controller
         return new JsonResponse([
             'prompts' => $translatedPrompts,
         ]);
+    }
+
+    private function formatModelList(array $models): array
+    {
+        $formattedModels = [];
+
+        foreach ($models as $model) {
+            $formattedModels[] = [
+                'id'    => $model['id'],
+                'label' => "[{$model['id']}]",
+            ];
+        }
+
+        return $formattedModels;
     }
 }
