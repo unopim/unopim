@@ -329,13 +329,13 @@
 
                             <!-- Pagination -->
                             <div class="flex gap-1 items-left justify-right mt-2.5">
-                                <a @click="changePage(--currentPage)">
+                                <a @click="changePage(currentPage - 1)">
                                     <div class="inline-flex gap-x-1 items-center justify-between w-full max-w-max ltr:ml-2 rtl:mr-2 p-1.5 bg-white dark:bg-cherry-800 border rounded-md dark:border-cherry-800 text-gray-600 dark:text-gray-300 text-center cursor-pointer transition-all hover:border hover:bg-violet-50 dark:hover:bg-cherry-800 marker:shadow appearance-none focus:ring-2 focus:outline-none focus:ring-black">
                                         <span class="icon-chevron-left text-2xl"></span>
                                     </div>
                                 </a>
 
-                                <a @click="changePage(++currentPage)">
+                                <a @click="changePage(currentPage + 1)">
                                     <div
                                         class="inline-flex gap-x-1 items-center justify-between w-full max-w-max ltr:ml-2 rtl:mr-2 p-1.5 bg-white dark:bg-cherry-800 border rounded-md dark:border-cherry-800 text-gray-600 dark:text-gray-300 text-center cursor-pointer transition-all hover:border hover:bg-violet-50 dark:hover:bg-cherry-800 marker:shadow appearance-none focus:ring-2 focus:outline-none focus:ring-black">
                                         <span class="icon-chevron-right text-2xl"></span>
@@ -390,7 +390,7 @@
                                         rules="required"
                                         :label="trans('admin::app.catalog.families.edit.groups')"
                                         async="true"
-                                        entityName="attribute_group"
+                                        entity-name="attribute_group"
                                         track-by="id"
                                         label-by="label"
                                     />
