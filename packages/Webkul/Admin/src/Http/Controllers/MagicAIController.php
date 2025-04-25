@@ -24,7 +24,7 @@ class MagicAIController extends Controller
     {
         try {
             return new JsonResponse([
-                'models'  => AIModel::getModels(),
+                'models'  => $this->formatModelList(AIModel::getModels()),
                 'message' => trans('admin::app.catalog.products.index.magic-ai-validate-success'),
             ]);
         } catch (\Exception $e) {
@@ -45,7 +45,7 @@ class MagicAIController extends Controller
 
         try {
             return new JsonResponse([
-                'models'  => AIModel::validate(),
+                'models'  => $this->formatModelList(AIModel::validate()),
                 'message' => trans('admin::app.catalog.products.index.magic-ai-validate-success'),
             ]);
         } catch (\Exception $e) {
@@ -183,5 +183,19 @@ class MagicAIController extends Controller
         return new JsonResponse([
             'prompts' => $translatedPrompts,
         ]);
+    }
+
+    private function formatModelList(array $models): array
+    {
+        $formattedModels = [];
+
+        foreach ($models as $model) {
+            $formattedModels[] = [
+                'id'    => $model['id'],
+                'label' => "[{$model['id']}]",
+            ];
+        }
+
+        return $formattedModels;
     }
 }

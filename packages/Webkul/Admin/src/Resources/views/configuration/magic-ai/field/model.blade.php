@@ -57,7 +57,7 @@
         ],
         data: function() {
             return {
-                modelsOptions: null,
+                modelsOptions: [],
                 aiCredentials: {
                     api_key: "{{ core()->getConfigData('general.magic_ai.settings.api_key') }}",
                     api_domain: "{{ core()->getConfigData('general.magic_ai.settings.api_domain') }}",
