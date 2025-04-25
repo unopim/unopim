@@ -53,15 +53,22 @@ class OpenAI
      */
     public function images(array $options): array
     {
+        $extraParameters = [];
+
+        if (isset($options['quality']) && $this->model !== 'dall-e-2') {
+            $extraParameters['quality'] = $options['quality'];
+        }
+
+        $options = array_merge($options, $extraParameters);
+        
         $result = BaseOpenAI::images()->create([
             'model'           => $this->model,
             'prompt'          => $this->prompt,
             'n'               => intval($options['n'] ?? 1),
             'size'            => $options['size'],
-            'quality'         => $options['quality'] ?? 'standard',
             'response_format' => 'b64_json',
         ]);
-
+        
         $images = [];
 
         foreach ($result->data as $image) {
