@@ -40,14 +40,19 @@ class AttributeService
      */
     public function findByCodes(array $codes): ?Collection
     {
+        $alreadyExistingcodes = array_intersect($codes, array_keys($this->cachedAttributes));
+
         $attributes = $this->attributeRepository
             ->whereIn('code', $codes)
             ->orderByRaw("FIELD(code, '".implode("', '", $codes)."')")
-            ->get();
+            ->get()
+            ->keyBy('code');
 
         foreach ($attributes as $attribute) {
             $this->cachedAttributes[$attribute->code] = $attribute;
         }
+
+        $attributes += $this->cachedAttributes;
 
         return $attributes;
     }

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Webkul\Core\Facades\ElasticSearch;
+use Webkul\ElasticSearch\Indexing\Normalizer\ProductNormalizer;
 use Webkul\Product\Models\Product;
 
 class ProductIndexer extends Command
@@ -18,7 +19,7 @@ class ProductIndexer extends Command
 
     protected $description = 'Index all products into Elasticsearch';
 
-    public function __construct()
+    public function __construct(protected ProductNormalizer $productIndexingNormalizer)
     {
         parent::__construct();
     }
@@ -90,6 +91,8 @@ class ProductIndexer extends Command
                         $productDB = (array) $productDB;
 
                         $productDB['values'] = is_string($productDB['values']) ? json_decode($productDB['values'], true) : $productDB['values'];
+
+                        $productDB['values'] = $this->productIndexingNormalizer->normalize($productDB['values']);
 
                         $product->forceFill($productDB);
                         $product->syncOriginal();
@@ -288,111 +291,84 @@ class ProductIndexer extends Command
                 'type'                => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
                 'updated_at'          => ['type' => 'date'],
             ],
-            'dynamic_templates' => [
-                [
-                    'common_fields_object' => [
-                        'path_match'         => 'values.common.*',
-                        'match_mapping_type' => 'object',
-                        'mapping'            => [
-                            'type' => 'object',
-                        ],
-                    ],
-                ], [
-                    'common_fields' => [
-                        'path_match' => 'values.common.*',
-                        'mapping'    => [
-                            'type'       => 'keyword',
-                            'normalizer' => 'string_normalizer',
-                        ],
-                    ],
-                ], [
-                    'locale_specific_object' => [
-                        'path_match'         => 'values.locale_specific.*',
-                        'match_mapping_type' => 'object',
-                        'mapping'            => [
-                            'type' => 'object',
-                        ],
-                    ],
-                ], [
-                    'locale_specific' => [
-                        'path_match' => 'values.locale_specific.*.*',
-                        'mapping'    => [
-                            'type'       => 'keyword',
-                            'normalizer' => 'string_normalizer',
-                        ],
-                    ],
-                ], [
-                    'channel_specific_cost' => [
-                        'path_match' => 'values.channel_specific.*.*.*',
-                        'mapping'    => [
-                            'type'   => 'float',
-                            'fields' => [
-                                'keyword' => [
-                                    'type'       => 'float',
-                                ],
-                            ],
-                        ],
-                    ],
-                ], [
-                    'channel_specific_object' => [
-                        'path_match'         => 'values.channel_specific.*',
-                        'match_mapping_type' => 'object',
-                        'mapping'            => [
-                            'type' => 'object',
-                        ],
-                    ],
-                ], [
-                    'channel_specific' => [
-                        'path_match' => 'values.channel_specific.*.*',
-                        'mapping'    => [
-                            'type'       => 'keyword',
-                            'normalizer' => 'string_normalizer',
-                        ],
-                    ],
-                ], [
-                    'channel_locale_specific_price' => [
-                        'path_match' => 'values.channel_locale_specific.*.*.*.*',
-                        'mapping'    => [
-                            'type'   => 'float',
-                            'fields' => [
-                                'keyword' => [
-                                    'type'       => 'float',
-                                ],
-                            ],
-                        ],
-                    ],
-                ], [
-                    'channel_locale_specific_object' => [
-                        'path_match'         => 'values.channel_locale_specific.*.*',
-                        'match_mapping_type' => 'object',
-                        'mapping'            => [
-                            'type' => 'object',
-                        ],
-                    ],
-                ], [
-                    'channel_locale_specific_text' => [
-                        'path_match' => 'values.channel_locale_specific.*.*.*',
-                        'mapping'    => [
-                            'type'   => 'text',
-                            'fields' => [
-                                'keyword' => [
-                                    'type'       => 'keyword',
-                                    'normalizer' => 'string_normalizer',
-                                ],
-                            ],
-                        ],
-                    ],
-                ], [
-                    'other_dynamic_fields' => [
-                        'path_match'         => 'values.*',
-                        'match_mapping_type' => 'object',
-                        'mapping'            => [
-                            'type' => 'object',
-                        ],
-                    ],
+            'dynamic_templates' => $this->dynamicAttributeMappings(),
+        ];
+    }
+
+    protected function dynamicAttributeMappings()
+    {
+        $attributeTypes = [
+            'textarea' => 'text',
+            'price'    => 'float',
+        ];
+
+        $scopes = [
+            'common'                  => 'values.common',
+            'locale_specific'         => 'values.locale_specific.*',
+            'channel_specific'        => 'values.channel_specific.*',
+            'channel_locale_specific' => 'values.channel_locale_specific.*.*',
+        ];
+
+        $dynamicTemplates = [];
+
+        foreach ($scopes as $scope => $path) {
+            $dynamicTemplates[] = [
+                "object_fields_{$scope}" => [
+                    'path_match'         => $path.'.*',
+                    'match_mapping_type' => 'object',
+                    'mapping'            => ['type' => 'object'],
                 ],
+            ];
+        }
+
+        foreach ($attributeTypes as $attr => $esType) {
+            foreach ($scopes as $scope => $path) {
+                $matchPath = $path.".*-{$attr}";
+
+                $mapping = ['type' => $esType];
+
+                if ($attr === 'price') {
+                    $matchPath = $path.".*-{$attr}.*";
+                }
+
+                if ($esType === 'text') {
+                    $mapping['fields'] = [
+                        'keyword' => ['type' => 'keyword', 'normalizer' => 'string_normalizer'],
+                    ];
+                } elseif ($esType === 'keyword') {
+                    $mapping['normalizer'] = 'string_normalizer';
+                }
+
+                $dynamicTemplates[] = [
+                    "{$attr}_fields_{$scope}" => [
+                        'path_match' => $matchPath,
+                        'mapping'    => $mapping,
+                    ],
+                ];
+            }
+        }
+
+        //Map default as keyword for all values
+        foreach ($scopes as $scope => $path) {
+            $dynamicTemplates[] = [
+                "fallback_fields_{$scope}" => [
+                    'path_match'         => $path.'.*',
+                    'match_mapping_type' => 'string',
+                    'mapping'            => ['type' => 'keyword'],
+                ],
+            ];
+        }
+
+
+        $dynamicTemplates[] = [
+            'fallback_object' => [
+                'path_match'         => 'values.*',
+                'match_mapping_type' => 'object',
+                'mapping'            => ['type' => 'object'],
             ],
         ];
+
+        return $dynamicTemplates;
     }
 
     private function getUnopimProductSetting()

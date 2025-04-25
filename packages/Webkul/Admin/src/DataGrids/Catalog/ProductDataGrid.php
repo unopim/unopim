@@ -583,9 +583,9 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         if ($searchEngine == 'elasticsearch') {
             if ($attribute->type === 'price') {
-                return sprintf('values.%s.%s.%s', $attribute->getScope($locale, $channel), $attribute->code, $currencyCode);
+                return sprintf('values.%s.%s.%s', $attribute->getScope($locale, $channel), $attribute->code.'-'.$attribute->type, $currencyCode);
             } else {
-                return sprintf('values.%s.%s.keyword', $attribute->getScope($locale, $channel), $attribute->code);
+                return sprintf('values.%s.%s', $attribute->getScope($locale, $channel), $attribute->code.'-'.$attribute->type);
             }
         }
 
