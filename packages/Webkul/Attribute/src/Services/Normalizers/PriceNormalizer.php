@@ -29,6 +29,10 @@ class PriceNormalizer extends AbstractNormalizer implements AttributeNormalizerI
     {
         $format = [];
 
+        if (! is_array($data)) {
+            return $data;
+        }
+
         foreach ($data as $key => $value) {
             $format[] = core()->currencySymbol($key).' '.$value;
         }

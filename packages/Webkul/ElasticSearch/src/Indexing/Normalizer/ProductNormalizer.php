@@ -36,16 +36,16 @@ class ProductNormalizer
         if (! empty($attributeValues[AbstractType::COMMON_VALUES_KEY])) {
             $attributeValues[AbstractType::COMMON_VALUES_KEY] = $this->normalizeAttributeKey($attributeValues[AbstractType::COMMON_VALUES_KEY]);
         }
-        // dd($attributeValues);
+
         return $attributeValues;
     }
 
     public function normalizeAttributeKey(array $attributeValues): array
     {
-        $attribtues = $this->attributeService->findByCodes(array_keys($attributeValues));
+        $attributes = $this->attributeService->findByCodes(array_keys($attributeValues));
 
         foreach ($attributeValues as $key => $value) {
-            $attribute = $attribtues[$key] ?? null;
+            $attribute = $attributes[$key] ?? null;
 
             if (! $attribute) {
                 continue;

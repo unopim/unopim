@@ -70,6 +70,7 @@ class ProductIndexer extends Command
             $progressBar = new ProgressBar($this->output, $totalProducts);
 
             $dbProductIds = [];
+            $failedProductIds = [];
 
             for ($offset = 0; $offset < $totalProducts; $offset += self::BATCH_SIZE) {
                 $products = DB::table('products')->offset($offset)->limit(self::BATCH_SIZE)->get();
@@ -122,9 +123,26 @@ class ProductIndexer extends Command
                     }
 
                     if ($productsToUpdate) {
-                        ElasticSearch::bulk($productsToUpdate);
+                        $response = ElasticSearch::bulk($productsToUpdate);
+
+                        if (isset($response['errors']) && $response['errors']) {
+                            foreach ($response['items'] as $index => $result) {
+                                if (isset($result['index']['error'])) {
+                                    $failedProductIds[] = $result['index']['_id'];
+
+                                    Log::channel('elasticsearch')->error('Error while indexing product id: '.$result['index']['_id'].' in '.$productIndex.' index: ', [
+                                        'error' => $result['index']['error'],
+                                    ]);
+                                }
+                            }
+                        }
                     }
                 }
+            }
+
+            if (! empty($failedProductIds)) {
+                $this->newLine();
+                $this->error('Please check elasticsearch.log, failed to index the following product IDs: '.implode(', ', $failedProductIds));
             }
 
             $progressBar->finish();
@@ -287,9 +305,9 @@ class ProductIndexer extends Command
                     'type'       => 'keyword',
                     'normalizer' => 'sku_normalizer',
                 ],
-                'status'              => ['type' => 'long'],
-                'type'                => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
-                'updated_at'          => ['type' => 'date'],
+                'status'     => ['type' => 'long'],
+                'type'       => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
+                'updated_at' => ['type' => 'date'],
             ],
             'dynamic_templates' => $this->dynamicAttributeMappings(),
         ];
@@ -298,8 +316,11 @@ class ProductIndexer extends Command
     protected function dynamicAttributeMappings()
     {
         $attributeTypes = [
+            'text'     => 'text',
             'textarea' => 'text',
             'price'    => 'float',
+            'datetime' => 'date',
+            'date'     => 'date',
         ];
 
         $scopes = [
@@ -321,26 +342,36 @@ class ProductIndexer extends Command
             ];
         }
 
-        foreach ($attributeTypes as $attr => $esType) {
+        foreach ($attributeTypes as $attributeType => $esType) {
             foreach ($scopes as $scope => $path) {
-                $matchPath = $path.".*-{$attr}";
+                $matchPath = $path.".*-{$attributeType}";
 
                 $mapping = ['type' => $esType];
 
-                if ($attr === 'price') {
-                    $matchPath = $path.".*-{$attr}.*";
+                if ($attributeType === 'price') {
+                    $matchPath = $path.".*-{$attributeType}.*";
                 }
 
                 if ($esType === 'text') {
                     $mapping['fields'] = [
                         'keyword' => ['type' => 'keyword', 'normalizer' => 'string_normalizer'],
                     ];
-                } elseif ($esType === 'keyword') {
+                }
+
+                if ($esType === 'keyword') {
                     $mapping['normalizer'] = 'string_normalizer';
                 }
 
+                if ($attributeType === 'date') {
+                    $mapping['format'] = 'yyyy-MM-dd';
+                }
+
+                if ($attributeType === 'datetime') {
+                    $mapping['format'] = 'yyyy-MM-dd HH:mm:ss';
+                }
+
                 $dynamicTemplates[] = [
-                    "{$attr}_fields_{$scope}" => [
+                    "{$attributeType}_fields_{$scope}" => [
                         'path_match' => $matchPath,
                         'mapping'    => $mapping,
                     ],
@@ -348,7 +379,7 @@ class ProductIndexer extends Command
             }
         }
 
-        //Map default as keyword for all values
+        // Map default as keyword for all values
         foreach ($scopes as $scope => $path) {
             $dynamicTemplates[] = [
                 "fallback_fields_{$scope}" => [
@@ -358,7 +389,6 @@ class ProductIndexer extends Command
                 ],
             ];
         }
-
 
         $dynamicTemplates[] = [
             'fallback_object' => [
@@ -397,8 +427,8 @@ class ProductIndexer extends Command
                         'filter'      => ['lowercase'],
                     ],
                     'url_normalizer' => [
-                        'type'  => 'custom',
-                        'filter'=> ['lowercase', 'asciifolding'],
+                        'type'   => 'custom',
+                        'filter' => ['lowercase', 'asciifolding'],
                     ],
                 ],
             ],

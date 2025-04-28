@@ -2,7 +2,7 @@
 
 namespace Webkul\Attribute\Services;
 
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Repositories\AttributeRepository;
 
@@ -40,19 +40,23 @@ class AttributeService
      */
     public function findByCodes(array $codes): ?Collection
     {
-        $alreadyExistingcodes = array_intersect($codes, array_keys($this->cachedAttributes));
+        $alreadyExistingCodes = array_intersect($codes, array_keys($this->cachedAttributes));
+        $codesToFetch = array_diff($codes, $alreadyExistingCodes);
 
-        $attributes = $this->attributeRepository
-            ->whereIn('code', $codes)
-            ->orderByRaw("FIELD(code, '".implode("', '", $codes)."')")
-            ->get()
-            ->keyBy('code');
+        $attributes = collect();
+
+        if (! empty($codesToFetch)) {
+            $attributes = $this->attributeRepository
+                ->whereIn('code', $codesToFetch)
+                ->orderByRaw("FIELD(code, '".implode("', '", $codesToFetch)."')")
+                ->get();
+        }
 
         foreach ($attributes as $attribute) {
             $this->cachedAttributes[$attribute->code] = $attribute;
         }
 
-        $attributes += $this->cachedAttributes;
+        $attributes = $attributes->merge(array_intersect_key($this->cachedAttributes, array_flip($alreadyExistingCodes)))->keyBy('code');
 
         return $attributes;
     }
