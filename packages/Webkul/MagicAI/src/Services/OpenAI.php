@@ -60,7 +60,7 @@ class OpenAI
         }
 
         $options = array_merge($options, $extraParameters);
-        
+
         $result = BaseOpenAI::images()->create([
             'model'           => $this->model,
             'prompt'          => $this->prompt,
@@ -68,7 +68,7 @@ class OpenAI
             'size'            => $options['size'],
             'response_format' => 'b64_json',
         ]);
-        
+
         $images = [];
 
         foreach ($result->data as $image) {
