@@ -2,6 +2,8 @@
 
 namespace Webkul\Product\Filter\ElasticSearch\Property;
 
+use Carbon\Carbon;
+use Carbon\Exceptions\InvalidFormatException;
 use Webkul\ElasticSearch\Enums\FilterOperators;
 use Webkul\Product\Filter\AbstractPropertyFilter;
 
@@ -71,5 +73,27 @@ class DateTimeFilter extends AbstractPropertyFilter
         }
 
         return $this;
+    }
+
+    /**
+     * Format date time value according to elasticsearch mapping date format
+     */
+    protected function getFormattedDateTime(string $field, string $value): string
+    {
+        try {
+            $utcTimeZone = 'UTC';
+
+            $dateTime = Carbon::parse($value, $utcTimeZone);
+        } catch (InvalidFormatException $e) {
+            throw new \LogicException(
+                sprintf(
+                    'Invalid date format for field "%s", expected "Y-m-d H:i:s", but "%s" given',
+                    $field,
+                    $value
+                )
+            );
+        }
+
+        return $dateTime->setTimezone($utcTimeZone)->toIso8601String();
     }
 }

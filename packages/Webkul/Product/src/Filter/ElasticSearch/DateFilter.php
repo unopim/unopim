@@ -10,6 +10,8 @@ use Webkul\ElasticSearch\Enums\FilterOperators;
  */
 class DateFilter extends AbstractElasticSearchAttributeFilter
 {
+    protected $dateFormat = 'Y-m-d';
+
     /**
      * @param  array  $supportedProperties
      */

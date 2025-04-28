@@ -9,6 +9,8 @@ use Webkul\ElasticSearch\Facades\ElasticSearchQuery;
 
 abstract class AbstractFilter implements FilterContract
 {
+    protected $dateFormat = 'Y-m-d H:i:s';
+
     /** @var ElasticSearchQuery */
     protected $queryBuilder = null;
 
@@ -61,6 +63,6 @@ abstract class AbstractFilter implements FilterContract
             );
         }
 
-        return $dateTime->setTimezone($utcTimeZone)->toIso8601String();
+        return $dateTime->setTimezone($utcTimeZone)->format($this->dateFormat);
     }
 }

@@ -57,7 +57,7 @@ class DateTimeFilter extends AbstractElasticSearchAttributeFilter
                 $values = array_values($value);
                 $clause = [
                     'range' => [
-                        "$attributePath.keyword" => [
+                        $attributePath => [
                             'gte' => $this->getFormattedDateTime($attributeCode, $values[0]),
                             'lte' => $this->getFormattedDateTime($attributeCode, $values[1]),
                         ],

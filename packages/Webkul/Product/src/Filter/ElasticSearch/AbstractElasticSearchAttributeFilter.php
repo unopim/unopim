@@ -8,6 +8,6 @@ abstract class AbstractElasticSearchAttributeFilter extends AbstractAttributeFil
 {
     protected function getScopedAttributePath($attribute, ?string $locale = null, ?string $channel = null)
     {
-        return sprintf('values.%s.%s', $attribute->getScope($locale, $channel), $attribute->code);
+        return sprintf('values.%s.%s', $attribute->getScope($locale, $channel), $attribute->code.'-'.$attribute->type);
     }
 }
