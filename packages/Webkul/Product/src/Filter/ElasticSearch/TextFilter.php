@@ -55,7 +55,7 @@ class TextFilter extends AbstractElasticSearchAttributeFilter
                 $clause = [
                     'query_string' => [
                         'default_field'    => $attributePath,
-                        'query'            => '*'.implode('* OR *', $escapedQuery).'*',
+                        'query'            => '"*'.implode('*" OR "*', $escapedQuery).'*"',
                     ],
                 ];
 
