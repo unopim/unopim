@@ -59,15 +59,13 @@ class OpenAI
             $extraParameters['quality'] = $options['quality'];
         }
 
-        $options = array_merge($options, $extraParameters);
-
-        $result = BaseOpenAI::images()->create([
+        $result = BaseOpenAI::images()->create(array_merge([
             'model'           => $this->model,
             'prompt'          => $this->prompt,
             'n'               => intval($options['n'] ?? 1),
             'size'            => $options['size'],
             'response_format' => 'b64_json',
-        ]);
+        ], $extraParameters));
 
         $images = [];
 
