@@ -12,6 +12,8 @@ class AttributeService
 
     private array $cachedAttributeRules = [];
 
+    private array $nonExistingCodes = [];
+
     /**
      * Create service object
      */
@@ -38,26 +40,31 @@ class AttributeService
     /**
      * Retrieves a collection of Attribute objects based on the provided attribute codes.
      */
-    public function findByCodes(array $codes): ?Collection
+    public function findByCodes(array $codes): ?array
     {
-        $alreadyExistingCodes = array_intersect($codes, array_keys($this->cachedAttributes));
-        $codesToFetch = array_diff($codes, $alreadyExistingCodes);
+        $codesToFetch = array_diff($codes, array_keys($this->cachedAttributes), array_keys($this->nonExistingCodes));
 
-        $attributes = collect();
+        $attributes = [];
 
         if (! empty($codesToFetch)) {
             $attributes = $this->attributeRepository
                 ->whereIn('code', $codesToFetch)
-                ->orderByRaw("FIELD(code, '".implode("', '", $codesToFetch)."')")
                 ->get();
         }
 
+        $codesToFetch = array_flip($codesToFetch);
+
         foreach ($attributes as $attribute) {
-            $this->cachedAttributes[$attribute->code] = $attribute;
+            $attrCode = $attribute['code'];
+            $this->cachedAttributes[$attrCode] = $attribute;
+
+            unset($codesToFetch[$attrCode]);
         }
 
-        $attributes = $attributes->merge(array_intersect_key($this->cachedAttributes, array_flip($alreadyExistingCodes)))->keyBy('code');
+        if (! empty($codesToFetch)) {
+            $this->nonExistingCodes = array_merge($this->nonExistingCodes, $codesToFetch);
+        }
 
-        return $attributes;
+        return array_intersect_key($this->cachedAttributes, array_flip($codes));
     }
 }
