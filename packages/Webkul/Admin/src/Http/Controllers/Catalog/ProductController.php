@@ -47,9 +47,7 @@ class ProductController extends Controller
             return app(ProductDataGrid::class)->toJson();
         }
 
-        $families = $this->attributeFamilyRepository->all();
-
-        return view('admin::catalog.products.index', compact('families'));
+        return view('admin::catalog.products.index');
     }
 
     /**
