@@ -42,6 +42,24 @@
                 />
                 <x-admin::form.control-group.error ::control-name="name" />
             </x-admin::form.control-group>
+
+            <x-admin::form.control-group class="mb-4" v-else>
+                <x-admin::form.control-group.label>
+                    @{{ label }}
+                </x-admin::form.control-group.label>
+                <x-admin::form.control-group.control
+                    type="multiselect"
+                    ref="aiModelRef"
+                    ::id="name"
+                    ::name="name"
+                />
+                <p
+                    v-if="errorMessage"
+                    class="mt-1 text-xs italic text-red-600"
+                    v-text="errorMessage"
+                >
+                </p>
+            </x-admin::form.control-group>
         </div>
     </div>
     
@@ -58,6 +76,7 @@
         data: function() {
             return {
                 modelsOptions: null,
+                errorMessage: null,
                 aiCredentials: {
                     api_key: "{{ core()->getConfigData('general.magic_ai.settings.api_key') }}",
                     api_domain: "{{ core()->getConfigData('general.magic_ai.settings.api_domain') }}",
@@ -134,8 +153,9 @@
                     const response = await axios.get("{{ route('admin.magic_ai.model') }}");
                     this.modelsOptions = JSON.stringify(response.data.models); // Populate the models array with the response data
                 } catch (error) {
+                    this.modelsOptions = null;
+                    this.errorMessage = error.response.data.message;
                     console.error("Failed to fetch AI models:", error);
-
                 }
             },
         }
