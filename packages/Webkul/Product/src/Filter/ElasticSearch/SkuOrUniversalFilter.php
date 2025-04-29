@@ -41,6 +41,12 @@ class SkuOrUniversalFilter extends AbstractElasticSearchAttributeFilter
             $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
             $escapedValue = QueryString::escapeValue(current((array) $value));
 
+            $attributeType = $attribute->type;
+
+            if ($attributeType === 'text' || $attributeType === 'textarea') {
+                $attributePath .= '.keyword';
+            }
+
             $clauses[] = [
                 'wildcard' => [
                     $attributePath => '*'.$escapedValue.'*',
@@ -48,10 +54,11 @@ class SkuOrUniversalFilter extends AbstractElasticSearchAttributeFilter
             ];
         }
 
-        $this->queryBuilder::where(['bool' => [
-            'should'               => $clauses,
-            'minimum_should_match' => 1,
-        ],
+        $this->queryBuilder::where([
+            'bool' => [
+                'should'               => $clauses,
+                'minimum_should_match' => 1,
+            ],
         ]);
 
         return $this;
