@@ -49,7 +49,7 @@ class PriceFilter extends AbstractDatabaseAttributeFilter
 
             case FilterOperators::EQUAL:
                 $this->queryBuilder->whereRaw(
-                    sprintf("JSON_UNQUOTE(JSON_EXTRACT(%s, '%s')) REGEXP ?", $this->getSearchTablePath($options), sprintf('%s.%s', $attributePath, $value[0])),
+                    sprintf("CAST(JSON_UNQUOTE(JSON_EXTRACT(%s, '%s')) AS DECIMAL(8,2)) = ?", $this->getSearchTablePath($options), sprintf('%s.%s', $attributePath, $value[0])),
                     $value[1]
                 );
 
