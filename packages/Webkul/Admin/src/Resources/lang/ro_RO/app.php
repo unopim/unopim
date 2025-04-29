@@ -267,6 +267,16 @@ return [
                         ],
                     ],
                 ],
+
+                'product-info' => [
+                    'title'        => 'Informații Produs',
+                    'status'       => 'Stare',
+                    'family'       => 'Familie',
+                    'parent'       => 'Produs Părinte',
+                    'updated-at'   => 'Ultima Actualizare',
+                    'created-at'   => 'Data Creării',
+                    'product-type' => 'Tip Produs',
+                ],
             ],
 
             'create-success'          => 'Produs creat cu succes',
