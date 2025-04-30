@@ -53,7 +53,7 @@ class AjaxOptionsController extends Controller
                 'id'    => $option->id,
                 'code'  => $option->code,
                 'label' => ! empty($translatedOptionLabel) ? $translatedOptionLabel : "[{$option->code}]",
-                ...$option->makeHidden(['translations'])->toArray(),
+                ...$option->makeHidden(['translations', 'label'])->toArray(),
             ];
         }
 

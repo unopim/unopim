@@ -51,7 +51,8 @@ class OptionNormalizer extends AbstractNormalizer implements AttributeNormalizer
         $formattedOptions = [];
 
         foreach ($options as $option) {
-            $formattedOptions[] = $option->translations()?->where('locale', $locale)?->first()?->label ?? "[{$option->code}]";
+            $translatedLabel = $option->translations()?->where('locale', $locale)?->first()?->label;
+            $formattedOptions[] = empty($translatedLabel) ? "[{$option->code}]" : $translatedLabel;
         }
 
         return $formattedOptions;
