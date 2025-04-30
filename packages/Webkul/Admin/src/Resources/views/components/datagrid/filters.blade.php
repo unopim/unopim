@@ -517,7 +517,13 @@
 @pushOnce('scripts')
     <script type="text/x-template" id="v-datagrid-searchable-dropdown-template">
         <template v-if="isLoading">
-    
+            <div class="shimmer h-10 rounded-md mb-4 mt-1.5"></div>
+
+            <div class="flex gap-2 mb-4">
+                <div class="shimmer w-14 h-6"></div>
+                <div class="shimmer w-14 h-6"></div>
+                <div class="shimmer w-14 h-6"></div>
+            </div>
         </template>
         <template v-else>
             <div class="mb-2 mt-1.5">
@@ -560,6 +566,7 @@
 
             data() {
                 return {
+                    isLoading: false,
                     isMinimumCharacters: false,
 
                     selectedOptions: [],
@@ -596,6 +603,10 @@
                 },
 
                 initializeValue() {
+                    if (! this.selectedValues.length) {
+                        return;
+                    }
+
                     this.isLoading = true;
 
                     this.params.identifiers = {

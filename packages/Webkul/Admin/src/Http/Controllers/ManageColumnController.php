@@ -57,7 +57,7 @@ class ManageColumnController extends SelectOptionsController
 
         $options = $this->getOptionsByParams($entityName, $page, $query, $queryParams, $limit);
         $currentLocaleCode = core()->getRequestedLocaleCode();
-        $formattedOptions = $page == 1 ? $this->getDefaultColumns($source) : [];
+        $formattedOptions = $page == 1 && ! $query ? $this->getDefaultColumns($source) : [];
 
         foreach ($options as $option) {
             $formattedOptions[] = $this->formatOption($option, $currentLocaleCode);

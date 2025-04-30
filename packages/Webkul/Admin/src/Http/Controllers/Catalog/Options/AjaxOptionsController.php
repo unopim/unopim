@@ -89,7 +89,7 @@ class AjaxOptionsController extends Controller
 
         $searchIdentifiers = isset($queryParams['identifiers']['columnName']) ? $queryParams['identifiers'] : [];
 
-        if (! empty($searchIdentifiers)) {
+        if (! empty($searchIdentifiers) && isset($searchIdentifiers['columnName']) && isset($searchIdentifiers['values'])) {
             $repository = $repository->whereIn(
                 $searchIdentifiers['columnName'],
                 is_array($searchIdentifiers['values']) ? $searchIdentifiers['values'] : [$searchIdentifiers['values']]

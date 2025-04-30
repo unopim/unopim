@@ -34,8 +34,7 @@ class AbstractOptionsController extends Controller
             'currency'        => $this->currencyRepository,
             'channel'         => $this->channelRepository,
             'category_fields' => $this->categoryFieldRepository,
-
-            default              => throw new \Exception('Not implemented for '.$entityName)
+            default           => throw new \Exception('Not implemented for '.$entityName)
         };
 
     }
