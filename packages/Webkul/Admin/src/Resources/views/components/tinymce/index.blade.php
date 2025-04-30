@@ -52,7 +52,7 @@
                                     <x-admin::form.control-group.error control-name="model"></x-admin::form.control-group.error>
                                 </x-admin::form.control-group>
                             </template>
-                            
+
 
                             <!-- default prompt -->
                             <x-admin::form.control-group>
@@ -89,9 +89,9 @@
                                         ref="promptInput"
                                         :label="trans('admin::app.components.tinymce.ai-generation.prompt')"
                                     />
-                                    
+
                                     <!-- Icon inside textarea -->
-                                    <div 
+                                    <div
                                         class="absolute bottom-2.5 left-1 text-gray-400 cursor-pointer text-2xl"
                                         @click="openSuggestions"
                                     >
@@ -103,7 +103,7 @@
                             </x-admin::form.control-group>
                         </div>
 
-                       
+
 
                         <!-- Generated Content -->
                         <x-admin::form.control-group class="mt-5" v-show="ai.content">
@@ -164,7 +164,7 @@
 
                                     <template v-else>
                                         <span class="icon-magic text-2xl text-violet-700"></span>
-                                        
+
                                         @lang('admin::app.components.media.images.ai-generation.regenerate')
                                     </template>
                                 </button>
@@ -188,7 +188,7 @@
     <script type="module">
         app.component('v-tinymce', {
             template: '#v-tinymce-template',
-                
+
             props: ['selector', 'field', 'prompt'],
 
             data() {
@@ -239,7 +239,7 @@
                         initTinyMCE: function(extraConfiguration) {
                             let self2 = this;
 
-                            let config = {  
+                            let config = {
                                 relative_urls: false,
                                 menubar: false,
                                 remove_script_host: false,
@@ -398,10 +398,10 @@
                                 selectTemplate: (item) => `@${item.original.code}`,
                                 menuItemTemplate: (item) => `<div class="p-1.5 rounded-md text-base cursor-pointer transition-all max-sm:place-self-center">${item.original.name || '[' + item.original.code + ']'}</div>`,
                             });
-                            
+
                             tribute.attach(this.$refs.promptInput);
 
-                            
+
                         }
                     });
                 },

@@ -3,6 +3,8 @@
 namespace Webkul\Attribute\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Webkul\Attribute\Repositories\AttributeRepository;
+use Webkul\Attribute\Services\AttributeService;
 
 class AttributeServiceProvider extends ServiceProvider
 {
@@ -14,6 +16,12 @@ class AttributeServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
 
         $this->registerConfig();
+
+        $this->app->singleton(AttributeService::class, function ($app) {
+            return new AttributeService(
+                $app->make(AttributeRepository::class)
+            );
+        });
     }
 
     /**

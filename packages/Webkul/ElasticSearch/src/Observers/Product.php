@@ -5,6 +5,7 @@ namespace Webkul\ElasticSearch\Observers;
 use Elastic\Elasticsearch\Exception\ElasticsearchException;
 use Illuminate\Support\Facades\Log;
 use Webkul\Core\Facades\ElasticSearch;
+use Webkul\ElasticSearch\Indexing\Normalizer\ProductNormalizer;
 use Webkul\Product\Models\Product as Products;
 
 class Product
@@ -16,7 +17,7 @@ class Product
      */
     private $indexPrefix;
 
-    public function __construct()
+    public function __construct(protected ProductNormalizer $productIndexingNormalizer)
     {
         $this->indexPrefix = config('elasticsearch.prefix');
     }
@@ -28,6 +29,8 @@ class Product
 
             $productArray['status'] = ! isset($productArray['status']) ? 1 : $productArray['status'];
 
+            $productArray['values'] = $this->productIndexingNormalizer->normalize($productArray['values']);
+
             try {
                 ElasticSearch::index([
                     'index' => strtolower($this->indexPrefix.'_products'),
@@ -35,7 +38,7 @@ class Product
                     'body'  => $productArray,
                 ]);
             } catch (ElasticsearchException $e) {
-                Log::channel('elasticsearch')->error('Exception while creating id: '.$product->id.' in '.$this->indexPrefix.'_categories index: ', [
+                Log::channel('elasticsearch')->error('Exception while creating id: '.$product->id.' in '.$this->indexPrefix.'_products index: ', [
                     'error' => $e->getMessage(),
                 ]);
             }
@@ -46,13 +49,17 @@ class Product
     {
         if (config('elasticsearch.enabled')) {
             try {
+                $productArray = $product->toArray();
+
+                $productArray['values'] = $this->productIndexingNormalizer->normalize($productArray['values']);
+
                 ElasticSearch::index([
                     'index' => strtolower($this->indexPrefix.'_products'),
                     'id'    => $product->id,
-                    'body'  => $product->toArray(),
+                    'body'  => $productArray,
                 ]);
             } catch (ElasticsearchException $e) {
-                Log::channel('elasticsearch')->error('Exception while updating id: '.$product->id.' in '.$this->indexPrefix.'_categories index: ', [
+                Log::channel('elasticsearch')->error('Exception while updating id: '.$product->id.' in '.$this->indexPrefix.'_products index: ', [
                     'error' => $e->getMessage(),
                 ]);
             }
@@ -68,7 +75,7 @@ class Product
                     'id'    => $product->id,
                 ]);
             } catch (ElasticsearchException $e) {
-                Log::channel('elasticsearch')->error('Exception while deleting id: '.$product->id.' from '.$this->indexPrefix.'_categories index: ', [
+                Log::channel('elasticsearch')->error('Exception while deleting id: '.$product->id.' from '.$this->indexPrefix.'_products index: ', [
                     'error' => $e->getMessage(),
                 ]);
             }

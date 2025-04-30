@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Webkul\Core\Facades\ElasticSearch;
+use Webkul\ElasticSearch\Indexing\Normalizer\ProductNormalizer;
 use Webkul\Product\Models\Product;
 
 class ProductIndexer extends Command
@@ -18,7 +19,7 @@ class ProductIndexer extends Command
 
     protected $description = 'Index all products into Elasticsearch';
 
-    public function __construct()
+    public function __construct(protected ProductNormalizer $productIndexingNormalizer)
     {
         parent::__construct();
     }
@@ -69,6 +70,7 @@ class ProductIndexer extends Command
             $progressBar = new ProgressBar($this->output, $totalProducts);
 
             $dbProductIds = [];
+            $failedProductIds = [];
 
             for ($offset = 0; $offset < $totalProducts; $offset += self::BATCH_SIZE) {
                 $products = DB::table('products')->offset($offset)->limit(self::BATCH_SIZE)->get();
@@ -105,6 +107,8 @@ class ProductIndexer extends Command
                             )
                             || ! isset($elasticProduct[$productId])
                         ) {
+                            $product->values = $this->productIndexingNormalizer->normalize($product->values);
+
                             $productsToUpdate['body'][] = [
                                 'index' => [
                                     '_index' => $productIndex,
@@ -119,9 +123,26 @@ class ProductIndexer extends Command
                     }
 
                     if ($productsToUpdate) {
-                        ElasticSearch::bulk($productsToUpdate);
+                        $response = ElasticSearch::bulk($productsToUpdate);
+
+                        if (isset($response['errors']) && $response['errors']) {
+                            foreach ($response['items'] as $index => $result) {
+                                if (isset($result['index']['error'])) {
+                                    $failedProductIds[] = $result['index']['_id'];
+
+                                    Log::channel('elasticsearch')->error('Error while indexing product id: '.$result['index']['_id'].' in '.$productIndex.' index: ', [
+                                        'error' => $result['index']['error'],
+                                    ]);
+                                }
+                            }
+                        }
                     }
                 }
+            }
+
+            if (! empty($failedProductIds)) {
+                $this->newLine();
+                $this->error('Please check elasticsearch.log, failed to index the following product IDs: '.implode(', ', $failedProductIds));
             }
 
             $progressBar->finish();
@@ -277,98 +298,107 @@ class ProductIndexer extends Command
                         ],
                     ],
                 ],
-                'attribute_family_id' => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
+                'attribute_family_id' => ['type' => 'long'],
                 'created_at'          => ['type' => 'date'],
                 'id'                  => ['type' => 'long'],
                 'sku'                 => [
                     'type'       => 'keyword',
                     'normalizer' => 'sku_normalizer',
                 ],
-                'status'              => ['type' => 'long'],
-                'type'                => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
-                'updated_at'          => ['type' => 'date'],
+                'status'     => ['type' => 'long'],
+                'type'       => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
+                'updated_at' => ['type' => 'date'],
             ],
-            'dynamic_templates' => [
-                [
-                    'common_fields_object' => [
-                        'path_match'         => 'values.common.*',
-                        'match_mapping_type' => 'object',
-                        'mapping'            => [
-                            'type' => 'object',
-                        ],
-                    ],
-                ], [
-                    'common_fields' => [
-                        'path_match' => 'values.common.*',
-                        'mapping'    => [
-                            'type'       => 'keyword',
-                            'normalizer' => 'string_normalizer',
-                        ],
-                    ],
-                ], [
-                    'locale_specific_object' => [
-                        'path_match'         => 'values.locale_specific.*',
-                        'match_mapping_type' => 'object',
-                        'mapping'            => [
-                            'type' => 'object',
-                        ],
-                    ],
-                ], [
-                    'locale_specific' => [
-                        'path_match' => 'values.locale_specific.*.*',
-                        'mapping'    => [
-                            'type'       => 'keyword',
-                            'normalizer' => 'string_normalizer',
-                        ],
-                    ],
-                ], [
-                    'channel_specific_object' => [
-                        'path_match'         => 'values.channel_specific.*',
-                        'match_mapping_type' => 'object',
-                        'mapping'            => [
-                            'type' => 'object',
-                        ],
-                    ],
-                ], [
-                    'channel_specific' => [
-                        'path_match' => 'values.channel_specific.*.*',
-                        'mapping'    => [
-                            'type'       => 'keyword',
-                            'normalizer' => 'string_normalizer',
-                        ],
-                    ],
-                ], [
-                    'channel_locale_specific_object' => [
-                        'path_match'         => 'values.channel_locale_specific.*.*',
-                        'match_mapping_type' => 'object',
-                        'mapping'            => [
-                            'type' => 'object',
-                        ],
-                    ],
-                ], [
-                    'channel_locale_specific_text' => [
-                        'path_match' => 'values.channel_locale_specific.*.*.*',
-                        'mapping'    => [
-                            'type'   => 'text',
-                            'fields' => [
-                                'keyword' => [
-                                    'type'       => 'keyword',
-                                    'normalizer' => 'string_normalizer',
-                                ],
-                            ],
-                        ],
-                    ],
-                ], [
-                    'other_dynamic_fields' => [
-                        'path_match'         => 'values.*',
-                        'match_mapping_type' => 'object',
-                        'mapping'            => [
-                            'type' => 'object',
-                        ],
-                    ],
+            'dynamic_templates' => $this->dynamicAttributeMappings(),
+        ];
+    }
+
+    protected function dynamicAttributeMappings()
+    {
+        $attributeTypes = [
+            'text'     => 'text',
+            'textarea' => 'text',
+            'price'    => 'float',
+            'datetime' => 'date',
+            'date'     => 'date',
+        ];
+
+        $scopes = [
+            'common'                  => 'values.common',
+            'locale_specific'         => 'values.locale_specific.*',
+            'channel_specific'        => 'values.channel_specific.*',
+            'channel_locale_specific' => 'values.channel_locale_specific.*.*',
+        ];
+
+        $dynamicTemplates = [];
+
+        foreach ($scopes as $scope => $path) {
+            $dynamicTemplates[] = [
+                "object_fields_{$scope}" => [
+                    'path_match'         => $path.'.*',
+                    'match_mapping_type' => 'object',
+                    'mapping'            => ['type' => 'object'],
                 ],
+            ];
+        }
+
+        foreach ($attributeTypes as $attributeType => $esType) {
+            foreach ($scopes as $scope => $path) {
+                $matchPath = $path.".*-{$attributeType}";
+
+                $mapping = ['type' => $esType];
+
+                if ($attributeType === 'price') {
+                    $matchPath = $path.".*-{$attributeType}.*";
+                }
+
+                if ($esType === 'text') {
+                    $mapping['fields'] = [
+                        'keyword' => ['type' => 'keyword', 'normalizer' => 'string_normalizer'],
+                    ];
+                }
+
+                if ($esType === 'keyword') {
+                    $mapping['normalizer'] = 'string_normalizer';
+                }
+
+                if ($attributeType === 'date') {
+                    $mapping['format'] = 'yyyy-MM-dd';
+                }
+
+                if ($attributeType === 'datetime') {
+                    $mapping['format'] = 'yyyy-MM-dd HH:mm:ss';
+                }
+
+                $dynamicTemplates[] = [
+                    "{$attributeType}_fields_{$scope}" => [
+                        'path_match' => $matchPath,
+                        'mapping'    => $mapping,
+                    ],
+                ];
+            }
+        }
+
+        // Map default as keyword for all values
+        foreach ($scopes as $scope => $path) {
+            $dynamicTemplates[] = [
+                "fallback_fields_{$scope}" => [
+                    'path_match'         => $path.'.*',
+                    'match_mapping_type' => 'string',
+                    'mapping'            => ['type' => 'keyword'],
+                ],
+            ];
+        }
+
+        $dynamicTemplates[] = [
+            'fallback_object' => [
+                'path_match'         => 'values.*',
+                'match_mapping_type' => 'object',
+                'mapping'            => ['type' => 'object'],
             ],
         ];
+
+        return $dynamicTemplates;
     }
 
     private function getUnopimProductSetting()
@@ -395,6 +425,10 @@ class ProductIndexer extends Command
                     'string_normalizer' => [
                         'char_filter' => ['newline_remover'],
                         'filter'      => ['lowercase'],
+                    ],
+                    'url_normalizer' => [
+                        'type'   => 'custom',
+                        'filter' => ['lowercase', 'asciifolding'],
                     ],
                 ],
             ],

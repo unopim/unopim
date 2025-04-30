@@ -372,6 +372,7 @@ return [
                 'yes'                   => 'Sí',
                 'same-code-error'       => 'El código de opción debe ser único.',
                 'usable-in-grid'        => 'Usable en la red',
+                'is-filterable'         => 'Es filtrable',
 
                 'option' => [
                     'color'    => 'Muestra de color',
@@ -437,6 +438,7 @@ return [
                 'yes'                   => 'Sí',
                 'same-code-error'       => 'El código de opción debe ser único.',
                 'usable-in-grid'        => 'Usable en la red',
+                'is-filterable'         => 'Es filtrable',
 
                 'option' => [
                     'color'    => 'Muestra de color',
@@ -1688,6 +1690,10 @@ return [
                 'search' => [
                     'title' => 'Buscar',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Administrar columnas',
+                ],
             ],
 
             'filters' => [
@@ -1726,6 +1732,13 @@ return [
             'table' => [
                 'actions'              => 'Comportamiento',
                 'no-records-available' => 'No hay registros disponibles.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Administrar columnas',
+                'available-columns' => 'Columnas disponibles',
+                'selected-columns'  => 'Columnas seleccionadas',
+                'apply-btn'         => 'Aplicar',
             ],
         ],
 
