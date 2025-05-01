@@ -192,29 +192,12 @@
                     </div>
                 </div>
 
-                <div class="mb-2 mt-1.5">
-                    <v-datagrid-sync-dropdown
-                        :datagrid-id="available.id"
-                        :column="column"
-                        @select-option="filterPage($event, column)"
-                    >
-                    </v-datagrid-sync-dropdown>
-                </div>
-
-                <div class="mb-4 flex gap-2 flex-wrap">
-                    <p
-                        class="flex items-center rounded bg-violet-100 px-2 py-1 font-semibold text-violet-700"
-                        v-for="appliedColumnValue in getAppliedColumnValues(column.index)"
-                    >
-                        <span v-text="appliedColumnValue"></span>
-
-                        <span
-                            class="icon-cancel cursor-pointer text-lg text-violet-700 ltr:ml-1.5 rtl:mr-1.5 dark:!text-violet-700"
-                            @click="removeAppliedColumnValue(column.index, appliedColumnValue)"
-                        >
-                        </span>
-                    </p>
-                </div>
+                <v-datagrid-sync-dropdown
+                    :datagrid-id="available.id"
+                    :column="column"
+                    @select-option="filterPage($event, column)"
+                >
+                </v-datagrid-sync-dropdown>
             </div>
         </div>
 
@@ -637,18 +620,46 @@
     </script>
 
     <script type="text/x-template" id="v-datagrid-sync-dropdown-template">
-        <x-admin::form.control-group.control
-            type="select"
-            ::ref="'filter_' + column.index"
-            name="'filter_' + column.index"
-            ::label="column.label || column.index"
-            track-by="code"
-            label-by="label"
-            async="true"
-            ::list-route="column.options.route"
-            ::query-params="column.options.params"
-            @select-option="selectOption($event, column.index)"
-        />
+        <template v-if="isLoading">
+            <div class="shimmer h-10 rounded-md mb-4 mt-1.5"></div>
+
+            <div class="flex gap-2 mb-4">
+                <div class="shimmer w-14 h-6"></div>
+                <div class="shimmer w-14 h-6"></div>
+                <div class="shimmer w-14 h-6"></div>
+            </div>
+        </template>
+        <template v-else>
+            <div class="mb-2 mt-1.5">
+                <x-admin::form.control-group.control
+                    type="select"
+                    ::ref="'filter_' + column.index"
+                    name="'filter_' + column.index"
+                    ::label="column.label || column.index"
+                    track-by="code"
+                    label-by="label"
+                    async="true"
+                    ::list-route="column.options.route"
+                    ::query-params="column.options.params"
+                    @select-option="selectOption($event, column.index)"
+                />
+            </div>
+
+            <div class="mb-4 flex gap-2 flex-wrap">
+                <p
+                    class="flex items-center rounded bg-violet-100 px-2 py-1 font-semibold text-violet-700"
+                    v-for="appliedColumnValue in getAppliedColumnValues(column.index)"
+                >
+                    <span v-text="getLabel(appliedColumnValue)"></span>
+
+                    <span
+                        class="icon-cancel cursor-pointer text-lg text-violet-700 ltr:ml-1.5 rtl:mr-1.5 dark:!text-violet-700"
+                        @click="this.$parent.$parent.$parent.removeAppliedColumnValue(column.index, appliedColumnValue)"
+                    >
+                    </span>
+                </p>
+            </div>
+        </template>
     </script>
 
     <script type="module">
@@ -656,6 +667,25 @@
             template: '#v-datagrid-sync-dropdown-template',
 
             props: ['datagridId', 'column'],
+
+            data() {
+                return {
+                    isLoading: false,
+
+                    selectedOptions: [],
+
+                    selectedValues: [],
+
+                    params: this.column.options.params,
+                };
+            },
+
+            mounted() {
+                this.selectedValues = this.getAppliedColumnValues(this.column.index);
+
+                this.initializeValue();
+            },
+
             methods: {
                 selectOption(option, index) {
                     this.searchedOptions = [];
@@ -665,8 +695,43 @@
                             value: option.target.value.code
                         }
                     });
+
                     this.$refs[`filter_${index}`].selectedValue = null;
                 },
+
+                initializeValue() {
+                    if (! this.selectedValues.length) {
+                        return;
+                    }
+
+                    this.isLoading = true;
+                    Object.assign(this.params, {
+                        page: 1,
+                        identifiers: {
+                            columnName: 'code',
+                            values: this.selectedValues
+                        }
+                    });
+
+                    this.$axios.get(this.column.options.route, {params: this.params})
+                        .then(result => {
+                            this.params.identifiers = {};
+
+                            this.selectedOptions = result.data.options;
+
+                            this.isLoading = false;
+                        })
+                },
+
+                getLabel(value) {
+                    let option = this.selectedOptions.filter(option => option.code == value)[0] ?? null;
+
+                    return option?.label ?? value;
+                },
+
+                getAppliedColumnValues(index) {
+                    return this.$parent.$parent.$parent.getAppliedColumnValues(index);
+                }
             }
         });
     </script>
