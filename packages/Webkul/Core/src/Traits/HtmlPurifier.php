@@ -1,6 +1,6 @@
 <?php
 
-namespace Webkul\AdminApi\Traits;
+namespace Webkul\Core\Traits;
 
 use HTMLPurifier as BaseHTMLPurifier;
 use HTMLPurifier_Config;
@@ -8,9 +8,9 @@ use HTMLPurifier_Config;
 trait HtmlPurifier
 {
     /**
-     * TextareaPurify function to sanitize the textarea input
+     * purifyText function to sanitize the textarea input
      */
-    public function textareaPurify(mixed $value): mixed
+    public function purifyText(mixed $value): mixed
     {
         $value = htmlspecialchars_decode($value, ENT_QUOTES);
 

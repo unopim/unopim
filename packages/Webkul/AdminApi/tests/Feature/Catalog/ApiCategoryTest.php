@@ -1040,7 +1040,7 @@ it('should update the file type category fields value in the category', function
     }
 });
 
-it('should textarea fields when creating category', function () {
+it('should textarea fields be used when creating a category', function () {
     CategoryField::factory()->create([
         'code'   => 'description_test',
         'type'   => 'textarea',
@@ -1079,7 +1079,7 @@ it('should textarea fields when creating category', function () {
     $this->assertStringContainsString('alt="logo.png"', $description);
 });
 
-it('should textarea fields when updating category', function () {
+it('should textarea fields be used when updating category', function () {
     $category = Category::factory()->create();
 
     CategoryField::factory()->create([

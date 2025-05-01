@@ -2,7 +2,7 @@
 
 use Webkul\DataTransfer\Helpers\Importers\FieldProcessor;
 
-it('should processes textarea field with WYSIWYG enabled', function () {
+it('should process the textarea field with WYSIWYG enabled', function () {
     $this->loginAsAdmin();
 
     $fieldProcessor = new FieldProcessor;
@@ -22,7 +22,7 @@ it('should processes textarea field with WYSIWYG enabled', function () {
     expect($result)->not->toContain('<iframe');
 });
 
-it('should processes textarea field with WYSIWYG disabled', function () {
+it('should process the textarea field with WYSIWYG disabled', function () {
     $this->loginAsAdmin();
 
     $fieldProcessor = new FieldProcessor;
@@ -39,7 +39,7 @@ it('should processes textarea field with WYSIWYG disabled', function () {
     expect($result)->toBe($textContent);
 });
 
-it('should handles HTML entities in textarea field with WYSIWYG enabled', function () {
+it('should handle HTML entities in the textarea field with WYSIWYG enabled', function () {
     $this->loginAsAdmin();
 
     $fieldProcessor = new FieldProcessor;
@@ -57,7 +57,7 @@ it('should handles HTML entities in textarea field with WYSIWYG enabled', functi
     expect($result)->toContain('This is encoded HTML');
 });
 
-it('should preserves allowed HTML tags in textarea field with WYSIWYG enabled', function () {
+it('should preserve allowed HTML tags in the textarea field with WYSIWYG enabled', function () {
     $this->loginAsAdmin();
 
     $fieldProcessor = new FieldProcessor;

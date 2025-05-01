@@ -7,8 +7,8 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Validator;
 use Webkul\AdminApi\Traits\ApiResponse;
-use Webkul\AdminApi\Traits\HtmlPurifier;
 use Webkul\Core\Rules\Code;
+use Webkul\Core\Traits\HtmlPurifier;
 
 class ApiController extends BaseController
 {

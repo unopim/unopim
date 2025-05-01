@@ -187,7 +187,7 @@ class CategoryController extends ApiController
                         if (empty($value) || $field->code !== $code) {
                             continue;
                         }
-                        $requestData['additional_data']['locale_specific'][$locale][$code] = $this->textareaPurify($value);
+                        $requestData['additional_data']['locale_specific'][$locale][$code] = $this->purifyText($value);
                     }
                 }
             } else {
@@ -195,7 +195,7 @@ class CategoryController extends ApiController
                     if (empty($value) || $field->code !== $code) {
                         continue;
                     }
-                    $requestData['additional_data']['common'][$code] = $this->textareaPurify($value);
+                    $requestData['additional_data']['common'][$code] = $this->purifyText($value);
                 }
             }
         }

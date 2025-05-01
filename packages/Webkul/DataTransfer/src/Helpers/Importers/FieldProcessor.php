@@ -2,12 +2,13 @@
 
 namespace Webkul\DataTransfer\Helpers\Importers;
 
-use HTMLPurifier;
-use HTMLPurifier_Config;
 use Illuminate\Support\Facades\Storage as StorageFacade;
+use Webkul\Core\Traits\HtmlPurifier;
 
 class FieldProcessor
 {
+    use HtmlPurifier;
+
     /**
      * Processes a field value based on its type.
      *
@@ -36,7 +37,9 @@ class FieldProcessor
 
                 break;
             case 'textarea':
-                $value = $this->handleTextareaField($field, $value);
+                if ($field->enable_wysiwyg) {
+                    $value = $this->purifyText($value);
+                }
 
                 break;
             default:
@@ -67,31 +70,5 @@ class FieldProcessor
         }
 
         return count($validPaths) ? $validPaths : null;
-    }
-
-    /**
-     * Processes textarea fields value.
-     *
-     * @param  object  $field  The field object.
-     * @param  mixed  $value  The value of the field.
-     * @return mixed The processed value of the field.
-     */
-    protected function handleTextareaField(object $field, mixed $value): mixed
-    {
-        if ($field->enable_wysiwyg) {
-            $value = htmlspecialchars_decode($value, ENT_QUOTES);
-            $config = HTMLPurifier_Config::createDefault();
-            $config->set('HTML.Allowed', 'p,b,a[href],i,em,strong,ul,ol,li,br,img[src|alt|width|height],h2,h3,h4,table,thead,tbody,tr,th,td');
-            $config->set('URI.AllowedSchemes', ['http' => true, 'https' => true]);
-            $config->set('AutoFormat.AutoParagraph', true);
-            $config->set('HTML.SafeIframe', true);
-            $config->set('HTML.SafeObject', true);
-
-            $purifier = new HTMLPurifier($config);
-            $value = $purifier->purify($value);
-
-        }
-
-        return $value;
     }
 }
