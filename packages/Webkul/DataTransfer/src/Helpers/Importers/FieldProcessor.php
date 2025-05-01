@@ -2,9 +2,9 @@
 
 namespace Webkul\DataTransfer\Helpers\Importers;
 
-use Illuminate\Support\Facades\Storage as StorageFacade;
 use HTMLPurifier;
 use HTMLPurifier_Config;
+use Illuminate\Support\Facades\Storage as StorageFacade;
 
 class FieldProcessor
 {
@@ -61,8 +61,8 @@ class FieldProcessor
         foreach ($paths as $path) {
             $trimmedPath = trim($path);
 
-            if (StorageFacade::disk('local')->has('public/' . $imgpath . $trimmedPath)) {
-                $validPaths[] = $imgpath . $trimmedPath;
+            if (StorageFacade::disk('local')->has('public/'.$imgpath.$trimmedPath)) {
+                $validPaths[] = $imgpath.$trimmedPath;
             }
         }
 
@@ -71,11 +71,11 @@ class FieldProcessor
 
     /**
      * Processes textarea fields value.
+     *
      * @param  object  $field  The field object.
      * @param  mixed  $value  The value of the field.
      * @return mixed The processed value of the field.
      */
-
     protected function handleTextareaField(object $field, mixed $value): mixed
     {
         if ($field->enable_wysiwyg) {

@@ -196,7 +196,7 @@ it('should return 404 if category not found for delete', function () {
             'message',
         ])
         ->assertJsonFragment(['success' => false])
-        ->assertJsonFragment(['message' =>  trans('admin::app.catalog.categories.not-found', ['code' => (string) $nonExistingCode])]);
+        ->assertJsonFragment(['message' => trans('admin::app.catalog.categories.not-found', ['code' => (string) $nonExistingCode])]);
 });
 
 it('should partially update the category and its parent', function () {
@@ -1038,4 +1038,78 @@ it('should update the file type category fields value in the category', function
         $category = Category::where('code', $updatedCategory['code'])->first();
         $this->assertTrue(Storage::exists($category->additional_data['common'][$categoryField->code]));
     }
+});
+
+it('should textarea fields when creating category', function () {
+    CategoryField::factory()->create([
+        'code'   => 'description_test',
+        'type'   => 'textarea',
+        'status' => 1,
+    ]);
+
+    $categoryData = [
+        'code'            => 'clothing_test',
+        'parent'          => 'root',
+        'additional_data' => [
+            'locale_specific' => [
+                'en_US' => [
+                    'name'        => 'Clothing2',
+                    'description' => '<h2>Premium Leather Backpack</h2>\n<p>This <strong>high-quality leather backpack</strong> is perfect for daily use or travel. Made from genuine leather with <em>water-resistant</em> treatment.</p>\n<p> </p>\n<p>Click me <img src="https://devdocs.unopim.com/logo.png" alt="logo.png" /></p>\n<p> </p>\n<h3>Key Features:</h3>\n<ul>\n<li>Genuine full-grain leather</li>\n<li>Padded laptop compartment (fits up to 15\")</li>\n<li>Water-resistant exterior</li>\n<li>Adjustable shoulder straps</li>\n</ul>\n<p> </p>\n<p>Available in multiple colors:</p>',
+                ],
+            ],
+        ],
+    ];
+
+    $response = $this->withHeaders($this->headers)
+        ->json('POST', route('admin.api.categories.store'), $categoryData);
+    $response->assertStatus(201);
+
+    $category = Category::where('code', $categoryData['code'])->first();
+    $description = $category->additional_data['locale_specific']['en_US']['description'];
+
+    $this->assertStringNotContainsString('<script>', $description);
+    $this->assertStringNotContainsString('alert(\'malicious code\')', $description);
+    $this->assertStringNotContainsString('<iframe', $description);
+    $this->assertStringNotContainsString('javascript:', $description);
+
+    $this->assertStringContainsString('<h2>Premium Leather Backpack</h2>', $description);
+    $this->assertStringContainsString('<strong>high-quality leather backpack</strong>', $description);
+
+    $this->assertStringContainsString('<img', $description);
+    $this->assertStringContainsString('alt="logo.png"', $description);
+});
+
+it('should textarea fields when updating category', function () {
+    $category = Category::factory()->create();
+
+    CategoryField::factory()->create([
+        'code'   => 'description_test',
+        'type'   => 'textarea',
+        'status' => 1,
+    ]);
+
+    $updateData = [
+        'code'            => $category->code,
+        'parent'          => $category->parent ? $category->parent->code : null,
+        'additional_data' => [
+            'locale_specific' => [
+                'en_US' => [
+                    'name'        => 'Updated Category',
+                    'description' => '<p>Updated description with <script>alert("XSS")</script> and <h3>Heading</h3></p>',
+                ],
+            ],
+        ],
+    ];
+
+    $response = $this->withHeaders($this->headers)
+        ->json('PUT', route('admin.api.categories.update', ['code' => $category->code]), $updateData);
+
+    $response->assertStatus(200);
+
+    $category = Category::where('code', $category->code)->first();
+    $description = $category->additional_data['locale_specific']['en_US']['description'];
+
+    $this->assertStringNotContainsString('<script>', $description);
+    $this->assertStringNotContainsString('alert("XSS")', $description);
+    $this->assertStringContainsString('<h3>Heading</h3>', $description);
 });

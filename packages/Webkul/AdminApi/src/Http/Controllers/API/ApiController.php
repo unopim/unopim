@@ -7,13 +7,12 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Validator;
 use Webkul\AdminApi\Traits\ApiResponse;
+use Webkul\AdminApi\Traits\HtmlPurifier;
 use Webkul\Core\Rules\Code;
-use HTMLPurifier;
-use HTMLPurifier_Config;
 
 class ApiController extends BaseController
 {
-    use ApiResponse, DispatchesJobs, ValidatesRequests;
+    use ApiResponse, DispatchesJobs, HtmlPurifier, ValidatesRequests;
 
     /**
      * This function processes and transforms the 'labels' key in the given request data.
@@ -73,25 +72,5 @@ class ApiController extends BaseController
         );
 
         return $validator;
-    }
-    /**
-     * TextareaPurify function to sanitize the textarea input
-     * @param mixed $value
-     * @return mixed
-     */
-    protected function textareaPurify(mixed $value): mixed
-    {
-        $value = htmlspecialchars_decode($value, ENT_QUOTES);
-        $config = HTMLPurifier_Config::createDefault();
-        $config->set('HTML.Allowed', 'p,b,a[href],i,em,strong,ul,ol,li,br,img[src|alt|width|height],h2,h3,h4,table,thead,tbody,tr,th,td');
-        $config->set('URI.AllowedSchemes', ['http' => true, 'https' => true]);
-        $config->set('AutoFormat.AutoParagraph', true);
-        $config->set('HTML.SafeIframe', true);
-        $config->set('HTML.SafeObject', true);
-
-        $purifier = new HTMLPurifier($config);
-        $value = $purifier->purify($value);
-
-        return $value;
     }
 }
