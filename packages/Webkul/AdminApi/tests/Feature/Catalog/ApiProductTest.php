@@ -1254,7 +1254,7 @@ it('should update the product status', function () {
     );
 });
 
-it('should textarea fields be used when creating the product', function () {
+it('should sanitize textarea fields when creating a product', function () {
     $family = AttributeFamily::first();
     $sku = fake()->word();
 
@@ -1314,7 +1314,7 @@ it('should textarea fields be used when creating the product', function () {
     $this->assertStringContainsString('<p>scelerisque mi eget</p>', $metaDescription);
 });
 
-it('should textarea fields be used when updating the product', function () {
+it('should sanitize textarea fields when updating a product', function () {
     $product = Product::factory()->simple()->create();
 
     $updatedProduct = [
