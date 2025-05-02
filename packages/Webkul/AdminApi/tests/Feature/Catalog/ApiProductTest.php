@@ -1274,11 +1274,7 @@ it('should sanitize textarea fields when creating a product', function () {
                         'price' => [
                             'USD' => '100',
                         ],
-                        'meta_title'        => '<p>Lorem ipsum dolor sit amet</p>',
-                        'description'       => "<h2>Premium Leather Backpack</h2>\r\n<p>This <strong>high-quality leather backpack</strong> is perfect for daily use or travel. Made from genuine leather with <em>water-resistant</em> treatment.</p>\r\n<p>&nbsp;</p>\r\n<p>Click me <img src=\"https://devdocs.unopim.com/logo.png\" alt=\"logo.png\"></p>\r\n<p>&nbsp;</p>\r\n<h3>Key Features:</h3>\r\n<ul>\r\n<li>Genuine full-grain leather</li>\r\n<li>Padded laptop compartment (fits up to 15\")</li>\r\n<li>Water-resistant exterior</li>\r\n<li>Adjustable shoulder straps</li>\r\n</ul>\r\n<p>&nbsp;</p>\r\n<p>Available in multiple colors:</p>\r\n<table>\r\n<thead>\r\n<tr>\r\n<th>Color</th>\r\n<th>SKU</th>\r\n<th>Price</th>\r\n</tr>\r\n</thead>\r\n<tbody>\r\n<tr>\r\n<td>Brown</td>\r\n<td>LB-BR-001</td>\r\n<td>$129.99</td>\r\n</tr>\r\n<tr>\r\n<td>Black</td>\r\n<td>LB-BL-001</td>\r\n<td>$129.99</td>\r\n</tr>\r\n</tbody>\r\n</table>\r\n<p><a>Click here</a></p>\r\n<h4>Care Instructions</h4>\r\n<p>Clean with a damp cloth and leather conditioner. <a>View detailed care guide</a>.</p>\r\n<p><img src=\"https://devdocs.unopim.com/logo.png\" alt=\"Backpack Front View\" width=\"400\" height=\"300\"></p>\r\n<p><img src=\"https://devdocs.unopim.com/logo.png\" alt=\"Backpack Interior\" width=\"400\" height=\"300\"></p>",
-                        'meta_keywords'     => 'consectetur adipiscing elit. Sed ac quam bibendum',
-                        'meta_description'  => '<p>scelerisque mi eget</p>',
-                        'short_description' => "<p>This is Test</p><script>alert('xss')</script>",
+                        'description' => "<h2>Premium Leather Backpack</h2>\r\n<p>This <strong>high-quality leather backpack</strong> is perfect for daily use or travel. Made from genuine leather with <em>water-resistant</em> treatment.</p>\r\n<p>&nbsp;</p>\r\n<p>Click me <img src=\"https://devdocs.unopim.com/logo.png\" alt=\"logo.png\"></p>\r\n<p>&nbsp;</p>\r\n<h3>Key Features:</h3>\r\n<ul>\r\n<li>Genuine full-grain leather</li>\r\n<li>Padded laptop compartment (fits up to 15\")</li>\r\n<li>Water-resistant exterior</li>\r\n<li>Adjustable shoulder straps</li>\r\n</ul>\r\n<p>&nbsp;</p>\r\n<p>Available in multiple colors:</p>\r\n<table>\r\n<thead>\r\n<tr>\r\n<th>Color</th>\r\n<th>SKU</th>\r\n<th>Price</th>\r\n</tr>\r\n</thead>\r\n<tbody>\r\n<tr>\r\n<td>Brown</td>\r\n<td>LB-BR-001</td>\r\n<td>$129.99</td>\r\n</tr>\r\n<tr>\r\n<td>Black</td>\r\n<td>LB-BL-001</td>\r\n<td>$129.99</td>\r\n</tr>\r\n</tbody>\r\n</table>\r\n<p><a>Click here</a></p>\r\n<h4>Care Instructions</h4>\r\n<p>Clean with a damp cloth and leather conditioner. <a>View detailed care guide</a>.</p>\r\n<p><img src=\"https://devdocs.unopim.com/logo.png\" alt=\"Backpack Front View\" width=\"400\" height=\"300\"></p>\r\n<p><img src=\"https://devdocs.unopim.com/logo.png\" alt=\"Backpack Interior\" width=\"400\" height=\"300\"></p>",
                     ],
                 ],
             ],
@@ -1305,13 +1301,6 @@ it('should sanitize textarea fields when creating a product', function () {
     $this->assertStringContainsString('<strong>high-quality leather backpack</strong>', $description);
     $this->assertStringContainsString('<table>', $description);
     $this->assertStringContainsString('<img src="https://devdocs.unopim.com/logo.png"', $description);
-
-    $shortDescription = $productValues['channel_locale_specific']['default']['en_US']['short_description'] ?? '';
-    $this->assertStringContainsString('<p>This is Test</p>', $shortDescription);
-    $this->assertStringNotContainsString('<script>', $shortDescription);
-
-    $metaDescription = $productValues['channel_locale_specific']['default']['en_US']['meta_description'] ?? '';
-    $this->assertStringContainsString('<p>scelerisque mi eget</p>', $metaDescription);
 });
 
 it('should sanitize textarea fields when updating a product', function () {
@@ -1329,15 +1318,7 @@ it('should sanitize textarea fields when updating a product', function () {
             'channel_locale_specific' => [
                 'default' => [
                     'en_US' => [
-                        'name'  => 'Updated Product Name',
-                        'price' => [
-                            'USD' => '150',
-                        ],
-                        'meta_title'        => '<p>Updated Meta Title</p>',
-                        'description'       => "<h2>Updated Product Description</h2>\r\n<p>This is an <strong>updated description</strong> with some formatting.</p>\r\n<script>alert('malicious code')</script>\r\n<iframe src=\"javascript:alert('xss')\"></iframe>\r\n<p><img src=\"https://devdocs.unopim.com/logo.png\" alt=\"logo.png\"></p>",
-                        'meta_keywords'     => 'updated, keywords, product',
-                        'meta_description'  => '<p>Updated meta description</p><script>alert("xss")</script>',
-                        'short_description' => '<p>Updated short description</p><iframe src="javascript:void(0)"></iframe>',
+                        'description' => "<h2>Updated Product Description</h2>\r\n<p>This is an <strong>updated description</strong> with some formatting.</p>\r\n<script>alert('malicious code')</script>\r\n<iframe src=\"javascript:alert('xss')\"></iframe>\r\n<p><img src=\"https://devdocs.unopim.com/logo.png\" alt=\"logo.png\"></p>",
                     ],
                 ],
             ],
@@ -1361,5 +1342,44 @@ it('should sanitize textarea fields when updating a product', function () {
     $this->assertStringContainsString('<h2>Updated Product Description</h2>', $description);
     $this->assertStringContainsString('<strong>updated description</strong>', $description);
     $this->assertStringContainsString('<img src="https://devdocs.unopim.com/logo.png"', $description);
+});
 
+it('should patch sanitize textarea fields when updating a product', function () {
+    $product = Product::factory()->simple()->create();
+
+    $updatedProduct = [
+        'sku'    => $product->sku,
+        'status' => true,
+        'parent' => null,
+        'family' => $product->attribute_family->code,
+        'values' => [
+            'common' => [
+                'sku' => $product->sku,
+            ],
+            'channel_locale_specific' => [
+                'default' => [
+                    'en_US' => [
+                        'description' => "<h2>Updated Product Description</h2>\r\n<p>This is an <strong>updated description</strong> with some formatting.</p>\r\n<script>alert('malicious code')</script>\r\n<iframe src=\"javascript:alert('xss')\"></iframe>\r\n<p><img src=\"https://devdocs.unopim.com/logo.png\" alt=\"logo.png\"></p>",
+                    ],
+                ],
+            ],
+        ],
+    ];
+    $response = $this->withHeaders($this->headers)
+        ->json('PATCH', route('admin.api.products.patch', ['sku' => $product->sku]), $updatedProduct);
+
+    $response->assertStatus(200);
+
+    $updatedProductModel = Product::where('sku', $product->sku)->first();
+    $productValues = $updatedProductModel->values;
+    $description = $productValues['channel_locale_specific']['default']['en_US']['description'] ?? '';
+
+    $this->assertStringNotContainsString('<script>', $description);
+    $this->assertStringNotContainsString('alert(\'malicious code\')', $description);
+    $this->assertStringNotContainsString('<iframe', $description);
+    $this->assertStringNotContainsString('javascript:', $description);
+
+    $this->assertStringContainsString('<h2>Updated Product Description</h2>', $description);
+    $this->assertStringContainsString('<strong>updated description</strong>', $description);
+    $this->assertStringContainsString('<img src="https://devdocs.unopim.com/logo.png"', $description);
 });

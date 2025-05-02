@@ -3,8 +3,6 @@
 use Webkul\DataTransfer\Helpers\Importers\FieldProcessor;
 
 it('should sanitize textarea content when WYSIWYG is enabled', function () {
-    $this->loginAsAdmin();
-
     $fieldProcessor = new FieldProcessor;
 
     $field = (object) [
@@ -23,8 +21,6 @@ it('should sanitize textarea content when WYSIWYG is enabled', function () {
 });
 
 it('should return plain text as-is when WYSIWYG is disabled', function () {
-    $this->loginAsAdmin();
-
     $fieldProcessor = new FieldProcessor;
 
     $field = (object) [
@@ -40,8 +36,6 @@ it('should return plain text as-is when WYSIWYG is disabled', function () {
 });
 
 it('should decode and sanitize HTML entities when WYSIWYG is enabled', function () {
-    $this->loginAsAdmin();
-
     $fieldProcessor = new FieldProcessor;
 
     $field = (object) [
@@ -58,8 +52,6 @@ it('should decode and sanitize HTML entities when WYSIWYG is enabled', function 
 });
 
 it('should preserve only allowed HTML tags when WYSIWYG is enabled', function () {
-    $this->loginAsAdmin();
-
     $fieldProcessor = new FieldProcessor;
 
     $field = (object) [

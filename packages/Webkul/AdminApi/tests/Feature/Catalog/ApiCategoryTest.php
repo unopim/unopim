@@ -1113,3 +1113,38 @@ it('should sanitize textarea fields when updating a category', function () {
     $this->assertStringNotContainsString('alert("XSS")', $description);
     $this->assertStringContainsString('<h3>Heading</h3>', $description);
 });
+
+it('should patch sanitize textarea fields when updating a category', function () {
+    $category = Category::factory()->create();
+
+    CategoryField::factory()->create([
+        'code'   => 'description_test',
+        'type'   => 'textarea',
+        'status' => 1,
+    ]);
+
+    $updateData = [
+        'code'            => $category->code,
+        'parent'          => $category->parent ? $category->parent->code : null,
+        'additional_data' => [
+            'locale_specific' => [
+                'en_US' => [
+                    'name'        => 'Updated Category',
+                    'description' => '<p>Updated description with <script>alert("XSS")</script> and <h3>Heading</h3></p>',
+                ],
+            ],
+        ],
+    ];
+
+    $response = $this->withHeaders($this->headers)
+        ->json('PATCH', route('admin.api.categories.patch', ['code' => $category->code]), $updateData);
+
+    $response->assertStatus(200);
+
+    $category = Category::where('code', $category->code)->first();
+    $description = $category->additional_data['locale_specific']['en_US']['description'];
+
+    $this->assertStringNotContainsString('<script>', $description);
+    $this->assertStringNotContainsString('alert("XSS")', $description);
+    $this->assertStringContainsString('<h3>Heading</h3>', $description);
+});
