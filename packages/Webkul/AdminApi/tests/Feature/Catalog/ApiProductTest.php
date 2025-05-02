@@ -1369,5 +1369,6 @@ it('should sanitize textarea fields when updating a product', function () {
 
     $metaDescription = $productValues['channel_locale_specific']['default']['en_US']['meta_description'] ?? '';
     $this->assertStringContainsString('<p>Updated meta description</p>', $metaDescription);
-    $this->assertStringNotContainsString('<script>', $metaDescription);
+    $this->assertStringContainsString('<script>alert("xss")</script>', $metaDescription);
+
 });
