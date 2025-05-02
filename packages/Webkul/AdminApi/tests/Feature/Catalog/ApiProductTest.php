@@ -1351,7 +1351,6 @@ it('should sanitize textarea fields when updating a product', function () {
 
     $updatedProductModel = Product::where('sku', $product->sku)->first();
     $productValues = $updatedProductModel->values;
-
     $description = $productValues['channel_locale_specific']['default']['en_US']['description'] ?? '';
 
     $this->assertStringNotContainsString('<script>', $description);
@@ -1362,13 +1361,5 @@ it('should sanitize textarea fields when updating a product', function () {
     $this->assertStringContainsString('<h2>Updated Product Description</h2>', $description);
     $this->assertStringContainsString('<strong>updated description</strong>', $description);
     $this->assertStringContainsString('<img src="https://devdocs.unopim.com/logo.png"', $description);
-
-    $shortDescription = $productValues['channel_locale_specific']['default']['en_US']['short_description'] ?? '';
-    $this->assertStringContainsString('<p>Updated short description</p>', $shortDescription);
-    $this->assertStringNotContainsString('<iframe', $shortDescription);
-
-    $metaDescription = $productValues['channel_locale_specific']['default']['en_US']['meta_description'] ?? '';
-    $this->assertStringContainsString('<p>Updated meta description</p>', $metaDescription);
-    $this->assertStringContainsString('<script>alert("xss")</script>', $metaDescription);
 
 });

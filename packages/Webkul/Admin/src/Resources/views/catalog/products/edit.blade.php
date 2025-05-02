@@ -51,7 +51,7 @@
 
             $currentLocale = core()->getRequestedLocale();
 
-            $currentLocale = $currentChannel->locales->contains($currentLocale) ? $currentLocale : $currentChannel->locales->first(); 
+            $currentLocale = $currentChannel->locales->contains($currentLocale) ? $currentLocale : $currentChannel->locales->first();
         @endphp
 
         <!-- Channel and Locale Switcher -->
@@ -67,7 +67,7 @@
                             flex gap-x-1 items-center px-3 py-1.5 border-2 border-transparent rounded-md font-semibold whitespace-nowrap cursor-pointer marker:shadow appearance-none transition-all hover:!bg-violet-50 dark:hover:!bg-cherry-900 text-gray-600 dark:!text-slate-50"
                         >
                             <span class="icon-channel   text-2xl"></span>
-                            
+
                             {{ ! empty($currentChannel->name) ? $currentChannel->name : '[' . $currentChannel->code . ']' }}
 
                             <input type="hidden" name="channel" value="{{ $currentChannel->code }}"/>
@@ -100,7 +100,7 @@
                             <span class="icon-language text-2xl"></span>
 
                             {{ $currentLocale?->name }}
-                            
+
                             <input type="hidden" name="locale" value="{{ $currentLocale?->code }}"/>
 
                             <span class="icon-chevron-down text-2xl"></span>
