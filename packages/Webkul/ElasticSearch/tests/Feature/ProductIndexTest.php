@@ -78,6 +78,8 @@ it('should index the product to elastic when product is created', function () {
 
     $product->forceFill(Product::factory()->definition());
 
+    $product->values = [];
+
     /** This is called after the product->save function is called so here product id is available */
     ElasticSearch::shouldReceive('index')
         ->once()
@@ -103,11 +105,11 @@ it('should index the product to elastic when product is created', function () {
 it('should index the product to elastic when product is updated', function () {
     config(['elasticsearch.enabled' => false]);
 
-    $product = Product::factory()->create();
+    $product = Product::factory()->withInitialValues()->create();
 
     config(['elasticsearch.enabled' => true]);
 
-    $product->sku = 'product_sku_test_____';
+    $product->status = 0;
 
     ElasticSearch::shouldReceive('index')
         ->once()
@@ -120,7 +122,14 @@ it('should index the product to elastic when product is updated', function () {
                 $this->assertEquals('testing_products', $args['index']);
 
                 $this->assertEquals($product->id, $args['id']);
-                $this->assertEquals($product->toArray(), $args['body']);
+
+                $productArray = $product->toArray();
+
+                // According to indexing format we need to change the sku key to sku-text according to normalizer
+                $productArray['values']['common']['sku-text'] = $product->sku;
+                unset($productArray['values']['common']['sku']);
+
+                $this->assertEquals($productArray, $args['body']);
             } catch (ExpectationFailedException $e) {
                 $this->fail($e->getMessage());
             }

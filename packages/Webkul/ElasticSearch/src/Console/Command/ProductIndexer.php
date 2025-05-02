@@ -107,7 +107,9 @@ class ProductIndexer extends Command
                             )
                             || ! isset($elasticProduct[$productId])
                         ) {
-                            $product->values = $this->productIndexingNormalizer->normalize($product->values);
+                            if (! empty($product->values)) {
+                                $product->values = $this->productIndexingNormalizer->normalize($product->values);
+                            }
 
                             $productsToUpdate['body'][] = [
                                 'index' => [
