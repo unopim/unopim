@@ -14,13 +14,11 @@ beforeEach(function () {
 
     ElasticSearch::shouldReceive('makeConnection')
         ->andReturn($elasticClientMock);
+
+    $this->loginAsAdmin();
 });
 
-it('should return the product data', function () {
-    $this->loginAsAdmin();
-
-    config(['elasticsearch.enabled' => true]);
-
+it('should return the product grid data when elastic is enabled with default sort order', function () {
     $data = [
         [
             'pagination' => [
@@ -30,13 +28,33 @@ it('should return the product data', function () {
         ],
     ];
 
-    ElasticSearch::shouldReceive('search')->andReturn([
-        'hits' => [
-            'total' => 0,
-            'hits'  => [],
+    $sortData = [
+        'updated_at' => [
+            'order'         => 'desc',
+            'missing'       => '_last',
+            'unmapped_type' => 'keyword',
         ],
-        '_scroll_id' => '83h84747',
-    ]);
+    ];
+
+    ElasticSearch::shouldReceive('search')
+        ->once()
+        ->withArgs(function ($args) use ($sortData) {
+            expect($args)->toBeArray();
+            expect($args)->toHaveKey('index');
+            expect($args)->toHaveKey('body');
+            expect($args['body'])->toHaveKey('sort');
+            expect($args['body']['sort'])->toBeArray();
+            expect($args['body']['sort'])->toEqual($sortData);
+
+            return true;
+        })
+        ->andReturn([
+            'hits' => [
+                'total' => 0,
+                'hits'  => [],
+            ],
+            '_scroll_id' => '83h84747',
+        ]);
 
     $response = $this->withHeaders([
         'X-Requested-With' => 'XMLHttpRequest',
@@ -45,7 +63,7 @@ it('should return the product data', function () {
     $response->assertOk();
 });
 
-it('should return the product data filter by default fields sku, attribute family, status, type, name', function () {
+it('should return the product data filtered by sku', function () {
     $this->loginAsAdmin();
 
     config(['elasticsearch.enabled' => true]);
@@ -57,90 +75,165 @@ it('should return the product data filter by default fields sku, attribute famil
         ],
 
         'filters' => [
-            'sku'              => ['test-sku'],
+            'sku' => ['testSku123'],
+        ],
+    ];
+
+    ElasticSearch::shouldReceive('search')
+        ->once()
+        ->withArgs(function ($args) {
+            $expectedQuery = [
+                'constant_score' => [
+                    'filter' => [
+                        'bool' => [
+                            'filter' => [
+                                [
+                                    'query_string' => [
+                                        'default_field' => 'sku',
+                                        'query'         => '*testSku123*',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ];
+
+            expect($args)->toBeArray();
+            expect($args)->toHaveKey('index');
+            expect($args)->toHaveKey('body');
+            expect($args['body'])->toHaveKey('query');
+
+            expect($args['body']['query'])->toEqual($expectedQuery);
+
+            return true;
+        })
+        ->andReturn([
+            'hits' => [
+                'total' => 0,
+                'hits'  => [],
+            ],
+            '_scroll_id' => '83h84747',
+        ]);
+
+    $response = $this->withHeaders([
+        'X-Requested-With' => 'XMLHttpRequest',
+    ])->json('GET', route('admin.catalog.products.index'), $data);
+
+    $response->assertOk();
+});
+
+it('should return the product data filtered by type', function () {
+    $this->loginAsAdmin();
+
+    config(['elasticsearch.enabled' => true]);
+
+    $data = [
+        'pagination' => [
+            'page'     => 1,
+            'per_page' => 10,
+        ],
+
+        'filters' => [
+            'type' => ['simple'],
+        ],
+    ];
+
+    ElasticSearch::shouldReceive('search')
+        ->once()
+        ->withArgs(function ($args) {
+            $expectedQuery = [
+                'constant_score' => [
+                    'filter' => [
+                        'bool' => [
+                            'filter' => [
+                                [
+                                    'query_string' => [
+                                        'default_field' => 'type',
+                                        'query'         => 'simple',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ];
+
+            expect($args)->toBeArray();
+            expect($args)->toHaveKey('index');
+            expect($args)->toHaveKey('body');
+            expect($args['body'])->toHaveKey('query');
+
+            expect($args['body']['query'])->toEqual($expectedQuery);
+
+            return true;
+        })
+        ->andReturn([
+            'hits' => [
+                'total' => 0,
+                'hits'  => [],
+            ],
+            '_scroll_id' => '83h84747',
+        ]);
+
+    $response = $this->withHeaders([
+        'X-Requested-With' => 'XMLHttpRequest',
+    ])->json('GET', route('admin.catalog.products.index'), $data);
+
+    $response->assertOk();
+});
+
+it('should return the product data filtered by attribute family', function () {
+    $this->loginAsAdmin();
+
+    config(['elasticsearch.enabled' => true]);
+
+    $data = [
+        'pagination' => [
+            'page'     => 1,
+            'per_page' => 10,
+        ],
+
+        'filters' => [
             'attribute_family' => [1],
-            'status'           => [1],
-            'type'             => ['simple'],
-            'name'             => ['Test Product'],
         ],
     ];
 
-    ElasticSearch::shouldReceive('search')->andReturn([
-        'hits' => [
-            'total' => 0,
-            'hits'  => [],
-        ],
-        '_scroll_id' => '83h84747',
-    ]);
+    ElasticSearch::shouldReceive('search')
+        ->once()
+        ->withArgs(function ($args) {
+            $expectedQuery = [
+                'constant_score' => [
+                    'filter' => [
+                        'bool' => [
+                            'filter' => [
+                                [
+                                    'term' => [
+                                        'attribute_family_id' => [1],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ];
 
-    $response = $this->withHeaders([
-        'X-Requested-With' => 'XMLHttpRequest',
-    ])->json('GET', route('admin.catalog.products.index'), $data);
+            expect($args)->toBeArray();
+            expect($args)->toHaveKey('index');
+            expect($args)->toHaveKey('body');
+            expect($args['body'])->toHaveKey('query');
 
-    $response->assertOk();
-});
+            expect($args['body']['query'])->toEqual($expectedQuery);
 
-it('should return the product data by dynamic columns', function () {
-    $this->loginAsAdmin();
-
-    config(['elasticsearch.enabled' => true]);
-
-    $data = [
-        'pagination' => [
-            'page'     => 1,
-            'per_page' => 10,
-        ],
-
-        'managedColumns' => ['sku', 'image', 'name', 'price'],
-    ];
-
-    ElasticSearch::shouldReceive('search')->andReturn([
-        'hits' => [
-            'total' => 0,
-            'hits'  => [],
-        ],
-        '_scroll_id' => '83h84747',
-    ]);
-
-    $response = $this->withHeaders([
-        'X-Requested-With' => 'XMLHttpRequest',
-    ])->json('GET', route('admin.catalog.products.index'), $data);
-
-    $response->assertOk();
-});
-
-it('should return the product data filter by attributes', function () {
-    $this->loginAsAdmin();
-
-    config(['elasticsearch.enabled' => true]);
-
-    $data = [
-        'pagination' => [
-            'page'     => 1,
-            'per_page' => 10,
-        ],
-
-        'managedColumns' => ['sku', 'image', 'name', 'price'],
-        'filters'        => [
-            'sku'   => ['test-sku'],
-            'name'  => ['Test Product'],
-            'price' => [
-                ['USD', '67'],
+            return true;
+        })
+        ->andReturn([
+            'hits' => [
+                'total' => 0,
+                'hits'  => [],
             ],
-            'color' => ['test-color'],
-            'Date'  => [
-                ['2025-03-17', '2025-03-23'],
-            ],
-        ],
-    ];
-
-    ElasticSearch::shouldReceive('search')->andReturn([
-        'hits' => [
-            'total' => 0,
-            'hits'  => [],
-        ],
-        '_scroll_id' => '83h84747',
-    ]);
+            '_scroll_id' => '83h84747',
+        ]);
 
     $response = $this->withHeaders([
         'X-Requested-With' => 'XMLHttpRequest',
