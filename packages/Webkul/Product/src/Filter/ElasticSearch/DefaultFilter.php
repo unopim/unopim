@@ -2,21 +2,21 @@
 
 namespace Webkul\Product\Filter\ElasticSearch;
 
-use Webkul\Attribute\Rules\AttributeTypes;
+use Webkul\Attribute\Models\Attribute;
 use Webkul\ElasticSearch\Enums\FilterOperators;
 use Webkul\ElasticSearch\QueryString;
 
 /**
- * Text filter for an Elasticsearch query
+ * Default filter for an Elasticsearch query can be used for all attributes mapped as keyword
  */
-class TextFilter extends AbstractElasticSearchAttributeFilter
+class DefaultFilter extends AbstractElasticSearchAttributeFilter
 {
     /**
      * @param  array  $supportedProperties
      */
     public function __construct(
-        array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[0], AttributeTypes::ATTRIBUTE_TYPES[1]],
-        array $allowedOperators = [FilterOperators::IN, FilterOperators::CONTAINS, FilterOperators::WILDCARD]
+        array $supportedAttributeTypes = [Attribute::GALLERY_ATTRIBUTE_TYPE, Attribute::IMAGE_ATTRIBUTE_TYPE, Attribute::FILE_ATTRIBUTE_TYPE, Attribute::CHECKBOX_FIELD_TYPE],
+        array $allowedOperators = [FilterOperators::IN, FilterOperators::CONTAINS]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;
         $this->allowedOperators = $allowedOperators;
@@ -49,24 +49,11 @@ class TextFilter extends AbstractElasticSearchAttributeFilter
 
                 $this->queryBuilder::where($clause);
                 break;
-
             case FilterOperators::CONTAINS:
-                $escapedQuery = preg_replace('/([+\-&|!(){}[\]^"~*?:\\/])/', '\\\$1', $value);
-                $clause = [
-                    'query_string' => [
-                        'default_field'    => $attributePath,
-                        'query'            => '"*'.implode('*" OR "*', $escapedQuery).'*"',
-                    ],
-                ];
-
-                $this->queryBuilder::where($clause);
-                break;
-
-            case FilterOperators::WILDCARD:
                 $escapedValue = QueryString::escapeValue(current((array) $value));
                 $clause = [
                     'wildcard' => [
-                        $attributePath.'.keyword' => '*'.$escapedValue.'*',
+                        $attributePath => '*'.$escapedValue.'*',
                     ],
                 ];
 
