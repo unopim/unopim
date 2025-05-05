@@ -205,7 +205,7 @@
                 @php
                     $value = !is_array($value) && !empty($value) ? json_decode($value, true) : $value;
                 @endphp
-                <div class="grid gap-4 grid-template-columns">
+                <div class="grid gap-4 [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))]">
                     @foreach ($channelCurrencies as $currency)
                         @php $currencyValue = $value[$currency->code] ?? ''; @endphp
                         <div class="grid w-full">
