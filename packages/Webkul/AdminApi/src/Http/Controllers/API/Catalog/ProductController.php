@@ -154,8 +154,6 @@ class ProductController extends ApiController
             ->where('type', '==', 'textarea')
             ->keyBy('code');
 
-        $data['values'] = $this->sanitizeData($data['values'], $attributes);
-
         if (isset($data['values'])) {
             $existingValues = is_string($product->values) ? json_decode($product->values, true) ?? [] : $product->values ?? [];
 
@@ -176,6 +174,10 @@ class ProductController extends ApiController
                 $existing[$key] = $this->mergeValues($existing[$key], $value, $attributes);
 
                 continue;
+            }
+
+            if (isset($attributes[$key])) {
+                $value = $this->purifyText($value);
             }
 
             $existing[$key] = $value;

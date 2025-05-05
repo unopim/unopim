@@ -46,7 +46,7 @@
     <x-admin::form.control-group>
         <div class="inline-flex justify-between w-full">
             <x-admin::form.control-group.label :for="$fieldName">
-                {{ $fieldLabel }} 
+                {{ $fieldLabel }}
 
                 @if ($field->is_required || $isConfigurableAttribute)
                     <span class="required"></span>
@@ -95,7 +95,7 @@
                             :for="$field->code . '_' . $option->id"
                             :checked="(bool) false !== array_search($option->code, $selectedValue)"
                         />
-    
+
                         <label
                             class="text-xs text-gray-600 dark:text-gray-300 font-medium cursor-pointer select-none"
                             for="{{ $field->code . '_' . $option->id }}"
@@ -270,7 +270,7 @@
                 />
         @endswitch
 
-        @php 
+        @php
             if ($isConfigurableAttribute) {
                 $field->is_required = $field->getOriginal('is_required');
             }

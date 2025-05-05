@@ -1345,17 +1345,34 @@ it('should sanitize textarea fields when updating a product', function () {
 });
 
 it('should patch sanitize textarea fields when updating a product', function () {
-    $product = Product::factory()->simple()->create();
+    $family = AttributeFamily::first();
+    $sku = fake()->word();
 
-    $updatedProduct = [
-        'sku'    => $product->sku,
+    $product = [
+        'sku'    => $sku,
         'status' => true,
         'parent' => null,
-        'family' => $product->attribute_family->code,
+        'family' => $family->code,
         'values' => [
             'common' => [
-                'sku' => $product->sku,
+                'sku' => $sku,
             ],
+            'channel_locale_specific' => [
+                'default' => [
+                    'en_US' => [
+                        'name'  => 'Simple Product 5',
+                        'price' => [
+                            'USD' => '100',
+                        ],
+                        'description' => '<h2>Premium Leather Backpack</h2>',
+                    ],
+                ],
+            ],
+        ],
+    ];
+
+    $updatedProduct = [
+        'values' => [
             'channel_locale_specific' => [
                 'default' => [
                     'en_US' => [
@@ -1365,12 +1382,18 @@ it('should patch sanitize textarea fields when updating a product', function () 
             ],
         ],
     ];
+
+    $responsePost = $this->withHeaders($this->headers)
+        ->json('POST', route('admin.api.products.store'), $product);
+
+    $responsePost->assertStatus(201);
+
     $response = $this->withHeaders($this->headers)
-        ->json('PATCH', route('admin.api.products.patch', ['sku' => $product->sku]), $updatedProduct);
+        ->json('PATCH', route('admin.api.products.patch', ['sku' => $product['sku']]), $updatedProduct);
 
     $response->assertStatus(200);
 
-    $updatedProductModel = Product::where('sku', $product->sku)->first();
+    $updatedProductModel = Product::where('sku', $product['sku'])->first();
     $productValues = $updatedProductModel->values;
     $description = $productValues['channel_locale_specific']['default']['en_US']['description'] ?? '';
 
