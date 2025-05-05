@@ -96,7 +96,7 @@ class AjaxOptionsController extends Controller
             );
         }
 
-        if (isset($queryParams['exclude']) && is_array($queryParams['exclude'])) {
+        if (isset($queryParams['exclude']) && is_array($queryParams['exclude']) && isset($queryParams['exclude']['values'])) {
             $repository = $repository->whereNotIn($queryParams['exclude']['columnName'], $queryParams['exclude']['values']);
         }
 
