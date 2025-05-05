@@ -474,3 +474,10 @@
 .multiselect__content-wrapper, .multiselect__tags, .multiselect__input, .multiselect__single {
     @apply bg-violet-100 dark:bg-cherry-900 dark:!text-slate-50 dark:hover:border-slate-300 dark:border-gray-600;
 }
+@layer utilities {
+    .grid-template-columns {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+}

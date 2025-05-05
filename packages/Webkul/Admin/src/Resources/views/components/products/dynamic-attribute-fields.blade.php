@@ -46,7 +46,7 @@
     <x-admin::form.control-group>
         <div class="inline-flex justify-between w-full">
             <x-admin::form.control-group.label :for="$fieldName">
-                {{ $fieldLabel }} 
+                {{ $fieldLabel }}
 
                 @if ($field->is_required || $isConfigurableAttribute)
                     <span class="required"></span>
@@ -95,7 +95,7 @@
                             :for="$field->code . '_' . $option->id"
                             :checked="(bool) false !== array_search($option->code, $selectedValue)"
                         />
-    
+
                         <label
                             class="text-xs text-gray-600 dark:text-gray-300 font-medium cursor-pointer select-none"
                             for="{{ $field->code . '_' . $option->id }}"
@@ -203,9 +203,9 @@
                 @break
             @case('price')
                 @php
-                    $value = ! is_array($value) && ! empty($value) ? json_decode($value, true) : $value;
+                    $value = !is_array($value) && !empty($value) ? json_decode($value, true) : $value;
                 @endphp
-                <div class="flex gap-4">
+                <div class="grid gap-4 grid-template-columns">
                     @foreach ($channelCurrencies as $currency)
                         @php $currencyValue = $value[$currency->code] ?? ''; @endphp
                         <div class="grid w-full">
@@ -270,7 +270,7 @@
                 />
         @endswitch
 
-        @php 
+        @php
             if ($isConfigurableAttribute) {
                 $field->is_required = $field->getOriginal('is_required');
             }
