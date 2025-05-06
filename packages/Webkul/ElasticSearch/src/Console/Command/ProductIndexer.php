@@ -215,6 +215,9 @@ class ProductIndexer extends Command
         }
     }
 
+    /**
+     * Get product updated at values from Elasticsearch
+     */
     public function getProductUpdates($productIndex, $command = null, array $searchIds = [])
     {
         $elasticProduct = [];
@@ -254,11 +257,17 @@ class ProductIndexer extends Command
         return $elasticProduct;
     }
 
+    /**
+     * Check if the index exists
+     */
     public function hasIndex($productIndex): bool
     {
         return ElasticSearch::indices()->exists(['index' => $productIndex])->asBool();
     }
 
+    /**
+     * Create Elasticsearch index with settings and mappings
+     */
     public function elasticConfiguration($productIndex)
     {
         try {
@@ -280,6 +289,9 @@ class ProductIndexer extends Command
         }
     }
 
+    /**
+     * Get index mappings for product
+     */
     private function getUnopimProductMapping()
     {
         return [
@@ -315,6 +327,11 @@ class ProductIndexer extends Command
         ];
     }
 
+    /**
+     * Attribute type wise dynamic field mapping templates
+     *
+     * See 'packages/Webkul/ElasticSearch/tests/Feature/ProductIndexTest.php' for full dynamic mapping template as an array
+     */
     protected function dynamicAttributeMappings()
     {
         $attributeTypes = [
@@ -403,6 +420,9 @@ class ProductIndexer extends Command
         return $dynamicTemplates;
     }
 
+    /**
+     * Get index settings for product
+     */
     private function getUnopimProductSetting()
     {
         return [

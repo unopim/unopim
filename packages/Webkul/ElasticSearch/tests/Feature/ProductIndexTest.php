@@ -165,3 +165,331 @@ it('should remove product from elastic when product is deleted', function () {
 
     $product->delete();
 });
+
+it('should create dynamic mapping templates for product attributes', function () {
+    $indicesMock = Mockery::mock('Elastic\Elasticsearch\Endpoints\Indices');
+
+    ElasticSearch::shouldReceive('indices')->andReturn($indicesMock)->between(1, 5);
+
+    $indicesMockResponse = Mockery::mock('Elastic\Elasticsearch\Response\Elasticsearch');
+
+    $indicesMock->shouldReceive('exists')->andReturn($indicesMockResponse);
+    $indicesMockResponse->shouldReceive('asBool')->andReturn(false);
+
+    $indicesMock->shouldReceive('create')
+        ->once()
+        ->withArgs(function ($args) {
+            try {
+                $this->assertArrayHasKey('index', $args);
+                $this->assertArrayHasKey('body', $args);
+
+                $this->assertArrayHasKey('mappings', $args['body']);
+                $this->assertArrayHasKey('dynamic_templates', $args['body']['mappings']);
+
+                $expectedDynamicTemplates = [
+                    [
+                        'object_fields_common' => [
+                            'path_match'         => 'values.common.*',
+                            'match_mapping_type' => 'object',
+                            'mapping'            => ['type' => 'object'],
+                        ],
+                    ],
+                    [
+                        'object_fields_locale_specific' => [
+                            'path_match'         => 'values.locale_specific.*.*',
+                            'match_mapping_type' => 'object',
+                            'mapping'            => ['type' => 'object'],
+                        ],
+                    ],
+                    [
+                        'object_fields_channel_specific' => [
+                            'path_match'         => 'values.channel_specific.*.*',
+                            'match_mapping_type' => 'object',
+                            'mapping'            => ['type' => 'object'],
+                        ],
+                    ],
+                    [
+                        'object_fields_channel_locale_specific' => [
+                            'path_match'         => 'values.channel_locale_specific.*.*.*',
+                            'match_mapping_type' => 'object',
+                            'mapping'            => ['type' => 'object'],
+                        ],
+                    ],
+                    // Text Fields
+                    [
+                        'text_fields_common' => [
+                            'path_match' => 'values.common.*-text',
+                            'mapping'    => [
+                                'type'   => 'text',
+                                'fields' => [
+                                    'keyword' => [
+                                        'type'       => 'keyword',
+                                        'normalizer' => 'string_normalizer',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    [
+                        'text_fields_locale_specific' => [
+                            'path_match' => 'values.locale_specific.*.*-text',
+                            'mapping'    => [
+                                'type'   => 'text',
+                                'fields' => [
+                                    'keyword' => [
+                                        'type'       => 'keyword',
+                                        'normalizer' => 'string_normalizer',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    [
+                        'text_fields_channel_specific' => [
+                            'path_match' => 'values.channel_specific.*.*-text',
+                            'mapping'    => [
+                                'type'   => 'text',
+                                'fields' => [
+                                    'keyword' => [
+                                        'type'       => 'keyword',
+                                        'normalizer' => 'string_normalizer',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    [
+                        'text_fields_channel_locale_specific' => [
+                            'path_match' => 'values.channel_locale_specific.*.*.*-text',
+                            'mapping'    => [
+                                'type'   => 'text',
+                                'fields' => [
+                                    'keyword' => [
+                                        'type'       => 'keyword',
+                                        'normalizer' => 'string_normalizer',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    // Textarea Fields
+                    [
+                        'textarea_fields_common' => [
+                            'path_match' => 'values.common.*-textarea',
+                            'mapping'    => [
+                                'type'   => 'text',
+                                'fields' => [
+                                    'keyword' => [
+                                        'type'       => 'keyword',
+                                        'normalizer' => 'string_normalizer',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    [
+                        'textarea_fields_locale_specific' => [
+                            'path_match' => 'values.locale_specific.*.*-textarea',
+                            'mapping'    => [
+                                'type'   => 'text',
+                                'fields' => [
+                                    'keyword' => [
+                                        'type'       => 'keyword',
+                                        'normalizer' => 'string_normalizer',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    [
+                        'textarea_fields_channel_specific' => [
+                            'path_match' => 'values.channel_specific.*.*-textarea',
+                            'mapping'    => [
+                                'type'   => 'text',
+                                'fields' => [
+                                    'keyword' => [
+                                        'type'       => 'keyword',
+                                        'normalizer' => 'string_normalizer',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    [
+                        'textarea_fields_channel_locale_specific' => [
+                            'path_match' => 'values.channel_locale_specific.*.*.*-textarea',
+                            'mapping'    => [
+                                'type'   => 'text',
+                                'fields' => [
+                                    'keyword' => [
+                                        'type'       => 'keyword',
+                                        'normalizer' => 'string_normalizer',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    // Price Fields
+                    [
+                        'price_fields_common' => [
+                            'path_match' => 'values.common.*-price.*',
+                            'mapping'    => ['type' => 'float'],
+                        ],
+                    ],
+                    [
+                        'price_fields_locale_specific' => [
+                            'path_match' => 'values.locale_specific.*.*-price.*',
+                            'mapping'    => ['type' => 'float'],
+                        ],
+                    ],
+                    [
+                        'price_fields_channel_specific' => [
+                            'path_match' => 'values.channel_specific.*.*-price.*',
+                            'mapping'    => ['type' => 'float'],
+                        ],
+                    ],
+                    [
+                        'price_fields_channel_locale_specific' => [
+                            'path_match' => 'values.channel_locale_specific.*.*.*-price.*',
+                            'mapping'    => ['type' => 'float'],
+                        ],
+                    ],
+                    // Datetime Fields
+                    [
+                        'datetime_fields_common' => [
+                            'path_match' => 'values.common.*-datetime',
+                            'mapping'    => [
+                                'type'   => 'date',
+                                'format' => 'yyyy-MM-dd HH:mm:ss',
+                            ],
+                        ],
+                    ],
+                    [
+                        'datetime_fields_locale_specific' => [
+                            'path_match' => 'values.locale_specific.*.*-datetime',
+                            'mapping'    => [
+                                'type'   => 'date',
+                                'format' => 'yyyy-MM-dd HH:mm:ss',
+                            ],
+                        ],
+                    ],
+                    [
+                        'datetime_fields_channel_specific' => [
+                            'path_match' => 'values.channel_specific.*.*-datetime',
+                            'mapping'    => [
+                                'type'   => 'date',
+                                'format' => 'yyyy-MM-dd HH:mm:ss',
+                            ],
+                        ],
+                    ],
+                    [
+                        'datetime_fields_channel_locale_specific' => [
+                            'path_match' => 'values.channel_locale_specific.*.*.*-datetime',
+                            'mapping'    => [
+                                'type'   => 'date',
+                                'format' => 'yyyy-MM-dd HH:mm:ss',
+                            ],
+                        ],
+                    ],
+                    // Date Fields
+                    [
+                        'date_fields_common' => [
+                            'path_match' => 'values.common.*-date',
+                            'mapping'    => [
+                                'type'   => 'date',
+                                'format' => 'yyyy-MM-dd',
+                            ],
+                        ],
+                    ],
+                    [
+                        'date_fields_locale_specific' => [
+                            'path_match' => 'values.locale_specific.*.*-date',
+                            'mapping'    => [
+                                'type'   => 'date',
+                                'format' => 'yyyy-MM-dd',
+                            ],
+                        ],
+                    ],
+                    [
+                        'date_fields_channel_specific' => [
+                            'path_match' => 'values.channel_specific.*.*-date',
+                            'mapping'    => [
+                                'type'   => 'date',
+                                'format' => 'yyyy-MM-dd',
+                            ],
+                        ],
+                    ],
+                    [
+                        'date_fields_channel_locale_specific' => [
+                            'path_match' => 'values.channel_locale_specific.*.*.*-date',
+                            'mapping'    => [
+                                'type'   => 'date',
+                                'format' => 'yyyy-MM-dd',
+                            ],
+                        ],
+                    ],
+                    // Fallbacks for string fields
+                    [
+                        'fallback_fields_common' => [
+                            'path_match'         => 'values.common.*',
+                            'match_mapping_type' => 'string',
+                            'mapping'            => ['type' => 'keyword'],
+                        ],
+                    ],
+                    [
+                        'fallback_fields_locale_specific' => [
+                            'path_match'         => 'values.locale_specific.*.*',
+                            'match_mapping_type' => 'string',
+                            'mapping'            => ['type' => 'keyword'],
+                        ],
+                    ],
+                    [
+                        'fallback_fields_channel_specific' => [
+                            'path_match'         => 'values.channel_specific.*.*',
+                            'match_mapping_type' => 'string',
+                            'mapping'            => ['type' => 'keyword'],
+                        ],
+                    ],
+                    [
+                        'fallback_fields_channel_locale_specific' => [
+                            'path_match'         => 'values.channel_locale_specific.*.*.*',
+                            'match_mapping_type' => 'string',
+                            'mapping'            => ['type' => 'keyword'],
+                        ],
+                    ],
+                    // Final fallback for any object type
+                    [
+                        'fallback_object' => [
+                            'path_match'         => 'values.*',
+                            'match_mapping_type' => 'object',
+                            'mapping'            => ['type' => 'object'],
+                        ],
+                    ],
+                ];
+
+                $this->assertEquals($expectedDynamicTemplates, $args['body']['mappings']['dynamic_templates']);
+            } catch (ExpectationFailedException $e) {
+                $this->fail($e->getMessage());
+            }
+
+            return true;
+        });
+
+    ElasticSearch::shouldReceive('search')->andReturn([
+        'hits' => [
+            'total' => 0,
+            'hits'  => [],
+        ],
+        '_scroll_id' => '83h84747',
+    ])->zeroOrMoreTimes();
+
+    ElasticSearch::shouldReceive('scroll')->andReturn([
+        'hits' => [
+            'hits' => [],
+        ],
+    ])->zeroOrMoreTimes();
+
+    ElasticSearch::shouldReceive('bulk')->zeroOrMoreTimes();
+
+    Artisan::call('unopim:product:index');
+});
