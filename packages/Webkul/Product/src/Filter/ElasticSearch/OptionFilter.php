@@ -3,7 +3,6 @@
 namespace Webkul\Product\Filter\ElasticSearch;
 
 use Webkul\Attribute\Models\Attribute;
-use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\ElasticSearch\Enums\FilterOperators;
 
 /**
@@ -15,7 +14,7 @@ class OptionFilter extends AbstractElasticSearchAttributeFilter
      * @param  array  $supportedProperties
      */
     public function __construct(
-        array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[4], AttributeTypes::ATTRIBUTE_TYPES[5]],
+        array $supportedAttributeTypes = [Attribute::CHECKBOX_FIELD_TYPE, Attribute::MULTISELECT_FIELD_TYPE, Attribute::SELECT_FIELD_TYPE],
         array $allowedOperators = [FilterOperators::IN]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;
@@ -44,7 +43,7 @@ class OptionFilter extends AbstractElasticSearchAttributeFilter
                 $clause = [
                     'query_string' => [
                         'default_field' => $attributePath,
-                        'query'         => $attribute->type == Attribute::MULTISELECT_FIELD_TYPE ? '*'.implode('* OR *', $value).'*' : implode(' OR ', $value),
+                        'query'         => $attribute->type == Attribute::SELECT_FIELD_TYPE ? implode(' OR ', $value) : '*'.implode('* OR *', $value).'*',
                     ],
                 ];
 

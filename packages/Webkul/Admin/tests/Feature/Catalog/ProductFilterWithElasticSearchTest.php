@@ -241,7 +241,7 @@ it('should filter products by ID using Elasticsearch', function () {
         ],
 
         'filters' => [
-            "product_id" => [
+            'product_id' => [
                 11,
             ],
         ],
@@ -1004,8 +1004,15 @@ it('should filter products by image attribute using Elasticsearch', function () 
                         'bool' => [
                             'filter' => [
                                 [
-                                    'wildcard' => [
-                                        'values.common.'.$attribute->code.'-'.$attribute->type => '*image1.jpg*',
+                                    'bool' => [
+                                        'should' => [
+                                            [
+                                                'wildcard' => [
+                                                    'values.common.'.$attribute->code.'-'.$attribute->type => '*image1.jpg*',
+                                                ],
+                                            ],
+                                        ],
+                                        'minimum_should_match' => 1,
                                     ],
                                 ],
                             ],
@@ -1014,6 +1021,10 @@ it('should filter products by image attribute using Elasticsearch', function () 
                 ],
             ];
 
+            expect($args)->toBeArray();
+            expect($args)->toHaveKey('index');
+            expect($args)->toHaveKey('body');
+            expect($args['body'])->toHaveKey('query');
             expect($args['body']['query'])->toEqual($expectedQuery);
 
             return true;
@@ -1061,8 +1072,145 @@ it('should filter products by file attribute using Elasticsearch', function () {
                         'bool' => [
                             'filter' => [
                                 [
-                                    'wildcard' => [
-                                        'values.common.'.$attribute->code.'-'.$attribute->type => '*file1.pdf*',
+                                    'bool' => [
+                                        'should' => [
+                                            [
+                                                'wildcard' => [
+                                                    'values.common.'.$attribute->code.'-'.$attribute->type => '*file1.pdf*',
+                                                ],
+                                            ],
+                                        ],
+                                        'minimum_should_match' => 1,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ];
+
+            expect($args)->toBeArray();
+            expect($args)->toHaveKey('index');
+            expect($args)->toHaveKey('body');
+            expect($args['body'])->toHaveKey('query');
+            expect($args['body']['query'])->toEqual($expectedQuery);
+
+            return true;
+        })
+        ->andReturn([
+            'hits' => [
+                'total' => 0,
+                'hits'  => [],
+            ],
+            '_scroll_id' => '83h84747',
+        ]);
+
+    $response = $this->withHeaders([
+        'X-Requested-With' => 'XMLHttpRequest',
+    ])->json('GET', route('admin.catalog.products.index'), $data);
+
+    $response->assertOk();
+});
+
+it('should filter products by checkbox attribute using Elasticsearch', function () {
+    $attribute = Attribute::factory()->create([
+        'code'              => 'checkbox_attribute',
+        'type'              => 'checkbox',
+        'value_per_locale'  => 0,
+        'value_per_channel' => 0,
+    ]);
+
+    $data = [
+        'pagination' => [
+            'page'     => 1,
+            'per_page' => 10,
+        ],
+        'managedColumns' => [$attribute->code],
+        'filters'        => [
+            $attribute->code => ['option1', 'option2'],
+        ],
+    ];
+
+    ElasticSearch::shouldReceive('search')
+        ->once()
+        ->withArgs(function ($args) use ($attribute) {
+            $expectedQuery = [
+                'constant_score' => [
+                    'filter' => [
+                        'bool' => [
+                            'filter' => [
+                                [
+                                    'query_string' => [
+                                        'default_field' => 'values.common.'.$attribute->code.'-'.$attribute->type,
+                                        'query'         => '*option1* OR *option2*',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ];
+
+            expect($args['body']['query'])->toEqual($expectedQuery);
+
+            return true;
+        })
+        ->andReturn([
+            'hits' => [
+                'total' => 0,
+                'hits'  => [],
+            ],
+            '_scroll_id' => '83h84747',
+        ]);
+
+    $response = $this->withHeaders([
+        'X-Requested-With' => 'XMLHttpRequest',
+    ])->json('GET', route('admin.catalog.products.index'), $data);
+
+    $response->assertOk();
+});
+
+it('should filter products by gallery attribute using Elasticsearch', function () {
+    $attribute = Attribute::factory()->create([
+        'code'              => 'gallery_attribute',
+        'type'              => 'gallery',
+        'value_per_locale'  => 0,
+        'value_per_channel' => 0,
+    ]);
+
+    $data = [
+        'pagination' => [
+            'page'     => 1,
+            'per_page' => 10,
+        ],
+        'managedColumns' => [$attribute->code],
+        'filters'        => [
+            $attribute->code => ['image1.jpg', 'image2.jpg'],
+        ],
+    ];
+
+    ElasticSearch::shouldReceive('search')
+        ->once()
+        ->withArgs(function ($args) use ($attribute) {
+            $expectedQuery = [
+                'constant_score' => [
+                    'filter' => [
+                        'bool' => [
+                            'filter' => [
+                                [
+                                    'bool' => [
+                                        'should' => [
+                                            [
+                                                'wildcard' => [
+                                                    'values.common.'.$attribute->code.'-'.$attribute->type => '*image1.jpg*',
+                                                ],
+                                            ], [
+                                                'wildcard' => [
+                                                    'values.common.'.$attribute->code.'-'.$attribute->type => '*image2.jpg*',
+                                                ],
+                                            ],
+                                        ],
+                                        'minimum_should_match' => 1,
                                     ],
                                 ],
                             ],
