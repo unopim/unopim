@@ -15,7 +15,7 @@ class DefaultFilter extends AbstractElasticSearchAttributeFilter
      * @param  array  $supportedProperties
      */
     public function __construct(
-        array $supportedAttributeTypes = [Attribute::GALLERY_ATTRIBUTE_TYPE, Attribute::IMAGE_ATTRIBUTE_TYPE, Attribute::FILE_ATTRIBUTE_TYPE, Attribute::CHECKBOX_FIELD_TYPE],
+        array $supportedAttributeTypes = [Attribute::GALLERY_ATTRIBUTE_TYPE, Attribute::IMAGE_ATTRIBUTE_TYPE, Attribute::FILE_ATTRIBUTE_TYPE],
         array $allowedOperators = [FilterOperators::IN, FilterOperators::CONTAINS]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;
@@ -50,10 +50,21 @@ class DefaultFilter extends AbstractElasticSearchAttributeFilter
                 $this->queryBuilder::where($clause);
                 break;
             case FilterOperators::CONTAINS:
-                $escapedValue = QueryString::escapeValue(current((array) $value));
+                $clauses = [];
+
+                foreach ((array) $value as $val) {
+                    $escapedValue = QueryString::escapeValue($val);
+                    $clauses[] = [
+                        'wildcard' => [
+                            $attributePath => '*'.$escapedValue.'*',
+                        ],
+                    ];
+                }
+
                 $clause = [
-                    'wildcard' => [
-                        $attributePath => '*'.$escapedValue.'*',
+                    'bool' => [
+                        'should'               => $clauses,
+                        'minimum_should_match' => 1,
                     ],
                 ];
 

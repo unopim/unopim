@@ -625,6 +625,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             $productValues = $this->getProductValues($productArray);
 
             unset($productArray[AbstractType::PRODUCT_VALUES_KEY]);
+            unset($productArray['raw_values']);
 
             foreach ($this->getAllChannelsAndLocales() as [$channelCode, $localeCode]) {
                 $data = $this->getInitialData($channelCode, $localeCode);
