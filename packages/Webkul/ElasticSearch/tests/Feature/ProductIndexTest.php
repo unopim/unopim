@@ -167,6 +167,12 @@ it('should remove product from elastic when product is deleted', function () {
 });
 
 it('should create dynamic mapping templates for product attributes', function () {
+    config(['elasticsearch.enabled' => false]);
+
+    $product = Product::factory()->create();
+
+    config(['elasticsearch.enabled' => true]);
+
     $indicesMock = Mockery::mock('Elastic\Elasticsearch\Endpoints\Indices');
 
     ElasticSearch::shouldReceive('indices')->andReturn($indicesMock)->between(1, 5);

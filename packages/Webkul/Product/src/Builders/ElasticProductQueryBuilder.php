@@ -57,7 +57,6 @@ class ElasticProductQueryBuilder extends ElasticSearchAbstractFilterableQueryBui
         $value,
         array $context
     ) {
-
         $filter->setQueryManager(new ElasticSearchQuery);
 
         $filter->applyUnfilteredFilter($attribute, $operator, $value, $context);

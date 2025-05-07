@@ -16,6 +16,7 @@ use Webkul\Core\Rules\Slug;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Product\Validator\Rule\AttributeOptionRule;
+use Webkul\Product\Validator\Rule\Elasticsearch\UniqueAttributeValue;
 
 class Attribute extends TranslatableModel implements AttributeContract, HistoryContract
 {
@@ -139,13 +140,17 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
             $validations[] = "regex:/^\d+(\.\d+)?$/";
         }
 
-        if ($this->is_unique && $withUniqueValidation) {
-            $path = $this->getJsonPath($currentChannelCode, $currentLocaleCode);
+        if ($this->is_unique && $this->code !== 'sku' && $withUniqueValidation) {
+            if (config('elasticsearch.enabled')) {
+                $rule = new UniqueAttributeValue($this->code, $id);
+            } else {
+                $path = $this->getJsonPath($currentChannelCode, $currentLocaleCode);
 
-            $rule = "unique:products,values->{$path}";
+                $rule = "unique:products,values->{$path}";
 
-            if ($id) {
-                $rule .= ",{$id}";
+                if ($id) {
+                    $rule .= ",{$id}";
+                }
             }
 
             $validations[] = $rule;

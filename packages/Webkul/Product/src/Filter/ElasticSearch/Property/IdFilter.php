@@ -14,7 +14,7 @@ class IdFilter extends AbstractPropertyFilter
 
     public function __construct(
         array $supportedProperties = [self::PROPERTY],
-        array $allowedOperators = [FilterOperators::IN]
+        array $allowedOperators = [FilterOperators::IN, FilterOperators::NOT_EQUAL, FilterOperators::NOT_IN]
     ) {
         $this->allowedOperators = $allowedOperators;
         $this->supportedProperties = $supportedProperties;
@@ -49,6 +49,26 @@ class IdFilter extends AbstractPropertyFilter
                 ];
 
                 $this->queryBuilder::where($clause);
+                break;
+
+            case FilterOperators::NOT_IN:
+                $clause = [
+                    'terms' => [
+                        'id' => $value,
+                    ],
+                ];
+
+                $this->queryBuilder::whereNot($clause);
+                break;
+
+            case FilterOperators::NOT_EQUAL:
+                $clause = [
+                    'term' => [
+                        'id' => $value,
+                    ],
+                ];
+
+                $this->queryBuilder::whereNot($clause);
                 break;
         }
 
