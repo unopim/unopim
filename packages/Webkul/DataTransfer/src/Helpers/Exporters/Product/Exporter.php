@@ -11,6 +11,8 @@ use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Helpers\Exporters\AbstractExporter;
 use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
+use Webkul\DataTransfer\Helpers\Sources\Export\Elastic\ProductSource as ElasticProductSource;
+use Webkul\Product\Repositories\ProductRepository;
 
 class Exporter extends AbstractExporter
 {
@@ -39,6 +41,7 @@ class Exporter extends AbstractExporter
         protected FileExportFileBuffer $exportFileBuffer,
         protected ChannelRepository $channelRepository,
         protected AttributeRepository $attributeRepository,
+        protected ElasticProductSource $elasticProductSource,
     ) {
         parent::__construct($exportBatchRepository, $exportFileBuffer);
     }
@@ -87,11 +90,32 @@ class Exporter extends AbstractExporter
      */
     protected function getResults()
     {
+        if (config('elasticsearch.enabled')) {
+            return $this->elasticProductSource->getResults([], $this->source, self::BATCH_SIZE);
+        }
+
         return $this->source->with([
             'attribute_family',
             'parent',
             'super_attributes',
         ])->orderBy('id', 'desc')->all()?->getIterator();
+    }
+
+    protected function getItemsFromIds(array $ids): array
+    {
+        if (empty($ids)) {
+            return [];
+        }
+
+        if (!$this->source) {
+            $this->source = app(ProductRepository::class);
+        }
+
+        return $this->source->with([
+            'attribute_family',
+            'parent',
+            'super_attributes',
+        ])->whereIn('id', $ids)->orderBy('id', 'desc')->get()->toArray(); 
     }
 
     /**
@@ -100,7 +124,11 @@ class Exporter extends AbstractExporter
     public function prepareProducts(JobTrackBatchContract $batch, $filePath)
     {
         $products = [];
-        foreach ($batch->data as $rowData) {
+        $flatIds = array_column($batch->data, 'id');
+        $productsByIds = $this->getItemsFromIds($flatIds); 
+
+        foreach ($productsByIds as $rowData) {
+            
             foreach ($this->channelsAndLocales as $channel => $locales) {
                 foreach ($locales as $locale) {
                     $commonFields = $this->getCommonFields($rowData);
@@ -111,7 +139,7 @@ class Exporter extends AbstractExporter
                     // Merge common and locale-specific fields before array_merge
                     $mergedFields = array_merge($commonFields, $localeSpecificFields, $channelSpecificFields, $channelLocaleSpecificFields);
                     $values = $this->setAttributesValues($mergedFields, $filePath);
-
+                    
                     $data = array_merge([
                         'channel'                 => $channel,
                         'locale'                  => $locale,
