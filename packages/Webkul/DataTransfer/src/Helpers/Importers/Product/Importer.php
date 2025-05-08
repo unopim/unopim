@@ -4,7 +4,10 @@ namespace Webkul\DataTransfer\Helpers\Importers\Product;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -15,6 +18,7 @@ use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeOptionRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Category\Repositories\CategoryRepository;
+use Webkul\Core\Facades\ElasticSearch;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Rules\Slug;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
@@ -22,6 +26,8 @@ use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Helpers\Importers\AbstractImporter;
 use Webkul\DataTransfer\Helpers\Importers\FieldProcessor;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
+use Webkul\ElasticSearch\Indexing\Normalizer\ProductNormalizer;
+use Webkul\ElasticSearch\Observers\Product as ElasticProductObserver;
 use Webkul\Product\Models\Product as ProductModel;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Type\AbstractType;
@@ -176,7 +182,7 @@ class Importer extends AbstractImporter
     /**
      * Is indexing required
      */
-    protected bool $indexingRequired = false;
+    protected bool $indexingRequired = true;
 
     /**
      * Cached variants configurable attributes for unique value check
@@ -305,8 +311,6 @@ class Importer extends AbstractImporter
 
         $source->rewind();
 
-        $this->skuStorage->init();
-
         while ($source->valid()) {
             try {
                 $rowData = $source->current();
@@ -315,6 +319,8 @@ class Importer extends AbstractImporter
 
                 continue;
             }
+
+            $this->skuStorage->load([$rowData['sku']]);
 
             $this->validateRow($rowData, $source->getCurrentRowNumber());
 
@@ -526,6 +532,8 @@ class Importer extends AbstractImporter
     public function importBatch(JobTrackBatchContract $batch): bool
     {
         Event::dispatch('data_transfer.imports.batch.import.before', $batch);
+
+        ElasticProductObserver::disable();
 
         if ($batch->jobTrack->action == Import::ACTION_DELETE) {
             $this->deleteProducts($batch);
@@ -1335,6 +1343,73 @@ class Importer extends AbstractImporter
                 $errorCode = array_key_first($failedAttributes[$attributeCode] ?? []);
 
                 $this->skipRow($rowNumber, $errorCode, $attributeCode, current($message));
+            }
+        }
+    }
+
+    /**
+     * Is indexing resource required for the import operation
+     */
+    public function isIndexingRequired(): bool
+    {
+        if ($this->import->action == Import::ACTION_DELETE) {
+            return false;
+        }
+
+        return config('elasticsearch.enabled') && $this->indexingRequired;
+    }
+
+    /**
+     * Index batch data to elasticsearch
+     */
+    public function indexBatch(JobTrackBatchContract $batch)
+    {
+        if (! config('elasticsearch.enabled')) {
+            return;
+        }
+
+        $productIndexingNormalizer = app(ProductNormalizer::class);
+
+        $productIndex = strtolower(config('elasticsearch.prefix').'_products');
+
+        $products = DB::table('products')->whereIn('sku', Arr::pluck($batch->data, 'sku'))->get();
+
+        $productsToUpdate = [];
+
+        foreach ($products as $productDB) {
+            $productDB = (array) $productDB;
+
+            $productDB['values'] = is_string($productDB['values']) ? json_decode($productDB['values'], true) : $productDB['values'];
+            $productDB['values'] = $productIndexingNormalizer->normalize($productDB['values']);
+
+            $productDB['created_at'] = Carbon::parse($productDB['created_at'])->toJson();
+            $productDB['updated_at'] = Carbon::parse($productDB['updated_at'])->toJson();
+
+            $productsToUpdate['body'][] = [
+                'index' => [
+                    '_index' => $productIndex,
+                    '_id'    => $productDB['id'],
+                ],
+            ];
+
+            $productsToUpdate['body'][] = $productDB;
+        }
+
+        if (empty($productsToUpdate)) {
+            return;
+        }
+
+        $response = ElasticSearch::bulk($productsToUpdate);
+
+        if (isset($response['errors']) && $response['errors']) {
+            foreach ($response['items'] as $index => $result) {
+                if (isset($result['index']['error'])) {
+                    $failedProductIds[] = $result['index']['_id'];
+
+                    Log::channel('elasticsearch')->error('Error while indexing product id: '.$result['index']['_id'].' in '.$productIndex.' index: ', [
+                        'error' => $result['index']['error'],
+                    ]);
+                }
             }
         }
     }

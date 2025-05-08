@@ -209,9 +209,9 @@ class ProductIndexer extends Command
 
             $this->info('The operation took '.round($end - $start, 4).' seconds to complete.');
         } else {
-            $this->warn('ELASTICSEARCH IS NOT ENABLED.');
+            $this->warn('ELASTICSEARCH IS DISABLED.');
 
-            Log::channel('elasticsearch')->warning('ELASTICSEARCH IS NOT ENABLE.');
+            Log::channel('elasticsearch')->warning('ELASTICSEARCH IS DISABLED.');
         }
     }
 

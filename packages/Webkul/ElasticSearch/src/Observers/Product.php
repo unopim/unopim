@@ -11,6 +11,35 @@ use Webkul\Product\Models\Product as Products;
 class Product
 {
     /**
+     * bool flag to manage observer functionality
+     */
+    protected static bool $isEnabled = true;
+
+    /**
+     * Enable the observer functionality.
+     */
+    public static function enable(): void
+    {
+        self::$isEnabled = true;
+    }
+
+    /**
+     * Disable the observer functionality.
+     */
+    public static function disable(): void
+    {
+        self::$isEnabled = false;
+    }
+
+    /**
+     * Get the current state of the observer functionality.
+     */
+    public static function isEnabled(): bool
+    {
+        return self::$isEnabled;
+    }
+
+    /**
      * Elastic search Index.
      *
      * @var string
@@ -24,7 +53,7 @@ class Product
 
     public function created(Products $product)
     {
-        if (config('elasticsearch.enabled')) {
+        if (config('elasticsearch.enabled') && self::$isEnabled) {
             $productArray = $product->toArray();
 
             $productArray['status'] = ! isset($productArray['status']) ? 1 : $productArray['status'];
@@ -47,7 +76,7 @@ class Product
 
     public function updated(Products $product)
     {
-        if (config('elasticsearch.enabled')) {
+        if (config('elasticsearch.enabled') && self::$isEnabled) {
             try {
                 $productArray = $product->toArray();
 
@@ -68,7 +97,7 @@ class Product
 
     public function deleted(Products $product)
     {
-        if (config('elasticsearch.enabled')) {
+        if (config('elasticsearch.enabled') && self::$isEnabled) {
             try {
                 ElasticSearch::delete([
                     'index' => strtolower($this->indexPrefix.'_products'),

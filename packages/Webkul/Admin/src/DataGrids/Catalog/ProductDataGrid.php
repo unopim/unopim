@@ -732,6 +732,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     {
         $productArray['status'] = $productArray['status'] ? 'true' : 'false';
 
+        unset($productArray['product_id']);
+        unset($productArray['created_at']);
+        unset($productArray['updated_at']);
+
         return $productArray;
     }
 
