@@ -106,7 +106,7 @@ class ProductController extends ApiController
                 foreach ($product[ProductAbstractType::CHANNEL_LOCALE_VALUES_KEY] ?? [] as $channel => $locales) {
                     foreach ($locales ?? [] as $locale => $value) {
                         if (! empty($value[$attribute->code])) {
-                            $val = htmlspecialchars($value[$attribute->code], ENT_QUOTES, 'UTF-8');
+                            $val = $this->purifyText($value[$attribute->code]);
                             $attribute->setProductValue($val, $product, $channel, $locale);
                         }
                     }
@@ -114,21 +114,21 @@ class ProductController extends ApiController
             } elseif ($attribute->value_per_channel) {
                 foreach ($product[ProductAbstractType::CHANNEL_VALUES_KEY] ?? [] as $channel => $value) {
                     if (! empty($value[$attribute->code])) {
-                        $val = htmlspecialchars($value[$attribute->code], ENT_QUOTES, 'UTF-8');
+                        $val = $this->purifyText($value[$attribute->code]);
                         $attribute->setProductValue($val, $product, $channel);
                     }
                 }
             } elseif ($attribute->value_per_locale) {
                 foreach ($product[ProductAbstractType::LOCALE_VALUES_KEY] ?? [] as $locale => $value) {
                     if (! empty($value[$attribute->code])) {
-                        $val = htmlspecialchars($value[$attribute->code], ENT_QUOTES, 'UTF-8');
+                        $val = $this->purifyText($value[$attribute->code]);
                         $attribute->setProductValue($val, $product, null, $locale);
                     }
                 }
             } else {
                 foreach ($product[ProductAbstractType::COMMON_VALUES_KEY] ?? [] as $key => $value) {
                     if (! empty($value) && $key === $attribute->code) {
-                        $val = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+                        $val = $this->purifyText($value);
                         $attribute->setProductValue($val, $product);
                     }
                 }
@@ -177,7 +177,7 @@ class ProductController extends ApiController
             }
 
             if (isset($attributes[$key])) {
-                $value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+                $value = $this->purifyText($value);
             }
 
             $existing[$key] = $value;
