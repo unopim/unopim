@@ -3,9 +3,12 @@
 namespace Webkul\DataTransfer\Helpers\Importers;
 
 use Illuminate\Support\Facades\Storage as StorageFacade;
+use Webkul\Core\Traits\HtmlPurifier;
 
 class FieldProcessor
 {
+    use HtmlPurifier;
+
     /**
      * Processes a field value based on its type.
      *
@@ -35,7 +38,7 @@ class FieldProcessor
                 break;
             case 'textarea':
                 if ($field->enable_wysiwyg) {
-                    $value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+                    $value = $this->purifyText($value);
                 }
 
                 break;

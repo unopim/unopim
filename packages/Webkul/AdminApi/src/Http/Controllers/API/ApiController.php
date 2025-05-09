@@ -8,10 +8,11 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Validator;
 use Webkul\AdminApi\Traits\ApiResponse;
 use Webkul\Core\Rules\Code;
+use Webkul\Core\Traits\HtmlPurifier;
 
 class ApiController extends BaseController
 {
-    use ApiResponse, DispatchesJobs, ValidatesRequests;
+    use ApiResponse, DispatchesJobs, HtmlPurifier, ValidatesRequests;
 
     /**
      * This function processes and transforms the 'labels' key in the given request data.

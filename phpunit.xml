@@ -6,7 +6,6 @@
     colors="true"
 >
     <testsuites>
-
         <!-- Core package testsuites. -->
         <testsuite name="Core Unit Test">
             <directory suffix="Test.php">./packages/Webkul/Core/tests/Unit</directory>
@@ -35,6 +34,11 @@
 
         <testsuite name="ElasticSearch Feature Tests">
             <directory suffix="Test.php">./packages/Webkul/ElasticSearch/tests/Feature</directory>
+        </testsuite>
+
+        <!-- Data Transfer package Unit testsuite. -->
+        <testsuite name="DataTransfer Package UnitTest">
+            <directory suffix="Test.php">./packages/Webkul/DataTransfer/tests/Unit</directory>
         </testsuite>
     </testsuites>
 
