@@ -11,6 +11,9 @@ class ProductNormalizer
         protected AttributeService $attributeService
     ) {}
 
+    /**
+     * Normalizes the given attribute value for elasticsearch indexing format.
+     */
     public function normalize(array $attributeValues, array $options = []): array
     {
         if (! empty($attributeValues[AbstractType::CHANNEL_LOCALE_VALUES_KEY])) {
@@ -40,6 +43,19 @@ class ProductNormalizer
         return $attributeValues;
     }
 
+    /**
+     * Processes attribute key to include attribute type for mapping to correct elasticsearch field
+     *
+     * Example Input:
+     * [
+     *     'name' => 'example',
+     * ]
+     *
+     * Example Output:
+     * [
+     *     'name-text' => 'example',
+     * ]
+     */
     public function normalizeAttributeKey(array $attributeValues): array
     {
         $attributes = $this->attributeService->findByCodes(array_keys($attributeValues));

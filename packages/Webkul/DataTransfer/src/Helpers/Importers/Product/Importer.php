@@ -1404,8 +1404,6 @@ class Importer extends AbstractImporter
         if (isset($response['errors']) && $response['errors']) {
             foreach ($response['items'] as $index => $result) {
                 if (isset($result['index']['error'])) {
-                    $failedProductIds[] = $result['index']['_id'];
-
                     Log::channel('elasticsearch')->error('Error while indexing product id: '.$result['index']['_id'].' in '.$productIndex.' index: ', [
                         'error' => $result['index']['error'],
                     ]);

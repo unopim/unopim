@@ -18,7 +18,6 @@ class StatusFilter extends AbstractPropertyFilter
     ) {
         $this->allowedOperators = $allowedOperators;
         $this->supportedProperties = $supportedProperties;
-
     }
 
     /**

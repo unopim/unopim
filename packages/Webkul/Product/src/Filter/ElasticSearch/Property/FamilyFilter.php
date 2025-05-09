@@ -18,7 +18,6 @@ class FamilyFilter extends AbstractPropertyFilter
     ) {
         $this->allowedOperators = $allowedOperators;
         $this->supportedProperties = $supportedProperties;
-
     }
 
     /**

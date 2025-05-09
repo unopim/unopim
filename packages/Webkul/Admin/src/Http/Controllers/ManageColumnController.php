@@ -60,7 +60,7 @@ class ManageColumnController extends SelectOptionsController
         $formattedOptions = $page == 1 && ! $query ? $this->getDefaultColumns($source) : [];
 
         foreach ($options as $option) {
-            $formattedOptions[] = $this->formatOption($option, $currentLocaleCode);
+            $formattedOptions[] = $this->formatOption($option, $currentLocaleCode, $entityName ?? '');
         }
 
         return new JsonResponse([
@@ -74,9 +74,9 @@ class ManageColumnController extends SelectOptionsController
     /**
      * {@inheritdoc}
      */
-    protected function formatOption(Model $option, string $currentLocaleCode)
+    protected function formatOption(Model $option, string $currentLocaleCode, string $entityName = '')
     {
-        $translatedOptionLabel = $this->getTranslatedLabel($currentLocaleCode, $option);
+        $translatedOptionLabel = $this->getTranslatedLabel($currentLocaleCode, $option, $entityName);
 
         return [
             'code'  => $option->code,

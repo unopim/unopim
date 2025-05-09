@@ -19,7 +19,7 @@ class SelectOptionsController extends AbstractOptionsController
         $formattedOptions = [];
 
         foreach ($options as $option) {
-            $formattedOptions[] = $this->formatOption($option, $currentLocaleCode);
+            $formattedOptions[] = $this->formatOption($option, $currentLocaleCode, $entityName ?? '');
         }
 
         return new JsonResponse([

@@ -18,16 +18,14 @@ class AttributeNormalizerFactory
         Attribute::CHECKBOX_FIELD_TYPE      => OptionNormalizer::class,
     ];
 
-    protected Container $app;
-
     /** @var array<string, AttributeNormalizerInterface> */
     protected array $instances = [];
 
-    public function __construct(Container $app)
-    {
-        $this->app = $app;
-    }
+    public function __construct(protected Container $app) {}
 
+    /**
+     * It is responsible for managing attribute normalizers.
+     */
     public function getNormalizer(string $type): AttributeNormalizerInterface
     {
         if (! isset($this->instances[$type])) {

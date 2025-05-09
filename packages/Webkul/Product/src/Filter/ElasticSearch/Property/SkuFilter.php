@@ -19,7 +19,6 @@ class SkuFilter extends AbstractPropertyFilter
     ) {
         $this->allowedOperators = $allowedOperators;
         $this->supportedProperties = $supportedProperties;
-
     }
 
     /**

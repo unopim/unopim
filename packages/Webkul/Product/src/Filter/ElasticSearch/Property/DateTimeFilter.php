@@ -22,7 +22,6 @@ class DateTimeFilter extends AbstractPropertyFilter
     ) {
         $this->allowedOperators = $allowedOperators;
         $this->supportedProperties = $supportedProperties;
-
     }
 
     /**

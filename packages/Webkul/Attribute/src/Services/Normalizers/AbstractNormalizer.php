@@ -7,6 +7,11 @@ use Webkul\Attribute\Contracts\AttributeNormalizerInterface;
 
 abstract class AbstractNormalizer implements AttributeNormalizerInterface
 {
+    /**
+     * Retrieves the attribute data.
+     * It should be implemented by subclasses
+     * to provide specific behaviour.
+     */
     abstract public function getData(mixed $data, ?Attribute $attribute = null, array $options = []);
 
     /**

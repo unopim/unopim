@@ -81,18 +81,17 @@ class AbstractOptionsController extends Controller
     /**
      * Get translated label for the entity
      */
-    protected function getTranslatedLabel(string $currentLocaleCode, TranslatableModel $option): string
+    protected function getTranslatedLabel(string $currentLocaleCode, TranslatableModel $option, string $entityName = ''): string
     {
         $translation = $option->translate($currentLocaleCode);
 
-        // return $translation?->label ?? $translation?->name;
-        return $translation ? $translation->name : '';
+        return $translation?->{$this->getTranslationColumnName($entityName)};
     }
 
     /**
      * format option for select component
      */
-    protected function formatOption(Model $option, string $currentLocaleCode)
+    protected function formatOption(Model $option, string $currentLocaleCode, string $entityName = '')
     {
         $translatedOptionLabel = $this->getTranslatedLabel($currentLocaleCode, $option);
 
@@ -147,10 +146,8 @@ class AbstractOptionsController extends Controller
     protected function getTranslationColumnName(string $entityName): string
     {
         return match ($entityName) {
-            'category_fields' => 'name',
-            'channel'         => 'name',
-            'attributes'      => 'name',
-            default           => 'label'
+            'category_fields', 'channel', 'attributes' => 'name',
+            default                                    => 'label'
         };
     }
 }

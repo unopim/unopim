@@ -263,7 +263,7 @@
             watch: {
                 selectedColumns: {
                     handler(newVal) {
-                    this.viewedColumns = newVal.map(el => el.code);
+                        this.viewedColumns = newVal.map(el => el.code);
                     },
                     deep: true,
                     immediate: true,

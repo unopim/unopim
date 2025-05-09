@@ -18,7 +18,7 @@ class ProductAttributeValuesNormalizer
     ) {}
 
     /**
-     * Normalize attribute data with options for product for export
+     * Normalize attribute data with options for product
      */
     public function normalizeAttributes(array $attributeValues, array $options = []): array
     {
