@@ -3,9 +3,10 @@
 namespace Webkul\DataTransfer\Buffer;
 
 use Maatwebsite\Excel\Files\TemporaryFile;
-use PhpOffice\PhpSpreadsheet\IOFactory;
 use Webkul\DataTransfer\Jobs\Export\File\SpoutWriterFactory;
 use Webkul\DataTransfer\Jobs\Export\File\TemporaryFileFactory;
+use OpenSpout\Common\Entity\Row;
+use OpenSpout\Common\Entity\Cell;
 
 class FileBuffer
 {
@@ -27,7 +28,7 @@ class FileBuffer
 
     protected $filePath;
 
-    protected $fileHandle;
+    protected $writer;
 
     /**
      * @return TemporaryFile
@@ -44,51 +45,27 @@ class FileBuffer
      */
     public function __destruct()
     {
-        unset($this->fileHandle);
         if (is_file($this->filePath)) {
             unlink($this->filePath);
         }
     }
 
-    public function appendRows(array $item, $sheet)
+    protected function getWriter($filePath, array $options = [])
     {
-        $column = 'A';
-        foreach ($item as $cellValue) {
-            $sheet->setCellValue($column.$this->highestRow, $cellValue);
-            $column++;
+        if (!isset($options['type'])) {
+            throw new \InvalidArgumentException('Option "type" have to be defined');
         }
+
+        $writer = SpoutWriterFactory::createWriter($options['type'], $options);
+        
+        $writer->openToFile($filePath->sync()->getLocalPath());
+
+        return $writer;
     }
 
-    /**
-     * @return Writer
-     *
-     * @throws \PhpOffice\PhpSpreadsheet\Reader\Exception
-     */
-    public function reopen(TemporaryFile $tempFile, string $writerType, $options)
+    public function writeHeader(array $headers): void
     {
-        $reader = IOFactory::createReader($writerType);
-        try {
-            $this->spreadsheet = $reader->load($tempFile->sync()->getLocalPath());
-        } catch (\Exception $e) {
-            $this->spreadsheet = SpoutWriterFactory::createSpreadSheet();
-            $writer = SpoutWriterFactory::createWriter($writerType, $this->spreadsheet, $options);
-            $writer->save($tempFile->sync()->getLocalPath());
-        }
-
-        return $this;
-    }
-
-    public function setHeaders()
-    {
-        $sheet = $this->spreadsheet->getActiveSheet();
-
-        $headers = $this->getHeaders();
-        $column = 'A';
-
-        foreach ($headers as $header) {
-            $sheet->setCellValue($column.'1', $header);
-            $column++;
-        }
+        $this->writer->addRow(Row::fromValues($headers));
     }
 
     /**
@@ -112,30 +89,16 @@ class FileBuffer
         $this->headers = $headers;
     }
 
-    public function current(): mixed
+    public function escapeFormulaCells(Row $row): Row
     {
-        $rawLine = $this->fileHandle->current();
+        $escapedCells = array_map(static function (Cell $cell): Cell {
+            if ($cell instanceof Cell\FormulaCell) {
+                return new Cell\StringCell($cell->getValue(), null);
+            }
 
-        return json_decode($rawLine, true);
-    }
+            return $cell;
+        }, $row->getCells());
 
-    public function next(): void
-    {
-        $this->fileHandle->next();
-    }
-
-    public function key(): int
-    {
-        return $this->fileHandle->key();
-    }
-
-    public function valid(): bool
-    {
-        return $this->fileHandle->valid();
-    }
-
-    public function rewind(): void
-    {
-        $this->fileHandle->rewind();
+        return new Row($escapedCells);
     }
 }

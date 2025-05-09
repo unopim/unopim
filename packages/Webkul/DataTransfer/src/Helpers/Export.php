@@ -10,6 +10,8 @@ use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
 use Webkul\DataTransfer\Helpers\Exporters\AbstractExporter;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
+use Webkul\DataTransfer\Jobs\Export\File\JSONFileBuffer;
+use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
 
 class Export
 {
@@ -236,7 +238,7 @@ class Export
     /**
      * Start the import process
      */
-    public function completed(): void
+    public function completed()
     {
         $summary = $this->jobTrackBatchRepository
             ->select(
@@ -265,6 +267,38 @@ class Export
         Event::dispatch('data_transfer.export.completed', $export);
 
         $this->jobLogger->info(trans('data_transfer::app.job.completed'));
+    }
+
+    public function flush($filePath)
+    {
+        $jobTrackId = $this->export->id;
+        $tempDir = sys_get_temp_dir();
+        $files = glob($tempDir . DIRECTORY_SEPARATOR . "unopim_buffer_{$jobTrackId}*");
+
+        $exportFileBuffer = app(FileExportFileBuffer::class);
+        
+        foreach ($files as $file) {
+            $buffer = JSONFileBuffer::load($file);
+            $buffer->rewind(); // Go to the beginning of the file
+
+            if ($buffer->valid()) {
+                $firstRow = $buffer->current();
+                $exportFileBuffer->addData($firstRow, $filePath, $this->getExportParameter());
+            }
+
+            @unlink($file);
+        }
+
+        return $this;
+    }
+
+    public function getExportParameter(): array
+    {
+        return [
+            'fieldDelimiter' => $this->export->jobInstance['field_separator'] ?? ',',
+            'filedEnclosure' => '"',
+            'shouldAddBOM'   => true,
+        ];
     }
 
     /**

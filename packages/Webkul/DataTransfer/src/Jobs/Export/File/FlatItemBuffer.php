@@ -4,6 +4,7 @@ namespace Webkul\DataTransfer\Jobs\Export\File;
 
 use Webkul\DataTransfer\Buffer\BufferInterface;
 use Webkul\DataTransfer\Buffer\FileBuffer;
+use OpenSpout\Common\Entity\Row;
 
 /**
  * Puts items into a buffer and calculate headers during a flat file export
@@ -13,15 +14,17 @@ class FlatItemBuffer extends FileBuffer implements BufferInterface
     /** @var int */
     protected $count = 0;
 
+    protected $headerWritten = false;
+
     public function initilize($directory, string $writerType, ?string $fileName = null)
     {
         $this->count = 0;
 
+        $this->headerWritten = false;
+
         if (! $this->spreadsheet) {
             $filePath = $this->make($directory, $writerType, $fileName);
         }
-
-        $this->spreadsheet = SpoutWriterFactory::createSpreadSheet();
 
         return $filePath;
     }
@@ -31,22 +34,23 @@ class FlatItemBuffer extends FileBuffer implements BufferInterface
      */
     public function addData($items, $filePath, array $options = [])
     {
-        $this->reopen($filePath, $filePath->getWriterType(), $options);
-
-        $sheet = $this->spreadsheet->getActiveSheet();
-        // Find the last row
-        $this->highestRow = $sheet->getHighestRow();
-
+        $options['type'] = $filePath->getWriterType();
+        if (! $this->writer) {
+            $this->writer = $this->getWriter($filePath, $options);
+        }
+        
         foreach ($items as $item) {
-            $this->addToHeaders(array_keys($item));
-            $this->highestRow++;
-            $this->setHeaders($sheet, $this->highestRow);
-            $this->appendRows($item, $sheet);
+            if (! $this->headerWritten) {
+                $headers = array_keys($item);
+                $this->writeHeader($headers);
+                $this->headerWritten = true;
+            }
+
+            $this->writer->addRow($this->escapeFormulaCells(Row::fromValues($item)));
             $this->count++;
         }
 
-        $writer = SpoutWriterFactory::createWriter($filePath->getWriterType(), $this->spreadsheet, $options);
-        $writer->save($filePath->getLocalPath());
+        $this->writer->close();
     }
 
     /**

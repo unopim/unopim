@@ -37,12 +37,9 @@ class ProductCursor extends AbstractElasticCursor
      */
     public function getNextItems()
     {
-        $totalItems = [];
         $ids = $this->getNextIds($this->elasticQuery, $this->size);
-        // $newItems = $this->getNextItemsFromIds($ids);
-        $totalItems = \array_merge($totalItems, $ids);
         
-        return $totalItems;
+        return $ids;
     }
 
     /**
@@ -63,7 +60,7 @@ class ProductCursor extends AbstractElasticCursor
      * @param int|null $size
      * @return array
      */
-    protected function getNextIds(array $esQuery, ?int $size = null): array
+    protected function getNextIds(array $esQuery = [], ?int $size = null): array
     {
         $options = self::resolveOptions($this->options);
         $sort = ['_id' => 'desc'];
@@ -106,19 +103,6 @@ class ProductCursor extends AbstractElasticCursor
 
 
         return $ids;
-    }
-
-    protected function getNextItemsFromIds(array $ids): array
-    {
-        if (empty($ids)) {
-            return [];
-        }
-
-        return $this->source->with([
-            'attribute_family',
-            'parent',
-            'super_attributes',
-        ])->whereIn('id', $ids)->orderBy('id', 'desc')->get()->toArray(); 
     }
 
     /**

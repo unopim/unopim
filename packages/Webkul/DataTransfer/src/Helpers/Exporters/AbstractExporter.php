@@ -337,7 +337,7 @@ abstract class AbstractExporter
 
         $chain[] = Bus::batch($typeBatches['export']);
 
-        $chain[] = new CompletedJob($this->export, $this->export->id);
+        $chain[] = new CompletedJob($this->export, $this->export->id, $filePath);
 
         $queueName = $this->getQueue();
 
