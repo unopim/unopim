@@ -2,7 +2,7 @@
 
 namespace Webkul\Product\Filter\Database;
 
-use Webkul\Attribute\Rules\AttributeTypes;
+use Webkul\Attribute\Models\Attribute;
 use Webkul\ElasticSearch\Contracts\Filter as FilterContract;
 use Webkul\ElasticSearch\Enums\FilterOperators;
 
@@ -15,7 +15,7 @@ class BooleanFilter extends AbstractDatabaseAttributeFilter implements FilterCon
      * @param  array  $supportedProperties
      */
     public function __construct(
-        array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[3]],
+        array $supportedAttributeTypes = [Attribute::BOOLEAN_FIELD_TYPE],
         array $allowedOperators = [FilterOperators::IN, FilterOperators::EQUAL]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;

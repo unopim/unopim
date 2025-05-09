@@ -2,7 +2,7 @@
 
 namespace Webkul\Product\Filter\ElasticSearch;
 
-use Webkul\Attribute\Rules\AttributeTypes;
+use Webkul\Attribute\Models\Attribute;
 use Webkul\ElasticSearch\Enums\FilterOperators;
 
 /**
@@ -16,7 +16,7 @@ class DateFilter extends AbstractElasticSearchAttributeFilter
      * @param  array  $supportedProperties
      */
     public function __construct(
-        array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[7]],
+        array $supportedAttributeTypes = [Attribute::DATE_FIELD_TYPE],
         array $allowedOperators = [FilterOperators::IN, FilterOperators::RANGE]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;

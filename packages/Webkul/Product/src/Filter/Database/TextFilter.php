@@ -2,7 +2,7 @@
 
 namespace Webkul\Product\Filter\Database;
 
-use Webkul\Attribute\Rules\AttributeTypes;
+use Webkul\Attribute\Models\Attribute;
 use Webkul\ElasticSearch\Enums\FilterOperators;
 use Webkul\ElasticSearch\QueryString;
 
@@ -15,7 +15,7 @@ class TextFilter extends AbstractDatabaseAttributeFilter
      * @param  array  $supportedProperties
      */
     public function __construct(
-        array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[0], AttributeTypes::ATTRIBUTE_TYPES[1], AttributeTypes::ATTRIBUTE_TYPES[4], AttributeTypes::ATTRIBUTE_TYPES[5], AttributeTypes::ATTRIBUTE_TYPES[8], AttributeTypes::ATTRIBUTE_TYPES[9], AttributeTypes::ATTRIBUTE_TYPES[10], AttributeTypes::ATTRIBUTE_TYPES[11]],
+        array $supportedAttributeTypes = [Attribute::TEXT_TYPE, Attribute::TEXTAREA_TYPE, Attribute::SELECT_FIELD_TYPE, Attribute::MULTISELECT_FIELD_TYPE, Attribute::IMAGE_ATTRIBUTE_TYPE, Attribute::FILE_ATTRIBUTE_TYPE, Attribute::CHECKBOX_FIELD_TYPE, Attribute::GALLERY_ATTRIBUTE_TYPE],
         array $allowedOperators = [FilterOperators::IN, FilterOperators::CONTAINS]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;

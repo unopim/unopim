@@ -2,7 +2,7 @@
 
 namespace Webkul\Product\Filter\ElasticSearch;
 
-use Webkul\Attribute\Rules\AttributeTypes;
+use Webkul\Attribute\Models\Attribute;
 use Webkul\ElasticSearch\Enums\FilterOperators;
 
 /**
@@ -14,7 +14,7 @@ class BooleanFilter extends AbstractElasticSearchAttributeFilter
      * @param  array  $supportedProperties
      */
     public function __construct(
-        array $supportedAttributeTypes = [AttributeTypes::ATTRIBUTE_TYPES[3]],
+        array $supportedAttributeTypes = [Attribute::BOOLEAN_FIELD_TYPE],
         array $allowedOperators = [FilterOperators::IN, FilterOperators::CONTAINS]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;

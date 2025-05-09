@@ -23,6 +23,10 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
     use HasFactory;
     use HistoryTrait;
 
+    const TEXT_TYPE = 'text';
+
+    const TEXTAREA_TYPE = 'textarea';
+
     const BOOLEAN_FIELD_TYPE = 'boolean';
 
     const PRICE_FIELD_TYPE = 'price';
@@ -40,8 +44,6 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
     const FILE_ATTRIBUTE_TYPE = 'file';
 
     const IMAGE_ATTRIBUTE_TYPE = 'image';
-
-    const PRICE_ATTRIBUTE_TYPE = 'price';
 
     const GALLERY_ATTRIBUTE_TYPE = 'gallery';
 
