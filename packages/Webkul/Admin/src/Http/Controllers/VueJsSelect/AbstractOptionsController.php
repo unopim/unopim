@@ -36,7 +36,6 @@ class AbstractOptionsController extends Controller
             'category_fields' => $this->categoryFieldRepository,
             default           => throw new \Exception('Not implemented for '.$entityName)
         };
-
     }
 
     /**
