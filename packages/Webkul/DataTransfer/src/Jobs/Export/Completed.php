@@ -23,7 +23,7 @@ class Completed implements ShouldQueue
     public function __construct(
         protected $export,
         protected $jobTrackId,
-        protected $filePath
+        protected $exportBuffer
     ) {}
 
     /**
@@ -36,7 +36,7 @@ class Completed implements ShouldQueue
         app(ExportHelper::class)
             ->setExport($this->export)
             ->setLogger(JobLogger::make($this->jobTrackId))
-            ->flush($this->filePath)
+            ->flush($this->exportBuffer)
             ->completed();
     }
 }

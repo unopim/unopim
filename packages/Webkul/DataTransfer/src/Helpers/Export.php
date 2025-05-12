@@ -5,13 +5,14 @@ namespace Webkul\DataTransfer\Helpers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Psr\Log\LoggerInterface;
+use Webkul\DataTransfer\Buffer\FileBuffer;
 use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
 use Webkul\DataTransfer\Helpers\Exporters\AbstractExporter;
+use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
+use Webkul\DataTransfer\Jobs\Export\File\SpoutWriterFactory;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
-use Webkul\DataTransfer\Jobs\Export\File\JSONFileBuffer;
-use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
 
 class Export
 {
@@ -107,6 +108,8 @@ class Export
      */
     protected $jobLogger;
 
+    protected $exportBuffer;
+
     /**
      * Create a new helper instance.
      *
@@ -134,6 +137,13 @@ class Export
     public function setLogger(LoggerInterface $logger): self
     {
         $this->jobLogger = $logger;
+
+        return $this;
+    }
+
+    public function setExportBuffer($exportBuffer): self
+    {
+        $this->exportBuffer = $exportBuffer;
 
         return $this;
     }
@@ -213,7 +223,6 @@ class Export
     public function start(?JobTrackBatchContract $exportBatch = null, ?string $queue = null): bool
     {
         DB::beginTransaction();
-
         try {
             $typeExporter = $this->getTypeExporter();
             $typeExporter->queue = $queue;
@@ -269,36 +278,43 @@ class Export
         $this->jobLogger->info(trans('data_transfer::app.job.completed'));
     }
 
-    public function flush($filePath)
+    public function flush($exportBuffer)
     {
-        $jobTrackId = $this->export->id;
-        $tempDir = sys_get_temp_dir();
-        $files = glob($tempDir . DIRECTORY_SEPARATOR . "unopim_buffer_{$jobTrackId}*");
-
-        $exportFileBuffer = app(FileExportFileBuffer::class);
-        
-        foreach ($files as $file) {
-            $buffer = JSONFileBuffer::load($file);
-            $buffer->rewind(); // Go to the beginning of the file
-
-            if ($buffer->valid()) {
-                $firstRow = $buffer->current();
-                $exportFileBuffer->addData($firstRow, $filePath, $this->getExportParameter());
-            }
-
-            @unlink($file);
+        if (empty($exportBuffer)) {
+            return $this;
         }
 
-        return $this;
-    }
+        $typeExporter = $this->getTypeExporter();
+        $filters = $typeExporter->getFilters();
 
-    public function getExportParameter(): array
-    {
-        return [
-            'fieldDelimiter' => $this->export->jobInstance['field_separator'] ?? ',',
-            'filedEnclosure' => '"',
-            'shouldAddBOM'   => true,
-        ];
+        $directory = sprintf('exports/%s/%s', $this->export->id, FileBuffer::FOLDER_PREFIX);
+        $fileName = sprintf(
+            '%s-%s.%s',
+            $this->export->jobInstance->code,
+            $this->export->jobInstance->entity_type,
+            strtolower($filters['file_format'] ?? SpoutWriterFactory::CSV)
+        );
+
+        $buffer = app(FileExportFileBuffer::class)->initialize(
+            $directory,
+            $fileName,
+            $typeExporter->getExportParameter()
+        );
+
+        foreach ($exportBuffer as $item) {
+            $buffer->addData($item);
+        }
+
+        $buffer->writerClose();
+
+        $filePath = $buffer->getFilePath();
+        $this->uploadFile(
+            $filePath->getFilePath(),
+            $filePath->getTemporaryPath(),
+            $filters
+        );
+
+        return $this;
     }
 
     /**
@@ -365,6 +381,7 @@ class Export
             $this->typeExporter = app()->make($exporterConfig['exporter'])
                 ->setExport($this->export)
                 ->setLogger($this->jobLogger)
+                ->setExportBuffer($this->exportBuffer)
                 ->setErrorHelper($this->errorHelper);
 
             $this->source = app()->make($exporterConfig['source']);

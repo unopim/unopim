@@ -12,10 +12,18 @@ class JSONFileBuffer implements \Iterator
     /** @var \SplFileObject|null */
     protected $file;
 
-    public function __construct(string $filename = null)
+    public function __construct(?string $filename = null)
     {
         $this->filename = tempnam(sys_get_temp_dir(), $filename);
         $this->openFile();
+    }
+
+    public static function initialize($export)
+    {
+        $filename = sprintf('%s%s_', JSONFileBuffer::FILE_PREFIX, $export->id);
+        $jsonFileBuffer = new self($filename, true);
+
+        return $jsonFileBuffer;
     }
 
     protected function openFile(): void
@@ -26,11 +34,11 @@ class JSONFileBuffer implements \Iterator
 
     public static function load(string $filename): self
     {
-        if (!file_exists($filename)) {
+        if (! file_exists($filename)) {
             throw new \InvalidArgumentException("File not found: $filename");
         }
 
-        $instance = new self(); // uses constructor to generate dummy file
+        $instance = new self; // uses constructor to generate dummy file
         $instance->filename = $filename;
         $instance->openFile();
 
@@ -39,13 +47,13 @@ class JSONFileBuffer implements \Iterator
 
     public function write($item, array $options = [])
     {
-        if (!is_array($item) && !is_scalar($item)) {
+        if (! is_array($item) && ! is_scalar($item)) {
             throw new \Exception(
                 sprintf('%s only supports items of type scalar or array', __CLASS__)
             );
         }
 
-        $this->file->fwrite(json_encode($item) . PHP_EOL);
+        $this->file->fwrite(json_encode($item).PHP_EOL);
     }
 
     // Iterator methods

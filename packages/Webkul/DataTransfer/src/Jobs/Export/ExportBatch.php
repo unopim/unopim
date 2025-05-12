@@ -24,7 +24,8 @@ class ExportBatch implements ShouldQueue
     public function __construct(
         protected $exportBatch,
         protected $filePath,
-        protected $jobTrackId
+        protected $jobTrackId,
+        protected $exportBuffer
     ) {}
 
     /**
@@ -37,6 +38,7 @@ class ExportBatch implements ShouldQueue
         $typeExported = app(ExportHelper::class)
             ->setExport($this->exportBatch->jobTrack)
             ->setLogger(JobLogger::make($this->jobTrackId))
+            ->setExportBuffer($this->exportBuffer)
             ->getTypeExporter();
 
         $typeExported->exportBatch($this->exportBatch, $this->filePath);

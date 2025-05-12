@@ -6,39 +6,24 @@ use Webkul\DataTransfer\Cursor\AbstractCursor;
 
 class ProductCursor extends AbstractCursor
 {
-    private array $searchAfter = [];
+    protected int $offset = 0;
 
     public function __construct(
-        protected $elasticQuery,
+        protected array $filters,
         protected $source,
-        protected int $size = 10,
+        protected int $batchSize = 100,
         protected array $options = []
-    ) {
-    }
+    ) {}
 
     /**
      * {@inheritdoc}
      */
     public function next(): void
     {
-        if (false === next($this->items)) {
-            $this->position += count($this->items);
+        if (next($this->items) === false) {
             $this->items = $this->getNextItems();
             reset($this->items);
         }
-    }
-
-    /**
-     * Get next items from the source
-     *
-     * @param array $esQuery
-     * @return array
-     */
-    public function getNextItems()
-    {
-        $ids = $this->getNextIds($this->elasticQuery, $this->size);
-        
-        return $ids;
     }
 
     /**
@@ -46,36 +31,51 @@ class ProductCursor extends AbstractCursor
      */
     public function rewind(): void
     {
-        $this->searchAfter = [];
+        $this->offset = 0;
         $this->items = $this->getNextItems();
         reset($this->items);
     }
-    
 
     /**
-     * Get next SKUs from the source
-     *
-     * @param array $esQuery
-     * @param int|null $size
-     * @return array
+     * Get the next batch of items from the source.
      */
-    protected function getNextIds(array $esQuery = [], ?int $size = null): array
+    protected function getNextItems(): array
     {
-        $options = self::resolveOptions($this->options);
+        return $this->fetchNextBatch();
+    }
 
-        $ids = [];
+    /**
+     * Fetch a batch of product IDs from the source using offset-based pagination.
+     */
+    protected function fetchNextBatch(): array
+    {
+        $query = $this->source->newQuery();
 
+        // @TODO: Need to future
+        // foreach ($this->filters as $field => $value) {
+        //     $query->where($field, $value);
+        // }
+
+        $ids = $query->select('id')
+            ->orderBy('id')
+            ->offset($this->offset)
+            ->limit($this->batchSize)
+            ->pluck('id')
+            ->map(fn ($id) => ['id' => $id])
+            ->all();
+
+        $this->offset += $this->batchSize;
 
         return $ids;
     }
 
     /**
-     * @return array
+     * Resolve and normalize options.
      */
-    protected static function resolveOptions(array $options)
+    protected static function resolveOptions(array $options): array
     {
-        $options['sort'] = $options['sort'] ?? [];
-        $options['filters'] = $options['filters'] ?? [];
+        $options['sort'] ??= [];
+        $options['filters'] ??= [];
 
         return $options;
     }

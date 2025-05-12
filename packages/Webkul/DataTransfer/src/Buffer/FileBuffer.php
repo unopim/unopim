@@ -3,10 +3,10 @@
 namespace Webkul\DataTransfer\Buffer;
 
 use Maatwebsite\Excel\Files\TemporaryFile;
+use OpenSpout\Common\Entity\Cell;
+use OpenSpout\Common\Entity\Row;
 use Webkul\DataTransfer\Jobs\Export\File\SpoutWriterFactory;
 use Webkul\DataTransfer\Jobs\Export\File\TemporaryFileFactory;
-use OpenSpout\Common\Entity\Row;
-use OpenSpout\Common\Entity\Cell;
 
 class FileBuffer
 {
@@ -40,24 +40,14 @@ class FileBuffer
         return $temporaryFileFactory->make($fileExtension, $fileName);
     }
 
-    /**
-     * Close and delete file at buffer destruction
-     */
-    public function __destruct()
-    {
-        if (is_file($this->filePath)) {
-            unlink($this->filePath);
-        }
-    }
-
     protected function getWriter($filePath, array $options = [])
     {
-        if (!isset($options['type'])) {
+        if (! isset($options['type'])) {
             throw new \InvalidArgumentException('Option "type" have to be defined');
         }
 
         $writer = SpoutWriterFactory::createWriter($options['type'], $options);
-        
+
         $writer->openToFile($filePath->sync()->getLocalPath());
 
         return $writer;

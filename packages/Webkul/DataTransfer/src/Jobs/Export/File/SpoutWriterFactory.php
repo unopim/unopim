@@ -13,7 +13,9 @@ use OpenSpout\Writer\XLSX\Writer as XlsxWriter;
 final class SpoutWriterFactory
 {
     public const XLS = 'Xls';
+
     public const CSV = 'Csv';
+
     public const XLSX = 'Xlsx';
 
     /**
@@ -25,15 +27,17 @@ final class SpoutWriterFactory
 
         switch ($type) {
             case self::CSV:
-                $options = new CsvOptions();
+                $options = new CsvOptions;
                 $options->FIELD_DELIMITER = $normalizedOptions['fieldDelimiter'] ?? $options->FIELD_DELIMITER;
                 $options->FIELD_ENCLOSURE = $normalizedOptions['fieldEnclosure'] ?? $options->FIELD_ENCLOSURE;
                 $options->SHOULD_ADD_BOM = $normalizedOptions['shouldAddBOM'] ?? $options->SHOULD_ADD_BOM;
+
                 return new CsvWriter($options);
 
             case self::XLSX:
             case self::XLS:
-                $options = new XlsxOptions();
+                $options = new XlsxOptions;
+
                 return new XlsxWriter($options);
 
             default:

@@ -2,9 +2,9 @@
 
 namespace Webkul\DataTransfer\Jobs\Export\File;
 
+use OpenSpout\Common\Entity\Row;
 use Webkul\DataTransfer\Buffer\BufferInterface;
 use Webkul\DataTransfer\Buffer\FileBuffer;
-use OpenSpout\Common\Entity\Row;
 
 /**
  * Puts items into a buffer and calculate headers during a flat file export
@@ -16,29 +16,26 @@ class FlatItemBuffer extends FileBuffer implements BufferInterface
 
     protected $headerWritten = false;
 
-    public function initilize($directory, string $writerType, ?string $fileName = null)
+    public function initialize($directory, $fileName, $options = [])
     {
         $this->count = 0;
 
         $this->headerWritten = false;
 
-        if (! $this->spreadsheet) {
-            $filePath = $this->make($directory, $writerType, $fileName);
+        if (! $this->writer) {
+            $this->filePath = $this->make($directory, $options['type'], $fileName);
+
+            $this->writer = $this->getWriter($this->filePath, $options);
         }
 
-        return $filePath;
+        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function addData($items, $filePath, array $options = [])
+    public function addData($items)
     {
-        $options['type'] = $filePath->getWriterType();
-        if (! $this->writer) {
-            $this->writer = $this->getWriter($filePath, $options);
-        }
-        
         foreach ($items as $item) {
             if (! $this->headerWritten) {
                 $headers = array_keys($item);
@@ -49,8 +46,16 @@ class FlatItemBuffer extends FileBuffer implements BufferInterface
             $this->writer->addRow($this->escapeFormulaCells(Row::fromValues($item)));
             $this->count++;
         }
+    }
 
+    public function writerClose()
+    {
         $this->writer->close();
+    }
+
+    public function getFilePath()
+    {
+        return $this->filePath;
     }
 
     /**
