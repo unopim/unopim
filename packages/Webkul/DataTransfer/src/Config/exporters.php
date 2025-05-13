@@ -32,7 +32,21 @@ return [
                     'title'    => 'With Media',
                     'required' => false,
                     'type'     => 'boolean',
-                ],
+                ], [
+                    'name'     => 'status',
+                    'title'    => 'Status',
+                    'required' => false,
+                    'type'     => 'select',
+                    'options' => [
+                        [
+                            'label' => 'Enable',
+                            'value' => 1,
+                        ], [
+                            'label' => 'Disable',
+                            'value' => 0,
+                        ],
+                    ],
+                ],                
             ],
         ],
     ],

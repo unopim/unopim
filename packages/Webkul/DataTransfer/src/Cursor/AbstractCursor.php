@@ -4,11 +4,11 @@ namespace Webkul\DataTransfer\Cursor;
 
 abstract class AbstractCursor
 {
-    protected $requestParam;
+    protected $requestParams;
 
     protected $source;
 
-    protected int $size = 100;
+    protected int $batchSize = 100;
 
     protected ?array $lastSort = null;
 

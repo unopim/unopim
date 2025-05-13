@@ -90,7 +90,9 @@ class Exporter extends AbstractExporter
      */
     protected function getResults()
     {
-        return $this->productSource->getResults([], $this->source, self::BATCH_SIZE);
+        $requestParam['filters'] = $this->getFilters();
+        
+        return $this->productSource->getResults($requestParam, $this->source, self::BATCH_SIZE);
     }
 
     protected function getItemsFromIds(array $ids)

@@ -10,11 +10,15 @@ class ProductCursor extends AbstractElasticCursor
     private array $searchAfter = [];
 
     public function __construct(
-        protected array $filters,
-        protected $source,
-        protected int $batchSize = 100,
+        array $requestParams,
+        $source,
+        int $batchSize = 100,
         protected array $options = []
-    ) {}
+    ) {
+        $this->requestParams = $requestParams;
+        $this->source = $source;
+        $this->batchSize = $batchSize;
+    }
 
     /**
      * {@inheritdoc}
@@ -42,16 +46,16 @@ class ProductCursor extends AbstractElasticCursor
      */
     protected function getNextItems(): array
     {
-        return $this->fetchNextBatch($this->filters, $this->batchSize);
+        return $this->fetchNextBatch($this->requestParams, $this->batchSize);
     }
 
     /**
      * Fetch a batch of product IDs from Elasticsearch.
      */
-    protected function fetchNextBatch(array $filters = [], ?int $size = null): array
+    protected function fetchNextBatch(array $requestParams = [], ?int $size = null): array
     {
         $options = self::resolveOptions($this->options);
-
+        $filters = $requestParams['filters'] ?? [];
         $query = [
             'track_total_hits' => true,
             '_source'          => false,
@@ -64,20 +68,31 @@ class ProductCursor extends AbstractElasticCursor
             $query['search_after'] = $this->searchAfter;
         }
 
-        // Set a default empty bool query if none is present
-        $query['query']['bool'] ??= new \stdClass;
+        // Build the bool query
+        $boolQuery = [];
+
+        // @TODO: Need to future
+        if (!empty($filters['status'])) {
+            $boolQuery['filter'][] = [
+                'terms' => ['status' => [$filters['status']]],
+            ];
+        }
+
+        // Set the final query
+        $query['query']['bool'] = $boolQuery ?: new \stdClass;
 
         $request = [
             'index' => $options['index'],
             'body'  => $query,
         ];
-
+        
+        
         try {
+            
             $response = ElasticSearch::search($request);
             $hits = $response['hits']['hits'] ?? [];
-
             $this->retrievedCount = $response['hits']['total']['value'] ?? 0;
-
+            
             if (! empty($hits)) {
                 $this->searchAfter = end($hits)['sort'];
 
@@ -85,6 +100,7 @@ class ProductCursor extends AbstractElasticCursor
             }
         } catch (\Throwable $e) {
             \Log::error('Elasticsearch search error: '.$e->getMessage());
+            throw $e;
         }
 
         return [];

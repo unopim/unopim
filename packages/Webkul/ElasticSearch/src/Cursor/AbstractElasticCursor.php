@@ -4,11 +4,11 @@ namespace Webkul\ElasticSearch\Cursor;
 
 abstract class AbstractElasticCursor
 {
-    protected $requestParam;
+    protected $requestParams;
 
     protected $source;
 
-    protected int $size = 100;
+    protected int $batchSize = 100;
 
     protected ?array $lastSort = null;
 

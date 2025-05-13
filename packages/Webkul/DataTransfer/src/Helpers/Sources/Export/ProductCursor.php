@@ -9,11 +9,15 @@ class ProductCursor extends AbstractCursor
     protected int $offset = 0;
 
     public function __construct(
-        protected array $filters,
-        protected $source,
-        protected int $batchSize = 100,
+        array $requestParams,
+        $source,
+        int $batchSize = 100,
         protected array $options = []
-    ) {}
+    ) {
+        $this->requestParams = $requestParams;
+        $this->source = $source;
+        $this->batchSize = $batchSize;
+    }
 
     /**
      * {@inheritdoc}
@@ -49,22 +53,29 @@ class ProductCursor extends AbstractCursor
      */
     protected function fetchNextBatch(): array
     {
+        $ids = [];
         $query = $this->source->newQuery();
-
+        $filters = $this->requestParams['filters'] ?? [];
         // @TODO: Need to future
-        // foreach ($this->filters as $field => $value) {
-        //     $query->where($field, $value);
-        // }
-
-        $ids = $query->select('id')
-            ->orderBy('id')
-            ->offset($this->offset)
-            ->limit($this->batchSize)
-            ->pluck('id')
-            ->map(fn ($id) => ['id' => $id])
-            ->all();
-
-        $this->offset += $this->batchSize;
+        foreach ($filters as $field => $value) {
+            if ($field == 'status' && !empty($value)) {
+                $query->where($field, $value);
+            }
+        }
+        try {
+            $ids = $query->select('id')
+                ->orderBy('id')
+                ->offset($this->offset)
+                ->limit($this->batchSize)
+                ->pluck('id')
+                ->map(fn ($id) => ['id' => $id])
+                ->all();
+        
+            $this->offset += $this->batchSize;
+        } catch (\Throwable $e) {
+            \Log::error('Elasticsearch search error: '.$e->getMessage());
+            throw $e;
+        }
 
         return $ids;
     }
@@ -75,7 +86,6 @@ class ProductCursor extends AbstractCursor
     protected static function resolveOptions(array $options): array
     {
         $options['sort'] ??= [];
-        $options['filters'] ??= [];
 
         return $options;
     }
