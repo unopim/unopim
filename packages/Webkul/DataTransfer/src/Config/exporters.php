@@ -37,7 +37,7 @@ return [
                     'title'    => 'Status',
                     'required' => false,
                     'type'     => 'select',
-                    'options' => [
+                    'options'  => [
                         [
                             'label' => 'Enable',
                             'value' => 1,
@@ -46,7 +46,7 @@ return [
                             'value' => 0,
                         ],
                     ],
-                ],                
+                ],
             ],
         ],
     ],

@@ -58,7 +58,7 @@ class ProductCursor extends AbstractCursor
         $filters = $this->requestParams['filters'] ?? [];
         // @TODO: Need to future
         foreach ($filters as $field => $value) {
-            if ($field == 'status' && !empty($value)) {
+            if ($field == 'status' && ! empty($value)) {
                 $query->where($field, $value);
             }
         }
@@ -70,7 +70,7 @@ class ProductCursor extends AbstractCursor
                 ->pluck('id')
                 ->map(fn ($id) => ['id' => $id])
                 ->all();
-        
+
             $this->offset += $this->batchSize;
         } catch (\Throwable $e) {
             \Log::error('Elasticsearch search error: '.$e->getMessage());

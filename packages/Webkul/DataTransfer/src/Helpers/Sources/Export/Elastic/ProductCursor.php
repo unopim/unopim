@@ -72,7 +72,7 @@ class ProductCursor extends AbstractElasticCursor
         $boolQuery = [];
 
         // @TODO: Need to future
-        if (!empty($filters['status'])) {
+        if (! empty($filters['status'])) {
             $boolQuery['filter'][] = [
                 'terms' => ['status' => [$filters['status']]],
             ];
@@ -85,14 +85,13 @@ class ProductCursor extends AbstractElasticCursor
             'index' => $options['index'],
             'body'  => $query,
         ];
-        
-        
+
         try {
-            
+
             $response = ElasticSearch::search($request);
             $hits = $response['hits']['hits'] ?? [];
             $this->retrievedCount = $response['hits']['total']['value'] ?? 0;
-            
+
             if (! empty($hits)) {
                 $this->searchAfter = end($hits)['sort'];
 

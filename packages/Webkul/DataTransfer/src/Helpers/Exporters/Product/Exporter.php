@@ -91,7 +91,7 @@ class Exporter extends AbstractExporter
     protected function getResults()
     {
         $requestParam['filters'] = $this->getFilters();
-        
+
         return $this->productSource->getResults($requestParam, $this->source, self::BATCH_SIZE);
     }
 
