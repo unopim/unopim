@@ -40,10 +40,10 @@ return [
                     'options'  => [
                         [
                             'label' => 'Enable',
-                            'value' => 1,
+                            'value' => 'enable',
                         ], [
                             'label' => 'Disable',
-                            'value' => 0,
+                            'value' => 'disable',
                         ],
                     ],
                 ],
