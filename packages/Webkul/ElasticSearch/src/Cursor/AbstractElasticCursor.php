@@ -4,6 +4,8 @@ namespace Webkul\ElasticSearch\Cursor;
 
 abstract class AbstractElasticCursor
 {
+    protected array $searchAfter = [];
+
     protected $requestParams;
 
     protected $source;
@@ -18,7 +20,30 @@ abstract class AbstractElasticCursor
 
     protected ?array $items = null;
 
-    abstract protected function getNextItems();
+    abstract protected function fetchNextBatch();
+
+    public function next(): void
+    {
+        if (next($this->items) === false) {
+            $this->items = $this->getNextItems();
+            reset($this->items);
+        }
+    }
+
+    public function rewind(): void
+    {
+        $this->searchAfter = [];
+        $this->items = $this->getNextItems();
+        reset($this->items);
+    }
+
+    /**
+     * Fetch the next batch of items.
+     */
+    protected function getNextItems(): array
+    {
+        return $this->fetchNextBatch($this->requestParams, $this->batchSize);
+    }
 
     public function current(): array
     {

@@ -8,6 +8,8 @@ abstract class AbstractCursor
 
     protected $source;
 
+    protected int $offset = 0;
+
     protected int $batchSize = 100;
 
     protected ?array $lastSort = null;
@@ -18,7 +20,30 @@ abstract class AbstractCursor
 
     protected ?array $items = null;
 
-    abstract protected function getNextItems();
+    abstract protected function fetchNextBatch();
+
+    public function next(): void
+    {
+        if (next($this->items) === false) {
+            $this->items = $this->getNextItems();
+            reset($this->items);
+        }
+    }
+
+    public function rewind(): void
+    {
+        $this->offset = 0;
+        $this->items = $this->getNextItems();
+        reset($this->items);
+    }
+
+    /**
+     * Get the next batch of items from the source.
+     */
+    protected function getNextItems(): array
+    {
+        return $this->fetchNextBatch();
+    }
 
     public function current(): array
     {

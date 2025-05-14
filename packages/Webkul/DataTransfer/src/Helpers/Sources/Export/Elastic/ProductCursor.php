@@ -7,46 +7,15 @@ use Webkul\ElasticSearch\Cursor\AbstractElasticCursor;
 
 class ProductCursor extends AbstractElasticCursor
 {
-    private array $searchAfter = [];
-
     public function __construct(
         array $requestParams,
-        $source,
+        mixed $source,
         int $batchSize = 100,
         protected array $options = []
     ) {
         $this->requestParams = $requestParams;
         $this->source = $source;
         $this->batchSize = $batchSize;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function next(): void
-    {
-        if (next($this->items) === false) {
-            $this->items = $this->getNextItems();
-            reset($this->items);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function rewind(): void
-    {
-        $this->searchAfter = [];
-        $this->items = $this->getNextItems();
-        reset($this->items);
-    }
-
-    /**
-     * Fetch the next batch of items.
-     */
-    protected function getNextItems(): array
-    {
-        return $this->fetchNextBatch($this->requestParams, $this->batchSize);
     }
 
     /**

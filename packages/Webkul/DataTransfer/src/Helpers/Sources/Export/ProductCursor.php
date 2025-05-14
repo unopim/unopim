@@ -6,46 +6,15 @@ use Webkul\DataTransfer\Cursor\AbstractCursor;
 
 class ProductCursor extends AbstractCursor
 {
-    protected int $offset = 0;
-
     public function __construct(
         array $requestParams,
-        $source,
+        mixed $source,
         int $batchSize = 100,
         protected array $options = []
     ) {
         $this->requestParams = $requestParams;
         $this->source = $source;
         $this->batchSize = $batchSize;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function next(): void
-    {
-        if (next($this->items) === false) {
-            $this->items = $this->getNextItems();
-            reset($this->items);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function rewind(): void
-    {
-        $this->offset = 0;
-        $this->items = $this->getNextItems();
-        reset($this->items);
-    }
-
-    /**
-     * Get the next batch of items from the source.
-     */
-    protected function getNextItems(): array
-    {
-        return $this->fetchNextBatch();
     }
 
     /**
