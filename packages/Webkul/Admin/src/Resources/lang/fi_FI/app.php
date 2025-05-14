@@ -16,10 +16,10 @@ return [
             'create' => [
                 'email'                  => 'Rekisteröity sähköposti',
                 'email-not-exist'        => 'Sähköpostiosoitetta ei löydy',
-                'page-title'             => 'Unohtunut salasana',
+                'page-title'             => 'Salasanan palauttaminen',
                 'reset-link-sent'        => 'Salasanan palautuslinkki lähetetty',
                 'email-settings-error'   => 'Sähköpostia ei voitu lähettää. Tarkista sähköpostiasetukset',
-                'sign-in-link'           => 'Takaisin kirjautumiseen?',
+                'sign-in-link'           => 'Takaisin kirjautumiseen',
                 'submit-btn'             => 'Palauta',
                 'title'                  => 'Palauta salasana',
                 'powered-by'             => 'Toimii :unopim:lla,',
@@ -28,7 +28,7 @@ return [
         ],
 
         'reset-password' => [
-            'back-link-title'        => 'Takaisin kirjautumiseen?',
+            'back-link-title'        => 'Takaisin kirjautumiseen',
             'confirm-password'       => 'Vahvista salasana',
             'email'                  => 'Rekisteröity sähköposti',
             'password'               => 'Salasana',
@@ -80,18 +80,18 @@ return [
     'dashboard' => [
         'index' => [
             'title'            => 'Kojelauta',
-            'user-info'        => 'Seuraa nopeasti PIM:si tärkeimpiä asioita',
+            'user-info'        => 'Seuraa nopeasti PIM:si tärkeimpiä avainlukuja',
             'user-name'        => 'Hei! :user_name',
             'catalog-details'  => 'Luettelo',
-            'total-families'   => 'Yhteensä perheitä',
-            'total-attributes' => 'Yhteensä attribuutteja',
-            'total-groups'     => 'Yhteensä ryhmiä',
-            'total-categories' => 'Yhteensä kategorioita',
-            'total-products'   => 'Yhteensä tuotteita',
+            'total-families'   => 'Perheitä yhteensä',
+            'total-attributes' => 'Attribuutteja yhteensä',
+            'total-groups'     => 'Ryhmiä yhteensä',
+            'total-categories' => 'Kategorioita yhteensä',
+            'total-products'   => 'Tuotteita yhteensä',
             'settings-details' => 'Luettelon rakenne',
-            'total-locales'    => 'Yhteensä kielialueita',
-            'total-currencies' => 'Yhteensä valuuttoja',
-            'total-channels'   => 'Yhteensä kanavia',
+            'total-locales'    => 'Käännöskieliä yhteensä',
+            'total-currencies' => 'Valuuttoja yhteensä',
+            'total-channels'   => 'Kanavia yhteensä',
         ],
     ],
 
@@ -168,27 +168,27 @@ return [
 
                 'videos' => [
                     'error' => ':attribute voi olla enintään :max kilotavua. Valitse pienempi tiedosto.',
-                    'info'  => 'Maksimi videosa on :size',
+                    'info'  => 'Videon suurin sallittu koko on :size',
                     'title' => 'Videot',
                 ],
 
                 'links' => [
                     'related-products' => [
-                        'empty-info' => 'Lisää liittyvät tuoteyhdistelmät.',
+                        'empty-info' => 'Lisää liittyvä tuote.',
                         'info'       => 'Näytettävien tuotteiden lisäksi asiakkaille esitellään liittyviä tuotteita.',
                         'title'      => 'Liittyvät tuotteet',
                     ],
 
                     'up-sells' => [
-                        'empty-info' => 'Lisää ylittävä tuote.',
-                        'info'       => 'Asiakkaille esitetään ylittävä tuote, joka on premium- tai korkealaatuinen vaihtoehto',
-                        'title'      => 'Ylitytuotteet',
+                        'empty-info' => 'Lisää lisämyyntituote.',
+                        'info'       => 'Asiakkaille esitetään lisämyyntituote, joka on premium- tai korkealaatuinen vaihtoehto',
+                        'title'      => 'Lisämyyntituotteet',
                     ],
 
                     'cross-sells' => [
-                        'empty-info' => 'Lisää ristikkäisesti myytävät tuotteet.',
+                        'empty-info' => 'Lisää ristiinmyyntituotteet.',
                         'info'       => 'Ostoskoriin lisättävien tuotteiden vieressä olevat "impulssiostot".',
-                        'title'      => 'Ristikkäisesti myytävät tuotteet',
+                        'title'      => 'Ristiinmyyntituotteet',
                     ],
 
                     'add-btn'           => 'Lisää',
@@ -197,7 +197,7 @@ return [
                     'empty-title'       => 'Lisää tuote',
                     'image-placeholder' => 'Tuotekuva',
                     'sku'               => 'SKU - :sku',
-                    'title'             => 'Yhdistelmät',
+                    'title'             => 'Liitännäiset tuotteet',
                 ],
 
                 'types' => [
@@ -214,7 +214,7 @@ return [
                         'title'                              => 'Muunnokset',
                         'variant-exists'                     => 'Tämä variantti tai SKU on jo käytössä.',
                         'variant-attribute-option-not-found' => 'Varianttiominaisuus tai vaihtoehto ei löytynyt',
-                        'supper-attribute-not-found'         => 'Super-ominaisuus ei löytynyt',
+                        'supper-attribute-not-found'         => 'Super-ominaisuutta ei löytynyt',
                         'variant-given-exists'               => 'Tämä variantti on jo olemassa',
 
                         'create' => [
@@ -229,7 +229,7 @@ return [
                             'disabled'        => 'Poistettu käytöstä',
                             'edit-info'       => 'Jos haluat päivittää tuoteominaisuuksia, mene',
                             'edit-link-title' => 'Tuote sivulle',
-                            'enabled'         => 'Otomuksessa',
+                            'enabled'         => 'Käytössä',
                             'images'          => 'Kuvat',
                             'name'            => 'Nimi',
                             'price'           => 'Hinta',
@@ -279,17 +279,17 @@ return [
                 ],
             ],
 
-            'create-success'          => 'Tuote luotu onnistuneesti',
+            'create-success'          => 'Tuote luotiin onnistuneesti',
             'delete-failed'           => 'Tuotteen poistaminen epäonnistui',
             'delete-success'          => 'Tuote poistettiin onnistuneesti',
-            'product-copied'          => 'Tuote kopioitu onnistuneesti',
-            'saved-inventory-message' => 'Tuote tallennettu onnistuneesti',
+            'product-copied'          => 'Tuote kopioitiin onnistuneesti',
+            'saved-inventory-message' => 'Tuote tallennettiin onnistuneesti',
             'update-success'          => 'Tuote päivitettiin onnistuneesti',
             'unique-validation'       => 'Tämä arvo on jo käytössä.',
             'invalid-type'            => 'Tuotteen tyyppi ":type" ei löytynyt',
             'product-not-found'       => 'Tuote SKU:lla ":sku" ei löytynyt',
             'parent-not-found'        => 'Vanhempaa SKU:lla ":sku" ei löytynyt',
-            'upload-success'          => 'Tuotetiedosto ladattu onnistuneesti.',
+            'upload-success'          => 'Tuotetiedosto ladattiin onnistuneesti.',
             'update-failure'          => 'Tuotetta ei voitu päivittää.',
         ],
 
@@ -299,13 +299,13 @@ return [
                 'title'      => 'Ominaisuudet',
 
                 'datagrid' => [
-                    'channel-based'       => 'Kanavapohjainen',
+                    'channel-based'       => 'Kanavakohtainen',
                     'code'                => 'Koodi',
                     'created-at'          => 'Luotu',
                     'delete'              => 'Poista',
                     'edit'                => 'Muokkaa',
                     'id'                  => 'ID',
-                    'locale-based'        => 'Paikkakuntapohjainen',
+                    'locale-based'        => 'Kielikohtainen',
                     'mass-delete-success' => 'Valitut ominaisuudet poistettu onnistuneesti',
                     'name'                => 'Nimi',
                     'required'            => 'Pakollinen',
@@ -347,8 +347,8 @@ return [
                 'is-filterable'         => 'Käytä suodattimessa',
                 'is-required'           => 'Pakollinen',
                 'is-unique'             => 'Ainutlaatuinen',
-                'is-visible-on-front'   => 'Näkyvissä tuotteen katselusivulla (etuosa)',
-                'label'                 => 'Etiketti',
+                'is-visible-on-front'   => 'Näkyvissä tuotteen katselusivulla',
+                'label'                 => 'Otsikko',
                 'multiselect'           => 'Monivalinta',
                 'no'                    => 'Ei',
                 'number'                => 'Numero',
@@ -357,7 +357,7 @@ return [
                 'price'                 => 'Hinta',
                 'regex'                 => 'Regex',
                 'save-btn'              => 'Tallenna ominaisuus',
-                'select'                => 'Valitse',
+                'select'                => 'Valintalista',
                 'select-type'           => 'Valitse ominaisuuden tyyppi',
                 'swatch'                => 'Näyte',
                 'text'                  => 'Teksti',
@@ -367,14 +367,14 @@ return [
                 'url'                   => 'URL',
                 'use-in-flat'           => 'Luo tuotteen litteässä taulussa',
                 'validations'           => 'Validoinnit',
-                'value-per-channel'     => 'Arvo kanavaa kohden',
+                'value-per-channel'     => 'Arvo kanavakohtainen',
                 'value-per-locale'      => 'Arvo kielikohtaisesti',
                 'yes'                   => 'Kyllä',
                 'same-code-error'       => 'Vaihtoehdon koodin tulee olla ainutlaatuinen.',
                 'usable-in-grid'        => 'Käytettävissä ruudukossa',
 
                 'option' => [
-                    'color'    => 'Väriä',
+                    'color'    => 'Väri',
                     'dropdown' => 'Pudotusvalikko',
                     'image'    => 'Kuvanäyte',
                     'save-btn' => 'Tallenna vaihtoehto',
@@ -414,7 +414,7 @@ return [
                 'is-required'           => 'Pakollinen',
                 'is-unique'             => 'Ainutlaatuinen',
                 'is-visible-on-front'   => 'Näkyvissä tuotteen katselusivulla (etuosa)',
-                'label'                 => 'Etiketti',
+                'label'                 => 'Otsikko',
                 'multiselect'           => 'Monivalinta',
                 'no'                    => 'Ei',
                 'number'                => 'Numero',
@@ -433,7 +433,7 @@ return [
                 'url'                   => 'URL',
                 'use-in-flat'           => 'Luo tuotteen litteässä taulussa',
                 'validations'           => 'Validoinnit',
-                'value-per-channel'     => 'Arvo kanavaa kohden',
+                'value-per-channel'     => 'Arvo kanavakohtainen',
                 'value-per-locale'      => 'Arvo kielikohtaisesti',
                 'yes'                   => 'Kyllä',
                 'same-code-error'       => 'Vaihtoehdon koodin tulee olla ainutlaatuinen.',
@@ -457,8 +457,8 @@ return [
         ],
 
         'attribute-options' => [
-            'create-success'       => 'Attribuuttivaihtoehto luotu onnistuneesti',
-            'update-success'       => 'Attribuuttivaihtoehto päivitetty onnistuneesti',
+            'create-success'       => 'Attribuuttivaihtoehto luotiin onnistuneesti',
+            'update-success'       => 'Attribuuttivaihtoehto päivitettiin onnistuneesti',
             'usable-in-grid-error' => 'Vain 4 attribuuttia voidaan merkitä käytettäväksi ruudukossa.',
         ],
 
@@ -546,7 +546,7 @@ return [
                 'slug'                => 'Slug',
                 'title'               => 'Lisää uusi kategoria',
                 'visible-in-menu'     => 'Näkyy valikossa',
-                'right-section'       => 'Määrityskategoria',
+                'right-section'       => 'Määritysosio',
                 'left-section'        => 'Yleinen osio',
             ],
 
@@ -565,7 +565,7 @@ return [
                 'slug'                   => 'Slug',
                 'title'                  => 'Muokkaa kategoriaa',
                 'visible-in-menu'        => 'Näkyy valikossa',
-                'right-section'          => 'Määrityskategoria',
+                'right-section'          => 'Määritysosio',
                 'left-section'           => 'Yleinen osio',
             ],
 
@@ -597,7 +597,7 @@ return [
                     'delete'              => 'Poista',
                     'edit'                => 'Muokkaa',
                     'id'                  => 'ID',
-                    'locale-based'        => 'Paikalliskohteinen',
+                    'locale-based'        => 'Kielikohtainen',
                     'mass-delete-success' => 'Valitut kategoriakentät poistettiin onnistuneesti',
                     'name'                => 'Nimi',
                     'required'            => 'Pakollinen',
@@ -643,7 +643,7 @@ return [
                 'input-validation'    => 'Syöte validointi',
                 'is-required'         => 'Pakollinen',
                 'is-unique'           => 'Ainutlaatuinen',
-                'label'               => 'Etiketti',
+                'label'               => 'Otsikko',
                 'multiselect'         => 'Monivalinta',
                 'no'                  => 'Ei',
                 'number'              => 'Numero',
@@ -707,7 +707,7 @@ return [
                 'input-validation'    => 'Syöte validointi',
                 'is-required'         => 'Pakollinen',
                 'is-unique'           => 'Ainutlaatuinen',
-                'label'               => 'Etiketti',
+                'label'               => 'Otsikko',
                 'multiselect'         => 'Monivalinta',
                 'no'                  => 'Ei',
                 'number'              => 'Numero',
@@ -782,7 +782,7 @@ return [
                 'assign-group-title'               => 'Määritä Attribuuttiryhmä',
                 'back-btn'                         => 'Takaisin',
                 'code'                             => 'Koodi',
-                'label'                            => 'Etiketti',
+                'label'                            => 'Otsikko',
                 'column'                           => 'Sarake',
                 'delete-group-btn'                 => 'Poista Ryhmä',
                 'edit-group-info'                  => 'Tuplaklikkaa muokataksesi ryhmää',
@@ -813,7 +813,7 @@ return [
                 'assign-group-title'               => 'Määritä Attribuuttiryhmä',
                 'back-btn'                         => 'Takaisin',
                 'code'                             => 'Koodi',
-                'label'                            => 'Etiketti',
+                'label'                            => 'Otsikko',
                 'column'                           => 'Sarake',
                 'delete-group-btn'                 => 'Poista Ryhmä',
                 'edit-group-info'                  => 'Tuplaklikkaa muokataksesi ryhmää',
@@ -869,11 +869,11 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'create-btn'            => 'Luo paikallinen',
-                'locale'                => 'Paikallinen',
-                'title'                 => 'Paikalliset',
-                'can-not-delete-error'  => 'Et voi poistaa paikallista, joka on liitetty kanavaan tai käyttäjään',
-                'can-not-disable-error' => 'Et voi poistaa käytöstä paikallista, joka on liitetty kanavaan tai käyttäjään',
+                'create-btn'            => 'Luo käännöskieli',
+                'locale'                => 'Kieli',
+                'title'                 => 'Käännöskielet',
+                'can-not-delete-error'  => 'Et voi poistaa kieltä, joka on liitetty kanavaan tai käyttäjään',
+                'can-not-disable-error' => 'Et voi poistaa käytöstä kieltä, joka on liitetty kanavaan tai käyttäjään',
 
                 'datagrid' => [
                     'actions'     => 'Toiminnot',
@@ -897,24 +897,24 @@ return [
                 'create' => [
                     'code'             => 'Koodi',
                     'direction'        => 'Suunta',
-                    'locale-logo'      => 'Paikallinen logo',
+                    'locale-logo'      => 'Kielen logo',
                     'name'             => 'Nimi',
-                    'save-btn'         => 'Tallenna paikallinen',
+                    'save-btn'         => 'Tallenna käännöskieli',
                     'select-direction' => 'Valitse suunta',
-                    'title'            => 'Luo paikallinen',
+                    'title'            => 'Luo käännöskieli',
                     'status'           => 'Tila',
                 ],
 
                 'edit' => [
-                    'title' => 'Muokkaa paikallista',
+                    'title' => 'Muokkaa käännöskieltä',
                 ],
 
-                'create-success'    => 'Paikallinen luotu onnistuneesti.',
-                'delete-failed'     => 'Paikallisen poistaminen epäonnistui',
-                'delete-success'    => 'Paikallinen poistettu onnistuneesti.',
+                'create-success'    => 'Käännöskieli luotu onnistuneesti.',
+                'delete-failed'     => 'Käännöskielen poistaminen epäonnistui',
+                'delete-success'    => 'Käännöskieli poistettu onnistuneesti.',
                 'delete-warning'    => 'Oletko varma, että haluat suorittaa tämän toimen?',
-                'last-delete-error' => 'Vähintään yksi paikallinen vaaditaan.',
-                'update-success'    => 'Paikallinen päivitetty onnistuneesti.',
+                'last-delete-error' => 'Vähintään yksi käännöskieli vaaditaan.',
+                'update-success'    => 'Käännöskieli päivitetty onnistuneesti.',
             ],
         ],
 
@@ -1052,7 +1052,7 @@ return [
                 'download-log-file' => 'Lataa lokitiedosto',
             ],
 
-            'import' => [
+            'imports' => [
                 'create' => [
                     'code'                => 'Koodi',
                     'action'              => 'Toiminto',
@@ -1537,7 +1537,7 @@ return [
         'import'                   => 'Tuonti',
         'imports'                  => 'Tuonti',
         'invoices'                 => 'Laskut',
-        'locales'                  => 'Paikalliset asetukset',
+        'locales'                  => 'Käännöskieliasetukset',
         'magic-ai'                 => 'Magic AI',
         'marketing'                => 'Markkinointi',
         'newsletter-subscriptions' => 'Uutiskirjeen tilaukset',
@@ -1688,11 +1688,18 @@ return [
 
                     'settings' => [
                         'api-key'        => 'API-avain',
-                        'enabled'        => 'Oletus',
-                        'llm-api-domain' => 'LLM API -alue',
+                        'enabled'        => 'Käytössä',
+                        'llm-api-domain' => 'LLM API -verkkotunnus',
                         'organization'   => 'Organisaation tunnus',
+                        'api-model'      => 'Mallit',
                         'title'          => 'Yleiset asetukset',
                         'title-info'     => 'Paranna kokemustasi Magic AI:llä syöttämällä yksinoikeutettu API-avain ja määrittämällä relevantti organisaatio saumattoman integraation saavuttamiseksi. Ota hallinta OpenAI-tunnuksistasi ja mukauta asetukset tarpeidesi mukaan.',
+                    ],
+
+                    'image-generation' => [
+                        'enabled'    => 'Käytössä',
+                        'title'      => 'Kuvan luominen',
+                        'title-info' => 'Tämä toiminto mahdollistaa kuvan luomisen jokaisen kuvan lataamisen yhteydessä, jossa kuvia halutaan luoda käyttäen DALL-E:tä.<br/><br/>Käyttöönoton jälkeen voit käyttää kuvan luomista kuvien lataamisen yhteydessä.',
                     ],
                 ],
             ],
@@ -1788,7 +1795,7 @@ return [
                 'tracker'            => 'Työn seurantapaneeli',
                 'imports'            => 'Tuo',
                 'exports'            => 'Vie',
-                'locales'            => 'Paikallisuudet',
+                'locales'            => 'Käännöskielet',
                 'magic-ai'           => 'Magic AI',
                 'mode'               => 'Tumma tila',
                 'products'           => 'Tuotteet',
@@ -1809,10 +1816,10 @@ return [
 
             'toolbar' => [
                 'length-of' => ':length of',
-                'of'        => 'of',
-                'per-page'  => 'Per Page',
-                'results'   => ':total Results',
-                'selected'  => ':total Selected',
+                'of'        => '/',
+                'per-page'  => 'Per sivu',
+                'results'   => ':total tulosta',
+                'selected'  => ':total valittu',
 
                 'mass-actions' => [
                     'submit'        => 'Lähetä',
@@ -1836,7 +1843,7 @@ return [
 
             'filters' => [
                 'select'   => 'Valitse',
-                'title'    => 'Sovita suodattimet',
+                'title'    => 'Määritä suodattimet',
                 'save'     => 'Tallenna',
                 'dropdown' => [
                     'searchable' => [
@@ -1889,7 +1896,7 @@ return [
             ],
 
             'history' => [
-                'title'           => 'Historialla esikatselu',
+                'title'           => 'Historian esikatselu',
                 'subtitle'        => 'Katsokaa nopeasti päivityksenne ja muutoksenne.',
                 'close-btn'       => 'Sulje',
                 'version-label'   => 'Versio',
@@ -1898,7 +1905,7 @@ return [
                 'name-label'      => 'Avain',
                 'old-value-label' => 'Vanha arvo',
                 'new-value-label' => 'Uusi arvo',
-                'no-history'      => 'Ei historiaa löytynyt',
+                'no-history'      => 'Historiaa ei löytynyt',
             ],
         ],
 
@@ -2004,7 +2011,7 @@ return [
         ],
         'overview' => [
             'title'  => 'Tuotteen Yleiskatsaus',
-            'prompt' => 'Luo yksityiskohtainen yleiskatsaus @name:stä, korostaen sen keskeisiä ominaisuuksia, etuja ja kohdeyleisöä kuten @brand ja @color.',
+            'prompt' => 'Luo yksityiskohtainen yleiskatsaus @name:stä, korostaen sen keskeisiä ominaisuuksia, etuja ja kohdeyleisöä, kuten @brand ja @color.',
         ],
         'features' => [
             'title'  => 'Tuotteen Ominaisuudet ja Hyödyt',
@@ -2016,15 +2023,15 @@ return [
         ],
         'care' => [
             'title'  => 'Tuotteen Hoito ja Ylläpito',
-            'prompt' => 'Kirjoita opas, kuinka hoitaa ja ylläpitää @name:a, mukaan lukien vinkkejä puhdistukseen, säilytykseen ja vianmääritykseen.',
+            'prompt' => 'Kirjoita opas @name:n hoidosta ja ylläpidosta, mukaan lukien vinkit puhdistukseen, säilytykseen ja vianmääritykseen.',
         ],
         'tagline' => [
             'title'  => 'Tuotteen Iskulause',
-            'prompt' => 'Kirjoita houkutteleva ja ytimekäs iskulause @name:lle, joka vangitsee sen olennaisuuden ja hyödyt.',
+            'prompt' => 'Kirjoita houkutteleva ja ytimekäs iskulause @name:lle, joka tiivistää sen ydinolemuksen ja hyödyt.',
         ],
         'summary' => [
             'title'  => 'Tuotteen Yhteenveto',
-            'prompt' => 'Tiivistä @name:n keskeiset ominaisuudet ja hyödyt 50-60 sanassa.',
+            'prompt' => 'Tiivistä @name:n keskeiset ominaisuudet ja hyödyt 50–60 sanaan.',
         ],
         'headline' => [
             'title'  => 'Tuotteen Otsikko',
@@ -2036,7 +2043,7 @@ return [
         ],
         'elevator' => [
             'title'  => 'Tuotteen Hissipuhe',
-            'prompt' => 'Laadi ytimekäs hissipuhe @name:stä, tiivistäen sen tarkoituksen, hyödyt ja ainutlaatuisen myyntivaltin 30-40 sanassa.',
+            'prompt' => 'Laadi ytimekäs hissipuhe @name:stä, tiivistäen sen tarkoituksen, hyödyt ja ainutlaatuisen myyntivaltin 30–40 sanaa.',
         ],
     ],
 ];
