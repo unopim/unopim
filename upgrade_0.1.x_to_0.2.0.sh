@@ -62,20 +62,21 @@ GITHUB_REPO="unopim"
 BACKUP_DIR="./backups"
 ROOT_PATH="$(pwd)"
 CURRENT_VERSION=$(php artisan unopim:version)
-UPGRADE_TO_VERSION="v0.2.0"
+UPGRADE_TO_VERSION_TAG="v0.2.0"
 echo -e "\n🔧 Starting Unopim upgrade script...\n"
 
 # 1. Get current version
 echo "📌 Current version: $CURRENT_VERSION"
 
-LATEST_VERSION="${UPGRADE_TO_VERSION//v/}"
+UPGRADE_VERSION="${UPGRADE_TO_VERSION_TAG//v/}"
+CURRENT_VERSION="${CURRENT_VERSION//v/}"
 
-echo "✅ Latest version: $LATEST_VERSION"
-
-if [[ "$CURRENT_VERSION" == "$LATEST_VERSION" ]]; then
+if [[ "$(echo -e "$CURRENT_VERSION\n$UPGRADE_VERSION" | sort -V | head -n 1)" == "$UPGRADE_VERSION" ]]; then
   echo "✅ Already up to date!"
   exit 0
 fi
+exit 0
+echo "✅ Upgrading to version: $UPGRADE_TO_VERSION_TAG"
 
 # 3. Create backup
 TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
@@ -85,8 +86,8 @@ backup_project "$BACKUP_PATH" "$ROOT_PATH"
 echo "✅ Backup created: $BACKUP_PATH"
 
 # 4. Download latest release
-ZIP_URL="https://github.com/$GITHUB_OWNER/$GITHUB_REPO/archive/refs/tags/$UPGRADE_TO_VERSION.zip"
-ZIP_FILE="./$LATEST_VERSION-unopim-update.zip"
+ZIP_URL="https://github.com/$GITHUB_OWNER/$GITHUB_REPO/archive/refs/tags/$UPGRADE_TO_VERSION_TAG.zip"
+ZIP_FILE="./$UPGRADE_VERSION-unopim-update.zip"
 echo "⬇️  Downloading latest release from GitHub..."
 
 curl -fL -o $ZIP_FILE $ZIP_URL
@@ -127,4 +128,4 @@ php artisan storage:link
 echo "🧹 Clearing cache..."
 php artisan optimize:clear
 
-echo "✅ Upgrade complete! Now on version $LATEST_VERSION"
+echo "✅ Upgrade complete! Now on version $UPGRADE_VERSION"
