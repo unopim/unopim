@@ -75,7 +75,7 @@ if [[ "$(echo -e "$CURRENT_VERSION\n$UPGRADE_VERSION" | sort -V | head -n 1)" ==
   echo "✅ Already up to date!"
   exit 0
 fi
-exit 0
+
 echo "✅ Upgrading to version: $UPGRADE_TO_VERSION_TAG"
 
 # 3. Create backup

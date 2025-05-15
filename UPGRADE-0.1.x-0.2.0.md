@@ -1,16 +1,10 @@
-# 🔼 UPGRADE GUIDE
+# 🔼 UPGRADE GUIDE: Unopim `v0.1.x` → `v0.2.0`
 
-> This guide helps you safely upgrade your Unopim installation. Follow the **manual upgrade steps** or use the **automated upgrade script** for minor patches.
-
----
-
-- [Manual Upgrade Steps](#manual-upgrade-steps)
-- [Automated Upgrade Script](#automated-upgrade-script)
+> This guide helps you safely upgrade your Unopim installation from any `v0.1.x` version to `v0.2.0`. You can follow the **manual** steps or you can use the **automated upgrade script** for version 0.1.x to 0.2.0.
 
 ---
 
-<a name="manual-upgrade-steps"></a>
-## 🛠️ Manual Upgrade Steps
+## 🛠️ MANUAL UPGRADE STEPS
 
 ### 1. **Backup Your Current Project**
 
@@ -78,29 +72,18 @@ sudo supervisorctl restart unopim-worker
 
 ---
 
-## ✅ Upgrade Complete!
+## 🛠️ AUTOMATED UPGRADE SCRIPT
 
-After following these steps, your Unopim should be successfully upgraded. Test your application thoroughly to make sure everything works as expected.
+1. **Download the script**
+* Download the upgrade script
 
----
-
-<a name="automated-upgrade-script"></a>
-## 🛠️ Automated Upgrade Script
-
-### 1. Download the Script
-
-Download the upgrade script for your Unopim version.
-
-### 2. Execute the Script
-
-Place the script in the directory of your Unopim project and execute it from the terminal:
+2. **Execute script**
+* Place the script in the root directory of your Unopim Project. Open terminal at the Unopim directory and execute:
 
 ```bash
-./upgrade.sh
+ ./upgrade_0.1.x_to_0.2.0.sh
 ```
-
----
 
 ## ✅ Upgrade Complete!
 
-After following these steps, your Unopim should be successfully upgraded. Test your application thoroughly to make sure everything works as expected.
+After following these steps, your Unopim should be successfully upgraded to version `v0.2.0`. Test your application thoroughly to make sure everything works as expected.
