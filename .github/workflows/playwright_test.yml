@@ -76,7 +76,7 @@ jobs:
 
       - name: Install Playwright dependencies
         run: |
-          cd unopim/packages/Webkul/Shopify/tests/e2e-pw
+          cd unopim/tests/e2e-pw
           npm install
           npx playwright install --with-deps
 
