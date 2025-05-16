@@ -20,7 +20,11 @@ class Completed implements ShouldQueue
      * @param  mixed  $import
      * @return void
      */
-    public function __construct(protected $export, protected $jobTrackId) {}
+    public function __construct(
+        protected $export,
+        protected $jobTrackId,
+        protected $exportBuffer
+    ) {}
 
     /**
      * Execute the job.
@@ -32,6 +36,7 @@ class Completed implements ShouldQueue
         app(ExportHelper::class)
             ->setExport($this->export)
             ->setLogger(JobLogger::make($this->jobTrackId))
+            ->flush($this->exportBuffer)
             ->completed();
     }
 }
