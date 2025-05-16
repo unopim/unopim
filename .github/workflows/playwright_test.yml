@@ -72,13 +72,13 @@ jobs:
 
       - name: Install Playwright dependencies
         run: |
-          cd unopim/tests/e2e-pw
+          cd tests/e2e-pw
           npm install
           npx playwright install --with-deps
 
       - name: Run Playwright tests
         run: |
-          cd unopim/tests/e2e-pw
+          cd tests/e2e-pw
           npx playwright test
 
       - name: Upload Playwright report
