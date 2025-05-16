@@ -59,10 +59,6 @@ jobs:
         run: |
           php artisan unopim:install --skip-env-check --skip-admin-creation
           php artisan migrate --force
-
-      - name: Start UnoPim server
-        run: |
-          cd unopim
           php artisan migrate:fresh --seed
           php artisan serve --host=0.0.0.0 --port=8000 &
 
