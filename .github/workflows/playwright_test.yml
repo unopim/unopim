@@ -70,15 +70,11 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install Playwright dependencies
+      - name: Install Playwright dependencies and run test
         run: |
           cd tests/e2e-pw
           npm install
           npx playwright install --with-deps
-
-      - name: Run Playwright tests
-        run: |
-          cd tests/e2e-pw
           npx playwright test
 
       - name: Upload Playwright report
