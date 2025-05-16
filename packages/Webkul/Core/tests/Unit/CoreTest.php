@@ -1,6 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Validator;
 use Webkul\Core\Models\Channel;
+use Webkul\Core\Rules\Code;
 
 afterEach(function () {
     /**
@@ -149,4 +151,85 @@ it('returns the current channel code if requested channel code is not provided',
 
     // Assert
     expect($channelCode)->toBe($expectedChannel->code);
+});
+
+it('validation passes for valid code', function () {
+    // Arrange
+    $rule = new Code;
+    $message = null;
+
+    // Act & Assert
+    $rule->validate('code', 'valid_code_123', function ($msg) use (&$message) {
+        $message = $msg;
+    });
+
+    expect($message)->toBeNull();
+});
+
+it('validation passes for code with underscores', function () {
+    // Arrange
+    $rule = new Code;
+    $message = null;
+
+    // Act
+    $rule->validate('code', 'valid_code_with_underscores', function ($msg) use (&$message) {
+        $message = $msg;
+    });
+
+    // Assert
+    expect($message)->toBeNull();
+});
+
+it('validation passes for code with numbers', function () {
+    // Arrange
+    $rule = new Code;
+    $message = null;
+
+    // Act
+    $rule->validate('code', 'code123', function ($msg) use (&$message) {
+        $message = $msg;
+    });
+
+    // Assert
+    expect($message)->toBeNull();
+});
+
+it('validation fails for invalid code length and characters', function () {
+    $data = ['code' => str_repeat('!', 192)];
+
+    $rules = ['code' => [new Code]];
+
+    $validator = Validator::make($data, $rules);
+
+    expect($validator->fails())->toBeTrue();
+
+    $messages = $validator->messages()->get('code');
+
+    expect($messages)->toContain(trans('validation.max.string', ['attribute' => 'code', 'max' => 191]));
+});
+
+it('validation fails for code with special characters', function () {
+    $data = ['code' => 'invalid-code@#$'];
+    $rules = ['code' => [new Code]];
+
+    $validator = Validator::make($data, $rules);
+
+    expect($validator->fails())->toBeTrue();
+
+    $messages = $validator->messages()->get('code');
+
+    expect($messages)->toContain(trans('core::validation.code', ['attribute' => 'code']));
+});
+
+it('validation fails for code with spaces', function () {
+    $data = ['code' => 'invalid code with spaces'];
+    $rules = ['code' => [new Code]];
+
+    $validator = Validator::make($data, $rules);
+
+    expect($validator->fails())->toBeTrue();
+
+    $messages = $validator->messages()->get('code');
+
+    expect($messages)->toContain(trans('core::validation.code', ['attribute' => 'code']));
 });
