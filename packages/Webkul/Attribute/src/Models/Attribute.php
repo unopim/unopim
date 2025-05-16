@@ -16,11 +16,16 @@ use Webkul\Core\Rules\Slug;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Product\Validator\Rule\AttributeOptionRule;
+use Webkul\Product\Validator\Rule\Elasticsearch\UniqueAttributeValue;
 
 class Attribute extends TranslatableModel implements AttributeContract, HistoryContract
 {
     use HasFactory;
     use HistoryTrait;
+
+    const TEXT_TYPE = 'text';
+
+    const TEXTAREA_TYPE = 'textarea';
 
     const BOOLEAN_FIELD_TYPE = 'boolean';
 
@@ -35,6 +40,12 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
     const DATE_FIELD_TYPE = 'date';
 
     const CHECKBOX_FIELD_TYPE = 'checkbox';
+
+    const FILE_ATTRIBUTE_TYPE = 'file';
+
+    const IMAGE_ATTRIBUTE_TYPE = 'image';
+
+    const GALLERY_ATTRIBUTE_TYPE = 'gallery';
 
     public $translatedAttributes = ['name'];
 
@@ -51,6 +62,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
         'regex_pattern',
         'value_per_locale',
         'value_per_channel',
+        'is_filterable',
     ];
 
     const NON_DELETABLE_ATTRIBUTE_CODE = 'sku';
@@ -130,13 +142,17 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
             $validations[] = "regex:/^\d+(\.\d+)?$/";
         }
 
-        if ($this->is_unique && $withUniqueValidation) {
-            $path = $this->getJsonPath($currentChannelCode, $currentLocaleCode);
+        if ($this->is_unique && $this->code !== 'sku' && $withUniqueValidation) {
+            if (config('elasticsearch.enabled')) {
+                $rule = new UniqueAttributeValue($this->code, $id);
+            } else {
+                $path = $this->getJsonPath($currentChannelCode, $currentLocaleCode);
 
-            $rule = "unique:products,values->{$path}";
+                $rule = "unique:products,values->{$path}";
 
-            if ($id) {
-                $rule .= ",{$id}";
+                if ($id) {
+                    $rule .= ",{$id}";
+                }
             }
 
             $validations[] = $rule;
@@ -393,5 +409,72 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
         }
 
         return $rules;
+    }
+
+    /**
+     * Get attribute filter type
+     */
+    public function getFilterType()
+    {
+        switch ($this->type) {
+            case self::BOOLEAN_FIELD_TYPE:
+                $filterType = 'boolean';
+                break;
+            case self::DATETIME_FIELD_TYPE:
+                $filterType = 'datetime_range';
+                break;
+            case self::DATE_FIELD_TYPE:
+                $filterType = 'date_range';
+                break;
+            case self::SELECT_FIELD_TYPE:
+            case self::MULTISELECT_FIELD_TYPE:
+            case self::CHECKBOX_FIELD_TYPE:
+                $filterType = 'dropdown';
+                break;
+            case self::IMAGE_ATTRIBUTE_TYPE:
+            case self::GALLERY_ATTRIBUTE_TYPE:
+                $filterType = 'image';
+                break;
+            case self::PRICE_FIELD_TYPE:
+                $filterType = 'price';
+                break;
+            default:
+                $filterType = 'string';
+                break;
+        }
+
+        return $filterType;
+    }
+
+    /**
+     * Get Attribute  scope
+     */
+    public function getScope(?string $locale = null, ?string $channel = null): string
+    {
+        return ($this->value_per_locale && $this->value_per_channel)
+        ? sprintf('channel_locale_specific.%s.%s', $channel, $locale)
+        : ($this->value_per_locale
+            ? sprintf('locale_specific.%s', $locale)
+            : ($this->value_per_channel
+                ? sprintf('channel_specific.%s', $channel)
+                : 'common'));
+    }
+
+    /**
+     * Get the options by option code and locale.
+     */
+    public function getOptionsByCodeAndLocale($codes, $locale = null)
+    {
+        $locale = $locale ?? core()->getRequestedLocaleCode();
+
+        return $this->options()
+            ->leftJoin('attribute_option_translations as aot', 'aot.attribute_option_id', 'attribute_options.id')
+            ->whereIn('attribute_options.code', $codes)
+            ->where(function ($query) use ($locale) {
+                $query->where('aot.locale', $locale)
+                    ->orWhereNull('aot.locale'); // Fallback if translation not found
+            })
+            ->select('attribute_options.*', 'aot.label')
+            ->get();
     }
 }

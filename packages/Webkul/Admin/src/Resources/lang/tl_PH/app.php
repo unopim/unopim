@@ -372,6 +372,7 @@ return [
                 'yes'                   => 'Oo',
                 'same-code-error'       => 'Ang code ng opsyon ay dapat na natangi.',
                 'usable-in-grid'        => 'Magagamit sa grid',
+                'is-filterable'         => 'Nafifilter',
 
                 'option' => [
                     'color'    => 'Color Swatch',
@@ -438,6 +439,7 @@ return [
                 'yes'                   => 'Oo',
                 'same-code-error'       => 'Ang code ng opsyon ay dapat na natangi.',
                 'usable-in-grid'        => 'Magagamit sa grid',
+                'is-filterable'         => 'Nafifilter',
 
                 'option' => [
                     'color'    => 'Color Swatch',
@@ -1833,6 +1835,10 @@ return [
                 'search' => [
                     'title' => 'Search',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Manage Columns',
+                ],
             ],
 
             'filters' => [
@@ -1871,6 +1877,13 @@ return [
             'table' => [
                 'actions'              => 'Actions',
                 'no-records-available' => 'No Records Available.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Manage columns',
+                'available-columns' => 'Available Columns',
+                'selected-columns'  => 'Selected Columns',
+                'apply-btn'         => 'Apply',
             ],
         ],
 
