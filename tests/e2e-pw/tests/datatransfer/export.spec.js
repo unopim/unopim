@@ -11,34 +11,71 @@ test.describe('UnoPim Export Jobs', () => {
 
   });
 
-  test('Create WooCommerce Product Export', async ({ page }) => {
+  test('Create Category Export (CSV)', async ({ page }) => {
     await page.getByRole('link', { name: ' Data Transfer' }).click();
     await page.getByRole('link', { name: 'Exports' }).click();
     await page.getByRole('link', { name: 'Create Export' }).click();
     await page.getByRole('textbox', { name: 'Code' }).click();
-    await page.getByRole('textbox', { name: 'Code' }).fill('WooCoomerce Product export');
-    await page.locator('div').filter({ hasText: /^Categories$/ }).locator('span').click();
-    await page.getByText('WooCommerce Product Export').click();
-    await page.locator('input[name="filters[credential]"]').locator('..').locator('.multiselect__placeholder').click();
-    await page.getByText('http://192.168.15.238/').click();
-    await page.locator('input[name="filters[channel]"]').locator('..').locator('.multiselect__placeholder').click();
-    await page.getByRole('option', { name: 'Default' }).locator('span').first().click();
-    await page.locator('input[name="filters[locale]"]').locator('..').locator('.multiselect__placeholder').click();
-    await page.getByText('English (United States)').click();
-    await page.locator('input[name="filters[currency]"]').locator('..').locator('.multiselect__placeholder').click();
-    await page.getByRole('option', { name: 'Indian Rupee' }).locator('span').first().click();
-    await page.locator('input[name="filters[productSKU]"]').locator('..').locator('.multiselect__placeholder').click();
-    await page.getByText('SAMS22-256-BLK').click();
+    await page.getByRole('textbox', { name: 'Code' }).fill('Category Export CSV');
+    await page.locator('input[name="filters[file_format]"]').locator('..').locator('.multiselect__placeholder').click();
+    await page.getByRole('option', { name: 'CSV' }).locator('span').first().click();
+    await page.locator('div').filter({ hasText: /^With Media$/ }).locator('div').click();
     await page.getByRole('button', { name: 'Save Export' }).click();
     await expect(page.getByText(/Export created successfully/i)).toBeVisible();
 
   });
 
-
-  test('Delete WooCommerce Product Export', async ({ page }) => {
+  test('Delete Category Export CSV', async ({ page }) => {
     await page.getByRole('link', { name: ' Data Transfer' }).click();
     await page.getByRole('link', { name: 'Exports' }).click();
-    const itemRow = await page.locator('div', { hasText: 'WooCommerce Product Export' });
+    const itemRow = await page.locator('div', { hasText: 'Category Export CSV' });
+    await itemRow.locator('span[title="Delete"]').first().click();        
+    await page.getByRole('button', { name: 'Delete' }).click();
+    await expect(page.getByText(/Export deleted successfully/i)).toBeVisible();
+  });
+
+
+  test('Create Category Export (XLS)', async ({ page }) => {
+    await page.getByRole('link', { name: ' Data Transfer' }).click();
+    await page.getByRole('link', { name: 'Exports' }).click();
+    await page.getByRole('link', { name: 'Create Export' }).click();
+    await page.getByRole('textbox', { name: 'Code' }).click();
+    await page.getByRole('textbox', { name: 'Code' }).fill('Category Export XLS');
+    await page.locator('input[name="filters[file_format]"]').locator('..').locator('.multiselect__placeholder').click();
+    await page.getByRole('option', { name: 'XLS' }).locator('span').first().click();
+    await page.getByRole('button', { name: 'Save Export' }).click();
+    await expect(page.getByText(/Export created successfully/i)).toBeVisible();
+
+  });
+
+  test('Delete Category Export (XLS)', async ({ page }) => {
+    await page.getByRole('link', { name: ' Data Transfer' }).click();
+    await page.getByRole('link', { name: 'Exports' }).click();
+    const itemRow = await page.locator('div', { hasText: 'Category Export XLS' });
+    await itemRow.locator('span[title="Delete"]').first().click();        
+    await page.getByRole('button', { name: 'Delete' }).click();
+    await expect(page.getByText(/Export deleted successfully/i)).toBeVisible();
+  });
+
+
+  test('Create Category Export (XLSX)', async ({ page }) => {
+    await page.getByRole('link', { name: ' Data Transfer' }).click();
+    await page.getByRole('link', { name: 'Exports' }).click();
+    await page.getByRole('link', { name: 'Create Export' }).click();
+    await page.getByRole('textbox', { name: 'Code' }).click();
+    await page.getByRole('textbox', { name: 'Code' }).fill('Category Export XLSX');
+    await page.locator('input[name="filters[file_format]"]').locator('..').locator('.multiselect__placeholder').click();
+    await page.getByRole('option', { name: 'XLSX' }).locator('span').first().click();
+    await page.locator('div').filter({ hasText: /^With Media$/ }).locator('div').click();
+    await page.getByRole('button', { name: 'Save Export' }).click();
+    await expect(page.getByText(/Export created successfully/i)).toBeVisible();
+
+  });
+
+  test('Delete Category Export (XLSX)', async ({ page }) => {
+    await page.getByRole('link', { name: ' Data Transfer' }).click();
+    await page.getByRole('link', { name: 'Exports' }).click();
+    const itemRow = await page.locator('div', { hasText: 'Category Export XLSX' });
     await itemRow.locator('span[title="Delete"]').first().click();        
     await page.getByRole('button', { name: 'Delete' }).click();
     await expect(page.getByText(/Export deleted successfully/i)).toBeVisible();
@@ -46,63 +83,71 @@ test.describe('UnoPim Export Jobs', () => {
 
 
 
-  test('Create WooCommerce Category Export', async ({ page }) => {
+  test('Create Product Export (CSV)', async ({ page }) => {
     await page.getByRole('link', { name: ' Data Transfer' }).click();
     await page.getByRole('link', { name: 'Exports' }).click();
     await page.getByRole('link', { name: 'Create Export' }).click();
     await page.getByRole('textbox', { name: 'Code' }).click();
-    await page.getByRole('textbox', { name: 'Code' }).fill('WooCommerce Catagary Export');
-    await page.locator('div').filter({ hasText: /^Categories$/ }).locator('span').click();
-    await page.getByRole('option', { name: 'WooCommerce Category Export' }).locator('span').first().click();
-    await page.locator('input[name="filters[credential]"]').locator('..').locator('.multiselect__placeholder').click();
-    await page.getByText('http://192.168.15.238/').click();
-    await page.locator('input[name="filters[channel]"]').locator('..').locator('.multiselect__placeholder').click();
-    await page.getByRole('option', { name: 'Default' }).locator('span').first().click();
-    await page.locator('input[name="filters[locale]"]').locator('..').locator('.multiselect__placeholder').click();
-    await page.getByRole('option', { name: 'English (United States)' }).locator('span').first().click();
+    await page.getByRole('textbox', { name: 'Code' }).fill('Product Export CSV');
+    await page.locator('input[name="filters[file_format]"]').locator('..').locator('.multiselect__placeholder').click();
+    await page.getByRole('option', { name: 'CSV' }).locator('span').first().click();
+    await page.locator('div').filter({ hasText: /^With Media$/ }).locator('div').click();
     await page.getByRole('button', { name: 'Save Export' }).click();
     await expect(page.getByText(/Export created successfully/i)).toBeVisible();
 
   });
 
-  test('Delete WooCommerce Category Export', async ({ page }) => {
+  test('Delete Product Export CSV', async ({ page }) => {
     await page.getByRole('link', { name: ' Data Transfer' }).click();
     await page.getByRole('link', { name: 'Exports' }).click();
-    const itemRow = await page.locator('div', { hasText: 'WooCommerce Category Export' });
+    const itemRow = await page.locator('div', { hasText: 'Product Export CSV' });
     await itemRow.locator('span[title="Delete"]').first().click();        
     await page.getByRole('button', { name: 'Delete' }).click();
     await expect(page.getByText(/Export deleted successfully/i)).toBeVisible();
   });
 
-  test('Create WooCommerce Attribute Export', async ({ page }) => {
-    await page.getByRole('link', { name: ' Catalog' }).click();
+
+  test('Create Product Export (XLS)', async ({ page }) => {
     await page.getByRole('link', { name: ' Data Transfer' }).click();
     await page.getByRole('link', { name: 'Exports' }).click();
     await page.getByRole('link', { name: 'Create Export' }).click();
     await page.getByRole('textbox', { name: 'Code' }).click();
-    await page.getByRole('textbox', { name: 'Code' }).fill('WooCommerce Attribute Export');
-    await page.locator('div').filter({ hasText: /^Categories$/ }).locator('span').click();
-    await page.getByRole('option', { name: 'WooCommerce Attribute Export' }).locator('span').first().click();
-    await page.locator('input[name="filters[credential]"]').locator('..').locator('.multiselect__placeholder').click();
-    await page.getByRole('option', { name: 'http://192.168.15.238/' }).locator('span').first().click();
-    await page.locator('input[name="filters[channel]"]').locator('..').locator('.multiselect__placeholder').click();
-    await page.getByRole('option', { name: 'Default' }).locator('span').first().click();
-    await page.locator('input[name="filters[locale]"]').locator('..').locator('.multiselect__placeholder').click();
-    await page.getByRole('option', { name: 'English (United States)' }).locator('span').first().click();
-    await page.locator('input[name="filters[attributes]"]').locator('..').locator('.multiselect__placeholder').click();
-    await page.getByRole('option', { name: 'Color' }).locator('span').first().click();
-    await page.locator('div').filter({ hasText: /^Color$/ }).first().click();
-    await page.getByRole('option', { name: 'Size' }).locator('span').first().click();
-    await page.locator('div').filter({ hasText: /^ColorSize$/ }).first().click();
-    await page.getByRole('option', { name: 'Brand' }).locator('span').first().click();
+    await page.getByRole('textbox', { name: 'Code' }).fill('Product Export XLS');
+    await page.locator('input[name="filters[file_format]"]').locator('..').locator('.multiselect__placeholder').click();
+    await page.getByRole('option', { name: 'XLS' }).locator('span').first().click();
     await page.getByRole('button', { name: 'Save Export' }).click();
     await expect(page.getByText(/Export created successfully/i)).toBeVisible();
+
   });
 
-  test('Delete WooCommerce Attribute Export', async ({ page }) => {
+  test('Delete Product Export (XLS)', async ({ page }) => {
     await page.getByRole('link', { name: ' Data Transfer' }).click();
     await page.getByRole('link', { name: 'Exports' }).click();
-    const itemRow = await page.locator('div', { hasText: 'WooCommerce Atribute Export' });
+    const itemRow = await page.locator('div', { hasText: 'Product Export XLS' });
+    await itemRow.locator('span[title="Delete"]').first().click();        
+    await page.getByRole('button', { name: 'Delete' }).click();
+    await expect(page.getByText(/Export deleted successfully/i)).toBeVisible();
+  });
+
+
+  test('Create Product Export (XLSX)', async ({ page }) => {
+    await page.getByRole('link', { name: ' Data Transfer' }).click();
+    await page.getByRole('link', { name: 'Exports' }).click();
+    await page.getByRole('link', { name: 'Create Export' }).click();
+    await page.getByRole('textbox', { name: 'Code' }).click();
+    await page.getByRole('textbox', { name: 'Code' }).fill('Product Export XLSX');
+    await page.locator('input[name="filters[file_format]"]').locator('..').locator('.multiselect__placeholder').click();
+    await page.getByRole('option', { name: 'XLSX' }).locator('span').first().click();
+    await page.locator('div').filter({ hasText: /^With Media$/ }).locator('div').click();
+    await page.getByRole('button', { name: 'Save Export' }).click();
+    await expect(page.getByText(/Export created successfully/i)).toBeVisible();
+
+  });
+
+  test('Delete Product Export (XLSX)', async ({ page }) => {
+    await page.getByRole('link', { name: ' Data Transfer' }).click();
+    await page.getByRole('link', { name: 'Exports' }).click();
+    const itemRow = await page.locator('div', { hasText: 'Product Export XLSX' });
     await itemRow.locator('span[title="Delete"]').first().click();        
     await page.getByRole('button', { name: 'Delete' }).click();
     await expect(page.getByText(/Export deleted successfully/i)).toBeVisible();

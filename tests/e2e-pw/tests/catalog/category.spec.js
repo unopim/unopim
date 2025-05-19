@@ -17,10 +17,15 @@ test.describe('UnoPim Category', () => {
     await page.getByRole('link', { name: 'Create Category' }).click();
     await page.locator('input[name="code"]').click();
     await page.locator('input[name="code"]').fill('television');
+    
+    // Fill 'name' input
     await page.locator('#name').click();
-    await page.locator('#name').fill('Television');
-    await page.locator('iframe[title="Rich Text Area"]').contentFrame().locator('html').click();
-    await page.locator('iframe[title="Rich Text Area"]').contentFrame().getByLabel('Rich Text Area. Press ALT-0').fill('this is television category.');
+    await page.locator('#name').type('Television', { delay: 100 });
+    
+    // Fill description (Rich Text Area in iframe)
+    const descriptionFrame = page.frameLocator('#description_ifr');
+    await descriptionFrame.locator('body').click();
+    await descriptionFrame.locator('body').type('This is television category.', { delay: 100 });
     await page.getByRole('button', { name: 'Save Category' }).click();
     await expect(page.getByText(/Category created successfully/i)).toBeVisible();
   });
