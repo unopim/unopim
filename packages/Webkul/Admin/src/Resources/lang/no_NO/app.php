@@ -267,6 +267,16 @@ return [
                         ],
                     ],
                 ],
+
+                'product-info' => [
+                    'title'        => 'Produktinformasjon',
+                    'status'       => 'Status',
+                    'family'       => 'Familie',
+                    'parent'       => 'Hovedprodukt',
+                    'updated-at'   => 'Sist oppdatert',
+                    'created-at'   => 'Opprettet',
+                    'product-type' => 'Produkttype',
+                ],
             ],
 
             'create-success'          => 'Produkt opprettet vellykket',

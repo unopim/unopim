@@ -267,6 +267,16 @@ return [
                         ],
                     ],
                 ],
+
+                'product-info' => [
+                    'title'        => '产品信息',
+                    'status'       => '状态',
+                    'family'       => '系列',
+                    'parent'       => '父产品',
+                    'updated-at'   => '最后更新',
+                    'created-at'   => '创建日期',
+                    'product-type' => '产品类型',
+                ],
             ],
 
             'create-success'          => '成功创建的产品',

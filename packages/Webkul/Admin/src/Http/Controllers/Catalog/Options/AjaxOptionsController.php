@@ -5,9 +5,13 @@ namespace Webkul\Admin\Http\Controllers\Catalog\Options;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\JsonResponse;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Attribute\Repositories\AttributeFamilyRepository;
+use Webkul\Attribute\Repositories\AttributeGroupRepository;
 use Webkul\Attribute\Repositories\AttributeOptionRepository;
+use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Category\Repositories\CategoryFieldOptionRepository;
 use Webkul\Core\Eloquent\Repository;
+use Webkul\Core\Eloquent\TranslatableModel;
 
 class AjaxOptionsController extends Controller
 {
@@ -18,7 +22,10 @@ class AjaxOptionsController extends Controller
      */
     public function __construct(
         protected CategoryFieldOptionRepository $categoryFieldOptionsRepository,
-        protected AttributeOptionRepository $attributeOptionsRepository
+        protected AttributeOptionRepository $attributeOptionsRepository,
+        protected AttributeFamilyRepository $attributeFamilyRepository,
+        protected AttributeGroupRepository $attributeGroupRepository,
+        protected AttributeRepository $attributeRepository
     ) {}
 
     /**
@@ -40,12 +47,13 @@ class AjaxOptionsController extends Controller
         $formattedoptions = [];
 
         foreach ($options as $option) {
-            $translatedOptionLabel = $option->translate($currentLocaleCode)?->label;
+            $translatedOptionLabel = $this->getTranslatedLabel($currentLocaleCode, $option, $entityName);
 
             $formattedoptions[] = [
                 'id'    => $option->id,
                 'code'  => $option->code,
                 'label' => ! empty($translatedOptionLabel) ? $translatedOptionLabel : "[{$option->code}]",
+                ...$option->makeHidden(['translations'])->toArray(),
             ];
         }
 
@@ -73,8 +81,8 @@ class AjaxOptionsController extends Controller
         }
 
         if (! empty($query)) {
-            $repository = $repository->where(function ($queryBuilder) use ($query) {
-                $queryBuilder->whereTranslationLike('label', '%'.$query.'%')
+            $repository = $repository->where(function ($queryBuilder) use ($query, $entityName) {
+                $queryBuilder->whereTranslationLike($this->getTranslationColumnName($entityName), '%'.$query.'%')
                     ->orWhere('code', $query);
             });
         }
@@ -88,7 +96,11 @@ class AjaxOptionsController extends Controller
             );
         }
 
-        return $repository->orderBy('id')->paginate(self::DEFAULT_PER_PAGE, ['*'], 'page', $page);
+        if (isset($queryParams['exclude']) && is_array($queryParams['exclude'])) {
+            $repository = $repository->whereNotIn($queryParams['exclude']['columnName'], $queryParams['exclude']['values']);
+        }
+
+        return $repository->orderBy('id')->paginate(self::DEFAULT_PER_PAGE, ['*'], 'paginate', $page);
     }
 
     /**
@@ -98,9 +110,33 @@ class AjaxOptionsController extends Controller
     private function getRepository(string $entityName): Repository
     {
         return match ($entityName) {
-            'attribute'      => $this->attributeOptionsRepository,
-            'category_field' => $this->categoryFieldOptionsRepository,
-            default          => throw new \Exception('Not implemented for '.$entityName)
+            'attribute'        => $this->attributeOptionsRepository,
+            'category_field'   => $this->categoryFieldOptionsRepository,
+            'attribute_family' => $this->attributeFamilyRepository,
+            'attribute_group'  => $this->attributeGroupRepository,
+            'attributes'       => $this->attributeRepository,
+            default            => throw new \Exception('Not implemented for '.$entityName)
         };
+    }
+
+    /**
+     * Translation for the models label to be used for search
+     */
+    protected function getTranslationColumnName(string $entityName): string
+    {
+        return match ($entityName) {
+            'attribute_family', 'attribute_group', 'attributes' => 'name',
+            default            => 'label'
+        };
+    }
+
+    /**
+     * Get translated label for the entity
+     */
+    protected function getTranslatedLabel(string $currentLocaleCode, TranslatableModel $option, string $entityName): ?string
+    {
+        $translation = $option->translate($currentLocaleCode);
+
+        return $translation?->{$this->getTranslationColumnName($entityName)};
     }
 }

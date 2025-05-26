@@ -114,7 +114,7 @@ class Installer extends Command
 
                 return;
             } else {
-                $this->info('Elastic Search Connected successfully');
+                $this->info('Elasticsearch Connected successfully');
             }
         }
 
@@ -136,10 +136,10 @@ class Installer extends Command
             $this->warn('Step: Clearing elasticsearch index...');
             $this->call('unopim:elastic:clear');
 
-            $this->warn('Step: Indexing categories to elastic search...');
+            $this->warn('Step: Indexing categories to Elasticsearch...');
             $this->call('unopim:category:index');
 
-            $this->warn('Step: Indexing products to elastic search...');
+            $this->warn('Step: Indexing products to Elasticsearch...');
             $this->call('unopim:product:index');
         }
 
@@ -322,59 +322,72 @@ class Installer extends Command
     }
 
     /**
-     * Add the Elastic Search credentials to the .env file.
+     * Add the Elasticsearch credentials to the .env file.
      */
     protected function askForElasticSearchDetails()
     {
-        $elasticSearchDetails = [
-            'ELASTICSEARCH_ENABLED' => select(
-                label: 'Do you want to enable Elastic Search?',
-                options: ['yes', 'no'],
-                default: env('ELASTICSEARCH_ENABLED', 'false')
-            ) === 'yes' ? 'true' : 'false',
+        $isElasticEnabled = select(
+            label: 'Do you want to enable Elasticsearch?',
+            options: ['yes', 'no'],
+            default: env('ELASTICSEARCH_ENABLED', 'false')
+        ) === 'yes';
 
-            'ELASTICSEARCH_CONNECTION' => select(
-                label: 'Please select the Elastic Search connection',
-                options: ['default', 'api', 'cloud'],
-                default: env('ELASTICSEARCH_CONNECTION', 'default') ?: 'default'
-            ),
+        if (!$isElasticEnabled) {
+            $this->envUpdate('ELASTICSEARCH_ENABLED', 'false');
+            return;
+        }
 
-            'ELASTICSEARCH_HOST' => text(
-                label: 'Please enter the Elastic Search host',
-                default: env('ELASTICSEARCH_HOST', ''),
-            ),
+        $this->envUpdate('ELASTICSEARCH_ENABLED', 'true');
 
-            'ELASTICSEARCH_USER' => text(
-                label: 'Please enter the Elastic Search user',
-                default: env('ELASTICSEARCH_USER', ''),
-            ),
+        $connectionType = select(
+            label: 'Please select the Elasticsearch connection',
+            options: ['default', 'api', 'cloud'],
+            default: env('ELASTICSEARCH_CONNECTION', 'default') ?: 'default'
+        );
 
-            'ELASTICSEARCH_PASS' => password(
-                label: 'Please enter the Elastic Search password',
-            ),
+        $this->envUpdate('ELASTICSEARCH_CONNECTION', $connectionType);
 
-            'ELASTICSEARCH_API_KEY' => text(
-                label: 'Please enter the Elastic Search API key',
-                default: env('ELASTICSEARCH_API_KEY', ''),
-            ),
+        if ($connectionType === 'cloud') {
+            $cloudId = text(
+                label: 'Please enter your Elasticsearch Cloud ID',
+                default: env('ELASTICSEARCH_CLOUD_ID', '')
+            );
+            $this->envUpdate('ELASTICSEARCH_CLOUD_ID', $cloudId);
+        } else {
+            $host = text(
+                label: 'Please enter the Elasticsearch host',
+                default: env('ELASTICSEARCH_HOST', '127.0.0.1:9200')
+            );
+            $this->envUpdate('ELASTICSEARCH_HOST', $host);
 
-            'ELASTICSEARCH_CLOUD_ID' => text(
-                label: 'Please enter your Elastic Search Cloud ID',
-                default: env('ELASTICSEARCH_CLOUD_ID', ''),
-            ),
+            $user = text(
+                label: 'Please enter the Elasticsearch user',
+                default: env('ELASTICSEARCH_USER', '')
+            );
+            $this->envUpdate('ELASTICSEARCH_USER', $user);
 
-            'ELASTICSEARCH_INDEX_PREFIX' => text(
-                label: 'Please enter your Elastic Search Index Prefix',
-                default: env('ELASTICSEARCH_INDEX_PREFIX', ''),
-            ),
-        ];
+            $password = password(
+                label: 'Please enter the Elasticsearch password'
+            );
+            $this->envUpdate('ELASTICSEARCH_PASS', $password);
 
-        foreach ($elasticSearchDetails as $key => $value) {
-            if ($value) {
-                $this->envUpdate($key, $value);
+            if ($connectionType === 'api') {
+                $apiKey = text(
+                    label: 'Please enter the Elasticsearch API key',
+                    default: env('ELASTICSEARCH_API_KEY', '')
+                );
+                $this->envUpdate('ELASTICSEARCH_API_KEY', $apiKey);
             }
         }
+
+        $indexPrefix = text(
+            label: 'Please enter your Elasticsearch Index Prefix',
+            default: env('ELASTICSEARCH_INDEX_PREFIX', '')
+        );
+
+        $this->envUpdate('ELASTICSEARCH_INDEX_PREFIX', $indexPrefix);
     }
+
 
     /**
      * Create a admin credentials.
@@ -385,13 +398,13 @@ class Installer extends Command
     {
         $adminName = text(
             label: 'Set the Name for Administrator',
-            default: 'John Doe',
+            default  : 'Example',
             required: true
         );
 
         $adminEmail = text(
             label: 'Provide Email of Administrator',
-            default: 'johndoe@example.com',
+            default  : 'admin@example.com',
             validate: fn (string $value) => match (true) {
                 ! filter_var($value, FILTER_VALIDATE_EMAIL) => 'The email address you entered is not valid please try again.',
                 ! filter_var($value, FILTER_VALIDATE_EMAIL) => 'The provided email is invalid, kindly enter a valid email address.',
@@ -400,8 +413,8 @@ class Installer extends Command
         );
 
         $adminPassword = text(
-            label: 'Input a Secure Password for Administrator',
-            default: 'JohnDoe@123',
+            label: 'Input a Password for Administrator',
+            default: 'admin123',
             required: true
         );
 
@@ -410,7 +423,6 @@ class Installer extends Command
 
             $adminPassword = text(
                 label: 'Input a Secure Password for Administrator',
-                default: 'JohnDoe@123',
                 required: true
             );
         }
@@ -438,7 +450,7 @@ class Installer extends Command
             $this->info('Congratulations! The installation has successfully completed and UnoPim is ready for use.');
             $this->info('Please navigate to: '.env('APP_URL').'/admin'.' and use the following credentials for authentication:');
             $this->info('Email: '.$adminEmail);
-            $this->info('Password: '.$adminPassword);
+            $this->info('Password was securely set for the admin user.');
             $this->info('Cheers!');
 
             Event::dispatch('unopim.installed');
