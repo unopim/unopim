@@ -247,7 +247,7 @@ class Export
     /**
      * Start the import process
      */
-    public function completed()
+    public function completed(): void
     {
         $summary = $this->jobTrackBatchRepository
             ->select(

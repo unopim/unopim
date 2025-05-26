@@ -121,7 +121,6 @@ class Exporter extends AbstractExporter
         foreach ($productsByIds as $product) {
             $rowData = $product->toArray();
 
-            // Cache derived data
             $rowData['super_attributes'] = $rowData['type'] === 'configurable'
                 ? $product->super_attributes->toArray()
                 : [];
@@ -131,7 +130,6 @@ class Exporter extends AbstractExporter
                 ? optional($product->parent)->sku
                 : null;
 
-            // Pre-fetch static field values outside the nested loops
             $sku = $rowData['sku'];
             $type = $rowData['type'];
             $status = $rowData['status'] ? 'true' : 'false';
@@ -144,7 +142,7 @@ class Exporter extends AbstractExporter
             unset($rowData['attribute_family'], $rowData['parent']);
 
             $commonFields = $this->getCommonFields($rowData);
-            unset($commonFields['sku']); // remove sku once
+            unset($commonFields['sku']);
 
             foreach ($this->channelsAndLocales as $channel => $locales) {
                 foreach ($locales as $locale) {
@@ -152,7 +150,6 @@ class Exporter extends AbstractExporter
                     $channelSpecificFields = $this->getChannelSpecificFields($rowData, $channel);
                     $channelLocaleSpecificFields = $this->getChannelLocaleSpecificFields($rowData, $channel, $locale);
 
-                    // Merge all attribute fields
                     $mergedFields = array_merge(
                         $commonFields,
                         $localeSpecificFields,
@@ -160,7 +157,6 @@ class Exporter extends AbstractExporter
                         $channelLocaleSpecificFields
                     );
 
-                    // Final transformation
                     $values = $this->setAttributesValues($mergedFields, $filePath);
 
                     $products[] = array_merge([
@@ -202,7 +198,6 @@ class Exporter extends AbstractExporter
     /**
      * Sets attribute values for a product. If an attribute is not present in the given values array,
      *
-     *
      * @return array
      */
     protected function setAttributesValues(array $values, mixed $filePath)
@@ -214,14 +209,12 @@ class Exporter extends AbstractExporter
         foreach ($this->attributes as $attribute) {
             $code = $attribute->code;
 
-            // Skip 'sku' and 'status'
             if (in_array($code, ['sku', 'status'])) {
                 continue;
             }
 
             $rawValue = $values[$code] ?? null;
 
-            // Handle media attributes
             if (
                 $withMedia &&
                 in_array($attribute->type, [
@@ -243,7 +236,6 @@ class Exporter extends AbstractExporter
                 continue;
             }
 
-            // Handle price attributes
             if ($attribute->type === AttributeTypes::PRICE_ATTRIBUTE_TYPE) {
                 $priceData = is_array($rawValue) ? $rawValue : [];
 
@@ -254,7 +246,6 @@ class Exporter extends AbstractExporter
                 continue;
             }
 
-            // Handle array to string
             if (is_array($rawValue)) {
                 $rawValue = implode(', ', $rawValue);
             }
@@ -267,7 +258,6 @@ class Exporter extends AbstractExporter
 
     /**
      * Retrieves and formats the common fields for a product.
-     *
      *
      * @return array
      */
@@ -286,10 +276,9 @@ class Exporter extends AbstractExporter
     /**
      * Retrieves and formats the locale-specific fields for a product.
      *
-     * @param  string  $channel
      * @return array
      */
-    protected function getLocaleSpecificFields(array $data, $locale)
+    protected function getLocaleSpecificFields(array $data, string $locale)
     {
         if (
             ! array_key_exists('values', $data)
@@ -304,10 +293,9 @@ class Exporter extends AbstractExporter
     /**
      * Retrieves and formats the channel-specific fields for a product.
      *
-     * @param  string  $channel
      * @return array
      */
-    protected function getChannelSpecificFields(array $data, $channel)
+    protected function getChannelSpecificFields(array $data, string $channel)
     {
         if (
             ! array_key_exists('values', $data)
@@ -321,7 +309,6 @@ class Exporter extends AbstractExporter
 
     /**
      * Retrieves and formats the channel-locale-specific fields for a product.
-     *
      *
      * @return array
      */
@@ -340,7 +327,6 @@ class Exporter extends AbstractExporter
     /**
      * Retrieves and formats the categories associated with a product.
      *
-     *
      * @return string|null
      */
     protected function getCategories(array $data)
@@ -358,7 +344,6 @@ class Exporter extends AbstractExporter
 
     /**
      * Retrieves and formats the associated products for a given data row and type.
-     *
      *
      * @return string|null
      */
