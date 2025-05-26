@@ -332,8 +332,9 @@ class Installer extends Command
             default: env('ELASTICSEARCH_ENABLED', 'false')
         ) === 'yes';
 
-        if (!$isElasticEnabled) {
+        if (! $isElasticEnabled) {
             $this->envUpdate('ELASTICSEARCH_ENABLED', 'false');
+
             return;
         }
 
@@ -387,7 +388,6 @@ class Installer extends Command
 
         $this->envUpdate('ELASTICSEARCH_INDEX_PREFIX', $indexPrefix);
     }
-
 
     /**
      * Create a admin credentials.
