@@ -38,7 +38,7 @@ class JSONFileBuffer implements \Iterator
             throw new \InvalidArgumentException("File not found: $filename");
         }
 
-        $instance = new self; // uses constructor to generate dummy file
+        $instance = new self;
         $instance->filename = $filename;
         $instance->openFile();
 
@@ -56,7 +56,6 @@ class JSONFileBuffer implements \Iterator
         $this->file->fwrite(json_encode($item).PHP_EOL);
     }
 
-    // Iterator methods
     public function current(): mixed
     {
         return json_decode($this->file->current(), true);
@@ -89,18 +88,16 @@ class JSONFileBuffer implements \Iterator
 
     public function __sleep(): array
     {
-        // Exclude non-serializable SplFileObject
         return ['filename'];
     }
 
     public function __wakeup(): void
     {
-        $this->openFile(); // Reopen after deserialization
+        $this->openFile();
     }
 
     public function __destruct()
     {
         unset($this->file);
-        // File cleanup is manual to avoid premature deletion
     }
 }

@@ -219,7 +219,7 @@ abstract class AbstractExporter
         return [
             'fieldDelimiter' => $this->export->jobInstance['field_separator'] ?? ',',
             'filedEnclosure' => '"',
-            'shouldAddBOM'   => true,
+            'shouldAddBOM'   => false,
             'type'           => $this->filters['file_format'] ?? SpoutWriterFactory::CSV,
         ];
     }
