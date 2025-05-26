@@ -125,6 +125,9 @@ php artisan migrate
 echo "🔗 Linking storage..."
 php artisan storage:link
 
+echo "🛠️ Sending queue restart signal..."
+php artisan queue:restart
+
 echo "🧹 Clearing cache..."
 php artisan optimize:clear
 
