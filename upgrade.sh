@@ -146,4 +146,7 @@ php artisan storage:link
 echo "🧹 Clearing cache..."
 php artisan optimize:clear
 
+echo "🛠️ Sending queue restart signal..."
+php artisan queue:restart
+
 echo "✅ Upgrade complete! Now on version $LATEST_VERSION"
