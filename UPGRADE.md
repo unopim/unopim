@@ -24,12 +24,12 @@ mysqldump -u your_db_user -p your_db_name > backup.sql
 ```
 * **Stop processes** either wait for all processes to stop or stop the queue worker safely.
 
-**Make sure to keep these backups safe in case something goes wrong during the upgrade.**
+**Make sure to keep these backups safe in case the upgrade process encounters any problem.**
 
 ### 2. **Download the Release**
 
-* Visit the [Unopim GitHub releases page for v0.2.0](https://github.com/unopim/unopim/archive/refs/tags/v0.2.0.zip)
-* Download the `.zip` file for the latest version `v0.2.0`
+* Visit the [Unopim GitHub latest release page](https://github.com/unopim/unopim/releases/latest)
+* Download the `.zip` file for the latest version
 * Extract the contents to a folder on your system.
 
 ### 3. **Copy Necessary Files**
@@ -87,9 +87,21 @@ After following these steps, your Unopim should be successfully upgraded. Test y
 <a name="automated-upgrade-script"></a>
 ## 🛠️ Automated Upgrade Script
 
-### 1. Download the Script
+### 1. Backup your project
 
-Download the upgrade script for your Unopim version.
+Although the upgrade script automatically creates the backup of your project as well as the database, For additional safety you can manually keep the backups in case the upgrade process encounters any problems.
+
+Before starting the upgrade process:
+
+* **Backup your full project**
+* **Backup your database** using `mysqldump` or your preferred method:
+
+```bash
+mysqldump -u your_db_user -p your_db_name > backup.sql
+```
+* **Stop processes** either wait for all processes to stop or stop the queue worker safely.
+
+**Make sure to keep these backups safe in case the upgrade process encounters any problem.**
 
 ### 2. Execute the Script
 
