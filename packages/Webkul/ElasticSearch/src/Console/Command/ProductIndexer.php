@@ -60,6 +60,10 @@ class ProductIndexer extends Command
                     }
                 }
 
+                if (! $this->hasIndex($productIndex)) {
+                    $this->elasticConfiguration($productIndex);
+                }
+
                 return;
             }
 
