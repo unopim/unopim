@@ -130,6 +130,11 @@
 
         <!-- Right Toolbar -->
         <div class="flex items-center gap-x-4">
+            <!-- Manage Columns -->
+             <template v-if="available.meta.managedColumn?.enabled">
+                <x-admin::datagrid.manage-columns />
+             </template>
+            
             <!-- Filters Activation Button -->
             <x-admin::drawer width="350px" ref="filterDrawer">
                 <x-slot:toggle>

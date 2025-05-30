@@ -9,6 +9,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Webkul\DataTransfer\Helpers\Import as ImportHelper;
+use Webkul\DataTransfer\Services\JobLogger;
 
 class IndexBatch implements ShouldQueue
 {
@@ -20,7 +21,7 @@ class IndexBatch implements ShouldQueue
      * @param  mixed  $importBatch
      * @return void
      */
-    public function __construct(protected $importBatch)
+    public function __construct(protected $importBatch, protected $jobTrackId)
     {
         $this->importBatch = $importBatch;
     }
@@ -33,7 +34,8 @@ class IndexBatch implements ShouldQueue
     public function handle()
     {
         $typeImported = app(ImportHelper::class)
-            ->setImport($this->importBatch->import)
+            ->setImport($this->importBatch->jobTrack)
+            ->setLogger(JobLogger::make($this->jobTrackId))
             ->getTypeImporter();
 
         $typeImported->indexBatch($this->importBatch);

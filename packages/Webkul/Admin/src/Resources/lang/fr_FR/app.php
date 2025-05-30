@@ -1683,6 +1683,10 @@ return [
                 'search' => [
                     'title' => 'Recherche',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Colonnes',
+                ],
             ],
 
             'filters' => [
@@ -1721,6 +1725,13 @@ return [
             'table' => [
                 'actions'              => 'Actions',
                 'no-records-available' => 'Aucun enregistrement disponible.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Gérer les colonnes',
+                'available-columns' => 'Colonnes disponibles',
+                'selected-columns'  => 'Colonnes sélectionnées',
+                'apply-btn'         => 'Appliquer',
             ],
         ],
 
