@@ -447,6 +447,56 @@
             </div>
         </div>
 
+        <!-- Integer/Number -->
+        <div v-else-if="column.type === 'integer'">
+            <div class="flex items-center justify-between">
+                <p
+                    class="text-sm font-medium leading-6 dark:text-white"
+                    v-text="column.label"
+                >
+                </p>
+
+                <div
+                    class="flex items-center gap-x-1.5"
+                    @click="removeAppliedColumnAllValues(column.index)"
+                >
+                    <p
+                        class="cursor-pointer text-xs font-medium leading-6 text-violet-700"
+                        v-if="hasAnyAppliedColumnValues(column.index)"
+                    >
+                        @lang('admin::app.components.datagrid.filters.custom-filters.clear-all')
+                    </p>
+                </div>
+            </div>
+
+            <div class="mb-2 mt-1.5 grid">
+                <input
+                    type="number"
+                    class="block w-full rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 px-2 py-1.5 text-sm leading-6 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400"
+                    :name="column.index"
+                    :placeholder="column.label"
+                    @blur="filterPage($event, column)"
+                    @keyup.enter="filterPage($event, column)"
+                    @wheel="$event.target.blur()"
+                />
+            </div>
+
+            <div class="mb-4 flex gap-2 flex-wrap">
+                <p
+                    class="flex items-center rounded bg-violet-100 px-2 py-1 font-semibold text-violet-700"
+                    v-for="appliedColumnValue in getAppliedColumnValues(column.index)"
+                >
+                    <span v-text="appliedColumnValue"></span>
+
+                    <span
+                        class="icon-cancel cursor-pointer text-lg text-violet-700 ltr:ml-1.5 rtl:mr-1.5 dark:!text-violet-700"
+                        @click="removeAppliedColumnValue(column.index, appliedColumnValue)"
+                    >
+                    </span>
+                </p>
+            </div>
+        </div>
+
         <!-- Rest -->
         <div v-else>
             <div class="flex items-center justify-between">
