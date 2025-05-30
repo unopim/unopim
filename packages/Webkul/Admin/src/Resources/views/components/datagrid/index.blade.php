@@ -547,6 +547,9 @@
 
                 managedColumns(columns) {
                     this.available.meta.managedColumn.columns = columns;
+                    // Remove filters for the column which has been removed
+                    this.applied.filters.columns = this.applied.filters.columns.filter(column => column.index === 'all' || columns.includes(column.index));
+
                     this.get();
                 },
 
