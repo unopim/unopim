@@ -1686,7 +1686,7 @@ return [
                 ],
 
                 'manage-columns' => [
-                    'title' => '管理列',
+                    'title' => '列',
                 ],
             ],
 

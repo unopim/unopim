@@ -1837,7 +1837,7 @@ return [
                 ],
 
                 'manage-columns' => [
-                    'title' => 'Upravljanje stupcima',
+                    'title' => 'Stupcima',
                 ],
             ],
 

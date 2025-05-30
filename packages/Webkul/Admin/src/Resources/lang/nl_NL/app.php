@@ -2140,7 +2140,7 @@ return [
                 ],
 
                 'manage-columns' => [
-                    'title' => 'Kolommen beheren',
+                    'title' => 'Kolommen',
                 ],
             ],
 

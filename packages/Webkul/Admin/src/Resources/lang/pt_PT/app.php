@@ -1836,7 +1836,7 @@ return [
                 ],
 
                 'manage-columns' => [
-                    'title' => 'Gerir colunas',
+                    'title' => 'colunas',
                 ],
             ],
 

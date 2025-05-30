@@ -1837,7 +1837,7 @@ return [
                 ],
 
                 'manage-columns' => [
-                    'title' => 'Gestionați coloanele',
+                    'title' => 'coloanele',
                 ],
             ],
 

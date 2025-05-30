@@ -45,7 +45,7 @@ class ManageColumnController extends SelectOptionsController
 
                     $columns = array_values(array_filter(
                         $columns,
-                        fn($col) => str_contains(strtolower($col['label']), $query)
+                        fn ($col) => str_contains(strtolower($col['label']), $query)
                     ));
                 }
 

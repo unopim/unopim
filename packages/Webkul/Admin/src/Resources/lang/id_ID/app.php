@@ -1710,7 +1710,7 @@ return [
                 ],
 
                 'manage-columns' => [
-                    'title' => 'Kelola Kolom',
+                    'title' => 'Kolom',
                 ],
             ],
 

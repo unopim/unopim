@@ -1837,7 +1837,7 @@ return [
                 ],
 
                 'manage-columns' => [
-                    'title' => '열 관리',
+                    'title' => '열',
                 ],
             ],
 

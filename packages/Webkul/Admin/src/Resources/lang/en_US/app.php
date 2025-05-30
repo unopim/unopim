@@ -1695,7 +1695,7 @@ return [
                 ],
 
                 'manage-columns' => [
-                    'title' => 'Manage Columns',
+                    'title' => 'Columns',
                 ],
             ],
 

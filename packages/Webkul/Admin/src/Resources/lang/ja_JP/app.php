@@ -1692,7 +1692,7 @@ return [
                 ],
 
                 'manage-columns' => [
-                    'title' => '列の管理',
+                    'title' => 'カラム',
                 ],
             ],
 

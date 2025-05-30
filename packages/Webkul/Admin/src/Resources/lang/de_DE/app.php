@@ -1691,7 +1691,7 @@ return [
                 ],
 
                 'manage-columns' => [
-                    'title' => 'Spalten verwalten',
+                    'title' => 'Kolonne',
                 ],
             ],
 

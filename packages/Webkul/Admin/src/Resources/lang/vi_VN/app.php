@@ -1837,7 +1837,7 @@ return [
                 ],
 
                 'manage-columns' => [
-                    'title' => 'Quản lý cột',
+                    'title' => 'Cột',
                 ],
             ],
 

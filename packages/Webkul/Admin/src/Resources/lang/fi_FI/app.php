@@ -1836,7 +1836,7 @@ return [
                 ],
 
                 'manage-columns' => [
-                    'title' => 'Hallitse sarakkeita',
+                    'title' => 'Sarakkeita',
                 ],
             ],
 
