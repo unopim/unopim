@@ -48,7 +48,7 @@
                             <!-- Columns -->
                             <p
                                 v-for="column in $parent.available.columns"
-                                class="flex gap-1.5 items-center break-words"
+                                class="flex gap-1.5 items-center break-words overflow-hidden"
                                 :class="{'cursor-pointer select-none hover:text-gray-800 dark:hover:text-white': column.sortable}"
                                 @click="$parent.sortPage(column)"
                             >
