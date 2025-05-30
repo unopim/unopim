@@ -16,7 +16,7 @@ test('My Account', async ({ page }) => {
   await page.getByRole('button', { name: 'Save Account' }).click();
 });
 
-test('Logout Check', async({page}) => {
+test('Logout Check', async ({ page }) => {
   await page.goto('http://127.0.0.1:8000/admin/login');
   await page.getByRole('textbox', { name: 'Email Address' }).click();
   await page.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');

@@ -69,13 +69,13 @@ test.describe('Login Page', () => {
   test('Error for password less than 6 characters', async ({ page }) => {
     await page.fill('input[name=password]', 'in123');
     await page.click('.primary-button');
-  
+
     // Only match the error related to the password field
     await expect(
       page.locator('input[name="password"]').locator('..').locator('p.mt-1')
     ).toContainText('The Password field must be at least 6 characters');
   });
-  
+
 
   // ✅ Toggle password visibility
   test('Click visibility toggle for showing the password', async ({ page }) => {
