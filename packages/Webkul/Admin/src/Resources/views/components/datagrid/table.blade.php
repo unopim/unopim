@@ -207,10 +207,13 @@
 
             methods: {
                 handleRowClick(event, record) {
-                    // Ensure the click event only fires if the clicked element is the row itself
-                    if (event.target === event.currentTarget) {
-                        this.$parent.performAction(record.actions.find(action => action.index === 'edit'));
+                    const selection = window.getSelection();
+
+                    if (selection && selection.toString().length > 0) {
+                        return;
                     }
+
+                    this.$parent.performAction(record.actions.find(action => action.index === 'edit'));
                 }
             }
         });

@@ -57,14 +57,14 @@
 
                         <!-- Modal Header -->
                         <x-slot:header>
-                            <p class="text-lg text-gray-800 dark:text-white font-bold">
+                            <p class="text-lg text-gray-800 dark:text-white font-bold p-2">
                                 @lang('admin::app.components.datagrid.manage-columns.title')
                             </p>
                         </x-slot>
 
                         <!-- Modal Content -->
                         <x-slot:content>
-                            <div class="grid grid-cols-2 gap-4 p-4">
+                            <div class="grid grid-cols-2 gap-4 p-2">
                                 <!-- Left Side -->
                                 <div class="flex flex-col gap-y-2">
                                     <div class="flex items-center justify-between">
