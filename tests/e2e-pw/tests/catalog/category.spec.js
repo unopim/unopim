@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 test.describe('UnoPim Category', () => {
-  
+
   test.beforeEach(async ({ page }) => {
     await page.goto('http://127.0.0.1:8000/admin/login');
     await page.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
@@ -17,7 +17,7 @@ test.describe('UnoPim Category', () => {
     await page.locator('#name').click();
     await page.locator('#name').type('Television', { delay: 100 });
     await page.getByRole('button', { name: 'Save Category' }).click();
-   await expect(page.getByText('The code field is required')).toBeVisible();
+    await expect(page.getByText('The code field is required')).toBeVisible();
   });
 
   test('Create Categories with empty Name field', async ({ page }) => {
@@ -29,7 +29,7 @@ test.describe('UnoPim Category', () => {
     await page.locator('#name').click();
     await page.locator('#name').fill('');
     await page.getByRole('button', { name: 'Save Category' }).click();
-   await expect(page.getByText('The Name field is required')).toBeVisible();
+    await expect(page.getByText('The Name field is required')).toBeVisible();
   });
 
   test('Create Categories with empty Code and Name field', async ({ page }) => {
@@ -41,8 +41,8 @@ test.describe('UnoPim Category', () => {
     await page.locator('#name').click();
     await page.locator('#name').type('');
     await page.getByRole('button', { name: 'Save Category' }).click();
-   await expect(page.getByText('The code field is required')).toBeVisible();
-   await expect(page.getByText('The Name field is required')).toBeVisible();
+    await expect(page.getByText('The code field is required')).toBeVisible();
+    await expect(page.getByText('The Name field is required')).toBeVisible();
   });
 
   test('Create Categories with all field', async ({ page }) => {
@@ -74,7 +74,7 @@ test.describe('UnoPim Category', () => {
     await expect(page.getByText('Apply Filters')).toBeVisible();
   });
 
-   test('should allow setting items per page', async ({ page }) => {
+  test('should allow setting items per page', async ({ page }) => {
     await page.getByRole('link', { name: ' Catalog' }).click();
     await page.getByRole('link', { name: 'Categories' }).click();
     await page.getByRole('button', { name: '' }).click();
@@ -88,13 +88,13 @@ test.describe('UnoPim Category', () => {
     const itemRow = page.locator('div', { hasText: 'root' });
     await itemRow.locator('span[title="Edit"]').first().click();
     await expect(page).toHaveURL(/\/admin\/catalog\/categories\/edit/);
-     await page.goBack();
+    await page.goBack();
     await itemRow.locator('span[title="Delete"]').first().click();
     await expect(page.locator('text=Are you sure you want to delete?')).toBeVisible();
   });
 
-   test('should allow selecting all category with the mass action checkbox', async ({ page }) => {
-     await page.getByRole('link', { name: ' Catalog' }).click();
+  test('should allow selecting all category with the mass action checkbox', async ({ page }) => {
+    await page.getByRole('link', { name: ' Catalog' }).click();
     await page.getByRole('link', { name: 'Categories' }).click();
     await page.click('label[for="mass_action_select_all_records"]');
     await expect(page.locator('#mass_action_select_all_records')).toBeChecked();

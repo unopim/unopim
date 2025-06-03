@@ -105,7 +105,7 @@ test.describe('UnoPim Export Jobs', () => {
     await expect(page.getByText('Apply Filters')).toBeVisible();
   });
 
-   test('should allow setting items per page', async ({ page }) => {
+  test('should allow setting items per page', async ({ page }) => {
     await page.getByRole('link', { name: ' Data Transfer' }).click();
     await page.getByRole('link', { name: 'Exports' }).click();
     await page.getByRole('button', { name: '' }).click();
@@ -117,12 +117,12 @@ test.describe('UnoPim Export Jobs', () => {
     await page.getByRole('link', { name: ' Data Transfer' }).click();
     await page.getByRole('link', { name: 'Exports' }).click();
     const itemRow = page.locator('div', { hasText: 'Category Export CSV' });
-     await itemRow.locator('span[title="Export"]').first().click();
+    await itemRow.locator('span[title="Export"]').first().click();
     await expect(page).toHaveURL(/\/admin\/settings\/data-transfer\/exports\/export/);
     await page.goBack();
     await itemRow.locator('span[title="Edit"]').first().click();
     await expect(page).toHaveURL(/\/admin\/settings\/data-transfer\/exports\/edit/);
-     await page.goBack();
+    await page.goBack();
     await itemRow.locator('span[title="Delete"]').first().click();
     await expect(page.locator('text=Are you sure you want to delete?')).toBeVisible();
   });

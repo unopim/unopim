@@ -1,7 +1,5 @@
 import { test, expect } from '@playwright/test';
 test.describe('UnoPim  Create Product Test cases', () => {
-
-  // Before each test, launch browser and navigate to the login page
   test.beforeEach(async ({ page }) => {
     await page.goto('http://127.0.0.1:8000/admin/login');
     await page.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
@@ -50,7 +48,6 @@ test.describe('UnoPim  Create Product Test cases', () => {
     await page.getByRole('button', { name: 'Save Product' }).click();
     await expect(page.getByText('The Type field is required')).toBeVisible();
     await expect(page.getByText('The Family field is required')).toBeVisible();
-
   });
 
   test('with empty product type and sku field', async ({ page }) => {
@@ -159,7 +156,7 @@ test.describe('UnoPim  Create Product Test cases', () => {
   });
 
   test('should allow selecting all products with the mass action checkbox', async ({ page }) => {
-     await page.getByRole('link', { name: ' Catalog' }).click();
+    await page.getByRole('link', { name: ' Catalog' }).click();
     await page.getByRole('link', { name: 'Products' }).click();
     await page.click('label[for="mass_action_select_all_records"]');
     await expect(page.locator('#mass_action_select_all_records')).toBeChecked();

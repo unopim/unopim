@@ -20,7 +20,7 @@ test.describe('UnoPim Test cases', () => {
         await expect(page.getByText(/Locale deleted successfully/i)).toBeVisible();
     });
 
-test('Create locale with empty Code field', async ({ page }) => {
+    test('Create locale with empty Code field', async ({ page }) => {
         await page.getByRole('link', { name: ' Settings' }).click();
         await page.getByRole('link', { name: 'Locales' }).click();
         await page.getByRole('button', { name: 'Create Locale' }).click();

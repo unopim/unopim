@@ -7,7 +7,7 @@ test.describe('UnoPim Test cases', () => {
     await page.getByRole('button', { name: 'Sign In' }).click();
   });
 
-test('Create Integration with empty Name field', async ({ page }) => {
+  test('Create Integration with empty Name field', async ({ page }) => {
     await page.getByRole('link', { name: ' Configuration' }).click();
     await page.getByRole('link', { name: 'Integrations' }).click();
     await page.getByRole('link', { name: 'Create' }).click();
@@ -17,8 +17,9 @@ test('Create Integration with empty Name field', async ({ page }) => {
     await page.getByRole('option', { name: 'John Doe' }).locator('span').first().click();
     await page.getByRole('button', { name: 'Save' }).click();
     await expect(page.getByText('The Name field is required')).toBeVisible();
-});
-test('Create Integration field with empty Assign User field', async ({ page }) => {
+  });
+
+  test('Create Integration field with empty Assign User field', async ({ page }) => {
     await page.getByRole('link', { name: ' Configuration' }).click();
     await page.getByRole('link', { name: 'Integrations' }).click();
     await page.getByRole('link', { name: 'Create' }).click();
@@ -26,9 +27,9 @@ test('Create Integration field with empty Assign User field', async ({ page }) =
     await page.getByRole('textbox', { name: 'Name' }).fill('Admin User');
     await page.getByRole('button', { name: 'Save' }).click();
     await expect(page.getByText('The Assign User field is required')).toBeVisible();
-});
+  });
 
-test('Create Integration field with empty Name and Assign User field', async ({ page }) => {
+  test('Create Integration field with empty Name and Assign User field', async ({ page }) => {
     await page.getByRole('link', { name: ' Configuration' }).click();
     await page.getByRole('link', { name: 'Integrations' }).click();
     await page.getByRole('link', { name: 'Create' }).click();
@@ -37,9 +38,9 @@ test('Create Integration field with empty Name and Assign User field', async ({ 
     await page.getByRole('button', { name: 'Save' }).click();
     await expect(page.getByText('The Name field is required')).toBeVisible();
     await expect(page.getByText('The Assign User field is required')).toBeVisible();
-});
+  });
 
-test('Create Integration field', async ({ page }) => {
+  test('Create Integration field', async ({ page }) => {
     await page.getByRole('link', { name: ' Configuration' }).click();
     await page.getByRole('link', { name: 'Integrations' }).click();
     await page.getByRole('link', { name: 'Create' }).click();
@@ -49,9 +50,9 @@ test('Create Integration field', async ({ page }) => {
     await page.getByRole('option', { name: 'John Doe' }).locator('span').first().click();
     await page.getByRole('button', { name: 'Save' }).click();
     await expect(page.getByText(/API Integration Created Successfully/i)).toBeVisible();
-});
+  });
 
-test('should allow Integration search', async ({ page }) => {
+  test('should allow Integration search', async ({ page }) => {
     await page.getByRole('link', { name: ' Configuration' }).click();
     await page.getByRole('link', { name: 'Integrations' }).click();
     await page.getByRole('textbox', { name: 'Search' }).click();
@@ -68,7 +69,7 @@ test('should allow Integration search', async ({ page }) => {
     await expect(page.getByText('Apply Filters')).toBeVisible();
   });
 
-   test('should allow setting items per page', async ({ page }) => {
+  test('should allow setting items per page', async ({ page }) => {
     await page.getByRole('link', { name: ' Configuration' }).click();
     await page.getByRole('link', { name: 'Integrations' }).click();
     await page.getByRole('button', { name: '' }).click();
@@ -82,12 +83,12 @@ test('should allow Integration search', async ({ page }) => {
     const itemRow = page.locator('div', { hasText: 'Admin User' });
     await itemRow.locator('span[title="Edit"]').first().click();
     await expect(page).toHaveURL(/\/admin\/integrations\/api-keys\/edit/);
-     await page.goBack();
+    await page.goBack();
     await itemRow.locator('span[title="Delete"]').first().click();
     await expect(page.locator('text=Are you sure you want to delete?')).toBeVisible();
   });
 
-test('Generate API key', async ({ page }) => {
+  test('Generate API key', async ({ page }) => {
     await page.getByRole('link', { name: ' Configuration' }).click();
     await page.getByRole('link', { name: 'Integrations' }).click();
     const itemRow = page.locator('div', { hasText: 'Admin USer' });
@@ -98,10 +99,10 @@ test('Generate API key', async ({ page }) => {
     await expect(clientIdInput).not.toHaveValue('');
     const secretkeyInput = page.locator('#secret_key');
     await expect(secretkeyInput).not.toHaveValue('');
-});
+  });
 
 
-test('Regenerate API key', async ({ page }) => {
+  test('Regenerate API key', async ({ page }) => {
     await page.getByRole('link', { name: ' Configuration' }).click();
     await page.getByRole('link', { name: 'Integrations' }).click();
     const itemRow = page.locator('div', { hasText: 'Admin USer' });
@@ -112,9 +113,9 @@ test('Regenerate API key', async ({ page }) => {
     await expect(clientIdInput).not.toHaveValue('');
     const secretkeyInput = page.locator('#secret_key');
     await expect(secretkeyInput).not.toHaveValue('');
-});
+  });
 
-test('Update Integration', async ({ page }) => {
+  test('Update Integration', async ({ page }) => {
     await page.getByRole('link', { name: ' Configuration' }).click();
     await page.getByRole('link', { name: 'Integrations' }).click();
     const itemRow = page.locator('div', { hasText: 'Admin USer' });
@@ -123,10 +124,10 @@ test('Update Integration', async ({ page }) => {
     await page.getByRole('textbox', { name: 'Name' }).fill('Admin Testing');
     await page.getByRole('button', { name: 'Save' }).click();
     await expect(page.getByText(/API Integration is updated successfully/i)).toBeVisible();
-});
+  });
 
 
-test('Delete Integration', async ({ page }) => {
+  test('Delete Integration', async ({ page }) => {
     await page.getByRole('link', { name: ' Configuration' }).click();
     await page.getByRole('link', { name: 'Integrations' }).click();
     const itemRow = page.locator('div', { hasText: 'Admin Testing' });

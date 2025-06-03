@@ -1,15 +1,11 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('UnoPim Dashboard', () => {
-  // This runs before every test to log in and go to the dashboard
   test.beforeEach(async ({ page }) => {
-    // Replace these lines with your actual login steps
     await page.goto('http://127.0.0.1:8000/admin/login');
     await page.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
     await page.getByRole('textbox', { name: 'Password' }).fill('admin123');
     await page.getByRole('button', { name: 'Sign In' }).click();
-
-    // After login, go to dashboard
     await expect(page).toHaveURL('http://127.0.0.1:8000/admin/dashboard');
   });
 
@@ -121,21 +117,17 @@ test.describe('UnoPim Dashboard', () => {
     expect(numberText.trim()).toMatch(/^\d+$/);
   });
 
-
-  // ✅ Check dark mode color
   test('Checks Dashboard text color in dark or light mode', async ({ page }) => {
     const hasDarkMode = await page.evaluate(() =>
       document.body?.classList.contains('dark-mode')
     );
 
-    const greetingText = page.getByText('Hi! John Doe'); // Adjust if this changes dynamically
+    const greetingText = page.getByText('Hi! John Doe');
 
     if (hasDarkMode) {
-      // Dark mode: color should be light (almost white)
       await expect(greetingText).toHaveCSS('color', 'rgb(248, 250, 252)');
       console.log("Dark Theme")
     } else {
-      // Light mode: color should be dark gray
       await expect(greetingText).toHaveCSS('color', 'rgb(39, 39, 42)');
       console.log("Light Theme")
     }

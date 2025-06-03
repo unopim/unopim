@@ -1,14 +1,10 @@
 import { test, expect } from '@playwright/test';
 test.describe('UnoPim Test cases', () => {
-
-  // Before each test, launch browser and navigate to the login page
   test.beforeEach(async ({ page }) => {
-
     await page.goto('http://127.0.0.1:8000/admin/login');
     await page.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
     await page.getByRole('textbox', { name: 'Password' }).fill('admin123');
     await page.getByRole('button', { name: 'Sign In' }).click();
-
   });
 
   test('Create Attribute Group with empty Code field', async ({ page }) => {
@@ -20,7 +16,7 @@ test.describe('UnoPim Test cases', () => {
     await page.locator('input[name="en_US\\[name\\]"]').click();
     await page.locator('input[name="en_US\\[name\\]"]').fill('Product Description');
     await page.getByRole('button', { name: 'Save Attribute Group' }).click();
-   await expect(page.getByText('The Code field is required')).toBeVisible();
+    await expect(page.getByText('The Code field is required')).toBeVisible();
   });
 
   test('Create Attribute Group', async ({ page }) => {
@@ -37,7 +33,7 @@ test.describe('UnoPim Test cases', () => {
 
   test('should allow category search', async ({ page }) => {
     await page.getByRole('link', { name: ' Catalog' }).click();
-     await page.getByRole('link', { name: 'Attribute Groups' }).click();
+    await page.getByRole('link', { name: 'Attribute Groups' }).click();
     await page.getByRole('textbox', { name: 'Search' }).click();
     await page.getByRole('textbox', { name: 'Search' }).type('product_description');
     await page.keyboard.press('Enter');
@@ -52,7 +48,7 @@ test.describe('UnoPim Test cases', () => {
     await expect(page.getByText('Apply Filters')).toBeVisible();
   });
 
-   test('should allow setting items per page', async ({ page }) => {
+  test('should allow setting items per page', async ({ page }) => {
     await page.getByRole('link', { name: ' Catalog' }).click();
     await page.getByRole('link', { name: 'Attribute Groups' }).click();
     await page.getByRole('button', { name: '' }).click();
@@ -66,7 +62,7 @@ test.describe('UnoPim Test cases', () => {
     const itemRow = page.locator('div', { hasText: 'product_description' });
     await itemRow.locator('span[title="Edit"]').first().click();
     await expect(page).toHaveURL(/\/admin\/catalog\/attributegroups\/edit/);
-     await page.goBack();
+    await page.goBack();
     await itemRow.locator('span[title="Delete"]').first().click();
     await expect(page.locator('text=Are you sure you want to delete?')).toBeVisible();
   });
