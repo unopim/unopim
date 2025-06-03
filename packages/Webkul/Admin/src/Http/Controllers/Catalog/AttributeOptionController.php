@@ -108,9 +108,6 @@ class AttributeOptionController extends Controller
     {
         $data = request()->all();
 
-        // TODO: update events for all options being updated in sort order
-        Event::dispatch('catalog.attribute.option.update.before', $attributeId);
-
         $sortOrderUpdated = $this->attributeOptionRepository->updateSortOrder($data['optionIds'], $data['direction'], $data['toIndex'], $attributeId);
 
         if (! $sortOrderUpdated) {
@@ -118,8 +115,6 @@ class AttributeOptionController extends Controller
                 'message' => trans('admin::app.catalog.attribute.option.sort-update-failure'),
             ], JsonResponse::HTTP_BAD_REQUEST);
         }
-
-        Event::dispatch('catalog.attribute.option.update.after', $attributeId);
 
         return new JsonResponse([
             'message' => trans('admin::app.catalog.attribute.option.sort-update-success'),

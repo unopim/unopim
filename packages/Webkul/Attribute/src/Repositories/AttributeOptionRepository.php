@@ -3,6 +3,7 @@
 namespace Webkul\Attribute\Repositories;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Webkul\Core\Eloquent\Repository;
 
 class AttributeOptionRepository extends Repository
@@ -20,11 +21,13 @@ class AttributeOptionRepository extends Repository
      */
     public function create(array $data)
     {
-        $maxSortOrder = $this->model
-            ->where('attribute_id', $data['attribute_id'])
-            ->max('sort_order');
+        if (! isset($data['sort_order'])) {
+            $maxSortOrder = $this->model
+                ->where('attribute_id', $data['attribute_id'])
+                ->max('sort_order');
 
-        $data['sort_order'] = $maxSortOrder ? $maxSortOrder + 1 : 1;
+            $data['sort_order'] = $maxSortOrder ? $maxSortOrder + 1 : 1;
+        }
 
         $option = parent::create($data);
 
@@ -47,11 +50,15 @@ class AttributeOptionRepository extends Repository
             DB::beginTransaction();
 
             foreach ($optionIds as $index => $optionId) {
+                Event::dispatch('catalog.attribute.option.update.before', $optionId);
+
                 $sortOrder = $direction === 'down'
                     ? ($baseSortOrder - ($totalSortedOptions - $index))
                     : $baseSortOrder + $index;
 
-                $this->update(['sort_order' => $sortOrder], $optionId);
+                $option = $this->update(['sort_order' => $sortOrder], $optionId);
+
+                Event::dispatch('catalog.attribute.option.update.after', $option);
             }
 
             DB::commit();
