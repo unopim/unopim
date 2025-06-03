@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Event;
 use Webkul\Admin\DataGrids\Catalog\AttributeOptionDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\AttributeOptionForm;
-use Webkul\Admin\Http\Requests\MassDestroyRequest;
 use Webkul\Attribute\Repositories\AttributeOptionRepository;
 
 class AttributeOptionController extends Controller
@@ -57,7 +56,7 @@ class AttributeOptionController extends Controller
         Event::dispatch('catalog.attribute.option.create.after', $attribute);
 
         return new JsonResponse([
-            'message' => trans('admin::app.catalog.attribute.option.create-success'),
+            'message' => trans('admin::app.catalog.attributes.edit.option.create-success'),
         ]);
     }
 
@@ -97,7 +96,7 @@ class AttributeOptionController extends Controller
         Event::dispatch('catalog.attribute.option.update.after', $option);
 
         return new JsonResponse([
-            'message' => trans('admin::app.catalog.attribute.option.update-success'),
+            'message' => trans('admin::app.catalog.attributes.edit.option.update-success'),
         ]);
     }
 
@@ -112,12 +111,12 @@ class AttributeOptionController extends Controller
 
         if (! $sortOrderUpdated) {
             return new JsonResponse([
-                'message' => trans('admin::app.catalog.attribute.option.sort-update-failure'),
+                'message' => trans('admin::app.catalog.attributes.edit.option.sort-update-failure'),
             ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         return new JsonResponse([
-            'message' => trans('admin::app.catalog.attribute.option.sort-update-success'),
+            'message' => trans('admin::app.catalog.attributes.edit.option.sort-update-success'),
         ]);
     }
 
@@ -137,46 +136,12 @@ class AttributeOptionController extends Controller
             Event::dispatch('catalog.attribute.option.delete.after', $id);
 
             return new JsonResponse([
-                'message' => trans('admin::app.catalog.attribute.option.delete-success'),
+                'message' => trans('admin::app.catalog.attributes.edit.option.delete-success'),
             ]);
         } catch (\Exception $e) {
             report($e);
 
             return new JsonResponse(['message' => $e->getMessage()], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
-    }
-
-    /**
-     * Remove the specified resources from database.
-     */
-    public function massDestroy(MassDestroyRequest $massDestroyRequest): JsonResponse
-    {
-        $indices = $massDestroyRequest->input('indices');
-        $delete = false;
-
-        foreach ($indices as $index) {
-            Event::dispatch('catalog.attribute.delete.before', $index);
-
-            $attribute = $this->attributeRepository->find($index);
-
-            if (! $attribute->canBeDeleted()) {
-                continue;
-            }
-
-            $this->attributeRepository->delete($index);
-            $delete = true;
-
-            Event::dispatch('catalog.attribute.delete.after', $index);
-        }
-
-        if (! $delete) {
-            return new JsonResponse([
-                'message' => trans('admin::app.catalog.attributes.index.datagrid.mass-delete-failed'),
-            ], JsonResponse::HTTP_BAD_REQUEST);
-        }
-
-        return new JsonResponse([
-            'message' => trans('admin::app.catalog.attributes.index.datagrid.mass-delete-success'),
-        ]);
     }
 }

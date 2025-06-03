@@ -62,7 +62,7 @@ it('should create the attribute option', function () {
 
     $response = $this->postJson(route('admin.catalog.attributes.options.store', $attributeId), $payload)
         ->assertStatus(200)
-        ->assertJsonFragment(['message' => trans('admin::app.catalog.attribute.option.create-success')]);
+        ->assertJsonFragment(['message' => trans('admin::app.catalog.attributes.edit.option.create-success')]);
 
     $this->assertDatabaseHas($this->getFullTableName(AttributeOption::class), ['code' => 'test_option', 'attribute_id' => $attributeId]);
 
@@ -89,7 +89,7 @@ it('should update the attribute option', function () {
 
     $response = $this->putJson(route('admin.catalog.attributes.options.update', [$attribute->id, $option->id]), $payload);
     $response->assertStatus(200)
-        ->assertJsonFragment(['message' => trans('admin::app.catalog.attribute.option.update-success')]);
+        ->assertJsonFragment(['message' => trans('admin::app.catalog.attributes.edit.option.update-success')]);
 
     $this->assertDatabaseHas($this->getFullTableName(AttributeOptionTranslation::class), ['attribute_option_id' => $option->id, 'label' => 'Updated Option Label', 'locale' => 'en_US']);
 });
@@ -100,7 +100,7 @@ it('should delete the attribute option', function () {
 
     $response = $this->deleteJson(route('admin.catalog.attributes.options.delete', [$attribute->id, $option->id]));
     $response->assertStatus(200)
-        ->assertJsonFragment(['message' => trans('admin::app.catalog.attribute.option.delete-success')]);
+        ->assertJsonFragment(['message' => trans('admin::app.catalog.attributes.edit.option.delete-success')]);
 
     $this->assertDatabaseMissing($this->getFullTableName(AttributeOption::class), ['id' => $option->id, 'attribute_id' => $attribute->id]);
 });
@@ -129,7 +129,7 @@ it('should update the sort order of attribute options when sorted up', function 
 
     $this->putJson(route('admin.catalog.attributes.options.update_sort', $attributeId), $payload)
         ->assertStatus(200)
-        ->assertJsonFragment(['message' => trans('admin::app.catalog.attribute.option.sort-update-success')]);
+        ->assertJsonFragment(['message' => trans('admin::app.catalog.attributes.edit.option.sort-update-success')]);
 
     $attribute->refresh();
 
@@ -162,7 +162,7 @@ it('should update the sort order of attribute options when sorted down', functio
 
     $this->putJson(route('admin.catalog.attributes.options.update_sort', $attributeId), $payload)
         ->assertStatus(200)
-        ->assertJsonFragment(['message' => trans('admin::app.catalog.attribute.option.sort-update-success')]);
+        ->assertJsonFragment(['message' => trans('admin::app.catalog.attributes.edit.option.sort-update-success')]);
 
     $attribute->refresh();
 
