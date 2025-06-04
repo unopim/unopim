@@ -48,17 +48,23 @@
                             <!-- Columns -->
                             <p
                                 v-for="column in $parent.available.columns"
-                                class="flex gap-1.5 items-center break-words overflow-hidden"
+                                class="flex gap-1.5 items-center break-words"
                                 :class="{'cursor-pointer select-none hover:text-gray-800 dark:hover:text-white': column.sortable}"
                                 @click="$parent.sortPage(column)"
                             >
-                                @{{ column.label }}
+                                <span
+                                    class="block overflow-hidden text-ellipsis text-nowrap"
+                                    :title="column.label"
+                                    v-text="column.label"
+                                >
+                                </span>
 
                                 <i
-                                    class="text-base  text-gray-600 dark:text-gray-300 align-text-bottom"
-                                    :class="[$parent.applied.sort.order === 'asc' ? 'icon-down-stat': 'icon-up-stat']"
+                                    class="text-base text-gray-600 dark:text-gray-300 align-text-bottom"
+                                    :class="[$parent.applied.sort.order === 'asc' ? 'icon-down-stat' : 'icon-up-stat']"
                                     v-if="column.index == $parent.applied.sort.column"
-                                ></i>
+                                >
+                                </i>
                             </p>
 
                             <!-- Actions -->
