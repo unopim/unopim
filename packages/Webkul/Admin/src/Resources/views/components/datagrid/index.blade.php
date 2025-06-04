@@ -200,7 +200,6 @@
                     params.managedColumns = this.available.meta?.managedColumn?.columns;
                     params.manageableColumn = this.available.meta?.managedColumn?.columns;
 
-
                     this.isLoading = true;
 
                     this.$refs['filterDrawer'].close();
@@ -238,6 +237,19 @@
                             this.available.meta = meta;
 
                             this.available.searchPlaceholder = search_placeholder;
+
+                            // Remove filters for attribute columns which have been disabled
+                            if (this.available?.meta?.managedColumn?.enabled && this.available?.columns?.length) {
+                                let filterableColumns = [];
+
+                                this.available.columns.forEach(column => {
+                                    if (column?.filterable) {
+                                        filterableColumns.push(column.index);
+                                    }
+                                });
+
+                                this.applied.filters.columns = this.applied.filters.columns.filter(column => column.index === 'all' || (filterableColumns.includes(column.index)));
+                            }
 
                             this.setCurrentSelectionMode();
 
@@ -547,9 +559,6 @@
 
                 managedColumns(columns) {
                     this.available.meta.managedColumn.columns = columns;
-                    // Remove filters for the column which has been removed
-                    this.applied.filters.columns = this.applied.filters.columns.filter(column => column.index === 'all' || columns.includes(column.index));
-
                     this.get();
                 },
 

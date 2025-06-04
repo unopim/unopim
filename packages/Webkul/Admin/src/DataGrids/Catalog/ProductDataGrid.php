@@ -253,7 +253,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         foreach ($this->defaultColumns as $column) {
             if (! isset($propertyColumns[$column])) {
                 $this->prepareAttributeColumns($column);
-                $this->attributeColumns[] = $column;
 
                 continue;
             }
@@ -269,6 +268,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         if (! $attribute) {
             return;
         }
+
+        $this->attributeColumns[$column] = ['is_filterable' => $attribute->is_filterable];
 
         $this->addColumn($this->buildColumnDefinition($attribute));
     }
@@ -485,6 +486,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             if ($attribute === 'indices') {
                 $this->applyFilterValue($queryBuilder, 'product_id', $value, FilterOperators::IN, $context);
 
+                continue;
+            }
+
+            if (isset($this->attributeColumns[$attribute]) && ! $this->attributeColumns[$attribute]['is_filterable']) {
                 continue;
             }
 
@@ -758,7 +763,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             $record = $this->sanitizeRow($record);
 
             foreach ($this->columns as $column) {
-                if (in_array($column->index, $this->attributeColumns)) {
+                if (isset($this->attributeColumns[$column->index])) {
                     continue;
                 }
 
@@ -828,13 +833,13 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'channel'                => core()->getRequestedChannelCode(),
             'format'                 => 'datagrid',
             'processed_on_attribute' => ! empty($this->attributeColumns) ?? false,
-            'attribute_codes'        => $this->attributeColumns,
+            'attribute_codes'        => array_keys($this->attributeColumns),
         ]);
 
         unset($record->raw_values);
 
         foreach ($this->columns as $column) {
-            if (! in_array($column->index, $this->attributeColumns)) {
+            if (! isset($this->attributeColumns[$column->index])) {
                 continue;
             }
 
