@@ -152,6 +152,7 @@
                                 <!-- Actions -->
                                 <div
                                     class="flex gap-2.5 items-center justify-end select-none"
+                                    :class="{'mr-[-15px]': $parent.available.actions.length > 2 }"
                                     @click.stop
                                 >
                                     <p
