@@ -483,6 +483,7 @@ it('should filter products by text attribute using Elasticsearch', function () {
         'type'              => 'text',
         'value_per_locale'  => 0,
         'value_per_channel' => 0,
+        'is_filterable'     => 1,
     ]);
 
     $data = [
@@ -546,6 +547,7 @@ it('should filter products by textarea attribute using Elasticsearch', function 
         'type'              => 'textarea',
         'value_per_locale'  => 0,
         'value_per_channel' => 0,
+        'is_filterable'     => 1,
     ]);
 
     $data = [
@@ -609,6 +611,7 @@ it('should filter products by price attribute using Elasticsearch', function () 
         'type'              => 'price',
         'value_per_locale'  => 0,
         'value_per_channel' => 0,
+        'is_filterable'     => 1,
     ]);
 
     $data = [
@@ -670,6 +673,7 @@ it('should filter products by boolean attribute using Elasticsearch', function (
         'type'              => 'boolean',
         'value_per_locale'  => 0,
         'value_per_channel' => 0,
+        'is_filterable'     => 1,
     ]);
 
     $data = [
@@ -731,6 +735,7 @@ it('should filter products by select attribute using Elasticsearch', function ()
         'type'              => 'select',
         'value_per_locale'  => 0,
         'value_per_channel' => 0,
+        'is_filterable'     => 1,
     ]);
 
     $data = [
@@ -793,6 +798,7 @@ it('should filter products by multiselect attribute using Elasticsearch', functi
         'type'              => 'multiselect',
         'value_per_locale'  => 0,
         'value_per_channel' => 0,
+        'is_filterable'     => 1,
     ]);
 
     $data = [
@@ -854,6 +860,7 @@ it('should filter products by date attribute using Elasticsearch', function () {
         'type'              => 'date',
         'value_per_locale'  => 0,
         'value_per_channel' => 0,
+        'is_filterable'     => 1,
     ]);
 
     $data = [
@@ -918,6 +925,7 @@ it('should filter products by datetime attribute using Elasticsearch', function 
         'type'              => 'datetime',
         'value_per_locale'  => 0,
         'value_per_channel' => 0,
+        'is_filterable'     => 1,
     ]);
 
     $data = [
@@ -982,6 +990,7 @@ it('should filter products by image attribute using Elasticsearch', function () 
         'type'              => 'image',
         'value_per_locale'  => 0,
         'value_per_channel' => 0,
+        'is_filterable'     => 1,
     ]);
 
     $data = [
@@ -1050,6 +1059,7 @@ it('should filter products by file attribute using Elasticsearch', function () {
         'type'              => 'file',
         'value_per_locale'  => 0,
         'value_per_channel' => 0,
+        'is_filterable'     => 1,
     ]);
 
     $data = [
@@ -1118,6 +1128,7 @@ it('should filter products by checkbox attribute using Elasticsearch', function 
         'type'              => 'checkbox',
         'value_per_locale'  => 0,
         'value_per_channel' => 0,
+        'is_filterable'     => 1,
     ]);
 
     $data = [
@@ -1176,6 +1187,7 @@ it('should filter products by gallery attribute using Elasticsearch', function (
         'type'              => 'gallery',
         'value_per_locale'  => 0,
         'value_per_channel' => 0,
+        'is_filterable'     => 1,
     ]);
 
     $data = [
