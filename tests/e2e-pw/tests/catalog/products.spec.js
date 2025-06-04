@@ -194,9 +194,8 @@ test.describe('UnoPim Update Product Test cases', () => {
     await mainDescFrame.locator('body').click();
     await mainDescFrame.locator('body').type('This is the ACER Laptop with high functionality', { delay: 100 });
     await page.locator('#meta_title').fill('thakubali');
-    await page.locator('input[name="values[channel_locale_specific][default][en_US][price][INR]"]').click();
-    await page.locator('input[name="values[channel_locale_specific][default][en_US][price][INR]"]').fill('40000');
-    await page.locator('.relative > .rounded-full').click();
+   await page.locator('#price').click();
+    await page.locator('#price').fill('40000');
     await expect(page.locator('input[name="uniqueFields[values.common.sku]"] + p.text-red-600')).toHaveText('The SKU field is required');
   });
 
@@ -219,8 +218,8 @@ test.describe('UnoPim Update Product Test cases', () => {
     await mainDescFrame.locator('body').click();
     await mainDescFrame.locator('body').type('This is the ACER Laptop with high functionality', { delay: 100 });
     await page.locator('#meta_title').fill('thakubali');
-    await page.locator('input[name="values[channel_locale_specific][default][en_US][price][INR]"]').click();
-    await page.locator('input[name="values[channel_locale_specific][default][en_US][price][INR]"]').fill('40000');
+   await page.locator('#price').click();
+    await page.locator('#price').fill('40000');
     await page.locator('.relative > .rounded-full').click();
     await expect(page.locator('input[name="values[channel_locale_specific][default][en_US][name]"] + p.text-red-600')).toHaveText('The Name field is required');
   });
@@ -244,8 +243,8 @@ test.describe('UnoPim Update Product Test cases', () => {
     await mainDescFrame.locator('body').click();
     await mainDescFrame.locator('body').type('This is the ACER Laptop with high functionality', { delay: 100 });
     await page.locator('#meta_title').fill('thakubali');
-    await page.locator('input[name="values[channel_locale_specific][default][en_US][price][INR]"]').click();
-    await page.locator('input[name="values[channel_locale_specific][default][en_US][price][INR]"]').fill('40000');
+await page.locator('#price').click();
+    await page.locator('#price').fill('40000');
     await page.locator('.relative > .rounded-full').click();
     await expect(page.locator('input[name="uniqueFields[values.common.url_key]"] + p.text-red-600')).toHaveText('The URL Key field is required');
   });
@@ -269,8 +268,8 @@ test.describe('UnoPim Update Product Test cases', () => {
     await mainDescFrame.locator('body').click();
     await mainDescFrame.locator('body').type('This is the ACER Laptop with high functionality', { delay: 100 });
     await page.locator('#meta_title').fill('thakubali');
-    await page.locator('input[name="values[channel_locale_specific][default][en_US][price][INR]"]').click();
-    await page.locator('input[name="values[channel_locale_specific][default][en_US][price][INR]"]').fill('40000');
+    await page.locator('#price').click();
+    await page.locator('#price').fill('40000');
     await page.locator('.relative > .rounded-full').click();
     await expect(page.locator('p.text-red-600')).toHaveText('The Short Description field is required');
   });
@@ -294,8 +293,8 @@ test.describe('UnoPim Update Product Test cases', () => {
     await mainDescFrame.locator('body').click();
     await mainDescFrame.locator('body').fill('');
     await page.locator('#meta_title').fill('thakubali');
-    await page.locator('input[name="values[channel_locale_specific][default][en_US][price][INR]"]').click();
-    await page.locator('input[name="values[channel_locale_specific][default][en_US][price][INR]"]').fill('40000');
+   await page.locator('#price').click();
+    await page.locator('#price').fill('40000');
     await page.locator('.relative > .rounded-full').click();
     await expect(page.locator('p.text-red-600')).toHaveText('The Description field is required');
   });
@@ -319,8 +318,8 @@ test.describe('UnoPim Update Product Test cases', () => {
     await mainDescFrame.locator('body').click();
     await mainDescFrame.locator('body').type('This is the ACER Laptop with high functionality', { delay: 100 });
     await page.locator('#meta_title').fill('thakubali');
-    await page.locator('input[name="values[channel_locale_specific][default][en_US][price][INR]"]').click();
-    await page.locator('input[name="values[channel_locale_specific][default][en_US][price][INR]"]').fill('');
+    await page.locator('#price').click();
+    await page.locator('#price').fill('');
     await page.locator('.relative > .rounded-full').click();
     await expect(page.locator('p.text-red-600')).toHaveText('The Price field is required');
   });
@@ -347,8 +346,8 @@ test.describe('UnoPim Update Product Test cases', () => {
     await mainDescFrame.locator('body').click();
     await mainDescFrame.locator('body').fill('');
     await page.locator('#meta_title').fill('thakubali');
-    await page.locator('input[name="values[channel_locale_specific][default][en_US][price][INR]"]').click();
-    await page.locator('input[name="values[channel_locale_specific][default][en_US][price][INR]"]').fill('');
+    await page.locator('#price').click();
+    await page.locator('#price').fill('');
     await page.locator('.relative > .rounded-full').click();
     await expect(page.getByText('The SKU field is required')).toBeVisible();
     await expect(page.locator('input[name="values[channel_locale_specific][default][en_US][name]"] + p.text-red-600')).toHaveText('The Name field is required');
@@ -377,8 +376,8 @@ test.describe('UnoPim Update Product Test cases', () => {
     await mainDescFrame.locator('body').click();
     await mainDescFrame.locator('body').type('This is the ACER Laptop with high functionality', { delay: 100 });
     await page.locator('#meta_title').fill('thakubali');
-    await page.locator('input[name="values[channel_locale_specific][default][en_US][price][INR]"]').click();
-    await page.locator('input[name="values[channel_locale_specific][default][en_US][price][INR]"]').fill('40000');
+    await page.locator('#price').click();
+    await page.locator('#price').fill('40000');
     await page.locator('.relative > .rounded-full').click();
     await page.getByRole('button', { name: 'Save Product' }).click();
     await expect(page.getByText(/Product updated successfully/i)).toBeVisible();
