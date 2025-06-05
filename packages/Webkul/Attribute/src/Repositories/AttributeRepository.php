@@ -71,6 +71,10 @@ class AttributeRepository extends Repository
 
         $attribute = $this->find($id);
 
+        if ($attribute->code === 'sku' && isset($data['is_filterable']) && $data['is_filterable'] === 0) {
+            $data['is_filterable'] = 1;
+        }
+
         $attribute->update($validatedData);
 
         if (in_array($attribute->type, ['select', 'multiselect', 'checkbox']) && isset($data['options'])) {

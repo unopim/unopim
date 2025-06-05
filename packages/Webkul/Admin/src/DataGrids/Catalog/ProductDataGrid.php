@@ -132,7 +132,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         return [
             'sku' => [
                 'index'      => 'sku',
-                'label'      => trans('admin::app.catalog.products.index.datagrid.sku'),
+                'label'      => $this->getSkuAttributeTranslation(),
                 'type'       => 'string',
                 'searchable' => true,
                 'filterable' => true,
@@ -860,5 +860,14 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $gridData = $this instanceof ExportableInterface ? $this->getExportableData($requestedParams) : $this->queryBuilder->get();
 
         $this->setExportFile($gridData, $requestedParams['format']);
+    }
+
+    private function getSkuAttributeTranslation(): string
+    {
+        $skuAttributeTranslation = $this->attributeService->findAttributeByCode('sku')?->name;
+
+        return ! empty($skuAttributeTranslation)
+            ? $skuAttributeTranslation
+            : trans('admin::app.catalog.products.index.datagrid.sku');
     }
 }

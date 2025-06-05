@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::table('attributes', function (Blueprint $table) {
             $table->boolean('is_filterable')->default(false)->after('value_per_channel');
         });
+
+        DB::table('attributes')->where('code', 'sku')?->update(['is_filterable' => 1]);
     }
 
     /**
