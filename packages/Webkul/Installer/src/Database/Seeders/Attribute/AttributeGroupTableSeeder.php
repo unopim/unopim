@@ -36,7 +36,7 @@ class AttributeGroupTableSeeder extends Seeder
                 'code'     => 'price',
             ], [
                 'id'       => 5,
-                'code'     => 'technical',
+                'code'     => 'media',
             ],
         ]);
 
@@ -62,7 +62,7 @@ class AttributeGroupTableSeeder extends Seeder
                     'attribute_group_id' => 4,
                 ], [
                     'locale'             => $locale,
-                    'name'               => trans('installer::app.seeders.attribute.attribute-groups.technical', [], $locale),
+                    'name'               => trans('installer::app.seeders.attribute.attribute-groups.media', [], $locale),
                     'attribute_group_id' => 5,
                 ],
             ]);

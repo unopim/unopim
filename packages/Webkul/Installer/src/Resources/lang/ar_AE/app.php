@@ -10,11 +10,9 @@ return [
             'attribute-groups' => [
                 'description'      => 'وصف',
                 'general'          => 'عام',
-                'inventories'      => 'المخزونات',
                 'meta-description' => 'وصف ميتا',
-                'price'            => 'سعر',
-                'technical'        => 'اِصطِلاحِيّ',
-                'shipping'         => 'شحن',
+                'price'            => 'السعر',
+                'media'            => 'وسائط',
             ],
 
             'attributes' => [
@@ -25,6 +23,7 @@ return [
                 'featured'             => 'مميز',
                 'guest-checkout'       => 'الخروج الضيف',
                 'height'               => 'ارتفاع',
+                'image'                => 'صورة',
                 'length'               => 'طول',
                 'manage-stock'         => 'إدارة المخزون',
                 'meta-description'     => 'وصف ميتا',
@@ -40,7 +39,6 @@ return [
                 'special-price-from'   => 'سعر خاص من',
                 'special-price-to'     => 'سعر خاص ل',
                 'special-price'        => 'سعر خاص',
-                'status'               => 'حالة',
                 'tax-category'         => 'فئة الضريبة',
                 'url-key'              => 'مفتاح URL',
                 'visible-individually' => 'مرئية بشكل فردي',
@@ -73,65 +71,6 @@ return [
             ],
         ],
 
-        'cms' => [
-            'pages' => [
-                'about-us' => [
-                    'content' => 'معلومات عنا محتوى الصفحة',
-                    'title'   => 'معلومات عنا',
-                ],
-
-                'contact-us' => [
-                    'content' => 'اتصل بنا محتوى الصفحة',
-                    'title'   => 'اتصل بنا',
-                ],
-
-                'customer-service' => [
-                    'content' => 'محتوى صفحة خدمة العملاء',
-                    'title'   => 'خدمة العملاء',
-                ],
-
-                'payment-policy' => [
-                    'content' => 'محتوى صفحة سياسة الدفع',
-                    'title'   => 'سياسة الدفع',
-                ],
-
-                'privacy-policy' => [
-                    'content' => 'محتوى صفحة سياسة الخصوصية',
-                    'title'   => 'سياسة الخصوصية',
-                ],
-
-                'refund-policy' => [
-                    'content' => 'محتوى صفحة سياسة استرداد الأموال',
-                    'title'   => 'سياسة استرداد الأموال',
-                ],
-
-                'return-policy' => [
-                    'content' => 'محتوى صفحة سياسة الإرجاع',
-                    'title'   => 'سياسة العائدات',
-                ],
-
-                'shipping-policy' => [
-                    'content' => 'محتوى صفحة سياسة الشحن',
-                    'title'   => 'سياسة الشحن',
-                ],
-
-                'terms-conditions' => [
-                    'content' => 'الشروط والأحكام محتوى الصفحة',
-                    'title'   => 'الشروط والأحكام',
-                ],
-
-                'terms-of-use' => [
-                    'content' => 'شروط الاستخدام محتوى الصفحة',
-                    'title'   => 'شروط الاستخدام',
-                ],
-
-                'whats-new' => [
-                    'content' => 'ما هو محتوى الصفحة الجديد',
-                    'title'   => 'ما هو الجديد',
-                ],
-            ],
-        ],
-
         'core' => [
             'channels' => [
                 'meta-title'       => 'متجر تجريبي',
@@ -154,138 +93,6 @@ return [
                 'TRY' => 'الليرة التركية',
                 'UAH' => 'الهريفنيا الأوكرانية',
                 'USD' => 'الدولار الأمريكي',
-            ],
-        ],
-
-        'customer' => [
-            'customer-groups' => [
-                'general'   => 'عام',
-                'guest'     => 'ضيف',
-                'wholesale' => 'بالجملة',
-            ],
-        ],
-
-        'inventory' => [
-            'inventory-sources' => [
-                'name' => 'تقصير',
-            ],
-        ],
-
-        'shop' => [
-            'theme-customizations' => [
-                'all-products' => [
-                    'name' => 'جميع المنتجات',
-
-                    'options' => [
-                        'title' => 'جميع المنتجات',
-                    ],
-                ],
-
-                'bold-collections' => [
-                    'content' => [
-                        'btn-title'   => 'عرض الكل',
-                        'description' => 'نقدم لكم مجموعاتنا الجريئة الجديدة! ارتقي بأسلوبك من خلال التصاميم الجريئة والبيانات النابضة بالحياة. اكتشف الأنماط المذهلة والألوان الجريئة التي تعيد تعريف خزانة ملابسك. استعد لاحتضان ما هو غير عادي!',
-                        'title'       => 'استعدوا لمجموعاتنا الجريئة الجديدة!',
-                    ],
-
-                    'name' => 'مجموعات جريئة',
-                ],
-
-                'categories-collections' => [
-                    'name' => 'الفئات المجموعات',
-                ],
-
-                'featured-collections' => [
-                    'name' => 'مجموعات مميزة',
-
-                    'options' => [
-                        'title' => 'المنتجات المميزة',
-                    ],
-                ],
-
-                'footer-links' => [
-                    'name' => 'روابط التذييل',
-
-                    'options' => [
-                        'about-us'         => 'معلومات عنا',
-                        'contact-us'       => 'اتصل بنا',
-                        'customer-service' => 'خدمة العملاء',
-                        'payment-policy'   => 'سياسة الدفع',
-                        'privacy-policy'   => 'سياسة الخصوصية',
-                        'refund-policy'    => 'سياسة استرداد الأموال',
-                        'return-policy'    => 'سياسة العائدات',
-                        'shipping-policy'  => 'سياسة الشحن',
-                        'terms-conditions' => 'الشروط والأحكام',
-                        'terms-of-use'     => 'شروط الاستخدام',
-                        'whats-new'        => 'ما هو الجديد',
-                    ],
-                ],
-
-                'game-container' => [
-                    'content' => [
-                        'sub-title-1' => 'مجموعاتنا',
-                        'sub-title-2' => 'مجموعاتنا',
-                        'title'       => 'اللعبة مع إضافاتنا الجديدة!',
-                    ],
-
-                    'name' => 'حاوية اللعبة',
-                ],
-
-                'image-carousel' => [
-                    'name' => 'صورة دائري',
-
-                    'sliders' => [
-                        'title' => 'استعد للمجموعة الجديدة',
-                    ],
-                ],
-
-                'new-products' => [
-                    'name' => 'منتجات جديدة',
-
-                    'options' => [
-                        'title' => 'منتجات جديدة',
-                    ],
-                ],
-
-                'offer-information' => [
-                    'content' => [
-                        'title' => 'احصل على خصم يصل إلى 40% على طلبك الأول تسوق الآن',
-                    ],
-
-                    'name' => 'معلومات العرض',
-                ],
-
-                'services-content' => [
-                    'description' => [
-                        'emi-available-info'   => 'لا تتوفر تكلفة EMI على جميع بطاقات الائتمان الرئيسية',
-                        'free-shipping-info'   => 'استمتع بالشحن المجاني لجميع الطلبات',
-                        'product-replace-info' => 'سهولة استبدال المنتج متاحة!',
-                        'time-support-info'    => 'دعم مخصص على مدار 24 ساعة طوال أيام الأسبوع عبر الدردشة والبريد الإلكتروني',
-                    ],
-
-                    'name' => 'محتوى الخدمات',
-
-                    'title' => [
-                        'emi-available'   => 'إيمي متاح',
-                        'free-shipping'   => 'ًالشحن مجانا',
-                        'product-replace' => 'استبدال المنتج',
-                        'time-support'    => 'دعم 24/7',
-                    ],
-                ],
-
-                'top-collections' => [
-                    'content' => [
-                        'sub-title-1' => 'مجموعاتنا',
-                        'sub-title-2' => 'مجموعاتنا',
-                        'sub-title-3' => 'مجموعاتنا',
-                        'sub-title-4' => 'مجموعاتنا',
-                        'sub-title-5' => 'مجموعاتنا',
-                        'sub-title-6' => 'مجموعاتنا',
-                        'title'       => 'اللعبة مع إضافاتنا الجديدة!',
-                    ],
-
-                    'name' => 'أفضل المجموعات',
-                ],
             ],
         ],
 

@@ -10,11 +10,9 @@ return [
             'attribute-groups' => [
                 'description'      => 'Beschrijving',
                 'general'          => 'Algemeen',
-                'inventories'      => 'Voorraden',
-                'meta-description' => 'Metabeschrijving',
+                'meta-description' => 'Meta beschrijving',
                 'price'            => 'Prijs',
-                'technical'        => 'Technisch',
-                'shipping'         => 'Verzending',
+                'media'            => 'Media',
             ],
 
             'attributes' => [
@@ -25,6 +23,7 @@ return [
                 'featured'             => 'Uitgelicht',
                 'guest-checkout'       => 'Afrekenen als gast',
                 'height'               => 'Hoogte',
+                'image'                => 'Afbeelding',
                 'length'               => 'Lengte',
                 'manage-stock'         => 'Beheer voorraad',
                 'meta-description'     => 'Metabeschrijving',
@@ -40,7 +39,6 @@ return [
                 'special-price-from'   => 'Speciale prijs vanaf',
                 'special-price-to'     => 'Speciale prijs voor',
                 'special-price'        => 'Speciale prijs',
-                'status'               => 'Status',
                 'tax-category'         => 'Belastingcategorie',
                 'url-key'              => 'URL-sleutel',
                 'visible-individually' => 'Individueel zichtbaar',
@@ -73,65 +71,6 @@ return [
             ],
         ],
 
-        'cms' => [
-            'pages' => [
-                'about-us' => [
-                    'content' => 'Over ons Pagina-inhoud',
-                    'title'   => 'Over ons',
-                ],
-
-                'contact-us' => [
-                    'content' => 'Neem contact met ons op Pagina-inhoud',
-                    'title'   => 'Neem contact met ons op',
-                ],
-
-                'customer-service' => [
-                    'content' => 'Inhoud klantenservicepagina',
-                    'title'   => 'Klantenservice',
-                ],
-
-                'payment-policy' => [
-                    'content' => 'Betalingsbeleid Pagina-inhoud',
-                    'title'   => 'Betalingsbeleid',
-                ],
-
-                'privacy-policy' => [
-                    'content' => 'Pagina-inhoud privacybeleid',
-                    'title'   => 'Privacybeleid',
-                ],
-
-                'refund-policy' => [
-                    'content' => 'Pagina-inhoud van het restitutiebeleid',
-                    'title'   => 'Terugbetalingsbeleid',
-                ],
-
-                'return-policy' => [
-                    'content' => 'Inhoud van de pagina Retourbeleid',
-                    'title'   => 'Retourbeleid',
-                ],
-
-                'shipping-policy' => [
-                    'content' => 'Verzendbeleid Pagina-inhoud',
-                    'title'   => 'Verzendbeleid',
-                ],
-
-                'terms-conditions' => [
-                    'content' => 'Algemene voorwaarden Pagina-inhoud',
-                    'title'   => 'Algemene voorwaarden',
-                ],
-
-                'terms-of-use' => [
-                    'content' => 'Gebruiksvoorwaarden Pagina-inhoud',
-                    'title'   => 'Gebruiksvoorwaarden',
-                ],
-
-                'whats-new' => [
-                    'content' => 'Wat is er nieuw pagina-inhoud',
-                    'title'   => 'Wat is er nieuw',
-                ],
-            ],
-        ],
-
         'core' => [
             'channels' => [
                 'meta-title'       => 'Demo winkel',
@@ -154,138 +93,6 @@ return [
                 'TRY' => 'Turkse Lira',
                 'UAH' => 'Oekraïense hryvnia',
                 'USD' => 'Amerikaanse dollar',
-            ],
-        ],
-
-        'customer' => [
-            'customer-groups' => [
-                'general'   => 'Algemeen',
-                'guest'     => 'Gast',
-                'wholesale' => 'Groothandel',
-            ],
-        ],
-
-        'inventory' => [
-            'inventory-sources' => [
-                'name' => 'Standaard',
-            ],
-        ],
-
-        'shop' => [
-            'theme-customizations' => [
-                'all-products' => [
-                    'name' => 'Alle producten',
-
-                    'options' => [
-                        'title' => 'Alle producten',
-                    ],
-                ],
-
-                'bold-collections' => [
-                    'content' => [
-                        'btn-title'   => 'Bekijk alles',
-                        'description' => 'Maak kennis met onze nieuwe gewaagde collecties! Verhoog uw stijl met gedurfde ontwerpen en levendige uitspraken. Ontdek opvallende patronen en opvallende kleuren die je garderobe opnieuw definiëren. Maak je klaar om het buitengewone te omarmen!',
-                        'title'       => 'Maak je klaar voor onze nieuwe Bold Collections!',
-                    ],
-
-                    'name' => 'Gedurfde collecties',
-                ],
-
-                'categories-collections' => [
-                    'name' => 'Categorieën Collecties',
-                ],
-
-                'featured-collections' => [
-                    'name' => 'Uitgelichte collecties',
-
-                    'options' => [
-                        'title' => 'Uitgelichte producten',
-                    ],
-                ],
-
-                'footer-links' => [
-                    'name' => 'Voettekstlinks',
-
-                    'options' => [
-                        'about-us'         => 'Over ons',
-                        'contact-us'       => 'Neem contact met ons op',
-                        'customer-service' => 'Klantenservice',
-                        'payment-policy'   => 'Betalingsbeleid',
-                        'privacy-policy'   => 'Privacybeleid',
-                        'refund-policy'    => 'Terugbetalingsbeleid',
-                        'return-policy'    => 'Retourbeleid',
-                        'shipping-policy'  => 'Verzendbeleid',
-                        'terms-conditions' => 'Algemene voorwaarden',
-                        'terms-of-use'     => 'Gebruiksvoorwaarden',
-                        'whats-new'        => 'Wat is er nieuw',
-                    ],
-                ],
-
-                'game-container' => [
-                    'content' => [
-                        'sub-title-1' => 'Onze collecties',
-                        'sub-title-2' => 'Onze collecties',
-                        'title'       => 'Het spel met onze nieuwe toevoegingen!',
-                    ],
-
-                    'name' => 'Spelcontainer',
-                ],
-
-                'image-carousel' => [
-                    'name' => 'Afbeeldingscarrousel',
-
-                    'sliders' => [
-                        'title' => 'Maak je klaar voor de nieuwe collectie',
-                    ],
-                ],
-
-                'new-products' => [
-                    'name' => 'Nieuwe producten',
-
-                    'options' => [
-                        'title' => 'Nieuwe producten',
-                    ],
-                ],
-
-                'offer-information' => [
-                    'content' => [
-                        'title' => 'Ontvang TOT 40% KORTING op uw 1e bestelling SHOP NU',
-                    ],
-
-                    'name' => 'Informatie aanbieden',
-                ],
-
-                'services-content' => [
-                    'description' => [
-                        'emi-available-info'   => 'Gratis EMI beschikbaar op alle gangbare creditcards',
-                        'free-shipping-info'   => 'Geniet van gratis verzending op alle bestellingen',
-                        'product-replace-info' => 'Gemakkelijke productvervanging beschikbaar!',
-                        'time-support-info'    => 'Toegewijde 24/7 ondersteuning via chat en e-mail',
-                    ],
-
-                    'name' => 'Diensten Inhoud',
-
-                    'title' => [
-                        'emi-available'   => 'Em beschikbaar',
-                        'free-shipping'   => 'Gratis verzending',
-                        'product-replace' => 'Product vervangen',
-                        'time-support'    => '24/7 ondersteuning',
-                    ],
-                ],
-
-                'top-collections' => [
-                    'content' => [
-                        'sub-title-1' => 'Onze collecties',
-                        'sub-title-2' => 'Onze collecties',
-                        'sub-title-3' => 'Onze collecties',
-                        'sub-title-4' => 'Onze collecties',
-                        'sub-title-5' => 'Onze collecties',
-                        'sub-title-6' => 'Onze collecties',
-                        'title'       => 'Het spel met onze nieuwe toevoegingen!',
-                    ],
-
-                    'name' => 'Topcollecties',
-                ],
             ],
         ],
 

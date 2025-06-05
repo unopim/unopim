@@ -10,11 +10,9 @@ return [
             'attribute-groups' => [
                 'description'      => 'Opis',
                 'general'          => 'Općenito',
-                'inventories'      => 'Inventar',
-                'meta-description' => 'Meta Opis',
+                'meta-description' => 'Meta opis',
                 'price'            => 'Cijena',
-                'technical'        => 'Tehnički',
-                'shipping'         => 'Dostava',
+                'media'            => 'Mediji',
             ],
 
             'attributes' => [
@@ -25,6 +23,7 @@ return [
                 'featured'             => 'Istaknuto',
                 'guest-checkout'       => 'Kupovina bez računa',
                 'height'               => 'Visina',
+                'image'                => 'Slika',
                 'length'               => 'Duljina',
                 'manage-stock'         => 'Upravljanje zalihama',
                 'meta-description'     => 'Meta Opis',
@@ -40,7 +39,6 @@ return [
                 'special-price-from'   => 'Posebna Cijena Od',
                 'special-price-to'     => 'Posebna Cijena Do',
                 'special-price'        => 'Posebna Cijena',
-                'status'               => 'Status',
                 'tax-category'         => 'Kategorija Poreza',
                 'url-key'              => 'URL Ključ',
                 'visible-individually' => 'Vidljivo Pojedinačno',
@@ -73,65 +71,6 @@ return [
             ],
         ],
 
-        'cms' => [
-            'pages' => [
-                'about-us' => [
-                    'content' => 'Sadržaj stranice O Nama',
-                    'title'   => 'O Nama',
-                ],
-
-                'contact-us' => [
-                    'content' => 'Sadržaj stranice Kontaktirajte Nas',
-                    'title'   => 'Kontaktirajte Nas',
-                ],
-
-                'customer-service' => [
-                    'content' => 'Sadržaj stranice Korisnička Podrška',
-                    'title'   => 'Korisnička Podrška',
-                ],
-
-                'payment-policy' => [
-                    'content' => 'Sadržaj stranice Pravila Plaćanja',
-                    'title'   => 'Pravila Plaćanja',
-                ],
-
-                'privacy-policy' => [
-                    'content' => 'Sadržaj stranice Pravila Privatnosti',
-                    'title'   => 'Pravila Privatnosti',
-                ],
-
-                'refund-policy' => [
-                    'content' => 'Sadržaj stranice Pravila Povrata Novca',
-                    'title'   => 'Pravila Povrata Novca',
-                ],
-
-                'return-policy' => [
-                    'content' => 'Sadržaj stranice Pravila Povrata',
-                    'title'   => 'Pravila Povrata',
-                ],
-
-                'shipping-policy' => [
-                    'content' => 'Sadržaj stranice Pravila Dostave',
-                    'title'   => 'Pravila Dostave',
-                ],
-
-                'terms-conditions' => [
-                    'content' => 'Sadržaj stranice Uvjeti i Odredbe',
-                    'title'   => 'Uvjeti i Odredbe',
-                ],
-
-                'terms-of-use' => [
-                    'content' => 'Sadržaj stranice Uvjeti Korištenja',
-                    'title'   => 'Uvjeti Korištenja',
-                ],
-
-                'whats-new' => [
-                    'content' => 'Sadržaj stranice Što je Novo',
-                    'title'   => 'Što je Novo',
-                ],
-            ],
-        ],
-
         'core' => [
             'channels' => [
                 'meta-title'       => 'Demo Trgovina',
@@ -154,138 +93,6 @@ return [
                 'TRY' => 'Turska Lira',
                 'UAH' => 'Ukrajinska Hryvnia',
                 'USD' => 'Američki Dolar',
-            ],
-        ],
-
-        'customer' => [
-            'customer-groups' => [
-                'general'   => 'Općenito',
-                'guest'     => 'Gost',
-                'wholesale' => 'Veleprodaja',
-            ],
-        ],
-
-        'inventory' => [
-            'inventory-sources' => [
-                'name' => 'Zadano',
-            ],
-        ],
-
-        'shop' => [
-            'theme-customizations' => [
-                'all-products' => [
-                    'name' => 'Svi Proizvodi',
-
-                    'options' => [
-                        'title' => 'Svi Proizvodi',
-                    ],
-                ],
-
-                'bold-collections' => [
-                    'content' => [
-                        'btn-title'   => 'Pogledaj Sve',
-                        'description' => 'Predstavljamo naše nove Smjele Kolekcije! Istaknite se odvažnim dizajnom i živim bojama.',
-                        'title'       => 'Spremni za naše nove Smjele Kolekcije!',
-                    ],
-
-                    'name' => 'Smjele Kolekcije',
-                ],
-
-                'categories-collections' => [
-                    'name' => 'Kolekcije Kategorija',
-                ],
-
-                'featured-collections' => [
-                    'name' => 'Istaknute Kolekcije',
-
-                    'options' => [
-                        'title' => 'Istaknuti Proizvodi',
-                    ],
-                ],
-
-                'footer-links' => [
-                    'name' => 'Linkovi u Podnožju',
-
-                    'options' => [
-                        'about-us'         => 'O Nama',
-                        'contact-us'       => 'Kontaktirajte Nas',
-                        'customer-service' => 'Korisnička Podrška',
-                        'payment-policy'   => 'Pravila Plaćanja',
-                        'privacy-policy'   => 'Pravila Privatnosti',
-                        'refund-policy'    => 'Pravila Povrata Novca',
-                        'return-policy'    => 'Pravila Povrata',
-                        'shipping-policy'  => 'Pravila Dostave',
-                        'terms-conditions' => 'Uvjeti i Odredbe',
-                        'terms-of-use'     => 'Uvjeti Korištenja',
-                        'whats-new'        => 'Što je Novo',
-                    ],
-                ],
-
-                'game-container' => [
-                    'content' => [
-                        'sub-title-1' => 'Naše Kolekcije',
-                        'sub-title-2' => 'Naše Kolekcije',
-                        'title'       => 'Igrajte se s našim novim dodacima!',
-                    ],
-
-                    'name' => 'Game Container',
-                ],
-
-                'image-carousel' => [
-                    'name' => 'Karusel Slika',
-
-                    'sliders' => [
-                        'title' => 'Pripremite se za novu kolekciju',
-                    ],
-                ],
-
-                'new-products' => [
-                    'name' => 'Novi Proizvodi',
-
-                    'options' => [
-                        'title' => 'Novi Proizvodi',
-                    ],
-                ],
-
-                'offer-information' => [
-                    'content' => [
-                        'title' => 'Ostvarite DO 40% POPUSTA na prvu narudžbu KUPITE SADA',
-                    ],
-
-                    'name' => 'Informacije o Ponudi',
-                ],
-
-                'services-content' => [
-                    'description' => [
-                        'emi-available-info'   => 'Bez kamatne rate dostupne za sve glavne kreditne kartice',
-                        'free-shipping-info'   => 'Uživajte u besplatnoj dostavi na sve narudžbe',
-                        'product-replace-info' => 'Jednostavna zamjena proizvoda dostupna!',
-                        'time-support-info'    => 'Posvećena 24/7 podrška putem chata i e-maila',
-                    ],
-
-                    'name' => 'Sadržaj Usluga',
-
-                    'title' => [
-                        'emi-available'   => 'EMI Dostupan',
-                        'free-shipping'   => 'Besplatna Dostava',
-                        'product-replace' => 'Zamjena Proizvoda',
-                        'time-support'    => '24/7 Podrška',
-                    ],
-                ],
-
-                'top-collections' => [
-                    'content' => [
-                        'sub-title-1' => 'Naše Kolekcije',
-                        'sub-title-2' => 'Naše Kolekcije',
-                        'sub-title-3' => 'Naše Kolekcije',
-                        'sub-title-4' => 'Naše Kolekcije',
-                        'sub-title-5' => 'Naše Kolekcije',
-                        'sub-title-6' => 'Naše Kolekcije',
-                        'title'       => 'Igrajte se s našim novim dodacima!',
-                    ],
-
-                    'name' => 'Najbolje Kolekcije',
-                ],
             ],
         ],
 
