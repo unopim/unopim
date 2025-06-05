@@ -66,6 +66,7 @@ class RolesDataGrid extends DataGrid
         if (bouncer()->hasPermission('settings.roles.edit')) {
             $this->addAction([
                 'icon'   => 'icon-edit',
+                'index'  => 'edit',
                 'title'  => trans('admin::app.settings.roles.index.datagrid.edit'),
                 'method' => 'GET',
                 'url'    => function ($row) {
