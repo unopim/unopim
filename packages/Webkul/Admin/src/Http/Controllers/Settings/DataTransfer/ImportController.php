@@ -99,7 +99,7 @@ class ImportController extends Controller
             'action' => 'append',
         ];
 
-        if (isset($importerConfig[$data['entity_type']]['has_file_options'])) {
+        if (isset($importerConfig[$data['entity_type']]['has_file_options']) && $importerConfig[$data['entity_type']]['has_file_options'] == 'true') {
             $fileData = [
                 'file_path' => request()->file('file')->storeAs(
                     'imports',

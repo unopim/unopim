@@ -372,6 +372,7 @@ return [
                 'yes'                   => 'Sim',
                 'same-code-error'       => 'O código da opção precisa ser único.',
                 'usable-in-grid'        => 'Usável na grade',
+                'is-filterable'         => 'É filtrável',
 
                 'option' => [
                     'color'    => 'Amostra de cor',
@@ -438,8 +439,8 @@ return [
                 'yes'                   => 'Sim',
                 'same-code-error'       => 'O código da opção precisa ser único.',
                 'usable-in-grid'        => 'Usável na grade',
-
-                'option' => [
+                'is-filterable'         => 'É filtrável',
+                'option'                => [
                     'color'    => 'Amostra de cor',
                     'dropdown' => 'Menu suspenso',
                     'image'    => 'Amostra de imagem',
@@ -1833,6 +1834,10 @@ return [
                 'search' => [
                     'title' => 'Buscar',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'colunas',
+                ],
             ],
 
             'filters' => [
@@ -1871,6 +1876,13 @@ return [
             'table' => [
                 'actions'              => 'Ações',
                 'no-records-available' => 'Nenhum Registro Disponível.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Gerir colunas',
+                'available-columns' => 'Colunas disponíveis',
+                'selected-columns'  => 'Colunas Selecionadas',
+                'apply-btn'         => 'Aplicar',
             ],
         ],
 

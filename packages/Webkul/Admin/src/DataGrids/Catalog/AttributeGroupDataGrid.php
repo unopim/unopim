@@ -77,6 +77,7 @@ class AttributeGroupDataGrid extends DataGrid
         if (bouncer()->hasPermission('catalog.attribute_groups.edit')) {
             $this->addAction([
                 'icon'   => 'icon-edit',
+                'index'  => 'edit',
                 'title'  => trans('admin::app.catalog.attribute-groups.index.datagrid.edit'),
                 'method' => 'GET',
                 'url'    => function ($row) {

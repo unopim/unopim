@@ -7,11 +7,9 @@ return [
             'attribute-groups'   => [
                 'description'      => '描述',
                 'general'          => '一般',
-                'inventories'      => '庫存',
-                'meta-description' => 'Meta 描述',
+                'meta-description' => '中繼描述',
                 'price'            => '價格',
-                'technical'        => '技術',
-                'shipping'         => '運送',
+                'media'            => '媒體',
             ],
             'attributes' => [
                 'brand'                => '品牌',
@@ -21,6 +19,7 @@ return [
                 'featured'             => '推薦',
                 'guest-checkout'       => '訪客結帳',
                 'height'               => '高度',
+                'image'                => '圖片',
                 'length'               => '長度',
                 'manage-stock'         => '管理庫存',
                 'meta-description'     => 'Meta 描述',
@@ -36,7 +35,6 @@ return [
                 'special-price-from'   => '特價從',
                 'special-price-to'     => '特價至',
                 'special-price'        => '特價',
-                'status'               => '狀態',
                 'tax-category'         => '稅務類別',
                 'url-key'              => 'URL 鍵',
                 'visible-individually' => '單獨顯示',
@@ -65,54 +63,6 @@ return [
                 'description' => '描述',
             ],
         ],
-        'cms' => [
-            'pages' => [
-                'about-us' => [
-                    'content' => '關於我們的內容',
-                    'title'   => '關於我們',
-                ],
-                'contact-us' => [
-                    'content' => '聯繫我們的內容',
-                    'title'   => '聯絡我們',
-                ],
-                'customer-service' => [
-                    'content' => '客服中心內容',
-                    'title'   => '客戶服務',
-                ],
-                'payment-policy' => [
-                    'content' => '付款政策內容',
-                    'title'   => '付款政策',
-                ],
-                'privacy-policy' => [
-                    'content' => '隱私政策內容',
-                    'title'   => '隱私政策',
-                ],
-                'refund-policy' => [
-                    'content' => '退款政策內容',
-                    'title'   => '退款政策',
-                ],
-                'return-policy' => [
-                    'content' => '退貨政策內容',
-                    'title'   => '退貨政策',
-                ],
-                'shipping-policy' => [
-                    'content' => '運送政策內容',
-                    'title'   => '運送政策',
-                ],
-                'terms-conditions' => [
-                    'content' => '條款和條件內容',
-                    'title'   => '條款與條件',
-                ],
-                'terms-of-use' => [
-                    'content' => '使用條款內容',
-                    'title'   => '使用條款',
-                ],
-                'whats-new' => [
-                    'content' => '最新內容',
-                    'title'   => '最新消息',
-                ],
-            ],
-        ],
         'core' => [
             'channels' => [
                 'meta-title'       => '商店展示',
@@ -134,114 +84,6 @@ return [
                 'TRY' => '土耳其里拉',
                 'UAH' => '烏克蘭赫夫尼亞',
                 'USD' => '美元',
-            ],
-        ],
-        'customer' => [
-            'customer-groups' => [
-                'general'   => '一般',
-                'guest'     => '訪客',
-                'wholesale' => '批發',
-            ],
-        ],
-        'inventory' => [
-            'inventory-sources' => [
-                'name' => '標準',
-            ],
-        ],
-        'shop' => [
-            'theme-customizations' => [
-                'all-products' => [
-                    'name'    => '所有產品',
-                    'options' => [
-                        'title' => '所有產品',
-                    ],
-                ],
-                'bold-collections' => [
-                    'content' => [
-                        'btn-title'   => '查看所有',
-                        'description' => '探索我們的新穎集合！提升你的風格，增加鮮艷的顏色和大膽的設計。豐富你的衣櫥，使用鮮明的印花和飽和的顏色。準備開始一次大膽的旅程！',
-                        'title'       => '準備迎接我們的新大膽系列！',
-                    ],
-                    'name' => '大膽系列',
-                ],
-                'categories-collections' => [
-                    'name' => '按分類集合',
-                ],
-                'featured-collections' => [
-                    'name'    => '特色系列',
-                    'options' => [
-                        'title' => '特色產品',
-                    ],
-                ],
-                'footer-links' => [
-                    'name'    => '頁腳連結',
-                    'options' => [
-                        'about-us'         => '關於我們',
-                        'contact-us'       => '聯繫我們',
-                        'customer-service' => '客戶服務',
-                        'payment-policy'   => '付款政策',
-                        'privacy-policy'   => '隱私政策',
-                        'refund-policy'    => '退款政策',
-                        'return-policy'    => '退貨政策',
-                        'shipping-policy'  => '運送政策',
-                        'terms-conditions' => '條款與條件',
-                        'terms-of-use'     => '使用條款',
-                        'whats-new'        => '最新消息',
-                    ],
-                ],
-                'game-container' => [
-                    'content' => [
-                        'sub-title-1' => '我們的系列',
-                        'sub-title-2' => '我們的系列',
-                        'title'       => '玩新產品吧！',
-                    ],
-                    'name' => '遊戲容器',
-                ],
-                'image-carousel' => [
-                    'name'    => '圖片輪播',
-                    'sliders' => [
-                        'title' => '準備迎接新系列',
-                    ],
-                ],
-                'new-products' => [
-                    'name'    => '新產品',
-                    'options' => [
-                        'title' => '新產品',
-                    ],
-                ],
-                'offer-information' => [
-                    'content' => [
-                        'title' => '開始瀏覽 %40 折扣，第一筆購買！',
-                    ],
-                    'name' => '優惠信息',
-                ],
-                'services-content' => [
-                    'description' => [
-                        'emi-available-info'   => '所有主要信用卡均提供免費金融機構',
-                        'free-shipping-info'   => '所有訂單免費配送',
-                        'product-replace-info' => '產品替換簡單！',
-                        'time-support-info'    => '24/7在線聊天和電子郵件專屬支持',
-                    ],
-                    'name'  => '服務內容',
-                    'title' => [
-                        'emi-available'   => '免費金融機構',
-                        'free-shipping'   => '免費配送',
-                        'product-replace' => '產品替換',
-                        'time-support'    => '24/7 支持',
-                    ],
-                ],
-                'top-collections' => [
-                    'content' => [
-                        'sub-title-1' => '我們的系列',
-                        'sub-title-2' => '我們的系列',
-                        'sub-title-3' => '我們的系列',
-                        'sub-title-4' => '我們的系列',
-                        'sub-title-5' => '我們的系列',
-                        'sub-title-6' => '我們的系列',
-                        'title'       => '玩新產品吧！',
-                    ],
-                    'name' => '特色系列',
-                ],
             ],
         ],
         'user' => [

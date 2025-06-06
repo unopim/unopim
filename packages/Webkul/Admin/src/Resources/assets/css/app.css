@@ -307,6 +307,10 @@
     .icon-at:before {
         content: "\e938";
     }
+
+    .icon-manage-column:before {
+        content: "\e93a";
+    }
     /** Icons END */
 
     .custom-select {

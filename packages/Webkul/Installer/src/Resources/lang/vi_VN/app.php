@@ -6,12 +6,10 @@ return [
             'attribute-families' => 'Các gia đình thuộc tính',
             'attribute-groups'   => [
                 'description'      => 'Mô tả',
-                'general'          => 'Tổng quát',
-                'inventories'      => 'Kho hàng',
+                'general'          => 'Chung',
                 'meta-description' => 'Mô tả meta',
                 'price'            => 'Giá',
-                'technical'        => 'Kỹ thuật',
-                'shipping'         => 'Vận chuyển',
+                'media'            => 'Phương tiện',
             ],
             'attributes' => [
                 'brand'                => 'Thương hiệu',
@@ -21,6 +19,7 @@ return [
                 'featured'             => 'Nổi bật',
                 'guest-checkout'       => 'Thanh toán cho khách hàng',
                 'height'               => 'Chiều cao',
+                'image'                => 'Hình ảnh',
                 'length'               => 'Chiều dài',
                 'manage-stock'         => 'Quản lý kho hàng',
                 'meta-description'     => 'Mô tả meta',
@@ -36,7 +35,6 @@ return [
                 'special-price-from'   => 'Giá đặc biệt từ',
                 'special-price-to'     => 'Giá đặc biệt đến',
                 'special-price'        => 'Giá đặc biệt',
-                'status'               => 'Trạng thái',
                 'tax-category'         => 'Danh mục thuế',
                 'url-key'              => 'Khóa URL',
                 'visible-individually' => 'Hiển thị riêng biệt',
@@ -65,54 +63,6 @@ return [
                 'description' => 'Mô tả',
             ],
         ],
-        'cms' => [
-            'pages' => [
-                'about-us' => [
-                    'content' => 'Nội dung trang giới thiệu',
-                    'title'   => 'Về chúng tôi',
-                ],
-                'contact-us' => [
-                    'content' => 'Nội dung trang liên hệ',
-                    'title'   => 'Liên hệ với chúng tôi',
-                ],
-                'customer-service' => [
-                    'content' => 'Nội dung trang dịch vụ khách hàng',
-                    'title'   => 'Dịch vụ khách hàng',
-                ],
-                'payment-policy' => [
-                    'content' => 'Nội dung trang chính sách thanh toán',
-                    'title'   => 'Chính sách thanh toán',
-                ],
-                'privacy-policy' => [
-                    'content' => 'Nội dung trang chính sách bảo mật',
-                    'title'   => 'Chính sách bảo mật',
-                ],
-                'refund-policy' => [
-                    'content' => 'Nội dung trang chính sách hoàn trả',
-                    'title'   => 'Chính sách hoàn trả',
-                ],
-                'return-policy' => [
-                    'content' => 'Nội dung trang chính sách trả hàng',
-                    'title'   => 'Chính sách trả hàng',
-                ],
-                'shipping-policy' => [
-                    'content' => 'Nội dung trang chính sách vận chuyển',
-                    'title'   => 'Chính sách vận chuyển',
-                ],
-                'terms-conditions' => [
-                    'content' => 'Nội dung trang điều khoản',
-                    'title'   => 'Điều khoản và điều kiện',
-                ],
-                'terms-of-use' => [
-                    'content' => 'Nội dung trang điều khoản sử dụng',
-                    'title'   => 'Điều khoản sử dụng',
-                ],
-                'whats-new' => [
-                    'content' => 'Nội dung trang cập nhật mới',
-                    'title'   => 'Cập nhật mới',
-                ],
-            ],
-        ],
         'core' => [
             'channels' => [
                 'meta-title'       => 'Cửa hàng Demo',
@@ -134,114 +84,6 @@ return [
                 'TRY' => 'Lira Thổ Nhĩ Kỳ',
                 'UAH' => 'Hryvnia Ukraine',
                 'USD' => 'Đô la Mỹ',
-            ],
-        ],
-        'customer' => [
-            'customer-groups' => [
-                'general'   => 'Chung',
-                'guest'     => 'Khách hàng',
-                'wholesale' => 'Bán buôn',
-            ],
-        ],
-        'inventory' => [
-            'inventory-sources' => [
-                'name' => 'Chuẩn',
-            ],
-        ],
-        'shop' => [
-            'theme-customizations' => [
-                'all-products' => [
-                    'name'    => 'Tất cả sản phẩm',
-                    'options' => [
-                        'title' => 'Tất cả sản phẩm',
-                    ],
-                ],
-                'bold-collections' => [
-                    'content' => [
-                        'btn-title'   => 'Xem tất cả',
-                        'description' => 'Khám phá các bộ sưu tập mới mẻ của chúng tôi! Tăng cường phong cách của bạn bằng cách thêm màu sắc tươi sáng và thiết kế táo bạo. Hãy làm phong phú thêm tủ đồ của bạn với những họa tiết tươi sáng và màu sắc đậm. Chuẩn bị để bắt đầu hành trình táo bạo của bạn!',
-                        'title'       => 'Chuẩn bị cho các bộ sưu tập táo bạo mới của chúng tôi!',
-                    ],
-                    'name' => 'Bộ sưu tập táo bạo',
-                ],
-                'categories-collections' => [
-                    'name' => 'Bộ sưu tập theo danh mục',
-                ],
-                'featured-collections' => [
-                    'name'    => 'Bộ sưu tập nổi bật',
-                    'options' => [
-                        'title' => 'Sản phẩm nổi bật',
-                    ],
-                ],
-                'footer-links' => [
-                    'name'    => 'Liên kết chân trang',
-                    'options' => [
-                        'about-us'         => 'Về chúng tôi',
-                        'contact-us'       => 'Liên hệ với chúng tôi',
-                        'customer-service' => 'Dịch vụ khách hàng',
-                        'payment-policy'   => 'Chính sách thanh toán',
-                        'privacy-policy'   => 'Chính sách bảo mật',
-                        'refund-policy'    => 'Chính sách hoàn trả',
-                        'return-policy'    => 'Chính sách trả hàng',
-                        'shipping-policy'  => 'Chính sách vận chuyển',
-                        'terms-conditions' => 'Điều khoản và điều kiện',
-                        'terms-of-use'     => 'Điều khoản sử dụng',
-                        'whats-new'        => 'Cập nhật mới',
-                    ],
-                ],
-                'game-container' => [
-                    'content' => [
-                        'sub-title-1' => 'Các bộ sưu tập của chúng tôi',
-                        'sub-title-2' => 'Các bộ sưu tập của chúng tôi',
-                        'title'       => 'Chơi với các sản phẩm mới!',
-                    ],
-                    'name' => 'Container trò chơi',
-                ],
-                'image-carousel' => [
-                    'name'    => 'Carousel hình ảnh',
-                    'sliders' => [
-                        'title' => 'Chuẩn bị cho bộ sưu tập mới',
-                    ],
-                ],
-                'new-products' => [
-                    'name'    => 'Sản phẩm mới',
-                    'options' => [
-                        'title' => 'Sản phẩm mới',
-                    ],
-                ],
-                'offer-information' => [
-                    'content' => [
-                        'title' => 'BẮT ĐẦU DUYỆT VỚI %40 GIẢM GIÁ CHO MUA HÀNG ĐẦU TIÊN CỦA BẠN!',
-                    ],
-                    'name' => 'Thông tin về ưu đãi',
-                ],
-                'services-content' => [
-                    'description' => [
-                        'emi-available-info'   => 'Có cơ hội tài chính miễn phí cho tất cả các thẻ tín dụng chính',
-                        'free-shipping-info'   => 'Giao hàng miễn phí cho tất cả các đơn hàng',
-                        'product-replace-info' => 'Thay thế sản phẩm dễ dàng!',
-                        'time-support-info'    => 'Hỗ trợ đặc biệt 24/7 qua trò chuyện trực tuyến và email',
-                    ],
-                    'name'  => 'Nội dung dịch vụ',
-                    'title' => [
-                        'emi-available'   => 'Tài chính miễn phí',
-                        'free-shipping'   => 'Giao hàng miễn phí',
-                        'product-replace' => 'Thay thế sản phẩm',
-                        'time-support'    => 'Hỗ trợ 24/7',
-                    ],
-                ],
-                'top-collections' => [
-                    'content' => [
-                        'sub-title-1' => 'Các bộ sưu tập của chúng tôi',
-                        'sub-title-2' => 'Các bộ sưu tập của chúng tôi',
-                        'sub-title-3' => 'Các bộ sưu tập của chúng tôi',
-                        'sub-title-4' => 'Các bộ sưu tập của chúng tôi',
-                        'sub-title-5' => 'Các bộ sưu tập của chúng tôi',
-                        'sub-title-6' => 'Các bộ sưu tập của chúng tôi',
-                        'title'       => 'Chơi với các sản phẩm mới!',
-                    ],
-                    'name' => 'Các bộ sưu tập nổi bật',
-                ],
             ],
         ],
         'user' => [

@@ -1,0 +1,68 @@
+<?php
+
+namespace Webkul\Product\Filter\ElasticSearch;
+
+use Webkul\Attribute\Models\Attribute;
+use Webkul\ElasticSearch\Enums\FilterOperators;
+
+/**
+ * Boolean filter for an Elasticsearch query
+ */
+class BooleanFilter extends AbstractElasticSearchAttributeFilter
+{
+    /**
+     * @param  array  $supportedProperties
+     */
+    public function __construct(
+        array $supportedAttributeTypes = [Attribute::BOOLEAN_FIELD_TYPE],
+        array $allowedOperators = [FilterOperators::IN, FilterOperators::CONTAINS]
+    ) {
+        $this->supportedAttributeTypes = $supportedAttributeTypes;
+        $this->allowedOperators = $allowedOperators;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addAttributeFilter(
+        $attribute,
+        $operator,
+        $value,
+        $locale = null,
+        $channel = null,
+        $options = []
+    ) {
+        if ($this->queryBuilder === null) {
+            throw new \LogicException('The search query builder is not initialized in the filter.');
+        }
+
+        $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
+
+        switch ($operator) {
+            case FilterOperators::IN:
+                $clause = [
+                    'terms' => [
+                        $attributePath => array_map(function ($val) {
+                            return ($val == '1') ? true : false;
+                        }, $value),
+                    ],
+                ];
+
+                $this->queryBuilder::where($clause);
+                break;
+            case FilterOperators::EQUAL:
+                $clause = [
+                    'terms' => [
+                        $attributePath => array_map(function ($val) {
+                            return ($val == '1') ? true : false;
+                        }, $value),
+                    ],
+                ];
+
+                $this->queryBuilder::where($clause);
+                break;
+        }
+
+        return $this;
+    }
+}
