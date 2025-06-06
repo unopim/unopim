@@ -405,7 +405,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
                 foreach ($values as $value) {
                     $filters['wildcard'] = [
-                        'sku' => '*'.$value.'*',
+                        'sku.keyword' => '*'.$value.'*',
                     ];
                 }
 
