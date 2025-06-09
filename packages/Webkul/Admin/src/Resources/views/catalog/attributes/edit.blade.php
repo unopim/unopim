@@ -294,14 +294,14 @@
 
                                                 <p 
                                                     v-text="record.code"
-                                                    class="text-nowrap overflow-hidden text-ellipsis hover:text-wrap"
+                                                    class="text-nowrap overflow-hidden text-ellipsis break-words hover:text-wrap"
                                                 >
                                                 </p>
 
                                                 <p
                                                     v-for="locale in locales"
                                                     v-text="record['name_' + locale.code]"
-                                                    class="text-nowrap overflow-hidden text-ellipsis hover:text-wrap"
+                                                    class="text-nowrap overflow-hidden text-ellipsis break-words hover:text-wrap"
                                                 >
                                                 </p>
 
