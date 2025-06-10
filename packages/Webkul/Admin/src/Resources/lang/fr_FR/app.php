@@ -657,6 +657,7 @@ return [
                 'select'              => 'Sélectionner',
                 'select-type'         => 'Sélectionner le type',
                 'swatch'              => 'Échantillon',
+                'text'                => 'Texte',
                 'textarea'            => 'Zone de texte',
                 'title'               => 'Ajouter un champ de catégorie',
                 'type'                => 'Type',
@@ -1683,6 +1684,10 @@ return [
                 'search' => [
                     'title' => 'Recherche',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Colonnes',
+                ],
             ],
 
             'filters' => [
@@ -1721,6 +1726,13 @@ return [
             'table' => [
                 'actions'              => 'Actions',
                 'no-records-available' => 'Aucun enregistrement disponible.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Gérer les colonnes',
+                'available-columns' => 'Colonnes disponibles',
+                'selected-columns'  => 'Colonnes sélectionnées',
+                'apply-btn'         => 'Appliquer',
             ],
         ],
 

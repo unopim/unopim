@@ -142,6 +142,7 @@ class CategoryFieldDataGrid extends DataGrid
         if (bouncer()->hasPermission('catalog.category_fields.edit')) {
             $this->addAction([
                 'icon'   => 'icon-edit',
+                'index'  => 'edit',
                 'title'  => trans('admin::app.catalog.category_fields.index.datagrid.edit'),
                 'method' => 'GET',
                 'url'    => function ($row) {

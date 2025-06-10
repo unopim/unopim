@@ -272,9 +272,9 @@ return [
                     'title'        => 'Product Info',
                     'status'       => 'Status',
                     'family'       => 'Family',
-                    'parent'       => 'Parent Product',
-                    'updated-at'   => 'Last Updated',
-                    'created-at'   => 'Date Created',
+                    'parent'       => 'Parent',
+                    'updated-at'   => 'Updated At',
+                    'created-at'   => 'Created At',
                     'product-type' => 'Product Type',
                 ],
             ],
@@ -372,6 +372,7 @@ return [
                 'yes'                   => 'Yes',
                 'same-code-error'       => 'The option code must be unique.',
                 'usable-in-grid'        => 'Usable in grid',
+                'is-filterable'         => 'Is filterable',
 
                 'option' => [
                     'color'    => 'Colour Swatch',
@@ -438,6 +439,7 @@ return [
                 'yes'                   => 'Yes',
                 'same-code-error'       => 'The option code must be unique.',
                 'usable-in-grid'        => 'Usable in grid',
+                'is-filterable'         => 'Is filterable',
 
                 'option' => [
                     'create-success'      => 'Attribute Option Created Successfully',
@@ -1832,6 +1834,10 @@ return [
                 'search' => [
                     'title' => 'Search',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Columns',
+                ],
             ],
 
             'filters' => [
@@ -1870,6 +1876,13 @@ return [
             'table' => [
                 'actions'              => 'Actions',
                 'no-records-available' => 'No Records Available.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Manage columns',
+                'available-columns' => 'Available Columns',
+                'selected-columns'  => 'Selected Columns',
+                'apply-btn'         => 'Apply',
             ],
         ],
 

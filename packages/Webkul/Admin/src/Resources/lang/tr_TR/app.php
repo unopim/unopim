@@ -372,6 +372,7 @@ return [
                 'yes'                   => 'Evet',
                 'same-code-error'       => 'Seçenek kodu benzersiz olmalıdır.',
                 'usable-in-grid'        => 'Izgarada Kullanılabilir',
+                'is-filterable'         => 'Filtrelenebilir',
 
                 'option' => [
                     'color'    => 'Renk Örneği',
@@ -438,6 +439,7 @@ return [
                 'yes'                   => 'Evet',
                 'same-code-error'       => 'Seçenek kodu benzersiz olmalıdır.',
                 'usable-in-grid'        => 'Izgarada Kullanılabilir',
+                'is-filterable'         => 'Filtrelenebilir',
 
                 'option' => [
                     'create-success'      => 'Öznitelik Seçeneği Başarıyla Oluşturuldu',
@@ -1834,6 +1836,10 @@ return [
                 'search' => [
                     'title' => 'Ara',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Sütunları',
+                ],
             ],
 
             'filters' => [
@@ -1872,6 +1878,13 @@ return [
             'table' => [
                 'actions'              => 'Eylemler',
                 'no-records-available' => 'Kayıt Bulunamadı.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Sütunları yönet',
+                'available-columns' => 'Kullanılabilir Sütunlar',
+                'selected-columns'  => 'Seçili Sütunlar',
+                'apply-btn'         => 'Uygula',
             ],
         ],
 

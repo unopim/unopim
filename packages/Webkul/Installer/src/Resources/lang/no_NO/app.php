@@ -7,11 +7,9 @@ return [
             'attribute-groups'   => [
                 'description'      => 'Beskrivelse',
                 'general'          => 'Generell',
-                'inventories'      => 'Lager',
-                'meta-description' => 'Meta-beskrivelse',
+                'meta-description' => 'Meta beskrivelse',
                 'price'            => 'Pris',
-                'technical'        => 'Teknisk',
-                'shipping'         => 'Frakt',
+                'media'            => 'Media',
             ],
             'attributes' => [
                 'brand'                => 'Merke',
@@ -21,6 +19,7 @@ return [
                 'featured'             => 'Vist',
                 'guest-checkout'       => 'Gjestekasse',
                 'height'               => 'Høyde',
+                'image'                => 'Bilde',
                 'length'               => 'Lengde',
                 'manage-stock'         => 'Forvalte Lager',
                 'meta-description'     => 'Meta-beskrivelse',
@@ -36,7 +35,6 @@ return [
                 'special-price-from'   => 'Spesialpris Fra',
                 'special-price-to'     => 'Spesialpris Til',
                 'special-price'        => 'Spesialpris',
-                'status'               => 'Status',
                 'tax-category'         => 'Avgiftskategori',
                 'url-key'              => 'URL-nøkkel',
                 'visible-individually' => 'Synlig Enkeltvis',
@@ -65,54 +63,6 @@ return [
                 'description' => 'Beskrivelse',
             ],
         ],
-        'cms' => [
-            'pages' => [
-                'about-us' => [
-                    'content' => 'Om oss-sideinnhold',
-                    'title'   => 'Om oss',
-                ],
-                'contact-us' => [
-                    'content' => 'Kontakt oss-sideinnhold',
-                    'title'   => 'Kontakt oss',
-                ],
-                'customer-service' => [
-                    'content' => 'Kundeservice-sideinnhold',
-                    'title'   => 'Kundeservice',
-                ],
-                'payment-policy' => [
-                    'content' => 'Betalingspolicy-sideinnhold',
-                    'title'   => 'Betalingspolicy',
-                ],
-                'privacy-policy' => [
-                    'content' => 'Personvernerklæring-sideinnhold',
-                    'title'   => 'Personvernerklæring',
-                ],
-                'refund-policy' => [
-                    'content' => 'Refusjonspolitikk-sideinnhold',
-                    'title'   => 'Refusjonspolitikk',
-                ],
-                'return-policy' => [
-                    'content' => 'Returpolitikk-sideinnhold',
-                    'title'   => 'Returpolitikk',
-                ],
-                'shipping-policy' => [
-                    'content' => 'Fraktpolicy-sideinnhold',
-                    'title'   => 'Fraktpolicy',
-                ],
-                'terms-conditions' => [
-                    'content' => 'Vilkår og betingelser-sideinnhold',
-                    'title'   => 'Vilkår og betingelser',
-                ],
-                'terms-of-use' => [
-                    'content' => 'Vilkår for bruk-sideinnhold',
-                    'title'   => 'Vilkår for bruk',
-                ],
-                'whats-new' => [
-                    'content' => 'Hva er nytt sideinnhold',
-                    'title'   => 'Hva er nytt',
-                ],
-            ],
-        ],
         'core' => [
             'channels' => [
                 'meta-title'       => 'Demo butikk',
@@ -134,114 +84,6 @@ return [
                 'TRY' => 'Tyrkisk Lira',
                 'UAH' => 'Ukrainsk Hryvnia',
                 'USD' => 'US Dollar',
-            ],
-        ],
-        'customer' => [
-            'customer-groups' => [
-                'general'   => 'Generell',
-                'guest'     => 'Gjest',
-                'wholesale' => 'Engros',
-            ],
-        ],
-        'inventory' => [
-            'inventory-sources' => [
-                'name' => 'Standard',
-            ],
-        ],
-        'shop' => [
-            'theme-customizations' => [
-                'all-products' => [
-                    'name'    => 'Alle produkter',
-                    'options' => [
-                        'title' => 'Alle produkter',
-                    ],
-                ],
-                'bold-collections' => [
-                    'content' => [
-                        'btn-title'   => 'Vis alle',
-                        'description' => 'Presenting the new Bold collection! Step up your style game with daring designs and vibrant colors. Define your outfit in a whole new way with bold patterns and statement hues. Get ready for special moments with our bold collection!',
-                        'title'       => 'Meet the new Bold collection!',
-                    ],
-                    'name' => 'Bold Collection',
-                ],
-                'categories-collections' => [
-                    'name' => 'Categories Collection',
-                ],
-                'featured-collections' => [
-                    'name'    => 'Featured Collection',
-                    'options' => [
-                        'title' => 'Featured Products',
-                    ],
-                ],
-                'footer-links' => [
-                    'name'    => 'Footer Links',
-                    'options' => [
-                        'about-us'         => 'About Us',
-                        'contact-us'       => 'Contact Us',
-                        'customer-service' => 'Customer Service',
-                        'payment-policy'   => 'Payment Policy',
-                        'privacy-policy'   => 'Privacy Policy',
-                        'refund-policy'    => 'Refund Policy',
-                        'return-policy'    => 'Return Policy',
-                        'shipping-policy'  => 'Shipping Policy',
-                        'terms-conditions' => 'Terms & Conditions',
-                        'terms-of-use'     => 'Terms of Use',
-                        'whats-new'        => 'What\'s New',
-                    ],
-                ],
-                'game-container' => [
-                    'content' => [
-                        'sub-title-1' => 'Our Collections',
-                        'sub-title-2' => 'Our Collections',
-                        'title'       => 'Prepare for a game with our new additions!',
-                    ],
-                    'name' => 'Game Container',
-                ],
-                'image-carousel' => [
-                    'name'    => 'Image Carousel',
-                    'sliders' => [
-                        'title' => 'Get ready to meet the new collection',
-                    ],
-                ],
-                'new-products' => [
-                    'name'    => 'New Products',
-                    'options' => [
-                        'title' => 'New Products',
-                    ],
-                ],
-                'offer-information' => [
-                    'content' => [
-                        'title' => 'Up to 40% off on first orders! SHOP NOW',
-                    ],
-                    'name' => 'Offer Information',
-                ],
-                'services-content' => [
-                    'description' => [
-                        'emi-available-info'   => 'Available EMI on all major credit cards',
-                        'free-shipping-info'   => 'Enjoy free shipping on all orders',
-                        'product-replace-info' => 'Easy replacement available!',
-                        'time-support-info'    => 'Dedicated 24/7 support via chat and email',
-                    ],
-                    'name'  => 'Services Content',
-                    'title' => [
-                        'emi-available'   => 'EMI Available',
-                        'free-shipping'   => 'Free Shipping',
-                        'product-replace' => 'Product Replacement',
-                        'time-support'    => '24/7 Support',
-                    ],
-                ],
-                'top-collections' => [
-                    'content' => [
-                        'sub-title-1' => 'Our Collections',
-                        'sub-title-2' => 'Our Collections',
-                        'sub-title-3' => 'Our Collections',
-                        'sub-title-4' => 'Our Collections',
-                        'sub-title-5' => 'Our Collections',
-                        'sub-title-6' => 'Our Collections',
-                        'title'       => 'Prepare for a game with our new additions!',
-                    ],
-                    'name' => 'Top Collections',
-                ],
             ],
         ],
         'user' => [

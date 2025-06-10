@@ -7,11 +7,9 @@ return [
             'attribute-groups'   => [
                 'description'      => '설명',
                 'general'          => '일반',
-                'inventories'      => '재고',
                 'meta-description' => '메타 설명',
                 'price'            => '가격',
-                'technical'        => '기술',
-                'shipping'         => '배송',
+                'media'            => '미디어',
             ],
             'attributes' => [
                 'brand'                => '브랜드',
@@ -21,6 +19,7 @@ return [
                 'featured'             => '추천됨',
                 'guest-checkout'       => '게스트 체크아웃',
                 'height'               => '높이',
+                'image'                => '이미지',
                 'length'               => '길이',
                 'manage-stock'         => '재고 관리',
                 'meta-description'     => '메타 설명',
@@ -36,7 +35,6 @@ return [
                 'special-price-from'   => '특가 시작일',
                 'special-price-to'     => '특가 종료일',
                 'special-price'        => '특가',
-                'status'               => '상태',
                 'tax-category'         => '세금 카테고리',
                 'url-key'              => 'URL 키',
                 'visible-individually' => '개별적으로 표시됨',
@@ -65,54 +63,6 @@ return [
                 'description' => '설명',
             ],
         ],
-        'cms' => [
-            'pages' => [
-                'about-us' => [
-                    'content' => '회사 소개 페이지 콘텐츠',
-                    'title'   => '회사 소개',
-                ],
-                'contact-us' => [
-                    'content' => '문의하기 페이지 콘텐츠',
-                    'title'   => '문의하기',
-                ],
-                'customer-service' => [
-                    'content' => '고객 서비스 페이지 콘텐츠',
-                    'title'   => '고객 서비스',
-                ],
-                'payment-policy' => [
-                    'content' => '결제 정책 페이지 콘텐츠',
-                    'title'   => '결제 정책',
-                ],
-                'privacy-policy' => [
-                    'content' => '개인 정보 보호 정책 페이지 콘텐츠',
-                    'title'   => '개인 정보 보호 정책',
-                ],
-                'refund-policy' => [
-                    'content' => '환불 정책 페이지 콘텐츠',
-                    'title'   => '환불 정책',
-                ],
-                'return-policy' => [
-                    'content' => '반품 정책 페이지 콘텐츠',
-                    'title'   => '반품 정책',
-                ],
-                'shipping-policy' => [
-                    'content' => '배송 정책 페이지 콘텐츠',
-                    'title'   => '배송 정책',
-                ],
-                'terms-conditions' => [
-                    'content' => '이용 약관 페이지 콘텐츠',
-                    'title'   => '이용 약관',
-                ],
-                'terms-of-use' => [
-                    'content' => '이용 약관 페이지 콘텐츠',
-                    'title'   => '이용 약관',
-                ],
-                'whats-new' => [
-                    'content' => '새로운 콘텐츠 페이지',
-                    'title'   => '새로운 콘텐츠',
-                ],
-            ],
-        ],
         'core' => [
             'channels' => [
                 'meta-title'       => '데모 상점',
@@ -134,114 +84,6 @@ return [
                 'TRY' => '터키 리라',
                 'UAH' => '우크라이나 그리브나',
                 'USD' => '미국 달러',
-            ],
-        ],
-        'customer' => [
-            'customer-groups' => [
-                'general'   => '일반',
-                'guest'     => '게스트',
-                'wholesale' => '도매',
-            ],
-        ],
-        'inventory' => [
-            'inventory-sources' => [
-                'name' => '기본',
-            ],
-        ],
-        'shop' => [
-            'theme-customizations' => [
-                'all-products' => [
-                    'name'    => '모든 제품',
-                    'options' => [
-                        'title' => '모든 제품',
-                    ],
-                ],
-                'bold-collections' => [
-                    'content' => [
-                        'btn-title'   => '모두 보기',
-                        'description' => '새로운 Bold 컬렉션을 소개합니다! 스타일을 한 단계 끌어올리고, 도전적인 디자인과 화려한 색상을 통해 의상에 활력을 불어넣어 보세요. 강렬한 패턴과 bold 색상을 통해 당신의 의상을 새롭게 정의하십시오. 특별한 순간을 준비하세요!',
-                        'title'       => '새 Bold 컬렉션을 만나보세요!',
-                    ],
-                    'name' => 'Bold 컬렉션',
-                ],
-                'categories-collections' => [
-                    'name' => '카테고리 컬렉션',
-                ],
-                'featured-collections' => [
-                    'name'    => '주요 컬렉션',
-                    'options' => [
-                        'title' => '추천 제품',
-                    ],
-                ],
-                'footer-links' => [
-                    'name'    => '푸터 링크',
-                    'options' => [
-                        'about-us'         => '회사 소개',
-                        'contact-us'       => '문의하기',
-                        'customer-service' => '고객 서비스',
-                        'payment-policy'   => '결제 정책',
-                        'privacy-policy'   => '개인 정보 보호 정책',
-                        'refund-policy'    => '환불 정책',
-                        'return-policy'    => '반품 정책',
-                        'shipping-policy'  => '배송 정책',
-                        'terms-conditions' => '이용 약관',
-                        'terms-of-use'     => '이용 약관',
-                        'whats-new'        => '새로운 콘텐츠',
-                    ],
-                ],
-                'game-container' => [
-                    'content' => [
-                        'sub-title-1' => '우리의 컬렉션',
-                        'sub-title-2' => '우리의 컬렉션',
-                        'title'       => '우리의 새로운 추가 사항으로 게임을 준비하세요!',
-                    ],
-                    'name' => '게임 컨테이너',
-                ],
-                'image-carousel' => [
-                    'name'    => '이미지 슬라이더',
-                    'sliders' => [
-                        'title' => '새로운 컬렉션을 준비하세요',
-                    ],
-                ],
-                'new-products' => [
-                    'name'    => '새로운 제품',
-                    'options' => [
-                        'title' => '새로운 제품',
-                    ],
-                ],
-                'offer-information' => [
-                    'content' => [
-                        'title' => '최초 주문 시 최대 40% 할인 SHOP NOW',
-                    ],
-                    'name' => '제안 정보',
-                ],
-                'services-content' => [
-                    'description' => [
-                        'emi-available-info'   => '모든 주요 신용 카드에서 EMI 이용 가능',
-                        'free-shipping-info'   => '모든 주문에 무료 배송 제공',
-                        'product-replace-info' => '쉽게 교체할 수 있는 제품 제공!',
-                        'time-support-info'    => '채팅 및 이메일을 통한 24시간 지원',
-                    ],
-                    'name'  => '서비스 콘텐츠',
-                    'title' => [
-                        'emi-available'   => 'EMI 사용 가능',
-                        'free-shipping'   => '무료 배송',
-                        'product-replace' => '제품 교체',
-                        'time-support'    => '24시간 지원',
-                    ],
-                ],
-                'top-collections' => [
-                    'content' => [
-                        'sub-title-1' => '우리의 컬렉션',
-                        'sub-title-2' => '우리의 컬렉션',
-                        'sub-title-3' => '우리의 컬렉션',
-                        'sub-title-4' => '우리의 컬렉션',
-                        'sub-title-5' => '우리의 컬렉션',
-                        'sub-title-6' => '우리의 컬렉션',
-                        'title'       => '우리의 새로운 추가 사항으로 게임을 준비하세요!',
-                    ],
-                    'name' => '탑 컬렉션',
-                ],
             ],
         ],
         'user' => [

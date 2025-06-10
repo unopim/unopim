@@ -8,13 +8,11 @@ return [
             ],
 
             'attribute-groups' => [
-                'description'      => 'Description',
+                'description'      => 'Descripció',
                 'general'          => 'General',
-                'inventories'      => 'Inventories',
-                'meta-description' => 'Meta Description',
-                'price'            => 'Price',
-                'technical'        => 'Technical',
-                'shipping'         => 'Shipping',
+                'meta-description' => 'Meta descripció',
+                'price'            => 'Preu',
+                'media'            => 'Mitjans',
             ],
 
             'attributes' => [
@@ -25,6 +23,7 @@ return [
                 'featured'             => 'Featured',
                 'guest-checkout'       => 'Guest Checkout',
                 'height'               => 'Height',
+                'image'                => 'Imatge',
                 'length'               => 'Length',
                 'manage-stock'         => 'Manage Stock',
                 'meta-description'     => 'Meta Description',
@@ -40,7 +39,6 @@ return [
                 'special-price-from'   => 'Special Price From',
                 'special-price-to'     => 'Special Price To',
                 'special-price'        => 'Special Price',
-                'status'               => 'Status',
                 'tax-category'         => 'Tax Category',
                 'url-key'              => 'URL Key',
                 'visible-individually' => 'Visible Individually',
@@ -73,65 +71,6 @@ return [
             ],
         ],
 
-        'cms' => [
-            'pages' => [
-                'about-us' => [
-                    'content' => 'About Us Page Content',
-                    'title'   => 'About Us',
-                ],
-
-                'contact-us' => [
-                    'content' => 'Contact Us Page Content',
-                    'title'   => 'Contact Us',
-                ],
-
-                'customer-service' => [
-                    'content' => 'Customer Service Page Content',
-                    'title'   => 'Customer Service',
-                ],
-
-                'payment-policy' => [
-                    'content' => 'Payment Policy Page Content',
-                    'title'   => 'Payment Policy',
-                ],
-
-                'privacy-policy' => [
-                    'content' => 'Privacy Policy Page Content',
-                    'title'   => 'Privacy Policy',
-                ],
-
-                'refund-policy' => [
-                    'content' => 'Refund Policy Page Content',
-                    'title'   => 'Refund Policy',
-                ],
-
-                'return-policy' => [
-                    'content' => 'Return Policy Page Content',
-                    'title'   => 'Return Policy',
-                ],
-
-                'shipping-policy' => [
-                    'content' => 'Shipping Policy Page Content',
-                    'title'   => 'Shipping Policy',
-                ],
-
-                'terms-conditions' => [
-                    'content' => 'Terms & Conditions Page Content',
-                    'title'   => 'Terms & Conditions',
-                ],
-
-                'terms-of-use' => [
-                    'content' => 'Terms of Use Page Content',
-                    'title'   => 'Terms of Use',
-                ],
-
-                'whats-new' => [
-                    'content' => 'What\'s New page content',
-                    'title'   => 'What\'s New',
-                ],
-            ],
-        ],
-
         'core' => [
             'channels' => [
                 'meta-title'       => 'Demo store',
@@ -154,138 +93,6 @@ return [
                 'TRY' => 'Turkish Lira',
                 'UAH' => 'Ukrainian Hryvnia',
                 'USD' => 'US Dollar',
-            ],
-        ],
-
-        'customer' => [
-            'customer-groups' => [
-                'general'   => 'General',
-                'guest'     => 'Guest',
-                'wholesale' => 'Wholesale',
-            ],
-        ],
-
-        'inventory' => [
-            'inventory-sources' => [
-                'name' => 'Default',
-            ],
-        ],
-
-        'shop' => [
-            'theme-customizations' => [
-                'all-products' => [
-                    'name' => 'All Products',
-
-                    'options' => [
-                        'title' => 'All Products',
-                    ],
-                ],
-
-                'bold-collections' => [
-                    'content' => [
-                        'btn-title'   => 'View All',
-                        'description' => 'Introducing Our New Bold Collections! Elevate your style with daring designs and vibrant statements. Explore striking patterns and bold colors that redefine your wardrobe. Get ready to embrace the extraordinary!',
-                        'title'       => 'Get Ready for our new Bold Collections!',
-                    ],
-
-                    'name' => 'Bold Collections',
-                ],
-
-                'categories-collections' => [
-                    'name' => 'Categories Collections',
-                ],
-
-                'featured-collections' => [
-                    'name' => 'Featured Collections',
-
-                    'options' => [
-                        'title' => 'Featured Products',
-                    ],
-                ],
-
-                'footer-links' => [
-                    'name' => 'Footer Links',
-
-                    'options' => [
-                        'about-us'         => 'About Us',
-                        'contact-us'       => 'Contact Us',
-                        'customer-service' => 'Customer Service',
-                        'payment-policy'   => 'Payment Policy',
-                        'privacy-policy'   => 'Privacy Policy',
-                        'refund-policy'    => 'Refund Policy',
-                        'return-policy'    => 'Return Policy',
-                        'shipping-policy'  => 'Shipping Policy',
-                        'terms-conditions' => 'Terms & Conditions',
-                        'terms-of-use'     => 'Terms of Use',
-                        'whats-new'        => 'What\'s New',
-                    ],
-                ],
-
-                'game-container' => [
-                    'content' => [
-                        'sub-title-1' => 'Our Collections',
-                        'sub-title-2' => 'Our Collections',
-                        'title'       => 'The game with our new additions!',
-                    ],
-
-                    'name' => 'Game Container',
-                ],
-
-                'image-carousel' => [
-                    'name' => 'Image Carousel',
-
-                    'sliders' => [
-                        'title' => 'Get Ready For New Collection',
-                    ],
-                ],
-
-                'new-products' => [
-                    'name' => 'New Products',
-
-                    'options' => [
-                        'title' => 'New Products',
-                    ],
-                ],
-
-                'offer-information' => [
-                    'content' => [
-                        'title' => 'Get UPTO 40% OFF on your 1st order SHOP NOW',
-                    ],
-
-                    'name' => 'Offer Information',
-                ],
-
-                'services-content' => [
-                    'description' => [
-                        'emi-available-info'   => 'No cost EMI available on all major credit cards',
-                        'free-shipping-info'   => 'Enjoy free shipping on all orders',
-                        'product-replace-info' => 'Easy Product Replacement Available!',
-                        'time-support-info'    => 'Dedicated 24/7 support via chat and email',
-                    ],
-
-                    'name' => 'Services Content',
-
-                    'title' => [
-                        'emi-available'   => 'Emi Available',
-                        'free-shipping'   => 'Free Shipping',
-                        'product-replace' => 'Product Replace',
-                        'time-support'    => '24/7 Support',
-                    ],
-                ],
-
-                'top-collections' => [
-                    'content' => [
-                        'sub-title-1' => 'Our Collections',
-                        'sub-title-2' => 'Our Collections',
-                        'sub-title-3' => 'Our Collections',
-                        'sub-title-4' => 'Our Collections',
-                        'sub-title-5' => 'Our Collections',
-                        'sub-title-6' => 'Our Collections',
-                        'title'       => 'The game with our new additions!',
-                    ],
-
-                    'name' => 'Top Collections',
-                ],
             ],
         ],
 

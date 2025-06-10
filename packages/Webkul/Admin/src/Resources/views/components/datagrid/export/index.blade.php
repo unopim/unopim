@@ -58,7 +58,7 @@
                                 v-model="format"
                                 :options="$optionsInJson"
                                 track-by="id"
-                                label-by="label" 
+                                label-by="label"
                             >
                             </x-admin::form.control-group.control>
                         </x-admin::form.control-group>
@@ -74,7 +74,7 @@
                             <x-admin::form.control-group.control
                                 type="switch"
                                 name="with_media"
-                                value="1" 
+                                value="1"
                                 v-model="with_media"/>
                         </x-admin::form.control-group>
                     </x-admin::form>
@@ -145,7 +145,7 @@
                 },
 
                 download() {
-                    if (! this.available?.records?.length) {                        
+                    if (! this.available?.records?.length) {
                         this.$emitter.emit('add-flash', { type: 'warning', message: '@lang('admin::app.export.no-records')' });
 
                         this.$refs.exportModal.toggle();
@@ -154,15 +154,15 @@
 
                         let params = {
                             export: 1,
-    
+
                             format: this.format,
-    
+
                             sort: {},
 
                             with_media: withMedia,
 
                             productIds: this?.applied?.massActions?.indices,
-    
+
                             filters: {},
 
                             pagination: {
@@ -170,14 +170,14 @@
                                 per_page: this?.applied?.pagination?.perPage ?? 10,
                             },
                         };
-    
+
                         if (
                             this.applied.sort.column &&
                             this.applied.sort.order
                         ) {
                             params.sort = this.applied.sort;
                         }
-    
+
                         this.applied.filters.columns.forEach(column => {
                             params.filters[column.index] = column.value;
                         });

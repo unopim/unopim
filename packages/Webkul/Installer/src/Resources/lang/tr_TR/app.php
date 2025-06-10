@@ -7,11 +7,9 @@ return [
             'attribute-groups'   => [
                 'description'      => 'Tanım',
                 'general'          => 'Genel',
-                'inventories'      => 'Envanterler',
                 'meta-description' => 'Meta Açıklama',
                 'price'            => 'Fiyat',
-                'technical'        => 'Teknik',
-                'shipping'         => 'Nakliye',
+                'media'            => 'Medya',
             ],
             'attributes' => [
                 'brand'                => 'Marka',
@@ -21,6 +19,7 @@ return [
                 'featured'             => 'Öne Çıkan',
                 'guest-checkout'       => 'Misafir Ödeme',
                 'height'               => 'Yükseklik',
+                'image'                => 'Görsel',
                 'length'               => 'Uzunluk',
                 'manage-stock'         => 'Stokları Yönet',
                 'meta-description'     => 'Meta Açıklama',
@@ -36,7 +35,6 @@ return [
                 'special-price-from'   => 'Özel Fiyat Başlangıç',
                 'special-price-to'     => 'Özel Fiyat Bitiş',
                 'special-price'        => 'Özel Fiyat',
-                'status'               => 'Durum',
                 'tax-category'         => 'Vergi Kategorisi',
                 'url-key'              => 'URL Anahtarı',
                 'visible-individually' => 'Ayrı Ayrı Görüntülenir',
@@ -65,54 +63,6 @@ return [
                 'description' => 'Açıklama',
             ],
         ],
-        'cms' => [
-            'pages' => [
-                'about-us' => [
-                    'content' => 'Hakkımızda sayfası içeriği',
-                    'title'   => 'Hakkımızda',
-                ],
-                'contact-us' => [
-                    'content' => 'İletişim sayfası içeriği',
-                    'title'   => 'İletişim',
-                ],
-                'customer-service' => [
-                    'content' => 'Müşteri hizmetleri sayfası içeriği',
-                    'title'   => 'Müşteri Hizmetleri',
-                ],
-                'payment-policy' => [
-                    'content' => 'Ödeme politikası sayfası içeriği',
-                    'title'   => 'Ödeme Politikası',
-                ],
-                'privacy-policy' => [
-                    'content' => 'Gizlilik politikası sayfası içeriği',
-                    'title'   => 'Gizlilik Politikası',
-                ],
-                'refund-policy' => [
-                    'content' => 'İade politikası sayfası içeriği',
-                    'title'   => 'İade Politikası',
-                ],
-                'return-policy' => [
-                    'content' => 'İade politikası sayfası içeriği',
-                    'title'   => 'İade Politikası',
-                ],
-                'shipping-policy' => [
-                    'content' => 'Nakliye politikası sayfası içeriği',
-                    'title'   => 'Nakliye Politikası',
-                ],
-                'terms-conditions' => [
-                    'content' => 'Şartlar sayfası içeriği',
-                    'title'   => 'Şartlar ve Koşullar',
-                ],
-                'terms-of-use' => [
-                    'content' => 'Kullanım koşulları sayfası içeriği',
-                    'title'   => 'Kullanım Koşulları',
-                ],
-                'whats-new' => [
-                    'content' => 'Yeni ne var sayfası içeriği',
-                    'title'   => 'Yeni Ne Var',
-                ],
-            ],
-        ],
         'core' => [
             'channels' => [
                 'meta-title'       => 'Demo Mağazası',
@@ -134,114 +84,6 @@ return [
                 'TRY' => 'Türk Lirası',
                 'UAH' => 'Ukrayna Grivnası',
                 'USD' => 'ABD Doları',
-            ],
-        ],
-        'customer' => [
-            'customer-groups' => [
-                'general'   => 'Genel',
-                'guest'     => 'Ziyaretçi',
-                'wholesale' => 'Toptan',
-            ],
-        ],
-        'inventory' => [
-            'inventory-sources' => [
-                'name' => 'Standart',
-            ],
-        ],
-        'shop' => [
-            'theme-customizations' => [
-                'all-products' => [
-                    'name'    => 'Tüm Ürünler',
-                    'options' => [
-                        'title' => 'Tüm Ürünler',
-                    ],
-                ],
-                'bold-collections' => [
-                    'content' => [
-                        'btn-title'   => 'Tümünü Gör',
-                        'description' => 'Yeni cesur koleksiyonlarımızı keşfedin! Stilinizi yükseltin, cesur tasarımlar ve parlak renklerle. Muhteşem desenler ve canlı renkler ile dolaplarınıza farklı bir hava katın. Cesur bir başlangıç için hazır olun!',
-                        'title'       => 'Yeni Cesur Koleksiyonlarımıza Hazırlanın!',
-                    ],
-                    'name' => 'Cesur Koleksiyonlar',
-                ],
-                'categories-collections' => [
-                    'name' => 'Kategori Koleksiyonları',
-                ],
-                'featured-collections' => [
-                    'name'    => 'Öne Çıkan Koleksiyonlar',
-                    'options' => [
-                        'title' => 'Öne Çıkan Ürünler',
-                    ],
-                ],
-                'footer-links' => [
-                    'name'    => 'Alt Bağlantılar',
-                    'options' => [
-                        'about-us'         => 'Hakkımızda',
-                        'contact-us'       => 'İletişim',
-                        'customer-service' => 'Müşteri Hizmetleri',
-                        'payment-policy'   => 'Ödeme Politikası',
-                        'privacy-policy'   => 'Gizlilik Politikası',
-                        'refund-policy'    => 'İade Politikası',
-                        'return-policy'    => 'İade Politikası',
-                        'shipping-policy'  => 'Nakliye Politikası',
-                        'terms-conditions' => 'Şartlar ve Koşullar',
-                        'terms-of-use'     => 'Kullanım Koşulları',
-                        'whats-new'        => 'Yeni Ne Var',
-                    ],
-                ],
-                'game-container' => [
-                    'content' => [
-                        'sub-title-1' => 'Koleksiyonlarımız',
-                        'sub-title-2' => 'Koleksiyonlarımız',
-                        'title'       => 'Yeni Ürünlerle Oynayın!',
-                    ],
-                    'name' => 'Oyun Kabini',
-                ],
-                'image-carousel' => [
-                    'name'    => 'Resim Karuseli',
-                    'sliders' => [
-                        'title' => 'Yeni Bir Koleksiyon için Hazırlanın',
-                    ],
-                ],
-                'new-products' => [
-                    'name'    => 'Yeni Ürünler',
-                    'options' => [
-                        'title' => 'Yeni Ürünler',
-                    ],
-                ],
-                'offer-information' => [
-                    'content' => [
-                        'title' => 'İLK ALIŞVERİŞİNİZDE %40 İNDİRİM BAŞLAYIN!',
-                    ],
-                    'name' => 'Teklif Bilgisi',
-                ],
-                'services-content' => [
-                    'description' => [
-                        'emi-available-info'   => 'Tüm ana kredi kartları için ek ücret olmadan finansman imkanı mevcuttur',
-                        'free-shipping-info'   => 'Tüm siparişler için ücretsiz gönderim',
-                        'product-replace-info' => 'Ürün değişikliği kolaydır!',
-                        'time-support-info'    => 'Canlı sohbet ve e-posta aracılığıyla 7/24 özel destek',
-                    ],
-                    'name'  => 'Hizmet İçeriği',
-                    'title' => [
-                        'emi-available'   => 'EMI Mevcut',
-                        'free-shipping'   => 'Ücretsiz Gönderim',
-                        'product-replace' => 'Ürün Değiştirme',
-                        'time-support'    => 'Destek 7/24',
-                    ],
-                ],
-                'top-collections' => [
-                    'content' => [
-                        'sub-title-1' => 'Koleksiyonlarımız',
-                        'sub-title-2' => 'Koleksiyonlarımız',
-                        'sub-title-3' => 'Koleksiyonlarımız',
-                        'sub-title-4' => 'Koleksiyonlarımız',
-                        'sub-title-5' => 'Koleksiyonlarımız',
-                        'sub-title-6' => 'Koleksiyonlarımız',
-                        'title'       => 'Yeni Ürünlerle Bir Oyun Oynayın!',
-                    ],
-                    'name' => 'Öne Çıkan Koleksiyonlar',
-                ],
             ],
         ],
         'user' => [

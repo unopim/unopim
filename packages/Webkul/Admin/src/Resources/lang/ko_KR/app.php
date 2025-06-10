@@ -372,6 +372,7 @@ return [
                 'yes'                   => '예',
                 'same-code-error'       => '옵션 코드는 고유해야 합니다.',
                 'usable-in-grid'        => '그리드에서 사용 가능',
+                'is-filterable'         => '필터링 가능',
 
                 'option' => [
                     'color'    => '샘플 색상',
@@ -438,6 +439,7 @@ return [
                 'yes'                   => '예',
                 'same-code-error'       => '옵션 코드는 고유해야 합니다.',
                 'usable-in-grid'        => '그리드에서 사용 가능',
+                'is-filterable'         => '필터링 가능',
 
                 'option' => [
                     'create-success'      => '속성 옵션이 성공적으로 생성되었습니다.',
@@ -1834,6 +1836,10 @@ return [
                 'search' => [
                     'title' => '검색',
                 ],
+
+                'manage-columns' => [
+                    'title' => '열',
+                ],
             ],
 
             'filters' => [
@@ -1872,6 +1878,13 @@ return [
             'table' => [
                 'actions'              => '작업',
                 'no-records-available' => '사용 가능한 기록이 없습니다.',
+            ],
+
+            'manage-columns' => [
+                'title'             => '열 관리',
+                'available-columns' => '사용 가능한 열',
+                'selected-columns'  => '선택한 열',
+                'apply-btn'         => '적용',
             ],
         ],
 

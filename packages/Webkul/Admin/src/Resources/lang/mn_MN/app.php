@@ -373,6 +373,7 @@ return [
                 'yes'                   => 'Мон',
                 'same-code-error'       => 'Сонголтын код нь өвөрмөц байх ёстой.',
                 'usable-in-grid'        => 'Сүлжээнд ашиглах боломжтой',
+                'is-filterable'         => 'Шүүж болох',
 
                 'option' => [
                     'color'    => 'Өнгөт сэлгэлт',
@@ -439,6 +440,7 @@ return [
                 'yes'                   => 'Мон',
                 'same-code-error'       => 'Сонголтын код нь өвөрмөц байх ёстой.',
                 'usable-in-grid'        => 'Сүлжээнд ашиглах боломжтой',
+                'is-filterable'         => 'Шүүж болох',
 
                 'option' => [
                     'create-success'      => 'Аттрибутын сонголт амжилттай бүтээгдсэн',
@@ -2137,6 +2139,10 @@ return [
                 'search' => [
                     'title' => 'Эрэл хайгуул хийх',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Багануудыг',
+                ],
             ],
 
             'filters' => [
@@ -2175,6 +2181,13 @@ return [
             'table' => [
                 'actions'              => 'Үйлдэл',
                 'no-records-available' => 'Бичлэг байхгүй байна.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Багануудыг удирдах',
+                'available-columns' => 'Боломжтой баганууд',
+                'selected-columns'  => 'Сонгосон баганууд',
+                'apply-btn'         => 'Өргөдөл гаргах',
             ],
         ],
 

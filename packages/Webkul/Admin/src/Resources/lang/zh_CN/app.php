@@ -372,6 +372,7 @@ return [
                 'yes'                   => '是的',
                 'same-code-error'       => '选项代码必须是唯一的。',
                 'usable-in-grid'        => '可在网格中使用',
+                'is-filterable'         => '可筛选',
 
                 'option' => [
                     'color'    => '色板',
@@ -437,6 +438,7 @@ return [
                 'yes'                   => '是的',
                 'same-code-error'       => '选项代码必须是唯一的。',
                 'usable-in-grid'        => '可在网格中使用',
+                'is-filterable'         => '可筛选',
 
                 'option' => [
                     'create-success'       => '属性选项创建成功',
@@ -1683,6 +1685,10 @@ return [
                 'search' => [
                     'title' => '搜索',
                 ],
+
+                'manage-columns' => [
+                    'title' => '列',
+                ],
             ],
 
             'filters' => [
@@ -1721,6 +1727,13 @@ return [
             'table' => [
                 'actions'              => '动作',
                 'no-records-available' => '没有可用的记录。',
+            ],
+
+            'manage-columns' => [
+                'title'             => '管理列',
+                'available-columns' => '可用列',
+                'selected-columns'  => '已选择列',
+                'apply-btn'         => '应用',
             ],
         ],
 

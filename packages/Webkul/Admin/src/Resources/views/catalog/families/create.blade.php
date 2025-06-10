@@ -189,7 +189,7 @@
                                             <span
                                                 class="text-sm font-regular transition-all group-hover:text-gray-800 dark:group-hover:text-white max-xl:text-xs"
                                                 :class="{'bg-violet-100 dark:text-violet-800 text-violet-600 group-hover:text-gray-800 dark:group-hover:text-gray-800': selectedGroup.id == element.id}"
-                                                v-text="element.name"
+                                                v-text="element?.label ?? element.name"
                                             >
                                             </span>
 
@@ -219,7 +219,7 @@
 
                                                 <span 
                                                     class="text-sm font-regular transition-all group-hover:text-gray-800 dark:group-hover:text-white max-xl:text-xs"
-                                                    v-text="element.name"    
+                                                    v-text="element?.label ?? element.name"    
                                                 >
                                                 </span>
 
@@ -302,7 +302,7 @@
                                             <i class="text-xl transition-all group-hover:text-gray-800 dark:group-hover:text-white"></i>
                                             <span 
                                                 class="text-sm font-regular transition-all group-hover:text-gray-800 dark:group-hover:text-white max-xl:text-xs"
-                                                v-text="element.name"
+                                                v-text="element?.label ?? element.name"
                                             >
                                             </span>
                                     </div>

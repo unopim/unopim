@@ -10,11 +10,9 @@ return [
             'attribute-groups' => [
                 'description'      => 'Kuvaus',
                 'general'          => 'Yleinen',
-                'inventories'      => 'Varastot',
-                'meta-description' => 'Meta Kuvaus',
+                'meta-description' => 'Meta kuvaus',
                 'price'            => 'Hinta',
-                'technical'        => 'Tekninen',
-                'shipping'         => 'Toimitus',
+                'media'            => 'Media',
             ],
 
             'attributes' => [
@@ -25,6 +23,7 @@ return [
                 'featured'             => 'Suositeltu',
                 'guest-checkout'       => 'Vierastarkastus',
                 'height'               => 'Korkeus',
+                'image'                => 'Kuva',
                 'length'               => 'Pituus',
                 'manage-stock'         => 'Hallinnoi Varastoa',
                 'meta-description'     => 'Meta Kuvaus',
@@ -40,7 +39,6 @@ return [
                 'special-price-from'   => 'Erikoishinta Alkaen',
                 'special-price-to'     => 'Erikoishinta Ennalleen',
                 'special-price'        => 'Erikoishinta',
-                'status'               => 'Status',
                 'tax-category'         => 'Veroluokka',
                 'url-key'              => 'URL Avain',
                 'visible-individually' => 'Näkyy Erikseen',
@@ -73,65 +71,6 @@ return [
             ],
         ],
 
-        'cms' => [
-            'pages' => [
-                'about-us' => [
-                    'content' => 'Tietoja Meistä Sivun Sisältö',
-                    'title'   => 'Tietoja Meistä',
-                ],
-
-                'contact-us' => [
-                    'content' => 'Ota Yhteyttä Sivun Sisältö',
-                    'title'   => 'Ota Yhteyttä',
-                ],
-
-                'customer-service' => [
-                    'content' => 'Asiakaspalvelun Sivun Sisältö',
-                    'title'   => 'Asiakaspalvelu',
-                ],
-
-                'payment-policy' => [
-                    'content' => 'Maksupolitiikan Sivun Sisältö',
-                    'title'   => 'Maksupolitiikka',
-                ],
-
-                'privacy-policy' => [
-                    'content' => 'Yksityisyydensuojan Sivun Sisältö',
-                    'title'   => 'Yksityisyys',
-                ],
-
-                'refund-policy' => [
-                    'content' => 'Palautuspolitiikan Sivun Sisältö',
-                    'title'   => 'Palautuspolitiikka',
-                ],
-
-                'return-policy' => [
-                    'content' => 'Palautuskäytännön Sivun Sisältö',
-                    'title'   => 'Palautuskäytäntö',
-                ],
-
-                'shipping-policy' => [
-                    'content' => 'Toimituskäytännön Sivun Sisältö',
-                    'title'   => 'Toimituskäytäntö',
-                ],
-
-                'terms-conditions' => [
-                    'content' => 'Ehdot ja Käytännöt Sivun Sisältö',
-                    'title'   => 'Ehdot ja Käytännöt',
-                ],
-
-                'terms-of-use' => [
-                    'content' => 'Käyttöehdot Sivun Sisältö',
-                    'title'   => 'Käyttöehdot',
-                ],
-
-                'whats-new' => [
-                    'content' => 'Uutuudet Sivun Sisältö',
-                    'title'   => 'Uutuudet',
-                ],
-            ],
-        ],
-
         'core' => [
             'channels' => [
                 'meta-title'       => 'Demo Store',
@@ -154,138 +93,6 @@ return [
                 'TRY' => 'Turkin Lira',
                 'UAH' => 'Ukrainan Hryvnia',
                 'USD' => 'US Dollari',
-            ],
-        ],
-
-        'customer' => [
-            'customer-groups' => [
-                'general'   => 'Yleinen',
-                'guest'     => 'Vieras',
-                'wholesale' => 'Tukkukauppa',
-            ],
-        ],
-
-        'inventory' => [
-            'inventory-sources' => [
-                'name' => 'Oletus',
-            ],
-        ],
-
-        'shop' => [
-            'theme-customizations' => [
-                'all-products' => [
-                    'name' => 'Kaikki Tuotteet',
-
-                    'options' => [
-                        'title' => 'Kaikki Tuotteet',
-                    ],
-                ],
-
-                'bold-collections' => [
-                    'content' => [
-                        'btn-title'   => 'Näytä Kaikki',
-                        'description' => 'Tervetuloa Uusiin Bold Kokoelmiin! Kohenna tyyliäsi rohkeilla malleilla ja kirkkailla väreillä. Tutustu silmiinpistäviin kuvioihin ja rohkeisiin väreihin, jotka määrittelevät vaatekaapin uudelleen. Ole valmis omaksumaan poikkeukselliset!',
-                        'title'       => 'Valmistaudu Uusiin Bold Kokoelmiin!',
-                    ],
-
-                    'name' => 'Bold Kokoelmat',
-                ],
-
-                'categories-collections' => [
-                    'name' => 'Luokkien Kokoelmat',
-                ],
-
-                'featured-collections' => [
-                    'name' => 'Esitellyt Kokoelmat',
-
-                    'options' => [
-                        'title' => 'Esitellyt Tuotteet',
-                    ],
-                ],
-
-                'footer-links' => [
-                    'name' => 'Jalkaliittymät',
-
-                    'options' => [
-                        'about-us'         => 'Tietoja Meistä',
-                        'contact-us'       => 'Ota Yhteyttä',
-                        'customer-service' => 'Asiakaspalvelu',
-                        'payment-policy'   => 'Maksupolitiikka',
-                        'privacy-policy'   => 'Yksityisyys',
-                        'refund-policy'    => 'Palautuspolitiikka',
-                        'return-policy'    => 'Palautuskäytäntö',
-                        'shipping-policy'  => 'Toimituskäytäntö',
-                        'terms-conditions' => 'Ehdot ja Käytännöt',
-                        'terms-of-use'     => 'Käyttöehdot',
-                        'whats-new'        => 'Uutuudet',
-                    ],
-                ],
-
-                'game-container' => [
-                    'content' => [
-                        'sub-title-1' => 'Kokoelmat',
-                        'sub-title-2' => 'Kokoelmat',
-                        'title'       => 'Peli Uusilla Lisäyksillämme!',
-                    ],
-
-                    'name' => 'Peli Astia',
-                ],
-
-                'image-carousel' => [
-                    'name' => 'Kuva-Galleria',
-
-                    'sliders' => [
-                        'title' => 'Valmistaudu Uuteen Kokoelmaan',
-                    ],
-                ],
-
-                'new-products' => [
-                    'name' => 'Uudet Tuotteet',
-
-                    'options' => [
-                        'title' => 'Uudet Tuotteet',
-                    ],
-                ],
-
-                'offer-information' => [
-                    'content' => [
-                        'title' => 'SAAVUTTA 40% ALENNUS ENSIMMÄISELLÄ TILAUKSELLASI, OSTA NYT',
-                    ],
-
-                    'name' => 'Tarjous Tiedot',
-                ],
-
-                'services-content' => [
-                    'description' => [
-                        'emi-available-info'   => 'Ei kustannuksia EMI kaikkien pääluottokorttien osalta',
-                        'free-shipping-info'   => 'Vapaat toimitukset kaikille tilauksille',
-                        'product-replace-info' => 'Helppo tuotevaihto saatavilla!',
-                        'time-support-info'    => 'Omistautunut 24/7 tuki chatissa ja sähköpostitse',
-                    ],
-
-                    'name' => 'Palvelut Sisältö',
-
-                    'title' => [
-                        'emi-available'   => 'EMI Saatavilla',
-                        'free-shipping'   => 'Vapaa Toimitus',
-                        'product-replace' => 'Tuote Vaihto',
-                        'time-support'    => '24/7 Tuki',
-                    ],
-                ],
-
-                'top-collections' => [
-                    'content' => [
-                        'sub-title-1' => 'Kokoelmat',
-                        'sub-title-2' => 'Kokoelmat',
-                        'sub-title-3' => 'Kokoelmat',
-                        'sub-title-4' => 'Kokoelmat',
-                        'sub-title-5' => 'Kokoelmat',
-                        'sub-title-6' => 'Kokoelmat',
-                        'title'       => 'Peli Uusilla Lisäyksillämme!',
-                    ],
-
-                    'name' => 'Ylä Kokoelmat',
-                ],
             ],
         ],
 

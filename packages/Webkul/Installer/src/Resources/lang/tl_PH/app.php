@@ -5,13 +5,11 @@ return [
         'attribute' => [
             'attribute-families' => 'Pamantayan',
             'attribute-groups'   => [
-                'description'      => 'Pagsusuri',
+                'description'      => 'Paglalarawan',
                 'general'          => 'Pangkalahatan',
-                'inventories'      => 'Ala-ala',
                 'meta-description' => 'Meta Paglalarawan',
                 'price'            => 'Presyo',
-                'technical'        => 'Teknikal',
-                'shipping'         => 'Pagpapadala',
+                'media'            => 'Media',
             ],
             'attributes' => [
                 'brand'                => 'Tatak',
@@ -21,6 +19,7 @@ return [
                 'featured'             => 'Pinakamahalaga',
                 'guest-checkout'       => 'Check-out para sa mga bisita',
                 'height'               => 'Ta-height',
+                'image'                => 'Larawan',
                 'length'               => 'Haba',
                 'manage-stock'         => 'Pamahalaan ang imbentaryo',
                 'meta-description'     => 'Meta Paglalarawan',
@@ -36,7 +35,6 @@ return [
                 'special-price-from'   => 'Special na presyo mula sa',
                 'special-price-to'     => 'Special na presyo hanggang sa',
                 'special-price'        => 'Special na presyo',
-                'status'               => 'Katayuan',
                 'tax-category'         => 'Kategorya ng buwis',
                 'url-key'              => 'URL key',
                 'visible-individually' => 'Nakikita nang paisa-isa',
@@ -65,54 +63,6 @@ return [
                 'description' => 'Paglalarawan',
             ],
         ],
-        'cms' => [
-            'pages' => [
-                'about-us' => [
-                    'content' => 'Tungkol sa amin pahina nilalaman',
-                    'title'   => 'Tungkol sa amin',
-                ],
-                'contact-us' => [
-                    'content' => 'Makipag-ugnayan sa amin pahina nilalaman',
-                    'title'   => 'Makipag-ugnayan sa amin',
-                ],
-                'customer-service' => [
-                    'content' => 'Serbisyo sa kustomer pahina nilalaman',
-                    'title'   => 'Serbisyo sa kustomer',
-                ],
-                'payment-policy' => [
-                    'content' => 'Polisiya sa pagbabayad pahina nilalaman',
-                    'title'   => 'Polisiya sa pagbabayad',
-                ],
-                'privacy-policy' => [
-                    'content' => 'Patakaran sa privacy pahina nilalaman',
-                    'title'   => 'Patakaran sa privacy',
-                ],
-                'refund-policy' => [
-                    'content' => 'Patakaran sa refund pahina nilalaman',
-                    'title'   => 'Patakaran sa refund',
-                ],
-                'return-policy' => [
-                    'content' => 'Patakaran sa pagbalik pahina nilalaman',
-                    'title'   => 'Patakaran sa pagbalik',
-                ],
-                'shipping-policy' => [
-                    'content' => 'Patakaran sa pagpapadala pahina nilalaman',
-                    'title'   => 'Patakaran sa pagpapadala',
-                ],
-                'terms-conditions' => [
-                    'content' => 'Tuntunin pahina nilalaman',
-                    'title'   => 'Tuntunin',
-                ],
-                'terms-of-use' => [
-                    'content' => 'Tuntunin ng paggamit pahina nilalaman',
-                    'title'   => 'Tuntunin ng paggamit',
-                ],
-                'whats-new' => [
-                    'content' => 'Ano ang bagong pahina nilalaman',
-                    'title'   => 'Ano ang bagong',
-                ],
-            ],
-        ],
         'core' => [
             'channels' => [
                 'meta-title'       => 'Demo store',
@@ -134,114 +84,6 @@ return [
                 'TRY' => 'Turkish lira',
                 'UAH' => 'Ukrainian hryvnia',
                 'USD' => 'United States dollar',
-            ],
-        ],
-        'customer' => [
-            'customer-groups' => [
-                'general'   => 'Pangkalahatan',
-                'guest'     => 'Bisita',
-                'wholesale' => 'Tirahan',
-            ],
-        ],
-        'inventory' => [
-            'inventory-sources' => [
-                'name' => 'Pamantayan',
-            ],
-        ],
-        'shop' => [
-            'theme-customizations' => [
-                'all-products' => [
-                    'name'    => 'Lahat ng produkto',
-                    'options' => [
-                        'title' => 'Lahat ng produkto',
-                    ],
-                ],
-                'bold-collections' => [
-                    'content' => [
-                        'btn-title'   => 'Tingnan lahat',
-                        'description' => 'Galugarin ang aming mga bagong bold na koleksyon! Itaas ang iyong estilo na may mga draybo na disenyo at mga makulay na kulay. Tuklasin ang mga kamangha-manghang mga disenyo at draybo na kulay na nagdidirekta ng iyong aparador. Maghanda na upang yakapin ang hindi pangkaraniwan!',
-                        'title'       => 'Maghanda para sa aming mga bagong bold na koleksyon!',
-                    ],
-                    'name' => 'Mga draybo na koleksyon',
-                ],
-                'categories-collections' => [
-                    'name' => 'Mga koleksyon ng kategorya',
-                ],
-                'featured-collections' => [
-                    'name'    => 'Mga tampok na koleksyon',
-                    'options' => [
-                        'title' => 'Mga tampok na produkto',
-                    ],
-                ],
-                'footer-links' => [
-                    'name'    => 'Mga link sa ibaba',
-                    'options' => [
-                        'about-us'         => 'Tungkol sa amin',
-                        'contact-us'       => 'Makipag-ugnayan sa amin',
-                        'customer-service' => 'Serbisyo sa kustomer',
-                        'payment-policy'   => 'Polisiya sa pagbabayad',
-                        'privacy-policy'   => 'Patakaran sa privacy',
-                        'refund-policy'    => 'Patakaran sa refund',
-                        'return-policy'    => 'Patakaran sa pagbalik',
-                        'shipping-policy'  => 'Patakaran sa pagpapadala',
-                        'terms-conditions' => 'Tuntunin',
-                        'terms-of-use'     => 'Tuntunin ng paggamit',
-                        'whats-new'        => 'Ano ang bagong',
-                    ],
-                ],
-                'game-container' => [
-                    'content' => [
-                        'sub-title-1' => 'Mga koleksyon namin',
-                        'sub-title-2' => 'Mga koleksyon namin',
-                        'title'       => 'Maglaro kasama ang aming mga bagong paglulunsad!',
-                    ],
-                    'name' => 'Laro container',
-                ],
-                'image-carousel' => [
-                    'name'    => 'Image carousel',
-                    'sliders' => [
-                        'title' => 'Maghanda para sa isang bagong koleksyon',
-                    ],
-                ],
-                'new-products' => [
-                    'name'    => 'Mga bagong produkto',
-                    'options' => [
-                        'title' => 'Mga bagong produkto',
-                    ],
-                ],
-                'offer-information' => [
-                    'content' => [
-                        'title' => 'SIMULAN ANG 40% DISKON SA IYONG UNANG PAGBILI',
-                    ],
-                    'name' => 'Impormasyon sa alok',
-                ],
-                'services-content' => [
-                    'description' => [
-                        'emi-available-info'   => 'Pondo ng pagpopondo nang walang dagdag na bayad ay magagamit sa lahat ng pangunahing mga credit card',
-                        'free-shipping-info'   => 'Libre ang pagpapadala para sa lahat ng mga order',
-                        'product-replace-info' => 'Madaling pagpapalit ng produkto!',
-                        'time-support-info'    => 'Dedikadong suporta 24/7 sa pamamagitan ng chat at email',
-                    ],
-                    'name'  => 'Nilalaman ng serbisyo',
-                    'title' => [
-                        'emi-available'   => 'EMI Magagamit',
-                        'free-shipping'   => 'Libre ang pagpapadala',
-                        'product-replace' => 'Pagpapalit ng produkto',
-                        'time-support'    => 'Suporta 24/7',
-                    ],
-                ],
-                'top-collections' => [
-                    'content' => [
-                        'sub-title-1' => 'Mga koleksyon namin',
-                        'sub-title-2' => 'Mga koleksyon namin',
-                        'sub-title-3' => 'Mga koleksyon namin',
-                        'sub-title-4' => 'Mga koleksyon namin',
-                        'sub-title-5' => 'Mga koleksyon namin',
-                        'sub-title-6' => 'Mga koleksyon namin',
-                        'title'       => 'Maghanda para sa isang laro sa aming mga bagong paglulunsad!',
-                    ],
-                    'name' => 'Pangunahing koleksyon',
-                ],
             ],
         ],
         'user' => [

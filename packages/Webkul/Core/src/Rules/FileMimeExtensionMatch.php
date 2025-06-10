@@ -33,6 +33,10 @@ class FileMimeExtensionMatch implements ValidationRule
             return;
         }
 
+        if (strtolower($extension) === 'jpeg') {
+            $extension = 'jpg';
+        }
+
         if (! (in_array($mimeType, $mimeTypes) && $value->guessExtension() === $extension)) {
             $fail(trans('core::validation.file-mime-extension-mismatch', ['extension' => $extension, 'mimeType' => $mimeType]));
 

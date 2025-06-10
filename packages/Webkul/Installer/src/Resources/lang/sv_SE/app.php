@@ -6,12 +6,10 @@ return [
             'attribute-families' => 'Standard',
             'attribute-groups'   => [
                 'description'      => 'Beskrivning',
-                'general'          => 'Allmän',
-                'inventories'      => 'Inventarier',
-                'meta-description' => 'Meta Beskrivning',
+                'general'          => 'Allmänt',
+                'meta-description' => 'Meta beskrivning',
                 'price'            => 'Pris',
-                'technical'        => 'Teknisk',
-                'shipping'         => 'Frakt',
+                'media'            => 'Media',
             ],
             'attributes' => [
                 'brand'                => 'Märke',
@@ -21,6 +19,7 @@ return [
                 'featured'             => 'Funktioner',
                 'guest-checkout'       => 'Gästkassa',
                 'height'               => 'Höjd',
+                'image'                => 'Bild',
                 'length'               => 'Längd',
                 'manage-stock'         => 'Hantera lager',
                 'meta-description'     => 'Meta Beskrivning',
@@ -36,7 +35,6 @@ return [
                 'special-price-from'   => 'Speciellt pris från',
                 'special-price-to'     => 'Speciellt pris till',
                 'special-price'        => 'Speciellt pris',
-                'status'               => 'Status',
                 'tax-category'         => 'Skattekategori',
                 'url-key'              => 'URL Nyckel',
                 'visible-individually' => 'Synlig individuellt',
@@ -65,54 +63,6 @@ return [
                 'description' => 'Beskrivning',
             ],
         ],
-        'cms' => [
-            'pages' => [
-                'about-us' => [
-                    'content' => 'Om oss sida innehåll',
-                    'title'   => 'Om oss',
-                ],
-                'contact-us' => [
-                    'content' => 'Kontakt oss sida innehåll',
-                    'title'   => 'Kontakta oss',
-                ],
-                'customer-service' => [
-                    'content' => 'Kundservice sida innehåll',
-                    'title'   => 'Kundservice',
-                ],
-                'payment-policy' => [
-                    'content' => 'Betalningspolicy sida innehåll',
-                    'title'   => 'Betalningspolicy',
-                ],
-                'privacy-policy' => [
-                    'content' => 'Sekretesspolicy sida innehåll',
-                    'title'   => 'Sekretesspolicy',
-                ],
-                'refund-policy' => [
-                    'content' => 'Återbetalningspolicy sida innehåll',
-                    'title'   => 'Återbetalningspolicy',
-                ],
-                'return-policy' => [
-                    'content' => 'Returpolicy sida innehåll',
-                    'title'   => 'Returpolicy',
-                ],
-                'shipping-policy' => [
-                    'content' => 'Fraktpolicy sida innehåll',
-                    'title'   => 'Fraktpolicy',
-                ],
-                'terms-conditions' => [
-                    'content' => 'Villkor sida innehåll',
-                    'title'   => 'Villkor',
-                ],
-                'terms-of-use' => [
-                    'content' => 'Villkor för användning sida innehåll',
-                    'title'   => 'Villkor för användning',
-                ],
-                'whats-new' => [
-                    'content' => 'Vad är nytt sida innehåll',
-                    'title'   => 'Vad är nytt',
-                ],
-            ],
-        ],
         'core' => [
             'channels' => [
                 'meta-title'       => 'Demobutik',
@@ -134,114 +84,6 @@ return [
                 'TRY' => 'Turkisk lira',
                 'UAH' => 'Ukrainsk hryvnia',
                 'USD' => 'Amerikansk dollar',
-            ],
-        ],
-        'customer' => [
-            'customer-groups' => [
-                'general'   => 'Allmänt',
-                'guest'     => 'Gäst',
-                'wholesale' => 'Grossist',
-            ],
-        ],
-        'inventory' => [
-            'inventory-sources' => [
-                'name' => 'Standard',
-            ],
-        ],
-        'shop' => [
-            'theme-customizations' => [
-                'all-products' => [
-                    'name'    => 'Alla produkter',
-                    'options' => [
-                        'title' => 'Alla produkter',
-                    ],
-                ],
-                'bold-collections' => [
-                    'content' => [
-                        'btn-title'   => 'Visa alla',
-                        'description' => 'Utforska våra nya modiga kollektioner! Höj din stil med djärva mönster och vibrerande färger. Upptäck slående mönster och djärva toner som redefinierar din garderob. Gör dig redo att omfamna det extraordinära!',
-                        'title'       => 'Förbered dig för våra nya djärva kollektioner!',
-                    ],
-                    'name' => 'Djärva kollektioner',
-                ],
-                'categories-collections' => [
-                    'name' => 'Kategoriens kollektioner',
-                ],
-                'featured-collections' => [
-                    'name'    => 'Utvalda kollektioner',
-                    'options' => [
-                        'title' => 'Utvalda produkter',
-                    ],
-                ],
-                'footer-links' => [
-                    'name'    => 'Sidfotslänkar',
-                    'options' => [
-                        'about-us'         => 'Om oss',
-                        'contact-us'       => 'Kontakta oss',
-                        'customer-service' => 'Kundservice',
-                        'payment-policy'   => 'Betalningspolicy',
-                        'privacy-policy'   => 'Sekretesspolicy',
-                        'refund-policy'    => 'Återbetalningspolicy',
-                        'return-policy'    => 'Returpolicy',
-                        'shipping-policy'  => 'Fraktpolicy',
-                        'terms-conditions' => 'Villkor',
-                        'terms-of-use'     => 'Villkor för användning',
-                        'whats-new'        => 'Vad är nytt',
-                    ],
-                ],
-                'game-container' => [
-                    'content' => [
-                        'sub-title-1' => 'Våra kollektioner',
-                        'sub-title-2' => 'Våra kollektioner',
-                        'title'       => 'Spela med våra nya släpp!',
-                    ],
-                    'name' => 'Spelcontainer',
-                ],
-                'image-carousel' => [
-                    'name'    => 'Bildkarusell',
-                    'sliders' => [
-                        'title' => 'Förbered dig för en ny kollektion',
-                    ],
-                ],
-                'new-products' => [
-                    'name'    => 'Nya produkter',
-                    'options' => [
-                        'title' => 'Nya produkter',
-                    ],
-                ],
-                'offer-information' => [
-                    'content' => [
-                        'title' => 'BÖRJA MED 40% RABATT PÅ DITT FÖRSTA KÖP',
-                    ],
-                    'name' => 'Erbjudande information',
-                ],
-                'services-content' => [
-                    'description' => [
-                        'emi-available-info'   => 'Finansiering utan extra kostnad finns tillgänglig på alla större kreditkort',
-                        'free-shipping-info'   => 'Fri frakt på alla beställningar',
-                        'product-replace-info' => 'Lätt produktutbyte tillgängligt!',
-                        'time-support-info'    => 'Dedikerad support dygnet runt via chatt och e-post',
-                    ],
-                    'name'  => 'Tjänsteinnehåll',
-                    'title' => [
-                        'emi-available'   => 'EMI Tillgänglig',
-                        'free-shipping'   => 'Fri frakt',
-                        'product-replace' => 'Produktbyte',
-                        'time-support'    => 'Support dygnet runt',
-                    ],
-                ],
-                'top-collections' => [
-                    'content' => [
-                        'sub-title-1' => 'Våra kollektioner',
-                        'sub-title-2' => 'Våra kollektioner',
-                        'sub-title-3' => 'Våra kollektioner',
-                        'sub-title-4' => 'Våra kollektioner',
-                        'sub-title-5' => 'Våra kollektioner',
-                        'sub-title-6' => 'Våra kollektioner',
-                        'title'       => 'Förbered dig för ett spel med våra nya lanseringar!',
-                    ],
-                    'name' => 'Huvudkollektioner',
-                ],
             ],
         ],
         'user' => [

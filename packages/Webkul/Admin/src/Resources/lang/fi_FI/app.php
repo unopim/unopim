@@ -372,6 +372,7 @@ return [
                 'yes'                   => 'Kyllä',
                 'same-code-error'       => 'Vaihtoehdon koodin tulee olla ainutlaatuinen.',
                 'usable-in-grid'        => 'Käytettävissä ruudukossa',
+                'is-filterable'         => 'On suodatettavissa',
 
                 'option' => [
                     'color'    => 'Väri',
@@ -438,6 +439,7 @@ return [
                 'yes'                   => 'Kyllä',
                 'same-code-error'       => 'Vaihtoehdon koodin tulee olla ainutlaatuinen.',
                 'usable-in-grid'        => 'Käytettävissä ruudukossa',
+                'is-filterable'         => 'On suodatettavissa',
 
                 'option' => [
                     'create-success'       => 'Attribuuttivaihtoehto luotiin onnistuneesti',
@@ -1840,6 +1842,10 @@ return [
                 'search' => [
                     'title' => 'Etsi',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Sarakkeita',
+                ],
             ],
 
             'filters' => [
@@ -1878,6 +1884,13 @@ return [
             'table' => [
                 'actions'              => 'Toiminnot',
                 'no-records-available' => 'Ei tallenteita saatavilla.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Hallitse sarakkeita',
+                'available-columns' => 'Saatavilla olevat sarakkeet',
+                'selected-columns'  => 'Valitut sarakkeet',
+                'apply-btn'         => 'Käytä',
             ],
         ],
 

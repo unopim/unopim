@@ -243,7 +243,7 @@ it('should mass update the status of products to disabled', function () {
 it('should search the products with sku successfully', function () {
     $this->loginAsAdmin();
 
-    $products = Product::factory()->simple()->createMany(2);
+    $products = Product::factory()->simple()->withInitialValues()->createMany(2);
 
     $sku = $products->first()->sku;
 
