@@ -35,7 +35,7 @@ class AttributeOptionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function store(int $attributeId, AttributeOptionForm $request)
+    public function store(int $attributeId, AttributeOptionForm $request): JsonResponse
     {
         $requestData = $request->get('locales');
 
@@ -75,15 +75,13 @@ class AttributeOptionController extends Controller
             $option['locales'][$translation['locale']] = $translation['label'] ?? '';
         }
 
-        return new JsonResponse([
-            'option' => $option,
-        ]);
+        return new JsonResponse(['option' => $option]);
     }
 
     /**
      * Update attribute option
      */
-    public function update(int $attributeId, int $id)
+    public function update(int $attributeId, int $id): JsonResponse
     {
         $this->validate(request(), ['locales.*.label' => 'nullable|string']);
 
@@ -101,9 +99,9 @@ class AttributeOptionController extends Controller
     }
 
     /**
-     * Update attribute option
+     * Updates the sort order of an attribute option based on the direction it is moved (up or down).
      */
-    public function updateSort(int $attributeId)
+    public function updateSort(int $attributeId): JsonResponse
     {
         $data = request()->all();
 
@@ -126,8 +124,6 @@ class AttributeOptionController extends Controller
     public function destroy(int $attributeId, int $id): JsonResponse
     {
         // TODO: add validation before delete to check if it is not being used in any product
-        $attribute = $this->attributeOptionRepository->findOrFail($id);
-
         try {
             Event::dispatch('catalog.attribute.option.delete.before', $id);
 
@@ -141,7 +137,9 @@ class AttributeOptionController extends Controller
         } catch (\Exception $e) {
             report($e);
 
-            return new JsonResponse(['message' => $e->getMessage()], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+            return new JsonResponse([
+                'message' => $e->getMessage(),
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }

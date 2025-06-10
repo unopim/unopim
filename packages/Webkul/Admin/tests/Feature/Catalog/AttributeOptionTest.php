@@ -171,7 +171,7 @@ it('should update the sort order of attribute options when sorted down', functio
     $this->assertEquals($optionIds, $sortedOptionIds->toArray());
 });
 
-it('should return the attribute option for editing', function () {
+it('should return the attribute option for edit modal', function () {
     $attribute = Attribute::factory()->create(['type' => 'select']);
     $attributeId = $attribute->id;
     $option = $attribute->options()->first();

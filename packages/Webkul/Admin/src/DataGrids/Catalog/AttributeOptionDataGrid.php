@@ -58,13 +58,13 @@ class AttributeOptionDataGrid extends DataGrid
             $labelAliasColumn = 'name_'.$locale;
 
             $queryBuilder->addSelect(DB::raw(
-                "MAX(CASE WHEN {$localeColumn} = '{$locale}' AND CHAR_LENGTH(TRIM({$labelColumn})) > 0 THEN {$labelColumn} ELSE NULL END) as {$labelAliasColumn}"
+                "MAX(CASE WHEN {$localeColumn} = '{$locale}' THEN $labelColumn END) as {$labelAliasColumn}"
             ));
-
-            $this->addFilter($labelAliasColumn, DB::raw("attribute_option_label.locale = '{$locale}' AND attribute_option_label.label "));
         }
 
         $this->addFilter('id', 'attribute_options.id');
+
+        $this->addFilter('code', DB::raw("(SELECT GROUP_CONCAT(CONCAT(code, ' ', label)  SEPARATOR ' ') FROM {$tablePrefix}attribute_option_translations WHERE attribute_option_id = {$tablePrefix}attribute_options.id)"));
 
         return $queryBuilder;
     }
@@ -94,7 +94,7 @@ class AttributeOptionDataGrid extends DataGrid
                 'index'      => 'name_'.$locale,
                 'label'      => \Locale::getDisplayName($locale, $currenctLocaleCode),
                 'type'       => 'string',
-                'searchable' => true,
+                'searchable' => false,
                 'filterable' => false,
                 'sortable'   => false,
             ]);
