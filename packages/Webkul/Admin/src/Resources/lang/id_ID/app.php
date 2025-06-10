@@ -441,11 +441,12 @@ return [
                 'is-filterable'         => 'Dapat difilter',
 
                 'option' => [
-                    'color'    => 'Color Swatch',
-                    'dropdown' => 'Dropdown',
-                    'image'    => 'Gambar gambar',
-                    'save-btn' => 'Simpan opsi',
-                    'text'     => 'Swatch Teks',
+                    'create-success'      => 'Opsi atribut berhasil dibuat',
+                    'delete-success'      => 'Opsi atribut berhasil dihapus',
+                    'save-btn'            => 'Simpan opsi',
+                    'sort-update-failure' => 'Gagal memperbarui urutan sortir',
+                    'sort-update-success' => 'Urutan sortir berhasil diperbarui',
+                    'update-success'      => 'Opsi atribut berhasil diperbarui',
                 ],
             ],
 

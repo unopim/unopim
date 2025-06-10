@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Webkul\Admin\Http\Controllers\Catalog\AttributeController;
 use Webkul\Admin\Http\Controllers\Catalog\AttributeFamilyController;
 use Webkul\Admin\Http\Controllers\Catalog\AttributeGroupController;
+use Webkul\Admin\Http\Controllers\Catalog\AttributeOptionController;
 use Webkul\Admin\Http\Controllers\Catalog\CategoryController;
 use Webkul\Admin\Http\Controllers\Catalog\CategoryFieldController;
 use Webkul\Admin\Http\Controllers\Catalog\Options\AjaxOptionsController;
@@ -21,8 +22,6 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
         Route::controller(AttributeController::class)->prefix('attributes')->group(function () {
             Route::get('', 'index')->name('admin.catalog.attributes.index');
 
-            Route::get('{id}/options', 'getAttributeOptions')->name('admin.catalog.attributes.options');
-
             Route::get('create', 'create')->name('admin.catalog.attributes.create');
 
             Route::post('create', 'store')->name('admin.catalog.attributes.store');
@@ -34,6 +33,25 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
             Route::delete('edit/{id}', 'destroy')->name('admin.catalog.attributes.delete');
 
             Route::post('mass-delete', 'massDestroy')->name('admin.catalog.attributes.mass_delete');
+        });
+
+        /**
+         * Attribute Options routes.
+         */
+        Route::controller(AttributeOptionController::class)->prefix('attributes/{attribute_id}/options')->group(function () {
+            Route::get('', 'index')->name('admin.catalog.attributes.options.index');
+
+            Route::post('create', 'store')->name('admin.catalog.attributes.options.store');
+
+            Route::get('edit/{id}', 'edit')->name('admin.catalog.attributes.options.edit');
+
+            Route::put('edit/{id}', 'update')->name('admin.catalog.attributes.options.update');
+
+            Route::put('update-sort', 'updateSort')->name('admin.catalog.attributes.options.update_sort');
+
+            Route::delete('delete/{id}', 'destroy')->name('admin.catalog.attributes.options.delete');
+
+            Route::post('mass-delete', 'massDestroy')->name('admin.catalog.attributes.options.mass_delete');
         });
 
         /**

@@ -442,11 +442,12 @@ return [
                 'is-filterable'         => 'Er filtrerbar',
 
                 'option' => [
-                    'color'    => 'Farveprøve',
-                    'dropdown' => 'Dropdown',
-                    'image'    => 'Billedeprøve',
-                    'save-btn' => 'Gem Mulighed',
-                    'text'     => 'Tekstprøve',
+                    'create-success'      => 'Attributmulighed oprettet succesfuldt',
+                    'delete-success'      => 'Attributmulighed slettet succesfuldt',
+                    'save-btn'            => 'Gem Mulighed',
+                    'sort-update-failure' => 'Kunne ikke opdatere sorteringsrækkefølge',
+                    'sort-update-success' => 'Sorteringsrækkefølge opdateret succesfuldt',
+                    'update-success'      => 'Attributmulighed opdateret succesfuldt',
                 ],
             ],
 

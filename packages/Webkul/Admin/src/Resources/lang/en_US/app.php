@@ -444,11 +444,12 @@ return [
                 'is-filterable'         => 'Is Filterable',
 
                 'option' => [
-                    'color'    => 'Color Swatch',
-                    'dropdown' => 'Dropdown',
-                    'image'    => 'Image Swatch',
-                    'save-btn' => 'Save Option',
-                    'text'     => 'Text Swatch',
+                    'save-btn'            => 'Save Option',
+                    'create-success'      => 'Attribute Option Created Successfully',
+                    'update-success'      => 'Attribute Option Updated Successfully',
+                    'sort-update-success' => 'Sort Order Updated Successfully',
+                    'sort-update-failure' => 'Failed to Update Sort Order',
+                    'delete-success'      => 'Attribute Option Deleted Successfully',
                 ],
             ],
 

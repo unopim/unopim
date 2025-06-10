@@ -18,6 +18,31 @@ class AjaxOptionsController extends Controller
     const DEFAULT_PER_PAGE = 20;
 
     /**
+     * This is used for fetching attribute options for a specific attribute id
+     */
+    const ENTITY_ATTRIBUTE_OPTION = 'attribute';
+
+    /**
+     * This is used for fetching category field options for a specific category field
+     */
+    const ENTITY_CATEGORY_FIELD_OPTION = 'category_field';
+
+    /**
+     * This is used for fetching attribute families
+     */
+    const ENTITY_ATTRIBUTE_FAMILY = 'attribute_family';
+
+    /**
+     * This is used for fetching attribute groups
+     */
+    const ENTITY_ATTRIBUTE_GROUP = 'attribute_group';
+
+    /**
+     * This is used for fetching attributes
+     */
+    const ENTITY_ATTRIBUTE = 'attributes';
+
+    /**
      * Return instance of Controller
      */
     public function __construct(
@@ -44,12 +69,12 @@ class AjaxOptionsController extends Controller
 
         $currentLocaleCode = core()->getRequestedLocaleCode();
 
-        $formattedoptions = [];
+        $formattedOptions = [];
 
         foreach ($options as $option) {
             $translatedOptionLabel = $this->getTranslatedLabel($currentLocaleCode, $option, $entityName);
 
-            $formattedoptions[] = [
+            $formattedOptions[] = [
                 'id'    => $option->id,
                 'code'  => $option->code,
                 'label' => ! empty($translatedOptionLabel) ? $translatedOptionLabel : "[{$option->code}]",
@@ -58,7 +83,7 @@ class AjaxOptionsController extends Controller
         }
 
         return new JsonResponse([
-            'options'  => $formattedoptions,
+            'options'  => $formattedOptions,
             'page'     => $options->currentPage(),
             'lastPage' => $options->lastPage(),
         ]);
@@ -100,22 +125,22 @@ class AjaxOptionsController extends Controller
             $repository = $repository->whereNotIn($queryParams['exclude']['columnName'], $queryParams['exclude']['values']);
         }
 
-        return $repository->orderBy('id')->paginate(self::DEFAULT_PER_PAGE, ['*'], 'paginate', $page);
+        return $repository->orderBy($this->getSortColumn($entityName))->paginate(self::DEFAULT_PER_PAGE, ['*'], 'paginate', $page);
     }
 
     /**
      * TODO: Add attribute, family, attribute group, category, products support here
      * Get Repository according to entity name
      */
-    private function getRepository(string $entityName): Repository
+    protected function getRepository(string $entityName): Repository
     {
         return match ($entityName) {
-            'attribute'        => $this->attributeOptionsRepository,
-            'category_field'   => $this->categoryFieldOptionsRepository,
-            'attribute_family' => $this->attributeFamilyRepository,
-            'attribute_group'  => $this->attributeGroupRepository,
-            'attributes'       => $this->attributeRepository,
-            default            => throw new \Exception('Not implemented for '.$entityName)
+            self::ENTITY_ATTRIBUTE_OPTION      => $this->attributeOptionsRepository,
+            self::ENTITY_CATEGORY_FIELD_OPTION => $this->categoryFieldOptionsRepository,
+            self::ENTITY_ATTRIBUTE_FAMILY      => $this->attributeFamilyRepository,
+            self::ENTITY_ATTRIBUTE_GROUP       => $this->attributeGroupRepository,
+            self::ENTITY_ATTRIBUTE             => $this->attributeRepository,
+            default                            => throw new \Exception('Not implemented for '.$entityName)
         };
     }
 
@@ -125,8 +150,8 @@ class AjaxOptionsController extends Controller
     protected function getTranslationColumnName(string $entityName): string
     {
         return match ($entityName) {
-            'attribute_family', 'attribute_group', 'attributes' => 'name',
-            default            => 'label'
+            self::ENTITY_ATTRIBUTE_FAMILY, self::ENTITY_ATTRIBUTE_GROUP, self::ENTITY_ATTRIBUTE => 'name',
+            default => 'label'
         };
     }
 
@@ -138,5 +163,16 @@ class AjaxOptionsController extends Controller
         $translation = $option->translate($currentLocaleCode);
 
         return $translation?->{$this->getTranslationColumnName($entityName)};
+    }
+
+    /**
+     * Get the sort column based on the entity name
+     */
+    protected function getSortColumn(string $entityName): string
+    {
+        return match ($entityName) {
+            self::ENTITY_ATTRIBUTE_OPTION, self::ENTITY_CATEGORY_FIELD_OPTION => 'sort_order',
+            default                                                           => 'id',
+        };
     }
 }

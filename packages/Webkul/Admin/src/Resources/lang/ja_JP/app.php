@@ -440,11 +440,12 @@ return [
                 'usable-in-grid'        => 'グリッドで使用可能',
 
                 'option' => [
-                    'color'    => 'カラー スウォッチ',
-                    'dropdown' => 'ドロップダウン',
-                    'image'    => '画像スウォッチ',
-                    'save-btn' => '保存オプション',
-                    'text'     => 'テキスト スウォッチ',
+                    'create-success'      => '属性オプションが正常に作成されました',
+                    'delete-success'      => '属性オプションが正常に削除されました',
+                    'save-btn'            => '保存オプション',
+                    'sort-update-failure' => '並び順の更新に失敗しました',
+                    'sort-update-success' => '並び順が正常に更新されました',
+                    'update-success'      => '属性オプションが正常に更新されました',
                 ],
             ],
 

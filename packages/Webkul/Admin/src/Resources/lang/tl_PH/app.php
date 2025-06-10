@@ -442,11 +442,12 @@ return [
                 'is-filterable'         => 'Nafifilter',
 
                 'option' => [
-                    'color'    => 'Color Swatch',
-                    'dropdown' => 'Dropdown',
-                    'image'    => 'Image Swatch',
-                    'save-btn' => 'I-save ang Opsyon',
-                    'text'     => 'Text Swatch',
+                    'create-success'      => 'Matagumpay na nalikha ang Opsyon ng Katangian',
+                    'delete-success'      => 'Matagumpay na natanggal ang Opsyon ng Katangian',
+                    'save-btn'            => 'I-save ang Opsyon',
+                    'sort-update-failure' => 'Nabigong i-update ang pagkakasunod-sunod',
+                    'sort-update-success' => 'Matagumpay na na-update ang pagkakasunod-sunod',
+                    'update-success'      => 'Matagumpay na na-update ang Opsyon ng Katangian',
                 ],
             ],
 

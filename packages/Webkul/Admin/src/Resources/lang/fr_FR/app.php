@@ -441,11 +441,12 @@ return [
                 'usable-in-grid'        => 'Disponible dans la liste des produits',
 
                 'option' => [
-                    'color'    => 'Couleur',
-                    'dropdown' => 'Dérouler',
-                    'image'    => 'Échantillon d\'image',
-                    'save-btn' => 'Enregistrer l\'option',
-                    'text'     => 'Échantillon de texte',
+                    'create-success'       => 'Option de champ de catégorie créée avec succès',
+                    'delete-success'       => 'Option de champ de catégorie supprimée avec succès',
+                    'save-btn'             => 'Enregistrer l\'option',
+                    'sort-update-failure'  => 'Échec de la mise à jour du tri',
+                    'sort-update-success'  => 'Tri mis à jour avec succès',
+                    'update-success'       => 'Option de champ de catégorie mise à jour avec succès',
                 ],
             ],
 
