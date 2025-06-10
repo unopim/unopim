@@ -440,11 +440,12 @@ return [
                 'usable-in-grid'        => 'Usable in grid',
 
                 'option' => [
-                    'color'    => 'Colour Swatch',
-                    'dropdown' => 'Dropdown',
-                    'image'    => 'Image Swatch',
-                    'save-btn' => 'Save Option',
-                    'text'     => 'Text Swatch',
+                    'create-success'      => 'Attribute Option Created Successfully',
+                    'delete-success'      => 'Attribute Option Deleted Successfully',
+                    'save-btn'            => 'Save Option',
+                    'sort-update-failure' => 'Failed to Update Sort Order',
+                    'sort-update-success' => 'Sort Order Updated Successfully',
+                    'update-success'      => 'Attribute Option Updated Successfully',
                 ],
             ],
 

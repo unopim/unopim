@@ -440,11 +440,12 @@ return [
                 'usable-in-grid'        => 'Izgarada Kullanılabilir',
 
                 'option' => [
-                    'color'    => 'Renk Örneği',
-                    'dropdown' => 'Açılır Menü',
-                    'image'    => 'Resim Örneği',
-                    'save-btn' => 'Seçenek Kaydet',
-                    'text'     => 'Metin Örneği',
+                    'create-success'      => 'Öznitelik Seçeneği Başarıyla Oluşturuldu',
+                    'delete-success'      => 'Öznitelik Seçeneği Başarıyla Silindi',
+                    'save-btn'            => 'Seçeneği Kaydet',
+                    'sort-update-failure' => 'Sıralama Güncellenemedi',
+                    'sort-update-success' => 'Sıralama Başarıyla Güncellendi',
+                    'update-success'      => 'Öznitelik Seçeneği Başarıyla Güncellendi',
                 ],
             ],
 

@@ -439,11 +439,12 @@ return [
                 'usable-in-grid'        => '可在网格中使用',
 
                 'option' => [
-                    'color'    => '色板',
-                    'dropdown' => '落下',
-                    'image'    => '图像色板',
-                    'save-btn' => '保存选项',
-                    'text'     => '文字色板',
+                    'create-success'       => '属性选项创建成功',
+                    'delete-success'       => '属性选项删除成功',
+                    'save-btn'             => '保存选项',
+                    'sort-update-failure'  => '排序更新失败',
+                    'sort-update-success'  => '排序更新成功',
+                    'update-success'       => '属性选项更新成功',
                 ],
             ],
 

@@ -440,11 +440,12 @@ return [
                 'usable-in-grid'        => 'Brukes i rutenett',
 
                 'option' => [
-                    'color'    => 'Fargeprøve',
-                    'dropdown' => 'Nedtrekksmeny',
-                    'image'    => 'Bildeprøve',
-                    'save-btn' => 'Lagre alternativ',
-                    'text'     => 'Tekstprøve',
+                    'create-success'      => 'Attributtalternativ opprettet',
+                    'delete-success'      => 'Attributtalternativ slettet',
+                    'save-btn'            => 'Lagre alternativ',
+                    'sort-update-failure' => 'Kunne ikke oppdatere sorteringsrekkefølge',
+                    'sort-update-success' => 'Sorteringsrekkefølge oppdatert',
+                    'update-success'      => 'Attributtalternativ oppdatert',
                 ],
             ],
 

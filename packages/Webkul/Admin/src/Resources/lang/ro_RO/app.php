@@ -440,11 +440,12 @@ return [
                 'usable-in-grid'        => 'Utilizabil în grilă',
 
                 'option' => [
-                    'color'    => 'Eșantion de culoare',
-                    'dropdown' => 'Meniu derulant',
-                    'image'    => 'Eșantion imagine',
-                    'save-btn' => 'Salvează opțiune',
-                    'text'     => 'Eșantion text',
+                    'create-success'      => 'Opțiunea atributului a fost creată cu succes',
+                    'delete-success'      => 'Opțiunea atributului a fost ștearsă cu succes',
+                    'save-btn'            => 'Salvează opțiune',
+                    'sort-update-failure' => 'Actualizarea ordinii de sortare a eșuat',
+                    'sort-update-success' => 'Ordinea de sortare a fost actualizată cu succes',
+                    'update-success'      => 'Opțiunea atributului a fost actualizată cu succes',
                 ],
             ],
 

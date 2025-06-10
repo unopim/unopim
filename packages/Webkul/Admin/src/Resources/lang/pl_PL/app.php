@@ -440,11 +440,12 @@ return [
                 'usable-in-grid'        => 'Można używać w siatce',
 
                 'option' => [
-                    'color'    => 'Kolor próbki',
-                    'dropdown' => 'Menu rozwijane',
-                    'image'    => 'Obraz próbki',
-                    'save-btn' => 'Zapisz opcję',
-                    'text'     => 'Tekst próbki',
+                    'create-success'      => 'Opcja atrybutu została pomyślnie utworzona',
+                    'delete-success'      => 'Opcja atrybutu została pomyślnie usunięta',
+                    'save-btn'            => 'Zapisz opcję',
+                    'sort-update-failure' => 'Nie udało się zaktualizować kolejności sortowania',
+                    'sort-update-success' => 'Kolejność sortowania została zaktualizowana',
+                    'update-success'      => 'Opcja atrybutu została pomyślnie zaktualizowana',
                 ],
             ],
 

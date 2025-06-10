@@ -440,11 +440,12 @@ return [
                 'usable-in-grid'        => 'Útil a la graella',
 
                 'option' => [
-                    'color'    => 'Muestra de color',
-                    'dropdown' => 'Desplegable',
-                    'image'    => 'Muestra d\'imatge',
-                    'save-btn' => 'Desar opció',
-                    'text'     => 'Muestra de text',
+                    'create-success'      => 'Opció d\'atribut creada amb èxit',
+                    'delete-success'      => 'Opció d\'atribut eliminada amb èxit',
+                    'save-btn'            => 'Desar opció',
+                    'sort-update-failure' => 'No s\'ha pogut actualitzar l\'ordre de classificació',
+                    'sort-update-success' => 'Ordre de classificació actualitzat amb èxit',
+                    'update-success'      => 'Opció d\'atribut actualitzada amb èxit',
                 ],
             ],
 

@@ -440,11 +440,12 @@ return [
                 'usable-in-grid'        => 'Käytettävissä ruudukossa',
 
                 'option' => [
-                    'color'    => 'Väriä',
-                    'dropdown' => 'Pudotusvalikko',
-                    'image'    => 'Kuvanäyte',
-                    'save-btn' => 'Tallenna vaihtoehto',
-                    'text'     => 'Tekstinäyte',
+                    'create-success'       => 'Attribuuttivaihtoehto luotiin onnistuneesti',
+                    'delete-success'       => 'Attribuuttivaihtoehto poistettiin onnistuneesti',
+                    'save-btn'             => 'Tallenna vaihtoehto',
+                    'sort-update-failure'  => 'Järjestyksen päivitys epäonnistui',
+                    'sort-update-success'  => 'Järjestys päivitetty onnistuneesti',
+                    'update-success'       => 'Attribuuttivaihtoehto päivitettiin onnistuneesti',
                 ],
             ],
 
@@ -852,7 +853,7 @@ return [
             'update-success'                 => 'Perhe päivitettiin onnistuneesti.',
             'user-define-error'              => 'Et voi poistaa järjestelmäattribuuttiperhettä',
             'not-found'                      => 'Attribuuttiperheellä, jonka koodi on ":code", ei löytynyt',
-            'can-not-update-variant-options' => 'Ei voida päivittää määritettäviä vaihtoehtoja, koska tällä perheellä on jo varianttituotteita.',
+            'can-not-update-variant-options' => 'Ei voida päivittää määritettäväviä vaihtoehtoja, koska tällä perheellä on jo varianttituotteita.',
         ],
 
         'history' => [

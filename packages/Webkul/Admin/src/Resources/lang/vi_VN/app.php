@@ -440,11 +440,12 @@ return [
                 'usable-in-grid'        => 'Có thể sử dụng trong lưới',
 
                 'option' => [
-                    'color'    => 'Mẫu màu sắc',
-                    'dropdown' => 'Danh sách thả xuống',
-                    'image'    => 'Mẫu hình ảnh',
-                    'save-btn' => 'Lưu tuỳ chọn',
-                    'text'     => 'Mẫu văn bản',
+                    'create-success'      => 'Tùy chọn thuộc tính đã được tạo thành công',
+                    'delete-success'      => 'Tùy chọn thuộc tính đã bị xóa thành công',
+                    'save-btn'            => 'Lưu tùy chọn',
+                    'sort-update-failure' => 'Cập nhật thứ tự sắp xếp thất bại',
+                    'sort-update-success' => 'Cập nhật thứ tự sắp xếp thành công',
+                    'update-success'      => 'Tùy chọn thuộc tính đã được cập nhật thành công',
                 ],
             ],
 

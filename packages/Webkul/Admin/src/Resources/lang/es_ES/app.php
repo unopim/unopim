@@ -439,11 +439,12 @@ return [
                 'usable-in-grid'        => 'Usable en la red',
 
                 'option' => [
-                    'color'    => 'Muestra de color',
-                    'dropdown' => 'Desplegable',
-                    'image'    => 'Muestra de imagen',
-                    'save-btn' => 'Opción Guardar',
-                    'text'     => 'Muestra de texto',
+                    'create-success'       => 'Opción de atributo creada correctamente',
+                    'delete-success'       => 'Opción de atributo eliminada correctamente',
+                    'save-btn'             => 'Guardar opción',
+                    'sort-update-failure'  => 'No se pudo actualizar el orden',
+                    'sort-update-success'  => 'Orden actualizado correctamente',
+                    'update-success'       => 'Opción de atributo actualizada correctamente',
                 ],
             ],
 
