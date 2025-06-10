@@ -142,7 +142,7 @@
                         <div
                             class="relative inline-flex w-full max-w-max ltr:pl-3 rtl:pr-3 ltr:pr-5 rtl:pl-5 cursor-pointer select-none appearance-none items-center justify-between gap-x-1 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-900 px-1 py-1.5 text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:border-gray-400 dark:hover:border-gray-400 focus:outline-none focus:ring-2"
                             :class="{'[&>*]:text-violet-700 [&>*]:dark:text-white': applied.filters.columns.length > 1}"
-                            v-if="available.columns.filter(col => col.filterable == true).length"
+                            v-if="available?.columns?.filter(col => col?.filterable == true)?.length"
                         >
                             <span class="icon-filter text-2xl"></span>
 
