@@ -1,5 +1,34 @@
 # v0.2.x
 
+## \[v0.2.1] – 2025-06-11
+
+### Patch Release
+**Highlights:**
+* Stability improvements, performance optimizations, and small feature enhancements.
+* Resolves several functional bugs in the product and category modules.
+* Improves export handling and UI/UX in product management.
+
+### Added / Improved
+* Altered `text` columns to `string (varchar)` and added indexes for better performance.
+* Enhanced product indexing logic for Elasticsearch.
+* Dynamically manage quick product export jobs.
+* Improved Magic AI functionality.
+* Optimized page loading for large datasets.
+* Improved validation logic for file uploads.
+* Enhanced layout of the Product Info section.
+
+### Fixed
+* Fixed category datagrid sorting by switching from `_id` to `id`.
+* Resolved issues with invalid channel-locale selections.
+* Prevented duplicate unique attribute values when creating product variants.
+* Fixed issues with product datagrid search and SKU filtering.
+* Fixed inability to input values in the Price section when multiple currencies are enabled.
+* Resolved inconsistent WYSIWYG behavior during data transfer and API usage.
+* Corrected Finnish translation issues.
+
+### Dependencies
+* Bumped `laravel/framework` from `v10.48.23` to `v10.48.29`.
+ 
 ## v0.2.0 - 2025-03-26
 ### ✨ **Features**  
 - Added disk parameter to `sanitizeSVG`. [#58](https://github.com/unopim/unopim/pull/58)  
