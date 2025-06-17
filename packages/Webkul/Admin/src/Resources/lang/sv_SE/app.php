@@ -442,11 +442,12 @@ return [
                 'is-filterable'         => 'Är filtrerbar',
 
                 'option' => [
-                    'color'    => 'Färgväljare',
-                    'dropdown' => 'Rullgardinsmeny',
-                    'image'    => 'Bildprov',
-                    'save-btn' => 'Spara alternativ',
-                    'text'     => 'Textprov',
+                    'create-success'        => 'Attributalternativ skapades',
+                    'delete-success'        => 'Attributalternativ raderades',
+                    'save-btn'              => 'Spara alternativ',
+                    'sort-update-failure'   => 'Det gick inte att uppdatera sorteringsordningen',
+                    'sort-update-success'   => 'Sorteringsordningen uppdaterades',
+                    'update-success'        => 'Attributalternativ uppdaterades',
                 ],
             ],
 

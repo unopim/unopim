@@ -439,11 +439,12 @@ return [
                 'is-filterable'         => 'Ist filterbar',
 
                 'option' => [
-                    'color'    => 'Farbfeld',
-                    'dropdown' => 'Dropdown',
-                    'image'    => 'Bildfeld',
-                    'save-btn' => 'Speicheroption',
-                    'text'     => 'Textfeld',
+                    'create-success'       => 'Attributoption erfolgreich erstellt',
+                    'delete-success'       => 'Attributoption erfolgreich gelöscht',
+                    'save-btn'             => 'Speicheroption',
+                    'sort-update-failure'  => 'Sortierreihenfolge konnte nicht aktualisiert werden',
+                    'sort-update-success'  => 'Sortierreihenfolge erfolgreich aktualisiert',
+                    'update-success'       => 'Attributoption erfolgreich aktualisiert',
                 ],
             ],
 

@@ -73,7 +73,7 @@ class AttributeController extends Controller
 
         session()->flash('success', trans('admin::app.catalog.attributes.create-success'));
 
-        return redirect()->route('admin.catalog.attributes.index');
+        return redirect()->route('admin.catalog.attributes.edit', $attribute->id);
     }
 
     /**
@@ -88,18 +88,6 @@ class AttributeController extends Controller
         $locales = $this->localeRepository->getActiveLocales();
 
         return view('admin::catalog.attributes.edit', compact('attribute', 'locales'));
-    }
-
-    /**
-     * Get attribute options associated with attribute.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function getAttributeOptions(int $id)
-    {
-        $attribute = $this->attributeRepository->findOrFail($id);
-
-        return $attribute->options()->orderBy('sort_order')->get();
     }
 
     /**

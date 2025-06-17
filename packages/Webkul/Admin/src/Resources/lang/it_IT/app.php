@@ -441,11 +441,12 @@ return [
                 'usable-in-grid'        => 'Usabile nella griglia',
 
                 'option' => [
-                    'color'    => 'Colore campione',
-                    'dropdown' => 'Menu a discesa',
-                    'image'    => 'Immagine campione',
-                    'save-btn' => 'Salva opzione',
-                    'text'     => 'Testo campione',
+                    'create-success'      => 'Opzione attributo creata con successo',
+                    'delete-success'      => 'Opzione attributo eliminata con successo',
+                    'save-btn'            => 'Salva opzione',
+                    'sort-update-failure' => 'Aggiornamento dell\'ordinamento non riuscito',
+                    'sort-update-success' => 'Ordinamento aggiornato con successo',
+                    'update-success'      => 'Opzione attributo aggiornata con successo',
                 ],
             ],
 

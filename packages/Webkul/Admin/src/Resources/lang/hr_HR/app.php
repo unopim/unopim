@@ -442,11 +442,12 @@ return [
                 'is-filterable'         => 'Je filtrabilno',
 
                 'option' => [
-                    'color'    => 'Boja uzorka',
-                    'dropdown' => 'Padajući izbornik',
-                    'image'    => 'Slika uzorka',
-                    'save-btn' => 'Spremi opciju',
-                    'text'     => 'Tekstualni uzorak',
+                    'create-success'      => 'Opcija atributa uspješno stvorena',
+                    'delete-success'      => 'Opcija atributa uspješno izbrisana',
+                    'save-btn'            => 'Spremi opciju',
+                    'sort-update-failure' => 'Neuspjelo ažuriranje redoslijeda sortiranja',
+                    'sort-update-success' => 'Redoslijed sortiranja uspješno ažuriran',
+                    'update-success'      => 'Opcija atributa uspješno ažurirana',
                 ],
             ],
 

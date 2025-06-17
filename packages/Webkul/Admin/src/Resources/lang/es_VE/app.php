@@ -442,11 +442,12 @@ return [
                 'is-filterable'         => 'Es filtrable',
 
                 'option' => [
-                    'color'    => 'Muestra de color',
-                    'dropdown' => 'Desplegable',
-                    'image'    => 'Muestra de imagen',
-                    'save-btn' => 'Guardar opción',
-                    'text'     => 'Muestra de texto',
+                    'create-success'      => 'Attribute Option Created Successfully',
+                    'delete-success'      => 'Attribute Option Deleted Successfully',
+                    'save-btn'            => 'Save Option',
+                    'sort-update-failure' => 'Failed to Update Sort Order',
+                    'sort-update-success' => 'Sort Order Updated Successfully',
+                    'update-success'      => 'Attribute Option Updated Successfully',
                 ],
             ],
 
