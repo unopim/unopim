@@ -1025,7 +1025,7 @@
                 :loading="isLoading ?? false"
                 :max-height="600"
                 :internal-search="false"
-                :close-on-select="true"
+                :close-on-select="false"
                 :clear-on-select="false"
                 :show-no-results="true"
                 :hide-selected="false"
