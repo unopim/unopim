@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => 'Орчуулах',
+                    'title'                    => 'Орчуулах',
+                    'source-channel'           => 'Эх суваг',
+                    'locale'                   => 'Эх орон нутгийн тохиргоо',
+                    'translated-content'       => 'Орчуулагдсан агуулга',
+                    'translating'              => 'Орчуулж байна',
+                    'apply'                    => 'Хэрэглэх',
+                    'cancel'                   => 'Цуцлах',
+                    'target-locales'           => 'Зорилтот орон нутгийн тохиргоо',
+                    'target-channel'           => 'Зорилтот суваг',
+                    'attributes'               => 'Шинж чанарууд',
+                    'source-content'           => 'Эх агуулга',
+                    'tranlated-job-processed'  => 'Орчуулсан агуулгыг хадгалах ажил хийгдлээ.',
+                ],
+
                 'product-info' => [
                     'title'        => 'Бүтээгдэхүүний мэдээлэл',
                     'status'       => 'Төлөв',
@@ -2018,6 +2034,38 @@ return [
             're-generate-secret-key-success' => 'API нууц түлхүүрийг амжилттай зохицуулж байна',
             'client-not-found'               => 'Үйлчлүүлэгч олдсонгүй',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'Гарчиг',
+                'prompt'        => 'Тушаал',
+                'type'          => 'Төрөл',
+                'created-at'    => 'Үүсгэсэн огноо',
+                'updated-at'    => 'Шинэчилсэн огноо',
+                'actions'       => 'Үйлдлүүд',
+                'edit'          => 'Засах',
+                'delete'        => 'Устгах',
+                'product'       => 'Бүтээгдэхүүн',
+                'category'      => 'Ангилал',
+            ],
+            'create' => [
+                'title'         => 'Тушаал',
+                'create-btn'    => 'Тушаал үүсгэх',
+                'edit-title'    => 'Тушаал засах',
+                'create-title'  => 'Шинэ тушаал үүсгэх',
+                'label-title'   => 'Гарчиг',
+                'type'          => 'Төрөл',
+                'prompt'        => 'Тушаал',
+                'save-btn'      => 'Тушаал хадгалах',
+            ],
+            'message' => [
+                'save-success'      => 'Тушаал амжилттай хадгалагдлаа.',
+                'update-success'    => 'Тушаал амжилттай шинэчлэгдлээ.',
+                'delete-success'    => 'Тушаал амжилттай устгагдлаа.',
+                'delete-fail'       => 'Тушаал устгахад алдаа гарлаа.',
+            ],
+        ],
     ],
 
     'components' => [
@@ -2104,6 +2152,8 @@ return [
                 'url-rewrites'             => 'URL Дахин бичих',
                 'users'                    => 'Хэрэглэгчид',
                 'integrations'             => 'Бүртгэл',
+                'prompt'                   => 'Түлхүүр үг',
+                'general-tab'              => 'Тохиргоо',
             ],
         ],
 

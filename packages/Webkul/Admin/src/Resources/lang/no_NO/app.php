@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => 'Oversett',
+                    'title'                    => 'Oversett',
+                    'source-channel'           => 'Kildekanal',
+                    'locale'                   => 'Kildelokalisering',
+                    'translated-content'       => 'Oversatt innhold',
+                    'translating'              => 'Oversetter',
+                    'apply'                    => 'Bruk',
+                    'cancel'                   => 'Avbryt',
+                    'target-locales'           => 'Mållokaliseringer',
+                    'target-channel'           => 'Målkanal',
+                    'attributes'               => 'Egenskaper',
+                    'source-content'           => 'Kildeinnhold',
+                    'tranlated-job-processed'  => 'Oppgaven for lagring av oversatt innhold er behandlet.',
+                ],
+
                 'product-info' => [
                     'title'        => 'Produktinformasjon',
                     'status'       => 'Status',
@@ -1759,6 +1775,38 @@ return [
             're-generate-secret-key-success' => 'API-sikkerhetsnøkkel ble generert på nytt vellykket',
             'client-not-found'               => 'Klient ble ikke funnet',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'Tittel',
+                'prompt'        => 'Prompt',
+                'type'          => 'Type',
+                'created-at'    => 'Opprettet',
+                'updated-at'    => 'Oppdatert',
+                'actions'       => 'Handlinger',
+                'edit'          => 'Rediger',
+                'delete'        => 'Slett',
+                'product'       => 'Produkt',
+                'category'      => 'Kategori',
+            ],
+            'create' => [
+                'title'         => 'Prompt',
+                'create-btn'    => 'Opprett Prompt',
+                'edit-title'    => 'Rediger Prompt',
+                'create-title'  => 'Opprett Ny Prompt',
+                'label-title'   => 'Tittel',
+                'type'          => 'Type',
+                'prompt'        => 'Prompt',
+                'save-btn'      => 'Lagre Prompt',
+            ],
+            'message' => [
+                'save-success'      => 'Prompt ble lagret.',
+                'update-success'    => 'Prompt ble oppdatert.',
+                'delete-success'    => 'Prompt ble slettet.',
+                'delete-fail'       => 'Kunne ikke slette prompt.',
+            ],
+        ],
     ],
 
     'components' => [
@@ -1801,6 +1849,8 @@ return [
                 'themes'             => 'Temaer',
                 'users'              => 'Brukere',
                 'integrations'       => 'Integrasjoner',
+                'prompt'             => 'Prompt',
+                'general-tab'        => 'Konfigurasjon',
             ],
         ],
 

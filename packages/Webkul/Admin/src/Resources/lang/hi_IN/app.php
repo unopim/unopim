@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => 'अनुवाद करें',
+                    'title'                    => 'अनुवाद',
+                    'source-channel'           => 'स्रोत चैनल',
+                    'locale'                   => 'स्रोत स्थान',
+                    'translated-content'       => 'अनुवादित सामग्री',
+                    'translating'              => 'अनुवाद हो रहा है',
+                    'apply'                    => 'लागू करें',
+                    'cancel'                   => 'रद्द करें',
+                    'target-locales'           => 'लक्षित स्थान',
+                    'target-channel'           => 'लक्षित चैनल',
+                    'attributes'               => 'गुण',
+                    'source-content'           => 'स्रोत सामग्री',
+                    'tranlated-job-processed'  => 'अनुवादित सामग्री सहेजने का कार्य पूरा हुआ।',
+                ],
+
                 'product-info' => [
                     'title'        => 'उत्पाद जानकारी',
                     'status'       => 'स्थिति',
@@ -834,7 +850,7 @@ return [
                 'group-name-already-exists'        => 'एक विशेषता समूह का नाम पहले से मौजूद है।',
                 'groups'                           => 'समूह',
                 'attribute-groups'                 => 'विशेषता समूह',
-                'groups-info'                      => 'विशेषता परिवार समूहों का प्रबंधन करें',                'main-column' => 'मुख्य स्तंभ',
+                'groups-info'                      => 'विशेषता परिवार समूहों का प्रबंधन करें',
                 'name'                             => 'नाम',
                 'removal-not-possible'             => 'आप विशेषता परिवार से सिस्टम विशेषताओं को नहीं हटा सकते।',
                 'right-column'                     => 'दाईं ओर स्तंभ',
@@ -1595,6 +1611,18 @@ return [
                         'title-info' => 'यह सुविधा प्रत्येक छवि अपलोड के लिए मैजिक एआई को सक्षम करेगी, जहां आप डल-ई का उपयोग करके छवियां उत्पन्न करना चाहते हैं। <br/> <br/> जब सक्षम करें, छवि उत्पन्न करने के लिए किसी भी छवि अपलोड पर जाएं।',
                     ],
 
+                    'translation'   => [
+                        'title'                  => 'अनुवाद',
+                        'enabled'                => 'सक्रिय',
+                        'title-info'             => 'यह सुविधा Magic AI को पाठ का अनुवाद करने में सक्षम बनाएगी, जिससे आप एक भाषा से दूसरी भाषा में आसानी से पाठ परिवर्तित कर सकेंगे।',
+                        'global-source-channel'  => 'स्रोत चैनल',
+                        'global-source-locale'   => 'स्रोत भाषा',
+                        'translation-model'      => 'अनुवाद मॉडल',
+                        'replace-existing-value' => 'मौजूदा मान को बदलें',
+                        'target-channel'         => 'लक्ष्य चैनल',
+                        'target-locales'         => 'लक्ष्य भाषाएँ',
+                    ],
+
                     'review-translation' => [
                         'dolphin-phi'       => 'डॉल्फिन फी',
                         'enabled'           => 'सक्रिय',
@@ -2017,6 +2045,38 @@ return [
             're-generate-secret-key-success' => 'एपीआई सीक्रेट कुंजी सफलतापूर्वक पुनर्जीवित है',
             'client-not-found'               => 'ग्राहक नहीं मिला',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'आईडी',
+                'title'         => 'शीर्षक',
+                'prompt'        => 'प्रॉम्प्ट',
+                'type'          => 'प्रकार',
+                'created_at'    => 'बनाया गया',
+                'updated_at'    => 'अद्यतन किया गया',
+                'actions'       => 'क्रियाएँ',
+                'edit'          => 'संपादित करें',
+                'delete'        => 'हटाएँ',
+                'product'       => 'उत्पाद',
+                'category'      => 'श्रेणी',
+            ],
+            'create' => [
+                'title'         => 'प्रॉम्प्ट',
+                'create-btn'    => 'प्रॉम्प्ट बनाएं',
+                'edit-title'    => 'प्रॉम्प्ट संपादित करें',
+                'create-title'  => 'नया प्रॉम्प्ट बनाएं',
+                'label-title'   => 'शीर्षक',
+                'type'          => 'प्रकार',
+                'prompt'        => 'प्रॉम्प्ट',
+                'save-btn'      => 'प्रॉम्प्ट सहेजें',
+            ],
+            'message' => [
+                'save-success'      => 'प्रॉम्प्ट सफलतापूर्वक सहेजा गया।',
+                'update-success'    => 'प्रॉम्प्ट सफलतापूर्वक अपडेट किया गया।',
+                'delete-success'    => 'प्रॉम्प्ट सफलतापूर्वक हटाया गया।',
+                'delete-fail'       => 'प्रॉम्प्ट को हटाने में विफल।',
+            ],
+        ],
     ],
 
     'components' => [
@@ -2103,6 +2163,8 @@ return [
                 'url-rewrites'             => 'URL फिर से लिखता है',
                 'users'                    => 'उपयोगकर्ताओं',
                 'integrations'             => 'एकीकरण',
+                'prompt'                   => 'प्रॉम्प्ट',
+                'general-tab'              => 'कॉन्फ़िगरेशन',
             ],
         ],
 

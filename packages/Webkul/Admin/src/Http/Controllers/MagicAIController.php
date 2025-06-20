@@ -3,17 +3,26 @@
 namespace Webkul\Admin\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
+use Webkul\Admin\DataGrids\MagicPromptGrid;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\MagicAI\Facades\MagicAI;
+use Webkul\MagicAI\Jobs\SaveTranslatedAllAttributesJob;
+use Webkul\MagicAI\Jobs\SaveTranslatedDataJob;
+use Webkul\MagicAI\Repository\MagicPromptRepository;
 use Webkul\MagicAI\Services\AIModel;
 use Webkul\MagicAI\Services\Prompt\Prompt;
+use Webkul\Product\Facades\ProductValueMapper as ProductValueMapperFacade;
+use Webkul\Product\Repositories\ProductRepository;
 
 class MagicAIController extends Controller
 {
     public function __construct(
+        protected ProductRepository $productRepository,
         protected AttributeRepository $attributeRepository,
         protected CategoryFieldRepository $categoryFieldRepository,
+        protected MagicPromptRepository $magicPromptRepository,
         protected Prompt $promptService,
     ) {}
 
@@ -24,7 +33,7 @@ class MagicAIController extends Controller
     {
         try {
             return new JsonResponse([
-                'models'  => $this->formatModelList(AIModel::getModels()),
+                'models'  => AIModel::getModels(),
                 'message' => trans('admin::app.catalog.products.index.magic-ai-validate-success'),
             ]);
         } catch (\Exception $e) {
@@ -45,7 +54,7 @@ class MagicAIController extends Controller
 
         try {
             return new JsonResponse([
-                'models'  => $this->formatModelList(AIModel::validate()),
+                'models'  => AIModel::validate(),
                 'message' => trans('admin::app.catalog.products.index.magic-ai-validate-success'),
             ]);
         } catch (\Exception $e) {
@@ -177,32 +186,231 @@ class MagicAIController extends Controller
 
     public function defaultPrompt()
     {
-        $prompts = config('default_prompts');
-        $translatedPrompts = [];
+        if (request()->field == 'category_field') {
+            $prompts = $this->magicPromptRepository->where('type', 'category')->select('prompt', 'title')->get();
 
-        foreach ($prompts as $value) {
-            $translatedPrompts[] = [
-                'prompt' => trans($value['prompt']),
-                'title'  => trans($value['title']),
+            return new JsonResponse([
+                'prompts' => $prompts,
+            ]);
+        }
+        $prompts = $this->magicPromptRepository->where('type', 'product')->select('prompt', 'title')->get();
+
+        return new JsonResponse([
+            'prompts' => $prompts,
+        ]);
+    }
+
+    public function index()
+    {
+        if (request()->ajax()) {
+            return app(MagicPromptGrid::class)->toJson();
+        }
+
+        return view('admin::configuration.magic-ai-prompt.index');
+    }
+
+    public function store(): JsonResponse
+    {
+        $this->validate(request(), [
+            'prompt' => 'required',
+            'title'  => 'required',
+            'type'   => 'required',
+        ]);
+
+        $data = request()->only([
+            'prompt',
+            'title',
+            'type',
+        ]);
+
+        $this->magicPromptRepository->create($data);
+
+        return new JsonResponse([
+            'message' => trans('admin::app.configuration.prompt.message.save-success'),
+        ]);
+    }
+
+    public function edit(int $id): JsonResponse
+    {
+        $prompt = $this->magicPromptRepository->findOrFail($id);
+
+        return new JsonResponse([
+            'data' => $prompt,
+        ]);
+    }
+
+    public function update(): JsonResponse
+    {
+        $this->validate(request(), [
+            'prompt'      => 'required',
+            'title'       => 'required',
+            'type'        => 'required',
+        ]);
+
+        $data = request()->only(['prompt', 'title', 'type']);
+        $this->magicPromptRepository->update($data, request()->id);
+
+        return new JsonResponse([
+            'message' => trans('admin::app.configuration.prompt.message.update-success'),
+        ]);
+    }
+
+    public function destroy(int $id): JsonResponse
+    {
+        try {
+            $this->magicPromptRepository->delete($id);
+
+            return new JsonResponse([
+                'message' => trans('admin::app.configuration.prompt.message.delete-success'),
+            ]);
+        } catch (\Exception $e) {
+            Log::info($e);
+
+            return new JsonResponse([
+                'message' => trans('admin::app.configuration.prompt.message.delete-fail'),
+            ], 500);
+        }
+    }
+
+    public function isTranslatable()
+    {
+        $productId = request()->resource_id;
+        $product = $this->productRepository->find($productId);
+        $productData = $product->toArray();
+        $locale = core()->getRequestedLocaleCode();
+        $channel = core()->getRequestedChannelCode();
+        $arr = ProductValueMapperFacade::getChannelLocaleSpecificFields($productData, $channel, $locale);
+
+        return new JsonResponse([
+            'isTranslatable' => ! empty($arr) && array_key_exists(request()->field, $arr),
+            'sourceData'     => ! empty($arr) && array_key_exists(request()->field, $arr) ? $arr[request()->field] : null,
+        ]);
+    }
+
+    public function translateToManyLocale(): JsonResponse
+    {
+        $id = request()->resource_id;
+        $product = $this->productRepository->find($id);
+        $data = $product->values;
+
+        $channel = request()->input('targetChannel');
+        $field = request()->input('field');
+
+        $targetLocales = explode(',', request()->input('targetLocale'));
+        $translatedData = [];
+        foreach ($targetLocales as $locale) {
+            $p = "Translate @$field into $locale. Return only the translated value wrapped in a single <p> tag. Do not include any additional text, descriptions, or explanations.";
+
+            $prompt = $this->promptService->getPrompt(
+                $p,
+                request()->input('resource_id'),
+                request()->input('resource_type')
+            );
+
+            $response = MagicAI::setModel(request()->input('model'))
+                ->setPlatForm(core()->getConfigData('general.magic_ai.settings.ai_platform'))
+                ->setPrompt($prompt)
+                ->ask();
+            preg_match_all('/<p>(.*?)<\/p>/', $response, $matches);
+
+            $value = end($matches[1]);
+            $translatedData[] = [
+                'locale'  => $locale,
+                'content' => $value,
             ];
         }
 
         return new JsonResponse([
-            'prompts' => $translatedPrompts,
+            'translatedData' => $translatedData,
         ]);
     }
 
-    private function formatModelList(array $models): array
+    public function saveTranslatedData()
     {
-        $formattedModels = [];
+        $id = request()->resource_id;
+        $translatedData = json_decode(request()->translatedData, true);
+        $channel = request()->input('targetChannel');
+        $field = request()->input('field');
 
-        foreach ($models as $model) {
-            $formattedModels[] = [
-                'id'    => $model['id'],
-                'label' => "[{$model['id']}]",
-            ];
+        SaveTranslatedDataJob::dispatch($id, $translatedData, $channel, $field);
+
+        return response()->json(['message' => trans('admin::app.catalog.products.edit.translate.tranlated-job-processed')]);
+    }
+
+    public function isAllAttributeTranslatable()
+    {
+        $productId = request()->resource_id;
+        $product = $this->productRepository->find($productId);
+        $productData = $product->toArray();
+        $locale = core()->getRequestedLocaleCode();
+        $channel = core()->getRequestedChannelCode();
+        $arr = ProductValueMapperFacade::getChannelLocaleSpecificFields($productData, $channel, $locale);
+        $sourceField = explode(',', request()->input('attributes'));
+        $result = [];
+        foreach ($sourceField as $field) {
+            if (! empty($arr) && array_key_exists($field, $arr)) {
+                $result[] = [
+                    'fieldName'      => $field,
+                    'isTranslatable' => ! empty($arr) && array_key_exists($field, $arr),
+                    'sourceData'     => ! empty($arr) && array_key_exists($field, $arr) ? $arr[$field] : null,
+                    'translatedData' => null,
+                ];
+            }
         }
 
-        return $formattedModels;
+        return $result;
+    }
+
+    public function translateAllAttribute()
+    {
+        $attributes = $this->isAllAttributeTranslatable();
+        foreach ($attributes as $key => $attribute) {
+            $field = $attribute['fieldName'];
+            $type = $this->attributeRepository->findByField('code', $field)->first()->type;
+            $attributes[$key]['type'] = $type;
+
+            if ($attribute['isTranslatable'] != false) {
+                $targetLocales = explode(',', request()->input('targetLocale'));
+                $translatedData = [];
+
+                foreach ($targetLocales as $locale) {
+                    $value = null;
+                    $p = "Translate @$field into $locale. Return only the translated value wrapped in a single <p> tag. Do not include any additional text, descriptions, or explanations.";
+                    $prompt = $this->promptService->getPrompt(
+                        $p,
+                        request()->input('resource_id'),
+                        request()->input('resource_type')
+                    );
+
+                    $response = MagicAI::setModel(request()->input('model'))
+                        ->setPlatForm(core()->getConfigData('general.magic_ai.settings.ai_platform'))
+                        ->setPrompt($prompt)
+                        ->ask();
+
+                    preg_match_all('/<p>(.*?)<\/p>/', $response, $matches);
+                    $value = end($matches[1]);
+
+                    $translatedData[] = [
+                        'locale'  => $locale,
+                        'content' => $value,
+                    ];
+                }
+
+                $attributes[$key]['translatedData'] = $translatedData;
+            }
+        }
+
+        return new JsonResponse($attributes);
+    }
+
+    public function saveAllTranslatedAttributes()
+    {
+        $productId = request()->resource_id;
+        $translatedValues = json_decode(request()->translatedData, true);
+        $channel = request()->input('targetChannel');
+
+        SaveTranslatedAllAttributesJob::dispatch($productId, $translatedValues, $channel);
+
+        return response()->json(['message' => trans('admin::app.catalog.products.edit.translate.tranlated-job-processed')]);
     }
 }

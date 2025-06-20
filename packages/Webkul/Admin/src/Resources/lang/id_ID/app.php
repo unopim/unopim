@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => 'Terjemahkan',
+                    'title'                    => 'Terjemahkan',
+                    'source-channel'           => 'Saluran Sumber',
+                    'locale'                   => 'Bahasa Sumber',
+                    'translated-content'       => 'Konten Terjemahan',
+                    'translating'              => 'Sedang Menerjemahkan',
+                    'apply'                    => 'Terapkan',
+                    'cancel'                   => 'Batalkan',
+                    'target-locales'           => 'Bahasa Target',
+                    'target-channel'           => 'Saluran Target',
+                    'attributes'               => 'Atribut',
+                    'source-content'           => 'Konten Sumber',
+                    'tranlated-job-processed'  => 'Tugas penyimpanan konten terjemahan telah diproses.',
+                ],
+
                 'product-info' => [
                     'title'        => 'Informasi Produk',
                     'status'       => 'Status',
@@ -1615,6 +1631,38 @@ return [
             're-generate-secret-key-success' => 'Kunci Rahasia API dengan sukses',
             'client-not-found'               => 'Klien tidak ditemukan',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'Judul',
+                'prompt'        => 'Prompt',
+                'type'          => 'Tipe',
+                'created-at'    => 'Dibuat Pada',
+                'updated-at'    => 'Diperbarui Pada',
+                'actions'       => 'Aksi',
+                'edit'          => 'Edit',
+                'delete'        => 'Hapus',
+                'product'       => 'Produk',
+                'category'      => 'Kategori',
+            ],
+            'create' => [
+                'title'         => 'Prompt',
+                'create-btn'    => 'Buat Prompt',
+                'edit-title'    => 'Edit Prompt',
+                'create-title'  => 'Buat Prompt Baru',
+                'label-title'   => 'Judul',
+                'type'          => 'Tipe',
+                'prompt'        => 'Prompt',
+                'save-btn'      => 'Simpan Prompt',
+            ],
+            'message' => [
+                'save-success'      => 'Prompt berhasil disimpan.',
+                'update-success'    => 'Prompt berhasil diperbarui.',
+                'delete-success'    => 'Prompt berhasil dihapus.',
+                'delete-fail'       => 'Gagal menghapus prompt.',
+            ],
+        ],
     ],
 
     'components' => [
@@ -1674,6 +1722,8 @@ return [
                 'themes'             => 'Tema',
                 'users'              => 'Pengguna',
                 'integrations'       => 'Integrasi',
+                'prompt'             => 'Prompt',
+                'general-tab'        => 'Konfigurasi',
             ],
         ],
 

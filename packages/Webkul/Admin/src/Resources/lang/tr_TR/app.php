@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => 'Çevir',
+                    'title'                    => 'Çevir',
+                    'source-channel'           => 'Kaynak Kanalı',
+                    'locale'                   => 'Kaynak Yerel Ayarı',
+                    'translated-content'       => 'Çevrilmiş İçerik',
+                    'translating'              => 'Çeviriliyor',
+                    'apply'                    => 'Uygula',
+                    'cancel'                   => 'İptal',
+                    'target-locales'           => 'Hedef Yerel Ayarlar',
+                    'target-channel'           => 'Hedef Kanal',
+                    'attributes'               => 'Özellikler',
+                    'source-content'           => 'Kaynak İçerik',
+                    'tranlated-job-processed'  => 'Çevrilmiş içeriğin kaydedilmesi işlemi tamamlandı.',
+                ],
+
                 'product-info' => [
                     'title'        => 'Ürün Bilgisi',
                     'status'       => 'Durum',
@@ -1759,6 +1775,38 @@ return [
             're-generate-secret-key-success' => 'API gizli anahtar başarıyla yeniden oluşturuldu',
             'client-not-found'               => 'Müşteri Bulunamadı',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'Başlık',
+                'prompt'        => 'İstem',
+                'type'          => 'Tür',
+                'created-at'    => 'Oluşturulma Tarihi',
+                'updated-at'    => 'Güncellenme Tarihi',
+                'actions'       => 'Eylemler',
+                'edit'          => 'Düzenle',
+                'delete'        => 'Sil',
+                'product'       => 'Ürün',
+                'category'      => 'Kategori',
+            ],
+            'create' => [
+                'title'         => 'İstem',
+                'create-btn'    => 'İstem Oluştur',
+                'edit-title'    => 'İstemi Düzenle',
+                'create-title'  => 'Yeni İstem Oluştur',
+                'label-title'   => 'Başlık',
+                'type'          => 'Tür',
+                'prompt'        => 'İstem',
+                'save-btn'      => 'İstemi Kaydet',
+            ],
+            'message' => [
+                'save-success'      => 'İstem başarıyla kaydedildi.',
+                'update-success'    => 'İstem başarıyla güncellendi.',
+                'delete-success'    => 'İstem başarıyla silindi.',
+                'delete-fail'       => 'İstem silinirken hata oluştu.',
+            ],
+        ],
     ],
 
     'components' => [
@@ -1801,6 +1849,8 @@ return [
                 'themes'             => 'Temalar',
                 'users'              => 'Kullanıcılar',
                 'integrations'       => 'Entegrasyonlar',
+                'prompt'             => 'İstem',
+                'general-tab'        => 'Yapılandırma',
             ],
         ],
 

@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => 'Traduce',
+                    'title'                    => 'Traduce',
+                    'source-channel'           => 'Canal sursă',
+                    'locale'                   => 'Setări regionale sursă',
+                    'translated-content'       => 'Conținut tradus',
+                    'translating'              => 'Se traduce',
+                    'apply'                    => 'Aplică',
+                    'cancel'                   => 'Anulează',
+                    'target-locales'           => 'Setări regionale țintă',
+                    'target-channel'           => 'Canal țintă',
+                    'attributes'               => 'Atribute',
+                    'source-content'           => 'Conținut sursă',
+                    'tranlated-job-processed'  => 'Sarcina de stocare a conținutului tradus a fost procesată.',
+                ],
+
                 'product-info' => [
                     'title'        => 'Informații Produs',
                     'status'       => 'Stare',
@@ -1759,6 +1775,38 @@ return [
             're-generate-secret-key-success' => 'Cheia API secretă a fost regenerată cu succes',
             'client-not-found'               => 'Clientul nu a fost găsit',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'Titlu',
+                'prompt'        => 'Prompt',
+                'type'          => 'Tip',
+                'created-at'    => 'Creat la',
+                'updated-at'    => 'Actualizat la',
+                'actions'       => 'Acțiuni',
+                'edit'          => 'Editează',
+                'delete'        => 'Șterge',
+                'product'       => 'Produs',
+                'category'      => 'Categorie',
+            ],
+            'create' => [
+                'title'         => 'Prompt',
+                'create-btn'    => 'Creează Prompt',
+                'edit-title'    => 'Editează Prompt',
+                'create-title'  => 'Creează un Nou Prompt',
+                'label-title'   => 'Titlu',
+                'type'          => 'Tip',
+                'prompt'        => 'Prompt',
+                'save-btn'      => 'Salvează Prompt',
+            ],
+            'message' => [
+                'save-success'      => 'Promptul a fost salvat cu succes.',
+                'update-success'    => 'Promptul a fost actualizat cu succes.',
+                'delete-success'    => 'Promptul a fost șters cu succes.',
+                'delete-fail'       => 'Ștergerea promptului a eșuat.',
+            ],
+        ],
     ],
 
     'components' => [
@@ -1801,6 +1849,8 @@ return [
                 'themes'             => 'Teme',
                 'users'              => 'Utilizatori',
                 'integrations'       => 'Integrare',
+                'prompt'             => 'Prompt',
+                'general-tab'        => 'Configurare',
             ],
         ],
 

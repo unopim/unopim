@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => 'Traducir',
+                    'title'                    => 'Traducir',
+                    'source-channel'           => 'Canal de origen',
+                    'locale'                   => 'Configuración regional de origen',
+                    'translated-content'       => 'Contenido traducido',
+                    'translating'              => 'Traduciendo',
+                    'apply'                    => 'Aplicar',
+                    'cancel'                   => 'Cancelar',
+                    'target-locales'           => 'Configuraciones regionales de destino',
+                    'target-channel'           => 'Canal de destino',
+                    'attributes'               => 'Atributos',
+                    'source-content'           => 'Contenido original',
+                    'tranlated-job-processed'  => 'El trabajo de almacenamiento del contenido traducido ha sido procesado.',
+                ],
+
                 'product-info' => [
                     'title'        => 'Información del producto',
                     'status'       => 'Estado',
@@ -1551,6 +1567,18 @@ return [
                         'title'      => 'Generación de imágenes',
                         'title-info' => 'Esta función habilitará Magic AI para cada carga de imagen, donde desee generar imágenes usando DALL-E.<br/><br/>Cuando esté habilitado, vaya a cualquier carga de imagen para generar una imagen.',
                     ],
+
+                    'translation'   => [
+                        'title'                  => 'Traducción',
+                        'enabled'                => 'Habilitado',
+                        'title-info'             => 'Esta función habilitará Magic AI para traducir texto, permitiéndote convertir texto de un idioma a otro sin problemas.',
+                        'global-source-channel'  => 'Canal de origen',
+                        'global-source-locale'   => 'Idioma de origen',
+                        'translation-model'      => 'Modelo de traducción',
+                        'replace-existing-value' => 'Reemplazar el valor existente',
+                        'target-channel'         => 'Canal de destino',
+                        'target-locales'         => 'Idiomas de destino',
+                    ],
                 ],
             ],
         ],
@@ -1612,6 +1640,38 @@ return [
             're-generate-secret-key-success' => 'La clave secreta API se regenera con éxito',
             'client-not-found'               => 'Client Not Found',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'Título',
+                'prompt'        => 'Solicitud',
+                'type'          => 'Tipo',
+                'created-at'    => 'Creado el',
+                'updated-at'    => 'Actualizado el',
+                'actions'       => 'Acciones',
+                'edit'          => 'Editar',
+                'delete'        => 'Eliminar',
+                'product'       => 'Producto',
+                'category'      => 'Categoría',
+            ],
+            'create' => [
+                'title'         => 'Solicitud',
+                'create-btn'    => 'Crear Solicitud',
+                'edit-title'    => 'Editar Solicitud',
+                'create-title'  => 'Crear Nueva Solicitud',
+                'label-title'   => 'Título',
+                'type'          => 'Tipo',
+                'prompt'        => 'Solicitud',
+                'save-btn'      => 'Guardar Solicitud',
+            ],
+            'message' => [
+                'save-success'      => 'Solicitud guardada con éxito.',
+                'update-success'    => 'Solicitud actualizada con éxito.',
+                'delete-success'    => 'Solicitud eliminada con éxito.',
+                'delete-fail'       => 'No se pudo eliminar la solicitud.',
+            ],
+        ],
     ],
 
     'components' => [
@@ -1656,6 +1716,8 @@ return [
                 'url-rewrites'       => 'URL reescribe',
                 'users'              => 'Users',
                 'integrations'       => 'Integraciones',
+                'prompt'             => 'Solicitud',
+                'general-tab'        => 'Configuración',
             ],
         ],
 

@@ -265,6 +265,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => 'Перевести',
+                    'title'                    => 'Перевод',
+                    'source-channel'           => 'Исходный канал',
+                    'locale'                   => 'Исходная локализация',
+                    'translated-content'       => 'Переведённый контент',
+                    'translating'              => 'Перевод...',
+                    'apply'                    => 'Применить',
+                    'cancel'                   => 'Отмена',
+                    'target-locales'           => 'Целевые локализации',
+                    'target-channel'           => 'Целевой канал',
+                    'attributes'               => 'Атрибуты',
+                    'source-content'           => 'Исходный контент',
+                    'tranlated-job-processed'  => 'Задача сохранения переведённого контента выполнена.',
+                ],
+
                 'product-info' => [
                     'title'        => 'Информация о продукте',
                     'status'       => 'Статус',
@@ -2016,6 +2032,38 @@ return [
             're-generate-secret-key-success' => 'API Secret Key успешно регенерируется',
             'client-not-found'               => 'Клиент не найден',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'Заголовок',
+                'prompt'        => 'Подсказка',
+                'type'          => 'Тип',
+                'created-at'    => 'Создано',
+                'updated-at'    => 'Обновлено',
+                'actions'       => 'Действия',
+                'edit'          => 'Редактировать',
+                'delete'        => 'Удалить',
+                'product'       => 'Продукт',
+                'category'      => 'Категория',
+            ],
+            'create' => [
+                'title'         => 'Подсказка',
+                'create-btn'    => 'Создать подсказку',
+                'edit-title'    => 'Редактировать подсказку',
+                'create-title'  => 'Создать новую подсказку',
+                'label-title'   => 'Заголовок',
+                'type'          => 'Тип',
+                'prompt'        => 'Подсказка',
+                'save-btn'      => 'Сохранить подсказку',
+            ],
+            'message' => [
+                'save-success'      => 'Подсказка успешно сохранена.',
+                'update-success'    => 'Подсказка успешно обновлена.',
+                'delete-success'    => 'Подсказка успешно удалена.',
+                'delete-fail'       => 'Не удалось удалить подсказку.',
+            ],
+        ],
     ],
 
     'components' => [
@@ -2102,6 +2150,8 @@ return [
                 'url-rewrites'             => 'URL переписывает',
                 'users'                    => 'Пользователи',
                 'integrations'             => 'Интеграции',
+                'prompt'                   => 'Подсказка',
+                'general-tab'              => 'Настройки',
             ],
         ],
 

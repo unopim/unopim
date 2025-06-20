@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => 'Vertalen',
+                    'title'                    => 'Vertalen',
+                    'source-channel'           => 'Bronkanaal',
+                    'locale'                   => 'Bronlocatie',
+                    'translated-content'       => 'Vertaald inhoud',
+                    'translating'              => 'Vertalen',
+                    'apply'                    => 'Toepassen',
+                    'cancel'                   => 'Annuleren',
+                    'target-locales'           => 'Doellocaties',
+                    'target-channel'           => 'Doelkanaal',
+                    'attributes'               => 'Kenmerken',
+                    'source-content'           => 'Broninhoud',
+                    'tranlated-job-processed'  => 'De taak voor het opslaan van vertaalde inhoud is verwerkt.',
+                ],
+
                 'product-info' => [
                     'title'        => 'Productinformatie',
                     'status'       => 'Status',
@@ -2018,6 +2034,38 @@ return [
             're-generate-secret-key-success' => 'API Secret Key wordt met succes geregenereerd',
             'client-not-found'               => 'Klant niet gevonden',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'Titel',
+                'prompt'        => 'Prompt',
+                'type'          => 'Type',
+                'created-at'    => 'Aangemaakt op',
+                'updated-at'    => 'Bijgewerkt op',
+                'actions'       => 'Acties',
+                'edit'          => 'Bewerken',
+                'delete'        => 'Verwijderen',
+                'product'       => 'Product',
+                'category'      => 'Categorie',
+            ],
+            'create' => [
+                'title'         => 'Prompt',
+                'create-btn'    => 'Prompt maken',
+                'edit-title'    => 'Prompt bewerken',
+                'create-title'  => 'Nieuwe prompt maken',
+                'label-title'   => 'Titel',
+                'type'          => 'Type',
+                'prompt'        => 'Prompt',
+                'save-btn'      => 'Prompt opslaan',
+            ],
+            'message' => [
+                'save-success'      => 'Prompt succesvol opgeslagen.',
+                'update-success'    => 'Prompt succesvol bijgewerkt.',
+                'delete-success'    => 'Prompt succesvol verwijderd.',
+                'delete-fail'       => 'Prompt verwijderen mislukt.',
+            ],
+        ],
     ],
 
     'components' => [
@@ -2104,6 +2152,8 @@ return [
                 'url-rewrites'             => 'URL -herschrijvingen',
                 'users'                    => 'Gebruikers',
                 'integrations'             => 'Integratie',
+                'prompt'                   => 'Prompt',
+                'general-tab'              => 'Configuratie',
             ],
         ],
 

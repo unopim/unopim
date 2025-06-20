@@ -2,19 +2,19 @@
 @inject('magicAI', 'Webkul\MagicAI\MagicAI')
 
 @php
-    $nameKey = $item['key'] . '.' . $field['name'];
+$nameKey = $item['key'] . '.' . $field['name'];
 
-    $name = $coreConfigRepository->getNameField($nameKey);
+$name = $coreConfigRepository->getNameField($nameKey);
 
-    $selectedOptions = core()->getConfigData($nameKey);
-    $selectedOptions = json_encode(explode(',', $selectedOptions) ?? []);
+$selectedOptions = core()->getConfigData($nameKey);
+$selectedOptions = json_encode(explode(',', $selectedOptions) ?? []);
 @endphp
 
 <v-ai-model
     label="@lang($field['title'])"
     name="{{ $name }}"
-    :value="{{ $selectedOptions }}"
-></v-ai-model>
+    :value="{{ $selectedOptions }}">
+</v-ai-model>
 
 @pushOnce('scripts')
 <script type="text/x-template" id="v-ai-model-template">
@@ -23,43 +23,100 @@
             <button type="button" class="primary-button" @click="validated"> Validate Credentials </button>
         </div>
         <div>
-            <x-admin::form.control-group class="mb-4" v-if="modelsOptions">
+
+            <x-admin::form.control-group class="mb-4" v-if="aiCredentials.api_platform === 'groq'">
                 <x-admin::form.control-group.label>
                     @{{ label }}
+                    @php
+                    $modelOptions = ["deepseek-r1-distill-llama-70b", "qwen-qwq-32b", "llama3-8b-8192"];
+                    $options = [];
+                    foreach($modelOptions as $option) {
+                        $options[] = [
+                            'id'    => $option,
+                            'label' => $option,
+                        ];
+                    }
+
+                    $optionsInJson = json_encode($options);
+                    @endphp
                 </x-admin::form.control-group.label>
                 <x-admin::form.control-group.control
                     type="multiselect"
                     ref="aiModelRef"
                     ::id="name"
                     ::name="name"
-                    rules="required"
-                    ::options="modelsOptions"
+                    :options="$optionsInJson"
                     ::value="value"
                     ::label="label"
                     ::placeholder="label"
                     track-by="id"
                     label-by="label"
+                    @input="getOptionValue"
                 />
                 <x-admin::form.control-group.error ::control-name="name" />
             </x-admin::form.control-group>
-
-            <x-admin::form.control-group class="mb-4" v-else>
+            <x-admin::form.control-group class="mb-4" v-if="aiCredentials.api_platform === 'openai'">
                 <x-admin::form.control-group.label>
                     @{{ label }}
+                    @php
+                    $modelOptions = ["gpt-4o", "gpt-4o-mini", "gpt-3.5-turbo", "dall-e-2", "dall-e-3"];
+                    $options = [];
+                    foreach($modelOptions as $option) {
+                        $options[] = [
+                            'id'    => $option,
+                            'label' => $option,
+                        ];
+                    }
+
+                    $optionsInJson = json_encode($options);
+                    @endphp
                 </x-admin::form.control-group.label>
                 <x-admin::form.control-group.control
                     type="multiselect"
                     ref="aiModelRef"
                     ::id="name"
                     ::name="name"
+                    :options="$optionsInJson"
+                    ::value="value"
+                    ::label="label"
+                    ::placeholder="label"
+                    track-by="id"
+                    label-by="label"
+                    @input="getOptionValue"
                 />
-                <p
-                    v-if="errorMessage"
-                    class="mt-1 text-xs italic text-red-600"
-                    v-text="errorMessage"
-                >
-                </p>
+                <x-admin::form.control-group.error ::control-name="name" />
             </x-admin::form.control-group>
+            <x-admin::form.control-group class="mb-4" v-if="aiCredentials.api_platform === 'ollama'">
+                <x-admin::form.control-group.label>
+                    @{{ label }}
+                    @php
+                    $modelOptions = ["llava"];
+                    $options = [];
+                    foreach($modelOptions as $option) {
+                        $options[] = [
+                            'id'    => $option,
+                            'label' => $option,
+                        ];
+                    }
+                    $optionsInJson = json_encode($options);
+                    @endphp
+                </x-admin::form.control-group.label>
+                <x-admin::form.control-group.control
+                    type="multiselect"
+                    ref="aiModelRef"
+                    ::id="name"
+                    ::name="name"
+                    :options="$optionsInJson"
+                    ::value="value"
+                    ::label="label"
+                    ::placeholder="label"
+                    track-by="id"
+                    label-by="label"
+                    @input="getOptionValue"
+                />
+                <x-admin::form.control-group.error ::control-name="name" />
+            </x-admin::form.control-group>
+
         </div>
     </div>
     
@@ -111,8 +168,6 @@
                     this.isValid = false;
                 }
             });
-
-            this.fetchModels();
         },
 
         methods: {
@@ -128,16 +183,10 @@
                     const response = await axios.get("{{ route('admin.magic_ai.validate_credential') }}", {
                         params: this.aiCredentials
                     });
-
-                    this.modelsOptions = JSON.stringify(response.data.models); // Populate the models array with the 
-                    
                     this.$emitter.emit('add-flash', {
                         type: 'success',
                         message: response.data.message
                     });
-
-                    this.$refs['aiModelRef'].selectedValue = null;
-
                     this.isValid = true;
                 } catch (error) {
                     console.error("Failed to fetch AI models:", error);
@@ -148,16 +197,10 @@
 
                 }
             },
-            async fetchModels() {
-                try {
-                    const response = await axios.get("{{ route('admin.magic_ai.model') }}");
-                    this.modelsOptions = JSON.stringify(response.data.models); // Populate the models array with the response data
-                } catch (error) {
-                    this.modelsOptions = null;
-                    this.errorMessage = error.response.data.message;
-                    console.error("Failed to fetch AI models:", error);
-                }
-            },
+
+            getOptionValue(event){
+                this.$emitter.emit('model_value_change',event);
+            }
         }
     });
 </script>

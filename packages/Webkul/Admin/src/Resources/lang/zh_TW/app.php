@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => '翻譯',
+                    'title'                    => '翻譯',
+                    'source-channel'           => '來源頻道',
+                    'locale'                   => '來源語區',
+                    'translated-content'       => '翻譯內容',
+                    'translating'              => '正在翻譯',
+                    'apply'                    => '套用',
+                    'cancel'                   => '取消',
+                    'target-locales'           => '目標語區',
+                    'target-channel'           => '目標頻道',
+                    'attributes'               => '屬性',
+                    'source-content'           => '來源內容',
+                    'tranlated-job-processed'  => '翻譯內容的儲存任務已完成。',
+                ],
+
                 'product-info' => [
                     'title'        => '產品資訊',
                     'status'       => '狀態',
@@ -1759,6 +1775,38 @@ return [
             're-generate-secret-key-success' => 'API秘密密鑰成功重新生成',
             'client-not-found'               => '客戶端未找到',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => '標題',
+                'prompt'        => '提示',
+                'type'          => '類型',
+                'created-at'    => '建立時間',
+                'updated-at'    => '更新時間',
+                'actions'       => '操作',
+                'edit'          => '編輯',
+                'delete'        => '刪除',
+                'product'       => '產品',
+                'category'      => '分類',
+            ],
+            'create' => [
+                'title'         => '提示',
+                'create-btn'    => '建立提示',
+                'edit-title'    => '編輯提示',
+                'create-title'  => '建立新提示',
+                'label-title'   => '標題',
+                'type'          => '類型',
+                'prompt'        => '提示',
+                'save-btn'      => '保存提示',
+            ],
+            'message' => [
+                'save-success'      => '提示已成功保存。',
+                'update-success'    => '提示已成功更新。',
+                'delete-success'    => '提示已成功刪除。',
+                'delete-fail'       => '刪除提示失敗。',
+            ],
+        ],
     ],
 
     'components' => [
@@ -1801,6 +1849,8 @@ return [
                 'themes'             => '主題',
                 'users'              => '用戶',
                 'integrations'       => '集成',
+                'prompt'             => '提示',
+                'general-tab'        => '配置',
             ],
         ],
 

@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => 'Tłumacz',
+                    'title'                    => 'Tłumacz',
+                    'source-channel'           => 'Kanał źródłowy',
+                    'locale'                   => 'Ustawienia regionalne źródła',
+                    'translated-content'       => 'Przetłumaczona treść',
+                    'translating'              => 'Tłumaczenie',
+                    'apply'                    => 'Zastosuj',
+                    'cancel'                   => 'Anuluj',
+                    'target-locales'           => 'Docelowe ustawienia regionalne',
+                    'target-channel'           => 'Kanał docelowy',
+                    'attributes'               => 'Atrybuty',
+                    'source-content'           => 'Treść źródłowa',
+                    'tranlated-job-processed'  => 'Zadanie zapisania przetłumaczonej treści zostało przetworzone.',
+                ],
+
                 'product-info' => [
                     'title'        => 'Informacje o produkcie',
                     'status'       => 'Status',
@@ -1759,6 +1775,38 @@ return [
             're-generate-secret-key-success' => 'Klucz tajny API został pomyślnie wygenerowany ponownie',
             'client-not-found'               => 'Klient nie został znaleziony',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'Tytuł',
+                'prompt'        => 'Podpowiedź',
+                'type'          => 'Typ',
+                'created-at'    => 'Utworzono',
+                'updated-at'    => 'Zaktualizowano',
+                'actions'       => 'Akcje',
+                'edit'          => 'Edytuj',
+                'delete'        => 'Usuń',
+                'product'       => 'Produkt',
+                'category'      => 'Kategoria',
+            ],
+            'create' => [
+                'title'         => 'Podpowiedź',
+                'create-btn'    => 'Utwórz podpowiedź',
+                'edit-title'    => 'Edytuj podpowiedź',
+                'create-title'  => 'Utwórz nową podpowiedź',
+                'label-title'   => 'Tytuł',
+                'type'          => 'Typ',
+                'prompt'        => 'Podpowiedź',
+                'save-btn'      => 'Zapisz podpowiedź',
+            ],
+            'message' => [
+                'save-success'      => 'Podpowiedź została pomyślnie zapisana.',
+                'update-success'    => 'Podpowiedź została pomyślnie zaktualizowana.',
+                'delete-success'    => 'Podpowiedź została pomyślnie usunięta.',
+                'delete-fail'       => 'Nie udało się usunąć podpowiedzi.',
+            ],
+        ],
     ],
 
     'components' => [
@@ -1801,6 +1849,8 @@ return [
                 'themes'             => 'Motywy',
                 'users'              => 'Użytkownicy',
                 'integrations'       => 'Integracje',
+                'prompt'             => 'Komunikat',
+                'general-tab'        => 'Konfiguracja',
             ],
         ],
 

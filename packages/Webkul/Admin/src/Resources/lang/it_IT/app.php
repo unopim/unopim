@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => 'Traduci',
+                    'title'                    => 'Traduci',
+                    'source-channel'           => 'Canale di origine',
+                    'locale'                   => 'Localizzazione di origine',
+                    'translated-content'       => 'Contenuto tradotto',
+                    'translating'              => 'Traduzione in corso',
+                    'apply'                    => 'Applica',
+                    'cancel'                   => 'Annulla',
+                    'target-locales'           => 'Localizzazioni di destinazione',
+                    'target-channel'           => 'Canale di destinazione',
+                    'attributes'               => 'Attributi',
+                    'source-content'           => 'Contenuto di origine',
+                    'tranlated-job-processed'  => 'Elaborazione del lavoro di archiviazione dei contenuti tradotti completata.',
+                ],
+
                 'product-info' => [
                     'title'        => 'Informazioni sul prodotto',
                     'status'       => 'Stato',
@@ -1758,6 +1774,38 @@ return [
             're-generate-secret-key-success' => 'Chiave segreta API rigenerata con successo',
             'client-not-found'               => 'Cliente non trovato',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'Titolo',
+                'prompt'        => 'Prompt',
+                'type'          => 'Tipo',
+                'created-at'    => 'Creato il',
+                'updated-at'    => 'Aggiornato il',
+                'actions'       => 'Azioni',
+                'edit'          => 'Modifica',
+                'delete'        => 'Elimina',
+                'product'       => 'Prodotto',
+                'category'      => 'Categoria',
+            ],
+            'create' => [
+                'title'         => 'Prompt',
+                'create-btn'    => 'Crea Prompt',
+                'edit-title'    => 'Modifica Prompt',
+                'create-title'  => 'Crea Nuovo Prompt',
+                'label-title'   => 'Titolo',
+                'type'          => 'Tipo',
+                'prompt'        => 'Prompt',
+                'save-btn'      => 'Salva Prompt',
+            ],
+            'message' => [
+                'save-success'      => 'Prompt salvato con successo.',
+                'update-success'    => 'Prompt aggiornato con successo.',
+                'delete-success'    => 'Prompt eliminato con successo.',
+                'delete-fail'       => 'Impossibile eliminare il prompt.',
+            ],
+        ],
     ],
 
     'components' => [
@@ -1800,6 +1848,8 @@ return [
                 'themes'             => 'Temi',
                 'users'              => 'Utenti',
                 'integrations'       => 'Integrazioni',
+                'prompt'             => 'Richiesta',
+                'general-tab'        => 'Configurazione',
             ],
         ],
 

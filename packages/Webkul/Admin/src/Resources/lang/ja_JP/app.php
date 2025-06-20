@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => '翻訳',
+                    'title'                    => '翻訳',
+                    'source-channel'           => 'ソースチャンネル',
+                    'locale'                   => 'ソースロケール',
+                    'translated-content'       => '翻訳されたコンテンツ',
+                    'translating'              => '翻訳中',
+                    'apply'                    => '適用',
+                    'cancel'                   => 'キャンセル',
+                    'target-locales'           => 'ターゲットロケール',
+                    'target-channel'           => 'ターゲットチャンネル',
+                    'attributes'               => '属性',
+                    'source-content'           => 'ソースコンテンツ',
+                    'tranlated-job-processed'  => '翻訳されたコンテンツ保存タスクが処理されました。',
+                ],
+
                 'product-info' => [
                     'title'        => '製品情報',
                     'status'       => 'ステータス',
@@ -1614,6 +1630,38 @@ return [
             're-generate-secret-key-success' => 'API シークレット キーが正常に再生成されました',
             'client-not-found'               => 'クライアントが見つかりません',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'タイトル',
+                'prompt'        => 'プロンプト',
+                'type'          => 'タイプ',
+                'created-at'    => '作成日時',
+                'updated-at'    => '更新日時',
+                'actions'       => '操作',
+                'edit'          => '編集',
+                'delete'        => '削除',
+                'product'       => '製品',
+                'category'      => 'カテゴリ',
+            ],
+            'create' => [
+                'title'         => 'プロンプト',
+                'create-btn'    => 'プロンプトを作成',
+                'edit-title'    => 'プロンプトを編集',
+                'create-title'  => '新しいプロンプトを作成',
+                'label-title'   => 'タイトル',
+                'type'          => 'タイプ',
+                'prompt'        => 'プロンプト',
+                'save-btn'      => 'プロンプトを保存',
+            ],
+            'message' => [
+                'save-success'      => 'プロンプトが正常に保存されました。',
+                'update-success'    => 'プロンプトが正常に更新されました。',
+                'delete-success'    => 'プロンプトが正常に削除されました。',
+                'delete-fail'       => 'プロンプトの削除に失敗しました。',
+            ],
+        ],
     ],
 
     'components' => [
@@ -1656,6 +1704,8 @@ return [
                 'themes'             => 'テーマ',
                 'users'              => 'ユーザー',
                 'integrations'       => '統合',
+                'prompt'             => 'プロンプト',
+                'general-tab'        => '設定',
             ],
         ],
 

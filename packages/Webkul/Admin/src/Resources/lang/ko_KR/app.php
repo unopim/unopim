@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => '번역',
+                    'title'                    => '번역',
+                    'source-channel'           => '소스 채널',
+                    'locale'                   => '소스 로케일',
+                    'translated-content'       => '번역된 콘텐츠',
+                    'translating'              => '번역 중',
+                    'apply'                    => '적용',
+                    'cancel'                   => '취소',
+                    'target-locales'           => '대상 로케일',
+                    'target-channel'           => '대상 채널',
+                    'attributes'               => '속성',
+                    'source-content'           => '소스 콘텐츠',
+                    'tranlated-job-processed'  => '번역된 콘텐츠 저장 작업이 처리되었습니다.',
+                ],
+
                 'product-info' => [
                     'title'        => '제품 정보',
                     'status'       => '상태',
@@ -1759,6 +1775,38 @@ return [
             're-generate-secret-key-success' => 'API 비밀 키가 성공적으로 재생성되었습니다',
             'client-not-found'               => '클라이언트를 찾을 수 없습니다',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => '제목',
+                'prompt'        => '프롬프트',
+                'type'          => '유형',
+                'created-at'    => '생성일',
+                'updated-at'    => '업데이트일',
+                'actions'       => '작업',
+                'edit'          => '편집',
+                'delete'        => '삭제',
+                'product'       => '제품',
+                'category'      => '카테고리',
+            ],
+            'create' => [
+                'title'         => '프롬프트',
+                'create-btn'    => '프롬프트 생성',
+                'edit-title'    => '프롬프트 편집',
+                'create-title'  => '새 프롬프트 생성',
+                'label-title'   => '제목',
+                'type'          => '유형',
+                'prompt'        => '프롬프트',
+                'save-btn'      => '프롬프트 저장',
+            ],
+            'message' => [
+                'save-success'      => '프롬프트가 성공적으로 저장되었습니다.',
+                'update-success'    => '프롬프트가 성공적으로 업데이트되었습니다.',
+                'delete-success'    => '프롬프트가 성공적으로 삭제되었습니다.',
+                'delete-fail'       => '프롬프트 삭제에 실패했습니다.',
+            ],
+        ],
     ],
 
     'components' => [
@@ -1801,6 +1849,8 @@ return [
                 'themes'             => '테마',
                 'users'              => '사용자',
                 'integrations'       => '통합',
+                'prompt'             => '프롬프트',
+                'general-tab'        => '구성',
             ],
         ],
 

@@ -56,6 +56,29 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
         Route::post('image', 'image')->name('admin.magic_ai.image');
 
         Route::get('default-prompt', 'defaultPrompt')->name('admin.magic_ai.default_prompt');
+
+        Route::get('prompt', 'index')->name('admin.magic_ai.prompt.index');
+
+        Route::post('create-prompt', 'store')->name('admin.magic_ai.prompt.store');
+
+        Route::delete('delete\{id}', 'destroy')->name('admin.magic_ai.prompt.delete');
+
+        Route::get('edit\{id}', 'edit')->name('admin.magic_ai.prompt.edit');
+
+        Route::put('edit', 'update')->name('admin.magic_ai.prompt.update');
+
+        Route::post('translate', 'translateToManyLocale')->name('admin.magic_ai.translate');
+
+        Route::post('check/isTranslatable', 'isTranslatable')->name('admin.magic_ai.check.is_translatable');
+
+        Route::post('save/translatedData', 'saveTranslatedData')->name('admin.magic_ai.store.translated');
+
+        Route::post('check/is-all-attribute-translatable', 'isAllAttributeTranslatable')->name('admin.magic_ai.check.is_all_attribute_translatable');
+
+        Route::post('translate/all/attribute', 'translateAllAttribute')->name('admin.magic_ai.translate.all.attribute');
+
+        Route::post('save/translated-attributes', 'saveAllTranslatedAttributes')->name('admin.magic_ai.store.translated.all_attribute');
+
     });
 
     /**

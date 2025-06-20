@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => 'Traduzir',
+                    'title'                    => 'Traduzir',
+                    'source-channel'           => 'Canal de Origem',
+                    'locale'                   => 'Localização de Origem',
+                    'translated-content'       => 'Conteúdo Traduzido',
+                    'translating'              => 'A Traduzir',
+                    'apply'                    => 'Aplicar',
+                    'cancel'                   => 'Cancelar',
+                    'target-locales'           => 'Localizações de Destino',
+                    'target-channel'           => 'Canal de Destino',
+                    'attributes'               => 'Atributos',
+                    'source-content'           => 'Conteúdo de Origem',
+                    'tranlated-job-processed'  => 'A tarefa de armazenamento de conteúdo traduzido foi processada.',
+                ],
+
                 'product-info' => [
                     'title'        => 'Informações do Produto',
                     'status'       => 'Estado',
@@ -1759,6 +1775,38 @@ return [
             're-generate-secret-key-success' => 'Chave secreta da API regenerada com sucesso',
             'client-not-found'               => 'Cliente não encontrado',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'Título',
+                'prompt'        => 'Prompt',
+                'type'          => 'Tipo',
+                'created-at'    => 'Criado em',
+                'updated-at'    => 'Atualizado em',
+                'actions'       => 'Ações',
+                'edit'          => 'Editar',
+                'delete'        => 'Eliminar',
+                'product'       => 'Produto',
+                'category'      => 'Categoria',
+            ],
+            'create' => [
+                'title'         => 'Prompt',
+                'create-btn'    => 'Criar Prompt',
+                'edit-title'    => 'Editar Prompt',
+                'create-title'  => 'Criar Novo Prompt',
+                'label-title'   => 'Título',
+                'type'          => 'Tipo',
+                'prompt'        => 'Prompt',
+                'save-btn'      => 'Guardar Prompt',
+            ],
+            'message' => [
+                'save-success'      => 'Prompt guardado com sucesso.',
+                'update-success'    => 'Prompt atualizado com sucesso.',
+                'delete-success'    => 'Prompt eliminado com sucesso.',
+                'delete-fail'       => 'Falha ao eliminar o prompt.',
+            ],
+        ],
     ],
 
     'components' => [
@@ -1801,6 +1849,8 @@ return [
                 'themes'             => 'Temas',
                 'users'              => 'Usuários',
                 'integrations'       => 'Integrações',
+                'prompt'             => 'Prompt',
+                'general-tab'        => 'Configuração',
             ],
         ],
 

@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => 'Перекласти',
+                    'title'                    => 'Переклад',
+                    'source-channel'           => 'Джерело каналу',
+                    'locale'                   => 'Місцева локалізація джерела',
+                    'translated-content'       => 'Перекладений контент',
+                    'translating'              => 'Перекладається',
+                    'apply'                    => 'Застосувати',
+                    'cancel'                   => 'Скасувати',
+                    'target-locales'           => 'Цільова локалізація',
+                    'target-channel'           => 'Цільовий канал',
+                    'attributes'               => 'Атрибути',
+                    'source-content'           => 'Контент джерела',
+                    'tranlated-job-processed'  => 'Завдання збереження перекладеного контенту оброблено.',
+                ],
+
                 'product-info' => [
                     'title'        => 'Інформація про продукт',
                     'status'       => 'Статус',
@@ -1759,6 +1775,38 @@ return [
             're-generate-secret-key-success' => 'Секретний ключ API успішно перегенеровано',
             'client-not-found'               => 'Клієнт не знайдено',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'Назва',
+                'prompt'        => 'Запит',
+                'type'          => 'Тип',
+                'created-at'    => 'Створено',
+                'updated-at'    => 'Оновлено',
+                'actions'       => 'Дії',
+                'edit'          => 'Редагувати',
+                'delete'        => 'Видалити',
+                'product'       => 'Продукт',
+                'category'      => 'Категорія',
+            ],
+            'create' => [
+                'title'         => 'Запит',
+                'create-btn'    => 'Створити Запит',
+                'edit-title'    => 'Редагувати Запит',
+                'create-title'  => 'Створити Новий Запит',
+                'label-title'   => 'Назва',
+                'type'          => 'Тип',
+                'prompt'        => 'Запит',
+                'save-btn'      => 'Зберегти Запит',
+            ],
+            'message' => [
+                'save-success'      => 'Запит успішно збережено.',
+                'update-success'    => 'Запит успішно оновлено.',
+                'delete-success'    => 'Запит успішно видалено.',
+                'delete-fail'       => 'Не вдалося видалити запит.',
+            ],
+        ],
     ],
 
     'components' => [
@@ -1801,6 +1849,8 @@ return [
                 'themes'             => 'Теми',
                 'users'              => 'Користувачі',
                 'integrations'       => 'Інтеграції',
+                'prompt'             => 'Запит',
+                'general-tab'        => 'Налаштування',
             ],
         ],
 

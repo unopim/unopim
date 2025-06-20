@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => 'Dịch',
+                    'title'                    => 'Dịch',
+                    'source-channel'           => 'Kênh Nguồn',
+                    'locale'                   => 'Ngôn Ngữ Nguồn',
+                    'translated-content'       => 'Nội Dung Đã Dịch',
+                    'translating'              => 'Đang Dịch',
+                    'apply'                    => 'Áp Dụng',
+                    'cancel'                   => 'Hủy',
+                    'target-locales'           => 'Ngôn Ngữ Đích',
+                    'target-channel'           => 'Kênh Đích',
+                    'attributes'               => 'Thuộc Tính',
+                    'source-content'           => 'Nội Dung Nguồn',
+                    'tranlated-job-processed'  => 'Nhiệm vụ lưu nội dung đã dịch đã được xử lý.',
+                ],
+
                 'product-info' => [
                     'title'        => 'Thông tin sản phẩm',
                     'status'       => 'Trạng thái',
@@ -1759,6 +1775,38 @@ return [
             're-generate-secret-key-success' => 'Khóa bí mật API đã được tạo lại thành công',
             'client-not-found'               => 'Không tìm thấy khách hàng',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'Tiêu đề',
+                'prompt'        => 'Gợi ý',
+                'type'          => 'Loại',
+                'created-at'    => 'Ngày tạo',
+                'updated-at'    => 'Ngày cập nhật',
+                'actions'       => 'Hành động',
+                'edit'          => 'Chỉnh sửa',
+                'delete'        => 'Xóa',
+                'product'       => 'Sản phẩm',
+                'category'      => 'Danh mục',
+            ],
+            'create' => [
+                'title'         => 'Gợi ý',
+                'create-btn'    => 'Tạo Gợi ý',
+                'edit-title'    => 'Chỉnh sửa Gợi ý',
+                'create-title'  => 'Tạo Gợi ý Mới',
+                'label-title'   => 'Tiêu đề',
+                'type'          => 'Loại',
+                'prompt'        => 'Gợi ý',
+                'save-btn'      => 'Lưu Gợi ý',
+            ],
+            'message' => [
+                'save-success'      => 'Gợi ý đã được lưu thành công.',
+                'update-success'    => 'Gợi ý đã được cập nhật thành công.',
+                'delete-success'    => 'Gợi ý đã được xóa thành công.',
+                'delete-fail'       => 'Không thể xóa gợi ý.',
+            ],
+        ],
     ],
 
     'components' => [
@@ -1801,6 +1849,8 @@ return [
                 'themes'             => 'Chủ đề',
                 'users'              => 'Người dùng',
                 'integrations'       => 'Tích hợp',
+                'prompt'             => 'Nhắc nhở',
+                'general-tab'        => 'Cấu hình',
             ],
         ],
 

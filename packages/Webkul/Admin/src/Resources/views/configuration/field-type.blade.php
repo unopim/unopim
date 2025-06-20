@@ -14,7 +14,7 @@
     $channelLocaleInfo = $coreConfigRepository->getChannelLocaleInfo($field, $currentChannel->code, $currentLocale->code);
 
     $field['options'] = isset($field['repository']) ? ($repositoryOptions ?? []) : ($field['options'] ?? []);
-    
+
     $value = core()->getConfigData($nameKey) ?? '';
 @endphp
 
@@ -193,10 +193,6 @@
                 },
             },
 
-            mounted() {
-                // console.log(this.options, 'options');
-            },
-
             methods: {
                 emitChangeEvent(value, fieldName) {
                     this.$emitter.emit('config-value-changed', { fieldName, value: value });
@@ -205,4 +201,3 @@
         });
 </script>
 @endPushOnce
- 
