@@ -18,7 +18,7 @@
                 {{ $header }}
 
                 <span
-                    class="icon-cancel text-3xl  cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 hover:rounded-md"
+                    class="icon-cancel text-3xl cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 hover:rounded-md"
                     @click="toggle"
                 >
                 </span>
@@ -36,7 +36,7 @@
 
     @isset($footer)
         <template v-slot:footer>
-            <div {{ $content->attributes->merge(['class' => 'flex justify-end px-4 py-2.5']) }}>
+            <div {{ $footer->attributes->merge(['class' => 'flex justify-end px-4 py-2.5']) }}>
                 {{ $footer }}
             </div>
         </template>
@@ -82,9 +82,8 @@
                     v-if="isOpen"
                 >
                     <div class="flex min-h-full items-end justify-center p-4 sm:items-center sm:p-0">
-                        <div 
-                            class="w-full max-h-[96%] overflow-y-auto z-[999] absolute ltr:left-1/2 rtl:right-1/2 top-1/2 rounded-lg bg-white dark:bg-gray-900 box-shadow max-md:w-[90%] ltr:-translate-x-1/2 rtl:translate-x-1/2 -translate-y-1/2"
-                            :class="modalSize"
+                        <div ref="modalContent" class="w-full max-h-[96%] z-[999] absolute ltr:left-1/2 rtl:right-1/2 top-1/2 rounded-lg bg-white dark:bg-gray-900 box-shadow max-md:w-[90%] ltr:-translate-x-1/2 rtl:translate-x-1/2 -translate-y-1/2"
+                            :class="[modalSize, { 'overflow-y-auto': isOverflowing }]"
                         >
                             <!-- Header Slot -->
                             <slot
@@ -115,6 +114,7 @@
             data() {
                 return {
                     isOpen: this.isActive,
+                    isOverflowing: false,
                     sizeMap: {
                         small: "max-w-[400px]",
                         medium: "max-w-[568px]",
@@ -147,6 +147,8 @@
 
                     document.body.style.overflow = 'hidden';
 
+                    this.checkOverflow();
+
                     this.$emit('open', { isActive: this.isOpen });
                 },
 
@@ -156,7 +158,14 @@
                     document.body.style.overflow = 'auto';
 
                     this.$emit('close', { isActive: this.isOpen });
-                }
+                },
+
+                checkOverflow() {
+                    const el = this.$refs.modalContent;
+                    if (el) {
+                        this.isOverflowing = el.scrollHeight > window.innerHeight * 0.96;
+                    }
+                },
             }
         });
     </script>
