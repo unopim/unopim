@@ -390,6 +390,7 @@ return [
                 'same-code-error'       => 'يجب أن يكون رمز الخيار فريدًا.',
                 'usable-in-grid'        => 'قابلة للاستخدام في الشبكة',
                 'is-filterable'         => 'قابل للتصفية',
+                'ai-translate'          => 'ترجمة الذكاء الاصطناعي',
 
                 'option' => [
                     'color'    => 'تغيير الالوان',
@@ -457,6 +458,7 @@ return [
                 'same-code-error'       => 'يجب أن يكون رمز الخيار فريدًا.',
                 'usable-in-grid'        => 'قابلة للاستخدام في الشبكة',
                 'is-filterable'         => 'قابل للتصفية',
+                'ai-translate'          => 'ترجمة الذكاء الاصطناعي',
 
                 'option' => [
                     'create-success'       => 'تم إنشاء خيار السمة بنجاح',

@@ -389,6 +389,7 @@ return [
                 'same-code-error'       => 'Mulighedskoden skal være unik.',
                 'usable-in-grid'        => 'Brugbar i gitter',
                 'is-filterable'         => 'Er filtrerbar',
+                'ai-translate'          => 'AI Oversæt',
 
                 'option' => [
                     'color'    => 'Farveprøve',
@@ -456,6 +457,7 @@ return [
                 'same-code-error'       => 'Mulighedskoden skal være unik.',
                 'usable-in-grid'        => 'Brugbar i gitter',
                 'is-filterable'         => 'Er filtrerbar',
+                'ai-translate'          => 'AI Oversæt',
 
                 'option' => [
                     'create-success'      => 'Attributmulighed oprettet succesfuldt',

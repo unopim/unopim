@@ -390,6 +390,7 @@ return [
                 'same-code-error'       => 'De optiecode moet uniek zijn.',
                 'usable-in-grid'        => 'Bruikbaar in het rooster',
                 'is-filterable'         => 'Is filterbaar',
+                'ai-translate'          => 'AI Vertaling',
 
                 'option' => [
                     'color'    => 'Kleurstaal',
@@ -457,6 +458,7 @@ return [
                 'same-code-error'       => 'De optiecode moet uniek zijn.',
                 'usable-in-grid'        => 'Bruikbaar in het rooster',
                 'is-filterable'         => 'Is filterbaar',
+                'ai-translate'          => 'AI Vertaling',
 
                 'option' => [
                     'create-success'      => 'Attribuutoptie met succes gemaakt',
@@ -1610,6 +1612,18 @@ return [
                         'enabled'    => 'Ingeschakeld',
                         'title'      => 'Beeldgeneratie',
                         'title-info' => 'Deze functie maakt de Magic AI mogelijk voor elke upload van afbeeldingen, waarbij u afbeeldingen wilt genereren met Dall-E. <br/> <br/> Wanneer u ingeschakeld, gaat u naar een afbeelding upload om afbeelding te genereren.',
+                    ],
+
+                    'translation'   => [
+                        'title'                  => 'Vertaling',
+                        'enabled'                => 'Ingeschakeld',
+                        'title-info'             => 'Met deze functie wordt Magic AI ingeschakeld voor het vertalen van tekst, zodat u tekst moeiteloos van de ene taal naar de andere kunt converteren.',
+                        'global-source-channel'  => 'Bronkanaal',
+                        'global-source-locale'   => 'Bronlocatie',
+                        'translation-model'      => 'Vertaalmodel',
+                        'replace-existing-value' => 'Bestaande waarde vervangen',
+                        'target-channel'         => 'Doelkanaal',
+                        'target-locales'         => 'Doellocaties',
                     ],
 
                     'review-translation' => [

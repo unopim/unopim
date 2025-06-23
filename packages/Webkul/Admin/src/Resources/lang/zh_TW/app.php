@@ -389,6 +389,7 @@ return [
                 'same-code-error'       => '選項代碼必須唯一。',
                 'usable-in-grid'        => '可在網格中使用',
                 'is-filterable'         => '可篩選',
+                'ai-translate'          => '人工智慧翻譯',
 
                 'option' => [
                     'color'    => '顏色樣本',
@@ -456,6 +457,7 @@ return [
                 'same-code-error'       => '選項代碼必須唯一。',
                 'usable-in-grid'        => '可在網格中使用',
                 'is-filterable'         => '可篩選',
+                'ai-translate'          => '人工智慧翻譯',
 
                 'option' => [
                     'create-success'      => '屬性選項創建成功',
@@ -1713,6 +1715,18 @@ return [
                         'organization'   => '組織ID',
                         'title'          => '常規設定',
                         'title-info'     => '提升您的Magic AI體驗，通過輸入您的專用API密鑰並確定相關的組織進行無縫集成。控制您的OpenAI憑證並根據您的具體需求定制設定。',
+                    ],
+
+                    'translation'   => [
+                        'title'                  => '翻譯',
+                        'enabled'                => '啟用',
+                        'title-info'             => '此功能將啟用 Magic AI 來翻譯文本，使您能夠輕鬆地將文本從一種語言轉換為另一種語言。',
+                        'global-source-channel'  => '來源頻道',
+                        'global-source-locale'   => '來源語言環境',
+                        'translation-model'      => '翻譯模型',
+                        'replace-existing-value' => '替換現有值',
+                        'target-channel'         => '目標頻道',
+                        'target-locales'         => '目標語言環境',
                     ],
                 ],
             ],

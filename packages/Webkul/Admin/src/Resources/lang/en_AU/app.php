@@ -388,6 +388,7 @@ return [
                 'same-code-error'       => 'The option code must be unique.',
                 'usable-in-grid'        => 'Usable in grid',
                 'is-filterable'         => 'Is filterable',
+                'ai-translate'          => 'AI Translate',
 
                 'option' => [
                     'color'    => 'Colour Swatch',
@@ -455,6 +456,7 @@ return [
                 'same-code-error'       => 'The option code must be unique.',
                 'usable-in-grid'        => 'Usable in grid',
                 'is-filterable'         => 'Is filterable',
+                'ai-translate'          => 'AI Translate',
 
                 'option' => [
                     'create-success'      => 'Attribute Option Created Successfully',

@@ -389,6 +389,7 @@ return [
                 'same-code-error'       => 'O código da opção precisa ser único.',
                 'usable-in-grid'        => 'Usável na grade',
                 'is-filterable'         => 'É filtrável',
+                'ai-translate'          => 'Tradução IA',
 
                 'option' => [
                     'color'    => 'Amostra de cor',
@@ -456,6 +457,7 @@ return [
                 'same-code-error'       => 'O código da opção precisa ser único.',
                 'usable-in-grid'        => 'Usável na grade',
                 'is-filterable'         => 'É filtrável',
+                'ai-translate'          => 'Tradução IA',
 
                 'option' => [
                     'create-success'      => 'Opção de atributo criada com sucesso',
@@ -1713,6 +1715,18 @@ return [
                         'organization'   => 'ID da Organização',
                         'title'          => 'Configurações Gerais',
                         'title-info'     => 'Melhore a sua experiência com o Magic AI inserindo a sua chave API exclusiva e especificando a organização pertinente para integração sem problemas. Controle os seus credenciais OpenAI e ajuste as configurações de acordo com as suas necessidades específicas.',
+                    ],
+
+                    'translation'   => [
+                        'title'                  => 'Tradução',
+                        'enabled'                => 'Ativado',
+                        'title-info'             => 'Esta funcionalidade ativará o Magic AI para traduzir textos, permitindo-lhe converter textos de um idioma para outro de forma simples e eficiente.',
+                        'global-source-channel'  => 'Canal de Origem',
+                        'global-source-locale'   => 'Localização de Origem',
+                        'translation-model'      => 'Modelo de Tradução',
+                        'replace-existing-value' => 'Substituir Valor Existente',
+                        'target-channel'         => 'Canal de Destino',
+                        'target-locales'         => 'Localizações de Destino',
                     ],
                 ],
             ],

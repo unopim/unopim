@@ -389,6 +389,7 @@ return [
                 'same-code-error'       => 'Il codice dell\'opzione deve essere unico.',
                 'usable-in-grid'        => 'Usabile nella griglia',
                 'is-filterable'         => 'È filtrabile',
+                'ai-translate'          => 'Traduzione IA',
 
                 'option' => [
                     'color'    => 'Colore campione',
@@ -455,6 +456,7 @@ return [
                 'yes'                   => 'Sì',
                 'same-code-error'       => 'Il codice dell\'opzione deve essere unico.',
                 'usable-in-grid'        => 'Usabile nella griglia',
+                'ai-translate'          => 'Traduzione IA',
 
                 'option' => [
                     'create-success'      => 'Opzione attributo creata con successo',
@@ -1712,6 +1714,18 @@ return [
                         'organization'   => 'ID Organizzazione',
                         'title'          => 'Impostazioni Generali',
                         'title-info'     => 'Migliora la tua esperienza con Magic AI inserendo la tua esclusiva Chiave API e specificando l\'Organizzazione pertinente per un\'integrazione senza problemi. Prendi il controllo delle tue credenziali OpenAI e personalizza le impostazioni secondo le tue esigenze specifiche.',
+                    ],
+
+                    'translation'   => [
+                        'title'                  => 'Traduzione',
+                        'enabled'                => 'Abilitato',
+                        'title-info'             => 'Questa funzionalità attiverà Magic AI per tradurre il testo, consentendoti di convertire il testo da una lingua all’altra senza problemi.',
+                        'global-source-channel'  => 'Canale Sorgente',
+                        'global-source-locale'   => 'Lingua Sorgente',
+                        'translation-model'      => 'Modello di Traduzione',
+                        'replace-existing-value' => 'Sostituisci Valore Esistente',
+                        'target-channel'         => 'Canale di Destinazione',
+                        'target-locales'         => 'Lingue di Destinazione',
                     ],
                 ],
             ],

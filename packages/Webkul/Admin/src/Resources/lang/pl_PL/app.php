@@ -389,6 +389,7 @@ return [
                 'same-code-error'       => 'Kod opcji musi być unikalny.',
                 'usable-in-grid'        => 'Można używać w siatce',
                 'is-filterable'         => 'Jest filtrowalne',
+                'ai-translate'          => 'Tłumaczenie SI',
 
                 'option' => [
                     'color'    => 'Kolor próbki',
@@ -456,6 +457,7 @@ return [
                 'same-code-error'       => 'Kod opcji musi być unikalny.',
                 'usable-in-grid'        => 'Można używać w siatce',
                 'is-filterable'         => 'Jest filtrowalne',
+                'ai-translate'          => 'Tłumaczenie SI',
 
                 'option' => [
                     'create-success'      => 'Opcja atrybutu została pomyślnie utworzona',
@@ -1713,6 +1715,18 @@ return [
                         'organization'   => 'ID Organizacji',
                         'title'          => 'Ogólne ustawienia',
                         'title-info'     => 'Popraw swoje doświadczenie z Magic AI, wpisując swój unikalny Klucz API i wskazując odpowiednią Organizację do łatwej integracji. Przejmij kontrolę nad swoimi danymi OpenAI i dostosuj ustawienia do swoich specyficznych potrzeb.',
+                    ],
+
+                    'translation'   => [
+                        'title'                  => 'Tłumaczenie',
+                        'enabled'                => 'Włączone',
+                        'title-info'             => 'Ta funkcja aktywuje Magic AI do tłumaczenia tekstu, umożliwiając płynne konwertowanie tekstu z jednego języka na inny.',
+                        'global-source-channel'  => 'Kanał źródłowy',
+                        'global-source-locale'   => 'Język źródłowy',
+                        'translation-model'      => 'Model tłumaczenia',
+                        'replace-existing-value' => 'Zastąp istniejącą wartość',
+                        'target-channel'         => 'Kanał docelowy',
+                        'target-locales'         => 'Języki docelowe',
                     ],
                 ],
             ],

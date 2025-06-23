@@ -389,6 +389,7 @@ return [
                 'same-code-error'       => 'Codul opțiunii trebuie să fie unic.',
                 'usable-in-grid'        => 'Utilizabil în grilă',
                 'is-filterable'         => 'Este filtrabil',
+                'ai-translate'          => 'Traducere IA',
 
                 'option' => [
                     'color'    => 'Eșantion de culoare',
@@ -456,6 +457,7 @@ return [
                 'same-code-error'       => 'Codul opțiunii trebuie să fie unic.',
                 'usable-in-grid'        => 'Utilizabil în grilă',
                 'is-filterable'         => 'Este filtrabil',
+                'ai-translate'          => 'Traducere IA',
 
                 'option' => [
                     'create-success'      => 'Opțiunea atributului a fost creată cu succes',
@@ -1713,6 +1715,18 @@ return [
                         'organization'   => 'ID Organizație',
                         'title'          => 'Setări Generale',
                         'title-info'     => 'Îmbunătățește-ți experiența cu Magic AI introducând cheia API unică și specificând organizația corespunzătoare pentru integrare fără probleme. Preia controlul asupra credentialelor OpenAI și ajustează setările conform nevoilor tale specifice.',
+                    ],
+
+                    'translation'   => [
+                        'title'                  => 'Traducere',
+                        'enabled'                => 'Activat',
+                        'title-info'             => 'Această funcție va activa Magic AI pentru traducerea textului, permițându-vă să convertiți textul dintr-o limbă în alta cu ușurință.',
+                        'global-source-channel'  => 'Canal Sursă',
+                        'global-source-locale'   => 'Localizare Sursă',
+                        'translation-model'      => 'Model de Traducere',
+                        'replace-existing-value' => 'Înlocuiește Valoarea Existenta',
+                        'target-channel'         => 'Canal Țintă',
+                        'target-locales'         => 'Localizări Țintă',
                     ],
                 ],
             ],

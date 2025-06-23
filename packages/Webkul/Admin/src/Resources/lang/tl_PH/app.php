@@ -389,6 +389,7 @@ return [
                 'same-code-error'       => 'Ang code ng opsyon ay dapat na natangi.',
                 'usable-in-grid'        => 'Magagamit sa grid',
                 'is-filterable'         => 'Nafifilter',
+                'ai-translate'          => 'AI Pagsasalin',
 
                 'option' => [
                     'color'    => 'Color Swatch',
@@ -456,6 +457,7 @@ return [
                 'same-code-error'       => 'Ang code ng opsyon ay dapat na natangi.',
                 'usable-in-grid'        => 'Magagamit sa grid',
                 'is-filterable'         => 'Nafifilter',
+                'ai-translate'          => 'AI Pagsasalin',
 
                 'option' => [
                     'create-success'      => 'Matagumpay na nalikha ang Opsyon ng Katangian',
@@ -1713,6 +1715,18 @@ return [
                         'organization'   => 'ID ng Organisasyon',
                         'title'          => 'Mga Pangunahing Setting',
                         'title-info'     => 'Palakihin ang iyong karanasan sa Magic AI sa pamamagitan ng pagpasok ng iyong eksklusibong API Key at pag-indicate ng kaukulang Organisasyon para sa walang putol na pagsasama. Kunin ang kontrol sa iyong mga kredensyal ng OpenAI at i-customize ang mga setting ayon sa iyong mga partikular na pangangailangan.',
+                    ],
+
+                    'translation'   => [
+                        'title'                  => 'Pagsasalin',
+                        'enabled'                => 'Pinagana',
+                        'title-info'             => 'Pinapagana ng tampok na ito ang Magic AI para magsalin ng teksto, na nagbibigay-daan sa iyo na madaling i-convert ang teksto mula sa isang wika patungo sa isa pa.',
+                        'global-source-channel'  => 'Pinagmulan na Channel',
+                        'global-source-locale'   => 'Pinagmulan na Wika',
+                        'translation-model'      => 'Modelo ng Pagsasalin',
+                        'replace-existing-value' => 'Palitan ang Umiiral na Halaga',
+                        'target-channel'         => 'Target na Channel',
+                        'target-locales'         => 'Target na Mga Wika',
                     ],
                 ],
             ],

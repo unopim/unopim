@@ -390,6 +390,7 @@ return [
                 'same-code-error'       => 'विकल्प कोड अद्वितीय होना चाहिए।',
                 'usable-in-grid'        => 'ग्रिड में प्रयोग करने योग्य',
                 'is-filterable'         => 'फ़िल्टर योग्य है',
+                'ai-translate'          => 'एआई अनुवाद',
 
                 'option' => [
                     'color'    => 'रंग आदर्श',
@@ -457,6 +458,7 @@ return [
                 'same-code-error'       => 'विकल्प कोड अद्वितीय होना चाहिए।',
                 'usable-in-grid'        => 'ग्रिड में प्रयोग करने योग्य',
                 'is-filterable'         => 'फ़िल्टर योग्य है',
+                'ai-translate'          => 'एआई अनुवाद',
 
                 'option' => [
                     'create-success'      => 'विशेषता विकल्प सफलतापूर्वक बनाया गया',

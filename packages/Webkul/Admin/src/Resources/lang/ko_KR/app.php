@@ -389,6 +389,7 @@ return [
                 'same-code-error'       => '옵션 코드는 고유해야 합니다.',
                 'usable-in-grid'        => '그리드에서 사용 가능',
                 'is-filterable'         => '필터링 가능',
+                'ai-translate'          => 'AI 번역',
 
                 'option' => [
                     'color'    => '샘플 색상',
@@ -456,6 +457,7 @@ return [
                 'same-code-error'       => '옵션 코드는 고유해야 합니다.',
                 'usable-in-grid'        => '그리드에서 사용 가능',
                 'is-filterable'         => '필터링 가능',
+                'ai-translate'          => 'AI 번역',
 
                 'option' => [
                     'create-success'      => '속성 옵션이 성공적으로 생성되었습니다.',
@@ -1713,6 +1715,18 @@ return [
                         'organization'   => '조직 ID',
                         'title'          => '일반 설정',
                         'title-info'     => 'Magic AI 경험을 향상시키려면 자신의 API 키를 입력하고 관련 조직을 지정하여 통합을 원활하게 하세요. OpenAI 자격 증명 제어 및 필요에 맞게 설정을 사용자 정의할 수 있습니다.',
+                    ],
+
+                    'translation'   => [
+                        'title'                  => '번역',
+                        'enabled'                => '활성화됨',
+                        'title-info'             => '이 기능은 Magic AI를 활성화하여 텍스트를 번역하고 한 언어에서 다른 언어로 원활하게 변환할 수 있도록 합니다.',
+                        'global-source-channel'  => '소스 채널',
+                        'global-source-locale'   => '소스 로케일',
+                        'translation-model'      => '번역 모델',
+                        'replace-existing-value' => '기존 값 대체',
+                        'target-channel'         => '대상 채널',
+                        'target-locales'         => '대상 로케일',
                     ],
                 ],
             ],

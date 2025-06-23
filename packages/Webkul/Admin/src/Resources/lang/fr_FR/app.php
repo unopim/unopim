@@ -389,6 +389,7 @@ return [
                 'yes'                   => 'Oui',
                 'same-code-error'       => 'Le code d\'option doit être unique.',
                 'usable-in-grid'        => 'Disponible dans la liste des produits',
+                'ai-translate'          => 'Traduction IA',
 
                 'option' => [
                     'color'    => 'Couleur',
@@ -455,6 +456,7 @@ return [
                 'yes'                   => 'Oui',
                 'same-code-error'       => 'Le code d\'option doit être unique.',
                 'usable-in-grid'        => 'Disponible dans la liste des produits',
+                'ai-translate'          => 'Traduction IA',
 
                 'option' => [
                     'create-success'       => 'Option de champ de catégorie créée avec succès',

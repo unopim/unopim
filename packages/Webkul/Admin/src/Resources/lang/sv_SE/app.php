@@ -389,6 +389,7 @@ return [
                 'same-code-error'       => 'Alternativets kod måste vara unik.',
                 'usable-in-grid'        => 'Kan användas i rutnät',
                 'is-filterable'         => 'Är filtrerbar',
+                'ai-translate'          => 'AI Översättning',
 
                 'option' => [
                     'color'    => 'Färgväljare',
@@ -456,6 +457,7 @@ return [
                 'same-code-error'       => 'Alternativets kod måste vara unik.',
                 'usable-in-grid'        => 'Kan användas i rutnät',
                 'is-filterable'         => 'Är filtrerbar',
+                'ai-translate'          => 'AI Översättning',
 
                 'option' => [
                     'create-success'        => 'Attributalternativ skapades',
@@ -1713,6 +1715,18 @@ return [
                         'organization'   => 'Organisations-ID',
                         'title'          => 'Allmänna inställningar',
                         'title-info'     => 'Förbättra din upplevelse med Magic AI genom att ange din exklusiva API-nyckel och indikera den relevanta organisationen för smidig integration. Ta kontroll över dina OpenAI-uppgifter och anpassa inställningarna enligt dina specifika behov.',
+                    ],
+
+                    'translation'   => [
+                        'title'                  => 'Översättning',
+                        'enabled'                => 'Aktiverad',
+                        'title-info'             => 'Denna funktion aktiverar Magic AI för att översätta text, vilket gör det möjligt att smidigt konvertera text från ett språk till ett annat.',
+                        'global-source-channel'  => 'Källkanal',
+                        'global-source-locale'   => 'Källspråk',
+                        'translation-model'      => 'Översättningsmodell',
+                        'replace-existing-value' => 'Ersätt befintligt värde',
+                        'target-channel'         => 'Målkanal',
+                        'target-locales'         => 'Målspråk',
                     ],
                 ],
             ],

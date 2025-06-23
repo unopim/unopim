@@ -389,6 +389,7 @@ return [
                 'same-code-error'       => 'El código de opción debe ser único.',
                 'usable-in-grid'        => 'Utilizable en cuadrícula',
                 'is-filterable'         => 'Es filtrable',
+                'ai-translate'          => 'Traducción IA',
 
                 'option' => [
                     'color'    => 'Muestra de color',
@@ -456,6 +457,7 @@ return [
                 'same-code-error'       => 'El código de opción debe ser único.',
                 'usable-in-grid'        => 'Utilizable en cuadrícula',
                 'is-filterable'         => 'Es filtrable',
+                'ai-translate'          => 'Traducción IA',
 
                 'option' => [
                     'create-success'      => 'Attribute Option Created Successfully',

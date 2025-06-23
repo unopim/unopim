@@ -389,6 +389,7 @@ return [
                 'same-code-error'       => 'El codi de l\'opció ha de ser únic.',
                 'usable-in-grid'        => 'Útil a la graella',
                 'is-filterable'         => 'És filtrable',
+                'ai-translate'          => 'Traducció IA',
 
                 'option' => [
                     'color'    => 'Muestra de color',
@@ -456,6 +457,7 @@ return [
                 'same-code-error'       => 'El codi de l\'opció ha de ser únic.',
                 'usable-in-grid'        => 'Útil a la graella',
                 'is-filterable'         => 'És filtrable',
+                'ai-translate'          => 'Traducció IA',
 
                 'option' => [
                     'create-success'      => 'Opció d\'atribut creada amb èxit',

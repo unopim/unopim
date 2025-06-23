@@ -389,6 +389,7 @@ return [
                 'same-code-error'       => 'Mã của tuỳ chọn phải duy nhất.',
                 'usable-in-grid'        => 'Có thể sử dụng trong lưới',
                 'is-filterable'         => 'Có thể lọc',
+                'ai-translate'          => 'Dịch thuật AI',
 
                 'option' => [
                     'color'    => 'Mẫu màu sắc',
@@ -456,6 +457,7 @@ return [
                 'same-code-error'       => 'Mã của tuỳ chọn phải duy nhất.',
                 'usable-in-grid'        => 'Có thể sử dụng trong lưới',
                 'is-filterable'         => 'Có thể lọc',
+                'ai-translate'          => 'Dịch thuật AI',
 
                 'option' => [
                     'create-success'      => 'Tùy chọn thuộc tính đã được tạo thành công',
@@ -1713,6 +1715,18 @@ return [
                         'organization'   => 'ID Tổ chức',
                         'title'          => 'Cài đặt chung',
                         'title-info'     => 'Nâng cao trải nghiệm của bạn với Magic AI bằng cách nhập API Key của bạn và xác định Tổ chức liên quan cho tích hợp dễ dàng. Kiểm soát các thông tin của bạn với OpenAI và tùy chỉnh các cài đặt theo nhu cầu cụ thể của bạn.',
+                    ],
+
+                    'translation'   => [
+                        'title'                  => 'Dịch thuật',
+                        'enabled'                => 'Đã bật',
+                        'title-info'             => 'Tính năng này sẽ kích hoạt Magic AI để dịch văn bản, cho phép bạn chuyển đổi văn bản từ ngôn ngữ này sang ngôn ngữ khác một cách dễ dàng.',
+                        'global-source-channel'  => 'Kênh Nguồn',
+                        'global-source-locale'   => 'Ngôn Ngữ Nguồn',
+                        'translation-model'      => 'Mô Hình Dịch',
+                        'replace-existing-value' => 'Thay Thế Giá Trị Hiện Có',
+                        'target-channel'         => 'Kênh Mục Tiêu',
+                        'target-locales'         => 'Ngôn Ngữ Mục Tiêu',
                     ],
                 ],
             ],

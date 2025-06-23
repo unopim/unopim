@@ -389,6 +389,7 @@ return [
                 'same-code-error'       => 'Alternativkoden må være unik.',
                 'usable-in-grid'        => 'Brukes i rutenett',
                 'is-filterable'         => 'Er filtrerbar',
+                'ai-translate'          => 'AI Oversettelse',
 
                 'option' => [
                     'color'    => 'Fargeprøve',
@@ -456,6 +457,7 @@ return [
                 'same-code-error'       => 'Alternativkoden må være unik.',
                 'usable-in-grid'        => 'Brukes i rutenett',
                 'is-filterable'         => 'Er filtrerbar',
+                'ai-translate'          => 'AI Oversettelse',
 
                 'option' => [
                     'create-success'      => 'Attributtalternativ opprettet',
@@ -1713,6 +1715,18 @@ return [
                         'organization'   => 'Organisasjons-ID',
                         'title'          => 'Generelle innstillinger',
                         'title-info'     => 'Forbedre opplevelsen din med Magic AI ved å legge inn din eksklusive API-nøkkel og spesifisere den relevante organisasjonen for sømløs integrasjon. Ta kontroll over OpenAI-tilgang og tilpass innstillingene etter dine spesifikke behov.',
+                    ],
+
+                    'translation'   => [
+                        'title'                  => 'Oversettelse',
+                        'enabled'                => 'Aktivert',
+                        'title-info'             => 'Denne funksjonen aktiverer Magic AI for å oversette tekst, slik at du enkelt kan konvertere tekst fra ett språk til et annet.',
+                        'global-source-channel'  => 'Kildekanal',
+                        'global-source-locale'   => 'Kildelokale',
+                        'translation-model'      => 'Oversettelsesmodell',
+                        'replace-existing-value' => 'Erstatt eksisterende verdi',
+                        'target-channel'         => 'Målkanal',
+                        'target-locales'         => 'Mållokaler',
                     ],
                 ],
             ],

@@ -389,6 +389,7 @@ return [
                 'same-code-error'       => 'Vaihtoehdon koodin tulee olla ainutlaatuinen.',
                 'usable-in-grid'        => 'Käytettävissä ruudukossa',
                 'is-filterable'         => 'On suodatettavissa',
+                'ai-translate'          => 'AI Käännös',
 
                 'option' => [
                     'color'    => 'Väri',
@@ -456,6 +457,7 @@ return [
                 'same-code-error'       => 'Vaihtoehdon koodin tulee olla ainutlaatuinen.',
                 'usable-in-grid'        => 'Käytettävissä ruudukossa',
                 'is-filterable'         => 'On suodatettavissa',
+                'ai-translate'          => 'AI Käännös',
 
                 'option' => [
                     'create-success'       => 'Attribuuttivaihtoehto luotiin onnistuneesti',

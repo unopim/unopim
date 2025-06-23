@@ -388,6 +388,8 @@ return [
                 'same-code-error'       => 'Der Optionscode muss eindeutig sein.',
                 'usable-in-grid'        => 'Verwendbar im Raster',
                 'is-filterable'         => 'Ist filterbar',
+                'ai-translate'          => 'KI Übersetzen',
+
                 'option'                => [
                     'color'    => 'Farbfeld',
                     'dropdown' => 'Dropdown',
@@ -453,6 +455,7 @@ return [
                 'same-code-error'       => 'Der Optionscode muss eindeutig sein.',
                 'usable-in-grid'        => 'Verwendbar im Raster',
                 'is-filterable'         => 'Ist filterbar',
+                'ai-translate'          => 'KI Übersetzen',
 
                 'option' => [
                     'create-success'       => 'Attributoption erfolgreich erstellt',

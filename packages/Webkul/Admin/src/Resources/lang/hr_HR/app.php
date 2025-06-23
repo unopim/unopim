@@ -689,6 +689,7 @@ return [
                 'set-section-right'   => 'Sekcija Konfiguracije',
                 'settings'            => 'Postavke',
                 'same-code-error'     => 'Kod opcije mora biti jedinstven.',
+                'ai-translate'        => 'AI Prijevod',
 
                 'option' => [
                     'dropdown' => 'Padajući Izbornik',
@@ -754,6 +755,7 @@ return [
                 'set-section-right'   => 'Sekcija Konfiguracije',
                 'settings'            => 'Postavke',
                 'same-code-error'     => 'Kod opcije mora biti jedinstven.',
+                'ai-translate'        => 'AI Prijevod',
 
                 'option' => [
                     'dropdown' => 'Padajući Izbornik',

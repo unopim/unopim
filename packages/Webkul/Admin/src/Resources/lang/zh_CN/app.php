@@ -389,6 +389,7 @@ return [
                 'same-code-error'       => '选项代码必须是唯一的。',
                 'usable-in-grid'        => '可在网格中使用',
                 'is-filterable'         => '可筛选',
+                'ai-translate'          => 'AI翻译',
 
                 'option' => [
                     'color'    => '色板',
@@ -455,6 +456,7 @@ return [
                 'same-code-error'       => '选项代码必须是唯一的。',
                 'usable-in-grid'        => '可在网格中使用',
                 'is-filterable'         => '可筛选',
+                'ai-translate'          => 'AI翻译',
 
                 'option' => [
                     'create-success'       => '属性选项创建成功',
@@ -1566,6 +1568,18 @@ return [
                         'enabled'    => '啟用',
                         'title'      => '影像生成',
                         'title-info' => '此功能將為每次圖像上傳啟用 Magic AI，您希望使用 DALL-E 生成圖像。',
+                    ],
+
+                    'translation'   => [
+                        'title'                  => '翻译',
+                        'enabled'                => '启用',
+                        'title-info'             => '此功能将启用 Magic AI 来翻译文本，使您能够轻松地将文本从一种语言转换为另一种语言。',
+                        'global-source-channel'  => '源频道',
+                        'global-source-locale'   => '源语言环境',
+                        'translation-model'      => '翻译模型',
+                        'replace-existing-value' => '替换现有值',
+                        'target-channel'         => '目标频道',
+                        'target-locales'         => '目标语言环境',
                     ],
                 ],
             ],

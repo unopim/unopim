@@ -389,6 +389,7 @@ return [
                 'same-code-error'       => 'Seçenek kodu benzersiz olmalıdır.',
                 'usable-in-grid'        => 'Izgarada Kullanılabilir',
                 'is-filterable'         => 'Filtrelenebilir',
+                'ai-translate'          => 'AI Çeviri',
 
                 'option' => [
                     'color'    => 'Renk Örneği',
@@ -456,6 +457,7 @@ return [
                 'same-code-error'       => 'Seçenek kodu benzersiz olmalıdır.',
                 'usable-in-grid'        => 'Izgarada Kullanılabilir',
                 'is-filterable'         => 'Filtrelenebilir',
+                'ai-translate'          => 'AI Çeviri',
 
                 'option' => [
                     'create-success'      => 'Öznitelik Seçeneği Başarıyla Oluşturuldu',
@@ -1713,6 +1715,18 @@ return [
                         'organization'   => 'Organizasyon ID',
                         'title'          => 'Genel Ayarlar',
                         'title-info'     => 'Magic AI deneyiminizi geliştirin, özel API Anahtarınızı girerek ve ilgili Organizasyonu belirleyerek entegrasyonu sorunsuz hale getirin. OpenAI kimlik bilgilerinizi kontrol edin ve ayarları ihtiyaçlarınıza göre özelleştirin.',
+                    ],
+
+                    'translation'   => [
+                        'title'                  => 'Çeviri',
+                        'enabled'                => 'Etkin',
+                        'title-info'             => 'Bu özellik, metinleri çevirmek için Magic AI’ı etkinleştirir ve bir dili diğerine sorunsuz bir şekilde dönüştürmenizi sağlar.',
+                        'global-source-channel'  => 'Kaynak Kanal',
+                        'global-source-locale'   => 'Kaynak Yerel Ayarı',
+                        'translation-model'      => 'Çeviri Modeli',
+                        'replace-existing-value' => 'Mevcut Değeri Değiştir',
+                        'target-channel'         => 'Hedef Kanal',
+                        'target-locales'         => 'Hedef Yerel Ayarlar',
                     ],
                 ],
             ],

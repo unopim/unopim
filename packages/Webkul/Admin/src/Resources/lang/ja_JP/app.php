@@ -389,6 +389,7 @@ return [
                 'same-code-error'       => 'オプション コードは一意である必要があります。',
                 'usable-in-grid'        => 'グリッドで使用可能',
                 'is-filterable'         => 'フィルタリング可能',
+                'ai-translate'          => 'AI翻訳',
 
                 'option' => [
                     'color'    => 'カラー スウォッチ',
@@ -454,6 +455,7 @@ return [
                 'yes'                   => 'はい',
                 'same-code-error'       => 'オプション コードは一意である必要があります。',
                 'usable-in-grid'        => 'グリッドで使用可能',
+                'ai-translate'          => 'AI翻訳',
 
                 'option' => [
                     'create-success'      => '属性オプションが正常に作成されました',
@@ -1568,6 +1570,18 @@ return [
                         'enabled'    => '有効',
                         'title'      => '画像生成',
                         'title-info' => 'この機能は、DALL-E を使用して画像を生成するすべての画像アップロードで Magic AI を有効にします。<br/><br/>有効にすると、任意の画像アップロードに移動して画像を生成します。',
+                    ],
+
+                    'translation'   => [
+                        'title'                  => '翻訳',
+                        'enabled'                => '有効',
+                        'title-info'             => 'この機能を有効にすると、Magic AIを使用してテキストを翻訳し、テキストをシームレスに別の言語に変換できます。',
+                        'global-source-channel'  => 'ソースチャンネル',
+                        'global-source-locale'   => 'ソースロケール',
+                        'translation-model'      => '翻訳モデル',
+                        'replace-existing-value' => '既存の値を置き換える',
+                        'target-channel'         => 'ターゲットチャンネル',
+                        'target-locales'         => 'ターゲットロケール',
                     ],
                 ],
             ],

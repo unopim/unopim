@@ -389,6 +389,7 @@ return [
                 'same-code-error'       => 'Kode opsi harus unik.',
                 'usable-in-grid'        => 'Dapat digunakan dalam grid',
                 'is-filterable'         => 'Dapat difilter',
+                'ai-translate'          => 'AI Terjemahan',
 
                 'option' => [
                     'color'    => 'Color Swatch',
@@ -455,6 +456,7 @@ return [
                 'same-code-error'       => 'Kode opsi harus unik.',
                 'usable-in-grid'        => 'Dapat digunakan dalam grid',
                 'is-filterable'         => 'Dapat difilter',
+                'ai-translate'          => 'AI Terjemahan',
 
                 'option' => [
                     'create-success'      => 'Opsi atribut berhasil dibuat',
@@ -1569,6 +1571,18 @@ return [
                         'enabled'    => 'Diaktifkan',
                         'title'      => 'Pembuatan Gambar',
                         'title-info' => 'Fitur ini akan mengaktifkan Magic AI untuk setiap unggahan gambar, di mana Anda ingin menghasilkan gambar menggunakan DALL-E.<br/><br/>Jika Diaktifkan, buka unggahan gambar mana pun untuk menghasilkan gambar.',
+                    ],
+
+                    'translation'   => [
+                        'title'                  => 'Terjemahan',
+                        'enabled'                => 'Diaktifkan',
+                        'title-info'             => 'Fitur ini akan mengaktifkan Magic AI untuk menerjemahkan teks, memungkinkan Anda mengubah teks dari satu bahasa ke bahasa lain dengan mudah.',
+                        'global-source-channel'  => 'Saluran Sumber',
+                        'global-source-locale'   => 'Bahasa Sumber',
+                        'translation-model'      => 'Model Terjemahan',
+                        'replace-existing-value' => 'Ganti Nilai yang Ada',
+                        'target-channel'         => 'Saluran Target',
+                        'target-locales'         => 'Bahasa Target',
                     ],
                 ],
             ],
