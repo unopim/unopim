@@ -372,6 +372,7 @@ return [
                 'yes'                   => 'Так',
                 'same-code-error'       => 'Код опції має бути унікальним.',
                 'usable-in-grid'        => 'Доступно в сітці',
+                'is-filterable'         => 'Фільтрований',
 
                 'option' => [
                     'color'    => 'Колір шаблону',
@@ -438,6 +439,7 @@ return [
                 'yes'                   => 'Так',
                 'same-code-error'       => 'Код опції має бути унікальним.',
                 'usable-in-grid'        => 'Доступно в сітці',
+                'is-filterable'         => 'Фільтрований',
 
                 'option' => [
                     'color'    => 'Колір шаблону',
@@ -1833,6 +1835,10 @@ return [
                 'search' => [
                     'title' => 'Пошук',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'колонками',
+                ],
             ],
 
             'filters' => [
@@ -1871,6 +1877,13 @@ return [
             'table' => [
                 'actions'              => 'Дії',
                 'no-records-available' => 'Записів немає.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Керувати колонками',
+                'available-columns' => 'Доступні стовпці',
+                'selected-columns'  => 'Вибрані стовпці',
+                'apply-btn'         => 'Застосувати',
             ],
         ],
 

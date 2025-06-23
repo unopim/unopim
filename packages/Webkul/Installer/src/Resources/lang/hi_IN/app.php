@@ -10,11 +10,9 @@ return [
             'attribute-groups' => [
                 'description'      => 'विवरण',
                 'general'          => 'सामान्य',
-                'inventories'      => 'सूची',
                 'meta-description' => 'मेटा विवरण',
-                'price'            => 'कीमत',
-                'technical'        => 'तकनीकी',
-                'shipping'         => 'शिपिंग',
+                'price'            => 'मूल्य',
+                'media'            => 'मीडिया',
             ],
 
             'attributes' => [
@@ -25,6 +23,7 @@ return [
                 'featured'             => 'प्रदर्शित',
                 'guest-checkout'       => 'मेहमान के होटल छोड़ने का समय',
                 'height'               => 'ऊंचाई',
+                'image'                => 'छवि',
                 'length'               => 'लंबाई',
                 'manage-stock'         => 'स्टॉक प्रबंधित करें',
                 'meta-description'     => 'मेटा विवरण',
@@ -40,7 +39,6 @@ return [
                 'special-price-from'   => 'से विशेष कीमत',
                 'special-price-to'     => 'विशेष कीमत के लिए',
                 'special-price'        => 'विशेष कीमत',
-                'status'               => 'स्थिति',
                 'tax-category'         => 'कर श्रेणी',
                 'url-key'              => 'यूआरएल कुंजी',
                 'visible-individually' => 'व्यक्तिगत रूप से दृश्यमान',
@@ -73,65 +71,6 @@ return [
             ],
         ],
 
-        'cms' => [
-            'pages' => [
-                'about-us' => [
-                    'content' => 'हमारे बारे में पृष्ठ सामग्री',
-                    'title'   => 'हमारे बारे में',
-                ],
-
-                'contact-us' => [
-                    'content' => 'हमसे संपर्क करें पृष्ठ सामग्री',
-                    'title'   => 'हमसे संपर्क करें',
-                ],
-
-                'customer-service' => [
-                    'content' => 'ग्राहक सेवा पृष्ठ सामग्री',
-                    'title'   => 'ग्राहक सेवा',
-                ],
-
-                'payment-policy' => [
-                    'content' => 'भुगतान नीति पृष्ठ सामग्री',
-                    'title'   => 'भुगतान की नीति',
-                ],
-
-                'privacy-policy' => [
-                    'content' => 'गोपनीयता नीति पृष्ठ सामग्री',
-                    'title'   => 'गोपनीयता नीति',
-                ],
-
-                'refund-policy' => [
-                    'content' => 'धनवापसी नीति पृष्ठ सामग्री',
-                    'title'   => 'भुगतान वापसी की नीति',
-                ],
-
-                'return-policy' => [
-                    'content' => 'वापसी नीति पृष्ठ सामग्री',
-                    'title'   => 'वापसी नीति',
-                ],
-
-                'shipping-policy' => [
-                    'content' => 'शिपिंग नीति पृष्ठ सामग्री',
-                    'title'   => 'शिपिंग नीति',
-                ],
-
-                'terms-conditions' => [
-                    'content' => 'नियम एवं शर्तें पृष्ठ सामग्री',
-                    'title'   => 'नियम एवं शर्तें',
-                ],
-
-                'terms-of-use' => [
-                    'content' => 'उपयोग की शर्तें पृष्ठ सामग्री',
-                    'title'   => 'उपयोग की शर्तें',
-                ],
-
-                'whats-new' => [
-                    'content' => 'नया पृष्ठ सामग्री क्या है',
-                    'title'   => 'नया क्या है',
-                ],
-            ],
-        ],
-
         'core' => [
             'channels' => [
                 'meta-title'       => 'डेमो स्टोर',
@@ -154,138 +93,6 @@ return [
                 'TRY' => 'तुर्की लीरा',
                 'UAH' => 'यूक्रेनी रिव्निया',
                 'USD' => 'अमेरिकी डॉलर',
-            ],
-        ],
-
-        'customer' => [
-            'customer-groups' => [
-                'general'   => 'सामान्य',
-                'guest'     => 'अतिथि',
-                'wholesale' => 'थोक',
-            ],
-        ],
-
-        'inventory' => [
-            'inventory-sources' => [
-                'name' => 'गलती करना',
-            ],
-        ],
-
-        'shop' => [
-            'theme-customizations' => [
-                'all-products' => [
-                    'name' => 'सभी प्रोडक्ट',
-
-                    'options' => [
-                        'title' => 'सभी प्रोडक्ट',
-                    ],
-                ],
-
-                'bold-collections' => [
-                    'content' => [
-                        'btn-title'   => 'सभी को देखें',
-                        'description' => 'पेश है हमारे नए बोल्ड कलेक्शन! साहसी डिज़ाइन और जीवंत कथनों के साथ अपनी शैली को उन्नत करें। आकर्षक पैटर्न और बोल्ड रंगों का अन्वेषण करें जो आपकी अलमारी को फिर से परिभाषित करते हैं। असाधारण को अपनाने के लिए तैयार हो जाइए!',
-                        'title'       => 'हमारे नए बोल्ड कलेक्शन के लिए तैयार हो जाइए!',
-                    ],
-
-                    'name' => 'बोल्ड कलेक्शन',
-                ],
-
-                'categories-collections' => [
-                    'name' => 'श्रेणियाँ संग्रह',
-                ],
-
-                'featured-collections' => [
-                    'name' => 'विशेष संग्रह',
-
-                    'options' => [
-                        'title' => 'विशेष रुप से प्रदर्शित प्रोडक्टस',
-                    ],
-                ],
-
-                'footer-links' => [
-                    'name' => 'फ़ुटर लिंक',
-
-                    'options' => [
-                        'about-us'         => 'हमारे बारे में',
-                        'contact-us'       => 'हमसे संपर्क करें',
-                        'customer-service' => 'ग्राहक सेवा',
-                        'payment-policy'   => 'भुगतान की नीति',
-                        'privacy-policy'   => 'गोपनीयता नीति',
-                        'refund-policy'    => 'भुगतान वापसी की नीति',
-                        'return-policy'    => 'वापसी नीति',
-                        'shipping-policy'  => 'शिपिंग नीति',
-                        'terms-conditions' => 'नियम एवं शर्तें',
-                        'terms-of-use'     => 'उपयोग की शर्तें',
-                        'whats-new'        => 'नया क्या है',
-                    ],
-                ],
-
-                'game-container' => [
-                    'content' => [
-                        'sub-title-1' => 'हमारे संग्रह',
-                        'sub-title-2' => 'हमारे संग्रह',
-                        'title'       => 'हमारे नए अतिरिक्त के साथ खेल!',
-                    ],
-
-                    'name' => 'गेम कंटेनर',
-                ],
-
-                'image-carousel' => [
-                    'name' => 'छवि हिंडोला',
-
-                    'sliders' => [
-                        'title' => 'नए संग्रह के लिए तैयार हो जाइए',
-                    ],
-                ],
-
-                'new-products' => [
-                    'name' => 'नये उत्पाद',
-
-                    'options' => [
-                        'title' => 'नये उत्पाद',
-                    ],
-                ],
-
-                'offer-information' => [
-                    'content' => [
-                        'title' => 'अपने पहले ऑर्डर की खरीदारी पर अभी 40% तक की छूट पाएं',
-                    ],
-
-                    'name' => 'जानकारी प्रदान करें',
-                ],
-
-                'services-content' => [
-                    'description' => [
-                        'emi-available-info'   => 'सभी प्रमुख क्रेडिट कार्ड पर नो कॉस्ट ईएमआई उपलब्ध है',
-                        'free-shipping-info'   => 'सभी आदेश पर मुफ्त शिपिंग का आनंद लें',
-                        'product-replace-info' => 'आसान उत्पाद प्रतिस्थापन उपलब्ध!',
-                        'time-support-info'    => 'चैट और ईमेल के माध्यम से समर्पित 24/7 सहायता',
-                    ],
-
-                    'name' => 'सेवाएँ सामग्री',
-
-                    'title' => [
-                        'emi-available'   => 'ईएमआई उपलब्ध',
-                        'free-shipping'   => 'मुफ़्त शिपिंग',
-                        'product-replace' => 'उत्पाद बदलें',
-                        'time-support'    => '24/7 सहायता',
-                    ],
-                ],
-
-                'top-collections' => [
-                    'content' => [
-                        'sub-title-1' => 'हमारे संग्रह',
-                        'sub-title-2' => 'हमारे संग्रह',
-                        'sub-title-3' => 'हमारे संग्रह',
-                        'sub-title-4' => 'हमारे संग्रह',
-                        'sub-title-5' => 'हमारे संग्रह',
-                        'sub-title-6' => 'हमारे संग्रह',
-                        'title'       => 'हमारे नए अतिरिक्त के साथ खेल!',
-                    ],
-
-                    'name' => 'शीर्ष संग्रह',
-                ],
             ],
         ],
 

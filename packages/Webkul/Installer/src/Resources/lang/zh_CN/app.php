@@ -9,12 +9,10 @@ return [
 
             'attribute-groups' => [
                 'description'      => '描述',
-                'general'          => '一般的',
-                'inventories'      => '库存',
+                'general'          => '一般',
                 'meta-description' => '元描述',
                 'price'            => '价格',
-                'technical'        => '技术的',
-                'shipping'         => '船运',
+                'media'            => '媒体',
             ],
 
             'attributes' => [
@@ -25,6 +23,7 @@ return [
                 'featured'             => '精选',
                 'guest-checkout'       => '宾客结帐',
                 'height'               => '高度',
+                'image'                => '图片',
                 'length'               => '长度',
                 'manage-stock'         => '管理库存',
                 'meta-description'     => '元描述',
@@ -40,7 +39,6 @@ return [
                 'special-price-from'   => '特价从',
                 'special-price-to'     => '特价至',
                 'special-price'        => '特价',
-                'status'               => '地位',
                 'tax-category'         => '税种',
                 'url-key'              => '网址键',
                 'visible-individually' => '单独可见',
@@ -73,65 +71,6 @@ return [
             ],
         ],
 
-        'cms' => [
-            'pages' => [
-                'about-us' => [
-                    'content' => '关于我们页面内容',
-                    'title'   => '关于我们',
-                ],
-
-                'contact-us' => [
-                    'content' => '联系我们页面内容',
-                    'title'   => '联系我们',
-                ],
-
-                'customer-service' => [
-                    'content' => '客户服务页面内容',
-                    'title'   => '客户服务',
-                ],
-
-                'payment-policy' => [
-                    'content' => '付款政策页面内容',
-                    'title'   => '付款政策',
-                ],
-
-                'privacy-policy' => [
-                    'content' => '隐私政策页面内容',
-                    'title'   => '隐私政策',
-                ],
-
-                'refund-policy' => [
-                    'content' => '退款政策页面内容',
-                    'title'   => '退款政策',
-                ],
-
-                'return-policy' => [
-                    'content' => '退货政策页面内容',
-                    'title'   => '退货政策',
-                ],
-
-                'shipping-policy' => [
-                    'content' => '运输政策页面内容',
-                    'title'   => '运输政策',
-                ],
-
-                'terms-conditions' => [
-                    'content' => '条款和条件页面内容',
-                    'title'   => '条款及条件',
-                ],
-
-                'terms-of-use' => [
-                    'content' => '使用条款页面内容',
-                    'title'   => '使用条款',
-                ],
-
-                'whats-new' => [
-                    'content' => '新增内容页面内容',
-                    'title'   => '什么是新的',
-                ],
-            ],
-        ],
-
         'core' => [
             'channels' => [
                 'meta-title'       => '示范店',
@@ -154,138 +93,6 @@ return [
                 'TRY' => '土耳其里拉',
                 'UAH' => '乌克兰格里夫纳',
                 'USD' => '美元',
-            ],
-        ],
-
-        'customer' => [
-            'customer-groups' => [
-                'general'   => '一般的',
-                'guest'     => '客人',
-                'wholesale' => '批发的',
-            ],
-        ],
-
-        'inventory' => [
-            'inventory-sources' => [
-                'name' => '默认',
-            ],
-        ],
-
-        'shop' => [
-            'theme-customizations' => [
-                'all-products' => [
-                    'name' => '所有产品',
-
-                    'options' => [
-                        'title' => '所有产品',
-                    ],
-                ],
-
-                'bold-collections' => [
-                    'content' => [
-                        'btn-title'   => '查看全部',
-                        'description' => '隆重推出我们大胆的新系列！通过大胆的设计和充满活力的宣言提升您的风格。探索引人注目的图案和大胆的色彩，重新定义您的衣柜。准备好拥抱非凡吧！',
-                        'title'       => '准备好迎接我们新的大胆系列吧！',
-                    ],
-
-                    'name' => '大胆系列',
-                ],
-
-                'categories-collections' => [
-                    'name' => '类别 收藏',
-                ],
-
-                'featured-collections' => [
-                    'name' => '特色收藏',
-
-                    'options' => [
-                        'title' => '特色产品',
-                    ],
-                ],
-
-                'footer-links' => [
-                    'name' => '页脚链接',
-
-                    'options' => [
-                        'about-us'         => '关于我们',
-                        'contact-us'       => '联系我们',
-                        'customer-service' => '客户服务',
-                        'payment-policy'   => '付款政策',
-                        'privacy-policy'   => '隐私政策',
-                        'refund-policy'    => '退款政策',
-                        'return-policy'    => '退货政策',
-                        'shipping-policy'  => '运输政策',
-                        'terms-conditions' => '条款及条件',
-                        'terms-of-use'     => '使用条款',
-                        'whats-new'        => '什么是新的',
-                    ],
-                ],
-
-                'game-container' => [
-                    'content' => [
-                        'sub-title-1' => '我们的系列',
-                        'sub-title-2' => '我们的系列',
-                        'title'       => '游戏新增了我们的新内容！',
-                    ],
-
-                    'name' => '游戏容器',
-                ],
-
-                'image-carousel' => [
-                    'name' => '图像轮播',
-
-                    'sliders' => [
-                        'title' => '为新系列做好准备',
-                    ],
-                ],
-
-                'new-products' => [
-                    'name' => '新产品',
-
-                    'options' => [
-                        'title' => '新产品',
-                    ],
-                ],
-
-                'offer-information' => [
-                    'content' => [
-                        'title' => '第一份订单可享受高达 40% 的折扣 现在购买',
-                    ],
-
-                    'name' => '优惠资讯',
-                ],
-
-                'services-content' => [
-                    'description' => [
-                        'emi-available-info'   => '所有主要信用卡均提供免费 EMI',
-                        'free-shipping-info'   => '所有订单均可享受免费送货服务',
-                        'product-replace-info' => '可以轻松更换产品！',
-                        'time-support-info'    => '通过聊天和电子邮件提供 24/7 专门支持',
-                    ],
-
-                    'name' => '服务内容',
-
-                    'title' => [
-                        'emi-available'   => '艾米可用',
-                        'free-shipping'   => '免运费',
-                        'product-replace' => '产品更换',
-                        'time-support'    => '24/7 支持',
-                    ],
-                ],
-
-                'top-collections' => [
-                    'content' => [
-                        'sub-title-1' => '我们的系列',
-                        'sub-title-2' => '我们的系列',
-                        'sub-title-3' => '我们的系列',
-                        'sub-title-4' => '我们的系列',
-                        'sub-title-5' => '我们的系列',
-                        'sub-title-6' => '我们的系列',
-                        'title'       => '游戏新增了我们的新内容！',
-                    ],
-
-                    'name' => '热门收藏',
-                ],
             ],
         ],
 

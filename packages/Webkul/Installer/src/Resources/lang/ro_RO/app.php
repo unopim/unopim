@@ -7,11 +7,9 @@ return [
             'attribute-groups'   => [
                 'description'      => 'Descriere',
                 'general'          => 'General',
-                'inventories'      => 'Inventare',
                 'meta-description' => 'Meta descriere',
                 'price'            => 'Preț',
-                'technical'        => 'Tehnic',
-                'shipping'         => 'Transport',
+                'media'            => 'Media',
             ],
             'attributes' => [
                 'brand'                => 'Marca',
@@ -21,6 +19,7 @@ return [
                 'featured'             => 'Promovat',
                 'guest-checkout'       => 'Checkout pentru oaspeți',
                 'height'               => 'Înălțime',
+                'image'                => 'Imagine',
                 'length'               => 'Lungime',
                 'manage-stock'         => 'Gestionare stocuri',
                 'meta-description'     => 'Meta descriere',
@@ -36,7 +35,6 @@ return [
                 'special-price-from'   => 'Preț special de la',
                 'special-price-to'     => 'Preț special până la',
                 'special-price'        => 'Preț special',
-                'status'               => 'Status',
                 'tax-category'         => 'Categorie TVA',
                 'url-key'              => 'Cheie URL',
                 'visible-individually' => 'Vizibil individual',
@@ -65,54 +63,6 @@ return [
                 'description' => 'Descriere',
             ],
         ],
-        'cms' => [
-            'pages' => [
-                'about-us' => [
-                    'content' => 'Conținut pagină despre noi',
-                    'title'   => 'Despre noi',
-                ],
-                'contact-us' => [
-                    'content' => 'Conținut pagină contact',
-                    'title'   => 'Contactează-ne',
-                ],
-                'customer-service' => [
-                    'content' => 'Conținut pagină serviciu clienți',
-                    'title'   => 'Serviciu client',
-                ],
-                'payment-policy' => [
-                    'content' => 'Conținut pagină politică plată',
-                    'title'   => 'Politica de plată',
-                ],
-                'privacy-policy' => [
-                    'content' => 'Conținut pagină politică confidențialitate',
-                    'title'   => 'Politica de confidențialitate',
-                ],
-                'refund-policy' => [
-                    'content' => 'Conținut pagină politică rambursare',
-                    'title'   => 'Politica de rambursare',
-                ],
-                'return-policy' => [
-                    'content' => 'Conținut pagină politică returnare',
-                    'title'   => 'Politica de returnare',
-                ],
-                'shipping-policy' => [
-                    'content' => 'Conținut pagină politică transport',
-                    'title'   => 'Politica de transport',
-                ],
-                'terms-conditions' => [
-                    'content' => 'Conținut pagină termeni și condiții',
-                    'title'   => 'Termeni și condiții',
-                ],
-                'terms-of-use' => [
-                    'content' => 'Conținut pagină termeni de utilizare',
-                    'title'   => 'Termeni de utilizare',
-                ],
-                'whats-new' => [
-                    'content' => 'Conținut pagină ce este nou',
-                    'title'   => 'Ce este nou',
-                ],
-            ],
-        ],
         'core' => [
             'channels' => [
                 'meta-title'       => 'Magazin demo',
@@ -134,114 +84,6 @@ return [
                 'TRY' => 'Liră turcească',
                 'UAH' => 'Grivna ucraineană',
                 'USD' => 'Dolar american',
-            ],
-        ],
-        'customer' => [
-            'customer-groups' => [
-                'general'   => 'General',
-                'guest'     => 'Invitat',
-                'wholesale' => 'Angro',
-            ],
-        ],
-        'inventory' => [
-            'inventory-sources' => [
-                'name' => 'Default',
-            ],
-        ],
-        'shop' => [
-            'theme-customizations' => [
-                'all-products' => [
-                    'name'    => 'Toate produsele',
-                    'options' => [
-                        'title' => 'Toate produsele',
-                    ],
-                ],
-                'bold-collections' => [
-                    'content' => [
-                        'btn-title'   => 'Vezi toate',
-                        'description' => 'Descoperă colecțiile îndrăznețe ale noastre! Elevă-ți stilul cu designuri îndrăznețe și culori vibrante. Explorează modele îndrăznețe și tonuri strălucitoare care îți vor defini garderoba. Pregătește-te să îmbrățișezi extraordinarul!',
-                        'title'       => 'Pregătește-te pentru colecțiile îndrăznețe noi!',
-                    ],
-                    'name' => 'Colecții îndrăznețe',
-                ],
-                'categories-collections' => [
-                    'name' => 'Colecțiile de categorii',
-                ],
-                'featured-collections' => [
-                    'name'    => 'Colecții recomandate',
-                    'options' => [
-                        'title' => 'Produse recomandate',
-                    ],
-                ],
-                'footer-links' => [
-                    'name'    => 'Linkuri de subsol',
-                    'options' => [
-                        'about-us'         => 'Despre noi',
-                        'contact-us'       => 'Contactează-ne',
-                        'customer-service' => 'Serviciu client',
-                        'payment-policy'   => 'Politica de plată',
-                        'privacy-policy'   => 'Politica de confidențialitate',
-                        'refund-policy'    => 'Politica de rambursare',
-                        'return-policy'    => 'Politica de returnare',
-                        'shipping-policy'  => 'Politica de transport',
-                        'terms-conditions' => 'Termeni și condiții',
-                        'terms-of-use'     => 'Termeni de utilizare',
-                        'whats-new'        => 'Ce este nou',
-                    ],
-                ],
-                'game-container' => [
-                    'content' => [
-                        'sub-title-1' => 'Colecțiile noastre',
-                        'sub-title-2' => 'Colecțiile noastre',
-                        'title'       => 'Jocul cu noile noastre adăugiri!',
-                    ],
-                    'name' => 'Container de joc',
-                ],
-                'image-carousel' => [
-                    'name'    => 'Carousel de imagini',
-                    'sliders' => [
-                        'title' => 'Pregătește-te pentru noua colecție',
-                    ],
-                ],
-                'new-products' => [
-                    'name'    => 'Produse noi',
-                    'options' => [
-                        'title' => 'Produse noi',
-                    ],
-                ],
-                'offer-information' => [
-                    'content' => [
-                        'title' => 'ÎNCEPĂND CU 40% DISCOUNT PE PRIMUL TĂU COMANDĂ',
-                    ],
-                    'name' => 'Informații despre oferte',
-                ],
-                'services-content' => [
-                    'description' => [
-                        'emi-available-info'   => 'Finanțare fără costuri disponibilă pe toate cardurile de credit majore',
-                        'free-shipping-info'   => 'Transport gratuit pentru toate comenzile',
-                        'product-replace-info' => 'Înlocuire produs ușoară disponibilă!',
-                        'time-support-info'    => 'Suport dedicat 24/7 prin chat și e-mail',
-                    ],
-                    'name'  => 'Conținutul serviciilor',
-                    'title' => [
-                        'emi-available'   => 'EMI disponibil',
-                        'free-shipping'   => 'Transport gratuit',
-                        'product-replace' => 'Înlocuire produs',
-                        'time-support'    => 'Suport 24/7',
-                    ],
-                ],
-                'top-collections' => [
-                    'content' => [
-                        'sub-title-1' => 'Nostre colecții',
-                        'sub-title-2' => 'Nostre colecții',
-                        'sub-title-3' => 'Nostre colecții',
-                        'sub-title-4' => 'Nostre colecții',
-                        'sub-title-5' => 'Nostre colecții',
-                        'sub-title-6' => 'Nostre colecții',
-                        'title'       => 'Pregătește-te pentru un joc cu noile noastre lansări!',
-                    ],
-                    'name' => 'Colecții principale',
-                ],
             ],
         ],
         'user' => [

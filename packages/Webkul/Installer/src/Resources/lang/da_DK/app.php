@@ -10,11 +10,9 @@ return [
             'attribute-groups' => [
                 'description'      => 'Beskrivelse',
                 'general'          => 'Generel',
-                'inventories'      => 'Lager',
                 'meta-description' => 'Meta Beskrivelse',
                 'price'            => 'Pris',
-                'technical'        => 'Teknisk',
-                'shipping'         => 'Fragt',
+                'media'            => 'Medier',
             ],
 
             'attributes' => [
@@ -25,6 +23,7 @@ return [
                 'featured'             => 'Fremhævet',
                 'guest-checkout'       => 'Gæstekøb',
                 'height'               => 'Højde',
+                'image'                => 'Billede',
                 'length'               => 'Længde',
                 'manage-stock'         => 'Styr Lager',
                 'meta-description'     => 'Meta Beskrivelse',
@@ -40,7 +39,6 @@ return [
                 'special-price-from'   => 'Særlig Pris Fra',
                 'special-price-to'     => 'Særlig Pris Til',
                 'special-price'        => 'Særlig Pris',
-                'status'               => 'Status',
                 'tax-category'         => 'Moms Kategori',
                 'url-key'              => 'URL Nøgle',
                 'visible-individually' => 'Synlig Individuelt',
@@ -73,65 +71,6 @@ return [
             ],
         ],
 
-        'cms' => [
-            'pages' => [
-                'about-us' => [
-                    'content' => 'Om Os Side Indhold',
-                    'title'   => 'Om Os',
-                ],
-
-                'contact-us' => [
-                    'content' => 'Kontakt Os Side Indhold',
-                    'title'   => 'Kontakt Os',
-                ],
-
-                'customer-service' => [
-                    'content' => 'Kunde Service Side Indhold',
-                    'title'   => 'Kunde Service',
-                ],
-
-                'payment-policy' => [
-                    'content' => 'Betalingspolitik Side Indhold',
-                    'title'   => 'Betalingspolitik',
-                ],
-
-                'privacy-policy' => [
-                    'content' => 'Fortrolighedspolitik Side Indhold',
-                    'title'   => 'Fortrolighedspolitik',
-                ],
-
-                'refund-policy' => [
-                    'content' => 'Refusion Politik Side Indhold',
-                    'title'   => 'Refusion Politik',
-                ],
-
-                'return-policy' => [
-                    'content' => 'Returneringspolitik Side Indhold',
-                    'title'   => 'Returneringspolitik',
-                ],
-
-                'shipping-policy' => [
-                    'content' => 'Fragtpolitik Side Indhold',
-                    'title'   => 'Fragtpolitik',
-                ],
-
-                'terms-conditions' => [
-                    'content' => 'Vilkår & Betingelser Side Indhold',
-                    'title'   => 'Vilkår & Betingelser',
-                ],
-
-                'terms-of-use' => [
-                    'content' => 'Brugsbetingelser Side Indhold',
-                    'title'   => 'Brugsbetingelser',
-                ],
-
-                'whats-new' => [
-                    'content' => 'Hvad er Nyt side indhold',
-                    'title'   => 'Hvad er Nyt',
-                ],
-            ],
-        ],
-
         'core' => [
             'channels' => [
                 'meta-title'       => 'Demo butik',
@@ -154,138 +93,6 @@ return [
                 'TRY' => 'Tyrkisk Lira',
                 'UAH' => 'Ukrainsk Hryvnia',
                 'USD' => 'US Dollar',
-            ],
-        ],
-
-        'customer' => [
-            'customer-groups' => [
-                'general'   => 'Generel',
-                'guest'     => 'Gæst',
-                'wholesale' => 'Engros',
-            ],
-        ],
-
-        'inventory' => [
-            'inventory-sources' => [
-                'name' => 'Standard',
-            ],
-        ],
-
-        'shop' => [
-            'theme-customizations' => [
-                'all-products' => [
-                    'name' => 'Alle Produkter',
-
-                    'options' => [
-                        'title' => 'Alle Produkter',
-                    ],
-                ],
-
-                'bold-collections' => [
-                    'content' => [
-                        'btn-title'   => 'Se Alle',
-                        'description' => 'Præsenterer Vores Nye Dristige Samlinger! Forhæv din stil med dristige designs og livlige udtryk. Udforsk markante mønstre og dristige farver, der gendefinerer din garderobe. Gør dig klar til at omfavne det ekstraordinære!',
-                        'title'       => 'Gør dig klar til vores nye Dristige Samlinger!',
-                    ],
-
-                    'name' => 'Dristige Samlinger',
-                ],
-
-                'categories-collections' => [
-                    'name' => 'Kategorier Samlinger',
-                ],
-
-                'featured-collections' => [
-                    'name' => 'Fremhævede Samlinger',
-
-                    'options' => [
-                        'title' => 'Fremhævede Produkter',
-                    ],
-                ],
-
-                'footer-links' => [
-                    'name' => 'Footer Links',
-
-                    'options' => [
-                        'about-us'         => 'Om Os',
-                        'contact-us'       => 'Kontakt Os',
-                        'customer-service' => 'Kunde Service',
-                        'payment-policy'   => 'Betalingspolitik',
-                        'privacy-policy'   => 'Fortrolighedspolitik',
-                        'refund-policy'    => 'Refusion Politik',
-                        'return-policy'    => 'Returneringspolitik',
-                        'shipping-policy'  => 'Fragtpolitik',
-                        'terms-conditions' => 'Vilkår & Betingelser',
-                        'terms-of-use'     => 'Brugsbetingelser',
-                        'whats-new'        => 'Hvad er Nyt',
-                    ],
-                ],
-
-                'game-container' => [
-                    'content' => [
-                        'sub-title-1' => 'Vores Samlinger',
-                        'sub-title-2' => 'Vores Samlinger',
-                        'title'       => 'Spillet med vores nye tilføjelser!',
-                    ],
-
-                    'name' => 'Spil Container',
-                ],
-
-                'image-carousel' => [
-                    'name' => 'Billed Carousel',
-
-                    'sliders' => [
-                        'title' => 'Gør dig klar til Nye Samlinger',
-                    ],
-                ],
-
-                'new-products' => [
-                    'name' => 'Nye Produkter',
-
-                    'options' => [
-                        'title' => 'Nye Produkter',
-                    ],
-                ],
-
-                'offer-information' => [
-                    'content' => [
-                        'title' => 'Få OP TIL 40% RABAT på din 1. ordre HANDL NU',
-                    ],
-
-                    'name' => 'Tilbud Information',
-                ],
-
-                'services-content' => [
-                    'description' => [
-                        'emi-available-info'   => 'Ingen omkostninger EMI tilgængelig på alle større kreditkort',
-                        'free-shipping-info'   => 'Gratis forsendelse på alle ordrer',
-                        'product-replace-info' => 'Let produkt erstatning tilgængelig!',
-                        'time-support-info'    => 'Dedikeret 24/7 support via chat og e-mail',
-                    ],
-
-                    'name' => 'Tjenester Indhold',
-
-                    'title' => [
-                        'emi-available'   => 'Emi Tilgængelig',
-                        'free-shipping'   => 'Gratis Forsendelse',
-                        'product-replace' => 'Produkt Erstatning',
-                        'time-support'    => '24/7 Support',
-                    ],
-                ],
-
-                'top-collections' => [
-                    'content' => [
-                        'sub-title-1' => 'Vores Samlinger',
-                        'sub-title-2' => 'Vores Samlinger',
-                        'sub-title-3' => 'Vores Samlinger',
-                        'sub-title-4' => 'Vores Samlinger',
-                        'sub-title-5' => 'Vores Samlinger',
-                        'sub-title-6' => 'Vores Samlinger',
-                        'title'       => 'Spillet med vores nye tilføjelser!',
-                    ],
-
-                    'name' => 'Top Samlinger',
-                ],
             ],
         ],
 
