@@ -335,7 +335,7 @@ it('should create the Attribute ai_translate field with 1', function () {
     $response = postJson(route('admin.catalog.attributes.store'), $attribute);
 
     $response->assertStatus(302)
-        ->assertRedirect(route('admin.catalog.attributes.index'));
+        ->assertRedirect(route('admin.catalog.attributes.edit', ['id' => Attribute::where('code', 'testAttribute')->first()->id]));
 
     $this->assertDatabaseHas($this->getFullTableName(Attribute::class), $attribute);
 });
@@ -352,7 +352,7 @@ it('should not create the Attribute ai_translate field with 1', function () {
     $response = postJson(route('admin.catalog.attributes.store'), $attribute);
 
     $response->assertStatus(302)
-        ->assertRedirect(route('admin.catalog.attributes.index'));
+        ->assertRedirect(route('admin.catalog.attributes.edit', ['id' => Attribute::where('code', 'testAttribute')->first()->id]));
 
     $this->assertDatabaseMissing($this->getFullTableName(Attribute::class), [
         'ai_translate' => 1,
