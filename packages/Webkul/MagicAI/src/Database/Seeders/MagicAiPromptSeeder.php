@@ -10,7 +10,7 @@ class MagicAiPromptSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(): void
+    public function run($parameters = []): void
     {
         $prompts = [
             [
