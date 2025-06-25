@@ -64,6 +64,8 @@ class AttributeController extends Controller
         ]);
 
         $requestData = request()->all();
+        $requestData['ai_translate'] = (isset($requestData['value_per_locale']) && $requestData['value_per_locale'] == 1 &&
+            in_array($requestData['type'], ['text', 'textarea'])) ? '1' : '0';
 
         Event::dispatch('catalog.attribute.create.before');
 
@@ -103,6 +105,9 @@ class AttributeController extends Controller
         ]);
 
         $requestData = request()->except(['type', 'code', 'value_per_locale', 'value_per_channel', 'is_unique']);
+        if (! array_key_exists('ai_translate', $requestData)) {
+            $requestData['ai_translate'] = '0';
+        }
 
         Event::dispatch('catalog.attribute.update.before', $id);
 

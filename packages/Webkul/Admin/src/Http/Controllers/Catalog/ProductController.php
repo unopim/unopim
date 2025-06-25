@@ -12,6 +12,8 @@ use Webkul\Admin\Http\Requests\MassDestroyRequest;
 use Webkul\Admin\Http\Requests\MassUpdateRequest;
 use Webkul\Admin\Http\Requests\ProductForm;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
+use Webkul\Attribute\Repositories\AttributeRepository;
+use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Rules\Slug;
 use Webkul\Product\Helpers\ProductType;
 use Webkul\Product\Repositories\ProductRepository;
@@ -33,7 +35,9 @@ class ProductController extends Controller
     public function __construct(
         protected AttributeFamilyRepository $attributeFamilyRepository,
         protected ProductRepository $productRepository,
-        protected ProductValuesValidator $valuesValidator
+        protected ProductValuesValidator $valuesValidator,
+        protected ChannelRepository $channelRepository,
+        protected AttributeRepository $attributeRepository,
     ) {}
 
     /**
@@ -383,5 +387,42 @@ class ProductController extends Controller
         }
 
         return new JsonResponse([]);
+    }
+
+    public function getLocale(): JsonResponse
+    {
+        $channel = request()->channel;
+        $result = $this->channelRepository->findOneByField('code', $channel);
+        $locales = $result->locales()->select('locales.code')->get();
+        $options = [];
+        foreach ($locales as $locale) {
+            $options[] = [
+                'id'    => $locale->code,
+                'label' => $locale->name,
+            ];
+        }
+
+        return new JsonResponse([
+            'locales' => $options,
+        ]);
+    }
+
+    public function getAttribute(): JsonResponse
+    {
+        $product = $this->productRepository->findByField('id', request()->productId)->first();
+        $attributes = $product->getEditableAttributes()->where('ai_translate', 1)->select('code', 'type', 'ai_translate');
+        $attributeOptions = [];
+        if ($attributes) {
+            foreach ($attributes as $attribute) {
+                $attributeOptions[] = [
+                    'id'    => $attribute['code'],
+                    'label' => $attribute['code'],
+                ];
+            }
+        }
+
+        return new JsonResponse([
+            'attributes' => $attributeOptions,
+        ]);
     }
 }

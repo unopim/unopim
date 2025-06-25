@@ -485,7 +485,41 @@
                                         :value="(boolean) $valuePerLocale"
                                     />
                                 </x-admin::form.control-group>
+                                @php
+                                $selectedOption = old('type') ?: $attribute->type;
+                                @endphp
+                                @if($valuePerLocale != 0 && ($selectedOption == 'textarea' || $selectedOption == 'text'))
+                                <!-- AI Translate -->
+                                <x-admin::form.control-group class="flex gap-2.5 items-center !mb-2  select-none">
+                                    @php
+                                        $valueTranslate = old('ai_translate') ?? $attribute->ai_translate;
 
+                                    @endphp
+
+                                    <x-admin::form.control-group.control
+                                        type="checkbox"
+                                        id="ai_translate"
+                                        name="ai_translate"
+                                        value="1"
+                                        :checked="(boolean) $valueTranslate"
+                                        for="ai_translate"
+
+                                    />
+
+                                    <label
+                                        class="text-xs text-gray-600 dark:text-gray-300 font-medium cursor-pointer"
+                                        for="ai_translate"
+                                    >
+                                        @lang('admin::app.catalog.attributes.edit.ai-translate')
+                                    </label>
+
+                                    <x-admin::form.control-group.control
+                                        type="hidden"
+                                        name="ai_translate"
+                                        :value="(boolean) $valueTranslate"
+                                    />
+                                </x-admin::form.control-group>
+                                @endif
                                 <!-- Value Per Channel -->
                                 <x-admin::form.control-group class="flex gap-2.5 items-center !mb-2 opacity-70 select-none">
                                     @php

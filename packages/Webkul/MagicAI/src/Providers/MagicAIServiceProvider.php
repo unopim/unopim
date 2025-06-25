@@ -15,6 +15,7 @@ class MagicAIServiceProvider extends ServiceProvider
     public function boot(): void
     {
         include __DIR__.'/../Http/helpers.php';
+        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
     }
 
     /**
