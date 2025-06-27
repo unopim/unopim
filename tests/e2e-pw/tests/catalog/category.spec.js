@@ -1,10 +1,11 @@
 import { test, expect } from '@playwright/test';
 test.describe('UnoPim Category', () => {
 test.beforeEach(async ({ page }) => {
-  await page.goto('http://127.0.0.1:8000/admin/login');
+   await page.goto('http://127.0.0.1:8000/admin/login');
   await page.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
   await page.getByRole('textbox', { name: 'Password' }).fill('admin123');
   await page.getByRole('button', { name: 'Sign In' }).click();
+  await expect(page).toHaveURL('http://127.0.0.1:8000/admin/dashboard');
 });
 
 test('Create Categories with empty Code field', async ({ page }) => {
@@ -48,7 +49,7 @@ test('Create Categories with all field', async ({ page }) => {
   await page.getByRole('link', { name: 'Categories' }).click();
   await page.getByRole('link', { name: 'Create Category' }).click();
   await page.locator('input[name="code"]').click();
-  await page.locator('input[name="code"]').fill('test1');
+  await page.locator('input[name="code"]').type('test1');
   await page.locator('#name').click();
   await page.locator('#name').type('Television', { delay: 100 });
   await page.getByRole('button', { name: 'Save Category' }).click();

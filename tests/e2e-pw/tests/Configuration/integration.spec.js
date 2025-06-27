@@ -1,10 +1,11 @@
 import { test, expect } from '@playwright/test';
 test.describe('UnoPim Test cases', () => {
 test.beforeEach(async ({ page }) => {
-  await page.goto('http://127.0.0.1:8000/admin/login');
+   await page.goto('http://127.0.0.1:8000/admin/login');
   await page.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
   await page.getByRole('textbox', { name: 'Password' }).fill('admin123');
   await page.getByRole('button', { name: 'Sign In' }).click();
+  await expect(page).toHaveURL('http://127.0.0.1:8000/admin/dashboard');
 });
 
 test('Create Integration with empty Name field', async ({ page }) => {
@@ -14,7 +15,7 @@ test('Create Integration with empty Name field', async ({ page }) => {
   await page.getByRole('textbox', { name: 'Name' }).click();
   await page.getByRole('textbox', { name: 'Name' }).fill('');
   await page.locator('input[name="admin_id"]').locator('..').locator('.multiselect__placeholder').click();
-  await page.getByRole('option', { name: 'John Doe' }).locator('span').first().click();
+  await page.getByRole('option', { name: 'Example' }).locator('span').first().click();
   await page.getByRole('button', { name: 'Save' }).click();
   await expect(page.getByText('The Name field is required')).toBeVisible();
 });
@@ -47,7 +48,7 @@ test('Create Integration field', async ({ page }) => {
   await page.getByRole('textbox', { name: 'Name' }).click();
   await page.getByRole('textbox', { name: 'Name' }).fill('Admin User');
   await page.locator('input[name="admin_id"]').locator('..').locator('.multiselect__placeholder').click();
-  await page.getByRole('option', { name: 'John Doe' }).locator('span').first().click();
+  await page.getByRole('option', { name: 'Example' }).locator('span').first().click();
   await page.getByRole('button', { name: 'Save' }).click();
   await expect(page.getByText(/API Integration Created Successfully/i)).toBeVisible();
 });
@@ -90,7 +91,7 @@ test('should perform actions on a Integration (Edit, Delete)', async ({ page }) 
 test('Generate API key', async ({ page }) => {
   await page.getByRole('link', { name: ' Configuration' }).click();
   await page.getByRole('link', { name: 'Integrations' }).click();
-  const itemRow = page.locator('div', { hasText: 'Admin USer' });
+  const itemRow = page.locator('div', { hasText: 'Admin User' });
   await itemRow.locator('span[title="Edit"]').first().click();
   await page.getByRole('button', { name: 'Generate' }).click();
   await expect(page.getByText(/API key is generated successfully/i)).toBeVisible();

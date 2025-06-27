@@ -1,10 +1,11 @@
 import { test, expect } from '@playwright/test';
 test.describe('Attribute Family', () => {
 test.beforeEach(async ({ page }) => {
-  await page.goto('http://127.0.0.1:8000/admin/login');
+   await page.goto('http://127.0.0.1:8000/admin/login');
   await page.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
   await page.getByRole('textbox', { name: 'Password' }).fill('admin123');
   await page.getByRole('button', { name: 'Sign In' }).click();
+  await expect(page).toHaveURL('http://127.0.0.1:8000/admin/dashboard');
 });
 
 test('Create Attribute family with empty code field', async ({ page }) => {
@@ -75,6 +76,11 @@ test('Edit Attribute Family', async ({ page }) => {
   await page.getByText('headerHeader').getByTitle('Edit').click();
   await page.locator('input[name="en_US\\[name\\]"]').click();
   await page.locator('input[name="en_US\\[name\\]"]').fill('Footer');
+  await page.locator('.secondary-button', { hasText: 'Assign Attribute Group' }).click();
+  await page.locator('input[name="group"]').locator('..').locator('.multiselect__placeholder').click();
+  await page.getByRole('textbox', { name: 'group-searchbox' }).fill('General');
+  await page.getByRole('option', { name: 'General' }).locator('span').first().click();
+  await page.getByRole('button', { name: 'Assign Attribute Group' }).click();
   const dragHandle = await page.locator('#unassigned-attributes i.icon-drag:near(:text("SKU"))').first();
   const dropTarget = await page.locator('#assigned-attribute-groups .group_node').first();
   const dragBox = await dragHandle.boundingBox();

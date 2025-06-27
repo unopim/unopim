@@ -1,10 +1,11 @@
 import { test, expect } from '@playwright/test';
 test.describe('UnoPim  Create Product Test cases', () => {
 test.beforeEach(async ({ page }) => {
-  await page.goto('http://127.0.0.1:8000/admin/login');
+   await page.goto('http://127.0.0.1:8000/admin/login');
   await page.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
   await page.getByRole('textbox', { name: 'Password' }).fill('admin123');
   await page.getByRole('button', { name: 'Sign In' }).click();
+  await expect(page).toHaveURL('http://127.0.0.1:8000/admin/dashboard');
 });
 
 test('with empty product type field', async ({ page }) => {
@@ -112,7 +113,7 @@ test('should allow product search', async ({ page }) => {
   await page.getByRole('textbox', { name: 'Search' }).type('acer456');
   await page.keyboard.press('Enter');
   await expect(page.locator('text=1 Results')).toBeVisible();
-  await expect(page.locator('text=SKU - acer456')).toBeVisible();
+  await expect(page.locator('text=acer456')).toBeVisible();
 });
 
 test('should open the filter menu when clicked', async ({ page }) => {
@@ -145,6 +146,8 @@ test('should perform actions on a product (Edit, Copy, Delete)', async ({ page }
   await expect(page).toHaveURL(/\/admin\/catalog\/products\/edit/);
   await page.goBack();
   await itemRow.locator('span[title="Copy"]').first().click();
+  await expect(page.getByText('Are you sure?')).toBeVisible();
+  await page.getByRole('button', { name: 'Agree', exact: true }).click();
   await expect(page.locator('text=Product copied successfully')).toBeVisible();
   await page.locator('a:has-text("Back")').click();
   const itemNRow = await page.locator('div', { hasText: 'temporary-sku' });
@@ -165,10 +168,11 @@ test('should allow selecting all products with the mass action checkbox', async 
 
 test.describe('UnoPim Update Product Test cases', () => {
 test.beforeEach(async ({ page }) => {
-  await page.goto('http://127.0.0.1:8000/admin/login');
+   await page.goto('http://127.0.0.1:8000/admin/login');
   await page.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
   await page.getByRole('textbox', { name: 'Password' }).fill('admin123');
   await page.getByRole('button', { name: 'Sign In' }).click();
+  await expect(page).toHaveURL('http://127.0.0.1:8000/admin/dashboard');
 });
 
 test('with empty SKU field', async ({ page }) => {
@@ -219,7 +223,7 @@ test('with empty Name field', async ({ page }) => {
   await page.locator('#meta_title').fill('thakubali');
   await page.locator('#price').click();
   await page.locator('#price').fill('40000');
-  await page.locator('.relative > .rounded-full').click();
+  await page.locator('label[for="status"]').click();
   await expect(page.locator('input[name="values[channel_locale_specific][default][en_US][name]"] + p.text-red-600')).toHaveText('The Name field is required');
 });
 
@@ -244,7 +248,7 @@ test('with empty URL key field', async ({ page }) => {
   await page.locator('#meta_title').fill('thakubali');
   await page.locator('#price').click();
   await page.locator('#price').fill('40000');
-  await page.locator('.relative > .rounded-full').click();
+  await page.locator('label[for="status"]').click();
   await expect(page.locator('input[name="uniqueFields[values.common.url_key]"] + p.text-red-600')).toHaveText('The URL Key field is required');
 });
 
@@ -269,7 +273,7 @@ test('with empty Short Description field', async ({ page }) => {
   await page.locator('#meta_title').fill('thakubali');
   await page.locator('#price').click();
   await page.locator('#price').fill('40000');
-  await page.locator('.relative > .rounded-full').click();
+  await page.locator('label[for="status"]').click();
   await expect(page.locator('p.text-red-600')).toHaveText('The Short Description field is required');
 });
 
@@ -294,7 +298,7 @@ test('with empty Description field', async ({ page }) => {
   await page.locator('#meta_title').fill('thakubali');
   await page.locator('#price').click();
   await page.locator('#price').fill('40000');
-  await page.locator('.relative > .rounded-full').click();
+  await page.locator('label[for="status"]').click();
   await expect(page.locator('p.text-red-600')).toHaveText('The Description field is required');
 });
 
@@ -319,7 +323,7 @@ test('with empty Price field', async ({ page }) => {
   await page.locator('#meta_title').fill('thakubali');
   await page.locator('#price').click();
   await page.locator('#price').fill('');
-  await page.locator('.relative > .rounded-full').click();
+  await page.locator('label[for="status"]').click();
   await expect(page.locator('p.text-red-600')).toHaveText('The Price field is required');
 });
 
@@ -347,7 +351,7 @@ test('with all required field empty', async ({ page }) => {
   await page.locator('#meta_title').fill('thakubali');
   await page.locator('#price').click();
   await page.locator('#price').fill('');
-  await page.locator('.relative > .rounded-full').click();
+  await page.locator('label[for="status"]').click();
   await expect(page.getByText('The SKU field is required')).toBeVisible();
   await expect(page.locator('input[name="values[channel_locale_specific][default][en_US][name]"] + p.text-red-600')).toHaveText('The Name field is required');
   await expect(page.locator('input[name="uniqueFields[values.common.url_key]"] + p.text-red-600')).toHaveText('The URL Key field is required');
@@ -377,7 +381,7 @@ test('Update simple product', async ({ page }) => {
   await page.locator('#meta_title').fill('thakubali');
   await page.locator('#price').click();
   await page.locator('#price').fill('40000');
-  await page.locator('.relative > .rounded-full').click();
+  await page.locator('label[for="status"]').click();
   await page.getByRole('button', { name: 'Save Product' }).click();
   await expect(page.getByText(/Product updated successfully/i)).toBeVisible();
 });
@@ -425,7 +429,7 @@ test('Update Configurable Product', async ({ page }) => {
   await page.locator('#meta_title').fill('best mobile');
   await page.locator('#price').click();
   await page.locator('#price').fill('25000');
-  await page.locator('.relative > .rounded-full').click();
+  await page.locator('label[for="status"]').click();
   await page.getByRole('button', { name: 'Save Product' }).click();
   await expect(page.getByText(/Product updated successfully/i)).toBeVisible();
 });

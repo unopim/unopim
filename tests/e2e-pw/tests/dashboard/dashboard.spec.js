@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 test.describe('UnoPim Dashboard', () => {
 test.beforeEach(async ({ page }) => {
-  await page.goto('http://127.0.0.1:8000/admin/login');
+   await page.goto('http://127.0.0.1:8000/admin/login');
   await page.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
   await page.getByRole('textbox', { name: 'Password' }).fill('admin123');
   await page.getByRole('button', { name: 'Sign In' }).click();
@@ -112,7 +112,7 @@ test('Checks Dashboard text color in dark or light mode', async ({ page }) => {
   const hasDarkMode = await page.evaluate(() =>
   document.body?.classList.contains('dark-mode')
   );
-  const greetingText = page.getByText('Hi! John Doe');
+  const greetingText = page.getByText('Hi! Example');
   if (hasDarkMode) {
   await expect(greetingText).toHaveCSS('color', 'rgb(248, 250, 252)');
   console.log("Dark Theme")

@@ -1,10 +1,11 @@
 import { test, expect } from '@playwright/test';
 test.describe('UnoPim Channel test', () => {
 test.beforeEach(async ({ page }) => {
-  await page.goto('http://127.0.0.1:8000/admin/login');
+   await page.goto('http://127.0.0.1:8000/admin/login');
   await page.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
   await page.getByRole('textbox', { name: 'Password' }).fill('admin123');
   await page.getByRole('button', { name: 'Sign In' }).click();
+  await expect(page).toHaveURL('http://127.0.0.1:8000/admin/dashboard');
 });
 
 test('Create Channel with empty Code', async ({ page }) => {
@@ -20,7 +21,7 @@ test('Create Channel with empty Code', async ({ page }) => {
   await page.locator('div').filter({ hasText: /^Select Locales$/ }).click();
   await page.getByRole('option', { name: 'English (United States)' }).locator('span').first().click();
   await page.locator('div').filter({ hasText: /^Select currencies$/ }).click();
-  await page.getByRole('option', { name: 'Indian Rupee' }).locator('span').first().click();
+  await page.getByRole('option', { name: 'US Dollar' }).locator('span').first().click();
   await page.getByRole('button', { name: 'Save Channel' }).click();
   await expect(page.getByText('The Code field is required')).toBeVisible();
 });
@@ -36,7 +37,7 @@ test('Create Channel with empty Root Category', async ({ page }) => {
   await page.locator('div').filter({ hasText: /^Select Locales$/ }).click();
   await page.getByRole('option', { name: 'English (United States)' }).locator('span').first().click();
   await page.locator('div').filter({ hasText: /^Select currencies$/ }).click();
-  await page.getByRole('option', { name: 'Indian Rupee' }).locator('span').first().click();
+  await page.getByRole('option', { name: 'US Dollar' }).locator('span').first().click();
   await page.getByRole('button', { name: 'Save Channel' }).click();
   await expect(page.getByText('The Root Category field is required')).toBeVisible();
 });
@@ -52,7 +53,7 @@ test('Create Channel with empty Locales field', async ({ page }) => {
   await page.locator('input[name="en_US\\[name\\]"]').click();
   await page.locator('input[name="en_US\\[name\\]"]').fill('E-Commerce');
   await page.locator('div').filter({ hasText: /^Select currencies$/ }).click();
-  await page.getByRole('option', { name: 'Indian Rupee' }).locator('span').first().click();
+  await page.getByRole('option', { name: 'US Dollar' }).locator('span').first().click();
   await page.getByRole('button', { name: 'Save Channel' }).click();
   await expect(page.getByText('The Locales field is required')).toBeVisible();
 });
@@ -101,7 +102,7 @@ test('Create Channel', async ({ page }) => {
   await page.locator('div').filter({ hasText: /^Select Locales$/ }).click();
   await page.getByRole('option', { name: 'English (United States)' }).locator('span').first().click();
   await page.locator('div').filter({ hasText: /^Select currencies$/ }).click();
-  await page.getByRole('option', { name: 'Indian Rupee' }).locator('span').first().click();
+  await page.getByRole('option', { name: 'US Dollar' }).locator('span').first().click();
   await page.getByRole('button', { name: 'Save Channel' }).click();
   await expect(page.getByText(/Channel created successfully/i)).toBeVisible();
 });
@@ -119,9 +120,9 @@ test('Create Channel with same Code', async ({ page }) => {
   await page.locator('div').filter({ hasText: /^Select Locales$/ }).click();
   await page.getByRole('option', { name: 'English (United States)' }).locator('span').first().click();
   await page.locator('div').filter({ hasText: /^Select currencies$/ }).click();
-  await page.getByRole('option', { name: 'Indian Rupee' }).locator('span').first().click();
+  await page.getByRole('option', { name: 'US Dollar' }).locator('span').first().click();
   await page.getByRole('button', { name: 'Save Channel' }).click();
-  await expect(page.getByText('The Code hasalready been taken.')).toBeVisible();
+  await expect(page.getByText('The Code has already been taken.')).toBeVisible();
 });
 
 test('should allow Channel search', async ({ page }) => {
