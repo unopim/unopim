@@ -4,6 +4,7 @@ namespace Webkul\Admin\DataGrids\Catalog;
 
 use Illuminate\Support\Facades\DB;
 use Webkul\DataGrid\DataGrid;
+use Webkul\Category\Models\CategoryField;
 
 class CategoryFieldDataGrid extends DataGrid
 {
@@ -83,6 +84,25 @@ class CategoryFieldDataGrid extends DataGrid
             'searchable' => true,
             'filterable' => true,
             'sortable'   => true,
+            'closure'    => function ($row) {
+
+                $categoryField = CategoryField::with('translations')->find($row->id);
+
+                $requestedLocale = core()->getRequestedLocaleCode();
+                $fallbackName = null;
+
+                foreach ($categoryField->translations as $translation) {
+                    if ($translation->locale === $requestedLocale && !empty($translation->name)) {
+                        return $translation->name;
+                    }
+
+                    if (!empty($translation->name) && $fallbackName === null) {
+                        $fallbackName = $translation->name;
+                    }
+                }
+
+                return $fallbackName ?: "[{$row->code}]";
+            },
         ]);
 
         $this->addColumn([

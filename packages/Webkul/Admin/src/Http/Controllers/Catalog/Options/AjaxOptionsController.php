@@ -160,9 +160,21 @@ class AjaxOptionsController extends Controller
      */
     protected function getTranslatedLabel(string $currentLocaleCode, TranslatableModel $option, string $entityName): ?string
     {
+        $translationColumn = $this->getTranslationColumnName($entityName);
+
         $translation = $option->translate($currentLocaleCode);
 
-        return $translation?->{$this->getTranslationColumnName($entityName)};
+        if (!empty($translation?->{$translationColumn})) {
+            return $translation->{$translationColumn};
+        }
+
+        foreach ($option->translations as $localeTranslation) {
+            if (!empty($localeTranslation->{$translationColumn})) {
+                return $localeTranslation->{$translationColumn};
+            }
+        }
+
+        return "[{$option->code}]";
     }
 
     /**

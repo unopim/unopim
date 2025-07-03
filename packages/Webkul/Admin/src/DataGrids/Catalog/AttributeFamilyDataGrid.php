@@ -4,6 +4,7 @@ namespace Webkul\Admin\DataGrids\Catalog;
 
 use Illuminate\Support\Facades\DB;
 use Webkul\DataGrid\DataGrid;
+use Webkul\Attribute\Models\AttributeFamily;
 
 class AttributeFamilyDataGrid extends DataGrid
 {
@@ -64,6 +65,25 @@ class AttributeFamilyDataGrid extends DataGrid
             'searchable' => true,
             'filterable' => true,
             'sortable'   => true,
+            'closure'    => function ($row) {
+
+                $attributeFamily = AttributeFamily::with('translations')->find($row->id);
+
+                $requestedLocale = core()->getRequestedLocaleCode();
+                $fallbackName = null;
+
+                foreach ($attributeFamily->translations as $translation) {
+                    if ($translation->locale === $requestedLocale && !empty($translation->name)) {
+                        return $translation->name;
+                    }
+
+                    if (!empty($translation->name) && $fallbackName === null) {
+                        $fallbackName = $translation->name;
+                    }
+                }
+
+                return $fallbackName ?: "[{$row->code}]";
+            },
         ]);
     }
 
