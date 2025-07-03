@@ -3,8 +3,8 @@
 namespace Webkul\Admin\DataGrids\Catalog;
 
 use Illuminate\Support\Facades\DB;
-use Webkul\DataGrid\DataGrid;
 use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\DataGrid\DataGrid;
 
 class AttributeFamilyDataGrid extends DataGrid
 {
@@ -73,11 +73,11 @@ class AttributeFamilyDataGrid extends DataGrid
                 $fallbackName = null;
 
                 foreach ($attributeFamily->translations as $translation) {
-                    if ($translation->locale === $requestedLocale && !empty($translation->name)) {
+                    if ($translation->locale === $requestedLocale && ! empty($translation->name)) {
                         return $translation->name;
                     }
 
-                    if (!empty($translation->name) && $fallbackName === null) {
+                    if (! empty($translation->name) && $fallbackName === null) {
                         $fallbackName = $translation->name;
                     }
                 }

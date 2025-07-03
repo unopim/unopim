@@ -3,8 +3,8 @@
 namespace Webkul\Admin\DataGrids\Catalog;
 
 use Illuminate\Support\Facades\DB;
-use Webkul\DataGrid\DataGrid;
 use Webkul\Attribute\Models\Attribute;
+use Webkul\DataGrid\DataGrid;
 
 class AttributeDataGrid extends DataGrid
 {
@@ -72,18 +72,17 @@ class AttributeDataGrid extends DataGrid
             'sortable'   => true,
             'closure'    => function ($row) {
 
-
                 $attribute = Attribute::with('translations')->find($row->id);
 
                 $requestedLocale = core()->getRequestedLocaleCode();
                 $fallbackName = null;
 
                 foreach ($attribute->translations as $translation) {
-                    if ($translation->locale === $requestedLocale && !empty($translation->name)) {
+                    if ($translation->locale === $requestedLocale && ! empty($translation->name)) {
                         return $translation->name;
                     }
 
-                    if (!empty($translation->name) && $fallbackName === null) {
+                    if (! empty($translation->name) && $fallbackName === null) {
                         $fallbackName = $translation->name;
                     }
                 }

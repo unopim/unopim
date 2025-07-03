@@ -164,12 +164,12 @@ class AjaxOptionsController extends Controller
 
         $translation = $option->translate($currentLocaleCode);
 
-        if (!empty($translation?->{$translationColumn})) {
+        if (! empty($translation?->{$translationColumn})) {
             return $translation->{$translationColumn};
         }
 
         foreach ($option->translations as $localeTranslation) {
-            if (!empty($localeTranslation->{$translationColumn})) {
+            if (! empty($localeTranslation->{$translationColumn})) {
                 return $localeTranslation->{$translationColumn};
             }
         }
