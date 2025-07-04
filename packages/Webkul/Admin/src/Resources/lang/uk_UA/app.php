@@ -372,6 +372,7 @@ return [
                 'yes'                   => 'Так',
                 'same-code-error'       => 'Код опції має бути унікальним.',
                 'usable-in-grid'        => 'Доступно в сітці',
+                'is-filterable'         => 'Фільтрований',
 
                 'option' => [
                     'color'    => 'Колір шаблону',
@@ -438,13 +439,15 @@ return [
                 'yes'                   => 'Так',
                 'same-code-error'       => 'Код опції має бути унікальним.',
                 'usable-in-grid'        => 'Доступно в сітці',
+                'is-filterable'         => 'Фільтрований',
 
                 'option' => [
-                    'color'    => 'Колір шаблону',
-                    'dropdown' => 'Випадаючий список',
-                    'image'    => 'Шаблон зображення',
-                    'save-btn' => 'Зберегти опцію',
-                    'text'     => 'Текстовий шаблон',
+                    'create-success'      => 'Опцію атрибута успішно створено',
+                    'delete-success'      => 'Опцію атрибута успішно видалено',
+                    'save-btn'            => 'Зберегти опцію',
+                    'sort-update-failure' => 'Не вдалося оновити порядок сортування',
+                    'sort-update-success' => 'Порядок сортування успішно оновлено',
+                    'update-success'      => 'Опцію атрибута успішно оновлено',
                 ],
             ],
 
@@ -1833,6 +1836,10 @@ return [
                 'search' => [
                     'title' => 'Пошук',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'колонками',
+                ],
             ],
 
             'filters' => [
@@ -1871,6 +1878,13 @@ return [
             'table' => [
                 'actions'              => 'Дії',
                 'no-records-available' => 'Записів немає.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Керувати колонками',
+                'available-columns' => 'Доступні стовпці',
+                'selected-columns'  => 'Вибрані стовпці',
+                'apply-btn'         => 'Застосувати',
             ],
         ],
 

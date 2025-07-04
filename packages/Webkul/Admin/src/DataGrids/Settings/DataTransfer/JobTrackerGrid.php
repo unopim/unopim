@@ -170,9 +170,9 @@ class JobTrackerGrid extends DataGrid
 
     public function prepareActions()
     {
-        if (bouncer()->hasPermission('history.view')) {
+        if (bouncer()->hasPermission('data_transfer.job_tracker')) {
             $this->addAction([
-                'index'  => 'view',
+                'index'  => 'edit',
                 'icon'   => 'icon-view',
                 'title'  => trans('admin::app.settings.data-transfer.imports.index.datagrid.view'),
                 'method' => 'GET',

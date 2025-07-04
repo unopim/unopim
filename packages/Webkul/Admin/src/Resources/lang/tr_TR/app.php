@@ -372,6 +372,7 @@ return [
                 'yes'                   => 'Evet',
                 'same-code-error'       => 'Seçenek kodu benzersiz olmalıdır.',
                 'usable-in-grid'        => 'Izgarada Kullanılabilir',
+                'is-filterable'         => 'Filtrelenebilir',
 
                 'option' => [
                     'color'    => 'Renk Örneği',
@@ -438,13 +439,15 @@ return [
                 'yes'                   => 'Evet',
                 'same-code-error'       => 'Seçenek kodu benzersiz olmalıdır.',
                 'usable-in-grid'        => 'Izgarada Kullanılabilir',
+                'is-filterable'         => 'Filtrelenebilir',
 
                 'option' => [
-                    'color'    => 'Renk Örneği',
-                    'dropdown' => 'Açılır Menü',
-                    'image'    => 'Resim Örneği',
-                    'save-btn' => 'Seçenek Kaydet',
-                    'text'     => 'Metin Örneği',
+                    'create-success'      => 'Öznitelik Seçeneği Başarıyla Oluşturuldu',
+                    'delete-success'      => 'Öznitelik Seçeneği Başarıyla Silindi',
+                    'save-btn'            => 'Seçeneği Kaydet',
+                    'sort-update-failure' => 'Sıralama Güncellenemedi',
+                    'sort-update-success' => 'Sıralama Başarıyla Güncellendi',
+                    'update-success'      => 'Öznitelik Seçeneği Başarıyla Güncellendi',
                 ],
             ],
 
@@ -1833,6 +1836,10 @@ return [
                 'search' => [
                     'title' => 'Ara',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Sütunları',
+                ],
             ],
 
             'filters' => [
@@ -1871,6 +1878,13 @@ return [
             'table' => [
                 'actions'              => 'Eylemler',
                 'no-records-available' => 'Kayıt Bulunamadı.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Sütunları yönet',
+                'available-columns' => 'Kullanılabilir Sütunlar',
+                'selected-columns'  => 'Seçili Sütunlar',
+                'apply-btn'         => 'Uygula',
             ],
         ],
 

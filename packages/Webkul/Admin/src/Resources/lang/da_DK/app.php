@@ -372,6 +372,7 @@ return [
                 'yes'                   => 'Ja',
                 'same-code-error'       => 'Mulighedskoden skal være unik.',
                 'usable-in-grid'        => 'Brugbar i gitter',
+                'is-filterable'         => 'Er filtrerbar',
 
                 'option' => [
                     'color'    => 'Farveprøve',
@@ -438,13 +439,15 @@ return [
                 'yes'                   => 'Ja',
                 'same-code-error'       => 'Mulighedskoden skal være unik.',
                 'usable-in-grid'        => 'Brugbar i gitter',
+                'is-filterable'         => 'Er filtrerbar',
 
                 'option' => [
-                    'color'    => 'Farveprøve',
-                    'dropdown' => 'Dropdown',
-                    'image'    => 'Billedeprøve',
-                    'save-btn' => 'Gem Mulighed',
-                    'text'     => 'Tekstprøve',
+                    'create-success'      => 'Attributmulighed oprettet succesfuldt',
+                    'delete-success'      => 'Attributmulighed slettet succesfuldt',
+                    'save-btn'            => 'Gem Mulighed',
+                    'sort-update-failure' => 'Kunne ikke opdatere sorteringsrækkefølge',
+                    'sort-update-success' => 'Sorteringsrækkefølge opdateret succesfuldt',
+                    'update-success'      => 'Attributmulighed opdateret succesfuldt',
                 ],
             ],
 
@@ -1834,6 +1837,10 @@ return [
                 'search' => [
                     'title' => 'Søg',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'kolonner',
+                ],
             ],
 
             'filters' => [
@@ -1872,6 +1879,13 @@ return [
             'table' => [
                 'actions'              => 'Handlinger',
                 'no-records-available' => 'Ingen poster tilgængelige.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Administrer kolonner',
+                'available-columns' => 'Tilgængelige kolonner',
+                'selected-columns'  => 'Udvalgte kolonner',
+                'apply-btn'         => 'Anvende',
             ],
         ],
 

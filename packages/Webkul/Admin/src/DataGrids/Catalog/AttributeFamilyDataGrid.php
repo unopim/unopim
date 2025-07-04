@@ -77,6 +77,7 @@ class AttributeFamilyDataGrid extends DataGrid
         if (bouncer()->hasPermission('catalog.families.edit')) {
             $this->addAction([
                 'icon'   => 'icon-edit',
+                'index'  => 'edit',
                 'title'  => trans('admin::app.catalog.families.index.datagrid.edit'),
                 'method' => 'GET',
                 'url'    => function ($row) {

@@ -9,12 +9,10 @@ return [
 
             'attribute-groups' => [
                 'description'      => '説明',
-                'general'          => '一般的な',
-                'inventories'      => '在庫',
-                'meta-description' => 'メタディスクリプション',
+                'general'          => '一般',
+                'meta-description' => 'メタ説明',
                 'price'            => '価格',
-                'technical'        => 'テクニカル',
-                'shipping'         => '配送',
+                'media'            => 'メディア',
             ],
 
             'attributes' => [
@@ -25,6 +23,7 @@ return [
                 'featured'             => '注目の',
                 'guest-checkout'       => 'ゲストチェックアウト',
                 'height'               => '身長',
+                'image'                => '画像',
                 'length'               => '長さ',
                 'manage-stock'         => '在庫の管理',
                 'meta-description'     => 'メタディスクリプション',
@@ -40,7 +39,6 @@ return [
                 'special-price-from'   => 'からの特別価格',
                 'special-price-to'     => '特別価格へ',
                 'special-price'        => '特別価格',
-                'status'               => '状態',
                 'tax-category'         => '税区分',
                 'url-key'              => 'URLキー',
                 'visible-individually' => '個別に表示',
@@ -73,65 +71,6 @@ return [
             ],
         ],
 
-        'cms' => [
-            'pages' => [
-                'about-us' => [
-                    'content' => '会社概要ページのコンテンツ',
-                    'title'   => '私たちについて',
-                ],
-
-                'contact-us' => [
-                    'content' => 'お問い合わせページのコンテンツ',
-                    'title'   => 'お問い合わせ',
-                ],
-
-                'customer-service' => [
-                    'content' => 'カスタマーサービスページのコンテンツ',
-                    'title'   => '顧客サービス',
-                ],
-
-                'payment-policy' => [
-                    'content' => '支払いポリシーページのコンテンツ',
-                    'title'   => '支払いポリシー',
-                ],
-
-                'privacy-policy' => [
-                    'content' => 'プライバシーポリシーページの内容',
-                    'title'   => 'プライバシーポリシー',
-                ],
-
-                'refund-policy' => [
-                    'content' => '返金ポリシーページのコンテンツ',
-                    'title'   => '返金ポリシー',
-                ],
-
-                'return-policy' => [
-                    'content' => '返品ポリシーページのコンテンツ',
-                    'title'   => '返品規則',
-                ],
-
-                'shipping-policy' => [
-                    'content' => '配送ポリシーページのコンテンツ',
-                    'title'   => '配送ポリシー',
-                ],
-
-                'terms-conditions' => [
-                    'content' => '利用規約ページのコンテンツ',
-                    'title'   => '利用規約',
-                ],
-
-                'terms-of-use' => [
-                    'content' => '利用規約ページのコンテンツ',
-                    'title'   => '利用規約',
-                ],
-
-                'whats-new' => [
-                    'content' => '「新着情報」ページのコンテンツ',
-                    'title'   => '新着情報',
-                ],
-            ],
-        ],
-
         'core' => [
             'channels' => [
                 'meta-title'       => 'デモストア',
@@ -154,138 +93,6 @@ return [
                 'TRY' => 'トルコリラ',
                 'UAH' => 'ウクライナ・グリブナ',
                 'USD' => '米ドル',
-            ],
-        ],
-
-        'customer' => [
-            'customer-groups' => [
-                'general'   => '一般的な',
-                'guest'     => 'ゲスト',
-                'wholesale' => '卸売',
-            ],
-        ],
-
-        'inventory' => [
-            'inventory-sources' => [
-                'name' => 'デフォルト',
-            ],
-        ],
-
-        'shop' => [
-            'theme-customizations' => [
-                'all-products' => [
-                    'name' => 'すべての製品',
-
-                    'options' => [
-                        'title' => 'すべての製品',
-                    ],
-                ],
-
-                'bold-collections' => [
-                    'content' => [
-                        'btn-title'   => 'すべて見る',
-                        'description' => '新しい大胆なコレクションをご紹介します!大胆なデザインと鮮やかなステートメントでスタイルを高めましょう。ワードローブを再定義する印象的なパターンと大胆な色を探してください。非日常を受け入れる準備をしましょう！',
-                        'title'       => '新しい大胆なコレクションに備えましょう!',
-                    ],
-
-                    'name' => '大胆なコレクション',
-                ],
-
-                'categories-collections' => [
-                    'name' => 'カテゴリ コレクション',
-                ],
-
-                'featured-collections' => [
-                    'name' => '注目のコレクション',
-
-                    'options' => [
-                        'title' => '注目の製品',
-                    ],
-                ],
-
-                'footer-links' => [
-                    'name' => 'フッターリンク',
-
-                    'options' => [
-                        'about-us'         => '私たちについて',
-                        'contact-us'       => 'お問い合わせ',
-                        'customer-service' => '顧客サービス',
-                        'payment-policy'   => '支払いポリシー',
-                        'privacy-policy'   => 'プライバシーポリシー',
-                        'refund-policy'    => '返金ポリシー',
-                        'return-policy'    => '返品規則',
-                        'shipping-policy'  => '配送ポリシー',
-                        'terms-conditions' => '利用規約',
-                        'terms-of-use'     => '利用規約',
-                        'whats-new'        => '新着情報',
-                    ],
-                ],
-
-                'game-container' => [
-                    'content' => [
-                        'sub-title-1' => '私たちのコレクション',
-                        'sub-title-2' => '私たちのコレクション',
-                        'title'       => '新しい追加要素を備えたゲームです！',
-                    ],
-
-                    'name' => 'ゲームコンテナ',
-                ],
-
-                'image-carousel' => [
-                    'name' => '画像カルーセル',
-
-                    'sliders' => [
-                        'title' => '新しいコレクションの準備をしましょう',
-                    ],
-                ],
-
-                'new-products' => [
-                    'name' => '新製品',
-
-                    'options' => [
-                        'title' => '新製品',
-                    ],
-                ],
-
-                'offer-information' => [
-                    'content' => [
-                        'title' => '初回注文で最大 40% オフ 今すぐ購入',
-                    ],
-
-                    'name' => 'オファー情報',
-                ],
-
-                'services-content' => [
-                    'description' => [
-                        'emi-available-info'   => 'すべての主要なクレジット カードで無料の EMI をご利用いただけます',
-                        'free-shipping-info'   => 'すべてのご注文で送料無料をお楽しみください',
-                        'product-replace-info' => '簡単に製品交換が可能！',
-                        'time-support-info'    => 'チャットとメールによる年中無休の専用サポート',
-                    ],
-
-                    'name' => 'サービス内容',
-
-                    'title' => [
-                        'emi-available'   => 'エミが利用可能',
-                        'free-shipping'   => '送料無料',
-                        'product-replace' => '製品の交換',
-                        'time-support'    => '年中無休のサポート',
-                    ],
-                ],
-
-                'top-collections' => [
-                    'content' => [
-                        'sub-title-1' => '私たちのコレクション',
-                        'sub-title-2' => '私たちのコレクション',
-                        'sub-title-3' => '私たちのコレクション',
-                        'sub-title-4' => '私たちのコレクション',
-                        'sub-title-5' => '私たちのコレクション',
-                        'sub-title-6' => '私たちのコレクション',
-                        'title'       => '新しい追加要素を備えたゲームです！',
-                    ],
-
-                    'name' => 'トップコレクション',
-                ],
             ],
         ],
 

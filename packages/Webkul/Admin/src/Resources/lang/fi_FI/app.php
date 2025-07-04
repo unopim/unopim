@@ -372,6 +372,7 @@ return [
                 'yes'                   => 'Kyllä',
                 'same-code-error'       => 'Vaihtoehdon koodin tulee olla ainutlaatuinen.',
                 'usable-in-grid'        => 'Käytettävissä ruudukossa',
+                'is-filterable'         => 'On suodatettavissa',
 
                 'option' => [
                     'color'    => 'Väri',
@@ -438,13 +439,15 @@ return [
                 'yes'                   => 'Kyllä',
                 'same-code-error'       => 'Vaihtoehdon koodin tulee olla ainutlaatuinen.',
                 'usable-in-grid'        => 'Käytettävissä ruudukossa',
+                'is-filterable'         => 'On suodatettavissa',
 
                 'option' => [
-                    'color'    => 'Väriä',
-                    'dropdown' => 'Pudotusvalikko',
-                    'image'    => 'Kuvanäyte',
-                    'save-btn' => 'Tallenna vaihtoehto',
-                    'text'     => 'Tekstinäyte',
+                    'create-success'       => 'Attribuuttivaihtoehto luotiin onnistuneesti',
+                    'delete-success'       => 'Attribuuttivaihtoehto poistettiin onnistuneesti',
+                    'save-btn'             => 'Tallenna vaihtoehto',
+                    'sort-update-failure'  => 'Järjestyksen päivitys epäonnistui',
+                    'sort-update-success'  => 'Järjestys päivitetty onnistuneesti',
+                    'update-success'       => 'Attribuuttivaihtoehto päivitettiin onnistuneesti',
                 ],
             ],
 
@@ -852,7 +855,7 @@ return [
             'update-success'                 => 'Perhe päivitettiin onnistuneesti.',
             'user-define-error'              => 'Et voi poistaa järjestelmäattribuuttiperhettä',
             'not-found'                      => 'Attribuuttiperheellä, jonka koodi on ":code", ei löytynyt',
-            'can-not-update-variant-options' => 'Ei voida päivittää määritettäviä vaihtoehtoja, koska tällä perheellä on jo varianttituotteita.',
+            'can-not-update-variant-options' => 'Ei voida päivittää määritettäväviä vaihtoehtoja, koska tällä perheellä on jo varianttituotteita.',
         ],
 
         'history' => [
@@ -1839,6 +1842,10 @@ return [
                 'search' => [
                     'title' => 'Etsi',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Sarakkeita',
+                ],
             ],
 
             'filters' => [
@@ -1877,6 +1884,13 @@ return [
             'table' => [
                 'actions'              => 'Toiminnot',
                 'no-records-available' => 'Ei tallenteita saatavilla.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Hallitse sarakkeita',
+                'available-columns' => 'Saatavilla olevat sarakkeet',
+                'selected-columns'  => 'Valitut sarakkeet',
+                'apply-btn'         => 'Käytä',
             ],
         ],
 

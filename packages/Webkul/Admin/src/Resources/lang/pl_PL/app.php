@@ -372,6 +372,7 @@ return [
                 'yes'                   => 'Tak',
                 'same-code-error'       => 'Kod opcji musi być unikalny.',
                 'usable-in-grid'        => 'Można używać w siatce',
+                'is-filterable'         => 'Jest filtrowalne',
 
                 'option' => [
                     'color'    => 'Kolor próbki',
@@ -438,13 +439,15 @@ return [
                 'yes'                   => 'Tak',
                 'same-code-error'       => 'Kod opcji musi być unikalny.',
                 'usable-in-grid'        => 'Można używać w siatce',
+                'is-filterable'         => 'Jest filtrowalne',
 
                 'option' => [
-                    'color'    => 'Kolor próbki',
-                    'dropdown' => 'Menu rozwijane',
-                    'image'    => 'Obraz próbki',
-                    'save-btn' => 'Zapisz opcję',
-                    'text'     => 'Tekst próbki',
+                    'create-success'      => 'Opcja atrybutu została pomyślnie utworzona',
+                    'delete-success'      => 'Opcja atrybutu została pomyślnie usunięta',
+                    'save-btn'            => 'Zapisz opcję',
+                    'sort-update-failure' => 'Nie udało się zaktualizować kolejności sortowania',
+                    'sort-update-success' => 'Kolejność sortowania została zaktualizowana',
+                    'update-success'      => 'Opcja atrybutu została pomyślnie zaktualizowana',
                 ],
             ],
 
@@ -1833,6 +1836,10 @@ return [
                 'search' => [
                     'title' => 'Szukaj',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'kolumnami',
+                ],
             ],
 
             'filters' => [
@@ -1871,6 +1878,13 @@ return [
             'table' => [
                 'actions'              => 'Akcje',
                 'no-records-available' => 'Brak dostępnych rekordów.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Zarządzaj kolumnami',
+                'available-columns' => 'Dostępne kolumny',
+                'selected-columns'  => 'Wybrane kolumny',
+                'apply-btn'         => 'Zastosuj',
             ],
         ],
 

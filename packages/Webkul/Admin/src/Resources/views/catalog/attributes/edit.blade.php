@@ -221,157 +221,111 @@
                             </div>
 
                             <!-- For Attribute Options If Data Exist -->
-                            <div class="mt-4 overflow-x-auto">
-                                <div class="flex gap-4 items-center max-sm:flex-wrap">
-                                    <!-- Input Options -->
-                                  
-                                </div>
-
-                                <template v-if="optionsData?.length">
-                                    @if (
-                                        $attribute->type == 'select'
-                                        || $attribute->type == 'multiselect'
-                                        || $attribute->type == 'checkbox'
-                                    )
-                                        <!-- Table Information -->
-                                        <x-admin::table>
-                                            <x-admin::table.thead class="text-sm font-medium dark:bg-gray-800">
-                                                <x-admin::table.thead.tr>
-                                                    <x-admin::table.th class="!p-0"></x-admin::table.th>
-    
-                                                    <!-- Swatch Select -->
-                                                    <x-admin::table.th v-if="showSwatch && (selectedSwatchType == 'color' || selectedSwatchType == 'image')">
-                                                        @lang('admin::app.catalog.attributes.edit.swatch')
-                                                    </x-admin::table.th>
-    
-                                                    <!-- Admin tables heading -->
-                                                    <x-admin::table.th>
-                                                        @lang('admin::app.catalog.attributes.edit.code')
-                                                    </x-admin::table.th>
-    
-                                                    <!-- Loacles tables heading -->
-                                                    @foreach ($locales as $locale)
-                                                        <x-admin::table.th>
-                                                            {{ $locale->name }}
-                                                        </x-admin::table.th>
-                                                    @endforeach
-    
-                                                    <!-- Action tables heading -->
-                                                    <x-admin::table.th></x-admin::table.th>
-                                                </x-admin::table.thead.tr>
-                                            </x-admin::table.thead>
-    
-                                            <!-- Draggable Component -->
-                                            <draggable
-                                                tag="tbody"
-                                                ghost-class="draggable-ghost"
-                                                handle=".icon-drag"
-                                                v-bind="{animation: 200}"
-                                                :list="optionsData"
-                                                item-key="id"
+                            <div class="overflow-x-auto">
+                                <x-admin::datagrid
+                                    :src="route('admin.catalog.attributes.options.index', $attribute->id)"
+                                    ref="optionsDataGrid"
+                                >
+                                    <template #header="{ columns, records, sortPage, selectAllRecords, applied, isLoading, actions}">
+                                        <template v-if="! isLoading">
+                                            <div
+                                                class="row grid grid-rows-1 gap-2.5 items-center px-4 py-2.5 border-b bg-violet-50 dark:border-cherry-800 dark:bg-cherry-900 font-semibold"
+                                                :style="'grid-template-columns: 0.2fr repeat(' + (actions.length ? columns.length + 1 : (columns.length )) + ', 1fr)'"
                                             >
-                                                <template #item="{ element, index }">
-                                                    <x-admin::table.thead.tr
-                                                        class="hover:bg-violet-50 hover:bg-opacity-50 dark:hover:bg-cherry-800"
-                                                        v-show="! element.isDelete"
+                                            <!-- Empty div to manage layout  -->
+                                            <div>
+                                            </div>
+                                                <div
+                                                    class="flex items-center select-none"
+                                                    v-for="(column, index) in columns"
+                                                >
+                                                    <p class="text-gray-600 dark:text-gray-300">
+                                                        <span class="[&>*]:after:content-['_/_']">
+                                                            <span
+                                                                class="after:content-['/'] last:after:content-['']"
+                                                                :class="{
+                                                                    'text-gray-800 dark:text-white font-medium': applied.sort.column == column.index,
+                                                                    'cursor-pointer hover:text-gray-800 dark:hover:text-white': column.sortable,
+                                                                }"
+                                                                @click="
+                                                                    column?.sortable ? sortPage(column.index): {}
+                                                                "
+                                                            >
+                                                                @{{ column?.label }}
+                                                            </span>
+                                                        </span>
+                                                    </p>
+                                                </div>
+
+                                                <!-- Actions -->
+                                                <div
+                                                    class="flex gap-2.5 items-center justify-end select-none"
+                                                    v-if="actions?.length"
+                                                >
+                                                    <p
+                                                        class="text-gray-600 dark:text-gray-300"
+                                                        v-if="actions?.length"
                                                     >
-                                                        <input
-                                                            type="hidden"
-                                                            :name="'options[' + element.id + '][isNew]'"
-                                                            :value="element.isNew"
-                                                        >
-    
-                                                        <input
-                                                            type="hidden"
-                                                            :name="'options[' + element.id + '][isDelete]'"
-                                                            :value="element.isDelete"
-                                                        >
-    
-                                                        <!-- Draggable Icon -->
-                                                        <x-admin::table.td class="!px-0 text-center">
-                                                            <i class="icon-drag text-2xl transition-all group-hover:text-gray-700 cursor-grab"></i>
-    
-                                                            <input
-                                                                type="hidden"
-                                                                :name="'options[' + element.id + '][sort_order]'"
-                                                                :value="index"
-                                                            />
-                                                        </x-admin::table.td>
+                                                        @lang('admin::app.components.datagrid.table.actions')
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </template>
 
-                                                        <!-- Admin-->
-                                                        <x-admin::table.td>
-                                                            <p
-                                                                class="dark:text-white"
-                                                                v-text="element.code"
-                                                                :data-attr="JSON.stringify(locales)"
-                                                            >
-                                                            </p>
-    
-                                                            <input
-                                                                type="hidden"
-                                                                :name="'options[' + element.id + '][code]'"
-                                                                v-model="element.code"
-                                                            />
-                                                        </x-admin::table.td>
-    
-                                                        <!-- Loacles -->
-                                                        <x-admin::table.td v-for="locale in locales">
-                                                            <p
-                                                                class="dark:text-white"
-                                                                v-text="element['locales'][locale.code]"
-                                                            >
-                                                            </p>
-    
-                                                            <input
-                                                                type="hidden"
-                                                                :name="'options[' + element.id + '][' + locale.code + '][label]'"
-                                                                v-model="element['locales'][locale.code]"
-                                                            />
-                                                        </x-admin::table.td>
-    
-                                                        <!-- Actions Button -->
-                                                        <x-admin::table.td class="!px-0">
-                                                            <span
-                                                                class="icon-edit p-1.5 rounded-md text-2xl cursor-pointer transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
-                                                                @click="editOptions(element)"
-                                                            >
-                                                            </span>
-    
-                                                            <span
-                                                                class="icon-delete p-1.5 rounded-md text-2xl cursor-pointer transition-all hover:bg-violet-50 dark:hover:bg-gray-800  max-sm:place-self-center"
-                                                                @click="removeOption(element.id)"
-                                                            >
-                                                            </span>
-                                                        </x-admin::table.td>
-                                                    </x-admin::table.thead.tr>
-                                                </template>
-                                            </draggable>
-                                        </x-admin::table>
-                                    @endif
-                                </template>
+                                        <!-- Datagrid Head Shimmer -->
+                                        <template v-else>
+                                            <x-admin::shimmer.datagrid.table.head :isMultiRow="true" />
+                                        </template>
+                                    </template>
+                                    <template #body="{ columns, records, performAction, applied, actions, isLoading }">
+                                        <template v-if="! isLoading">
+                                            <div
+                                                v-for="(record, index) in records"
+                                                class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
+                                                :style="'grid-template-columns: 0.2fr repeat(' + (actions.length ? columns.length + 1 : (columns.length )) + ', 1fr)'"
+                                                :draggable="isSortable"
+                                                @dragstart="onDragStart(index)"
+                                                @dragover.prevent
+                                                @dragenter.prevent="onDragEnter(index)"
+                                                @drop="onDrop(records)"
+                                            >
 
-                                <!-- For Empty Attribute Options -->
-                                <template v-else>
-                                    <div class="grid gap-3.5 justify-items-center py-10 px-2.5">
-                                        <!-- Attribute Option Image -->
-                                        <img
-                                            class="w-[120px] h-[120px] dark:invert dark:mix-blend-exclusion"
-                                            src="{{ unopim_asset('images/icon-add-product.svg') }}"
-                                            alt="{{ trans('admin::app.catalog.attributes.edit.add-attribute-options') }}"
-                                        >
+                                                <i class="icon-drag text-2xl transition-all group-hover:text-gray-700 cursor-grab" :class="{ 'invisible': !isSortable }"></i>
 
-                                        <!-- Add Attribute Options Information -->
-                                        <div class="flex flex-col gap-1.5 items-center">
-                                            <p class="text-base text-gray-400 font-semibold">
-                                                @lang('admin::app.catalog.attributes.edit.add-attribute-options')
-                                            </p>
+                                                <p 
+                                                    v-text="record.code"
+                                                    class="text-nowrap overflow-hidden text-ellipsis break-words hover:text-wrap"
+                                                >
+                                                </p>
 
-                                            <p class="text-gray-400">
-                                                @lang('admin::app.catalog.attributes.edit.add-options-info')
-                                            </p>
-                                        </div>
-                                    </div>
-                                </template>
+                                                <p
+                                                    v-for="locale in locales"
+                                                    v-text="record['name_' + locale.code]"
+                                                    class="text-nowrap overflow-hidden text-ellipsis break-words hover:text-wrap"
+                                                >
+                                                </p>
+
+                                                <!-- Actions -->
+                                                <div class="flex justify-end">
+                                                    <span
+                                                        class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
+                                                        :class="action.icon"
+                                                        v-text="!action.icon ? action.title : ''"
+                                                        v-for="action in record.actions"
+                                                        :title="action.title ?? ''"
+                                                        @click="checkAndPerformAction(record.id, action, performAction)"
+                                                    >
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </template>
+
+                                        <!-- Datagrid Shimmer for body when loading data  -->
+                                        <template v-else>
+                                            <x-admin::shimmer.datagrid.table.body :isMultiRow="true" />
+                                        </template>
+                                    </template>
+                                </x-admin::datagrid>
                             </div>
                         </div>
                     </div>
@@ -516,7 +470,7 @@
                                         name="value_per_locale"
                                         value="1"
                                         :checked="(boolean) $valuePerLocale"
-                                        :disabled="(boolean) $valuePerLocale"
+                                        disabled
                                     />
 
                                     <label
@@ -544,7 +498,7 @@
                                         name="value_per_channel"
                                         value="1"
                                         :checked="(boolean) $valuePerChannel"
-                                        :disabled="(boolean) $valuePerChannel"
+                                        disabled
                                     />
 
                                     <label
@@ -558,6 +512,36 @@
                                         name="value_per_channel"
                                         :value="(boolean) $valuePerChannel"
                                     />
+                                </x-admin::form.control-group>
+
+                                <!-- Filterable  -->
+                                <x-admin::form.control-group class="flex gap-2.5 items-center !mb-2 select-none {{ $attribute->code === 'sku' ? 'opacity-70' : '' }}">
+                                    @php
+                                        $isFilterable = old('is_filterable') ?? $attribute->is_filterable;
+                                    @endphp
+
+                                    <x-admin::form.control-group.control
+                                        type="hidden"
+                                        name="is_filterable"
+                                        value="0"
+                                    />
+
+                                    <x-admin::form.control-group.control
+                                        type="checkbox"
+                                        name="is_filterable"
+                                        id="is_filterable"
+                                        for="is_filterable"
+                                        value="1"
+                                        :checked="(boolean) $isFilterable"
+                                        :disabled="$attribute->code === 'sku'"
+                                    />
+
+                                    <label
+                                        class="text-xs text-gray-600 dark:text-gray-300 font-medium {{ $attribute->code === 'sku' ? 'cursor-not-allowed' : 'cursor-pointer' }}"
+                                        for="is_filterable"
+                                    >
+                                        @lang('admin::app.catalog.attributes.edit.is-filterable')
+                                    </label>
                                 </x-admin::form.control-group>
                             </x-slot>
                         </x-admin::accordion>
@@ -574,7 +558,7 @@
                 ref="modelForm"
             >
                 <form
-                    @submit.prevent="handleSubmit($event, storeOptions)"
+                    @submit.prevent="handleSubmit($event, storeOption)"
                     enctype="multipart/form-data"
                     ref="editOptionsForm"
                 >
@@ -721,12 +705,14 @@
 
                         optionId: 0,
 
-                        src: "{{ route('admin.catalog.attributes.options', $attribute->id) }}",
-                    }
-                },
+                        src: "{{ route('admin.catalog.attributes.options.edit', ['attribute_id' => $attribute->id, 'id' => '_ID']) }}",
 
-                created: function () {
-                    this.getAttributesOption();
+                        optionCreateRoute: "{{ route('admin.catalog.attributes.options.store', ['attribute_id' => $attribute->id]) }}",
+                        optionUpdateRoute: "{{ route('admin.catalog.attributes.options.update', ['attribute_id' => $attribute->id, 'id' => '_ID']) }}",
+                        updateSortOrder: "{{ route('admin.catalog.attributes.options.update_sort', ['attribute_id' => $attribute->id]) }}",
+                        dragFromIndex: null,
+                        dragToIndex: null,
+                    }
                 },
 
                 watch: {
@@ -737,44 +723,57 @@
                         this.selectedSwatchType = this.parseValue(value)?.id;
                     }
                 },
+
+                computed: {
+                    isSortable() {
+                        return this.$refs.optionsDataGrid.applied.filters.columns.filter(
+                            item => item.index === 'all' && item.value == ''
+                        ).length > 0;
+                    }
+                },
+
                 methods: {
-                    storeOptions(params, { resetForm, setValues }) {
-                        if (! params.id) {
-                            params.id = 'option_' + this.optionId;
-                            this.optionId++;
+                    storeOption(params, { resetForm, setValues }) {
+                        const updatedLocales = {};
+
+                        for (const [localeCode, label] of Object.entries(params.locales)) {
+                            updatedLocales[localeCode] = { label };
                         }
 
-                        let foundIndex = this.optionsData.findIndex(item => item.id === params.id);
+                        params.locales = updatedLocales;
 
-                        if (foundIndex !== -1) {
-                            this.optionsData.splice(foundIndex, 1, params);
-                        } else {
-                            let existAlready = this.optionsData.findIndex(item => item.code.toLowerCase() === params.code.toLowerCase());
+                        const request = params.id
+                            ? this.$axios.put(this.optionUpdateRoute.replace('_ID', params.id), params)
+                            : this.$axios.post(this.optionCreateRoute, params);
 
-                            if (existAlready !== -1) {
-                                this.$emitter.emit('add-flash', { type: 'warning', message: "@lang('admin::app.catalog.attributes.edit.same-code-error')" });
+                        request.then(response => {
+                                this.$emitter.emit('add-flash', {
+                                    type: 'success',
+                                    message: response.data.message,
+                                });
+                                
+                                this.$refs.optionsDataGrid.get();
 
-                                return;
-                            }
+                                this.$refs.addOptionsRow.toggle();
 
-                            this.optionsData.push(params);
+                                resetForm();
+                            })
+                            .catch(error => {
+                                if (error.response.status === 422) {
+                                    this.$refs.modelForm.setErrors(error.response.data.errors);
+                                }
+                            });
+                    },
+
+                    async checkAndPerformAction(id, action, performAction) {
+                        if (action.index === 'edit') {
+                            let option = await this.getAttributeOption(id);
+                            this.editOptions(option);
+
+                            return;
                         }
 
-                        let formData = new FormData(this.$refs.editOptionsForm);
-
-                        const sliderImage = formData.get("swatch_value[]");
-
-                        if (sliderImage) {
-                            params.swatch_value = sliderImage;
-                        }
-
-                        this.$refs.addOptionsRow.toggle();
-
-                        if (params.swatch_value instanceof File) {
-                            this.setFile(sliderImage, params.id);
-                        }
-
-                        resetForm();
+                        performAction(action);
                     },
 
                     editOptions(value) {
@@ -793,56 +792,15 @@
                         this.$refs.addOptionsRow.toggle();
                     },
 
-                    removeOption(id) {
-                        let foundIndex = this.optionsData.findIndex(item => item.id === id);
-
-                        if (foundIndex !== -1) {
-                            if (this.optionsData[foundIndex].isNew) {
-                                this.optionsData.splice(foundIndex, 1);
-                            } else {
-                                this.optionsData[foundIndex].isDelete = true;
-                            }
-                        }
-                    },
-
-                    getAttributesOption() {
-                        this.$axios.get(`${this.src}`)
+                    getAttributeOption(id) {
+                        return this.$axios.get(this.src.replace('_ID', id))
                             .then(response => {
-                                let options = response.data;
+                                    let option = response.data.option;
 
-                                options.forEach((option) => {
-                                    let row = {
-                                        'id': option.id,
-                                        'code': option.code,
-                                        'sort_order': option.sort_order,
-                                        'swatch_value': option.swatch_value,
-                                        'swatch_value_url': option.swatch_value_url,
-                                        'notRequired': '',
-                                        'locales': {},
-                                        'isNew': false,
-                                        'isDelete': false,
-                                    };
+                                    this.optionsData.push(option);
 
-                                    option.translations.forEach((translation) => {
-                                        row['locales'][translation.locale] = translation.label ?? '';
-                                    });
-
-                                    this.optionsData.push(row);
+                                    return option;
                                 });
-                            });
-                    },
-
-                    setFile(file, id) {
-                        let dataTransfer = new DataTransfer();
-
-                        dataTransfer.items.add(file);
-
-                        // Use Set timeout because need to wait for render dom before set the src or get the ref value
-                        setTimeout(() => {
-                            this.$refs['image_' + id].src =  URL.createObjectURL(file);
-
-                            this.$refs['imageInput_' + id].files = dataTransfer.files;
-                        }, 0);
                     },
 
                     parseValue(value) {  
@@ -852,6 +810,78 @@
                             return value;
                         }
                     },
+
+                    onDragStart(index) {
+                        if (! this.isSortable) {
+                            return;
+                        }
+
+                        this.dragFromIndex = index;
+                    },
+
+                    onDragEnter(index) {
+                        if (! this.isSortable) {
+                            return;
+                        }
+
+                        this.dragToIndex = index;
+                    },
+
+                    onDrop(records) {
+                        if (! this.isSortable) {
+                            return;
+                        }
+
+                        if (
+                            this.dragFromIndex !== null &&
+                            this.dragToIndex !== null &&
+                            this.dragFromIndex !== this.dragToIndex
+                        ) {
+                            let recordsArray = JSON.parse(JSON.stringify(records));
+
+                            this.$refs.optionsDataGrid.isLoading = true;
+
+                            const fromIndex = recordsArray[this.dragFromIndex].id;
+
+                            const toIndex = recordsArray[this.dragToIndex].id;
+
+                            const movedItem = recordsArray.splice(this.dragFromIndex, 1)[0];
+
+                            recordsArray.splice(this.dragToIndex, 0, movedItem);
+
+                            let dataToSort = this.dragToIndex > this.dragFromIndex
+                                ? recordsArray.slice(this.dragFromIndex, this.dragToIndex + 1)
+                                : recordsArray.slice(this.dragToIndex, this.dragFromIndex + 1);
+
+                            dataToSort = dataToSort.map(item => item.id);
+
+                            this.$axios.put(this.updateSortOrder, {
+                                    attributeId: {{ $attribute->id }},
+                                    fromIndex: fromIndex,
+                                    toIndex: toIndex,
+                                    optionIds: dataToSort,
+                                    direction: this.dragToIndex > this.dragFromIndex ? 'down' : 'up',
+                                })
+                                .then(response => {
+                                    this.$refs.optionsDataGrid.isLoading = false;
+
+                                    this.$emitter.emit('add-flash', {
+                                        type: 'success',
+                                        message: response.data.message,
+                                    });
+                                }).catch(error => {
+                                    this.$refs.optionsDataGrid.isLoading = false;
+
+                                    this.$emitter.emit('add-flash', {
+                                        type: 'error',
+                                        message: error.response.data.message,
+                                    });
+                                }).finally(() => this.$refs.optionsDataGrid.get());
+                        }
+
+                        this.dragFromIndex = null;
+                        this.dragToIndex = null;
+                    }
                 },
             });
         </script>

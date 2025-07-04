@@ -27,10 +27,12 @@ it('should create the Attribute', function () {
 
     $response = postJson(route('admin.catalog.attributes.store'), $attribute);
 
-    $response->assertStatus(302)
-        ->assertRedirect(route('admin.catalog.attributes.index'));
-
     $this->assertDatabaseHas($this->getFullTableName(Attribute::class), $attribute);
+
+    $attributeId = Attribute::where('code', $attribute['code'])?->value('id');
+
+    $response->assertStatus(302)
+        ->assertRedirect(route('admin.catalog.attributes.edit', ['id' => $attributeId]));
 });
 
 it('should create the gallery type Attribute', function () {
@@ -43,10 +45,12 @@ it('should create the gallery type Attribute', function () {
 
     $response = postJson(route('admin.catalog.attributes.store'), $attribute);
 
-    $response->assertStatus(302)
-        ->assertRedirect(route('admin.catalog.attributes.index'));
-
     $this->assertDatabaseHas($this->getFullTableName(Attribute::class), $attribute);
+
+    $attributeId = Attribute::where('code', $attribute['code'])?->value('id');
+
+    $response->assertStatus(302)
+        ->assertRedirect(route('admin.catalog.attributes.edit', ['id' => $attributeId]));
 });
 
 it('should return the attribute datagrid', function () {
@@ -246,34 +250,6 @@ it('should not delete sku with mass delete attributes', function () {
 
         $this->assertDatabaseMissing($this->getFullTableName(Attribute::class), ['id' => $id]);
     }
-});
-
-it('should fetch attribute options', function () {
-    $this->loginAsAdmin();
-
-    $attribute = Attribute::factory()->create(['type' => 'select']);
-    $response = get(route('admin.catalog.attributes.options', ['id' => $attribute->id]));
-
-    $responseData = $response->json();
-    $this->assertIsArray($responseData);
-
-    $this->assertEquals($responseData[0], $attribute->options()->orderBy('sort_order')->first()->toArray());
-
-    $response->assertStatus(200);
-});
-
-it('should fetch attribute options for multiselect type attribute', function () {
-    $this->loginAsAdmin();
-
-    $attribute = Attribute::factory()->create(['type' => 'multiselect']);
-    $response = get(route('admin.catalog.attributes.options', ['id' => $attribute->id]));
-
-    $responseData = $response->json();
-    $this->assertIsArray($responseData);
-
-    $this->assertEquals($responseData[0], $attribute->options()->orderBy('sort_order')->first()->toArray());
-
-    $response->assertStatus(200);
 });
 
 it('should update attribute options', function () {

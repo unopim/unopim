@@ -372,6 +372,7 @@ return [
                 'yes'                   => '是的',
                 'same-code-error'       => '选项代码必须是唯一的。',
                 'usable-in-grid'        => '可在网格中使用',
+                'is-filterable'         => '可筛选',
 
                 'option' => [
                     'color'    => '色板',
@@ -437,13 +438,15 @@ return [
                 'yes'                   => '是的',
                 'same-code-error'       => '选项代码必须是唯一的。',
                 'usable-in-grid'        => '可在网格中使用',
+                'is-filterable'         => '可筛选',
 
                 'option' => [
-                    'color'    => '色板',
-                    'dropdown' => '落下',
-                    'image'    => '图像色板',
-                    'save-btn' => '保存选项',
-                    'text'     => '文字色板',
+                    'create-success'       => '属性选项创建成功',
+                    'delete-success'       => '属性选项删除成功',
+                    'save-btn'             => '保存选项',
+                    'sort-update-failure'  => '排序更新失败',
+                    'sort-update-success'  => '排序更新成功',
+                    'update-success'       => '属性选项更新成功',
                 ],
             ],
 
@@ -1682,6 +1685,10 @@ return [
                 'search' => [
                     'title' => '搜索',
                 ],
+
+                'manage-columns' => [
+                    'title' => '列',
+                ],
             ],
 
             'filters' => [
@@ -1720,6 +1727,13 @@ return [
             'table' => [
                 'actions'              => '动作',
                 'no-records-available' => '没有可用的记录。',
+            ],
+
+            'manage-columns' => [
+                'title'             => '管理列',
+                'available-columns' => '可用列',
+                'selected-columns'  => '已选择列',
+                'apply-btn'         => '应用',
             ],
         ],
 

@@ -372,6 +372,7 @@ return [
                 'yes'                   => 'Da',
                 'same-code-error'       => 'Codul opțiunii trebuie să fie unic.',
                 'usable-in-grid'        => 'Utilizabil în grilă',
+                'is-filterable'         => 'Este filtrabil',
 
                 'option' => [
                     'color'    => 'Eșantion de culoare',
@@ -438,13 +439,15 @@ return [
                 'yes'                   => 'Da',
                 'same-code-error'       => 'Codul opțiunii trebuie să fie unic.',
                 'usable-in-grid'        => 'Utilizabil în grilă',
+                'is-filterable'         => 'Este filtrabil',
 
                 'option' => [
-                    'color'    => 'Eșantion de culoare',
-                    'dropdown' => 'Meniu derulant',
-                    'image'    => 'Eșantion imagine',
-                    'save-btn' => 'Salvează opțiune',
-                    'text'     => 'Eșantion text',
+                    'create-success'      => 'Opțiunea atributului a fost creată cu succes',
+                    'delete-success'      => 'Opțiunea atributului a fost ștearsă cu succes',
+                    'save-btn'            => 'Salvează opțiune',
+                    'sort-update-failure' => 'Actualizarea ordinii de sortare a eșuat',
+                    'sort-update-success' => 'Ordinea de sortare a fost actualizată cu succes',
+                    'update-success'      => 'Opțiunea atributului a fost actualizată cu succes',
                 ],
             ],
 
@@ -1833,6 +1836,10 @@ return [
                 'search' => [
                     'title' => 'Căutare',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'coloanele',
+                ],
             ],
 
             'filters' => [
@@ -1871,6 +1878,13 @@ return [
             'table' => [
                 'actions'              => 'Acțiuni',
                 'no-records-available' => 'Nu există înregistrări disponibile.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Gestionați coloanele',
+                'available-columns' => 'Coloane disponibile',
+                'selected-columns'  => 'Coloane selectate',
+                'apply-btn'         => 'Aplicați',
             ],
         ],
 

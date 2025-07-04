@@ -372,6 +372,7 @@ return [
                 'yes'                   => 'Sì',
                 'same-code-error'       => 'Il codice dell\'opzione deve essere unico.',
                 'usable-in-grid'        => 'Usabile nella griglia',
+                'is-filterable'         => 'È filtrabile',
 
                 'option' => [
                     'color'    => 'Colore campione',
@@ -440,11 +441,12 @@ return [
                 'usable-in-grid'        => 'Usabile nella griglia',
 
                 'option' => [
-                    'color'    => 'Colore campione',
-                    'dropdown' => 'Menu a discesa',
-                    'image'    => 'Immagine campione',
-                    'save-btn' => 'Salva opzione',
-                    'text'     => 'Testo campione',
+                    'create-success'      => 'Opzione attributo creata con successo',
+                    'delete-success'      => 'Opzione attributo eliminata con successo',
+                    'save-btn'            => 'Salva opzione',
+                    'sort-update-failure' => 'Aggiornamento dell\'ordinamento non riuscito',
+                    'sort-update-success' => 'Ordinamento aggiornato con successo',
+                    'update-success'      => 'Opzione attributo aggiornata con successo',
                 ],
             ],
 
@@ -1833,6 +1835,10 @@ return [
                 'search' => [
                     'title' => 'Cerca',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Colonne',
+                ],
             ],
 
             'filters' => [
@@ -1871,6 +1877,13 @@ return [
             'table' => [
                 'actions'              => 'Azioni',
                 'no-records-available' => 'Nessun record disponibile.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Gestisci colonne',
+                'available-columns' => 'Colonne disponibili',
+                'selected-columns'  => 'Colonne selezionate',
+                'apply-btn'         => 'Applica',
             ],
         ],
 

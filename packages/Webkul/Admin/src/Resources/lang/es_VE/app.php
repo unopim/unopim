@@ -372,6 +372,7 @@ return [
                 'yes'                   => 'Sí',
                 'same-code-error'       => 'El código de opción debe ser único.',
                 'usable-in-grid'        => 'Utilizable en cuadrícula',
+                'is-filterable'         => 'Es filtrable',
 
                 'option' => [
                     'color'    => 'Muestra de color',
@@ -438,13 +439,15 @@ return [
                 'yes'                   => 'Sí',
                 'same-code-error'       => 'El código de opción debe ser único.',
                 'usable-in-grid'        => 'Utilizable en cuadrícula',
+                'is-filterable'         => 'Es filtrable',
 
                 'option' => [
-                    'color'    => 'Muestra de color',
-                    'dropdown' => 'Desplegable',
-                    'image'    => 'Muestra de imagen',
-                    'save-btn' => 'Guardar opción',
-                    'text'     => 'Muestra de texto',
+                    'create-success'      => 'Attribute Option Created Successfully',
+                    'delete-success'      => 'Attribute Option Deleted Successfully',
+                    'save-btn'            => 'Save Option',
+                    'sort-update-failure' => 'Failed to Update Sort Order',
+                    'sort-update-success' => 'Sort Order Updated Successfully',
+                    'update-success'      => 'Attribute Option Updated Successfully',
                 ],
             ],
 
@@ -1833,6 +1836,10 @@ return [
                 'search' => [
                     'title' => 'Buscar',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Columnas',
+                ],
             ],
 
             'filters' => [
@@ -1871,6 +1878,13 @@ return [
             'table' => [
                 'actions'              => 'Acciones',
                 'no-records-available' => 'No hay registros disponibles.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Administrar columnas',
+                'available-columns' => 'Columnas disponibles',
+                'selected-columns'  => 'Columnas seleccionadas',
+                'apply-btn'         => 'Aplicar',
             ],
         ],
 

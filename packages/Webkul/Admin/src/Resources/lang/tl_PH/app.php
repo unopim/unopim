@@ -372,6 +372,7 @@ return [
                 'yes'                   => 'Oo',
                 'same-code-error'       => 'Ang code ng opsyon ay dapat na natangi.',
                 'usable-in-grid'        => 'Magagamit sa grid',
+                'is-filterable'         => 'Nafifilter',
 
                 'option' => [
                     'color'    => 'Color Swatch',
@@ -438,13 +439,15 @@ return [
                 'yes'                   => 'Oo',
                 'same-code-error'       => 'Ang code ng opsyon ay dapat na natangi.',
                 'usable-in-grid'        => 'Magagamit sa grid',
+                'is-filterable'         => 'Nafifilter',
 
                 'option' => [
-                    'color'    => 'Color Swatch',
-                    'dropdown' => 'Dropdown',
-                    'image'    => 'Image Swatch',
-                    'save-btn' => 'I-save ang Opsyon',
-                    'text'     => 'Text Swatch',
+                    'create-success'      => 'Matagumpay na nalikha ang Opsyon ng Katangian',
+                    'delete-success'      => 'Matagumpay na natanggal ang Opsyon ng Katangian',
+                    'save-btn'            => 'I-save ang Opsyon',
+                    'sort-update-failure' => 'Nabigong i-update ang pagkakasunod-sunod',
+                    'sort-update-success' => 'Matagumpay na na-update ang pagkakasunod-sunod',
+                    'update-success'      => 'Matagumpay na na-update ang Opsyon ng Katangian',
                 ],
             ],
 
@@ -1833,6 +1836,10 @@ return [
                 'search' => [
                     'title' => 'Search',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Columns',
+                ],
             ],
 
             'filters' => [
@@ -1871,6 +1878,13 @@ return [
             'table' => [
                 'actions'              => 'Actions',
                 'no-records-available' => 'No Records Available.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Manage columns',
+                'available-columns' => 'Available Columns',
+                'selected-columns'  => 'Selected Columns',
+                'apply-btn'         => 'Apply',
             ],
         ],
 

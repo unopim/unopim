@@ -28,7 +28,6 @@ class AttributeTableSeeder extends Seeder
             [
                 'id'                  => 1,
                 'code'                => 'sku',
-
                 'type'                => 'text',
                 'validation'          => null,
                 'position'            => 1,
@@ -36,8 +35,8 @@ class AttributeTableSeeder extends Seeder
                 'is_unique'           => 1,
                 'value_per_locale'    => 0,
                 'value_per_channel'   => 0,
+                'is_filterable'       => 1,
                 'default_value'       => null,
-
                 'enable_wysiwyg'      => 0,
                 'created_at'          => $now,
                 'updated_at'          => $now,
@@ -52,6 +51,7 @@ class AttributeTableSeeder extends Seeder
                 'is_unique'           => 0,
                 'value_per_locale'    => 1,
                 'value_per_channel'   => 1,
+                'is_filterable'       => 1,
                 'default_value'       => null,
 
                 'enable_wysiwyg'      => 0,
@@ -68,6 +68,7 @@ class AttributeTableSeeder extends Seeder
                 'is_unique'           => 1,
                 'value_per_locale'    => 0,
                 'value_per_channel'   => 0,
+                'is_filterable'       => 0,
                 'default_value'       => null,
 
                 'enable_wysiwyg'      => 0,
@@ -84,6 +85,7 @@ class AttributeTableSeeder extends Seeder
                 'is_unique'           => 0,
                 'value_per_locale'    => 0,
                 'value_per_channel'   => 1,
+                'is_filterable'       => 0,
                 'default_value'       => null,
 
                 'enable_wysiwyg'      => 0,
@@ -91,15 +93,16 @@ class AttributeTableSeeder extends Seeder
                 'updated_at'          => $now,
             ], [
                 'id'                  => 8,
-                'code'                => 'product_status',
+                'code'                => 'image',
 
-                'type'                => 'boolean',
+                'type'                => 'image',
                 'validation'          => null,
                 'position'            => 10,
-                'is_required'         => 1,
+                'is_required'         => 0,
                 'is_unique'           => 0,
                 'value_per_locale'    => 0,
                 'value_per_channel'   => 0,
+                'is_filterable'       => 0,
                 'default_value'       => null,
 
                 'enable_wysiwyg'      => 0,
@@ -116,6 +119,7 @@ class AttributeTableSeeder extends Seeder
                 'is_unique'           => 0,
                 'value_per_locale'    => 1,
                 'value_per_channel'   => 1,
+                'is_filterable'       => 0,
                 'default_value'       => null,
 
                 'enable_wysiwyg'      => 1,
@@ -132,6 +136,7 @@ class AttributeTableSeeder extends Seeder
                 'is_unique'           => 0,
                 'value_per_locale'    => 1,
                 'value_per_channel'   => 1,
+                'is_filterable'       => 0,
                 'default_value'       => null,
 
                 'enable_wysiwyg'      => 1,
@@ -148,6 +153,7 @@ class AttributeTableSeeder extends Seeder
                 'is_unique'           => 0,
                 'value_per_locale'    => 1,
                 'value_per_channel'   => 1,
+                'is_filterable'       => 1,
                 'default_value'       => null,
 
                 'enable_wysiwyg'      => 0,
@@ -164,6 +170,7 @@ class AttributeTableSeeder extends Seeder
                 'is_unique'           => 0,
                 'value_per_locale'    => 0,
                 'value_per_channel'   => 1,
+                'is_filterable'       => 0,
                 'default_value'       => null,
 
                 'enable_wysiwyg'      => 0,
@@ -180,6 +187,7 @@ class AttributeTableSeeder extends Seeder
                 'is_unique'           => 0,
                 'value_per_locale'    => 1,
                 'value_per_channel'   => 1,
+                'is_filterable'       => 0,
                 'default_value'       => null,
 
                 'enable_wysiwyg'      => 0,
@@ -196,6 +204,7 @@ class AttributeTableSeeder extends Seeder
                 'is_unique'           => 0,
                 'value_per_locale'    => 1,
                 'value_per_channel'   => 1,
+                'is_filterable'       => 0,
                 'default_value'       => null,
 
                 'enable_wysiwyg'      => 0,
@@ -212,6 +221,7 @@ class AttributeTableSeeder extends Seeder
                 'is_unique'           => 0,
                 'value_per_locale'    => 1,
                 'value_per_channel'   => 1,
+                'is_filterable'       => 0,
                 'default_value'       => null,
 
                 'enable_wysiwyg'      => 0,
@@ -228,6 +238,7 @@ class AttributeTableSeeder extends Seeder
                 'is_unique'           => 0,
                 'value_per_locale'    => 0,
                 'value_per_channel'   => 0,
+                'is_filterable'       => 0,
                 'default_value'       => null,
 
                 'enable_wysiwyg'      => 0,
@@ -244,6 +255,7 @@ class AttributeTableSeeder extends Seeder
                 'is_unique'           => 0,
                 'value_per_locale'    => 0,
                 'value_per_channel'   => 0,
+                'is_filterable'       => 0,
                 'default_value'       => null,
 
                 'enable_wysiwyg'      => 0,
@@ -260,6 +272,7 @@ class AttributeTableSeeder extends Seeder
                 'is_unique'           => 0,
                 'value_per_locale'    => 0,
                 'value_per_channel'   => 0,
+                'is_filterable'       => 0,
                 'default_value'       => null,
 
                 'enable_wysiwyg'      => 0,
@@ -276,6 +289,7 @@ class AttributeTableSeeder extends Seeder
                 'is_unique'           => 0,
                 'value_per_locale'    => 0,
                 'value_per_channel'   => 0,
+                'is_filterable'       => 0,
                 'default_value'       => null,
 
                 'enable_wysiwyg'      => 0,
@@ -292,6 +306,7 @@ class AttributeTableSeeder extends Seeder
                 'is_unique'           => 0,
                 'value_per_locale'    => 0,
                 'value_per_channel'   => 0,
+                'is_filterable'       => 0,
                 'default_value'       => null,
 
                 'enable_wysiwyg'      => 0,
@@ -308,6 +323,7 @@ class AttributeTableSeeder extends Seeder
                 'is_unique'           => 0,
                 'value_per_locale'    => 0,
                 'value_per_channel'   => 0,
+                'is_filterable'       => 0,
                 'default_value'       => null,
 
                 'enable_wysiwyg'      => 0,
@@ -324,6 +340,7 @@ class AttributeTableSeeder extends Seeder
                 'is_unique'           => 0,
                 'value_per_locale'    => 0,
                 'value_per_channel'   => 0,
+                'is_filterable'       => 0,
                 'default_value'       => null,
 
                 'enable_wysiwyg'      => 0,
@@ -340,6 +357,7 @@ class AttributeTableSeeder extends Seeder
                 'is_unique'           => 1,
                 'value_per_locale'    => 0,
                 'value_per_channel'   => 0,
+                'is_filterable'       => 0,
                 'default_value'       => null,
 
                 'enable_wysiwyg'      => 0,
@@ -356,6 +374,7 @@ class AttributeTableSeeder extends Seeder
                 'is_unique'           => 0,
                 'value_per_locale'    => 0,
                 'value_per_channel'   => 1,
+                'is_filterable'       => 0,
                 'default_value'       => 1,
 
                 'enable_wysiwyg'      => 0,
@@ -386,7 +405,7 @@ class AttributeTableSeeder extends Seeder
                     'attribute_id' => 4,
                 ], [
                     'locale'       => $locale,
-                    'name'         => trans('installer::app.seeders.attribute.attributes.status', [], $locale),
+                    'name'         => trans('installer::app.seeders.attribute.attributes.image', [], $locale),
                     'attribute_id' => 8,
                 ], [
                     'locale'       => $locale,

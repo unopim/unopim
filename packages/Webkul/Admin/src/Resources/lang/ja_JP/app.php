@@ -372,6 +372,7 @@ return [
                 'yes'                   => 'はい',
                 'same-code-error'       => 'オプション コードは一意である必要があります。',
                 'usable-in-grid'        => 'グリッドで使用可能',
+                'is-filterable'         => 'フィルタリング可能',
 
                 'option' => [
                     'color'    => 'カラー スウォッチ',
@@ -439,11 +440,12 @@ return [
                 'usable-in-grid'        => 'グリッドで使用可能',
 
                 'option' => [
-                    'color'    => 'カラー スウォッチ',
-                    'dropdown' => 'ドロップダウン',
-                    'image'    => '画像スウォッチ',
-                    'save-btn' => '保存オプション',
-                    'text'     => 'テキスト スウォッチ',
+                    'create-success'      => '属性オプションが正常に作成されました',
+                    'delete-success'      => '属性オプションが正常に削除されました',
+                    'save-btn'            => '保存オプション',
+                    'sort-update-failure' => '並び順の更新に失敗しました',
+                    'sort-update-success' => '並び順が正常に更新されました',
+                    'update-success'      => '属性オプションが正常に更新されました',
                 ],
             ],
 
@@ -1689,6 +1691,10 @@ return [
                 'search' => [
                     'title' => '検索',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'カラム',
+                ],
             ],
 
             'filters' => [
@@ -1727,6 +1733,13 @@ return [
             'table' => [
                 'actions'              => 'アクション',
                 'no-records-available' => '利用可能なレコードはありません。',
+            ],
+
+            'manage-columns' => [
+                'title'             => '列の管理',
+                'available-columns' => '利用可能な列',
+                'selected-columns'  => '選択した列',
+                'apply-btn'         => '適用',
             ],
         ],
 

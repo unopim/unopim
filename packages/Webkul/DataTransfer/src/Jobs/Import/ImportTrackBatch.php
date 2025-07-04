@@ -88,8 +88,6 @@ class ImportTrackBatch implements ShouldQueue
             // Handle linking or indexing if required
             if ($importHelper->isLinkingRequired()) {
                 $importHelper->linking();
-            } elseif ($importHelper->isIndexingRequired()) {
-                $importHelper->indexing();
             } else {
                 $importHelper->completed();
             }

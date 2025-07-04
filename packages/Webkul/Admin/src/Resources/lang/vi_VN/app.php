@@ -372,6 +372,7 @@ return [
                 'yes'                   => 'Có',
                 'same-code-error'       => 'Mã của tuỳ chọn phải duy nhất.',
                 'usable-in-grid'        => 'Có thể sử dụng trong lưới',
+                'is-filterable'         => 'Có thể lọc',
 
                 'option' => [
                     'color'    => 'Mẫu màu sắc',
@@ -438,13 +439,15 @@ return [
                 'yes'                   => 'Có',
                 'same-code-error'       => 'Mã của tuỳ chọn phải duy nhất.',
                 'usable-in-grid'        => 'Có thể sử dụng trong lưới',
+                'is-filterable'         => 'Có thể lọc',
 
                 'option' => [
-                    'color'    => 'Mẫu màu sắc',
-                    'dropdown' => 'Danh sách thả xuống',
-                    'image'    => 'Mẫu hình ảnh',
-                    'save-btn' => 'Lưu tuỳ chọn',
-                    'text'     => 'Mẫu văn bản',
+                    'create-success'      => 'Tùy chọn thuộc tính đã được tạo thành công',
+                    'delete-success'      => 'Tùy chọn thuộc tính đã bị xóa thành công',
+                    'save-btn'            => 'Lưu tùy chọn',
+                    'sort-update-failure' => 'Cập nhật thứ tự sắp xếp thất bại',
+                    'sort-update-success' => 'Cập nhật thứ tự sắp xếp thành công',
+                    'update-success'      => 'Tùy chọn thuộc tính đã được cập nhật thành công',
                 ],
             ],
 
@@ -1833,6 +1836,10 @@ return [
                 'search' => [
                     'title' => 'Tìm kiếm',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Cột',
+                ],
             ],
 
             'filters' => [
@@ -1871,6 +1878,13 @@ return [
             'table' => [
                 'actions'              => 'Các hành động',
                 'no-records-available' => 'Không có bản ghi nào.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Quản lý cột',
+                'available-columns' => 'Cột có sẵn',
+                'selected-columns'  => 'Cột đã chọn',
+                'apply-btn'         => 'Áp dụng',
             ],
         ],
 

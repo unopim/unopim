@@ -372,6 +372,7 @@ return [
                 'yes'                   => 'Da',
                 'same-code-error'       => 'Kod opcije mora biti jedinstven.',
                 'usable-in-grid'        => 'Upotrebljivo u mreži',
+                'is-filterable'         => 'Je filtrabilno',
 
                 'option' => [
                     'color'    => 'Boja uzorka',
@@ -438,13 +439,15 @@ return [
                 'yes'                   => 'Da',
                 'same-code-error'       => 'Kod opcije mora biti jedinstven.',
                 'usable-in-grid'        => 'Upotrebljivo u mreži',
+                'is-filterable'         => 'Je filtrabilno',
 
                 'option' => [
-                    'color'    => 'Boja uzorka',
-                    'dropdown' => 'Padajući izbornik',
-                    'image'    => 'Slika uzorka',
-                    'save-btn' => 'Spremi opciju',
-                    'text'     => 'Tekstualni uzorak',
+                    'create-success'      => 'Opcija atributa uspješno stvorena',
+                    'delete-success'      => 'Opcija atributa uspješno izbrisana',
+                    'save-btn'            => 'Spremi opciju',
+                    'sort-update-failure' => 'Neuspjelo ažuriranje redoslijeda sortiranja',
+                    'sort-update-success' => 'Redoslijed sortiranja uspješno ažuriran',
+                    'update-success'      => 'Opcija atributa uspješno ažurirana',
                 ],
             ],
 
@@ -1833,6 +1836,10 @@ return [
                 'search' => [
                     'title' => 'Pretraži',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Stupcima',
+                ],
             ],
 
             'filters' => [
@@ -1871,6 +1878,13 @@ return [
             'table' => [
                 'actions'              => 'Akcije',
                 'no-records-available' => 'Nema dostupnih zapisa.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Upravljanje stupcima',
+                'available-columns' => 'Dostupni stupci',
+                'selected-columns'  => 'Odabrani stupci',
+                'apply-btn'         => 'primijeniti',
             ],
         ],
 

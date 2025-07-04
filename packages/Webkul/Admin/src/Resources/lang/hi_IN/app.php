@@ -373,6 +373,7 @@ return [
                 'yes'                   => 'हाँ',
                 'same-code-error'       => 'विकल्प कोड अद्वितीय होना चाहिए।',
                 'usable-in-grid'        => 'ग्रिड में प्रयोग करने योग्य',
+                'is-filterable'         => 'फ़िल्टर योग्य है',
 
                 'option' => [
                     'color'    => 'रंग आदर्श',
@@ -439,13 +440,15 @@ return [
                 'yes'                   => 'हाँ',
                 'same-code-error'       => 'विकल्प कोड अद्वितीय होना चाहिए।',
                 'usable-in-grid'        => 'ग्रिड में प्रयोग करने योग्य',
+                'is-filterable'         => 'फ़िल्टर योग्य है',
 
                 'option' => [
-                    'color'    => 'रंग आदर्श',
-                    'dropdown' => 'ड्रॉप डाउन',
-                    'image'    => 'छवि स्वैच',
-                    'save-btn' => 'सहेजें विकल्प',
-                    'text'     => 'पाठ स्वैच',
+                    'create-success'      => 'विशेषता विकल्प सफलतापूर्वक बनाया गया',
+                    'delete-success'      => 'विशेषता विकल्प सफलतापूर्वक हटाया गया',
+                    'save-btn'            => 'विकल्प सहेजें',
+                    'sort-update-failure' => 'क्रम अपडेट करने में विफल',
+                    'sort-update-success' => 'क्रम सफलतापूर्वक अपडेट किया गया',
+                    'update-success'      => 'विशेषता विकल्प सफलतापूर्वक अपडेट किया गया',
                 ],
             ],
 
@@ -2135,6 +2138,10 @@ return [
                 'search' => [
                     'title' => 'खोज',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'कॉलम',
+                ],
             ],
 
             'filters' => [
@@ -2173,6 +2180,13 @@ return [
             'table' => [
                 'actions'              => 'कार्रवाई',
                 'no-records-available' => 'कोई रिकॉर्ड उपलब्ध नहीं है।',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'कॉलम प्रबंधित करें',
+                'available-columns' => 'उपलब्ध कॉलम',
+                'selected-columns'  => 'चयनित कॉलम',
+                'apply-btn'         => 'लागू करें',
             ],
         ],
 

@@ -7,11 +7,9 @@ return [
             'attribute-groups'   => [
                 'description'      => 'Descrizione',
                 'general'          => 'Generale',
-                'inventories'      => 'Inventari',
                 'meta-description' => 'Meta Descrizione',
                 'price'            => 'Prezzo',
-                'technical'        => 'Tecnico',
-                'shipping'         => 'Spedizione',
+                'media'            => 'Media',
             ],
             'attributes' => [
                 'brand'                => 'Marca',
@@ -21,6 +19,7 @@ return [
                 'featured'             => 'In evidenza',
                 'guest-checkout'       => 'Check-out ospite',
                 'height'               => 'Altezza',
+                'image'                => 'Immagine',
                 'length'               => 'Lunghezza',
                 'manage-stock'         => 'Gestisci Stock',
                 'meta-description'     => 'Meta Descrizione',
@@ -36,7 +35,6 @@ return [
                 'special-price-from'   => 'Prezzo Speciale Da',
                 'special-price-to'     => 'Prezzo Speciale A',
                 'special-price'        => 'Prezzo Speciale',
-                'status'               => 'Stato',
                 'tax-category'         => 'Categoria Fiscale',
                 'url-key'              => 'Chiave URL',
                 'visible-individually' => 'Visibile Singolarmente',
@@ -65,54 +63,6 @@ return [
                 'description' => 'Descrizione',
             ],
         ],
-        'cms' => [
-            'pages' => [
-                'about-us' => [
-                    'content' => 'Contenuto della pagina Chi Siamo',
-                    'title'   => 'Chi Siamo',
-                ],
-                'contact-us' => [
-                    'content' => 'Contenuto della pagina Contattaci',
-                    'title'   => 'Contattaci',
-                ],
-                'customer-service' => [
-                    'content' => 'Contenuto della pagina Servizio Clienti',
-                    'title'   => 'Servizio Clienti',
-                ],
-                'payment-policy' => [
-                    'content' => 'Contenuto della pagina Politica di Pagamento',
-                    'title'   => 'Politica di Pagamento',
-                ],
-                'privacy-policy' => [
-                    'content' => 'Contenuto della pagina Politica sulla Privacy',
-                    'title'   => 'Politica sulla Privacy',
-                ],
-                'refund-policy' => [
-                    'content' => 'Contenuto della pagina Politica di Rimborso',
-                    'title'   => 'Politica di Rimborso',
-                ],
-                'return-policy' => [
-                    'content' => 'Contenuto della pagina Politica di Reso',
-                    'title'   => 'Politica di Reso',
-                ],
-                'shipping-policy' => [
-                    'content' => 'Contenuto della pagina Politica di Spedizione',
-                    'title'   => 'Politica di Spedizione',
-                ],
-                'terms-conditions' => [
-                    'content' => 'Contenuto della pagina Termini e Condizioni',
-                    'title'   => 'Termini e Condizioni',
-                ],
-                'terms-of-use' => [
-                    'content' => 'Contenuto della pagina Condizioni d\'uso',
-                    'title'   => 'Condizioni d\'uso',
-                ],
-                'whats-new' => [
-                    'content' => 'Contenuto della pagina Novità',
-                    'title'   => 'Novità',
-                ],
-            ],
-        ],
         'core' => [
             'channels' => [
                 'meta-title'       => 'Negozio dimostrativo',
@@ -134,114 +84,6 @@ return [
                 'TRY' => 'Lira Turca',
                 'UAH' => 'Grivna Ucraina',
                 'USD' => 'Dollaro USA',
-            ],
-        ],
-        'customer' => [
-            'customer-groups' => [
-                'general'   => 'Generale',
-                'guest'     => 'Ospite',
-                'wholesale' => 'All\'ingrosso',
-            ],
-        ],
-        'inventory' => [
-            'inventory-sources' => [
-                'name' => 'Predefinito',
-            ],
-        ],
-        'shop' => [
-            'theme-customizations' => [
-                'all-products' => [
-                    'name'    => 'Tutti i Prodotti',
-                    'options' => [
-                        'title' => 'Tutti i Prodotti',
-                    ],
-                ],
-                'bold-collections' => [
-                    'content' => [
-                        'btn-title'   => 'Vedi Tutti',
-                        'description' => 'Scopri le nostre nuove collezioni audaci! Elevate il tuo stile con design audaci e colori vivaci. Esplora motivi accattivanti e colori che definiscono il tuo guardaroba. Preparati a abbracciare l\'extraordinario!',
-                        'title'       => 'Preparati per le nostre nuove Collezioni Audaci!',
-                    ],
-                    'name' => 'Collezioni Audaci',
-                ],
-                'categories-collections' => [
-                    'name' => 'Collezioni per Categoria',
-                ],
-                'featured-collections' => [
-                    'name'    => 'Collezioni In Evidenza',
-                    'options' => [
-                        'title' => 'Prodotti In Evidenza',
-                    ],
-                ],
-                'footer-links' => [
-                    'name'    => 'Link nel Piede di Pagina',
-                    'options' => [
-                        'about-us'         => 'Chi Siamo',
-                        'contact-us'       => 'Contattaci',
-                        'customer-service' => 'Servizio Clienti',
-                        'payment-policy'   => 'Politica di Pagamento',
-                        'privacy-policy'   => 'Politica sulla Privacy',
-                        'refund-policy'    => 'Politica di Rimborso',
-                        'return-policy'    => 'Politica di Reso',
-                        'shipping-policy'  => 'Politica di Spedizione',
-                        'terms-conditions' => 'Termini e Condizioni',
-                        'terms-of-use'     => 'Condizioni d\'uso',
-                        'whats-new'        => 'Novità',
-                    ],
-                ],
-                'game-container' => [
-                    'content' => [
-                        'sub-title-1' => 'Le nostre Collezioni',
-                        'sub-title-2' => 'Le nostre Collezioni',
-                        'title'       => 'Il gioco con le nostre nuove aggiunte!',
-                    ],
-                    'name' => 'Contenitore di Gioco',
-                ],
-                'image-carousel' => [
-                    'name'    => 'Carosello Immagini',
-                    'sliders' => [
-                        'title' => 'Preparati per la Nuova Collezione',
-                    ],
-                ],
-                'new-products' => [
-                    'name'    => 'Nuovi Prodotti',
-                    'options' => [
-                        'title' => 'Nuovi Prodotti',
-                    ],
-                ],
-                'offer-information' => [
-                    'content' => [
-                        'title' => 'Fino al 40% di Sconto sul Tuo Primo Ordine ACQUISTA ORA',
-                    ],
-                    'name' => 'Informazioni sull\'Offerta',
-                ],
-                'services-content' => [
-                    'description' => [
-                        'emi-available-info'   => 'Disponibile EMI senza costi aggiuntivi su tutte le principali carte di credito',
-                        'free-shipping-info'   => 'Goditi la spedizione gratuita su tutti gli ordini',
-                        'product-replace-info' => 'Sostituzione facile dei prodotti disponibile!',
-                        'time-support-info'    => 'Supporto dedicato 24/7 via chat ed email',
-                    ],
-                    'name'  => 'Contenuto dei Servizi',
-                    'title' => [
-                        'emi-available'   => 'EMI Disponibile',
-                        'free-shipping'   => 'Spedizione Gratuita',
-                        'product-replace' => 'Sostituzione Prodotto',
-                        'time-support'    => 'Supporto 24/7',
-                    ],
-                ],
-                'top-collections' => [
-                    'content' => [
-                        'sub-title-1' => 'Le nostre Collezioni',
-                        'sub-title-2' => 'Le nostre Collezioni',
-                        'sub-title-3' => 'Le nostre Collezioni',
-                        'sub-title-4' => 'Le nostre Collezioni',
-                        'sub-title-5' => 'Le nostre Collezioni',
-                        'sub-title-6' => 'Le nostre Collezioni',
-                        'title'       => 'Il gioco con le nostre nuove aggiunte!',
-                    ],
-                    'name' => 'Collezioni di Tendenza',
-                ],
             ],
         ],
         'user' => [

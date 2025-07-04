@@ -372,6 +372,7 @@ return [
                 'yes'                   => 'Ja',
                 'same-code-error'       => 'Alternativkoden må være unik.',
                 'usable-in-grid'        => 'Brukes i rutenett',
+                'is-filterable'         => 'Er filtrerbar',
 
                 'option' => [
                     'color'    => 'Fargeprøve',
@@ -438,13 +439,15 @@ return [
                 'yes'                   => 'Ja',
                 'same-code-error'       => 'Alternativkoden må være unik.',
                 'usable-in-grid'        => 'Brukes i rutenett',
+                'is-filterable'         => 'Er filtrerbar',
 
                 'option' => [
-                    'color'    => 'Fargeprøve',
-                    'dropdown' => 'Nedtrekksmeny',
-                    'image'    => 'Bildeprøve',
-                    'save-btn' => 'Lagre alternativ',
-                    'text'     => 'Tekstprøve',
+                    'create-success'      => 'Attributtalternativ opprettet',
+                    'delete-success'      => 'Attributtalternativ slettet',
+                    'save-btn'            => 'Lagre alternativ',
+                    'sort-update-failure' => 'Kunne ikke oppdatere sorteringsrekkefølge',
+                    'sort-update-success' => 'Sorteringsrekkefølge oppdatert',
+                    'update-success'      => 'Attributtalternativ oppdatert',
                 ],
             ],
 
@@ -1833,6 +1836,10 @@ return [
                 'search' => [
                     'title' => 'Søk',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'kolonner',
+                ],
             ],
 
             'filters' => [
@@ -1871,6 +1878,13 @@ return [
             'table' => [
                 'actions'              => 'Handlinger',
                 'no-records-available' => 'Ingen oppføringer tilgjengelig.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Administrer kolonner',
+                'available-columns' => 'Tilgjengelige kolonner',
+                'selected-columns'  => 'Valgte kolonner',
+                'apply-btn'         => 'Søke',
             ],
         ],
 

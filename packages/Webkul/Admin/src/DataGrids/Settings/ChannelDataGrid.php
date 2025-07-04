@@ -96,6 +96,7 @@ class ChannelDataGrid extends DataGrid
         if (bouncer()->hasPermission('settings.channels.edit')) {
             $this->addAction([
                 'icon'   => 'icon-edit',
+                'index'  => 'edit',
                 'title'  => trans('admin::app.settings.channels.index.datagrid.edit'),
                 'method' => 'GET',
                 'url'    => function ($row) {

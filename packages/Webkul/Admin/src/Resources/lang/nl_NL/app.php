@@ -373,6 +373,7 @@ return [
                 'yes'                   => 'Ja',
                 'same-code-error'       => 'De optiecode moet uniek zijn.',
                 'usable-in-grid'        => 'Bruikbaar in het rooster',
+                'is-filterable'         => 'Is filterbaar',
 
                 'option' => [
                     'color'    => 'Kleurstaal',
@@ -439,13 +440,15 @@ return [
                 'yes'                   => 'Ja',
                 'same-code-error'       => 'De optiecode moet uniek zijn.',
                 'usable-in-grid'        => 'Bruikbaar in het rooster',
+                'is-filterable'         => 'Is filterbaar',
 
                 'option' => [
-                    'color'    => 'Kleurstaal',
-                    'dropdown' => 'Laten vallen',
-                    'image'    => 'Afbeeldingsstaal',
-                    'save-btn' => 'Optie opslaan',
-                    'text'     => 'Tekststaal',
+                    'create-success'      => 'Attribuutoptie met succes gemaakt',
+                    'delete-success'      => 'Attribuutoptie met succes verwijderd',
+                    'save-btn'            => 'Optie opslaan',
+                    'sort-update-failure' => 'Sorteren bijwerken mislukt',
+                    'sort-update-success' => 'Sorteervolgorde succesvol bijgewerkt',
+                    'update-success'      => 'Attribuutoptie met succes bijgewerkt',
                 ],
             ],
 
@@ -2136,6 +2139,10 @@ return [
                 'search' => [
                     'title' => 'Zoekopdracht',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'Kolommen',
+                ],
             ],
 
             'filters' => [
@@ -2174,6 +2181,13 @@ return [
             'table' => [
                 'actions'              => 'Acties',
                 'no-records-available' => 'Geen records beschikbaar.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Kolommen beheren',
+                'available-columns' => 'Beschikbare kolommen',
+                'selected-columns'  => 'Geselecteerde kolommen',
+                'apply-btn'         => 'Toepassen',
             ],
         ],
 

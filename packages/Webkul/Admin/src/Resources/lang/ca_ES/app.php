@@ -372,6 +372,7 @@ return [
                 'yes'                   => 'Sí',
                 'same-code-error'       => 'El codi de l\'opció ha de ser únic.',
                 'usable-in-grid'        => 'Útil a la graella',
+                'is-filterable'         => 'És filtrable',
 
                 'option' => [
                     'color'    => 'Muestra de color',
@@ -438,13 +439,15 @@ return [
                 'yes'                   => 'Sí',
                 'same-code-error'       => 'El codi de l\'opció ha de ser únic.',
                 'usable-in-grid'        => 'Útil a la graella',
+                'is-filterable'         => 'És filtrable',
 
                 'option' => [
-                    'color'    => 'Muestra de color',
-                    'dropdown' => 'Desplegable',
-                    'image'    => 'Muestra d\'imatge',
-                    'save-btn' => 'Desar opció',
-                    'text'     => 'Muestra de text',
+                    'create-success'      => 'Opció d\'atribut creada amb èxit',
+                    'delete-success'      => 'Opció d\'atribut eliminada amb èxit',
+                    'save-btn'            => 'Desar opció',
+                    'sort-update-failure' => 'No s\'ha pogut actualitzar l\'ordre de classificació',
+                    'sort-update-success' => 'Ordre de classificació actualitzat amb èxit',
+                    'update-success'      => 'Opció d\'atribut actualitzada amb èxit',
                 ],
             ],
 
@@ -1683,6 +1686,10 @@ return [
                 'search' => [
                     'title' => 'Buscar',
                 ],
+
+                'manage-columns' => [
+                    'title' => 'columnas',
+                ],
             ],
 
             'filters' => [
@@ -1721,6 +1728,13 @@ return [
             'table' => [
                 'actions'              => 'Acciones',
                 'no-records-available' => 'No hay registros disponibles.',
+            ],
+
+            'manage-columns' => [
+                'title'             => 'Gérer les colonnes',
+                'available-columns' => 'Colonnes disponibles',
+                'selected-columns'  => 'Colonnes sélectionnées',
+                'apply-btn'         => 'Appliquer',
             ],
         ],
 
