@@ -17,7 +17,7 @@ test('Create Import with empty Code field', async ({ page }) => {
   await page.locator('div').filter({ hasText: /^Categories$/ }).click();
   await page.getByRole('option', { name: 'Products' }).locator('span').first().click();
   const fileInput = page.locator('input[type="file"][id="36_dropzone-file"]');
-  await fileInput.setInputFiles('/home/users/pawan.kumar/Downloads/1000products.csv');
+  await fileInput.setInputFiles('/home/users/pawan.kumar/Downloads/1k_products.xlsx');
   await page.getByRole('button', { name: 'Save Import' }).click();
   await expect(page.getByText('The Code field is required')).toBeVisible();
 });
@@ -31,7 +31,7 @@ test('Create Import with empty Type field', async ({ page }) => {
   await page.locator('div').filter({ hasText: /^Categories$/ }).click();
   await page.getByRole('option', { name: 'Categories' }).locator('span').first().click();
   const fileInput = page.locator('input[type="file"][id="36_dropzone-file"]');
-  await fileInput.setInputFiles('/home/users/pawan.kumar/Downloads/1000products.csv');
+  await fileInput.setInputFiles('/home/users/pawan.kumar/Downloads/1k_products.xlsx');
   await page.getByRole('button', { name: 'Save Import' }).click();
   await expect(page.getByText('The Type field is required')).toBeVisible();
 });
@@ -70,7 +70,7 @@ test('Create Import with empty Action field', async ({ page }) => {
   await page.locator('div').filter({ hasText: /^Categories$/ }).click();
   await page.getByRole('option', { name: 'Categories' }).locator('span').first().click();
   const fileInput = page.locator('input[type="file"][id="36_dropzone-file"]');
-  await fileInput.setInputFiles('/home/users/pawan.kumar/Downloads/1000products.csv');
+  await fileInput.setInputFiles('/home/users/pawan.kumar/Downloads/1k_products.xlsx');
   await page.locator('div').filter({ hasText: /^Create\/Update$/ }).click();
   await page.getByRole('option', { name: 'Create/Update' }).locator('span').first().click();
   await page.getByRole('button', { name: 'Save Import' }).click();
@@ -86,7 +86,7 @@ test('Create Import with empty Validation Strategy field', async ({ page }) => {
   await page.locator('div').filter({ hasText: /^Categories$/ }).click();
   await page.getByRole('option', { name: 'Categories' }).locator('span').first().click();
   const fileInput = page.locator('input[type="file"][id="36_dropzone-file"]');
-  await fileInput.setInputFiles('/home/users/pawan.kumar/Downloads/1000products.csv');
+  await fileInput.setInputFiles('/home/users/pawan.kumar/Downloads/1k_products.xlsx');
   await page.locator('div').filter({ hasText: /^Stop on Errors$/ }).click();
   await page.getByText('Stop on Errors').click();
   await page.getByRole('button', { name: 'Save Import' }).click();
@@ -102,7 +102,7 @@ test('Create Import with empty Allowed Errors field', async ({ page }) => {
   await page.locator('div').filter({ hasText: /^Categories$/ }).click();
   await page.getByRole('option', { name: 'Categories' }).locator('span').first().click();
   const fileInput = page.locator('input[type="file"][id="36_dropzone-file"]');
-  await fileInput.setInputFiles('/home/users/pawan.kumar/Downloads/1000products.csv');
+  await fileInput.setInputFiles('/home/users/pawan.kumar/Downloads/1k_products.xlsx');
   await page.getByRole('textbox', { name: 'Allowed Errors' }).click();
   await page.getByRole('textbox', { name: 'Allowed Errors' }).fill('');
   await page.getByRole('button', { name: 'Save Import' }).click();
@@ -118,7 +118,7 @@ test('Create Import with empty Field Separator field', async ({ page }) => {
   await page.locator('div').filter({ hasText: /^Categories$/ }).click();
   await page.getByRole('option', { name: 'Categories' }).locator('span').first().click();
   const fileInput = page.locator('input[type="file"][id="36_dropzone-file"]');
-  await fileInput.setInputFiles('/home/users/pawan.kumar/Downloads/1000products.csv');
+  await fileInput.setInputFiles('/home/users/pawan.kumar/Downloads/1k_products.xlsx');
   await page.getByRole('textbox', { name: 'Field Separator' }).click();
   await page.getByRole('textbox', { name: 'Field Separator' }).fill('');
   await page.getByRole('button', { name: 'Save Import' }).click();
@@ -159,7 +159,7 @@ test('Create Product Import', async ({ page }) => {
   await page.locator('div').filter({ hasText: /^Categories$/ }).click();
   await page.getByRole('option', { name: 'Products' }).locator('span').first().click();
   const fileInput = page.locator('input[type="file"][id="36_dropzone-file"]');
-  await fileInput.setInputFiles('/home/users/pawan.kumar/Downloads/1000products.csv');
+  await fileInput.setInputFiles('/home/users/pawan.kumar/Downloads/1k_products.xlsx');
   await page.getByRole('button', { name: 'Save Import' }).click();
   await expect(page.getByText(/Import created successfully/i)).toBeVisible();
   await expect(page.getByRole('button', { name: 'Import Now' })).toBeVisible();
@@ -176,7 +176,7 @@ test('Create Import with same Code', async ({ page }) => {
   await page.locator('div').filter({ hasText: /^Categories$/ }).click();
   await page.getByRole('option', { name: 'Products' }).locator('span').first().click();
   const fileInput = page.locator('input[type="file"][id="36_dropzone-file"]');
-  await fileInput.setInputFiles('/home/users/pawan.kumar/Downloads/1000products.csv');
+  await fileInput.setInputFiles('/home/users/pawan.kumar/Downloads/1k_products.xlsx');
   await page.getByRole('button', { name: 'Save Import' }).click();
   await expect(page.getByText('The code has already been taken.')).toBeVisible();
 });
@@ -235,7 +235,7 @@ test('Create Category Import', async ({ page }) => {
   await page.getByRole('textbox', { name: 'Code' }).click();
   await page.getByRole('textbox', { name: 'Code' }).fill('Category Import');
   const fileInput = page.locator('input[type="file"][id="36_dropzone-file"]');
-  await fileInput.setInputFiles('/home/users/pawan.kumar/Downloads/1000products.csv');
+  await fileInput.setInputFiles('/home/users/pawan.kumar/Downloads/1k_products.xlsx');
   await page.getByRole('button', { name: 'Save Import' }).click();
   await expect(page.getByText(/Import created successfully/i)).toBeVisible();
 });

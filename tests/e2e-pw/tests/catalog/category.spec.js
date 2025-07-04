@@ -15,7 +15,7 @@ test('Create Categories with empty Code field', async ({ page }) => {
   await page.locator('input[name="code"]').click();
   await page.locator('input[name="code"]').fill('');
   await page.locator('#name').click();
-  await page.locator('#name').type('Television', { delay: 100 });
+  await page.locator('#name').type('Television');
   await page.getByRole('button', { name: 'Save Category' }).click();
   await expect(page.getByText('The code field is required')).toBeVisible();
 });
@@ -51,7 +51,7 @@ test('Create Categories with all field', async ({ page }) => {
   await page.locator('input[name="code"]').click();
   await page.locator('input[name="code"]').type('test1');
   await page.locator('#name').click();
-  await page.locator('#name').type('Television', { delay: 100 });
+  await page.locator('#name').type('Television');
   await page.getByRole('button', { name: 'Save Category' }).click();
   await expect(page.getByText(/Category created successfully/i)).toBeVisible();
 });
