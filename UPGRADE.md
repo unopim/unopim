@@ -2,6 +2,15 @@
 
 > This guide helps you safely upgrade your Unopim installation. Follow the **manual upgrade steps** or use the **automated upgrade script** for minor patches.
 
+([See change impact classification details](CHANGE_IMPACT_CLASSIFICATION.md))
+
+## High impact changes
+
+## Medium impact changes
+
+## Low impact changes
+
+
 ---
 
 - [Manual Upgrade Steps](#manual-upgrade-steps)
