@@ -72,6 +72,10 @@ class AttributeDataGrid extends DataGrid
             'sortable'   => true,
             'closure'    => function ($row) {
 
+                if (! empty($row->name) && ! str_starts_with($row->name, '[')) {
+                    return $row->name;
+                }
+
                 $attribute = Attribute::with('translations')->find($row->id);
 
                 $requestedLocale = core()->getRequestedLocaleCode();
