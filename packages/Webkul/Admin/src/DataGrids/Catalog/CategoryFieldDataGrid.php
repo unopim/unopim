@@ -53,7 +53,7 @@ class CategoryFieldDataGrid extends DataGrid
                 'status',
                 'position',
                 'created_at',
-                DB::raw('(CASE WHEN CHAR_LENGTH(TRIM('.$tablePrefix.'requested_category_field_translation.name)) < 1 THEN CONCAT("[", code , "]") ELSE '.$tablePrefix.'requested_category_field_translation.name END) as name'),
+                'requested_category_field_translation.name as name'
             );
 
         $this->addFilter('name', 'requested_category_field_translation.name');
@@ -86,7 +86,7 @@ class CategoryFieldDataGrid extends DataGrid
             'sortable'   => true,
             'closure'    => function ($row) {
 
-                if (! empty($row->name) && ! str_starts_with($row->name, '[')) {
+                if (! empty($row->name)) {
                     return $row->name;
                 }
 

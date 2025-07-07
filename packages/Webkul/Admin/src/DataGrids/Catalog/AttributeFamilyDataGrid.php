@@ -25,7 +25,7 @@ class AttributeFamilyDataGrid extends DataGrid
             ->select(
                 'attribute_families.id',
                 'attribute_families.code',
-                DB::raw('(CASE WHEN '.$tablePrefix.'attribute_family_name.name IS NULL OR CHAR_LENGTH(TRIM('.$tablePrefix.'attribute_family_name.name)) < 1 THEN CONCAT("[", '.$tablePrefix.'attribute_families.code,"]") ELSE '.$tablePrefix.'attribute_family_name.name END) as name')
+                'attribute_family_name.name as name'
             );
 
         $this->addFilter('id', 'attribute_families.id');
@@ -67,7 +67,7 @@ class AttributeFamilyDataGrid extends DataGrid
             'sortable'   => true,
             'closure'    => function ($row) {
 
-                if (! empty($row->name) && ! str_starts_with($row->name, '[')) {
+                if (! empty($row->name)) {
                     return $row->name;
                 }
 
