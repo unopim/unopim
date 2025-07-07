@@ -12,7 +12,7 @@ test('My Account', async ({ page }) => {
   await page.getByRole('button', { name: 'E' }).click();
   await page.getByRole('link', { name: 'My Account' }).click();
   const fileInput = page.locator('input[type="file"]');
-  await fileInput.setInputFiles('/home/users/pawan.kumar/Downloads/john doe.jpeg');
+  await fileInput.setInputFiles('assets/john doe.jpeg');
   await page.getByRole('textbox', { name: 'Current Password' }).click();
   await page.getByRole('textbox', { name: 'Current Password' }).fill('admin123');
   await page.getByRole('button', { name: 'Save Account' }).click();

@@ -50,8 +50,10 @@ test('Create Categories with all field', async ({ page }) => {
   await page.getByRole('link', { name: 'Create Category' }).click();
   await page.locator('input[name="code"]').click();
   await page.locator('input[name="code"]').type('test1');
+  await page.waitForTimeout(100);
   await page.locator('#name').click();
   await page.locator('#name').type('Television');
+  await page.waitForTimeout(100);
   await page.getByRole('button', { name: 'Save Category' }).click();
   await expect(page.getByText(/Category created successfully/i)).toBeVisible();
 });
@@ -109,6 +111,7 @@ test('Update Categories', async ({ page }) => {
   await itemRow.locator('span[title="Edit"]').first().click();
   await page.locator('#name').click();
   await page.locator('#name').fill('LG Television');
+  await page.waitForTimeout(100);
   await page.getByRole('button', { name: 'Save Category' }).click();
   await expect(page.getByText(/Category updated successfully/i)).toBeVisible();
 });

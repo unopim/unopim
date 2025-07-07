@@ -14,6 +14,7 @@ test('Delete Locale', async ({ page }) => {
   await page.getByRole('textbox', { name: 'Search by code' }).click();
   await page.getByRole('textbox', { name: 'Search by code' }).type('af_ZA');
   await page.keyboard.press('Enter');
+  await page.waitForTimeout(100);
   const itemRow = page.locator('div', { hasText: 'af_ZAAfrikaans (South Africa)' });
   await itemRow.locator('span[title="Delete"]').first().click();
   await page.getByRole('button', { name: 'Delete' }).click();

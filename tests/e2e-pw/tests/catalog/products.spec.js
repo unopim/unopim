@@ -496,13 +496,13 @@ test('check Is Filterable', async ({ page }) => {
   await page.getByText('Filter', { exact: true }).click();
   await expect(page.getByText('Apply Filters')).toBeVisible();
   const filterDrawer = page.locator('div[class*="overflow-auto"]');
-  await expect(filterDrawer.getByText('Name')).toHaveCount(0);
+  await expect(filterDrawer.getByText('Image')).toHaveCount(0);
   await page.getByText('Save').click();
   await page.getByRole('link', { name: 'Attributes' }).click();
   await page.getByRole('textbox', { name: 'Search' }).click();
-  await page.getByRole('textbox', { name: 'Search' }).fill('Name');
+  await page.getByRole('textbox', { name: 'Search' }).fill('Image');
   await page.keyboard.press('Enter');
-  const itemRow = page.locator('div', { hasText: 'name' });
+  const itemRow = page.locator('div', { hasText: 'image' });
   await itemRow.locator('span[title="Edit"]').first().click();
   await page.getByText('Is Filterable').check();
   await expect(page.getByText('Is Filterable')).toBeChecked();
@@ -512,7 +512,7 @@ test('check Is Filterable', async ({ page }) => {
   await page.getByRole('link', { name: 'Products' }).click();
   await page.getByText('Filter', { exact: true }).click();
   await expect(page.getByText('Apply Filters')).toBeVisible();
-  await expect(filterDrawer.getByText('Name')).toBeVisible();
+  await expect(filterDrawer.getByText('Image')).toBeVisible();
 });
 
 test('Add Column to the product data grid and verify', async ({ page }) => {
