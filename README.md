@@ -131,9 +131,18 @@ If you have Docker/Docker Compose installed, follow these steps:
    - Application: `http://localhost:8000`
    - MySQL: `http://localhost:3306`
 
+
 > **Note**:  
 > If MySQL is already running on your system, change the MySQL port in the `docker-compose.yml` and `.env` files.  
 > Run `docker-compose up -d` again to apply changes.
+
+## ☁️ Cloud Installation via Amazon AMI
+
+You can also deploy UnoPim quickly using our pre-configured Amazon Machine Image (AMI) available on the AWS Marketplace:
+
+👉 [**Launch UnoPim on AWS**](https://aws.amazon.com/marketplace/pp/prodview-fdyosdv7k3cgw)
+
+This AMI allows you to get started with UnoPim on a cloud environment without manual setup. Ideal for scalable production or testing environments.
 
 ## 📖 Usage
 

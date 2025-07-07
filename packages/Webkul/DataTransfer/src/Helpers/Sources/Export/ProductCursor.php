@@ -25,7 +25,7 @@ class ProductCursor extends AbstractCursor
         $ids = [];
         $query = $this->source->newQuery();
         $filters = $this->requestParams['filters'] ?? [];
-        // @TODO: Need to future
+
         foreach ($filters as $field => $value) {
             if ($field == 'status' && ! empty($value)) {
                 $value = $value == 'enable' ? 1 : 0;

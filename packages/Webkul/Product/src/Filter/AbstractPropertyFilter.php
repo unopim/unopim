@@ -23,7 +23,7 @@ abstract class AbstractPropertyFilter extends AbstractFilter implements Property
      */
     protected function getSearchTablePath(array $options = [])
     {
-        return $options['search_table_path'] ?? DB::getTablePrefix().'products';
+        return $options['search_table_path'] ?? 'products';
     }
 
     /**

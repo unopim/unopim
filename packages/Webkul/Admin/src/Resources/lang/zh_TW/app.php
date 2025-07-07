@@ -442,11 +442,12 @@ return [
                 'is-filterable'         => '可篩選',
 
                 'option' => [
-                    'color'    => '顏色樣本',
-                    'dropdown' => '下拉選單',
-                    'image'    => '圖片樣本',
-                    'save-btn' => '保存選項',
-                    'text'     => '文本樣本',
+                    'create-success'      => '屬性選項創建成功',
+                    'delete-success'      => '屬性選項刪除成功',
+                    'save-btn'            => '保存選項',
+                    'sort-update-failure' => '排序更新失敗',
+                    'sort-update-success' => '排序更新成功',
+                    'update-success'      => '屬性選項更新成功',
                 ],
             ],
 

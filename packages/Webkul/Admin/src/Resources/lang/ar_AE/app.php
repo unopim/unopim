@@ -443,11 +443,12 @@ return [
                 'is-filterable'         => 'قابل للتصفية',
 
                 'option' => [
-                    'color'    => 'تغيير الالوان',
-                    'dropdown' => 'اسقاط',
-                    'image'    => 'حوامل الصورة',
-                    'save-btn' => 'حفظ الخيار',
-                    'text'     => 'نصوص نص',
+                    'create-success'       => 'تم إنشاء خيار السمة بنجاح',
+                    'delete-success'       => 'تم حذف خيار السمة بنجاح',
+                    'save-btn'             => 'حفظ الخيار',
+                    'sort-update-failure'  => 'فشل في تحديث ترتيب الفرز',
+                    'sort-update-success'  => 'تم تحديث ترتيب الفرز بنجاح',
+                    'update-success'       => 'تم تحديث خيار السمة بنجاح',
                 ],
             ],
 

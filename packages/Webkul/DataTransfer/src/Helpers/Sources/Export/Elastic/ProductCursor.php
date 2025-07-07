@@ -37,10 +37,8 @@ class ProductCursor extends AbstractElasticCursor
             $query['search_after'] = $this->searchAfter;
         }
 
-        // Build the bool query
         $boolQuery = [];
 
-        // @TODO: Need to future
         if (! empty($filters['status'])) {
             $value = $filters['status'] == 'enable' ? 1 : 0;
             $boolQuery['filter'][] = [
@@ -48,7 +46,6 @@ class ProductCursor extends AbstractElasticCursor
             ];
         }
 
-        // Set the final query
         $query['query']['bool'] = $boolQuery ?: new \stdClass;
 
         $request = [
