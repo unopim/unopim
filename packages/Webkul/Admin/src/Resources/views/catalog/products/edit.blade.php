@@ -42,13 +42,13 @@
                 </div>
 
                 @php
-                $channels = core()->getAllChannels();
+                    $channels = core()->getAllChannels();
 
-                $currentChannel = core()->getRequestedChannel() ?? core()->getDefaultChannel();
+                    $currentChannel = core()->getRequestedChannel() ?? core()->getDefaultChannel();
 
-                $currentLocale = core()->getRequestedLocale();
+                    $currentLocale = core()->getRequestedLocale();
 
-                $currentLocale = $currentChannel->locales->contains($currentLocale) ? $currentLocale : $currentChannel->locales->first();
+                    $currentLocale = $currentChannel->locales->contains($currentLocale) ? $currentLocale : $currentChannel->locales->first();
                 @endphp
 
                 <!-- Channel and Locale Switcher -->
@@ -77,11 +77,11 @@
                                     <!-- Dropdown Content -->
                                     <x-slot:content class="!p-0">
                                         @foreach ($channels as $channel)
-                                        <a
-                                            href="?{{ Arr::query(['channel' => $channel->code, 'locale' => $currentLocale?->code]) }}"
-                                            class="flex gap-2.5 px-5 py-2 text-base cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 dark:text-white">
-                                            {{ ! empty($channel->name) ? $channel->name : '[' . $channel->code . ']' }}
-                                        </a>
+                                            <a
+                                                href="?{{ Arr::query(['channel' => $channel->code, 'locale' => $currentLocale?->code]) }}"
+                                                class="flex gap-2.5 px-5 py-2 text-base cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 dark:text-white">
+                                                {{ ! empty($channel->name) ? $channel->name : '[' . $channel->code . ']' }}
+                                            </a>
                                         @endforeach
                                         </x-slot>
                             </x-admin::dropdown>
@@ -106,11 +106,11 @@
                                     <!-- Dropdown Content -->
                                     <x-slot:content class="!p-0">
                                         @foreach ($currentChannel->locales->sortBy('name') as $locale)
-                                        <a
-                                            href="?{{ Arr::query(['channel' => $currentChannel->code, 'locale' => $locale->code]) }}"
-                                            class="flex gap-2.5 px-5 py-2 text-base cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 dark:text-white {{ $locale->code == $currentLocale?->code ? 'bg-gray-100 dark:bg-cherry-800' : ''}}">
-                                            {{ $locale->name }}
-                                        </a>
+                                            <a
+                                                href="?{{ Arr::query(['channel' => $currentChannel->code, 'locale' => $locale->code]) }}"
+                                                class="flex gap-2.5 px-5 py-2 text-base cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 dark:text-white {{ $locale->code == $currentLocale?->code ? 'bg-gray-100 dark:bg-cherry-800' : ''}}">
+                                                {{ $locale->name }}
+                                            </a>
                                         @endforeach
                                         </x-slot>
                             </x-admin::dropdown>
@@ -130,42 +130,42 @@
                 <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
                     <div class="left-column flex flex-col gap-2 flex-1 max-xl:flex-auto">
                         @foreach ($product->attribute_family->familyGroups()->orderBy('position')->get() as $group)
-                        {!! view_render_event('unopim.admin.catalog.product.edit.form.column_before', ['product' => $product]) !!}
+                            {!! view_render_event('unopim.admin.catalog.product.edit.form.column_before', ['product' => $product]) !!}
 
-                        <div class="flex flex-col gap-2">
-                            @php
-                            $customAttributes = $product->getEditableAttributes($group);
+                            <div class="flex flex-col gap-2">
+                                @php
+                                    $customAttributes = $product->getEditableAttributes($group);
 
 
-                            $groupLabel = $group->name;
-                            $groupLabel = empty($groupLabel) ? "[{$group->code}]" : $groupLabel;
-                            @endphp
+                                    $groupLabel = $group->name;
+                                    $groupLabel = empty($groupLabel) ? "[{$group->code}]" : $groupLabel;
+                                @endphp
 
-                            @if (count($customAttributes))
-                            {!! view_render_event('unopim.admin.catalog.product.edit.form.' . $group->code . '.before', ['product' => $product]) !!}
+                                @if (count($customAttributes))
+                                    {!! view_render_event('unopim.admin.catalog.product.edit.form.' . $group->code . '.before', ['product' => $product]) !!}
 
-                            <div class="relative p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
-                                <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
-                                    {{ $groupLabel }}
-                                </p>
-                                <x-admin::products.dynamic-attribute-fields
-                                    :fields="$customAttributes"
-                                    :fieldValues="$product->values"
-                                    :currentLocaleCode="$currentLocale->code"
-                                    :currentChannelCode="$currentChannel->code"
-                                    :channelCurrencies="$currentChannel->currencies"
-                                    :variantFields="$product?->parent ? $product->parent->super_attributes->pluck('code')->toArray() : []"
-                                    fieldsWrapper="values">
-                                </x-admin::products.dynamic-attribute-fields>
+                                    <div class="relative p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
+                                        <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
+                                            {{ $groupLabel }}
+                                        </p>
+                                        <x-admin::products.dynamic-attribute-fields
+                                            :fields="$customAttributes"
+                                            :fieldValues="$product->values"
+                                            :currentLocaleCode="$currentLocale->code"
+                                            :currentChannelCode="$currentChannel->code"
+                                            :channelCurrencies="$currentChannel->currencies"
+                                            :variantFields="$product?->parent ? $product->parent->super_attributes->pluck('code')->toArray() : []"
+                                            fieldsWrapper="values">
+                                        </x-admin::products.dynamic-attribute-fields>
+                                    </div>
+
+                                    {!! view_render_event('unopim.admin.catalog.product.edit.form.' . $group->code . '.after', ['product' => $product]) !!}
+                                @endif
+
+                                <!-- Product Type View Blade File -->
                             </div>
 
-                            {!! view_render_event('unopim.admin.catalog.product.edit.form.' . $group->code . '.after', ['product' => $product]) !!}
-                            @endif
-
-                            <!-- Product Type View Blade File -->
-                        </div>
-
-                        {!! view_render_event('unopim.admin.catalog.product.edit.form.column_after', ['product' => $product]) !!}
+                            {!! view_render_event('unopim.admin.catalog.product.edit.form.column_after', ['product' => $product]) !!}
                         @endforeach
                     </div>
                     <div class="right-column flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
@@ -183,7 +183,7 @@
 
                         <!-- Include Product Type Additional Blade Files If Any -->
                         @foreach ($product->getTypeInstance()->getAdditionalViews() as $view)
-                        @includeIf($view)
+                            @includeIf($view)
                         @endforeach
                     </div>
                 </div>
@@ -195,19 +195,19 @@
 @pushOnce('scripts')
 <script type="text/x-template" id="v-translate-attribute-template">
     <div class="flex  gap-4 justify-between items-center max-sm:flex-wrap">
-            <div class="flex gap-x-2.5 items-center">
-                <p class="icon-language text-l text-gray-700 hover:bg-gray-100 rounded"
-                @click="resetForm();fetchAttribute();fetchSourceLocales();fetchTargetLocales();$refs.translationModal.toggle();"
-                >
-                @lang('admin::app.catalog.products.edit.translate.translate-btn')
-                </p>
-                </div>
-            <div>
-                <x-admin::form
+        <div class="flex gap-x-2.5 items-center">
+            <p class="icon-language text-l text-gray-700 hover:bg-gray-100 rounded"
+            @click="resetForm();fetchAttribute();fetchSourceLocales();fetchTargetLocales();$refs.translationModal.toggle();"
+            >
+            @lang('admin::app.catalog.products.edit.translate.translate-btn')
+            </p>
+        </div>
+        <div>
+            <x-admin::form
                 v-slot="{ meta, errors, handleSubmit }"
                 as="div"
                 ref="translationForm"
-                >
+            >
                 <form @submit="handleSubmit($event, translate)" ref="translationForm">
                     <x-admin::modal ref="translationModal">
                         <x-slot:header>
@@ -275,12 +275,12 @@
                                             </x-admin::form.control-group.label>
 
                                             <x-admin::form.control-group.control
-                                            type="select"
-                                            name="targetChannel"
-                                            rules="required"
-                                            ::value="targetChannel"
-                                            :options="json_encode($options)"
-                                            @input="getTargetLocale"
+                                                type="select"
+                                                name="targetChannel"
+                                                rules="required"
+                                                ::value="targetChannel"
+                                                :options="json_encode($options)"
+                                                @input="getTargetLocale"
                                             >
                                             </x-admin::form.control-group.control>
 
@@ -293,13 +293,13 @@
                                         </x-admin::form.control-group.label>
 
                                         <x-admin::form.control-group.control
-                                        type="select"
-                                        name="locale"
-                                        rules="required"
-                                        ref="localelRef"
-                                        ::value="sourceLocale"
-                                        ::options="localeOption"
-                                        @input="resetTargetLocales"
+                                            type="select"
+                                            name="locale"
+                                            rules="required"
+                                            ref="localelRef"
+                                            ::value="sourceLocale"
+                                            ::options="localeOption"
+                                            @input="resetTargetLocales"
                                         >
                                         </x-admin::form.control-group.control>
 
@@ -462,11 +462,11 @@
 
                             <template v-else>
                                 <button
-                                v-if="translatedValues"
-                                type="button"
-                                class="primary-button"
-                                :disabled="!translatedValues"
-                                @click="apply"
+                                    v-if="translatedValues"
+                                    type="button"
+                                    class="primary-button"
+                                    :disabled="!translatedValues"
+                                    @click="apply"
                                 >
                                     @lang('admin::app.catalog.products.edit.translate.apply')
                                 </button>
@@ -753,19 +753,20 @@
                 <div v-if="isOpen" class="absolute right-0  w-36 bg-white shadow-lg rounded-lg z-100">
                     <p class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded cursor-pointer">
                         @php
-                        $channelValue = core()->getConfigData('general.magic_ai.translation.source_channel');
-                        $localeValue = core()->getConfigData('general.magic_ai.translation.source_locale');
-                        $targetChannel = core()->getConfigData('general.magic_ai.translation.target_channel');
-                        $targetlocales = core()->getConfigData('general.magic_ai.translation.target_locale');
-                        $targetlocales = json_encode(explode(',', $targetlocales) ?? []);
-                        $model = core()->getConfigData('general.magic_ai.translation.ai_model');
+                            $channelValue = core()->getConfigData('general.magic_ai.translation.source_channel');
+                            $localeValue = core()->getConfigData('general.magic_ai.translation.source_locale');
+                            $targetChannel = core()->getConfigData('general.magic_ai.translation.target_channel');
+                            $targetlocales = core()->getConfigData('general.magic_ai.translation.target_locale');
+                            $targetlocales = json_encode(explode(',', $targetlocales) ?? []);
+                            $model = core()->getConfigData('general.magic_ai.translation.ai_model');
                         @endphp
                         <v-translate-attribute
-                        :channel-value="{{ json_encode($channelValue) }}"
-                        :locale-value='@json($localeValue)'
-                        :channel-target="{{ json_encode($targetChannel) }}"
-                        :target-locales="{{$targetlocales}}"
-                        :model="'{{$model}}'">
+                            :channel-value="{{ json_encode($channelValue) }}"
+                            :locale-value='@json($localeValue)'
+                            :channel-target="{{ json_encode($targetChannel) }}"
+                            :target-locales="{{$targetlocales}}"
+                            :model="'{{$model}}'"
+                        >
                         </v-translate-attribute>
                     </p>
             </div>

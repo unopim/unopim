@@ -2,9 +2,9 @@
 @inject('magicAI', 'Webkul\MagicAI\MagicAI')
 
 @php
-$nameKey = $item['key'] . '.' . $field['name'];
-$name = $coreConfigRepository->getNameField($nameKey);
-$value = core()->getConfigData($nameKey);
+    $nameKey = $item['key'] . '.' . $field['name'];
+    $name = $coreConfigRepository->getNameField($nameKey);
+    $value = core()->getConfigData($nameKey);
 @endphp
 
 <v-translation-model
@@ -23,7 +23,6 @@ $value = core()->getConfigData($nameKey);
                     @{{ label }}
                 </x-admin::form.control-group.label>
                 @php
-
                     $models = core()->getConfigData('general.magic_ai.settings.api_model');
                     $models = explode(',', $models);
                     $options = [];

@@ -2,11 +2,10 @@
 @inject('magicAI', 'Webkul\MagicAI\MagicAI')
 
 @php
-$nameKey = $item['key'] . '.' . $field['name'];
-
-$name = $coreConfigRepository->getNameField($nameKey);
-$value = core()->getConfigData($nameKey);
-$api_platform = core()->getConfigData('general.magic_ai.settings.ai_platform');
+    $nameKey = $item['key'] . '.' . $field['name'];
+    $name = $coreConfigRepository->getNameField($nameKey);
+    $value = core()->getConfigData($nameKey);
+    $api_platform = core()->getConfigData('general.magic_ai.settings.ai_platform');
 @endphp
 
 <v-production-model

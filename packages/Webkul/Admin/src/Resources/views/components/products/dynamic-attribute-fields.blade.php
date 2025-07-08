@@ -60,54 +60,54 @@
             @endphp
 
             @if (($fieldType == 'text' || $fieldType == 'textarea') && ($field->ai_translate != 0 && $globaltranslationEnabled !=0 ))
-            <span>
-                @php
-                $channelValue = core()->getConfigData('general.magic_ai.translation.source_channel');
-                $localeValue = core()->getConfigData('general.magic_ai.translation.source_locale');
-                $targetChannel = core()->getConfigData('general.magic_ai.translation.target_channel');
-                $targetlocales = core()->getConfigData('general.magic_ai.translation.target_locale');
-                $targetlocales = json_encode(explode(',', $targetlocales) ?? []);
-                $model = core()->getConfigData('general.magic_ai.translation.ai_model');
-                @endphp
-                <v-translate-form
-                    :channel-value="{{ json_encode($channelValue) }}"
-                    :locale-value='@json($localeValue)'
-                    :channel-target="{{ json_encode($targetChannel) }}"
-                    :target-locales="{{$targetlocales}}"
-                    :id="'{{$field->code}}'"
-                    :value="'{{ json_encode(e($value)) }}'"
-                    :field="'{{$fieldLabel}}'"
-                    :field-type="'{{$fieldType}}'"
-                    :model="'{{$model}}'"
-                    :current-local-code="'{{ $currentLocaleCode }}'"
-                    :current-channel="'{{ $currentChannelCode }}'">
-                    <div class="flex  gap-4 justify-between items-center max-sm:flex-wrap">
-                        <div class="flex gap-x-2.5 items-center">
+                <span>
+                    @php
+                        $channelValue = core()->getConfigData('general.magic_ai.translation.source_channel');
+                        $localeValue = core()->getConfigData('general.magic_ai.translation.source_locale');
+                        $targetChannel = core()->getConfigData('general.magic_ai.translation.target_channel');
+                        $targetlocales = core()->getConfigData('general.magic_ai.translation.target_locale');
+                        $targetlocales = json_encode(explode(',', $targetlocales) ?? []);
+                        $model = core()->getConfigData('general.magic_ai.translation.ai_model');
+                    @endphp
+                    <v-translate-form
+                        :channel-value="{{ json_encode($channelValue) }}"
+                        :locale-value='@json($localeValue)'
+                        :channel-target="{{ json_encode($targetChannel) }}"
+                        :target-locales="{{$targetlocales}}"
+                        :id="'{{$field->code}}'"
+                        :value="'{{ json_encode(e($value)) }}'"
+                        :field="'{{$fieldLabel}}'"
+                        :field-type="'{{$fieldType}}'"
+                        :model="'{{$model}}'"
+                        :current-local-code="'{{ $currentLocaleCode }}'"
+                        :current-channel="'{{ $currentChannelCode }}'">
+                        <div class="flex  gap-4 justify-between items-center max-sm:flex-wrap">
+                            <div class="flex gap-x-2.5 items-center">
 
-                            <button
-                                type="button"
-                                class="secondary-button bg-violet-50 text-violet-700 focus:ring-indigo-200 border border-indigo-200 rounded-lg px-2 h-5">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 20 20" fill="none">
-                                    <g clip-path="url(#clip0_3148_2242)">
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M12.1484 9.31989L9.31995 12.1483L19.9265 22.7549L22.755 19.9265L12.1484 9.31989ZM12.1484 10.7341L10.7342 12.1483L13.5626 14.9767L14.9768 13.5625L12.1484 10.7341Z" fill="#6d28d9" />
-                                        <path d="M11.0877 3.30949L13.5625 4.44748L16.0374 3.30949L14.8994 5.78436L16.0374 8.25924L13.5625 7.12124L11.0877 8.25924L12.2257 5.78436L11.0877 3.30949Z" fill="#6d28d9" />
-                                        <path d="M2.39219 2.39217L5.78438 3.95197L9.17656 2.39217L7.61677 5.78436L9.17656 9.17655L5.78438 7.61676L2.39219 9.17655L3.95198 5.78436L2.39219 2.39217Z" fill="#6d28d9" />
-                                        <path d="M3.30947 11.0877L5.78434 12.2257L8.25922 11.0877L7.12122 13.5626L8.25922 16.0374L5.78434 14.8994L3.30947 16.0374L4.44746 13.5626L3.30947 11.0877Z" fill="#6d28d9" />
-                                    </g>
-                                    <defs>
-                                        <clipPath id="clip0_3148_2242">
-                                            <rect width="24" height="24" fill="white" />
-                                        </clipPath>
-                                    </defs>
-                                </svg>
-                                @lang('admin::app.catalog.products.edit.translate.translate-btn')
-                            </button>
+                                <button
+                                    type="button"
+                                    class="secondary-button bg-violet-50 text-violet-700 focus:ring-indigo-200 border border-indigo-200 rounded-lg px-2 h-5">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 20 20" fill="none">
+                                        <g clip-path="url(#clip0_3148_2242)">
+                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M12.1484 9.31989L9.31995 12.1483L19.9265 22.7549L22.755 19.9265L12.1484 9.31989ZM12.1484 10.7341L10.7342 12.1483L13.5626 14.9767L14.9768 13.5625L12.1484 10.7341Z" fill="#6d28d9" />
+                                            <path d="M11.0877 3.30949L13.5625 4.44748L16.0374 3.30949L14.8994 5.78436L16.0374 8.25924L13.5625 7.12124L11.0877 8.25924L12.2257 5.78436L11.0877 3.30949Z" fill="#6d28d9" />
+                                            <path d="M2.39219 2.39217L5.78438 3.95197L9.17656 2.39217L7.61677 5.78436L9.17656 9.17655L5.78438 7.61676L2.39219 9.17655L3.95198 5.78436L2.39219 2.39217Z" fill="#6d28d9" />
+                                            <path d="M3.30947 11.0877L5.78434 12.2257L8.25922 11.0877L7.12122 13.5626L8.25922 16.0374L5.78434 14.8994L3.30947 16.0374L4.44746 13.5626L3.30947 11.0877Z" fill="#6d28d9" />
+                                        </g>
+                                        <defs>
+                                            <clipPath id="clip0_3148_2242">
+                                                <rect width="24" height="24" fill="white" />
+                                            </clipPath>
+                                        </defs>
+                                    </svg>
+                                    @lang('admin::app.catalog.products.edit.translate.translate-btn')
+                                </button>
 
+                            </div>
                         </div>
-                    </div>
 
-                </v-translate-form>
-            </span>
+                    </v-translate-form>
+                </span>
             @endif
 
                 @if ($isChannelBased)
@@ -409,12 +409,12 @@
                                         $optionsInJson = json_encode($options);
                                     @endphp
                                     <x-admin::form.control-group.control
-                                    type="select"
-                                    name="channel"
-                                    rules="required"
-                                    ::value="sourceChannel"
-                                    :options="json_encode($options)"
-                                    @input="getSourceLocale"
+                                        type="select"
+                                        name="channel"
+                                        rules="required"
+                                        ::value="sourceChannel"
+                                        :options="json_encode($options)"
+                                        @input="getSourceLocale"
                                     >
                                     </x-admin::form.control-group.control>
 
@@ -438,12 +438,12 @@
                                         $optionsInJson = json_encode($options);
                                     @endphp
                                     <x-admin::form.control-group.control
-                                    type="select"
-                                    name="targetChannel"
-                                    rules="required"
-                                    ::value="targetChannel"
-                                    :options="json_encode($options)"
-                                    @input="getTargetLocale"
+                                        type="select"
+                                        name="targetChannel"
+                                        rules="required"
+                                        ::value="targetChannel"
+                                        :options="json_encode($options)"
+                                        @input="getTargetLocale"
                                     >
                                     </x-admin::form.control-group.control>
 
@@ -456,13 +456,13 @@
                                     </x-admin::form.control-group.label>
 
                                     <x-admin::form.control-group.control
-                                    type="select"
-                                    name="locale"
-                                    rules="required"
-                                    ref="localelRef"
-                                    ::value="sourceLocale"
-                                    ::options="localeOption"
-                                    @input="resetTargetLocales"
+                                        type="select"
+                                        name="locale"
+                                        rules="required"
+                                        ref="localelRef"
+                                        ::value="sourceLocale"
+                                        ::options="localeOption"
+                                        @input="resetTargetLocales"
                                     >
                                     </x-admin::form.control-group.control>
 
@@ -474,15 +474,15 @@
                                         @lang('admin::app.catalog.products.edit.translate.target-locales')
                                     </x-admin::form.control-group.label>
                                     <x-admin::form.control-group.control
-                                    type="multiselect"
-                                    id="section"
-                                    ref="targetLocOptionsRef"
-                                    name="targetLocale"
-                                    rules="required"
-                                    ::value="targetLocales"
-                                    ::options="targetLocOptions"
-                                    track-by="id"
-                                    label-by="label"
+                                        type="multiselect"
+                                        id="section"
+                                        ref="targetLocOptionsRef"
+                                        name="targetLocale"
+                                        rules="required"
+                                        ::value="targetLocales"
+                                        ::options="targetLocOptions"
+                                        track-by="id"
+                                        label-by="label"
                                     >
                                     </x-admin::form.control-group.control>
 
@@ -613,11 +613,11 @@
 
                             <template v-else>
                                 <button
-                                v-if="translatedData"
-                                type="button"
-                                class="primary-button"
-                                :disabled="!translatedData"
-                                @click="apply"
+                                    v-if="translatedData"
+                                    type="button"
+                                    class="primary-button"
+                                    :disabled="!translatedData"
+                                    @click="apply"
                                 >
                                     @lang('admin::app.catalog.products.edit.translate.apply')
                                 </button>

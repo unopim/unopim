@@ -2,10 +2,10 @@
 @inject('magicAI', 'Webkul\MagicAI\MagicAI')
 
 @php
-$nameKey = $item['key'] . '.' . $field['name'];
-$name = $coreConfigRepository->getNameField($nameKey);
-$value = core()->getConfigData($nameKey);
-$channel = core()->getConfigData('general.magic_ai.translation.source_channel');
+    $nameKey = $item['key'] . '.' . $field['name'];
+    $name = $coreConfigRepository->getNameField($nameKey);
+    $value = core()->getConfigData($nameKey);
+    $channel = core()->getConfigData('general.magic_ai.translation.source_channel');
 @endphp
 
 <v-translation-locale

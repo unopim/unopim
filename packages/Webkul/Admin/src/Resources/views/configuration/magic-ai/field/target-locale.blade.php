@@ -2,13 +2,13 @@
 @inject('magicAI', 'Webkul\MagicAI\MagicAI')
 
 @php
-$nameKey = $item['key'] . '.' . $field['name'];
-$name = $coreConfigRepository->getNameField($nameKey);
-$channel = core()->getConfigData('general.magic_ai.translation.source_channel');
-$sourceLocale = core()->getConfigData('general.magic_ai.translation.source_locale');
-$targetChannel = core()->getConfigData('general.magic_ai.translation.target_channel');
-$selectedOptions = core()->getConfigData($nameKey);
-$targetlocales = json_encode(explode(',', $selectedOptions) ?? []);
+    $nameKey = $item['key'] . '.' . $field['name'];
+    $name = $coreConfigRepository->getNameField($nameKey);
+    $channel = core()->getConfigData('general.magic_ai.translation.source_channel');
+    $sourceLocale = core()->getConfigData('general.magic_ai.translation.source_locale');
+    $targetChannel = core()->getConfigData('general.magic_ai.translation.target_channel');
+    $selectedOptions = core()->getConfigData($nameKey);
+    $targetlocales = json_encode(explode(',', $selectedOptions) ?? []);
 @endphp
 
 <v-translation-target-locale

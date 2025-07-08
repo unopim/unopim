@@ -2,12 +2,10 @@
 @inject('magicAI', 'Webkul\MagicAI\MagicAI')
 
 @php
-$nameKey = $item['key'] . '.' . $field['name'];
-
-$name = $coreConfigRepository->getNameField($nameKey);
-
-$selectedOptions = core()->getConfigData($nameKey);
-$selectedOptions = json_encode(explode(',', $selectedOptions) ?? []);
+    $nameKey = $item['key'] . '.' . $field['name'];
+    $name = $coreConfigRepository->getNameField($nameKey);
+    $selectedOptions = core()->getConfigData($nameKey);
+    $selectedOptions = json_encode(explode(',', $selectedOptions) ?? []);
 @endphp
 
 <v-ai-model
@@ -28,16 +26,16 @@ $selectedOptions = json_encode(explode(',', $selectedOptions) ?? []);
                 <x-admin::form.control-group.label>
                     @{{ label }}
                     @php
-                    $modelOptions = ["deepseek-r1-distill-llama-70b", "qwen-qwq-32b", "llama3-8b-8192"];
-                    $options = [];
-                    foreach($modelOptions as $option) {
-                        $options[] = [
-                            'id'    => $option,
-                            'label' => $option,
-                        ];
-                    }
+                        $modelOptions = ["deepseek-r1-distill-llama-70b", "qwen-qwq-32b", "llama3-8b-8192"];
+                        $options = [];
+                        foreach($modelOptions as $option) {
+                            $options[] = [
+                                'id'    => $option,
+                                'label' => $option,
+                            ];
+                        }
 
-                    $optionsInJson = json_encode($options);
+                        $optionsInJson = json_encode($options);
                     @endphp
                 </x-admin::form.control-group.label>
                 <x-admin::form.control-group.control
@@ -59,16 +57,16 @@ $selectedOptions = json_encode(explode(',', $selectedOptions) ?? []);
                 <x-admin::form.control-group.label>
                     @{{ label }}
                     @php
-                    $modelOptions = ["gpt-4o", "gpt-4o-mini", "gpt-3.5-turbo", "dall-e-2", "dall-e-3"];
-                    $options = [];
-                    foreach($modelOptions as $option) {
-                        $options[] = [
-                            'id'    => $option,
-                            'label' => $option,
-                        ];
-                    }
+                        $modelOptions = ["gpt-4o", "gpt-4o-mini", "gpt-3.5-turbo", "dall-e-2", "dall-e-3"];
+                        $options = [];
+                        foreach($modelOptions as $option) {
+                            $options[] = [
+                                'id'    => $option,
+                                'label' => $option,
+                            ];
+                        }
 
-                    $optionsInJson = json_encode($options);
+                        $optionsInJson = json_encode($options);
                     @endphp
                 </x-admin::form.control-group.label>
                 <x-admin::form.control-group.control
@@ -90,15 +88,15 @@ $selectedOptions = json_encode(explode(',', $selectedOptions) ?? []);
                 <x-admin::form.control-group.label>
                     @{{ label }}
                     @php
-                    $modelOptions = ["llava"];
-                    $options = [];
-                    foreach($modelOptions as $option) {
-                        $options[] = [
-                            'id'    => $option,
-                            'label' => $option,
-                        ];
-                    }
-                    $optionsInJson = json_encode($options);
+                        $modelOptions = ["llava"];
+                        $options = [];
+                        foreach($modelOptions as $option) {
+                            $options[] = [
+                                'id'    => $option,
+                                'label' => $option,
+                            ];
+                        }
+                        $optionsInJson = json_encode($options);
                     @endphp
                 </x-admin::form.control-group.label>
                 <x-admin::form.control-group.control

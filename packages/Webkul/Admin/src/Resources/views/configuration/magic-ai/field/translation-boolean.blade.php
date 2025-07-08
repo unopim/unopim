@@ -2,9 +2,9 @@
 @inject('magicAI', 'Webkul\MagicAI\MagicAI')
 
 @php
-$nameKey = $item['key'] . '.' . $field['name'];
-$name = $coreConfigRepository->getNameField($nameKey);
-$value = core()->getConfigData($nameKey);
+    $nameKey = $item['key'] . '.' . $field['name'];
+    $name = $coreConfigRepository->getNameField($nameKey);
+    $value = core()->getConfigData($nameKey);
 @endphp
 
 <v-translation-boolean

@@ -2,9 +2,9 @@
 @inject('magicAI', 'Webkul\MagicAI\MagicAI')
 
 @php
-$nameKey = $item['key'] . '.' . $field['name'];
-$name = $coreConfigRepository->getNameField($nameKey);
-$value = core()->getConfigData($nameKey);
+    $nameKey = $item['key'] . '.' . $field['name'];
+    $name = $coreConfigRepository->getNameField($nameKey);
+    $value = core()->getConfigData($nameKey);
 @endphp
 
 <v-translation-replace-boolean
@@ -43,7 +43,6 @@ $value = core()->getConfigData($nameKey);
                     <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-violet-700"></div>
                 </label>
             </x-admin::form.control-group>
-
         </div>
     </div>
 
