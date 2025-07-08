@@ -225,13 +225,13 @@
                                     </x-admin::form.control-group.label>
                                     <div class="w-full ">
                                         <x-admin::form.control-group.control
-                                        type="multiselect"
-                                        name="attributes"
-                                        ref="attributesOptionsRef"
-                                        rules="required"
-                                        ::value="attributes"
-                                        ::options="attributesOptions"
-                                        class="w-full "
+                                            type="multiselect"
+                                            name="attributes"
+                                            ref="attributesOptionsRef"
+                                            rules="required"
+                                            ::value="attributes"
+                                            ::options="attributesOptions"
+                                            class="w-full "
                                         >
                                         </x-admin::form.control-group.control>
 
@@ -311,15 +311,15 @@
                                             @lang('admin::app.catalog.products.edit.translate.target-locales')
                                         </x-admin::form.control-group.label>
                                         <x-admin::form.control-group.control
-                                        type="multiselect"
-                                        id="section"
-                                        ref="targetLocOptionsRef"
-                                        name="targetLocale"
-                                        rules="required"
-                                        ::value="targetLocales"
-                                        ::options="targetLocOptions"
-                                        track-by="id"
-                                        label-by="label"
+                                            type="multiselect"
+                                            id="section"
+                                            ref="targetLocOptionsRef"
+                                            name="targetLocale"
+                                            rules="required"
+                                            ::value="targetLocales"
+                                            ::options="targetLocOptions"
+                                            track-by="id"
+                                            label-by="label"
                                         >
                                         </x-admin::form.control-group.control>
 
