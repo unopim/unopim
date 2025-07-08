@@ -1776,7 +1776,7 @@ return [
                 ],
 
                 'custom-filters' => [
-                    'clear-all' => 'Clear Al',
+                    'clear-all' => 'Clear All',
                     'title'     => 'Custom Filters',
                 ],
 

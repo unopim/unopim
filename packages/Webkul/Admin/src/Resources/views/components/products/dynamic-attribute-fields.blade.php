@@ -59,7 +59,7 @@
 
             @endphp
 
-            @if(($fieldType == 'text' || $fieldType == 'textarea') && ($field->ai_translate != 0 && $globaltranslationEnabled !=0 ))
+            @if (($fieldType == 'text' || $fieldType == 'textarea') && ($field->ai_translate != 0 && $globaltranslationEnabled !=0 ))
             <span>
                 @php
                 $channelValue = core()->getConfigData('general.magic_ai.translation.source_channel');

@@ -25,6 +25,7 @@
                         </div>
 
                         <div class="flex gap-x-2.5 items-center">
+                            {!! view_render_event('unopim.pdf.product.edit.actions.before', ['product' => $product]) !!}
                             <!-- Back Button -->
                             <a
                                 href="{{ route('admin.catalog.products.index') }}"
@@ -62,7 +63,7 @@
                                     <button
                                         type="button"
                                         class="
-                                    flex gap-x-1 items-center px-3 py-1.5 border-2 border-transparent rounded-md font-semibold whitespace-nowrap cursor-pointer marker:shadow appearance-none transition-all hover:!bg-violet-50 dark:hover:!bg-cherry-900 text-gray-600 dark:!text-slate-50">
+                                        flex gap-x-1 items-center px-3 py-1.5 border-2 border-transparent rounded-md font-semibold whitespace-nowrap cursor-pointer marker:shadow appearance-none transition-all hover:!bg-violet-50 dark:hover:!bg-cherry-900 text-gray-600 dark:!text-slate-50">
                                         <span class="icon-channel   text-2xl"></span>
 
                                         {{ ! empty($currentChannel->name) ? $currentChannel->name : '[' . $currentChannel->code . ']' }}
@@ -194,11 +195,11 @@
 @pushOnce('scripts')
 <script type="text/x-template" id="v-translate-attribute-template">
     <div class="flex  gap-4 justify-between items-center max-sm:flex-wrap">
-                <div class="flex gap-x-2.5 items-center">
+            <div class="flex gap-x-2.5 items-center">
                 <p class="icon-language text-l text-gray-700 hover:bg-gray-100 rounded"
                 @click="resetForm();fetchAttribute();fetchSourceLocales();fetchTargetLocales();$refs.translationModal.toggle();"
                 >
-                    @lang('admin::app.catalog.products.edit.translate.translate-btn')
+                @lang('admin::app.catalog.products.edit.translate.translate-btn')
                 </p>
                 </div>
             <div>
@@ -210,11 +211,11 @@
                 <form @submit="handleSubmit($event, translate)" ref="translationForm">
                     <x-admin::modal ref="translationModal">
                         <x-slot:header>
-                                <p class="flex  items-center text-lg text-gray-800 dark:text-white font-bold">
-                                <span class="icon-magic text-2xl text-gray-800"></span>
+                            <p class="flex  items-center text-lg text-gray-800 dark:text-white font-bold">
+                            <span class="icon-magic text-2xl text-gray-800"></span>
 
-                                @lang('admin::app.catalog.products.edit.translate.title')
-                                </p>
+                            @lang('admin::app.catalog.products.edit.translate.title')
+                            </p>
                         </x-slot>
                         <x-slot:content>
                             <x-admin::form.control-group v-if="attributesOptions" >
@@ -250,7 +251,7 @@
                                             {
                                                 $options[] = [
                                                     'id' => $channel->code,
-                                                    'label' => ucfirst($channel->code),
+                                                    'label' => $channel->name,
                                                     ];
                                             }
                                             $optionsInJson = json_encode($options);
@@ -272,18 +273,7 @@
                                             <x-admin::form.control-group.label class="required">
                                                 @lang('admin::app.catalog.products.edit.translate.target-channel')
                                             </x-admin::form.control-group.label>
-                                            @php
-                                                $channels = core()->getAllChannels();
-                                                $options = [];
-                                                foreach($channels as $channel)
-                                                {
-                                                    $options[] = [
-                                                        'id' => $channel->code,
-                                                        'label' => ucfirst($channel->code),
-                                                        ];
-                                                }
-                                                $optionsInJson = json_encode($options);
-                                            @endphp
+
                                             <x-admin::form.control-group.control
                                             type="select"
                                             name="targetChannel"
@@ -495,61 +485,61 @@
                         </x-slot>
                     </x-admin::modal>
                 </form>
-            </x-admin::form>
+                </x-admin::form>
+        </div>
     </div>
-</div>
 </script>
-            <script type="module">
-                app.component('v-translate-attribute', {
-                    template: '#v-translate-attribute-template',
-                    props: [
-                        'channelValue',
-                        'localeValue',
-                        'model',
-                        'channelTarget',
-                        'targetLocales'
-                    ],
-                    data() {
-                        return {
-                            attributesOptions: null,
-                            attributes: null,
-                            targetLocOptions: null,
-                            localeOption: null,
-                            resourceId: "{{ request()->id }}",
-                            sourceData: null,
-                            translatedValues: null,
-                            isLoading: false,
-                            nothingToTranslate: '',
-                            sourceLocale: this.localeValue,
-                            sourceChannel: this.channelValue,
-                            targetChannel: this.channelTarget,
-                            targetLocales: this.targetLocales,
-                            fieldType: this.fieldType,
+<script type="module">
+    app.component('v-translate-attribute', {
+        template: '#v-translate-attribute-template',
+            props: [
+                'channelValue',
+                'localeValue',
+                'model',
+                'channelTarget',
+                'targetLocales'
+            ],
+            data() {
+                return {
+                    attributesOptions: null,
+                    attributes: null,
+                    targetLocOptions: null,
+                    localeOption: null,
+                    resourceId: "{{ request()->id }}",
+                    sourceData: null,
+                    translatedValues: null,
+                    isLoading: false,
+                    nothingToTranslate: '',
+                    sourceLocale: this.localeValue,
+                    sourceChannel: this.channelValue,
+                    targetChannel: this.channelTarget,
+                    targetLocales: this.targetLocales,
+                    fieldType: this.fieldType,
 
-                        };
-                    },
-                    methods: {
-                        fetchAttribute() {
-                            this.$axios.get("{{ route('admin.catalog.product.get_attribute') }}", {
-                                    params: {
-                                        productId: this.resourceId,
-                                    },
-                                })
-                                .then((response) => {
-                                    let options = response.data?.attributes;
-                                    this.attributesOptions = JSON.stringify(options);
-                                    this.attributes = options;
-                                    this.$nextTick(() => {
-                                        if (this.$refs['attributesOptionsRef']) {
-                                            this.$refs['attributesOptionsRef'].selectedValue = options;
-                                        }
-                                    });
-
-                                })
-                                .catch((error) => {
-                                    console.error('Error fetching attributes:', error);
-                                    throw error;
+                    };
+                },
+            methods: {
+                fetchAttribute() {
+                        this.$axios.get("{{ route('admin.catalog.product.get_attribute') }}", {
+                            params: {
+                                productId: this.resourceId,
+                                },
+                            })
+                            .then((response) => {
+                                let options = response.data?.attributes;
+                                this.attributesOptions = JSON.stringify(options);
+                                this.attributes = options;
+                                this.$nextTick(() => {
+                                    if (this.$refs['attributesOptionsRef']) {
+                                        this.$refs['attributesOptionsRef'].selectedValue = options;
+                                    }
                                 });
+
+                            })
+                            .catch((error) => {
+                            console.error('Error fetching attributes:', error);
+                                throw error;
+                            });
                         },
                         fetchSourceLocales() {
                             this.getLocale(this.sourceChannel)
@@ -716,7 +706,7 @@
                                     });
                                 })
                                 .catch((error) => {
-
+                                    console.error("Error in translation store request:", error);
                                 });
                         },
 
@@ -742,14 +732,14 @@
                             this.targetLocOptions = null;
                         }
 
-                    },
-                })
-            </script>
-            @endPushOnce
+            },
+        });
+</script>
+@endPushOnce
 
-            @pushOnce('scripts')
-            <script type="text/x-template" id="v-custom-dropdown-template">
-                <div class="relative inline-block text-left">
+@pushOnce('scripts')
+    <script type="text/x-template" id="v-custom-dropdown-template">
+            <div class="relative inline-block text-left">
 
                 <button
                     type="button"
@@ -778,37 +768,38 @@
                         :model="'{{$model}}'">
                         </v-translate-attribute>
                     </p>
-                </div>
+            </div>
     </div>
 </script>
-            <script type="module">
-                app.component('v-custom-dropdown', {
-                    template: '#v-custom-dropdown-template',
-                    data() {
-                        return {
-                            isOpen: false,
-                        };
-                    },
-                    methods: {
-                        toggleDropdown() {
-                            this.isOpen = !this.isOpen;
-                        },
-                        closeDropdown(event) {
-                            if (!this.$el.contains(event.target)) {
-                                this.isOpen = false;
-                            }
-                        },
-                        hideMenu() {
+<script type="module">
+    app.component('v-custom-dropdown', {
+        template: '#v-custom-dropdown-template',
+            data() {
+                return {
+                    isOpen: false,
+                    };
+            },
+            methods: {
+                toggleDropdown() {
+                    this.isOpen = !this.isOpen;
+                },
+
+                closeDropdown(event) {
+                    if (!this.$el.contains(event.target)) {
                             this.isOpen = false;
-                        }
-                    },
-                    mounted() {
-                        document.addEventListener('click', this.closeDropdown);
-                    },
-                    beforeUnmount() {
-                        document.removeEventListener('click', this.closeDropdown);
-                    },
-                });
-            </script>
-            @endPushOnce
+                    }
+                },
+                hideMenu() {
+                    this.isOpen = false;
+                }
+            },
+            mounted() {
+                document.addEventListener('click', this.closeDropdown);
+            },
+            beforeUnmount() {
+                document.removeEventListener('click', this.closeDropdown);
+            },
+    });
+</script>
+@endPushOnce
 </x-admin::layouts.with-history>
