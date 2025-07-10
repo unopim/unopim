@@ -289,18 +289,11 @@ class MagicAIController extends Controller
 
     public function translateToManyLocale(): JsonResponse
     {
-        $id = request()->resource_id;
-        $product = $this->productRepository->find($id);
-        $data = $product->values;
-
-        $channel = request()->input('targetChannel');
         $field = request()->input('field');
-
         $targetLocales = explode(',', request()->input('targetLocale'));
         $translatedData = [];
         foreach ($targetLocales as $locale) {
             $p = "Translate @$field into $locale. Return only the translated value wrapped in a single <p> tag. Do not include any additional text, descriptions, or explanations.";
-
             $prompt = $this->promptService->getPrompt(
                 $p,
                 request()->input('resource_id'),
@@ -349,7 +342,9 @@ class MagicAIController extends Controller
         $result = [];
         foreach ($sourceField as $field) {
             if (! empty($arr) && array_key_exists($field, $arr)) {
+                $attribute = $this->attributeRepository->where('code', $field)->first();
                 $result[] = [
+                    'fieldLabel'     => $attribute->name,
                     'fieldName'      => $field,
                     'isTranslatable' => ! empty($arr) && array_key_exists($field, $arr),
                     'sourceData'     => ! empty($arr) && array_key_exists($field, $arr) ? $arr[$field] : null,
@@ -364,6 +359,7 @@ class MagicAIController extends Controller
     public function translateAllAttribute()
     {
         $attributes = $this->isAllAttributeTranslatable();
+
         foreach ($attributes as $key => $attribute) {
             $field = $attribute['fieldName'];
             $type = $this->attributeRepository->findByField('code', $field)->first()->type;

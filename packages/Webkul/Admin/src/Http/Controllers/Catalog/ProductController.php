@@ -410,7 +410,7 @@ class ProductController extends Controller
     public function getAttribute(): JsonResponse
     {
         $product = $this->productRepository->findByField('id', request()->productId)->first();
-        $attributes = $product->getEditableAttributes()->where('ai_translate', 1)->select('code','name', 'type', 'ai_translate');
+        $attributes = $product->getEditableAttributes()->where('ai_translate', 1)->select('code', 'name', 'type', 'ai_translate');
         $attributeOptions = [];
         if ($attributes) {
             foreach ($attributes as $attribute) {

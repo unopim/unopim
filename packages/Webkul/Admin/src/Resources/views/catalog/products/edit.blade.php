@@ -340,7 +340,7 @@
                                         <div class="w-full">
                                             <div class="inline-flex justify-between w-full">
                                                 <x-admin::form.control-group.label class="text-left pr-2">
-                                                    @{{ucFirst(data.fieldName)}}
+                                                    @{{data.fieldLabel}}
                                                 </x-admin::form.control-group.label>
                                                     <div class="self-end mb-2 text-xs flex gap-1 items-center">
                                                         <span class="icon-channel uppercase box-shadow p-1 h-5 rounded-full bg-gray-100 border text- border-gray-200  text-gray-600 dark:!text-gray-600">
@@ -377,7 +377,7 @@
                                         <div class="w-full">
                                             <div class="inline-flex justify-between w-full">
                                                 <x-admin::form.control-group.label class="text-left">
-                                                     @{{ucFirst(data.fieldName)}}
+                                                     @{{data.fieldLabel}}
                                                 </x-admin::form.control-group.label>
                                                     <div class="self-end mb-2 text-xs flex gap-1 items-center">
                                                         <span class="icon-channel uppercase box-shadow p-1 h-5 rounded-full bg-gray-100 border text- border-gray-200 text-gray-600 dark:!text-gray-600">
@@ -708,16 +708,6 @@
                                 .catch((error) => {
                                     console.error("Error in translation store request:", error);
                                 });
-                        },
-
-                        ucFirst(field) {
-                            if (typeof field !== 'string' || field.length === 0) {
-                                return field;
-                            }
-                            return field
-                                .split('_')
-                                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                                .join(' ');
                         },
 
                         cancel() {

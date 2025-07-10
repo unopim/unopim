@@ -27,7 +27,7 @@
                     {
                         $options[] = [
                             'id' => $channel->code,
-                            'label' => ucfirst($channel->code),
+                            'label' => $channel->name,
                             ];
                     }
                 @endphp

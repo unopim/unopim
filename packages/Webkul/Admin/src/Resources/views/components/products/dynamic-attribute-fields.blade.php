@@ -403,7 +403,7 @@
                                         {
                                             $options[] = [
                                                 'id' => $channel->code,
-                                                'label' => ucfirst($channel->code),
+                                                'label' => $channel->name,
                                                 ];
                                         }
                                         $optionsInJson = json_encode($options);
@@ -425,18 +425,7 @@
                                     <x-admin::form.control-group.label class="required">
                                         @lang('admin::app.catalog.products.edit.translate.target-channel')
                                     </x-admin::form.control-group.label>
-                                    @php
-                                        $channels = core()->getAllChannels();
-                                        $options = [];
-                                        foreach($channels as $channel)
-                                        {
-                                            $options[] = [
-                                                'id' => $channel->code,
-                                                'label' => ucfirst($channel->code),
-                                                ];
-                                        }
-                                        $optionsInJson = json_encode($options);
-                                    @endphp
+                                   
                                     <x-admin::form.control-group.control
                                         type="select"
                                         name="targetChannel"
