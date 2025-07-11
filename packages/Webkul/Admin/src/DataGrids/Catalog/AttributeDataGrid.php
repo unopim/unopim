@@ -3,6 +3,7 @@
 namespace Webkul\Admin\DataGrids\Catalog;
 
 use Illuminate\Support\Facades\DB;
+use Webkul\Attribute\Models\Attribute;
 use Webkul\DataGrid\DataGrid;
 
 class AttributeDataGrid extends DataGrid
@@ -40,7 +41,7 @@ class AttributeDataGrid extends DataGrid
                 'value_per_locale',
                 'value_per_channel',
                 'created_at',
-                DB::raw('(CASE WHEN '.$tablePrefix.'attribute_name.name IS NULL OR CHAR_LENGTH(TRIM('.$tablePrefix.'attribute_name.name)) < 1 THEN CONCAT("[", '.$tablePrefix.'attributes.code,"]") ELSE '.$tablePrefix.'attribute_name.name END) as name')
+                'attribute_name.name as name'
             );
 
         return $queryBuilder;
@@ -69,6 +70,29 @@ class AttributeDataGrid extends DataGrid
             'searchable' => true,
             'filterable' => true,
             'sortable'   => true,
+            'closure'    => function ($row) {
+
+                if (! empty($row->name)) {
+                    return $row->name;
+                }
+
+                $attribute = Attribute::with('translations')->find($row->id);
+
+                $requestedLocale = core()->getRequestedLocaleCode();
+                $fallbackName = null;
+
+                foreach ($attribute->translations as $translation) {
+                    if ($translation->locale === $requestedLocale && ! empty($translation->name)) {
+                        return $translation->name;
+                    }
+
+                    if (! empty($translation->name) && $fallbackName === null) {
+                        $fallbackName = $translation->name;
+                    }
+                }
+
+                return $fallbackName ?: "[{$row->code}]";
+            },
         ]);
 
         $this->addColumn([

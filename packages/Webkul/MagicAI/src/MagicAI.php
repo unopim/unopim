@@ -140,6 +140,16 @@ class MagicAI
         return $this->getModelInstance()->images($options);
     }
 
+    public function generateImage(string $imageBase64, string $mimeType, string $prompt)
+    {
+        return $this->getModelInstance()->generateImage($imageBase64, $mimeType, $prompt);
+    }
+
+    public function editImage(array $options, $imageBinary, string $prompt): array
+    {
+        return $this->getModelInstance()->editImage($options, $imageBinary, $prompt);
+    }
+
     /**
      * Get LLM model instance.
      */

@@ -76,7 +76,7 @@ class MagicAIController extends Controller
         if ($entityName === 'category_field') {
             $data = $this->categoryFieldRepository->getCategoryFieldListBySearch($query, ['code', 'name'], excludeTypes: ['image', 'file']);
         } else {
-            $data = $this->attributeRepository->getAttributeListBySearch($query, ['code', 'name'], excludeTypes: ['image', 'gallery', 'file', 'asset']);
+            $data = $this->attributeRepository->getAttributeListBySearch($query, ['code', 'name'], excludeTypes: ['gallery', 'file', 'asset']);
         }
 
         $data = array_map(function ($item) {
@@ -126,7 +126,7 @@ class MagicAIController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function image(): JsonResponse
+    public function images(): JsonResponse
     {
         config([
             'openai.api_key'      => core()->getConfigData('general.magic_ai.settings.api_key'),
@@ -170,6 +170,100 @@ class MagicAIController extends Controller
             ]);
         } catch (\Exception $e) {
             return new JsonResponse([
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function image(): JsonResponse
+    {
+        $apiKey = core()->getConfigData('general.magic_ai.settings.api_key');
+        $organization = core()->getConfigData('general.magic_ai.settings.organization');
+
+        config([
+            'openai.api_key'      => $apiKey,
+            'openai.organization' => $organization,
+        ]);
+
+        $this->validate(request(), [
+            'prompt'  => 'required',
+            'model'   => 'required|in:dall-e-2,dall-e-3,gemini-2.0,gpt-image-1',
+            'n'       => 'required_if:model,dall-e-2|integer|min:1|max:10',
+            'size'    => 'required|in:1024x1024,1024x1792,1792x1024',
+            'quality' => 'required_if:model,dall-e-3|in:standard,hd',
+            'image'   => 'nullable|image',
+
+        ]);
+
+        if (core()->getConfigData('general.magic_ai.settings.ai_platform') !== 'openai') {
+            return response()->json([
+                'message' => trans('admin::app.catalog.products.index.magic-ai-openai-required'),
+            ], 500);
+        }
+
+        try {
+            $options = request()->only([
+                'n',
+                'size',
+                'quality',
+            ]);
+
+            $prompt = $this->promptService->getPrompt(
+                request()->input('prompt'),
+                request()->input('resource_id'),
+                request()->input('resource_type')
+            );
+
+            if (request()->hasFile('image')) {
+
+                if (request()->input('model') === 'gemini-2.0') {
+
+                    $imageFile = request()->file('image');
+
+                    $mimeType = $imageFile->getMimeType();
+
+                    $base64Image = base64_encode(file_get_contents($imageFile->getRealPath()));
+
+                    $response = MagicAI::setModel(request()->input('model'))
+                        ->setPlatForm(core()->getConfigData('general.magic_ai.settings.ai_platform'))
+                        ->setPrompt($prompt)
+                        ->generateImage($base64Image, $mimeType, $prompt);
+
+                    return response()->json([
+                        'images' => $response,
+                    ]);
+
+                } else {
+
+                    $imageFile = request()->file('image');
+
+                    $response = MagicAI::setModel(request()->input('model'))
+                        ->setPlatForm(core()->getConfigData('general.magic_ai.settings.ai_platform'))
+                        ->setPrompt($prompt)
+                        ->editImage($options, $imageFile, $prompt);
+
+                    return response()->json([
+                        'images' => $response,
+                    ]);
+                }
+
+            } elseif (request()->input('model') === 'gpt-image-1') {
+                return response()->json([
+                    'message' => trans('bol_data::app.catalog.products.magic-ai-image-required'),
+                ], 500);
+            }
+
+            // MagicAI is your wrapper class for prompt-only generation
+            $response = MagicAI::setModel(request()->input('model'))
+                ->setPlatForm(core()->getConfigData('general.magic_ai.settings.ai_platform'))
+                ->setPrompt($prompt)
+                ->images($options);
+
+            return response()->json([
+                'images' => $response ?? [],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
                 'message' => $e->getMessage(),
             ], 500);
         }
