@@ -267,6 +267,21 @@ return [
                         ],
                     ],
                 ],
+                'translate' => [
+                    'translate-btn'            => 'Translate',
+                    'title'                    => 'Translate',
+                    'source-channel'           => 'Source Channel',
+                    'locale'                   => 'Source Locale',
+                    'translated-content'       => 'Translated Content',
+                    'translating'              => 'Translating',
+                    'apply'                    => 'Apply',
+                    'cancel'                   => 'Cancel',
+                    'target-locales'           => 'Target Locales',
+                    'target-channel'           => 'Target Channel',
+                    'attributes'               => 'Attributes',
+                    'source-content'           => 'Source Content',
+                    'tranlated-job-processed'  => 'Translated content storage job processed.',
+                ],
 
                 'product-info' => [
                     'title'        => 'Product Info',
@@ -373,6 +388,7 @@ return [
                 'same-code-error'       => 'The option code must be unique.',
                 'usable-in-grid'        => 'Usable in grid',
                 'is-filterable'         => 'Is filterable',
+                'ai-translate'          => 'AI Translate',
 
                 'option' => [
                     'color'    => 'Colour Swatch',
@@ -440,6 +456,7 @@ return [
                 'same-code-error'       => 'The option code must be unique.',
                 'usable-in-grid'        => 'Usable in grid',
                 'is-filterable'         => 'Is filterable',
+                'ai-translate'          => 'AI Translate',
 
                 'option' => [
                     'create-success'      => 'Attribute Option Created Successfully',
@@ -1702,6 +1719,18 @@ return [
                         'title'          => 'General Settings',
                         'title-info'     => 'Enhance your experience with Magic AI by entering your exclusive API Key and specifying the relevant Organization for seamless integration. Take control of your OpenAI credentials and customize the settings according to your specific needs.',
                     ],
+
+                    'translation'   => [
+                        'title'                  => 'Translation',
+                        'enabled'                => 'Enabled',
+                        'title-info'             => 'This feature enables Magic AI to translate text, allowing you to convert text from one language to another seamlessly.',
+                        'global-source-channel'  => 'Source Channel',
+                        'global-source-locale'   => 'Source Locale',
+                        'translation-model'      => 'Translation Model',
+                        'replace-existing-value' => 'Replace Existing Value',
+                        'target-channel'         => 'Target Channel',
+                        'target-locales'         => 'Target Locales',
+                    ],
                 ],
             ],
         ],
@@ -1763,6 +1792,38 @@ return [
             're-generate-secret-key-success' => 'API secret key is regenerated successfully',
             'client-not-found'               => 'Client Not Found',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'Title',
+                'prompt'        => 'Prompt',
+                'type'          => 'Type',
+                'created-at'    => 'Created At',
+                'updated-at'    => 'Updated At',
+                'actions'       => 'Actions',
+                'edit'          => 'Edit',
+                'delete'        => 'Delete',
+                'product'       => 'Product',
+                'category'      => 'Category',
+            ],
+            'create' => [
+                'title'         => 'Prompt',
+                'create-btn'    => 'Create Prompt',
+                'edit-title'    => 'Edit Prompt',
+                'create-title'  => 'Create New Prompt',
+                'label-title'   => 'Title',
+                'type'          => 'Type',
+                'prompt'        => 'Prompt',
+                'save-btn'      => 'Save Prompt',
+            ],
+            'message' => [
+                'save-success'      => 'Prompt saved successfully.',
+                'update-success'    => 'Prompt updated successfully.',
+                'delete-success'    => 'Prompt deleted successfully.',
+                'delete-fail'       => 'Failed to delete prompt.',
+            ],
+        ],
     ],
 
     'components' => [
@@ -1805,6 +1866,8 @@ return [
                 'themes'             => 'Themes',
                 'users'              => 'Users',
                 'integrations'       => 'Integrations',
+                'prompt'             => 'Prompt',
+                'general-tab'        => 'Configuration',
             ],
         ],
 
