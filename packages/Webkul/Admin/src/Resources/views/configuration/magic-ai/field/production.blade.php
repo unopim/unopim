@@ -28,13 +28,14 @@
                             type="text"
                             ::id="name"
                             ::name="name"
-                            rules="required"
+                            ::rules="{required:true,regex:/^[^\s]+$/}"
                             v-model="value"
                             ::label="label"
                             ::placeholder="label"
                             track-by="id"
                             label-by="label"
                             @input="emitChangeEvent($event.target.value, name)"
+                            @keypress="preventSpace($event)"
                         />
                         <x-admin::form.control-group.error ::control-name="name" />
                     </x-admin::form.control-group>
@@ -93,10 +94,15 @@
 
                 this.$emitter.emit('config-value-changed', {
                     fieldName,
-                    value: value
+                    value: value.replace(/\s+/g, ''),
                 });
             },
 
+            preventSpace(event) {
+                if (event.key === ' ') {
+                    event.preventDefault();
+                }
+            },
 
         }
     });
