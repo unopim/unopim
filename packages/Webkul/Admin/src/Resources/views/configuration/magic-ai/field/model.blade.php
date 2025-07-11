@@ -178,6 +178,7 @@
             },
             async validated() {
                 try {
+                    
                     const response = await axios.get("{{ route('admin.magic_ai.validate_credential') }}", {
                         params: this.aiCredentials
                     });
