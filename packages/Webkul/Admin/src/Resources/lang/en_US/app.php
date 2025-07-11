@@ -1585,6 +1585,7 @@ return [
                         'replace-existing-value' => 'Replace Existing Value',
                         'target-channel'         => 'Target Channel',
                         'target-locales'         => 'Target Locales',
+                        'replace-existing-value-info'=>'Replace the existing value if it already exists.'
                     ],
                 ],
             ],

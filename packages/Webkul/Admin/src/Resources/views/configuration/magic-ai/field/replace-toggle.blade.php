@@ -19,7 +19,7 @@
         <div>
 
             <x-admin::form.control-group class="last:!mb-0">
-                <x-admin::form.control-group.label>
+                <x-admin::form.control-group.label title="{{ __('admin::app.configuration.index.general.magic-ai.translation.replace-existing-value-info',) }}">
                     @{{ label }}
                 </x-admin::form.control-group.label>
 
