@@ -3,6 +3,7 @@
 namespace Webkul\Admin\DataGrids\Catalog;
 
 use Illuminate\Support\Facades\DB;
+use Webkul\Attribute\Models\AttributeGroup;
 use Webkul\DataGrid\DataGrid;
 
 class AttributeGroupDataGrid extends DataGrid
@@ -24,7 +25,7 @@ class AttributeGroupDataGrid extends DataGrid
             ->select(
                 'attribute_groups.id',
                 'attribute_groups.code',
-                DB::raw('(CASE WHEN '.$tablePrefix.'attribute_group_name.name IS NULL OR CHAR_LENGTH(TRIM('.$tablePrefix.'attribute_group_name.name)) < 1 THEN CONCAT("[", '.$tablePrefix.'attribute_groups.code,"]") ELSE '.$tablePrefix.'attribute_group_name.name END) as name')
+                'attribute_group_name.name as name'
             );
 
         $this->addFilter('id', 'attribute_groups.id');
@@ -64,6 +65,29 @@ class AttributeGroupDataGrid extends DataGrid
             'searchable' => true,
             'filterable' => true,
             'sortable'   => true,
+            'closure'    => function ($row) {
+
+                if (! empty($row->name)) {
+                    return $row->name;
+                }
+
+                $attributeGroup = AttributeGroup::with('translations')->find($row->id);
+
+                $requestedLocale = core()->getRequestedLocaleCode();
+                $fallbackName = null;
+
+                foreach ($attributeGroup->translations as $translation) {
+                    if ($translation->locale === $requestedLocale && ! empty($translation->name)) {
+                        return $translation->name;
+                    }
+
+                    if (! empty($translation->name) && $fallbackName === null) {
+                        $fallbackName = $translation->name;
+                    }
+                }
+
+                return $fallbackName ?: "[{$row->code}]";
+            },
         ]);
     }
 

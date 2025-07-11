@@ -3,6 +3,7 @@
 namespace Webkul\Admin\DataGrids\Catalog;
 
 use Illuminate\Support\Facades\DB;
+use Webkul\Category\Models\CategoryField;
 use Webkul\DataGrid\DataGrid;
 
 class CategoryFieldDataGrid extends DataGrid
@@ -52,7 +53,7 @@ class CategoryFieldDataGrid extends DataGrid
                 'status',
                 'position',
                 'created_at',
-                DB::raw('(CASE WHEN CHAR_LENGTH(TRIM('.$tablePrefix.'requested_category_field_translation.name)) < 1 THEN CONCAT("[", code , "]") ELSE '.$tablePrefix.'requested_category_field_translation.name END) as name'),
+                'requested_category_field_translation.name as name'
             );
 
         $this->addFilter('name', 'requested_category_field_translation.name');
@@ -83,6 +84,29 @@ class CategoryFieldDataGrid extends DataGrid
             'searchable' => true,
             'filterable' => true,
             'sortable'   => true,
+            'closure'    => function ($row) {
+
+                if (! empty($row->name)) {
+                    return $row->name;
+                }
+
+                $categoryField = CategoryField::with('translations')->find($row->id);
+
+                $requestedLocale = core()->getRequestedLocaleCode();
+                $fallbackName = null;
+
+                foreach ($categoryField->translations as $translation) {
+                    if ($translation->locale === $requestedLocale && ! empty($translation->name)) {
+                        return $translation->name;
+                    }
+
+                    if (! empty($translation->name) && $fallbackName === null) {
+                        $fallbackName = $translation->name;
+                    }
+                }
+
+                return $fallbackName ?: "[{$row->code}]";
+            },
         ]);
 
         $this->addColumn([
