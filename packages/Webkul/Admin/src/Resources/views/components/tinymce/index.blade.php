@@ -494,7 +494,7 @@
 
                 getResourceType() {
                     switch (this.entityName) {
-                        case 'category-field':
+                        case 'category_field':
                             return 'category';
                         default:
                             return 'product';
