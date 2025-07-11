@@ -11,7 +11,7 @@
 <v-production-model
     label="@lang($field['title'])"
     name="{{ $name }}"
-    :value="{{$value}}"
+    :value="'{{$value}}'"
     api_plateform={{$api_platform}}>
 </v-production-model>
 
