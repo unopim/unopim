@@ -479,7 +479,7 @@
                         .then(response => {
                             this.isLoading = false;
 
-                            this.ai.content = response.data.content;
+                            this.ai.content = response.data.content.replace(/<think[^>]*>.*?<\/think>/gs, '');
                         })
                         .catch(error => {
                             this.isLoading = false;
