@@ -4,42 +4,44 @@ declare(strict_types=1);
 
 namespace Webkul\DataTransfer\Jobs\Export\File;
 
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Csv as CsvWriter;
-use PhpOffice\PhpSpreadsheet\Writer\Xls as XlsWriter;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx as XlsxWriter;
+use OpenSpout\Writer\CSV\Options as CsvOptions;
+use OpenSpout\Writer\CSV\Writer as CsvWriter;
+use OpenSpout\Writer\WriterInterface;
+use OpenSpout\Writer\XLSX\Options as XlsxOptions;
+use OpenSpout\Writer\XLSX\Writer as XlsxWriter;
 
 final class SpoutWriterFactory
 {
-    public const CSV = 'Csv';
-
     public const XLS = 'Xls';
+
+    public const CSV = 'Csv';
 
     public const XLSX = 'Xlsx';
 
-    public static function createSpreadSheet()
+    /**
+     * @throws \InvalidArgumentException
+     */
+    public static function createWriter(string $type, array $normalizedOptions = []): WriterInterface
     {
-        return new Spreadsheet;
-    }
+        $type = ucfirst(strtolower($type));
 
-    public static function createWriter(string $type, $spreadsheet, array $normalizedOptions = [])
-    {
         switch ($type) {
             case self::CSV:
-                $writer = new CsvWriter($spreadsheet);
-                $writer->setDelimiter($normalizedOptions['fieldDelimiter']);
-                $writer->setEnclosure($normalizedOptions['filedEnclosure']);
-                break;
-            case self::XLS:
-                $writer = new XlsWriter($spreadsheet);
-                break;
+                $options = new CsvOptions;
+                $options->FIELD_DELIMITER = $normalizedOptions['fieldDelimiter'] ?? $options->FIELD_DELIMITER;
+                $options->FIELD_ENCLOSURE = $normalizedOptions['fieldEnclosure'] ?? $options->FIELD_ENCLOSURE;
+                $options->SHOULD_ADD_BOM = $normalizedOptions['shouldAddBOM'] ?? $options->SHOULD_ADD_BOM;
+
+                return new CsvWriter($options);
+
             case self::XLSX:
-                $writer = new XlsxWriter($spreadsheet);
-                break;
+            case self::XLS:
+                $options = new XlsxOptions;
+
+                return new XlsxWriter($options);
+
             default:
                 throw new \InvalidArgumentException(sprintf('"%s" is not a valid writer type', $type));
         }
-
-        return $writer;
     }
 }

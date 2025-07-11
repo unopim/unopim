@@ -31,7 +31,7 @@ class LocalTemporaryFile extends TemporaryFile
     public function __construct(string $filePath, string $temporaryPath, $writerType = SpoutWriterFactory::CSV)
     {
         $this->temporaryPath = $temporaryPath;
-        Storage::put($filePath, '');
+        Storage::makeDirectory($temporaryPath);
         $this->filePath = $filePath;
         $this->writerType = $writerType;
         $this->LocalFilePath = storage_path(FileBuffer::PUBLIC_STORAGE_PATH.$filePath);
