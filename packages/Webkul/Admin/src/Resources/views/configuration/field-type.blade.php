@@ -69,7 +69,7 @@
                     type="password"
                     ::id="name"
                     ::name="name"
-                    ::value="maskedPassword"
+                    ::value="value"
                     ::rules="validations"
                     ::label="label"
                     @input="emitChangeEvent($event.target.value, name)"
@@ -191,11 +191,6 @@
                 options() {
                     return JSON.stringify(this.field.options);
                 },
-
-                maskedPassword() {
-                    return this.value ? '*'.repeat(this.value.length) : '';
-                }
-
             },
 
             methods: {
