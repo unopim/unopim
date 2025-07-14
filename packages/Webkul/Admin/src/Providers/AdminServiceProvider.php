@@ -40,6 +40,7 @@ class AdminServiceProvider extends ServiceProvider
     public function register()
     {
         $this->registerConfig();
+        $this->mergeConfigFrom(dirname(__DIR__).'/Config/system.php', 'systems');
     }
 
     /**

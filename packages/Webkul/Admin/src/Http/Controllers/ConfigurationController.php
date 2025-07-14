@@ -7,6 +7,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Admin\Http\Requests\ConfigurationForm;
 use Webkul\Core\Repositories\CoreConfigRepository;
+use Webkul\MagicAI\Contracts\Validator\ConfigValidator;
 use Webkul\Core\Tree;
 
 class ConfigurationController extends Controller
@@ -55,7 +56,7 @@ class ConfigurationController extends Controller
     {
         $groups = Arr::get(
             $this->configTree->items,
-            request()->route('slug').'.children.'.request()->route('slug2').'.children'
+            request()->route('slug') . '.children.' . request()->route('slug2') . '.children'
         );
 
         if ($groups) {
@@ -93,13 +94,26 @@ class ConfigurationController extends Controller
      */
     public function store(ConfigurationForm $request)
     {
-        $data = $request->all();
+        try {
+            $data = $request->all();
+            $config = config('systems');
+            $credential = $data['general']['magic_ai']['settings'];
+            $jobValidator = isset($config[2]['validator']) ? app($config[2]['validator']) : null;
 
-        $this->coreConfigRepository->create($request->except(['_token', 'admin_locale']));
+            if ($jobValidator instanceof ConfigValidator) {
+                $jobValidator->validate($credential);
+            }
 
-        session()->flash('success', trans('admin::app.configuration.index.save-message'));
+            $this->coreConfigRepository->create($request->except(['_token', 'admin_locale']));
 
-        return redirect()->back();
+            session()->flash('success', trans('admin::app.configuration.index.save-message'));
+
+            return redirect()->back();
+        } catch (\Throwable $th) {
+            \Log::info($th);
+            session()->flash('error', "Please verify the Magic AI credentials.");
+            return redirect()->back();
+        }
     }
 
     /**
@@ -111,7 +125,7 @@ class ConfigurationController extends Controller
     {
         $path = request()->route()->parameters()['path'];
 
-        $fileName = 'configuration/'.$path;
+        $fileName = 'configuration/' . $path;
 
         $config = $this->coreConfigRepository->findOneByField('value', $fileName);
 
