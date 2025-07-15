@@ -95,13 +95,19 @@ class ConfigurationController extends Controller
     public function store(ConfigurationForm $request)
     {
         try {
-            $data = $request->all();
-            $config = config('systems');
-            $credential = $data['general']['magic_ai']['settings'];
-            $jobValidator = isset($config[2]['validator']) ? app($config[2]['validator']) : null;
 
-            if ($jobValidator instanceof ConfigValidator) {
-                $jobValidator->validate($credential);
+            $data = $request->all();
+            $slug = request()->route('slug');
+            $slug2 = request()->route('slug2');
+            $config = config('core');
+            foreach ($config as $section) {
+                if (isset($section['key']) && $section['key'] == "{$slug}.{$slug2}") {
+                    $configValidator = isset($section['validator']) ? app($section['validator']) : null;
+
+                    if ($configValidator instanceof ConfigValidator) {
+                        $configValidator->validate($data);
+                    }
+                }
             }
 
             $this->coreConfigRepository->create($request->except(['_token', 'admin_locale']));

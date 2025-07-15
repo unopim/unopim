@@ -15,13 +15,13 @@ return [
         'key'  => 'general.magic_ai',
         'name' => 'admin::app.configuration.index.general.magic-ai.title',
         'info' => 'admin::app.configuration.index.general.magic-ai.info',
+        'validator' => 'Webkul\MagicAI\Validator\MagicAICredentialValidator',
         'icon' => 'settings/magic-ai.svg',
         'sort' => 3,
     ], [
         'key'    => 'general.magic_ai.settings',
         'name'   => 'admin::app.configuration.index.general.magic-ai.settings.title',
         'info'   => 'admin::app.configuration.index.general.magic-ai.settings.title-info',
-        'validator' => 'Webkul\MagicAI\Validator\MagicAICredentialValidator',
         'sort'   => 1,
         'fields' => [
             [
