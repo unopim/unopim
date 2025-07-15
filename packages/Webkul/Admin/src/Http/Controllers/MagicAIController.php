@@ -109,12 +109,15 @@ class MagicAIController extends Controller
         ]);
 
         try {
+            $locale = core()->getRequestedLocaleCode();
+            $prompt = request()->input('prompt');
+
+            $prompt .= "\n\nGenerated content should be in {$locale}.";
             $prompt = $this->promptService->getPrompt(
-                request()->input('prompt'),
+                $prompt,
                 request()->input('resource_id'),
                 request()->input('resource_type')
             );
-
             $response = MagicAI::setModel(request()->input('model'))
                 ->setPlatForm(core()->getConfigData('general.magic_ai.settings.ai_platform'))
                 ->setPrompt($prompt)
