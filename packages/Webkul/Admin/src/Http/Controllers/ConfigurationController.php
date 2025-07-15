@@ -117,7 +117,7 @@ class ConfigurationController extends Controller
             return redirect()->back();
         } catch (\Throwable $th) {
             \Log::info($th);
-            session()->flash('error', "Please verify the Magic AI credentials.");
+            session()->flash('error', trans('admin::app.catalog.products.index.magic-ai-validate-error'));
             return redirect()->back();
         }
     }

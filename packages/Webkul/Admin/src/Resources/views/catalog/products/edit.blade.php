@@ -740,7 +740,7 @@
 
                 </button>
 
-                <div v-if="isOpen" class="absolute right-0  w-36 bg-white shadow-lg rounded-lg z-100">
+                <div v-if="isOpen" class="absolute right-0  w-36 bg-white dark:bg-gray-700 shadow-lg rounded-lg z-100">
                     <p class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded cursor-pointer">
                         @php
                             $channelValue = core()->getConfigData('general.magic_ai.translation.source_channel');
