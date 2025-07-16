@@ -19,7 +19,7 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
 
     const ALLOWED_VARIANT_OPTION_TYPES = [
         'select',
-        'text'
+        'text',
     ];
 
     public $timestamps = false;

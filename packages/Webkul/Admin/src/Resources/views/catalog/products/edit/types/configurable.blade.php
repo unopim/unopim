@@ -86,74 +86,74 @@
                             <p class="text-lg text-gray-800 dark:text-white font-bold">
                                 @lang('admin::app.catalog.products.edit.types.configurable.create.title')
                             </p>
-                            </x-slot>
+                        </x-slot>
 
-                            <!-- Modal Content -->
-                            <x-slot:content>
-                                <x-admin::form.control-group>
-                                    <x-admin::form.control-group.label class="required">
-                                        sku
-                                    </x-admin::form.control-group.label>
+                        <!-- Modal Content -->
+                        <x-slot:content>
+                            <x-admin::form.control-group>
+                                <x-admin::form.control-group.label class="required">
+                                    sku
+                                </x-admin::form.control-group.label>
+                                <x-admin::form.control-group.control
+                                    id="sku"
+                                    name="sku"
+                                    rules="required"
+                                />
+                                <x-admin::form.control-group.error control-name="sku" />
+                            </x-admin::form.control-group>
+
+                            <x-admin::form.control-group
+                                v-for='(attribute, index) in superAttributes'
+                            >
+                                <x-admin::form.control-group.label class="required">
+                                    @{{ attribute.name || '[' + attribute.code + ']' }}
+                                </x-admin::form.control-group.label>
+
+                                <template v-if="attribute.type === 'select'">
                                     <x-admin::form.control-group.control
-                                        id="sku"
-                                        name="sku"
+                                        type="select"
+                                        ::id="attribute.code"
+                                        ::name="attribute.code"
                                         rules="required"
+                                        ::label="attribute.name"
+                                        track-by="code"
+                                        async="true"
+                                        entity-name="attribute"
+                                        ::attribute-id="attribute.id"
+                                    >
+                                    </x-admin::form.control-group.control>
+                                </template>
+                                <template v-else>
+                                    <x-admin::form.control-group.control
+                                        ::id="attribute.code"
+                                        ::name="attribute.code"
+                                        rules="required"
+                                        ::label="attribute.name"
                                     />
-                                    <x-admin::form.control-group.error control-name="sku" />
-                                </x-admin::form.control-group>
+                                </template>
 
-                                <x-admin::form.control-group
-                                    v-for='(attribute, index) in superAttributes'
+                                <v-error-message :name="attribute.code" v-slot="{ message }">
+                                    <p
+                                        class="mt-1 text-red-600 text-xs italic"
+                                        v-text="message"
+                                    >
+                                    </p>
+                                </v-error-message>
+                            </x-admin::form.control-group>
+                        </x-slot>
+
+                        <!-- Modal Footer -->
+                        <x-slot:footer>
+                            <!-- Modal Submission -->
+                            <div class="flex gap-x-2.5 items-center">
+                                <button
+                                    type="submit"
+                                    class="primary-button"
                                 >
-                                    <x-admin::form.control-group.label class="required">
-                                        @{{ attribute.name || '[' + attribute.code + ']' }}
-                                    </x-admin::form.control-group.label>
-
-                                    <template v-if="attribute.type === 'select'">
-                                        <x-admin::form.control-group.control
-                                            type="select"
-                                            ::id="attribute.code"
-                                            ::name="attribute.code"
-                                            rules="required"
-                                            ::label="attribute.name"
-                                            track-by="code"
-                                            async="true"
-                                            entity-name="attribute"
-                                            ::attribute-id="attribute.id"
-                                        >
-                                        </x-admin::form.control-group.control>
-                                    </template>
-                                    <template v-else>
-                                        <x-admin::form.control-group.control
-                                            ::id="attribute.code"
-                                            ::name="attribute.code"
-                                            rules="required"
-                                            ::label="attribute.name"
-                                        />
-                                    </template>
-
-                                    <v-error-message :name="attribute.code" v-slot="{ message }">
-                                        <p
-                                            class="mt-1 text-red-600 text-xs italic"
-                                            v-text="message"
-                                        >
-                                        </p>
-                                    </v-error-message>
-                                </x-admin::form.control-group>
-                                </x-slot>
-
-                                <!-- Modal Footer -->
-                                <x-slot:footer>
-                                    <!-- Modal Submission -->
-                                    <div class="flex gap-x-2.5 items-center">
-                                        <button
-                                            type="submit"
-                                            class="primary-button"
-                                        >
-                                            @lang('admin::app.catalog.products.edit.types.configurable.create.save-btn')
-                                        </button>
-                                    </div>
-                                    </x-slot>
+                                    @lang('admin::app.catalog.products.edit.types.configurable.create.save-btn')
+                                </button>
+                            </div>
+                        </x-slot>
                     </x-admin::modal>
                 </form>
             </x-admin::form>
@@ -200,354 +200,354 @@
                                     @lang('admin::app.catalog.products.edit.types.configurable.edit.save-btn')
                                 </button>
                             </div>
-                            </x-slot>
+                        </x-slot>
 
-                            <!-- Drawer Content -->
-                            <x-slot:content class="p-4">
-                                <x-admin::form
-                                    v-slot="{ meta, errors, handleSubmit }"
-                                    as="div"
-                                >
-                                    <form @submit="handleSubmit($event, update)">
-                                        <!-- Mass Update -->
-                                        <template v-if="selectedType == 'editPrices'">
-                                            <div class="pb-2.5 border-b dark:border-gray-800">
-                                                <div class="flex gap-2.5 items-end">
-                                                    <x-admin::form.control-group class="flex-1 !mb-0">
-                                                        <x-admin::form.control-group.label>
-                                                            @lang('admin::app.catalog.products.edit.types.configurable.mass-edit.apply-to-all-sku')
-                                                        </x-admin::form.control-group.label>
+                        <!-- Drawer Content -->
+                        <x-slot:content class="p-4">
+                            <x-admin::form
+                                v-slot="{ meta, errors, handleSubmit }"
+                                as="div"
+                            >
+                                <form @submit="handleSubmit($event, update)">
+                                    <!-- Mass Update -->
+                                    <template v-if="selectedType == 'editPrices'">
+                                        <div class="pb-2.5 border-b dark:border-gray-800">
+                                            <div class="flex gap-2.5 items-end">
+                                                <x-admin::form.control-group class="flex-1 !mb-0">
+                                                    <x-admin::form.control-group.label>
+                                                        @lang('admin::app.catalog.products.edit.types.configurable.mass-edit.apply-to-all-sku')
+                                                    </x-admin::form.control-group.label>
 
-                                                        <div class="relative">
+                                                    <div class="relative">
                                                         <span class="absolute ltr:left-4 rtl:right-4 top-1/2 -translate-y-1/2 text-gray-500">
                                                             {{ core()->currencySymbol(core()->getBaseCurrencyCode()) }}
                                                         </span>
 
-                                                            <x-admin::form.control-group.control
-                                                                type="text"
-                                                                class="ltr:pl-8 rtl:pr-8"
-                                                                name="price"
-                                                                ::rules="{required: true, decimal: true, min_value: 0}"
-                                                                :label="trans('admin::app.catalog.products.edit.types.configurable.mass-edit.price')"
-                                                            />
-                                                        </div>
-                                                    </x-admin::form.control-group>
-
-                                                    <button class="secondary-button">
-                                                        @lang('admin::app.catalog.products.edit.types.configurable.mass-edit.apply-to-all-btn')
-                                                    </button>
-                                                </div>
-
-                                                <x-admin::form.control-group.error control-name="price" />
-                                            </div>
-                                        </template>
-
-
-                                        <template v-if="selectedType == 'addImages'">
-                                            <div class="pb-2.5 border-b dark:border-gray-800">
-                                                <v-media-images
-                                                    name="images"
-                                                    class="mb-2.5"
-                                                    v-bind:allow-multiple="true"
-                                                    :uploaded-images="updateTypes[selectedType].images"
-                                                >
-                                                </v-media-images>
+                                                        <x-admin::form.control-group.control
+                                                            type="text"
+                                                            class="ltr:pl-8 rtl:pr-8"
+                                                            name="price"
+                                                            ::rules="{required: true, decimal: true, min_value: 0}"
+                                                            :label="trans('admin::app.catalog.products.edit.types.configurable.mass-edit.price')"
+                                                        />
+                                                    </div>
+                                                </x-admin::form.control-group>
 
                                                 <button class="secondary-button">
                                                     @lang('admin::app.catalog.products.edit.types.configurable.mass-edit.apply-to-all-btn')
                                                 </button>
                                             </div>
-                                        </template>
 
-                                        <template v-if="selectedType == 'editWeight'">
-                                            <div class="pb-2.5 border-b dark:border-gray-800">
-                                                <div class="flex gap-2.5 items-end">
-                                                    <x-admin::form.control-group class="flex-1 !mb-0">
-                                                        <x-admin::form.control-group.label>
-                                                            @lang('admin::app.catalog.products.edit.types.configurable.mass-edit.apply-to-all-weight')
-                                                        </x-admin::form.control-group.label>
+                                            <x-admin::form.control-group.error control-name="price" />
+                                        </div>
+                                    </template>
 
-                                                        <div class="relative">
-                                                            <x-admin::form.control-group.control
-                                                                type="text"
-                                                                name="weight"
-                                                                ::rules="{ required: true, regex: /^([0-9]*[1-9][0-9]*(\.[0-9]+)?|[0]+\.[0-9]*[1-9][0-9]*)$/ }"
-                                                                value="0"
-                                                                :label="trans('admin::app.catalog.products.edit.types.configurable.mass-edit.weight')"
-                                                            />
-                                                        </div>
-                                                    </x-admin::form.control-group>
 
-                                                    <button class="secondary-button">
-                                                        @lang('admin::app.catalog.products.edit.types.configurable.mass-edit.apply-to-all-btn')
-                                                    </button>
-                                                </div>
+                                    <template v-if="selectedType == 'addImages'">
+                                        <div class="pb-2.5 border-b dark:border-gray-800">
+                                            <v-media-images
+                                                name="images"
+                                                class="mb-2.5"
+                                                v-bind:allow-multiple="true"
+                                                :uploaded-images="updateTypes[selectedType].images"
+                                            >
+                                            </v-media-images>
 
-                                                <x-admin::form.control-group.error control-name="weight" />
+                                            <button class="secondary-button">
+                                                @lang('admin::app.catalog.products.edit.types.configurable.mass-edit.apply-to-all-btn')
+                                            </button>
+                                        </div>
+                                    </template>
+
+                                    <template v-if="selectedType == 'editWeight'">
+                                        <div class="pb-2.5 border-b dark:border-gray-800">
+                                            <div class="flex gap-2.5 items-end">
+                                                <x-admin::form.control-group class="flex-1 !mb-0">
+                                                    <x-admin::form.control-group.label>
+                                                        @lang('admin::app.catalog.products.edit.types.configurable.mass-edit.apply-to-all-weight')
+                                                    </x-admin::form.control-group.label>
+
+                                                    <div class="relative">
+                                                        <x-admin::form.control-group.control
+                                                            type="text"
+                                                            name="weight"
+                                                            ::rules="{ required: true, regex: /^([0-9]*[1-9][0-9]*(\.[0-9]+)?|[0]+\.[0-9]*[1-9][0-9]*)$/ }"
+                                                            value="0"
+                                                            :label="trans('admin::app.catalog.products.edit.types.configurable.mass-edit.weight')"
+                                                        />
+                                                    </div>
+                                                </x-admin::form.control-group>
+
+                                                <button class="secondary-button">
+                                                    @lang('admin::app.catalog.products.edit.types.configurable.mass-edit.apply-to-all-btn')
+                                                </button>
                                             </div>
-                                        </template>
 
-                                        <template v-if="selectedType == 'editName'">
-                                            <div class="pb-2.5 border-b dark:border-gray-800">
-                                                <div class="flex gap-2.5 items-end">
-                                                    <x-admin::form.control-group class="flex-1 !mb-0">
-                                                        <x-admin::form.control-group.label>
-                                                            @lang('admin::app.catalog.products.edit.types.configurable.mass-edit.apply-to-all-name')
-                                                        </x-admin::form.control-group.label>
+                                            <x-admin::form.control-group.error control-name="weight" />
+                                        </div>
+                                    </template>
 
-                                                        <div class="relative">
-                                                            <x-admin::form.control-group.control
-                                                                type="text"
-                                                                name="name"
-                                                                ::rules="{ required: true }"
-                                                                :label="trans('admin::app.catalog.products.edit.types.configurable.mass-edit.name')"
-                                                            />
-                                                        </div>
-                                                    </x-admin::form.control-group>
+                                    <template v-if="selectedType == 'editName'">
+                                        <div class="pb-2.5 border-b dark:border-gray-800">
+                                            <div class="flex gap-2.5 items-end">
+                                                <x-admin::form.control-group class="flex-1 !mb-0">
+                                                    <x-admin::form.control-group.label>
+                                                        @lang('admin::app.catalog.products.edit.types.configurable.mass-edit.apply-to-all-name')
+                                                    </x-admin::form.control-group.label>
 
-                                                    <button class="secondary-button">
-                                                        @lang('admin::app.catalog.products.edit.types.configurable.mass-edit.apply-to-all-btn')
-                                                    </button>
-                                                </div>
+                                                    <div class="relative">
+                                                        <x-admin::form.control-group.control
+                                                            type="text"
+                                                            name="name"
+                                                            ::rules="{ required: true }"
+                                                            :label="trans('admin::app.catalog.products.edit.types.configurable.mass-edit.name')"
+                                                        />
+                                                    </div>
+                                                </x-admin::form.control-group>
 
-                                                <x-admin::form.control-group.error control-name="name" />
+                                                <button class="secondary-button">
+                                                    @lang('admin::app.catalog.products.edit.types.configurable.mass-edit.apply-to-all-btn')
+                                                </button>
                                             </div>
-                                        </template>
 
-                                        <template v-if="selectedType == 'editStatus'">
-                                            <div class="pb-2.5 border-b dark:border-gray-800">
-                                                <div class="flex gap-2.5 items-end">
-                                                    <x-admin::form.control-group class="flex-1 !mb-0">
-                                                        <x-admin::form.control-group.label>
-                                                            @lang('admin::app.catalog.products.edit.types.configurable.mass-edit.apply-to-all-status')
-                                                        </x-admin::form.control-group.label>
-                                                        @php
-                                                            $formattedOptions = [
-                                                                [
-                                                                    'id'    => 0,
-                                                                    'label' => trans('admin::app.catalog.products.edit.types.configurable.edit.enabled'),
-                                                                ], [
-                                                                    'id'    => 1,
-                                                                    'label' => trans('admin::app.catalog.products.edit.types.configurable.edit.disabled'),
-                                                                ]
-                                                            ];
-                                                        @endphp
-                                                        <div class="relative">
-                                                            <x-admin::form.control-group.control
-                                                                type="select"
-                                                                name="status"
-                                                                :options="json_encode($formattedOptions)"
-                                                                ::rules="{ required: true }"
-                                                                :label="trans('admin::app.catalog.products.edit.types.configurable.mass-edit.status')"
-                                                            >
-                                                            </x-admin::form.control-group.control>
-                                                        </div>
-                                                    </x-admin::form.control-group>
+                                            <x-admin::form.control-group.error control-name="name" />
+                                        </div>
+                                    </template>
 
-                                                    <button class="secondary-button">
-                                                        @lang('admin::app.catalog.products.edit.types.configurable.mass-edit.apply-to-all-btn')
-                                                    </button>
-                                                </div>
+                                    <template v-if="selectedType == 'editStatus'">
+                                        <div class="pb-2.5 border-b dark:border-gray-800">
+                                            <div class="flex gap-2.5 items-end">
+                                                <x-admin::form.control-group class="flex-1 !mb-0">
+                                                    <x-admin::form.control-group.label>
+                                                        @lang('admin::app.catalog.products.edit.types.configurable.mass-edit.apply-to-all-status')
+                                                    </x-admin::form.control-group.label>
+                                                    @php
+                                                        $formattedOptions = [
+                                                            [
+                                                                'id'    => 0,
+                                                                'label' => trans('admin::app.catalog.products.edit.types.configurable.edit.enabled'),
+                                                            ], [
+                                                                'id'    => 1,
+                                                                'label' => trans('admin::app.catalog.products.edit.types.configurable.edit.disabled'),
+                                                            ]
+                                                        ];
+                                                    @endphp
+                                                    <div class="relative">
+                                                        <x-admin::form.control-group.control
+                                                            type="select"
+                                                            name="status"
+                                                            :options="json_encode($formattedOptions)"
+                                                            ::rules="{ required: true }"
+                                                            :label="trans('admin::app.catalog.products.edit.types.configurable.mass-edit.status')"
+                                                        >
+                                                        </x-admin::form.control-group.control>
+                                                    </div>
+                                                </x-admin::form.control-group>
 
-                                                <x-admin::form.control-group.error control-name="name" />
+                                                <button class="secondary-button">
+                                                    @lang('admin::app.catalog.products.edit.types.configurable.mass-edit.apply-to-all-btn')
+                                                </button>
                                             </div>
-                                        </template>
-                                    </form>
-                                </x-admin::form>
 
-                                <div
-                                    class="py-4 border-b dark:border-cherry-800 last:border-b-0"
-                                    :class="{'grid grid-cols-2 gap-3 justify-between items-center': [
+                                            <x-admin::form.control-group.error control-name="name" />
+                                        </div>
+                                    </template>
+                                </form>
+                            </x-admin::form>
+
+                            <div
+                                class="py-4 border-b dark:border-cherry-800 last:border-b-0"
+                                :class="{'grid grid-cols-2 gap-3 justify-between items-center': [
                                         'editName', 'editSku',
                                 ].includes(selectedType), 'flex justify-between items-center' : [
                                     'editWeight', 'editPrices', 'editStatus',
                                 ].includes(selectedType)}"
-                                    v-for="variant in tempSelectedVariants"
-                                >
-                                    <div class="text-sm text-gray-800">
+                                v-for="variant in tempSelectedVariants"
+                            >
+                                <div class="text-sm text-gray-800">
                                     <span
                                         class="dark:text-white after:content-['_/_'] last:after:content-['']"
                                         v-for='(attribute, index) in superAttributes'
                                     >
                                         @{{ optionName(attribute, variant?.values?.common[attribute.code]) }}
                                     </span>
-                                    </div>
+                                </div>
 
-                                    <template v-if="selectedType == 'editPrices'">
-                                        <x-admin::form.control-group class="flex-1 mb-0 max-w-[115px]">
-                                            <div class="relative">
+                                <template v-if="selectedType == 'editPrices'">
+                                    <x-admin::form.control-group class="flex-1 mb-0 max-w-[115px]">
+                                        <div class="relative">
                                             <span class="absolute ltr:left-4 rtl:right-4 top-1/2 -translate-y-1/2 text-gray-500">
                                                 {{ core()->currencySymbol(core()->getBaseCurrencyCode()) }}
                                             </span>
 
-                                                <v-field
-                                                    type="text"
-                                                    class="flex w-full min-h-[39px] py-1.5 ltr:pl-8 rtl:pr-8 bg-white dark:bg-cherry-800 border dark:border-cherry-800 rounded-md text-sm text-gray-600 dark:text-gray-300 font-normal transition-all hover:border-gray-400"
-                                                    :class="[errors['variants[variant_' + variant.id + ']'] ? 'border border-red-500' : '']"
-                                                    :name="'variants[variant_' + variant.id + ']'"
-                                                    :rules="{required: true, decimal: true, min_value: 0}"
-                                                    v-model="variant.price"
-                                                    label="@lang('admin::app.catalog.products.edit.types.configurable.mass-edit.price')"
-                                                >
-                                                </v-field>
-                                            </div>
-
-                                            <v-error-message
+                                            <v-field
+                                                type="text"
+                                                class="flex w-full min-h-[39px] py-1.5 ltr:pl-8 rtl:pr-8 bg-white dark:bg-cherry-800 border dark:border-cherry-800 rounded-md text-sm text-gray-600 dark:text-gray-300 font-normal transition-all hover:border-gray-400"
+                                                :class="[errors['variants[variant_' + variant.id + ']'] ? 'border border-red-500' : '']"
                                                 :name="'variants[variant_' + variant.id + ']'"
-                                                v-slot="{ message }"
+                                                :rules="{required: true, decimal: true, min_value: 0}"
+                                                v-model="variant.price"
+                                                label="@lang('admin::app.catalog.products.edit.types.configurable.mass-edit.price')"
                                             >
-                                                <p
-                                                    class="mt-1 text-red-600 text-xs italic"
-                                                    v-text="message"
-                                                >
-                                                </p>
-                                            </v-error-message>
-                                        </x-admin::form.control-group>
-                                    </template>
+                                            </v-field>
+                                        </div>
 
-                                    <template v-if="selectedType == 'editWeight'">
-                                        <x-admin::form.control-group class="flex-1 mb-0 max-w-[115px]">
-                                            <div class="relative">
-                                                <v-field
-                                                    type="text"
-                                                    class="flex w-full min-h-[39px] py-1.5 ltr:pl-2.5 rtl:pr-2.5 bg-white dark:bg-cherry-800  border dark:border-cherry-800   rounded-md text-sm text-gray-600 dark:text-gray-300 font-normal transition-all hover:border-gray-400"
-                                                    :class="[errors['variants[variant_' + variant.id + ']'] ? 'border border-red-500' : '']"
-                                                    :name="'variants[variant_' + variant.id + ']'"
-                                                    ::rules="{ required: true, regex: /^([0-9]*[1-9][0-9]*(\.[0-9]+)?|[0]+\.[0-9]*[1-9][0-9]*)$/ }"
-                                                    v-model="variant.weight"
-                                                    label="@lang('admin::app.catalog.products.edit.types.configurable.mass-edit.weight')"
-                                                >
-                                                </v-field>
-                                            </div>
+                                        <v-error-message
+                                            :name="'variants[variant_' + variant.id + ']'"
+                                            v-slot="{ message }"
+                                        >
+                                            <p
+                                                class="mt-1 text-red-600 text-xs italic"
+                                                v-text="message"
+                                            >
+                                            </p>
+                                        </v-error-message>
+                                    </x-admin::form.control-group>
+                                </template>
 
-                                            <v-error-message
+                                <template v-if="selectedType == 'editWeight'">
+                                    <x-admin::form.control-group class="flex-1 mb-0 max-w-[115px]">
+                                        <div class="relative">
+                                            <v-field
+                                                type="text"
+                                                class="flex w-full min-h-[39px] py-1.5 ltr:pl-2.5 rtl:pr-2.5 bg-white dark:bg-cherry-800  border dark:border-cherry-800   rounded-md text-sm text-gray-600 dark:text-gray-300 font-normal transition-all hover:border-gray-400"
+                                                :class="[errors['variants[variant_' + variant.id + ']'] ? 'border border-red-500' : '']"
                                                 :name="'variants[variant_' + variant.id + ']'"
-                                                v-slot="{ message }"
+                                                ::rules="{ required: true, regex: /^([0-9]*[1-9][0-9]*(\.[0-9]+)?|[0]+\.[0-9]*[1-9][0-9]*)$/ }"
+                                                v-model="variant.weight"
+                                                label="@lang('admin::app.catalog.products.edit.types.configurable.mass-edit.weight')"
                                             >
-                                                <p
-                                                    class="mt-1 text-red-600 text-xs italic"
-                                                    v-text="message"
-                                                >
-                                                </p>
-                                            </v-error-message>
-                                        </x-admin::form.control-group>
-                                    </template>
+                                            </v-field>
+                                        </div>
 
-                                    <template v-if="selectedType == 'editStatus'">
-                                        <x-admin::form.control-group class="flex-1 mb-0 max-w-[115px]">
-                                            <div class="relative">
-                                                <v-field
-                                                    as="select"
-                                                    class="custom-select flex w-full min-h-[39px] py-1.5 px-3 bg-white dark:bg-cherry-800 border dark:border-cherry-800 rounded-md text-sm text-gray-600 dark:text-gray-300 font-normal transition-all hover:border-gray-400"
-                                                    :class="[errors['variants[variant_' + variant.id + ']'] ? 'border border-red-500' : '']"
-                                                    :name="'variants[variant_' + variant.id + ']'"
-                                                    ::rules="{ required: true, regex: /^([0-9]*[1-9][0-9]*(\.[0-9]+)?|[0]+\.[0-9]*[1-9][0-9]*)$/ }"
-                                                    v-model="variant.status"
-                                                    label="@lang('admin::app.catalog.products.edit.types.configurable.edit.enabled')"
-                                                >
-                                                    <option value="1">
-                                                        @lang('admin::app.catalog.products.edit.types.configurable.edit.enabled')
-                                                    </option>
+                                        <v-error-message
+                                            :name="'variants[variant_' + variant.id + ']'"
+                                            v-slot="{ message }"
+                                        >
+                                            <p
+                                                class="mt-1 text-red-600 text-xs italic"
+                                                v-text="message"
+                                            >
+                                            </p>
+                                        </v-error-message>
+                                    </x-admin::form.control-group>
+                                </template>
 
-                                                    <option value="0">
-                                                        @lang('admin::app.catalog.products.edit.types.configurable.edit.disabled')
-                                                    </option>
-                                                </v-field>
-                                            </div>
-
-                                            <v-error-message
+                                <template v-if="selectedType == 'editStatus'">
+                                    <x-admin::form.control-group class="flex-1 mb-0 max-w-[115px]">
+                                        <div class="relative">
+                                            <v-field
+                                                as="select"
+                                                class="custom-select flex w-full min-h-[39px] py-1.5 px-3 bg-white dark:bg-cherry-800 border dark:border-cherry-800 rounded-md text-sm text-gray-600 dark:text-gray-300 font-normal transition-all hover:border-gray-400"
+                                                :class="[errors['variants[variant_' + variant.id + ']'] ? 'border border-red-500' : '']"
                                                 :name="'variants[variant_' + variant.id + ']'"
-                                                v-slot="{ message }"
+                                                ::rules="{ required: true, regex: /^([0-9]*[1-9][0-9]*(\.[0-9]+)?|[0]+\.[0-9]*[1-9][0-9]*)$/ }"
+                                                v-model="variant.status"
+                                                label="@lang('admin::app.catalog.products.edit.types.configurable.edit.enabled')"
                                             >
-                                                <p
-                                                    class="mt-1 text-red-600 text-xs italic"
-                                                    v-text="message"
-                                                >
-                                                </p>
-                                            </v-error-message>
-                                        </x-admin::form.control-group>
-                                    </template>
+                                                <option value="1">
+                                                    @lang('admin::app.catalog.products.edit.types.configurable.edit.enabled')
+                                                </option>
 
-                                    <template v-if="selectedType == 'editName'">
-                                        <x-admin::form.control-group
-                                            class="flex-1 mb-0"
-                                            ::class="{
+                                                <option value="0">
+                                                    @lang('admin::app.catalog.products.edit.types.configurable.edit.disabled')
+                                                </option>
+                                            </v-field>
+                                        </div>
+
+                                        <v-error-message
+                                            :name="'variants[variant_' + variant.id + ']'"
+                                            v-slot="{ message }"
+                                        >
+                                            <p
+                                                class="mt-1 text-red-600 text-xs italic"
+                                                v-text="message"
+                                            >
+                                            </p>
+                                        </v-error-message>
+                                    </x-admin::form.control-group>
+                                </template>
+
+                                <template v-if="selectedType == 'editName'">
+                                    <x-admin::form.control-group
+                                        class="flex-1 mb-0"
+                                        ::class="{
                                             'max-w-[115px]' : selectedType !== 'editName',
                                             '!mb-0': selectedType === 'editName'
                                         }"
-                                        >
-                                            <div class="relative">
-                                                <v-field
-                                                    type="text"
-                                                    class="flex w-full min-h-[39px] py-1.5 ltr:pl-2.5 rtl:pr-2.5 bg-white dark:bg-cherry-800  border dark:border-cherry-800   rounded-md text-sm text-gray-600 dark:text-gray-300 font-normal transition-all hover:border-gray-400"
-                                                    :class="[errors['variants[variant_' + variant.id + ']'] ? 'border border-red-500' : '']"
-                                                    :name="'variants[variant_' + variant.id + ']'"
-                                                    ::rules="{ required: true, regex: /^([0-9]*[1-9][0-9]*(\.[0-9]+)?|[0]+\.[0-9]*[1-9][0-9]*)$/ }"
-                                                    v-model="variant.name"
-                                                    label="@lang('admin::app.catalog.products.edit.types.configurable.edit.variant-name')"
-                                                >
-                                                </v-field>
-                                            </div>
-
-                                            <v-error-message
+                                    >
+                                        <div class="relative">
+                                            <v-field
+                                                type="text"
+                                                class="flex w-full min-h-[39px] py-1.5 ltr:pl-2.5 rtl:pr-2.5 bg-white dark:bg-cherry-800  border dark:border-cherry-800   rounded-md text-sm text-gray-600 dark:text-gray-300 font-normal transition-all hover:border-gray-400"
+                                                :class="[errors['variants[variant_' + variant.id + ']'] ? 'border border-red-500' : '']"
                                                 :name="'variants[variant_' + variant.id + ']'"
-                                                v-slot="{ message }"
+                                                ::rules="{ required: true, regex: /^([0-9]*[1-9][0-9]*(\.[0-9]+)?|[0]+\.[0-9]*[1-9][0-9]*)$/ }"
+                                                v-model="variant.name"
+                                                label="@lang('admin::app.catalog.products.edit.types.configurable.edit.variant-name')"
                                             >
-                                                <p
-                                                    class="mt-1 text-red-600 text-xs italic"
-                                                    v-text="message"
-                                                >
-                                                </p>
-                                            </v-error-message>
-                                        </x-admin::form.control-group>
-                                    </template>
+                                            </v-field>
+                                        </div>
 
-                                    <template v-if="selectedType == 'editSku'">
-                                        <x-admin::form.control-group
-                                            class="flex-1 mb-0"
-                                            ::class="{
+                                        <v-error-message
+                                            :name="'variants[variant_' + variant.id + ']'"
+                                            v-slot="{ message }"
+                                        >
+                                            <p
+                                                class="mt-1 text-red-600 text-xs italic"
+                                                v-text="message"
+                                            >
+                                            </p>
+                                        </v-error-message>
+                                    </x-admin::form.control-group>
+                                </template>
+
+                                <template v-if="selectedType == 'editSku'">
+                                    <x-admin::form.control-group
+                                        class="flex-1 mb-0"
+                                        ::class="{
                                             'max-w-[115px]' : selectedType !== 'editSku',
                                             '!mb-0': selectedType === 'editSku'
                                         }"
-                                        >
-                                            <div class="relative">
-                                                <v-field
-                                                    type="text"
-                                                    class="flex w-full min-h-[39px] py-1.5 ltr:pl-2.5 rtl:pr-2.5 bg-white dark:bg-cherry-800  border dark:border-cherry-800   rounded-md text-sm text-gray-600 dark:text-gray-300 font-normal transition-all hover:border-gray-400"
-                                                    :class="[errors['variants[variant_' + variant.id + ']'] ? 'border border-red-500' : '']"
-                                                    :name="'variants[variant_' + variant.id + ']'"
-                                                    ::rules="{ required: true, regex: /^([0-9]*[1-9][0-9]*(\.[0-9]+)?|[0]+\.[0-9]*[1-9][0-9]*)$/ }"
-                                                    v-model="variant.sku"
-                                                    label="@lang('admin::app.catalog.products.edit.types.configurable.edit.variant-sku')"
-                                                    v-slugify
-                                                >
-                                                </v-field>
-                                            </div>
-
-                                            <v-error-message
+                                    >
+                                        <div class="relative">
+                                            <v-field
+                                                type="text"
+                                                class="flex w-full min-h-[39px] py-1.5 ltr:pl-2.5 rtl:pr-2.5 bg-white dark:bg-cherry-800  border dark:border-cherry-800   rounded-md text-sm text-gray-600 dark:text-gray-300 font-normal transition-all hover:border-gray-400"
+                                                :class="[errors['variants[variant_' + variant.id + ']'] ? 'border border-red-500' : '']"
                                                 :name="'variants[variant_' + variant.id + ']'"
-                                                v-slot="{ message }"
+                                                ::rules="{ required: true, regex: /^([0-9]*[1-9][0-9]*(\.[0-9]+)?|[0]+\.[0-9]*[1-9][0-9]*)$/ }"
+                                                v-model="variant.sku"
+                                                label="@lang('admin::app.catalog.products.edit.types.configurable.edit.variant-sku')"
+                                                v-slugify
                                             >
-                                                <p
-                                                    class="mt-1 text-red-600 text-xs italic"
-                                                    v-text="message"
-                                                >
-                                                </p>
-                                            </v-error-message>
-                                        </x-admin::form.control-group>
-                                    </template>
+                                            </v-field>
+                                        </div>
 
-                                    <template v-if="selectedType == 'addImages'">
-                                        <v-media-images
-                                            name="images"
-                                            class="mt-2.5"
-                                            v-bind:allow-multiple="true"
-                                            :uploaded-images="variant.temp_images"
+                                        <v-error-message
+                                            :name="'variants[variant_' + variant.id + ']'"
+                                            v-slot="{ message }"
                                         >
-                                        </v-media-images>
-                                    </template>
-                                </div>
-                                </x-slot>
+                                            <p
+                                                class="mt-1 text-red-600 text-xs italic"
+                                                v-text="message"
+                                            >
+                                            </p>
+                                        </v-error-message>
+                                    </x-admin::form.control-group>
+                                </template>
+
+                                <template v-if="selectedType == 'addImages'">
+                                    <v-media-images
+                                        name="images"
+                                        class="mt-2.5"
+                                        v-bind:allow-multiple="true"
+                                        :uploaded-images="variant.temp_images"
+                                    >
+                                    </v-media-images>
+                                </template>
+                            </div>
+                        </x-slot>
                     </x-admin::drawer>
                 </form>
             </x-admin::form>
@@ -693,91 +693,91 @@
                                                 @lang('admin::app.catalog.products.edit.types.configurable.edit.save-btn')
                                             </button>
                                         </div>
-                                        </x-slot>
+                                    </x-slot>
 
-                                        <!-- Drawer Content -->
-                                        <x-slot:content>
+                                    <!-- Drawer Content -->
+                                    <x-slot:content>
+                                        <x-admin::form.control-group.control
+                                            type="hidden"
+                                            name="id"
+                                            ::value="variant.id"
+                                        />
+                                        <x-admin::form.control-group>
+                                            <x-admin::form.control-group.label class="required">
+                                                @lang('admin::app.catalog.products.edit.types.configurable.edit.sku')
+                                            </x-admin::form.control-group.label>
+
                                             <x-admin::form.control-group.control
-                                                type="hidden"
-                                                name="id"
-                                                ::value="variant.id"
+                                                type="text"
+                                                name="sku"
+                                                rules="required"
+                                                ::value="variant.sku"
+                                                :label="trans('admin::app.catalog.products.edit.types.configurable.edit.sku')"
                                             />
-                                            <x-admin::form.control-group>
-                                                <x-admin::form.control-group.label class="required">
-                                                    @lang('admin::app.catalog.products.edit.types.configurable.edit.sku')
-                                                </x-admin::form.control-group.label>
 
-                                                <x-admin::form.control-group.control
-                                                    type="text"
-                                                    name="sku"
-                                                    rules="required"
-                                                    ::value="variant.sku"
-                                                    :label="trans('admin::app.catalog.products.edit.types.configurable.edit.sku')"
-                                                />
-
-                                                <x-admin::form.control-group.error control-name="sku" />
-                                            </x-admin::form.control-group>
+                                            <x-admin::form.control-group.error control-name="sku" />
+                                        </x-admin::form.control-group>
 
 
-                                            <x-admin::form.control-group
-                                                v-for='(attribute, index) in attributes'
+                                    <x-admin::form.control-group
+                                        v-for='(attribute, index) in attributes'
+                                    >
+                                        <x-admin::form.control-group.label class="required">
+                                            @{{ attribute.name }}
+                                        </x-admin::form.control-group.label>
+
+                                        <template v-if="attribute.type === 'select'">
+                                            <x-admin::form.control-group.control
+                                                type="select"
+                                                ::id="attribute.code"
+                                                ::name="attribute.code"
+                                                rules="required"
+                                                ::label="attribute.name"
+                                                ::value="variant?.values?.common[attribute.code] ? {code: variant?.values?.common[attribute.code], label: optionName(attribute, variant?.values?.common[attribute.code])} : null"
+                                                track-by="code"
+                                                async="true"
+                                                entity-name="attribute"
+                                                ::attribute-id="attribute.id"
                                             >
-                                                <x-admin::form.control-group.label class="required">
-                                                    @{{ attribute.name }}
-                                                </x-admin::form.control-group.label>
+                                            </x-admin::form.control-group.control>
+                                        </template>
+                                        <template v-else>
+                                            <x-admin::form.control-group.control
+                                                ::id="attribute.code"
+                                                ::name="attribute.code"
+                                                rules="required"
+                                                ::label="attribute.name"
+                                                ::value="optionName(attribute, variant?.values?.common[attribute.code])"
+                                                entity-name="attribute"
+                                                ::attribute-id="attribute.id"
+                                            />
+                                        </template>
 
-                                                <template v-if="attribute.type === 'select'">
-                                                    <x-admin::form.control-group.control
-                                                        type="select"
-                                                        ::id="attribute.code"
-                                                        ::name="attribute.code"
-                                                        rules="required"
-                                                        ::label="attribute.name"
-                                                        ::value="variant?.values?.common[attribute.code] ? {code: variant?.values?.common[attribute.code], label: optionName(attribute, variant?.values?.common[attribute.code])} : null"
-                                                        track-by="code"
-                                                        async="true"
-                                                        entity-name="attribute"
-                                                        ::attribute-id="attribute.id"
-                                                    >
-                                                    </x-admin::form.control-group.control>
-                                                </template>
-                                                <template v-else>
-                                                    <x-admin::form.control-group.control
-                                                        ::id="attribute.code"
-                                                        ::name="attribute.code"
-                                                        rules="required"
-                                                        ::label="attribute.name"
-                                                        ::value="optionName(attribute, variant?.values?.common[attribute.code])"
-                                                        entity-name="attribute"
-                                                        ::attribute-id="attribute.id"
-                                                    />
-                                                </template>
-
-                                                <v-error-message :name="attribute.code" v-slot="{ message }">
-                                                    <p
-                                                        class="mt-1 text-red-600 text-xs italic"
-                                                        v-text="message"
-                                                    >
-                                                    </p>
-                                                </v-error-message>
-                                            </x-admin::form.control-group>
-
-                                            <!-- Actions -->
-                                            <div
-                                                class="mt-2.5 text-sm text-gray-800 dark:text-white font-semibold"
-                                                v-if="typeof variant.id !== 'string'"
+                                        <v-error-message :name="attribute.code" v-slot="{ message }">
+                                            <p
+                                                class="mt-1 text-red-600 text-xs italic"
+                                                v-text="message"
                                             >
-                                                @lang('admin::app.catalog.products.edit.types.configurable.edit.edit-info')
+                                            </p>
+                                        </v-error-message>
+                                    </x-admin::form.control-group>
 
-                                                <a
-                                                    :href="'{{ route('admin.catalog.products.edit', ':id') }}'.replace(':id', variant.id)"
-                                                    class="inline-block text-violet-700 hover:text-violet-700 hover:underline"
-                                                    target="_blank"
-                                                >
-                                                    @lang('admin::app.catalog.products.edit.types.configurable.edit.edit-link-title')
-                                                </a>
-                                            </div>
-                                            </x-slot>
+                                        <!-- Actions -->
+                                        <div
+                                            class="mt-2.5 text-sm text-gray-800 dark:text-white font-semibold"
+                                            v-if="typeof variant.id !== 'string'"
+                                        >
+                                            @lang('admin::app.catalog.products.edit.types.configurable.edit.edit-info')
+
+                                            <a
+                                                :href="'{{ route('admin.catalog.products.edit', ':id') }}'.replace(':id', variant.id)"
+                                                class="inline-block text-violet-700 hover:text-violet-700 hover:underline"
+                                                target="_blank"
+                                            >
+                                                @lang('admin::app.catalog.products.edit.types.configurable.edit.edit-link-title')
+                                            </a>
+                                        </div>
+                                    </x-slot>
                                 </x-admin::drawer>
                             </form>
                         </x-admin::form>
@@ -862,8 +862,6 @@
                     if (! isUnique) {
                         return;
                     }
-
-                    console.log(params);
 
                     const optionIds = Object.values(params);
 
