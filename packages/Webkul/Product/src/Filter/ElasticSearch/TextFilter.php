@@ -55,7 +55,7 @@ class TextFilter extends AbstractElasticSearchAttributeFilter
                 $clause = [
                     'query_string' => [
                         'default_field'    => $attributePath,
-                        'query'            => '"*'.implode('*" OR "*', $escapedQuery).'*"',
+                            'query' => implode(' OR ', array_map(fn($term) => "*{$term}*", $escapedQuery)),
                     ],
                 ];
 
@@ -75,5 +75,10 @@ class TextFilter extends AbstractElasticSearchAttributeFilter
         }
 
         return $this;
+    }
+
+    protected function getScopedAttributePath($attribute, ?string $locale = null, ?string $channel = null)
+    {
+        return sprintf('values.%s.%s', $attribute->getScope($locale, $channel), $attribute->code.'-'.$attribute->type. '.keyword');
     }
 }
