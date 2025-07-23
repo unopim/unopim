@@ -51,11 +51,17 @@ class TextFilter extends AbstractElasticSearchAttributeFilter
                 break;
 
             case FilterOperators::CONTAINS:
-                $escapedQuery = preg_replace('/([+\-&|!(){}[\]^"~*?:\\/])/', '\\\$1', $value);
+                $escapedQuery = collect((array) $value)->map(function ($q) {
+
+                    $q = preg_replace('/([+\-&|!(){}\[\]^"~*?:\\\\\/])/', '\\\\$1', $q);
+
+                    return str_contains($q, ' ') ? '"*'.$q.'*"' : '*'.$q.'*';
+                })->implode(' OR ');
+
                 $clause = [
                     'query_string' => [
-                        'default_field'    => $attributePath,
-                            'query' => implode(' OR ', array_map(fn($term) => "*{$term}*", $escapedQuery)),
+                        'default_field' => $attributePath,
+                        'query'         => $escapedQuery,
                     ],
                 ];
 
@@ -75,10 +81,5 @@ class TextFilter extends AbstractElasticSearchAttributeFilter
         }
 
         return $this;
-    }
-
-    protected function getScopedAttributePath($attribute, ?string $locale = null, ?string $channel = null)
-    {
-        return sprintf('values.%s.%s', $attribute->getScope($locale, $channel), $attribute->code.'-'.$attribute->type. '.keyword');
     }
 }

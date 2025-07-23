@@ -58,7 +58,9 @@ class Product
 
             $productArray['status'] = ! isset($productArray['status']) ? 1 : $productArray['status'];
 
-            $productArray['values'] = $this->productIndexingNormalizer->normalize($productArray['values']);
+            if (isset($productArray['values'])) {
+                $productArray['values'] = $this->productIndexingNormalizer->normalize($productArray['values']);
+            }
 
             try {
                 ElasticSearch::index([
@@ -80,7 +82,9 @@ class Product
             try {
                 $productArray = $product->toArray();
 
-                $productArray['values'] = $this->productIndexingNormalizer->normalize($productArray['values']);
+                if (isset($productArray['values'])) {
+                    $productArray['values'] = $this->productIndexingNormalizer->normalize($productArray['values']);
+                }
 
                 ElasticSearch::index([
                     'index' => strtolower($this->indexPrefix.'_products'),
