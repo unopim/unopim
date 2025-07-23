@@ -51,12 +51,13 @@ class TextFilter extends AbstractElasticSearchAttributeFilter
                 break;
 
             case FilterOperators::CONTAINS:
-                $escapedQuery = collect((array) $value)->map(function ($q) {
-
+                $escapedQueryArray = array_map(function ($q) {
                     $q = preg_replace('/([+\-&|!(){}\[\]^"~*?:\\\\\/])/', '\\\\$1', $q);
 
                     return str_contains($q, ' ') ? '"*'.$q.'*"' : '*'.$q.'*';
-                })->implode(' OR ');
+                }, (array) $value);
+
+                $escapedQuery = implode(' OR ', $escapedQueryArray);
 
                 $clause = [
                     'query_string' => [

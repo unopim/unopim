@@ -281,7 +281,7 @@ class CategoryDataGrid extends DataGrid
                         'should' => [
                             [
                                 'wildcard' => [
-                                    'additional_data.locale_specific.'.$localeCode.'.name' => '*'.$values.'*',
+                                    'additional_data.locale_specific.'.$localeCode.'.name.keyword' => '*'.$values.'*',
                                 ],
                             ], [
                                 'wildcard' => [
