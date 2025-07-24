@@ -16,6 +16,16 @@ use Webkul\Product\Repositories\ProductRepository;
 
 class AttributeController extends Controller
 {
+    public const AI_TRANSLATE_ENABLED = '1';
+
+    public const AI_TRANSLATE_DISABLED = '0';
+
+    public const VALUE_PER_LOCALE_ENABLED = 1;
+
+    public const TEXT = 'text';
+
+    public const TEXTAREA = 'textarea';
+
     /**
      * Create a new controller instance.
      *
@@ -64,8 +74,8 @@ class AttributeController extends Controller
         ]);
 
         $requestData = request()->all();
-        $requestData['ai_translate'] = (isset($requestData['value_per_locale']) && $requestData['value_per_locale'] == 1 &&
-            in_array($requestData['type'], ['text', 'textarea'])) ? '1' : '0';
+        $requestData['ai_translate'] = (isset($requestData['value_per_locale']) && $requestData['value_per_locale'] == self::VALUE_PER_LOCALE_ENABLED &&
+            in_array($requestData['type'], [self::TEXT, self::TEXTAREA])) ? self::AI_TRANSLATE_ENABLED : self::AI_TRANSLATE_DISABLED;
 
         Event::dispatch('catalog.attribute.create.before');
 
@@ -106,7 +116,7 @@ class AttributeController extends Controller
 
         $requestData = request()->except(['type', 'code', 'value_per_locale', 'value_per_channel', 'is_unique']);
         if (! array_key_exists('ai_translate', $requestData)) {
-            $requestData['ai_translate'] = '0';
+            $requestData['ai_translate'] = self::AI_TRANSLATE_DISABLED;
         }
 
         Event::dispatch('catalog.attribute.update.before', $id);
