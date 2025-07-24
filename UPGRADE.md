@@ -121,6 +121,16 @@ sudo supervisorctl restart unopim-worker
 
 ---
 
+### 8. **Rebuild Elasticsearch Indexes**
+
+If Elasticsearch service is running, you must clear and rebuild the indexes to reflect updated structures or data:
+
+```bash
+php artisan unopim:elastic:clear   # Clear existing Elasticsearch data
+php artisan unopim:product:index   # Re-index all products
+php artisan unopim:category:index  # Re-index all categories
+
+
 ## ✅ Upgrade Complete!
 
 After following these steps, your Unopim should be successfully upgraded. Test your application thoroughly to make sure everything works as expected.
