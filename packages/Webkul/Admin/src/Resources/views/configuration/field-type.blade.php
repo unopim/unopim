@@ -14,7 +14,7 @@
     $channelLocaleInfo = $coreConfigRepository->getChannelLocaleInfo($field, $currentChannel->code, $currentLocale->code);
 
     $field['options'] = isset($field['repository']) ? ($repositoryOptions ?? []) : ($field['options'] ?? []);
-    
+
     $value = core()->getConfigData($nameKey) ?? '';
 @endphp
 
@@ -69,7 +69,7 @@
                     type="password"
                     ::id="name"
                     ::name="name"
-                    ::value="value"
+                    ::value="maskedPassword"
                     ::rules="validations"
                     ::label="label"
                     @input="emitChangeEvent($event.target.value, name)"
@@ -191,10 +191,11 @@
                 options() {
                     return JSON.stringify(this.field.options);
                 },
-            },
 
-            mounted() {
-                // console.log(this.options, 'options');
+                maskedPassword() {
+                    return this.value ? '*'.repeat(this.value.length) : '';
+                }
+
             },
 
             methods: {
@@ -205,4 +206,3 @@
         });
 </script>
 @endPushOnce
- 
