@@ -85,6 +85,12 @@
                     type: String,
                     required: 'en_US',
                 },
+
+                expandedBranch: {
+                    type: [Array, Object],
+                    required: false,
+                    default: () => ([])
+                },
             },
 
             data() {
@@ -92,11 +98,19 @@
                     formattedItems: null,
 
                     formattedValues: null,
+
+                    formattedExpandedBranch: null,
                 };
             },
 
             created() {
                 this.formattedItems = this.getInitialFormattedItems();
+
+                const expansion = typeof this.expandedBranch === 'string'
+                    ? JSON.parse(this.expandedBranch)
+                    : this.expandedBranch;
+
+                this.formattedExpandedBranch = expansion;
 
                 this.formattedValues = this.getInitialFormattedValues();
             },
@@ -198,9 +212,16 @@
 
                 generateTreeItemComponents(items, level = 1) {
                     let treeItems = [];
+                    let expandedBranch = this.formattedExpandedBranch[0];
 
                     for (let key in items) {
-                        let hasChildren = Object.entries(items[key][this.childrenField]).length > 0;
+
+                        if (items[key]['id'] == expandedBranch['id']) {
+                            items[key]['children'] = expandedBranch['children']
+                        }
+
+                        let hasChildren = (items[key]['_rgt'] - items[key]['_lft']) > 0 ;
+
                         let label = this.getLabel(items[key]);
 
                         let hasSelectedValue = this.formattedValues.filter(value => value == items[key][this.valueField]).length > 0 || this.countSelectedChildren(items[key]);

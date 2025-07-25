@@ -101,13 +101,15 @@ class CategoryController extends Controller
     {
         $category = $this->categoryRepository->findOrFail($id);
 
-        $categories = $this->categoryRepository->getCategoryTreeWithoutDescendant($id);
+        $categories = $this->categoryRepository->getRootCategories($id);
+
+        $branchToParent = $this->categoryRepository->getTreeBranchToParent($id);
 
         $leftCategoryFields = $this->categoryFieldRepository->getActiveCategoryFieldsBySection('left');
 
         $rightCategoryFields = $this->categoryFieldRepository->getActiveCategoryFieldsBySection('right');
 
-        return view('admin::catalog.categories.edit', compact('category', 'categories', 'leftCategoryFields', 'rightCategoryFields'));
+        return view('admin::catalog.categories.edit', compact('category', 'branchToParent', 'categories', 'leftCategoryFields', 'rightCategoryFields'));
     }
 
     /**

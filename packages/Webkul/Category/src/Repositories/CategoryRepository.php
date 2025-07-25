@@ -129,6 +129,36 @@ class CategoryRepository extends Repository
             : $this->model->get()->toTree();
     }
 
+    public function getTreeBranchToParent(int $id)
+    {
+        $category = $this->find($id);
+        $parent = $category->parent;
+
+        if (! $parent) {
+            return collect();
+        }
+
+        $ancestors = $this->model->ancestorsAndSelf($parent->id);
+
+        $ancestorIds = $ancestors->pluck('id')->toArray();
+
+        $siblingMap = $this->model
+            ->whereIn('parent_id', $ancestorIds)
+            ->where('id', '!=', $id)
+            ->get()
+            ->groupBy('parent_id');
+
+        $allIds = collect($ancestorIds)
+            ->merge($siblingMap->flatten()->pluck('id'))
+            ->unique()
+            ->values();
+
+        return $this->model
+            ->whereIn('id', $allIds)
+            ->get()
+            ->toTree();
+    }
+
     /**
      * Get root categories.
      *
@@ -136,7 +166,9 @@ class CategoryRepository extends Repository
      */
     public function getRootCategories()
     {
-        return $this->getModel()->where('parent_id', null)->get();
+        return $this->getModel()
+            ->whereNull('parent_id')
+            ->get();
     }
 
     /**
@@ -146,7 +178,7 @@ class CategoryRepository extends Repository
      */
     public function getChildCategories($parentId)
     {
-        return $this->getModel()->where('parent_id', $parentId)->get();
+        return $this->getModel()->where('parent_id', $parentId)->withCount('children')->get();
     }
 
     /**
