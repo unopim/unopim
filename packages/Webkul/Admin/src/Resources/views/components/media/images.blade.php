@@ -7,8 +7,16 @@
     'height'           => '120px'
 ])
 
+@php
+    preg_match('/\[(\w+)\]$/', $name, $matches);
+    $fieldCode = $matches[1] ?? $name;
+    $refId = 'media_images_' . $fieldCode;
+@endphp
+
 <v-media-images
     name="{{ $name }}"
+    ref="{{ $refId }}"
+    field-code="{{ $fieldCode }}"
     v-bind:allow-multiple="{{ $allowMultiple ? true : false }}"
     v-bind:show-placeholders="{{ $showPlaceholders ? 'true' : 'false' }}"
     :uploaded-images='{{ json_encode($uploadedImages) }}'
@@ -93,6 +101,7 @@
                             :width="width"
                             :height="height"
                             @onRemove="remove($event)"
+                            @triggerEdit="handleAIEdit($event)"
                         >
                         </v-media-image-item>
                     </template>
@@ -263,7 +272,7 @@
                                         <x-admin::form.control-group.error control-name="prompt" />
                                     </x-admin::form.control-group>
 
-                                    <x-admin::form.control-group v-if="ai.model == 'dall-e-2'">
+                                    <x-admin::form.control-group v-if="ai.model == 'dall-e-2' || ai.model == 'gpt-image-1'">
                                         <x-admin::form.control-group.label class="required">
                                             @lang('admin::app.components.media.images.ai-generation.number-of-images')
                                         </x-admin::form.control-group.label>
@@ -279,7 +288,7 @@
                                         <x-admin::form.control-group.error control-name="n" />
                                     </x-admin::form.control-group>
 
-                                    <x-admin::form.control-group>
+                                    <x-admin::form.control-group v-if="ai.model != 'gemini-2.0'">
                                         <x-admin::form.control-group.label class="required">
                                             @lang('admin::app.components.media.images.ai-generation.size')
                                         </x-admin::form.control-group.label>
@@ -445,6 +454,64 @@
                 </x-slot>
             </x-admin::modal>
 
+
+            <x-admin::modal ref="editImageOptionsModal">
+
+                <x-slot:header>
+                    <p class="grid text-base text-gray-800 dark:text-gray-300 font-semibold text-center">
+                        @lang('admin::app.components.media.images.add-image-btn')
+                    </p>
+                </x-slot>
+
+                <x-slot:content>
+
+                    <div class="mb-4">
+                        <label
+                            class="cursor-pointer mb-2"
+                            @click="triggerAIEdit"
+                        >
+                            <div class="flex flex-col">
+                                <div class="flex gap-1 p-3 border rounded-md text-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" class="dark:invert">
+                                        <g clip-path="url(#clip0_3148_2242)"> <path fill-rule="evenodd" clip-rule="evenodd" d="M12.1484 9.31989L9.31995 12.1483L19.9265 22.7549L22.755 19.9265L12.1484 9.31989ZM12.1484 10.7341L10.7342 12.1483L13.5626 14.9767L14.9768 13.5625L12.1484 10.7341Z" fill="#27272A"/>
+                                            <path d="M11.0877 3.30949L13.5625 4.44748L16.0374 3.30949L14.8994 5.78436L16.0374 8.25924L13.5625 7.12124L11.0877 8.25924L12.2257 5.78436L11.0877 3.30949Z" fill="#27272A"/>
+                                            <path d="M2.39219 2.39217L5.78438 3.95197L9.17656 2.39217L7.61677 5.78436L9.17656 9.17655L5.78438 7.61676L2.39219 9.17655L3.95198 5.78436L2.39219 2.39217Z" fill="#27272A"/>
+                                            <path d="M3.30947 11.0877L5.78434 12.2257L8.25922 11.0877L7.12122 13.5626L8.25922 16.0374L5.78434 14.8994L3.30947 16.0374L4.44746 13.5626L3.30947 11.0877Z" fill="#27272A"/>
+                                        </g>
+                                        <defs>
+                                            <clipPath id="clip0_3148_2242">
+                                                <rect width="24" height="24"/>
+                                            </clipPath>
+                                        </defs>
+                                    </svg>
+
+                                    <span class="text-gray-600 dark:text-slate-50 text-sm font-semibold">@lang('admin::app.components.media.images.generate-with-ai')</span>
+                                </div>
+
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="cursor-pointer mb-2" :for="$.uid + '_imageInput_' + index">
+                            <div class="flex gap-1 p-3 border rounded-md text-sm">
+                                <span class="icon-export text-xl"></span>
+                                <span class="text-sm font-semibold text-gray-600 dark:text-slate-50">
+                                    @lang('admin::app.components.media.images.upload-from-device')
+                                </span>
+                            </div>
+                        </label>
+                    </div>
+                </x-slot>
+
+                <x-slot:footer>
+                    <a href="#" @click="$refs.editImageOptionsModal.close()" class="secondary-button">
+                        @lang('admin::app.components.media.images.cancel')
+                    </a>
+                </x-slot>
+            </x-admin::modal>
+
+
             <div class="flex flex-col justify-between invisible w-full p-3 bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 transition-all group-hover:visible">
                 <!-- Image Name -->
                 <p class="text-xs text-gray-600 dark:text-gray-300 font-semibold break-all"></p>
@@ -459,10 +526,11 @@
                         class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
                         @click="preview"
                     ></span>
-                    <label
+
+                    <span
                         class="icon-edit text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
-                        :for="$.uid + '_imageInput_' + index"
-                    ></label>
+                        @click="$refs.editImageOptionsModal.open()"
+                    ></span>
 
                     <input type="hidden" :name="name + '[' + image.id + ']'" v-if="allowMultiple && ! image.is_new && image.value" :value="image.value"/>
 
@@ -546,6 +614,8 @@
                         quality: 'standard',
 
                         images: [],
+
+                        baseImage: null,
                     },
 
                     aiModels: [],
@@ -584,9 +654,28 @@
 
             mounted() {
                 this.images = this.uploadedImages;
+
             },
 
             methods: {
+
+                handleAIEdit(image) {
+
+                    this.ai.baseImage = image.file || null;
+
+                    if (!this.ai.baseImage && image.url?.startsWith('http')) {
+                        fetch(image.url)
+                            .then(res => res.blob())
+                            .then(blob => {
+                                this.ai.baseImage = new File([blob], 'uploaded-image.png', { type: blob.type });
+                                this.toggleImageAIModal();
+                            });
+                    } else {
+                        this.toggleImageAIModal();
+                    }
+                },
+
+
                 selectImage(image, allowMultiple) {
                     if (allowMultiple) {
                         image.selected =!image.selected;
@@ -597,6 +686,7 @@
                 },
 
                 add() {
+
                     let imageInput = this.$refs[this.$.uid + '_imageInput'];
 
                     if (imageInput.files == undefined) {
@@ -634,6 +724,8 @@
                 },
 
                 toggleImageAIModal() {
+
+
                     this.$refs.magicAIImageModal.open();
                     this.$nextTick(() => {
                         if (this.$refs.imagePromptInput) {
@@ -659,7 +751,7 @@
                     try {
                         const response = await axios.get("{{ route('admin.magic_ai.available_model') }}");
 
-                        this.aiModels = response.data.models.filter(model => model.id === 'dall-e-2' || model.id === 'dall-e-3');
+                        this.aiModels = response.data.models.filter(model => model.id === 'dall-e-2' || model.id === 'dall-e-3' ||  model.id === 'gemini-2.0' || model.id === 'gpt-image-1'  );
                         this.ai.model = this.aiModels[0] ? this.aiModels[0].id : '';
                     } catch (error) {
                         console.error("Failed to fetch AI models:", error);
@@ -674,6 +766,7 @@
 
                     const response = await fetch(`{{ route('admin.magic_ai.suggestion_values') }}?query=${text}&&entity_name=${this.entityName}&&locale={{ core()->getRequestedLocaleCode() }}`);
                     const data = await response.json();
+
                     this.suggestionValues = data;
 
                     cb(this.suggestionValues);
@@ -701,46 +794,118 @@
                     }
                 },
 
-                generate(params, { setErrors }) {
+                async generate(params, { setErrors }) {
                     this.isLoading = true;
 
-                    let self = this;
+                    const formData = new FormData();
+                    let prompt = this.ai.prompt || '';
+                    let baseImageSet = false;
 
-                    params.resource_id = this.resourceId;
-                    params.resource_type = this.getResourceType();
-                    params.field_type = 'image';
-                    params.model = this.ai.model;
-                    params.channel = "{{ core()->getRequestedChannelCode() }}";
-                    params.locale = "{{ core()->getRequestedLocaleCode() }}";
+                    const matches = prompt.match(/@\w+/g) || [];
 
-                    this.$axios.post("{{ route('admin.magic_ai.image') }}", params)
-                        .then(response => {
-                            this.isLoading = false;
+                    for (const token of matches) {
+                        const fieldCode = token.replace('@', '');
+                        const refKey = 'media_images_' + fieldCode;
+                        const refComponent = this.$root?.$refs?.[refKey];
 
-                            self.ai.images = response.data.images;
-                        })
-                        .catch(error => {
-                            this.isLoading = false;
+                        if (!refComponent || !Array.isArray(refComponent.images) || !refComponent.images.length) {
+                            continue;
+                        }
 
-                            if (error.response.status == 422) {
-                                setErrors(error.response.data.errors);
-                            } else {
-                                this.$emitter.emit('add-flash', { type: 'error', message: error.response.data.message });
-                            }
-                        });
+                        const image = refComponent.images[0];
+
+                        prompt = prompt.replace(token, '').trim();
+
+                        if (image?.file) {
+                            formData.append('image', image.file);
+                            baseImageSet = true;
+                            break;
+                        } else if (image?.url) {
+                            const blob = await fetch(image.url).then(res => res.blob());
+
+                            const urlParts = image.url.split('?')[0].split('.');
+                            const extension = urlParts[urlParts.length - 1].toLowerCase();
+
+                            const mimeType = {
+                                jpg: 'image/jpg',
+                                jpeg: 'image/jpeg',
+                                png: 'image/png',
+                                webp: 'image/webp',
+                            }[extension] || blob.type || 'image/png';
+
+                            const file = new File([blob], `${fieldCode}.${extension}`, { type: mimeType });
+                            formData.append('image', file);
+                            baseImageSet = true;
+                            break;
+                        }
+                    }
+
+                    if (!baseImageSet && this.ai.baseImage) {
+                        formData.append('image', this.ai.baseImage);
+                    }
+
+                    // Append cleaned prompt and other metadata
+                    formData.append('prompt', prompt);
+                    formData.append('model', this.ai.model);
+                    formData.append('size', this.ai.size);
+                    formData.append('quality', this.ai.quality);
+                    formData.append('resource_id', this.resourceId);
+                    formData.append('n', this.ai.n);
+                    formData.append('resource_type', this.getResourceType());
+                    formData.append('field_type', 'image');
+                    formData.append('channel', "{{ core()->getRequestedChannelCode() }}");
+                    formData.append('locale', "{{ core()->getRequestedLocaleCode() }}");
+
+                    this.$axios.post("{{ route('admin.magic_ai.image') }}", formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        }
+                    })
+                    .then(response => {
+                        this.isLoading = false;
+                        this.ai.images = response.data.images;
+                    })
+                    .catch(error => {
+                        this.isLoading = false;
+                        const message = error.response?.data?.message || 'Image generation failed';
+
+                        this.$emitter.emit('add-flash', { type: 'error', message });
+
+                        if (error.response?.status == 422) {
+                            setErrors(error.response.data.errors);
+                        }
+                    });
                 },
 
-                apply() {
-                    this.selectedAIImages.forEach((image, index) => {
+                async apply() {
+
+                    this.images = [];
+
+                    for (let index = 0; index < this.selectedAIImages.length; index++) {
+                        const image = this.selectedAIImages[index];
+                        const url = image?.url || '';
+                        const isBase64 = url.startsWith('data:image/');
+
+                        let file = null;
+
+                        if (isBase64) {
+                            file = this.getBase64ToFile(url, 'temp.png');
+                        } else {
+                            const response = await fetch(url);
+                            const blob = await response.blob();
+                            file = new File([blob], 'image.png', { type: blob.type });
+                        }
+
                         this.images.push({
-                            id: 'image_' + this.images.length,
+                            id: 'image_' + index,
                             url: '',
-                            file: this.getBase64ToFile(image.url, 'temp.png')
+                            file: file,
                         });
-                    });
+                    }
 
                     this.$refs.magicAIImageModal.close();
                 },
+
 
                 getBase64ToFile(base64, filename) {
                     var arr = base64.split(','),
@@ -771,6 +936,8 @@
                         quality: 'standard',
 
                         images: [],
+
+                         baseImage: null,
                     };
                 }
             }
@@ -790,6 +957,13 @@
             },
 
             methods: {
+
+                triggerAIEdit() {
+
+                    this.$emit('triggerEdit', this.image);
+                    this.$refs.editImageOptionsModal.close();
+                },
+
                 edit() {
                     let imageInput = this.$refs[this.$.uid + '_imageInput_' + this.index];
 
@@ -811,6 +985,8 @@
                     this.setFile(imageInput.files[0]);
 
                     this.readFile(imageInput.files[0]);
+
+                     this.$refs.editImageOptionsModal.close();
                 },
 
                 remove() {
