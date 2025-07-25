@@ -275,18 +275,19 @@ class CategoryDataGrid extends DataGrid
                 ];
             case 'category_name':
                 $values = current($values);
+                $escaped = preg_replace('/([+\-&|!(){}\[\]^"~*?:\\\\\/])/', '\\\\$1', $values);
+
+                $escaped = str_contains($values, ' ') ? '"*'.$escaped.'*"' : '*'.$escaped.'*';
 
                 return [
                     'bool' => [
                         'should' => [
-                            [
-                                'wildcard' => [
-                                    'additional_data.locale_specific.'.$localeCode.'.name' => '*'.$values.'*',
+                            'query_string' => [
+                                'fields' => [
+                                    'additional_data.locale_specific.'.$localeCode.'.name',
+                                    'code',
                                 ],
-                            ], [
-                                'wildcard' => [
-                                    'code' => '*'.$values.'*',
-                                ],
+                                'query' => $escaped,
                             ],
                         ],
                     ],

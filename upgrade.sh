@@ -149,4 +149,13 @@ php artisan optimize:clear
 echo "🛠️ Sending queue restart signal..."
 php artisan queue:restart
 
+echo "🔄 Clearing Elasticsearch indexes..."
+php artisan unopim:elastic:clear
+
+echo "📦 Re-indexing products..."
+php artisan unopim:product:index
+
+echo "📂 Re-indexing categories..."
+php artisan unopim:category:index
+
 echo "✅ Upgrade complete! Now on version $LATEST_VERSION"
