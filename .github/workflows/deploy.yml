@@ -1,0 +1,35 @@
+name: Deploy to DigitalOcean
+
+permissions:
+  contents: read
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      digital_ocean_image_tag:
+        required: true
+        type: string
+    secrets:
+      DIGITALOCEAN_ACCESS_TOKEN:
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Deploy to Digital Ocean
+        id: deploy
+        uses: digitalocean/app_action/deploy@5aee1e1f98d7182bd7457fa2946e031d78c570b0 #v2
+        env:
+          DOCKER_IMAGE: ${{ inputs.digital_ocean_image_tag }}
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          app_spec_location: '.do/app.${{ inputs.environment }}.yml'

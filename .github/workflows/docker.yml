@@ -1,0 +1,102 @@
+name: Build and Push Docker Image
+
+permissions:
+  contents: read
+
+on:
+  workflow_call:
+    secrets:
+      DIGITALOCEAN_ACCESS_TOKEN:
+        required: true
+    outputs:
+      digital_ocean_image_tag:
+        value: ${{ jobs.build_push.outputs.digital_ocean_image_tag }}
+
+jobs:
+  build_push:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    outputs:
+      digital_ocean_image_tag: ${{ steps.image-tag.outputs.digital_ocean_image_tag }}
+    steps:
+      - name: Log in to DigitalOcean Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: registry.digitalocean.com
+          username: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          password: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Get image tag
+        id: image-tag
+        run: |
+          DIGITAL_OCEAN_IMAGE_TAG="$(echo ${{ github.sha }} | cut -c1-7)"
+          DIGITAL_OCEAN_IMAGE_URL="${{ vars.DIGITALOCEAN_REGISTRY_URL }}/${{ vars.DIGITALOCEAN_IMAGE_NAME }}:${DIGITAL_OCEAN_IMAGE_TAG}"
+          echo "DIGITAL_OCEAN_IMAGE_URL=${DIGITAL_OCEAN_IMAGE_URL}" >> $GITHUB_ENV
+          echo "DIGITAL_OCEAN_IMAGE_TAG=${DIGITAL_OCEAN_IMAGE_TAG}" >> $GITHUB_ENV
+          echo "digital_ocean_image_tag=${DIGITAL_OCEAN_IMAGE_TAG}" >> $GITHUB_OUTPUT
+      - name: Check if image already exists
+        run: |
+          # Allow the next commands to fail, so the exit code can be captured
+          set +e
+          # The command returns 0 if the image exists in the registry and repository, and 1 if it does not.
+          docker manifest inspect ${{ env.DIGITAL_OCEAN_IMAGE_URL }}
+          echo "IMAGE_NEEDS_TO_BE_CREATED=$?" >> $GITHUB_ENV
+      - name: Checkout repository
+        if: ${{ env.IMAGE_NEEDS_TO_BE_CREATED == 1 }}
+        uses: actions/checkout@v4
+      - name: Setup PHP
+        if: ${{ env.IMAGE_NEEDS_TO_BE_CREATED == 1 }}
+        uses: shivammathur/setup-php@0f7f1d08e3e32076e51cae65eb0b0c871405b16e #v2
+        with:
+          php-version: 8.4
+          tools: composer:v2
+      - name: Cache vendor
+        if: ${{ env.IMAGE_NEEDS_TO_BE_CREATED == 1 }}
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-vendor
+          cache-env: prd
+        with:
+          path: ./vendor
+          key: ${{ env.cache-name }}-${{ runner.os }}-${{ hashFiles('composer.lock') }}-${{ env.cache-env }}
+          restore-keys: |
+            ${{ env.cache-name }}-${{ runner.os }}-${{ hashFiles('composer.lock') }}-
+            ${{ env.cache-name }}-${{ runner.os }}-
+            ${{ env.cache-name }}-
+      - name: Install Dependencies
+        if: ${{ env.IMAGE_NEEDS_TO_BE_CREATED == 1 }}
+        run: |
+          composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader --classmap-authoritative --no-dev
+      - name: Setup NPM
+        if: ${{ env.IMAGE_NEEDS_TO_BE_CREATED == 1 }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Cache node modules
+        id: npm-cache
+        if: ${{ env.IMAGE_NEEDS_TO_BE_CREATED == 1 }}
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ./node_modules
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('package-lock.json') }}
+          # Do not add restore-keys: https://glebbahmutov.com/blog/do-not-let-npm-cache-snowball/
+      - name: Install NPM Dependencies
+        if: ${{ env.IMAGE_NEEDS_TO_BE_CREATED == 1 && steps.npm-cache.outputs.cache-hit != 'true'}}
+        run: npm ci --ignore-scripts
+      - name: Set up Docker Buildx
+        if: ${{ env.IMAGE_NEEDS_TO_BE_CREATED == 1 }}
+        uses: docker/setup-buildx-action@v3
+      - name: Build and push
+        if: ${{ env.IMAGE_NEEDS_TO_BE_CREATED == 1 }}
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          target: production
+          build-args: |
+            SENTRY_RELEASE="${{ env.DIGITAL_OCEAN_IMAGE_TAG }}"
+          cache-from: type=gha
+          cache-to: type=gha,mode=max,compression=zstd
+          push: true
+          tags: ${{ env.DIGITAL_OCEAN_IMAGE_URL }}

@@ -1,0 +1,59 @@
+name: Deploy to DigitalOcean
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches:
+      - development
+    tags:
+      - '*'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment'
+        required: true
+        type: choice
+        options:
+          - development
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.inputs.environment }}
+  cancel-in-progress: true
+
+jobs:
+  determine_environment:
+    name: Determine environment
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.determine_environment.outputs.environment }}
+    steps:
+      - id: determine_environment
+        run: |
+          ENVIRONMENT=${{ github.event.inputs.environment }}
+          if [ -z $ENVIRONMENT ]; then
+            if ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') }}; then
+              ENVIRONMENT="acceptance"
+            else
+              ENVIRONMENT="development"
+            fi
+          fi
+          echo "${ENVIRONMENT}"
+          echo "environment=${ENVIRONMENT}" >> $GITHUB_OUTPUT
+
+  build:
+    name: Docker Build & Push
+    uses: ./.github/workflows/docker.yml
+    secrets: inherit
+
+  deploy:
+    name: Deploy to DigitalOcean
+    needs:
+      - build
+      - determine_environment
+    uses: ./.github/workflows/deploy.yml
+    secrets: inherit
+    with:
+      environment: ${{ needs.determine_environment.outputs.environment }}
+      digital_ocean_image_tag: ${{ needs.build.outputs.digital_ocean_image_tag }}
