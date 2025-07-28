@@ -10,7 +10,8 @@
 
             <x-admin::form
                 method="PUT"
-                enctype="multipart/form-data">
+                enctype="multipart/form-data"
+            >
                 {!! view_render_event('unopim.admin.catalog.product.edit.actions.before', ['product' => $product]) !!}
 
                 <input type="hidden" name="sku" value="{{ $product->sku }}">
@@ -63,7 +64,8 @@
                                     <button
                                         type="button"
                                         class="
-                                        flex gap-x-1 items-center px-3 py-1.5 border-2 border-transparent rounded-md font-semibold whitespace-nowrap cursor-pointer marker:shadow appearance-none transition-all hover:!bg-violet-50 dark:hover:!bg-cherry-900 text-gray-600 dark:!text-slate-50">
+                                        flex gap-x-1 items-center px-3 py-1.5 border-2 border-transparent rounded-md font-semibold whitespace-nowrap cursor-pointer marker:shadow appearance-none transition-all hover:!bg-violet-50 dark:hover:!bg-cherry-900 text-gray-600 dark:!text-slate-50"
+                                    >
                                         <span class="icon-channel   text-2xl"></span>
 
                                         {{ ! empty($currentChannel->name) ? $currentChannel->name : '[' . $currentChannel->code . ']' }}
@@ -79,7 +81,8 @@
                                         @foreach ($channels as $channel)
                                             <a
                                                 href="?{{ Arr::query(['channel' => $channel->code, 'locale' => $currentLocale?->code]) }}"
-                                                class="flex gap-2.5 px-5 py-2 text-base cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 dark:text-white">
+                                                class="flex gap-2.5 px-5 py-2 text-base cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 dark:text-white"
+                                            >
                                                 {{ ! empty($channel->name) ? $channel->name : '[' . $channel->code . ']' }}
                                             </a>
                                         @endforeach
@@ -92,7 +95,8 @@
                                 <x-slot:toggle>
                                     <button
                                         type="button"
-                                        class="flex gap-x-1 items-center px-3 py-1.5 border-2 border-transparent rounded-md font-semibold whitespace-nowrap cursor-pointer marker:shadow appearance-none transition-all hover:!bg-violet-50 dark:hover:!bg-cherry-900 text-gray-600 dark:!text-slate-50 ">
+                                        class="flex gap-x-1 items-center px-3 py-1.5 border-2 border-transparent rounded-md font-semibold whitespace-nowrap cursor-pointer marker:shadow appearance-none transition-all hover:!bg-violet-50 dark:hover:!bg-cherry-900 text-gray-600 dark:!text-slate-50 "
+                                    >
                                         <span class="icon-language text-2xl"></span>
 
                                         {{ $currentLocale?->name }}
@@ -108,7 +112,8 @@
                                         @foreach ($currentChannel->locales->sortBy('name') as $locale)
                                             <a
                                                 href="?{{ Arr::query(['channel' => $currentChannel->code, 'locale' => $locale->code]) }}"
-                                                class="flex gap-2.5 px-5 py-2 text-base cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 dark:text-white {{ $locale->code == $currentLocale?->code ? 'bg-gray-100 dark:bg-cherry-800' : ''}}">
+                                                class="flex gap-2.5 px-5 py-2 text-base cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 dark:text-white {{ $locale->code == $currentLocale?->code ? 'bg-gray-100 dark:bg-cherry-800' : ''}}"
+                                            >
                                                 {{ $locale->name }}
                                             </a>
                                         @endforeach
@@ -135,8 +140,6 @@
                             <div class="flex flex-col gap-2">
                                 @php
                                     $customAttributes = $product->getEditableAttributes($group);
-
-
                                     $groupLabel = $group->name;
                                     $groupLabel = empty($groupLabel) ? "[{$group->code}]" : $groupLabel;
                                 @endphp
@@ -155,7 +158,8 @@
                                             :currentChannelCode="$currentChannel->code"
                                             :channelCurrencies="$currentChannel->currencies"
                                             :variantFields="$product?->parent ? $product->parent->super_attributes->pluck('code')->toArray() : []"
-                                            fieldsWrapper="values">
+                                            fieldsWrapper="values"
+                                        >
                                         </x-admin::products.dynamic-attribute-fields>
                                     </div>
 
@@ -176,9 +180,9 @@
 
                         <!-- Related, Cross Sells, Up Sells View Blade File -->
                         @include('admin::catalog.products.edit.links', [
-                        'upSellAssociations' => $product->values['associations']['up_sells'] ?? [],
-                        'crossSellAssociations' => $product->values['associations']['cross_sells'] ?? [],
-                        'relatedAssociations' => $product->values['associations']['related_products'] ?? [],
+                            'upSellAssociations' => $product->values['associations']['up_sells'] ?? [],
+                            'crossSellAssociations' => $product->values['associations']['cross_sells'] ?? [],
+                            'relatedAssociations' => $product->values['associations']['related_products'] ?? [],
                         ])
 
                         <!-- Include Product Type Additional Blade Files If Any -->
@@ -485,7 +489,7 @@
                         </x-slot>
                     </x-admin::modal>
                 </form>
-                </x-admin::form>
+            </x-admin::form>
         </div>
     </div>
 </script>

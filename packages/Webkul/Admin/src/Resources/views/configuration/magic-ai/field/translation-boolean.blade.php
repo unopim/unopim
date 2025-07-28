@@ -17,7 +17,6 @@
 <script type="text/x-template" id="v-translation-boolean-template">
     <div class="grid gap-2.5 content-start">
         <div>
-
             <x-admin::form.control-group class="mb-4" >
                 <x-admin::form.control-group.label>
                     @{{ label }}
@@ -39,14 +38,11 @@
                         :checked="parseInt(localValue || 0)"
                         :disabled="isDisabled"
                     >
-
                     <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-violet-700"></div>
                 </label>
             </x-admin::form.control-group>
-
         </div>
     </div>
-
 </script>
 <script type="module">
     app.component('v-translation-boolean', {

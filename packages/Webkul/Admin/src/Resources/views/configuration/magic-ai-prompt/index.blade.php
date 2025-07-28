@@ -13,7 +13,8 @@
 
                     <button
                         type="button"
-                        class="primary-button">
+                        class="primary-button"
+                    >
                         @lang('admin::app.configuration.prompt.create.create-btn')
                     </button>
 
@@ -31,13 +32,13 @@
                 </p>
 
                 <div class="flex gap-x-2.5 items-center">
-                        <button
-                            type="button"
-                            class="primary-button"
-                            @click="selectedPrompt=0;resetForm();$refs.promptUpdateOrCreateModal.toggle();toggleMagicAIModal()"
-                        >
-                            @lang('admin::app.configuration.prompt.create.create-btn')
-                        </button>
+                    <button
+                        type="button"
+                        class="primary-button"
+                        @click="selectedPrompt=0;resetForm();$refs.promptUpdateOrCreateModal.toggle();toggleMagicAIModal()"
+                    >
+                        @lang('admin::app.configuration.prompt.create.create-btn')
+                    </button>
                 </div>
             </div>
             <x-admin::datagrid src="{{ route('admin.magic_ai.prompt.index') }}" ref="datagrid">
@@ -61,31 +62,29 @@
 
                         <!-- Actions -->
                         <div class="flex justify-end">
-
-                                <a @click="selectedPrompt=1;editModal(record.actions.find(action => action.index === 'action_1')?.url)">
-                                    <span
-                                        :class="record.actions.find(action => action.index === 'action_1')?.icon"
-                                        title="@lang('admin::app.configuration.prompt.datagrid.edit')"
-                                        class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
-                                    >
-                                    </span>
-                                </a>
-                                <a @click="performAction(record.actions.find(action => action.index === 'action_2'))">
-                                    <span
-                                        :class="record.actions.find(action => action.index === 'action_2')?.icon"
-                                        title="@lang('admin::app.configuration.prompt.datagrid.delete')"
-                                        class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
-                                    >
-                                    </span>
-                                </a>
-
+                            <a @click="selectedPrompt=1;editModal(record.actions.find(action => action.index === 'action_1')?.url)">
+                                <span
+                                    :class="record.actions.find(action => action.index === 'action_1')?.icon"
+                                    title="@lang('admin::app.configuration.prompt.datagrid.edit')"
+                                    class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
+                                >
+                                </span>
+                            </a>
+                            <a @click="performAction(record.actions.find(action => action.index === 'action_2'))">
+                                <span
+                                    :class="record.actions.find(action => action.index === 'action_2')?.icon"
+                                    title="@lang('admin::app.configuration.prompt.datagrid.delete')"
+                                    class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
+                                >
+                                </span>
+                            </a>
                         </div>
                     </div>
                 </template>
 
             </x-admin::datagrid>
             <div>
-                    <x-admin::form
+                <x-admin::form
                     v-slot="{ meta, errors, handleSubmit }"
                     as="div"
                     ref="modalform"
@@ -165,7 +164,7 @@
                                     @lang('admin::app.configuration.prompt.create.prompt')
                                 </x-admin::form.control-group.label>
                                  <div class="relative w-full">
-                                <x-admin::form.control-group.control
+                                    <x-admin::form.control-group.control
                                         type="textarea"
                                         class="h-[180px]"
                                         name="prompt"

@@ -17,7 +17,6 @@
 <script type="text/x-template" id="v-translation-model-template">
     <div class="grid gap-2.5 content-start">
         <div>
-
             <x-admin::form.control-group class="last:!mb-0" v-if="! modelOptions">
                 <x-admin::form.control-group.label>
                     @{{ label }}
@@ -71,10 +70,8 @@
                 />
                 <x-admin::form.control-group.error ::control-name="name" />
             </x-admin::form.control-group>
-
         </div>
     </div>
-
 </script>
 <script type="module">
     app.component('v-translation-model', {

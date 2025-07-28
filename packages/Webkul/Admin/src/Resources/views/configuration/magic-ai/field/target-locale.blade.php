@@ -23,24 +23,23 @@
 @pushOnce('scripts')
 <script type="text/x-template" id="v-translation-target-locale-template">
     <div class="grid gap-2.5 content-start">
-            <x-admin::form.control-group class="last:!mb-0 w-full" v-if="localeOption">
-                <x-admin::form.control-group.label>
-                    @{{ label }}
-                </x-admin::form.control-group.label>
-                <x-admin::form.control-group.control
-                    type="multiselect"
-                    ::id="name"
-                    ::name="name"
-                    rules="required"
-                    ref="localelRef"
-                    ::label="label"
-                    ::value="targetLocales"
-                    ::options="localeOption"
-                />
-                <x-admin::form.control-group.error ::control-name="name" />
-            </x-admin::form.control-group>
+        <x-admin::form.control-group class="last:!mb-0 w-full" v-if="localeOption">
+            <x-admin::form.control-group.label>
+                @{{ label }}
+            </x-admin::form.control-group.label>
+            <x-admin::form.control-group.control
+                type="multiselect"
+                ::id="name"
+                ::name="name"
+                rules="required"
+                ref="localelRef"
+                ::label="label"
+                ::value="targetLocales"
+                ::options="localeOption"
+            />
+            <x-admin::form.control-group.error ::control-name="name" />
+        </x-admin::form.control-group>
     </div>
-    
 </script>
 <script type="module">
     app.component('v-translation-target-locale', {

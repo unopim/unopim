@@ -17,7 +17,6 @@
 <script type="text/x-template" id="v-domain-model-template">
     <div class="grid gap-2.5 content-start">
         <div>
-
             <x-admin::form.control-group class="mb-4" >
                 <x-admin::form.control-group.label>
                     @{{ label }}
@@ -36,10 +35,8 @@
                 />
                 <x-admin::form.control-group.error ::control-name="name" />
             </x-admin::form.control-group>
-
         </div>
     </div>
-
 </script>
 <script type="module">
     app.component('v-domain-model', {

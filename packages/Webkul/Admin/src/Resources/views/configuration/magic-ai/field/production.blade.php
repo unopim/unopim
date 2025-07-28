@@ -19,31 +19,29 @@
 <script type="text/x-template" id="v-production-model-template">
     <div class="grid gap-2.5 content-start">
         <div>
-                <template v-if="plateform === 'openai' || show">
-                    <x-admin::form.control-group class="mb-4">
-                        <x-admin::form.control-group.label>
-                            @{{ label }}
-                        </x-admin::form.control-group.label>
-                        <x-admin::form.control-group.control
-                            type="text"
-                            ::id="name"
-                            ::name="name"
-                            ::rules="{required:true,regex:/^[^\s]+$/}"
-                            v-model="value"
-                            ::label="label"
-                            ::placeholder="label"
-                            track-by="id"
-                            label-by="label"
-                            @input="emitChangeEvent($event.target.value, name)"
-                            @keypress="preventSpace($event)"
-                        />
-                        <x-admin::form.control-group.error ::control-name="name" />
-                    </x-admin::form.control-group>
-                </template>
-
+            <template v-if="plateform === 'openai' || show">
+                <x-admin::form.control-group class="mb-4">
+                    <x-admin::form.control-group.label>
+                        @{{ label }}
+                    </x-admin::form.control-group.label>
+                    <x-admin::form.control-group.control
+                        type="text"
+                        ::id="name"
+                        ::name="name"
+                        ::rules="{required:true,regex:/^[^\s]+$/}"
+                        v-model="value"
+                        ::label="label"
+                        ::placeholder="label"
+                        track-by="id"
+                        label-by="label"
+                        @input="emitChangeEvent($event.target.value, name)"
+                        @keypress="preventSpace($event)"
+                    />
+                    <x-admin::form.control-group.error ::control-name="name" />
+                </x-admin::form.control-group>
+            </template>
         </div>
     </div>
-
 </script>
 <script type="module">
     app.component('v-production-model', {
@@ -103,7 +101,6 @@
                     event.preventDefault();
                 }
             },
-
         }
     });
 </script>

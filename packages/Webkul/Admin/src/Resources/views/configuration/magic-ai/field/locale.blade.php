@@ -18,25 +18,24 @@
 @pushOnce('scripts')
 <script type="text/x-template" id="v-translation-locale-template">
     <div class="grid gap-2.5 content-start">
-            <x-admin::form.control-group class="last:!mb-0 w-full" v-if="localeOption">
-                <x-admin::form.control-group.label>
-                    @{{ label }}
-                </x-admin::form.control-group.label>
-                <x-admin::form.control-group.control
-                    type="select"
-                    ::id="name"
-                    ::name="name"
-                    rules="required"
-                    ref="localelRef"
-                    ::label="label"
-                    ::value="value"
-                    ::options="localeOption"
-                    @input="emitChangeEvent($event)"
-                />
-                <x-admin::form.control-group.error ::control-name="name" />
-            </x-admin::form.control-group>
+        <x-admin::form.control-group class="last:!mb-0 w-full" v-if="localeOption">
+            <x-admin::form.control-group.label>
+                @{{ label }}
+            </x-admin::form.control-group.label>
+            <x-admin::form.control-group.control
+                type="select"
+                ::id="name"
+                ::name="name"
+                rules="required"
+                ref="localelRef"
+                ::label="label"
+                ::value="value"
+                ::options="localeOption"
+                @input="emitChangeEvent($event)"
+            />
+            <x-admin::form.control-group.error ::control-name="name" />
+        </x-admin::form.control-group>
     </div>
-
 </script>
 <script type="module">
     app.component('v-translation-locale', {
