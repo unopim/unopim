@@ -62,7 +62,7 @@ GITHUB_REPO="unopim"
 BACKUP_DIR="./backups"
 ROOT_PATH="$(pwd)"
 CURRENT_VERSION=$(php artisan unopim:version)
-UPGRADE_TO_VERSION="v0.2.0"
+UPGRADE_TO_VERSION="v0.3.0"
 echo -e "\n🔧 Starting Unopim upgrade script...\n"
 
 # 1. Get current version
