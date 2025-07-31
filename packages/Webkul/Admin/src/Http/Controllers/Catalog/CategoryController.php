@@ -256,6 +256,22 @@ class CategoryController extends Controller
         return CategoryTreeResource::collection($categories);
     }
 
+    public function children()
+    {
+        $id = request()->get('id');
+
+        if (!$id) {
+            // Add error or throw exception here
+            return;
+        }
+
+        $this->categoryRepository->findOrFail($id);
+
+        $childCategories = $this->categoryRepository->getChildCategories($id);
+
+        return new JsonResponse($childCategories->toArray());
+    }
+
     /**
      * Result of search customer.
      *

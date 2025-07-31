@@ -69,7 +69,7 @@ app.component('v-tree-item', {
         },
 
         hasSelectedValue() {
-            return this.categorytree.formattedValues.includes(this.item[this.valueField])
+            return Object.values(this.item).includes(this.categorytree.value)
                 || this.categorytree.countSelectedChildren(this.item);
         },
 
@@ -105,24 +105,32 @@ app.component('v-tree-item', {
     },
 
     methods: {
-        async toggleBranch() {
-            this.showChildren = !this.showChildren;
+       toggleBranch() {
+            const categoryId = this.id;
+            const url = new URL(this.categorytree.fetchChildrenUrl, window.location.origin);
 
+            if (categoryId) {
+                url.searchParams.append('id', categoryId);
+            }
+
+            this.showChildren = !this.showChildren;
+            console.log(this.id);
             if (this.showChildren && !this.hasFetchedChildren && this.hasChildren) {
-                if (this.categorytree.cache[this.id]) {
+                if (this.categorytree.cache && this.categorytree.cache[this.id]) {
                     this.children = this.categorytree.cache[this.id];
                     this.hasFetchedChildren = true;
                 } else {
-                    const url = `${this.fetchChildrenUrl}?id=${this.id}`;
-                    try {
-                        const response = await fetch(url);
-                        const data = await response.json();
-                        this.children = data;
-                        this.categorytree.cache[this.id] = data;
-                        this.hasFetchedChildren = true;
-                    } catch (e) {
-                        console.error('Failed to fetch children for node', this.id, e);
-                    }
+                    this.$axios
+                        .get(url.toString())
+                        .then((response) => {
+                            const data = response.data;
+                            this.children = data;
+                            this.categorytree.cache[this.id] = data;
+                            this.hasFetchedChildren = true;
+                        })
+                        .catch((err) => {
+                            console.error('Failed to fetch children for node', this.id, err);
+                        });
                 }
             }
         },
