@@ -2,7 +2,6 @@
 
 namespace Webkul\DataTransfer\Helpers\Importers;
 
-use Illuminate\Support\Facades\Storage as StorageFacade;
 use Webkul\Core\Traits\HtmlPurifier;
 
 class FieldProcessor
@@ -56,17 +55,14 @@ class FieldProcessor
      * @param  string  $imgpath  The path to the media files.
      * @return array|null valid paths of the media files, or null if none are found.
      */
-    protected function handleMediaField(mixed $value, string $imgpath): ?array
+    public function handleMediaField(mixed $value, string $imgpath): ?array
     {
         $paths = is_array($value) ? $value : [$value];
         $validPaths = [];
 
         foreach ($paths as $path) {
             $trimmedPath = trim($path);
-
-            if (StorageFacade::disk('local')->has('public/'.$imgpath.$trimmedPath)) {
-                $validPaths[] = $imgpath.$trimmedPath;
-            }
+            $validPaths[] = $imgpath.$trimmedPath;
         }
 
         return count($validPaths) ? $validPaths : null;

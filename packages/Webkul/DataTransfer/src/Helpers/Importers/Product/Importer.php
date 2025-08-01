@@ -497,8 +497,21 @@ class Importer extends AbstractImporter
 
         $skipAttributes[] = 'sku';
 
+        $mediaAttributes = ['image', 'file', 'gallery'];
+
+        $imageDirPath = $this->import->images_directory_path;
+
         foreach ($attributes as $attribute) {
             $attributeCode = $attribute->code;
+
+            if (in_array($attribute->type, $mediaAttributes)) {
+                $value = $this->fieldProcessor->handleMediaField($rowData[$attributeCode], $imageDirPath);
+                if (is_array($value)) {
+                    $value = implode(',', $value);
+                }
+
+                $rowData[$attributeCode] = $value;
+            }
 
             if (in_array($attributeCode, $skipAttributes)) {
                 continue;
