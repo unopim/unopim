@@ -483,7 +483,7 @@ class Importer extends AbstractImporter
     /**
      * Prepare validation rules
      */
-    public function getValidationRules(array $rowData): array
+    public function getValidationRules(array &$rowData): array
     {
         $rules = [
             'sku' => ['required', new Slug],

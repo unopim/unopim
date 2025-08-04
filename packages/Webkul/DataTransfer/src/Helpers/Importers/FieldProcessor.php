@@ -2,6 +2,7 @@
 
 namespace Webkul\DataTransfer\Helpers\Importers;
 
+use Illuminate\Support\Facades\Storage as StorageFacade;
 use Webkul\Core\Traits\HtmlPurifier;
 
 class FieldProcessor
@@ -62,7 +63,9 @@ class FieldProcessor
 
         foreach ($paths as $path) {
             $trimmedPath = trim($path);
-            $validPaths[] = $imgpath.$trimmedPath;
+            if (StorageFacade::disk('local')->has('public/'.$imgpath.$trimmedPath)) {
+                $validPaths[] = $imgpath.$trimmedPath;
+            }
         }
 
         return count($validPaths) ? $validPaths : null;
