@@ -401,6 +401,8 @@ class Importer extends AbstractImporter
             $this->typeFamilyValidationRules[$rowData['type']][$rowData[self::ATTRIBUTE_FAMILY_CODE]] = $this->getValidationRules($rowData);
         }
 
+        $this->updateRowMediaPath($rowData);
+
         $validationRules = $this->typeFamilyValidationRules[$rowData['type']][$rowData[self::ATTRIBUTE_FAMILY_CODE]];
 
         /**
@@ -480,10 +482,31 @@ class Importer extends AbstractImporter
         return ! $this->errorHelper->isRowInvalid($rowNumber);
     }
 
+    public function updateRowMediaPath(array &$rowData): void
+    {
+        $mediaTypes = ['image', 'file', 'gallery'];
+        $mediaAttributes = $this->attributes->whereIn('type', $mediaTypes);
+        $imageDirPath = $this->import->images_directory_path;
+
+        foreach ($mediaAttributes as $attribute) {
+            $code = $attribute->code;
+
+            if (! isset($rowData[$code])) {
+                continue;
+            }
+
+            $value = $this->fieldProcessor->handleMediaField($rowData[$code], $imageDirPath);
+
+            if ($value) {
+                $rowData[$code] = is_array($value) ? implode(',', $value) : $value;
+            }
+        }
+    }
+
     /**
      * Prepare validation rules
      */
-    public function getValidationRules(array &$rowData): array
+    public function getValidationRules(array $rowData): array
     {
         $rules = [
             'sku' => ['required', new Slug],
@@ -497,21 +520,8 @@ class Importer extends AbstractImporter
 
         $skipAttributes[] = 'sku';
 
-        $mediaAttributes = ['image', 'file', 'gallery'];
-
-        $imageDirPath = $this->import->images_directory_path;
-
         foreach ($attributes as $attribute) {
             $attributeCode = $attribute->code;
-
-            if (in_array($attribute->type, $mediaAttributes)) {
-                $value = $this->fieldProcessor->handleMediaField($rowData[$attributeCode], $imageDirPath);
-                if (is_array($value)) {
-                    $value = implode(',', $value);
-                }
-
-                $rowData[$attributeCode] = $value;
-            }
 
             if (in_array($attributeCode, $skipAttributes)) {
                 continue;

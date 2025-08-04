@@ -63,6 +63,7 @@ class FieldProcessor
 
         foreach ($paths as $path) {
             $trimmedPath = trim($path);
+
             if (StorageFacade::disk('local')->has('public/'.$imgpath.$trimmedPath)) {
                 $validPaths[] = $imgpath.$trimmedPath;
             }
