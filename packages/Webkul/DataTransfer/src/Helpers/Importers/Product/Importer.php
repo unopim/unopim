@@ -482,7 +482,7 @@ class Importer extends AbstractImporter
         return ! $this->errorHelper->isRowInvalid($rowNumber);
     }
 
-    public function updateRowMediaPath(array &$rowData): void
+    protected function updateRowMediaPath(array &$rowData): void
     {
         $mediaTypes = ['image', 'file', 'gallery'];
         $mediaAttributes = $this->attributes->whereIn('type', $mediaTypes);
