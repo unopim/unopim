@@ -5,6 +5,7 @@ namespace Webkul\DataTransfer\Helpers\Exporters;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use Psr\Log\LoggerInterface;
+use Webkul\DataTransfer\Buffer\FileBuffer;
 use Webkul\DataTransfer\Contracts\JobTrack as ExportJobTrackContract;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
 use Webkul\DataTransfer\Jobs\Export\Completed as CompletedJob;
@@ -307,6 +308,18 @@ abstract class AbstractExporter
         return $fileName;
     }
 
+    public function initializeFileBuffer()
+    {
+        $fileName = $this->getFileName();
+        $directory = sprintf('exports/%s/%s', $this->export->id, FileBuffer::FOLDER_PREFIX);
+
+        return $this->exportFileBuffer->initialize(
+            $directory,
+            $fileName,
+            ['type' => $this->filters['file_format'] ?? SpoutWriterFactory::CSV],
+        );
+    }
+
     /**
      * Start the export process
      */
@@ -318,6 +331,10 @@ abstract class AbstractExporter
             if ($this->exportsFile) {
                 $this->exportBuffer = JSONFileBuffer::initialize($this->export);
             }
+
+            $fileBuffer = $this->initializeFileBuffer();
+
+            $filePath = $fileBuffer->getFilePath();
         }
 
         if ($exportBatch) {
