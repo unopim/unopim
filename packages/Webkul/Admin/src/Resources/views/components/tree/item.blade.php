@@ -8,7 +8,6 @@
         ></i>
 
         <i :class="folderIconClasses"></i>
-        <span v-text="item.name"></span>
 
         <component
             :is="inputComponent"
@@ -45,6 +44,12 @@ app.component('v-tree-item', {
 
     inject: [ 'categorytree' ],
 
+    provide() {
+        return {
+            categorytree: this.categorytree
+        };
+    },
+
     data() {
         return {
             children: this.item[this.childrenField] || [],
@@ -55,12 +60,12 @@ app.component('v-tree-item', {
 
     computed: {
         id() {
-            return this.item[this.idField];
+            return this.item['id'];
         },
 
         label() {
-            return this.item[this.labelField]
-                || (this.item.translations?.find(t => t.locale === this.fallbackLocale)?.[this.labelField]
+            return this.item[this.categorytree.labelField]
+                || (this.item.translations?.find(t => t.locale === this.fallbackLocale)?.[this.categorytree.labelField]
                 || `[${this.item.code}]`);
         },
 
@@ -98,14 +103,14 @@ app.component('v-tree-item', {
         },
 
         inputComponent() {
-            return this.inputType === 'radio'
+            return this.categorytree.inputType === 'radio'
                 ? this.$resolveComponent('v-tree-radio')
                 : this.$resolveComponent('v-tree-checkbox');
         }
     },
 
     methods: {
-       toggleBranch() {
+        toggleBranch() {
             const categoryId = this.id;
             const url = new URL(this.categorytree.fetchChildrenUrl, window.location.origin);
 
@@ -136,21 +141,20 @@ app.component('v-tree-item', {
         },
 
         onInputChange() {
-            this.handleCheckbox(this.item[this.valueField]);
+            this.handleCheckbox(this.item[this.categorytree.valueField]);
             this.$emit('change-input', this.formattedValues);
         },
 
         handleCheckbox(key) {
-            const item = this.searchInTree(this.$parent.formattedItems, key);
-
+            const item = this.categorytree.searchInTree(this.categorytree.formattedItems, key);
             switch (this.selectionType) {
                 case 'individual':
-                    this.handleIndividualSelectionType(item);
+                    this.categorytree.handleIndividualSelectionType(item);
                     break;
 
                 case 'hierarchical':
                 default:
-                    this.handleHierarchicalSelectionType(item);
+                    this.categorytree.handleHierarchicalSelectionType(item);
                     break;
             }
         }

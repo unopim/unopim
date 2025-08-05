@@ -92,7 +92,8 @@ app.component('v-tree-view', {
             formattedItems: [],
             formattedValues: [],
             formattedExpandedBranch: [],
-            fetchChildrenUrl: "{{ route('admin.catalog.categories.children.tree')}}"
+            fetchChildrenUrl: "{{ route('admin.catalog.categories.children.tree')}}",
+            cache: []
         };
     },
 

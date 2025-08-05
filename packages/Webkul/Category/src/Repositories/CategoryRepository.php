@@ -178,7 +178,7 @@ class CategoryRepository extends Repository
      */
     public function getChildCategories($parentId)
     {
-        return $this->getModel()->where('parent_id', $parentId)->withCount('children')->get();
+        return $this->getModel()->where('parent_id', $parentId)->get()->toTree();
     }
 
     /**
