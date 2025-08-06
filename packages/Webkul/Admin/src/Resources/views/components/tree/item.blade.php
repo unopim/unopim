@@ -14,8 +14,7 @@
             :id="id"
             :label="label"
             :name="name"
-            :value="item[valueField]"
-            @change-input="onInputChange"
+            :value="item[categorytree.valueField]"
         />
 
         <template v-if="showChildren">
@@ -46,7 +45,7 @@ app.component('v-tree-item', {
 
     provide() {
         return {
-            categorytree: this.categorytree
+            treeItem: this
         };
     },
 
@@ -70,7 +69,7 @@ app.component('v-tree-item', {
         },
 
         hasChildren() {
-            return (this.item['_rgt'] - this.item['_lft']) > 0;
+            return (this.item['_rgt'] - this.item['_lft']) > 1;
         },
 
         hasSelectedValue() {
@@ -84,7 +83,8 @@ app.component('v-tree-item', {
                 this.level === 1 && !this.hasChildren ? 'ltr:!pl-5 rtl:!pr-5'
                 : this.level > 1 && !this.hasChildren ? 'ltr:!pl-14 rtl:!pr-14'
                 : '',
-                this.hasChildren && this.hasSelectedValue ? 'active' : ''
+                this.hasChildren && this.hasSelectedValue ? 'active' : '',
+                this.showChildren ? 'active' : ''
             ];
         },
 
@@ -119,7 +119,7 @@ app.component('v-tree-item', {
             }
 
             this.showChildren = !this.showChildren;
-            console.log(this.id);
+
             if (this.showChildren && !this.hasFetchedChildren && this.hasChildren) {
                 if (this.categorytree.cache && this.categorytree.cache[this.id]) {
                     this.children = this.categorytree.cache[this.id];
@@ -141,8 +141,8 @@ app.component('v-tree-item', {
         },
 
         onInputChange() {
-            this.handleCheckbox(this.item[this.categorytree.valueField]);
-            this.$emit('change-input', this.formattedValues);
+            this.categorytree.handleCheckbox(this.item[this.categorytree.valueField]);
+            this.$emit('change-input', this.categorytree.formattedValues);
         },
 
         handleCheckbox(key) {

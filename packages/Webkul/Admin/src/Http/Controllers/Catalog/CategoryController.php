@@ -101,7 +101,7 @@ class CategoryController extends Controller
     {
         $category = $this->categoryRepository->findOrFail($id);
 
-        $categories = $this->categoryRepository->getRootCategories($id);
+        $categories = $this->categoryRepository->getRootCategories();
 
         $branchToParent = $this->categoryRepository->getTreeBranchToParent($id);
 
@@ -251,9 +251,9 @@ class CategoryController extends Controller
      */
     public function tree()
     {
-        $categories = $this->categoryRepository->getVisibleCategoryTree();
+        $categories = $this->categoryRepository->getRootCategories();
 
-        return CategoryTreeResource::collection($categories);
+        return new JsonResponse(['data' => $categories]);
     }
 
     public function children()
