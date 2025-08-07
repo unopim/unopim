@@ -154,6 +154,7 @@
                                         label-field="name"
                                         value-field="id"
                                         id-field="id"
+                                        :current-category="$category->id"
                                         :expanded-branch="json_encode($branchToParent)"
                                         :items="json_encode($categories)"
                                         :value="old('parent_id') ?? json_encode($category->parent_id)"

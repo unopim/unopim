@@ -112,7 +112,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
             Route::get('search', 'search')->name('admin.catalog.categories.search');
 
-            Route::get('tree', 'tree')->name('admin.catalog.categories.tree');
+            Route::post('tree', 'tree')->name('admin.catalog.categories.tree');
 
             Route::get('children-tree', 'children')->name('admin.catalog.categories.children.tree');
         });

@@ -14,7 +14,7 @@
             :id="id"
             :label="label"
             :name="name"
-            :value="item[categorytree.valueField]"
+            :value="value"
         />
 
         <template v-if="showChildren">
@@ -73,8 +73,16 @@ app.component('v-tree-item', {
         },
 
         hasSelectedValue() {
-            return Object.values(this.item).includes(this.categorytree.value)
-                || this.categorytree.countSelectedChildren(this.item);
+            if (this.categorytree.has(this.value)) return true;
+
+            if (!this.categorytree.formattedExpandedBranch) return false;
+
+            let children = this.categorytree.hasSelectedValue(this.value);
+            
+            if (children) {
+                this.showChildren = true;
+                this.children = children;
+            }
         },
 
         itemClasses() {
@@ -83,7 +91,7 @@ app.component('v-tree-item', {
                 this.level === 1 && !this.hasChildren ? 'ltr:!pl-5 rtl:!pr-5'
                 : this.level > 1 && !this.hasChildren ? 'ltr:!pl-14 rtl:!pr-14'
                 : '',
-                this.hasChildren && this.hasSelectedValue ? 'active' : '',
+                this.hasSelectedValue ? 'active' : '',
                 this.showChildren ? 'active' : ''
             ];
         },
@@ -106,6 +114,10 @@ app.component('v-tree-item', {
             return this.categorytree.inputType === 'radio'
                 ? this.$resolveComponent('v-tree-radio')
                 : this.$resolveComponent('v-tree-checkbox');
+        },
+
+        value() {
+           return this.item[this.categorytree.valueField].toString();
         }
     },
 
@@ -116,6 +128,7 @@ app.component('v-tree-item', {
 
             if (categoryId) {
                 url.searchParams.append('id', categoryId);
+                url.searchParams.append('category', this.categorytree.currentCategory);
             }
 
             this.showChildren = !this.showChildren;
@@ -141,7 +154,7 @@ app.component('v-tree-item', {
         },
 
         onInputChange() {
-            this.categorytree.handleCheckbox(this.item[this.categorytree.valueField]);
+            this.categorytree.handleCheckbox(this.item);
             this.$emit('change-input', this.categorytree.formattedValues);
         },
 

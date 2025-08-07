@@ -129,24 +129,31 @@ class CategoryRepository extends Repository
             : $this->model->get()->toTree();
     }
 
-    public function getTreeBranchToParent(int $id)
+    public function getTreeBranchToParent(Category $category, $present = true)
     {
-        $category = $this->find($id);
         $parent = $category->parent;
 
+        $id = $category->id;
+
         if (! $parent) {
-            return collect();
+            return;
         }
 
         $ancestors = $this->model->ancestorsAndSelf($parent->id);
 
         $ancestorIds = $ancestors->pluck('id')->toArray();
-
-        $siblingMap = $this->model
-            ->whereIn('parent_id', $ancestorIds)
-            ->where('id', '!=', $id)
-            ->get()
-            ->groupBy('parent_id');
+        if (! $present) {
+            $siblingMap = $this->model
+                ->whereIn('parent_id', $ancestorIds)
+                ->get()
+                ->groupBy('parent_id');
+        } else {
+            $siblingMap = $this->model
+                ->whereIn('parent_id', $ancestorIds)
+                ->where('id', '!=', $id)
+                ->get()
+                ->groupBy('parent_id');
+        }
 
         $allIds = collect($ancestorIds)
             ->merge($siblingMap->flatten()->pluck('id'))
@@ -176,9 +183,13 @@ class CategoryRepository extends Repository
      *
      * @return \Illuminate\Support\Collection
      */
-    public function getChildCategories($parentId)
+    public function getChildCategories($parentId, $categoryId)
     {
-        return $this->getModel()->where('parent_id', $parentId)->get()->toTree();
+        return $this->getModel()
+            ->where('parent_id', $parentId)
+            ->where('id', '!=', $categoryId)
+            ->get()
+            ->toTree();
     }
 
     /**

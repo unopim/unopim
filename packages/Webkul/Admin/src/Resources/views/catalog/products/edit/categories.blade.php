@@ -47,6 +47,7 @@
                     value-field="code"
                     ::items="categories"
                     :value="json_encode($productCategories)"
+                    ::expanded-branch="selectedCategoryTree"
                     :fallback-locale="config('app.fallback_locale')"
                 >
                 </x-admin::tree.view>
@@ -63,6 +64,8 @@
                     isLoading: true,
 
                     categories: [],
+
+                    selectedCategoryTree: [],
                 }
             },
 
@@ -72,15 +75,20 @@
 
             methods: {
                 get() {
-                    this.$axios.get("{{ route('admin.catalog.categories.tree') }}", {params: {locale: "{{ $currentLocaleCode }}" }})
-                        .then(response => {
-                            this.isLoading = false;
-
-                            this.categories = response.data.data;
-                        }).catch(error => {
-                            console.log(error);
-                        });
+                    this.$axios.post("{{ route('admin.catalog.categories.tree') }}", {
+                        locale: "{{ $currentLocaleCode }}",
+                        selected: @json($productCategories),
+                    })
+                    .then(response => {
+                        this.isLoading = false;
+                        this.categories = response.data.data;
+                        this.selectedCategoryTree = response.data.selected_tree;
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
                 }
+
             }
         });
     </script>

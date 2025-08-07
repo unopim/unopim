@@ -85,6 +85,9 @@ app.component('v-tree-view', {
             type: [Array, Object],
             default: () => ([])
         },
+        currentCategory: {
+            type: Object
+        }
     },
 
     data() {
@@ -107,6 +110,7 @@ app.component('v-tree-view', {
         this.formattedItems = typeof this.items === 'string' ? JSON.parse(this.items) : this.items;
         this.formattedExpandedBranch = typeof this.expandedBranch === 'string' ? JSON.parse(this.expandedBranch) : this.expandedBranch;
         this.formattedValues = this.getInitialFormattedValues();
+        this.subCategoryValue = this.formattedValues;
     },
 
     methods: {
@@ -121,6 +125,18 @@ app.component('v-tree-view', {
 
         has(key) {
             return this.formattedValues.includes(key);
+        },
+
+        hasSelectedValue(key) {
+            const valueField = this.valueField;
+
+            for (const branch of this.formattedExpandedBranch) {
+                if (branch[valueField] == key) {
+                    return branch.children || [];
+                }
+            }
+
+            return false;
         },
 
         select(key) {
@@ -181,6 +197,7 @@ app.component('v-tree-view', {
         },
 
         handleCurrent(item) {
+
             this.toggle(item[this.valueField]);
         },
 
@@ -189,8 +206,8 @@ app.component('v-tree-view', {
             selected ? this.unSelectAllChildren(item) : this.selectAllChildren(item);
         },
 
-        handleCheckbox(key) {
-            const item = this.searchInTree(this.formattedItems, key);
+        handleCheckbox(item) {
+
 
             switch (this.selectionType) {
                 case 'individual':
