@@ -7,8 +7,8 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Admin\Http\Requests\ConfigurationForm;
 use Webkul\Core\Repositories\CoreConfigRepository;
-use Webkul\MagicAI\Contracts\Validator\ConfigValidator;
 use Webkul\Core\Tree;
+use Webkul\MagicAI\Contracts\Validator\ConfigValidator;
 
 class ConfigurationController extends Controller
 {
@@ -56,7 +56,7 @@ class ConfigurationController extends Controller
     {
         $groups = Arr::get(
             $this->configTree->items,
-            request()->route('slug') . '.children.' . request()->route('slug2') . '.children'
+            request()->route('slug').'.children.'.request()->route('slug2').'.children'
         );
 
         if ($groups) {
@@ -118,6 +118,7 @@ class ConfigurationController extends Controller
         } catch (\Throwable $th) {
             \Log::info($th);
             session()->flash('error', trans('admin::app.catalog.products.index.magic-ai-validate-error'));
+
             return redirect()->back();
         }
     }
@@ -131,7 +132,7 @@ class ConfigurationController extends Controller
     {
         $path = request()->route()->parameters()['path'];
 
-        $fileName = 'configuration/' . $path;
+        $fileName = 'configuration/'.$path;
 
         $config = $this->coreConfigRepository->findOneByField('value', $fileName);
 

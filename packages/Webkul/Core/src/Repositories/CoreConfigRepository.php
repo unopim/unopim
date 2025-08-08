@@ -59,7 +59,7 @@ class CoreConfigRepository extends Repository
                         $value = $original;
                     }
                 }
-                
+
                 if (
                     gettype($value) == 'array'
                     && ! isset($value['delete'])

@@ -12,12 +12,12 @@ return [
         'info' => 'admin::app.configuration.index.general.info',
         'sort' => 1,
     ], [
-        'key'  => 'general.magic_ai',
-        'name' => 'admin::app.configuration.index.general.magic-ai.title',
-        'info' => 'admin::app.configuration.index.general.magic-ai.info',
+        'key'       => 'general.magic_ai',
+        'name'      => 'admin::app.configuration.index.general.magic-ai.title',
+        'info'      => 'admin::app.configuration.index.general.magic-ai.info',
         'validator' => 'Webkul\MagicAI\Validator\MagicAICredentialValidator',
-        'icon' => 'settings/magic-ai.svg',
-        'sort' => 3,
+        'icon'      => 'settings/magic-ai.svg',
+        'sort'      => 3,
     ], [
         'key'    => 'general.magic_ai.settings',
         'name'   => 'admin::app.configuration.index.general.magic-ai.settings.title',

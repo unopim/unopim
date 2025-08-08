@@ -9,6 +9,6 @@ class ConfigValidator implements ConfigValidatorContract
     public function validate(array $credentials, array $options = []): array
     {
 
-        return $this->validate($credentials); 
+        return $this->validate($credentials);
     }
 }

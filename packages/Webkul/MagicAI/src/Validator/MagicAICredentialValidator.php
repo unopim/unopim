@@ -3,8 +3,8 @@
 namespace Webkul\MagicAI\Validator;
 
 use GuzzleHttp\Client;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use OpenAI\ValueObjects\Transporter\BaseUri;
 use Webkul\MagicAI\MagicAI;
 
@@ -21,19 +21,20 @@ class MagicAICredentialValidator extends ConfigValidator
     ];
 
     protected ?string $baseUri = null;
+
     protected Client $client;
 
     public function __construct()
     {
-        $this->client = new Client();
+        $this->client = new Client;
     }
 
     public function validate(array $credentials, array $options = []): array
     {
         $credentials = $credentials['general']['magic_ai']['settings'];
 
-        if (!str_starts_with($credentials['api_domain'], 'http')) {
-            $credentials['api_domain'] = 'https://' . $credentials['api_domain'];
+        if (! str_starts_with($credentials['api_domain'], 'http')) {
+            $credentials['api_domain'] = 'https://'.$credentials['api_domain'];
         }
 
         $rules = [
@@ -69,9 +70,9 @@ class MagicAICredentialValidator extends ConfigValidator
 
             $modelEndpoint = self::MODEL_ENDPOINTS[$credentials['ai_platform'] ?? 'openai'];
 
-            $response = $this->client->get($baseUri . $modelEndpoint, [
+            $response = $this->client->get($baseUri.$modelEndpoint, [
                 'headers' => [
-                    'Authorization' => 'Bearer ' . $credentials['api_key'],
+                    'Authorization' => 'Bearer '.$credentials['api_key'],
                     'Content-Type'  => 'application/json',
                 ],
             ]);

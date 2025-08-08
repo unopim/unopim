@@ -4,7 +4,7 @@
         </x-slot>
         <x-slot:title>
             @lang('admin::app.catalog.products.edit.title')
-            </x-slot>
+        </x-slot>
 
             {!! view_render_event('unopim.admin.catalog.product.edit.before', ['product' => $product]) !!}
 
@@ -519,212 +519,222 @@
                     targetChannel: this.channelTarget,
                     targetLocales: this.targetLocales,
                     fieldType: this.fieldType,
-
-                    };
-                },
+                };
+            },
             methods: {
                 fetchAttribute() {
-                        this.$axios.get("{{ route('admin.catalog.product.get_attribute') }}", {
-                            params: {
-                                productId: this.resourceId,
-                                },
-                            })
-                            .then((response) => {
-                                let options = response.data?.attributes;
-                                this.attributesOptions = JSON.stringify(options);
-                                this.attributes = options;
-                                this.$nextTick(() => {
-                                    if (this.$refs['attributesOptionsRef']) {
-                                        this.$refs['attributesOptionsRef'].selectedValue = options;
-                                    }
-                                });
+                    this.$axios.get("{{ route('admin.catalog.product.get_attribute') }}", {
+                        params: {
+                            productId: this.resourceId,
+                            },
+                        })
+                        .then((response) => {
+                            let options = response.data?.attributes;
+                            this.attributesOptions = JSON.stringify(options);
+                            this.attributes = options;
+                            this.$nextTick(() => {
+                                if (this.$refs['attributesOptionsRef']) {
+                                    this.$refs['attributesOptionsRef'].selectedValue = options;
+                                }
+                            });
 
+                        })
+                        .catch((error) => {
+                        console.error('Error fetching attributes:', error);
+                            throw error;
+                        });
+                },
+
+                fetchSourceLocales() {
+                    this.getLocale(this.sourceChannel)
+                        .then((options) => {
+                            this.localeOption = JSON.stringify(options);
+                        })
+                        .catch((error) => {
+                            console.error('Error fetching source locales:', error);
+                        });
+                },
+
+                fetchTargetLocales() {
+                    this.getLocale(this.targetChannel)
+                        .then((options) => {
+                            if (this.targetChannel === this.sourceChannel) {
+                                options = options.filter(option => option.id != this.sourceLocale);
+                            }
+
+                            this.targetLocOptions = JSON.stringify(options);
+                        })
+                        .catch((error) => {
+                            console.error('Error fetching target locales:', error);
+                        });
+                },
+
+                getSourceLocale(event) {
+                    if (event) {
+                        this.sourceChannel = JSON.parse(event).id;
+
+                        this.getLocale(this.sourceChannel)
+                            .then((options) => {
+                                if (this.$refs['localelRef']) {
+                                    this.$refs['localelRef'].selectedValue = null;
+                                }
+
+                                this.localeOption = JSON.stringify(options);
+
+                                if (options.length == 1) {
+                                    this.sourceLocale = options[0].id;
+
+                                    if (this.$refs['localelRef']) {
+                                        this.$refs['localelRef'].selectedValue = options[0];
+                                    }
+                                }
                             })
                             .catch((error) => {
-                            console.error('Error fetching attributes:', error);
-                                throw error;
+                                console.error('Error fetching source locales:', error);
                             });
-                        },
-                        fetchSourceLocales() {
-                            this.getLocale(this.sourceChannel)
-                                .then((options) => {
-                                    this.localeOption = JSON.stringify(options);
-                                })
-                                .catch((error) => {
+                    }
+                },    
+
+                getTargetLocale(event) {
+                    if (event) {
+                        this.targetChannel = JSON.parse(event).id;
+
+                        this.getLocale(this.targetChannel)
+                            .then((options) => {
+                                if (this.$refs['targetLocOptionsRef']) {
+                                    this.$refs['targetLocOptionsRef'].selectedValue = null;
+                                }
+
+                                if (this.targetChannel === this.sourceChannel) {
+                                    options = options.filter(option => option.id != this.sourceLocale);
+                                }
+
+                                this.targetLocOptions = JSON.stringify(options);
+                                this.targetLocales = options;
+
+                                if (this.$refs['targetLocOptionsRef']) {
+                                    this.$refs['targetLocOptionsRef'].selectedValue = options;
+                                }
+                            })
+                            .catch((error) => {
+                                console.error('Error fetching source locales:', error);
+                            });
+                    }
+                },   
+
+                resetTargetLocales(event) {
+                    if (event) {
+                        this.sourceLocale = JSON.parse(event).id;
+                        this.getLocale(this.targetChannel)
+                            .then((options) => {
+                                if (this.$refs['targetLocOptionsRef']) {
+                                    this.$refs['targetLocOptionsRef'].selectedValue = null;
+                                }
+                                if (this.targetChannel === this.sourceChannel) {
+                                    options = options.filter(option => option.id != this.sourceLocale);
+                                }
+                                this.targetLocOptions = JSON.stringify(options);
+                                this.targetLocales = options;
+                                if (this.$refs['targetLocOptionsRef']) {
+                                    this.$refs['targetLocOptionsRef'].selectedValue = options;
+                                }
+                            })
+                            .catch((error) => {
                                     console.error('Error fetching source locales:', error);
-                                });
-                        },
+                            });
 
-                        fetchTargetLocales() {
-                            this.getLocale(this.targetChannel)
-                                .then((options) => {
-                                    if (this.targetChannel === this.sourceChannel) {
-                                        options = options.filter(option => option.id != this.sourceLocale);
-                                    }
-                                    this.targetLocOptions = JSON.stringify(options);
-                                })
-                                .catch((error) => {
-                                    console.error('Error fetching target locales:', error);
-                                });
-                        },
+                    }
+                },
 
-                        getSourceLocale(event) {
-                            if (event) {
-                                this.sourceChannel = JSON.parse(event).id;
-                                this.getLocale(this.sourceChannel)
-                                    .then((options) => {
-                                        if (this.$refs['localelRef']) {
-                                            this.$refs['localelRef'].selectedValue = null;
-                                        }
-                                        this.localeOption = JSON.stringify(options);
-                                        if (options.length == 1) {
-                                            this.sourceLocale = options[0].id;
-                                            if (this.$refs['localelRef']) {
-                                                this.$refs['localelRef'].selectedValue = options[0];
-                                            }
-                                        }
-                                    }).catch((error) => {
-                                        console.error('Error fetching source locales:', error);
-                                    });
+                getLocale(channel) {
+                    return this.$axios.get("{{ route('admin.catalog.product.get_locale') }}", {
+                            params: {
+                                channel: channel,
+                            },
+                        })
+                        .then((response) => {
+                                return response.data?.locales || [];
+                        })
+                        .catch((error) => {
+                            console.error('Error fetching locales:', error);
+                            throw error;
+                        });
+                },
+
+                translate(params, {
+                    resetForm,
+                    resetField,
+                    setErrors
+                }) {
+                    this.isLoading = true;
+                    if (!this.$refs.translationForm) {
+                        console.error("translationForm reference is missing.");
+                        return;
+                    }
+
+                    const formData = new FormData(this.$refs.translationForm);
+                    let locale = params['locale'];
+                    formData.append('model', this.model);
+                    formData.append('resource_id', this.resourceId);
+                    formData.append('resource_type', 'product');
+                    this.$axios.post("{{ route('admin.magic_ai.translate.all.attribute') }}", formData)
+                        .then((response) => {
+                            this.isLoading = false;
+                            let translatedData = response.data;
+                            if (translatedData.length != 0) {
+                                this.translatedValues = response.data;
+                            } else {
+                                this.nothingToTranslate = 'Data not available for translate on the basis of source channel and locale';
                             }
-                        },
-
-                        getTargetLocale(event) {
-                            if (event) {
-                                this.targetChannel = JSON.parse(event).id;
-                                this.getLocale(this.targetChannel)
-                                    .then((options) => {
-                                        if (this.$refs['targetLocOptionsRef']) {
-                                            this.$refs['targetLocOptionsRef'].selectedValue = null;
-                                        }
-                                        if (this.targetChannel === this.sourceChannel) {
-                                            options = options.filter(option => option.id != this.sourceLocale);
-                                        }
-                                        this.targetLocOptions = JSON.stringify(options);
-                                        this.targetLocales = options;
-                                        if (this.$refs['targetLocOptionsRef']) {
-                                            this.$refs['targetLocOptionsRef'].selectedValue = options;
-                                        }
-                                    }).catch((error) => {
-                                        console.error('Error fetching source locales:', error);
-                                    });
-
+                        })
+                        .catch((error) => {
+                            this.isLoading = false;
+                            console.error("Error in translation request:", error);
+                            if (setErrors) {
+                                setErrors(error.response?.data?.errors || {});
                             }
+                        });
+                },
 
-                        },
+                apply() {
+                    const translatedData = this.translatedValues.map(item => ({
+                        field: item.fieldName,
+                        isTranslatable: item.isTranslatable,
+                        source: item.sourceData,
+                        translations: item.translatedData.map(translation => ({
+                            locale: translation.locale,
+                            content: translation.content
+                        })),
+                    }));
 
-                        resetTargetLocales(event) {
-                            if (event) {
-                                this.sourceLocale = JSON.parse(event).id;
-                                this.getLocale(this.targetChannel)
-                                    .then((options) => {
-                                        if (this.$refs['targetLocOptionsRef']) {
-                                            this.$refs['targetLocOptionsRef'].selectedValue = null;
-                                        }
-                                        if (this.targetChannel === this.sourceChannel) {
-                                            options = options.filter(option => option.id != this.sourceLocale);
-                                        }
-                                        this.targetLocOptions = JSON.stringify(options);
-                                        this.targetLocales = options;
-                                        if (this.$refs['targetLocOptionsRef']) {
-                                            this.$refs['targetLocOptionsRef'].selectedValue = options;
-                                        }
-                                    }).catch((error) => {
-                                        console.error('Error fetching source locales:', error);
-                                    });
-
-                            }
-                        },
-
-                        getLocale(channel) {
-                            return this.$axios.get("{{ route('admin.catalog.product.get_locale') }}", {
-                                    params: {
-                                        channel: channel,
-                                    },
-                                })
-                                .then((response) => {
-                                    return response.data?.locales || [];
-                                })
-                                .catch((error) => {
-                                    console.error('Error fetching locales:', error);
-                                    throw error;
-                                });
-                        },
-
-                        translate(params, {
-                            resetForm,
-                            resetField,
-                            setErrors
-                        }) {
-                            this.isLoading = true;
-                            if (!this.$refs.translationForm) {
-                                console.error("translationForm reference is missing.");
-                                return;
-                            }
-
-                            const formData = new FormData(this.$refs.translationForm);
-                            let locale = params['locale'];
-                            formData.append('model', this.model);
-                            formData.append('resource_id', this.resourceId);
-                            formData.append('resource_type', 'product');
-                            this.$axios.post("{{ route('admin.magic_ai.translate.all.attribute') }}", formData)
-                                .then((response) => {
-                                    this.isLoading = false;
-                                    let translatedData = response.data;
-                                    if (translatedData.length != 0) {
-                                        this.translatedValues = response.data;
-                                    } else {
-                                        this.nothingToTranslate = 'Data not available for translate on the basis of source channel and locale';
-                                    }
-                                })
-                                .catch((error) => {
-                                    this.isLoading = false;
-                                    console.error("Error in translation request:", error);
-                                    if (setErrors) {
-                                        setErrors(error.response?.data?.errors || {});
-                                    }
-                                });
-                        },
-
-                        apply() {
-                            const translatedData = this.translatedValues.map(item => ({
-                                field: item.fieldName,
-                                isTranslatable: item.isTranslatable,
-                                source: item.sourceData,
-                                translations: item.translatedData.map(translation => ({
-                                    locale: translation.locale,
-                                    content: translation.content
-                                })),
-                            }));
-
-                            const formData = new FormData(this.$refs.translationForm);
-                            formData.append('resource_id', this.resourceId);
-                            formData.append('resource_type', 'product');
-                            formData.append('translatedData', JSON.stringify(translatedData));
-                            this.$axios.post("{{ route('admin.magic_ai.store.translated.all_attribute') }}", formData)
-                                .then((response) => {
-                                    this.$refs.translationModal.close();
-                                    this.$emitter.emit('add-flash', {
-                                        type: 'success',
-                                        message: response.data.message,
-                                    });
-                                })
-                                .catch((error) => {
-                                    console.error("Error in translation store request:", error);
-                                });
-                        },
-
-                        cancel() {
+                    const formData = new FormData(this.$refs.translationForm);
+                    formData.append('resource_id', this.resourceId);
+                    formData.append('resource_type', 'product');
+                    formData.append('translatedData', JSON.stringify(translatedData));
+                    this.$axios.post("{{ route('admin.magic_ai.store.translated.all_attribute') }}", formData)
+                        .then((response) => {
                             this.$refs.translationModal.close();
-                            this.resetForm();
-                        },
+                            this.$emitter.emit('add-flash', {
+                                type: 'success',
+                                message: response.data.message,
+                            });
+                        })
+                        .catch((error) => {
+                            console.error("Error in translation store request:", error);
+                        });
+                },
 
-                        resetForm() {
-                            this.translatedValues = null;
-                            this.localeOption = null;
-                            this.nothingToTranslate = null;
-                            this.targetLocOptions = null;
-                        }
+                cancel() {
+                    this.$refs.translationModal.close();
+                    this.resetForm();
+                },
+
+                resetForm() {
+                    this.translatedValues = null;
+                    this.localeOption = null;
+                    this.nothingToTranslate = null;
+                    this.targetLocOptions = null;
+                }
 
             },
         });
@@ -732,38 +742,38 @@
 @endPushOnce
 
 @pushOnce('scripts')
-    <script type="text/x-template" id="v-custom-dropdown-template">
-            <div class="relative inline-block text-left">
+<script type="text/x-template" id="v-custom-dropdown-template">
+    <div class="relative inline-block text-left">
 
-                <button
-                    type="button"
-                    @click="toggleDropdown"
-                    class="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
+        <button
+            type="button"
+            @click="toggleDropdown"
+            class="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
+        >
+        <span class="icon-configuration text-2xl"></span>
+
+        </button>
+
+        <div v-if="isOpen" class="absolute right-0  w-36 bg-white dark:bg-gray-700 shadow-lg rounded-lg z-100">
+            <p class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded cursor-pointer">
+                @php
+                    $channelValue = core()->getConfigData('general.magic_ai.translation.source_channel');
+                    $localeValue = core()->getConfigData('general.magic_ai.translation.source_locale');
+                    $targetChannel = core()->getConfigData('general.magic_ai.translation.target_channel');
+                    $targetlocales = core()->getConfigData('general.magic_ai.translation.target_locale');
+                    $targetlocales = json_encode(explode(',', $targetlocales) ?? []);
+                    $model = core()->getConfigData('general.magic_ai.translation.ai_model');
+                @endphp
+                <v-translate-attribute
+                    :channel-value="{{ json_encode($channelValue) }}"
+                    :locale-value='@json($localeValue)'
+                    :channel-target="{{ json_encode($targetChannel) }}"
+                    :target-locales="{{$targetlocales}}"
+                    :model="'{{$model}}'"
                 >
-                <span class="icon-configuration text-2xl"></span>
-
-                </button>
-
-                <div v-if="isOpen" class="absolute right-0  w-36 bg-white dark:bg-gray-700 shadow-lg rounded-lg z-100">
-                    <p class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded cursor-pointer">
-                        @php
-                            $channelValue = core()->getConfigData('general.magic_ai.translation.source_channel');
-                            $localeValue = core()->getConfigData('general.magic_ai.translation.source_locale');
-                            $targetChannel = core()->getConfigData('general.magic_ai.translation.target_channel');
-                            $targetlocales = core()->getConfigData('general.magic_ai.translation.target_locale');
-                            $targetlocales = json_encode(explode(',', $targetlocales) ?? []);
-                            $model = core()->getConfigData('general.magic_ai.translation.ai_model');
-                        @endphp
-                        <v-translate-attribute
-                            :channel-value="{{ json_encode($channelValue) }}"
-                            :locale-value='@json($localeValue)'
-                            :channel-target="{{ json_encode($targetChannel) }}"
-                            :target-locales="{{$targetlocales}}"
-                            :model="'{{$model}}'"
-                        >
-                        </v-translate-attribute>
-                    </p>
-            </div>
+                </v-translate-attribute>
+            </p>
+        </div>
     </div>
 </script>
 <script type="module">
