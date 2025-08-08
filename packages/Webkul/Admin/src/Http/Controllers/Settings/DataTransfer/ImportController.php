@@ -553,7 +553,7 @@ class ImportController extends Controller
     {
         $importer = config('importers.'.$type);
 
-        return Storage::download($importer['sample_path']);
+        return Storage::disk('public')->download($importer['sample_path']);
     }
 
     /**

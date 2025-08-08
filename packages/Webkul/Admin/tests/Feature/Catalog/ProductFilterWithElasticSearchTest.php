@@ -508,7 +508,7 @@ it('should filter products by text attribute using Elasticsearch', function () {
                                 [
                                     'query_string' => [
                                         'default_field' => 'values.common.'.$attribute->code.'-'.$attribute->type,
-                                        'query'         => '"*test_value*" OR "*test_value2*"',
+                                        'query'         => '*test_value* OR *test_value2*',
                                     ],
                                 ],
                             ],
@@ -572,7 +572,7 @@ it('should filter products by textarea attribute using Elasticsearch', function 
                                 [
                                     'query_string' => [
                                         'default_field' => 'values.common.'.$attribute->code.'-'.$attribute->type,
-                                        'query'         => '"*test_value*"',
+                                        'query'         => '*test_value*',
                                     ],
                                 ],
                             ],

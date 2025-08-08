@@ -9,8 +9,10 @@ use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
 use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Helpers\Exporters\AbstractExporter;
+use Webkul\DataTransfer\Helpers\Sources\Export\ProductSource;
 use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
+use Webkul\Product\Repositories\ProductRepository;
 
 class Exporter extends AbstractExporter
 {
@@ -39,6 +41,7 @@ class Exporter extends AbstractExporter
         protected FileExportFileBuffer $exportFileBuffer,
         protected ChannelRepository $channelRepository,
         protected AttributeRepository $attributeRepository,
+        protected ProductSource $productSource,
     ) {
         parent::__construct($exportBatchRepository, $exportFileBuffer);
     }
@@ -70,7 +73,7 @@ class Exporter extends AbstractExporter
 
         $products = $this->prepareProducts($batch, $filePath);
 
-        $this->exportFileBuffer->addData($products, $filePath, $this->getExportParameter());
+        $this->exportBuffer->write($products);
 
         /**
          * Update export batch process state summary
@@ -87,11 +90,22 @@ class Exporter extends AbstractExporter
      */
     protected function getResults()
     {
-        return $this->source->with([
-            'attribute_family',
-            'parent',
-            'super_attributes',
-        ])->orderBy('id', 'desc')->all()?->getIterator();
+        $requestParam['filters'] = $this->getFilters();
+
+        return $this->productSource->getResults($requestParam, $this->source, self::BATCH_SIZE);
+    }
+
+    protected function getItemsFromIds(array $ids)
+    {
+        if (empty($ids)) {
+            return [];
+        }
+
+        if (! $this->source) {
+            $this->source = app(ProductRepository::class);
+        }
+
+        return $this->source->whereIn('id', $ids)->get();
     }
 
     /**
@@ -100,34 +114,65 @@ class Exporter extends AbstractExporter
     public function prepareProducts(JobTrackBatchContract $batch, $filePath)
     {
         $products = [];
-        foreach ($batch->data as $rowData) {
+        $flatIds = array_column($batch->data, 'id');
+
+        $productsByIds = $this->getItemsFromIds($flatIds);
+
+        foreach ($productsByIds as $product) {
+            $rowData = $product->toArray();
+
+            $rowData['super_attributes'] = $rowData['type'] === 'configurable'
+                ? $product->super_attributes->toArray()
+                : [];
+
+            $family = $rowData['attribute_family']['code'] ?? null;
+            $parentSku = $rowData['type'] === 'simple'
+                ? optional($product->parent)->sku
+                : null;
+
+            $sku = $rowData['sku'];
+            $type = $rowData['type'];
+            $status = $rowData['status'] ? 'true' : 'false';
+            $configurableAttributes = $this->getSuperAttributes($rowData);
+            $categories = $this->getCategories($rowData);
+            $upSells = $this->getAssociations($rowData, 'up_sells');
+            $crossSells = $this->getAssociations($rowData, 'cross_sells');
+            $relatedProducts = $this->getAssociations($rowData, 'related_products');
+
+            unset($rowData['attribute_family'], $rowData['parent']);
+
+            $commonFields = $this->getCommonFields($rowData);
+            unset($commonFields['sku']);
+
             foreach ($this->channelsAndLocales as $channel => $locales) {
                 foreach ($locales as $locale) {
-                    $commonFields = $this->getCommonFields($rowData);
-                    unset($commonFields['sku']);
                     $localeSpecificFields = $this->getLocaleSpecificFields($rowData, $locale);
                     $channelSpecificFields = $this->getChannelSpecificFields($rowData, $channel);
                     $channelLocaleSpecificFields = $this->getChannelLocaleSpecificFields($rowData, $channel, $locale);
-                    // Merge common and locale-specific fields before array_merge
-                    $mergedFields = array_merge($commonFields, $localeSpecificFields, $channelSpecificFields, $channelLocaleSpecificFields);
+
+                    $mergedFields = array_merge(
+                        $commonFields,
+                        $localeSpecificFields,
+                        $channelSpecificFields,
+                        $channelLocaleSpecificFields
+                    );
+
                     $values = $this->setAttributesValues($mergedFields, $filePath);
 
-                    $data = array_merge([
+                    $products[] = array_merge([
                         'channel'                 => $channel,
                         'locale'                  => $locale,
-                        'sku'                     => $rowData['sku'],
-                        'status'                  => $rowData['status'] ? 'true' : 'false',
-                        'type'                    => $rowData['type'],
-                        'parent'                  => $rowData['parent']['sku'] ?? null,
-                        'attribute_family'        => $rowData['attribute_family']['code'] ?? null,
-                        'configurable_attributes' => $this->getSuperAttributes($rowData),
-                        'categories'              => $this->getCategories($rowData),
-                        'up_sells'                => $this->getAssociations($rowData, 'up_sells'),
-                        'cross_sells'             => $this->getAssociations($rowData, 'cross_sells'),
-                        'related_products'        => $this->getAssociations($rowData, 'related_products'),
+                        'sku'                     => $sku,
+                        'status'                  => $status,
+                        'type'                    => $type,
+                        'parent'                  => $parentSku,
+                        'attribute_family'        => $family,
+                        'configurable_attributes' => $configurableAttributes,
+                        'categories'              => $categories,
+                        'up_sells'                => $upSells,
+                        'cross_sells'             => $crossSells,
+                        'related_products'        => $relatedProducts,
                     ], $values);
-
-                    $products[] = $data;
                 }
             }
 
@@ -153,54 +198,58 @@ class Exporter extends AbstractExporter
     /**
      * Sets attribute values for a product. If an attribute is not present in the given values array,
      *
-     *
      * @return array
      */
     protected function setAttributesValues(array $values, mixed $filePath)
     {
         $attributeValues = [];
         $filters = $this->getFilters();
-        $withMedia = (bool) $filters['with_media'];
+        $withMedia = (bool) ($filters['with_media'] ?? false);
 
-        foreach ($this->attributes as $key => $attribute) {
-            $attributeCode = $attribute->code;
+        foreach ($this->attributes as $attribute) {
+            $code = $attribute->code;
 
-            if ($attributeCode == 'sku' || $attributeCode === 'status') {
+            if (in_array($code, ['sku', 'status'])) {
                 continue;
             }
 
-            $attributeValues[$attributeCode] = $values[$attributeCode] ?? null;
+            $rawValue = $values[$code] ?? null;
 
-            if ($attribute->type == AttributeTypes::PRICE_ATTRIBUTE_TYPE) {
-                $priceData = ! empty($attributeValues[$attributeCode]) ? $attributeValues[$attributeCode] : [];
-
-                foreach ($this->currencies as $value) {
-                    $attributeValues[$attributeCode.' ('.$value.')'] = $priceData[$value] ?? null;
-                }
-
-                unset($attributeValues[$attributeCode]);
-            }
-
-            if ($withMedia && in_array($attribute->type, [AttributeTypes::FILE_ATTRIBUTE_TYPE, AttributeTypes::IMAGE_ATTRIBUTE_TYPE, AttributeTypes::GALLERY_ATTRIBUTE_TYPE])) {
-                $existingFilePath = $values[$attributeCode] ?? null;
-
-                $existingFilePath = is_array($existingFilePath) ? $existingFilePath : [$existingFilePath];
-
-                foreach ($existingFilePath as $path) {
-                    if ($path && ! empty($path)) {
-                        $newfilePath = $filePath->getTemporaryPath().'/'.$path;
-                        $this->copyMedia($path, $newfilePath);
+            if (
+                $withMedia &&
+                in_array($attribute->type, [
+                    AttributeTypes::FILE_ATTRIBUTE_TYPE,
+                    AttributeTypes::IMAGE_ATTRIBUTE_TYPE,
+                    AttributeTypes::GALLERY_ATTRIBUTE_TYPE,
+                ])
+            ) {
+                $mediaPaths = (array) $rawValue;
+                foreach ($mediaPaths as $path) {
+                    if (! empty($path)) {
+                        $this->copyMedia($path, $filePath->getTemporaryPath().'/'.$path);
                     }
                 }
 
-                if (is_array($existingFilePath)) {
-                    $attributeValues[$attributeCode] = implode(', ', $existingFilePath);
-                }
+                $attributeValues[$code] = implode(', ', array_filter($mediaPaths));
+
+                continue;
             }
 
-            if (is_array($attributeValues[$attributeCode] ?? null)) {
-                $attributeValues[$attributeCode] = implode(', ', $attributeValues[$attributeCode]);
+            if ($attribute->type === AttributeTypes::PRICE_ATTRIBUTE_TYPE) {
+                $priceData = is_array($rawValue) ? $rawValue : [];
+
+                foreach ($this->currencies as $currency) {
+                    $attributeValues["{$code} ({$currency})"] = $priceData[$currency] ?? null;
+                }
+
+                continue;
             }
+
+            if (is_array($rawValue)) {
+                $rawValue = implode(', ', $rawValue);
+            }
+
+            $attributeValues[$code] = $rawValue;
         }
 
         return $attributeValues;
@@ -208,7 +257,6 @@ class Exporter extends AbstractExporter
 
     /**
      * Retrieves and formats the common fields for a product.
-     *
      *
      * @return array
      */
@@ -227,10 +275,9 @@ class Exporter extends AbstractExporter
     /**
      * Retrieves and formats the locale-specific fields for a product.
      *
-     * @param  string  $channel
      * @return array
      */
-    protected function getLocaleSpecificFields(array $data, $locale)
+    protected function getLocaleSpecificFields(array $data, string $locale)
     {
         if (
             ! array_key_exists('values', $data)
@@ -245,10 +292,9 @@ class Exporter extends AbstractExporter
     /**
      * Retrieves and formats the channel-specific fields for a product.
      *
-     * @param  string  $channel
      * @return array
      */
-    protected function getChannelSpecificFields(array $data, $channel)
+    protected function getChannelSpecificFields(array $data, string $channel)
     {
         if (
             ! array_key_exists('values', $data)
@@ -262,7 +308,6 @@ class Exporter extends AbstractExporter
 
     /**
      * Retrieves and formats the channel-locale-specific fields for a product.
-     *
      *
      * @return array
      */
@@ -281,7 +326,6 @@ class Exporter extends AbstractExporter
     /**
      * Retrieves and formats the categories associated with a product.
      *
-     *
      * @return string|null
      */
     protected function getCategories(array $data)
@@ -299,7 +343,6 @@ class Exporter extends AbstractExporter
 
     /**
      * Retrieves and formats the associated products for a given data row and type.
-     *
      *
      * @return string|null
      */

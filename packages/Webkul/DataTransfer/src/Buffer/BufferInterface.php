@@ -14,5 +14,5 @@ interface BufferInterface
      *
      * @throws \InvalidArgumentException If the buffer implementation does not support item of this type
      */
-    public function addData($item, $filePath, array $options = []);
+    public function addData($item);
 }
