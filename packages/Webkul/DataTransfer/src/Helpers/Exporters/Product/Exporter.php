@@ -224,7 +224,6 @@ class Exporter extends AbstractExporter
                 ])
             ) {
                 $mediaPaths = (array) $rawValue;
-
                 foreach ($mediaPaths as $path) {
                     if (! empty($path)) {
                         $this->copyMedia($path, $filePath->getTemporaryPath().'/'.$path);

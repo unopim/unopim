@@ -1,5 +1,38 @@
-# v0.2.x
+## v0.3.0 - 2025-07-28
 
+### Features
+
+* Dynamic management of quick product export jobs
+* Product datagrid now supports dynamic columns and filters
+* Improved Magic AI functionality
+* Enhanced product information section UI/UX
+* Improved Elasticsearch filters for products and categories
+* Improved export functionality using Elasticsearch
+* Introduced upgrade guide and automated upgrade script
+* Added Playwright tests for end-to-end testing
+
+### Fixes & Enhancements
+
+* Altered `text` column to `string` (`varchar`) and added relevant indexes
+* Optimized category datagrid to sort by `id` instead of `_id`
+* Improved performance for pages loading bulk data
+* Improved file validation rules
+* Enhanced product index functionality in Elasticsearch
+* Resolved issue with invalid channel-locale change [#122](https://github.com/unopim/unopim/pull/122)
+* Fixed unique attribute value duplication when creating variants
+* Fixed issue preventing value entry in the Price section when multiple currencies are enabled
+* Fixed inconsistent WYSIWYG field behavior during data transfer and API usage
+* Updated validation rule to disallow only special characters, spaces, and dashes in the `Code` field
+* Fixed error when downloading sample CSV files with non-public default storage
+* Updated `X-Frame-Options` header to `SAMEORIGIN` in SecureHeaders middleware [#180](https://github.com/unopim/unopim/pull/180)
+
+### Dependency Updates
+
+* Upgraded `laravel/framework` from `10.48.23` to `10.48.29`
+* Updated Finnish translations [#161](https://github.com/unopim/unopim/pull/161)
+* Optimized attribute options grid performance for large datasets
+ 
+ 
 ## v0.2.0 - 2025-03-26
 ### ✨ **Features**  
 - Added disk parameter to `sanitizeSVG`. [#58](https://github.com/unopim/unopim/pull/58)  
