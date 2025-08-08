@@ -51,13 +51,29 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        $categories = $this->categoryRepository->getCategoryTree(null, ['id']);
+        $categories = $this->categoryRepository->getRootCategories();
+
+        $categories = $this->transformCategoryTree($categories);
 
         $leftCategoryFields = $this->categoryFieldRepository->getActiveCategoryFieldsBySection('left');
 
         $rightCategoryFields = $this->categoryFieldRepository->getActiveCategoryFieldsBySection('right');
 
         return view('admin::catalog.categories.create', compact('categories', 'leftCategoryFields', 'rightCategoryFields'));
+    }
+
+    public function transformCategoryTree($categories)
+    {
+        return $categories->map(function ($category) {
+            return [
+                'id'       => $category->id,
+                'code'     => $category->code,
+                'name'     => $category->name,
+                'children' => [],
+                '_rgt'     => $category->_rgt,
+                '_lft'     => $category->_lft,
+            ];
+        })->toArray();
     }
 
     /**
@@ -102,6 +118,8 @@ class CategoryController extends Controller
         $category = $this->categoryRepository->findOrFail($id);
 
         $categories = $this->categoryRepository->getRootCategories();
+
+        $categories = $this->transformCategoryTree($categories);
 
         $category = $this->categoryRepository->find($id);
 

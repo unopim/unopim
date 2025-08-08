@@ -11,7 +11,7 @@
     @php
         $currentLocale = core()->getRequestedLocale();
 
-        $categoryCount = $categories->count();
+        $categoryCount = count($categories);
 
         $isEmptyRightSection = $rightCategoryFields?->isEmpty();
     @endphp
