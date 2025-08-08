@@ -263,7 +263,7 @@ class CategoryController extends Controller
 
         $selectedCategories = $this->categoryRepository->findWhereIn('code', $selectedCodes);
 
-        $allBranches = [];
+        $allBranches = collect();
 
         foreach ($selectedCategories as $category) {
             if (! $category->parent) {
@@ -278,6 +278,7 @@ class CategoryController extends Controller
         }
 
         $categories = $this->categoryRepository->getRootCategories();
+        $allBranches = $allBranches->unique('id')->values();
 
         return new JsonResponse([
             'data'          => $categories,
@@ -288,12 +289,8 @@ class CategoryController extends Controller
     public function children()
     {
         $id = request()->get('id');
-        $category = request()->get('category');
 
-        if (! $id) {
-            // Add error or throw exception here
-            return;
-        }
+        $category = request()->get('category');
 
         $this->categoryRepository->findOrFail($id);
 

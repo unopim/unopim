@@ -107,13 +107,45 @@ app.component('v-tree-view', {
     },
 
     created() {
-        this.formattedItems = typeof this.items === 'string' ? JSON.parse(this.items) : this.items;
-        this.formattedExpandedBranch = typeof this.expandedBranch === 'string' ? JSON.parse(this.expandedBranch) : this.expandedBranch;
+        this.formattedItems = this.parseInput(this.items);
+        this.formattedExpandedBranch = this.parseInput(this.expandedBranch);
         this.formattedValues = this.getInitialFormattedValues();
-        this.subCategoryValue = this.formattedValues;
+
+        this.mergeExpandedBranches();
     },
 
+
     methods: {
+        parseInput(data) {
+            return typeof data === 'string' ? JSON.parse(data) : (data || []);
+        },
+
+        mergeExpandedBranches() {
+            const valueField = this.valueField;
+            const childrenField = this.childrenField;
+
+            const injectChildren = (targetList, sourceBranch) => {
+                for (const item of targetList) {
+                    if (item[valueField] === sourceBranch[valueField]) {
+                        if (sourceBranch[childrenField]) {
+                            item[childrenField] = sourceBranch[childrenField];
+                        }
+                        return true;
+                    }
+
+                    if (item[childrenField]) {
+                        const found = injectChildren(item[childrenField], sourceBranch);
+                        if (found) return true;
+                    }
+                }
+                return false;
+            };
+
+            for (const branch of this.formattedExpandedBranch) {
+                injectChildren(this.formattedItems, branch);
+            }
+        },
+
         getInitialFormattedValues() {
             if (this.inputType === 'radio') {
                 return Array.isArray(this.value) ? this.value : [this.value];
@@ -127,18 +159,6 @@ app.component('v-tree-view', {
             return this.formattedValues.includes(key);
         },
 
-        hasSelectedValue(key) {
-            const valueField = this.valueField;
-
-            for (const branch of this.formattedExpandedBranch) {
-                if (branch[valueField] == key) {
-                    return branch.children || [];
-                }
-            }
-
-            return false;
-        },
-
         select(key) {
             if (!this.has(key)) this.formattedValues.push(key);
         },
@@ -149,19 +169,6 @@ app.component('v-tree-view', {
 
         toggle(key) {
             this.has(key) ? this.unSelect(key) : this.select(key);
-        },
-
-        searchInTree(items, value, ancestors = []) {
-            for (const item of items) {
-                if (item[this.valueField] === value) {
-                    return Object.assign(item, { ancestors: [...ancestors].reverse() });
-                }
-
-                if (item[this.childrenField]) {
-                    const found = this.searchInTree(item[this.childrenField], value, [...ancestors, item]);
-                    if (found) return found;
-                }
-            }
         },
 
         countSelectedChildren(item) {

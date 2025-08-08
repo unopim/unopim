@@ -51,10 +51,16 @@ app.component('v-tree-item', {
 
     data() {
         return {
-            children: this.item[this.childrenField] || [],
+            children: this.item[this.categorytree.childrenField] || [],
             hasFetchedChildren: false,
             showChildren: false
         };
+    },
+
+    mounted() {
+        if (this.children.length > 0) {
+            this.showChildren = true;
+        }
     },
 
     computed: {
@@ -74,15 +80,6 @@ app.component('v-tree-item', {
 
         hasSelectedValue() {
             if (this.categorytree.has(this.value)) return true;
-
-            if (!this.categorytree.formattedExpandedBranch) return false;
-
-            let children = this.categorytree.hasSelectedValue(this.value);
-            
-            if (children) {
-                this.showChildren = true;
-                this.children = children;
-            }
         },
 
         itemClasses() {
@@ -157,20 +154,6 @@ app.component('v-tree-item', {
             this.categorytree.handleCheckbox(this.item);
             this.$emit('change-input', this.categorytree.formattedValues);
         },
-
-        handleCheckbox(key) {
-            const item = this.categorytree.searchInTree(this.categorytree.formattedItems, key);
-            switch (this.selectionType) {
-                case 'individual':
-                    this.categorytree.handleIndividualSelectionType(item);
-                    break;
-
-                case 'hierarchical':
-                default:
-                    this.categorytree.handleHierarchicalSelectionType(item);
-                    break;
-            }
-        }
     }
 });
 </script>

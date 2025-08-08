@@ -147,7 +147,7 @@
                                 </h2>
 
                                 <!-- Radio select button -->
-                                <div class="flex flex-col gap-3">
+                                <div class="flex flex-col gap-3 h-[calc(100vh-100px)] overflow-y-auto">
                                     <x-admin::tree.view
                                         input-type="radio"
                                         name-field="parent_id"
