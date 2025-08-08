@@ -164,20 +164,14 @@
                                         >
                                         </label>
 
-                                        <div class="flex flex-wrap gap-1 min-h-[38px] p-1.5 border dark:border-cherry-800 rounded-md">
-                                            <p
-                                                class="flex items-center py-1 px-2 bg-violet-100 rounded text-violet-700 font-semibold"
-                                                v-for="attribute in attributes"
-                                            >
-                                                @{{ attribute.name || '[' + attribute.code + ']' }}
-
-                                                <span
-                                                    class="icon-cancel cursor-pointer text-lg text-violet-700 ltr:ml-1.5 rtl:mr-1.5 dark:!text-violet-700"
-                                                    @click="removeAttribute(attribute)"
-                                                >
-                                                </span>
-                                            </p>
-                                        </div>
+                                        <x-admin::form.control-group.control
+                                            type="tagging"
+                                            name="attributes"
+                                            ::value="attributes"
+                                            ::options="JSON.stringify(attributes)"
+                                            track-by="code"
+                                            label-by="name"
+                                        />
                                     </div>
 
                                     {!! view_render_event('unopim.admin.catalog.products.create_form.attributes.controls.before') !!}
@@ -227,16 +221,21 @@
                     create(params, {
                         setErrors
                     }) {
+                        this.superAttributes = {};
+
                         let formData = new FormData(this.$refs.productCreateForm);
 
-                        this.attributes.forEach(attribute => {
-                            params.super_attributes ||= {};
-
-                            params.super_attributes[attribute.code] = this.superAttributes[attribute.code];
+                        formData.entries().forEach(entry => {
+                            if (entry[0] === 'attributes') {
+                                entry[1].split(',').forEach(code => {
+                                    if (code !== '')
+                                        this.superAttributes[code] = code;
+                                });
+                            }
                         });
 
-                        if (this.attributes?.length > 0) {
-                            formData.append('super_attributes', JSON.stringify(params.super_attributes));
+                        if (Object.entries(this.superAttributes)?.length > 0) {
+                            formData.append('super_attributes', JSON.stringify(this.superAttributes));
                         }
 
                         this.$axios.post("{{ route('admin.catalog.products.store') }}", formData)
@@ -245,8 +244,6 @@
                                     window.location.href = response.data.data.redirect_url;
                                 } else {
                                     this.attributes = response.data.data.attributes;
-
-                                    this.setSuperAttributes();
                                 }
                             })
                             .catch(error => {
@@ -254,23 +251,9 @@
                                     setErrors(error.response.data.errors);
                                 }
                             });
-                    },
-
-                    removeAttribute(attribute) {
-                        this.attributes = this.attributes.filter(item => item.id != attribute.id);
-
-                        this.setSuperAttributes();
-                    },
-
-                    setSuperAttributes() {
-                        this.superAttributes = {};
-
-                        this.attributes.forEach(attribute => {
-                            this.superAttributes[attribute.code] = attribute.code;
-                        });
                     }
                 }
             })
         </script>
-        @endPushOnce
+    @endPushOnce
 </x-admin::layouts>

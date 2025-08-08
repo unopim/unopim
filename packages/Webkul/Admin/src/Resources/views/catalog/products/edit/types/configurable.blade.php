@@ -22,7 +22,7 @@
                         @lang('admin::app.catalog.products.edit.types.configurable.info')
                     </p>
                 </div>
-                
+
                 <!-- Add Buttons -->
                 <div class="flex gap-x-1 items-center justify-between w-full">
                     <div></div>
@@ -87,7 +87,7 @@
                                 @lang('admin::app.catalog.products.edit.types.configurable.create.title')
                             </p>
                         </x-slot>
-        
+
                         <!-- Modal Content -->
                         <x-slot:content>
                             <x-admin::form.control-group>
@@ -109,18 +109,28 @@
                                     @{{ attribute.name || '[' + attribute.code + ']' }}
                                 </x-admin::form.control-group.label>
 
-                                <x-admin::form.control-group.control
-                                    type="select"
-                                    ::id="attribute.code"
-                                    ::name="attribute.code"
-                                    rules="required"
-                                    ::label="attribute.name"
-                                    track-by="code"
-                                    async="true"
-                                    entity-name="attribute"
-                                    ::attribute-id="attribute.id"
-                                >
-                                </x-admin::form.control-group.control>
+                                <template v-if="attribute.type === 'select'">
+                                    <x-admin::form.control-group.control
+                                        type="select"
+                                        ::id="attribute.code"
+                                        ::name="attribute.code"
+                                        rules="required"
+                                        ::label="attribute.name"
+                                        track-by="code"
+                                        async="true"
+                                        entity-name="attribute"
+                                        ::attribute-id="attribute.id"
+                                    >
+                                    </x-admin::form.control-group.control>
+                                </template>
+                                <template v-else>
+                                    <x-admin::form.control-group.control
+                                        ::id="attribute.code"
+                                        ::name="attribute.code"
+                                        rules="required"
+                                        ::label="attribute.name"
+                                    />
+                                </template>
 
                                 <v-error-message :name="attribute.code" v-slot="{ message }">
                                     <p
@@ -131,12 +141,12 @@
                                 </v-error-message>
                             </x-admin::form.control-group>
                         </x-slot>
-        
+
                         <!-- Modal Footer -->
                         <x-slot:footer>
                             <!-- Modal Submission -->
                             <div class="flex gap-x-2.5 items-center">
-                                <button 
+                                <button
                                     type="submit"
                                     class="primary-button"
                                 >
@@ -207,7 +217,7 @@
                                                     <x-admin::form.control-group.label>
                                                         @lang('admin::app.catalog.products.edit.types.configurable.mass-edit.apply-to-all-sku')
                                                     </x-admin::form.control-group.label>
-                        
+
                                                     <div class="relative">
                                                         <span class="absolute ltr:left-4 rtl:right-4 top-1/2 -translate-y-1/2 text-gray-500">
                                                             {{ core()->currencySymbol(core()->getBaseCurrencyCode()) }}
@@ -227,7 +237,7 @@
                                                     @lang('admin::app.catalog.products.edit.types.configurable.mass-edit.apply-to-all-btn')
                                                 </button>
                                             </div>
-                    
+
                                             <x-admin::form.control-group.error control-name="price" />
                                         </div>
                                     </template>
@@ -256,7 +266,7 @@
                                                     <x-admin::form.control-group.label>
                                                         @lang('admin::app.catalog.products.edit.types.configurable.mass-edit.apply-to-all-weight')
                                                     </x-admin::form.control-group.label>
-                        
+
                                                     <div class="relative">
                                                         <x-admin::form.control-group.control
                                                             type="text"
@@ -272,7 +282,7 @@
                                                     @lang('admin::app.catalog.products.edit.types.configurable.mass-edit.apply-to-all-btn')
                                                 </button>
                                             </div>
-                    
+
                                             <x-admin::form.control-group.error control-name="weight" />
                                         </div>
                                     </template>
@@ -299,7 +309,7 @@
                                                     @lang('admin::app.catalog.products.edit.types.configurable.mass-edit.apply-to-all-btn')
                                                 </button>
                                             </div>
-                    
+
                                             <x-admin::form.control-group.error control-name="name" />
                                         </div>
                                     </template>
@@ -338,7 +348,7 @@
                                                     @lang('admin::app.catalog.products.edit.types.configurable.mass-edit.apply-to-all-btn')
                                                 </button>
                                             </div>
-                    
+
                                             <x-admin::form.control-group.error control-name="name" />
                                         </div>
                                     </template>
@@ -459,9 +469,9 @@
                                 </template>
 
                                 <template v-if="selectedType == 'editName'">
-                                    <x-admin::form.control-group 
+                                    <x-admin::form.control-group
                                         class="flex-1 mb-0"
-                                        ::class="{ 
+                                        ::class="{
                                             'max-w-[115px]' : selectedType !== 'editName',
                                             '!mb-0': selectedType === 'editName'
                                         }"
@@ -493,9 +503,9 @@
                                 </template>
 
                                 <template v-if="selectedType == 'editSku'">
-                                    <x-admin::form.control-group 
+                                    <x-admin::form.control-group
                                         class="flex-1 mb-0"
-                                        ::class="{ 
+                                        ::class="{
                                             'max-w-[115px]' : selectedType !== 'editSku',
                                             '!mb-0': selectedType === 'editSku'
                                         }"
@@ -526,7 +536,7 @@
                                         </v-error-message>
                                     </x-admin::form.control-group>
                                 </template>
-                                
+
                                 <template v-if="selectedType == 'addImages'">
                                     <v-media-images
                                         name="images"
@@ -545,7 +555,7 @@
     </script>
 
     <!-- Variation Item Template -->
-    <script type="text/x-template" id="v-product-variation-item-template"> 
+    <script type="text/x-template" id="v-product-variation-item-template">
         <div class="flex gap-2.5 justify-between px-4 py-6 border-b border-slate-300 dark:border-gray-800">
 
             <!-- Information -->
@@ -696,7 +706,7 @@
                                             <x-admin::form.control-group.label class="required">
                                                 @lang('admin::app.catalog.products.edit.types.configurable.edit.sku')
                                             </x-admin::form.control-group.label>
-                
+
                                             <x-admin::form.control-group.control
                                                 type="text"
                                                 name="sku"
@@ -704,7 +714,7 @@
                                                 ::value="variant.sku"
                                                 :label="trans('admin::app.catalog.products.edit.types.configurable.edit.sku')"
                                             />
-                
+
                                             <x-admin::form.control-group.error control-name="sku" />
                                         </x-admin::form.control-group>
 
@@ -716,19 +726,32 @@
                                             @{{ attribute.name }}
                                         </x-admin::form.control-group.label>
 
-                                        <x-admin::form.control-group.control
-                                            type="select"
-                                            ::id="attribute.code"
-                                            ::name="attribute.code"
-                                            rules="required"
-                                            ::label="attribute.name"
-                                            ::value="variant?.values?.common[attribute.code] ? {code: variant?.values?.common[attribute.code], label: optionName(attribute, variant?.values?.common[attribute.code])} : null"
-                                            track-by="code"
-                                            async="true"
-                                            entity-name="attribute"
-                                            ::attribute-id="attribute.id"
-                                        >
-                                        </x-admin::form.control-group.control>
+                                        <template v-if="attribute.type === 'select'">
+                                            <x-admin::form.control-group.control
+                                                type="select"
+                                                ::id="attribute.code"
+                                                ::name="attribute.code"
+                                                rules="required"
+                                                ::label="attribute.name"
+                                                ::value="variant?.values?.common[attribute.code] ? {code: variant?.values?.common[attribute.code], label: optionName(attribute, variant?.values?.common[attribute.code])} : null"
+                                                track-by="code"
+                                                async="true"
+                                                entity-name="attribute"
+                                                ::attribute-id="attribute.id"
+                                            >
+                                            </x-admin::form.control-group.control>
+                                        </template>
+                                        <template v-else>
+                                            <x-admin::form.control-group.control
+                                                ::id="attribute.code"
+                                                ::name="attribute.code"
+                                                rules="required"
+                                                ::label="attribute.name"
+                                                ::value="optionName(attribute, variant?.values?.common[attribute.code])"
+                                                entity-name="attribute"
+                                                ::attribute-id="attribute.id"
+                                            />
+                                        </template>
 
                                         <v-error-message :name="attribute.code" v-slot="{ message }">
                                             <p
@@ -747,7 +770,7 @@
                                             @lang('admin::app.catalog.products.edit.types.configurable.edit.edit-info')
 
                                             <a
-                                                :href="'{{ route('admin.catalog.products.edit', ':id') }}'.replace(':id', variant.id)" 
+                                                :href="'{{ route('admin.catalog.products.edit', ':id') }}'.replace(':id', variant.id)"
                                                 class="inline-block text-violet-700 hover:text-violet-700 hover:underline"
                                                 target="_blank"
                                             >
@@ -917,6 +940,10 @@
 
             methods: {
                 optionName(attribute, optionCode) {
+                    if (attribute.options.length === 0) {
+                        return optionCode;
+                    }
+
                     let attributeOption = attribute.options.find((option) => {
                         return option.code == optionCode;
                     })
