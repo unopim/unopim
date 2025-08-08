@@ -22,7 +22,7 @@
                 v-text="label"
             >
             </div>
-        </label>
+        </label> 
     </script>
 
     <script type="module">
@@ -31,22 +31,28 @@
 
             name: 'v-tree-checkbox',
 
-            props: ['id', 'label', 'name', 'value'],
+            props: {
+                id: String,
+                label: String,
+                name: {
+                    type: String,
+                    default: 'categories'
+                },
+                value: [String, Number, Object, Boolean]
+            },
+
+            inject: [ 'treeItem' ],
 
             computed: {
                 isActive() {
-                    return this.$parent.has(this.value);
+                    return this.treeItem.categorytree.has(this.value);
                 },
             },
 
             methods: {
                 inputChanged() {
-                    this.$emit('change-input', {
-                        id: this.id,
-                        label: this.label,
-                        name: this.name,
-                        value: this.value,
-                    });
+
+                    this.treeItem.onInputChange()
                 },
             },
         });

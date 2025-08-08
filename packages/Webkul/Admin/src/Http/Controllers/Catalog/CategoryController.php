@@ -3,13 +3,13 @@
 namespace Webkul\Admin\Http\Controllers\Catalog;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\ValidationException;
 use Webkul\Admin\DataGrids\Catalog\CategoryDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\CategoryRequest;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
-use Webkul\Admin\Http\Resources\CategoryTreeResource;
 use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Category\Validator\Catalog\CategoryRequestValidator;
@@ -51,13 +51,29 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        $categories = $this->categoryRepository->getCategoryTree(null, ['id']);
+        $categories = $this->categoryRepository->getRootCategories();
+
+        $categories = $this->transformCategoryTree($categories);
 
         $leftCategoryFields = $this->categoryFieldRepository->getActiveCategoryFieldsBySection('left');
 
         $rightCategoryFields = $this->categoryFieldRepository->getActiveCategoryFieldsBySection('right');
 
         return view('admin::catalog.categories.create', compact('categories', 'leftCategoryFields', 'rightCategoryFields'));
+    }
+
+    public function transformCategoryTree($categories)
+    {
+        return $categories->map(function ($category) {
+            return [
+                'id'       => $category->id,
+                'code'     => $category->code,
+                'name'     => $category->name,
+                'children' => [],
+                '_rgt'     => $category->_rgt,
+                '_lft'     => $category->_lft,
+            ];
+        })->toArray();
     }
 
     /**
@@ -101,13 +117,19 @@ class CategoryController extends Controller
     {
         $category = $this->categoryRepository->findOrFail($id);
 
-        $categories = $this->categoryRepository->getCategoryTreeWithoutDescendant($id);
+        $categories = $this->categoryRepository->getRootCategories();
+
+        $categories = $this->transformCategoryTree($categories);
+
+        $category = $this->categoryRepository->find($id);
+
+        $branchToParent = $this->categoryRepository->getTreeBranchToParent($category);
 
         $leftCategoryFields = $this->categoryFieldRepository->getActiveCategoryFieldsBySection('left');
 
         $rightCategoryFields = $this->categoryFieldRepository->getActiveCategoryFieldsBySection('right');
 
-        return view('admin::catalog.categories.edit', compact('category', 'categories', 'leftCategoryFields', 'rightCategoryFields'));
+        return view('admin::catalog.categories.edit', compact('category', 'branchToParent', 'categories', 'leftCategoryFields', 'rightCategoryFields'));
     }
 
     /**
@@ -247,11 +269,52 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function tree()
+    public function tree(Request $request)
     {
-        $categories = $this->categoryRepository->getVisibleCategoryTree();
+        $validated = $request->validate([
+            'locale'     => 'required|string',
+            'selected'   => 'nullable|array',
+            'selected.*' => 'string',
+        ]);
 
-        return CategoryTreeResource::collection($categories);
+        $selectedCodes = $validated['selected'] ?? [];
+
+        $selectedCategories = $this->categoryRepository->findWhereIn('code', $selectedCodes);
+
+        $allBranches = collect();
+
+        foreach ($selectedCategories as $category) {
+            if (! $category->parent) {
+                continue;
+            }
+
+            $branches = $this->categoryRepository->getTreeBranchToParent($category, false);
+
+            if ($branches && ! empty($branches)) {
+                $allBranches[] = $branches->first();
+            }
+        }
+
+        $categories = $this->categoryRepository->getRootCategories();
+        $allBranches = $allBranches->unique('id')->values();
+
+        return new JsonResponse([
+            'data'          => $categories,
+            'selected_tree' => $allBranches,
+        ]);
+    }
+
+    public function children()
+    {
+        $id = request()->get('id');
+
+        $category = request()->get('category');
+
+        $this->categoryRepository->findOrFail($id);
+
+        $childCategories = $this->categoryRepository->getChildCategories($id, $category);
+
+        return new JsonResponse($childCategories->toArray());
     }
 
     /**

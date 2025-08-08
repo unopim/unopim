@@ -33,11 +33,21 @@
 
             name: 'v-tree-radio',
 
-            props: ['id', 'label', 'name', 'value'],
+            props: {
+                id: String,
+                label: String,
+                name: {
+                    type: String,
+                    default: 'parent_id'
+                },
+                value: String
+            },
+
+            inject: [ 'treeItem' ],
 
             computed: {
                 isActive() {
-                    return this.$parent.has(this.value);
+                    return this.treeItem.categorytree.has(this.value);
                 },
             },
 
