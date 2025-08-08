@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use Webkul\Admin\Http\Requests\ConfigurationForm;
 use Webkul\Core\Repositories\CoreConfigRepository;
 use Webkul\Core\Tree;
+use Webkul\MagicAI\Contracts\Validator\ConfigValidator;
 
 class ConfigurationController extends Controller
 {
@@ -93,13 +94,33 @@ class ConfigurationController extends Controller
      */
     public function store(ConfigurationForm $request)
     {
-        $data = $request->all();
+        try {
 
-        $this->coreConfigRepository->create($request->except(['_token', 'admin_locale']));
+            $data = $request->all();
+            $slug = request()->route('slug');
+            $slug2 = request()->route('slug2');
+            $config = config('core');
+            foreach ($config as $section) {
+                if (isset($section['key']) && $section['key'] == "{$slug}.{$slug2}") {
+                    $configValidator = isset($section['validator']) ? app($section['validator']) : null;
 
-        session()->flash('success', trans('admin::app.configuration.index.save-message'));
+                    if ($configValidator instanceof ConfigValidator) {
+                        $configValidator->validate($data);
+                    }
+                }
+            }
 
-        return redirect()->back();
+            $this->coreConfigRepository->create($request->except(['_token', 'admin_locale']));
+
+            session()->flash('success', trans('admin::app.configuration.index.save-message'));
+
+            return redirect()->back();
+        } catch (\Throwable $th) {
+            \Log::info($th);
+            session()->flash('error', trans('admin::app.catalog.products.index.magic-ai-validate-error'));
+
+            return redirect()->back();
+        }
     }
 
     /**

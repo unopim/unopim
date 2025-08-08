@@ -63,6 +63,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
         'value_per_locale',
         'value_per_channel',
         'is_filterable',
+        'ai_translate',
     ];
 
     const NON_DELETABLE_ATTRIBUTE_CODE = 'sku';

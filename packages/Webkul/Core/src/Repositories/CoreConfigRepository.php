@@ -49,6 +49,16 @@ class CoreConfigRepository extends Repository
 
             foreach ($recursiveData as $fieldName => $value) {
                 $field = core()->getConfigField($fieldName);
+                if (
+                    $field['type'] === 'password' &&
+                    preg_match('/^\*+$/', $value)
+                ) {
+                    $original = core()->getConfigData($fieldName);
+
+                    if (strlen($value) === strlen($original)) {
+                        $value = $original;
+                    }
+                }
 
                 if (
                     gettype($value) == 'array'
