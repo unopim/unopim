@@ -7,8 +7,9 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use OpenAI\ValueObjects\Transporter\BaseUri;
 use Webkul\MagicAI\MagicAI;
+use Webkul\MagicAI\Contracts\Validator\ConfigValidator;
 
-class MagicAICredentialValidator extends ConfigValidator
+class MagicAICredentialValidator implements ConfigValidator
 {
     const DEFAULT_MODELS = [
         ['id' => 'llama3', 'label' => 'llama3'],
@@ -39,7 +40,7 @@ class MagicAICredentialValidator extends ConfigValidator
 
         $rules = [
             'enabled'       => 'required|in:0,1',
-            'ai_platform'   => 'required|in:openai,ollama',
+            'ai_platform'   => 'required|in:openai,ollama,groq',
             'api_key'       => 'required_if:ai_platform,openai|string|min:10',
             'organization'  => 'nullable|string',
             'api_domain'    => 'required|url',

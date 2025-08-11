@@ -55,12 +55,10 @@ class SaveTranslatedAllAttributesJob implements ShouldQueue
 
                 $existingData = $data['channel_locale_specific'][$this->channel][$locale] ?? [];
 
-                if (core()->getConfigData('general.magic_ai.translation.replace') == 1) {
+                if (core()->getConfigData('general.magic_ai.translation.replace')) {
                     $existingData[$field] = $value;
-                } else {
-                    if (! isset($existingData[$field])) {
-                        $existingData[$field] = $value;
-                    }
+                } else if (! isset($existingData[$field])) {
+                    $existingData[$field] = $value;
                 }
 
                 $data['channel_locale_specific'][$this->channel][$locale] = $existingData;
