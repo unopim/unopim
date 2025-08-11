@@ -114,10 +114,8 @@
                 />
                 <x-admin::form.control-group.error ::control-name="name" />
             </x-admin::form.control-group>
-
         </div>
     </div>
-    
 </script>
 <script type="module">
     app.component('v-ai-model', {

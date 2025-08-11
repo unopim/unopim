@@ -1,30 +1,25 @@
 <x-admin::layouts>
     <x-slot:title>
         @lang('admin::app.configuration.prompt.create.title')
-        </x-slot>
-
-        <v-create-prompt-form>
-            <div class="flex  gap-4 justify-between items-center max-sm:flex-wrap">
-                <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                    @lang('admin::app.configuration.prompt.create.title')
-                </p>
-
-                <div class="flex gap-x-2.5 items-center">
-
-                    <button
-                        type="button"
-                        class="primary-button"
-                    >
-                        @lang('admin::app.configuration.prompt.create.create-btn')
-                    </button>
-
-                </div>
+    </x-slot>
+    <v-create-prompt-form>
+        <div class="flex  gap-4 justify-between items-center max-sm:flex-wrap">
+            <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
+                @lang('admin::app.configuration.prompt.create.title')
+            </p>
+            <div class="flex gap-x-2.5 items-center">
+                <button
+                    type="button"
+                    class="primary-button"
+                >
+                    @lang('admin::app.configuration.prompt.create.create-btn')
+                </button>
             </div>
-
-            <!-- DataGrid Shimmer -->
-            <x-admin::shimmer.datagrid />
-        </v-create-prompt-form>
-        @pushOnce('scripts')
+        </div>
+        <!-- DataGrid Shimmer -->
+        <x-admin::shimmer.datagrid />
+    </v-create-prompt-form>
+    @pushOnce('scripts')
         <script type="text/x-template" id="v-create-prompt-form-template">
             <div class="flex  gap-4 justify-between items-center max-sm:flex-wrap">
                 <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
@@ -43,7 +38,7 @@
             </div>
             <x-admin::datagrid src="{{ route('admin.magic_ai.prompt.index') }}" ref="datagrid">
 
-            <template #body="{ columns, records, performAction, applied, setCurrentSelectionMode }">
+                <template #body="{ columns, records, performAction, applied, setCurrentSelectionMode }">
                     <div
                         v-for="record in records"
                         class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-violet-50 dark:hover:bg-cherry-800"
@@ -81,7 +76,6 @@
                         </div>
                     </div>
                 </template>
-
             </x-admin::datagrid>
             <div>
                 <x-admin::form
@@ -104,84 +98,83 @@
                             </x-slot>
                             <!-- Modal Content -->
                             <x-slot:content>
-                            <x-admin::form.control-group.control
-                                type="hidden"
-                                name="id"
-                                v-model="id"
-                            />
-                            <x-admin::form.control-group>
-                                <x-admin::form.control-group.label class="required">
-                                    @lang('admin::app.configuration.prompt.create.label-title')
-                                </x-admin::form.control-group.label>
                                 <x-admin::form.control-group.control
-                                    type="text"
-                                    name="title"
-                                    v-model="title"
+                                    type="hidden"
+                                    name="id"
+                                    v-model="id"
                                 />
-                                <x-admin::form.control-group.error control-name="title" />
-                            </x-admin::form.control-group>
-
-                            <!-- Select Component -->
-                            <x-admin::form.control-group>
-                            <!-- Label for the Select Element -->
-                            <x-admin::form.control-group.label class="required">
-                               @lang('admin::app.configuration.prompt.create.type')
-                            </x-admin::form.control-group.label>
-
-                            @php
-                                $supportedTypes = ['product', 'category'];
-                                $options = [];
-                                foreach($supportedTypes as $type) {
-                                    $options[] = [
-                                        'id'    => $type,
-                                        'label' => ucfirst($type)
-                                    ];
-                                }
-                                $optionsInJson = json_encode($options);
-                            @endphp
-
-                            <!-- The Select Control with dynamic options -->
-                            <x-admin::form.control-group.control
-                                type="select"
-                                id="type"
-                                name="type"
-                                v-model="type"
-                                rules="required"
-                                :options="$optionsInJson"
-                                :value="old('section') ?? $supportedTypes[0]"
-                                track-by="id"
-                                label-by="label"
-                                @input="checkType($event)"
-                            >
-                            </x-admin::form.control-group.control>
-
-                            <!-- Error handling for the Select element -->
-                            <x-admin::form.control-group.error control-name="section" />
-                            </x-admin::form.control-group>
-
-                            <x-admin::form.control-group>
-                                <x-admin::form.control-group.label class="required">
-                                    @lang('admin::app.configuration.prompt.create.prompt')
-                                </x-admin::form.control-group.label>
-                                 <div class="relative w-full">
+                                <x-admin::form.control-group>
+                                    <x-admin::form.control-group.label class="required">
+                                        @lang('admin::app.configuration.prompt.create.label-title')
+                                    </x-admin::form.control-group.label>
                                     <x-admin::form.control-group.control
-                                        type="textarea"
-                                        class="h-[180px]"
-                                        name="prompt"
-                                        rules="required"
-                                        v-model="ai.prompt"
-                                        ref="promptInput"
-                                        :label="trans('admin::app.components.tinymce.ai-generation.prompt')"
+                                        type="text"
+                                        name="title"
+                                        v-model="title"
                                     />
-                                    <div
-                                        class="absolute bottom-2.5 left-1 text-gray-400 cursor-pointer text-2xl"
-                                        @click="openSuggestions"
-                                    >
-                                        <span class="icon-at"></span>
-                                    </div>
-                                </div>
-                            </x-admin::form.control-group>
+                                    <x-admin::form.control-group.error control-name="title" />
+                                </x-admin::form.control-group>
 
+                                <!-- Select Component -->
+                                <x-admin::form.control-group>
+                                <!-- Label for the Select Element -->
+                                <x-admin::form.control-group.label class="required">
+                                @lang('admin::app.configuration.prompt.create.type')
+                                </x-admin::form.control-group.label>
+
+                                @php
+                                    $supportedTypes = ['product', 'category'];
+                                    $options = [];
+                                    foreach($supportedTypes as $type) {
+                                        $options[] = [
+                                            'id'    => $type,
+                                            'label' => ucfirst($type)
+                                        ];
+                                    }
+                                    $optionsInJson = json_encode($options);
+                                @endphp
+
+                                <!-- The Select Control with dynamic options -->
+                                <x-admin::form.control-group.control
+                                    type="select"
+                                    id="type"
+                                    name="type"
+                                    v-model="type"
+                                    rules="required"
+                                    :options="$optionsInJson"
+                                    :value="old('section') ?? $supportedTypes[0]"
+                                    track-by="id"
+                                    label-by="label"
+                                    @input="checkType($event)"
+                                >
+                                </x-admin::form.control-group.control>
+
+                                <!-- Error handling for the Select element -->
+                                <x-admin::form.control-group.error control-name="section" />
+                                </x-admin::form.control-group>
+
+                                <x-admin::form.control-group>
+                                    <x-admin::form.control-group.label class="required">
+                                        @lang('admin::app.configuration.prompt.create.prompt')
+                                    </x-admin::form.control-group.label>
+                                    <div class="relative w-full">
+                                        <x-admin::form.control-group.control
+                                            type="textarea"
+                                            class="h-[180px]"
+                                            name="prompt"
+                                            rules="required"
+                                            v-model="ai.prompt"
+                                            ref="promptInput"
+                                            :label="trans('admin::app.components.tinymce.ai-generation.prompt')"
+                                        />
+                                        <div
+                                            class="absolute bottom-2.5 left-1 text-gray-400 cursor-pointer text-2xl"
+                                            @click="openSuggestions"
+                                        >
+                                            <span class="icon-at"></span>
+                                        </div>
+                                    </div>
+                                </x-admin::form.control-group>
                             </x-slot>
 
                             <!-- Modal Footer -->
@@ -241,6 +234,7 @@
                             this.entityName = null;
                         }
                     },
+
                     updateOrCreate(params, {
                         resetForm,
                         setErrors
@@ -272,7 +266,6 @@
                     },
 
                     toggleMagicAIModal() {
-
                         this.$nextTick(() => {
                             if (this.$refs.promptInput) {
 
@@ -291,7 +284,6 @@
                     },
 
                     openSuggestions() {
-
                         this.ai.prompt += ' @';
                         this.$nextTick(() => {
                             this.$refs.promptInput.focus();
@@ -309,11 +301,9 @@
                         });
                     },
                     async fetchSuggestionValues(text, cb) {
-
                         const response = await fetch(`{{ route('admin.magic_ai.suggestion_values') }}?query=${text}&&entity_name=${this.entityName}&&locale={{ core()->getRequestedLocaleCode() }}`);
                         const data = await response.json();
                         this.suggestionValues = data;
-
                         cb(this.suggestionValues);
                     },
 
