@@ -6,8 +6,8 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use OpenAI\ValueObjects\Transporter\BaseUri;
-use Webkul\MagicAI\MagicAI;
 use Webkul\MagicAI\Contracts\Validator\ConfigValidator;
+use Webkul\MagicAI\MagicAI;
 
 class MagicAICredentialValidator implements ConfigValidator
 {

@@ -57,7 +57,7 @@ class SaveTranslatedAllAttributesJob implements ShouldQueue
 
                 if (core()->getConfigData('general.magic_ai.translation.replace')) {
                     $existingData[$field] = $value;
-                } else if (! isset($existingData[$field])) {
+                } elseif (! isset($existingData[$field])) {
                     $existingData[$field] = $value;
                 }
 
