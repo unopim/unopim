@@ -62,39 +62,21 @@ GITHUB_REPO="unopim"
 BACKUP_DIR="./backups"
 ROOT_PATH="$(pwd)"
 CURRENT_VERSION=$(php artisan unopim:version)
-UPGRADE_TO_VERSION="v0.3.0"
+UPGRADE_TO_VERSION_TAG="v0.3.0"
 echo -e "\n🔧 Starting Unopim upgrade script...\n"
 
 # 1. Get current version
 echo "📌 Current version: $CURRENT_VERSION"
 
-UPGRADE_TO_VERSION="https://api.github.com/repos/$GITHUB_OWNER/$GITHUB_REPO/releases/latest"
+UPGRADE_VERSION="${UPGRADE_TO_VERSION_TAG//v/}"
+CURRENT_VERSION="${CURRENT_VERSION//v/}"
 
-RELEASE_INFO=$(curl -s -H "Accept: application/vnd.github.v3+json" "$UPGRADE_TO_VERSION")
-if echo "$RELEASE_INFO" | grep -q "<html>"; then
-  echo "❌ Received HTML response instead of JSON. Possible issue with the GitHub API request."
-  exit 1
-fi
-
-if [[ -z "$RELEASE_INFO" ]]; then
-  echo "❌ Failed to fetch release information."
-  exit 1
-fi
-# Extract the version from the release information
-UPGRADE_TO_VERSION=$(echo "$RELEASE_INFO" | grep -oP '"tag_name":\s*"\K(.*?)(?=")')
-if [[ -z "$UPGRADE_TO_VERSION" ]]; then
-  echo "❌ Failed to parse the version tag from release information."
-  exit 1
-fi
-
-LATEST_VERSION="${UPGRADE_TO_VERSION//v/}"
-
-echo "✅ Latest version: $LATEST_VERSION"
-
-if [[ "$CURRENT_VERSION" == "$LATEST_VERSION" ]]; then
+if [[ "$(echo -e "$CURRENT_VERSION\n$UPGRADE_VERSION" | sort -V | head -n 1)" == "$UPGRADE_VERSION" ]]; then
   echo "✅ Already up to date!"
   exit 0
 fi
+
+echo "✅ Upgrading to version: $UPGRADE_TO_VERSION_TAG"
 
 # 3. Create backup
 TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
@@ -104,8 +86,8 @@ backup_project "$BACKUP_PATH" "$ROOT_PATH"
 echo "✅ Backup created: $BACKUP_PATH"
 
 # 4. Download latest release
-ZIP_URL="https://github.com/$GITHUB_OWNER/$GITHUB_REPO/archive/refs/tags/$UPGRADE_TO_VERSION.zip"
-ZIP_FILE="./$LATEST_VERSION-unopim-update.zip"
+ZIP_URL="https://github.com/$GITHUB_OWNER/$GITHUB_REPO/archive/refs/tags/$UPGRADE_TO_VERSION_TAG.zip"
+ZIP_FILE="./$UPGRADE_VERSION-unopim-update.zip"
 echo "⬇️  Downloading latest release from GitHub..."
 
 curl -fL -o $ZIP_FILE $ZIP_URL
@@ -143,19 +125,10 @@ php artisan migrate
 echo "🔗 Linking storage..."
 php artisan storage:link
 
-echo "🧹 Clearing cache..."
-php artisan optimize:clear
-
 echo "🛠️ Sending queue restart signal..."
 php artisan queue:restart
 
-echo "🔄 Clearing Elasticsearch indexes..."
-php artisan unopim:elastic:clear
+echo "🧹 Clearing cache..."
+php artisan optimize:clear
 
-echo "📦 Re-indexing products..."
-php artisan unopim:product:index
-
-echo "📂 Re-indexing categories..."
-php artisan unopim:category:index
-
-echo "✅ Upgrade complete! Now on version $LATEST_VERSION"
+echo "✅ Upgrade complete! Now on version $UPGRADE_VERSION"
