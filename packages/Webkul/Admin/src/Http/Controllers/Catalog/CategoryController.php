@@ -4,6 +4,7 @@ namespace Webkul\Admin\Http\Controllers\Catalog;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\ValidationException;
 use Webkul\Admin\DataGrids\Catalog\CategoryDataGrid;
@@ -62,7 +63,12 @@ class CategoryController extends Controller
         return view('admin::catalog.categories.create', compact('categories', 'leftCategoryFields', 'rightCategoryFields'));
     }
 
-    public function transformCategoryTree($categories)
+    /**
+     * Maps each category in the collection to a new value using the provided callback.
+     *
+     * @param  \Illuminate\Support\Collection  $categories  Collection of category objects.
+     */
+    public function transformCategoryTree(Collection $categories): array
     {
         return $categories->map(function ($category) {
             return [
@@ -272,7 +278,6 @@ class CategoryController extends Controller
     public function tree(Request $request)
     {
         $validated = $request->validate([
-            'locale'     => 'required|string',
             'selected'   => 'nullable|array',
             'selected.*' => 'string',
         ]);
@@ -303,15 +308,18 @@ class CategoryController extends Controller
         ]);
     }
 
-    public function children()
+    /**
+     * Fetch child categories for a given category ID.
+     */
+    public function children(): JsonResponse
     {
-        $id = request()->get('id');
+        $id = (int) request()->get('id');
 
-        $category = request()->get('category');
+        $categoryId = request()->get('category') ?? 0;
 
         $this->categoryRepository->findOrFail($id);
 
-        $childCategories = $this->categoryRepository->getChildCategories($id, $category);
+        $childCategories = $this->categoryRepository->getChildCategories($id, $categoryId);
 
         return new JsonResponse($childCategories->toArray());
     }

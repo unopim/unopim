@@ -129,7 +129,14 @@ class CategoryRepository extends Repository
             : $this->model->get()->toTree();
     }
 
-    public function getTreeBranchToParent(Category $category, $present = true)
+    /**
+     * Retrieves the tree branch from the given category up to its parent categories.
+     *
+     * @param  Category  $category  The category instance to start from.
+     * @param  bool  $present  Whether to include the present category in the result.
+     * @return array The branch of categories from the given category to its parent(s).
+     */
+    public function getTreeBranchToParent(Category $category, bool $present = true)
     {
         $parent = $category->parent;
 
@@ -142,18 +149,14 @@ class CategoryRepository extends Repository
         $ancestors = $this->model->ancestorsAndSelf($parent->id);
 
         $ancestorIds = $ancestors->pluck('id')->toArray();
-        if (! $present) {
-            $siblingMap = $this->model
-                ->whereIn('parent_id', $ancestorIds)
-                ->get()
-                ->groupBy('parent_id');
-        } else {
-            $siblingMap = $this->model
-                ->whereIn('parent_id', $ancestorIds)
-                ->where('id', '!=', $id)
-                ->get()
-                ->groupBy('parent_id');
+
+        $query = $this->model->whereIn('parent_id', $ancestorIds);
+
+        if ($present) {
+            $query->where('id', '!=', $id);
         }
+
+        $siblingMap = $query->get()->groupBy('parent_id');
 
         $allIds = collect($ancestorIds)
             ->merge($siblingMap->flatten()->pluck('id'))
@@ -183,13 +186,15 @@ class CategoryRepository extends Repository
      *
      * @return \Illuminate\Support\Collection
      */
-    public function getChildCategories($parentId, $categoryId)
+    public function getChildCategories(int $parentId, int $categoryId = 0)
     {
-        return $this->getModel()
-            ->where('parent_id', $parentId)
-            ->where('id', '!=', $categoryId)
-            ->get()
-            ->toTree();
+        $query = $this->getModel()->where('parent_id', $parentId);
+
+        if ($categoryId) {
+            $query->where('id', '!=', $categoryId);
+        }
+
+        return $query->get()->toTree();
     }
 
     /**

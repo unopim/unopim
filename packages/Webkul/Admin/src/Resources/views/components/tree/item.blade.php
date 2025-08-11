@@ -127,6 +127,9 @@
 
                 if (categoryId) {
                     url.searchParams.append('id', categoryId);
+                }
+
+                if (this.categorytree.currentCategory) {
                     url.searchParams.append('category', this.categorytree.currentCategory);
                 }
 
