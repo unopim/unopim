@@ -148,7 +148,7 @@
 
                                 <!-- Radio select button -->
                                 <div class="flex flex-col gap-3 h-[calc(100vh-100px)] overflow-y-auto">
-                                    <x-admin::tree.view
+                                    <x-admin::tree.category.view
                                         input-type="radio"
                                         name-field="parent_id"
                                         label-field="name"
@@ -160,7 +160,7 @@
                                         :value="old('parent_id') ?? json_encode($category->parent_id)"
                                         :fallback-locale="config('app.fallback_locale')"
                                     >
-                                    </x-admin::tree.view>
+                                    </x-admin::tree.category.view>
                                 </div>
                             </div>
                         </div>

@@ -39,7 +39,7 @@
             </template>
 
             <template v-else>
-                <x-admin::tree.view
+                <x-admin::tree.category.view
                     input-type="checkbox"
                     selection-type="individual"
                     name-field="categories"
@@ -50,7 +50,7 @@
                     ::expanded-branch="selectedCategoryTree"
                     :fallback-locale="config('app.fallback_locale')"
                 >
-                </x-admin::tree.view>
+                </x-admin::tree.category.view>
             </template>
         </div>
     </script>

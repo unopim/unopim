@@ -3,8 +3,6 @@
     'selectionType' => 'hierarchical',
 ])
 
-<x-admin::tree.item />
-
 @if ($inputType == 'checkbox')
     <!-- Tree Checkbox Component -->
     <x-admin::tree.checkbox />
@@ -22,226 +20,379 @@
 </v-tree-view>
 
 @pushOnce('scripts')
-<script type="x-template" id="v-tree-view-template">
-    <div class="v-tree-container v-tree-item-wrapper">
-        <v-tree-item
-            v-for="(item, index) in formattedItems"
-            :key="index"
-            :item="item"
-            :level="1"
-            @change-input="$emit('change-input', $event)"
-        />
-    </div>
-</script>
+    <script type="module">
+        app.component('v-tree-view', {
+            name: 'v-tree-view',
 
-<script type="module">
-app.component('v-tree-view', {
-    name: 'v-tree-view',
-    template: '#v-tree-view-template',
-    inheritAttrs: false,
+            inheritAttrs: false,
 
-    props: {
-        inputType: {
-            type: String,
-            default: 'checkbox'
-        },
-        selectionType: {
-            type: String,
-            default: 'hierarchical'
-        },
-        nameField: {
-            type: String,
-            default: 'permissions'
-        },
-        valueField: {
-            type: String,
-            default: 'value'
-        },
-        idField: {
-            type: String,
-            default: 'id'
-        },
-        labelField: {
-            type: String,
-            default: 'name'
-        },
-        childrenField: {
-            type: String,
-            default: 'children'
-        },
-        items: {
-            type: [Array, String, Object],
-            default: () => ([])
-        },
-        value: {
-            type: [Array, String, Object],
-            default: () => ([])
-        },
-        fallbackLocale: {
-            type: String,
-            default: 'en_US',
-        },
-        expandedBranch: {
-            type: [Array, Object],
-            default: () => ([])
-        },
-        currentCategory: {
-            type: Object
-        }
-    },
+            props: {
+                inputType: {
+                    type: String,
+                    required: false,
+                    default: 'checkbox'
+                },
 
-    data() {
-        return {
-            formattedItems: [],
-            formattedValues: [],
-            formattedExpandedBranch: [],
-            fetchChildrenUrl: "{{ route('admin.catalog.categories.children.tree')}}",
-            cache: []
-        };
-    },
+                selectionType: {
+                    type: String,
+                    required: false,
+                    default: 'hierarchical'
+                },
 
-    provide() {
-        return {
-            categorytree: this
-        };
-    },
+                nameField: {
+                    type: String,
+                    required: false,
+                    default: 'permissions'
+                },
 
-    created() {
-        this.formattedItems = this.parseInput(this.items);
-        this.formattedExpandedBranch = this.parseInput(this.expandedBranch);
-        this.formattedValues = this.getInitialFormattedValues();
+                valueField: {
+                    type: String,
+                    required: false,
+                    default: 'value'
+                },
 
-        this.mergeExpandedBranches();
-    },
+                idField: {
+                    type: String,
+                    required: false,
+                    default: 'id'
+                },
 
+                labelField: {
+                    type: String,
+                    required: false,
+                    default: 'name'
+                },
 
-    methods: {
-        parseInput(data) {
-            return typeof data === 'string' ? JSON.parse(data) : (data || []);
-        },
+                childrenField: {
+                    type: String,
+                    required: false,
+                    default: 'children'
+                },
 
-        mergeExpandedBranches() {
-            const valueField = this.valueField;
-            const childrenField = this.childrenField;
+                items: {
+                    type: [Array, String, Object],
+                    required: false,
+                    default: () => ([])
+                },
 
-            const injectChildren = (targetList, sourceBranch) => {
-                for (const item of targetList) {
-                    if (item[valueField] === sourceBranch[valueField]) {
-                        if (sourceBranch[childrenField]) {
-                            item[childrenField] = sourceBranch[childrenField];
+                value: {
+                    type: [Array, String, Object],
+                    required: false,
+                    default: () => ([])
+                },
+
+                fallbackLocale: {
+                    type: String,
+                    required: 'en_US',
+                },
+            },
+
+            data() {
+                return {
+                    formattedItems: null,
+
+                    formattedValues: null,
+                };
+            },
+
+            created() {
+                this.formattedItems = this.getInitialFormattedItems();
+
+                this.formattedValues = this.getInitialFormattedValues();
+            },
+
+            methods: {
+                getInitialFormattedItems() {
+                    return (typeof this.items == 'string')
+                        ? JSON.parse(this.items)
+                        : this.items;
+                },
+
+                getInitialFormattedValues() {
+                    if (this.inputType == 'radio') {
+                        if (typeof this.value == 'array') {
+                            return this.value;
+                        } else {
+                            return [this.value];
                         }
-                        return true;
                     }
 
-                    if (item[childrenField]) {
-                        const found = injectChildren(item[childrenField], sourceBranch);
-                        if (found) return true;
+                    let formattedValue = (typeof this.value == 'string')
+                        ? JSON.parse(this.value)
+                        : this.value;
+
+                    if (! (formattedValue instanceof Array)) {
+                        formattedValue = [];
                     }
-                }
-                return false;
-            };
 
-            for (const branch of this.formattedExpandedBranch) {
-                injectChildren(this.formattedItems, branch);
+                    return formattedValue;
+                },
+
+                getId(item) {
+                    const timestamp = new Date().getTime().toString(36);
+
+                    const id = item[this.idField];
+
+                    return `${timestamp}_${id}`
+                },
+
+                getLabel(item) {
+                    return item[this.labelField]
+                        ? item[this.labelField]
+                        : item.translations.filter((translation) => translation.locale === this.fallbackLocale)[0][this.labelField];
+                },
+
+                generateToggleIconComponent(props) {
+                    return this.$h('i', {
+                        ...props,
+
+                        onClick: (selection) => {
+                            selection.srcElement.parentElement.classList.toggle('active');
+
+                            selection.srcElement.classList.toggle('icon-chevron-down', !selection.srcElement.classList.contains('icon-chevron-down'));
+                            selection.srcElement.classList.toggle('icon-chevron-right', !selection.srcElement.classList.contains('icon-chevron-right'));
+                        },
+                    });
+                },
+
+                generateFolderIconComponent(props) {
+                    return this.$h('i', {
+                        ...props,
+                    });
+                },
+
+                generateCheckboxComponent(props) {
+                    return this.$h(this.$resolveComponent('v-tree-checkbox'), {
+                        ...props,
+
+                        onChangeInput: (item) => {
+                            this.handleCheckbox(item.value);
+
+                            this.$emit('change-input', this.formattedValues);
+                        },
+                    });
+                },
+
+                generateRadioComponent(props) {
+                    return this.$h(this.$resolveComponent('v-tree-radio'), {
+                        ...props,
+
+                        onChangeInput: (item) => {
+                            this.$emit('change-input', this.formattedValues[0]);
+                        },
+                    });
+                },
+
+                generateInputComponent(props) {
+                    switch (this.inputType) {
+                        case 'checkbox':
+                            return this.generateCheckboxComponent(props);
+
+                        case 'radio':
+                            return this.generateRadioComponent(props);
+
+                        default:
+                            return this.generateCheckboxComponent(props);
+                    }
+                },
+
+                generateTreeItemComponents(items, level = 1) {
+                    let treeItems = [];
+
+                    for (let key in items) {
+                        let hasChildren = Object.entries(items[key][this.childrenField]).length > 0;
+                        let label = this.getLabel(items[key]);
+
+                        let hasSelectedValue = this.formattedValues.filter(value => value == items[key][this.valueField]).length > 0 || this.countSelectedChildren(items[key]);
+
+                        label = '' === label ? ('[' + items[key]['code'] + ']' ) : label;
+
+                        treeItems.push(
+                            this.$h(
+                                'div', {
+                                    class: [
+                                        'v-tree-item inline-block w-full [&>.v-tree-item]:ltr:pl-6 [&>.v-tree-item]:rtl:pr-6 [&>.v-tree-item]:hidden [&.active>.v-tree-item]:block',
+                                        level === 1 && ! hasChildren
+                                            ? 'ltr:!pl-5 rtl:!pr-5'
+                                            : level > 1 && ! hasChildren
+                                            ? 'ltr:!pl-14 rtl:!pr-14'
+                                            : '',
+                                        hasChildren && hasSelectedValue ? 'active' : '',
+                                    ],
+                                }, [
+                                    this.generateToggleIconComponent({
+                                        class: [
+                                            hasChildren ? (hasSelectedValue ? 'icon-chevron-down' :'icon-chevron-right') : '',
+                                            'text-xl rounded-md cursor-pointer transition-all hover:bg-violet-50 dark:hover:bg-cherry-800'
+                                        ],
+                                    }),
+
+                                    this.generateFolderIconComponent({
+                                        class: [
+                                            hasChildren ? 'icon-folder' : 'icon-attribute',
+                                            'text-2xl cursor-pointer'
+                                        ],
+                                    }),
+
+                                    this.generateInputComponent({
+                                        id: this.getId(items[key]),
+                                        label: label,
+                                        name: this.nameField,
+                                        value: items[key][this.valueField],
+                                    }),
+
+                                    this.generateTreeItemComponents(items[key][this.childrenField], level + 1),
+                                ]
+                            )
+                        );
+                    }
+
+                    return treeItems;
+                },
+
+                generateTree() {
+                    return this.$h(
+                        'div', {
+                            class: [
+                                'v-tree-item-wrapper',
+                            ],
+                        }, [
+                            this.generateTreeItemComponents(this.formattedItems),
+                        ]
+                    );
+                },
+
+                searchInTree(items, value, ancestors = []) {
+                    for (let key in items) {
+                        if (items[key][this.valueField] === value) {
+                            return Object.assign(items[key], { ancestors: ancestors.reverse() });
+                        }
+
+                        const result = this.searchInTree(items[key][this.childrenField], value, [...ancestors, items[key]]);
+
+                        if (result !== undefined) {
+                            return result;
+                        }
+                    }
+
+                    return undefined;
+                },
+
+                has(key) {
+                    let foundValues = this.formattedValues.filter(value => value == key);
+
+                    return foundValues.length > 0;
+                },
+
+                select(key) {
+                    if (! this.has(key)) {
+                        this.formattedValues.push(key);
+                    }
+                },
+
+                unSelect(key) {
+                    this.formattedValues = this.formattedValues.filter((savedKey) => savedKey !== key);
+                },
+
+                toggle(key) {
+                    this.has(key) ? this.unSelect(key) : this.select(key);
+                },
+
+                handleCheckbox(key) {
+                    let item = this.searchInTree(this.formattedItems, key);
+
+                    switch (this.selectionType) {
+                        case 'individual':
+                            this.handleIndividualSelectionType(item);
+
+                            break;
+
+                        case 'hierarchical':
+                            this.handleHierarchicalSelectionType(item);
+
+                            break;
+
+                        default:
+                            this.handleHierarchicalSelectionType(item);
+
+                            break;
+                    }
+                },
+
+                handleIndividualSelectionType(item) {
+                    this.handleCurrent(item);
+                },
+
+                handleHierarchicalSelectionType(item) {
+                    this.handleAncestors(item);
+
+                    this.handleCurrent(item);
+
+                    this.handleChildren(item);
+
+                    if (! this.has(item[this.valueField])) {
+                        this.unSelectAllChildren(item);
+                    }
+                },
+
+                handleAncestors(item) {
+                    if (item.ancestors.length) {
+                        item.ancestors.forEach((ancestor) => {
+                            this.select(ancestor[this.valueField]);
+                        });
+                    }
+                },
+
+                handleCurrent(item) {
+                    this.toggle(item[this.valueField]);
+                },
+
+                handleChildren(item) {
+                    let selectedChildrenCount = this.countSelectedChildren(item);
+
+                    selectedChildrenCount ? this.unSelectAllChildren(item) : this.selectAllChildren(item);
+                },
+
+                countSelectedChildren(item, selectedCount = 0) {
+                    if (typeof item[this.childrenField] === 'object') {
+                        for (let childKey in item[this.childrenField]) {
+                            if (this.has(item[this.childrenField][childKey][this.valueField])) {
+                                ++selectedCount;
+                            }
+
+                            this.countSelectedChildren(item[this.childrenField][childKey], selectedCount);
+                        }
+                    }
+
+                    return selectedCount;
+                },
+
+                selectAllChildren(item) {
+                    if (typeof item[this.childrenField] === 'object') {
+                        for (let childKey in item[this.childrenField]) {
+                            this.select(item[this.childrenField][childKey][this.valueField]);
+
+                            this.selectAllChildren(item[this.childrenField][childKey]);
+                        }
+                    }
+                },
+
+                unSelectAllChildren(item) {
+                    if (typeof item[this.childrenField] === 'object') {
+                        for (let childKey in item[this.childrenField]) {
+                            this.unSelect(item[this.childrenField][childKey][this.valueField]);
+
+                            this.unSelectAllChildren(item[this.childrenField][childKey]);
+                        }
+                    }
+                },
+            },
+
+            render() {
+                return this.$h('div', {
+                    class: ['v-tree-container']
+                }, [this.generateTree()]);
             }
-        },
-
-        getInitialFormattedValues() {
-            if (this.inputType === 'radio') {
-                return Array.isArray(this.value) ? this.value : [this.value];
-            }
-
-            let val = typeof this.value === 'string' ? JSON.parse(this.value) : this.value;
-            return Array.isArray(val) ? val : [];
-        },
-
-        has(key) {
-            return this.formattedValues.includes(key);
-        },
-
-        select(key) {
-            if (!this.has(key)) this.formattedValues.push(key);
-        },
-
-        unSelect(key) {
-            this.formattedValues = this.formattedValues.filter(v => v !== key);
-        },
-
-        toggle(key) {
-            this.has(key) ? this.unSelect(key) : this.select(key);
-        },
-
-        countSelectedChildren(item) {
-            let count = 0;
-            const children = item[this.childrenField] || [];
-            for (const child of children) {
-                if (this.has(child[this.valueField])) count++;
-                count += this.countSelectedChildren(child);
-            }
-            return count;
-        },
-
-        selectAllChildren(item) {
-            const children = item[this.childrenField] || [];
-            for (const child of children) {
-                this.select(child[this.valueField]);
-                this.selectAllChildren(child);
-            }
-        },
-
-        unSelectAllChildren(item) {
-            const children = item[this.childrenField] || [];
-            for (const child of children) {
-                this.unSelect(child[this.valueField]);
-                this.unSelectAllChildren(child);
-            }
-        },
-
-        handleAncestors(item) {
-            if (item.ancestors?.length) {
-                item.ancestors.forEach(ancestor => this.select(ancestor[this.valueField]));
-            }
-        },
-
-        handleCurrent(item) {
-
-            this.toggle(item[this.valueField]);
-        },
-
-        handleChildren(item) {
-            const selected = this.countSelectedChildren(item);
-            selected ? this.unSelectAllChildren(item) : this.selectAllChildren(item);
-        },
-
-        handleCheckbox(item) {
-
-
-            switch (this.selectionType) {
-                case 'individual':
-                    this.handleIndividualSelectionType(item);
-                    break;
-
-                case 'hierarchical':
-                default:
-                    this.handleHierarchicalSelectionType(item);
-                    break;
-            }
-        },
-
-        handleIndividualSelectionType(item) {
-            this.handleCurrent(item);
-        },
-
-        handleHierarchicalSelectionType(item) {
-            this.handleAncestors(item);
-            this.handleCurrent(item);
-            this.handleChildren(item);
-
-            if (!this.has(item[this.valueField])) {
-                this.unSelectAllChildren(item);
-            }
-        }
-    }
-});
-</script>
+        });
+    </script>
 @endPushOnce

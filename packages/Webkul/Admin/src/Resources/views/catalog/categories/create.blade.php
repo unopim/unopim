@@ -102,7 +102,7 @@
 
                     <!-- Radio select button -->
                     <div class="flex flex-col gap-3 h-[calc(100vh-100px)] overflow-y-auto">
-                        <x-admin::tree.view
+                        <x-admin::tree.category.view
                             input-type="radio"
                             id-field="id"
                             label-field="name"

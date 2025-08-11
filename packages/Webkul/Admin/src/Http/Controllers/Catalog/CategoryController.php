@@ -296,7 +296,6 @@ class CategoryController extends Controller
         }
 
         $categories = $this->categoryRepository->getRootCategories();
-        $allBranches = $allBranches->unique('id')->values();
 
         return new JsonResponse([
             'data'          => $categories,

@@ -31,28 +31,22 @@
 
             name: 'v-tree-checkbox',
 
-            props: {
-                id: String,
-                label: String,
-                name: {
-                    type: String,
-                    default: 'categories'
-                },
-                value: [String, Number, Object, Boolean]
-            },
-
-            inject: [ 'treeItem' ],
+            props: ['id', 'label', 'name', 'value'],
 
             computed: {
                 isActive() {
-                    return this.treeItem.categorytree.has(this.value);
+                    return this.$parent.has(this.value);
                 },
             },
 
             methods: {
                 inputChanged() {
-
-                    this.treeItem.onInputChange()
+                    this.$emit('change-input', {
+                        id: this.id,
+                        label: this.label,
+                        name: this.name,
+                        value: this.value,
+                    });
                 },
             },
         });
