@@ -6,47 +6,6 @@ use Webkul\Core\Repositories\CoreConfigRepository;
 use Webkul\MagicAI\Facades\MagicAI;
 use Webkul\Product\Models\Product;
 
-it('should check if the field is translatable successfully', function () {
-    $this->loginAsAdmin();
-    Locale::whereIn('code', ['fr_FR', 'es_ES', 'de_DE', 'en_US'])->update(['status' => 1]);
-
-    $defaultChannel = core()->getDefaultChannel();
-
-    $defaultChannelLocale = $defaultChannel->locales->first()->code;
-
-    $attribute = Attribute::factory()->create(['value_per_locale' => true, 'value_per_channel' => true, 'type' => 'text']);
-
-    $attributeCode = $attribute->code;
-
-    $product = Product::Factory()->simple()->create([
-        'values' => [
-            'channel_locale_specific' => [
-                'default' => [
-                    $defaultChannelLocale => [
-                        $attributeCode => 'Default Channel Value',
-                        'name'         => 'smartPhone',
-                    ],
-                ],
-            ],
-        ],
-    ]);
-
-    $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
-    $productId = $product->id;
-    $field = 'name';
-    $locale = $defaultChannelLocale;
-    $channel = 'default';
-
-    $this->post(route('admin.magic_ai.check.is_translatable', [
-        'resource_id' => $productId,
-        'field'       => $field,
-        'locale'      => $locale,
-        'channel'     => $channel,
-    ]))
-        ->assertOk()
-        ->assertJson(['isTranslatable' => true]);
-});
-
 it('should translate the field successfully', function () {
     $this->loginAsAdmin();
     Locale::whereIn('code', ['fr_FR', 'es_ES', 'de_DE', 'en_US'])->update(['status' => 1]);
@@ -143,4 +102,45 @@ it('should translate the field successfully', function () {
     $this->post(route('admin.magic_ai.store.translated'), $formData)
         ->assertOk()
         ->assertJson(['message' => trans('admin::app.catalog.products.edit.translate.tranlated-job-processed')]);
+});
+
+it('should check if the field is translatable successfully', function () {
+    $this->loginAsAdmin();
+    Locale::whereIn('code', ['fr_FR', 'es_ES', 'de_DE', 'en_US'])->update(['status' => 1]);
+
+    $defaultChannel = core()->getDefaultChannel();
+
+    $defaultChannelLocale = $defaultChannel->locales->first()->code;
+
+    $attribute = Attribute::factory()->create(['value_per_locale' => true, 'value_per_channel' => true, 'type' => 'text']);
+
+    $attributeCode = $attribute->code;
+
+    $product = Product::Factory()->simple()->create([
+        'values' => [
+            'channel_locale_specific' => [
+                'default' => [
+                    $defaultChannelLocale => [
+                        $attributeCode => 'Default Channel Value',
+                        'name'         => 'smartPhone',
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
+    $productId = $product->id;
+    $field = 'name';
+    $locale = $defaultChannelLocale;
+    $channel = 'default';
+
+    $this->post(route('admin.magic_ai.check.is_translatable', [
+        'resource_id' => $productId,
+        'field'       => $field,
+        'locale'      => $locale,
+        'channel'     => $channel,
+    ]))
+        ->assertOk()
+        ->assertJson(['isTranslatable' => true]);
 });
