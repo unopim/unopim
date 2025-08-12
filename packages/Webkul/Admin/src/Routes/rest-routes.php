@@ -61,9 +61,9 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
         Route::post('create-prompt', 'store')->name('admin.magic_ai.prompt.store');
 
-        Route::delete('delete\{id}', 'destroy')->name('admin.magic_ai.prompt.delete');
+        Route::delete('delete/{id}', 'destroy')->name('admin.magic_ai.prompt.delete');
 
-        Route::get('edit\{id}', 'edit')->name('admin.magic_ai.prompt.edit');
+        Route::get('edit/{id}', 'edit')->name('admin.magic_ai.prompt.edit');
 
         Route::put('edit', 'update')->name('admin.magic_ai.prompt.update');
 

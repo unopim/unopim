@@ -4,7 +4,12 @@ use Webkul\Attribute\Models\Attribute;
 use Webkul\Core\Models\Locale;
 use Webkul\Core\Repositories\CoreConfigRepository;
 use Webkul\MagicAI\Facades\MagicAI;
+use Webkul\MagicAI\Services\Prompt\ProductPrompt;
 use Webkul\Product\Models\Product;
+
+beforeEach(function () {
+    ProductPrompt::resetInstance();
+});
 
 it('should translate all attributes successfully', function () {
     $this->loginAsAdmin();

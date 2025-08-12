@@ -52,43 +52,43 @@
                         </p>
                     </div>
 
-                @if($item['name'] == 'admin::app.configuration.index.general.magic-ai.translation.title')
-                    <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow grid grid-cols-2 gap-4">
-                        @foreach ($item['fields'] as $index => $field)
-                            <div class="{{ $index < 3 ? 'col-span-2' : '' }}">
-                                @if ($field['type'] == 'blade' && view()->exists($path = $field['path']))
+                    @if($item['name'] == 'admin::app.configuration.index.general.magic-ai.translation.title')
+                        <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow grid grid-cols-2 gap-4">
+                            @foreach ($item['fields'] as $index => $field)
+                                <div class="{{ $index < 3 ? 'col-span-2' : '' }}">
+                                    @if ($field['type'] == 'blade' && view()->exists($path = $field['path']))
+                                        {!! view($path, compact('field', 'item'))->render() !!}
+                                    @else
+                                        @include('admin::configuration.field-type')
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
+                            @foreach ($item['fields'] as $field)
+                                @if (
+                                    $field['type'] == 'blade'
+                                    && view()->exists($path = $field['path'])
+                                )
                                     {!! view($path, compact('field', 'item'))->render() !!}
-                                @else
-                                    @include('admin::configuration.field-type')
+                                @else 
+                                    @include ('admin::configuration.field-type')
                                 @endif
-                            </div>
-                        @endforeach
-                    </div>
-                @else
-                    <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
-                        @foreach ($item['fields'] as $field)
-                            @if (
-                                $field['type'] == 'blade'
-                                && view()->exists($path = $field['path'])
-                            )
-                                {!! view($path, compact('field', 'item'))->render() !!}
-                            @else 
-                                @include ('admin::configuration.field-type')
-                            @endif
-                        
-                            @php ($hint = $field['title'] . '-hint')
+                            
+                                @php ($hint = $field['title'] . '-hint')
 
-                            @if ($hint !== __($hint))
-                                <label 
-                                    for="@lang($hint)"
-                                    class="block leading-5 text-xs text-gray-600 dark:text-gray-300 font-medium"
-                                >
-                                    @lang($hint)
-                                </label>
-                            @endIf
-                        @endforeach
-                    </div>
-                @endif
+                                @if ($hint !== __($hint))
+                                    <label 
+                                        for="@lang($hint)"
+                                        class="block leading-5 text-xs text-gray-600 dark:text-gray-300 font-medium"
+                                    >
+                                        @lang($hint)
+                                    </label>
+                                @endIf
+                            @endforeach
+                        </div>
+                    @endif
                 @endforeach
             </div>
         @endIf

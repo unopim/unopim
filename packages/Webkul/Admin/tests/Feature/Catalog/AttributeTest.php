@@ -345,7 +345,7 @@ it('should not create the Attribute ai_translate field with 1', function () {
 
     $attribute = [
         'code'         => 'testAttribute',
-        'type'         => 'gallary',
+        'type'         => 'gallery',
         'ai_translate' => 1,
     ];
 

@@ -329,7 +329,7 @@
                     }
 
                 }
-            })
+            });
         </script>
-        @endPushOnce
+    @endPushOnce
 </x-admin::layouts>

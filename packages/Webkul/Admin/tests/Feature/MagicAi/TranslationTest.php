@@ -4,10 +4,16 @@ use Webkul\Attribute\Models\Attribute;
 use Webkul\Core\Models\Locale;
 use Webkul\Core\Repositories\CoreConfigRepository;
 use Webkul\MagicAI\Facades\MagicAI;
+use Webkul\MagicAI\Services\Prompt\ProductPrompt;
 use Webkul\Product\Models\Product;
+
+beforeEach(function () {
+    ProductPrompt::resetInstance();
+});
 
 it('should translate the field successfully', function () {
     $this->loginAsAdmin();
+
     Locale::whereIn('code', ['fr_FR', 'es_ES', 'de_DE', 'en_US'])->update(['status' => 1]);
 
     $defaultChannel = core()->getDefaultChannel();
