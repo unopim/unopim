@@ -2,6 +2,9 @@
 
 namespace Webkul\MagicAI\Services\Prompt;
 
+use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Attribute\Repositories\AttributeRepository;
+
 class Prompt
 {
     protected $typeInstance;
@@ -18,7 +21,7 @@ class Prompt
     public function getTypeInstance($resourceType)
     {
         if ($resourceType === 'product') {
-            $this->typeInstance = ProductPrompt::getInstance();
+            $this->typeInstance = new ProductPrompt(app(ProductRepository::class), app(AttributeRepository::class));
         }
 
         if ($resourceType === 'category') {
