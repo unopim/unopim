@@ -322,7 +322,7 @@ it('should enable Wysiwyg in textarea type attribute', function () {
     $this->assertDatabaseHas($this->getFullTableName(Attribute::class), $updatedData);
 });
 
-it('should create the Attribute ai_translate field with 1', function () {
+it('should set enabled to ai_translate field at attribute creation', function () {
     $this->loginAsAdmin();
 
     $attribute = [
@@ -340,7 +340,7 @@ it('should create the Attribute ai_translate field with 1', function () {
     $this->assertDatabaseHas($this->getFullTableName(Attribute::class), $attribute);
 });
 
-it('should not create the Attribute ai_translate field with 1', function () {
+it('should not set enabled to ai_translate field at attribute creation', function () {
     $this->loginAsAdmin();
 
     $attribute = [
