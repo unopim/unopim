@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => 'Översätt',
+                    'title'                    => 'Översätt',
+                    'source-channel'           => 'Källkanal',
+                    'locale'                   => 'Källspråk',
+                    'translated-content'       => 'Översatt innehåll',
+                    'translating'              => 'Översätter',
+                    'apply'                    => 'Tillämpa',
+                    'cancel'                   => 'Avbryt',
+                    'target-locales'           => 'Målspråk',
+                    'target-channel'           => 'Målkanal',
+                    'attributes'               => 'Attribut',
+                    'source-content'           => 'Källinnehåll',
+                    'tranlated-job-processed'  => 'Uppgiften att spara översatt innehåll har bearbetats.',
+                ],
+
                 'product-info' => [
                     'title'        => 'Produktinformation',
                     'status'       => 'Status',
@@ -373,6 +389,7 @@ return [
                 'same-code-error'       => 'Alternativets kod måste vara unik.',
                 'usable-in-grid'        => 'Kan användas i rutnät',
                 'is-filterable'         => 'Är filtrerbar',
+                'ai-translate'          => 'AI Översättning',
 
                 'option' => [
                     'color'    => 'Färgväljare',
@@ -440,6 +457,7 @@ return [
                 'same-code-error'       => 'Alternativets kod måste vara unik.',
                 'usable-in-grid'        => 'Kan användas i rutnät',
                 'is-filterable'         => 'Är filtrerbar',
+                'ai-translate'          => 'AI Översättning',
 
                 'option' => [
                     'create-success'        => 'Attributalternativ skapades',
@@ -1698,6 +1716,18 @@ return [
                         'title'          => 'Allmänna inställningar',
                         'title-info'     => 'Förbättra din upplevelse med Magic AI genom att ange din exklusiva API-nyckel och indikera den relevanta organisationen för smidig integration. Ta kontroll över dina OpenAI-uppgifter och anpassa inställningarna enligt dina specifika behov.',
                     ],
+
+                    'translation'   => [
+                        'title'                  => 'Översättning',
+                        'enabled'                => 'Aktiverad',
+                        'title-info'             => 'Denna funktion aktiverar Magic AI för att översätta text, vilket gör det möjligt att smidigt konvertera text från ett språk till ett annat.',
+                        'global-source-channel'  => 'Källkanal',
+                        'global-source-locale'   => 'Källspråk',
+                        'translation-model'      => 'Översättningsmodell',
+                        'replace-existing-value' => 'Ersätt befintligt värde',
+                        'target-channel'         => 'Målkanal',
+                        'target-locales'         => 'Målspråk',
+                    ],
                 ],
             ],
         ],
@@ -1759,6 +1789,38 @@ return [
             're-generate-secret-key-success' => 'API-sekret-nyckel genererades om framgångsrikt',
             'client-not-found'               => 'Klient hittades inte',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'Titel',
+                'prompt'        => 'Uppmaning',
+                'type'          => 'Typ',
+                'created-at'    => 'Skapad',
+                'updated-at'    => 'Uppdaterad',
+                'actions'       => 'Åtgärder',
+                'edit'          => 'Redigera',
+                'delete'        => 'Radera',
+                'product'       => 'Produkt',
+                'category'      => 'Kategori',
+            ],
+            'create' => [
+                'title'         => 'Uppmaning',
+                'create-btn'    => 'Skapa Uppmaning',
+                'edit-title'    => 'Redigera Uppmaning',
+                'create-title'  => 'Skapa Ny Uppmaning',
+                'label-title'   => 'Titel',
+                'type'          => 'Typ',
+                'prompt'        => 'Uppmaning',
+                'save-btn'      => 'Spara Uppmaning',
+            ],
+            'message' => [
+                'save-success'      => 'Uppmaningen sparades framgångsrikt.',
+                'update-success'    => 'Uppmaningen uppdaterades framgångsrikt.',
+                'delete-success'    => 'Uppmaningen raderades framgångsrikt.',
+                'delete-fail'       => 'Misslyckades med att radera uppmaningen.',
+            ],
+        ],
     ],
 
     'components' => [
@@ -1801,6 +1863,8 @@ return [
                 'themes'             => 'Teman',
                 'users'              => 'Användare',
                 'integrations'       => 'Integrationer',
+                'prompt'             => 'Prompt',
+                'general-tab'        => 'Konfiguration',
             ],
         ],
 

@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => 'Çevir',
+                    'title'                    => 'Çevir',
+                    'source-channel'           => 'Kaynak Kanalı',
+                    'locale'                   => 'Kaynak Yerel Ayarı',
+                    'translated-content'       => 'Çevrilmiş İçerik',
+                    'translating'              => 'Çeviriliyor',
+                    'apply'                    => 'Uygula',
+                    'cancel'                   => 'İptal',
+                    'target-locales'           => 'Hedef Yerel Ayarlar',
+                    'target-channel'           => 'Hedef Kanal',
+                    'attributes'               => 'Özellikler',
+                    'source-content'           => 'Kaynak İçerik',
+                    'tranlated-job-processed'  => 'Çevrilmiş içeriğin kaydedilmesi işlemi tamamlandı.',
+                ],
+
                 'product-info' => [
                     'title'        => 'Ürün Bilgisi',
                     'status'       => 'Durum',
@@ -373,6 +389,7 @@ return [
                 'same-code-error'       => 'Seçenek kodu benzersiz olmalıdır.',
                 'usable-in-grid'        => 'Izgarada Kullanılabilir',
                 'is-filterable'         => 'Filtrelenebilir',
+                'ai-translate'          => 'AI Çeviri',
 
                 'option' => [
                     'color'    => 'Renk Örneği',
@@ -440,6 +457,7 @@ return [
                 'same-code-error'       => 'Seçenek kodu benzersiz olmalıdır.',
                 'usable-in-grid'        => 'Izgarada Kullanılabilir',
                 'is-filterable'         => 'Filtrelenebilir',
+                'ai-translate'          => 'AI Çeviri',
 
                 'option' => [
                     'create-success'      => 'Öznitelik Seçeneği Başarıyla Oluşturuldu',
@@ -1698,6 +1716,18 @@ return [
                         'title'          => 'Genel Ayarlar',
                         'title-info'     => 'Magic AI deneyiminizi geliştirin, özel API Anahtarınızı girerek ve ilgili Organizasyonu belirleyerek entegrasyonu sorunsuz hale getirin. OpenAI kimlik bilgilerinizi kontrol edin ve ayarları ihtiyaçlarınıza göre özelleştirin.',
                     ],
+
+                    'translation'   => [
+                        'title'                  => 'Çeviri',
+                        'enabled'                => 'Etkin',
+                        'title-info'             => 'Bu özellik, metinleri çevirmek için Magic AI’ı etkinleştirir ve bir dili diğerine sorunsuz bir şekilde dönüştürmenizi sağlar.',
+                        'global-source-channel'  => 'Kaynak Kanal',
+                        'global-source-locale'   => 'Kaynak Yerel Ayarı',
+                        'translation-model'      => 'Çeviri Modeli',
+                        'replace-existing-value' => 'Mevcut Değeri Değiştir',
+                        'target-channel'         => 'Hedef Kanal',
+                        'target-locales'         => 'Hedef Yerel Ayarlar',
+                    ],
                 ],
             ],
         ],
@@ -1759,6 +1789,38 @@ return [
             're-generate-secret-key-success' => 'API gizli anahtar başarıyla yeniden oluşturuldu',
             'client-not-found'               => 'Müşteri Bulunamadı',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'Başlık',
+                'prompt'        => 'İstem',
+                'type'          => 'Tür',
+                'created-at'    => 'Oluşturulma Tarihi',
+                'updated-at'    => 'Güncellenme Tarihi',
+                'actions'       => 'Eylemler',
+                'edit'          => 'Düzenle',
+                'delete'        => 'Sil',
+                'product'       => 'Ürün',
+                'category'      => 'Kategori',
+            ],
+            'create' => [
+                'title'         => 'İstem',
+                'create-btn'    => 'İstem Oluştur',
+                'edit-title'    => 'İstemi Düzenle',
+                'create-title'  => 'Yeni İstem Oluştur',
+                'label-title'   => 'Başlık',
+                'type'          => 'Tür',
+                'prompt'        => 'İstem',
+                'save-btn'      => 'İstemi Kaydet',
+            ],
+            'message' => [
+                'save-success'      => 'İstem başarıyla kaydedildi.',
+                'update-success'    => 'İstem başarıyla güncellendi.',
+                'delete-success'    => 'İstem başarıyla silindi.',
+                'delete-fail'       => 'İstem silinirken hata oluştu.',
+            ],
+        ],
     ],
 
     'components' => [
@@ -1801,6 +1863,8 @@ return [
                 'themes'             => 'Temalar',
                 'users'              => 'Kullanıcılar',
                 'integrations'       => 'Entegrasyonlar',
+                'prompt'             => 'İstem',
+                'general-tab'        => 'Yapılandırma',
             ],
         ],
 

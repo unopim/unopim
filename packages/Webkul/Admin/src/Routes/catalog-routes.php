@@ -174,6 +174,10 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
             Route::get('search', 'search')->name('admin.catalog.products.search');
 
             Route::post('check-variant', 'checkVariantUniqueness')->name('admin.catalog.products.check-variant');
+
+            Route::get('get/locale', 'getLocale')->name('admin.catalog.product.get_locale');
+
+            Route::get('get/attributes', 'getAttribute')->name('admin.catalog.product.get_attribute');
         });
     });
 });

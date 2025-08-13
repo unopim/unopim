@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => 'Traduce',
+                    'title'                    => 'Traduce',
+                    'source-channel'           => 'Canal sursă',
+                    'locale'                   => 'Setări regionale sursă',
+                    'translated-content'       => 'Conținut tradus',
+                    'translating'              => 'Se traduce',
+                    'apply'                    => 'Aplică',
+                    'cancel'                   => 'Anulează',
+                    'target-locales'           => 'Setări regionale țintă',
+                    'target-channel'           => 'Canal țintă',
+                    'attributes'               => 'Atribute',
+                    'source-content'           => 'Conținut sursă',
+                    'tranlated-job-processed'  => 'Sarcina de stocare a conținutului tradus a fost procesată.',
+                ],
+
                 'product-info' => [
                     'title'        => 'Informații Produs',
                     'status'       => 'Stare',
@@ -373,6 +389,7 @@ return [
                 'same-code-error'       => 'Codul opțiunii trebuie să fie unic.',
                 'usable-in-grid'        => 'Utilizabil în grilă',
                 'is-filterable'         => 'Este filtrabil',
+                'ai-translate'          => 'Traducere IA',
 
                 'option' => [
                     'color'    => 'Eșantion de culoare',
@@ -440,6 +457,7 @@ return [
                 'same-code-error'       => 'Codul opțiunii trebuie să fie unic.',
                 'usable-in-grid'        => 'Utilizabil în grilă',
                 'is-filterable'         => 'Este filtrabil',
+                'ai-translate'          => 'Traducere IA',
 
                 'option' => [
                     'create-success'      => 'Opțiunea atributului a fost creată cu succes',
@@ -1698,6 +1716,18 @@ return [
                         'title'          => 'Setări Generale',
                         'title-info'     => 'Îmbunătățește-ți experiența cu Magic AI introducând cheia API unică și specificând organizația corespunzătoare pentru integrare fără probleme. Preia controlul asupra credentialelor OpenAI și ajustează setările conform nevoilor tale specifice.',
                     ],
+
+                    'translation'   => [
+                        'title'                  => 'Traducere',
+                        'enabled'                => 'Activat',
+                        'title-info'             => 'Această funcție va activa Magic AI pentru traducerea textului, permițându-vă să convertiți textul dintr-o limbă în alta cu ușurință.',
+                        'global-source-channel'  => 'Canal Sursă',
+                        'global-source-locale'   => 'Localizare Sursă',
+                        'translation-model'      => 'Model de Traducere',
+                        'replace-existing-value' => 'Înlocuiește Valoarea Existenta',
+                        'target-channel'         => 'Canal Țintă',
+                        'target-locales'         => 'Localizări Țintă',
+                    ],
                 ],
             ],
         ],
@@ -1759,6 +1789,38 @@ return [
             're-generate-secret-key-success' => 'Cheia API secretă a fost regenerată cu succes',
             'client-not-found'               => 'Clientul nu a fost găsit',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'Titlu',
+                'prompt'        => 'Prompt',
+                'type'          => 'Tip',
+                'created-at'    => 'Creat la',
+                'updated-at'    => 'Actualizat la',
+                'actions'       => 'Acțiuni',
+                'edit'          => 'Editează',
+                'delete'        => 'Șterge',
+                'product'       => 'Produs',
+                'category'      => 'Categorie',
+            ],
+            'create' => [
+                'title'         => 'Prompt',
+                'create-btn'    => 'Creează Prompt',
+                'edit-title'    => 'Editează Prompt',
+                'create-title'  => 'Creează un Nou Prompt',
+                'label-title'   => 'Titlu',
+                'type'          => 'Tip',
+                'prompt'        => 'Prompt',
+                'save-btn'      => 'Salvează Prompt',
+            ],
+            'message' => [
+                'save-success'      => 'Promptul a fost salvat cu succes.',
+                'update-success'    => 'Promptul a fost actualizat cu succes.',
+                'delete-success'    => 'Promptul a fost șters cu succes.',
+                'delete-fail'       => 'Ștergerea promptului a eșuat.',
+            ],
+        ],
     ],
 
     'components' => [
@@ -1801,6 +1863,8 @@ return [
                 'themes'             => 'Teme',
                 'users'              => 'Utilizatori',
                 'integrations'       => 'Integrare',
+                'prompt'             => 'Prompt',
+                'general-tab'        => 'Configurare',
             ],
         ],
 

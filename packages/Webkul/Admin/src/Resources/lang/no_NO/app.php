@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => 'Oversett',
+                    'title'                    => 'Oversett',
+                    'source-channel'           => 'Kildekanal',
+                    'locale'                   => 'Kildelokalisering',
+                    'translated-content'       => 'Oversatt innhold',
+                    'translating'              => 'Oversetter',
+                    'apply'                    => 'Bruk',
+                    'cancel'                   => 'Avbryt',
+                    'target-locales'           => 'Mållokaliseringer',
+                    'target-channel'           => 'Målkanal',
+                    'attributes'               => 'Egenskaper',
+                    'source-content'           => 'Kildeinnhold',
+                    'tranlated-job-processed'  => 'Oppgaven for lagring av oversatt innhold er behandlet.',
+                ],
+
                 'product-info' => [
                     'title'        => 'Produktinformasjon',
                     'status'       => 'Status',
@@ -373,6 +389,7 @@ return [
                 'same-code-error'       => 'Alternativkoden må være unik.',
                 'usable-in-grid'        => 'Brukes i rutenett',
                 'is-filterable'         => 'Er filtrerbar',
+                'ai-translate'          => 'AI Oversettelse',
 
                 'option' => [
                     'color'    => 'Fargeprøve',
@@ -440,6 +457,7 @@ return [
                 'same-code-error'       => 'Alternativkoden må være unik.',
                 'usable-in-grid'        => 'Brukes i rutenett',
                 'is-filterable'         => 'Er filtrerbar',
+                'ai-translate'          => 'AI Oversettelse',
 
                 'option' => [
                     'create-success'      => 'Attributtalternativ opprettet',
@@ -1698,6 +1716,18 @@ return [
                         'title'          => 'Generelle innstillinger',
                         'title-info'     => 'Forbedre opplevelsen din med Magic AI ved å legge inn din eksklusive API-nøkkel og spesifisere den relevante organisasjonen for sømløs integrasjon. Ta kontroll over OpenAI-tilgang og tilpass innstillingene etter dine spesifikke behov.',
                     ],
+
+                    'translation'   => [
+                        'title'                  => 'Oversettelse',
+                        'enabled'                => 'Aktivert',
+                        'title-info'             => 'Denne funksjonen aktiverer Magic AI for å oversette tekst, slik at du enkelt kan konvertere tekst fra ett språk til et annet.',
+                        'global-source-channel'  => 'Kildekanal',
+                        'global-source-locale'   => 'Kildelokale',
+                        'translation-model'      => 'Oversettelsesmodell',
+                        'replace-existing-value' => 'Erstatt eksisterende verdi',
+                        'target-channel'         => 'Målkanal',
+                        'target-locales'         => 'Mållokaler',
+                    ],
                 ],
             ],
         ],
@@ -1759,6 +1789,38 @@ return [
             're-generate-secret-key-success' => 'API-sikkerhetsnøkkel ble generert på nytt vellykket',
             'client-not-found'               => 'Klient ble ikke funnet',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'Tittel',
+                'prompt'        => 'Prompt',
+                'type'          => 'Type',
+                'created-at'    => 'Opprettet',
+                'updated-at'    => 'Oppdatert',
+                'actions'       => 'Handlinger',
+                'edit'          => 'Rediger',
+                'delete'        => 'Slett',
+                'product'       => 'Produkt',
+                'category'      => 'Kategori',
+            ],
+            'create' => [
+                'title'         => 'Prompt',
+                'create-btn'    => 'Opprett Prompt',
+                'edit-title'    => 'Rediger Prompt',
+                'create-title'  => 'Opprett Ny Prompt',
+                'label-title'   => 'Tittel',
+                'type'          => 'Type',
+                'prompt'        => 'Prompt',
+                'save-btn'      => 'Lagre Prompt',
+            ],
+            'message' => [
+                'save-success'      => 'Prompt ble lagret.',
+                'update-success'    => 'Prompt ble oppdatert.',
+                'delete-success'    => 'Prompt ble slettet.',
+                'delete-fail'       => 'Kunne ikke slette prompt.',
+            ],
+        ],
     ],
 
     'components' => [
@@ -1801,6 +1863,8 @@ return [
                 'themes'             => 'Temaer',
                 'users'              => 'Brukere',
                 'integrations'       => 'Integrasjoner',
+                'prompt'             => 'Prompt',
+                'general-tab'        => 'Konfigurasjon',
             ],
         ],
 

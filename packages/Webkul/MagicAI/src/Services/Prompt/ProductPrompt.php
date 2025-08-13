@@ -28,6 +28,11 @@ class ProductPrompt extends AbstractPrompt
         return self::$instance;
     }
 
+    public static function resetInstance(): void
+    {
+        self::$instance = null;
+    }
+
     /**
      * Replaces placeholders in the prompt with product attribute values.
      */
