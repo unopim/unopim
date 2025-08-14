@@ -76,6 +76,7 @@
             methods: {
                 get() {
                     this.$axios.post("{{ route('admin.catalog.categories.tree') }}", {
+                        locale: "{{ $currentLocaleCode }}",
                         selected: @json($productCategories),
                     })
                     .then(response => {

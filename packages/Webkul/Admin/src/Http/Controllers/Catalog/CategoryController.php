@@ -66,7 +66,7 @@ class CategoryController extends Controller
     /**
      * Maps each category in the collection to a new value using the provided callback.
      *
-     * @param  \Illuminate\Support\Collection  $categories  Collection of category objects.
+     * @param \Illuminate\Support\Collection $categories Collection of category objects.
      */
     public function transformCategoryTree(Collection $categories): array
     {
@@ -278,6 +278,7 @@ class CategoryController extends Controller
     public function tree(Request $request)
     {
         $validated = $request->validate([
+            'locale'     => 'required|string',
             'selected'   => 'nullable|array',
             'selected.*' => 'string',
         ]);
@@ -310,6 +311,8 @@ class CategoryController extends Controller
 
     /**
      * Fetch child categories for a given category ID.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function children(): JsonResponse
     {
