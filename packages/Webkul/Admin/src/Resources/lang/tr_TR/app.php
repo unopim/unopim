@@ -1578,6 +1578,8 @@ return [
         'tracker'                  => 'İş Takibi',
         'imports'                  => 'İçe Aktarımlar',
         'exports'                  => 'Dışa Aktarımlar',
+        'mass-update'              => 'Toplu güncelleme',
+        'mass-delete'              => 'Toplu silme',
     ],
 
     'errors' => [

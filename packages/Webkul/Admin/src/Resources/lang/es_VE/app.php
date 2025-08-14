@@ -1578,6 +1578,8 @@ return [
         'tracker'                  => 'Rastreador de trabajos',
         'imports'                  => 'Importaciones',
         'exports'                  => 'Exportaciones',
+        'mass-update'              => 'Actualización masiva',
+        'mass-delete'              => 'Eliminación en masa',
     ],
 
     'errors' => [

@@ -1579,6 +1579,8 @@ return [
         'tracker'                  => 'Job Tracker',
         'imports'                  => 'Importer',
         'exports'                  => 'Eksporter',
+        'mass-update'              => 'Masseopdatering',
+        'mass-delete'              => 'Masse sletning',
     ],
 
     'errors' => [

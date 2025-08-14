@@ -1577,6 +1577,8 @@ return [
         'tracker'                  => 'Työseuranta',
         'imports'                  => 'Tuonti',
         'exports'                  => 'Vienti',
+        'mass-update'              => 'Määräpäivitys',
+        'mass-delete'              => 'Määräpoisto',
     ],
 
     'errors' => [

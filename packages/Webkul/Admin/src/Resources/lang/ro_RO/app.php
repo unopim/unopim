@@ -1578,6 +1578,8 @@ return [
         'tracker'                  => 'Urmărire sarcini',
         'imports'                  => 'Importuri',
         'exports'                  => 'Exporturi',
+        'mass-update'              => 'Actualizare în masă',
+        'mass-delete'              => 'Ștergere în masă',
     ],
 
     'errors' => [

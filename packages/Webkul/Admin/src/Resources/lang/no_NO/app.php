@@ -1578,6 +1578,8 @@ return [
         'tracker'                  => 'Jobbspor',
         'imports'                  => 'Importer',
         'exports'                  => 'Eksporter',
+        'mass-update'              => 'Masseoppdatering',
+        'mass-delete'              => 'Masse sletting',
     ],
 
     'errors' => [

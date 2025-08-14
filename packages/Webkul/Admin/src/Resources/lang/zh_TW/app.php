@@ -1578,6 +1578,8 @@ return [
         'tracker'                  => '工作追踪器',
         'imports'                  => '導入',
         'exports'                  => '出口',
+        'mass-update'              => '批次更新',
+        'mass-delete'              => '批次刪除',
     ],
 
     'errors' => [
