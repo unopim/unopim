@@ -134,7 +134,7 @@ class LocalesDataGrid extends DataGrid
      */
     public function prepareMassActions()
     {
-        if (bouncer()->hasPermission('settings.locales.edit')) {
+        if (bouncer()->hasPermission('settings.locales.mass_update')) {
             $this->addMassAction([
                 'title'   => trans('admin::app.settings.locales.index.datagrid.mass-update'),
                 'url'     => route('admin.settings.locales.mass_update'),
@@ -151,7 +151,7 @@ class LocalesDataGrid extends DataGrid
             ]);
         }
 
-        if (bouncer()->hasPermission('settings.locales.delete')) {
+        if (bouncer()->hasPermission('settings.locales.mass_delete')) {
             $this->addMassAction([
                 'title'   => trans('admin::app.settings.locales.index.datagrid.delete'),
                 'url'     => route('admin.settings.locales.mass_delete'),

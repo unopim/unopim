@@ -139,7 +139,7 @@ class CurrencyDataGrid extends DataGrid
      */
     public function prepareMassActions()
     {
-        if (bouncer()->hasPermission('settings.currencies.edit')) {
+        if (bouncer()->hasPermission('settings.currencies.mass_update')) {
             $this->addMassAction([
                 'title'   => trans('admin::app.settings.currencies.index.datagrid.mass-update'),
                 'url'     => route('admin.settings.currencies.mass_update'),
@@ -156,7 +156,7 @@ class CurrencyDataGrid extends DataGrid
             ]);
         }
 
-        if (bouncer()->hasPermission('settings.currencies.delete')) {
+        if (bouncer()->hasPermission('settings.currencies.mass_delete')) {
             $this->addMassAction([
                 'title'   => trans('admin::app.settings.currencies.index.datagrid.delete'),
                 'url'     => route('admin.settings.currencies.mass_delete'),
