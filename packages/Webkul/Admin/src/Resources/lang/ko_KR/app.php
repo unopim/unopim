@@ -1596,6 +1596,8 @@ return [
         'tracker'                  => '추적기',
         'imports'                  => '임포트',
         'exports'                  => '임포트',
+        'mass-update'              => '대량 업데이트',
+        'mass-delete'              => '대량 삭제',
     ],
 
     'errors' => [

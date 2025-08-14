@@ -97,3 +97,54 @@ it('should be able to delete a product if has permission', function () {
 
     $this->assertDatabaseMissing($this->getFullTableName(Product::class), ['id' => $product->id]);
 });
+
+it('should not be able to mass update products if does not have permission', function () {
+    $this->loginWithPermissions(permissions: ['catalog', 'catalog.products']);
+
+    $products = Product::factory()->simple()->createMany(2);
+
+    $this->post(route('admin.catalog.products.mass_update'), ['indices' => $products->pluck('id')->toArray(), 'value' => true])
+        ->assertSeeText('Unauthorized');
+});
+
+it('should be able to mass update products if has permission', function () {
+    $this->loginWithPermissions(permissions: ['catalog', 'catalog.products', 'catalog.products.mass_update']);
+
+    $products = Product::factory()->simple()->createMany(2);
+
+    $this->post(route('admin.catalog.products.mass_update'), ['indices' => $products->pluck('id')->toArray(), 'value' => true])
+        ->assertOk();
+
+    foreach ($products as $product) {
+        $product->refresh();
+
+        $this->assertEquals(1, $product->status);
+    }
+});
+
+it('should not be able to mass delete products if does not have permission', function () {
+    $this->loginWithPermissions(permissions: ['catalog', 'catalog.products', 'catalog.products.delete']);
+
+    $productIds = Product::factory()->simple()->createMany(2)->pluck('id')->toArray();
+
+    $this->post(route('admin.catalog.products.mass_delete'), ['indices' => $productIds])
+        ->assertSeeText('Unauthorized');
+
+    foreach ($productIds as $id) {
+        $this->assertDatabaseHas($this->getFullTableName(Product::class), ['id' => $id]);
+    }
+});
+
+it('should be able to mass delete products if has permission', function () {
+    $this->loginWithPermissions(permissions: ['catalog', 'catalog.products', 'catalog.products.mass_delete']);
+
+    $productIds = Product::factory()->simple()->createMany(2)->pluck('id')->toArray();
+
+    $this->post(route('admin.catalog.products.mass_delete'), ['indices' => $productIds])
+        ->assertOk()
+        ->assertJsonFragment(['message' => trans('admin::app.catalog.products.index.datagrid.mass-delete-success')]);
+
+    foreach ($productIds as $id) {
+        $this->assertDatabaseMissing($this->getFullTableName(Product::class), ['id' => $id]);
+    }
+});

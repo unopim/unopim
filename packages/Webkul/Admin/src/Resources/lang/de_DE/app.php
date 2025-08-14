@@ -1992,6 +1992,8 @@ return [
         'tracker'                  => 'Job-Tracker',
         'imports'                  => 'Importe',
         'exports'                  => 'Exporte',
+        'mass-update'              => 'Massenaktualisierung',
+        'mass-delete'              => 'Massenlöschung',
     ],
 
     'errors' => [

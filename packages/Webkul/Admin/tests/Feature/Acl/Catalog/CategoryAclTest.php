@@ -69,3 +69,31 @@ it('should be able to delete category if has permission', function () {
 
     $this->assertDatabaseMissing($this->getFullTableName(Category::class), ['id' => $category->id]);
 });
+
+it('should not be able to mass delete categories if does not have permission', function () {
+    $this->loginWithPermissions(permissions: ['catalog', 'catalog.categories', 'catalog.categories.delete']);
+    $categories = Category::factory()->count(1)->create();
+
+    $ids = $categories->pluck('id')->toArray();
+
+    $this->post(route('admin.catalog.categories.mass_delete'), ['indices' => $ids])
+        ->assertSeeText('Unauthorized');
+
+    foreach ($ids as $id) {
+        $this->assertDatabaseHas($this->getFullTableName(Category::class), ['id' => $id]);
+    }
+});
+
+it('should be able to mass delete categories if has permission', function () {
+    $this->loginWithPermissions(permissions: ['catalog', 'catalog.categories', 'catalog.categories.mass_delete']);
+    $categories = Category::factory()->count(1)->create();
+
+    $ids = $categories->pluck('id')->toArray();
+
+    $this->post(route('admin.catalog.categories.mass_delete'), ['indices' => $ids])
+        ->assertStatus(200);
+
+    foreach ($ids as $id) {
+        $this->assertDatabaseMissing($this->getFullTableName(Category::class), ['id' => $id]);
+    }
+});

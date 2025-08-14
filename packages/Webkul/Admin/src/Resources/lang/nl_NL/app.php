@@ -2442,6 +2442,8 @@ return [
         'restore'                  => 'Herstellen',
         'integrations'             => 'Integratie',
         'api'                      => 'API',
+        'mass-update'              => 'Massabijwerking',
+        'mass-delete'              => 'Massaverwijdering',
     ],
 
     'errors' => [

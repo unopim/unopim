@@ -69,3 +69,55 @@ it('should be able to delete category field if has permission', function () {
 
     $this->assertDatabaseMissing($this->getFullTableName(CategoryField::class), ['id' => $categoryField->id]);
 });
+
+it('should not be able to mass delete category fields if does not have permission', function () {
+    $this->loginWithPermissions(permissions: ['catalog', 'catalog.category_fields', 'catalog.category_fields.delete']);
+
+    $categoryFieldIds = CategoryField::factory()->count(3)->create()->pluck('id')->toArray();
+
+    $this->post(route('admin.catalog.category_fields.mass_delete'), ['indices' => $categoryFieldIds])
+        ->assertSeeText('Unauthorized');
+
+    foreach ($categoryFieldIds as $id) {
+        $this->assertDatabaseHas($this->getFullTableName(CategoryField::class), ['id' => $id]);
+    }
+});
+
+it('should be able to mass delete category fields if has permission', function () {
+    $this->loginWithPermissions(permissions: ['catalog', 'catalog.category_fields', 'catalog.category_fields.mass_delete']);
+
+    $categoryFieldIds = CategoryField::factory()->count(3)->create()->pluck('id')->toArray();
+
+    $this->post(route('admin.catalog.category_fields.mass_delete'), ['indices' => $categoryFieldIds])
+        ->assertOk();
+
+    foreach ($categoryFieldIds as $id) {
+        $this->assertDatabaseMissing($this->getFullTableName(CategoryField::class), ['id' => $id]);
+    }
+});
+
+it('should not be able to mass update category fields if does not have permission', function () {
+    $this->loginWithPermissions(permissions: ['catalog', 'catalog.category_fields']);
+
+    $categoryFieldIds = CategoryField::factory()->count(3)->create(['status' => 0])->pluck('id')->toArray();
+
+    $this->post(route('admin.catalog.category_fields.mass_update'), ['indices' => $categoryFieldIds, 'value' => 1])
+        ->assertSeeText('Unauthorized');
+
+    foreach ($categoryFieldIds as $id) {
+        $this->assertDatabaseHas($this->getFullTableName(CategoryField::class), ['id' => $id, 'status' => 0]);
+    }
+});
+
+it('should be able to mass update category fields if has permission', function () {
+    $this->loginWithPermissions(permissions: ['catalog', 'catalog.category_fields', 'catalog.category_fields.mass_update']);
+
+    $categoryFieldIds = CategoryField::factory()->count(3)->create(['status' => 0])->pluck('id')->toArray();
+
+    $this->post(route('admin.catalog.category_fields.mass_update'), ['indices' => $categoryFieldIds, 'value' => 1])
+        ->assertOk();
+
+    foreach ($categoryFieldIds as $id) {
+        $this->assertDatabaseHas($this->getFullTableName(CategoryField::class), ['id' => $id, 'status' => 1]);
+    }
+});

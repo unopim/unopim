@@ -69,3 +69,31 @@ it('should be able to delete attribute if has permission', function () {
 
     $this->assertDatabaseMissing($this->getFullTableName(Attribute::class), ['id' => $attribute->id]);
 });
+
+it('should not be able to mass delete attributes if does not have permission', function () {
+    $this->loginWithPermissions(permissions: ['catalog', 'catalog.attributes', 'catalog.attributes.delete']);
+    $attributes = Attribute::factory()->count(3)->create();
+
+    $ids = $attributes->pluck('id')->toArray();
+
+    $this->post(route('admin.catalog.attributes.mass_delete'), ['indices' => $ids])
+        ->assertSeeText('Unauthorized');
+
+    foreach ($ids as $id) {
+        $this->assertDatabaseHas($this->getFullTableName(Attribute::class), ['id' => $id]);
+    }
+});
+
+it('should be able to mass delete attributes if has permission', function () {
+    $this->loginWithPermissions(permissions: ['catalog', 'catalog.attributes', 'catalog.attributes.mass_delete']);
+    $attributes = Attribute::factory()->count(1)->create();
+
+    $ids = $attributes->pluck('id')->toArray();
+
+    $this->post(route('admin.catalog.attributes.mass_delete'), ['indices' => $ids])
+        ->assertStatus(200);
+
+    foreach ($ids as $id) {
+        $this->assertDatabaseMissing($this->getFullTableName(Attribute::class), ['id' => $id]);
+    }
+});

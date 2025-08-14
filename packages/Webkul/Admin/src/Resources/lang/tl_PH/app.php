@@ -1596,6 +1596,8 @@ return [
         'tracker'                  => 'Tagasunod ng Trabaho',
         'imports'                  => 'Mga Pag-import',
         'exports'                  => 'Mga Pag-export',
+        'mass-update'              => 'Maramihang pag-update',
+        'mass-delete'              => 'Maramihang pagtanggal',
     ],
 
     'errors' => [

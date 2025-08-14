@@ -2442,6 +2442,8 @@ return [
         'restore'                  => 'Сэргээх',
         'integrations'             => 'Бүртгэл',
         'api'                      => 'Api',
+        'mass-update'              => '[translation needed]',
+        'mass-delete'              => '[translation needed]',
     ],
 
     'errors' => [

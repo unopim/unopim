@@ -54,6 +54,14 @@
                 </div>
             </div>
 
+            @php
+                $hasDeletePermission = bouncer()->hasPermission('settings.currencies.delete');
+
+                $hasEditPermission = bouncer()->hasPermission('settings.currencies.edit');
+
+                $hasMassActionPermission = bouncer()->hasPermission('settings.currencies.mass_update') || bouncer()->hasPermission('settings.currencies.mass_delete');
+            @endphp
+
             <x-admin::datagrid
                 :src="route('admin.settings.currencies.index')"
                 ref="datagrid"
@@ -66,10 +74,7 @@
                         :style="`grid-template-columns: repeat(${gridsCount}, minmax(0, 1fr))`"
                     >
                         <!-- Mass actions -->
-                        @if (
-                            bouncer()->hasPermission('settings.currencies.edit')
-                            || bouncer()->hasPermission('settings.currencies.delete')
-                        )
+                        @if ($hasMassActionPermission)
                             <input
                                 type="checkbox"
                                 :name="`mass_action_select_record_${record.id}`"
@@ -100,7 +105,7 @@
 
                         <!-- Actions -->
                         <div class="flex justify-end">
-                            @if (bouncer()->hasPermission('settings.currencies.edit'))
+                            @if ($hasEditPermission)
                                 <a @click="selectedCurrencies=1; editModal(record.actions.find(action => action.index === 'edit')?.url)">
                                     <span
                                         :class="record.actions.find(action => action.index === 'edit')?.icon"
@@ -111,7 +116,7 @@
                                 </a>
                             @endif
 
-                            @if (bouncer()->hasPermission('settings.currencies.delete'))
+                            @if ($hasDeletePermission)
                                 <a @click="performAction(record.actions.find(action => action.index === 'delete'))">
                                     <span
                                         :class="record.actions.find(action => action.index === 'delete')?.icon"

@@ -2441,6 +2441,8 @@ return [
         'restore'                  => 'Восстановить',
         'integrations'             => 'Интеграции',
         'api'                      => 'API',
+        'mass-update'              => 'Массовое обновление',
+        'mass-delete'              => 'Массовое удаление',
     ],
 
     'errors' => [

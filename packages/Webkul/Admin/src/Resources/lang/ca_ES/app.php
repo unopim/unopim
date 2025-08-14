@@ -1987,6 +1987,8 @@ return [
         'tracker'                  => 'Rastrejador de treball',
         'imports'                  => 'Imports',
         'exports'                  => 'Exports',
+        'mass-update'              => 'Actualització en massa',
+        'mass-delete'              => 'Eliminació en massa',
     ],
 
     'errors' => [

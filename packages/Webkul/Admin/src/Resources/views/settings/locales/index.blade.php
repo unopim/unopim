@@ -53,6 +53,13 @@
                 </div>
             </div>
 
+            @php
+                $hasDeletePermission = bouncer()->hasPermission('settings.locales.delete');
+
+                $hasEditPermission = bouncer()->hasPermission('settings.locales.edit');
+
+                $hasMassActionPermission = bouncer()->hasPermission('settings.locales.mass_update') || bouncer()->hasPermission('settings.locales.mass_delete');
+            @endphp
             <x-admin::datagrid :src="route('admin.settings.locales.index')" ref="datagrid">
                 <!-- DataGrid Body -->
                 <template #body="{ columns, records, performAction, applied, setCurrentSelectionMode }">
@@ -62,10 +69,7 @@
                         :style="`grid-template-columns: repeat(${gridsCount}, minmax(0, 1fr))`"
                     >
                         <!-- Mass actions -->
-                        @if (
-                            bouncer()->hasPermission('settings.locales.edit')
-                            || bouncer()->hasPermission('settings.locales.delete')
-                        )
+                        @if ($hasMassActionPermission)
                             <input
                                 type="checkbox"
                                 :name="`mass_action_select_record_${record.id}`"
@@ -95,7 +99,7 @@
 
                         <!-- Actions -->
                         <div class="flex justify-end">
-                            @if (bouncer()->hasPermission('settings.locales.edit'))
+                            @if ($hasEditPermission)
                                 <a @click="selectedLocales=1; editModal(record.actions.find(action => action.index === 'edit')?.url)">
                                     <span
                                         :class="record.actions.find(action => action.index === 'edit')?.icon"
@@ -106,7 +110,7 @@
                                 </a>
                             @endif
 
-                            @if (bouncer()->hasPermission('settings.locales.delete'))
+                            @if ($hasDeletePermission)
                                 <a @click="performAction(record.actions.find(action => action.index === 'delete'))">
                                     <span
                                         :class="record.actions.find(action => action.index === 'delete')?.icon"
