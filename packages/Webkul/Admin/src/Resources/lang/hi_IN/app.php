@@ -2441,6 +2441,8 @@ return [
         'restore'                  => 'पुनर्स्थापित करना',
         'integrations'             => 'एकीकरण',
         'api'                      => 'एपीआई',
+        'mass-update'              => 'सामूहिक अद्यतन',
+        'mass-delete'              => 'सामूहिक हटाना',
     ],
 
     'errors' => [

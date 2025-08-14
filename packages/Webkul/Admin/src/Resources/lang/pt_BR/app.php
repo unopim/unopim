@@ -1596,6 +1596,8 @@ return [
         'tracker'                  => 'Rastreamento de Tarefas',
         'imports'                  => 'Importações',
         'exports'                  => 'Exportações',
+        'mass-update'              => 'Atualização em massa',
+        'mass-delete'              => 'Exclusão em massa',
     ],
 
     'errors' => [

@@ -1992,6 +1992,8 @@ return [
         'tracker'                  => '工作追踪',
         'imports'                  => '导入',
         'exports'                  => '出口',
+        'mass-update'              => '批量更新',
+        'mass-delete'              => '批量删除',
     ],
 
     'errors' => [

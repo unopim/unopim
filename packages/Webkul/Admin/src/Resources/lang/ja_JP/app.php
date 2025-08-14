@@ -1992,6 +1992,8 @@ return [
         'tracker'                  => 'ジョブ トラッカー',
         'imports'                  => 'インポート',
         'exports'                  => 'エクスポート',
+        'mass-update'              => '一括更新',
+        'mass-delete'              => '一括削除',
     ],
 
     'errors' => [
