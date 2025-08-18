@@ -22,6 +22,7 @@ use Webkul\Core\Facades\ElasticSearch;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Rules\Slug;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
+use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Helpers\Importers\AbstractImporter;
 use Webkul\DataTransfer\Helpers\Importers\FieldProcessor;
@@ -790,6 +791,8 @@ class Importer extends AbstractImporter
             if ($attribute->type === 'price') {
                 $value = $this->formatPriceValueWithCurrency($currencyCode, $value, $attribute->getValueFromProductValues($attributeValues, $rowData['channel'] ?? null, $rowData['locale'] ?? null));
             }
+
+            $value = EscapeFormulaOperators::unescapeValue($value);
 
             $attribute->setProductValue($value, $attributeValues, $rowData['channel'] ?? null, $rowData['locale'] ?? null);
         }

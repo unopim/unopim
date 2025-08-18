@@ -9,6 +9,7 @@ use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
 use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Helpers\Exporters\AbstractExporter;
+use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
 use Webkul\DataTransfer\Helpers\Sources\Export\ProductSource;
 use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
@@ -249,7 +250,7 @@ class Exporter extends AbstractExporter
                 $rawValue = implode(', ', $rawValue);
             }
 
-            $attributeValues[$code] = $rawValue;
+            $attributeValues[$code] = EscapeFormulaOperators::escapeValue($rawValue);
         }
 
         return $attributeValues;
