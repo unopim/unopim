@@ -145,7 +145,7 @@ class CategoryDataGrid extends DataGrid
      */
     public function prepareMassActions()
     {
-        if (bouncer()->hasPermission('catalog.categories.delete')) {
+        if (bouncer()->hasPermission('catalog.categories.mass_delete')) {
             $this->addMassAction([
                 'title'   => trans('admin::app.catalog.categories.index.datagrid.delete'),
                 'method'  => 'POST',

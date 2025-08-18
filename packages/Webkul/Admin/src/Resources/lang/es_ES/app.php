@@ -1997,6 +1997,8 @@ return [
         'restore'                  => 'Restaurar',
         'integrations'             => 'Integraciones',
         'api'                      => 'API',
+        'mass-update'              => 'Actualización masiva',
+        'mass-delete'              => 'Eliminación en masa',
     ],
 
     'errors' => [

@@ -1596,6 +1596,8 @@ return [
         'tracker'                  => 'Śledzenie',
         'imports'                  => 'Importy',
         'exports'                  => 'Eksporty',
+        'mass-update'              => 'Masowa aktualizacja',
+        'mass-delete'              => 'Masowe usuwanie',
     ],
 
     'errors' => [

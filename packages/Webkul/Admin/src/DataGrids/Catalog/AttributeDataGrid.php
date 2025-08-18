@@ -169,7 +169,7 @@ class AttributeDataGrid extends DataGrid
      */
     public function prepareMassActions()
     {
-        if (bouncer()->hasPermission('catalog.attributes.delete')) {
+        if (bouncer()->hasPermission('catalog.attributes.mass_delete')) {
             $this->addMassAction([
                 'icon'    => 'icon-delete',
                 'title'   => trans('admin::app.catalog.attributes.index.datagrid.delete'),

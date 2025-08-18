@@ -2016,6 +2016,8 @@ return [
         'tracker'                  => 'Pelacak Pekerjaan',
         'imports'                  => 'Impor',
         'exports'                  => 'Ekspor',
+        'mass-update'              => 'Pembaruan massal',
+        'mass-delete'              => 'Penghapusan massal',
     ],
 
     'errors' => [

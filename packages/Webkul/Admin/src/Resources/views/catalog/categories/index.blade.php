@@ -30,6 +30,8 @@
     >
         @php
             $hasPermission = bouncer()->hasPermission('catalog.categories.edit') || bouncer()->hasPermission('catalog.categories.delete');
+
+            $hasMassActionPermission = bouncer()->hasPermission('catalog.categories.mass_delete');
         @endphp
         
         <template #header="{ columns, records, sortPage, selectAllRecords, applied, isLoading, actions}">
@@ -42,7 +44,7 @@
                         class="flex items-center select-none"
                         v-for="(columnGroup, index) in ['display_name', 'category_name', 'code']"
                     >
-                        @if ($hasPermission)
+                        @if ($hasMassActionPermission)
                             <label
                                 class="flex mr-2 gap-1 items-center w-max cursor-pointer select-none"
                                 for="mass_action_select_all_records"
@@ -125,7 +127,7 @@
                     :style="'grid-template-columns: 2fr repeat(' + (actions.length ? columns.length : (columns.length -1 )) + ', 1fr)'"
                 >
                     <div class="flex items-center gap-2.5 overflow-hidden">
-                        @if ($hasPermission)
+                        @if ($hasMassActionPermission)
                             <div class="mass-action-input">
                                 <input
                                     type="checkbox"
