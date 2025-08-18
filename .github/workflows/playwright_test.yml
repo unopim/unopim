@@ -74,18 +74,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-          # Try multiple possible lockfile locations, but ignore if missing
-          cache-dependency-path: |
-            package-lock.json
-            tests/e2e-pw/package-lock.json
 
       - name: Install Playwright & Run Tests
         working-directory: tests/e2e-pw
         run: |
-          npm ci || npm install
+          npm install
           npx playwright install --with-deps
-          npx playwright test --reporter=line
+          npx playwright test --reporter=html
 
       - name: Upload Playwright Report
         if: always()
