@@ -8,6 +8,7 @@ on:
 
 jobs:
   test:
+    timeout-minutes: 60
     runs-on: ubuntu-latest
 
     steps:
@@ -18,18 +19,21 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: "npm"
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright Browsers
+      - name: Install Playwright Browsers & Dependencies
         run: npx playwright install --with-deps
 
       - name: Run Playwright Tests
-        run: npx playwright test --reporter=dot
+        run: |
+          npx playwright test --reporter=dot
+        env:
+          CI: true
 
-      - name: Upload Playwright Report (always run)
+      - name: Upload Playwright Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
