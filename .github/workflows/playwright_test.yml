@@ -76,6 +76,8 @@ jobs:
       - name: Install Playwright and run tests
         run: |
           cd tests/e2e-pw
+          # Create the report directory to ensure the path always exists
+          mkdir -p playwright-report
           npm ci
           npx playwright install --with-deps
           npx playwright test
