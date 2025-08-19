@@ -5,18 +5,12 @@ on: [push, pull_request]
 permissions:
   contents: read
 
-env:
-  FORCE_COLOR: 1
-  CI: true
-
 jobs:
   playwright_tests:
     name: Playwright End-to-end UI Test
     runs-on: ${{ matrix.operating-systems }}
-    timeout-minutes: 60
 
     strategy:
-      fail-fast: false
       matrix:
         operating-systems: [ubuntu-latest]
         php-versions: ['8.2']
@@ -29,15 +23,15 @@ jobs:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: unopim
         ports:
-          - 3306:3306
+          - 3306
         options: >-
-          --health-cmd="mysqladmin ping -h localhost -uroot -proot"
+          --health-cmd="mysqladmin ping"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup PHP
@@ -48,27 +42,29 @@ jobs:
           ini-values: error_reporting=E_ALL
           tools: composer:v2
 
-      - name: Install Composer dependencies
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+      - name: Running Composer Install
+        run: composer install
 
-      - name: Configure Environment
+      - name: Setting Environment
         run: |
           cp .env.example .env
-          sed -i "s|^APP_ENV=.*|APP_ENV=testing|" .env
-          sed -i "s|^DB_HOST=.*|DB_HOST=127.0.0.1|" .env
-          sed -i "s|^DB_PORT=.*|DB_PORT=${{ job.services.mysql.ports['3306'] }}|" .env
-          sed -i "s|^DB_DATABASE=.*|DB_DATABASE=unopim|" .env
-          sed -i "s|^DB_USERNAME=.*|DB_USERNAME=root|" .env
-          sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=root|" .env
+          sed -i "s|^\(APP_ENV=\s*\).*$|\1testing|" .env
+          sed -i "s|^\(DB_HOST=\s*\).*$|\1127.0.0.1|" .env
+          sed -i "s|^\(DB_PORT=\s*\).*$|\1${{ job.services.mysql.ports['3306'] }}|" .env
+          sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
+          sed -i "s|^\(DB_USERNAME=\s*\).*$|\1root|" .env
+          sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
           cat .env
 
-      - name: Run UnoPim Installer & Start Server
+      - name: Running UnoPim Installer
         run: |
           php artisan unopim:install --skip-env-check --skip-admin-creation
-          php artisan migrate:fresh --seed --force
-          php artisan serve --host=0.0.0.0 --port=8000 > server.log 2>&1 &
-          echo "Waiting for UnoPim to be ready..."
-          timeout 60 bash -c 'until curl -s http://127.0.0.1:8000 > /dev/null; do sleep 2; done'
+          php artisan migrate --force
+          php artisan migrate:fresh --seed
+          php artisan serve --host=0.0.0.0 --port=8000 &
+
+      - name: Wait for UnoPim to start
+        run: npx wait-on http://localhost:8000
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -82,7 +78,7 @@ jobs:
         run: |
           npm ci
           npx playwright install --with-deps
-          npx playwright test --reporter=dot
+          npx playwright test --reporter=dot --output=playwright-report
 
       - name: Upload Playwright Report
         if: always()
