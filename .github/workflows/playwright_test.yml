@@ -8,13 +8,8 @@ permissions:
 jobs:
   playwright_tests:
     name: Playwright End-to-end UI Test
-    runs-on: ${{ matrix.operating-systems }}
-
-    strategy:
-      matrix:
-        operating-systems: [ubuntu-latest]
-        php-versions: ['8.2']
-        node-version: ['18']
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
 
     services:
       mysql:
@@ -37,7 +32,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php-versions }}
+          php-version: 8.2
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
           ini-values: error_reporting=E_ALL
           tools: composer:v2
@@ -50,7 +45,7 @@ jobs:
           cp .env.example .env
           sed -i "s|^\(APP_ENV=\s*\).*$|\1testing|" .env
           sed -i "s|^\(DB_HOST=\s*\).*$|\1127.0.0.1|" .env
-          sed -i "s|^\(DB_PORT=\s*\).*$|\1${{ job.services.mysql.ports['3306'] }}|" .env
+          sed -i "s|^\(DB_PORT=\s*\).*$|\13306|" .env
           sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
           sed -i "s|^\(DB_USERNAME=\s*\).*$|\1root|" .env
           sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
@@ -69,14 +64,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: npm
-          cache-dependency-path: tests/e2e-pw/package-lock.json
+          node-version: 18
 
       - name: Install Playwright & Run Tests
         working-directory: tests/e2e-pw
         run: |
-          npm ci
+          npm install
           npx playwright install --with-deps
           npx playwright test --reporter=dot --output=playwright-report
 
