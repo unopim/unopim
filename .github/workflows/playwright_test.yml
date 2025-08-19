@@ -1,10 +1,6 @@
 name: Playwright Tests
 
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+on: [push, pull_request]
 
 permissions:
   contents: read
@@ -12,10 +8,11 @@ permissions:
 jobs:
   playwright_tests:
     name: Playwright End-to-end UI Test
-    runs-on: ubuntu-latest
-    
+    runs-on: ${{ matrix.operating-systems }}
+
     strategy:
       matrix:
+        operating-systems: [ubuntu-latest]
         php-versions: ['8.2']
 
     services:
@@ -33,7 +30,7 @@ jobs:
           --health-retries=5
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup PHP
@@ -44,21 +41,21 @@ jobs:
           ini-values: error_reporting=E_ALL
           tools: composer:v2
 
-      - name: Install Composer dependencies
+      - name: Running Composer Install
         run: composer install
 
-      - name: Configure application environment
+      - name: Setting Environment
         run: |
           cp .env.example .env
-          sed -i 's/^APP_ENV=.*/APP_ENV=testing/' .env
-          sed -i 's/^DB_HOST=.*/DB_HOST=127.0.0.1/' .env
-          sed -i 's/^DB_PORT=.*/DB_PORT=3306/' .env
-          sed -i 's/^DB_DATABASE=.*/DB_DATABASE=unopim/' .env
-          sed -i 's/^DB_USERNAME=.*/DB_USERNAME=root/' .env
-          sed -i 's/^DB_PASSWORD=.*/DB_PASSWORD=root/' .env
+          sed -i "s|^\(APP_ENV=\s*\).*$|\1testing|" .env
+          sed -i "s|^\(DB_HOST=\s*\).*$|\1127.0.0.1|" .env
+          sed -i "s|^\(DB_PORT=\s*\).*$|\1${{ job.services.mysql.ports['3306'] }}|" .env
+          sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
+          sed -i "s|^\(DB_USERNAME=\s*\).*$|\1root|" .env
+          sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
           cat .env
 
-      - name: Run UnoPim installer and migrations
+      - name: Running UnoPim Installer
         run: |
           php artisan unopim:install --skip-env-check --skip-admin-creation
           php artisan migrate --force
@@ -66,19 +63,17 @@ jobs:
           php artisan serve --host=0.0.0.0 --port=8000 &
 
       - name: Wait for UnoPim to start
-        run: npx wait-on http://localhost:8000 --timeout 60000
+        run: npx wait-on http://localhost:8000
 
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      - name: Install Playwright and run tests
+      - name: Install Playwright dependencies and run test
         run: |
           cd tests/e2e-pw
-          # Create the report directory to ensure the path always exists
-          mkdir -p playwright-report
-          npm ci
+          npm install
           npx playwright install --with-deps
           npx playwright test
 
@@ -87,5 +82,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
-          path: tests/e2e-pw/playwright-report
-          retention-days: 7
+          path: unopim/tests/e2e-pw/playwright-report
