@@ -8,11 +8,7 @@ permissions:
 jobs:
   playwright_tests:
     name: Playwright End-to-End UI Test
-    runs-on: ${{ matrix.operating-system }}
-    strategy:
-      matrix:
-        operating-system: [ubuntu-latest]
-        php-version: ['8.2']
+    runs-on: ubuntu-latest
 
     services:
       mysql:
@@ -32,10 +28,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup PHP
+      - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php-version }}
+          php-version: '8.2'
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
           ini-values: error_reporting=E_ALL
           tools: composer:v2
@@ -43,12 +39,12 @@ jobs:
       - name: Install PHP dependencies
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
-      - name: Set environment variables
+      - name: Prepare .env file
         run: |
           cp .env.example .env
           sed -i "s/^APP_ENV=.*/APP_ENV=testing/" .env
           sed -i "s/^DB_HOST=.*/DB_HOST=127.0.0.1/" .env
-          sed -i "s/^DB_PORT=.*/DB_PORT=${{ job.services.mysql.ports[3306] }}/" .env
+          sed -i "s/^DB_PORT=.*/DB_PORT=3306/" .env
           sed -i "s/^DB_DATABASE=.*/DB_DATABASE=unopim/" .env
           sed -i "s/^DB_USERNAME=.*/DB_USERNAME=root/" .env
           sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=root/" .env
@@ -57,14 +53,13 @@ jobs:
       - name: Run UnoPim installer & migrations
         run: |
           php artisan unopim:install --skip-env-check --skip-admin-creation
-          php artisan migrate --force
           php artisan migrate:fresh --seed
           nohup php artisan serve --host=0.0.0.0 --port=8000 > server.log 2>&1 &
 
       - name: Wait for UnoPim to be ready
         run: npx wait-on http://localhost:8000
 
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
