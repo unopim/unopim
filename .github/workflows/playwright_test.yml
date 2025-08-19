@@ -1,20 +1,17 @@
 name: Playwright Tests
 
-on:
-  push:
-  pull_request:
+on: [push, pull_request]
 
 permissions:
   contents: read
 
 jobs:
   playwright_tests:
-    name: Playwright End-to-end UI Test
-    runs-on: ${{ matrix.os }}
-
+    name: Playwright End-to-End UI Test
+    runs-on: ${{ matrix.operating-system }}
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        operating-system: [ubuntu-latest]
         php-version: ['8.2']
 
     services:
@@ -26,16 +23,16 @@ jobs:
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping"
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up PHP
+      - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
@@ -43,36 +40,36 @@ jobs:
           ini-values: error_reporting=E_ALL
           tools: composer:v2
 
-      - name: Install Composer dependencies
-        run: composer install --prefer-dist --no-interaction --no-progress
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
-      - name: Set up environment
+      - name: Set environment variables
         run: |
           cp .env.example .env
-          sed -i "s|^APP_ENV=.*$|APP_ENV=testing|" .env
-          sed -i "s|^DB_HOST=.*$|DB_HOST=127.0.0.1|" .env
-          sed -i "s|^DB_PORT=.*$|DB_PORT=${{ job.services.mysql.ports['3306'] }}|" .env
-          sed -i "s|^DB_DATABASE=.*$|DB_DATABASE=unopim|" .env
-          sed -i "s|^DB_USERNAME=.*$|DB_USERNAME=root|" .env
-          sed -i "s|^DB_PASSWORD=.*$|DB_PASSWORD=root|" .env
+          sed -i "s/^APP_ENV=.*/APP_ENV=testing/" .env
+          sed -i "s/^DB_HOST=.*/DB_HOST=127.0.0.1/" .env
+          sed -i "s/^DB_PORT=.*/DB_PORT=${{ job.services.mysql.ports[3306] }}/" .env
+          sed -i "s/^DB_DATABASE=.*/DB_DATABASE=unopim/" .env
+          sed -i "s/^DB_USERNAME=.*/DB_USERNAME=root/" .env
+          sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=root/" .env
           cat .env
 
-      - name: Run UnoPim installer and migrations
+      - name: Run UnoPim installer & migrations
         run: |
           php artisan unopim:install --skip-env-check --skip-admin-creation
           php artisan migrate --force
           php artisan migrate:fresh --seed
-          php artisan serve --host=0.0.0.0 --port=8000 &
+          nohup php artisan serve --host=0.0.0.0 --port=8000 > server.log 2>&1 &
 
-      - name: Wait for UnoPim server
+      - name: Wait for UnoPim to be ready
         run: npx wait-on http://localhost:8000
 
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      - name: Install Playwright dependencies and run tests
+      - name: Install Playwright and run tests
         run: |
           cd tests/e2e-pw
           npm ci
@@ -84,4 +81,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
-          path: unopim/tests/e2e-pw/playwright-report
+          path: tests/e2e-pw/playwright-report
