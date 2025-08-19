@@ -26,7 +26,7 @@ jobs:
           --health-retries=5
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup PHP
@@ -37,8 +37,21 @@ jobs:
           ini-values: error_reporting=E_ALL
           tools: composer:v2
 
-      - name: Composer Install
-        run: composer install
+      - name: Validate PHP & Composer
+        run: |
+          php -v
+          composer -V
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
 
       - name: Configure Environment
         run: |
@@ -58,18 +71,36 @@ jobs:
           php artisan serve --host=0.0.0.0 --port=8000 > server.log 2>&1 &
           echo "Waiting for UnoPim to be ready..."
           timeout 60 bash -c 'until curl -s http://127.0.0.1:8000 > /dev/null; do sleep 2; done'
+          echo "UnoPim server started successfully."
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
-      - name: Install Playwright & Run Tests
+      - name: Validate Node.js & npm
+        run: |
+          node -v
+          npm -v
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v4
+        with:
+          path: tests/e2e-pw/node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('tests/e2e-pw/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      - name: Install Playwright dependencies
         working-directory: tests/e2e-pw
         run: |
-          npm install
+          npm ci
           npx playwright install --with-deps
-          npx playwright test --reporter=dot --output=playwright-report || true
+
+      - name: Run Playwright Tests
+        working-directory: tests/e2e-pw
+        run: |
+          npx playwright test --reporter=dot,line --output=playwright-report
 
       - name: Upload Playwright Report
         if: always()
@@ -78,3 +109,9 @@ jobs:
           name: playwright-report
           path: tests/e2e-pw/playwright-report
           retention-days: 7
+
+      - name: Show server log if failed
+        if: failure()
+        run: |
+          echo "==== SERVER LOG ===="
+          cat server.log || echo "No server.log found"
