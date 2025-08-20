@@ -126,7 +126,6 @@ class CurrencyTableSeeder extends Seeder
         foreach ($this->currenciesWithSymbols as $currency => $currencySymbol) {
             DB::table('currencies')->insert([
                 [
-                    'id'     => $currency,
                     'code'   => $currency,
                     'symbol' => $currencySymbol,
                     'status' => in_array($currency, $enableCurrencies) ? true : false,
