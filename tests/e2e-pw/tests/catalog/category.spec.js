@@ -1,7 +1,11 @@
 import { test, expect } from '@playwright/test';
 test.describe('UnoPim Category', () => {
 test.beforeEach(async ({ page }) => {
-   await page.goto('/admin/dashboard');
+   await page.goto('http://127.0.0.1:8000/admin/login');
+  await page.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
+  await page.getByRole('textbox', { name: 'Password' }).fill('admin123');
+  await page.getByRole('button', { name: 'Sign In' }).click();
+  await expect(page).toHaveURL('http://127.0.0.1:8000/admin/dashboard');
 });
 
 test('Create Categories with empty Code field', async ({ page }) => {
@@ -51,7 +55,9 @@ test('Create Categories with all field', async ({ page }) => {
   await page.locator('#name').type('Television');
   await page.waitForTimeout(100);
   await page.getByRole('button', { name: 'Save Category' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(page.getByText(/Category created successfully/i)).toBeVisible();
+  await adminPage.waitForTimeout(500);
 });
 
 test('should allow category search', async ({ page }) => {
@@ -129,3 +135,4 @@ test('Delete Root Category', async ({ page }) => {
   await expect(page.getByText(/You cannot delete the root category that is associated with a channel./i)).toBeVisible();
 });
 });
+

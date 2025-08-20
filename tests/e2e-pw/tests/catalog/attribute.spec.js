@@ -1,7 +1,11 @@
 import { test, expect } from '@playwright/test';
 test.describe('UnoPim Attribute', () => {
 test.beforeEach(async ({ page }) => {
-  await page.goto('/admin/dashboard');
+   await page.goto('http://127.0.0.1:8000/admin/login');
+  await page.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
+  await page.getByRole('textbox', { name: 'Password' }).fill('admin123');
+  await page.getByRole('button', { name: 'Sign In' }).click();
+  await expect(page).toHaveURL('http://127.0.0.1:8000/admin/dashboard');
 });
 
 test('Create attribute with empty code field', async ({ page }) => {
@@ -122,10 +126,14 @@ test('Delete Attribute', async ({ page }) => {
 
 test.describe('Checkbox Type Attribute Option Grid', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/admin/dashboard');
-  });
+  await page.goto('http://127.0.0.1:8000/admin/login');
+  await page.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
+  await page.getByRole('textbox', { name: 'Password' }).fill('admin123');
+  await page.getByRole('button', { name: 'Sign In' }).click();
+  await expect(page).toHaveURL('http://127.0.0.1:8000/admin/dashboard');
+})
 
-test('Adding options should not be visible while creating the attribute (checkbox type)', async ({ page }) => {
+test('Adding options should not behttp://127.0.0.1:3000/playwright-report/index.html visible while creating the attribute (checkbox type)', async ({ page }) => {
   await page.getByRole('link', { name: ' Catalog' }).click();
   await page.getByRole('link', { name: 'Attributes' }).click();
   await page.getByRole('link', { name: 'Create Attribute' }).click();
@@ -267,7 +275,11 @@ test('Delete the checkbox type attibute', async ({ page }) => {
 
 test.describe('Multiselect Type Attribute Options Grid', () => {
   test.beforeEach(async ({ page }) => {
-  await page.goto('/admin/dashboard');
+  await page.goto('http://127.0.0.1:8000/admin/login');
+  await page.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
+  await page.getByRole('textbox', { name: 'Password' }).fill('admin123');
+  await page.getByRole('button', { name: 'Sign In' }).click();
+  await expect(page).toHaveURL('http://127.0.0.1:8000/admin/dashboard');
 })
 
 test('Adding options should not be visible while creating the attribute (multiselect type)', async ({ page }) => {
@@ -413,8 +425,12 @@ test('Delete the multiselect type attibute', async ({ page }) => {
 
 test.describe('Select Type Attribute', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/admin/dashboard');
-  });
+  await page.goto('http://127.0.0.1:8000/admin/login');
+  await page.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
+  await page.getByRole('textbox', { name: 'Password' }).fill('admin123');
+  await page.getByRole('button', { name: 'Sign In' }).click();
+  await expect(page).toHaveURL('http://127.0.0.1:8000/admin/dashboard');
+})
 
 test('Adding options should not be visible while creating the attribute (select type)', async ({ page }) => {
   await page.getByRole('link', { name: ' Catalog' }).click();

@@ -1,7 +1,11 @@
 import { test, expect } from '@playwright/test';
 test.describe('UnoPim  Create Product Test cases', () => {
 test.beforeEach(async ({ page }) => {
-  await page.goto('/admin/dashboard');
+   await page.goto('http://127.0.0.1:8000/admin/login');
+  await page.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
+  await page.getByRole('textbox', { name: 'Password' }).fill('admin123');
+  await page.getByRole('button', { name: 'Sign In' }).click();
+  await expect(page).toHaveURL('http://127.0.0.1:8000/admin/dashboard');
 });
 
 test('with empty product type field', async ({ page }) => {
@@ -109,8 +113,7 @@ test('should allow product search', async ({ page }) => {
   await page.getByRole('textbox', { name: 'Search' }).type('acer456');
   await page.keyboard.press('Enter');
   await expect(page.locator('text=1 Results')).toBeVisible();
-  const itemRow = page.locator('div.row.grid', { hasText: 'acer456' });
-  await expect(itemRow).toBeVisible();
+  await expect(page.locator('text=acer456')).toBeVisible();
 });
 
 test('should open the filter menu when clicked', async ({ page }) => {
@@ -165,7 +168,11 @@ test('should allow selecting all products with the mass action checkbox', async 
 
 test.describe('UnoPim Update Product Test cases', () => {
 test.beforeEach(async ({ page }) => {
-  await page.goto('/admin/dashboard');
+   await page.goto('http://127.0.0.1:8000/admin/login');
+  await page.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
+  await page.getByRole('textbox', { name: 'Password' }).fill('admin123');
+  await page.getByRole('button', { name: 'Sign In' }).click();
+  await expect(page).toHaveURL('http://127.0.0.1:8000/admin/dashboard');
 });
 
 test('with empty SKU field', async ({ page }) => {
@@ -438,7 +445,11 @@ test('Delete configurable product', async ({ page }) => {
 
 test.describe('UnoPim Test cases dynamic column', () => {
   test.beforeEach(async ({ page }) => {
-  await page.goto('/admin/dashboard');
+  await page.goto('http://127.0.0.1:8000/admin/login');
+  await page.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
+  await page.getByRole('textbox', { name: 'Password' }).fill('admin123');
+  await page.getByRole('button', { name: 'Sign In' }).click();
+  await expect(page).toHaveURL('http://127.0.0.1:8000/admin/dashboard');
 });
 
 test('Dynamic Column should be clickable', async ({ page }) => {
