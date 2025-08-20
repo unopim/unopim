@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 test.describe('UnoPim Test cases(Administrator Role)', () => {
 test.beforeEach(async ({ page }) => {
-   await page.goto('http://127.0.0.1:8000/admin/login');
+  await page.goto('http://127.0.0.1:8000/admin/login');
   await page.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
   await page.getByRole('textbox', { name: 'Password' }).fill('admin123');
   await page.getByRole('button', { name: 'Sign In' }).click();
@@ -137,7 +137,7 @@ test('Update Custom Roles', async ({ page }) => {
   await page.getByRole('link', { name: 'Roles' }).click();
   const itemRow = page.locator('div', { hasText: 'Catalog Manager' });
   await itemRow.locator('span[title="Edit"]').first().click();
-  await adminPage.locator('label').filter({ hasText: 'Categories' }).locator('span').click();
+  await page.locator('label').filter({ hasText: 'Categories' }).locator('span').click();
   await page.getByRole('button', { name: 'Save Role' }).click();
   await expect(page.getByText(/Roles is updated successfully./i).first()).toBeVisible();
 });

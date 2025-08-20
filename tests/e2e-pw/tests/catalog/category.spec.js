@@ -55,9 +55,9 @@ test('Create Categories with all field', async ({ page }) => {
   await page.locator('#name').type('Television');
   await page.waitForTimeout(100);
   await page.getByRole('button', { name: 'Save Category' }).click();
-  await adminPage.waitForTimeout(500);
+  await page.waitForTimeout(500);
   await expect(page.getByText(/Category created successfully/i)).toBeVisible();
-  await adminPage.waitForTimeout(500);
+  await page.waitForTimeout(500);
 });
 
 test('should allow category search', async ({ page }) => {
