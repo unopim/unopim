@@ -121,7 +121,8 @@ test('Update Categories', async ({ page }) => {
 test('Delete Category', async ({ page }) => {
   await page.getByRole('link', { name: ' Catalog' }).click();
   await page.getByRole('link', { name: 'Categories' }).click();
-  await page.getByText('LG TelevisionLG Televisiontest1').getByTitle('Delete').click();
+  const itemRow = page.locator('div', { hasText: 'LG TelevisionLG Televisiontest1' });
+  await itemRow.locator('span[title="Delete"]').first().click();
   await page.getByRole('button', { name: 'Delete' }).click();
   await expect(page.getByText(/The category has been successfully deleted/i)).toBeVisible();
 });
