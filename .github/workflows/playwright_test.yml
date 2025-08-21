@@ -66,7 +66,7 @@ jobs:
       - name: Wait for app
         run: npx wait-on http://localhost:8000
 
-      # Setup Node with npm cache
+      # Setup Node.js with built-in npm caching
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -74,7 +74,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: tests/e2e-pw/package-lock.json
 
-      # Cache Playwright browser binaries (big speedup)
+      # Cache Playwright browsers (big speedup)
       - name: Cache Playwright browsers
         uses: actions/cache@v3
         with:
@@ -90,7 +90,7 @@ jobs:
           cd tests/e2e-pw
           npm ci --no-audit --no-fund
           npx playwright install --with-deps
-          # Sequential execution + visible reporter (no dot output)
+          # Run tests sequentially with list reporter (no dots)
           npx playwright test --workers=1 --reporter=list
 
       - name: Upload Test Results
