@@ -8,7 +8,12 @@ permissions:
 jobs:
   playwright_tests:
     name: Playwright End-to-end UI Test
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.operating-systems }}
+
+    strategy:
+      matrix:
+        operating-systems: [ubuntu-latest]
+        php-versions: ['8.2']
 
     services:
       mysql:
@@ -20,69 +25,51 @@ jobs:
           - 3306
         options: >-
           --health-cmd="mysqladmin ping"
-          --health-interval=5s
+          --health-interval=10s
           --health-timeout=5s
-          --health-retries=3
+          --health-retries=5
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Cache Composer deps
-      - name: Cache Composer
-        uses: actions/cache@v3
-        with:
-          path: vendor
-          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-php-
-
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: ${{ matrix.php-versions }}
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
           ini-values: error_reporting=E_ALL
           tools: composer:v2
 
-      - name: Composer Install
+      - name: Running Composer Install
         run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-progress
 
-      - name: Setup .env
+      - name: Setting Environment
         run: |
           cp .env.example .env
-          sed -i "s|APP_ENV=.*|APP_ENV=testing|" .env
-          sed -i "s|DB_HOST=.*|DB_HOST=127.0.0.1|" .env
-          sed -i "s|DB_PORT=.*|DB_PORT=${{ job.services.mysql.ports['3306'] }}|" .env
-          sed -i "s|DB_DATABASE=.*|DB_DATABASE=unopim|" .env
-          sed -i "s|DB_USERNAME=.*|DB_USERNAME=root|" .env
-          sed -i "s|DB_PASSWORD=.*|DB_PASSWORD=root|" .env
+          sed -i "s|^\(APP_ENV=\s*\).*$|\1testing|" .env
+          sed -i "s|^\(DB_HOST=\s*\).*$|\1127.0.0.1|" .env
+          sed -i "s|^\(DB_PORT=\s*\).*$|\1${{ job.services.mysql.ports['3306'] }}|" .env
+          sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
+          sed -i "s|^\(DB_USERNAME=\s*\).*$|\1root|" .env
+          sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
+          cat .env
 
-      - name: Install UnoPim + DB
+      - name: Running UnoPim Installer
         run: |
           php artisan unopim:install --skip-env-check --skip-admin-creation
           php artisan migrate:fresh --seed
-          nohup php artisan serve --host=0.0.0.0 --port=8000 &
+          php artisan serve --host=0.0.0.0 --port=8000 &
 
-      - name: Wait for app
+      - name: Wait for UnoPim to start
         run: npx wait-on http://localhost:8000
 
-      # Setup Node.js with npm cache (no manual ~/.npm caching!)
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
-          cache: 'npm'
-          cache-dependency-path: tests/e2e-pw/package-lock.json
+          node-version: '18'
 
-      # Cache Playwright browsers
-      - name: Cache Playwright browsers
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('tests/e2e-pw/package-lock.json') }}
-          restore-keys: ${{ runner.os }}-playwright-
-
-      - name: Install Playwright deps and run tests (sequential + verbose)
+      - name: Install Playwright dependencies and run test
         env:
           CI: true
           FORCE_COLOR: '1'
@@ -90,14 +77,14 @@ jobs:
           cd tests/e2e-pw
           npm ci --no-audit --no-fund
           npx playwright install --with-deps
-          # Run tests sequentially with list reporter (no dots)
+          # Run sequentially, verbose (no dots)
           npx playwright test --workers=1 --reporter=list
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: test-results-${{ github.run_id }}
+          name: test-results-${{ matrix.shard-index }}-${{ github.run_id }}-${{ github.run_number }}
           path: |
             tests/e2e-pw/playwright-report
             tests/e2e-pw/test-results
