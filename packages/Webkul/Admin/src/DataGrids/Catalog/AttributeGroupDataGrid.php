@@ -15,6 +15,7 @@ class AttributeGroupDataGrid extends DataGrid
     public function prepareQueryBuilder()
     {
         $tablePrefix = DB::getTablePrefix();
+        $driver      = DB::getDriverName();
 
         $queryBuilder = DB::table('attribute_groups')
             ->leftJoin('attribute_group_translations as attribute_group_name', function ($join) {
@@ -23,9 +24,33 @@ class AttributeGroupDataGrid extends DataGrid
             })
             ->select(
                 'attribute_groups.id',
-                'attribute_groups.code',
-                DB::raw('(CASE WHEN '.$tablePrefix.'attribute_group_name.name IS NULL OR CHAR_LENGTH(TRIM('.$tablePrefix.'attribute_group_name.name)) < 1 THEN CONCAT("[", '.$tablePrefix.'attribute_groups.code,"]") ELSE '.$tablePrefix.'attribute_group_name.name END) as name')
+                'attribute_groups.code'
             );
+
+        switch ($driver) {
+            case 'pgsql':
+                $queryBuilder->addSelect(DB::raw(
+                    "(CASE 
+                        WHEN {$tablePrefix}attribute_group_name.name IS NULL 
+                            OR LENGTH(TRIM({$tablePrefix}attribute_group_name.name)) < 1 
+                        THEN '[' || {$tablePrefix}attribute_groups.code || ']' 
+                        ELSE {$tablePrefix}attribute_group_name.name 
+                    END) as name"
+                ));
+                break;
+
+            case 'mysql':
+            default:
+                $queryBuilder->addSelect(DB::raw(
+                    "(CASE 
+                        WHEN {$tablePrefix}attribute_group_name.name IS NULL 
+                            OR CHAR_LENGTH(TRIM({$tablePrefix}attribute_group_name.name)) < 1 
+                        THEN CONCAT('[', {$tablePrefix}attribute_groups.code, ']') 
+                        ELSE {$tablePrefix}attribute_group_name.name 
+                    END) as name"
+                ));
+                break;
+        }
 
         $this->addFilter('id', 'attribute_groups.id');
 
