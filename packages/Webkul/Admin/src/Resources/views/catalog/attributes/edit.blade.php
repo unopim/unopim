@@ -328,6 +328,14 @@
                                 </x-admin::datagrid>
                             </div>
                         </div>
+                        <div
+                            class="p-4 bg-white dark:bg-cherry-900 box-shadow rounded"
+                            v-if="(
+                                    selectedAttributeType == 'table'
+                                )"
+                        >
+                            @includeIf('admin::catalog.attributes.types.table', ['locales' => $locales])
+                        </div>
                     </div>
 
                     <!-- Right sub-component -->

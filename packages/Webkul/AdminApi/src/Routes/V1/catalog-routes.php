@@ -33,6 +33,13 @@ Route::group([
         Route::get('{code}/options', 'getOptions')->name('admin.api.attribute_options.get');
         Route::post('{code}/options', 'storeOption')->name('admin.api.attribute_options.store_option');
         Route::put('{code}/options', 'updateOption')->name('admin.api.attribute_options.update_option');
+
+        Route::get('{code}/columns', 'getColumns')->name('admin.api.columns.get');
+        Route::post('{code}/columns', 'storeColumn')->name('admin.api.attribute_column.store_column');
+        Route::put('{code}/columns', 'updateColumn')->name('admin.api.attribute_columns.update_column');
+        Route::get('{attributeCode}/column/{columnCode}/options', 'getColumnOptions')->name('admin.api.column.options.get');
+        Route::post('{attributeCode}/column/{columnId}/options', 'storeColumnOptions')->name('admin.api.attribute_column.store_column_options');
+        Route::put('{attributeCode}/column/{columnCode}/options', 'updateColumnOptions')->name('admin.api.attribute_column.update_column_options');
     });
 
     /** Attributes Family API Routes */

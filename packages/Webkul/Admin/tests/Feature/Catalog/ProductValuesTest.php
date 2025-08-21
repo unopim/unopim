@@ -3,6 +3,8 @@
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Attribute\Models\Attribute;
+use Webkul\Attribute\Models\AttributeColumn;
+use Webkul\Attribute\Models\AttributeColumnOption;
 use Webkul\Category\Models\Category;
 use Webkul\Core\Models\Channel;
 use Webkul\Core\Models\Locale;
@@ -460,6 +462,261 @@ it('should store the multi select attribute value when updating simple product',
     $product->refresh();
 
     $this->assertEquals($value, $product->values['common'][$attributeCode] ?? '');
+});
+
+it('should store the table attribute value when updating simple product', function () {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create(['type' => 'table']);
+
+    $product = Product::factory()->simple()->create();
+
+    $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
+
+    $attributeCode = $attribute->code;
+
+    $attributeColumn = AttributeColumn::factory()->create(['attribute_id' => $attribute->id]);
+
+    $columnValue = fake()->text(50);
+
+    $data = [
+        'sku'    => $product->sku,
+        'values' => [
+            'common' => [
+                $attributeCode => [[$attributeColumn->code => $columnValue]],
+            ],
+        ],
+    ];
+
+    $this->put(route('admin.catalog.products.update', $product->id), $data)
+        ->assertSessionHas('success', trans('admin::app.catalog.products.update-success'));
+
+    $product->refresh();
+
+    $this->assertEquals(
+        [[$attributeColumn->code => $columnValue]],
+        json_decode($product->values['common'][$attributeCode] ?? '[]', true)
+    );
+});
+
+it('should store the table attribute with column type text value when updating simple product', function () {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create(['type' => 'table']);
+
+    $product = Product::factory()->simple()->create();
+
+    $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
+
+    $attributeCode = $attribute->code;
+
+    $attributeColumn = AttributeColumn::factory()->text()->create(['attribute_id' => $attribute->id]);
+
+    $columnValue = fake()->text(50);
+
+    $data = [
+        'sku'    => $product->sku,
+        'values' => [
+            'common' => [
+                $attributeCode => [[$attributeColumn->code => $columnValue]],
+            ],
+        ],
+    ];
+
+    $this->put(route('admin.catalog.products.update', $product->id), $data)
+        ->assertSessionHas('success', trans('admin::app.catalog.products.update-success'));
+
+    $product->refresh();
+
+    $this->assertEquals(
+        [[$attributeColumn->code => $columnValue]],
+        json_decode($product->values['common'][$attributeCode] ?? '[]', true)
+    );
+});
+
+it('should store the table attribute with column type boolean value when updating simple product', function () {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create(['type' => 'table']);
+
+    $product = Product::factory()->simple()->create();
+
+    $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
+
+    $attributeCode = $attribute->code;
+
+    $attributeColumn = AttributeColumn::factory()->boolean()->create(['attribute_id' => $attribute->id]);
+
+    $columnValue = $bool = fake()->boolean() ? 'true' : 'false';
+
+    $data = [
+        'sku'    => $product->sku,
+        'values' => [
+            'common' => [
+                $attributeCode => [[$attributeColumn->code => $columnValue]],
+            ],
+        ],
+    ];
+
+    $this->put(route('admin.catalog.products.update', $product->id), $data)
+        ->assertSessionHas('success', trans('admin::app.catalog.products.update-success'));
+
+    $product->refresh();
+
+    $this->assertEquals(
+        [[$attributeColumn->code => $columnValue]],
+        json_decode($product->values['common'][$attributeCode] ?? '[]', true)
+    );
+});
+
+it('should store the table attribute with column type date value when updating simple product', function () {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create(['type' => 'table']);
+
+    $product = Product::factory()->simple()->create();
+
+    $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
+
+    $attributeCode = $attribute->code;
+
+    $attributeColumn = AttributeColumn::factory()->date()->create(['attribute_id' => $attribute->id]);
+
+    $columnValue = fake()->date();
+
+    $data = [
+        'sku'    => $product->sku,
+        'values' => [
+            'common' => [
+                $attributeCode => [[$attributeColumn->code => $columnValue]],
+            ],
+        ],
+    ];
+
+    $this->put(route('admin.catalog.products.update', $product->id), $data)
+        ->assertSessionHas('success', trans('admin::app.catalog.products.update-success'));
+
+    $product->refresh();
+
+    $this->assertEquals(
+        [[$attributeColumn->code => $columnValue]],
+        json_decode($product->values['common'][$attributeCode] ?? '[]', true)
+    );
+});
+
+it('should store the table attribute with column type image value when updating simple product', function () {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create(['type' => 'table']);
+    $product = Product::factory()->simple()->create();
+
+    $product->attribute_family
+        ->attributeFamilyGroupMappings
+        ->first()
+        ?->customAttributes()
+        ?->attach($attribute);
+
+    $attributeCode = $attribute->code;
+
+    $attributeColumn = AttributeColumn::factory()
+        ->image()
+        ->create(['attribute_id' => $attribute->id]);
+
+    Storage::fake();
+
+    $uploadedImage = UploadedFile::fake()->image('product.jpg');
+
+    $data = [
+        'sku'    => $product->sku,
+        'values' => [
+            'common' => [
+                $attributeCode => [[$attributeColumn->code => $uploadedImage]],
+            ],
+        ],
+    ];
+
+    $this->put(route('admin.catalog.products.update', $product->id), $data)
+        ->assertSessionHas('success', trans('admin::app.catalog.products.update-success'));
+
+    $product->refresh();
+
+    $storedValues = json_decode($product->values['common'][$attributeCode] ?? '[]', true);
+    $storedPath = $storedValues[0][$attributeColumn->code] ?? null;
+
+    expect($storedPath)->not->toBeNull();
+    Storage::disk()->assertExists($storedPath);
+});
+
+it('should store the table attribute with column type select value when updating simple product', function () {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create(['type' => 'table']);
+
+    $product = Product::factory()->simple()->create();
+
+    $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
+
+    $attributeCode = $attribute->code;
+
+    $attributeColumn = AttributeColumn::factory()->select()->create(['attribute_id' => $attribute->id]);
+
+    $attributeColumnOption = AttributeColumnOption::factory()->create(['attribute_column_id' => $attributeColumn->id]);
+
+    $data = [
+        'sku'    => $product->sku,
+        'values' => [
+            'common' => [
+                $attributeCode => [[$attributeColumn->code => $attributeColumnOption->code]],
+            ],
+        ],
+    ];
+
+    $this->put(route('admin.catalog.products.update', $product->id), $data)
+        ->assertSessionHas('success', trans('admin::app.catalog.products.update-success'));
+
+    $product->refresh();
+
+    $this->assertEquals(
+        [[$attributeColumn->code => $attributeColumnOption->code]],
+        json_decode($product->values['common'][$attributeCode] ?? '[]', true)
+    );
+});
+
+it('should store the table attribute with column type multiselect value when updating simple product', function () {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create(['type' => 'table']);
+
+    $product = Product::factory()->simple()->create();
+
+    $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
+
+    $attributeCode = $attribute->code;
+
+    $attributeColumn = AttributeColumn::factory()->multiselect()->create(['attribute_id' => $attribute->id]);
+
+    $attributeColumnOptions = AttributeColumnOption::factory()->count(3)->create(['attribute_column_id' => $attributeColumn->id]);
+
+    $selectedOptionCodes = $attributeColumnOptions->pluck('code')->toArray();
+
+    $data = [
+        'sku'    => $product->sku,
+        'values' => [
+            'common' => [
+                $attributeCode => [[$attributeColumn->code => implode(',', $selectedOptionCodes)]],
+            ],
+        ],
+    ];
+
+    $this->put(route('admin.catalog.products.update', $product->id), $data)
+        ->assertSessionHas('success', trans('admin::app.catalog.products.update-success'));
+
+    $product->refresh();
+
+    $this->assertEquals(
+        [[$attributeColumn->code => implode(',', $selectedOptionCodes)]],
+        json_decode($product->values['common'][$attributeCode] ?? '[]', true)
+    );
 });
 
 it('should store the date time attribute value when updating simple product', function () {

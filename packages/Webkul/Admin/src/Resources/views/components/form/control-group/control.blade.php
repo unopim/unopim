@@ -518,6 +518,7 @@
                 :show-no-results="true"
                 :hide-selected="true"
                 :name="name"
+                :disabled="disabled ?? false"
                 v-model="selectedValue"
                 v-bind="field"
                 @select="selectOption"
@@ -553,6 +554,7 @@
                 value: String,
                 field: Array,
                 placeholder: String,
+                disabled: Boolean,
             },
             
             data() {

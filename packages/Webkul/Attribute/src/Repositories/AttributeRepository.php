@@ -19,6 +19,7 @@ class AttributeRepository extends Repository
      */
     public function __construct(
         protected AttributeOptionRepository $attributeOptionRepository,
+        protected AttributeColumnRepository $attributeColumnRepository,
         Container $container
     ) {
         parent::__construct($container);
@@ -52,6 +53,12 @@ class AttributeRepository extends Repository
                 $this->attributeOptionRepository->create(array_merge([
                     'attribute_id' => $attribute->id,
                 ], $optionInputs));
+            }
+        } elseif ($attribute->type === 'table' && $options) {
+            foreach ($options as $columns) {
+                $this->attributeColumnRepository->create(array_merge([
+                    'attribute_id' => $attribute->id,
+                ], $columns));
             }
         }
 
