@@ -66,7 +66,7 @@ jobs:
       - name: Wait for app
         run: npx wait-on http://localhost:8000
 
-      # Setup Node.js with built-in npm caching
+      # Setup Node.js with npm cache (no manual ~/.npm caching!)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -74,7 +74,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: tests/e2e-pw/package-lock.json
 
-      # Cache Playwright browsers (big speedup)
+      # Cache Playwright browsers
       - name: Cache Playwright browsers
         uses: actions/cache@v3
         with:
