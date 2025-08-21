@@ -37,40 +37,40 @@ class AttributeRepository extends Repository
      *
      * @return \Webkul\Attribute\Contracts\Attribute
      */
-public function create(array $data)
-{
-    $validatedData = $this->validateUserInput($data);
+    public function create(array $data)
+    {
+        $validatedData = $this->validateUserInput($data);
 
-    $options = $validatedData['options'] ?? [];
+        $options = $validatedData['options'] ?? [];
 
-    unset($validatedData['options']);
+        unset($validatedData['options']);
 
-    $driver = DB::getDriverName();
+        $driver = DB::getDriverName();
 
-    switch ($driver) {
-        case 'pgsql':
-            $sequence = $this->model->getTable() . '_id_seq';
-            DB::statement("SELECT setval('{$sequence}', (SELECT COALESCE(MAX(id), 0) + 1 FROM {$this->model->getTable()}), false)");
-            break;
+        switch ($driver) {
+            case 'pgsql':
+                $sequence = $this->model->getTable() . '_id_seq';
+                DB::statement("SELECT setval('{$sequence}', (SELECT COALESCE(MAX(id), 0) + 1 FROM {$this->model->getTable()}), false)");
+                break;
 
-        case 'mysql':
-        default:
-            break;
-    }
-
-    $attribute = $this->model->create($validatedData);
-
-    
-    if (in_array($attribute->type, ['select', 'multiselect', 'checkbox']) && $options) {
-        foreach ($options as $optionInputs) {
-            $this->attributeOptionRepository->create(array_merge([
-                'attribute_id' => $attribute->id,
-            ], $optionInputs));
+            case 'mysql':
+            default:
+                break;
         }
-    }
 
-    return $attribute;
-}
+        $attribute = $this->model->create($validatedData);
+
+        
+        if (in_array($attribute->type, ['select', 'multiselect', 'checkbox']) && $options) {
+            foreach ($options as $optionInputs) {
+                $this->attributeOptionRepository->create(array_merge([
+                    'attribute_id' => $attribute->id,
+                ], $optionInputs));
+            }
+        }
+
+        return $attribute;
+    }
 
     /**
      * Update attribute.
