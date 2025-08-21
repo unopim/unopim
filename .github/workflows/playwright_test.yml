@@ -65,7 +65,7 @@ jobs:
         run: npx wait-on http://localhost:8000
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
           node-version: '18'
 
