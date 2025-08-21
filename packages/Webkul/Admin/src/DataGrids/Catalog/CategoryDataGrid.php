@@ -49,24 +49,42 @@ class CategoryDataGrid extends DataGrid
     public function prepareQueryBuilder()
     {
         $tablePrefix = DB::getTablePrefix();
+        $localeCode  = core()->getRequestedLocaleCode();
+        $driver      = DB::getDriverName();
 
-        $localeCode = core()->getRequestedLocaleCode();
+        $subQuery = $this->getSubQuery($localeCode, $tablePrefix, $driver);
 
-        $subQuery = $this->getSubQuery($localeCode, $tablePrefix);
+        // Choose SQL depending on driver
+        switch ($driver) {
+            case 'mysql':
+                $categoryNameExpr = "(CASE WHEN JSON_UNQUOTE(JSON_EXTRACT({$tablePrefix}cat.additional_data, '$.locale_specific.{$localeCode}.name')) IS NOT NULL 
+                        THEN REPLACE(JSON_UNQUOTE(JSON_EXTRACT({$tablePrefix}cat.additional_data, '$.locale_specific.{$localeCode}.name')), '\"', '') 
+                        ELSE CONCAT('[', {$tablePrefix}cat.code, ']') END)";
+                break;
+
+            case 'pgsql':
+                $categoryNameExpr = "(CASE WHEN {$tablePrefix}cat.additional_data->'locale_specific'->'{$localeCode}'->>'name' IS NOT NULL 
+                        THEN {$tablePrefix}cat.additional_data->'locale_specific'->'{$localeCode}'->>'name'
+                        ELSE '[' || {$tablePrefix}cat.code || ']' END)";
+                break;
+
+            default:
+                throw new \Exception("Unsupported driver: {$driver}");
+        }
 
         $queryBuilder = DB::table('categories as cat')
             ->select(
                 'cat.id as category_id',
                 'cat.code as code',
-                DB::raw('(CASE WHEN JSON_UNQUOTE(JSON_EXTRACT('.$tablePrefix."cat.additional_data, '$.locale_specific.".$localeCode.".name')) IS NOT NULL THEN REPLACE(JSON_UNQUOTE(JSON_EXTRACT(".$tablePrefix."cat.additional_data, '$.locale_specific.".$localeCode.".name')), '\"', '') ELSE CONCAT('[', ".$tablePrefix."cat.code, ']') END) as category_name"),
-                DB::raw('category_display_names.name as display_name'),
+                DB::raw($categoryNameExpr . ' as category_name'),
+                DB::raw('category_display_names.name as display_name')
             )
-            ->leftJoin(DB::raw("({$subQuery->toSql()}) as category_display_names"), function ($leftJoin) {
+            ->leftJoin(DB::raw("({$subQuery}) as category_display_names"), function ($leftJoin) {
                 $leftJoin->on('cat.id', '=', DB::raw('category_display_names.id'));
             })
             ->groupBy('cat.id', 'cat.code', DB::raw('category_display_names.name'));
 
-        $this->addFilter('category_name', DB::raw('CASE WHEN JSON_UNQUOTE(JSON_EXTRACT('.$tablePrefix."cat.additional_data, '$.locale_specific.".$localeCode.".name')) IS NOT NULL THEN REPLACE(JSON_UNQUOTE(JSON_EXTRACT(".$tablePrefix."cat.additional_data, '$.locale_specific.".$localeCode.".name')), '\"', '') ELSE CONCAT('[', ".$tablePrefix."cat.code, ']') END"));
+        $this->addFilter('category_name', DB::raw($categoryNameExpr));
 
         return $queryBuilder;
     }
@@ -162,7 +180,6 @@ class CategoryDataGrid extends DataGrid
     {
         if (! config('elasticsearch.enabled')) {
             parent::processRequest();
-
             return;
         }
 
@@ -191,8 +208,18 @@ class CategoryDataGrid extends DataGrid
 
             $ids = collect($results['hits']['hits'])->pluck('_id')->toArray();
 
-            $this->queryBuilder->whereIn('cat.id', $ids)
-                ->orderBy(DB::raw('FIELD('.DB::getTablePrefix().'cat.id, '.implode(',', $ids).')'));
+            $driver = DB::getDriverName();
+
+            if (! empty($ids)) {
+                if ($driver === 'mysql') {
+                    $this->queryBuilder->whereIn('cat.id', $ids)
+                        ->orderByRaw('FIELD('.DB::getTablePrefix().'cat.id, '.implode(',', $ids).')');
+                } elseif ($driver === 'pgsql') {
+                    $idList = implode(',', $ids);
+                    $this->queryBuilder->whereIn('cat.id', $ids)
+                        ->orderByRaw("array_position(ARRAY[{$idList}]::int[], cat.id)");
+                }
+            }
 
             $total = $results['hits']['total']['value'];
 
@@ -210,7 +237,6 @@ class CategoryDataGrid extends DataGrid
             if (str_contains($e->getMessage(), 'index_not_found_exception')) {
                 Log::error('Elasticsearch index not found. Please create an index first.');
                 parent::processRequest();
-
                 return;
             } else {
                 throw $e;
@@ -226,6 +252,7 @@ class CategoryDataGrid extends DataGrid
         $filters = [];
 
         $localeCode = core()->getRequestedLocaleCode();
+        $driver     = DB::getDriverName();
 
         foreach ($params as $attribute => $value) {
             if (in_array($attribute, ['channel', 'locale'])) {
@@ -234,6 +261,22 @@ class CategoryDataGrid extends DataGrid
 
             if ($attribute == 'all') {
                 $attribute = 'name';
+            }
+
+            switch ($driver) {
+                case 'pgsql':
+                    $value = array_map(function ($val) {
+                        if ($val instanceof \Illuminate\Database\Query\Expression) {
+                            return (string) $val->getValue(DB::connection()->getQueryGrammar());
+                        }
+                        return $val;
+                    }, (array) $value);
+                    break;
+
+                case 'mysql':
+                default:
+                    $value = (array) $value;
+                    break;
             }
 
             $value = array_filter($value, function ($val) {
@@ -253,6 +296,25 @@ class CategoryDataGrid extends DataGrid
      */
     public function getFilterValue(mixed $attribute, mixed $values, string $localeCode): array
     {
+        $driver = DB::getDriverName();
+
+        // Normalize values depending on DB driver
+        switch ($driver) {
+            case 'pgsql':
+                $values = array_map(function ($val) {
+                    if ($val instanceof \Illuminate\Database\Query\Expression) {
+                        return (string) $val->getValue(DB::connection()->getQueryGrammar());
+                    }
+                    return $val;
+                }, (array) $values);
+                break;
+
+            case 'mysql':
+            default:
+                $values = (array) $values;
+                break;
+        }
+
         switch ($attribute) {
             /** For Grid search filter the parameter is sent as name */
             case 'name':
@@ -273,6 +335,7 @@ class CategoryDataGrid extends DataGrid
                         ],
                     ],
                 ];
+
             case 'category_name':
                 $values = current($values);
                 $escaped = preg_replace('/([+\-&|!(){}\[\]^"~*?:\\\\\/])/', '\\\\$1', $values);
@@ -314,18 +377,41 @@ class CategoryDataGrid extends DataGrid
      */
     protected function getElasticSort($params): array
     {
+        $driver = DB::getDriverName();
+
         $sort = $params['column'] ?? $this->primaryColumn;
 
-        if ($sort == 'category_name') {
-            $sort = 'name.keyword';
-        }
+        switch ($driver) {
+            case 'pgsql':
+                // Convert Expression to string if needed
+                if ($sort instanceof \Illuminate\Database\Query\Expression) {
+                    $sort = (string) $sort->getValue(DB::connection()->getQueryGrammar());
+                }
 
-        if ($sort == 'code') {
-            $sort .= '.keyword';
-        }
+                // Map column aliases for Postgres
+                if ($sort === 'category_name') {
+                    $sort = 'name.keyword';
+                } elseif ($sort === 'code') {
+                    $sort = 'code.keyword';
+                } elseif ($sort === 'category_id') {
+                    $sort = 'id';
+                }
+                break;
 
-        if ($sort === 'category_id') {
-            $sort = 'id';
+            case 'mysql':
+            default:
+                if ($sort == 'category_name') {
+                    $sort = 'name.keyword';
+                }
+
+                if ($sort == 'code') {
+                    $sort .= '.keyword';
+                }
+
+                if ($sort === 'category_id') {
+                    $sort = 'id';
+                }
+                break;
         }
 
         return [
@@ -338,24 +424,53 @@ class CategoryDataGrid extends DataGrid
     /**
      * Creates a query to fetch the parent names of the categories
      */
-    private function getSubQuery(string $locale, string $tablePrefix): Builder
+    private function getSubQuery(string $locale, string $tablePrefix, string $driver): string
     {
-        return DB::table(DB::raw("(WITH RECURSIVE tree_view AS (
-            SELECT id,
-                parent_id,
-                (CASE WHEN JSON_UNQUOTE(JSON_EXTRACT(additional_data, '$.locale_specific.".$locale.".name')) IS NOT NULL THEN REPLACE(JSON_UNQUOTE(JSON_EXTRACT(additional_data, '$.locale_specific.".$locale.".name')), '\"', '') ELSE CONCAT('[', code, ']') END) as name
-            FROM ".$tablePrefix."categories
-            WHERE parent_id IS NULL
-            UNION ALL
+        switch ($driver) {
+            case 'mysql':
+                return "WITH RECURSIVE tree_view AS (
+                    SELECT id,
+                        parent_id,
+                        (CASE WHEN JSON_UNQUOTE(JSON_EXTRACT(additional_data, '$.locale_specific.{$locale}.name')) IS NOT NULL 
+                            THEN REPLACE(JSON_UNQUOTE(JSON_EXTRACT(additional_data, '$.locale_specific.{$locale}.name')), '\"', '') 
+                            ELSE CONCAT('[', code, ']') END) as name
+                    FROM {$tablePrefix}categories
+                    WHERE parent_id IS NULL
+                    UNION ALL
+                    SELECT parent.id,
+                        parent.parent_id,
+                        CONCAT(tree_view.name, ' / ', 
+                            (CASE WHEN JSON_UNQUOTE(JSON_EXTRACT(parent.additional_data, '$.locale_specific.{$locale}.name')) IS NOT NULL 
+                                THEN REPLACE(JSON_UNQUOTE(JSON_EXTRACT(parent.additional_data, '$.locale_specific.{$locale}.name')), '\"', '') 
+                                ELSE CONCAT('[', parent.code, ']') END)) AS name
+                    FROM {$tablePrefix}categories parent
+                    JOIN tree_view ON parent.parent_id = tree_view.id
+                )
+                SELECT id, parent_id, name FROM tree_view";
 
-            SELECT parent.id,
-                parent.parent_id,
-                CONCAT(tree_view.name, ' / ', (CASE WHEN JSON_UNQUOTE(JSON_EXTRACT(additional_data, '$.locale_specific.".$locale.".name')) IS NOT NULL THEN REPLACE(JSON_UNQUOTE(JSON_EXTRACT(additional_data, '$.locale_specific.".$locale.".name')), '\"', '') ELSE CONCAT('[', code, ']') END)) AS name
-            FROM ".$tablePrefix.'categories parent
-            JOIN tree_view ON parent.parent_id = tree_view.id
-        )
-        SELECT id, parent_id, name
-        FROM tree_view
-        ) as category_display_names'));
+            case 'pgsql':
+                return "WITH RECURSIVE tree_view AS (
+                    SELECT id,
+                        parent_id,
+                        (CASE WHEN additional_data->'locale_specific'->'{$locale}'->>'name' IS NOT NULL 
+                            THEN additional_data->'locale_specific'->'{$locale}'->>'name'
+                            ELSE '[' || code || ']' END) as name
+                    FROM {$tablePrefix}categories
+                    WHERE parent_id IS NULL
+                    UNION ALL
+                    SELECT parent.id,
+                        parent.parent_id,
+                        tree_view.name || ' / ' || 
+                        (CASE WHEN parent.additional_data->'locale_specific'->'{$locale}'->>'name' IS NOT NULL 
+                            THEN parent.additional_data->'locale_specific'->'{$locale}'->>'name'
+                            ELSE '[' || parent.code || ']' END) as name
+                    FROM {$tablePrefix}categories parent
+                    JOIN tree_view ON parent.parent_id = tree_view.id
+                )
+                SELECT id, parent_id, name FROM tree_view";
+
+            default:
+                throw new \Exception("Unsupported driver: {$driver}");
+        }
     }
 }
