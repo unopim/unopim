@@ -89,6 +89,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     public function prepareQueryBuilder()
     {
         $tablePrefix = DB::getTablePrefix();
+        $driver      = DB::getDriverName();
 
         $this->prepareQuery = ProductQueryBuilderFactory::make()->prepareQueryBuilder();
 
@@ -98,29 +99,45 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             $join->on('attribute_family_name.attribute_family_id', '=', 'af.id')
                 ->where('attribute_family_name.locale', '=', core()->getRequestedLocaleCode());
         })
-            ->select(
-                'products.sku',
-                'products.id as product_id',
-                'products.status',
-                'products.type',
-                'products.created_at',
-                'products.updated_at',
-                'parent_products.sku as parent',
-                DB::raw('
-                COALESCE('.$tablePrefix.'products.values, '.$tablePrefix.'parent_products.values) as raw_values
-            '),
-                DB::raw('
-                CASE
-                    WHEN '.$tablePrefix.'attribute_family_name.name IS NULL
-                        OR CHAR_LENGTH(TRIM('.$tablePrefix.'attribute_family_name.name)) < 1
-                    THEN CONCAT("[", '.$tablePrefix.'af.code, "]")
-                    ELSE '.$tablePrefix.'attribute_family_name.name
-                END as attribute_family
-            ')
-            );
+        ->select(
+            'products.sku',
+            'products.id as product_id',
+            'products.status',
+            'products.type',
+            'products.created_at',
+            'products.updated_at',
+            'parent_products.sku as parent',
+            DB::raw("COALESCE({$tablePrefix}products.values, {$tablePrefix}parent_products.values) as raw_values")
+        );
+
+        switch ($driver) {
+            case 'pgsql':
+                $queryBuilder->addSelect(DB::raw(
+                    "(CASE
+                        WHEN {$tablePrefix}attribute_family_name.name IS NULL
+                            OR LENGTH(TRIM({$tablePrefix}attribute_family_name.name)) < 1
+                        THEN '[' || {$tablePrefix}af.code || ']'
+                        ELSE {$tablePrefix}attribute_family_name.name
+                    END) as attribute_family"
+                ));
+                break;
+
+            case 'mysql':
+            default:
+                $queryBuilder->addSelect(DB::raw(
+                    "(CASE
+                        WHEN {$tablePrefix}attribute_family_name.name IS NULL
+                            OR CHAR_LENGTH(TRIM({$tablePrefix}attribute_family_name.name)) < 1
+                        THEN CONCAT('[', {$tablePrefix}af.code, ']')
+                        ELSE {$tablePrefix}attribute_family_name.name
+                    END) as attribute_family"
+                ));
+                break;
+        }
 
         return $queryBuilder;
     }
+
 
     /**
      * Property column list.
@@ -360,7 +377,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     {
         if (! config('elasticsearch.enabled')) {
             parent::processRequest();
-
             return;
         }
 
@@ -368,9 +384,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         if (! empty($requestedParams['productIds']) && isset($requestedParams['export']) && (bool) $requestedParams['export']) {
             $this->queryBuilder->whereIn('products.id', $requestedParams['productIds']);
-
             $this->exportData($requestedParams);
-
             return;
         }
 
@@ -387,12 +401,30 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
             $ids = $result->getAllIds();
 
-            $this->queryBuilder->whereIn('products.id', $ids)
-                ->orderBy(DB::raw('FIELD('.DB::getTablePrefix().'products.id, '.implode(',', $ids).')'));
+            $this->queryBuilder->whereIn('products.id', $ids);
+
+            if (! empty($ids)) {
+                $tablePrefix = DB::getTablePrefix();
+                $driver      = DB::getDriverName();
+
+                switch ($driver) {
+                    case 'pgsql':
+                        $this->queryBuilder->orderByRaw(
+                            "array_position(ARRAY[" . implode(',', $ids) . "]::int[], {$tablePrefix}products.id)"
+                        );
+                        break;
+
+                    case 'mysql':
+                    default:
+                        $this->queryBuilder->orderByRaw(
+                            "FIELD({$tablePrefix}products.id, " . implode(',', $ids) . ")"
+                        );
+                        break;
+                }
+            }
 
             if (isset($requestedParams['export']) && (bool) $requestedParams['export']) {
                 $this->exportData($requestedParams);
-
                 return;
             }
 
@@ -417,6 +449,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         }
     }
 
+
     /**
      * {@inheritdoc}
      */
@@ -437,16 +470,41 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     public function processRequestedSorting($requestedSort)
     {
         $sortColumn = $requestedSort['column'] ?? $this->sortColumn ?? $this->primaryColumn;
-        $sortOrder = $requestedSort['order'] ?? $this->sortOrder;
+        $sortOrder  = $requestedSort['order'] ?? $this->sortOrder;
+
+        $tablePrefix = DB::getTablePrefix();
+        $driver      = DB::getDriverName();
 
         if ($attributePath = $this->getAttributePathForSort($sortColumn)) {
-            return $this->queryBuilder->orderByRaw(
-                sprintf('JSON_UNQUOTE(JSON_EXTRACT('.DB::getTablePrefix()."products.values, '%s')) %s", $attributePath, $sortOrder)
-            );
+            switch ($driver) {
+                case 'pgsql':
+                    $jsonPath = trim($attributePath, '$.'); 
+                    $pathParts = explode('.', $jsonPath);
+                    $pgExpr    = $tablePrefix . 'products.values';
+                    foreach ($pathParts as $i => $part) {
+                        $pgExpr .= $i === array_key_last($pathParts) 
+                            ? "->>'$part'" 
+                            : "->'$part'"; 
+                    }
+
+                    return $this->queryBuilder->orderByRaw("$pgExpr $sortOrder");
+
+                case 'mysql':
+                default:
+                    return $this->queryBuilder->orderByRaw(
+                        sprintf(
+                            "JSON_UNQUOTE(JSON_EXTRACT(%sproducts.values, '%s')) %s",
+                            $tablePrefix,
+                            $attributePath,
+                            $sortOrder
+                        )
+                    );
+            }
         }
 
         return $this->queryBuilder->orderBy($sortColumn, $sortOrder);
     }
+
 
     /**
      * Process request.
@@ -583,29 +641,63 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             return null;
         }
 
-        $locale = core()->getRequestedLocaleCode();
-        $channel = core()->getRequestedChannel();
+        $locale       = core()->getRequestedLocaleCode();
+        $channel      = core()->getRequestedChannel();
         $currencyCode = $channel?->currencies?->first()?->code;
+        $channel      = $channel->code;
 
-        $channel = $channel->code;
-
-        $path = sprintf('$.%s.%s', $attribute->getScope($locale, $channel), $attribute->code);
-
+        $driver = DB::getDriverName();
         $attributeType = $attribute->type;
 
-        if ($searchEngine == 'elasticsearch') {
-            $path = sprintf('values.%s.%s', $attribute->getScope($locale, $channel), $attribute->code.'-'.$attributeType);
+        if ($searchEngine === 'elasticsearch') {
+            $path = sprintf(
+                'values.%s.%s',
+                $attribute->getScope($locale, $channel),
+                $attribute->code . '-' . $attributeType
+            );
 
             if ($attributeType === 'textarea' || $attributeType === 'text') {
                 $path .= '.keyword';
             }
+
+            if ($attributeType === 'price') {
+                $path .= '.' . $currencyCode;
+            }
+
+            return $path;
         }
 
-        if ($attributeType === 'price') {
-            $path .= '.'.$currencyCode;
-        }
+        switch ($driver) {
+            case 'pgsql':
+                $pgPath = [$attribute->getScope($locale, $channel), $attribute->code];
+                
+                if ($attributeType === 'price' && $currencyCode) {
+                    $pgPath[] = $currencyCode;
+                }
 
-        return $path;
+                $expr = 'products.values';
+                foreach ($pgPath as $i => $part) {
+                    $expr .= $i === array_key_last($pgPath)
+                        ? "->>'$part'"   // last part as text
+                        : "->'$part'";
+                }
+
+                return $expr;
+
+            case 'mysql':
+            default:
+                $path = sprintf(
+                    '$.%s.%s',
+                    $attribute->getScope($locale, $channel),
+                    $attribute->code
+                );
+
+                if ($attributeType === 'price' && $currencyCode) {
+                    $path .= '.' . $currencyCode;
+                }
+
+                return $path;
+        }
     }
 
     /**
@@ -613,30 +705,49 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     public function getExportableData(array $parameters = []): array|Collection
     {
-        $this->queryBuilder = $this->queryBuilder->addSelect('products.values', 'af.code as attribute_family');
+        $driver = DB::getDriverName();
 
-        $gridData = ! empty($parameters['productIds']) ? $this->queryBuilder->get() : $this->queryBuilder->paginate(
-            perPage: $parameters['pagination']['per_page'] ?? $this->itemsPerPage,
-            page: $parameters['pagination']['page'] ?? 1
-        );
+        switch ($driver) {
+            case 'pgsql':
+                $this->queryBuilder = $this->queryBuilder->addSelect(
+                    DB::raw('products.values::text as values'),
+                    'af.code as attribute_family'
+                );
+                break;
+
+            case 'mysql':
+            default:
+                $this->queryBuilder = $this->queryBuilder->addSelect(
+                    'products.values',
+                    'af.code as attribute_family'
+                );
+                break;
+        }
+
+        $gridData = ! empty($parameters['productIds'])
+            ? $this->queryBuilder->get()
+            : $this->queryBuilder->paginate(
+                perPage: $parameters['pagination']['per_page'] ?? $this->itemsPerPage,
+                page: $parameters['pagination']['page'] ?? 1
+            );
 
         $exportableData = [];
-
         $columns = [];
 
         foreach ($gridData as $product) {
             $productArray = (array) $product;
+            if (! empty($productArray['values']) && is_string($productArray['values'])) {
+                $productArray['values'] = json_decode($productArray['values'], true);
+            }
 
             $productValues = $this->getProductValues($productArray);
 
-            unset($productArray[AbstractType::PRODUCT_VALUES_KEY]);
-            unset($productArray['raw_values']);
+            unset($productArray[AbstractType::PRODUCT_VALUES_KEY], $productArray['raw_values']);
 
             foreach ($this->getAllChannelsAndLocales() as [$channelCode, $localeCode]) {
                 $data = $this->getInitialData($channelCode, $localeCode);
 
                 $data += $this->formatProductColumnsData($productArray);
-
                 $data += $this->formatProductValues($productValues, $localeCode, $channelCode);
 
                 $columns = $this->getColumnsFromData($data, $columns);
@@ -650,6 +761,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'records' => $exportableData,
         ];
     }
+
 
     /**
      * Format product values for quick export
