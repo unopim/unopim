@@ -39,6 +39,19 @@ class CategoryFieldRepository extends Repository
      */
     public function create(array $data)
     {
+        $driver = DB::getDriverName();
+
+        switch ($driver) {
+            case 'pgsql':
+                $sequence = $this->model->getTable() . '_id_seq';
+                DB::statement("SELECT setval('{$sequence}', (SELECT COALESCE(MAX(id), 0) + 1 FROM {$this->model->getTable()}), false)");
+                break;
+
+            case 'mysql':
+            default:
+                break;
+        }
+
         $categoryField = parent::create($data);
 
         if (
@@ -46,6 +59,12 @@ class CategoryFieldRepository extends Repository
             || ! isset($data['options'])
         ) {
             return $categoryField;
+        }
+
+        if ($driver === 'pgsql') {
+            $optionTable = $this->categoryFieldOptionRepository->getModel()->getTable();
+            $optionSeq = $optionTable . '_id_seq';
+            DB::statement("SELECT setval('{$optionSeq}', (SELECT COALESCE(MAX(id), 0) + 1 FROM {$optionTable}), false)");
         }
 
         foreach ($data['options'] as $option) {
