@@ -7,13 +7,13 @@ permissions:
 
 jobs:
   playwright_tests:
-    name: Playwright End-to-End UI Test
-    runs-on: ${{ matrix.os }}
+    name: Playwright End-to-end UI Test
+    runs-on: ${{ matrix.operating-systems }}
 
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        php: ['8.2']
+        operating-systems: [ubuntu-latest]
+        php-versions: ['8.2']
 
     services:
       mysql:
@@ -21,14 +21,11 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: unopim
-        ports:
-          - 3306:3306
         options: >-
           --health-cmd="mysqladmin ping -h localhost -uroot -proot --silent"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
-          --default-authentication-plugin=mysql_native_password
 
     steps:
       - name: Checkout
@@ -37,51 +34,53 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php }}
+          php-version: ${{ matrix.php-versions }}
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
           ini-values: error_reporting=E_ALL
           tools: composer:v2
 
-      - name: Composer Install
-        run: composer install --no-progress --prefer-dist --optimize-autoloader
+      - name: Running Composer Install
+        run: composer install
 
-      - name: Configure Environment
+      - name: Setting Environment
         run: |
           cp .env.example .env
-          sed -i "s|^APP_ENV=.*|APP_ENV=testing|" .env
-          sed -i "s|^DB_HOST=.*|DB_HOST=127.0.0.1|" .env
-          sed -i "s|^DB_PORT=.*|DB_PORT=${{ job.services.mysql.ports['3306'] }}|" .env
-          sed -i "s|^DB_DATABASE=.*|DB_DATABASE=unopim|" .env
-          sed -i "s|^DB_USERNAME=.*|DB_USERNAME=root|" .env
-          sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=root|" .env
+          sed -i "s|^\(APP_ENV=\s*\).*$|\1testing|" .env
+          sed -i "s|^\(DB_HOST=\s*\).*$|\1mysql|" .env
+          sed -i "s|^\(DB_PORT=\s*\).*$|\13306|" .env
+          sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
+          sed -i "s|^\(DB_USERNAME=\s*\).*$|\1root|" .env
+          sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
           cat .env
 
-      - name: Install & Migrate UnoPim
+      - name: Running UnoPim Installer
         run: |
           php artisan unopim:install --skip-env-check --skip-admin-creation
-          php artisan migrate:fresh --seed --force
+          php artisan migrate --force
+          php artisan migrate:fresh --seed
           php artisan serve --host=0.0.0.0 --port=8000 &
 
       - name: Wait for UnoPim to start
-        run: npx wait-on http://127.0.0.1:8000
+        run: npx wait-on http://localhost:8000
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: '18'
 
-      - name: Install Playwright Dependencies
-        working-directory: tests/e2e-pw
+      - name: Install Playwright dependencies
         run: |
-          npm ci
+          cd tests/e2e-pw
+          npm install
           npx playwright install-deps chromium
           npx playwright install chromium
 
-      - name: Run Playwright Tests
-        working-directory: tests/e2e-pw
-        run: npx playwright test --reporter=html
+      - name: Run Playwright tests
+        run: |
+          cd tests/e2e-pw
+          npx playwright test --reporter=list
 
-      - name: Upload Playwright Report
+      - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
         with:
