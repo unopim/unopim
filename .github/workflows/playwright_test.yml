@@ -7,9 +7,7 @@ permissions:
 
 jobs:
   playwright_tests:
-    name: Run Playwright Tests
     runs-on: ubuntu-latest
-
     services:
       mysql:
         image: mysql:8.0
@@ -19,10 +17,10 @@ jobs:
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot --silent"
+          --health-cmd="mysqladmin ping -h localhost -uroot -proot --silent"
           --health-interval=10s
           --health-timeout=5s
-          --health-retries=10
+          --health-retries=5
 
     steps:
       - name: Checkout repository
@@ -32,54 +30,35 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-          extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
-          ini-values: error_reporting=E_ALL
+          extensions: mbstring, intl, pdo_mysql, bcmath
           tools: composer:v2
-
-      - name: Install PHP dependencies
-        run: composer install --no-progress --no-interaction
-
-      - name: Setup environment
-        run: |
-          cp .env.example .env
-          sed -i "s|^\(APP_ENV=\s*\).*$|\1testing|" .env
-          sed -i "s|^\(DB_CONNECTION=\s*\).*$|\1mysql|" .env
-          sed -i "s|^\(DB_HOST=\s*\).*$|\1127.0.0.1|" .env
-          sed -i "s|^\(DB_PORT=\s*\).*$|\13306|" .env
-          sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
-          sed -i "s|^\(DB_USERNAME=\s*\).*$|\1root|" .env
-          sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
-          cat .env
-
-      - name: Wait for MySQL
-        run: |
-          until mysqladmin ping -h 127.0.0.1 -uroot -proot --silent; do
-            echo "⏳ Waiting for MySQL to be ready..."
-            sleep 5
-          done
-          echo " MySQL is ready!"
-
-      - name: Run UnoPim installer
-        run: |
-          php artisan unopim:install --skip-env-check --skip-admin-creation
-          php artisan migrate --force
-          php artisan migrate:fresh --seed
-          php artisan serve --host=0.0.0.0 --port=8000 &
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Install Node.js dependencies
+        run: npm install
 
       - name: Install Playwright Chromium only
         run: |
           npx playwright install-deps chromium
           npx playwright install chromium
 
-      - name: Wait for app to be ready
+      - name: Generate application key & migrate
+        run: |
+          php artisan key:generate
+          php artisan migrate --force
+          php artisan db:seed --force || true
+
+      - name: Start Laravel server
+        run: php artisan serve --host=127.0.0.1 --port=8000 &
+      
+      - name: Wait for Laravel to be ready
         run: npx wait-on http://127.0.0.1:8000
 
       - name: Run Playwright tests
