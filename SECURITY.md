@@ -2,11 +2,11 @@
 
 ## Supported Versions
 
-For versions 0.1.x of UnoPim, we support and provide patches for any security vulnerabilities.
+For versions 0.3.x of UnoPim, we support and provide patches for any security vulnerabilities.
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 0.1.x   | :white_check_mark: |
+| 0.3.x   | :white_check_mark: |
 
 ## Reporting a Vulnerability
 
@@ -23,7 +23,7 @@ We will respond to your report within 72 hours with an acknowledgment of receipt
 
 ## Security Vulnerability Process
 
-Upon receiving a security vulnerability report for version 0.1.1 of UnoPim, we will follow these steps:
+Upon receiving a security vulnerability report for version 0.3.x of UnoPim, we will follow these steps:
 
 1. **Acknowledgment**: We will acknowledge receipt of the vulnerability report within 72 hours.
 2. **Investigation**: We will investigate the reported vulnerability and determine its impact and severity.
