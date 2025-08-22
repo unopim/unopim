@@ -46,7 +46,7 @@ jobs:
         run: npm install
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps
+        run: npx playwright install chromium --with-deps
 
       - name: Create .env
         run: |
@@ -67,24 +67,20 @@ jobs:
           php artisan migrate --force
 
       - name: Start Laravel server
-        run: php artisan serve --host=127.0.0.1 --port=8000 &
+        run: php artisan serve --host=127.0.0.1 --port=8000 > laravel.log 2>&1 &
 
-      - name: Wait for server
+      - name: Debug Laravel logs
+        run: tail -f laravel.log &
+      
+      - name: Wait for server to be ready
         run: npx wait-on http://127.0.0.1:8000
 
-      - name: Run Playwright tests (with HTML report)
-        run: npx playwright test --reporter=html
+      - name: Run Playwright tests
+        run: npx playwright test --reporter=html --trace on
 
-      - name: Upload Playwright HTML report as artifact
+      - name: Upload Playwright HTML report
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
           path: playwright-report
           retention-days: 7
-
-      - name: Deploy Playwright report to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        if: github.ref == 'refs/heads/main'
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: playwright-report
