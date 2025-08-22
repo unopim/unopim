@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  test:
+  playwright:
     runs-on: ubuntu-latest
 
     services:
@@ -27,6 +27,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # --- Setup environments ---
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -39,15 +40,17 @@ jobs:
         with:
           node-version: '20'
 
+      # --- Install dependencies ---
       - name: Install PHP dependencies
         run: composer install --no-interaction --prefer-dist
 
       - name: Install Node dependencies
         run: npm install
 
-      - name: Install Playwright browsers
+      - name: Install Playwright Chromium
         run: npx playwright install chromium --with-deps
 
+      # --- Laravel setup ---
       - name: Create .env
         run: |
           cp .env.example .env || touch .env
@@ -66,18 +69,18 @@ jobs:
           php artisan key:generate --force
           php artisan migrate --force
 
+      # --- Start Laravel server for Playwright ---
       - name: Start Laravel server
         run: php artisan serve --host=127.0.0.1 --port=8000 > laravel.log 2>&1 &
-
-      - name: Debug Laravel logs
-        run: tail -f laravel.log &
       
       - name: Wait for server to be ready
         run: npx wait-on http://127.0.0.1:8000
 
+      # --- Run Playwright tests ---
       - name: Run Playwright tests
-        run: npx playwright test --reporter=html --trace on
+        run: npx playwright test --config=playwright.config.ts --reporter=html --trace on
 
+      # --- Upload test report ---
       - name: Upload Playwright HTML report
         uses: actions/upload-artifact@v4
         with:
