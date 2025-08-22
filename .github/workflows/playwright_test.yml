@@ -7,7 +7,13 @@ permissions:
 
 jobs:
   playwright_tests:
-    runs-on: ubuntu-latest
+    name: Playwright End-to-end UI Test
+    runs-on: ${{ matrix.operating-systems }}
+
+    strategy:
+      matrix:
+        operating-systems: [ubuntu-latest]
+        php-versions: ['8.2']
 
     services:
       mysql:
@@ -16,9 +22,9 @@ jobs:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: unopim
         ports:
-          - 3306:3306
+          - 3306
         options: >-
-          --health-cmd="mysqladmin ping -h localhost -u root -proot"
+          --health-cmd="mysqladmin ping"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
@@ -27,76 +33,59 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Cache Composer deps
-      - name: Get Composer Cache Directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache Composer
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: composer-
-
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: ${{ matrix.php-versions }}
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
+          ini-values: error_reporting=E_ALL
           tools: composer:v2
 
-      - name: Install Composer Dependencies
-        run: composer install --no-progress --prefer-dist --optimize-autoloader
+      - name: Running Composer Install
+        run: composer install
 
-      - name: Setup Environment
+      - name: Setting Environment
         run: |
           cp .env.example .env
-          sed -i "s|APP_ENV=.*|APP_ENV=testing|" .env
-          sed -i "s|DB_HOST=.*|DB_HOST=127.0.0.1|" .env
-          sed -i "s|DB_PORT=.*|DB_PORT=3306|" .env
-          sed -i "s|DB_DATABASE=.*|DB_DATABASE=unopim|" .env
-          sed -i "s|DB_USERNAME=.*|DB_USERNAME=root|" .env
-          sed -i "s|DB_PASSWORD=.*|DB_PASSWORD=root|" .env
+          sed -i "s|^\(APP_ENV=\s*\).*$|\1testing|" .env
+          sed -i "s|^\(DB_HOST=\s*\).*$|\1127.0.0.1|" .env
+          sed -i "s|^\(DB_PORT=\s*\).*$|\1${{ job.services.mysql.ports['3306'] }}|" .env
+          sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
+          sed -i "s|^\(DB_USERNAME=\s*\).*$|\1root|" .env
+          sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
           cat .env
 
-      - name: Run Database Migrations
-        run: php artisan migrate:fresh --seed
+      - name: Running UnoPim Installer
+        run: |
+          php artisan unopim:install --skip-env-check --skip-admin-creation
+          php artisan migrate --force
+          php artisan migrate:fresh --seed
+          php artisan serve --host=0.0.0.0 --port=8000 &
 
-      - name: Start Laravel Server
-        run: php artisan serve --host=127.0.0.1 --port=8000 > /dev/null 2>&1 &
+      - name: Wait for UnoPim to start
+        run: npx wait-on http://localhost:8000
 
-      - name: Wait for Laravel to start
-        run: npx wait-on http://127.0.0.1:8000
-
-      # Cache npm
-      - name: Cache Node Modules
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.npm
-            tests/e2e-pw/node_modules
-          key: npm-${{ hashFiles('tests/e2e-pw/package-lock.json') }}
-          restore-keys: npm-
-
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: '18'
 
-      - name: Install Playwright Dependencies
-        working-directory: tests/e2e-pw
+      # Dependency Installation (separate)
+      - name: Install Playwright dependencies
         run: |
-          npm ci
+          cd tests/e2e-pw
+          npm install
           npx playwright install --with-deps
 
-      - name: Run Playwright Tests
-        working-directory: tests/e2e-pw
-        run: npx playwright test --reporter=list
+      # Run Tests (separate)
+      - name: Run Playwright tests
+        run: |
+          cd tests/e2e-pw
+          npx playwright test --reporter=list
 
-      - name: Upload Playwright Report
+      - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
-          path: tests/e2e-pw/playwright-report
+          path: unopim/tests/e2e-pw/playwright-report
