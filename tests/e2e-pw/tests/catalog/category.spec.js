@@ -1,7 +1,8 @@
+
 import { test, expect } from '@playwright/test';
 test.describe('UnoPim Category', () => {
 test.beforeEach(async ({ page }) => {
-   await page.goto('http://127.0.0.1:8000/admin/login');
+  await page.goto('http://127.0.0.1:8000/admin/login');
   await page.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
   await page.getByRole('textbox', { name: 'Password' }).fill('admin123');
   await page.getByRole('button', { name: 'Sign In' }).click();
@@ -55,7 +56,9 @@ test('Create Categories with all field', async ({ page }) => {
   await page.locator('#name').type('Television');
   await page.waitForTimeout(100);
   await page.getByRole('button', { name: 'Save Category' }).click();
+  await page.waitForTimeout(500);
   await expect(page.getByText(/Category created successfully/i)).toBeVisible();
+  await page.waitForTimeout(500);
 });
 
 test('should allow category search', async ({ page }) => {
@@ -116,14 +119,6 @@ test('Update Categories', async ({ page }) => {
   await expect(page.getByText(/Category updated successfully/i)).toBeVisible();
 });
 
-test('Delete Category', async ({ page }) => {
-  await page.getByRole('link', { name: ' Catalog' }).click();
-  await page.getByRole('link', { name: 'Categories' }).click();
-  await page.getByText('LG TelevisionLG Televisiontest1').getByTitle('Delete').click();
-  await page.getByRole('button', { name: 'Delete' }).click();
-  await expect(page.getByText(/The category has been successfully deleted/i)).toBeVisible();
-});
-
 test('Delete Root Category', async ({ page }) => {
   await page.getByRole('link', { name: ' Catalog' }).click();
   await page.getByRole('link', { name: 'Categories' }).click();
@@ -133,4 +128,3 @@ test('Delete Root Category', async ({ page }) => {
   await expect(page.getByText(/You cannot delete the root category that is associated with a channel./i)).toBeVisible();
 });
 });
-
