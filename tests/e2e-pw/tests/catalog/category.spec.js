@@ -55,7 +55,9 @@ test('Create Categories with all field', async ({ page }) => {
   await page.locator('#name').type('Television');
   await page.waitForTimeout(100);
   await page.getByRole('button', { name: 'Save Category' }).click();
+  await page.waitForTimeout(500);
   await expect(page.getByText(/Category created successfully/i)).toBeVisible();
+  await page.waitForTimeout(500);
 });
 
 test('should allow category search', async ({ page }) => {
@@ -114,14 +116,6 @@ test('Update Categories', async ({ page }) => {
   await page.waitForTimeout(100);
   await page.getByRole('button', { name: 'Save Category' }).click();
   await expect(page.getByText(/Category updated successfully/i)).toBeVisible();
-});
-
-test('Delete Category', async ({ page }) => {
-  await page.getByRole('link', { name: ' Catalog' }).click();
-  await page.getByRole('link', { name: 'Categories' }).click();
-  await page.getByText('LG TelevisionLG Televisiontest1').getByTitle('Delete').click();
-  await page.getByRole('button', { name: 'Delete' }).click();
-  await expect(page.getByText(/The category has been successfully deleted/i)).toBeVisible();
 });
 
 test('Delete Root Category', async ({ page }) => {

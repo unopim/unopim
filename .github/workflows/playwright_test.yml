@@ -75,7 +75,7 @@ jobs:
           cd tests/e2e-pw
           npm install
           npx playwright install --with-deps
-          npx playwright test
+          npx playwright test --reporter=list
 
       - name: Upload Playwright report
         if: always()
