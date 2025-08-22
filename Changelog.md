@@ -2,8 +2,8 @@
 
 ### Fixes
 
-* Fix: Escape CSV formula operators in export files [CVE-2025-55741]
-* Fix: Added ACL permissions for mass action routes [CVE-2025-55745]
+* Fix: escape CSV formula operators in export files [CVE-2025-55741]
+* Fix: added ACL permissions for mass action routes [CVE-2025-55745]
 
 ### Chores
 
