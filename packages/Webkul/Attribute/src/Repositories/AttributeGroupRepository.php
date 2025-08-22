@@ -3,6 +3,7 @@
 namespace Webkul\Attribute\Repositories;
 
 use Webkul\Core\Eloquent\Repository;
+use Illuminate\Support\Arr;
 
 class AttributeGroupRepository extends Repository
 {
@@ -23,5 +24,26 @@ class AttributeGroupRepository extends Repository
     public function queryBuilder()
     {
         return $this->with(['translations']);
+    }
+
+    /**
+     * Create a new Attribute Group with translations.
+     *
+     * @param  array  $data
+     * @return \Webkul\Attribute\Contracts\AttributeGroup
+     */
+    public function create(array $data)
+    {
+        unset($data['id']);
+    
+        $translations = Arr::pull($data, 'translations', []);
+
+        $attributeGroup = parent::create($data);
+
+        if (! empty($translations)) {
+            $attributeGroup->translations()->createMany($translations);
+        }
+
+        return $attributeGroup;
     }
 }
