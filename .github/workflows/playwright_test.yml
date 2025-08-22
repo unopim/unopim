@@ -49,9 +49,22 @@ jobs:
           npx playwright install-deps chromium
           npx playwright install chromium
 
+      - name: Create .env file
+        run: |
+          cp .env.example .env || true
+          echo "APP_ENV=local" >> .env
+          echo "APP_KEY=" >> .env
+          echo "APP_DEBUG=true" >> .env
+          echo "DB_CONNECTION=mysql" >> .env
+          echo "DB_HOST=127.0.0.1" >> .env
+          echo "DB_PORT=3306" >> .env
+          echo "DB_DATABASE=unopim" >> .env
+          echo "DB_USERNAME=root" >> .env
+          echo "DB_PASSWORD=root" >> .env
+
       - name: Generate application key & migrate
         run: |
-          php artisan key:generate
+          php artisan key:generate --force
           php artisan migrate --force
           php artisan db:seed --force || true
 
