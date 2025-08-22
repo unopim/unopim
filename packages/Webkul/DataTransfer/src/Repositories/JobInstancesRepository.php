@@ -17,34 +17,53 @@ class JobInstancesRepository extends Repository
     }
 
     /**
-     * Update job instance with DB-driver specific fixes.
+     * Normalize job instance data before save (DB-driver aware).
      */
-    public function update(array $data, $id)
+    protected function normalizeData(array $data): array
     {
         $driver = DB::getDriverName();
 
-        if ($driver === 'pgsql') {
-            if (isset($data['allowed_errors']) && $data['allowed_errors'] === '') {
-                $data['allowed_errors'] = 0;
-            }
+        switch ($driver) {
+            case 'pgsql':
+
+                if (isset($data['allowed_errors']) && $data['allowed_errors'] === '') {
+                    $data['allowed_errors'] = 0;
+                }
+
+                if (isset($data['file_path']) && $data['file_path'] === '') {
+                    $data['file_path'] = null;
+                }
+                if (isset($data['images_directory_path']) && $data['images_directory_path'] === '') {
+                    $data['images_directory_path'] = null;
+                }
+                break;
+
+            case 'mysql':
+                
+                if (isset($data['allowed_errors']) && $data['allowed_errors'] === '') {
+                    $data['allowed_errors'] = 0;
+                }
+                break;
         }
 
+        return $data;
+    }
+
+    /**
+     * Update job instance.
+     */
+    public function update(array $data, $id)
+    {
+        $data = $this->normalizeData($data);
         return parent::update($data, $id);
     }
 
     /**
-     * Create job instance with DB-driver specific fixes.
+     * Create job instance.
      */
     public function create(array $data)
     {
-        $driver = DB::getDriverName();
-
-        if ($driver === 'pgsql') {
-            if (isset($data['allowed_errors']) && $data['allowed_errors'] === '') {
-                $data['allowed_errors'] = 0;
-            }
-        }
-
+        $data = $this->normalizeData($data);
         return parent::create($data);
     }
 }
