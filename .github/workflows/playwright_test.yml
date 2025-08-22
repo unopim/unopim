@@ -1,15 +1,14 @@
 name: Playwright Tests
 
-on: [push, pull_request]
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+on:
+  push:
+    branches: [ main ]
+  pull_request:
 
 jobs:
-  playwright_tests:
+  test:
     runs-on: ubuntu-latest
+
     services:
       mysql:
         image: mysql:8.0
@@ -19,13 +18,13 @@ jobs:
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping -h localhost -uroot -proot --silent"
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot --silent"
           --health-interval=10s
           --health-timeout=5s
-          --health-retries=5
+          --health-retries=10
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup PHP
@@ -43,19 +42,15 @@ jobs:
       - name: Install PHP dependencies
         run: composer install --no-interaction --prefer-dist
 
-      - name: Install Node.js dependencies
+      - name: Install Node dependencies
         run: npm install
 
-      - name: Install Playwright Chromium only
-        run: |
-          npx playwright install-deps chromium
-          npx playwright install chromium
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
 
-      - name: Ensure .env file exists
+      - name: Create .env
         run: |
-          if [ ! -f .env ]; then
-            cp .env.example .env || touch .env
-          fi
+          cp .env.example .env || touch .env
           echo "APP_ENV=local" >> .env
           echo "APP_KEY=" >> .env
           echo "APP_DEBUG=true" >> .env
@@ -66,35 +61,30 @@ jobs:
           echo "DB_USERNAME=root" >> .env
           echo "DB_PASSWORD=root" >> .env
 
-      - name: Generate Laravel key & migrate
+      - name: Generate key & migrate
         run: |
           php artisan key:generate --force
           php artisan migrate --force
-          php artisan db:seed --force || true
 
       - name: Start Laravel server
         run: php artisan serve --host=127.0.0.1 --port=8000 &
-      
-      - name: Wait for Laravel
+
+      - name: Wait for server
         run: npx wait-on http://127.0.0.1:8000
 
-      - name: Run Playwright tests with HTML report
+      - name: Run Playwright tests (with HTML report)
         run: npx playwright test --reporter=html
 
-      - name: Upload Playwright report (for GitHub Pages)
-        if: always()
-        uses: actions/upload-pages-artifact@v3
+      - name: Upload Playwright HTML report as artifact
+        uses: actions/upload-artifact@v4
         with:
-          path: playwright-report/
+          name: playwright-report
+          path: playwright-report
+          retention-days: 7
 
-  deploy-report:
-    if: always()
-    needs: playwright_tests
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Deploy Playwright report to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: playwright-report
