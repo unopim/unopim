@@ -1,3 +1,14 @@
+## v0.3.1 - 2025-08-22
+
+### Fixes
+
+* Fix: Escape CSV formula operators in export files [CVE-2025-55741]
+* Fix: Added ACL permissions for mass action routes [CVE-2025-55745]
+
+### Chores
+
+* Chore: update security policy for supported version
+
 ## v0.3.0 - 2025-07-28
 
 ### Features
