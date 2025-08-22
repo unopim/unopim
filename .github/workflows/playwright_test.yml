@@ -7,13 +7,8 @@ permissions:
 
 jobs:
   playwright_tests:
-    name: Playwright End-to-end UI Test
-    runs-on: ${{ matrix.operating-systems }}
-
-    strategy:
-      matrix:
-        operating-systems: [ubuntu-latest]
-        php-versions: ['8.2']
+    name: Run Playwright Tests
+    runs-on: ubuntu-latest
 
     services:
       mysql:
@@ -21,68 +16,71 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: unopim
+        ports:
+          - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping -h localhost -uroot -proot --silent"
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot --silent"
           --health-interval=10s
           --health-timeout=5s
-          --health-retries=5
+          --health-retries=10
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php-versions }}
+          php-version: '8.2'
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
           ini-values: error_reporting=E_ALL
           tools: composer:v2
 
-      - name: Running Composer Install
-        run: composer install
+      - name: Install PHP dependencies
+        run: composer install --no-progress --no-interaction
 
-      - name: Setting Environment
+      - name: Setup environment
         run: |
           cp .env.example .env
           sed -i "s|^\(APP_ENV=\s*\).*$|\1testing|" .env
-          sed -i "s|^\(DB_HOST=\s*\).*$|\1mysql|" .env
+          sed -i "s|^\(DB_CONNECTION=\s*\).*$|\1mysql|" .env
+          sed -i "s|^\(DB_HOST=\s*\).*$|\1127.0.0.1|" .env
           sed -i "s|^\(DB_PORT=\s*\).*$|\13306|" .env
           sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
           sed -i "s|^\(DB_USERNAME=\s*\).*$|\1root|" .env
           sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
           cat .env
 
-      - name: Running UnoPim Installer
+      - name: Wait for MySQL
+        run: |
+          until mysqladmin ping -h 127.0.0.1 -uroot -proot --silent; do
+            echo "⏳ Waiting for MySQL to be ready..."
+            sleep 5
+          done
+          echo " MySQL is ready!"
+
+      - name: Run UnoPim installer
         run: |
           php artisan unopim:install --skip-env-check --skip-admin-creation
           php artisan migrate --force
           php artisan migrate:fresh --seed
           php artisan serve --host=0.0.0.0 --port=8000 &
 
-      - name: Wait for UnoPim to start
-        run: npx wait-on http://localhost:8000
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
 
-      - name: Install Playwright dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium only
         run: |
-          cd tests/e2e-pw
-          npm install
           npx playwright install-deps chromium
           npx playwright install chromium
 
-      - name: Run Playwright tests
-        run: |
-          cd tests/e2e-pw
-          npx playwright test --reporter=list
+      - name: Wait for app to be ready
+        run: npx wait-on http://127.0.0.1:8000
 
-      - name: Upload Playwright report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report
-          path: tests/e2e-pw/playwright-report
+      - name: Run Playwright tests
+        run: npx playwright test
