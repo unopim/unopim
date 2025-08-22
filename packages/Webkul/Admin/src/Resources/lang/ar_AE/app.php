@@ -2378,6 +2378,8 @@ return [
         'restore'                  => 'يعيد',
         'integrations'             => 'التكامل',
         'api'                      => 'واجهة برمجة التطبيقات',
+        'mass-update'              => 'تحديث جماعي',
+        'mass-delete'              => 'حذف جماعي',
     ],
 
     'errors' => [

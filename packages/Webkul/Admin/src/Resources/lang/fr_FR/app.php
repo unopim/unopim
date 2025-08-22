@@ -1899,6 +1899,8 @@ return [
         'api'                => 'API',
         'tracker'            => 'Suivi des tâches',
         'exports'            => 'Exports',
+        'mass-update'        => 'Mise à jour en masse',
+        'mass-delete'        => 'Suppression en masse',
     ],
 
     'errors' => [

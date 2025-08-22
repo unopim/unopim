@@ -6,44 +6,18 @@
 
 ## 🔴 High Impact Changes
 
-- **Constructor Signature Changes**  
-  Existing class constructors have been modified:
-  - `Exporter` (`Product/Exporter.php`): Added new dependency `ProductSource`.
-  - `AbstractExporter` class now rely on `$exportBuffer`, altering the construction and initialization flow.
-- **Interface Contract Update**  
-  - `BufferInterface::addData` signature changed from:
-    ```php
-    public function addData($item, $filePath, array $options = []);
-    ```
-    to:
-    ```php
-    public function addData($item);
-    ```
-- **Export Source Refactor**  
-  - Major logic change in `getResults()` flow to handle ElasticSearch-based or generic database exports.
-- **Export Finalization Workflow Changed**  
-  - Export file generation now handled via `flush()` in `Export.php` rather than per-batch.
-
 ---
 
 ## 🟠 Medium Impact Changes
 
-- Introduced `AbstractCursor` and `AbstractElasticCursor` as base cursor classes for streaming exports.
-- Added `ProductCursor` to support paginated export via ElasticSearch or DB query.
-- Integrated [`openspout/openspout`](https://github.com/openspout/openspout) for efficient streaming file generation (CSV/XLSX).
-- Introduced `JSONFileBuffer` to handle intermediate export buffering for improved performance.
-- Optimized export preparation by caching and pre-processing common values (e.g., attribute values, super attributes).
-- Logging and profiling improvements (e.g., execution timing in `prepareProducts()`).
-- **Added attribute option datagrid** in select and multiselect attributes to support managing large datasets efficiently.
-- **Introduced dynamic column and filter management** in the product datagrid, allowing control over visible columns and filters.
+- Added ACL configuration for all mass update and mass delete routes.
 
 ---
 
 ## 🟢 Low Impact Changes
 
-- Code formatting, naming standardization, and file organization improvements.
-- Removed unused methods and redundant logic (e.g., unused `getNextItemsFromIds()`).
-- Updated "code" validation rule** to only allow underscore `_` as a special character.
+- Escaped formula operators in CSV and XLSX export files to prevent potential issues.
+- Removed unused routes: admin.catalog.attributes.options.mass_delete, admin.catalog.attribute.groups.mass_delete
 
 ---
 

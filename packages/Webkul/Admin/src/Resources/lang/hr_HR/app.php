@@ -1578,6 +1578,8 @@ return [
         'tracker'                  => 'Praćenje poslova',
         'imports'                  => 'Uvozi',
         'exports'                  => 'Izvozi',
+        'mass-update'              => 'Masovno ažuriranje',
+        'mass-delete'              => 'Masovno brisanje',
     ],
 
     'errors' => [

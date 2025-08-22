@@ -13,6 +13,7 @@ use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Core\Rules\Code;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
+use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Helpers\Importers\AbstractImporter;
 use Webkul\DataTransfer\Helpers\Importers\FieldProcessor;
@@ -368,6 +369,8 @@ class Importer extends AbstractImporter
             $catalogField = $this->categoryFieldRepository->where('code', $field)->first();
 
             $value = $this->fieldProcessor->handleField($catalogField, $value, $imageDirPath);
+
+            $value = EscapeFormulaOperators::unescapeValue($value);
 
             if ($catalogField->value_per_locale === self::VALUE_PER_LOCALE) {
                 $locale = $rowData['locale'] ?? null;

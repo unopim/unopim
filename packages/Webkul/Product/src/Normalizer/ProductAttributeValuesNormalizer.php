@@ -3,6 +3,7 @@
 namespace Webkul\Product\Normalizer;
 
 use Webkul\Attribute\Services\AttributeService;
+use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
 use Webkul\Product\Type\AbstractType;
 
 /**
@@ -49,7 +50,7 @@ class ProductAttributeValuesNormalizer
                 $value = implode(', ', $value);
             }
 
-            $values[$attributeCode] = $value;
+            $values[$attributeCode] = EscapeFormulaOperators::escapeValue($value);
         }
 
         return $values;

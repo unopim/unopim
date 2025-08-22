@@ -1577,6 +1577,8 @@ return [
         'tracker'                  => 'Tracker di lavoro',
         'imports'                  => 'Importazioni',
         'exports'                  => 'Esportazioni',
+        'mass-update'              => 'Aggiornamento di massa',
+        'mass-delete'              => 'Eliminazione di massa',
     ],
 
     'errors' => [

@@ -1578,6 +1578,8 @@ return [
         'tracker'                  => 'Theo dõi công việc',
         'imports'                  => 'Nhập khẩu',
         'exports'                  => 'Xuất khẩu',
+        'mass-update'              => 'Cập nhật hàng loạt',
+        'mass-delete'              => 'Xóa hàng loạt',
     ],
 
     'errors' => [

@@ -87,3 +87,67 @@ it('should be able to delete locale if has permission', function () {
         'status' => 0,
     ]);
 });
+
+it('should not be able to mass update locales if does not have permission', function () {
+    $this->loginWithPermissions(permissions: ['settings', 'settings.locales', 'settings.locales.edit']);
+
+    $localeIds = Locale::where('status', 0)->limit(2)->pluck('id')->toArray();
+
+    $this->post(route('admin.settings.locales.mass_update'), [
+        'indices' => $localeIds,
+        'value'   => 1,
+    ])
+        ->assertSeeText('Unauthorized');
+
+    foreach ($localeIds as $id) {
+        $this->assertDatabaseHas($this->getFullTableName(Locale::class), ['id' => $id, 'status' => 0]);
+    }
+});
+
+it('should be able to mass update locales if has permission', function () {
+    $this->loginWithPermissions(permissions: ['settings', 'settings.locales', 'settings.locales.mass_update']);
+
+    $localeIds = Locale::where('status', 0)->limit(2)->pluck('id')->toArray();
+
+    $this->post(route('admin.settings.locales.mass_update'), [
+        'indices' => $localeIds,
+        'value'   => 1,
+    ])
+        ->assertOk()
+        ->assertJsonFragment(['message' => trans('admin::app.settings.locales.index.update-success')]);
+
+    foreach ($localeIds as $id) {
+        $this->assertDatabaseHas($this->getFullTableName(Locale::class), ['id' => $id, 'status' => 1]);
+    }
+});
+
+it('should not be able to mass delete locales if does not have permission', function () {
+    $this->loginWithPermissions(permissions: ['settings', 'settings.locales', 'settings.locales.delete']);
+
+    $localeIds = Locale::where('status', 0)->limit(2)->pluck('id')->toArray();
+
+    $this->post(route('admin.settings.locales.mass_delete'), [
+        'indices' => $localeIds,
+    ])
+        ->assertSeeText('Unauthorized');
+
+    foreach ($localeIds as $id) {
+        $this->assertDatabaseHas($this->getFullTableName(Locale::class), ['id' => $id]);
+    }
+});
+
+it('should be able to mass delete locales if has permission', function () {
+    $this->loginWithPermissions(permissions: ['settings', 'settings.locales', 'settings.locales.mass_delete']);
+
+    $localeIds = Locale::where('status', 0)->limit(2)->pluck('id')->toArray();
+
+    $this->post(route('admin.settings.locales.mass_delete'), [
+        'indices' => $localeIds,
+    ])
+        ->assertOk()
+        ->assertJsonFragment(['message' => trans('admin::app.settings.locales.index.delete-success')]);
+
+    foreach ($localeIds as $id) {
+        $this->assertDatabaseMissing($this->getFullTableName(Locale::class), ['id' => $id]);
+    }
+});

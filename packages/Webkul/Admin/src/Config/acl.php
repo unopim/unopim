@@ -56,6 +56,16 @@ return [
         'route' => 'admin.catalog.products.delete',
         'sort'  => 4,
     ], [
+        'key'   => 'catalog.products.mass_update',
+        'name'  => 'admin::app.acl.mass-update',
+        'route' => 'admin.catalog.products.mass_update',
+        'sort'  => 5,
+    ], [
+        'key'   => 'catalog.products.mass_delete',
+        'name'  => 'admin::app.acl.mass-delete',
+        'route' => 'admin.catalog.products.mass_delete',
+        'sort'  => 6,
+    ], [
         'key'   => 'catalog.categories',
         'name'  => 'admin::app.acl.categories',
         'route' => 'admin.catalog.categories.index',
@@ -75,6 +85,11 @@ return [
         'name'  => 'admin::app.acl.delete',
         'route' => 'admin.catalog.categories.delete',
         'sort'  => 3,
+    ], [
+        'key'   => 'catalog.categories.mass_delete',
+        'name'  => 'admin::app.acl.mass-delete',
+        'route' => 'admin.catalog.categories.mass_delete',
+        'sort'  => 4,
     ], [
         'key'   => 'catalog.category_fields',
         'name'  => 'admin::app.acl.category_fields',
@@ -96,6 +111,16 @@ return [
         'route' => 'admin.catalog.category_fields.delete',
         'sort'  => 3,
     ], [
+        'key'   => 'catalog.category_fields.mass_update',
+        'name'  => 'admin::app.acl.mass-update',
+        'route' => 'admin.catalog.category_fields.mass_update',
+        'sort'  => 4,
+    ], [
+        'key'   => 'catalog.category_fields.mass_delete',
+        'name'  => 'admin::app.acl.mass-delete',
+        'route' => 'admin.catalog.category_fields.mass_delete',
+        'sort'  => 5,
+    ], [
         'key'   => 'catalog.attributes',
         'name'  => 'admin::app.acl.attributes',
         'route' => 'admin.catalog.attributes.index',
@@ -115,6 +140,11 @@ return [
         'name'  => 'admin::app.acl.delete',
         'route' => 'admin.catalog.attributes.delete',
         'sort'  => 3,
+    ], [
+        'key'   => 'catalog.attributes.mass_delete',
+        'name'  => 'admin::app.acl.mass-delete',
+        'route' => 'admin.catalog.attributes.mass_delete',
+        'sort'  => 4,
     ], [
         'key'   => 'catalog.attribute_groups',
         'name'  => 'admin::app.acl.attribute-groups',
@@ -276,6 +306,16 @@ return [
         'route' => 'admin.settings.locales.delete',
         'sort'  => 3,
     ], [
+        'key'   => 'settings.locales.mass_update',
+        'name'  => 'admin::app.acl.mass-update',
+        'route' => 'admin.settings.locales.mass_update',
+        'sort'  => 4,
+    ], [
+        'key'   => 'settings.locales.mass_delete',
+        'name'  => 'admin::app.acl.mass-delete',
+        'route' => 'admin.settings.locales.mass_delete',
+        'sort'  => 5,
+    ], [
         'key'   => 'settings.currencies',
         'name'  => 'admin::app.acl.currencies',
         'route' => 'admin.settings.currencies.index',
@@ -295,7 +335,17 @@ return [
         'name'  => 'admin::app.acl.delete',
         'route' => 'admin.settings.currencies.delete',
         'sort'  => 3,
-    ],  [
+    ], [
+        'key'   => 'settings.currencies.mass_update',
+        'name'  => 'admin::app.acl.mass-update',
+        'route' => 'admin.settings.currencies.mass_update',
+        'sort'  => 4,
+    ], [
+        'key'   => 'settings.currencies.mass_delete',
+        'name'  => 'admin::app.acl.mass-delete',
+        'route' => 'admin.settings.currencies.mass_delete',
+        'sort'  => 5,
+    ], [
         'key'   => 'settings.channels',
         'name'  => 'admin::app.acl.channels',
         'route' => 'admin.settings.channels.index',

@@ -1578,6 +1578,8 @@ return [
         'tracker'                  => 'Uppgiftsspårning',
         'imports'                  => 'Importer',
         'exports'                  => 'Exporter',
+        'mass-update'              => 'Massuppdatering',
+        'mass-delete'              => 'Massradering',
     ],
 
     'errors' => [
