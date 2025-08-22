@@ -70,12 +70,17 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install Playwright dependencies and run test
+      - name: Install Playwright dependencies
         run: |
           cd tests/e2e-pw
           npm install
-          npx playwright install --with-deps
-          npx playwright test
+          npx playwright install-deps chromium
+          npx playwright install chromium
+
+      - name: Run Playwright tests
+        run: |
+          cd tests/e2e-pw
+          npx playwright test --reporter=list
 
       - name: Upload Playwright report
         if: always()
