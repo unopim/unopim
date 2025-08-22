@@ -4,6 +4,8 @@ on: [push, pull_request]
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 jobs:
   playwright_tests:
@@ -42,18 +44,18 @@ jobs:
         run: composer install --no-interaction --prefer-dist
 
       - name: Install Node.js dependencies
-        run: |
-          npm install
-          npm install --save-dev @playwright/test
+        run: npm install
 
       - name: Install Playwright Chromium only
         run: |
           npx playwright install-deps chromium
           npx playwright install chromium
 
-      - name: Create .env file
+      - name: Ensure .env file exists
         run: |
-          cp .env.example .env || true
+          if [ ! -f .env ]; then
+            cp .env.example .env || touch .env
+          fi
           echo "APP_ENV=local" >> .env
           echo "APP_KEY=" >> .env
           echo "APP_DEBUG=true" >> .env
@@ -64,7 +66,7 @@ jobs:
           echo "DB_USERNAME=root" >> .env
           echo "DB_PASSWORD=root" >> .env
 
-      - name: Generate application key & migrate
+      - name: Generate Laravel key & migrate
         run: |
           php artisan key:generate --force
           php artisan migrate --force
@@ -72,25 +74,27 @@ jobs:
 
       - name: Start Laravel server
         run: php artisan serve --host=127.0.0.1 --port=8000 &
-
-      - name: Wait for Laravel to be ready
+      
+      - name: Wait for Laravel
         run: npx wait-on http://127.0.0.1:8000
 
-      - name: Run Playwright tests
-        run: npx playwright test --reporter=list
+      - name: Run Playwright tests with HTML report
+        run: npx playwright test --reporter=html
 
-      - name: Upload Playwright Test Report
+      - name: Upload Playwright report (for GitHub Pages)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: playwright-report
           path: playwright-report/
-          retention-days: 7
 
-      - name: Upload Playwright Traces
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-traces
-          path: test-results/
-          retention-days: 7
+  deploy-report:
+    if: always()
+    needs: playwright_tests
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
