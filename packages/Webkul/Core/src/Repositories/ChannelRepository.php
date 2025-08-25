@@ -2,6 +2,7 @@
 
 namespace Webkul\Core\Repositories;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Webkul\Core\Eloquent\Repository;
 
@@ -24,6 +25,14 @@ class ChannelRepository extends Repository
     {
         $model = $this->getModel();
 
+        // Normalize numeric fields (Postgres doesn't allow "" for integers)
+        foreach ($model->getFillable() as $field) {
+            if (isset($data[$field]) && $data[$field] === '') {
+                $data[$field] = null; // or 0 if you want default integer
+            }
+        }
+
+        // Handle translated attributes per locale
         foreach (core()->getAllActiveLocales() as $locale) {
             foreach ($model->translatedAttributes as $attribute) {
                 if (isset($data[$attribute])) {
@@ -32,11 +41,38 @@ class ChannelRepository extends Repository
             }
         }
 
+        // Ensure sequence is in sync for PostgreSQL
+        $driver = DB::getDriverName();
+
+        switch ($driver) {
+            case 'pgsql':
+                $sequence = $model->getTable() . '_id_seq';
+                DB::statement("
+                    SELECT setval(
+                        '{$sequence}',
+                        (SELECT COALESCE(MAX(id), 0) + 1 FROM {$model->getTable()}),
+                        false
+                    )
+                ");
+                break;
+
+            case 'mysql':
+            default:
+                // MySQL auto-increment handles itself
+                break;
+        }
+
+        // Create channel
         $channel = parent::create($data);
 
-        $channel->locales()->sync($data['locales']);
+        // Sync relations
+        if (isset($data['locales'])) {
+            $channel->locales()->sync($data['locales']);
+        }
 
-        $channel->currencies()->sync($data['currencies']);
+        if (isset($data['currencies'])) {
+            $channel->currencies()->sync($data['currencies']);
+        }
 
         return $channel;
     }
