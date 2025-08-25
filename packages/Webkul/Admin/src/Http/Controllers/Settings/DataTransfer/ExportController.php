@@ -283,7 +283,7 @@ class ExportController extends Controller
             \Log::error('Import failed for job instance '.$id.': '.$e->getMessage());
 
             return redirect()->route('admin.settings.data_transfer.tracker.view', $id)
-                ->with('error', 'Failed to start the expor process. Please try again.');
+                ->with('error', 'Failed to start the export process. Please try again.');
         }
     }
 
