@@ -40,6 +40,7 @@ class Exporter extends AbstractExporter
     public function initilize()
     {
         $this->categoryFields = $this->categoryFieldRepository->getActiveCategoryFields();
+        $this->initializeFileBuffer();
     }
 
     /**
@@ -52,7 +53,7 @@ class Exporter extends AbstractExporter
         $this->initilize();
         $categories = $this->prepareCategories($batch, $filePath);
 
-        $this->exportFileBuffer->addData($categories, $filePath, $this->getExportParameter());
+        $this->exportBuffer->write($categories);
 
         /**
          * Update export batch process state summary

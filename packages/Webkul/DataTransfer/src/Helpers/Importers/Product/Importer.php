@@ -402,6 +402,8 @@ class Importer extends AbstractImporter
             $this->typeFamilyValidationRules[$rowData['type']][$rowData[self::ATTRIBUTE_FAMILY_CODE]] = $this->getValidationRules($rowData);
         }
 
+        $this->updateRowMediaPath($rowData);
+
         $validationRules = $this->typeFamilyValidationRules[$rowData['type']][$rowData[self::ATTRIBUTE_FAMILY_CODE]];
 
         /**
@@ -479,6 +481,27 @@ class Importer extends AbstractImporter
         $this->isUniqueVariation($rowData, $rowNumber);
 
         return ! $this->errorHelper->isRowInvalid($rowNumber);
+    }
+
+    protected function updateRowMediaPath(array &$rowData): void
+    {
+        $mediaTypes = ['image', 'file', 'gallery'];
+        $mediaAttributes = $this->attributes->whereIn('type', $mediaTypes);
+        $imageDirPath = $this->import->images_directory_path;
+
+        foreach ($mediaAttributes as $attribute) {
+            $code = $attribute->code;
+
+            if (! isset($rowData[$code])) {
+                continue;
+            }
+
+            $value = $this->fieldProcessor->handleMediaField($rowData[$code], $imageDirPath);
+
+            if ($value) {
+                $rowData[$code] = is_array($value) ? implode(',', $value) : $value;
+            }
+        }
     }
 
     /**
