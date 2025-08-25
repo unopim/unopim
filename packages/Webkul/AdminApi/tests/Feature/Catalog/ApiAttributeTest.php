@@ -571,7 +571,7 @@ it('should store attribute options for an attribute successfully', function () {
         ->assertCreated()
         ->assertJsonFragment([
             'success' => true,
-            'message' => trans('admin::app.catalog.attribute-options.create-success'),
+            'message' => trans('admin::app.catalog.attributes.edit.option.create-success'),
         ]);
 
     $this->assertModelWise([
@@ -656,7 +656,7 @@ it('should update attribute options for an attribute successfully', function () 
         ->assertOk()
         ->assertJsonFragment([
             'success' => true,
-            'message' => trans('admin::app.catalog.attribute-options.update-success'),
+            'message' => trans('admin::app.catalog.attributes.edit.option.update-success'),
         ]);
 
     $this->assertModelWise([
