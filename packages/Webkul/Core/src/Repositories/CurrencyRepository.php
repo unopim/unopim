@@ -2,6 +2,7 @@
 
 namespace Webkul\Core\Repositories;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Webkul\Core\Contracts\Currency;
 use Webkul\Core\Eloquent\Repository;
@@ -25,12 +26,36 @@ class CurrencyRepository extends Repository
     {
         Event::dispatch('core.currency.create.before');
 
+        if (isset($attributes['decimal']) && $attributes['decimal'] === '') {
+            $attributes['decimal'] = 0;
+        }
+
+        $driver = DB::getDriverName();
+
+        switch ($driver) {
+            case 'pgsql':
+                $sequence = $this->model->getTable() . '_id_seq';
+                DB::statement("
+                    SELECT setval(
+                        '{$sequence}',
+                        (SELECT COALESCE(MAX(id), 0) + 1 FROM {$this->model->getTable()}),
+                        false
+                    )
+                ");
+                break;
+
+            case 'mysql':
+            default:
+                break;
+        }
+
         $currency = parent::create($attributes);
 
         Event::dispatch('core.currency.create.after', $currency);
 
         return $currency;
     }
+
 
     /**
      * Update.

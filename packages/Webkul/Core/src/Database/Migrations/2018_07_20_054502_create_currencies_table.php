@@ -12,31 +12,14 @@ return new class extends Migration
      */
     public function up()
     {
-        $driver = DB::getDriverName();
-
-        switch ($driver) {
-            case 'mysql':
-                Schema::create('currencies', function (Blueprint $table) {
-                    $table->increments('id');
-                    $table->string('code');
-                    $table->string('symbol')->nullable();
-                    $table->boolean('status')->default(0);
-                    $table->integer('decimal')->unsigned()->default(2);
-                    $table->timestamps();
-                });
-                break;
-
-            case 'pgsql':
-                Schema::create('currencies', function (Blueprint $table) {
-                    $table->bigIncrements('id');
-                    $table->string('code');
-                    $table->string('symbol')->nullable();
-                    $table->boolean('status')->default(0);
-                    $table->integer('decimal')->default(2);
-                    $table->timestamps();
-                });
-                break;
-        }
+        Schema::create('currencies', function (Blueprint $table) {
+            $table->id();
+            $table->string('code');
+            $table->string('symbol')->nullable();
+            $table->boolean('status')->default(0);
+            $table->integer('decimal')->default(2);
+            $table->timestamps();
+        });
     }
 
     /**
