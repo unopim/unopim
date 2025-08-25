@@ -411,12 +411,29 @@ class Import
      */
     public function completed(): void
     {
+        $driver = DB::getDriverName();
+
+        switch ($driver) {
+            case 'pgsql':
+                $selects = [
+                    DB::raw("SUM((summary->>'created')::int) AS created"),
+                    DB::raw("SUM((summary->>'updated')::int) AS updated"),
+                    DB::raw("SUM((summary->>'deleted')::int) AS deleted"),
+                ];
+                break;
+
+            case 'mysql':
+            default:
+                $selects = [
+                    DB::raw("SUM(json_unquote(json_extract(summary, '$.\"created\"'))) AS created"),
+                    DB::raw("SUM(json_unquote(json_extract(summary, '$.\"updated\"'))) AS updated"),
+                    DB::raw("SUM(json_unquote(json_extract(summary, '$.\"deleted\"'))) AS deleted"),
+                ];
+                break;
+        }
+
         $summary = $this->jobTrackBatchRepository
-            ->select(
-                DB::raw('SUM(json_unquote(json_extract(summary, \'$."created"\'))) AS created'),
-                DB::raw('SUM(json_unquote(json_extract(summary, \'$."updated"\'))) AS updated'),
-                DB::raw('SUM(json_unquote(json_extract(summary, \'$."deleted"\'))) AS deleted'),
-            )
+            ->select(...$selects)
             ->where('job_track_id', $this->import->id)
             ->groupBy('job_track_id')
             ->first()?->toArray();
@@ -435,6 +452,7 @@ class Import
             $this->jobLogger->info(trans('data_transfer::app.job.completed'));
         }
     }
+
 
     /**
      * Returns import stats
