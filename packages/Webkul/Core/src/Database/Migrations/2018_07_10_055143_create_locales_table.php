@@ -12,27 +12,12 @@ return new class extends Migration
      */
     public function up()
     {
-        $driver = DB::getDriverName();
-
-        switch ($driver) {
-            case 'mysql':
-                Schema::create('locales', function (Blueprint $table) {
-                    $table->increments('id'); 
-                    $table->string('code')->unique();
-                    $table->boolean('status')->default(0);
-                    $table->timestamps();
-                });
-                break;
-
-            case 'pgsql':
-                Schema::create('locales', function (Blueprint $table) {
-                    $table->bigIncrements('id');
-                    $table->string('code')->unique();
-                    $table->boolean('status')->default(0);
-                    $table->timestamps();
-                });
-                break;
-        }
+        Schema::create('locales', function (Blueprint $table) {
+            $table->id(); 
+            $table->string('code')->unique();
+            $table->boolean('status')->default(0);
+            $table->timestamps();
+        });
     }
 
     /**
