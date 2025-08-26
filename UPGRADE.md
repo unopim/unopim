@@ -11,6 +11,9 @@
 ## 🟠 Medium Impact Changes
 
 - Added ACL configuration for all mass update and mass delete routes.
+* Added `initializeFileBuffer()` in `packages/Webkul/DataTransfer/src/Helpers/Exporters/AbstractExporter.php` to properly initialize file buffer for exports.
+* Updated media export handling in `packages/Webkul/DataTransfer/src/Helpers/Exporters/Product.php` to correctly process media paths and ensure files are exported.
+* Changed method visibility to **public** for function `handleMediaField` in `packages/Webkul/DataTransfer/src/Helpers/Importers/FieldProcessor.php`.
 
 ---
 
