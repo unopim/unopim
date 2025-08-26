@@ -1,3 +1,10 @@
+## v0.3.2 - 2025-08-26
+
+### Fixes
+
+* Fixed failure of product export when 'with media' filter is enabled
+* Fixed category export job failing due to uninitialized file buffer
+
 ## v0.3.1 - 2025-08-22
 
 ### Fixes
