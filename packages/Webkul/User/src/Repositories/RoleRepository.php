@@ -3,7 +3,6 @@
 namespace Webkul\User\Repositories;
 
 use Webkul\Core\Eloquent\Repository;
-use Illuminate\Support\Facades\DB;
 
 class RoleRepository extends Repository
 {
