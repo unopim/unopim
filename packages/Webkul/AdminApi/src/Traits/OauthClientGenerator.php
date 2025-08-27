@@ -2,7 +2,9 @@
 
 namespace Webkul\AdminApi\Traits;
 
-use Webkul\AdminApi\Models\Client;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Laravel\Passport\Client;
 
 trait OauthClientGenerator
 {
@@ -11,17 +13,41 @@ trait OauthClientGenerator
      *
      * @return \Laravel\Passport\Client The newly created OAuth client with the generated client ID and secret key.
      */
-    public function generateClientIdAndSecretKey(int $user_id, string $name)
-    {
-        $providers = array_keys(config('auth.providers'));
-        $provider = $providers[0];
+ public function generateClientIdAndSecretKey(int $user_id, string $name)
+{
+    $providers = array_keys(config('auth.providers'));
+    $provider = $providers[0];
 
-        $client = $this->clients->createPasswordGrantClient(
-            $user_id, $name, 'http://localhost', $provider
-        );
+    $driver = DB::getDriverName();
 
-        return $client;
+    switch ($driver) {
+        case 'pgsql': // PostgreSQL → use UUIDs
+            $client = new Client();
+            $client->id = Str::uuid()->toString();
+            $client->user_id = $user_id;
+            $client->name = $name;
+            $client->secret = Str::random(40);
+            $client->provider = $provider;
+            $client->redirect = 'http://localhost';
+            $client->personal_access_client = false;
+            $client->password_client = true;
+            $client->revoked = false;
+            $client->save();
+            break;
+
+        case 'mysql': // MySQL → use Passport repo (auto-increment bigint)
+        default:
+            $client = $this->clients->createPasswordGrantClient(
+                $user_id,
+                $name,
+                'http://localhost',
+                $provider
+            );
+            break;
     }
+
+    return $client;
+}
 
     /**
      * Regenerates the secret key for the specified OAuth client.

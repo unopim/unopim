@@ -16,7 +16,7 @@ class AdminRepository extends Repository
         return 'Webkul\User\Contracts\Admin';
     }
 
-    public function create(array $data)
+       public function create(array $data)
     {
         Event::dispatch('user.admin.create.before');
       
