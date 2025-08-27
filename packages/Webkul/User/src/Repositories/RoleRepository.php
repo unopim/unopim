@@ -3,6 +3,7 @@
 namespace Webkul\User\Repositories;
 
 use Webkul\Core\Eloquent\Repository;
+use Illuminate\Support\Facades\DB;
 
 class RoleRepository extends Repository
 {
@@ -12,5 +13,13 @@ class RoleRepository extends Repository
     public function model(): string
     {
         return 'Webkul\User\Contracts\Role';
+    }
+
+    /**
+     * Create a new role safely for both MySQL & PostgreSQL
+     */
+    public function create(array $data)
+    {
+        $this->model->create($data);
     }
 }
