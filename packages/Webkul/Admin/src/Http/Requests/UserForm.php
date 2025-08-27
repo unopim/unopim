@@ -8,6 +8,7 @@ use Illuminate\Validation\ValidationException;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Core\Rules\AlphaNumericSpace;
 use Webkul\Core\Rules\FileMimeExtensionMatch;
+use Illuminate\Validation\Rule;
 
 class UserForm extends FormRequest
 {
@@ -35,11 +36,18 @@ class UserForm extends FormRequest
      *
      * @return array
      */
+
     public function rules()
     {
+        $id = $this->id ?: null;
+
         return [
             'name'                  => ['required', new AlphaNumericSpace],
-            'email'                 => 'required|email|unique:admins,email,'.$this->id,
+            'email'                 => [
+                'required',
+                'email',
+                Rule::unique('admins', 'email')->ignore($id, 'id'),
+            ],
             'password'              => 'nullable',
             'password_confirmation' => 'nullable|required_with:password|same:password',
             'status'                => 'sometimes',
