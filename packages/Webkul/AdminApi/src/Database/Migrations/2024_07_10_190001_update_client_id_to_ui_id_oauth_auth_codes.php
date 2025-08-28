@@ -22,13 +22,8 @@ return new class extends Migration
                 break;
 
             case 'pgsql':
-                // PostgreSQL: leave as bigint (safe)
-                // Optional: uncomment to convert to UUID (requires pgcrypto extension)
-                /*
-                DB::statement('CREATE EXTENSION IF NOT EXISTS "pgcrypto";');
                 DB::statement('ALTER TABLE oauth_auth_codes ALTER COLUMN client_id DROP DEFAULT;');
-                DB::statement('ALTER TABLE oauth_auth_codes ALTER COLUMN client_id TYPE uuid USING gen_random_uuid();');
-                */
+                DB::statement('ALTER TABLE oauth_auth_codes ALTER COLUMN client_id TYPE uuid USING md5(client_id::text)::uuid;');
                 break;
         }
     }
@@ -38,8 +33,19 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('oauth_auth_codes', function (Blueprint $table) {
-            //
-        });
+        $driver = DB::getDriverName();
+
+        switch ($driver) {
+            case 'mysql':
+                Schema::table('oauth_auth_codes', function (Blueprint $table) {
+                    $table->unsignedBigInteger('client_id')->change();
+                });
+                break;
+
+            case 'pgsql':
+                DB::statement('ALTER TABLE oauth_auth_codes ALTER COLUMN client_id DROP DEFAULT;');
+                DB::statement('ALTER TABLE oauth_auth_codes ALTER COLUMN client_id TYPE bigint USING 1;');
+                break;
+        }
     }
 };

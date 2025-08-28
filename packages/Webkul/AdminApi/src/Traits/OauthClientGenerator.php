@@ -13,7 +13,7 @@ trait OauthClientGenerator
      *
      * @return \Laravel\Passport\Client The newly created OAuth client with the generated client ID and secret key.
      */
- public function generateClientIdAndSecretKey(int $user_id, string $name)
+public function generateClientIdAndSecretKey(int $user_id, string $name)
 {
     $providers = array_keys(config('auth.providers'));
     $provider = $providers[0];
@@ -21,7 +21,7 @@ trait OauthClientGenerator
     $driver = DB::getDriverName();
 
     switch ($driver) {
-        case 'pgsql': // PostgreSQL → use UUIDs
+        case 'pgsql': 
             $client = new Client();
             $client->id = Str::uuid()->toString();
             $client->user_id = $user_id;
@@ -35,7 +35,7 @@ trait OauthClientGenerator
             $client->save();
             break;
 
-        case 'mysql': // MySQL → use Passport repo (auto-increment bigint)
+        case 'mysql':
         default:
             $client = $this->clients->createPasswordGrantClient(
                 $user_id,

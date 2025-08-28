@@ -12,6 +12,7 @@ use Webkul\AdminApi\DataGrids\Integrations\ApiKeysDataGrid;
 use Webkul\AdminApi\Repositories\ApiKeyRepository;
 use Webkul\AdminApi\Traits\OauthClientGenerator;
 use Webkul\User\Repositories\AdminRepository;
+use Illuminate\Support\Facades\DB;
 
 class ApiKeysController extends Controller
 {
@@ -186,15 +187,25 @@ class ApiKeysController extends Controller
         $client = $this->generateClientIdAndSecretKey($userId, $name);
 
         $id = $name = $data['apiId'];
+        $driver = DB::getDriverName();
+        $clientId = null;
 
+        switch ($driver) {
+            case 'pgsql':
+                $clientId = !empty($client->getAttributes()) ? $client->getAttributes()['id']: null;
+                break;
+            case 'mysql':
+                $clientId =  $client->getKey();
+        }
+        
         $apiKey = $this->apiKeyRepository->update([
-            'oauth_client_id' => $client->getKey(),
+            'oauth_client_id' =>$clientId,
         ], $id);
 
         return new JsonResponse([
-            'client_id'       => $client->getKey(),
+            'client_id'       => $clientId,
             'secret_key'      => $client->plainSecret,
-            'oauth_client_id' => $client->getKey(),
+            'oauth_client_id' => $clientId ,
         ]);
     }
 
