@@ -829,10 +829,24 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     protected function getProductValues(array $product): array
     {
-        return ! empty($product[AbstractType::PRODUCT_VALUES_KEY])
-            ? json_decode($product[AbstractType::PRODUCT_VALUES_KEY], true) ?? []
-            : [];
+        $values = $product[AbstractType::PRODUCT_VALUES_KEY] ?? null;
+
+        if (empty($values)) {
+            return [];
+        }
+
+        switch (DB::getDriverName()) {
+            case 'pgsql':
+                // In PostgreSQL JSON/JSONB fields are already arrays
+                return is_array($values) ? $values : [];
+
+            case 'mysql':
+            default:
+                // In MySQL JSON is stored as string → decode it
+                return is_string($values) ? (json_decode($values, true) ?? []) : [];
+        }
     }
+
 
     /**
      * Set File name to be used during quick export
