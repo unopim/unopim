@@ -117,8 +117,7 @@ class ProductIndexer extends Command
 
                             $product =  $product->toArray();
 
-                            $product['status'] =  $product['status'] ? 1 : 0;
-
+                          
                             $productsToUpdate['body'][] = [
                                 'index' => [
                                     '_index' => $productIndex,
@@ -302,20 +301,58 @@ class ProductIndexer extends Command
      */
     private function getUnopimProductMapping()
     {
+        $driver = DB::getDriverName();
+
+        $statusMapping = $driver === 'pgsql'
+            ? ['type' => 'boolean']
+            : ['type' => 'long'];
+
         return [
             'properties' => [
                 'attribute_family' => [
                     'properties' => [
-                        'code'         => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
-                        'id'           => ['type' => 'long'],
-                        'name'         => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
-                        'status'       => ['type' => 'long'],
+                        'code' => [
+                            'type'   => 'text',
+                            'fields' => [
+                                'keyword' => [
+                                    'type'         => 'keyword',
+                                    'ignore_above' => 256,
+                                ],
+                            ],
+                        ],
+                        'id'     => ['type' => 'long'],
+                        'name'   => [
+                            'type'   => 'text',
+                            'fields' => [
+                                'keyword' => [
+                                    'type'         => 'keyword',
+                                    'ignore_above' => 256,
+                                ],
+                            ],
+                        ],
+                        'status'       => $statusMapping,
                         'translations' => [
                             'properties' => [
                                 'attribute_family_id' => ['type' => 'long'],
                                 'id'                  => ['type' => 'long'],
-                                'locale'              => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
-                                'name'                => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
+                                'locale'              => [
+                                    'type'   => 'text',
+                                    'fields' => [
+                                        'keyword' => [
+                                            'type'         => 'keyword',
+                                            'ignore_above' => 256,
+                                        ],
+                                    ],
+                                ],
+                                'name'                => [
+                                    'type'   => 'text',
+                                    'fields' => [
+                                        'keyword' => [
+                                            'type'         => 'keyword',
+                                            'ignore_above' => 256,
+                                        ],
+                                    ],
+                                ],
                             ],
                         ],
                     ],
@@ -327,8 +364,16 @@ class ProductIndexer extends Command
                     'type'       => 'keyword',
                     'normalizer' => 'sku_normalizer',
                 ],
-                'status'     => ['type' => 'long'],
-                'type'       => ['type' => 'text', 'fields' => ['keyword' => ['type' => 'keyword', 'ignore_above' => 256]]],
+                'status'     => $statusMapping,
+                'type'       => [
+                    'type'   => 'text',
+                    'fields' => [
+                        'keyword' => [
+                            'type'         => 'keyword',
+                            'ignore_above' => 256,
+                        ],
+                    ],
+                ],
                 'updated_at' => ['type' => 'date'],
             ],
             'dynamic_templates' => $this->dynamicAttributeMappings(),

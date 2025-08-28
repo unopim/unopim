@@ -4,6 +4,7 @@ namespace Webkul\AdminApi\Http\Controllers\Integrations;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\Rule;
 use Laravel\Passport\ClientRepository;
@@ -12,7 +13,6 @@ use Webkul\AdminApi\DataGrids\Integrations\ApiKeysDataGrid;
 use Webkul\AdminApi\Repositories\ApiKeyRepository;
 use Webkul\AdminApi\Traits\OauthClientGenerator;
 use Webkul\User\Repositories\AdminRepository;
-use Illuminate\Support\Facades\DB;
 
 class ApiKeysController extends Controller
 {
@@ -197,7 +197,7 @@ class ApiKeysController extends Controller
             case 'mysql':
                 $clientId =  $client->getKey();
         }
-        
+
         $apiKey = $this->apiKeyRepository->update([
             'oauth_client_id' =>$clientId,
         ], $id);
