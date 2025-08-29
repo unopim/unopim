@@ -43,6 +43,8 @@ class AttributeOptionController extends Controller
 
         $requestData['code'] = $request->get('code');
 
+        $requestData['swatch_value'] = $request->get('swatch_value');
+
         Event::dispatch('catalog.attribute.option.create.before', $requestData);
 
         try {

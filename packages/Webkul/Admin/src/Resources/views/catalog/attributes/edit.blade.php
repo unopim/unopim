@@ -219,6 +219,66 @@
                                     @lang('admin::app.catalog.attributes.edit.add-row')
                                 </div>
                             </div>
+                            
+                            <!-- Swatch Changer And Empty Field Section -->
+                            <div
+                                class="flex items-center gap-4 max-sm:flex-wrap"  
+                            >
+                                <!-- Input Options -->
+                                <x-admin::form.control-group
+                                    class="mb-2.5 w-full"
+                                >
+                                    <x-admin::form.control-group.label for="swatchType">
+                                        @lang('admin::app.catalog.attributes.edit.input-options')
+                                    </x-admin::form.control-group.label>
+
+                                    @php
+                                        $options = [];
+
+                                        foreach($swatchTypes as $type) {
+                                            $options[] = [
+                                                'id'    => $type,
+                                                'label' => trans('' . $type),
+                                            ];
+                                        }
+
+                                        $optionsInJson = json_encode($options);
+                                    @endphp
+                                    <x-admin::form.control-group.control
+                                        type="select"
+                                        id="swatchType"
+                                        name="swatch_type"   
+                                        :options="$optionsInJson"
+                                        v-model="swatchType"
+                                        @change="showSwatch=true"
+                                        track-by="id"
+                                        label-by="label"
+                                    >
+                                    </x-admin::form.control-group.control>
+
+                                    <x-admin::form.control-group.error control-name="admin" />
+                                </x-admin::form.control-group>
+
+                                <!-- Checkbox -->
+                                <div class="w-full">
+                                    <div class="!mb-0 flex w-max cursor-pointer select-none items-center gap-2.5">
+                                        <x-admin::form.control-group.control
+                                            type="checkbox"
+                                            name="empty_option"
+                                            id="empty_option"
+                                            v-model="isNullOptionChecked"
+                                            @click="$refs.addOptionsRow.toggle()"
+                                            
+                                        />
+                                        <label
+                                            for="empty_option"
+                                            class="cursor-pointer text-xs font-medium text-gray-600 dark:text-gray-300"
+                                        >
+                                            Create default empty option
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
 
                             <!-- For Attribute Options If Data Exist -->
                             <div class="overflow-x-auto">
@@ -633,6 +693,24 @@
                                     <x-admin::form.control-group.error control-name="swatch_value" />
                                 </x-admin::form.control-group>
 
+                                <!-- Color Input -->
+                                <x-admin::form.control-group
+                                    class="w-2/6"
+                                    v-if="selectedSwatchType == 'color'"
+                                >
+                                    <x-admin::form.control-group.label>
+                                        @lang('admin::app.catalog.attributes.edit.color')
+                                    </x-admin::form.control-group.label>
+
+                                    <x-admin::form.control-group.control
+                                        type="color"
+                                        name="swatch_value"
+                                        :placeholder="trans('admin::app.catalog.attributes.edit.color')"
+                                    />
+
+                                    <x-admin::form.control-group.error control-name="swatch_value[]" />
+                                </x-admin::form.control-group>
+
                                  
                             </div>
 
@@ -726,6 +804,8 @@
 
                         selectedAttributeType: "{{ $attribute->type }}",
 
+                        isNullOptionChecked: false,
+
                         swatchValue: [
                             {
                                 image: [],
@@ -775,9 +855,32 @@
 
                         params.locales = updatedLocales;
 
+                        // Use FormData
+                        let formData = new FormData();
+
+                        for (const [localeCode, localeData] of Object.entries(params.locales)) {
+                            for (const [field, value] of Object.entries(localeData)) {
+                                formData.append(`locales[${localeCode}][${field}]`, value);
+                            }
+                        }
+
+                        for (const key in params) {
+                            if (key !== 'locales' && key !== 'swatch_value') {
+                                formData.append(key, params[key]);
+                            }
+                        }
+
+                        if (params.swatch_value instanceof File) {
+                            formData.append('swatch_value', params.swatch_value);
+                        }
+
                         const request = params.id
-                            ? this.$axios.put(this.optionUpdateRoute.replace('_ID', params.id), params)
-                            : this.$axios.post(this.optionCreateRoute, params);
+                            ? this.$axios.put(this.optionUpdateRoute.replace('_ID', params.id), formData, {
+                                headers: { 'Content-Type': 'multipart/form-data' }
+                            })
+                            : this.$axios.post(this.optionCreateRoute, formData, {
+                                headers: { 'Content-Type': 'multipart/form-data' }
+                            });
 
                         request.then(response => {
                                 this.$emitter.emit('add-flash', {

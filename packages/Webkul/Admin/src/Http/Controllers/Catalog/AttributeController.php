@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Event;
 use Webkul\Admin\DataGrids\Catalog\AttributeDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
+use Webkul\Attribute\Enums\SwatchTypeEnum;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\NotSupportedAttributes;
 use Webkul\Core\Repositories\LocaleRepository;
@@ -99,7 +100,9 @@ class AttributeController extends Controller
 
         $locales = $this->localeRepository->getActiveLocales();
 
-        return view('admin::catalog.attributes.edit', compact('attribute', 'locales'));
+        $swatchTypes = SwatchTypeEnum::getValues();
+
+        return view('admin::catalog.attributes.edit', compact('attribute', 'locales', 'swatchTypes'));
     }
 
     /**
