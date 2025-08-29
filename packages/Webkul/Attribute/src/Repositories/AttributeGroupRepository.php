@@ -2,8 +2,9 @@
 
 namespace Webkul\Attribute\Repositories;
 
-use Webkul\Core\Eloquent\Repository;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Webkul\Core\Eloquent\Repository;
 
 class AttributeGroupRepository extends Repository
 {
@@ -35,10 +36,21 @@ class AttributeGroupRepository extends Repository
     public function create(array $data)
     {
         unset($data['id']);
-    
         $translations = Arr::pull($data, 'translations', []);
+        $connection = $this->getConnection()->getDriverName();
 
-        $attributeGroup = parent::create($data);
+        if ($connection === 'pgsql') {
+            $attributeGroup = parent::create($data);
+            $table = $this->getTable();
+            $sequence = "{$table}_id_seq";
+
+            $maxId = $this->newQuery()->max('id');
+            if ($maxId) {
+                DB::statement("SELECT setval('{$sequence}', {$maxId})");
+            }
+        } else {
+            $attributeGroup = parent::create($data);
+        }
 
         if (! empty($translations)) {
             $attributeGroup->translations()->createMany($translations);
@@ -46,4 +58,5 @@ class AttributeGroupRepository extends Repository
 
         return $attributeGroup;
     }
+
 }
