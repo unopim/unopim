@@ -1,3 +1,11 @@
+
+
+## v0.3.0 - 2025-07-28
+
+### Features
+
+- Added support for PostgreSQL (pgsql).
+
 ## v0.3.0 - 2025-07-28
 
 ### Features
