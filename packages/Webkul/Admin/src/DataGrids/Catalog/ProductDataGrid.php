@@ -89,7 +89,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     public function prepareQueryBuilder()
     {
         $tablePrefix = DB::getTablePrefix();
-        $driver      = DB::getDriverName();
+        $driver = DB::getDriverName();
 
         $this->prepareQuery = ProductQueryBuilderFactory::make()->prepareQueryBuilder();
 
@@ -99,16 +99,16 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             $join->on('attribute_family_name.attribute_family_id', '=', 'af.id')
                 ->where('attribute_family_name.locale', '=', core()->getRequestedLocaleCode());
         })
-        ->select(
-            'products.sku',
-            'products.id as product_id',
-            'products.status',
-            'products.type',
-            'products.created_at',
-            'products.updated_at',
-            'parent_products.sku as parent',
-            DB::raw("COALESCE({$tablePrefix}products.values, {$tablePrefix}parent_products.values) as raw_values")
-        );
+            ->select(
+                'products.sku',
+                'products.id as product_id',
+                'products.status',
+                'products.type',
+                'products.created_at',
+                'products.updated_at',
+                'parent_products.sku as parent',
+                DB::raw("COALESCE({$tablePrefix}products.values, {$tablePrefix}parent_products.values) as raw_values")
+            );
 
         switch ($driver) {
             case 'pgsql':
@@ -137,7 +137,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         return $queryBuilder;
     }
-
 
     /**
      * Property column list.
@@ -377,6 +376,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     {
         if (! config('elasticsearch.enabled')) {
             parent::processRequest();
+
             return;
         }
 
@@ -385,6 +385,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         if (! empty($requestedParams['productIds']) && isset($requestedParams['export']) && (bool) $requestedParams['export']) {
             $this->queryBuilder->whereIn('products.id', $requestedParams['productIds']);
             $this->exportData($requestedParams);
+
             return;
         }
 
@@ -405,19 +406,19 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
             if (! empty($ids)) {
                 $tablePrefix = DB::getTablePrefix();
-                $driver      = DB::getDriverName();
+                $driver = DB::getDriverName();
 
                 switch ($driver) {
                     case 'pgsql':
                         $this->queryBuilder->orderByRaw(
-                            "array_position(ARRAY[" . implode(',', $ids) . "]::int[], {$tablePrefix}products.id)"
+                            'array_position(ARRAY['.implode(',', $ids)."]::int[], {$tablePrefix}products.id)"
                         );
                         break;
 
                     case 'mysql':
                     default:
                         $this->queryBuilder->orderByRaw(
-                            "FIELD({$tablePrefix}products.id, " . implode(',', $ids) . ")"
+                            "FIELD({$tablePrefix}products.id, ".implode(',', $ids).')'
                         );
                         break;
                 }
@@ -425,6 +426,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
             if (isset($requestedParams['export']) && (bool) $requestedParams['export']) {
                 $this->exportData($requestedParams);
+
                 return;
             }
 
@@ -449,7 +451,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         }
     }
 
-
     /**
      * {@inheritdoc}
      */
@@ -470,21 +471,21 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     public function processRequestedSorting($requestedSort)
     {
         $sortColumn = $requestedSort['column'] ?? $this->sortColumn ?? $this->primaryColumn;
-        $sortOrder  = $requestedSort['order'] ?? $this->sortOrder;
+        $sortOrder = $requestedSort['order'] ?? $this->sortOrder;
 
         $tablePrefix = DB::getTablePrefix();
-        $driver      = DB::getDriverName();
+        $driver = DB::getDriverName();
 
         if ($attributePath = $this->getAttributePathForSort($sortColumn)) {
             switch ($driver) {
                 case 'pgsql':
-                    $jsonPath = trim($attributePath, '$.'); 
+                    $jsonPath = trim($attributePath, '$.');
                     $pathParts = explode('.', $jsonPath);
-                    $pgExpr    = $tablePrefix . 'products.values';
+                    $pgExpr = $tablePrefix.'products.values';
                     foreach ($pathParts as $i => $part) {
-                        $pgExpr .= $i === array_key_last($pathParts) 
-                            ? "->>'$part'" 
-                            : "->'$part'"; 
+                        $pgExpr .= $i === array_key_last($pathParts)
+                            ? "->>'$part'"
+                            : "->'$part'";
                     }
 
                     return $this->queryBuilder->orderByRaw("$pgExpr $sortOrder");
@@ -504,7 +505,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         return $this->queryBuilder->orderBy($sortColumn, $sortOrder);
     }
-
 
     /**
      * Process request.
@@ -641,10 +641,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             return null;
         }
 
-        $locale       = core()->getRequestedLocaleCode();
-        $channel      = core()->getRequestedChannel();
+        $locale = core()->getRequestedLocaleCode();
+        $channel = core()->getRequestedChannel();
         $currencyCode = $channel?->currencies?->first()?->code;
-        $channel      = $channel->code;
+        $channel = $channel->code;
 
         $driver = DB::getDriverName();
         $attributeType = $attribute->type;
@@ -653,7 +653,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             $path = sprintf(
                 'values.%s.%s',
                 $attribute->getScope($locale, $channel),
-                $attribute->code . '-' . $attributeType
+                $attribute->code.'-'.$attributeType
             );
 
             if ($attributeType === 'textarea' || $attributeType === 'text') {
@@ -661,7 +661,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             }
 
             if ($attributeType === 'price') {
-                $path .= '.' . $currencyCode;
+                $path .= '.'.$currencyCode;
             }
 
             return $path;
@@ -670,7 +670,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         switch ($driver) {
             case 'pgsql':
                 $pgPath = [$attribute->getScope($locale, $channel), $attribute->code];
-                
+
                 if ($attributeType === 'price' && $currencyCode) {
                     $pgPath[] = $currencyCode;
                 }
@@ -693,7 +693,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 );
 
                 if ($attributeType === 'price' && $currencyCode) {
-                    $path .= '.' . $currencyCode;
+                    $path .= '.'.$currencyCode;
                 }
 
                 return $path;
@@ -761,7 +761,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'records' => $exportableData,
         ];
     }
-
 
     /**
      * Format product values for quick export
@@ -846,7 +845,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 return is_string($values) ? (json_decode($values, true) ?? []) : [];
         }
     }
-
 
     /**
      * Set File name to be used during quick export

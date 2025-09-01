@@ -216,9 +216,9 @@ class ExportController extends Controller
                 'message' => trans('admin::app.settings.data-transfer.exports.delete-success'),
             ]);
         } catch (\Exception $e) {
-           
+
             Log::error('Failed to delete job instance', [
-                'id' => $id,
+                'id'    => $id,
                 'error' => $e->getMessage(),
             ]);
         }

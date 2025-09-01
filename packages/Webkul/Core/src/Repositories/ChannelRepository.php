@@ -25,14 +25,12 @@ class ChannelRepository extends Repository
     {
         $model = $this->getModel();
 
-        // Normalize numeric fields (Postgres doesn't allow "" for integers)
         foreach ($model->getFillable() as $field) {
             if (isset($data[$field]) && $data[$field] === '') {
-                $data[$field] = null; // or 0 if you want default integer
+                $data[$field] = null;
             }
         }
 
-        // Handle translated attributes per locale
         foreach (core()->getAllActiveLocales() as $locale) {
             foreach ($model->translatedAttributes as $attribute) {
                 if (isset($data[$attribute])) {
@@ -41,12 +39,11 @@ class ChannelRepository extends Repository
             }
         }
 
-        // Ensure sequence is in sync for PostgreSQL
         $driver = DB::getDriverName();
 
         switch ($driver) {
             case 'pgsql':
-                $sequence = $model->getTable() . '_id_seq';
+                $sequence = $model->getTable().'_id_seq';
                 DB::statement("
                     SELECT setval(
                         '{$sequence}',
@@ -58,14 +55,11 @@ class ChannelRepository extends Repository
 
             case 'mysql':
             default:
-                // MySQL auto-increment handles itself
                 break;
         }
 
-        // Create channel
         $channel = parent::create($data);
 
-        // Sync relations
         if (isset($data['locales'])) {
             $channel->locales()->sync($data['locales']);
         }

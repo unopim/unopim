@@ -4,7 +4,6 @@ namespace Webkul\Attribute\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Contracts\AttributeFamilyGroupMapping as AttributeFamilyGroupMappingContract;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
@@ -43,12 +42,12 @@ class AttributeFamilyGroupMapping extends Model implements AttributeFamilyGroupM
     public function attributeGroups()
     {
         $query = $this->belongsToMany(
-                AttributeGroupProxy::modelClass(),
-                'attribute_family_group_mappings',
-                'attribute_group_id',
-                null,                 
-                'attribute_group_id' 
-            )
+            AttributeGroupProxy::modelClass(),
+            'attribute_family_group_mappings',
+            'attribute_group_id',
+            null,
+            'attribute_group_id'
+        )
             ->select(
                 'attribute_groups.id',
                 'attribute_groups.code',
@@ -66,7 +65,6 @@ class AttributeFamilyGroupMapping extends Model implements AttributeFamilyGroupM
 
         return $query;
     }
-
 
     /**
      * {@inheritdoc}

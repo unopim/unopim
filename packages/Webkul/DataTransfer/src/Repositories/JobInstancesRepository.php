@@ -2,9 +2,9 @@
 
 namespace Webkul\DataTransfer\Repositories;
 
+use Illuminate\Support\Facades\DB;
 use Webkul\Core\Eloquent\Repository;
 use Webkul\DataTransfer\Contracts\JobInstances;
-use Illuminate\Support\Facades\DB;
 
 class JobInstancesRepository extends Repository
 {
@@ -39,7 +39,7 @@ class JobInstancesRepository extends Repository
                 break;
 
             case 'mysql':
-                
+
                 if (isset($data['allowed_errors']) && $data['allowed_errors'] === '') {
                     $data['allowed_errors'] = 0;
                 }
@@ -55,6 +55,7 @@ class JobInstancesRepository extends Repository
     public function update(array $data, $id)
     {
         $data = $this->normalizeData($data);
+
         return parent::update($data, $id);
     }
 
@@ -64,6 +65,7 @@ class JobInstancesRepository extends Repository
     public function create(array $data)
     {
         $data = $this->normalizeData($data);
+
         return parent::create($data);
     }
 }

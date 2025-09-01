@@ -49,8 +49,8 @@ class CategoryDataGrid extends DataGrid
     public function prepareQueryBuilder()
     {
         $tablePrefix = DB::getTablePrefix();
-        $localeCode  = core()->getRequestedLocaleCode();
-        $driver      = DB::getDriverName();
+        $localeCode = core()->getRequestedLocaleCode();
+        $driver = DB::getDriverName();
 
         $subQuery = $this->getSubQuery($localeCode, $tablePrefix, $driver);
 
@@ -76,7 +76,7 @@ class CategoryDataGrid extends DataGrid
             ->select(
                 'cat.id as category_id',
                 'cat.code as code',
-                DB::raw($categoryNameExpr . ' as category_name'),
+                DB::raw($categoryNameExpr.' as category_name'),
                 DB::raw('category_display_names.name as display_name')
             )
             ->leftJoin(DB::raw("({$subQuery}) as category_display_names"), function ($leftJoin) {
@@ -180,6 +180,7 @@ class CategoryDataGrid extends DataGrid
     {
         if (! config('elasticsearch.enabled')) {
             parent::processRequest();
+
             return;
         }
 
@@ -237,6 +238,7 @@ class CategoryDataGrid extends DataGrid
             if (str_contains($e->getMessage(), 'index_not_found_exception')) {
                 Log::error('Elasticsearch index not found. Please create an index first.');
                 parent::processRequest();
+
                 return;
             } else {
                 throw $e;
@@ -252,7 +254,7 @@ class CategoryDataGrid extends DataGrid
         $filters = [];
 
         $localeCode = core()->getRequestedLocaleCode();
-        $driver     = DB::getDriverName();
+        $driver = DB::getDriverName();
 
         foreach ($params as $attribute => $value) {
             if (in_array($attribute, ['channel', 'locale'])) {
@@ -269,6 +271,7 @@ class CategoryDataGrid extends DataGrid
                         if ($val instanceof \Illuminate\Database\Query\Expression) {
                             return (string) $val->getValue(DB::connection()->getQueryGrammar());
                         }
+
                         return $val;
                     }, (array) $value);
                     break;
@@ -305,6 +308,7 @@ class CategoryDataGrid extends DataGrid
                     if ($val instanceof \Illuminate\Database\Query\Expression) {
                         return (string) $val->getValue(DB::connection()->getQueryGrammar());
                     }
+
                     return $val;
                 }, (array) $values);
                 break;

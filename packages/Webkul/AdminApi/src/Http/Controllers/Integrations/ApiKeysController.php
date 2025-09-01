@@ -192,20 +192,20 @@ class ApiKeysController extends Controller
 
         switch ($driver) {
             case 'pgsql':
-                $clientId = !empty($client->getAttributes()) ? $client->getAttributes()['id']: null;
+                $clientId = ! empty($client->getAttributes()) ? $client->getAttributes()['id'] : null;
                 break;
             case 'mysql':
-                $clientId =  $client->getKey();
+                $clientId = $client->getKey();
         }
 
         $apiKey = $this->apiKeyRepository->update([
-            'oauth_client_id' =>$clientId,
+            'oauth_client_id' => $clientId,
         ], $id);
 
         return new JsonResponse([
             'client_id'       => $clientId,
             'secret_key'      => $client->plainSecret,
-            'oauth_client_id' => $clientId ,
+            'oauth_client_id' => $clientId,
         ]);
     }
 

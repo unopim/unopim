@@ -44,7 +44,7 @@ class AttributeFamilyRepository extends Repository
 
         switch ($driver) {
             case 'pgsql':
-                $sequence = $this->model->getTable() . '_id_seq';
+                $sequence = $this->model->getTable().'_id_seq';
                 DB::statement("SELECT setval('{$sequence}', (SELECT COALESCE(MAX(id), 0) + 1 FROM {$this->model->getTable()}), false)");
                 break;
 
@@ -62,7 +62,7 @@ class AttributeFamilyRepository extends Repository
 
             if ($driver === 'pgsql') {
                 $mappingTable = $this->attributeFamilyGroupMappingRepository->getModel()->getTable();
-                $mappingSeq = $mappingTable . '_id_seq';
+                $mappingSeq = $mappingTable.'_id_seq';
                 DB::statement("SELECT setval('{$mappingSeq}', (SELECT COALESCE(MAX(id), 0) + 1 FROM {$mappingTable}), false)");
             }
 

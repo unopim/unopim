@@ -25,7 +25,7 @@ class AttributeDataGrid extends DataGrid
     public function prepareQueryBuilder()
     {
         $tablePrefix = DB::getTablePrefix();
-        $driver      = DB::getDriverName();
+        $driver = DB::getDriverName();
 
         $queryBuilder = DB::table('attributes')
             ->leftJoin('attribute_translations as attribute_name', function ($join) {

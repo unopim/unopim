@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -30,7 +30,7 @@ return new class extends Migration
 
             case 'pgsql':
                 Schema::create('channel_translations', function (Blueprint $table) {
-                    $table->bigIncrements('id'); 
+                    $table->bigIncrements('id');
                     $table->integer('channel_id');
                     $table->string('locale')->index();
                     $table->string('name');

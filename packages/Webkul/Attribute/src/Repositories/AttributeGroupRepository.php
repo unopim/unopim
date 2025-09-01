@@ -30,7 +30,6 @@ class AttributeGroupRepository extends Repository
     /**
      * Create a new Attribute Group with translations.
      *
-     * @param  array  $data
      * @return \Webkul\Attribute\Contracts\AttributeGroup
      */
     public function create(array $data)
@@ -58,5 +57,4 @@ class AttributeGroupRepository extends Repository
 
         return $attributeGroup;
     }
-
 }

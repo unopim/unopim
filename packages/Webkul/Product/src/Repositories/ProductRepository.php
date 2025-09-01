@@ -42,7 +42,7 @@ class ProductRepository extends Repository
 
         switch ($driver) {
             case 'pgsql':
-                $sequence = $this->model->getTable() . '_id_seq';
+                $sequence = $this->model->getTable().'_id_seq';
                 DB::statement("SELECT setval('{$sequence}', (SELECT COALESCE(MAX(id), 0) + 1 FROM {$this->model->getTable()}), false)");
                 break;
 
@@ -51,7 +51,7 @@ class ProductRepository extends Repository
                 break;
         }
 
-        $typeInstance = app(config('product_types.' . $data['type'] . '.class'));
+        $typeInstance = app(config('product_types.'.$data['type'].'.class'));
 
         $product = $typeInstance->create($data);
 

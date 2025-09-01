@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -17,7 +17,7 @@ return new class extends Migration
         switch ($driver) {
             case 'mysql':
                 Schema::create('core_config', function (Blueprint $table) {
-                    $table->increments('id'); 
+                    $table->increments('id');
                     $table->string('code');
                     $table->text('value');
                     $table->string('channel_code')->nullable();

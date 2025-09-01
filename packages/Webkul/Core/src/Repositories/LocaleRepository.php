@@ -31,7 +31,7 @@ class LocaleRepository extends Repository
 
         switch ($driver) {
             case 'pgsql':
-                $sequence = $this->model->getTable() . '_id_seq';
+                $sequence = $this->model->getTable().'_id_seq';
                 DB::statement("
                     SELECT setval(
                         '{$sequence}',
@@ -52,7 +52,6 @@ class LocaleRepository extends Repository
 
         return $locale;
     }
-
 
     /**
      * Update.

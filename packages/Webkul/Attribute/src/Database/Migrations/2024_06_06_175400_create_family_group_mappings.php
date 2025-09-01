@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('attribute_family_group_mappings', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->integer('attribute_family_id')->unsigned();
             $table->integer('attribute_group_id')->unsigned();
             $table->integer('position')->nullable();

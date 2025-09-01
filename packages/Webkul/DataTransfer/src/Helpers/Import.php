@@ -453,7 +453,6 @@ class Import
         }
     }
 
-
     /**
      * Returns import stats
      */

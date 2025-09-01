@@ -115,9 +115,8 @@ class ProductIndexer extends Command
                                 $product->values = $this->productIndexingNormalizer->normalize($product->values);
                             }
 
-                            $product =  $product->toArray();
+                            $product = $product->toArray();
 
-                          
                             $productsToUpdate['body'][] = [
                                 'index' => [
                                     '_index' => $productIndex,
@@ -125,7 +124,7 @@ class ProductIndexer extends Command
                                 ],
                             ];
 
-                            $productsToUpdate['body'][] =  $product;
+                            $productsToUpdate['body'][] = $product;
                         }
 
                         $progressBar->advance();

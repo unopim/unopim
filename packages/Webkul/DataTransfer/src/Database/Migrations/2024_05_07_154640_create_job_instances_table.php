@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -15,28 +15,24 @@ return new class extends Migration
         $driver = DB::getDriverName();
 
         Schema::create('job_instances', function (Blueprint $table) use ($driver) {
-            $table->increments('id');
+            $table->id();
             $table->string('code')->unique();
             $table->string('entity_type');
 
             if ($driver === 'mysql') {
                 $table->enum('type', ['import', 'export', 'system']);
             } else {
-
                 $table->string('type');
             }
 
-            $table->string('action');
+           $table->string('action')->default('')->nullable(false);
 
             $table->string('validation_strategy')->default('skip');
-
             $table->integer('allowed_errors')->default(0);
-
             $table->char('field_separator', 1)->default(',');
-
             $table->string('file_path')->nullable();
-
             $table->string('images_directory_path')->nullable();
+
             $table->timestamps();
         });
 

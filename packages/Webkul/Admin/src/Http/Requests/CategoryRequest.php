@@ -16,8 +16,8 @@ class CategoryRequest extends FormRequest
     {
         $uniqueRule = 'unique:categories,code';
 
-        if (!empty($this->id)) {
-            $uniqueRule .= ',' . $this->id;
+        if (! empty($this->id)) {
+            $uniqueRule .= ','.$this->id;
         }
 
         if ($this->id) {

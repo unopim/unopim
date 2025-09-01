@@ -43,7 +43,7 @@ class CategoryFieldRepository extends Repository
 
         switch ($driver) {
             case 'pgsql':
-                $sequence = $this->model->getTable() . '_id_seq';
+                $sequence = $this->model->getTable().'_id_seq';
                 DB::statement("SELECT setval('{$sequence}', (SELECT COALESCE(MAX(id), 0) + 1 FROM {$this->model->getTable()}), false)");
                 break;
 
@@ -63,7 +63,7 @@ class CategoryFieldRepository extends Repository
 
         if ($driver === 'pgsql') {
             $optionTable = $this->categoryFieldOptionRepository->getModel()->getTable();
-            $optionSeq = $optionTable . '_id_seq';
+            $optionSeq = $optionTable.'_id_seq';
             DB::statement("SELECT setval('{$optionSeq}', (SELECT COALESCE(MAX(id), 0) + 1 FROM {$optionTable}), false)");
         }
 

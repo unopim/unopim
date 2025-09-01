@@ -37,8 +37,8 @@ class ApiKeyRepository extends Repository
 
         if ($driver === 'pgsql') {
             if (isset($data['oauth_client_id'])) {
-            
-                if (!is_string($data['oauth_client_id']) || !preg_match(
+
+                if (! is_string($data['oauth_client_id']) || ! preg_match(
                     '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i',
                     $data['oauth_client_id']
                 )) {
@@ -47,7 +47,7 @@ class ApiKeyRepository extends Repository
                 }
             }
 
-            if (!array_key_exists('revoked', $data) || $data['revoked'] === null) {
+            if (! array_key_exists('revoked', $data) || $data['revoked'] === null) {
                 $data['revoked'] = false;
             }
         }
@@ -56,6 +56,4 @@ class ApiKeyRepository extends Repository
 
         return $model->update($data);
     }
-
-    
 }

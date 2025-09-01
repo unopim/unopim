@@ -4,11 +4,11 @@ namespace Webkul\Admin\Http\Requests;
 
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Core\Rules\AlphaNumericSpace;
 use Webkul\Core\Rules\FileMimeExtensionMatch;
-use Illuminate\Validation\Rule;
 
 class UserForm extends FormRequest
 {
@@ -36,7 +36,6 @@ class UserForm extends FormRequest
      *
      * @return array
      */
-
     public function rules()
     {
         $id = $this->id ?: null;

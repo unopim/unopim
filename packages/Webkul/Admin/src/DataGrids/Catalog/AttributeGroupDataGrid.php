@@ -15,7 +15,7 @@ class AttributeGroupDataGrid extends DataGrid
     public function prepareQueryBuilder()
     {
         $tablePrefix = DB::getTablePrefix();
-        $driver      = DB::getDriverName();
+        $driver = DB::getDriverName();
 
         $queryBuilder = DB::table('attribute_groups')
             ->leftJoin('attribute_group_translations as attribute_group_name', function ($join) {

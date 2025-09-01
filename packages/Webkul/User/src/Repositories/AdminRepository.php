@@ -16,20 +16,20 @@ class AdminRepository extends Repository
         return 'Webkul\User\Contracts\Admin';
     }
 
-       public function create(array $data)
+    public function create(array $data)
     {
         Event::dispatch('user.admin.create.before');
-      
+
         if (empty($data['id'])) {
-            unset($data['id']); 
+            unset($data['id']);
         } else {
-            $data['id'] = (int) $data['id']; 
+            $data['id'] = (int) $data['id'];
         }
 
         $driver = DB::getDriverName();
-        
+
         if ($driver === 'pgsql') {
-            $sequence = $this->model->getTable() . '_id_seq';
+            $sequence = $this->model->getTable().'_id_seq';
             DB::statement("
                 SELECT setval(
                     '{$sequence}',
@@ -45,7 +45,7 @@ class AdminRepository extends Repository
 
         return $admin;
     }
-    
+
     /**
      * Count admins with all access.
      */

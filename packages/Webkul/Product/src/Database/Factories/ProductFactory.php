@@ -32,6 +32,7 @@ class ProductFactory extends Factory
     {
         return [
             'sku'                 => $this->faker->uuid,
+            'type'                => 'simple',
             'status'              => 1,
             'attribute_family_id' => AttributeFamily::find(1)?->id ?? AttributeFamily::factory()->withMinimalAttributesForProductTypes()->create()->id,
         ];

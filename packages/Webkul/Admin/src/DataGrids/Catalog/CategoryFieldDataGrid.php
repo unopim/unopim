@@ -35,7 +35,7 @@ class CategoryFieldDataGrid extends DataGrid
     public function prepareQueryBuilder()
     {
         $tablePrefix = DB::getTablePrefix();
-        $driver      = DB::getDriverName();
+        $driver = DB::getDriverName();
 
         $queryBuilder = DB::table('category_fields')
             ->leftJoin('category_field_translations as requested_category_field_translation', function ($leftJoin) {
@@ -81,7 +81,6 @@ class CategoryFieldDataGrid extends DataGrid
 
         return $queryBuilder;
     }
-
 
     /**
      * Add columns.

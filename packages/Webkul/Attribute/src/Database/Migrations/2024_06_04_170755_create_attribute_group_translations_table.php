@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('attribute_group_translations', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->integer('attribute_group_id')->unsigned();
             $table->string('locale');
             $table->text('name')->nullable();

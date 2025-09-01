@@ -49,7 +49,7 @@ class AttributeRepository extends Repository
 
         switch ($driver) {
             case 'pgsql':
-                $sequence = $this->model->getTable() . '_id_seq';
+                $sequence = $this->model->getTable().'_id_seq';
                 DB::statement("SELECT setval('{$sequence}', (SELECT COALESCE(MAX(id), 0) + 1 FROM {$this->model->getTable()}), false)");
                 break;
 
@@ -60,7 +60,6 @@ class AttributeRepository extends Repository
 
         $attribute = $this->model->create($validatedData);
 
-        
         if (in_array($attribute->type, ['select', 'multiselect', 'checkbox']) && $options) {
             foreach ($options as $optionInputs) {
                 $this->attributeOptionRepository->create(array_merge([

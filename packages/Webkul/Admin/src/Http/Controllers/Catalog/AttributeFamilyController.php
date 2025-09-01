@@ -57,24 +57,24 @@ class AttributeFamilyController extends Controller
      *
      * @return array
      */
-     private function normalize($attributeFamily = null)
+    private function normalize($attributeFamily = null)
     {
         $driver = DB::getDriverName();
 
         $familyGroupMappings = $attributeFamily?->attributeFamilyGroupMappings()
-            ->with(['attributeGroups' => function ($query) use ($driver) {
+            ->with(['attributeGroups' => function ($query) {
                 $query->select(
                     'attribute_groups.id as attribute_group_id',
                     'attribute_groups.code',
                     DB::raw('COALESCE(attribute_group_translations.name, attribute_groups.code) as attribute_group_name')
                 )
-                ->leftJoin(
-                    'attribute_group_translations',
-                    'attribute_group_translations.attribute_group_id',
-                    '=',
-                    'attribute_groups.id'
-                )
-                ->groupBy('attribute_groups.id', 'attribute_groups.code', 'attribute_group_translations.name');
+                    ->leftJoin(
+                        'attribute_group_translations',
+                        'attribute_group_translations.attribute_group_id',
+                        '=',
+                        'attribute_groups.id'
+                    )
+                    ->groupBy('attribute_groups.id', 'attribute_groups.code', 'attribute_group_translations.name');
             }])
             ->get()
             ->map(function ($familyGroupMapping) {
@@ -91,7 +91,7 @@ class AttributeFamilyController extends Controller
                                 'group_id' => $attributeGroup->attribute_group_id,
                                 'name'     => ! empty($attributeArray['name'])
                                     ? $attributeArray['name']
-                                    : '[' . $attributeArray['code'] . ']',
+                                    : '['.$attributeArray['code'].']',
                                 'type'     => $attributeArray['type'],
                             ];
                         })->toArray()
@@ -103,7 +103,7 @@ class AttributeFamilyController extends Controller
                     'id'               => $attributeGroup['attribute_group_id'] ?? null,
                     'code'             => $attributeGroup['code'] ?? null,
                     'group_mapping_id' => $familyGroupMapping->id,
-                    'name'             => $attributeGroup['attribute_group_name'] ?? ('[' . ($attributeGroup['code'] ?? '') . ']'),
+                    'name'             => $attributeGroup['attribute_group_name'] ?? ('['.($attributeGroup['code'] ?? '').']'),
                     'customAttributes' => $customAttributes,
                 ];
             })->toArray();

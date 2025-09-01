@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('attribute_translations', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->integer('attribute_id')->unsigned();
             $table->string('locale');
             $table->text('name')->nullable();
