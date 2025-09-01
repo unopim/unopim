@@ -466,6 +466,10 @@ return [
                     'sort-update-failure' => '排序更新失敗',
                     'sort-update-success' => '排序更新成功',
                     'update-success'      => '屬性選項更新成功',
+                    'color'               => '顏色樣本',
+                    'dropdown'            => '下拉選單',
+                    'image'               => '圖片樣本',
+                    'text'                => '文本樣本',
                 ],
             ],
 

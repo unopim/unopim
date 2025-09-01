@@ -43,7 +43,11 @@ class AttributeOptionController extends Controller
 
         $requestData['code'] = $request->get('code');
 
-        $requestData['swatch_value'] = $request->get('swatch_value');
+        if ($request->hasFile('swatch_value')) {
+            $requestData['swatch_value'] = $request->file('swatch_value');
+        } else {
+            $requestData['swatch_value'] = $request->get('swatch_value');
+        }
 
         Event::dispatch('catalog.attribute.option.create.before', $requestData);
 
@@ -87,11 +91,12 @@ class AttributeOptionController extends Controller
     {
         $this->validate(request(), ['locales.*.label' => 'nullable|string']);
 
-        $requestData = request()->only('locales');
-
+        $requestData = request()->only('locales', 'swatch_value');
         Event::dispatch('catalog.attribute.option.update.before', $id);
 
-        $option = $this->attributeOptionRepository->update($requestData['locales'], $id);
+        $option = $this->attributeOptionRepository->update(array_merge($requestData['locales'], [
+            'swatch_value' => $requestData['swatch_value'] ?? '',
+        ]), $id);
 
         Event::dispatch('catalog.attribute.option.update.after', $option);
 

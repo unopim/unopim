@@ -466,6 +466,10 @@ return [
                     'sort-update-failure'  => 'Järjestyksen päivitys epäonnistui',
                     'sort-update-success'  => 'Järjestys päivitetty onnistuneesti',
                     'update-success'       => 'Attribuuttivaihtoehto päivitettiin onnistuneesti',
+                    'color'                => 'Väri',
+                    'dropdown'             => 'Pudotusvalikko',
+                    'image'                => 'Kuvanäyte',
+                    'text'                 => 'Tekstinäyte',
                 ],
             ],
 

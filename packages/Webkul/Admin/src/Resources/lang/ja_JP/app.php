@@ -464,6 +464,10 @@ return [
                     'sort-update-failure' => '並び順の更新に失敗しました',
                     'sort-update-success' => '並び順が正常に更新されました',
                     'update-success'      => '属性オプションが正常に更新されました',
+                    'color'               => 'カラー スウォッチ',
+                    'dropdown'            => 'ドロップダウン',
+                    'image'               => '画像スウォッチ',
+                    'text'                => 'テキスト スウォッチ',
                 ],
             ],
 

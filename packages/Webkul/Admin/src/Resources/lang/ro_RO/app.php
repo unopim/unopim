@@ -466,6 +466,10 @@ return [
                     'sort-update-failure' => 'Actualizarea ordinii de sortare a eșuat',
                     'sort-update-success' => 'Ordinea de sortare a fost actualizată cu succes',
                     'update-success'      => 'Opțiunea atributului a fost actualizată cu succes',
+                    'color'               => 'Eșantion de culoare',
+                    'dropdown'            => 'Meniu derulant',
+                    'image'               => 'Eșantion imagine',
+                    'text'                => 'Eșantion text',
                 ],
             ],
 

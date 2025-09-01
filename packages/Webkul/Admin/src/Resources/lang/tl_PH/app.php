@@ -466,6 +466,10 @@ return [
                     'sort-update-failure' => 'Nabigong i-update ang pagkakasunod-sunod',
                     'sort-update-success' => 'Matagumpay na na-update ang pagkakasunod-sunod',
                     'update-success'      => 'Matagumpay na na-update ang Opsyon ng Katangian',
+                    'color'               => 'Color Swatch',
+                    'dropdown'            => 'Dropdown',
+                    'image'               => 'Image Swatch',
+                    'text'                => 'Text Swatch',
                 ],
             ],
 

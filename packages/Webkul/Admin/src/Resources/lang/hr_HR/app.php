@@ -464,6 +464,10 @@ return [
                     'sort-update-failure' => 'Neuspjelo ažuriranje redoslijeda sortiranja',
                     'sort-update-success' => 'Redoslijed sortiranja uspješno ažuriran',
                     'update-success'      => 'Opcija atributa uspješno ažurirana',
+                    'color'               => 'Boja uzorka',
+                    'dropdown'            => 'Padajući izbornik',
+                    'image'               => 'Slika uzorka',
+                    'text'                => 'Tekstualni uzorak',
                 ],
             ],
 

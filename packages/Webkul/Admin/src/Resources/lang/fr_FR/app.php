@@ -465,6 +465,10 @@ return [
                     'sort-update-failure'  => 'Échec de la mise à jour du tri',
                     'sort-update-success'  => 'Tri mis à jour avec succès',
                     'update-success'       => 'Option de champ de catégorie mise à jour avec succès',
+                    'color'                => 'Couleur',
+                    'dropdown'             => 'Dérouler',
+                    'image'                => 'Échantillon d\'image',
+                    'text'                 => 'Échantillon de texte',
                 ],
             ],
 

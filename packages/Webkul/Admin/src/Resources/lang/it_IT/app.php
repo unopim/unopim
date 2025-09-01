@@ -465,6 +465,10 @@ return [
                     'sort-update-failure' => 'Aggiornamento dell\'ordinamento non riuscito',
                     'sort-update-success' => 'Ordinamento aggiornato con successo',
                     'update-success'      => 'Opzione attributo aggiornata con successo',
+                    'color'               => 'Colore campione',
+                    'dropdown'            => 'Menu a discesa',
+                    'image'               => 'Immagine campione',
+                    'text'                => 'Testo campione',
                 ],
             ],
 

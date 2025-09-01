@@ -466,6 +466,10 @@ return [
                     'sort-update-failure'   => 'Det gick inte att uppdatera sorteringsordningen',
                     'sort-update-success'   => 'Sorteringsordningen uppdaterades',
                     'update-success'        => 'Attributalternativ uppdaterades',
+                    'color'                 => 'Färgväljare',
+                    'dropdown'              => 'Rullgardinsmeny',
+                    'image'                 => 'Bildprov',
+                    'text'                  => 'Textprov',
                 ],
             ],
 

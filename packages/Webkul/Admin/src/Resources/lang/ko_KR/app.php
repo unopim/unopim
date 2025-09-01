@@ -466,6 +466,10 @@ return [
                     'sort-update-failure' => '정렬 순서를 업데이트하지 못했습니다.',
                     'sort-update-success' => '정렬 순서가 성공적으로 업데이트되었습니다.',
                     'update-success'      => '속성 옵션이 성공적으로 업데이트되었습니다.',
+                    'color'               => '샘플 색상',
+                    'dropdown'            => '드롭다운',
+                    'image'               => '샘플 이미지',
+                    'text'                => '텍스트 샘플',
                 ],
             ],
 

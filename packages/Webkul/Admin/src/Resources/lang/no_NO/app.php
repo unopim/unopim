@@ -466,6 +466,10 @@ return [
                     'sort-update-failure' => 'Kunne ikke oppdatere sorteringsrekkefølge',
                     'sort-update-success' => 'Sorteringsrekkefølge oppdatert',
                     'update-success'      => 'Attributtalternativ oppdatert',
+                    'color'               => 'Fargeprøve',
+                    'dropdown'            => 'Nedtrekksmeny',
+                    'image'               => 'Bildeprøve',
+                    'text'                => 'Tekstprøve',
                 ],
             ],
 

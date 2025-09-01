@@ -42,10 +42,20 @@ class AttributeOptionDataGrid extends DataGrid
             ->leftJoin('attribute_option_translations as attribute_option_label', function ($join) {
                 $join->on('attribute_option_label.attribute_option_id', '=', 'attribute_options.id');
             })
+            ->leftJoin('attributes', 'attribute_options.attribute_id', '=', 'attributes.id')
             ->where('attribute_options.attribute_id', $this->attributeId)
             ->select(
                 'attribute_options.id',
                 'attribute_options.code',
+                'attribute_options.swatch_value',
+                DB::raw("CASE 
+                    WHEN attributes.swatch_type = 'image'
+                    AND attribute_options.swatch_value IS NOT NULL 
+                    AND attribute_options.swatch_value <> '' 
+                    AND attribute_options.swatch_value NOT LIKE '#%'
+                    THEN CONCAT('".url('storage')."/', attribute_options.swatch_value)
+                    ELSE NULL
+                END AS swatch_value_url")
             )
             ->groupBy('attribute_options.id')
             ->orderBy('attribute_options.sort_order', 'asc');

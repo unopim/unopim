@@ -467,6 +467,10 @@ return [
                     'sort-update-failure' => 'Sorteren bijwerken mislukt',
                     'sort-update-success' => 'Sorteervolgorde succesvol bijgewerkt',
                     'update-success'      => 'Attribuutoptie met succes bijgewerkt',
+                    'color'               => 'Kleurstaal',
+                    'dropdown'            => 'Laten vallen',
+                    'image'               => 'Afbeeldingsstaal',
+                    'text'                => 'Tekststaal',
                 ],
             ],
 
