@@ -466,6 +466,10 @@ return [
                     'sort-update-failure' => 'No s\'ha pogut actualitzar l\'ordre de classificació',
                     'sort-update-success' => 'Ordre de classificació actualitzat amb èxit',
                     'update-success'      => 'Opció d\'atribut actualitzada amb èxit',
+                    'color'               => 'Mostra de color',
+                    'dropdown'            => 'Desplegable',
+                    'image'               => 'Mostra d\'imatge',
+                    'text'                => 'Mostra de text',
                 ],
             ],
 

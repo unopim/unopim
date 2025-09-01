@@ -466,6 +466,10 @@ return [
                     'sort-update-failure' => 'Sıralama Güncellenemedi',
                     'sort-update-success' => 'Sıralama Başarıyla Güncellendi',
                     'update-success'      => 'Öznitelik Seçeneği Başarıyla Güncellendi',
+                    'color'               => 'Renk Örneği',
+                    'dropdown'            => 'Açılır Menü',
+                    'image'               => 'Resim Örneği',
+                    'text'                => 'Metin Örneği',
                 ],
             ],
 

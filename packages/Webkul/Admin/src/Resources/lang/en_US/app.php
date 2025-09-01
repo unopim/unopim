@@ -468,6 +468,10 @@ return [
                     'sort-update-success' => 'Sort Order Updated Successfully',
                     'sort-update-failure' => 'Failed to Update Sort Order',
                     'delete-success'      => 'Attribute Option Deleted Successfully',
+                    'color'               => 'Color Swatch',
+                    'dropdown'            => 'Dropdown',
+                    'image'               => 'Image Swatch',
+                    'text'                => 'Text Swatch',
                 ],
             ],
 

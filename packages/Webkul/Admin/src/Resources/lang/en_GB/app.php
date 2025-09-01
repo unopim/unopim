@@ -465,6 +465,10 @@ return [
                     'sort-update-failure' => 'Failed to Update Sort Order',
                     'sort-update-success' => 'Sort Order Updated Successfully',
                     'update-success'      => 'Attribute Option Updated Successfully',
+                    'color'               => 'Colour Swatch',
+                    'dropdown'            => 'Dropdown',
+                    'image'               => 'Image Swatch',
+                    'text'                => 'Text Swatch',
                 ],
             ],
 

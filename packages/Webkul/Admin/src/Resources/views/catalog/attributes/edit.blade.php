@@ -238,7 +238,7 @@
                                         foreach($swatchTypes as $type) {
                                             $options[] = [
                                                 'id'    => $type,
-                                                'label' => trans('' . $type),
+                                                'label' => trans('admin::app.catalog.attributes.edit.option.' . $type),
                                             ];
                                         }
 
@@ -259,24 +259,7 @@
                                     <x-admin::form.control-group.error control-name="admin" />
                                 </x-admin::form.control-group>
 
-                                <!-- Checkbox -->
                                 <div class="w-full">
-                                    <div class="!mb-0 flex w-max cursor-pointer select-none items-center gap-2.5">
-                                        <x-admin::form.control-group.control
-                                            type="checkbox"
-                                            name="empty_option"
-                                            id="empty_option"
-                                            v-model="isNullOptionChecked"
-                                            @click="$refs.addOptionsRow.toggle()"
-                                            
-                                        />
-                                        <label
-                                            for="empty_option"
-                                            class="cursor-pointer text-xs font-medium text-gray-600 dark:text-gray-300"
-                                        >
-                                            Create default empty option
-                                        </label>
-                                    </div>
                                 </div>
                             </div>
 
@@ -290,11 +273,19 @@
                                         <template v-if="! isLoading">
                                             <div
                                                 class="row grid grid-rows-1 gap-2.5 items-center px-4 py-2.5 border-b bg-violet-50 dark:border-cherry-800 dark:bg-cherry-900 font-semibold"
-                                                :style="'grid-template-columns: 0.2fr repeat(' + (actions.length ? columns.length + 1 : (columns.length )) + ', 1fr)'"
+                                                :style="'grid-template-columns: 0.2fr repeat(' + (actions.length ? columns.length + (selectedSwatchType=='color' || selectedSwatchType == 'image' ? 2 : 1 ) : (columns.length )) + ', 1fr)'"
                                             >
                                             <!-- Empty div to manage layout  -->
                                             <div>
                                             </div>
+                                                <!-- Column Headers -->
+                                                 <div v-if="showSwatch && (selectedSwatchType == 'color' || selectedSwatchType == 'image')"
+                                                    class="flex items-center select-none">
+                                                    <p class="text-gray-600 dark:text-gray-300">
+                                                        @lang('admin::app.catalog.attributes.edit.swatch')
+                                                    </p>
+                                                </div>
+
                                                 <div
                                                     class="flex items-center select-none"
                                                     v-for="(column, index) in columns"
@@ -342,7 +333,7 @@
                                             <div
                                                 v-for="(record, index) in records"
                                                 class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
-                                                :style="'grid-template-columns: 0.2fr repeat(' + (actions.length ? columns.length + 1 : (columns.length )) + ', 1fr)'"
+                                                :style="'grid-template-columns: 0.2fr repeat(' + (actions.length ? columns.length + (selectedSwatchType=='color' || selectedSwatchType == 'image' ? 2 : 1 ) : (columns.length )) + ', 1fr)'"
                                                 :draggable="isSortable"
                                                 @dragstart="onDragStart(index)"
                                                 @dragover.prevent
@@ -351,6 +342,26 @@
                                             >
 
                                                 <i class="icon-drag text-2xl transition-all group-hover:text-gray-700 cursor-grab" :class="{ 'invisible': !isSortable }"></i>
+
+                                                <div v-if="showSwatch && (selectedSwatchType == 'color' || selectedSwatchType == 'image')">
+                                                    <!-- Swatch Image -->
+                                                    <div v-if="selectedSwatchType == 'image'">
+                                                        <div>
+                                                                <img
+                                                                    :src="record.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}'"
+                                                                    class="h-[50px] w-[50px] object-cover"
+                                                                >
+                                                        </div>
+                                                    </div>
+                                                    <!-- Swatch Color -->
+                                                    <div v-if="selectedSwatchType == 'color'">
+                                                        <div
+                                                            class="h-[25px] w-[25px] rounded-md border border-gray-200 dark:border-gray-800"
+                                                            :style="{ background: record.swatch_value }"
+                                                        >
+                                                        </div>
+                                                    </div>
+                                                </div>
 
                                                 <p 
                                                     v-text="record.code"
@@ -847,40 +858,39 @@
 
                 methods: {
                     storeOption(params, { resetForm, setValues }) {
-                        const updatedLocales = {};
+                        const formData = new FormData();
 
                         for (const [localeCode, label] of Object.entries(params.locales)) {
-                            updatedLocales[localeCode] = { label };
-                        }
-
-                        params.locales = updatedLocales;
-
-                        // Use FormData
-                        let formData = new FormData();
-
-                        for (const [localeCode, localeData] of Object.entries(params.locales)) {
-                            for (const [field, value] of Object.entries(localeData)) {
-                                formData.append(`locales[${localeCode}][${field}]`, value);
-                            }
+                            formData.append(`locales[${localeCode}][label]`, label !== undefined && label !== null ? label : '');
                         }
 
                         for (const key in params) {
                             if (key !== 'locales' && key !== 'swatch_value') {
-                                formData.append(key, params[key]);
+                                const value = params[key] !== undefined && params[key] !== null ? params[key] : '';
+                                formData.append(key, value);
                             }
                         }
 
-                        if (params.swatch_value instanceof File) {
-                            formData.append('swatch_value', params.swatch_value);
+                        let imageFormData = new FormData(this.$refs.editOptionsForm);
+
+                        const imageInput = this.$refs.editOptionsForm.querySelector('input[name="swatch_value[]"]');
+                        if (imageInput && imageInput.files.length > 0 && imageInput.files[0] instanceof File) {
+                            formData.append('swatch_value', imageInput.files[0]);
+                        } else {
+                            const swatchValue = params.swatch_value !== undefined && params.swatch_value !== null 
+                                ? params.swatch_value 
+                                : '';
+                            formData.append('swatch_value', swatchValue);
                         }
 
-                        const request = params.id
-                            ? this.$axios.put(this.optionUpdateRoute.replace('_ID', params.id), formData, {
-                                headers: { 'Content-Type': 'multipart/form-data' }
-                            })
-                            : this.$axios.post(this.optionCreateRoute, formData, {
-                                headers: { 'Content-Type': 'multipart/form-data' }
-                            });
+                        let request;
+
+                        if (params.id) {
+                            formData.append('_method', 'PUT');
+                            request = this.$axios.post(this.optionUpdateRoute.replace('_ID', params.id), formData);
+                        } else {
+                            request = this.$axios.post(this.optionCreateRoute, formData);
+                        }
 
                         request.then(response => {
                                 this.$emitter.emit('add-flash', {

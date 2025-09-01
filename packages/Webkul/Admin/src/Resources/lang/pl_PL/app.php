@@ -466,6 +466,10 @@ return [
                     'sort-update-failure' => 'Nie udało się zaktualizować kolejności sortowania',
                     'sort-update-success' => 'Kolejność sortowania została zaktualizowana',
                     'update-success'      => 'Opcja atrybutu została pomyślnie zaktualizowana',
+                    'color'               => 'Kolor próbki',
+                    'dropdown'            => 'Menu rozwijane',
+                    'image'               => 'Obraz próbki',
+                    'text'                => 'Tekst próbki',
                 ],
             ],
 

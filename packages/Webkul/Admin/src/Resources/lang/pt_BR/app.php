@@ -466,6 +466,10 @@ return [
                     'sort-update-failure' => 'Falha ao atualizar a ordem de classificação',
                     'sort-update-success' => 'Ordem de classificação atualizada com sucesso',
                     'update-success'      => 'Opção de atributo atualizada com sucesso',
+                    'color'               => 'Amostra de cor',
+                    'dropdown'            => 'Menu suspenso',
+                    'image'               => 'Amostra de imagem',
+                    'text'                => 'Amostra de texto',
                 ],
             ],
 

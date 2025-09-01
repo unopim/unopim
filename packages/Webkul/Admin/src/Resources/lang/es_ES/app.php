@@ -465,6 +465,10 @@ return [
                     'sort-update-failure'  => 'No se pudo actualizar el orden',
                     'sort-update-success'  => 'Orden actualizado correctamente',
                     'update-success'       => 'Opción de atributo actualizada correctamente',
+                    'color'                => 'Muestra de color',
+                    'dropdown'             => 'Desplegable',
+                    'image'                => 'Muestra de imagen',
+                    'text'                 => 'Muestra de texto',
                 ],
             ],
 

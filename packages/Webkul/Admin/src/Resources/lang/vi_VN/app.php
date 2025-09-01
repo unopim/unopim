@@ -466,6 +466,10 @@ return [
                     'sort-update-failure' => 'Cập nhật thứ tự sắp xếp thất bại',
                     'sort-update-success' => 'Cập nhật thứ tự sắp xếp thành công',
                     'update-success'      => 'Tùy chọn thuộc tính đã được cập nhật thành công',
+                    'color'               => 'Mẫu màu sắc',
+                    'dropdown'            => 'Danh sách thả xuống',
+                    'image'               => 'Mẫu hình ảnh',
+                    'text'                => 'Mẫu văn bản',
                 ],
             ],
 

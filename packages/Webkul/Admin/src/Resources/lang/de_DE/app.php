@@ -464,6 +464,10 @@ return [
                     'sort-update-failure'  => 'Sortierreihenfolge konnte nicht aktualisiert werden',
                     'sort-update-success'  => 'Sortierreihenfolge erfolgreich aktualisiert',
                     'update-success'       => 'Attributoption erfolgreich aktualisiert',
+                    'color'                => 'Farbfeld',
+                    'dropdown'             => 'Dropdown',
+                    'image'                => 'Bildfeld',
+                    'text'                 => 'Textfeld',
                 ],
             ],
 

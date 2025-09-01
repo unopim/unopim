@@ -465,6 +465,10 @@ return [
                     'sort-update-failure' => 'Gagal memperbarui urutan sortir',
                     'sort-update-success' => 'Urutan sortir berhasil diperbarui',
                     'update-success'      => 'Opsi atribut berhasil diperbarui',
+                    'color'               => 'Color Swatch',
+                    'dropdown'            => 'Dropdown',
+                    'image'               => 'Gambar gambar',
+                    'text'                => 'Swatch Teks',
                 ],
             ],
 
