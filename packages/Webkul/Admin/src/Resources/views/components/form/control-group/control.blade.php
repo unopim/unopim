@@ -1041,6 +1041,35 @@
                 v-model="selectedValue"
                 v-bind="field"
             >
+                <template #option="{ option }">
+                    <div class="flex items-center space-x-2">
+                        <!-- Image swatch -->
+                        <img v-if="option.swatch_value_url && option.attribute.swatch_type == 'image'"
+                            :src="option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}'"
+                            class="w-12 h-12 rounded border object-cover" />
+
+                        <!-- Color swatch -->
+                        <div v-if="option.swatch_value && option.attribute.swatch_type == 'color'"
+                            :style="{ backgroundColor: option.swatch_value }"
+                            class="w-6 h-6 rounded border"></div>
+
+                        <!-- Label -->
+                        <span>@{{ option[labelBy] }}</span>
+                    </div>
+                </template>
+                <template #singleLabel="{ option }">
+                    <div class="flex items-center space-x-2">
+                        <img v-if="option.swatch_value_url && option.attribute.swatch_type == 'image'"
+                            :src="option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}'"
+                            class="w-12 h-12 rounded border object-cover" />
+
+                        <div v-if="option.swatch_value && option.attribute.swatch_type == 'color'"
+                            :style="{ backgroundColor: option.swatch_value }"
+                            class="w-4 h-4 rounded border"></div>
+
+                        <span>@{{ option[labelBy] }}</span>
+                    </div>
+                </template>
             </v-multiselect>   
             <input
                 v-model="selectedOption"
