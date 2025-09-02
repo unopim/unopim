@@ -253,9 +253,10 @@
                                         @change="showSwatch=true"
                                         track-by="id"
                                         label-by="label"
+                                        :disabled="(boolean) $attribute->swatch_type"
                                     >
                                     </x-admin::form.control-group.control>
-
+                                        
                                     <x-admin::form.control-group.error control-name="admin" />
                                 </x-admin::form.control-group>
 
