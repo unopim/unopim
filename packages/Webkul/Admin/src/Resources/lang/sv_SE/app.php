@@ -458,6 +458,7 @@ return [
                 'usable-in-grid'        => 'Kan användas i rutnät',
                 'is-filterable'         => 'Är filtrerbar',
                 'ai-translate'          => 'AI Översättning',
+                'invalid-swatch-type'   => ':attribute är inte tillåten för attributtyp :type med swatch-typ :swatch_type.',
 
                 'option' => [
                     'create-success'        => 'Attributalternativ skapades',

@@ -458,6 +458,7 @@ return [
                 'usable-in-grid'        => 'Útil a la graella',
                 'is-filterable'         => 'És filtrable',
                 'ai-translate'          => 'Traducció IA',
+                'invalid-swatch-type'   => ':attribute no està permès per al tipus d\'atribut :type amb tipus de swatch :swatch_type.',
 
                 'option' => [
                     'create-success'      => 'Opció d\'atribut creada amb èxit',

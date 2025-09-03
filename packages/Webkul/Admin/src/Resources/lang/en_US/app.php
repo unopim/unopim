@@ -393,6 +393,7 @@ return [
                 'usable-in-grid'        => 'Usable in grid',
                 'is-filterable'         => 'Is Filterable',
                 'ai-translate'          => 'AI Translate',
+                'invalid-swatch-type'   => 'The :attribute is not allowed for attribute type :type with swatch type :swatch_type.',
 
                 'option' => [
                     'color'    => 'Color Swatch',

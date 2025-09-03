@@ -456,6 +456,7 @@ return [
                 'same-code-error'       => 'Kod opcije mora biti jedinstven.',
                 'usable-in-grid'        => 'Upotrebljivo u mreži',
                 'is-filterable'         => 'Je filtrabilno',
+                'invalid-swatch-type'   => ':attribute nije dopušten za tip atributa :type sa swatch tipom :swatch_type.',
 
                 'option' => [
                     'create-success'      => 'Opcija atributa uspješno stvorena',

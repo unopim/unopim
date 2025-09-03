@@ -7,7 +7,9 @@ use Illuminate\Support\Facades\Event;
 use Webkul\Admin\DataGrids\Catalog\AttributeOptionDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\AttributeOptionForm;
+use Webkul\Attribute\Enums\SwatchTypeEnum;
 use Webkul\Attribute\Repositories\AttributeOptionRepository;
+use Webkul\Attribute\Repositories\AttributeRepository;
 
 class AttributeOptionController extends Controller
 {
@@ -18,6 +20,7 @@ class AttributeOptionController extends Controller
      */
     public function __construct(
         protected AttributeOptionRepository $attributeOptionRepository,
+        protected AttributeRepository $attributeRepository,
     ) {}
 
     /**
@@ -43,10 +46,14 @@ class AttributeOptionController extends Controller
 
         $requestData['code'] = $request->get('code');
 
-        if ($request->hasFile('swatch_value')) {
-            $requestData['swatch_value'] = $request->file('swatch_value');
-        } else {
-            $requestData['swatch_value'] = $request->get('swatch_value');
+        $attribute = $this->attributeRepository->find($attributeId);
+
+        if (in_array($attribute->swatch_type, SwatchTypeEnum::getValues())) {
+            if ($request->hasFile('swatch_value')) {
+                $requestData['swatch_value'] = $request->file('swatch_value');
+            } else {
+                $requestData['swatch_value'] = $request->get('swatch_value');
+            }
         }
 
         Event::dispatch('catalog.attribute.option.create.before', $requestData);

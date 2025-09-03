@@ -459,6 +459,7 @@ return [
                 'usable-in-grid'        => 'ग्रिड में प्रयोग करने योग्य',
                 'is-filterable'         => 'फ़िल्टर योग्य है',
                 'ai-translate'          => 'एआई अनुवाद',
+                'invalid-swatch-type'   => ':attribute :type प्रकार के attribute के लिए :swatch_type swatch type के साथ अनुमति नहीं है।',
 
                 'option' => [
                     'create-success'      => 'विशेषता विकल्प सफलतापूर्वक बनाया गया',

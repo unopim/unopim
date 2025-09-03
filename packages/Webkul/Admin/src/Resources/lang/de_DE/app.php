@@ -456,6 +456,7 @@ return [
                 'usable-in-grid'        => 'Verwendbar im Raster',
                 'is-filterable'         => 'Ist filterbar',
                 'ai-translate'          => 'KI Übersetzen',
+                'invalid-swatch-type'   => ':attribute ist für den Attributtyp :type mit Swatch-Typ :swatch_type nicht erlaubt.',
 
                 'option' => [
                     'create-success'       => 'Attributoption erfolgreich erstellt',

@@ -391,13 +391,13 @@ it('should create dropdown type swatch for select attribute', function () {
     $label = fake()->word();
 
     $data = [
-        'code' => $attribute->code,
-        'type' => $attribute->type,
+        'code'        => $attribute->code,
+        'type'        => $attribute->type,
         'swatch_type' => 'dropdown',
-        'options' => [
+        'options'     => [
             $option->id => [
-                'isNew'   => false,
-                'isDelete'=> false,
+                'isNew'       => false,
+                'isDelete'    => false,
                 $locale->code => ['label' => $label],
             ],
         ],
@@ -409,19 +409,19 @@ it('should create dropdown type swatch for select attribute', function () {
         ->assertRedirect(route('admin.catalog.attributes.edit', $attribute->id));
 
     $this->assertDatabaseHas('attributes', [
-        'id' => $attribute->id,
-        'type' => 'select',
+        'id'          => $attribute->id,
+        'type'        => 'select',
         'swatch_type' => 'dropdown',
     ]);
 
     $this->assertDatabaseHas('attribute_option_translations', [
         'attribute_option_id' => $option->id,
-        'locale' => $locale->code,
-        'label'  => $label,
+        'locale'              => $locale->code,
+        'label'               => $label,
     ]);
 
     $this->assertDatabaseMissing('attribute_options', [
-        'id' => $option->id,
+        'id'           => $option->id,
         'swatch_value' => $label,
     ]);
 });
@@ -434,10 +434,10 @@ it('should create attribute option with color swatch_value for select type', fun
     $color = fake()->hexColor();
     $label = fake()->word();
     $data = [
-        'code'    => $attribute->code,
-        'type'    => $attribute->type,
+        'code'        => $attribute->code,
+        'type'        => $attribute->type,
         'swatch_type' => 'color',
-        'options' => [
+        'options'     => [
             fake()->word() => [
                 'isNew'         => true,
                 'isDelete'      => false,
@@ -453,8 +453,8 @@ it('should create attribute option with color swatch_value for select type', fun
         ->assertRedirect(route('admin.catalog.attributes.edit', $attribute->id));
 
     $this->assertDatabaseHas('attributes', [
-        'id' => $attribute->id,
-        'type' => 'select',
+        'id'          => $attribute->id,
+        'type'        => 'select',
         'swatch_type' => 'color',
     ]);
     $this->assertDatabaseHas('attribute_options', [
@@ -467,7 +467,7 @@ it('should update text type swatch label per locale for select attribute', funct
     $this->loginAsAdmin();
 
     $attribute = Attribute::factory()->create([
-        'type' => 'select',
+        'type'        => 'select',
         'swatch_type' => 'text',
     ]);
 
@@ -476,13 +476,13 @@ it('should update text type swatch label per locale for select attribute', funct
     $label = fake()->word();
 
     $data = [
-        'code' => $attribute->code,
-        'type' => $attribute->type,
+        'code'        => $attribute->code,
+        'type'        => $attribute->type,
         'swatch_type' => 'text',
-        'options' => [
+        'options'     => [
             $option->id => [
-                'isNew'   => false,
-                'isDelete'=> false,
+                'isNew'       => false,
+                'isDelete'    => false,
                 $locale->code => ['label' => $label],
             ],
         ],
@@ -494,19 +494,19 @@ it('should update text type swatch label per locale for select attribute', funct
         ->assertRedirect(route('admin.catalog.attributes.edit', $attribute->id));
 
     $this->assertDatabaseHas('attributes', [
-        'id' => $attribute->id,
-        'type' => 'select',
+        'id'          => $attribute->id,
+        'type'        => 'select',
         'swatch_type' => 'text',
     ]);
 
     $this->assertDatabaseHas('attribute_option_translations', [
         'attribute_option_id' => $option->id,
-        'locale' => $locale->code,
-        'label'  => $label,
+        'locale'              => $locale->code,
+        'label'               => $label,
     ]);
 
     $this->assertDatabaseMissing('attribute_options', [
-        'id' => $option->id,
+        'id'           => $option->id,
         'swatch_value' => $label,
     ]);
 });
@@ -515,7 +515,7 @@ it('should create attribute option with image swatch_value for select type', fun
     $this->loginAsAdmin();
 
     $attribute = Attribute::factory()->create([
-        'type' => 'select',
+        'type'        => 'select',
         'swatch_type' => 'image',
     ]);
 
@@ -525,10 +525,10 @@ it('should create attribute option with image swatch_value for select type', fun
     $label = fake()->word();
 
     $data = [
-        'code'    => $attribute->code,
-        'type'    => $attribute->type,
+        'code'        => $attribute->code,
+        'type'        => $attribute->type,
         'swatch_type' => 'image',
-        'options' => [
+        'options'     => [
             'option_1' => [
                 'isNew'        => true,
                 'isDelete'     => false,
@@ -544,8 +544,8 @@ it('should create attribute option with image swatch_value for select type', fun
         ->assertRedirect(route('admin.catalog.attributes.edit', $attribute->id));
 
     $this->assertDatabaseHas('attributes', [
-        'id' => $attribute->id,
-        'type' => 'select',
+        'id'          => $attribute->id,
+        'type'        => 'select',
         'swatch_type' => 'image',
     ]);
 
@@ -564,10 +564,10 @@ it('should not allow swatch_value for non-select attributes', function () {
     $color = fake()->hexColor();
     $label = fake()->word();
     $data = [
-        'code'    => $attribute->code,
-        'type'    => $attribute->type,
+        'code'        => $attribute->code,
+        'type'        => $attribute->type,
         'swatch_type' => 'color',
-        'options' => [
+        'options'     => [
             'option_1' => [
                 'isNew'         => true,
                 'isDelete'      => false,

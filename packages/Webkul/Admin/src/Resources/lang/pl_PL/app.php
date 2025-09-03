@@ -458,6 +458,7 @@ return [
                 'usable-in-grid'        => 'Można używać w siatce',
                 'is-filterable'         => 'Jest filtrowalne',
                 'ai-translate'          => 'Tłumaczenie SI',
+                'invalid-swatch-type'   => ':attribute nie jest dozwolony dla typu atrybutu :type z typem swatch :swatch_type.',
 
                 'option' => [
                     'create-success'      => 'Opcja atrybutu została pomyślnie utworzona',

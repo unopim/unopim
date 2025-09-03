@@ -458,6 +458,7 @@ return [
                 'usable-in-grid'        => 'Usável na grade',
                 'is-filterable'         => 'É filtrável',
                 'ai-translate'          => 'Tradução IA',
+                'invalid-swatch-type'   => ':attribute não é permitido para o tipo de atributo :type com tipo de swatch :swatch_type.',
 
                 'option' => [
                     'create-success'      => 'Opção de atributo criada com sucesso',

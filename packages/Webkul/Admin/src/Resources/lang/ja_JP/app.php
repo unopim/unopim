@@ -456,6 +456,7 @@ return [
                 'same-code-error'       => 'オプション コードは一意である必要があります。',
                 'usable-in-grid'        => 'グリッドで使用可能',
                 'ai-translate'          => 'AI翻訳',
+                'invalid-swatch-type'   => ':attribute は属性タイプ :type でスウォッチタイプ :swatch_type に対して許可されていません。',
 
                 'option' => [
                     'create-success'      => '属性オプションが正常に作成されました',

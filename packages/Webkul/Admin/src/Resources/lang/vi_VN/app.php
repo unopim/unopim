@@ -458,6 +458,7 @@ return [
                 'usable-in-grid'        => 'Có thể sử dụng trong lưới',
                 'is-filterable'         => 'Có thể lọc',
                 'ai-translate'          => 'Dịch thuật AI',
+                'invalid-swatch-type'   => ':attribute không được phép cho loại thuộc tính :type với loại swatch :swatch_type.',
 
                 'option' => [
                     'create-success'      => 'Tùy chọn thuộc tính đã được tạo thành công',
