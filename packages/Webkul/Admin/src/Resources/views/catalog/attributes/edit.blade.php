@@ -222,6 +222,7 @@
                             
                             <!-- Swatch Changer And Empty Field Section -->
                             <div
+                                v-if="showSwatch"
                                 class="flex items-center gap-4 max-sm:flex-wrap"  
                             >
                                 <!-- Input Options -->
@@ -257,7 +258,7 @@
                                     >
                                     </x-admin::form.control-group.control>
                                         
-                                    <x-admin::form.control-group.error control-name="admin" />
+                                    <x-admin::form.control-group.error control-name="swatch_type" />
                                 </x-admin::form.control-group>
 
                                 <div class="w-full">
@@ -804,7 +805,7 @@
 
                 data: function() {
                     return {
-                        showSwatch: {{ in_array($attribute->type, ['select', 'checkbox', 'price', 'multiselect']) ? 'true' : 'false' }},
+                        showSwatch: {{ in_array($attribute->type, ['select']) ? 'true' : 'false' }},
 
                         swatchType: "{{ $attribute->swatch_type == '' ? 'dropdown' : $attribute->swatch_type }}",
 

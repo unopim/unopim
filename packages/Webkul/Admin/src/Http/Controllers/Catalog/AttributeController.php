@@ -76,6 +76,11 @@ class AttributeController extends Controller
             'swatch_type' => [
                 'nullable',
                 new SwatchTypes,
+                function ($attribute, $value, $fail) {
+                    if (request('type') !== 'select' && ! is_null($value)) {
+                        $fail(trans('validation.null', ['attribute' => $attribute]));
+                    }
+                },
             ],
         ]);
 
@@ -123,6 +128,11 @@ class AttributeController extends Controller
             'swatch_type' => [
                 'nullable',
                 new SwatchTypes,
+                function ($attribute, $value, $fail) {
+                    if (request('type') !== 'select' && ! is_null($value)) {
+                        $fail(trans('core::validation.not-supported', ['attribute' => $attribute, 'unsupported' => $value]));
+                    }
+                },
             ],
         ]);
 
