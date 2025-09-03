@@ -116,7 +116,7 @@
             },
 
             value() {
-            return this.item[this.categorytree.valueField].toString();
+                return this.item[this.categorytree.valueField].toString();
             }
         },
 
