@@ -458,6 +458,7 @@ return [
                 'usable-in-grid'        => '可在網格中使用',
                 'is-filterable'         => '可篩選',
                 'ai-translate'          => '人工智慧翻譯',
+                'invalid-swatch-type'   => ':attribute 不允許用於屬性類型 :type，Swatch 類型 :swatch_type。',
 
                 'option' => [
                     'create-success'      => '屬性選項創建成功',

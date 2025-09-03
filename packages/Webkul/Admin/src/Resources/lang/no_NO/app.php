@@ -458,6 +458,7 @@ return [
                 'usable-in-grid'        => 'Brukes i rutenett',
                 'is-filterable'         => 'Er filtrerbar',
                 'ai-translate'          => 'AI Oversettelse',
+                'invalid-swatch-type'   => ':attribute er ikke tillatt for attributttype :type med swatch-type :swatch_type.',
 
                 'option' => [
                     'create-success'      => 'Attributtalternativ opprettet',

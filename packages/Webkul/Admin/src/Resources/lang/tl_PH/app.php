@@ -458,6 +458,7 @@ return [
                 'usable-in-grid'        => 'Magagamit sa grid',
                 'is-filterable'         => 'Nafifilter',
                 'ai-translate'          => 'AI Pagsasalin',
+                'invalid-swatch-type'   => 'Ang :attribute ay hindi pinapayagan para sa attribute type :type na may swatch type :swatch_type.',
 
                 'option' => [
                     'create-success'      => 'Matagumpay na nalikha ang Opsyon ng Katangian',

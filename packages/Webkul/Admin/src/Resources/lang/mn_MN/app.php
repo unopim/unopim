@@ -459,6 +459,7 @@ return [
                 'usable-in-grid'        => 'Сүлжээнд ашиглах боломжтой',
                 'is-filterable'         => 'Шүүж болох',
                 'ai-translate'          => 'ХИ Орчуулга',
+                'invalid-swatch-type'   => ':attribute нь :type төрлийн attribute-д :swatch_type swatch type ашиглахыг зөвшөөрдөггүй.',
 
                 'option' => [
                     'create-success'      => 'Аттрибутын сонголт амжилттай бүтээгдсэн',

@@ -11,6 +11,7 @@ use Webkul\Admin\Http\Requests\MassDestroyRequest;
 use Webkul\Attribute\Enums\SwatchTypeEnum;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\NotSupportedAttributes;
+use Webkul\Attribute\Rules\SwatchTypes;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Core\Rules\Code;
 use Webkul\Product\Repositories\ProductRepository;
@@ -70,8 +71,12 @@ class AttributeController extends Controller
     public function store()
     {
         $this->validate(request(), [
-            'code' => ['required', 'not_in:type,attribute_family_id', 'unique:attributes,code', new Code, new NotSupportedAttributes],
-            'type' => 'required',
+            'code'        => ['required', 'not_in:type,attribute_family_id', 'unique:attributes,code', new Code, new NotSupportedAttributes],
+            'type'        => 'required',
+            'swatch_type' => [
+                'nullable',
+                new SwatchTypes,
+            ],
         ]);
 
         $requestData = request()->all();
@@ -113,8 +118,12 @@ class AttributeController extends Controller
     public function update(int $id)
     {
         $this->validate(request(), [
-            'code' => ['required', 'unique:attributes,code,'.$id, new Code],
-            'type' => 'required',
+            'code'        => ['required', 'unique:attributes,code,'.$id, new Code],
+            'type'        => 'required',
+            'swatch_type' => [
+                'nullable',
+                new SwatchTypes,
+            ],
         ]);
 
         $requestData = request()->except(['type', 'code', 'value_per_locale', 'value_per_channel', 'is_unique']);

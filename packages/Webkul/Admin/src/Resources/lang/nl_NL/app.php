@@ -459,6 +459,7 @@ return [
                 'usable-in-grid'        => 'Bruikbaar in het rooster',
                 'is-filterable'         => 'Is filterbaar',
                 'ai-translate'          => 'AI Vertaling',
+                'invalid-swatch-type'   => ':attribute is niet toegestaan voor attribuuttype :type met swatchtype :swatch_type.',
 
                 'option' => [
                     'create-success'      => 'Attribuutoptie met succes gemaakt',

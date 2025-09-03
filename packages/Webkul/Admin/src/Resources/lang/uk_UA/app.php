@@ -458,6 +458,7 @@ return [
                 'usable-in-grid'        => 'Доступно в сітці',
                 'is-filterable'         => 'Фільтрований',
                 'ai-translate'          => 'Переклад ШІ',
+                'invalid-swatch-type'   => ':attribute не дозволено для типу атрибуту :type зі swatch-типом :swatch_type.',
 
                 'option' => [
                     'create-success'      => 'Опцію атрибута успішно створено',

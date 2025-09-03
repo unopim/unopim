@@ -130,7 +130,7 @@ class AttributeDataSource extends ApiDataSource
                 'sort_order'       => $data['sort_order'],
                 'swatch_value'     => $data['swatch_value'],
                 'swatch_value_url' => $data['swatch_value_url'],
-                'labels'       => $this->getTranslations($data, 'label'),
+                'labels'           => $this->getTranslations($data, 'label'),
             ];
         }, $attributeOption ?? []);
     }

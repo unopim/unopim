@@ -457,6 +457,7 @@ return [
                 'usable-in-grid'        => 'Usable en la red',
                 'is-filterable'         => 'Es filtrable',
                 'ai-translate'          => 'Traducción IA',
+                'invalid-swatch-type'   => ':attribute no está permitido para el tipo de atributo :type con tipo de swatch :swatch_type.',
 
                 'option' => [
                     'create-success'       => 'Opción de atributo creada correctamente',

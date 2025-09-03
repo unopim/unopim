@@ -458,6 +458,7 @@ return [
                 'usable-in-grid'        => 'Brugbar i gitter',
                 'is-filterable'         => 'Er filtrerbar',
                 'ai-translate'          => 'AI Oversæt',
+                'invalid-swatch-type'   => ':attribute er ikke tilladt for attributtype :type med swatch-type :swatch_type.',
 
                 'option' => [
                     'create-success'      => 'Attributmulighed oprettet succesfuldt',
