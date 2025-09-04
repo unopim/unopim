@@ -805,7 +805,7 @@
 
                 data: function() {
                     return {
-                        showSwatch: {{ in_array($attribute->type, ['select']) ? 'true' : 'false' }},
+                        showSwatch: {{ in_array($attribute->type, ['select', 'multiselect']) ? 'true' : 'false' }},
 
                         swatchType: "{{ $attribute->swatch_type == '' ? 'dropdown' : $attribute->swatch_type }}",
 

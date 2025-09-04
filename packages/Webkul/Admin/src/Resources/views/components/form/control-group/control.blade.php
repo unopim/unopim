@@ -768,7 +768,7 @@
     </script>
 
 
-<script type="text/x-template" id="v-taggingselect-handler-template">
+    <script type="text/x-template" id="v-taggingselect-handler-template">
         <div>
             <v-multiselect
                 id="ajax"
@@ -833,7 +833,7 @@
                 isLoading: Boolean,
                 listRoute: {
                     type: String,
-                    default: '{{ route('admin.catalog.options.fetch-all')}}'
+                    default: "{{ route('admin.catalog.options.fetch-all')}}"
                 },
                 queryParams: Array,
             },
@@ -1054,6 +1054,19 @@
                 type="hidden"
             >
         </div>
+        
+        <div class="overflow-auto w-full">
+            <x-admin::modal ref="imagePreviewModal">
+                <x-slot:header>
+                    <p class="text-lg text-gray-800 dark:text-white font-bold"></p>
+                </x-slot>
+                <x-slot:content>
+                    <div style="max-width: 100%; height: 260px;">
+                        <img :src="fileUrl" class="w-full h-full object-contain object-top" />
+                    </div>
+                </x-slot>
+            </x-admin::modal>
+        </div>
          
     </script>
 
@@ -1087,7 +1100,7 @@
                 },
                 listRoute: {
                     type: String,
-                    default: '{{ route('admin.catalog.options.fetch-all')}}'
+                    default: "{{ route('admin.catalog.options.fetch-all')}}"
                 },
                 queryParams: Array,
             },
@@ -1126,7 +1139,12 @@
             },
 
             mounted() {
-                this.$refs['multiselect__handler__']._.refs.list.addEventListener('scroll', this.onScroll);
+                this.$nextTick(() => {
+                    const listRef = this.$refs['multiselect__handler__']?._?.refs?.list;
+                    if (listRef) {
+                        listRef.addEventListener('scroll', this.onScroll);
+                    }
+                });
 
                 if (this.selectedValue && typeof this.selectedValue != 'object') {
                     this.initializeValue();
@@ -1277,6 +1295,11 @@
                         }
                     });
                 },
+
+                previewImage(event) {
+                    this.fileUrl = this.$refs.optionImage.src;
+                    this.$refs.imagePreviewModal.toggle();
+                }
             }
         });
     </script>

@@ -298,9 +298,12 @@
                         $translatedOptionLabel = $option->translate($currentLocaleCode)?->label;
 
                         $selectedValue[] = [
-                            'id' => $option->id,
-                            'code' => $option->code,
-                            'label' => ! empty($translatedOptionLabel) ? $translatedOptionLabel : "[{$option->code}]",
+                            'id'                => $option->id,
+                            'code'              => $option->code,
+                            'swatch_value'      => $option->swatch_value,
+                            'swatch_value_url'  => $option->swatch_value_url,
+                            'attribute'         => ['swatch_type' => $field->swatch_type],
+                            'label'             => ! empty($translatedOptionLabel) ? $translatedOptionLabel : "[{$option->code}]",
                         ];
                     }
 
