@@ -12,8 +12,7 @@
             >
                 @lang('admin::app.settings.data-transfer.imports.import.title')
             </a>
-             - @lang(ucfirst(strtolower($import->entity_type))) / @lang(ucfirst(strtolower($import->code)))
-            
+             - {{ (ucfirst(strtolower($import->entity_type)))."/".(ucfirst(strtolower($import->code))) }}            
         </p>
 
         <div class="flex gap-x-2.5 items-center">
