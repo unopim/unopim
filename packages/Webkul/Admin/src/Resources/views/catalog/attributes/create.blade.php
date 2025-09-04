@@ -135,6 +135,43 @@
                                 <x-admin::form.control-group.error control-name="type" />
                             </x-admin::form.control-group>
 
+                            <x-admin::form.control-group v-if="(selectedAttributeType == 'select' || selectedAttributeType == 'multiselect')">
+                                <x-admin::form.control-group.label class="required">
+                                    @lang('admin::app.catalog.attributes.edit.input-options')
+                                </x-admin::form.control-group.label>
+
+                                @php
+                                    $options = [];
+
+                                    foreach($swatchTypes as $type) {
+                                        $options[] = [
+                                            'id'    => $type,
+                                            'label' => trans('admin::app.catalog.attributes.edit.option.' . $type),
+                                        ];
+                                    }
+
+                                    $optionsInJson = json_encode($options);
+
+                                @endphp
+
+                                <x-admin::form.control-group.control
+                                    type="select"
+                                    id="swatch_type"
+                                    class="cursor-pointer"
+                                    name="swatch_type"
+                                    rules="required"
+                                    :value="old('type')"
+                                    :label="trans('admin::app.catalog.attributes.create.swatch')"
+                                    :options="$optionsInJson"
+                                    track-by="id"
+                                    label-by="label"
+                                >
+                                    
+                                </x-admin::form.control-group.control>
+
+                                <x-admin::form.control-group.error control-name="swatch_type" />
+                            </x-admin::form.control-group>
+
                             <!-- Textarea Switcher -->
                             <x-admin::form.control-group v-show=" (selectedAttributeType == 'textarea')">
                                 <x-admin::form.control-group.label>

@@ -60,7 +60,11 @@ class AttributeController extends Controller
      */
     public function create()
     {
-        return view('admin::catalog.attributes.create', ['locales' => $this->localeRepository->getActiveLocales()]);
+        $locales = $this->localeRepository->getActiveLocales();
+
+        $swatchTypes = SwatchTypeEnum::getValues();
+
+        return view('admin::catalog.attributes.create', compact('locales', 'swatchTypes'));
     }
 
     /**
@@ -77,7 +81,7 @@ class AttributeController extends Controller
                 'nullable',
                 new SwatchTypes,
                 function ($attribute, $value, $fail) {
-                    if (request('type') !== 'select' && ! is_null($value)) {
+                    if (! in_array(request('type'), ['select', 'multiselect']) && ! is_null($value)) {
                         $fail(trans('validation.null', ['attribute' => $attribute]));
                     }
                 },
@@ -129,8 +133,8 @@ class AttributeController extends Controller
                 'nullable',
                 new SwatchTypes,
                 function ($attribute, $value, $fail) {
-                    if (request('type') !== 'select' && ! is_null($value)) {
-                        $fail(trans('core::validation.not-supported', ['attribute' => $attribute, 'unsupported' => $value]));
+                    if (! in_array(request('type'), ['select', 'multiselect']) && ! is_null($value)) {
+                        $fail(trans('core::validation.not-supported', ['attribute' => $attribute, 'unsupported' => request('type')]));
                     }
                 },
             ],

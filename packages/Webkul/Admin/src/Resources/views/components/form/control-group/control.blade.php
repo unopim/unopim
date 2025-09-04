@@ -763,7 +763,7 @@
     </script>
 
 
-<script type="text/x-template" id="v-taggingselect-handler-template">
+    <script type="text/x-template" id="v-taggingselect-handler-template">
         <div>
             <v-multiselect
                 id="ajax"
@@ -828,7 +828,7 @@
                 isLoading: Boolean,
                 listRoute: {
                     type: String,
-                    default: '{{ route('admin.catalog.options.fetch-all')}}'
+                    default: "{{ route('admin.catalog.options.fetch-all')}}"
                 },
                 queryParams: Array,
             },
@@ -1044,9 +1044,26 @@
                 <template #option="{ option }">
                     <div class="flex items-center space-x-2">
                         <!-- Image swatch -->
-                        <img v-if="option.swatch_value_url && option.attribute.swatch_type == 'image'"
+                        <div
+                            v-if="option.swatch_value_url && option.attribute.swatch_type == 'image'"
+                            class="justify-items-center border rounded p-1 relative overflow-hidden group"
+                            style="width: 86px; height: 46px;"
+                        >
+                            <img :src="option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}'"
+                             class="w-full h-full object-contain object-top rounded border" ref="optionImage" />
+
+                            <div class="flex items-center justify-center invisible w-full bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 group-hover:visible">
+                                <div class="flex justify-between">
+                                    <span
+                                        class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                        @click="previewImage"
+                                    ></span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <img v-if="option.swatch_value_url && option.attribute.swatch_type == 'image'"
                             :src="option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}'"
-                            class="w-12 h-12 rounded border object-cover" />
+                            class="w-8 h-8 rounded border object-cover" @click="previewImage"/> -->
 
                         <!-- Color swatch -->
                         <div v-if="option.swatch_value && option.attribute.swatch_type == 'color'"
@@ -1061,13 +1078,27 @@
                     <div class="flex items-center space-x-2">
                         <img v-if="option.swatch_value_url && option.attribute.swatch_type == 'image'"
                             :src="option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}'"
-                            class="w-12 h-12 rounded border object-cover" />
+                            class="w-8 h-8 rounded border object-cover" />
 
                         <div v-if="option.swatch_value && option.attribute.swatch_type == 'color'"
                             :style="{ backgroundColor: option.swatch_value }"
                             class="w-4 h-4 rounded border"></div>
 
                         <span>@{{ option[labelBy] }}</span>
+                    </div>
+                </template>
+                <template #tag="{ option, remove }"> 
+                    <div class="multiselect__tag space-x-2 items-center justify-center" style="display:inline-flex" v-if="option.swatch_value || option.swatch_value_url">
+                        <img v-if="option.swatch_value_url && option.attribute.swatch_type == 'image'"
+                            :src="option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}'"
+                            class="w-10 h-10 rounded border object-cover" />
+
+                        <div v-if="option.swatch_value && option.attribute.swatch_type == 'color'"
+                            :style="{ backgroundColor: option.swatch_value }"
+                            class="w-4 h-4 rounded border"></div>
+
+                        <span>@{{ option[labelBy] }}</span>
+                        <i tabindex="1" @click="remove(option)" class="multiselect__tag-icon"></i>
                     </div>
                 </template>
             </v-multiselect>   
@@ -1077,6 +1108,19 @@
                 :name="name"
                 type="hidden"
             >
+        </div>
+        
+        <div class="overflow-auto w-full">
+            <x-admin::modal ref="imagePreviewModal">
+                <x-slot:header>
+                    <p class="text-lg text-gray-800 dark:text-white font-bold"></p>
+                </x-slot>
+                <x-slot:content>
+                    <div style="max-width: 100%; height: 260px;">
+                        <img :src="fileUrl" class="w-full h-full object-contain object-top" />
+                    </div>
+                </x-slot>
+            </x-admin::modal>
         </div>
          
     </script>
@@ -1107,7 +1151,7 @@
                 multiple: Boolean,
                 listRoute: {
                     type: String,
-                    default: '{{ route('admin.catalog.options.fetch-all')}}'
+                    default: "{{ route('admin.catalog.options.fetch-all')}}"
                 },
                 queryParams: Array,
             },
@@ -1146,7 +1190,12 @@
             },
 
             mounted() {
-                this.$refs['multiselect__handler__']._.refs.list.addEventListener('scroll', this.onScroll);
+                this.$nextTick(() => {
+                    const listRef = this.$refs['multiselect__handler__']?._?.refs?.list;
+                    if (listRef) {
+                        listRef.addEventListener('scroll', this.onScroll);
+                    }
+                });
 
                 if (this.selectedValue && typeof this.selectedValue != 'object') {
                     this.initializeValue();
@@ -1297,6 +1346,11 @@
                         }
                     });
                 },
+
+                previewImage(event) {
+                    this.fileUrl = this.$refs.optionImage.src;
+                    this.$refs.imagePreviewModal.toggle();
+                }
             }
         });
     </script>
