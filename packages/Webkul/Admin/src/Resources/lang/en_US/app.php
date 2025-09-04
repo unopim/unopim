@@ -352,6 +352,7 @@ return [
                 'date'                  => 'Date',
                 'datetime'              => 'Datetime',
                 'decimal'               => 'Decimal',
+                'table'                 => 'Table',
                 'default-value'         => 'Default Value',
                 'email'                 => 'Email',
                 'enable-wysiwyg'        => 'Enable Wysiwyg Editor',
@@ -437,6 +438,7 @@ return [
                 'label'                 => 'Label',
                 'multiselect'           => 'Multiselect',
                 'no'                    => 'No',
+                'no-columns'            => 'No Columns Added. Please Add One.',
                 'number'                => 'Number',
                 'options'               => 'Options',
                 'position'              => 'Position',
@@ -469,20 +471,39 @@ return [
                     'sort-update-failure' => 'Failed to Update Sort Order',
                     'delete-success'      => 'Attribute Option Deleted Successfully',
                 ],
+
+                'column' => [
+                    'title'               => 'Column',
+                    'save-btn'            => 'Save Column',
+                    'create-success'      => 'Attribute Column Created Successfully',
+                    'update-success'      => 'Attribute Column Updated Successfully',
+                    'delete-success'      => 'Attribute Column Deleted Successfully',
+                ],
+
+                'table-attribute' => [
+                    'save'                => 'Save',
+                    'save-success'        => 'Save Successfully',
+                    'save-failed'         => 'Failed to Save',
+                ],
             ],
 
-            'create-success'    => 'Attribute Created Successfully',
-            'delete-failed'     => 'Attribute Deleted Failed',
-            'delete-success'    => 'Attribute Deleted Successfully',
-            'update-success'    => 'Attribute Updated Successfully',
-            'user-define-error' => 'Can not delete system Attribute',
-            'not-found'         => 'Attribute with code ":code" could not be found',
-        ],
+            'column' => [
+                'not-found'           => 'Column with code ":code" could not be found',
+                'no-options-provided' => 'No options have been provided',
+                'code-required'       => 'Attribute code and Column code are required',
+                'option'              => [
+                    'create-success'  => 'Attribute Column Option Created Successfully',
+                    'update-success'  => 'Attribute Column Option Updated Successfully',
+                ],
+            ],
 
-        'attribute-options' => [
-            'create-success'       => 'Attribute Option Created Successfully',
-            'update-success'       => 'Attribute Option Updated Successfully',
-            'usable-in-grid-error' => 'Only 4 attributes can be have usable in grid enabled.',
+            'create-success'      => 'Attribute Created Successfully',
+            'delete-failed'       => 'Attribute Deleted Failed',
+            'delete-success'      => 'Attribute Deleted Successfully',
+            'update-success'      => 'Attribute Updated Successfully',
+            'user-define-error'   => 'Can not delete system Attribute',
+            'not-found'           => 'Attribute with code ":code" could not be found',
+            'invalid-column-type' => 'Options can only be created for select or multiselect type columns.',
         ],
 
         'attribute-groups' => [
@@ -1574,19 +1595,6 @@ return [
                         'title'      => 'Image Generation',
                         'title-info' => 'This feature will enable the Magic AI for every image upload, where you want to generate images using DALL-E.<br/><br/>When Enable, go to any image upload to generate image.',
                     ],
-
-                    'translation'   => [
-                        'title'                      => 'Translation',
-                        'enabled'                    => 'Enabled',
-                        'title-info'                 => 'This feature will enable Magic AI for translating text, allowing you to convert text from one language to another seamlessly.',
-                        'global-source-channel'      => 'Source Channel',
-                        'global-source-locale'       => 'Source Locale',
-                        'translation-model'          => 'Translation Model',
-                        'replace-existing-value'     => 'Replace Existing Value',
-                        'target-channel'             => 'Target Channel',
-                        'target-locales'             => 'Target Locales',
-                        'replace-existing-value-info'=> 'Replace the existing value if it already exists.',
-                    ],
                 ],
             ],
         ],
@@ -1996,8 +2004,6 @@ return [
         'tracker'                  => 'Job Tracker',
         'imports'                  => 'Imports',
         'exports'                  => 'Exports',
-        'mass-update'              => 'Mass Update',
-        'mass-delete'              => 'Mass Delete',
     ],
 
     'errors' => [

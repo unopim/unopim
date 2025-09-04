@@ -15,6 +15,8 @@ class AttributeTypes implements ValidationRule
 
     const GALLERY_ATTRIBUTE_TYPE = 'gallery';
 
+    const TABLE_ATTRIBUTE_TYPE = 'table';
+
     const ATTRIBUTE_TYPES = [
         'text',
         'textarea',
@@ -28,6 +30,7 @@ class AttributeTypes implements ValidationRule
         'file',
         'checkbox',
         'gallery',
+        'table',
     ];
 
     /**

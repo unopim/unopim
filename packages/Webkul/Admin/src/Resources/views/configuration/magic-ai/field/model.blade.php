@@ -11,8 +11,8 @@
 <v-ai-model
     label="@lang($field['title'])"
     name="{{ $name }}"
-    :value="{{ $selectedOptions }}">
-</v-ai-model>
+    :value="{{ $selectedOptions }}"
+></v-ai-model>
 
 @pushOnce('scripts')
     <script type="text/x-template" id="v-ai-model-template">

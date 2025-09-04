@@ -170,7 +170,7 @@ class CategoryFieldDataGrid extends DataGrid
      */
     public function prepareMassActions()
     {
-        if (bouncer()->hasPermission('catalog.category_fields.mass_delete')) {
+        if (bouncer()->hasPermission('catalog.category_fields.delete')) {
             $this->addMassAction([
                 'icon'    => 'icon-delete',
                 'title'   => trans('admin::app.catalog.category_fields.index.datagrid.delete'),
@@ -180,7 +180,7 @@ class CategoryFieldDataGrid extends DataGrid
             ]);
         }
 
-        if (bouncer()->hasPermission('catalog.category_fields.mass_update')) {
+        if (bouncer()->hasPermission('catalog.category_fields.edit')) {
             $this->addMassAction([
                 'icon'    => 'icon-edit',
                 'title'   => trans('admin::app.catalog.category_fields.index.datagrid.update-status'),
