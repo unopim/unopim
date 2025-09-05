@@ -1,13 +1,19 @@
 name: Playwright Tests
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
+on: [push, pull_request]
+
+permissions:
+  contents: read
 
 jobs:
-  playwright:
-    runs-on: ubuntu-latest
+  playwright_tests:
+    name: Playwright End-to-end UI Test
+    runs-on: ${{ matrix.operating-systems }}
+
+    strategy:
+      matrix:
+        operating-systems: [ubuntu-latest]
+        php-versions: ['8.2']
 
     services:
       mysql:
@@ -16,74 +22,69 @@ jobs:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: unopim
         ports:
-          - 3306:3306
+          - 3306
         options: >-
-          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot --silent"
+          --health-cmd="mysqladmin ping"
           --health-interval=10s
           --health-timeout=5s
-          --health-retries=10
+          --health-retries=5
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      # --- Setup environments ---
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
-          extensions: mbstring, intl, pdo_mysql, bcmath
+          php-version: ${{ matrix.php-versions }}
+          extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
+          ini-values: error_reporting=E_ALL
           tools: composer:v2
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+      - name: Running Composer Install
+        run: composer install
 
-      # --- Install dependencies ---
-      - name: Install PHP dependencies
-        run: composer install --no-interaction --prefer-dist
-
-      - name: Install Node dependencies
-        run: npm install
-
-      - name: Install Playwright Chromium
-        run: npx playwright install chromium --with-deps
-
-      # --- Laravel setup ---
-      - name: Create .env
+      - name: Setting Environment
         run: |
-          cp .env.example .env || touch .env
-          echo "APP_ENV=local" >> .env
-          echo "APP_KEY=" >> .env
-          echo "APP_DEBUG=true" >> .env
-          echo "DB_CONNECTION=mysql" >> .env
-          echo "DB_HOST=127.0.0.1" >> .env
-          echo "DB_PORT=3306" >> .env
-          echo "DB_DATABASE=unopim" >> .env
-          echo "DB_USERNAME=root" >> .env
-          echo "DB_PASSWORD=root" >> .env
+          cp .env.example .env
+          sed -i "s|^\(APP_ENV=\s*\).*$|\1testing|" .env
+          sed -i "s|^\(DB_HOST=\s*\).*$|\1127.0.0.1|" .env
+          sed -i "s|^\(DB_PORT=\s*\).*$|\1${{ job.services.mysql.ports['3306'] }}|" .env
+          sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
+          sed -i "s|^\(DB_USERNAME=\s*\).*$|\1root|" .env
+          sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
+          cat .env
 
-      - name: Generate key & migrate
+      - name: Running UnoPim Installer
         run: |
-          php artisan key:generate --force
+          php artisan unopim:install --skip-env-check --skip-admin-creation
           php artisan migrate --force
+          php artisan migrate:fresh --seed
+          php artisan serve --host=0.0.0.0 --port=8000 &
 
-      # --- Start Laravel server for Playwright ---
-      - name: Start Laravel server
-        run: php artisan serve --host=127.0.0.1 --port=8000 > laravel.log 2>&1 &
-      
-      - name: Wait for server to be ready
-        run: npx wait-on http://127.0.0.1:8000
+      - name: Wait for UnoPim to start
+        run: npx wait-on http://localhost:8000
 
-      # --- Run Playwright tests ---
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Playwright dependencies
+        run: |
+          cd tests/e2e-pw
+          npm install
+          npx playwright install-deps chromium
+          npx playwright install chromium
+
       - name: Run Playwright tests
-        run: npx playwright test --config=playwright.config.ts --reporter=html --trace on
+        run: |
+          cd tests/e2e-pw
+          npx playwright test --reporter=list
 
-      # --- Upload test report ---
-      - name: Upload Playwright HTML report
+      - name: Upload Playwright report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
-          path: playwright-report
-          retention-days: 7
+          path: tests/e2e-pw/playwright-report
