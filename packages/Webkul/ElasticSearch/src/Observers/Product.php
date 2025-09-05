@@ -3,6 +3,7 @@
 namespace Webkul\ElasticSearch\Observers;
 
 use Elastic\Elasticsearch\Exception\ElasticsearchException;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\ElasticSearch\Indexing\Normalizer\ProductNormalizer;
@@ -56,7 +57,27 @@ class Product
         if (config('elasticsearch.enabled') && self::$isEnabled) {
             $productArray = $product->toArray();
 
-            $productArray['status'] = ! isset($productArray['status']) ? 1 : $productArray['status'];
+            $productArray['status'] = $productArray['status'] ?? 1;
+
+            switch (DB::getDriverName()) {
+                case 'pgsql':
+                    $productArray['status'] = $productArray['status'] == 1 || $productArray['status'] === true;
+
+                    if (isset($productArray['attribute_family']['status'])) {
+                        $productArray['attribute_family']['status'] =
+                            $productArray['attribute_family']['status'] == 1 || $productArray['attribute_family']['status'] === true;
+                    }
+                    break;
+
+                case 'mysql':
+                default:
+                    $productArray['status'] = (int) $productArray['status'];
+
+                    if (isset($productArray['attribute_family']['status'])) {
+                        $productArray['attribute_family']['status'] = (int) $productArray['attribute_family']['status'];
+                    }
+                    break;
+            }
 
             if (isset($productArray['values'])) {
                 $productArray['values'] = $this->productIndexingNormalizer->normalize($productArray['values']);
@@ -69,9 +90,10 @@ class Product
                     'body'  => $productArray,
                 ]);
             } catch (ElasticsearchException $e) {
-                Log::channel('elasticsearch')->error('Exception while creating id: '.$product->id.' in '.$this->indexPrefix.'_products index: ', [
-                    'error' => $e->getMessage(),
-                ]);
+                Log::channel('elasticsearch')->error(
+                    'Exception while creating id: '.$product->id.' in '.$this->indexPrefix.'_products index: ',
+                    ['error' => $e->getMessage()],
+                );
             }
         }
     }

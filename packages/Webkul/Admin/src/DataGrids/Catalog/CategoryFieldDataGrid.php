@@ -35,12 +35,12 @@ class CategoryFieldDataGrid extends DataGrid
     public function prepareQueryBuilder()
     {
         $tablePrefix = DB::getTablePrefix();
+        $driver = DB::getDriverName();
 
         $queryBuilder = DB::table('category_fields')
             ->leftJoin('category_field_translations as requested_category_field_translation', function ($leftJoin) {
                 $leftJoin->on('requested_category_field_translation.category_field_id', '=', 'category_fields.id')
                     ->where('requested_category_field_translation.locale', core()->getRequestedLocaleCode());
-
             })
             ->select(
                 'category_fields.id',
@@ -51,9 +51,31 @@ class CategoryFieldDataGrid extends DataGrid
                 'value_per_locale',
                 'status',
                 'position',
-                'created_at',
-                DB::raw('(CASE WHEN CHAR_LENGTH(TRIM('.$tablePrefix.'requested_category_field_translation.name)) < 1 THEN CONCAT("[", code , "]") ELSE '.$tablePrefix.'requested_category_field_translation.name END) as name'),
+                'created_at'
             );
+
+        switch ($driver) {
+            case 'pgsql':
+                $queryBuilder->addSelect(DB::raw(
+                    "(CASE 
+                        WHEN LENGTH(TRIM({$tablePrefix}requested_category_field_translation.name)) < 1 
+                        THEN '[' || code || ']' 
+                        ELSE {$tablePrefix}requested_category_field_translation.name 
+                    END) as name"
+                ));
+                break;
+
+            case 'mysql':
+            default:
+                $queryBuilder->addSelect(DB::raw(
+                    "(CASE 
+                        WHEN CHAR_LENGTH(TRIM({$tablePrefix}requested_category_field_translation.name)) < 1 
+                        THEN CONCAT('[', code , ']') 
+                        ELSE {$tablePrefix}requested_category_field_translation.name 
+                    END) as name"
+                ));
+                break;
+        }
 
         $this->addFilter('name', 'requested_category_field_translation.name');
 

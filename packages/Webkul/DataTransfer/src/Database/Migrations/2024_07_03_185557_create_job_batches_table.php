@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('job_track_batches', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->string('state')->default('pending');
             $table->json('data');
             $table->json('summary')->nullable();

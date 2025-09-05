@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('attribute_family_translations', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->integer('attribute_family_id')->unsigned();
             $table->string('locale');
             $table->text('name')->nullable();

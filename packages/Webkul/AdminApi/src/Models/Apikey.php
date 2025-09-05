@@ -49,6 +49,10 @@ class Apikey extends Model implements ApikeyContract, HistoryContract
         'revoked',
     ];
 
+    protected $attributes = [
+        'revoked' => false,
+    ];
+
     /**
      * The attributes that are castable.
      *
