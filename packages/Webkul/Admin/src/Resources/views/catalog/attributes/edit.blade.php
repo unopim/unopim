@@ -873,16 +873,19 @@
                             }
                         }
 
-                        let imageFormData = new FormData(this.$refs.editOptionsForm);
+                        if (this.selectedSwatchType === 'image') {
+                            const fileInput = this.$refs.editOptionsForm.querySelector('input[name="swatch_value[]"]');
 
-                        const imageInput = this.$refs.editOptionsForm.querySelector('input[name="swatch_value[]"]');
-                        if (imageInput && imageInput.files.length > 0 && imageInput.files[0] instanceof File) {
-                            formData.append('swatch_value', imageInput.files[0]);
-                        } else {
-                            const swatchValue = params.swatch_value !== undefined && params.swatch_value !== null 
-                                ? params.swatch_value 
-                                : '';
-                            formData.append('swatch_value', swatchValue);
+                            if (fileInput && fileInput.files.length > 0) {
+                                formData.append('swatch_value', fileInput.files[0]);
+                            } else if (!this.swatchValue.image || this.swatchValue.image.length === 0) {
+                                formData.append('swatch_value', '');
+                            } else {
+                                const relativePath = params.swatch_value;
+                                formData.append('swatch_value', relativePath);
+                            }
+                        } else if (this.selectedSwatchType === 'color') {
+                            formData.append('swatch_value', params.swatch_value ?? '');
                         }
 
                         let request;

@@ -1296,8 +1296,8 @@
                     });
                 },
 
-                previewImage(event) {
-                    this.fileUrl = this.$refs.optionImage.src;
+                previewImage(option) {
+                    this.fileUrl = option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}';
                     this.$refs.imagePreviewModal.toggle();
                 }
             }

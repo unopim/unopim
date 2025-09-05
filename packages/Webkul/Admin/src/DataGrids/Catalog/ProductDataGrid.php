@@ -938,7 +938,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 ? array_map($mapSwatch, $value)
                 : $mapSwatch($value);
 
-                $record->{$code} = "<div class='flex items-center justify-center space-x-2' >" . $swatchHtml . " <span class='ml-1'>" . e($value) . "</span></div>";
+                $record->{$code} = "<div class='flex items-center space-x-2' >" . $swatchHtml . " <span class='ml-1'>" . e($value) . "</span></div>";
             }
 
             continue;

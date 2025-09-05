@@ -74,7 +74,7 @@ class AttributeOptionDataGrid extends DataGrid
 
         $this->addFilter('id', 'attribute_options.id');
 
-        $this->addFilter('code', DB::raw("(SELECT GROUP_CONCAT(CONCAT(code, ' ', label)  SEPARATOR ' ') FROM {$tablePrefix}attribute_option_translations WHERE attribute_option_id = {$tablePrefix}attribute_options.id)"));
+        $this->addFilter('code', DB::raw("(SELECT GROUP_CONCAT(CONCAT(attribute_options.code, ' ', label)  SEPARATOR ' ') FROM {$tablePrefix}attribute_option_translations WHERE attribute_option_id = {$tablePrefix}attribute_options.id)"));
 
         return $queryBuilder;
     }
