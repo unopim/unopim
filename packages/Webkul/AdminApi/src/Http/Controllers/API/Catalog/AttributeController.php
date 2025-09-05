@@ -261,7 +261,7 @@ class AttributeController extends ApiController
                     if (! empty($value)) {
                         $attr = $this->attributeRepository->find($attributeId);
 
-                        $isValid = $attr?->type === 'select' && in_array($attr?->swatch_type, ['color', 'image']);
+                        $isValid = in_array($attr?->type, ['select', 'multiselect'], true) && in_array($attr?->swatch_type, ['color', 'image'], true);
 
                         if (! $isValid) {
                             $fail(trans('admin::app.catalog.attributes.create.invalid-swatch-type', [
