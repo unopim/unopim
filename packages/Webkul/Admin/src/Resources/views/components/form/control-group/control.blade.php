@@ -1046,8 +1046,7 @@
                         <!-- Image swatch -->
                         <div
                             v-if="option.swatch_value_url && option.attribute.swatch_type == 'image'"
-                            class="justify-items-center border rounded p-1 relative overflow-hidden group"
-                            style="width: 86px; height: 46px;"
+                            class="justify-items-center border rounded relative overflow-hidden group w-12 h-12"
                         >
                             <img :src="option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}'"
                              class="w-full h-full object-contain object-top rounded border" ref="optionImage" />
@@ -1056,14 +1055,11 @@
                                 <div class="flex justify-between">
                                     <span
                                         class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
-                                        @click="previewImage"
+                                        @click.stop.prevent="previewImage(option)"
                                     ></span>
                                 </div>
                             </div>
                         </div>
-                        <!-- <img v-if="option.swatch_value_url && option.attribute.swatch_type == 'image'"
-                            :src="option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}'"
-                            class="w-8 h-8 rounded border object-cover" @click="previewImage"/> -->
 
                         <!-- Color swatch -->
                         <div v-if="option.swatch_value && option.attribute.swatch_type == 'color'"
@@ -1076,9 +1072,22 @@
                 </template>
                 <template #singleLabel="{ option }">
                     <div class="flex items-center space-x-2">
-                        <img v-if="option.swatch_value_url && option.attribute.swatch_type == 'image'"
-                            :src="option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}'"
-                            class="w-8 h-8 rounded border object-cover" />
+                        <div
+                            v-if="option.swatch_value_url && option.attribute.swatch_type == 'image'"
+                            class="justify-items-center border rounded relative overflow-hidden group w-12 h-12"
+                        >
+                            <img :src="option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}'"
+                             class="w-full h-full object-contain object-top rounded border" ref="optionImage" />
+
+                            <div class="flex items-center justify-center invisible w-full bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 group-hover:visible">
+                                <div class="flex justify-between">
+                                    <span
+                                        class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                        @mousedown.stop.prevent="previewImage(option)"
+                                    ></span>
+                                </div>
+                            </div>
+                        </div>
 
                         <div v-if="option.swatch_value && option.attribute.swatch_type == 'color'"
                             :style="{ backgroundColor: option.swatch_value }"
@@ -1089,9 +1098,22 @@
                 </template>
                 <template #tag="{ option, remove }"> 
                     <div class="multiselect__tag space-x-2 items-center justify-center" style="display:inline-flex" v-if="option.swatch_value || option.swatch_value_url">
-                        <img v-if="option.swatch_value_url && option.attribute.swatch_type == 'image'"
-                            :src="option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}'"
-                            class="w-10 h-10 rounded border object-cover" />
+                        <div
+                            v-if="option.swatch_value_url && option.attribute.swatch_type == 'image'"
+                            class="justify-items-center border rounded relative overflow-hidden group w-12 h-12"
+                        >
+                            <img :src="option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}'"
+                             class="w-full h-full object-contain object-top rounded border" ref="optionImage" />
+
+                            <div class="flex items-center justify-center invisible w-full bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 group-hover:visible">
+                                <div class="flex justify-between">
+                                    <span
+                                        class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                        @mousedown.stop.prevent="previewImage(option)"
+                                    ></span>
+                                </div>
+                            </div>
+                        </div>
 
                         <div v-if="option.swatch_value && option.attribute.swatch_type == 'color'"
                             :style="{ backgroundColor: option.swatch_value }"
@@ -1347,8 +1369,8 @@
                     });
                 },
 
-                previewImage(event) {
-                    this.fileUrl = this.$refs.optionImage.src;
+                previewImage(option) {
+                    this.fileUrl = option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}';
                     this.$refs.imagePreviewModal.toggle();
                 }
             }
