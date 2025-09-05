@@ -1,11 +1,11 @@
 <?php
 
-namespace Webkul\Admin\DataGrids;
+namespace Webkul\Admin\DataGrids\MagicAI;
 
 use Illuminate\Support\Facades\DB;
 use Webkul\DataGrid\DataGrid;
 
-class MagicPromptGrid extends DataGrid
+class MagicSystemPromptGrid extends DataGrid
 {
     /**
      * Primary column.
@@ -21,8 +21,8 @@ class MagicPromptGrid extends DataGrid
      */
     public function prepareQueryBuilder()
     {
-        $queryBuilder = DB::table('magic_ai_prompts')
-            ->select('id', 'prompt', 'title', 'type', 'created_at', 'updated_at');
+        $queryBuilder = DB::table('magic_ai_system_prompts')
+            ->select('id', 'title', 'tone', 'max_tokens', 'temperature', 'is_enabled', 'created_at', 'updated_at');
 
         return $queryBuilder;
     }
@@ -44,8 +44,8 @@ class MagicPromptGrid extends DataGrid
         ]);
 
         $this->addColumn([
-            'index'      => 'prompt',
-            'label'      => trans('admin::app.configuration.prompt.datagrid.prompt'),
+            'index'      => 'tone',
+            'label'      => trans('Tone'),
             'type'       => 'string',
             'searchable' => true,
             'sortable'   => true,
@@ -53,27 +53,50 @@ class MagicPromptGrid extends DataGrid
         ]);
 
         $this->addColumn([
-            'index'      => 'type',
-            'label'      => trans('admin::app.configuration.prompt.datagrid.type'),
-            'type'       => 'dropdown',
-            'searchable' => false,
+            'index'      => 'max_tokens',
+            'label'      => trans('Max Tokens'),
+            'type'       => 'integer',
+            'searchable' => true,
             'sortable'   => true,
             'filterable' => true,
+        ]);
+
+        $this->addColumn([
+            'index'      => 'temperature',
+            'label'      => trans('Temperature'),
+            'type'       => 'float',
+            'searchable' => true,
+            'sortable'   => true,
+            'filterable' => true,
+        ]);
+
+        $this->addColumn([
+            'index'      => 'is_enabled',
+            'label'      => trans('admin::app.catalog.products.index.datagrid.status'),
+            'type'       => 'boolean',
+            'searchable' => false,
+            'filterable' => true,
+            'sortable'   => true,
             'options'    => [
                 'type'   => 'basic',
                 'params' => [
                     'options' => [
                         [
-                            'label' => trans('admin::app.configuration.prompt.datagrid.product'),
-                            'value' => 'product',
+                            'label' => trans('admin::app.common.enable'),
+                            'value' => 1,
                         ],
                         [
-                            'label' => trans('admin::app.configuration.prompt.datagrid.category'),
-                            'value' => 'category',
+                            'label' => trans('admin::app.common.disable'),
+                            'value' => 0,
                         ],
                     ],
                 ],
             ],
+            'closure' => function ($row) {
+                return $row->is_enabled
+                    ? "<span class='label-active'>".trans('admin::app.common.enable').'</span>'
+                    : "<span class='label-info'>".trans('admin::app.common.disable').'</span>';
+            },
         ]);
 
         $this->addColumn([
@@ -107,7 +130,7 @@ class MagicPromptGrid extends DataGrid
             'title'  => trans('admin::app.configuration.prompt.datagrid.edit'),
             'method' => 'GET',
             'url'    => function ($row) {
-                return route('admin.magic_ai.prompt.edit', $row->id);
+                return route('admin.magic_ai.system_prompt.edit', $row->id);
             },
         ]);
 
@@ -116,7 +139,7 @@ class MagicPromptGrid extends DataGrid
             'title'  => trans('admin::app.configuration.prompt.datagrid.delete'),
             'method' => 'DELETE',
             'url'    => function ($row) {
-                return route('admin.magic_ai.prompt.delete', $row->id);
+                return route('admin.magic_ai.system_prompt.delete', $row->id);
             },
         ]);
     }

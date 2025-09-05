@@ -8,5 +8,6 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
 {
     protected $models = [
         \Webkul\MagicAI\Models\MagicPrompt::class,
+        \Webkul\MagicAI\Models\MagicSystemPrompt::class,
     ];
 }

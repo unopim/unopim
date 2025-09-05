@@ -1,16 +1,18 @@
 <?php
 
-namespace Webkul\Admin\Http\Controllers;
+namespace Webkul\Admin\Http\Controllers\Magic;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
-use Webkul\Admin\DataGrids\MagicPromptGrid;
+use Webkul\Admin\DataGrids\MagicAI\MagicPromptGrid;
+use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\MagicAI\Facades\MagicAI;
 use Webkul\MagicAI\Jobs\SaveTranslatedAllAttributesJob;
 use Webkul\MagicAI\Jobs\SaveTranslatedDataJob;
 use Webkul\MagicAI\Repository\MagicPromptRepository;
+use Webkul\MagicAI\Repository\MagicSystemPromptRepository;
 use Webkul\MagicAI\Services\AIModel;
 use Webkul\MagicAI\Services\Prompt\Prompt;
 use Webkul\Product\Facades\ProductValueMapper as ProductValueMapperFacade;
@@ -23,6 +25,7 @@ class MagicAIController extends Controller
         protected AttributeRepository $attributeRepository,
         protected CategoryFieldRepository $categoryFieldRepository,
         protected MagicPromptRepository $magicPromptRepository,
+        protected MagicSystemPromptRepository $magicSystemPromptRepository,
         protected Prompt $promptService,
     ) {}
 

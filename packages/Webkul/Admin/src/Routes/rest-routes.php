@@ -3,7 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use Webkul\Admin\Http\Controllers\DashboardController;
 use Webkul\Admin\Http\Controllers\DataGridController;
-use Webkul\Admin\Http\Controllers\MagicAIController;
+use Webkul\Admin\Http\Controllers\Magic\MagicAIController;
+use Webkul\Admin\Http\Controllers\Magic\MagicSystemPromptController;
 use Webkul\Admin\Http\Controllers\ManageColumnController;
 use Webkul\Admin\Http\Controllers\TinyMCEController;
 use Webkul\Admin\Http\Controllers\User\AccountController;
@@ -78,7 +79,22 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
         Route::post('translate/all/attribute', 'translateAllAttribute')->name('admin.magic_ai.translate.all.attribute');
 
         Route::post('save/translated-attributes', 'saveAllTranslatedAttributes')->name('admin.magic_ai.store.translated.all_attribute');
+    });
 
+    /**
+     * System Prompt Routes
+     */
+    Route::controller(MagicSystemPromptController::class)->prefix('magic-system-prompt')->group(function () {
+
+        Route::get('system-prompt', 'index')->name('admin.magic_ai.system_prompt.index');
+
+        Route::post('create-system-prompt', 'store')->name('admin.magic_ai.system_prompt.store');
+
+        Route::delete('delete/{id}', 'destroy')->name('admin.magic_ai.system_prompt.delete');
+
+        Route::get('edit/{id}', 'edit')->name('admin.magic_ai.system_prompt.edit');
+
+        Route::put('edit', 'update')->name('admin.magic_ai.system_prompt.update');
     });
 
     /**
