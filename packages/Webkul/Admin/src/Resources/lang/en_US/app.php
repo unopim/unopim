@@ -1680,6 +1680,41 @@ return [
                 'delete-fail'       => 'Prompt deletion failed.',
             ],
         ],
+
+        'system-prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'Title',
+                'tone'          => 'Tone',
+                'max-tokens'    => 'Max Tokens',
+                'temperature'   => 'Temperature',
+                'status'        => 'Status',
+                'created-at'    => 'Created At',
+                'updated-at'    => 'Updated At',
+                'actions'       => 'Actions',
+                'save'          => 'Save',
+                'edit'          => 'Edit',
+                'delete'        => 'delete',
+            ],
+            'create' => [
+                'title'         => 'System Prompt',
+                'create-btn'    => 'Create System Prompt',
+                'edit-title'    => 'Edit System Prompt',
+                'create-title'  => 'Create New System Prompt',
+                'label-title'   => 'Title',
+                'max-tokens'    => 'Max Output Tokens',
+                'temperature'   => 'Temperature',
+                'type'          => 'Type',
+                'prompt'        => 'Prompt',
+                'save-btn'      => 'Save Prompt',
+            ],
+            'message' => [
+                'save-success'      => 'Prompt saved successfully.',
+                'update-success'    => 'Prompt updated successfully.',
+                'delete-success'    => 'Prompt deleted successfully.',
+                'delete-fail'       => 'Prompt deletion failed.',
+            ],
+        ],
     ],
 
     'components' => [

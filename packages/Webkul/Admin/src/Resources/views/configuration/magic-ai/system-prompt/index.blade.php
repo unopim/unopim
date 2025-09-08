@@ -1,18 +1,18 @@
 <x-admin::layouts>
     <x-slot:title>
-        @lang('System Prompt')
+        @lang('admin::app.configuration.system-prompt.create.title')
     </x-slot>
     <v-create-system-prompt-form>
         <div class="flex  gap-4 justify-between items-center max-sm:flex-wrap">
             <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                @lang('System Prompt')
+                @lang('admin::app.configuration.system-prompt.create.title')
             </p>
             <div class="flex gap-x-2.5 items-center">
                 <button
                     type="button"
                     class="primary-button"
                 >
-                    @lang('Create System Prompt')
+                    @lang('admin::app.configuration.system-prompt.create.create-btn')
                 </button>
             </div>
         </div>
@@ -25,7 +25,7 @@
         <script type="text/x-template" id="v-create-system-prompt-form-template">
             <div class="flex  gap-4 justify-between items-center max-sm:flex-wrap">
                 <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                    @lang('System Prompt')
+                    @lang('admin::app.configuration.system-prompt.create.title')
                 </p>
 
                 <div class="flex gap-x-2.5 items-center">
@@ -34,7 +34,7 @@
                         class="primary-button"
                         @click="selectedPrompt=0;resetForm();$refs.promptUpdateOrCreateModal.toggle();toggleMagicAIModal()"
                     >
-                        @lang('Create System Prompt')
+                        @lang('admin::app.configuration.system-prompt.create.create-btn')
                     </button>
                 </div>
             </div>
@@ -72,7 +72,7 @@
                             <a @click="selectedPrompt=1;editModal(record.actions.find(action => action.index === 'action_1')?.url)">
                                 <span
                                     :class="record.actions.find(action => action.index === 'action_1')?.icon"
-                                    title="@lang('admin::app.configuration.prompt.datagrid.edit')"
+                                    title="@lang('admin::app.configuration.system-prompt.datagrid.edit')"
                                     class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
                                 >
                                 </span>
@@ -80,7 +80,7 @@
                             <a @click="performAction(record.actions.find(action => action.index === 'action_2'))">
                                 <span
                                     :class="record.actions.find(action => action.index === 'action_2')?.icon"
-                                    title="@lang('admin::app.configuration.prompt.datagrid.delete')"
+                                    title="@lang('admin::app.configuration.system-prompt.datagrid.delete')"
                                     class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
                                 >
                                 </span>
@@ -101,11 +101,11 @@
                             <!-- Modal Header -->
                             <x-slot:header>
                                 <span v-if="selectedPrompt" class="dark:text-slate-50">
-                                     @lang('Edit System Prompt')
+                                     @lang('admin::app.configuration.system-prompt.create.edit-title')
                                 </span>
 
                                 <span v-else class="dark:text-slate-50">
-                                     @lang('Create New System Prompt')
+                                     @lang('admin::app.configuration.system-prompt.create.create-title')
                                 </span>
                             </x-slot>
                             <!-- Modal Content -->
@@ -119,26 +119,56 @@
                                  <!-- Title -->
                                 <x-admin::form.control-group>
                                     <x-admin::form.control-group.label class="required">
-                                        @lang('admin::app.configuration.prompt.create.label-title')
+                                        @lang('admin::app.configuration.system-prompt.create.label-title')
                                     </x-admin::form.control-group.label>
                                     <x-admin::form.control-group.control
                                         type="text"
                                         name="title"
                                         v-model="title"
+                                        rules="required"
                                     />
                                     <x-admin::form.control-group.error control-name="title" />
+                                </x-admin::form.control-group>
+
+
+                                 <!-- Status(is_enabled) -->
+                                <x-admin::form.control-group>
+                                    <x-admin::form.control-group.label>
+                                        @lang('admin::app.configuration.system-prompt.datagrid.status')
+                                    </x-admin::form.control-group.label>
+                                    <input 
+                                        type="hidden"
+                                        name="is_enabled"
+                                        value="0"
+                                    />
+
+                                    <x-admin::form.control-group.control
+                                        type="switch"
+                                        name="is_enabled"
+                                        value="1"
+                                        ::checked="is_enabled"
+                                    />
                                 </x-admin::form.control-group>
 
                                  <!-- Max Token -->
                                  <x-admin::form.control-group>
                                     <x-admin::form.control-group.label>
-                                        @lang('Max Token')
+                                        @lang('admin::app.configuration.system-prompt.create.max-tokens')
+                                          <span 
+                                            class="icon tooltip-icon" 
+                                            title="Allowed Max Output Token range: 100 to 5000 tokens"
+                                            style="cursor: pointer; margin-left: 6px;"
+                                        >
+                                            &#9432;
+                                        </span>
                                     </x-admin::form.control-group.label>
+
                                     <x-admin::form.control-group.control
                                         type="number"
                                         name="max_tokens"
                                         v-model="max_tokens"
                                         min="1"
+                                        max="5000"
                                         step="1"
                                     />
                                     <x-admin::form.control-group.error control-name="max_tokens" />
@@ -147,7 +177,16 @@
                                 <!-- Temperature -->
                                  <x-admin::form.control-group>
                                     <x-admin::form.control-group.label>
-                                        @lang('Temperature')
+                                        @lang('admin::app.configuration.system-prompt.create.temperature')
+
+                                       <span 
+                                            class="icon tooltip-icon" 
+                                            title="Temperature controls creativity. Range: 0 to 2. Lower values (e.g., 0.4) give more accurate and focused responses."
+                                            style="cursor: pointer; margin-left: 6px;"
+                                        >
+                                            &#9432;
+                                        </span>
+
                                     </x-admin::form.control-group.label>
                                     <x-admin::form.control-group.control
                                         type="number"
@@ -163,7 +202,7 @@
                                  <!-- Tone -->
                                 <x-admin::form.control-group>
                                     <x-admin::form.control-group.label class="required">
-                                        @lang('Tone')
+                                        @lang('admin::app.configuration.system-prompt.datagrid.tone')
                                     </x-admin::form.control-group.label>
                                     
                                         <x-admin::form.control-group.control
@@ -172,8 +211,9 @@
                                             name="tone"
                                             rules="required"
                                             v-model="tone"
-                                            :label="trans('admin::app.components.tinymce.ai-generation.prompt')"
+                                            :label="trans('admin::app.configuration.system-prompt.datagrid.tone')"
                                         />
+                                        <x-admin::form.control-group.error control-name="tone" />
                                 </x-admin::form.control-group>
                             </x-slot>
 
@@ -185,7 +225,7 @@
                                         type="submit"
                                         class="primary-button"
                                     >
-                                    @lang('Save')
+                                    @lang('admin::app.configuration.system-prompt.datagrid.save')
                                     </button>
                                 </div>
                             </x-slot>
@@ -209,6 +249,7 @@
                         id: null,
                         max_tokens: null,
                         temperature : null,
+                        is_enabled : false,
                     };
                 },
 
@@ -262,6 +303,7 @@
                                 let data = response.data.data;
                                 this.id = data.id;
                                 this.title = data.title;
+                                this.is_enabled = data.is_enabled;
                                 this.tone = data.tone;
                                 this.max_tokens = data.max_tokens;
                                 this.temperature = data.temperature;

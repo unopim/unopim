@@ -111,48 +111,89 @@
                                         type="text"
                                         name="title"
                                         v-model="title"
+                                        rules="required"
                                     />
                                     <x-admin::form.control-group.error control-name="title" />
                                 </x-admin::form.control-group>
 
-                                <!-- Select Component -->
+                                <!-- Type Input -->
                                 <x-admin::form.control-group>
-                                <!-- Label for the Select Element -->
-                                <x-admin::form.control-group.label class="required">
-                                @lang('admin::app.configuration.prompt.create.type')
-                                </x-admin::form.control-group.label>
+                                    <!-- Label for the Select Element -->
+                                    <x-admin::form.control-group.label class="required">
+                                    @lang('admin::app.configuration.prompt.create.type')
+                                    </x-admin::form.control-group.label>
 
-                                @php
-                                    $supportedTypes = ['product', 'category'];
-                                    $options = [];
-                                    foreach($supportedTypes as $type) {
-                                        $options[] = [
-                                            'id'    => $type,
-                                            'label' => ucfirst($type)
-                                        ];
-                                    }
-                                    $optionsInJson = json_encode($options);
-                                @endphp
+                                    @php
+                                        $supportedTypes = ['product', 'category'];
+                                        $options = [];
+                                        foreach($supportedTypes as $type) {
+                                            $options[] = [
+                                                'id'    => $type,
+                                                'label' => ucfirst($type)
+                                            ];
+                                        }
+                                        $optionsInJson = json_encode($options);
+                                    @endphp
+                                    
+                                    <x-admin::form.control-group.control
+                                        type="select"
+                                        id="type"
+                                        name="type"
+                                        v-model="type"
+                                        rules="required"
+                                        :options="$optionsInJson"
+                                        :value="old('section') ?? $supportedTypes[0]"
+                                        track-by="id"
+                                        label-by="label"
+                                        @input="checkType($event)"
+                                    >
+                                    </x-admin::form.control-group.control>
 
-                                <!-- The Select Control with dynamic options -->
-                                <x-admin::form.control-group.control
-                                    type="select"
-                                    id="type"
-                                    name="type"
-                                    v-model="type"
-                                    rules="required"
-                                    :options="$optionsInJson"
-                                    :value="old('section') ?? $supportedTypes[0]"
-                                    track-by="id"
-                                    label-by="label"
-                                    @input="checkType($event)"
-                                >
-                                </x-admin::form.control-group.control>
-
-                                <!-- Error handling for the Select element -->
-                                <x-admin::form.control-group.error control-name="section" />
+                                    <!-- Error handling for the Select element -->
+                                    <x-admin::form.control-group.error control-name="section" />
                                 </x-admin::form.control-group>
 
+
+                                 <!-- Tone Input -->
+                                <x-admin::form.control-group>
+                                    <!-- Label for the Select Element -->
+                                    <x-admin::form.control-group.label class="required">
+                                    @lang('Prompt Tone')
+                                    </x-admin::form.control-group.label>
+
+                                    <!-- Get all the Enabled Tone  -->
+                                    @php
+                                        $enabledPrompt = app('Webkul\Admin\Http\Controllers\MagicAI\MagicAISystemPromptController')->getAllEnabledPrompt();
+                                        $options = [];
+                                        foreach($enabledPrompt as $type) {
+                                            $options[] = [
+                                                'id'    => $type,
+                                                'label' => ucfirst($type)
+                                            ];
+                                        }
+                                        $enabledPromptOption = json_encode($options);
+                                    @endphp
+                                    
+                                    <x-admin::form.control-group.control
+                                        type="select"
+                                        id="tone"
+                                        name="tone"
+                                        v-model="tone"
+                                        rules="required"
+                                        :options="$enabledPromptOption"
+                                        :value="old('tone') ?? $enabledPrompt[0]"
+                                        track-by="id"
+                                        label-by="label"
+                                        
+                                    >
+                                    </x-admin::form.control-group.control>
+
+                                    <!-- Error handling for the Select element -->
+                                    <x-admin::form.control-group.error control-name="tone" />
+                                </x-admin::form.control-group>
+
+
+                                <!--Prompt Input -->
                                 <x-admin::form.control-group>
                                     <x-admin::form.control-group.label class="required">
                                         @lang('admin::app.configuration.prompt.create.prompt')
@@ -174,6 +215,8 @@
                                             <span class="icon-at"></span>
                                         </div>
                                     </div>
+                                        <x-admin::form.control-group.error control-name="prompt" />
+
                                 </x-admin::form.control-group>
                             </x-slot>
 
@@ -208,6 +251,7 @@
                         selectedPrompt: 0,
                         title: null,
                         type: null,
+                        tone:null,
                         id: null,
                         entityName: null,
                     };
@@ -315,6 +359,7 @@
                                 this.title = data.title;
                                 this.ai.prompt = data.prompt;
                                 this.type = data.type;
+                                this.tone = data.tone;
                                 this.$refs.promptUpdateOrCreateModal.toggle();
                                 this.toggleMagicAIModal();
                             })

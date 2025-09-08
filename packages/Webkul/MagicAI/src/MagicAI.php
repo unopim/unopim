@@ -49,6 +49,12 @@ class MagicAI
      */
     protected float $temperature = 0.7;
 
+
+    /**
+     * Max tokens.
+     */
+    protected int $maxTokens = 1054;
+
     /**
      * LLM prompt text.
      */
@@ -115,11 +121,21 @@ class MagicAI
     }
 
     /**
+     * Set the max tokens.
+     */
+    public function setMaxTokens(int $maxTokens): self
+    {
+        $this->maxTokens = $maxTokens;
+
+        return $this;
+    }
+
+    /**
      * Set LLM prompt text.
      */
     public function setPrompt(string $prompt, string $fieldType = 'tinymce'): self
     {
-        $this->prompt = $fieldType == 'tinymce' ? $prompt.' '.self::SUFFIX_HTML_PROMPT : $prompt.' '.self::SUFFIX_TEXT_PROMPT;
+        $this->prompt = $fieldType == 'tinymce' ? $prompt . ' ' . self::SUFFIX_HTML_PROMPT : $prompt . ' ' . self::SUFFIX_TEXT_PROMPT;
 
         return $this;
     }
@@ -144,34 +160,38 @@ class MagicAI
      * Get LLM model instance.
      */
     public function getModelInstance(): OpenAI|Groq|Ollama
-    {
-        if ($this->platform === self::MAGIC_OPEN_AI) {
-            return new OpenAI(
-                $this->model,
-                $this->prompt,
-                $this->temperature,
-                $this->stream,
-            );
-        }
+{
+    if ($this->platform === self::MAGIC_OPEN_AI) {
+        return new OpenAI(
+            $this->model,
+            $this->prompt,
+            $this->temperature,
+            $this->stream,
+            $this->maxTokens, // ✅ added
+        );
+    }
 
-        if ($this->platform === self::MAGIC_GROQ_AI) {
-            return new Groq(
-                $this->model,
-                $this->prompt,
-                $this->temperature,
-                $this->stream,
-                $this->raw,
-            );
-        }
-
-        return new Ollama(
+    if ($this->platform === self::MAGIC_GROQ_AI) {
+        return new Groq(
             $this->model,
             $this->prompt,
             $this->temperature,
             $this->stream,
             $this->raw,
+            $this->maxTokens, // ✅ added
         );
     }
+
+    return new Ollama(
+        $this->model,
+        $this->prompt,
+        $this->temperature,
+        $this->stream,
+        $this->raw,
+        $this->maxTokens, // ✅ added
+    );
+}
+
 
     /**
      * Gets the list of models from the API.

@@ -2,4 +2,4 @@
 
 namespace Webkul\MagicAI\Contracts;
 
-interface MagicSystemPrompt {}
+interface MagicAISystemPrompt {}

@@ -3,8 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use Webkul\Admin\Http\Controllers\DashboardController;
 use Webkul\Admin\Http\Controllers\DataGridController;
-use Webkul\Admin\Http\Controllers\Magic\MagicAIController;
-use Webkul\Admin\Http\Controllers\Magic\MagicSystemPromptController;
+use Webkul\Admin\Http\Controllers\MagicAI\MagicAIController;
+use Webkul\Admin\Http\Controllers\MagicAI\MagicAISystemPromptController;
 use Webkul\Admin\Http\Controllers\ManageColumnController;
 use Webkul\Admin\Http\Controllers\TinyMCEController;
 use Webkul\Admin\Http\Controllers\User\AccountController;
@@ -84,7 +84,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
     /**
      * System Prompt Routes
      */
-    Route::controller(MagicSystemPromptController::class)->prefix('magic-system-prompt')->group(function () {
+    Route::controller(MagicAISystemPromptController::class)->prefix('system-prompt')->group(function () {
 
         Route::get('system-prompt', 'index')->name('admin.magic_ai.system_prompt.index');
 

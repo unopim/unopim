@@ -3,11 +3,11 @@
 namespace Webkul\MagicAI\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Webkul\MagicAI\Models\MagicSystemPrompt;
+use Webkul\MagicAI\Models\MagicAISystemPrompt;
 
-class MagicSystemPromptFactory extends Factory
+class MagicAISystemPromptFactory extends Factory
 {
-    protected $model = MagicSystemPrompt::class;
+    protected $model = MagicAISystemPrompt::class;
 
     public function definition()
     {

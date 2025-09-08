@@ -5,7 +5,7 @@ namespace Webkul\Admin\DataGrids\MagicAI;
 use Illuminate\Support\Facades\DB;
 use Webkul\DataGrid\DataGrid;
 
-class MagicSystemPromptGrid extends DataGrid
+class MagicAISystemPromptGrid extends DataGrid
 {
     /**
      * Primary column.
@@ -36,7 +36,7 @@ class MagicSystemPromptGrid extends DataGrid
     {
         $this->addColumn([
             'index'      => 'title',
-            'label'      => trans('admin::app.configuration.prompt.datagrid.title'),
+            'label'      => trans('admin::app.configuration.system-prompt.datagrid.title'),
             'type'       => 'string',
             'searchable' => true,
             'sortable'   => true,
@@ -45,7 +45,7 @@ class MagicSystemPromptGrid extends DataGrid
 
         $this->addColumn([
             'index'      => 'tone',
-            'label'      => trans('Tone'),
+            'label'      => trans('admin::app.configuration.system-prompt.datagrid.tone'),
             'type'       => 'string',
             'searchable' => true,
             'sortable'   => true,
@@ -54,7 +54,7 @@ class MagicSystemPromptGrid extends DataGrid
 
         $this->addColumn([
             'index'      => 'max_tokens',
-            'label'      => trans('Max Tokens'),
+            'label'      => trans('admin::app.configuration.system-prompt.datagrid.max-tokens'),
             'type'       => 'integer',
             'searchable' => true,
             'sortable'   => true,
@@ -63,7 +63,7 @@ class MagicSystemPromptGrid extends DataGrid
 
         $this->addColumn([
             'index'      => 'temperature',
-            'label'      => trans('Temperature'),
+            'label'      => trans('admin::app.configuration.system-prompt.datagrid.temperature'),
             'type'       => 'float',
             'searchable' => true,
             'sortable'   => true,
@@ -72,7 +72,7 @@ class MagicSystemPromptGrid extends DataGrid
 
         $this->addColumn([
             'index'      => 'is_enabled',
-            'label'      => trans('admin::app.catalog.products.index.datagrid.status'),
+            'label'      => trans('admin::app.configuration.system-prompt.datagrid.status'),
             'type'       => 'boolean',
             'searchable' => false,
             'filterable' => true,
@@ -101,7 +101,7 @@ class MagicSystemPromptGrid extends DataGrid
 
         $this->addColumn([
             'index'      => 'created_at',
-            'label'      => trans('admin::app.configuration.prompt.datagrid.created-at'),
+            'label'      => trans('admin::app.configuration.system-prompt.datagrid.created-at'),
             'type'       => 'datetime',
             'searchable' => false,
             'sortable'   => true,
@@ -110,7 +110,7 @@ class MagicSystemPromptGrid extends DataGrid
 
         $this->addColumn([
             'index'      => 'updated_at',
-            'label'      => trans('admin::app.configuration.prompt.datagrid.updated-at'),
+            'label'      => trans('admin::app.configuration.system-prompt.datagrid.updated-at'),
             'type'       => 'datetime',
             'searchable' => false,
             'sortable'   => true,
@@ -127,7 +127,7 @@ class MagicSystemPromptGrid extends DataGrid
     {
         $this->addAction([
             'icon'   => 'icon-edit',
-            'title'  => trans('admin::app.configuration.prompt.datagrid.edit'),
+            'title'  => trans('admin::app.configuration.system-prompt.datagrid.edit'),
             'method' => 'GET',
             'url'    => function ($row) {
                 return route('admin.magic_ai.system_prompt.edit', $row->id);
@@ -136,7 +136,7 @@ class MagicSystemPromptGrid extends DataGrid
 
         $this->addAction([
             'icon'   => 'icon-delete',
-            'title'  => trans('admin::app.configuration.prompt.datagrid.delete'),
+            'title'  => trans('admin::app.configuration.system-prompt.datagrid.delete'),
             'method' => 'DELETE',
             'url'    => function ($row) {
                 return route('admin.magic_ai.system_prompt.delete', $row->id);
