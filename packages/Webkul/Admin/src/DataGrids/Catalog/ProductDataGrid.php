@@ -851,50 +851,50 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 continue;
             }
 
-        $attribute = $this->attributeService->findAttributeByCode($code);
+            $attribute = $this->attributeService->findAttributeByCode($code);
 
-        if ($attribute && in_array($attribute->type, ['select', 'multiselect'], true) && in_array($attribute->swatch_type, ['color', 'image'], true)) {
-            $mapSwatch = function ($optionValue) use ($attribute) {
-                if (! $optionValue) {
-                    return null;
-                }
-                $cleanValue = trim($optionValue, '[]');
+            if ($attribute && in_array($attribute->type, ['select', 'multiselect'], true) && in_array($attribute->swatch_type, ['color', 'image'], true)) {
+                $mapSwatch = function ($optionValue) use ($attribute) {
+                    if (! $optionValue) {
+                        return null;
+                    }
+                    $cleanValue = trim($optionValue, '[]');
 
-                $option = $attribute->options()
-                   ->where(function ($q) use ($cleanValue) {
-                        $q->where('code', $cleanValue)
-                        ->orWhereHas('translations', function ($q2) use ($cleanValue) {
-                            $q2->where('label', $cleanValue)
-                                ->where('locale', core()->getRequestedLocaleCode());
-                        });
-                    })
-                    ->first();
-                if($attribute->swatch_type === 'color') {
-                    return $option?->swatch_value ? "<div style='background-color: ".$option->swatch_value.";' class='h-[25px] w-[25px] rounded-md border border-gray-200 dark:border-gray-800 inline-block'></div>" : null;
+                    $option = $attribute->options()
+                        ->where(function ($q) use ($cleanValue) {
+                            $q->where('code', $cleanValue)
+                                ->orWhereHas('translations', function ($q2) use ($cleanValue) {
+                                    $q2->where('label', $cleanValue)
+                                        ->where('locale', core()->getRequestedLocaleCode());
+                                });
+                        })
+                        ->first();
+                    if ($attribute->swatch_type === 'color') {
+                        return $option?->swatch_value ? "<div style='background-color: ".$option->swatch_value.";' class='h-[25px] w-[25px] rounded-md border border-gray-200 dark:border-gray-800 inline-block'></div>" : null;
+                    } else {
+                        return $option?->swatch_value ? "<img src='".asset('storage/'.$option->swatch_value)."' alt='".$optionValue."' class='h-[46px] w-[46px] max-w-[46px] min-w-[46px] max-h-[46px] min-h-[46px] rounded-lg border border-gray-300 shadow-sm object-cover inline-block' />" : null;
+                    }
+                };
+
+                if ($attribute->type === 'multiselect') {
+                    if (is_string($value)) {
+                        $value = explode(',', $value);
+                    }
+                    $record->{$code} = $record->{$code} = is_array($value)
+                    ? implode(' ', array_map($mapSwatch, $value))
+                    : $mapSwatch($value);
                 } else {
-                    return $option?->swatch_value ? "<img src='".asset('storage/'.$option->swatch_value)."' alt='".$optionValue."' class='h-[46px] w-[46px] max-w-[46px] min-w-[46px] max-h-[46px] min-h-[46px] rounded-lg border border-gray-300 shadow-sm object-cover inline-block' />" : null;
-                }
-            };
+                    $swatchHtml = is_array($value)
+                    ? array_map($mapSwatch, $value)
+                    : $mapSwatch($value);
 
-            if($attribute->type === 'multiselect') {
-                if (is_string($value)) {
-                    $value = explode(',', $value);
+                    $record->{$code} = "<div class='flex items-center space-x-2' >".$swatchHtml." <span class='ml-1'>".e($value).'</span></div>';
                 }
-                $record->{$code} = $record->{$code} = is_array($value)
-                ? implode(' ', array_map($mapSwatch, $value))
-                : $mapSwatch($value);
-            } else {
-                $swatchHtml = is_array($value)
-                ? array_map($mapSwatch, $value)
-                : $mapSwatch($value);
 
-                $record->{$code} = "<div class='flex items-center space-x-2' >" . $swatchHtml . " <span class='ml-1'>" . e($value) . "</span></div>";
+                continue;
             }
 
-            continue;
-        }
-
-        $record->{$code} = $value;
+            $record->{$code} = $value;
         }
     }
 
