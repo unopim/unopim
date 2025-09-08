@@ -167,7 +167,7 @@ class MagicAI
             $this->prompt,
             $this->temperature,
             $this->stream,
-            $this->maxTokens, // ✅ added
+            $this->maxTokens,
         );
     }
 
@@ -178,7 +178,7 @@ class MagicAI
             $this->temperature,
             $this->stream,
             $this->raw,
-            $this->maxTokens, // ✅ added
+            $this->maxTokens,
         );
     }
 
@@ -188,7 +188,7 @@ class MagicAI
         $this->temperature,
         $this->stream,
         $this->raw,
-        $this->maxTokens, // ✅ added
+        $this->maxTokens,
     );
 }
 
