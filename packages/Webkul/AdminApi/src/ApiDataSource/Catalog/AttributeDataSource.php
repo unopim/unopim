@@ -124,14 +124,19 @@ class AttributeDataSource extends ApiDataSource
         $attribute = $this->attributeRepository->findOneByField('code', $attributeCode);
         $attributeOption = $attribute?->options()?->orderBy('sort_order')->get()->toArray();
 
-        return array_map(function ($data) {
-            return [
-                'code'             => $data['code'],
-                'sort_order'       => $data['sort_order'],
-                'swatch_value'     => $data['swatch_value'],
-                'swatch_value_url' => $data['swatch_value_url'],
-                'labels'           => $this->getTranslations($data, 'label'),
+        return array_map(function ($data) use ($attribute) {
+            $result = [
+                'code'       => $data['code'],
+                'sort_order' => $data['sort_order'],
+                'labels'     => $this->getTranslations($data, 'label'),
             ];
+
+            if (in_array($attribute->swatch_type, ['image', 'color'])) {
+                $result['swatch_value'] = $data['swatch_value'];
+                $result['swatch_value_url'] = $data['swatch_value_url'];
+            }
+
+            return $result;
         }, $attributeOption ?? []);
     }
 }

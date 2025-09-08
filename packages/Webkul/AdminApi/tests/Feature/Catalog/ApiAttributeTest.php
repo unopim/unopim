@@ -16,6 +16,7 @@ it('should return the list of all attributes', function () {
     $attributeData = [
         'code'              => $attribute->code,
         'type'              => $attribute->type,
+        'swatch_type'       => $attribute->swatch_type,
         'validation'        => $attribute->validation,
         'regex_pattern'     => $attribute->regex_pattern,
         'position'          => $attribute->position,
@@ -34,6 +35,7 @@ it('should return the list of all attributes', function () {
                 '*' => [
                     'code',
                     'type',
+                    'swatch_type',
                     'validation',
                     'regex_pattern',
                     'position',

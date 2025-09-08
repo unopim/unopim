@@ -5,9 +5,9 @@ namespace Webkul\Attribute\Enums;
 enum SwatchTypeEnum: string
 {
     /**
-     * Dropdown swatch type.
+     * Text swatch type.
      */
-    case DROPDOWN = 'dropdown';
+    case TEXT = 'text';
 
     /**
      * Color swatch type.
@@ -18,11 +18,6 @@ enum SwatchTypeEnum: string
      * Image swatch type.
      */
     case IMAGE = 'image';
-
-    /**
-     * Text swatch type.
-     */
-    case TEXT = 'text';
 
     /**
      * Get all attribute type values as an array.

@@ -379,53 +379,6 @@ it('should update the ai_translate property in Attribute', function () {
     $this->assertDatabaseHas($this->getFullTableName(Attribute::class), $updatedData);
 });
 
-it('should create dropdown type swatch for select attribute', function () {
-    $this->loginAsAdmin();
-
-    $attribute = Attribute::factory()->create([
-        'type' => 'select',
-    ]);
-
-    $option = $attribute->options()->first();
-    $locale = Locale::where('status', 1)->first();
-    $label = fake()->word();
-
-    $data = [
-        'code'        => $attribute->code,
-        'type'        => $attribute->type,
-        'swatch_type' => 'dropdown',
-        'options'     => [
-            $option->id => [
-                'isNew'       => false,
-                'isDelete'    => false,
-                $locale->code => ['label' => $label],
-            ],
-        ],
-    ];
-
-    $response = putJson(route('admin.catalog.attributes.update', $attribute->id), $data);
-
-    $response->assertStatus(302)
-        ->assertRedirect(route('admin.catalog.attributes.edit', $attribute->id));
-
-    $this->assertDatabaseHas('attributes', [
-        'id'          => $attribute->id,
-        'type'        => 'select',
-        'swatch_type' => 'dropdown',
-    ]);
-
-    $this->assertDatabaseHas('attribute_option_translations', [
-        'attribute_option_id' => $option->id,
-        'locale'              => $locale->code,
-        'label'               => $label,
-    ]);
-
-    $this->assertDatabaseMissing('attribute_options', [
-        'id'           => $option->id,
-        'swatch_value' => $label,
-    ]);
-});
-
 it('should create attribute option with color swatch_value for select type', function () {
     $this->loginAsAdmin();
 
@@ -579,8 +532,7 @@ it('should not allow swatch_value for non-select attributes', function () {
 
     $response = putJson(route('admin.catalog.attributes.update', $attribute->id), $data);
 
-    $response->assertStatus(302)
-        ->assertRedirect(route('admin.catalog.attributes.edit', $attribute->id));
+    $response->assertStatus(422)->assertJsonValidationErrors(['swatch_type']);
 
     $this->assertDatabaseMissing('attribute_options', [
         'attribute_id' => $attribute->id,

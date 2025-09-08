@@ -351,7 +351,7 @@
                                                         <div>
                                                                 <img
                                                                     :src="record.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}'"
-                                                                    class="h-[50px] w-[50px] object-cover"
+                                                                    class="h-[50px] w-[50px] max-w-[50px] min-w-[50px] max-h-[50px] min-h-[50px] rounded-lg border border-gray-300 shadow-sm object-cover"
                                                                 >
                                                         </div>
                                                     </div>
@@ -807,17 +807,15 @@
                     return {
                         showSwatch: {{ in_array($attribute->type, ['select', 'multiselect']) ? 'true' : 'false' }},
 
-                        swatchType: "{{ $attribute->swatch_type == '' ? 'dropdown' : $attribute->swatch_type }}",
+                        swatchType: "{{ $attribute->swatch_type == '' ? 'text' : $attribute->swatch_type }}",
 
-                        selectedSwatchType: "{{ $attribute->swatch_type == '' ? 'dropdown' : $attribute->swatch_type }}",
+                        selectedSwatchType: "{{ $attribute->swatch_type == '' ? 'text' : $attribute->swatch_type }}",
 
                         validationType: "{{ $attribute->validation }}",
 
                         selectedValidationType: "{{ $attribute->validation }}",
 
                         selectedAttributeType: "{{ $attribute->type }}",
-
-                        isNullOptionChecked: false,
 
                         swatchValue: [
                             {

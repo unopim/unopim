@@ -48,11 +48,17 @@ class AttributeOptionController extends Controller
 
         $attribute = $this->attributeRepository->find($attributeId);
 
-        if (in_array($attribute->swatch_type, SwatchTypeEnum::getValues())) {
+        if (in_array($attribute->swatch_type, SwatchTypeEnum::getValues(), true)) {
             if ($request->hasFile('swatch_value')) {
                 $requestData['swatch_value'] = $request->file('swatch_value');
             } else {
-                $requestData['swatch_value'] = $request->get('swatch_value');
+                $swatchValue = $request->get('swatch_value');
+
+                if ($attribute->swatch_type === 'color' && blank($swatchValue)) {
+                    $requestData['swatch_value'] = '#000000';
+                } else {
+                    $requestData['swatch_value'] = $swatchValue;
+                }
             }
         }
 
