@@ -34,6 +34,9 @@ return [
                 'type'          => 'select',
                 'options'       => [
                     [
+                        'title' => 'GPT OSS',
+                        'value' => MagicAI::MAGIC_GPT_OSS,
+                    ], [
                         'title' => 'Openai',
                         'value' => MagicAI::MAGIC_OPEN_AI,
                     ], [
@@ -42,6 +45,12 @@ return [
                     ], [
                         'title' => 'Ollama',
                         'value' => MagicAI::MAGIC_OLLAMA_AI,
+                    ], [
+                        'title' => 'Claude',
+                        'value' => MagicAI::MAGIC_CLAUDE_AI,
+                    ], [
+                        'title' => 'Gemini',
+                        'value' => MagicAI::MAGIC_GEMINI_AI,
                     ],
                 ],
             ], [

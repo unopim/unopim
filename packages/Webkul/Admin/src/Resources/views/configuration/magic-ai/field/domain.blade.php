@@ -7,10 +7,7 @@
     $value = core()->getConfigData($nameKey);
 @endphp
 
-<v-domain-model
-    label="@lang($field['title'])"
-    name="{{ $name }}"
-    :value='@json($value)'>
+<v-domain-model label="@lang($field['title'])" name="{{ $name }}" :value='@json($value)'>
 </v-domain-model>
 
 @pushOnce('scripts')
@@ -60,6 +57,10 @@
                             this.api_domain = 'api.openai.com';
                         } else if (dom == 'groq') {
                             this.api_domain = 'api.groq.com';
+                        } else if (dom == 'gemini') {
+                            this.api_domain = 'generativelanguage.googleapis.com';
+                        } else if (dom == 'claude') {
+                            this.api_domain = 'api.anthropic.com';
                         } else {
                             this.api_domain = 'localhost';
                         }

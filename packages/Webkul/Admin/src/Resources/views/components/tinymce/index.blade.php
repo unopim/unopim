@@ -73,6 +73,55 @@
                                 <x-admin::form.control-group.error control-name="default_prompt"></x-admin::form.control-group.error>
                             </x-admin::form.control-group>
 
+                             <!-- Tone Input -->
+                                <x-admin::form.control-group>
+                                    <!-- Label for the Select Element -->
+                                    <x-admin::form.control-group.label class="required">
+                                    @lang('Prompt Tone')
+                                    </x-admin::form.control-group.label>
+
+                                    @php
+                                        $promptOptions = app('Webkul\Admin\Http\Controllers\MagicAI\MagicAISystemPromptController')->getAllPromptOptions();
+
+                                        $options = [];
+                                        $defaultPrompt = null;
+
+                                        foreach ($promptOptions as $prompt) {
+                                            $options[] = [
+                                                'id'    => $prompt['id'],
+                                                'label' => $prompt['label'],
+                                            ];
+
+                                            if ($defaultPrompt === null && $prompt['is_enabled']) {
+                                                $defaultPrompt = $prompt['id'];
+                                            }
+                                        }
+                                        
+                                        if ($defaultPrompt === null && count($options)) {
+                                            $defaultPrompt = $options[0]['id'];
+                                        }
+
+                                        $optionsJson = json_encode($options);
+                                        
+                                    @endphp
+
+                   
+                                    <x-admin::form.control-group.control
+                                        type="select"
+                                        id="tone"
+                                        name="tone"
+                                        rules="required"
+                                        :options="$optionsJson"
+                                        :value="old('tone') ?? $defaultPrompt"
+                                        track-by="id"
+                                        label-by="label"
+                                    >
+                                    </x-admin::form.control-group.control>
+
+
+                                    <x-admin::form.control-group.error control-name="tone" />
+                                </x-admin::form.control-group>
+
                             <!-- Prompt -->
                             <x-admin::form.control-group>
                                 <x-admin::form.control-group.label class="required">
@@ -211,6 +260,8 @@
 
                     aiModels: [],
                     defaultPrompts: [],
+                    tone: null,               
+                    systemPrompts: [],
                     selectedModel: null,
                     suggestionValues: [],
                     resourceId: "{{ request()->id }}",
@@ -220,6 +271,7 @@
 
             mounted() {
                 this.init();
+                 this.fetchSystemPrompts();
 
                 this.$emitter.on('change-theme', (theme) => {
                     tinymce.get(0).destroy();
@@ -390,6 +442,10 @@
                                 this.fetchDefaultPrompts();
                             }
 
+                            if (this.systemPrompts.length === 0) {
+                                this.fetchSystemPrompts();
+                            }
+
                             const tribute = this.$tribute.init({
                                 values: this.fetchSuggestionValues,
                                 lookup: 'name',
@@ -433,9 +489,26 @@
                         const response = await axios.get("{{ route('admin.magic_ai.default_prompt') }}", {
                             params: { field: this.entityName }
                         });
+                        
                         this.defaultPrompts = response.data.prompts;
                     } catch (error) {
-                        console.error("Failed to fetch AI models:", error);
+                        console.error("Failed to fetch Default Prompt:", error);
+                    }
+                },
+
+                async fetchSystemPrompts() {
+                    try {
+                        const response = await axios.get("{{ route('admin.magic_ai.all_system_prompt') }}");
+                        this.systemPrompts = response.data.prompts;   
+
+                        if (!this.tone) {
+                            const firstEnabled = this.systemPrompts.find(p => p.is_enabled);
+                            if (firstEnabled) {
+                                this.tone = firstEnabled.id;
+                            }
+                        }
+                    } catch (error) {
+                        console.error("Failed to fetch System Prompt:", error);
                     }
                 },
 
@@ -470,6 +543,7 @@
                     this.$axios.post("{{ route('admin.magic_ai.content') }}", {
                         prompt: params['prompt'],
                         model: params['model'],
+                        tone: params['tone'],
                         resource_id: this.resourceId,
                         resource_type: this.getResourceType(),
                         field_type: 'tinymce',

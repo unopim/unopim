@@ -12,6 +12,7 @@ class OpenAI
     public function __construct(
         protected string $model,
         protected string $prompt,
+        protected string $systemPrompt,
         protected float $temperature,
         protected bool $stream = false
     ) {
@@ -38,6 +39,10 @@ class OpenAI
             'model'       => $this->model,
             'temperature' => $this->temperature,
             'messages'    => [
+                [
+                    'role'    => 'system',
+                    'content' => $this->systemPrompt,
+                ],
                 [
                     'role'    => 'user',
                     'content' => $this->prompt,

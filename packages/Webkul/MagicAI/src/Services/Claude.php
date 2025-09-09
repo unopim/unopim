@@ -5,7 +5,7 @@ namespace Webkul\MagicAI\Services;
 use GuzzleHttp\Client;
 use OpenAI\ValueObjects\Transporter\BaseUri;
 
-class Groq
+class Claude
 {
     /**
      * New service instance.
@@ -17,6 +17,7 @@ class Groq
         protected float $temperature,
         protected bool $stream,
         protected bool $raw,
+        protected int $maxTokens,
     ) {}
 
     /**
@@ -24,18 +25,24 @@ class Groq
      */
     public function ask(): string
     {
+        $apiKey = core()->getConfigData('general.magic_ai.settings.api_key');
+
         $httpClient = new Client;
 
-        $baseUri = BaseUri::from('api.groq.com')->toString();
-        $endpoint = $baseUri.'openai/v1/chat/completions';
+        $apiKey = core()->getConfigData('general.magic_ai.settings.api_key');
+        $baseUri = BaseUri::from('api.anthropic.com')->toString();
+        $endpoint = $baseUri.'v1/messages';
 
-        $result = $httpClient->request('POST', $endpoint, [
+        $response = $httpClient->request('POST', $endpoint, [
             'headers' => [
-                'Accept'        => 'application/json',
-                'Authorization' => 'Bearer '.core()->getConfigData('general.magic_ai.settings.api_key'),
+                'Content-Type'      => 'application/json',
+                'x-api-key'         => $apiKey,
+                'anthropic-version' => '2023-06-01',
             ],
-            'json'    => [
+            'json' => [
                 'model'       => $this->model,
+                'max_tokens'  => $this->maxTokens,
+                'temperature' => $this->temperature,
                 'messages'    => [
                     [
                         'role'    => 'system',
@@ -49,8 +56,8 @@ class Groq
             ],
         ]);
 
-        $result = json_decode($result->getBody()->getContents(), true);
+        $data = json_decode($response->getBody()->getContents(), true);
 
-        return $result['choices'][0]['message']['content'];
+        return $data['content'][0]['text'] ?? 'No response';
     }
 }

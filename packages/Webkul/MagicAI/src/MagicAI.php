@@ -3,17 +3,26 @@
 namespace Webkul\MagicAI;
 
 use Webkul\MagicAI\Services\AIModel;
+use Webkul\MagicAI\Services\Claude;
+use Webkul\MagicAI\Services\Gemini;
+use Webkul\MagicAI\Services\GptOss;
 use Webkul\MagicAI\Services\Groq;
 use Webkul\MagicAI\Services\Ollama;
 use Webkul\MagicAI\Services\OpenAI;
 
 class MagicAI
 {
+    const MAGIC_GPT_OSS = 'gpt_oss';
+
     const MAGIC_OPEN_AI = 'openai';
 
     const MAGIC_GROQ_AI = 'groq';
 
     const MAGIC_OLLAMA_AI = 'ollama';
+
+    const MAGIC_CLAUDE_AI = 'claude';
+
+    const MAGIC_GEMINI_AI = 'gemini';
 
     const SUFFIX_HTML_PROMPT = 'Generate a response using HTML formatting only. Do not include Markdown or any non-HTML syntax.';
 
@@ -49,7 +58,6 @@ class MagicAI
      */
     protected float $temperature = 0.7;
 
-
     /**
      * Max tokens.
      */
@@ -59,6 +67,11 @@ class MagicAI
      * LLM prompt text.
      */
     protected string $prompt;
+
+    /**
+     * LLM system prompt text.
+     */
+    protected string $systemPrompt;
 
     /**
      * Set LLM model
@@ -135,7 +148,17 @@ class MagicAI
      */
     public function setPrompt(string $prompt, string $fieldType = 'tinymce'): self
     {
-        $this->prompt = $fieldType == 'tinymce' ? $prompt . ' ' . self::SUFFIX_HTML_PROMPT : $prompt . ' ' . self::SUFFIX_TEXT_PROMPT;
+        $this->prompt = $fieldType == 'tinymce' ? $prompt.' '.self::SUFFIX_HTML_PROMPT : $prompt.' '.self::SUFFIX_TEXT_PROMPT;
+
+        return $this;
+    }
+
+    /**
+     * Set LLM system prompt.
+     */
+    public function setSystemPrompt(string $systemPrompt): self
+    {
+        $this->systemPrompt = $systemPrompt;
 
         return $this;
     }
@@ -159,39 +182,77 @@ class MagicAI
     /**
      * Get LLM model instance.
      */
-    public function getModelInstance(): OpenAI|Groq|Ollama
-{
-    if ($this->platform === self::MAGIC_OPEN_AI) {
-        return new OpenAI(
-            $this->model,
-            $this->prompt,
-            $this->temperature,
-            $this->stream,
-            $this->maxTokens,
-        );
-    }
+    public function getModelInstance(): GptOss|OpenAI|Groq|Claude|Gemini|Ollama
+    {
+        if ($this->platform === self::MAGIC_GPT_OSS) {
+            return new GptOss(
+                $this->model,
+                $this->prompt,
+                $this->temperature,
+                $this->stream,
+                $this->raw,
+                $this->maxTokens,
+                $this->systemPrompt
+            );
+        }
 
-    if ($this->platform === self::MAGIC_GROQ_AI) {
-        return new Groq(
+        if ($this->platform === self::MAGIC_OPEN_AI) {
+            return new OpenAI(
+                $this->model,
+                $this->prompt,
+                $this->temperature,
+                $this->stream,
+                $this->maxTokens,
+                $this->systemPrompt
+            );
+        }
+
+        if ($this->platform === self::MAGIC_GROQ_AI) {
+            return new Groq(
+                $this->model,
+                $this->prompt,
+                $this->temperature,
+                $this->stream,
+                $this->raw,
+                $this->maxTokens,
+                $this->systemPrompt
+            );
+        }
+
+        if ($this->platform === self::MAGIC_CLAUDE_AI) {
+            return new Claude(
+                $this->model,
+                $this->prompt,
+                $this->temperature,
+                $this->stream,
+                $this->raw,
+                $this->maxTokens,
+                $this->systemPrompt
+            );
+        }
+
+        if ($this->platform === self::MAGIC_GEMINI_AI) {
+            return new Gemini(
+                $this->model,
+                $this->prompt,
+                $this->temperature,
+                $this->stream,
+                $this->raw,
+                $this->maxTokens,
+                $this->systemPrompt
+            );
+        }
+
+        return new Ollama(
             $this->model,
             $this->prompt,
             $this->temperature,
             $this->stream,
             $this->raw,
             $this->maxTokens,
+            $this->systemPrompt
         );
     }
-
-    return new Ollama(
-        $this->model,
-        $this->prompt,
-        $this->temperature,
-        $this->stream,
-        $this->raw,
-        $this->maxTokens,
-    );
-}
-
 
     /**
      * Gets the list of models from the API.

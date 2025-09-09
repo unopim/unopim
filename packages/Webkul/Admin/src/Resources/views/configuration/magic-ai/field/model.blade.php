@@ -8,10 +8,7 @@
     $selectedOptions = json_encode(explode(',', $selectedOptions) ?? []);
 @endphp
 
-<v-ai-model
-    label="@lang($field['title'])"
-    name="{{ $name }}"
-    :value="{{ $selectedOptions }}">
+<v-ai-model label="@lang($field['title'])" name="{{ $name }}" :value="{{ $selectedOptions }}">
 </v-ai-model>
 
 @pushOnce('scripts')
@@ -22,11 +19,47 @@
             </div>
             <div>
 
+                <!-- GPT Open source software -->
+                <x-admin::form.control-group class="mb-4" v-if="aiCredentials.api_platform === 'gpt_oss'">
+                    <x-admin::form.control-group.label>
+                        @{{ label }}
+                        @php
+                            $modelOptions = ["llama-7b", "llama-13b", "qwen-7b", "qwen-14b", "glm4.5-6b", "k2-mini"];
+                            $options = array_map(fn($option) => ['id' => $option, 'label' => $option], $modelOptions);
+                            $optionsInJson = json_encode($options);
+                        @endphp
+                    </x-admin::form.control-group.label>
+                    <x-admin::form.control-group.control
+                        type="multiselect"
+                        ref="aiModelRef"
+                        ::id="name"
+                        ::name="name"
+                        :options="$optionsInJson"
+                        ::value="value"
+                        ::label="label"
+                        ::placeholder="label"
+                        track-by="id"
+                        label-by="label"
+                        @input="getOptionValue"
+                    />
+                    <x-admin::form.control-group.error ::control-name="name" />
+                </x-admin::form.control-group>
+
+
+                <!-- Groq -->
                 <x-admin::form.control-group class="mb-4" v-if="aiCredentials.api_platform === 'groq'">
                     <x-admin::form.control-group.label>
                         @{{ label }}
                         @php
-                            $modelOptions = ["deepseek-r1-distill-llama-70b", "qwen-qwq-32b", "llama3-8b-8192"];
+                            $modelOptions = [  "llama3-70b", 
+                                                "llama3-8b", 
+                                                "mixtral-8x7b", 
+                                                "gemma-7b-it", 
+                                                "llama2-70b-chat", 
+                                                "deepseek-r1-distill-llama-70b", 
+                                                "qwen-qwq-32b", 
+                                                "llama3-8b-8192"
+                                            ];
                             $options = [];
                             foreach($modelOptions as $option) {
                                 $options[] = [
@@ -53,6 +86,8 @@
                     />
                     <x-admin::form.control-group.error ::control-name="name" />
                 </x-admin::form.control-group>
+
+                <!-- Open AI -->
                 <x-admin::form.control-group class="mb-4" v-if="aiCredentials.api_platform === 'openai'">
                     <x-admin::form.control-group.label>
                         @{{ label }}
@@ -84,11 +119,13 @@
                     />
                     <x-admin::form.control-group.error ::control-name="name" />
                 </x-admin::form.control-group>
+
+                <!-- Ollama -->
                 <x-admin::form.control-group class="mb-4" v-if="aiCredentials.api_platform === 'ollama'">
                     <x-admin::form.control-group.label>
                         @{{ label }}
                         @php
-                            $modelOptions = ["llava"];
+                            $modelOptions = ["llama2", "llama3",  "mistral", "qwen", "deepseek-coder", "phi", "llava"];
                             $options = [];
                             foreach($modelOptions as $option) {
                                 $options[] = [
@@ -114,6 +151,69 @@
                     />
                     <x-admin::form.control-group.error ::control-name="name" />
                 </x-admin::form.control-group>
+
+                <!-- Claude -->
+                <x-admin::form.control-group class="mb-4" v-if="aiCredentials.api_platform === 'claude'">
+                    <x-admin::form.control-group.label>
+                        @{{ label }}
+                        @php
+                            $modelOptions = [
+                                "claude-3-opus", 
+                                "claude-3-sonnet", 
+                                "claude-3-haiku"
+                            ];
+                            $options = array_map(fn($option) => ['id' => $option, 'label' => $option], $modelOptions);
+                            $optionsInJson = json_encode($options);
+                        @endphp
+                    </x-admin::form.control-group.label>
+                    <x-admin::form.control-group.control
+                        type="multiselect"
+                        ref="aiModelRef"
+                        ::id="name"
+                        ::name="name"
+                        :options="$optionsInJson"
+                        ::value="value"
+                        ::label="label"
+                        ::placeholder="label"
+                        track-by="id"
+                        label-by="label"
+                        @input="getOptionValue"
+                    />
+                    <x-admin::form.control-group.error ::control-name="name" />
+                </x-admin::form.control-group>
+
+                <!-- Gemini -->
+                <x-admin::form.control-group class="mb-4" v-if="aiCredentials.api_platform === 'gemini'">
+                    <x-admin::form.control-group.label>
+                        @{{ label }}
+                        @php
+                            $modelOptions = [
+                                "gemini-1.5-pro", 
+                                "gemini-1.5-flash", 
+                                "gemini-1.0-pro"
+                            ];
+                            $options = array_map(fn($option) => ['id' => $option, 'label' => $option], $modelOptions);
+                            $optionsInJson = json_encode($options);
+                        @endphp
+                    </x-admin::form.control-group.label>
+                    <x-admin::form.control-group.control
+                        type="multiselect"
+                        ref="aiModelRef"
+                        ::id="name"
+                        ::name="name"
+                        :options="$optionsInJson"
+                        ::value="value"
+                        ::label="label"
+                        ::placeholder="label"
+                        track-by="id"
+                        label-by="label"
+                        @input="getOptionValue"
+                    />
+                    <x-admin::form.control-group.error ::control-name="name" />
+                </x-admin::form.control-group>
+
+
+
             </div>
         </div>
     </script>
@@ -176,7 +276,7 @@
                 },
                 async validated() {
                     try {
-                        
+
                         const response = await axios.get("{{ route('admin.magic_ai.validate_credential') }}", {
                             params: this.aiCredentials
                         });
@@ -195,8 +295,8 @@
                     }
                 },
 
-                getOptionValue(event){
-                    this.$emitter.emit('model_value_change',event);
+                getOptionValue(event) {
+                    this.$emitter.emit('model_value_change', event);
                 }
             }
         });

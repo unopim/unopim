@@ -115,9 +115,9 @@ class MagicAIController extends Controller
         try {
             $locale = core()->getRequestedLocaleCode();
             $prompt = request()->input('prompt');
+            $tone = request()->input('tone');
 
-            // get the tone here, which is enabled
-            $toneData = MagicAISystemPrompt::where('is_enabled', true)->first(['tone', 'temperature', 'max_tokens']);
+            $toneData = MagicAISystemPrompt::where('title', $tone)->first(['tone', 'temperature', 'max_tokens']);
             $prompt .= "\n\nGenerated content should be in {$locale}.";
 
             $prompt = $this->promptService->getPrompt(
@@ -129,6 +129,7 @@ class MagicAIController extends Controller
                 ->setPlatForm(core()->getConfigData('general.magic_ai.settings.ai_platform'))
                 ->setTemperature($toneData->temperature)
                 ->setMaxTokens($toneData->max_tokens)
+                ->setSystemPrompt($toneData->tone)
                 ->setPrompt($prompt)
                 ->ask();
 
@@ -228,18 +229,21 @@ class MagicAIController extends Controller
             'prompt' => 'required',
             'title'  => 'required',
             'type'   => 'required',
+            'tone'   => 'required',
         ]);
 
         $data = request()->only([
             'prompt',
             'title',
             'type',
+            'tone',
         ]);
 
         $userPrompt = $data['prompt'];
+        $toneTitle = $data['tone'];
 
-        // Fetch tone description from MagicAISystemPrompt model
-        $toneDescription = MagicAISystemPrompt::where('is_enabled', true)->value('tone');
+
+        $toneDescription = MagicAISystemPrompt::where('title', $toneTitle)->value('tone');
         $finalPrompt = "Use a {$toneDescription} tone. ".$userPrompt;
         $data['prompt'] = $finalPrompt;
 
@@ -262,12 +266,20 @@ class MagicAIController extends Controller
     public function update(): JsonResponse
     {
         $this->validate(request(), [
-            'prompt'      => 'required',
-            'title'       => 'required',
-            'type'        => 'required',
+            'prompt' => 'required',
+            'title'  => 'required',
+            'type'   => 'required',
+            'tone'   => 'required',
         ]);
 
-        $data = request()->only(['prompt', 'title', 'type']);
+        $data = request()->only(['prompt', 'title', 'type', 'tone']);
+        $userPrompt = $data['prompt'];
+        $toneTitle = $data['tone'];
+
+        $toneDescription = MagicAISystemPrompt::where('title', $toneTitle)->value('tone');
+        $finalPrompt = "Use a {$toneDescription} tone. ".$userPrompt;
+        $data['prompt'] = $finalPrompt;
+
         $this->magicPromptRepository->update($data, request()->id);
 
         return new JsonResponse([

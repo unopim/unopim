@@ -161,30 +161,41 @@
                                     @lang('Prompt Tone')
                                     </x-admin::form.control-group.label>
 
-                                    <!-- Get all the Enabled Tone  -->
                                     @php
-                                        $enabledPrompt = app('Webkul\Admin\Http\Controllers\MagicAI\MagicAISystemPromptController')->getAllEnabledPrompt();
+                                        $promptOptions = app('Webkul\Admin\Http\Controllers\MagicAI\MagicAISystemPromptController')->getAllPromptOptions();
+
                                         $options = [];
-                                        foreach($enabledPrompt as $type) {
+                                        $defaultPrompt = null;
+
+                                        foreach ($promptOptions as $prompt) {
                                             $options[] = [
-                                                'id'    => $type,
-                                                'label' => ucfirst($type)
+                                                'id'    => $prompt['id'],
+                                                'label' => $prompt['label'],
                                             ];
+
+                                            if ($defaultPrompt === null && $prompt['is_enabled']) {
+                                                $defaultPrompt = $prompt['id'];
+                                            }
                                         }
-                                        $enabledPromptOption = json_encode($options);
+                                        
+                                        if ($defaultPrompt === null && count($options)) {
+                                            $defaultPrompt = $options[0]['id'];
+                                        }
+
+                                        $optionsJson = json_encode($options);
+                                        
                                     @endphp
-                                    
+
+                   
                                     <x-admin::form.control-group.control
                                         type="select"
                                         id="tone"
                                         name="tone"
-                                        v-model="tone"
                                         rules="required"
-                                        :options="$enabledPromptOption"
-                                        :value="old('tone') ?? $enabledPrompt[0]"
+                                        :options="$optionsJson"
+                                        :value="old('tone') ?? $defaultPrompt"
                                         track-by="id"
                                         label-by="label"
-                                        
                                     >
                                     </x-admin::form.control-group.control>
 

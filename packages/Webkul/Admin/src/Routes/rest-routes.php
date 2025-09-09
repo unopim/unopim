@@ -95,6 +95,8 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
         Route::get('edit/{id}', 'edit')->name('admin.magic_ai.system_prompt.edit');
 
         Route::put('edit', 'update')->name('admin.magic_ai.system_prompt.update');
+
+        Route::get('all-system-prompt', 'allSystemPrompts')->name('admin.magic_ai.all_system_prompt');
     });
 
     /**
