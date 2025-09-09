@@ -9,9 +9,11 @@ use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 use Webkul\AdminApi\Http\Controllers\API\ApiController;
 use Webkul\Attribute\Repositories\AttributeOptionRepository;
+use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Category\Validator\Catalog\CategoryMediaValidator;
 use Webkul\Core\Filesystem\FileStorer;
+use Webkul\Core\Rules\Code;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Validator\API\UploadMediaValidator;
 
@@ -29,6 +31,7 @@ class MediaFileController extends ApiController
         protected UploadMediaValidator $mediaValidator,
         protected FileStorer $fileStorer,
         protected AttributeOptionRepository $attributeOptionRepository,
+        protected AttributeRepository $attributeRepository,
     ) {}
 
     /**
@@ -145,6 +148,11 @@ class MediaFileController extends ApiController
         }
     }
 
+    /**
+     * Handles the storage of media files for swatch attribute.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function storeSwatchMedia()
     {
         request()->validate([
@@ -152,18 +160,42 @@ class MediaFileController extends ApiController
                 'required',
                 'string',
                 Rule::exists('attribute_options', 'code'),
+                new Code,
+            ],
+            'attribute_code' => [
+                'required',
+                'string',
+                Rule::exists('attributes', 'code'),
+                new Code,
             ],
             'file' => 'required|file|mimes:jpeg,png,jpg,webp,svg|max:2048',
         ]);
 
         $requestData = request()->all();
 
-        $attributeOption = $this->attributeOptionRepository->findOneByField('code', $requestData['code']);
+        $attribute = $this->attributeRepository->findOneByField('code', $requestData['attribute_code']);
+
+        if (! $attribute) {
+            return $this->modelNotFoundResponse(
+                trans('admin::app.catalog.attributes.not-found', ['code' => $requestData['attribute_code']])
+            );
+        }
+
+        $attributeOption = $this->attributeOptionRepository->findOneWhere([
+            'code'         => $requestData['code'],
+            'attribute_id' => $attribute->id,
+        ]);
 
         if (! $attributeOption) {
             return $this->modelNotFoundResponse(
-                trans('admin::app.catalog.attributes.option.not-found', ['code' => $requestData['code']])
+                trans('admin::app.catalog.products.edit.types.configurable.variant-attribute-option-not-found', ['attributes' => $requestData['code']])
             );
+        }
+
+        if ($attribute->swatch_type !== 'image') {
+            return $this->validateErrorResponse([
+                'file' => trans('admin::app.catalog.attributes.create.invalid-swatch-type', ['attribute' => $requestData['attribute_code'], 'type' => 'Upload', 'swatch_type' => 'Image']),
+            ]);
         }
 
         try {

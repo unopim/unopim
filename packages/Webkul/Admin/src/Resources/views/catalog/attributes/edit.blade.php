@@ -861,13 +861,12 @@
                         const formData = new FormData();
 
                         for (const [localeCode, label] of Object.entries(params.locales)) {
-                            formData.append(`locales[${localeCode}][label]`, label !== undefined && label !== null ? label : '');
+                            formData.append(`locales[${localeCode}][label]`, label ?? '');
                         }
 
                         for (const key in params) {
                             if (key !== 'locales' && key !== 'swatch_value') {
-                                const value = params[key] !== undefined && params[key] !== null ? params[key] : '';
-                                formData.append(key, value);
+                                formData.append(key, params[key] ?? '');
                             }
                         }
 
@@ -876,7 +875,7 @@
 
                             if (fileInput && fileInput.files.length > 0) {
                                 formData.append('swatch_value', fileInput.files[0]);
-                            } else if (!this.swatchValue.image || this.swatchValue.image.length === 0) {
+                            } else if (!this.swatchValue.image?.length) {
                                 formData.append('swatch_value', '');
                             } else {
                                 const relativePath = params.swatch_value;

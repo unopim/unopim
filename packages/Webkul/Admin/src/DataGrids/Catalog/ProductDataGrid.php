@@ -858,6 +858,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                     if (! $optionValue) {
                         return null;
                     }
+
                     $cleanValue = trim($optionValue, '[]');
 
                     $option = $attribute->options()
@@ -869,11 +870,14 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                                 });
                         })
                         ->first();
-                    if ($attribute->swatch_type === 'color') {
-                        return $option?->swatch_value ? "<div style='background-color: ".$option->swatch_value.";' class='h-[25px] w-[25px] rounded-md border border-gray-200 dark:border-gray-800 inline-block'></div>" : null;
-                    } else {
-                        return $option?->swatch_value ? "<img src='".asset('storage/'.$option->swatch_value)."' alt='".$optionValue."' class='h-[46px] w-[46px] max-w-[46px] min-w-[46px] max-h-[46px] min-h-[46px] rounded-lg border border-gray-300 shadow-sm object-cover inline-block' />" : null;
+
+                    if (! $option?->swatch_value) {
+                        return null;
                     }
+
+                    return $attribute->swatch_type === 'color'
+                        ? "<div style='background-color: {$option->swatch_value};' class='h-[25px] w-[25px] rounded-md border border-gray-200 dark:border-gray-800 inline-block'></div>"
+                        : "<img src='".asset("storage/{$option->swatch_value}")."' alt='".e($optionValue)."' class='h-[46px] w-[46px] max-w-[46px] min-w-[46px] max-h-[46px] min-h-[46px] rounded-lg border border-gray-300 shadow-sm object-cover inline-block' />";
                 };
 
                 if ($attribute->type === 'multiselect') {
