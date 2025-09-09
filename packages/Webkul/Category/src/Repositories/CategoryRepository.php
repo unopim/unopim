@@ -114,10 +114,25 @@ class CategoryRepository extends Repository
             $category->additional_data = $data[self::ADDITIONAL_VALUES_KEY];
         }
 
+        $driver = DB::getDriverName();
+
+        switch ($driver) {
+            case 'pgsql':
+                if (isset($data['parent_id']) && !is_numeric($data['parent_id'])) {
+                    $data['parent_id'] = (string) $data['parent_id'];
+                }
+                break;
+
+            case 'mysql':
+            default:
+                break;
+        }
+
         $category->update($data);
 
         return $category;
     }
+
 
     /**
      * Specify category tree.

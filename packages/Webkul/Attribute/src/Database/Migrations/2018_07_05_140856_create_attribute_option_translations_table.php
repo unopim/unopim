@@ -22,15 +22,17 @@ return new class extends Migration
             switch ($driver) {
                 case 'mysql':
                     $table->unsignedBigInteger('attribute_option_id');
+                    $table->string('locale');
                     break;
 
                 case 'pgsql':
                 default:
                     $table->bigInteger('attribute_option_id');
+                     $table->string('locale')->nullable();
                     break;
             }
 
-            $table->string('locale');
+           
             $table->text('label')->nullable();
 
             $table->unique(['attribute_option_id', 'locale']);

@@ -48,6 +48,10 @@ class CategoryFieldRepository extends Repository
                 break;
 
             case 'mysql':
+                $table = $this->model->getTable();
+                DB::statement("ALTER TABLE {$table} AUTO_INCREMENT = 1");
+                break;
+
             default:
                 break;
         }
@@ -61,10 +65,17 @@ class CategoryFieldRepository extends Repository
             return $categoryField;
         }
 
-        if ($driver === 'pgsql') {
-            $optionTable = $this->categoryFieldOptionRepository->getModel()->getTable();
-            $optionSeq = $optionTable.'_id_seq';
-            DB::statement("SELECT setval('{$optionSeq}', (SELECT COALESCE(MAX(id), 0) + 1 FROM {$optionTable}), false)");
+        switch ($driver) {
+            case 'pgsql':
+                $optionTable = $this->categoryFieldOptionRepository->getModel()->getTable();
+                $optionSeq = $optionTable.'_id_seq';
+                DB::statement("SELECT setval('{$optionSeq}', (SELECT COALESCE(MAX(id), 0) + 1 FROM {$optionTable}), false)");
+                break;
+
+            case 'mysql':
+                $optionTable = $this->categoryFieldOptionRepository->getModel()->getTable();
+                DB::statement("ALTER TABLE {$optionTable} AUTO_INCREMENT = 1");
+                break;
         }
 
         foreach ($data['options'] as $option) {
@@ -75,6 +86,7 @@ class CategoryFieldRepository extends Repository
 
         return $categoryField;
     }
+
 
     /**
      * Update a category field in the database and its options if present.

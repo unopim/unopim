@@ -2,6 +2,8 @@
 
 use Webkul\Core\Models\Locale;
 
+use Illuminate\Support\Facades\DB;
+
 beforeEach(function () {
     $this->headers = $this->getAuthenticationHeaders();
 });
@@ -60,7 +62,10 @@ it('should filter the locale based on status', function () {
         ],
     ];
 
-    $this->withHeaders($this->headers)->json('GET', route('admin.api.locales.index', ['filters' => json_encode($filters)]))
+    $driver = DB::getDriverName();
+
+    $response = $this->withHeaders($this->headers)
+        ->json('GET', route('admin.api.locales.index', ['filters' => json_encode($filters)]))
         ->assertOK()
         ->assertJsonStructure([
             'data' => [
@@ -78,9 +83,22 @@ it('should filter the locale based on status', function () {
                 'next',
                 'prev',
             ],
-        ])
-        ->assertJsonFragment(['code' => $locale->code, 'status' => $locale->status])
-        ->assertJsonFragment(['total' => Locale::where('status', 1)->count()]);
+        ]);
+
+    switch ($driver) {
+        case 'pgsql':
+            $response
+                ->assertJsonFragment(['code' => $locale->code, 'status' => (int) $locale->status])
+                ->assertJsonFragment(['total' => Locale::where('status', 1)->count()]);
+            break;
+
+        case 'mysql':
+        default:
+            $response
+                ->assertJsonFragment(['code' => $locale->code, 'status' => (bool) $locale->status])
+                ->assertJsonFragment(['total' => Locale::where('status', 1)->count()]);
+            break;
+    }
 });
 
 it('should return validation error when filtering based on any other field than status', function () {
