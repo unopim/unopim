@@ -1,163 +1,150 @@
-import { test, expect } from '@playwright/test';
+const { test, expect } = require('../../utils/fixtures');
+
 test.describe('UnoPim Test cases(Administrator Role)', () => {
-test.beforeEach(async ({ page }) => {
-  await page.goto('http://127.0.0.1:8000/admin/login');
-  await page.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
-  await page.getByRole('textbox', { name: 'Password' }).fill('admin123');
-  await page.getByRole('button', { name: 'Sign In' }).click();
-  await expect(page).toHaveURL('http://127.0.0.1:8000/admin/dashboard');
+test('Create role with empty permission field', async ({ adminPage }) => {
+  await adminPage.getByRole('link', { name: ' Settings' }).click();
+  await adminPage.getByRole('link', { name: 'Roles' }).click();
+  await adminPage.getByRole('link', { name: 'Create Role' }).click();
+  await adminPage.locator('div').filter({ hasText: /^Custom$/ }).click();
+  await adminPage.getByRole('option', { name: 'Custom' }).locator('span').first().click();
+  await adminPage.getByRole('textbox', { name: 'Name' }).click();
+  await adminPage.getByRole('textbox', { name: 'Name' }).fill('Admin');
+  await adminPage.getByRole('textbox', { name: 'Description' }).click();
+  await adminPage.getByRole('textbox', { name: 'Description' }).fill('The admin have full access');
+  await adminPage.getByRole('button', { name: 'Save Role' }).click();
+  await expect(adminPage.getByText(/The Permissions field is required/i)).toBeVisible();
 });
 
-test('Create role with empty permission field', async ({ page }) => {
-  await page.getByRole('link', { name: ' Settings' }).click();
-  await page.getByRole('link', { name: 'Roles' }).click();
-  await page.getByRole('link', { name: 'Create Role' }).click();
-  await page.locator('div').filter({ hasText: /^Custom$/ }).click();
-  await page.getByRole('option', { name: 'Custom' }).locator('span').first().click();
-  await page.getByRole('textbox', { name: 'Name' }).click();
-  await page.getByRole('textbox', { name: 'Name' }).fill('Admin');
-  await page.getByRole('textbox', { name: 'Description' }).click();
-  await page.getByRole('textbox', { name: 'Description' }).fill('The admin have full access');
-  await page.getByRole('button', { name: 'Save Role' }).click();
-  await expect(page.getByText(/The Permissions field is required/i)).toBeVisible();
+test('Create role with empty Name field', async ({ adminPage }) => {
+  await adminPage.getByRole('link', { name: ' Settings' }).click();
+  await adminPage.getByRole('link', { name: 'Roles' }).click();
+  await adminPage.getByRole('link', { name: 'Create Role' }).click();
+  await adminPage.locator('div').filter({ hasText: /^Custom$/ }).click();
+  await adminPage.getByRole('option', { name: 'All' }).locator('span').first().click();
+  await adminPage.getByRole('textbox', { name: 'Name' }).click();
+  await adminPage.getByRole('textbox', { name: 'Name' }).fill('');
+  await adminPage.getByRole('textbox', { name: 'Description' }).click();
+  await adminPage.getByRole('textbox', { name: 'Description' }).fill('The admin have full access');
+  await adminPage.getByRole('button', { name: 'Save Role' }).click();
+  await expect(adminPage.getByText(/The Name field is required/i)).toBeVisible();
 });
 
-test('Create role with empty Name field', async ({ page }) => {
-  await page.getByRole('link', { name: ' Settings' }).click();
-  await page.getByRole('link', { name: 'Roles' }).click();
-  await page.getByRole('link', { name: 'Create Role' }).click();
-  await page.locator('div').filter({ hasText: /^Custom$/ }).click();
-  await page.getByRole('option', { name: 'All' }).locator('span').first().click();
-  await page.getByRole('textbox', { name: 'Name' }).click();
-  await page.getByRole('textbox', { name: 'Name' }).fill('');
-  await page.getByRole('textbox', { name: 'Description' }).click();
-  await page.getByRole('textbox', { name: 'Description' }).fill('The admin have full access');
-  await page.getByRole('button', { name: 'Save Role' }).click();
-  await expect(page.getByText(/The Name field is required/i)).toBeVisible();
+test('Create role with empty description field', async ({ adminPage }) => {
+  await adminPage.getByRole('link', { name: ' Settings' }).click();
+  await adminPage.getByRole('link', { name: 'Roles' }).click();
+  await adminPage.getByRole('link', { name: 'Create Role' }).click();
+  await adminPage.locator('div').filter({ hasText: /^Custom$/ }).click();
+  await adminPage.getByRole('option', { name: 'All' }).locator('span').first().click();
+  await adminPage.getByRole('textbox', { name: 'Name' }).click();
+  await adminPage.getByRole('textbox', { name: 'Name' }).fill('Admin');
+  await adminPage.getByRole('textbox', { name: 'Description' }).click();
+  await adminPage.getByRole('textbox', { name: 'Description' }).fill('');
+  await adminPage.getByRole('button', { name: 'Save Role' }).click();
+  await expect(adminPage.getByText(/The Description field is required/i)).toBeVisible();
 });
 
-test('Create role with empty description field', async ({ page }) => {
-  await page.getByRole('link', { name: ' Settings' }).click();
-  await page.getByRole('link', { name: 'Roles' }).click();
-  await page.getByRole('link', { name: 'Create Role' }).click();
-  await page.locator('div').filter({ hasText: /^Custom$/ }).click();
-  await page.getByRole('option', { name: 'All' }).locator('span').first().click();
-  await page.getByRole('textbox', { name: 'Name' }).click();
-  await page.getByRole('textbox', { name: 'Name' }).fill('Admin');
-  await page.getByRole('textbox', { name: 'Description' }).click();
-  await page.getByRole('textbox', { name: 'Description' }).fill('');
-  await page.getByRole('button', { name: 'Save Role' }).click();
-  await expect(page.getByText(/The Description field is required/i)).toBeVisible();
+test('Create role with all required field empty', async ({ adminPage }) => {
+  await adminPage.getByRole('link', { name: ' Settings' }).click();
+  await adminPage.getByRole('link', { name: 'Roles' }).click();
+  await adminPage.getByRole('link', { name: 'Create Role' }).click();
+  await adminPage.locator('div').filter({ hasText: /^Custom$/ }).click();
+  await adminPage.getByRole('option', { name: 'Custom' }).locator('span').first().click();
+  await adminPage.getByRole('textbox', { name: 'Name' }).click();
+  await adminPage.getByRole('textbox', { name: 'Name' }).fill('');
+  await adminPage.getByRole('textbox', { name: 'Description' }).click();
+  await adminPage.getByRole('textbox', { name: 'Description' }).fill('');
+  await adminPage.getByRole('button', { name: 'Save Role' }).click();
+  await expect(adminPage.getByText(/The Permissions field is required/i)).toBeVisible();
+  await expect(adminPage.getByText(/The Name field is required/i)).toBeVisible();
+  await expect(adminPage.getByText(/The Description field is required/i)).toBeVisible();
 });
 
-test('Create role with all required field empty', async ({ page }) => {
-  await page.getByRole('link', { name: ' Settings' }).click();
-  await page.getByRole('link', { name: 'Roles' }).click();
-  await page.getByRole('link', { name: 'Create Role' }).click();
-  await page.locator('div').filter({ hasText: /^Custom$/ }).click();
-  await page.getByRole('option', { name: 'Custom' }).locator('span').first().click();
-  await page.getByRole('textbox', { name: 'Name' }).click();
-  await page.getByRole('textbox', { name: 'Name' }).fill('');
-  await page.getByRole('textbox', { name: 'Description' }).click();
-  await page.getByRole('textbox', { name: 'Description' }).fill('');
-  await page.getByRole('button', { name: 'Save Role' }).click();
-  await expect(page.getByText(/The Permissions field is required/i)).toBeVisible();
-  await expect(page.getByText(/The Name field is required/i)).toBeVisible();
-  await expect(page.getByText(/The Description field is required/i)).toBeVisible();
+test('Create Administrator role', async ({ adminPage }) => {
+  await adminPage.getByRole('link', { name: ' Settings' }).click();
+  await adminPage.getByRole('link', { name: 'Roles' }).click();
+  await adminPage.getByRole('link', { name: 'Create Role' }).click();
+  await adminPage.locator('div').filter({ hasText: /^Custom$/ }).click();
+  await adminPage.getByRole('option', { name: 'All' }).locator('span').first().click();
+  await adminPage.getByRole('textbox', { name: 'Name' }).click();
+  await adminPage.getByRole('textbox', { name: 'Name' }).fill('Admin');
+  await adminPage.getByRole('textbox', { name: 'Description' }).click();
+  await adminPage.getByRole('textbox', { name: 'Description' }).fill('The admin have full access');
+  await adminPage.getByRole('button', { name: 'Save Role' }).click();
+  await expect(adminPage.getByText(/Roles Created Successfully/i)).toBeVisible();
 });
 
-test('Create Administrator role', async ({ page }) => {
-  await page.getByRole('link', { name: ' Settings' }).click();
-  await page.getByRole('link', { name: 'Roles' }).click();
-  await page.getByRole('link', { name: 'Create Role' }).click();
-  await page.locator('div').filter({ hasText: /^Custom$/ }).click();
-  await page.getByRole('option', { name: 'All' }).locator('span').first().click();
-  await page.getByRole('textbox', { name: 'Name' }).click();
-  await page.getByRole('textbox', { name: 'Name' }).fill('Admin');
-  await page.getByRole('textbox', { name: 'Description' }).click();
-  await page.getByRole('textbox', { name: 'Description' }).fill('The admin have full access');
-  await page.getByRole('button', { name: 'Save Role' }).click();
-  await expect(page.getByText(/Roles Created Successfully/i)).toBeVisible();
+test('should allow role search', async ({ adminPage }) => {
+  await adminPage.getByRole('link', { name: ' Settings' }).click();
+  await adminPage.getByRole('link', { name: 'Roles' }).click();
+  await adminPage.getByRole('textbox', { name: 'Search' }).click();
+  await adminPage.getByRole('textbox', { name: 'Search' }).type('Administrator');
+  await adminPage.keyboard.press('Enter');
+  await expect(adminPage.locator('text=AdministratorAll', {exact:true})).toBeVisible();
 });
 
-test('should allow Export search', async ({ page }) => {
-  await page.getByRole('link', { name: ' Settings' }).click();
-  await page.getByRole('link', { name: 'Roles' }).click();
-  await page.getByRole('textbox', { name: 'Search' }).click();
-  await page.getByRole('textbox', { name: 'Search' }).type('Administrator');
-  await page.keyboard.press('Enter');
-  await expect(page.locator('text=AdministratorAll')).toBeVisible();
-});
-
-test('Update Administrator role', async ({ page }) => {
-  await page.getByRole('link', { name: ' Settings' }).click();
-  await page.getByRole('link', { name: 'Roles' }).click();
-  const itemRow = page.locator('div', { hasText: 'Admin' });
+test('Update Administrator role', async ({ adminPage }) => {
+  await adminPage.getByRole('link', { name: ' Settings' }).click();
+  await adminPage.getByRole('link', { name: 'Roles' }).click();
+  const itemRow = adminPage.locator('div', { hasText: 'Admin' });
   await itemRow.locator('span[title="Edit"]').first().click();
-  await page.getByRole('textbox', { name: 'Description' }).click();
-  await page.getByRole('textbox', { name: 'Description' }).fill('The admin have full access of UnoPim');
-  await page.getByRole('button', { name: 'Save Role' }).click();
-  await expect(page.getByText(/Roles is updated successfully./i).first()).toBeVisible();
+  await adminPage.getByRole('textbox', { name: 'Description' }).click();
+  await adminPage.getByRole('textbox', { name: 'Description' }).fill('The admin have full access of UnoPim');
+  await adminPage.getByRole('button', { name: 'Save Role' }).click();
+  await expect(adminPage.getByText(/Roles is updated successfully./i).first()).toBeVisible();
 });
 
-test('Delete Administrator role', async ({ page }) => {
-  await page.getByRole('link', { name: ' Settings' }).click();
-  await page.getByRole('link', { name: 'Roles' }).click();
-  const itemRow = page.locator('div', { hasText: 'Admin' });
+test('Delete Administrator role', async ({ adminPage }) => {
+  await adminPage.getByRole('link', { name: ' Settings' }).click();
+  await adminPage.getByRole('link', { name: 'Roles' }).click();
+  const itemRow = adminPage.locator('div', { hasText: 'Admin' });
   await itemRow.locator('span[title="Delete"]').first().click();
-  await page.click('button:has-text("Delete")');
-  await expect(page.getByText(/Roles is deleted successfully/i)).toBeVisible();
+  await adminPage.click('button:has-text("Delete")');
+  await expect(adminPage.getByText(/Roles is deleted successfully/i)).toBeVisible();
 });
 });
 
 test.describe('UnoPim Test cases(Custom Role)', () => {
-test.beforeEach(async ({ page }) => {
-  await page.goto('http://127.0.0.1:8000/admin/login');
-  await page.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
-  await page.getByRole('textbox', { name: 'Password' }).fill('admin123');
-  await page.getByRole('button', { name: 'Sign In' }).click();
+test('Create Custom Roles', async ({ adminPage }) => {
+  await adminPage.getByRole('link', { name: ' Settings' }).click();
+  await adminPage.getByRole('link', { name: 'Roles' }).click();
+  await adminPage.getByRole('link', { name: 'Create Role' }).click();
+  await adminPage.locator('label').filter({ hasText: 'Dashboard' }).locator('span').click();
+  await adminPage.locator('label').filter({ hasText: 'Catalog' }).locator('span').click();
+  await adminPage.getByRole('textbox', { name: 'Name' }).click();
+  await adminPage.getByRole('textbox', { name: 'Name' }).fill('Catalog Manager');
+  await adminPage.getByRole('textbox', { name: 'Description' }).click();
+  await adminPage.getByRole('textbox', { name: 'Description' }).fill('The catalog manager have access to the catalog section only');
+  await adminPage.getByRole('button', { name: 'Save Role' }).click();
+  await expect(adminPage.getByText(/Roles Created Successfully/i)).toBeVisible();
 });
 
-test('Create Custom Roles', async ({ page }) => {
-  await page.getByRole('link', { name: ' Settings' }).click();
-  await page.getByRole('link', { name: 'Roles' }).click();
-  await page.getByRole('link', { name: 'Create Role' }).click();
-  await page.locator('label').filter({ hasText: 'Dashboard' }).locator('span').click();
-  await page.locator('label').filter({ hasText: 'Catalog' }).locator('span').click();
-  await page.getByRole('textbox', { name: 'Name' }).click();
-  await page.getByRole('textbox', { name: 'Name' }).fill('Catalog Manager');
-  await page.getByRole('textbox', { name: 'Description' }).click();
-  await page.getByRole('textbox', { name: 'Description' }).fill('The catalog manager have access to the catalog section only');
-  await page.getByRole('button', { name: 'Save Role' }).click();
-  await expect(page.getByText(/Roles Created Successfully/i)).toBeVisible();
-});
-
-test('Update Custom Roles', async ({ page }) => {
-  await page.getByRole('link', { name: ' Settings' }).click();
-  await page.getByRole('link', { name: 'Roles' }).click();
-  const itemRow = page.locator('div', { hasText: 'Catalog Manager' });
+test('Update Custom Roles', async ({ adminPage }) => {
+  await adminPage.getByRole('link', { name: ' Settings' }).click();
+  await adminPage.getByRole('link', { name: 'Roles' }).click();
+  const itemRow = adminPage.locator('div', { hasText: 'Catalog Manager' });
   await itemRow.locator('span[title="Edit"]').first().click();
-  await page.locator('label').filter({ hasText: 'Categories' }).locator('span').click();
-  await page.getByRole('button', { name: 'Save Role' }).click();
-  await expect(page.getByText(/Roles is updated successfully./i).first()).toBeVisible();
+  await adminPage.waitForTimeout(500);
+  await adminPage.locator('label').filter({ hasText: 'Categories' }).locator('span').click();
+  await adminPage.getByRole('button', { name: 'Save Role' }).click();
+  await expect(adminPage.getByText(/Roles is updated successfully./i).first()).toBeVisible();
 });
 
-test('Delete Custom Roles', async ({ page }) => {
-  await page.getByRole('link', { name: ' Settings' }).click();
-  await page.getByRole('link', { name: 'Roles' }).click();
-  const itemRow = page.locator('div', { hasText: 'Catalog Manager' });
+test('Delete Custom Roles', async ({ adminPage }) => {
+  await adminPage.getByRole('link', { name: ' Settings' }).click();
+  await adminPage.getByRole('link', { name: 'Roles' }).click();
+  const itemRow = adminPage.locator('div', { hasText: 'Catalog Manager' });
   await itemRow.locator('span[title="Delete"]').first().click();
-  await page.click('button:has-text("Delete")');
-  await expect(page.getByText(/Roles is deleted successfully./i).first()).toBeVisible();
+  await adminPage.click('button:has-text("Delete")');
+  await expect(adminPage.getByText(/Roles is deleted successfully./i).first()).toBeVisible();
 });
 
-test('Delete Default Roles', async ({ page }) => {
-  await page.getByRole('link', { name: ' Settings' }).click();
-  await page.getByRole('link', { name: 'Roles' }).click();
-  const itemRow = page.locator('div', { hasText: 'Administrator' });
+test('Delete Default Roles', async ({ adminPage }) => {
+  await adminPage.getByRole('link', { name: ' Settings' }).click();
+  await adminPage.getByRole('link', { name: 'Roles' }).click();
+  const itemRow = adminPage.locator('div', { hasText: 'Administrator' });
   await itemRow.locator('span[title="Delete"]').first().click();
-  await page.click('button:has-text("Delete")');
-  await expect(page.getByText(/Role is already used by Example User/i).first()).toBeVisible();
+  await adminPage.click('button:has-text("Delete")');
+  await expect(adminPage.getByText(/Role is already used by Example User/i).first()).toBeVisible();
 });
 });
 
