@@ -242,7 +242,6 @@ class MagicAIController extends Controller
         $userPrompt = $data['prompt'];
         $toneTitle = $data['tone'];
 
-
         $toneDescription = MagicAISystemPrompt::where('title', $toneTitle)->value('tone');
         $finalPrompt = "Use a {$toneDescription} tone. ".$userPrompt;
         $data['prompt'] = $finalPrompt;
