@@ -71,7 +71,7 @@ class MagicAI
     /**
      * LLM system prompt text.
      */
-    protected string $systemPrompt;
+    protected string $systemPrompt = '';
 
     /**
      * Set LLM model

@@ -1,10 +1,10 @@
 <v-tinymce {{ $attributes }}></v-tinymce>
 
 @pushOnce('scripts')
-    <script
-        src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.6.2/tinymce.min.js"
-        crossorigin="anonymous"
-        referrerpolicy="no-referrer"
+    <script 
+    src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.6.2/tinymce.min.js" 
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
     ></script>
 
     <script
@@ -115,7 +115,7 @@
                                         :value="old('tone') ?? $defaultPrompt"
                                         track-by="id"
                                         label-by="label"
-                                    >
+                                        >
                                     </x-admin::form.control-group.control>
 
 
@@ -260,7 +260,7 @@
 
                     aiModels: [],
                     defaultPrompts: [],
-                    tone: null,               
+                    tone: null,
                     systemPrompts: [],
                     selectedModel: null,
                     suggestionValues: [],
@@ -271,7 +271,7 @@
 
             mounted() {
                 this.init();
-                 this.fetchSystemPrompts();
+                this.fetchSystemPrompts();
 
                 this.$emitter.on('change-theme', (theme) => {
                     tinymce.get(0).destroy();
@@ -303,7 +303,7 @@
                                 content_css: self.currentContentCSS,
                             };
 
-                            const image_upload_handler = (blobInfo, progress) => new Promise((resolve, reject) => {
+                            const image_upload_handler = (blobInfo, progress) => new Promise((resolve,reject) => {
                                 self2.uploadImageHandler(config, blobInfo, resolve, reject, progress);
                             });
 
@@ -375,7 +375,7 @@
 
                                 json = JSON.parse(xhr.responseText);
 
-                                if (! json || typeof json.location != 'string') {
+                                if (!json || typeof json.location != 'string') {
                                     reject("@lang('admin::app.error.tinymce.invalid-json')" + xhr.responseText);
 
                                     return;
@@ -384,7 +384,7 @@
                                 resolve(json.location);
                             };
 
-                            xhr.onerror = (()=>reject("@lang('admin::app.error.tinymce.upload-failed')"));
+                            xhr.onerror = (() => reject("@lang('admin::app.error.tinymce.upload-failed')"));
 
                             formData = new FormData();
                             formData.append('_token', config.csrfToken);
@@ -399,17 +399,19 @@
                         plugins: 'image media wordcount save fullscreen code table lists link',
                         toolbar1: 'formatselect | fontsize bold italic strikethrough forecolor backcolor image alignleft aligncenter alignright alignjustify | link hr numlist bullist outdent indent removeformat code table | aibutton',
                         image_advtab: true,
-                        directionality : "ltr",
+                        directionality: "ltr",
 
                         setup: editor => {
-                            editor.ui.registry.addIcon('magic', '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"> <g clip-path="url(#clip0_3148_2242)"> <path fill-rule="evenodd" clip-rule="evenodd" d="M12.1484 9.31989L9.31995 12.1483L19.9265 22.7549L22.755 19.9265L12.1484 9.31989ZM12.1484 10.7341L10.7342 12.1483L13.5626 14.9767L14.9768 13.5625L12.1484 10.7341Z" fill="#6d28d9"/> <path d="M11.0877 3.30949L13.5625 4.44748L16.0374 3.30949L14.8994 5.78436L16.0374 8.25924L13.5625 7.12124L11.0877 8.25924L12.2257 5.78436L11.0877 3.30949Z" fill="#6d28d9"/> <path d="M2.39219 2.39217L5.78438 3.95197L9.17656 2.39217L7.61677 5.78436L9.17656 9.17655L5.78438 7.61676L2.39219 9.17655L3.95198 5.78436L2.39219 2.39217Z" fill="#6d28d9"/> <path d="M3.30947 11.0877L5.78434 12.2257L8.25922 11.0877L7.12122 13.5626L8.25922 16.0374L5.78434 14.8994L3.30947 16.0374L4.44746 13.5626L3.30947 11.0877Z" fill="#6d28d9"/> </g> <defs> <clipPath id="clip0_3148_2242"> <rect width="24" height="24" fill="white"/> </clipPath> </defs> </svg>');
+                            editor.ui.registry.addIcon('magic',
+                                '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"> <g clip-path="url(#clip0_3148_2242)"> <path fill-rule="evenodd" clip-rule="evenodd" d="M12.1484 9.31989L9.31995 12.1483L19.9265 22.7549L22.755 19.9265L12.1484 9.31989ZM12.1484 10.7341L10.7342 12.1483L13.5626 14.9767L14.9768 13.5625L12.1484 10.7341Z" fill="#6d28d9"/> <path d="M11.0877 3.30949L13.5625 4.44748L16.0374 3.30949L14.8994 5.78436L16.0374 8.25924L13.5625 7.12124L11.0877 8.25924L12.2257 5.78436L11.0877 3.30949Z" fill="#6d28d9"/> <path d="M2.39219 2.39217L5.78438 3.95197L9.17656 2.39217L7.61677 5.78436L9.17656 9.17655L5.78438 7.61676L2.39219 9.17655L3.95198 5.78436L2.39219 2.39217Z" fill="#6d28d9"/> <path d="M3.30947 11.0877L5.78434 12.2257L8.25922 11.0877L7.12122 13.5626L8.25922 16.0374L5.78434 14.8994L3.30947 16.0374L4.44746 13.5626L3.30947 11.0877Z" fill="#6d28d9"/> </g> <defs> <clipPath id="clip0_3148_2242"> <rect width="24" height="24" fill="white"/> </clipPath> </defs> </svg>'
+                                );
 
                             editor.ui.registry.addButton('aibutton', {
                                 text: "@lang('admin::app.components.tinymce.ai-btn-tile')",
                                 icon: 'magic',
                                 enabled: self.ai.enabled,
 
-                                onAction: function () {
+                                onAction: function() {
                                     self.ai = {
                                         prompt: self.prompt,
 
@@ -452,7 +454,8 @@
                                 fillAttr: 'code',
                                 noMatchTemplate: "@lang('admin::app.common.no-match-found')",
                                 selectTemplate: (item) => `@${item.original.code}`,
-                                menuItemTemplate: (item) => `<div class="p-1.5 rounded-md text-base cursor-pointer transition-all max-sm:place-self-center">${item.original.name || '[' + item.original.code + ']'}</div>`,
+                                menuItemTemplate: (item) =>
+                                    `<div class="p-1.5 rounded-md text-base cursor-pointer transition-all max-sm:place-self-center">${item.original.name || '[' + item.original.code + ']'}</div>`,
                             });
 
                             tribute.attach(this.$refs.promptInput);
@@ -467,9 +470,15 @@
                     this.$nextTick(() => {
                         this.$refs.promptInput.focus();
                         const textarea = this.$refs.promptInput;
-                        const keydownEvent = new KeyboardEvent("keydown", { key: "@", bubbles: true });
+                        const keydownEvent = new KeyboardEvent("keydown", {
+                            key: "@",
+                            bubbles: true
+                        });
                         textarea.dispatchEvent(keydownEvent);
-                        const event = new KeyboardEvent("keyup", { key: "@", bubbles: true });
+                        const event = new KeyboardEvent("keyup", {
+                            key: "@",
+                            bubbles: true
+                        });
                         textarea.dispatchEvent(event);
                     });
                 },
@@ -477,7 +486,8 @@
                 async fetchModels() {
                     try {
                         const response = await axios.get("{{ route('admin.magic_ai.available_model') }}");
-                        this.aiModels = response.data.models.filter(model => model.id !== 'dall-e-2' && model.id !== 'dall-e-3');
+                        this.aiModels = response.data.models.filter(model => model.id !== 'dall-e-2' && model
+                            .id !== 'dall-e-3');
                         this.selectedModel = this.aiModels[0].id;
                     } catch (error) {
                         console.error("Failed to fetch AI models:", error);
@@ -487,28 +497,14 @@
                 async fetchDefaultPrompts() {
                     try {
                         const response = await axios.get("{{ route('admin.magic_ai.default_prompt') }}", {
-                            params: { field: this.entityName }
+                            params: {
+                                field: this.entityName
+                            }
                         });
-                        
+
                         this.defaultPrompts = response.data.prompts;
                     } catch (error) {
                         console.error("Failed to fetch Default Prompt:", error);
-                    }
-                },
-
-                async fetchSystemPrompts() {
-                    try {
-                        const response = await axios.get("{{ route('admin.magic_ai.all_system_prompt') }}");
-                        this.systemPrompts = response.data.prompts;   
-
-                        if (!this.tone) {
-                            const firstEnabled = this.systemPrompts.find(p => p.is_enabled);
-                            if (firstEnabled) {
-                                this.tone = firstEnabled.id;
-                            }
-                        }
-                    } catch (error) {
-                        console.error("Failed to fetch System Prompt:", error);
                     }
                 },
 
@@ -529,27 +525,34 @@
                     this.ai.prompt = JSON.parse(value)?.prompt;
                 },
 
-                generate(params, { resetForm, resetField, setErrors }) {
+                generate(params, {
+                    resetForm,
+                    resetField,
+                    setErrors
+                }) {
                     this.isLoading = true;
 
                     var formData = new FormData(this.$refs.magicAiGenerateForm);
-
+                    
                     let model = formData.getAll('model');
 
                     model = model.filter((value) => value !== '')[0];
 
                     params['model'] = model;
 
+                    let tones = formData.getAll('tone');
+                    let tone = tones.find(value => value !== '');
+
                     this.$axios.post("{{ route('admin.magic_ai.content') }}", {
-                        prompt: params['prompt'],
-                        model: params['model'],
-                        tone: params['tone'],
-                        resource_id: this.resourceId,
-                        resource_type: this.getResourceType(),
-                        field_type: 'tinymce',
-                        locale: "{{ core()->getRequestedLocaleCode() }}",
-                        channel: "{{ core()->getRequestedChannelCode() }}",
-                    })
+                            prompt: params['prompt'],
+                            model: params['model'],
+                            tone: tone,
+                            resource_id: this.resourceId,
+                            resource_type: this.getResourceType(),
+                            field_type: 'tinymce',
+                            locale: "{{ core()->getRequestedLocaleCode() }}",
+                            channel: "{{ core()->getRequestedChannelCode() }}",
+                        })
                         .then(response => {
                             this.isLoading = false;
 
@@ -561,7 +564,10 @@
                             if (error.response.status == 422) {
                                 setErrors(error.response.data.errors);
                             } else {
-                                this.$emitter.emit('add-flash', { type: 'error', message: error.response.data.message });
+                                this.$emitter.emit('add-flash', {
+                                    type: 'error',
+                                    message: error.response.data.message
+                                });
                             }
                         });
                 },
@@ -576,11 +582,12 @@
                 },
 
                 apply() {
-                    if (! this.ai.content) {
+                    if (!this.ai.content) {
                         return;
                     }
 
-                    tinymce.get(this.selector.replace('textarea#', '')).setContent(this.ai.content.replace(/\r?\n/g, ''))
+                    tinymce.get(this.selector.replace('textarea#', '')).setContent(this.ai.content.replace(/\r?\n/g,
+                        ''))
 
                     this.field.onInput(this.ai.content.replace(/\r?\n/g, ''));
 

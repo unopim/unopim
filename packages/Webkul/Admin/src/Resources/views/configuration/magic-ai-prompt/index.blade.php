@@ -8,9 +8,9 @@
                 @lang('admin::app.configuration.prompt.create.title')
             </p>
             <div class="flex gap-x-2.5 items-center">
-                <button
-                    type="button"
-                    class="primary-button"
+                <button 
+                type="button" 
+                class="primary-button"
                 >
                     @lang('admin::app.configuration.prompt.create.create-btn')
                 </button>
@@ -262,7 +262,7 @@
                         selectedPrompt: 0,
                         title: null,
                         type: null,
-                        tone:null,
+                        tone: null,
                         id: null,
                         entityName: null,
                     };
@@ -296,11 +296,13 @@
                     }) {
                         let formData = new FormData(this.$refs.promptCreateForm);
 
+
                         if (params.id) {
                             formData.append('_method', 'put');
                         }
 
-                        this.$axios.post(params.id ? "{{ route('admin.magic_ai.prompt.update') }}" : "{{ route('admin.magic_ai.prompt.store') }}", formData)
+                        this.$axios.post(params.id ? "{{ route('admin.magic_ai.prompt.update') }}" :
+                                "{{ route('admin.magic_ai.prompt.store') }}", formData)
                             .then((response) => {
                                 this.$refs.promptUpdateOrCreateModal.close();
 
@@ -330,7 +332,8 @@
                                     fillAttr: 'code',
                                     noMatchTemplate: "@lang('admin::app.common.no-match-found')",
                                     selectTemplate: (item) => `@${item.original.code}`,
-                                    menuItemTemplate: (item) => `<div class="p-1.5 rounded-md text-base cursor-pointer transition-all max-sm:place-self-center">${item.original.name || '[' + item.original.code + ']'}</div>`,
+                                    menuItemTemplate: (item) =>
+                                        `<div class="p-1.5 rounded-md text-base cursor-pointer transition-all max-sm:place-self-center">${item.original.name || '[' + item.original.code + ']'}</div>`,
                                 });
                                 tribute.attach(this.$refs.promptInput);
 
@@ -356,7 +359,9 @@
                         });
                     },
                     async fetchSuggestionValues(text, cb) {
-                        const response = await fetch(`{{ route('admin.magic_ai.suggestion_values') }}?query=${text}&&entity_name=${this.entityName}&&locale={{ core()->getRequestedLocaleCode() }}`);
+                        const response = await fetch(
+                            `{{ route('admin.magic_ai.suggestion_values') }}?query=${text}&&entity_name=${this.entityName}&&locale={{ core()->getRequestedLocaleCode() }}`
+                            );
                         const data = await response.json();
                         this.suggestionValues = data;
                         cb(this.suggestionValues);

@@ -24,7 +24,6 @@ class Gemini
      */
     public function ask(): string
     {
-
         $apiKey = core()->getConfigData('general.magic_ai.settings.api_key');
         $baseUri = BaseUri::from('generativelanguage.googleapis.com')->toString();
         $endpoint = $baseUri.`v1beta/models/{$this->model}:generateContent`;
