@@ -7,27 +7,23 @@ use Webkul\Core\Rules\Code;
 
 class CategoryRequest extends FormRequest
 {
-    /**
-     * Determine if the Configuration is authorized to make this request.
-     *
-     * @return bool
-     */
     public function authorize()
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
     public function rules()
     {
+        $uniqueRule = 'unique:categories,code';
+
+        if (! empty($this->id)) {
+            $uniqueRule .= ','.$this->id;
+        }
+
         if ($this->id) {
             return [
                 'code' => [
-                    'unique:categories,code,'.$this->id,
+                    $uniqueRule,
                     new Code,
                 ],
             ];
@@ -36,7 +32,7 @@ class CategoryRequest extends FormRequest
         return [
             'code' => [
                 'required',
-                'unique:categories,code,'.$this->id,
+                $uniqueRule,
                 new Code,
             ],
         ];

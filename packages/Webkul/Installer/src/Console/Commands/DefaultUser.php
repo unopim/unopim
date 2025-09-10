@@ -306,42 +306,92 @@ class DefaultUser extends Command
         $password = password_hash($userPassword, PASSWORD_BCRYPT, ['cost' => 10]);
 
         $localeId = DB::table('locales')->where('code', $defaultLocale)->where('status', 1)->first()?->id ?? 58;
-        $role = $isAdmin ? DB::table('roles')->where('permission_type', 'all')->first()?->id : DB::table('roles')->where('permission_type', 'custom')->first()?->id;
 
-        if (! $role) {
-            DB::table('roles')->updateOrInsert(
-                [
-                    'name'            => $isAdmin ? 'Admin' : 'User',
-                    'description'     => $isAdmin ? 'This role users will have all the access' : 'This role users have limited access',
-                    'permission_type' => $isAdmin ? 'all' : 'custom',
-                    'permissions'     => ! $isAdmin ? json_encode(['dashboard']) : null,
-                ]
-            );
+        $driver = DB::getDriverName(); 
+
+        switch ($driver) {
+            case 'pgsql':
+                $role = $isAdmin
+                    ? DB::table('roles')->where('permission_type', 'all')->first()?->id
+                    : DB::table('roles')
+                        ->where('permission_type', 'custom')
+                        ->whereRaw('"permissions"::jsonb @> ?', [json_encode(['dashboard'])])
+                        ->first()?->id;
+
+                if (! $role) {
+                    DB::table('roles')->updateOrInsert(
+                        [
+                            'name'            => $isAdmin ? 'Admin' : 'User',
+                            'description'     => $isAdmin
+                                ? 'This role users will have all the access'
+                                : 'This role users have limited access',
+                            'permission_type' => $isAdmin ? 'all' : 'custom',
+                        ],
+                        [
+                            'permissions' => $isAdmin ? null : json_encode(['dashboard']),
+                        ]
+                    );
+                }
+
+                $role = $isAdmin
+                    ? DB::table('roles')->where('permission_type', 'all')->first()?->id
+                    : DB::table('roles')
+                        ->where('permission_type', 'custom')
+                        ->whereRaw('"permissions"::jsonb @> ?', [json_encode(['dashboard'])])
+                        ->first()?->id;
+
+
+                break;
+
+            case 'mysql':
+            default:
+                $role = $isAdmin
+                    ? DB::table('roles')->where('permission_type', 'all')->first()?->id
+                    : DB::table('roles')
+                        ->where('permission_type', 'custom')
+                        ->where('permissions', json_encode(['dashboard']))
+                        ->first()?->id;
+
+                if (! $role) {
+                    DB::table('roles')->updateOrInsert(
+                        [
+                            'name'            => $isAdmin ? 'Admin' : 'User',
+                            'description'     => $isAdmin ? 'This role users will have all the access' : 'This role users have limited access',
+                            'permission_type' => $isAdmin ? 'all' : 'custom',
+                            'permissions'     => $isAdmin ? null : json_encode(['dashboard']),
+                        ]
+                    );
+                }
+
+                $role = $isAdmin
+                    ? DB::table('roles')->where('permission_type', 'all')->first()?->id
+                    : DB::table('roles')->where('permission_type', 'custom')->where('permissions', json_encode(['dashboard']))->first()?->id;
+                break;
         }
-
-        $role = $isAdmin ? DB::table('roles')->where('permission_type', 'all')->first()?->id : DB::table('roles')->where('permission_type', 'custom')->first()?->id;
 
         try {
             DB::table('admins')->updateOrInsert(
                 [
+                    'email' => $userEmail,
+                ],
+                [
                     'api_token'    => Str::random(80),
-                    'created_at'   => date('Y-m-d H:i:s'),
+                    'created_at'   => now(),
                     'name'         => $userName,
-                    'email'        => $userEmail,
                     'password'     => $password,
                     'role_id'      => $role,
                     'status'       => 1,
                     'timezone'     => $timezone,
                     'ui_locale_id' => $localeId,
-                    'updated_at'   => date('Y-m-d H:i:s'),
+                    'updated_at'   => now(),
                 ]
             );
 
             $this->info('-----------------------------');
             $this->info('Congratulations! The User has been created successfully.');
-            $this->info('Please navigate to: '.env('APP_URL').'/admin'.' and use the following credentials for authentication:');
-            $this->info('Email: '.$userEmail);
-            $this->info('Password: '.$userPassword);
+            $this->info('Please navigate to: ' . env('APP_URL') . '/admin and use the following credentials:');
+            $this->info('Email: ' . $userEmail);
+            $this->info('Password: ' . $userPassword);
             $this->info('Cheers!');
             Log::info('Congratulations! The User has been created successfully');
         } catch (\Exception $e) {

@@ -456,7 +456,7 @@ it('should give validation message if category trying to add parent to a root ca
 
     $this->assertDatabaseMissing($this->getFullTableName(Category::class), [
         'code'      => $category->code,
-        'parent_id' => $parentCategory->code,
+        'parent_id' => $parentCategory->id,
     ]);
 });
 

@@ -4,6 +4,7 @@ namespace Webkul\Category\Repositories;
 
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Webkul\Category\Contracts\Category;
 use Webkul\Core\Eloquent\Repository;
 use Webkul\Core\Filesystem\FileStorer;
@@ -62,13 +63,28 @@ class CategoryRepository extends Repository
      */
     public function create(array $data, bool $withoutFormattingValues = false)
     {
+        $driver = DB::getDriverName();
+
+        switch ($driver) {
+            case 'pgsql':
+                $sequence = $this->model->getTable().'_id_seq';
+                DB::statement("SELECT setval('{$sequence}', (SELECT COALESCE(MAX(id), 0) + 1 FROM {$this->model->getTable()}), false)");
+                break;
+
+            case 'mysql':
+            default:
+                break;
+        }
+
         $category = $this->model->create($data);
 
         if (isset($data[self::ADDITIONAL_VALUES_KEY])) {
             /**
              * For csv or xls when values are already formatted
              */
-            $data = $withoutFormattingValues ? $data : $this->prepareAdditionalData($data, $category);
+            $data = $withoutFormattingValues
+                ? $data
+                : $this->prepareAdditionalData($data, $category);
 
             $category->additional_data = $data[self::ADDITIONAL_VALUES_KEY];
 
@@ -98,10 +114,25 @@ class CategoryRepository extends Repository
             $category->additional_data = $data[self::ADDITIONAL_VALUES_KEY];
         }
 
+        $driver = DB::getDriverName();
+
+        switch ($driver) {
+            case 'pgsql':
+                if (isset($data['parent_id']) && !is_numeric($data['parent_id'])) {
+                    $data['parent_id'] = (string) $data['parent_id'];
+                }
+                break;
+
+            case 'mysql':
+            default:
+                break;
+        }
+
         $category->update($data);
 
         return $category;
     }
+
 
     /**
      * Specify category tree.

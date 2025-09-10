@@ -4,6 +4,7 @@ namespace Webkul\Admin\Http\Controllers\Settings\DataTransfer;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ExportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
@@ -201,9 +202,13 @@ class ExportController extends Controller
         $export = $this->jobInstancesRepository->findOrFail($id);
 
         try {
-            Storage::disk('private')->delete($export->file_path);
+            if (! empty($export->file_path)) {
+                Storage::disk('private')->delete($export->file_path);
+            }
 
-            Storage::disk('private')->delete($export->error_file_path ?? '');
+            if (! empty($export->error_file_path)) {
+                Storage::disk('private')->delete($export->error_file_path);
+            }
 
             $this->jobInstancesRepository->delete($id);
 
@@ -211,6 +216,11 @@ class ExportController extends Controller
                 'message' => trans('admin::app.settings.data-transfer.exports.delete-success'),
             ]);
         } catch (\Exception $e) {
+
+            Log::error('Failed to delete job instance', [
+                'id'    => $id,
+                'error' => $e->getMessage(),
+            ]);
         }
 
         return response()->json([
@@ -273,7 +283,7 @@ class ExportController extends Controller
             \Log::error('Import failed for job instance '.$id.': '.$e->getMessage());
 
             return redirect()->route('admin.settings.data_transfer.tracker.view', $id)
-                ->with('error', 'Failed to start the expor process. Please try again.');
+                ->with('error', 'Failed to start the export process. Please try again.');
         }
     }
 

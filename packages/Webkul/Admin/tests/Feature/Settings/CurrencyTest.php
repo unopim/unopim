@@ -6,6 +6,7 @@ use Webkul\Core\Models\Currency;
 use function Pest\Laravel\get;
 use function Pest\Laravel\postJson;
 use function Pest\Laravel\putJson;
+use Illuminate\Support\Facades\DB;
 
 it('should returns the currency index page', function () {
     $this->loginAsAdmin();
@@ -73,25 +74,44 @@ it('should update the currency', function () {
     $currency = Currency::factory()->create([
         'code'   => 'DOP',
         'symbol' => '$',
+        'decimal' => 2,
+        'status' => 1,
     ]);
 
-    $response = putJson(route('admin.settings.currencies.update'),
-        [
-            'id'      => $currency->id,
-            'code'    => 'DOP',
-            'symbol'  => '$$',
-            'decimal' => '',
-            'status'  => 0,
-        ],
-    );
+    $driver = DB::getDriverName();
+
+    $data = [
+        'id'     => $currency->id,
+        'code'   => 'DOP',
+        'symbol' => '$$',
+        'status' => 0,
+    ];
+
+    switch ($driver) {
+        case 'pgsql':
+            $data['decimal'] = $currency->decimal ?? 0;
+            break;
+
+        case 'mysql':
+        default:
+            $data['decimal'] = '';
+            break;
+    }
+
+    $response = putJson(route('admin.settings.currencies.update'), $data);
 
     $response->assertStatus(200);
 
     $this->assertDatabaseHas($this->getFullTableName(Currency::class), [
         'code'   => $currency->code,
         'symbol' => '$$',
+        'decimal'=> $data['decimal'],
+        'status' => 0,
     ]);
+
 });
+
+
 
 it('should give validation message for code', function () {
     $this->loginAsAdmin();
