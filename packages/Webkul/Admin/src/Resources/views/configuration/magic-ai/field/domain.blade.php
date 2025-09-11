@@ -64,6 +64,8 @@
                             this.api_domain = 'generativelanguage.googleapis.com';
                         } else if (dom == 'claude') {
                             this.api_domain = 'api.anthropic.com';
+                        } else if (dom == 'gpt_oss') {
+                            this.api_domain = 'openrouter.ai';
                         } else {
                             this.api_domain = 'localhost';
                         }

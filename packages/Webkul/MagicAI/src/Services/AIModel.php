@@ -17,8 +17,11 @@ class AIModel
     private ?string $baseUri = null;
 
     const MODEL_ENDPOINTS = [
-        MagicAI::MAGIC_OPEN_AI => 'v1/models',
-        MagicAI::MAGIC_GROQ_AI => 'openai/v1/models',
+        MagicAI::MAGIC_OPEN_AI   => 'v1/models',
+        MagicAI::MAGIC_GROQ_AI   => 'openai/v1/models',
+        MagicAI::MAGIC_GEMINI_AI => 'v1beta/models',
+        MagicAI::MAGIC_CLAUDE_AI => 'api/v1/models',
+        MagicAI::MAGIC_GPT_OSS   => 'api/v1/models',
     ];
 
     const DEFAULT_MODELS = [
@@ -102,7 +105,9 @@ class AIModel
         $this->baseUri = $credentials['api_domain'] ?? $this->baseUri;
 
         $baseUri = BaseUri::from($this->baseUri ?: 'api.openai.com')->toString();
-        $modelEndpoint = self::MODEL_ENDPOINTS[$credentials['api_platform'] ?? core()->getConfigData('general.magic_ai.settings.ai_platform')] ?? null;
+
+        $platform = $credentials['api_platform'] ?? core()->getConfigData('general.magic_ai.settings.ai_platform');
+        $modelEndpoint = self::MODEL_ENDPOINTS[$platform] ?? null;
 
         if (! $modelEndpoint || ! (bool) core()->getConfigData('general.magic_ai.settings.enabled')) {
             return self::DEFAULT_MODELS;
@@ -111,65 +116,93 @@ class AIModel
         $this->apiKey = $credentials['api_key'] ?? $this->apiKey;
 
         try {
-            $response = $this->client->get(sprintf('%s%s', $baseUri, $modelEndpoint), [
+            $url = rtrim($baseUri, '/').'/'.ltrim($modelEndpoint, '/');
+
+            $response = $this->client->get($url, [
                 'headers' => [
                     'Authorization' => 'Bearer '.$this->apiKey,
                     'Content-Type'  => 'application/json',
                 ],
+                'query' => $platform === MagicAI::MAGIC_GEMINI_AI
+                         ? ['key' => $this->apiKey]
+                         : [],
             ]);
 
-            $body = $response->getBody();
+            $body = $response->getBody()->getContents();
             $data = json_decode($body, true);
 
-            return $data['data'] ?? [];
+            return $data['models'] ?? $data['data'] ?? [];
+
         } catch (\Exception $e) {
-            throw $e;
             report($e);
 
-            return [];
+            return self::DEFAULT_MODELS;
         }
     }
 
     /**
      * Validate the AI credential.
      */
-    public function validateCredential()
+    public function validateCredential(): array
     {
         $credentials = request()->all();
+        $platform = $credentials['api_platform'] ?? core()->getConfigData('general.magic_ai.settings.ai_platform');
 
-        if (isset($credentials['api_platform']) && $credentials['api_platform'] == 'ollama') {
+        if (in_array($platform, ['ollama'])) {
             return self::DEFAULT_MODELS;
+        }
+
+        if ($platform === MagicAI::MAGIC_GEMINI_AI) {
+            $models = $this->getModelList();
+            $formatted = [];
+            foreach ($models as $model) {
+                $modelId = is_string($model) ? $model : ($model['name'] ?? $model['id'] ?? null);
+                if ($modelId) {
+                    $formatted[] = [
+                        'id'    => $modelId,
+                        'label' => $modelId,
+                    ];
+                }
+            }
+
+            return $formatted ?: self::DEFAULT_MODELS;
         }
 
         try {
             $this->baseUri = $credentials['api_domain'] ?? $this->baseUri;
             $baseUri = BaseUri::from($this->baseUri ?: 'api.openai.com')->toString();
-            $modelEndpoint = self::MODEL_ENDPOINTS[$credentials['api_platform'] ?? core()->getConfigData('general.magic_ai.settings.ai_platform')] ?? null;
-            $response = $this->client->get(sprintf('%s%s', $baseUri, $modelEndpoint), [
+            $platform = $credentials['api_platform'] ?? core()->getConfigData('general.magic_ai.settings.ai_platform');
+            $modelEndpoint = self::MODEL_ENDPOINTS[$platform] ?? null;
+
+            if (! $modelEndpoint) {
+                return self::DEFAULT_MODELS;
+            }
+
+            $url = rtrim($baseUri, '/').'/'.ltrim($modelEndpoint, '/');
+
+            $response = $this->client->get($url, [
                 'headers' => [
-                    'Authorization' => 'Bearer '.$credentials['api_key'],
+                    'Authorization' => 'Bearer '.($credentials['api_key'] ?? $this->apiKey),
                     'Content-Type'  => 'application/json',
                 ],
             ]);
 
-            $body = $response->getBody();
+            $body = $response->getBody()->getContents();
             $data = json_decode($body, true);
 
             $formattedModels = [];
-
-            foreach (($data['data'] ?? []) as $model) {
+            foreach ($data['data'] ?? [] as $model) {
                 $formattedModels[] = [
                     'id'    => $model['id'],
                     'label' => $model['id'],
                 ];
             }
 
-            return $formattedModels;
+            return $formattedModels ?: self::DEFAULT_MODELS;
         } catch (\Exception $e) {
-            throw $e;
             report($e);
 
-            return [];
+            return self::DEFAULT_MODELS;
         }
     }
 

@@ -3,6 +3,7 @@
 namespace Webkul\MagicAI\Services;
 
 use GuzzleHttp\Client;
+use OpenAI\ValueObjects\Transporter\BaseUri;
 
 class GptOss
 {
@@ -11,32 +12,43 @@ class GptOss
         protected string $prompt,
         protected float $temperature,
         protected bool $stream,
-        protected bool $raw,
         protected int $maxTokens,
-        protected string $apiUrl = 'localhost', // here need local url for, where this model is running locally
+        protected string $systemPrompt,
     ) {}
 
     public function ask(): string
     {
         $httpClient = new Client;
 
-        $response = $httpClient->post($this->apiUrl, [
+        $apiKey = core()->getConfigData('general.magic_ai.settings.api_key');
+        $baseUri = BaseUri::from('openrouter.ai')->toString();
+        $endpoint = $baseUri.`api/v1/chat/completions`;
+
+        $response = $httpClient->post($endpoint, [
             'json' => [
                 'model'       => $this->model,
-                'prompt'      => $this->prompt,
                 'temperature' => $this->temperature,
                 'max_tokens'  => $this->maxTokens,
                 'stream'      => $this->stream,
-                'raw'         => $this->raw,
+                'messages'    => [
+                    [
+                        'role'    => 'system',
+                        'content' => $this->systemPrompt,
+                    ],
+                    [
+                        'role'    => 'user',
+                        'content' => $this->prompt,
+                    ],
+                ],
             ],
             'headers' => [
-                'Accept' => 'application/json',
+                'Content-Type'  => 'application/json',
+                'Authorization' => 'Bearer'.$apiKey,
             ],
         ]);
 
         $data = json_decode($response->getBody()->getContents(), true);
 
-        return $data['response'] ?? 'No response';
-
+        return $data['choices'][0]['message']['content'] ?? 'No response';
     }
 }

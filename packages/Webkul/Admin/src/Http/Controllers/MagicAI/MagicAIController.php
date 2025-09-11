@@ -239,13 +239,6 @@ class MagicAIController extends Controller
             'tone',
         ]);
 
-        $userPrompt = $data['prompt'];
-        $toneTitle = $data['tone'];
-
-        $toneDescription = MagicAISystemPrompt::where('title', $toneTitle)->value('tone');
-        $finalPrompt = "Use a {$toneDescription} tone. ".$userPrompt;
-        $data['prompt'] = $finalPrompt;
-
         $this->magicPromptRepository->create($data);
 
         return new JsonResponse([
@@ -272,13 +265,6 @@ class MagicAIController extends Controller
         ]);
 
         $data = request()->only(['prompt', 'title', 'type', 'tone']);
-        $userPrompt = $data['prompt'];
-        $toneTitle = $data['tone'];
-
-        $toneDescription = MagicAISystemPrompt::where('title', $toneTitle)->value('tone');
-        $finalPrompt = "Use a {$toneDescription} tone. ".$userPrompt;
-        $data['prompt'] = $finalPrompt;
-
         $this->magicPromptRepository->update($data, request()->id);
 
         return new JsonResponse([

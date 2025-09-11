@@ -3,7 +3,6 @@
 namespace Webkul\MagicAI\Services;
 
 use GuzzleHttp\Client;
-use OpenAI\ValueObjects\Transporter\BaseUri;
 
 class Gemini
 {
@@ -24,14 +23,13 @@ class Gemini
      */
     public function ask(): string
     {
-        $apiKey = core()->getConfigData('general.magic_ai.settings.api_key');
-        $baseUri = BaseUri::from('generativelanguage.googleapis.com')->toString();
-        $endpoint = $baseUri.`v1beta/models/{$this->model}:generateContent`;
-
         $httpClient = new Client;
+        $apiKey = core()->getConfigData('general.magic_ai.settings.api_key');
+        $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/{$this->model}:generateContent";
 
         $response = $httpClient->post($endpoint, [
             'headers' => [
+                'Accept'         => 'application/json',
                 'Content-Type'   => 'application/json',
                 'x-goog-api-key' => $apiKey,
             ],

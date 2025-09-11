@@ -18,13 +18,20 @@
                 <button type="button" class="primary-button" @click="validated"> Validate Credentials </button>
             </div>
             <div>
-
                 <!-- GPT Open source software -->
                 <x-admin::form.control-group class="mb-4" v-if="aiCredentials.api_platform === 'gpt_oss'">
                     <x-admin::form.control-group.label>
                         @{{ label }}
                         @php
-                            $modelOptions = ["llama-7b", "llama-13b", "qwen-7b", "qwen-14b", "glm4.5-6b", "k2-mini"];
+                            $modelOptions = [
+                                "openai/gpt-oss-120b", 
+                                "openai/gpt-5", 
+                                "google/gemini-2.5-flash", 
+                                "deepseek/deepseek-chat-v3-0324", 
+                                "z-ai/glm-4.5",
+                                "qwen/qwen3-30b-a3b",
+                                "qwen/qwen3-32b"
+                            ];
                             $options = array_map(fn($option) => ['id' => $option, 'label' => $option], $modelOptions);
                             $optionsInJson = json_encode($options);
                         @endphp
@@ -45,21 +52,20 @@
                     <x-admin::form.control-group.error ::control-name="name" />
                 </x-admin::form.control-group>
 
-
                 <!-- Groq -->
                 <x-admin::form.control-group class="mb-4" v-if="aiCredentials.api_platform === 'groq'">
                     <x-admin::form.control-group.label>
                         @{{ label }}
                         @php
-                            $modelOptions = [  "llama3-70b", 
-                                                "llama3-8b", 
-                                                "mixtral-8x7b", 
-                                                "gemma-7b-it", 
-                                                "llama2-70b-chat", 
-                                                "deepseek-r1-distill-llama-70b", 
-                                                "qwen-qwq-32b", 
-                                                "llama3-8b-8192"
-                                            ];
+                            $modelOptions = [ 
+                                            "deepseek-r1-distill-llama-70b",
+                                            "llama-3.1-8b-instant",
+                                            "openai/gpt-oss-120b",
+                                            "openai/gpt-oss-20b",
+                                            "groq/compound",
+                                            "qwen/qwen3-32b",
+                                            "moonshotai/kimi-k2-instruct-0905"
+                                        ];
                             $options = [];
                             foreach($modelOptions as $option) {
                                 $options[] = [
@@ -92,7 +98,13 @@
                     <x-admin::form.control-group.label>
                         @{{ label }}
                         @php
-                            $modelOptions = ["gpt-4o", "gpt-4o-mini", "gpt-3.5-turbo", "dall-e-2", "dall-e-3"];
+                            $modelOptions = [
+                                "gpt-4o", 
+                                "gpt-4o-mini", 
+                                "gpt-3.5-turbo", 
+                                "dall-e-2", 
+                                "dall-e-3"
+                            ];
                             $options = [];
                             foreach($modelOptions as $option) {
                                 $options[] = [
@@ -125,7 +137,14 @@
                     <x-admin::form.control-group.label>
                         @{{ label }}
                         @php
-                            $modelOptions = ["llama2", "llama3",  "mistral", "qwen", "deepseek-coder", "phi", "llava"];
+                            $modelOptions = [
+                                "llama2", 
+                                "llama3",  
+                                "mistral", 
+                                "qwen", 
+                                "deepseek-coder", 
+                                "phi", 
+                                "llava"];
                             $options = [];
                             foreach($modelOptions as $option) {
                                 $options[] = [
@@ -158,6 +177,10 @@
                         @{{ label }}
                         @php
                             $modelOptions = [
+                                "claude-opus-4-0",
+                                "claude-sonnet-4-0",
+                                "claude-opus-4-1",
+                                "claude-3-5-haiku-latest",
                                 "claude-3-opus", 
                                 "claude-3-sonnet", 
                                 "claude-3-haiku"
@@ -188,9 +211,12 @@
                         @{{ label }}
                         @php
                             $modelOptions = [
+                                "gemini-2.5-pro",
+                                "gemini-2.5-flash",
+                                "gemini-2.0-flash",
+                                "gemini-1.5-flash-latest",
                                 "gemini-1.5-pro", 
-                                "gemini-1.5-flash", 
-                                "gemini-1.0-pro"
+                                "gemini-1.5-flash"
                             ];
                             $options = array_map(fn($option) => ['id' => $option, 'label' => $option], $modelOptions);
                             $optionsInJson = json_encode($options);
@@ -211,8 +237,6 @@
                     />
                     <x-admin::form.control-group.error ::control-name="name" />
                 </x-admin::form.control-group>
-
-
 
             </div>
         </div>

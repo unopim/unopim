@@ -17,8 +17,11 @@ class MagicAICredentialValidator implements ConfigValidator
     ];
 
     const MODEL_ENDPOINTS = [
-        MagicAI::MAGIC_OPEN_AI => 'v1/models',
-        MagicAI::MAGIC_GROQ_AI => 'openai/v1/models',
+        MagicAI::MAGIC_OPEN_AI   => 'v1/models',
+        MagicAI::MAGIC_GROQ_AI   => 'openai/v1/models',
+        MagicAI::MAGIC_GPT_OSS   => 'api/v1/models',
+        MagicAI::MAGIC_GEMINI_AI => 'v1beta/models',
+        MagicAI::MAGIC_CLAUDE_AI => 'api/v1/models',
     ];
 
     protected ?string $baseUri = null;
@@ -40,8 +43,8 @@ class MagicAICredentialValidator implements ConfigValidator
 
         $rules = [
             'enabled'       => 'required|in:0,1',
-            'ai_platform'   => 'required|in:openai,ollama,groq',
-            'api_key'       => 'required_if:ai_platform,openai|string|min:10',
+            'ai_platform'   => 'required|in:openai,ollama,groq,gpt_oss,gemini,claude',
+            'api_key'       => 'required|string|min:10',
             'organization'  => 'nullable|string',
             'api_domain'    => 'required|url',
             'api_model'     => 'nullable|string',
@@ -60,37 +63,58 @@ class MagicAICredentialValidator implements ConfigValidator
         try {
             if (preg_match('/^\*+$/', $credentials['api_key'])) {
                 $original = core()->getConfigData('general.magic_ai.settings.api_key');
-
                 if (strlen($credentials['api_key']) === strlen($original)) {
                     $credentials['api_key'] = $original;
                 }
             }
 
-            $this->baseUri = $credentials['api_domain'];
-            $baseUri = BaseUri::from($this->baseUri ?: 'api.openai.com')->toString();
+            $this->baseUri = $credentials['api_domain'] ?? null;
+            $baseUri = BaseUri::from($this->baseUri ?: 'https://api.openai.com')->toString();
 
-            $modelEndpoint = self::MODEL_ENDPOINTS[$credentials['ai_platform'] ?? 'openai'];
+            $platform = $credentials['ai_platform'];
+            $modelEndpoint = self::MODEL_ENDPOINTS[$platform] ?? null;
 
-            $response = $this->client->get($baseUri.$modelEndpoint, [
+            if (! $modelEndpoint) {
+                return self::DEFAULT_MODELS;
+            }
+
+            $url = rtrim($baseUri, '/').'/'.ltrim($modelEndpoint, '/');
+
+            $requestOptions = [
                 'headers' => [
-                    'Authorization' => 'Bearer '.$credentials['api_key'],
-                    'Content-Type'  => 'application/json',
+                    'Content-Type' => 'application/json',
                 ],
-            ]);
+            ];
 
-            $body = $response->getBody();
-            $data = json_decode($body, true);
+            if ($platform === MagicAI::MAGIC_GEMINI_AI) {
+                $url .= '?key='.$credentials['api_key'];
+            } else {
+                $requestOptions['headers']['Authorization'] = 'Bearer '.$credentials['api_key'];
+            }
+
+            $response = $this->client->get($url, $requestOptions);
+            $data = json_decode($response->getBody(), true);
 
             $formattedModels = [];
 
-            foreach (($data['data'] ?? []) as $model) {
-                $formattedModels[] = [
-                    'id'    => $model['id'],
-                    'label' => $model['id'],
-                ];
+            if ($platform === MagicAI::MAGIC_GEMINI_AI) {
+                foreach (($data['models'] ?? []) as $model) {
+                    $formattedModels[] = [
+                        'id'    => $model['name'],
+                        'label' => $model['name'],
+                    ];
+                }
+            } else {
+                foreach (($data['data'] ?? []) as $model) {
+                    $formattedModels[] = [
+                        'id'    => $model['id'],
+                        'label' => $model['id'],
+                    ];
+                }
             }
 
-            return $formattedModels;
+            return $formattedModels ?: self::DEFAULT_MODELS;
+
         } catch (\Exception $e) {
             report($e);
             throw ValidationException::withMessages([

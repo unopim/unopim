@@ -118,7 +118,6 @@
 
                                 <!-- Type Input -->
                                 <x-admin::form.control-group>
-                                    <!-- Label for the Select Element -->
                                     <x-admin::form.control-group.label class="required">
                                     @lang('admin::app.configuration.prompt.create.type')
                                     </x-admin::form.control-group.label>
@@ -149,21 +148,18 @@
                                     >
                                     </x-admin::form.control-group.control>
 
-                                    <!-- Error handling for the Select element -->
                                     <x-admin::form.control-group.error control-name="section" />
                                 </x-admin::form.control-group>
 
 
                                  <!-- Tone Input -->
                                 <x-admin::form.control-group>
-                                    <!-- Label for the Select Element -->
                                     <x-admin::form.control-group.label class="required">
                                     @lang('Prompt Tone')
                                     </x-admin::form.control-group.label>
 
                                     @php
                                         $promptOptions = app('Webkul\Admin\Http\Controllers\MagicAI\MagicAISystemPromptController')->getAllPromptOptions();
-
                                         $options = [];
                                         $defaultPrompt = null;
 
@@ -172,7 +168,6 @@
                                                 'id'    => $prompt['id'],
                                                 'label' => $prompt['label'],
                                             ];
-
                                             if ($defaultPrompt === null && $prompt['is_enabled']) {
                                                 $defaultPrompt = $prompt['id'];
                                             }
@@ -193,13 +188,12 @@
                                         name="tone"
                                         rules="required"
                                         :options="$optionsJson"
-                                        :value="old('tone') ?? $defaultPrompt"
+                                        {{-- :value="old('tone') ?? $defaultPrompt" --}}       
+                                        v-model="tone"
                                         track-by="id"
                                         label-by="label"
                                     >
                                     </x-admin::form.control-group.control>
-
-                                    <!-- Error handling for the Select element -->
                                     <x-admin::form.control-group.error control-name="tone" />
                                 </x-admin::form.control-group>
 
@@ -257,14 +251,13 @@
                         attributes: [],
                         ai: {
                             prompt: '',
-
                         },
                         selectedPrompt: 0,
                         title: null,
                         type: null,
-                        tone: null,
                         id: null,
                         entityName: null,
+                        tone: @json($defaultPrompt),
                     };
                 },
 
@@ -386,9 +379,9 @@
                         this.type = "product";
                         this.ai.prompt = '';
                         this.id = null;
-                        this.entityName = null
+                        this.entityName = null;
+                        this.tone = @json($defaultPrompt);
                     }
-
                 }
             });
         </script>
