@@ -128,7 +128,7 @@ class AIModel
                          : [],
             ]);
 
-            $body = $response->getBody()->getContents();
+            $body = $response->getBody();
             $data = json_decode($body, true);
 
             return $data['models'] ?? $data['data'] ?? [];

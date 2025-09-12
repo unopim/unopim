@@ -8,8 +8,8 @@
                 @lang('admin::app.configuration.prompt.create.title')
             </p>
             <div class="flex gap-x-2.5 items-center">
-                <button 
-                    type="button" 
+                <button
+                    type="button"
                     class="primary-button"
                 >
                     @lang('admin::app.configuration.prompt.create.create-btn')
@@ -218,8 +218,7 @@
                                             <span class="icon-at"></span>
                                         </div>
                                     </div>
-                                        <x-admin::form.control-group.error control-name="prompt" />
-
+                                    <x-admin::form.control-group.error control-name="prompt" />
                                 </x-admin::form.control-group>
                             </x-slot>
 

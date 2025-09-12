@@ -1,10 +1,10 @@
 <v-tinymce {{ $attributes }}></v-tinymce>
 
 @pushOnce('scripts')
-    <script 
-    src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.6.2/tinymce.min.js" 
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer"
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.6.2/tinymce.min.js"
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
     ></script>
 
     <script
@@ -116,8 +116,6 @@
                                         label-by="label"
                                         >
                                     </x-admin::form.control-group.control>
-
-
                                     <x-admin::form.control-group.error control-name="tone" />
                                 </x-admin::form.control-group>
 
@@ -585,8 +583,7 @@
                         return;
                     }
 
-                    tinymce.get(this.selector.replace('textarea#', '')).setContent(this.ai.content.replace(/\r?\n/g,
-                        ''))
+                    tinymce.get(this.selector.replace('textarea#', '')).setContent(this.ai.content.replace(/\r?\n/g,''))
 
                     this.field.onInput(this.ai.content.replace(/\r?\n/g, ''));
 

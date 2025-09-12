@@ -8,8 +8,11 @@
     $selectedOptions = json_encode(explode(',', $selectedOptions) ?? []);
 @endphp
 
-<v-ai-model label="@lang($field['title'])" name="{{ $name }}" :value="{{ $selectedOptions }}">
-</v-ai-model>
+    <v-ai-model
+        label="@lang($field['title'])" 
+        name="{{ $name }}" 
+        :value="{{ $selectedOptions }}">
+    </v-ai-model>
 
 @pushOnce('scripts')
     <script type="text/x-template" id="v-ai-model-template">
@@ -58,14 +61,14 @@
                         @{{ label }}
                         @php
                             $modelOptions = [ 
-                                            "deepseek-r1-distill-llama-70b",
-                                            "llama-3.1-8b-instant",
-                                            "openai/gpt-oss-120b",
-                                            "openai/gpt-oss-20b",
-                                            "groq/compound",
-                                            "qwen/qwen3-32b",
-                                            "moonshotai/kimi-k2-instruct-0905"
-                                        ];
+                                "deepseek-r1-distill-llama-70b",
+                                "llama-3.1-8b-instant",
+                                "openai/gpt-oss-120b",
+                                "openai/gpt-oss-20b",
+                                "groq/compound",
+                                "qwen/qwen3-32b",
+                                "moonshotai/kimi-k2-instruct-0905"
+                            ];
                             $options = [];
                             foreach($modelOptions as $option) {
                                 $options[] = [
@@ -73,7 +76,6 @@
                                     'label' => $option,
                                 ];
                             }
-
                             $optionsInJson = json_encode($options);
                         @endphp
                     </x-admin::form.control-group.label>
@@ -237,7 +239,6 @@
                     />
                     <x-admin::form.control-group.error ::control-name="name" />
                 </x-admin::form.control-group>
-
             </div>
         </div>
     </script>
@@ -300,7 +301,6 @@
                 },
                 async validated() {
                     try {
-
                         const response = await axios.get("{{ route('admin.magic_ai.validate_credential') }}", {
                             params: this.aiCredentials
                         });
@@ -315,7 +315,6 @@
                             type: 'error',
                             message: error.response.data.message
                         });
-
                     }
                 },
 
