@@ -9,8 +9,8 @@
             </p>
             <div class="flex gap-x-2.5 items-center">
                 <button 
-                type="button" 
-                class="primary-button"
+                    type="button" 
+                    class="primary-button"
                 >
                     @lang('admin::app.configuration.prompt.create.create-btn')
                 </button>
@@ -155,11 +155,11 @@
                                  <!-- Tone Input -->
                                 <x-admin::form.control-group>
                                     <x-admin::form.control-group.label class="required">
-                                    @lang('Prompt Tone')
+                                        @lang('admin::app.configuration.system-prompt.datagrid.tone')
                                     </x-admin::form.control-group.label>
 
                                     @php
-                                        $promptOptions = app('Webkul\Admin\Http\Controllers\MagicAI\MagicAISystemPromptController')->getAllPromptOptions();
+                                        $promptOptions = app(\Webkul\MagicAI\Repository\MagicAISystemPromptRepository::class)->getAllPromptOptions();
                                         $options = [];
                                         $defaultPrompt = null;
 
@@ -178,7 +178,6 @@
                                         }
 
                                         $optionsJson = json_encode($options);
-                                        
                                     @endphp
 
                    
@@ -187,8 +186,7 @@
                                         id="tone"
                                         name="tone"
                                         rules="required"
-                                        :options="$optionsJson"
-                                        {{-- :value="old('tone') ?? $defaultPrompt" --}}       
+                                        :options="$optionsJson"   
                                         v-model="tone"
                                         track-by="id"
                                         label-by="label"
@@ -354,7 +352,7 @@
                     async fetchSuggestionValues(text, cb) {
                         const response = await fetch(
                             `{{ route('admin.magic_ai.suggestion_values') }}?query=${text}&&entity_name=${this.entityName}&&locale={{ core()->getRequestedLocaleCode() }}`
-                            );
+                        );
                         const data = await response.json();
                         this.suggestionValues = data;
                         cb(this.suggestionValues);

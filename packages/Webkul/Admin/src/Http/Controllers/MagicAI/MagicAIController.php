@@ -117,7 +117,7 @@ class MagicAIController extends Controller
             $prompt = request()->input('prompt');
             $tone = request()->input('tone');
 
-            $toneData = MagicAISystemPrompt::where('title', $tone)->first(['tone', 'temperature', 'max_tokens']);
+            $toneData = MagicAISystemPrompt::where('id', $tone)->first(['tone', 'temperature', 'max_tokens']);
             $prompt .= "\n\nGenerated content should be in {$locale}.";
 
             $prompt = $this->promptService->getPrompt(
@@ -226,10 +226,10 @@ class MagicAIController extends Controller
     public function store(): JsonResponse
     {
         $this->validate(request(), [
-            'prompt' => 'required',
-            'title'  => 'required',
-            'type'   => 'required',
-            'tone'   => 'required',
+            'prompt'    => 'required',
+            'title'     => 'required',
+            'type'      => 'required',
+            'tone'      => 'nullable',
         ]);
 
         $data = request()->only([
@@ -258,10 +258,10 @@ class MagicAIController extends Controller
     public function update(): JsonResponse
     {
         $this->validate(request(), [
-            'prompt' => 'required',
-            'title'  => 'required',
-            'type'   => 'required',
-            'tone'   => 'required',
+            'prompt'    => 'required',
+            'title'     => 'required',
+            'type'      => 'required',
+            'tone'      => 'nullable',
         ]);
 
         $data = request()->only(['prompt', 'title', 'type', 'tone']);

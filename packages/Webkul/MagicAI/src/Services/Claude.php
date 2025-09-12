@@ -3,9 +3,9 @@
 namespace Webkul\MagicAI\Services;
 
 use GuzzleHttp\Client;
-use OpenAI\ValueObjects\Transporter\BaseUri;
+use Webkul\MagicAI\Contracts\LLMModelInterface;
 
-class Claude
+class Claude implements LLMModelInterface
 {
     /**
      * New service instance.
@@ -28,10 +28,8 @@ class Claude
         $apiKey = core()->getConfigData('general.magic_ai.settings.api_key');
 
         $httpClient = new Client;
-
         $apiKey = core()->getConfigData('general.magic_ai.settings.api_key');
-        $baseUri = BaseUri::from('api.anthropic.com')->toString();
-        $endpoint = $baseUri.'v1/messages';
+        $endpoint = 'https://api.anthropic.com/v1/messages';
 
         $response = $httpClient->request('POST', $endpoint, [
             'headers' => [
@@ -59,5 +57,13 @@ class Claude
         $data = json_decode($response->getBody()->getContents(), true);
 
         return $data['content'][0]['text'] ?? 'No response';
+    }
+
+    /**
+     * Generate image.
+     */
+    public function images(array $options): array
+    {
+        throw new \RuntimeException('Claude does not support image generation.');
     }
 }

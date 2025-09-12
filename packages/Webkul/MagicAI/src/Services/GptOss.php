@@ -3,9 +3,9 @@
 namespace Webkul\MagicAI\Services;
 
 use GuzzleHttp\Client;
-use OpenAI\ValueObjects\Transporter\BaseUri;
+use Webkul\MagicAI\Contracts\LLMModelInterface;
 
-class GptOss
+class GptOss implements LLMModelInterface
 {
     public function __construct(
         protected string $model,
@@ -19,10 +19,8 @@ class GptOss
     public function ask(): string
     {
         $httpClient = new Client;
-
         $apiKey = core()->getConfigData('general.magic_ai.settings.api_key');
-        $baseUri = BaseUri::from('openrouter.ai')->toString();
-        $endpoint = $baseUri.`api/v1/chat/completions`;
+        $endpoint = 'https://openrouter.ai/api/v1/chat/completions';
 
         $response = $httpClient->post($endpoint, [
             'json' => [
@@ -43,12 +41,20 @@ class GptOss
             ],
             'headers' => [
                 'Content-Type'  => 'application/json',
-                'Authorization' => 'Bearer'.$apiKey,
+                'Authorization' => 'Bearer '.$apiKey,
             ],
         ]);
 
         $data = json_decode($response->getBody()->getContents(), true);
 
         return $data['choices'][0]['message']['content'] ?? 'No response';
+    }
+
+    /**
+     * Generate image.
+     */
+    public function images(array $options): array
+    {
+        throw new \RuntimeException('Opensource Models does not support image generation.');
     }
 }

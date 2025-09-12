@@ -2,6 +2,7 @@
 
 namespace Webkul\MagicAI;
 
+use Webkul\MagicAI\Contracts\LLMModelInterface;
 use Webkul\MagicAI\Services\AIModel;
 use Webkul\MagicAI\Services\Claude;
 use Webkul\MagicAI\Services\Gemini;
@@ -182,7 +183,7 @@ class MagicAI
     /**
      * Get LLM model instance.
      */
-    public function getModelInstance(): GptOss|OpenAI|Groq|Claude|Gemini|Ollama
+    public function getModelInstance(): LLMModelInterface
     {
         if ($this->platform === self::MAGIC_GPT_OSS) {
             return new GptOss(

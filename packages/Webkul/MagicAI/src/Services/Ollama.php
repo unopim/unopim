@@ -3,8 +3,9 @@
 namespace Webkul\MagicAI\Services;
 
 use GuzzleHttp\Client;
+use Webkul\MagicAI\Contracts\LLMModelInterface;
 
-class Ollama
+class Ollama implements LLMModelInterface
 {
     /**
      * New service instance.
@@ -41,5 +42,13 @@ class Ollama
         $result = json_decode($result->getBody()->getContents(), true);
 
         return $result['response'];
+    }
+
+    /**
+     * Generate image.
+     */
+    public function images(array $options): array
+    {
+        throw new \RuntimeException('Ollama does not support image generation.');
     }
 }

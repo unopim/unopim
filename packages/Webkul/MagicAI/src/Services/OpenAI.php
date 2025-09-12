@@ -3,8 +3,9 @@
 namespace Webkul\MagicAI\Services;
 
 use OpenAI\Laravel\Facades\OpenAI as BaseOpenAI;
+use Webkul\MagicAI\Contracts\LLMModelInterface;
 
-class OpenAI
+class OpenAI implements LLMModelInterface
 {
     /**
      * New service instance.

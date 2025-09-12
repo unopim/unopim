@@ -81,8 +81,7 @@
                                     </x-admin::form.control-group.label>
 
                                     @php
-                                        $promptOptions = app('Webkul\Admin\Http\Controllers\MagicAI\MagicAISystemPromptController')->getAllPromptOptions();
-
+                                        $promptOptions = app(\Webkul\MagicAI\Repository\MagicAISystemPromptRepository::class)->getAllPromptOptions();
                                         $options = [];
                                         $defaultPrompt = null;
 

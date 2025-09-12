@@ -107,29 +107,4 @@ class MagicAISystemPromptController extends Controller
             ], 500);
         }
     }
-
-    /**
-     * Get all prompts (enabled and disabled).
-     */
-    public function getAllPromptOptions(): array
-    {
-        $enabledProm = MagicAISystemPrompt::all()->map(function ($prompt) {
-            return [
-                'id'         => $prompt->title,
-                'label'      => ucfirst($prompt->title),
-                'is_enabled' => (bool) $prompt->is_enabled,
-            ];
-        })->toArray();
-
-        return $enabledProm;
-    }
-
-    public function allSystemPrompts()
-    {
-        $prompts = $this->getAllPromptOptions();
-
-        return new JsonResponse([
-            'prompts' => $prompts,
-        ]);
-    }
 }

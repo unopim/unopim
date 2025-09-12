@@ -3,8 +3,9 @@
 namespace Webkul\MagicAI\Services;
 
 use GuzzleHttp\Client;
+use Webkul\MagicAI\Contracts\LLMModelInterface;
 
-class Gemini
+class Gemini implements LLMModelInterface
 {
     /**
      * New service instance.
@@ -47,5 +48,13 @@ class Gemini
         $data = json_decode($response->getBody()->getContents(), true);
 
         return $data['candidates'][0]['content']['parts'][0]['text'] ?? 'No response';
+    }
+
+    /**
+     * Generate image.
+     */
+    public function images(array $options): array
+    {
+        throw new \RuntimeException('Gemini does not support image generation.');
     }
 }
