@@ -13,10 +13,11 @@ class Groq implements LLMModelInterface
     public function __construct(
         protected string $model,
         protected string $prompt,
-        protected string $systemPrompt,
         protected float $temperature,
         protected bool $stream,
         protected bool $raw,
+        protected int $maxTokens,
+        protected string $systemPrompt,
     ) {}
 
     /**
