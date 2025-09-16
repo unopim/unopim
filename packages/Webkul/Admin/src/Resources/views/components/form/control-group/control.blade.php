@@ -1046,6 +1046,23 @@
                 v-model="selectedValue"
                 v-bind="field"
             >
+                @isset($option)
+                    <template v-slot:option="{ option }">
+                        {{ $option }}
+                    </template>
+                @endisset
+
+                @isset($singleLabel)
+                    <template v-slot:singleLabel="{ option }">
+                        {{ $singleLabel }}
+                    </template>
+                @endisset
+
+                @isset($tag)
+                    <template v-slot:tag="{ option, remove }">
+                        {{ $tag }}
+                    </template>
+                @endisset
             </v-multiselect>
             <input
                 v-model="selectedOption"
