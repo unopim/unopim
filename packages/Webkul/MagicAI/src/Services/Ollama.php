@@ -16,6 +16,8 @@ class Ollama implements LLMModelInterface
         protected float $temperature,
         protected bool $stream,
         protected bool $raw,
+        protected int $maxTokens,
+        protected string $systemPrompt,
     ) {}
 
     /**

@@ -13,9 +13,11 @@ class OpenAI implements LLMModelInterface
     public function __construct(
         protected string $model,
         protected string $prompt,
-        protected string $systemPrompt,
         protected float $temperature,
-        protected bool $stream = false
+        protected bool $stream = false,
+        protected int $maxTokens,
+        protected string $systemPrompt,
+        
     ) {
         $this->setConfig();
     }

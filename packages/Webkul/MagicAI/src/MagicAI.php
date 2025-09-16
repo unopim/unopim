@@ -191,7 +191,6 @@ class MagicAI
                 $this->prompt,
                 $this->temperature,
                 $this->stream,
-                $this->raw,
                 $this->maxTokens,
                 $this->systemPrompt
             );

@@ -17,6 +17,7 @@ class Gemini implements LLMModelInterface
         protected bool $stream,
         protected bool $raw,
         protected int $maxTokens,
+        protected string $systemPrompt,
     ) {}
 
     /**
