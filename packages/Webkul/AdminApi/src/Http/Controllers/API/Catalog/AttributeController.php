@@ -13,6 +13,7 @@ use Webkul\Attribute\Repositories\AttributeOptionRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Attribute\Rules\NotSupportedAttributes;
+use Webkul\Attribute\Rules\SwatchTypes;
 use Webkul\Attribute\Rules\ValidationTypes;
 use Webkul\Core\Rules\Code;
 
@@ -71,6 +72,10 @@ class AttributeController extends ApiController
                 new Code,
                 new NotSupportedAttributes,
             ],
+            'swatch_type' => [
+                'nullable',
+                new SwatchTypes,
+            ],
         ];
 
         if (isset($requestData['validation']) && $requestData['validation']) {
@@ -114,7 +119,7 @@ class AttributeController extends ApiController
             return $this->modelNotFoundResponse(trans('admin::app.catalog.attributes.not-found', ['code' => $code]));
         }
 
-        $requestData = request()->except(['type', 'code', 'value_per_locale', 'value_per_channel', 'is_unique']);
+        $requestData = request()->except(['type', 'code', 'swatch_type', 'value_per_locale', 'value_per_channel', 'is_unique']);
         $requestData = $this->setLabels($requestData);
         $id = $attribute->id;
 
@@ -250,6 +255,23 @@ class AttributeController extends ApiController
                     return $query->where('code', $requestData['code'])->where('attribute_id', $attributeId);
                 }),
                 new Code,
+            ],
+            'swatch_value' => [
+                function ($attribute, $value, $fail) use ($attributeId) {
+                    if (! empty($value)) {
+                        $attr = $this->attributeRepository->find($attributeId);
+
+                        $isValid = in_array($attr?->type, ['select', 'multiselect'], true) && in_array($attr?->swatch_type, ['color', 'image'], true);
+
+                        if (! $isValid) {
+                            $fail(trans('admin::app.catalog.attributes.create.invalid-swatch-type', [
+                                'attribute'   => $attribute,
+                                'type'        => $attr?->type,
+                                'swatch_type' => $attr?->swatch_type ?? 'none',
+                            ]));
+                        }
+                    }
+                },
             ],
         ];
 

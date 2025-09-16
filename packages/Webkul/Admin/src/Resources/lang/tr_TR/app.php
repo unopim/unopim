@@ -458,6 +458,7 @@ return [
                 'usable-in-grid'        => 'Izgarada Kullanılabilir',
                 'is-filterable'         => 'Filtrelenebilir',
                 'ai-translate'          => 'AI Çeviri',
+                'invalid-swatch-type'   => ':attribute, :swatch_type swatch tipi ile :type özellik türü için izin verilmemiştir.',
 
                 'option' => [
                     'create-success'      => 'Öznitelik Seçeneği Başarıyla Oluşturuldu',
@@ -466,6 +467,10 @@ return [
                     'sort-update-failure' => 'Sıralama Güncellenemedi',
                     'sort-update-success' => 'Sıralama Başarıyla Güncellendi',
                     'update-success'      => 'Öznitelik Seçeneği Başarıyla Güncellendi',
+                    'color'               => 'Renk Örneği',
+                    'dropdown'            => 'Açılır Menü',
+                    'image'               => 'Resim Örneği',
+                    'text'                => 'Metin Örneği',
                 ],
             ],
 

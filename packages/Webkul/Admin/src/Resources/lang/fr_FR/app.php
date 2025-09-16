@@ -457,6 +457,7 @@ return [
                 'same-code-error'       => 'Le code d\'option doit être unique.',
                 'usable-in-grid'        => 'Disponible dans la liste des produits',
                 'ai-translate'          => 'Traduction IA',
+                'invalid-swatch-type'   => ':attribute n\'est pas autorisé pour le type d\'attribut :type avec le type de swatch :swatch_type.',
 
                 'option' => [
                     'create-success'       => 'Option de champ de catégorie créée avec succès',
@@ -465,6 +466,10 @@ return [
                     'sort-update-failure'  => 'Échec de la mise à jour du tri',
                     'sort-update-success'  => 'Tri mis à jour avec succès',
                     'update-success'       => 'Option de champ de catégorie mise à jour avec succès',
+                    'color'                => 'Couleur',
+                    'dropdown'             => 'Dérouler',
+                    'image'                => 'Échantillon d\'image',
+                    'text'                 => 'Échantillon de texte',
                 ],
             ],
 

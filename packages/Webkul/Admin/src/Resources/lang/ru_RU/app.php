@@ -456,6 +456,7 @@ return [
                 'usable-in-grid'        => 'Пользуемое в сетке',
                 'is-filterable'         => 'Фильтруемый',
                 'ai-translate'          => 'Перевод ИИ',
+                'invalid-swatch-type'   => ':attribute не разрешен для типа атрибута :type с типом swatch :swatch_type.',
 
                 'option' => [
                     'create-success'      => 'Параметр атрибута успешно создан',
@@ -464,6 +465,10 @@ return [
                     'sort-update-failure' => 'Не удалось обновить порядок сортировки',
                     'sort-update-success' => 'Порядок сортировки успешно обновлён',
                     'update-success'      => 'Параметр атрибута успешно обновлён',
+                    'color'               => 'Образец цвета',
+                    'dropdown'            => 'Падать',
+                    'image'               => 'Образец изображения',
+                    'text'                => 'Текстовый образец',
                 ],
             ],
 

@@ -459,6 +459,7 @@ return [
                 'usable-in-grid'        => 'قابلة للاستخدام في الشبكة',
                 'is-filterable'         => 'قابل للتصفية',
                 'ai-translate'          => 'ترجمة الذكاء الاصطناعي',
+                'invalid-swatch-type'   => 'القيمة :attribute غير مسموح بها لنوع السمة :type مع نوع السواتش :swatch_type.',
 
                 'option' => [
                     'create-success'       => 'تم إنشاء خيار السمة بنجاح',
@@ -467,6 +468,10 @@ return [
                     'sort-update-failure'  => 'فشل في تحديث ترتيب الفرز',
                     'sort-update-success'  => 'تم تحديث ترتيب الفرز بنجاح',
                     'update-success'       => 'تم تحديث خيار السمة بنجاح',
+                    'color'                => 'تغيير الالوان',
+                    'dropdown'             => 'اسقاط',
+                    'image'                => 'حوامل الصورة',
+                    'text'                 => 'نصوص نص',
                 ],
             ],
 
