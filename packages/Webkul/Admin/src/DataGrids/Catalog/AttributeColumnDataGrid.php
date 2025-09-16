@@ -83,6 +83,7 @@ class AttributeColumnDataGrid extends DataGrid
             'searchable' => true,
             'sortable'   => true,
             'filterable' => true,
+            'closure'    => fn ($row) => trans('admin::app.catalog.attributes.create.'.$row->type),
         ]);
 
         $this->addColumn([

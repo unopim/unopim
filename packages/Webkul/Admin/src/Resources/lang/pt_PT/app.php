@@ -397,7 +397,7 @@ return [
                 'same-code-error'          => 'O código da opção precisa ser único.',
                 'usable-in-grid'           => 'Usável na grade',
                 'is-filterable'            => 'É filtrável',
-                'ai-translate'          => 'Tradução IA',
+                'ai-translate'             => 'Tradução IA',
 
                 'option' => [
                     'color'    => 'Amostra de cor',
@@ -471,6 +471,7 @@ return [
                 'table'                 => [
                     'type' => 'Tipo',
                 ],
+                'select-image'          => 'Selecionar imagem',
                 'is-filterable'         => 'É filtrável',
                 'ai-translate'          => 'Tradução IA',
 

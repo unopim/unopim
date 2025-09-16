@@ -398,7 +398,7 @@ return [
                 'same-code-error'          => 'Il codice dell\'opzione deve essere unico.',
                 'usable-in-grid'           => 'Usabile nella griglia',
                 'is-filterable'            => 'È filtrabile',
-                'ai-translate'          => 'Traduzione IA',
+                'ai-translate'             => 'Traduzione IA',
 
                 'option' => [
                     'color'    => 'Colore campione',
@@ -473,8 +473,8 @@ return [
                 'table'                 => [
                     'type' => 'Tipo',
                 ],
-
-                'option' => [
+                'select-image' => 'Seleziona immagine',
+                'option'       => [
                     'create-success'      => 'Opzione attributo creata con successo',
                     'delete-success'      => 'Opzione attributo eliminata con successo',
                     'save-btn'            => 'Salva opzione',

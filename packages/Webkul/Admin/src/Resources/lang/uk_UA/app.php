@@ -397,7 +397,7 @@ return [
                 'same-code-error'          => 'Код опції має бути унікальним.',
                 'usable-in-grid'           => 'Доступно в сітці',
                 'is-filterable'            => 'Фільтрований',
-                'ai-translate'          => 'Переклад ШІ',
+                'ai-translate'             => 'Переклад ШІ',
 
                 'option' => [
                     'color'    => 'Колір шаблону',
@@ -471,6 +471,7 @@ return [
                 'table'                 => [
                     'type' => 'Тип',
                 ],
+                'select-image'          => 'Виберіть зображення',
                 'is-filterable'         => 'Фільтрований',
                 'ai-translate'          => 'Переклад ШІ',
 

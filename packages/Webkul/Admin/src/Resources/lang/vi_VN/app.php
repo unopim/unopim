@@ -397,7 +397,7 @@ return [
                 'same-code-error'          => 'Mã của tuỳ chọn phải duy nhất.',
                 'usable-in-grid'           => 'Có thể sử dụng trong lưới',
                 'is-filterable'            => 'Có thể lọc',
-                'ai-translate'          => 'Dịch thuật AI',
+                'ai-translate'             => 'Dịch thuật AI',
 
                 'option' => [
                     'color'    => 'Mẫu màu sắc',
@@ -471,6 +471,7 @@ return [
                 'table'                 => [
                     'type' => 'Loại',
                 ],
+                'select-image'          => 'Chọn hình ảnh',
                 'is-filterable'         => 'Có thể lọc',
                 'ai-translate'          => 'Dịch thuật AI',
 

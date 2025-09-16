@@ -473,6 +473,7 @@ return [
                 'table'                 => [
                     'type' => 'Type',
                 ],
+                'select-image'          => 'Selecciona imatge',
                 'is-filterable'         => 'Er filtrerbar',
                 'ai-translate'          => 'AI Oversæt',
 
@@ -1596,6 +1597,8 @@ return [
         'import'                   => 'Importer',
         'imports'                  => 'Importer',
         'invoices'                 => 'Fakturaer',
+        'mass-update'              => 'Masseopdatering',
+        'mass-delete'              => 'Masse sletning',
         'locales'                  => 'Lokaliseringer',
         'magic-ai'                 => 'Magisk AI',
         'marketing'                => 'Markedsføring',

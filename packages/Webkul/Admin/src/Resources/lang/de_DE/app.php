@@ -470,6 +470,7 @@ return [
                 'table'                 => [
                     'type' => 'Typ',
                 ],
+                'select-image'          => 'Bild auswählen',
                 'is-filterable'         => 'Ist filterbar',
 
                 'option' => [
@@ -1991,6 +1992,8 @@ return [
         'locales'                  => 'Gebietsschemas',
         'magic-ai'                 => 'Magic AI',
         'marketing'                => 'Marketing',
+        'mass-update'              => 'Massenaktualisierung',
+        'mass-delete'              => 'Massenlöschung',
         'newsletter-subscriptions' => 'Newsletter-Abonnements',
         'note'                     => 'Hinweis',
         'orders'                   => 'Bestellungen',

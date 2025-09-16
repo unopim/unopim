@@ -397,7 +397,7 @@ return [
                 'same-code-error'          => 'オプション コードは一意である必要があります。',
                 'usable-in-grid'           => 'グリッドで使用可能',
                 'is-filterable'            => 'フィルタリング可能',
-                'ai-translate'          => 'AI翻訳',
+                'ai-translate'             => 'AI翻訳',
 
                 'option' => [
                     'color'    => 'カラー スウォッチ',
@@ -471,6 +471,7 @@ return [
                 'table'                 => [
                     'type' => 'タイプ',
                 ],
+                'select-image' => '画像を選択',
 
                 'option' => [
                     'create-success'      => '属性オプションが正常に作成されました',

@@ -472,6 +472,7 @@ return [
                 'table'                 => [
                     'type' => 'Vrsta',
                 ],
+                'select-image'          => 'Odaberite sliku',
                 'is-filterable'         => 'Je filtrabilno',
 
                 'option' => [

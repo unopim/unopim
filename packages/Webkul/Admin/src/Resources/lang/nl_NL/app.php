@@ -472,6 +472,7 @@ return [
                 'table'                 => [
                     'type' => 'Type',
                 ],
+                'select-image'          => 'Selecteer afbeelding',
                 'is-filterable'         => 'Is filterbaar',
                 'ai-translate'          => 'AI Vertaling',
 

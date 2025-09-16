@@ -472,6 +472,8 @@ return [
                 'table'                 => [
                     'type' => '유형',
                 ],
+                'select-image' => '이미지 선택',
+
                 'is-filterable'         => '필터링 가능',
                 'ai-translate'          => 'AI 번역',
 

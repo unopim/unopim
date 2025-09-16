@@ -18,5 +18,6 @@ class ModuleServiceProvider extends CoreModuleServiceProvider
         \Webkul\Attribute\Models\AttributeFamilyGroupMapping::class,
         \Webkul\Attribute\Models\AttributeColumn::class,
         \Webkul\Attribute\Models\AttributeColumnTranslation::class,
+        \Webkul\Attribute\Models\AttributeColumnOption::class,
     ];
 }

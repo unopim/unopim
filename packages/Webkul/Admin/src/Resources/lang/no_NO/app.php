@@ -397,7 +397,7 @@ return [
                 'same-code-error'          => 'Alternativkoden må være unik.',
                 'usable-in-grid'           => 'Brukes i rutenett',
                 'is-filterable'            => 'Er filtrerbar',
-                'ai-translate'          => 'AI Oversettelse',
+                'ai-translate'             => 'AI Oversettelse',
 
                 'option' => [
                     'color'    => 'Fargeprøve',
@@ -471,6 +471,7 @@ return [
                 'table'                 => [
                     'type' => 'Type',
                 ],
+                'select-image'          => 'Velg bilde',
                 'is-filterable'         => 'Er filtrerbar',
                 'ai-translate'          => 'AI Oversettelse',
 

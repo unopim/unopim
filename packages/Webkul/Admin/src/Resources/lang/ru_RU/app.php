@@ -395,7 +395,7 @@ return [
                 'same-code-error'          => 'Код опции должен быть уникальным.',
                 'usable-in-grid'           => 'Используется в сетке',
                 'is-filterable'            => 'Фильтруемый',
-                'ai-translate'          => 'Перевод ИИ',
+                'ai-translate'             => 'Перевод ИИ',
 
                 'option' => [
                     'color'    => 'Образец цвета',
@@ -469,6 +469,7 @@ return [
                 'table'                 => [
                     'type' => 'Тип',
                 ],
+                'select-image'          => 'Выберите изображение',
                 'is-filterable'         => 'Фильтруемый',
                 'ai-translate'          => 'Перевод ИИ',
 

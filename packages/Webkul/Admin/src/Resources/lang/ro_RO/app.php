@@ -397,7 +397,7 @@ return [
                 'same-code-error'          => 'Codul opțiunii trebuie să fie unic.',
                 'usable-in-grid'           => 'Utilizabil în grilă',
                 'is-filterable'            => 'Este filtrabil',
-                'ai-translate'          => 'Traducere IA',
+                'ai-translate'             => 'Traducere IA',
 
                 'option' => [
                     'color'    => 'Eșantion de culoare',
@@ -471,6 +471,7 @@ return [
                 'table'                 => [
                     'type' => 'Tip',
                 ],
+                'select-image'          => 'Selectați imaginea',
                 'is-filterable'         => 'Este filtrabil',
                 'ai-translate'          => 'Traducere IA',
 

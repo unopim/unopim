@@ -48,6 +48,7 @@ class TableAttributeController extends Controller
                 Rule::unique('attribute_columns')->where(function ($query) use ($attributeId) {
                     return $query->where('attribute_id', $attributeId);
                 }),
+                new Code,
             ],
             'type'       => 'required|in:text,select,multiselect,image,date,boolean',
             'validation' => 'nullable|string',

@@ -397,7 +397,7 @@ return [
                 'same-code-error'          => 'Seçenek kodu benzersiz olmalıdır.',
                 'usable-in-grid'           => 'Izgarada Kullanılabilir',
                 'is-filterable'            => 'Filtrelenebilir',
-                'ai-translate'          => 'AI Çeviri',
+                'ai-translate'             => 'AI Çeviri',
 
                 'option' => [
                     'color'    => 'Renk Örneği',
@@ -471,6 +471,7 @@ return [
                 'table'                 => [
                     'type' => 'Tür',
                 ],
+                'select-image'          => 'Resim Seç',
                 'is-filterable'         => 'Filtrelenebilir',
                 'ai-translate'          => 'AI Çeviri',
 

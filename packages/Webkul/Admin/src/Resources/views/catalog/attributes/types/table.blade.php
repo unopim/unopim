@@ -17,18 +17,18 @@
         $attributeTypesJson = json_encode($attributeTypes);
 
         $columnTypes = [
-            [ 'key' => 'text', 'label' => 'Text' ],
-            [ 'key' => 'boolean', 'label' => 'Boolean' ],
-            [ 'key' => 'date', 'label' => 'Date' ],
-            [ 'key' => 'image', 'label' => 'Image' ],
-            [ 'key' => 'select', 'label' => 'Select' ],
-            [ 'key' => 'multiselect', 'label' => 'Multiselect' ],
+            [ 'key' => 'text', 'label' => trans('admin::app.catalog.attributes.create.text') ],
+            [ 'key' => 'boolean', 'label' => trans('admin::app.catalog.attributes.create.boolean') ],
+            [ 'key' => 'date', 'label' => trans('admin::app.catalog.attributes.create.date') ],
+            [ 'key' => 'image', 'label' => trans('admin::app.catalog.attributes.create.image') ],
+            [ 'key' => 'select', 'label' => trans('admin::app.catalog.attributes.create.select') ],
+            [ 'key' => 'multiselect', 'label' => trans('admin::app.catalog.attributes.create.multiselect') ],
         ];
 
         $columnValidationTypes = [
             'number'   => ['text'],
             'email'    => ['text'],
-            'required' => ['text', 'boolean', 'date', 'image', 'select', 'multiselect'],
+            'required' => ['text', 'boolean', 'date', 'select', 'multiselect'],
             'decimal'  => ['text'],
         ];
 
@@ -144,7 +144,7 @@
 
                         <x-admin::form.control-group>
                             <x-admin::form.control-group.label class="required">
-                                @lang('admin::app.catalog.attributes.edit.table.type')
+                                @lang('admin::app.catalog.attributes.edit.table-attribute.type')
                             </x-admin::form.control-group.label>
 
                             <x-admin::form.control-group.control
@@ -229,7 +229,7 @@
 
                                 <x-admin::form.control-group class="w-full mb-2.5">
                                     <x-admin::form.control-group.label class="required">
-                                    @lang('admin::app.catalog.attributes.edit.table.type')
+                                    @lang('admin::app.catalog.attributes.edit.table-attribute.type')
                                     </x-admin::form.control-group.label>
                                     <x-admin::form.control-group.control
                                         type="select"
@@ -393,6 +393,7 @@ app.component('v-edit-table-attribute', {
             validationType: '',
             columnValidationTypesJson: JSON.parse('{!! $columnValidationTypesJson !!}'),
             type: '',
+            typeLabels: JSON.parse('{!! $columnTypesJson !!}'),
             filteredValidationTypes: null,
             selectedValidation: null,
             columnId: null,
@@ -431,7 +432,6 @@ app.component('v-edit-table-attribute', {
         updateValidationTypes(selectedType) {
             let filtered = this.columnValidationTypesJson.filter(item => item.supports.includes(selectedType));
             this.filteredValidationTypes = JSON.stringify(filtered);
-            console.log(this.filtisSearchingeredValidationTypes);
         },
 
         registerGlobalEvents() {
@@ -620,7 +620,6 @@ app.component('v-edit-table-attribute', {
                 }
             });
 
-            console.log(params);
             this.$axios.put(updateurl, params)
                 .then(response => {
                     this.$emitter.emit('add-flash', {
@@ -678,7 +677,6 @@ app.component('v-edit-table-attribute', {
             if(this.loading) return;
             let data = new FormData(this.$refs.addColumnsForm);
             this.loading = true;
-            console.log(this.loading);
             this.$axios.post(this.src, data)
                 .then(response => {
                     this.$emitter.emit('add-flash', {
@@ -694,7 +692,9 @@ app.component('v-edit-table-attribute', {
                         type: 'error',
                         message: "@lang('admin::app.catalog.attributes.edit.table-attribute.save-failed')"
                     });
-                    console.error(error);
+                    if (error.response.status === 422) {
+                        this.$refs.addColumnForm.setErrors(error.response.data.errors);
+                    }
                 })
                 .finally(() => {
                     this.loading = false;
@@ -708,6 +708,11 @@ app.component('v-edit-table-attribute', {
                 return value;
             }
         },
+
+        getTypeLabel(key) {
+            const found = this.typeLabels.find(item => item.key === key);
+            return found ? found.label : key;
+        }
     }
 });
 </script>

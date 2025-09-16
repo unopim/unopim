@@ -4,10 +4,11 @@ namespace Webkul\Attribute\Models;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Webkul\Attribute\Contracts\AttributeColumnOption as AttributeColumnOptionContracts;
 use Webkul\Attribute\Database\Factories\AttributeColumnOptionFactory;
 use Webkul\Core\Eloquent\TranslatableModel;
 
-class AttributeColumnOption extends TranslatableModel
+class AttributeColumnOption extends TranslatableModel implements AttributeColumnOptionContracts
 {
     use HasFactory;
 

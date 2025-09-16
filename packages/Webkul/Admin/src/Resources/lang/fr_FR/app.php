@@ -471,6 +471,7 @@ return [
                 'table'                 => [
                     'type' => 'Type',
                 ],
+                'select-image' => 'Sélectionner l\'image',
 
                 'option' => [
                     'create-success'       => 'Option de champ de catégorie créée avec succès',

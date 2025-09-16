@@ -473,6 +473,7 @@ return [
                 'table'                 => [
                     'type' => 'Tipus',
                 ],
+                'select-image'          => 'Selecciona imatge',
                 'is-filterable'         => 'És filtrable',
 
                 'option' => [
@@ -1987,6 +1988,8 @@ return [
         'invoices'                 => 'Factures',
         'locales'                  => 'Locales',
         'magic-ai'                 => 'AI màgic',
+        'mass-update'              => 'Actualització en massa',
+        'mass-delete'              => 'Eliminació en massa',
         'marketing'                => 'Màrqueting',
         'newsletter-subscriptions' => 'Subministraments de butlletí',
         'note'                     => 'Nota',

@@ -397,7 +397,7 @@ return [
                 'same-code-error'          => '选项代码必须是唯一的。',
                 'usable-in-grid'           => '可在网格中使用',
                 'is-filterable'            => '可筛选',
-                'ai-translate'          => 'AI翻译',
+                'ai-translate'             => 'AI翻译',
 
                 'option' => [
                     'color'    => '色板',
@@ -470,6 +470,7 @@ return [
                 'table'                 => [
                     'type' => '类型',
                 ],
+                'select-image'          => '选择图片',
                 'is-filterable'         => '可筛选',
                 'ai-translate'          => 'AI翻译',
 

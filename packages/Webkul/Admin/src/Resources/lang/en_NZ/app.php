@@ -469,9 +469,7 @@ return [
                 'add-column'            => 'Add Column',
                 'edit-column'           => 'Edit Column',
                 'validation'            => 'Validation',
-                'table'                 => [
-                    'type' => 'Type',
-                ],
+                'select-image'          => 'Select Image',
                 'is-filterable'         => 'Is filterable',
                 'ai-translate'          => 'AI Translate',
 
@@ -496,6 +494,7 @@ return [
                     'save'                => 'Save',
                     'save-success'        => 'Saved successfully',
                     'save-failed'         => 'Failed to save',
+                    'type'                => 'Type',
                 ],
             ],
 

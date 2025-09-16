@@ -471,6 +471,7 @@ return [
                 'table'                 => [
                     'type' => 'Type',
                 ],
+                'select-image'          => 'Select Image',
                 'is-filterable'         => 'Is filterable',
                 'ai-translate'          => 'AI Translate',
 

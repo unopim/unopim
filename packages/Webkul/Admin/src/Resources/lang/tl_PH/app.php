@@ -470,6 +470,7 @@ return [
                 'table'                 => [
                     'type' => 'Uri',
                 ],
+                'select-image'          => 'Pumili ng Imahe',
                 'is-filterable'         => 'Nafifilter',
                 'ai-translate'          => 'AI Pagsasalin',
 

@@ -398,7 +398,7 @@ return [
                 'same-code-error'          => 'Alternativets kod måste vara unik.',
                 'usable-in-grid'           => 'Kan användas i rutnät',
                 'is-filterable'            => 'Är filtrerbar',
-                'ai-translate'          => 'AI Översättning',
+                'ai-translate'             => 'AI Översättning',
 
                 'option' => [
                     'color'    => 'Färgväljare',
@@ -472,6 +472,7 @@ return [
                 'table'                 => [
                     'type' => 'Typ',
                 ],
+                'select-image'          => 'Välj bild',
                 'is-filterable'         => 'Är filtrerbar',
                 'ai-translate'          => 'AI Översättning',
 

@@ -397,7 +397,7 @@ return [
                 'same-code-error'          => 'Kod opcji musi być unikalny.',
                 'usable-in-grid'           => 'Można używać w siatce',
                 'is-filterable'            => 'Jest filtrowalne',
-                'ai-translate'          => 'Tłumaczenie SI',
+                'ai-translate'             => 'Tłumaczenie SI',
 
                 'option' => [
                     'color'    => 'Kolor próbki',
@@ -486,6 +486,7 @@ return [
                 'table'                 => [
                     'type' => 'Typ',
                 ],
+                'select-image'          => 'Wybierz obraz',
                 'is-filterable'         => 'Jest filtrowalne',
                 'ai-translate'          => 'Tłumaczenie SI',
 

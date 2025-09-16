@@ -398,7 +398,7 @@ return [
                 'same-code-error'          => 'Сонголтын код нь өвөрмөц байх ёстой.',
                 'usable-in-grid'           => 'Сүлжээнд ашиглах боломжтой',
                 'is-filterable'            => 'Шүүж болох',
-                'ai-translate'          => 'ХИ Орчуулга',
+                'ai-translate'             => 'ХИ Орчуулга',
 
                 'option' => [
                     'color'    => 'Өнгөт сэлгэлт',
@@ -472,6 +472,7 @@ return [
                 'table'                 => [
                     'type' => 'Төрөл',
                 ],
+                'select-image'          => 'Зураг сонгох',
                 'is-filterable'         => 'Шүүж болох',
                 'ai-translate'          => 'ХИ Орчуулга',
 

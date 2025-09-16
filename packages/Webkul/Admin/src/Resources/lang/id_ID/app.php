@@ -470,6 +470,7 @@ return [
                 'table'                 => [
                     'type' => 'Tipe',
                 ],
+                'select-image'          => 'Pilih Gambar',
                 'is-filterable'         => 'Dapat difilter',
                 'ai-translate'          => 'AI Terjemahan',
 

@@ -115,7 +115,7 @@ class AjaxOptionsController extends Controller
         if (! empty($query)) {
             $repository = $repository->where(function ($queryBuilder) use ($query, $entityName) {
                 $queryBuilder->whereTranslationLike($this->getTranslationColumnName($entityName), '%'.$query.'%')
-                    ->orWhere('code', $query);
+                    ->orWhere('code', 'LIKE', '%'.$query.'%');
             });
         }
 

@@ -470,6 +470,7 @@ return [
                 'table'                 => [
                     'type' => '類型',
                 ],
+                'select-image'          => '選擇圖片',
                 'is-filterable'         => '可篩選',
                 'ai-translate'          => '人工智慧翻譯',
 

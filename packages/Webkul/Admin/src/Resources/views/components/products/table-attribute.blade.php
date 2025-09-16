@@ -55,7 +55,7 @@
                             <x-admin::table.td v-for="column in columns" class="!whitespace-normal">
                                 <v-field
                                     v-slot="{ field, errors }"
-                                    :rules="getValidation(column.validation)"
+                                    :rules="getValidation(column)"
                                     :name="fieldName + '[' + index + '][' + column.code + ']'"
                                     :value="element[column.code]"
                                 >
@@ -110,7 +110,7 @@
                                             :for="'image_' + index + '_' + column.code"
                                             class="text-blue-500 text-sm cursor-pointer hover:text-blue-700"
                                         >
-                                            Select Image
+                                            @lang('admin::app.catalog.attributes.edit.select-image')
                                         </label>
                                     </div>
 
@@ -271,9 +271,10 @@
                     return type;
                 },
 
-                getValidation(validations) {
+                getValidation(column) {
                     let result = {};
-                    if (!validations || validations.trim() === '') return result;
+                    const validations = column.validation;
+                    if (! validations || validations.trim() === '' || column.type === 'image') return result;
 
                     try {
                         let rules = JSON.parse(validations);

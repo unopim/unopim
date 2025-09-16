@@ -470,6 +470,7 @@ return [
                 'table'                 => [
                     'type' => 'Tipo',
                 ],
+                'select-image'          => 'Seleccionar imagen',
                 'is-filterable'         => 'Es filtrable',
                 'ai-translate'          => 'Traducción IA',
 

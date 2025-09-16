@@ -473,6 +473,7 @@ return [
                 'table'                 => [
                     'type' => 'प्रकार',
                 ],
+                'select-image'          => 'छवि चुनें',
                 'is-filterable'         => 'फ़िल्टर योग्य है',
                 'ai-translate'          => 'एआई अनुवाद',
 

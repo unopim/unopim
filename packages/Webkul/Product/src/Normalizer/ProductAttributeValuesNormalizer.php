@@ -3,7 +3,6 @@
 namespace Webkul\Product\Normalizer;
 
 use Webkul\Attribute\Services\AttributeService;
-use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
 use Webkul\Product\Type\AbstractType;
 
 /**

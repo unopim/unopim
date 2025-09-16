@@ -398,7 +398,7 @@ return [
                 'same-code-error'          => 'Vaihtoehdon koodin tulee olla ainutlaatuinen.',
                 'usable-in-grid'           => 'Käytettävissä ruudukossa',
                 'is-filterable'            => 'On suodatettavissa',
-                'ai-translate'          => 'AI Käännös',
+                'ai-translate'             => 'AI Käännös',
 
                 'option' => [
                     'color'    => 'Väri',
@@ -472,6 +472,7 @@ return [
                 'table'                 => [
                     'type' => 'Tyyppi',
                 ],
+                'select-image'          => 'Valitse kuva',
                 'is-filterable'         => 'On suodatettavissa',
 
                 'option' => [

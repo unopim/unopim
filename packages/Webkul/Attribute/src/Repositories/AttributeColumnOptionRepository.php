@@ -11,28 +11,6 @@ class AttributeColumnOptionRepository extends Repository
      */
     public function model(): string
     {
-        return 'Webkul\Attribute\Models\AttributeColumnOption';
-    }
-
-    /**
-     * @return \Webkul\Attribute\Contracts\AttributeColumn
-     */
-    public function create(array $data)
-    {
-        $column = parent::create($data);
-
-        return $column;
-    }
-
-    /**
-     * @param  int  $id
-     * @param  string  $attribute
-     * @return \Webkul\Attribute\Contracts\AttributeColumn
-     */
-    public function update(array $data, $id, $attribute = 'id')
-    {
-        $column = parent::update($data, $id);
-
-        return $column;
+        return 'Webkul\Attribute\Contracts\AttributeColumnOption';
     }
 }

@@ -473,6 +473,7 @@ return [
                 'table'                 => [
                     'type' => 'النوع',
                 ],
+                'select-image'          => 'اختر صورة',
                 'is-filterable'         => 'قابل للتصفية',
                 'ai-translate'          => 'ترجمة الذكاء الاصطناعي',
 
@@ -484,16 +485,41 @@ return [
                     'sort-update-success'  => 'تم تحديث ترتيب الفرز بنجاح',
                     'update-success'       => 'تم تحديث خيار السمة بنجاح',
                 ],
+
+                'column' => [
+                    'title'               => 'العمود',
+                    'save-btn'            => 'حفظ العمود',
+                    'create-success'      => 'تم إنشاء عمود السمة بنجاح',
+                    'update-success'      => 'تم تحديث عمود السمة بنجاح',
+                    'delete-success'      => 'تم حذف عمود السمة بنجاح',
+                ],
+
+                'table-attribute' => [
+                    'save'         => 'حفظ',
+                    'save-success' => 'تم الحفظ بنجاح',
+                    'save-failed'  => 'فشل في الحفظ',
+                    'type'         => 'النوع',
+                ],
             ],
 
-            'create-success'      => 'السمة التي تم إنشاؤها بنجاح',
-            'delete-failed'       => 'فشل حذف السمة',
-            'delete-success'      => 'تم حذف السمة بنجاح',
-            'update-success'      => 'سمة تحديث بنجاح',
+            'column' => [
+                'not-found'           => 'لم يتم العثور على العمود بالرمز ":code"',
+                'no-options-provided' => 'لم يتم توفير أي خيارات',
+                'code-required'       => 'رمز السمة ورمز العمود مطلوبان',
+                'option'              => [
+                    'create-success' => 'تم إنشاء خيار عمود السمة بنجاح',
+                    'update-success' => 'تم تحديث خيار عمود السمة بنجاح',
+                ],
+            ],
+
+            'create-success'       => 'السمة التي تم إنشاؤها بنجاح',
+            'delete-failed'        => 'فشل حذف السمة',
+            'delete-success'       => 'تم حذف السمة بنجاح',
+            'update-success'       => 'سمة تحديث بنجاح',
             'usable-in-grid-error' => 'يمكن استخدام 4 سمات فقط في تمكين الشبكة.',
-            'user-define-error'   => 'لا يمكن حذف سمة النظام',
-            'not-found'           => 'لم يتم العثور على السمة برمز ":code"',
-            'invalid-column-type' => 'Options can only be created for select or multiselect type columns.',
+            'user-define-error'    => 'لا يمكن حذف سمة النظام',
+            'not-found'            => 'لم يتم العثور على السمة برمز ":code"',
+            'invalid-column-type'  => 'Options can only be created for select or multiselect type columns.',
         ],
 
         'attribute-groups' => [
