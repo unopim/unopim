@@ -350,6 +350,31 @@ abstract class AbstractType
 
                     continue;
                 }
+
+                if ($type === 'table') {
+                    $columns = $attribute->columns()->orderBy('sort_order')->get();
+
+                    $imageColumns = $columns->map(function ($column) {
+                        if ($column->type === 'image') {
+                            return $column->code;
+                        }
+                    });
+
+                    foreach ($fieldValue as $key => $rowValue) {
+                        foreach ($imageColumns as $imageColumn) {
+                            if (isset($rowValue[$imageColumn]) && $rowValue[$imageColumn] instanceof UploadedFile) {
+                                $path = 'product'.DIRECTORY_SEPARATOR.$productId.DIRECTORY_SEPARATOR.$imageColumn;
+
+                                $fieldValue[$key][$imageColumn] = $this->fileStorer->store($path, $rowValue[$imageColumn], [FileStorer::HASHED_FOLDER_NAME_KEY => true]);
+                            }
+                        }
+                    }
+
+                    $values[$field] = json_encode($fieldValue);
+
+                    continue;
+                }
+
             }
 
             if (

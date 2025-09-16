@@ -145,7 +145,7 @@
                             ::rules="{{ $field->getValidationsField() }}"
                             :label="$fieldLabel"
                             :for="$field->code . '_' . $option->id"
-                            :checked="(bool) false !== array_search($option->code, $selectedValue)" 
+                            :checked="(bool) false !== array_search($option->code, $selectedValue)"
                         />
 
                         <label
@@ -167,7 +167,43 @@
                     :name="$fieldName"
                     :label="$fieldLabel"
                     :checked="(bool) ('true' == strtolower($value))"
-                    value="true" 
+                    value="true"
+                />
+
+                @break
+            @case ('table')
+                @php
+                    $value = json_decode($value, true);
+                    $columns = $field->columns->toArray();
+
+                    if ($value) {
+
+                        $imageColumns = array_map(function ($column) {
+                            return $column['type'] === 'image' ? $column['code'] : null;
+                        }, $columns);
+
+                        foreach ($value as &$val) {
+                            foreach ($imageColumns as $image) {
+                                if (!empty($val[$image])) {
+                                    $val['url'] = Storage::url($val[$image]);
+                                    $val[$image] = ['url' => Storage::url($val[$image]),
+                                        'val' => $val[$image]];
+                                }
+                            }
+                        }
+                        unset($val);
+                    }
+                @endphp
+                @if (! empty($value))
+                    <!-- Emoty value sent when value is deleted need to send empty value for this field -->
+                    <input type="hidden" name="{{ $fieldName }}" value="">
+                @endIf
+
+                <x-admin::products.table-attribute
+                    :columns="$columns"
+                    field-name="{{$fieldName}}"
+                    :value="$value"
+                    :locale="$currentLocaleCode"
                 />
 
                 @break
@@ -178,8 +214,8 @@
                     }
 
                     $savedImage = ! empty($value) ? [
-                        'id' => 0,
-                        'url' => Storage::url($value),
+                        'id'    => 0,
+                        'url'   => Storage::url($value),
                         'value' => $value,
                     ] : [];
                 @endphp
@@ -195,16 +231,16 @@
                     :id="$field->code"
                     ::rules="{{ $field->getValidationsField() }}"
                     :uploaded-images="! empty($value) ? [$savedImage] : []"
-                    width='210px' 
+                    width='210px'
                 />
                 @break
             @case('gallery')
                 @php
                     $savedImages = ! empty($value) ? array_map(function ($image, $index) {
                         return [
-                        'id' => uniqid(),
-                        'url' => Storage::url($image),
-                        'value' => $image,
+                            'id'    => uniqid(),
+                            'url'   => Storage::url($image),
+                            'value' => $image,
                         ];
                     }, (array)$value, array_keys((array)$value)) : [];
                 @endphp
@@ -230,9 +266,9 @@
                     $fileName = strlen($fileName) > 20 ? substr($fileName, 0, 20) . '...' : $fileName;
 
                     $savedFile = ! empty($value) ? [
-                        'id' => 0,
-                        'url' => Storage::url($value),
-                        'value' => $value,
+                        'id'       => 0,
+                        'url'      => Storage::url($value),
+                        'value'    => $value,
                         'fileName' => $fileName,
                     ] : [];
                 @endphp
@@ -250,7 +286,7 @@
                     :label="$fieldLabel"
                     :uploaded-files="! empty($value) ? [$savedFile] : []"
                     value="{{$value}}"
-                    class="mt-3" 
+                    class="mt-3"
                 />
                 @break
             @case('price')
@@ -293,8 +329,8 @@
                         $translatedOptionLabel = $option->translate($currentLocaleCode)?->label;
 
                         $selectedValue[] = [
-                            'id' => $option->id,
-                            'code' => $option->code,
+                            'id'    => $option->id,
+                            'code'  => $option->code,
                             'label' => ! empty($translatedOptionLabel) ? $translatedOptionLabel : "[{$option->code}]",
                         ];
                     }
@@ -318,7 +354,7 @@
                     track-by="code"
                     async="true"
                     entity-name="attribute"
-                    :attribute-id="$field->id" 
+                    :attribute-id="$field->id"
                 />
         @endswitch
 
@@ -329,13 +365,13 @@
         @endphp
 
         @if ($field->is_unique)
-        <x-admin::form.control-group.control
-            type="hidden"
-            name="uniqueFields[{{ $flatFieldName }}]"
-            :value="$fieldName"
-            :label="$fieldLabel"
-            id="uniqueFields[{{ $flatFieldName }}]" 
-        />
+            <x-admin::form.control-group.control
+                type="hidden"
+                name="uniqueFields[{{ $flatFieldName }}]"
+                :value="$fieldName"
+                :label="$fieldLabel"
+                id="uniqueFields[{{ $flatFieldName }}]"
+            />
         @endIf
 
         {!! view_render_event('unopim.admin.products.dynamic-attribute-fields.control.'.$fieldType.'.after', ['field' => $field, 'value' => $value, 'fieldName' => $fieldName]) !!}

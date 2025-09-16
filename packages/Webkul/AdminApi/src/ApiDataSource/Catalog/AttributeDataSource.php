@@ -4,6 +4,7 @@ namespace Webkul\AdminApi\ApiDataSource\Catalog;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Webkul\AdminApi\ApiDataSource;
+use Webkul\Attribute\Repositories\AttributeColumnRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 
 class AttributeDataSource extends ApiDataSource
@@ -13,7 +14,10 @@ class AttributeDataSource extends ApiDataSource
      *
      * @return void
      */
-    public function __construct(protected AttributeRepository $attributeRepository) {}
+    public function __construct(
+        protected AttributeRepository $attributeRepository,
+        protected AttributeColumnRepository $attributeColumnRepository,
+    ) {}
 
     /**
      * Prepares the query builder for API requests.
@@ -129,5 +133,82 @@ class AttributeDataSource extends ApiDataSource
                 'labels'     => $this->getTranslations($data, 'label'),
             ];
         }, $attributeOption ?? []);
+    }
+
+    /**
+     * Retrieves attribute columns by the attribute's code.
+     *
+     * @param  string  $attributeCode  The unique code of the attribute.
+     * @return array An array of attribute columns, each containing the column's code, sort order, type, validation, and labels.
+     */
+    public function getColumnsByAttributeCode(string $attributeCode)
+    {
+        $attribute = $this->attributeRepository->findOneByField('code', $attributeCode);
+        $attributeColumn = $attribute?->columns()?->orderBy('sort_order')->get()->toArray();
+
+        return array_map(function ($data) {
+            return [
+                'code'       => $data['code'],
+                'sort_order' => $data['sort_order'],
+                'type'       => $data['type'],
+                'validation' => $data['validation'],
+                'labels'     => $this->getTranslations($data, 'label'),
+            ];
+        }, $attributeColumn ?? []);
+    }
+
+    /**
+     * Retrieves attribute column options by the attribute's code and column's code.
+     *
+     * @param  string  $attributeCode  The unique code of the attribute.
+     * @param  string  $columnCode  The unique code of the column.
+     * @return array An array of attribute column options, each containing the option's code, and labels.
+     */
+    public function getColumnOptionByColumnCode(string $attributeCode, string $columnCode)
+    {
+        if (empty($attributeCode) || empty($columnCode)) {
+            return response()->json([
+                'message' => trans('admin::app.catalog.attributes.column.code-required'),
+            ], 422);
+        }
+
+        $attribute = $this->attributeRepository->findOneByField('code', $attributeCode);
+
+        if (! $attribute) {
+            return response()->json([
+                'message' => trans('admin::app.catalog.attributes.not-found', ['code' => $attributeCode]),
+            ], 404);
+        }
+
+        $column = $this->attributeColumnRepository->findOneWhere([
+            'attribute_id' => $attribute->id,
+            'code'         => $columnCode,
+        ]);
+
+        if (! $column) {
+            return response()->json([
+                'message' => trans('admin::app.catalog.attributes.column.not-found', ['code' => $columnCode]),
+            ], 404);
+        }
+
+        if (! in_array($column->type, ['select', 'multiselect'], true)) {
+            return response()->json([
+                'message' => trans('admin::app.catalog.attributes.invalid-column-type'),
+            ], 422);
+        }
+
+        $options = $column->options()
+            ->with('translations')
+            ->get()
+            ->toArray();
+
+        $mapped = array_map(function ($data) {
+            return [
+                'code'  => $data['code'],
+                'label' => $this->getTranslations($data, 'label'),
+            ];
+        }, $options ?? []);
+
+        return response()->json($mapped, 200);
     }
 }

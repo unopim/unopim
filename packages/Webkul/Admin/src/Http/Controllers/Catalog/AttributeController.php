@@ -5,6 +5,7 @@ namespace Webkul\Admin\Http\Controllers\Catalog;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Webkul\Admin\DataGrids\Catalog\AttributeColumnDataGrid;
 use Webkul\Admin\DataGrids\Catalog\AttributeDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
@@ -100,6 +101,11 @@ class AttributeController extends Controller
         $locales = $this->localeRepository->getActiveLocales();
 
         return view('admin::catalog.attributes.edit', compact('attribute', 'locales'));
+    }
+
+    public function getAttributeColumn(int $id)
+    {
+        return app(AttributeColumnDataGrid::class, ['attributeId' => $id])->toJson();
     }
 
     /**

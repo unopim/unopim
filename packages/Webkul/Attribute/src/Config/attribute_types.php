@@ -60,4 +60,9 @@ return [
         'key'  => 'checkbox',
         'name' => 'admin::app.catalog.attributes.create.checkbox',
     ],
+
+    'table' => [
+        'key'  => 'table',
+        'name' => 'admin::app.catalog.attributes.create.table',
+    ],
 ];
