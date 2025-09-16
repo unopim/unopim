@@ -22,7 +22,7 @@
                 v-text="label"
             >
             </div>
-        </label>
+        </label> 
     </script>
 
     <script type="module">
