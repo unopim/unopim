@@ -2005,6 +2005,7 @@ return [
                 'ai-btn-info'        => 'Generează Imagine',
                 'allowed-types'      => 'png, jpeg, jpg',
                 'not-allowed-error'  => 'Doar fișiere imagini (.jpeg, .jpg, .png, ..) sunt permise.',
+                'upload-media-btn'  => 'Încarcă media',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

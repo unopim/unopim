@@ -2005,6 +2005,7 @@ return [
                 'ai-btn-info'        => 'Generera Bild',
                 'allowed-types'      => 'png, jpeg, jpg',
                 'not-allowed-error'  => 'Endast bildfiler (.jpeg, .jpg, .png, ..) är tillåtna.',
+                'upload-media-btn'  => 'Ladda upp media',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

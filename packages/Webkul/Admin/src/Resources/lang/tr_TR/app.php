@@ -2005,6 +2005,7 @@ return [
                 'ai-btn-info'        => 'Görsel Oluştur',
                 'allowed-types'      => 'png, jpeg, jpg',
                 'not-allowed-error'  => 'Sadece görsel dosyalar (.jpeg, .jpg, .png, ..) kabul edilmektedir.',
+                'upload-media-btn'  => 'Medya Yükle',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

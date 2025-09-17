@@ -2005,6 +2005,7 @@ return [
                 'ai-btn-info'        => 'Generar imagen',
                 'allowed-types'      => 'png, jpeg, jpg',
                 'not-allowed-error'  => 'Solo se permiten archivos de imagen (.jpeg, .jpg, .png, ..).',
+                'upload-media-btn'  => 'Subir medios',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

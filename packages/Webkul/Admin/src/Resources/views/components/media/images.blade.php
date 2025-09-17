@@ -425,7 +425,7 @@
     </script>
 
     <script type="text/x-template" id="v-media-image-item-template">
-        <div class="justify-items-center border rounded p-1 min-w-[120px] max-h-[120px] relative rounded overflow-hidden transition-all hover:border-gray-400 group"  :style="{'width': this.width, 'height': this.height}">
+        <div class="justify-items-center border rounded p-1 min-w-[120px] max-h-[120px] relative rounded overflow-hidden transition-all hover:border-gray-400 group cursor-grab"  :style="{'width': this.width, 'height': this.height}">
             <img
                 :src="image.url"
                 class="w-full h-full object-contain object-top"
