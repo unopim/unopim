@@ -155,7 +155,18 @@ class ProductController extends Controller
     {
         $product = $this->productRepository->findOrFail($id);
 
-        return view('admin::catalog.products.edit', compact('product'));
+        $requestedChannelId = core()->getRequestedChannel()->id;
+
+        $requiredAttributes = $product->getCompletenessAttributes($requestedChannelId, core()->getRequestedLocale()->id)
+            ->keyBy('attribute_id')
+            ->map(fn ($item) => $item->attribute_id)
+            ->toArray();
+
+        $scores = $product->getCompletenessScore($requestedChannelId);
+
+        $averageScore = count($scores) ? round(array_sum(array_column($scores, 'score')) / count($scores)) : null;
+
+        return view('admin::catalog.products.edit', compact('product', 'requiredAttributes', 'scores', 'averageScore'));
     }
 
     /**

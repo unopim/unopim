@@ -8,6 +8,7 @@ use Webkul\Admin\DataGrids\Catalog\AttributeFamilyDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
+use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Core\Rules\Code;
 
@@ -22,7 +23,8 @@ class AttributeFamilyController extends Controller
      */
     public function __construct(
         protected AttributeFamilyRepository $attributeFamilyRepository,
-        protected LocaleRepository $localeRepository
+        protected LocaleRepository $localeRepository,
+        protected ChannelRepository $channelRepository
     ) {}
 
     /**
@@ -123,10 +125,26 @@ class AttributeFamilyController extends Controller
      */
     public function edit(int $id)
     {
-        $attributeFamily = $this->attributeFamilyRepository->findOrFail($id, ['*']);
-        $normalizedData = $this->normalize($attributeFamily);
+        $attributeFamily = $this->attributeFamilyRepository->findOrFail($id);
 
-        return view('admin::catalog.families.edit', $normalizedData);
+        if (request()->has('history')) {
+            return view('admin::catalog.families.edit');
+        }
+
+        $isCompletenessTab = request()->has('completeness');
+
+        $normalizedData = $isCompletenessTab
+            ? ['attributeFamilyId' => $id]
+            : $this->normalize($attributeFamily);
+
+        $allChannels = $isCompletenessTab
+            ? $this->channelRepository->getChannelAsOptions()->toJson()
+            : [];
+
+        return view('admin::catalog.families.edit', [
+            ...$normalizedData,
+            'allChannels' => $allChannels,
+        ]);
     }
 
     /**

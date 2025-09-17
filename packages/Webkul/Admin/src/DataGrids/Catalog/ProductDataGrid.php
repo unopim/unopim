@@ -55,6 +55,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         'attribute_family',
         'status',
         'type',
+        'completeness',
     ];
 
     /**
@@ -81,11 +82,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         protected AttributeValueNormalizer $attributeValueNormalizer,
     ) {}
 
-    /**
-     * Prepare query builder.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
     public function prepareQueryBuilder()
     {
         $tablePrefix = DB::getTablePrefix();
@@ -116,7 +112,19 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                     THEN CONCAT("[", '.$tablePrefix.'af.code, "]")
                     ELSE '.$tablePrefix.'attribute_family_name.name
                 END as attribute_family
-            ')
+            '),
+                'products.avg_completeness_score as completeness'
+            )
+            ->groupBy(
+                'products.id',
+                'products.sku',
+                'products.status',
+                'products.type',
+                'products.created_at',
+                'products.updated_at',
+                'parent_products.sku',
+                'af.code',
+                'attribute_family_name.name'
             );
 
         return $queryBuilder;
@@ -198,6 +206,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'filterable' => true,
                 'sortable'   => true,
             ],
+
             'type' => [
                 'index'   => 'type',
                 'label'   => trans('admin::app.catalog.products.index.datagrid.type'),
@@ -217,6 +226,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'filterable' => true,
                 'sortable'   => true,
             ],
+
             'created_at' => [
                 'index'      => 'created_at',
                 'label'      => trans('admin::app.catalog.products.index.datagrid.created-at'),
@@ -225,12 +235,40 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'filterable' => true,
                 'sortable'   => true,
             ],
+
             'updated_at' => [
                 'index'      => 'updated_at',
                 'label'      => trans('admin::app.catalog.products.index.datagrid.updated-at'),
                 'type'       => 'date_range',
                 'searchable' => false,
                 'filterable' => true,
+                'sortable'   => true,
+            ],
+
+            'completeness' => [
+                'index'   => 'completeness',
+                'label'   => trans('Completeness'),
+                'type'    => 'integer',
+                'closure' => function ($row) {
+                    if (is_null($row->completeness)) {
+                        return '<span class="label-info break-words">'.trans('completeness::app.catalog.products.index.datagrid.missing-completeness-setting').'</span>';
+                    }
+
+                    $score = number_format((float) $row->completeness);
+
+                    if ($score < 30) {
+                        $bgClass = 'pill-low';
+                    } elseif ($score < 70) {
+                        $bgClass = 'pill-medium';
+                    } else {
+                        $bgClass = 'pill-high';
+                    }
+
+                    return '<span class="inline-flex items-center justify-center text-center px-2 py-1 w-10 rounded-md text-xs fon-base text-white '.$bgClass.'">'
+                        .$score.'%</span>';
+                },
+                'searchable' => false,
+                'filterable' => false,
                 'sortable'   => true,
             ],
         ];
@@ -613,7 +651,18 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     public function getExportableData(array $parameters = []): array|Collection
     {
-        $this->queryBuilder = $this->queryBuilder->addSelect('products.values', 'af.code as attribute_family');
+        $this->queryBuilder = $this->queryBuilder->select(
+            'products.sku',
+            'products.id as product_id',
+            'products.status',
+            'products.type',
+            'products.created_at',
+            'products.updated_at',
+            'parent_products.sku as parent',
+            'products.values',
+            'af.code as attribute_family',
+            'products.avg_completeness_score as completeness'
+        );
 
         $gridData = ! empty($parameters['productIds']) ? $this->queryBuilder->get() : $this->queryBuilder->paginate(
             perPage: $parameters['pagination']['per_page'] ?? $this->itemsPerPage,
@@ -631,6 +680,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
             unset($productArray[AbstractType::PRODUCT_VALUES_KEY]);
             unset($productArray['raw_values']);
+            unset($productArray['completeness']);
 
             foreach ($this->getAllChannelsAndLocales() as [$channelCode, $localeCode]) {
                 $data = $this->getInitialData($channelCode, $localeCode);
@@ -793,13 +843,13 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         }
 
         return [
-            'id'                  => Crypt::encryptString(get_called_class()),
-            'columns'             => $this->columns,
-            'actions'             => $this->actions,
-            'mass_actions'        => $this->massActions,
-            'search_placeholder'  => __($this->searchPlaceholder),
-            'records'             => $paginator['data'],
-            'meta'                => [
+            'id'                 => Crypt::encryptString(get_called_class()),
+            'columns'            => $this->columns,
+            'actions'            => $this->actions,
+            'mass_actions'       => $this->massActions,
+            'search_placeholder' => __($this->searchPlaceholder),
+            'records'            => $paginator['data'],
+            'meta'               => [
                 'primary_column'   => $this->primaryColumn,
                 'default_order'    => $this->sortColumn,
                 'from'             => $paginator['from'],

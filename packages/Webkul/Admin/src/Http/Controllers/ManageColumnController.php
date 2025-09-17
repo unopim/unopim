@@ -37,6 +37,9 @@ class ManageColumnController extends SelectOptionsController
                     ], [
                         'code'  => 'updated_at',
                         'label' => trans('admin::app.catalog.products.index.datagrid.updated-at'),
+                    ], [
+                        'code'  => 'completeness',
+                        'label' => trans('Completeness'),
                     ],
                 ];
 
