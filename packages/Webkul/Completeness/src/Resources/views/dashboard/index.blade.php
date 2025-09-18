@@ -60,7 +60,7 @@
 
             methods: {
                 fetchCompletenessData() {
-                    this.$axios.get("{{ route('admin.completeness.dashboard.data') }}")
+                    this.$axios.get("{{ route('admin.dashboard.completeness.data') }}")
                         .then(response => {
                             if (response.data.success) {
                                 this.data = response.data.data;
