@@ -20,8 +20,6 @@ class AIModel
         MagicAI::MAGIC_OPEN_AI   => 'v1/models',
         MagicAI::MAGIC_GROQ_AI   => 'openai/v1/models',
         MagicAI::MAGIC_GEMINI_AI => 'v1beta/models',
-        MagicAI::MAGIC_CLAUDE_AI => 'api/v1/models',
-        MagicAI::MAGIC_GPT_OSS   => 'api/v1/models',
     ];
 
     const DEFAULT_MODELS = [

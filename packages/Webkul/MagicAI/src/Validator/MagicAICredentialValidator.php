@@ -19,9 +19,7 @@ class MagicAICredentialValidator implements ConfigValidator
     const MODEL_ENDPOINTS = [
         MagicAI::MAGIC_OPEN_AI   => 'v1/models',
         MagicAI::MAGIC_GROQ_AI   => 'openai/v1/models',
-        MagicAI::MAGIC_GPT_OSS   => 'api/v1/models',
         MagicAI::MAGIC_GEMINI_AI => 'v1beta/models',
-        MagicAI::MAGIC_CLAUDE_AI => 'api/v1/models',
     ];
 
     protected ?string $baseUri = null;
@@ -43,7 +41,7 @@ class MagicAICredentialValidator implements ConfigValidator
 
         $rules = [
             'enabled'       => 'required|in:0,1',
-            'ai_platform'   => 'required|in:openai,ollama,groq,gpt_oss,gemini,claude',
+            'ai_platform'   => 'required|in:openai,ollama,groq,gemini',
             'api_key'       => 'required|string|min:10',
             'organization'  => 'nullable|string',
             'api_domain'    => 'required|url',

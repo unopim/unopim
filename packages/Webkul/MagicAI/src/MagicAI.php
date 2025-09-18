@@ -4,24 +4,18 @@ namespace Webkul\MagicAI;
 
 use Webkul\MagicAI\Contracts\LLMModelInterface;
 use Webkul\MagicAI\Services\AIModel;
-use Webkul\MagicAI\Services\Claude;
 use Webkul\MagicAI\Services\Gemini;
-use Webkul\MagicAI\Services\GptOss;
 use Webkul\MagicAI\Services\Groq;
 use Webkul\MagicAI\Services\Ollama;
 use Webkul\MagicAI\Services\OpenAI;
 
 class MagicAI
 {
-    const MAGIC_GPT_OSS = 'gpt_oss';
-
     const MAGIC_OPEN_AI = 'openai';
 
     const MAGIC_GROQ_AI = 'groq';
 
     const MAGIC_OLLAMA_AI = 'ollama';
-
-    const MAGIC_CLAUDE_AI = 'claude';
 
     const MAGIC_GEMINI_AI = 'gemini';
 
@@ -185,17 +179,6 @@ class MagicAI
      */
     public function getModelInstance(): LLMModelInterface
     {
-        if ($this->platform === self::MAGIC_GPT_OSS) {
-            return new GptOss(
-                $this->model,
-                $this->prompt,
-                $this->temperature,
-                $this->stream,
-                $this->maxTokens,
-                $this->systemPrompt
-            );
-        }
-
         if ($this->platform === self::MAGIC_OPEN_AI) {
             return new OpenAI(
                 $this->model,
@@ -209,18 +192,6 @@ class MagicAI
 
         if ($this->platform === self::MAGIC_GROQ_AI) {
             return new Groq(
-                $this->model,
-                $this->prompt,
-                $this->temperature,
-                $this->stream,
-                $this->raw,
-                $this->maxTokens,
-                $this->systemPrompt
-            );
-        }
-
-        if ($this->platform === self::MAGIC_CLAUDE_AI) {
-            return new Claude(
                 $this->model,
                 $this->prompt,
                 $this->temperature,

@@ -21,40 +21,6 @@
                 <button type="button" class="primary-button" @click="validated"> Validate Credentials </button>
             </div>
             <div>
-                <!-- GPT Open source software -->
-                <x-admin::form.control-group class="mb-4" v-if="aiCredentials.api_platform === 'gpt_oss'">
-                    <x-admin::form.control-group.label>
-                        @{{ label }}
-                        @php
-                            $modelOptions = [
-                                "openai/gpt-oss-120b", 
-                                "openai/gpt-5", 
-                                "google/gemini-2.5-flash", 
-                                "deepseek/deepseek-chat-v3-0324", 
-                                "z-ai/glm-4.5",
-                                "qwen/qwen3-30b-a3b",
-                                "qwen/qwen3-32b"
-                            ];
-                            $options = array_map(fn($option) => ['id' => $option, 'label' => $option], $modelOptions);
-                            $optionsInJson = json_encode($options);
-                        @endphp
-                    </x-admin::form.control-group.label>
-                    <x-admin::form.control-group.control
-                        type="multiselect"
-                        ref="aiModelRef"
-                        ::id="name"
-                        ::name="name"
-                        :options="$optionsInJson"
-                        ::value="value"
-                        ::label="label"
-                        ::placeholder="label"
-                        track-by="id"
-                        label-by="label"
-                        @input="getOptionValue"
-                    />
-                    <x-admin::form.control-group.error ::control-name="name" />
-                </x-admin::form.control-group>
-
                 <!-- Groq -->
                 <x-admin::form.control-group class="mb-4" v-if="aiCredentials.api_platform === 'groq'">
                     <x-admin::form.control-group.label>
@@ -154,40 +120,6 @@
                                     'label' => $option,
                                 ];
                             }
-                            $optionsInJson = json_encode($options);
-                        @endphp
-                    </x-admin::form.control-group.label>
-                    <x-admin::form.control-group.control
-                        type="multiselect"
-                        ref="aiModelRef"
-                        ::id="name"
-                        ::name="name"
-                        :options="$optionsInJson"
-                        ::value="value"
-                        ::label="label"
-                        ::placeholder="label"
-                        track-by="id"
-                        label-by="label"
-                        @input="getOptionValue"
-                    />
-                    <x-admin::form.control-group.error ::control-name="name" />
-                </x-admin::form.control-group>
-
-                <!-- Claude -->
-                <x-admin::form.control-group class="mb-4" v-if="aiCredentials.api_platform === 'claude'">
-                    <x-admin::form.control-group.label>
-                        @{{ label }}
-                        @php
-                            $modelOptions = [
-                                "claude-opus-4-0",
-                                "claude-sonnet-4-0",
-                                "claude-opus-4-1",
-                                "claude-3-5-haiku-latest",
-                                "claude-3-opus", 
-                                "claude-3-sonnet", 
-                                "claude-3-haiku"
-                            ];
-                            $options = array_map(fn($option) => ['id' => $option, 'label' => $option], $modelOptions);
                             $optionsInJson = json_encode($options);
                         @endphp
                     </x-admin::form.control-group.label>
