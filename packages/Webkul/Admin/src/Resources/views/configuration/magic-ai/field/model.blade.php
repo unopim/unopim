@@ -8,11 +8,11 @@
     $selectedOptions = json_encode(explode(',', $selectedOptions) ?? []);
 @endphp
 
-    <v-ai-model
-        label="@lang($field['title'])" 
-        name="{{ $name }}" 
-        :value="{{ $selectedOptions }}">
-    </v-ai-model>
+<v-ai-model
+    label="@lang($field['title'])"
+    name="{{ $name }}"
+    :value="{{ $selectedOptions }}">
+</v-ai-model>
 
 @pushOnce('scripts')
     <script type="text/x-template" id="v-ai-model-template">
