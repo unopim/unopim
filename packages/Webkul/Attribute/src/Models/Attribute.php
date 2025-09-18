@@ -402,9 +402,14 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
                 $rules[] = new FileOrImageValidValue;
 
                 break;
-            case AttributeTypes::IMAGE_ATTRIBUTE_TYPE:
             case AttributeTypes::GALLERY_ATTRIBUTE_TYPE:
-                $rules[] = new FileOrImageValidValue(isImage: true, isMultiple: $this->type === AttributeTypes::GALLERY_ATTRIBUTE_TYPE);
+                $rules[] = (new FileOrImageValidValue(isImage: true, isMultiple: true))
+                    ->mergeAllowedExtensions(['mp4', 'webm', 'mkv'])
+                    ->mergeAllowedMimes(['mp4', 'webm', 'mkv']);
+
+                break;
+            case AttributeTypes::IMAGE_ATTRIBUTE_TYPE:
+                $rules[] = new FileOrImageValidValue(isImage: true);
 
                 break;
         }
