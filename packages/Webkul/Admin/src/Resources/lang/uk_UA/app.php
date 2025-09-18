@@ -2005,7 +2005,7 @@ return [
                 'ai-btn-info'        => 'Огенрация Изображения',
                 'allowed-types'      => 'png, jpeg, jpg',
                 'not-allowed-error'  => 'Дозволені тільки зображення файли (.jpeg, .jpg, .png, ..)',
-                'upload-media-btn'  => 'Завантажити медіа',
+                'upload-media-btn'   => 'Завантажити медіа',
             ],
 
             'videos' => [

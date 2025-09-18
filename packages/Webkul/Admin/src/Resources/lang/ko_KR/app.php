@@ -2005,7 +2005,7 @@ return [
                 'ai-btn-info'        => '이미지 생성',
                 'allowed-types'      => 'png, jpeg, jpg',
                 'not-allowed-error'  => '이미지 파일만 허용됩니다 (.jpeg, .jpg, .png, ..).',
-                'upload-media-btn'  => '미디어 업로드',
+                'upload-media-btn'   => '미디어 업로드',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

@@ -1876,7 +1876,7 @@ return [
                 'ai-btn-info'        => 'Menghasilkan gambar',
                 'allowed-types'      => 'png, jpeg, jpg',
                 'not-allowed-error'  => 'Hanya file gambar (.jpeg, .jpg, .png, ..) diizinkan.',
-                'upload-media-btn'  => 'Unggah Media',
+                'upload-media-btn'   => 'Unggah Media',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

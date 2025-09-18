@@ -2306,7 +2306,7 @@ return [
                 'ai-btn-info'        => 'Afbeelding genereren',
                 'allowed-types'      => 'PNG, JPEG, JPG',
                 'not-allowed-error'  => 'Alleen afbeeldingenbestanden (.JPEG, .JPG, .png, ..) zijn toegestaan.',
-                'upload-media-btn'  => 'Media uploaden',
+                'upload-media-btn'   => 'Media uploaden',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

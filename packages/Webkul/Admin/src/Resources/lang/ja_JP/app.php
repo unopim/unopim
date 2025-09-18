@@ -1858,7 +1858,7 @@ return [
                 'ai-btn-info'        => '画像の生成',
                 'allowed-types'      => 'png、jpeg、jpg',
                 'not-allowed-error'  => '画像ファイル (.jpeg、.jpg、.png、..) のみが許可されます。',
-                'upload-media-btn'  => 'メディアをアップロード',
+                'upload-media-btn'   => 'メディアをアップロード',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

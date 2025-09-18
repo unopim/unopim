@@ -2306,7 +2306,7 @@ return [
                 'ai-btn-info'        => 'Зураг үүсгэх',
                 'allowed-types'      => 'PNG, JPEG, JPG',
                 'not-allowed-error'  => 'Зөвхөн зураг (.jpeg, .jpeg, .jpg, .jpg, .png, .png, ..png, ..) Зөвшөөрөгдсөн.',
-                'upload-media-btn'  => 'Медиа байршуулах',
+                'upload-media-btn'   => 'Медиа байршуулах',
 
                 'ai-generation' => [
                     '1024X1024'        => '1024X1024',

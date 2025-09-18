@@ -2306,7 +2306,7 @@ return [
                 'ai-btn-info'        => 'छवि उत्पन्न करें',
                 'allowed-types'      => 'पीएनजी, जेपीईजी, जेपीजी',
                 'not-allowed-error'  => 'केवल चित्र फ़ाइलें (.jpeg, .jpg, .png, ..) की अनुमति है।',
-                'upload-media-btn'  => 'मीडिया अपलोड करें',
+                'upload-media-btn'   => 'मीडिया अपलोड करें',
 
                 'ai-generation'      => [
                     '1024x1024'        => '1024x1024',
