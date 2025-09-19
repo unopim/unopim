@@ -670,7 +670,7 @@
                     if (! validFiles) {
                         this.$emitter.emit('add-flash', {
                             type: 'warning',
-                            message: "@lang('admin::app.components.media.images.not-allowed-error')"
+                            message: "@lang('admin::app.components.media.gallery.not-allowed-error')"
                         });
 
                         return;

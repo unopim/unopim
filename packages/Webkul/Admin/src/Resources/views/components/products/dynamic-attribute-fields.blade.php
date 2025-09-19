@@ -200,15 +200,14 @@
                 @break
             @case('gallery')
                 @php
-                    $savedData = !empty($value) ? array_map(function ($image, $index) {
-                        $filePath = public_path('storage/' . $image);
-                        $mimeType = file_exists($filePath) ? mime_content_type($filePath) : null;
-                        $fileName = basename($filePath);
+                    $savedData = !empty($value) ? array_map(function ($media, $index) {
+                        $mimeType = Storage::exists($media) ? Storage::mimeType($media) : null;
+                        $fileName = basename($media);
 
                         return [
                             'id'    => uniqid(),
-                            'url'   => Storage::url($image),
-                            'value' => $image,
+                            'url'   => Storage::url($media),
+                            'value' => $media,
                             'type'  => $mimeType,
                             'name'  => $fileName,
                         ];

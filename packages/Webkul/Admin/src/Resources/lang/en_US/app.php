@@ -1894,6 +1894,10 @@ return [
                 ],
             ],
 
+            'gallery' => [
+                'not-allowed-error' => 'Only image and video files are allowed. (.mp4, .jpg ..)',
+            ],
+
             'videos' => [
                 'add-video-btn'     => 'Add Video',
                 'allowed-types'     => 'mp4, webm, mkv',
