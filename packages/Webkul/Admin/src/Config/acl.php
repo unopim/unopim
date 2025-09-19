@@ -451,5 +451,21 @@ return [
         'route'  => 'admin.configuration.edit',
         'params' => ['general', 'magic_ai'],
         'sort'   => 2,
+    ], [
+        'key'    => 'configuration.magic-ai.general',
+        'name'   => 'admin::app.acl.magic-ai-general',
+        'route'  => 'admin.configuration.edit',
+        'params' => ['general', 'magic_ai'],
+        'sort'   => 1,
+    ], [
+        'key'    => 'configuration.magic-ai.prompt',
+        'name'   => 'admin::app.acl.magic-ai-prompt',
+        'route'  => 'admin.magic_ai.prompt.index',
+        'sort'   => 2,
+    ], [
+        'key'    => 'configuration.magic-ai.system-prompt',
+        'name'   => 'admin::app.acl.magic-ai-system-prompt',
+        'route'  => 'admin.magic_ai.system_prompt.index',
+        'sort'   => 3,
     ],
 ];

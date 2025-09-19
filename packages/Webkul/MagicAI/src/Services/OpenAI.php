@@ -3,8 +3,9 @@
 namespace Webkul\MagicAI\Services;
 
 use OpenAI\Laravel\Facades\OpenAI as BaseOpenAI;
+use Webkul\MagicAI\Contracts\LLMModelInterface;
 
-class OpenAI
+class OpenAI implements LLMModelInterface
 {
     /**
      * New service instance.
@@ -13,7 +14,9 @@ class OpenAI
         protected string $model,
         protected string $prompt,
         protected float $temperature,
-        protected bool $stream = false
+        protected int $maxTokens,
+        protected string $systemPrompt,
+        protected bool $stream = false,
     ) {
         $this->setConfig();
     }
@@ -38,6 +41,10 @@ class OpenAI
             'model'       => $this->model,
             'temperature' => $this->temperature,
             'messages'    => [
+                [
+                    'role'    => 'system',
+                    'content' => $this->systemPrompt,
+                ],
                 [
                     'role'    => 'user',
                     'content' => $this->prompt,
@@ -74,5 +81,21 @@ class OpenAI
         }
 
         return $images;
+    }
+
+    /**
+     * Format the models response for OpenAI.
+     */
+    public static function formatModelsResponse(array $data): array
+    {
+        $formattedModels = [];
+        foreach (($data['data'] ?? []) as $model) {
+            $formattedModels[] = [
+                'id'    => $model['id'],
+                'label' => $model['id'],
+            ];
+        }
+
+        return $formattedModels;
     }
 }

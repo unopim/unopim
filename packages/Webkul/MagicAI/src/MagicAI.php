@@ -2,7 +2,9 @@
 
 namespace Webkul\MagicAI;
 
+use Webkul\MagicAI\Contracts\LLMModelInterface;
 use Webkul\MagicAI\Services\AIModel;
+use Webkul\MagicAI\Services\Gemini;
 use Webkul\MagicAI\Services\Groq;
 use Webkul\MagicAI\Services\Ollama;
 use Webkul\MagicAI\Services\OpenAI;
@@ -14,6 +16,8 @@ class MagicAI
     const MAGIC_GROQ_AI = 'groq';
 
     const MAGIC_OLLAMA_AI = 'ollama';
+
+    const MAGIC_GEMINI_AI = 'gemini';
 
     const SUFFIX_HTML_PROMPT = 'Generate a response using HTML formatting only. Do not include Markdown or any non-HTML syntax.';
 
@@ -50,9 +54,19 @@ class MagicAI
     protected float $temperature = 0.7;
 
     /**
+     * Max tokens.
+     */
+    protected int $maxTokens = 1054;
+
+    /**
      * LLM prompt text.
      */
     protected string $prompt;
+
+    /**
+     * LLM system prompt text.
+     */
+    protected string $systemPrompt = '';
 
     /**
      * Set LLM model
@@ -115,11 +129,31 @@ class MagicAI
     }
 
     /**
+     * Set the max tokens.
+     */
+    public function setMaxTokens(int $maxTokens): self
+    {
+        $this->maxTokens = $maxTokens;
+
+        return $this;
+    }
+
+    /**
      * Set LLM prompt text.
      */
     public function setPrompt(string $prompt, string $fieldType = 'tinymce'): self
     {
         $this->prompt = $fieldType == 'tinymce' ? $prompt.' '.self::SUFFIX_HTML_PROMPT : $prompt.' '.self::SUFFIX_TEXT_PROMPT;
+
+        return $this;
+    }
+
+    /**
+     * Set LLM system prompt.
+     */
+    public function setSystemPrompt(string $systemPrompt): self
+    {
+        $this->systemPrompt = $systemPrompt;
 
         return $this;
     }
@@ -143,13 +177,15 @@ class MagicAI
     /**
      * Get LLM model instance.
      */
-    public function getModelInstance(): OpenAI|Groq|Ollama
+    public function getModelInstance(): LLMModelInterface
     {
         if ($this->platform === self::MAGIC_OPEN_AI) {
             return new OpenAI(
                 $this->model,
                 $this->prompt,
                 $this->temperature,
+                $this->maxTokens,
+                $this->systemPrompt,
                 $this->stream,
             );
         }
@@ -161,6 +197,20 @@ class MagicAI
                 $this->temperature,
                 $this->stream,
                 $this->raw,
+                $this->maxTokens,
+                $this->systemPrompt
+            );
+        }
+
+        if ($this->platform === self::MAGIC_GEMINI_AI) {
+            return new Gemini(
+                $this->model,
+                $this->prompt,
+                $this->temperature,
+                $this->stream,
+                $this->raw,
+                $this->maxTokens,
+                $this->systemPrompt
             );
         }
 
@@ -170,6 +220,8 @@ class MagicAI
             $this->temperature,
             $this->stream,
             $this->raw,
+            $this->maxTokens,
+            $this->systemPrompt
         );
     }
 

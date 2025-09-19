@@ -3,9 +3,9 @@
 namespace Webkul\MagicAI\Services;
 
 use GuzzleHttp\Client;
-use OpenAI\ValueObjects\Transporter\BaseUri;
+use Webkul\MagicAI\Contracts\LLMModelInterface;
 
-class Groq
+class Groq implements LLMModelInterface
 {
     /**
      * New service instance.
@@ -16,6 +16,8 @@ class Groq
         protected float $temperature,
         protected bool $stream,
         protected bool $raw,
+        protected int $maxTokens,
+        protected string $systemPrompt,
     ) {}
 
     /**
@@ -24,9 +26,7 @@ class Groq
     public function ask(): string
     {
         $httpClient = new Client;
-
-        $baseUri = BaseUri::from('api.groq.com')->toString();
-        $endpoint = $baseUri.'openai/v1/chat/completions';
+        $endpoint = 'https://api.groq.com/openai/v1/chat/completions';
 
         $result = $httpClient->request('POST', $endpoint, [
             'headers' => [
@@ -36,6 +36,10 @@ class Groq
             'json'    => [
                 'model'       => $this->model,
                 'messages'    => [
+                    [
+                        'role'    => 'system',
+                        'content' => $this->systemPrompt,
+                    ],
                     [
                         'role'    => 'user',
                         'content' => $this->prompt,
@@ -47,5 +51,29 @@ class Groq
         $result = json_decode($result->getBody()->getContents(), true);
 
         return $result['choices'][0]['message']['content'];
+    }
+
+    /**
+     * Generate image.
+     */
+    public function images(array $options): array
+    {
+        throw new \RuntimeException('Groq does not support image generation.');
+    }
+
+    /**
+     * Format the models response for Groq AI.
+     */
+    public static function formatModelsResponse(array $data): array
+    {
+        $formattedModels = [];
+        foreach (($data['data'] ?? []) as $model) {
+            $formattedModels[] = [
+                'id'    => $model['id'],
+                'label' => $model['id'],
+            ];
+        }
+
+        return $formattedModels;
     }
 }

@@ -1,15 +1,18 @@
 <?php
 
-namespace Webkul\Admin\Http\Controllers;
+namespace Webkul\Admin\Http\Controllers\MagicAI;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
-use Webkul\Admin\DataGrids\MagicPromptGrid;
+use Webkul\Admin\DataGrids\MagicAI\MagicPromptGrid;
+use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\MagicAI\Facades\MagicAI;
 use Webkul\MagicAI\Jobs\SaveTranslatedAllAttributesJob;
 use Webkul\MagicAI\Jobs\SaveTranslatedDataJob;
+use Webkul\MagicAI\Models\MagicAISystemPrompt;
+use Webkul\MagicAI\Repository\MagicAISystemPromptRepository;
 use Webkul\MagicAI\Repository\MagicPromptRepository;
 use Webkul\MagicAI\Services\AIModel;
 use Webkul\MagicAI\Services\Prompt\Prompt;
@@ -23,6 +26,7 @@ class MagicAIController extends Controller
         protected AttributeRepository $attributeRepository,
         protected CategoryFieldRepository $categoryFieldRepository,
         protected MagicPromptRepository $magicPromptRepository,
+        protected MagicAISystemPromptRepository $magicAiSystemPromptRepository,
         protected Prompt $promptService,
     ) {}
 
@@ -111,8 +115,11 @@ class MagicAIController extends Controller
         try {
             $locale = core()->getRequestedLocaleCode();
             $prompt = request()->input('prompt');
+            $tone = request()->input('tone');
 
+            $toneData = MagicAISystemPrompt::where('id', $tone)->first(['tone', 'temperature', 'max_tokens']);
             $prompt .= "\n\nGenerated content should be in {$locale}.";
+
             $prompt = $this->promptService->getPrompt(
                 $prompt,
                 request()->input('resource_id'),
@@ -120,6 +127,9 @@ class MagicAIController extends Controller
             );
             $response = MagicAI::setModel(request()->input('model'))
                 ->setPlatForm(core()->getConfigData('general.magic_ai.settings.ai_platform'))
+                ->setTemperature($toneData->temperature)
+                ->setMaxTokens($toneData->max_tokens)
+                ->setSystemPrompt($toneData->tone)
                 ->setPrompt($prompt)
                 ->ask();
 
@@ -212,18 +222,21 @@ class MagicAIController extends Controller
         return view('admin::configuration.magic-ai-prompt.index');
     }
 
+    // Merge the Tone and Prompt here and send the updated prompt on function,
     public function store(): JsonResponse
     {
         $this->validate(request(), [
-            'prompt' => 'required',
-            'title'  => 'required',
-            'type'   => 'required',
+            'prompt'    => 'required',
+            'title'     => 'required',
+            'type'      => 'required',
+            'tone'      => 'nullable',
         ]);
 
         $data = request()->only([
             'prompt',
             'title',
             'type',
+            'tone',
         ]);
 
         $this->magicPromptRepository->create($data);
@@ -245,12 +258,13 @@ class MagicAIController extends Controller
     public function update(): JsonResponse
     {
         $this->validate(request(), [
-            'prompt'      => 'required',
-            'title'       => 'required',
-            'type'        => 'required',
+            'prompt'    => 'required',
+            'title'     => 'required',
+            'type'      => 'required',
+            'tone'      => 'nullable',
         ]);
 
-        $data = request()->only(['prompt', 'title', 'type']);
+        $data = request()->only(['prompt', 'title', 'type', 'tone']);
         $this->magicPromptRepository->update($data, request()->id);
 
         return new JsonResponse([

@@ -18,6 +18,7 @@ class MagicPrompt extends Model implements MagicPromptContract
         'prompt',
         'title',
         'type',
+        'tone',
     ];
 
     protected static function newFactory(): Factory
