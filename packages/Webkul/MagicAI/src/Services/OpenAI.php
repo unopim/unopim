@@ -82,4 +82,20 @@ class OpenAI implements LLMModelInterface
 
         return $images;
     }
+
+    /**
+     * Format the models response for OpenAI.
+     */
+    public static function formatModelsResponse(array $data): array
+    {
+        $formattedModels = [];
+        foreach (($data['data'] ?? []) as $model) {
+            $formattedModels[] = [
+                'id'    => $model['id'],
+                'label' => $model['id'],
+            ];
+        }
+
+        return $formattedModels;
+    }
 }

@@ -86,7 +86,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
      */
     Route::controller(MagicAISystemPromptController::class)->prefix('system-prompt')->group(function () {
 
-        Route::get('system-prompt', 'index')->name('admin.magic_ai.system_prompt.index');
+        Route::get('', 'index')->name('admin.magic_ai.system_prompt.index');
 
         Route::post('create-system-prompt', 'store')->name('admin.magic_ai.system_prompt.store');
 

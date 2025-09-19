@@ -60,4 +60,20 @@ class Groq implements LLMModelInterface
     {
         throw new \RuntimeException('Groq does not support image generation.');
     }
+
+    /**
+     * Format the models response for Groq AI.
+     */
+    public static function formatModelsResponse(array $data): array
+    {
+        $formattedModels = [];
+        foreach (($data['data'] ?? []) as $model) {
+            $formattedModels[] = [
+                'id'    => $model['id'],
+                'label' => $model['id'],
+            ];
+        }
+
+        return $formattedModels;
+    }
 }

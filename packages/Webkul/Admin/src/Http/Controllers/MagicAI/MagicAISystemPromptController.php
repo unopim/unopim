@@ -6,7 +6,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Webkul\Admin\DataGrids\MagicAI\MagicAISystemPromptGrid;
 use Webkul\Admin\Http\Controllers\Controller;
-use Webkul\MagicAI\Models\MagicAISystemPrompt;
 use Webkul\MagicAI\Repository\MagicAISystemPromptRepository;
 use Webkul\MagicAI\Services\Prompt\Prompt;
 
@@ -45,7 +44,7 @@ class MagicAISystemPromptController extends Controller
         ]);
 
         if ($data['is_enabled']) {
-            MagicAISystemPrompt::where('is_enabled', true)->update(['is_enabled' => false]);
+            $this->magicAiSystemPromptRepository->disableAllEnabledPrompts();
         }
 
         $this->magicAiSystemPromptRepository->create($data);
@@ -79,9 +78,7 @@ class MagicAISystemPromptController extends Controller
         $id = request()->id;
 
         if ($data['is_enabled']) {
-            MagicAISystemPrompt::where('is_enabled', true)
-                ->where('id', '!=', $id)
-                ->update(['is_enabled' => false]);
+            $this->magicAiSystemPromptRepository->disableAllEnabledPrompts();
         }
 
         $this->magicAiSystemPromptRepository->update($data, $id);

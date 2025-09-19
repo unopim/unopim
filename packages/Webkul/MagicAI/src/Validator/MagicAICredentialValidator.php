@@ -8,6 +8,10 @@ use Illuminate\Validation\ValidationException;
 use OpenAI\ValueObjects\Transporter\BaseUri;
 use Webkul\MagicAI\Contracts\Validator\ConfigValidator;
 use Webkul\MagicAI\MagicAI;
+use Webkul\MagicAI\Services\Gemini;
+use Webkul\MagicAI\Services\Groq;
+use Webkul\MagicAI\Services\Ollama;
+use Webkul\MagicAI\Services\OpenAI;
 
 class MagicAICredentialValidator implements ConfigValidator
 {
@@ -55,7 +59,7 @@ class MagicAICredentialValidator implements ConfigValidator
         }
 
         if ($credentials['ai_platform'] === 'ollama') {
-            return self::DEFAULT_MODELS;
+            return Ollama::formatModelsResponse(['models' => self::DEFAULT_MODELS]);
         }
 
         try {
@@ -93,26 +97,21 @@ class MagicAICredentialValidator implements ConfigValidator
             $response = $this->client->get($url, $requestOptions);
             $data = json_decode($response->getBody(), true);
 
-            $formattedModels = [];
-
-            if ($platform === MagicAI::MAGIC_GEMINI_AI) {
-                foreach (($data['models'] ?? []) as $model) {
-                    $formattedModels[] = [
-                        'id'    => $model['name'],
-                        'label' => $model['name'],
-                    ];
-                }
-            } else {
-                foreach (($data['data'] ?? []) as $model) {
-                    $formattedModels[] = [
-                        'id'    => $model['id'],
-                        'label' => $model['id'],
-                    ];
-                }
+            switch ($platform) {
+                case MagicAI::MAGIC_GEMINI_AI:
+                    $formattedModels = Gemini::formatModelsResponse($data);
+                    break;
+                case MagicAI::MAGIC_OPEN_AI:
+                    $formattedModels = OpenAI::formatModelsResponse($data);
+                    break;
+                case MagicAI::MAGIC_GROQ_AI:
+                    $formattedModels = Groq::formatModelsResponse($data);
+                    break;
+                default:
+                    $formattedModels = self::DEFAULT_MODELS;
             }
 
             return $formattedModels ?: self::DEFAULT_MODELS;
-
         } catch (\Exception $e) {
             report($e);
             throw ValidationException::withMessages([

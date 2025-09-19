@@ -27,4 +27,12 @@ class MagicAISystemPromptRepository extends Repository
             ];
         })->toArray();
     }
+
+    /**
+     * Disable all enabled system prompts
+     */
+    public function disableAllEnabledPrompts(): int
+    {
+        return $this->model->where('is_enabled', true)->update(['is_enabled' => false]);
+    }
 }

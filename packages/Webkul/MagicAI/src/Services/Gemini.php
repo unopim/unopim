@@ -21,6 +21,22 @@ class Gemini implements LLMModelInterface
     ) {}
 
     /**
+     * Format the models response for Gemini AI.
+     */
+    public static function formatModelsResponse(array $data): array
+    {
+        $formattedModels = [];
+        foreach (($data['models'] ?? []) as $model) {
+            $formattedModels[] = [
+                'id'    => $model['name'],
+                'label' => $model['name'],
+            ];
+        }
+
+        return $formattedModels;
+    }
+
+    /**
      * Set LLM prompt text.
      */
     public function ask(): string

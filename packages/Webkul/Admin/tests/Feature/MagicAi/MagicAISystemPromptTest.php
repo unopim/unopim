@@ -2,14 +2,16 @@
 
 use Webkul\MagicAI\Models\MagicAISystemPrompt;
 
-it('should return MagicAI System Prompts DataGrid', function () {
+beforeEach(function () {
     $this->loginAsAdmin();
+});
+
+it('should return MagicAI System Prompts DataGrid', function () {
     $this->get(route('admin.magic_ai.system_prompt.index'))
         ->assertOk();
 });
 
 it('should return the System Prompt DataGrid as JSON for AJAX requests', function () {
-    $this->loginAsAdmin();
     MagicAISystemPrompt::factory()->create();
     $response = $this->withHeaders([
         'X-Requested-With' => 'XMLHttpRequest',
@@ -28,7 +30,6 @@ it('should return the System Prompt DataGrid as JSON for AJAX requests', functio
 });
 
 it('should return validation error for title and tone', function () {
-    $this->loginAsAdmin();
     $systemPrompt = MagicAISystemPrompt::factory()->make()->toArray();
     unset($systemPrompt['title']);
     unset($systemPrompt['tone']);
@@ -42,7 +43,6 @@ it('should return validation error for title and tone', function () {
 });
 
 it('should create a new system prompt successfully', function () {
-    $this->loginAsAdmin();
     $systemPrompt = MagicAISystemPrompt::factory()->make()->toArray();
     $this->post(route('admin.magic_ai.system_prompt.store', $systemPrompt))
         ->assertOk()
@@ -57,7 +57,6 @@ it('should create a new system prompt successfully', function () {
 });
 
 it('should update a system prompt successfully', function () {
-    $this->loginAsAdmin();
     $prompt = MagicAISystemPrompt::factory()->create();
     $data = [
         'id'             => $prompt->id,
@@ -75,7 +74,6 @@ it('should update a system prompt successfully', function () {
 });
 
 it('should delete system prompt successfully', function () {
-    $this->loginAsAdmin();
     $prompt = MagicAISystemPrompt::factory()->create();
     $this->delete(route('admin.magic_ai.system_prompt.delete', $prompt->id))
         ->assertOk()

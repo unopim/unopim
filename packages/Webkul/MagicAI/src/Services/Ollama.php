@@ -53,4 +53,20 @@ class Ollama implements LLMModelInterface
     {
         throw new \RuntimeException('Ollama does not support image generation.');
     }
+
+    /**
+     * Format the models response for Ollama AI.
+     */
+    public static function formatModelsResponse(array $data): array
+    {
+        $formattedModels = [];
+        foreach (($data['models'] ?? []) as $model) {
+            $formattedModels[] = [
+                'id'    => $model['name'] ?? $model['id'] ?? '',
+                'label' => $model['name'] ?? $model['id'] ?? '',
+            ];
+        }
+
+        return $formattedModels;
+    }
 }
