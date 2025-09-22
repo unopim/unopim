@@ -627,19 +627,19 @@
             watch: {
                 'ai.model': function (newVal, oldVal) {
                     try {
-                        this.ai.model = JSON.parse(newVal)?.id     // Return true if parsing succeeds
+                        this.ai.model = JSON.parse(newVal)?.id
                     } catch (e) {}
                 },
 
                 'ai.size': function (newVal, oldVal) {
                     try {
-                        this.ai.size = JSON.parse(newVal)?.value     // Return true if parsing succeeds
+                        this.ai.size = JSON.parse(newVal)?.value
                     } catch (e) {}
                 },
 
                 'ai.quality': function (newVal, oldVal) {
                     try {
-                        this.ai.quality = JSON.parse(newVal)?.value     // Return true if parsing succeeds
+                        this.ai.quality = JSON.parse(newVal)?.value
                     } catch (e) {}
                 }
             },

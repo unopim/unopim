@@ -200,7 +200,7 @@
                 @break
             @case('gallery')
                 @php
-                    $savedData = !empty($value) ? array_map(function ($media, $index) {
+                    $savedData = ! empty($value) ? array_map(function ($media, $index) {
                         $mimeType = Storage::exists($media) ? Storage::mimeType($media) : null;
                         $fileName = basename($media);
 
