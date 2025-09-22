@@ -84,7 +84,7 @@
                 },
 
                 containerSize() {
-                return (this.radius + 10) * 2;
+                    return (this.radius + 10) * 2;
                 },
 
                 circumference() {

@@ -185,137 +185,137 @@
     </script>
 
     <script type="module">
-    app.component('v-completeness-required-modal', {
-        template: '#v-completeness-required-modal-template',
+        app.component('v-completeness-required-modal', {
+            template: '#v-completeness-required-modal-template',
 
-        data() {
-            return {
-                isSaving: false,
-                selectedChannels: [],
-                currentAttributeId: null,
-            }
-        },
-        mounted() {
-            this.$emitter.on('open-completeness-required-modal', () => this.$refs?.completenessModal.open());
-
-            this.$emitter.on('open-attribute-completeness-edit-modal', this.editModal);
-        },
-        methods: {
-            save(params) {
-                this.isSaving = true;
-
-                const formData = new FormData(this.$refs.completenessRequireForm);
-
-                for (const key of formData.keys()) {
-                    let formValue = formData.getAll(key);
-                    params[key] = formValue.pop();
+            data() {
+                return {
+                    isSaving: false,
+                    selectedChannels: [],
+                    currentAttributeId: null,
                 }
+            },
+            mounted() {
+                this.$emitter.on('open-completeness-required-modal', () => this.$refs?.completenessModal.open());
 
-                params.familyId = "{{ $familyId }}";
+                this.$emitter.on('open-attribute-completeness-edit-modal', this.editModal);
+            },
+            methods: {
+                save(params) {
+                    this.isSaving = true;
 
-                if (this.currentAttributeId) {
-                    params.attributeId = this.currentAttributeId;
+                    const formData = new FormData(this.$refs.completenessRequireForm);
+
+                    for (const key of formData.keys()) {
+                        let formValue = formData.getAll(key);
+                        params[key] = formValue.pop();
+                    }
+
+                    params.familyId = "{{ $familyId }}";
+
+                    if (this.currentAttributeId) {
+                        params.attributeId = this.currentAttributeId;
+
+                        this.$axios.post("{{ route('admin.catalog.families.completeness.update') }}", params)
+                            .then(response => {
+                                this.$refs.completenessModal.toggle();
+                                this.currentAttributeId = null;
+                            })
+                            .catch(console.error)
+                            .finally(() => this.isSaving = false);
+                    } else {
+                        params.indices = this.$refs.completenessAttributeDatagrid.applied.massActions.indices;
+
+                        this.$axios.post("{{ route('admin.catalog.families.completeness.mass_update') }}", params)
+                            .then(response => {
+                                this.$refs.completenessModal.toggle();
+
+                                if (response.data.success) {
+                                    this.$emitter.emit('add-flash', {
+                                        type: 'success',
+                                        message: response.data.message,
+                                    });
+                                }
+
+                                this.$refs.completenessAttributeDatagrid.get();
+                            })
+                            .catch(e => {
+                                this.$emitter.emit('add-flash', {
+                                    type: 'error',
+                                    message: e.message,
+                                });
+                            })
+                            .finally(() => {
+                                this.isSaving = false;
+                            });
+                    }
+                },
+
+                updated(id, channels) {
+                    if (typeof InputEvent !== 'undefined' && channels instanceof InputEvent) {
+                        return;
+                    }
+
+                    try {
+                        channels = JSON.parse(channels)
+                    } catch (e) {
+                        channels = [];
+                    }
+
+                    const channelCodes = Array.isArray(channels)
+                        ? channels.map(c => typeof c === 'string' ? c : c.code).join(',')
+                        : '';
+
+                    const params = {
+                        familyId: "{{ $familyId }}",
+                        attributeId: id,
+                        channel_requirements: channelCodes,
+                    };
+
+                    this.isSaving = true;
 
                     this.$axios.post("{{ route('admin.catalog.families.completeness.update') }}", params)
                         .then(response => {
-                            this.$refs.completenessModal.toggle();
-                            this.currentAttributeId = null;
-                        })
-                        .catch(console.error)
-                        .finally(() => this.isSaving = false);
-                } else {
-                    params.indices = this.$refs.completenessAttributeDatagrid.applied.massActions.indices;
-
-                    this.$axios.post("{{ route('admin.catalog.families.completeness.mass_update') }}", params)
-                        .then(response => {
-                            this.$refs.completenessModal.toggle();
-
-                            if (response.data.success) {
-                                this.$emitter.emit('add-flash', {
-                                    type: 'success',
-                                    message: response.data.message,
-                                });
-                            }
-
-                            this.$refs.completenessAttributeDatagrid.get();
-                        })
-                        .catch(e => {
-                            this.$emitter.emit('add-flash', {
-                                type: 'error',
-                                message: e.message,
+                            this.$emitter.emit('add-flash', 
+                            {
+                                type: 'success',
+                                message: response.data.message,
                             });
                         })
+                        .catch(console.error)
                         .finally(() => {
                             this.isSaving = false;
                         });
-                }
-            },
-
-            updated(id, channels) {
-                if (typeof InputEvent !== 'undefined' && channels instanceof InputEvent) {
-                    return;
-                }
-
-                try {
-                    channels = JSON.parse(channels)
-                } catch (e) {
-                    channels = [];
-                }
-
-                const channelCodes = Array.isArray(channels)
-                    ? channels.map(c => typeof c === 'string' ? c : c.code).join(',')
-                    : '';
-
-                const params = {
-                    familyId: "{{ $familyId }}",
-                    attributeId: id,
-                    channel_requirements: channelCodes,
-                };
-
-                this.isSaving = true;
-
-                this.$axios.post("{{ route('admin.catalog.families.completeness.update') }}", params)
-                    .then(response => {
-                        this.$emitter.emit('add-flash', 
-                        {
-                            type: 'success',
-                            message: response.data.message,
-                        });
-                    })
-                    .catch(console.error)
-                    .finally(() => {
-                        this.isSaving = false;
-                    });
-            },
+                },
 
 
-        parseJson(value, silent = false) {
-                try {
-                    return JSON.parse(value);
-                } catch (e) {
-                    if (! silent) {
-                        console.error(e);
+            parseJson(value, silent = false) {
+                    try {
+                        return JSON.parse(value);
+                    } catch (e) {
+                        if (! silent) {
+                            console.error(e);
+                        }
+
+                        return value;
                     }
+                },
 
-                    return value;
+                editModal(action, attributeId) {
+                    const url = action.url;
+                    this.currentAttributeId = attributeId;
+
+                    this.$axios.get(url)
+                        .then(response => {
+                            const data = response.data;
+
+                            this.selectedChannels = data.channels ? data.channels.split(',') : [];
+
+                            this.$refs.completenessModal.open();
+                        })
+                        .catch(console.error);
                 }
-            },
-
-            editModal(action, attributeId) {
-                const url = action.url;
-                this.currentAttributeId = attributeId;
-
-                this.$axios.get(url)
-                    .then(response => {
-                        const data = response.data;
-
-                        this.selectedChannels = data.channels ? data.channels.split(',') : [];
-
-                        this.$refs.completenessModal.open();
-                    })
-                    .catch(console.error);
             }
-        }
-    });
+        });
     </script>
 @endPushOnce

@@ -13,13 +13,13 @@ return [
         'families' => [
             'edit' => [
                 'completeness' => [
-                    'update-success'      => 'Compeleteness updated successfully',
+                    'update-success'      => 'Completeness updated successfully',
                     'title'               => 'Completeness',
                     'configure'           => 'Configure Completeness',
                     'channel-required'    => 'Required in Channels',
                     'save-btn'            => 'Save',
                     'back-btn'            => 'Back',
-                    'mass-update-success' => 'Compeleteness updated successfully',
+                    'mass-update-success' => 'Completeness updated successfully',
 
                     'datagrid' => [
                         'code'             => 'Code',

@@ -399,6 +399,8 @@ class Importer extends AbstractImporter
             $this->typeFamilyValidationRules[$rowData['type']][$rowData[self::ATTRIBUTE_FAMILY_CODE]] = $this->getValidationRules($rowData);
         }
 
+        $this->updateRowMediaPath($rowData);
+
         $validationRules = $this->typeFamilyValidationRules[$rowData['type']][$rowData[self::ATTRIBUTE_FAMILY_CODE]];
 
         /**
