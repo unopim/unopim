@@ -1,0 +1,48 @@
+<?php
+
+namespace Webkul\Webhook\Repositories;
+
+use Webkul\Core\Eloquent\Repository;
+use Webkul\Webhook\Models\Settings;
+
+class SettingsRepository extends Repository
+{
+    /**
+     * Specify Model class name
+     */
+    public function model(): string
+    {
+        return Settings::class;
+    }
+
+    public function createOrUpdate(string $field, $value, array $extra = [])
+    {
+        $config = Settings::updateOrCreate(
+            ['field' => $field],
+            [
+                'value' => $value,
+                'extra' => $extra,
+            ]
+        );
+
+        return $config;
+    }
+
+    public function getAllDataAndNormalize(): array
+    {
+        $configurations = $this->all();
+        $normalizedData = [];
+
+        foreach ($configurations as $config) {
+            $value = $config->value;
+
+            if ($config->field === 'webhook_active') {
+                $value = (int) $config->value;
+            }
+
+            $normalizedData[$config->field] = $value;
+        }
+
+        return $normalizedData;
+    }
+}

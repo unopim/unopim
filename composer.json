@@ -80,7 +80,8 @@
             "Webkul\\Theme\\": "packages/Webkul/Theme/src",
             "Webkul\\User\\": "packages/Webkul/User/src",
             "Webkul\\AdminApi\\": "packages/Webkul/AdminApi/src",
-            "Webkul\\ElasticSearch\\": "packages/Webkul/ElasticSearch/src"
+            "Webkul\\ElasticSearch\\": "packages/Webkul/ElasticSearch/src",
+            "Webkul\\Webhook\\": "packages/Webkul/Webhook/src"
         }
     },
     "autoload-dev": {

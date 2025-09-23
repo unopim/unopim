@@ -38,6 +38,8 @@
                     <button class="primary-button">
                         @lang('admin::app.catalog.products.edit.save-btn')
                     </button>
+
+                    {!! view_render_event('unopim.pdf.product.edit.actions.after', ['product' => $product]) !!}
                 </div>
             </div>
         </div>
