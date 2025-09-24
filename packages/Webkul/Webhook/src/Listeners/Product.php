@@ -4,12 +4,10 @@ namespace Webkul\Webhook\Listeners;
 
 use Webkul\Webhook\Repositories\LogsRepository;
 use Webkul\Webhook\Repositories\SettingsRepository;
-use Webkul\Webhook\Traits\WebhookTrait;
+use Webkul\Webhook\Services\WebhookService;
 
 class Product
 {
-    use WebhookTrait;
-
     /**
      * Create a new listener instance.
      *
@@ -17,7 +15,8 @@ class Product
      */
     public function __construct(
         protected SettingsRepository $settingsRepository,
-        protected LogsRepository $logsRepository
+        protected LogsRepository $logsRepository,
+        protected WebhookService $webhookService
     ) {}
 
     /**
@@ -30,12 +29,22 @@ class Product
     {
         $code = $product->sku;
         $type = $product->type;
+
         $settings = $this->settingsRepository->getAllDataAndNormalize();
 
-        if ($settings['webhook_active']) {
-            $response = $this->sendDataToWebhook($code, $type);
-
-            $this->storeLogs($code, $response->successful() ? 1 : 0);
+        if (! empty($settings['webhook_active'])) {
+            $this->webhookService->sendDataToWebhook($code, $type);
         }
+    }
+
+    public function afterBulkUpdate(array $ids)
+    {
+        $settings = $this->settingsRepository->getAllDataAndNormalize();
+
+        if (empty($settings['webhook_active'])) {
+            return;
+        }
+
+        $this->webhookService->sendBatchByIds($ids);
     }
 }

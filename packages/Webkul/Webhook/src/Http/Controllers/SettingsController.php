@@ -33,17 +33,12 @@ class SettingsController
     {
         $active = (int) $request->get('webhook_active', '0');
 
-        if (! $active) {
-            $settings = [
-                'webhook_active' => $active,
-            ];
-        }
+        $settings = [
+            'webhook_active' => $active,
+        ];
 
         if ($active) {
-            $settings = [
-                'webhook_active' => $active,
-                'webhook_url'    => $request->filled('webhook_url') ? $request->webhook_url : null,
-            ];
+            $settings['webhook_url'] = $request->filled('webhook_url') ? $request->webhook_url : null;
         }
 
         Settings::$auditingDisabled = true;
