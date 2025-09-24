@@ -278,6 +278,49 @@ return [
                     'product-type' => 'Tip Produs',
                 ],
             ],
+            'bulk-edit' => [
+                'validation' => [
+                    'decimal'                    => 'Introduceți un număr zecimal valid.',
+                    'number'                     => 'Introduceți un număr întreg valid.',
+                    'email'                      => 'Introduceți o adresă de e-mail validă.',
+                    'url'                        => 'Introduceți un URL valid.',
+                    'regex'                      => 'Valoarea nu se potrivește cu modelul necesar.',
+                    'invalid-pattern'            => 'Model personalizat invalid furnizat.',
+                    'select-attribute-or-family' => 'Vă rugăm să selectați cel puțin un atribut sau o familie de atribute.',
+                    'failed'                     => 'Validarea a eșuat.',
+                ],
+
+                'modal'                      => [
+                    'title'            => 'Atribute pentru editare în masă',
+                    'btn-cancel'       => 'Anulează',
+                    'btn-proceed'      => 'Continuă',
+                    'attribute-family' => 'Selectați familia de atribute',
+                ],
+
+                'index' => [
+                    'no-product'    => 'Nu au fost selectate produse pentru editare în masă.',
+                ],
+
+                'filter' => [
+                    'many-product'      => 'Au fost selectate prea multe produse.',
+                    'redirect-message'  => 'Redirecționare către vizualizarea de editare în masă.',
+                ],
+
+                'handle-save' => [
+                    'edit-success'  => 'Editarea în masă a reușit.',
+                ],
+
+                'id'              => 'ID',
+                'no-changes'      => 'Nicio modificare de salvat.',
+                'success'         => 'Sarcină executată cu succes.',
+                'fetch-failed'    => 'Eroare la preluare.',
+                'action'          => 'Editare în masă',
+                'gallery-preview' => 'Previzualizare galerie',
+                'img-preview'     => 'Previzualizare imagine',
+                'no-image'        => 'Nicio imagine',
+                'img-fail'        => 'Încărcarea imaginii a eșuat',
+                'no-opton'        => 'Nicio opțiune',
+            ],
 
             'create-success'          => 'Produs creat cu succes',
             'delete-failed'           => 'Ștergerea produsului a eșuat',

@@ -278,6 +278,49 @@ return [
                     'product-type' => 'Tuotetyyppi',
                 ],
             ],
+            'bulk-edit' => [
+                'validation' => [
+                    'decimal'                    => 'Anna kelvollinen desimaaliluku.',
+                    'number'                     => 'Anna kelvollinen kokonaisluku.',
+                    'email'                      => 'Anna kelvollinen sähköpostiosoite.',
+                    'url'                        => 'Anna kelvollinen URL.',
+                    'regex'                      => 'Arvo ei vastaa vaadittua kaavaa.',
+                    'invalid-pattern'            => 'Virheellinen mukautettu kaava annettu.',
+                    'select-attribute-or-family' => 'Valitse vähintään yksi attribuutti tai attribuuttiperhe.',
+                    'failed'                     => 'Validointi epäonnistui.',
+                ],
+
+                'modal'                      => [
+                    'title'            => 'Attribuutit massamuokkaukseen',
+                    'btn-cancel'       => 'Peruuta',
+                    'btn-proceed'      => 'Jatka',
+                    'attribute-family' => 'Valitse attribuuttiperhe',
+                ],
+
+                'index' => [
+                    'no-product'    => 'Yhtään tuotetta ei ole valittu massamuokkaukseen.',
+                ],
+
+                'filter' => [
+                    'many-product'      => 'Liian monta tuotetta valittu.',
+                    'redirect-message'  => 'Ohjataan massamuokkausnäkymään.',
+                ],
+
+                'handle-save' => [
+                    'edit-success'  => 'Massamuokkaus onnistui.',
+                ],
+
+                'id'              => 'ID',
+                'no-changes'      => 'Ei muutoksia tallennettavaksi.',
+                'success'         => 'Toiminto suoritettu onnistuneesti.',
+                'fetch-failed'    => 'Tietojen haku epäonnistui.',
+                'action'          => 'Massamuokkaus',
+                'gallery-preview' => 'Gallerian esikatselu',
+                'img-preview'     => 'Kuvan esikatselu',
+                'no-image'        => 'Ei kuvaa',
+                'img-fail'        => 'Kuvan lataus epäonnistui.',
+                'no-opton'        => 'No Options',
+            ],
 
             'create-success'          => 'Tuote luotiin onnistuneesti',
             'delete-failed'           => 'Tuotteen poistaminen epäonnistui',

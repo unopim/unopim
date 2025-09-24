@@ -195,6 +195,7 @@
                     v-bind="field"
                     :class="[errors.length ? 'border border-red-500' : '']"
                     multiple="true"
+                    :onselect="false"
                     {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label']) }}
                 >
                 </v-async-select-handler>
@@ -202,6 +203,7 @@
                 <v-multiselect-handler
                     name="{{ $name }}"
                     v-bind="field"
+                    :onselect="false"
                     :class="[errors.length ? 'border border-red-500' : '']"
                     {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label']) }}
                 >
@@ -513,7 +515,7 @@
                 :multiple="true"
                 :searchable="true"
                 :placeholder="placeholder"
-                :close-on-select="true"
+                :close-on-select="onselect"
                 :clear-on-select="true"
                 :show-no-results="true"
                 :hide-selected="true"
@@ -553,6 +555,9 @@
                 value: String,
                 field: Array,
                 placeholder: String,
+                onselect: {
+                    default: true
+                },
             },
             
             data() {
@@ -1025,7 +1030,7 @@
                 :loading="isLoading ?? false"
                 :max-height="600"
                 :internal-search="false"
-                :close-on-select="true"
+                :close-on-select="onselect"
                 :clear-on-select="false"
                 :show-no-results="true"
                 :hide-selected="false"
@@ -1041,7 +1046,7 @@
                 v-model="selectedValue"
                 v-bind="field"
             >
-            </v-multiselect>   
+            </v-multiselect>
             <input
                 v-model="selectedOption"
                 v-validate="'required'"
@@ -1076,9 +1081,13 @@
                 entityName: String,
                 attributeId: String,
                 multiple: Boolean,
+                onselect: {
+                    type: Boolean,
+                    default: true
+                },
                 listRoute: {
                     type: String,
-                    default: '{{ route('admin.catalog.options.fetch-all')}}'
+                    default: "{{ route('admin.catalog.options.fetch-all')}}"
                 },
                 queryParams: Array,
             },
@@ -1117,7 +1126,6 @@
             },
 
             mounted() {
-                this.$refs['multiselect__handler__']._.refs.list.addEventListener('scroll', this.onScroll);
 
                 if (this.selectedValue && typeof this.selectedValue != 'object') {
                     this.initializeValue();
@@ -1200,16 +1208,25 @@
                 openedSelect(id) {
                     if (this.optionsList.length < 1) {
                         this.isLoading = true;
-
+                        
                         this.$axios.get(this.listRoute, {params: this.params})
-                            .then((result) => {
-                                this.optionsList = result.data.options;
-                                this.lastPage = result.data.lastPage;
-                                this.params.page = result.data.page;
-
-                                this.isLoading = false;
-                            });
+                        .then((result) => {
+                            this.optionsList = result.data.options;
+                            this.lastPage = result.data.lastPage;
+                            this.params.page = result.data.page;
+                            
+                            this.isLoading = false;
+                        });
                     }
+
+                    this.$nextTick(() => {
+                        const listEl = this.$refs['multiselect__handler__'].$el.querySelector('.multiselect__content-wrapper');
+
+                        if (listEl) {
+                            listEl.removeEventListener('scroll', this.onScroll);
+                            listEl.addEventListener('scroll', this.onScroll);
+                        }
+                    });
                 },
                 onScroll(e) {
                     const element = this.$refs['multiselect__handler__']._.refs.list;

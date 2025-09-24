@@ -278,6 +278,49 @@ return [
                     'product-type' => 'Tipo de Produto',
                 ],
             ],
+            'bulk-edit' => [
+                'validation' => [
+                    'decimal'                    => 'Por favor, insira um número decimal válido.',
+                    'number'                     => 'Por favor, insira um número inteiro válido.',
+                    'email'                      => 'Por favor, insira um endereço de email válido.',
+                    'url'                        => 'Por favor, insira um URL válido.',
+                    'regex'                      => 'O valor não corresponde ao padrão requerido.',
+                    'invalid-pattern'            => 'Padrão personalizado inválido fornecido.',
+                    'select-attribute-or-family' => 'Por favor, selecione pelo menos um atributo ou uma família de atributos.',
+                    'failed'                     => 'A validação falhou.',
+                ],
+
+                'modal'                      => [
+                    'title'            => 'Atributos para edição em massa',
+                    'btn-cancel'       => 'Cancelar',
+                    'btn-proceed'      => 'Prosseguir',
+                    'attribute-family' => 'Selecionar família de atributos',
+                ],
+
+                'index' => [
+                    'no-product'    => 'Nenhum produto selecionado para edição em massa.',
+                ],
+
+                'filter' => [
+                    'many-product'      => 'Foram selecionados produtos a mais.',
+                    'redirect-message'  => 'A redirecionar para a vista de edição em massa.',
+                ],
+
+                'handle-save' => [
+                    'edit-success'  => 'Edição em massa concluída com sucesso.',
+                ],
+
+                'id'              => 'ID',
+                'no-changes'      => 'Sem alterações para guardar.',
+                'success'         => 'Tarefa executada com sucesso.',
+                'fetch-failed'    => 'Falha ao obter dados.',
+                'action'          => 'Edição em massa',
+                'gallery-preview' => 'Pré-visualização da Galeria',
+                'img-preview'     => 'Pré-visualização da Imagem',
+                'no-image'        => 'Sem imagem',
+                'img-fail'        => 'Falha ao carregar a imagem',
+                'no-opton'        => 'Sem opções',
+            ],
 
             'create-success'          => 'Produto criado com sucesso',
             'delete-failed'           => 'Falha ao excluir o produto',

@@ -278,6 +278,49 @@ return [
                     'product-type' => '製品タイプ',
                 ],
             ],
+            'bulk-edit' => [
+                'validation' => [
+                    'decimal'                    => '有効な小数を入力してください。',
+                    'number'                     => '有効な整数を入力してください。',
+                    'email'                      => '有効なメールアドレスを入力してください。',
+                    'url'                        => '有効なURLを入力してください。',
+                    'regex'                      => '値が必要なパターンと一致しません。',
+                    'invalid-pattern'            => '無効なカスタムパターンが指定されました。',
+                    'select-attribute-or-family' => '少なくとも1つの属性または属性ファミリーを選択してください。',
+                    'failed'                     => '検証に失敗しました。',
+                ],
+
+                'modal'                      => [
+                    'title'            => '一括編集用の属性',
+                    'btn-cancel'       => 'キャンセル',
+                    'btn-proceed'      => '続行',
+                    'attribute-family' => '属性ファミリーを選択',
+                ],
+
+                'index' => [
+                    'no-product'    => '一括編集する製品が選択されていません。',
+                ],
+
+                'filter' => [
+                    'many-product'      => '選択された製品が多すぎます。',
+                    'redirect-message'  => '一括編集画面にリダイレクトしています。',
+                ],
+
+                'handle-save' => [
+                    'edit-success'  => '一括編集に成功しました。',
+                ],
+
+                'id'              => 'ID',
+                'no-changes'      => '保存する変更はありません。',
+                'success'         => 'ジョブが正常に実行されました。',
+                'fetch-failed'    => '取得に失敗しました。',
+                'action'          => '一括編集',
+                'gallery-preview' => 'ギャラリープレビュー',
+                'img-preview'     => '画像プレビュー',
+                'no-image'        => '画像なし',
+                'img-fail'        => '画像のアップロードに失敗しました',
+                'no-opton'        => 'オプションがありません',
+            ],
 
             'create-success'          => '製品が正常に作成されました',
             'delete-failed'           => '製品の削除に失敗しました',

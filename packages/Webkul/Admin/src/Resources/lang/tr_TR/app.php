@@ -278,6 +278,49 @@ return [
                     'product-type' => 'Ürün Türü',
                 ],
             ],
+            'bulk-edit' => [
+                'validation' => [
+                    'decimal'                    => 'Lütfen geçerli bir ondalık sayı girin.',
+                    'number'                     => 'Lütfen geçerli bir tam sayı girin.',
+                    'email'                      => 'Lütfen geçerli bir e-posta adresi girin.',
+                    'url'                        => 'Lütfen geçerli bir URL girin.',
+                    'regex'                      => 'Değer gerekli desenle eşleşmiyor.',
+                    'invalid-pattern'            => 'Geçersiz özel desen sağlandı.',
+                    'select-attribute-or-family' => 'Lütfen en az bir özellik veya özellik ailesi seçin.',
+                    'failed'                     => 'Doğrulama başarısız oldu.',
+                ],
+
+                'modal'                      => [
+                    'title'            => 'Toplu düzenleme için özellikler',
+                    'btn-cancel'       => 'İptal',
+                    'btn-proceed'      => 'Devam et',
+                    'attribute-family' => 'Özellik ailesi seçin',
+                ],
+
+                'index' => [
+                    'no-product'    => 'Toplu düzenleme için ürün seçilmedi.',
+                ],
+
+                'filter' => [
+                    'many-product'      => 'Çok fazla ürün seçildi.',
+                    'redirect-message'  => 'Toplu düzenleme görünümüne yönlendiriliyor.',
+                ],
+
+                'handle-save' => [
+                    'edit-success'  => 'Toplu düzenleme başarıyla tamamlandı.',
+                ],
+
+                'id'              => 'ID',
+                'no-changes'      => 'Kaydedilecek değişiklik yok.',
+                'success'         => 'İşlem başarıyla gerçekleştirildi.',
+                'fetch-failed'    => 'Veri alınamadı.',
+                'action'          => 'Toplu Düzenleme',
+                'gallery-preview' => 'Galeri Önizleme',
+                'img-preview'     => 'Resim Önizleme',
+                'no-image'        => 'Resim Yok',
+                'img-fail'        => 'Resim yüklenemedi',
+                'no-opton'        => 'Seçenek Yok',
+            ],
 
             'create-success'          => 'Ürün başarıyla oluşturuldu',
             'delete-failed'           => 'Ürün silinirken hata oluştu',

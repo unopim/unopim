@@ -278,6 +278,43 @@ return [
                     'product-type' => 'Produkttyp',
                 ],
             ],
+            'bulk-edit' => [
+                'validation' => [
+                    'decimal'                    => 'Ange ett giltigt decimaltal.',
+                    'number'                     => 'Ange ett giltigt heltal.',
+                    'email'                      => 'Ange en giltig e-postadress.',
+                    'url'                        => 'Ange en giltig URL.',
+                    'regex'                      => 'Värdet matchar inte det krävs mönstret.',
+                    'invalid-pattern'            => 'Ogiltigt anpassat mönster angivet.',
+                    'select-attribute-or-family' => 'Välj minst ett attribut eller en attributfamilj.',
+                    'failed'                     => 'Valideringen misslyckades.', ],
+                'modal'                      => [
+                    'title'            => 'Attribut för massredigering',
+                    'btn-cancel'       => 'Avbryt',
+                    'btn-proceed'      => 'Fortsätt',
+                    'attribute-family' => 'Välj attributfamilj',
+                ],
+                'index' => [
+                    'no-product'    => 'Inga produkter valda för massredigering.',
+                ],
+                'filter' => [
+                    'many-product'      => 'För många produkter har valts.',
+                    'redirect-message'  => 'Omdirigerar till vyn för massredigering.',
+                ],
+                'handle-save' => [
+                    'edit-success'  => 'Massredigeringen lyckades.',
+                ],
+                'id'              => 'ID',
+                'no-changes'      => 'Inga ändringar att spara.',
+                'success'         => 'Uppgiften har utförts.',
+                'fetch-failed'    => 'Misslyckades med att hämta.',
+                'action'          => 'Massredigering',
+                'gallery-preview' => 'Galleri Förhandsgranskning',
+                'img-preview'     => 'Bildförhandsvisning',
+                'no-image'        => 'Ingen bild',
+                'img-fail'        => 'Misslyckades med att ladda upp bilden',
+                'no-opton'        => 'Inga alternativ',
+            ],
 
             'create-success'          => 'Produkten skapades framgångsrikt',
             'delete-failed'           => 'Fel vid radering av produkt',

@@ -279,6 +279,50 @@ return [
                 ],
             ],
 
+            'bulk-edit' => [
+                'validation' => [
+                    'decimal'                    => 'Si us plau, introdueix un decimal vàlid.',
+                    'number'                     => 'Si us plau, introdueix un número sencer vàlid.',
+                    'email'                      => 'Si us plau, introdueix un correu electrònic vàlid.',
+                    'url'                        => 'Si us plau, introdueix una URL vàlida.',
+                    'regex'                      => 'El valor no coincideix amb el patró requerit.',
+                    'invalid-pattern'            => 'S\'ha proporcionat un patró personalitzat no vàlid.',
+                    'select-attribute-or-family' => 'Si us plau, seleccioneu almenys un atribut o una família d’atributs.',
+                    'failed'                     => 'La validació ha fallat.',
+                ],
+
+                'modal'                      => [
+                    'title'            => 'Atributs per a l’edició massiva',
+                    'btn-cancel'       => 'Cancel·lar',
+                    'btn-proceed'      => 'Continuar',
+                    'attribute-family' => 'Selecciona família d’atributs',
+                ],
+
+                'index' => [
+                    'no-product'    => 'No s’han seleccionat productes per a l’edició massiva.',
+                ],
+
+                'filter' => [
+                    'many-product'      => 'S’han seleccionat massa productes.',
+                    'redirect-message'  => 'Redirigint a la vista d’edició massiva.',
+                ],
+
+                'handle-save' => [
+                    'edit-success'  => 'Edició massiva realitzada amb èxit.',
+                ],
+
+                'id'              => 'ID',
+                'no-changes'      => 'No hi ha canvis per desar.',
+                'success'         => 'Operació completada amb èxit.',
+                'fetch-failed'    => 'Error en obtenir les dades.',
+                'action'          => 'Edició en massa',
+                'gallery-preview' => 'Previsualització de la galeria',
+                'img-preview'     => 'Previsualització de la imatge',
+                'no-image'        => 'Sense imatge',
+                'img-fail'        => 'Error en la pujada de la imatge.',
+                'no-opton'        => 'No Options',
+            ],
+
             'create-success'          => 'Producte creat amb èxit',
             'delete-failed'           => 'Eliminació del producte fallida',
             'delete-success'          => 'Producte eliminat correctament',
