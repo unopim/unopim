@@ -158,4 +158,11 @@ return [
         'sort'   => 2,
         'icon'   => '',
     ],
+    [
+        'key'    => 'configuration.magic-ai.system-prompt',
+        'name'   => 'System Prompt',
+        'route'  => 'admin.magic_ai.system_prompt.index',
+        'sort'   => 3,
+        'icon'   => '',
+    ],
 ];

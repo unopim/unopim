@@ -95,7 +95,6 @@ class ConfigurationController extends Controller
     public function store(ConfigurationForm $request)
     {
         try {
-
             $data = $request->all();
             $slug = request()->route('slug');
             $slug2 = request()->route('slug2');

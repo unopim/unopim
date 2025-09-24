@@ -42,6 +42,9 @@ return [
                     ], [
                         'title' => 'Ollama',
                         'value' => MagicAI::MAGIC_OLLAMA_AI,
+                    ], [
+                        'title' => 'Gemini',
+                        'value' => MagicAI::MAGIC_GEMINI_AI,
                     ],
                 ],
             ], [
