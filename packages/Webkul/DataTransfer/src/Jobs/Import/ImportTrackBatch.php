@@ -24,7 +24,7 @@ class ImportTrackBatch implements ShouldQueue
 
     public $tries = 3;
 
-    public $timeout = 300; // Adjust as needed
+    public $timeout = 0; // Adjust as needed
 
     /**
      * Create a new job instance.
