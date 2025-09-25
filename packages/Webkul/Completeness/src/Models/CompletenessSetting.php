@@ -2,15 +2,20 @@
 
 namespace Webkul\Completeness\Models;
 
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Completeness\Contracts\CompletenessSetting as CompletenessSettingContracts;
+use Webkul\Completeness\Database\Factories\CompletenessSettingFactory;
 use Webkul\Core\Models\Channel;
 
 class CompletenessSetting extends Model implements CompletenessSettingContracts
 {
+    use HasFactory;
+
     protected $fillable = [
         'family_id',
         'attribute_id',
@@ -39,5 +44,13 @@ class CompletenessSetting extends Model implements CompletenessSettingContracts
     public function channel(): BelongsTo
     {
         return $this->belongsTo(Channel::class, 'channel_id');
+    }
+
+    /**
+     * Create a new factory instance for the model
+     */
+    protected static function newFactory(): Factory
+    {
+        return CompletenessSettingFactory::new();
     }
 }
