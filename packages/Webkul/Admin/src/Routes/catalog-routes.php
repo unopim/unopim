@@ -7,6 +7,7 @@ use Webkul\Admin\Http\Controllers\Catalog\AttributeGroupController;
 use Webkul\Admin\Http\Controllers\Catalog\AttributeOptionController;
 use Webkul\Admin\Http\Controllers\Catalog\CategoryController;
 use Webkul\Admin\Http\Controllers\Catalog\CategoryFieldController;
+use Webkul\Admin\Http\Controllers\Catalog\Columns\TableAttributeController;
 use Webkul\Admin\Http\Controllers\Catalog\Options\AjaxOptionsController;
 use Webkul\Admin\Http\Controllers\Catalog\ProductController;
 use Webkul\Admin\Http\Middleware\EnsureChannelLocaleIsValid;
@@ -23,6 +24,8 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
             Route::get('', 'index')->name('admin.catalog.attributes.index');
 
             Route::get('create', 'create')->name('admin.catalog.attributes.create');
+
+            Route::get('{id}/columns', 'getAttributeColumn')->name('admin.catalog.attributes.column');
 
             Route::post('create', 'store')->name('admin.catalog.attributes.store');
 
@@ -52,6 +55,25 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
             Route::delete('delete/{id}', 'destroy')->name('admin.catalog.attributes.options.delete');
         });
 
+        Route::controller(TableAttributeController::class)->prefix('table/attributes')->group(function () {
+            Route::get('column/options/{id}', 'getOptions')->name('admin.catalog.attributes.columns.option.get');
+
+            Route::get('column/{id}', 'getAttributeColumn')->name('admin.catalog.attributes.column.get');
+
+            Route::get('async/column/options', 'getColumnOptions')->name('admin.catalog.attributes.column.options.async');
+
+            Route::post('{attributeId}/columns', 'addColumn')->name('admin.catalog.attributes.columns.add');
+
+            Route::put('columns/{columnId}', 'updateColumn')->name('admin.catalog.attributes.columns.update');
+
+            Route::put('column/option/{id}', 'updateOption')->name('admin.catalog.attributes.column.option.update');
+
+            Route::delete('columns/{columnId}', 'deleteColumn')->name('admin.catalog.attributes.columns.delete');
+
+            Route::post('columns/{id}/options', 'storeOption')->name('admin.catalog.attributes.columns.options.add');
+
+            Route::delete('columns/options/{id}', 'deleteOption')->name('admin.catalog.attributes.columns.options.delete');
+        });
         /**
          * Attributes group routes.
          */

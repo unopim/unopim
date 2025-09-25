@@ -17,6 +17,7 @@ use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Product\Validator\Rule\AttributeOptionRule;
 use Webkul\Product\Validator\Rule\Elasticsearch\UniqueAttributeValue;
+use Webkul\Product\Validator\Rule\TableAttributeRule;
 
 class Attribute extends TranslatableModel implements AttributeContract, HistoryContract
 {
@@ -84,6 +85,14 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
     }
 
     /**
+     * Get the columns.
+     */
+    public function columns(): HasMany
+    {
+        return $this->hasMany(AttributeColumnProxy::modelClass());
+    }
+
+    /**
      * Returns attribute validation rules
      *
      * @return string
@@ -141,6 +150,8 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
 
         if ($this->type == 'price') {
             $validations[] = "regex:/^\d+(\.\d+)?$/";
+        } elseif ($this->type == 'table') {
+            $validations[] = new TableAttributeRule($this);
         }
 
         if ($this->is_unique && $this->code !== 'sku' && $withUniqueValidation) {

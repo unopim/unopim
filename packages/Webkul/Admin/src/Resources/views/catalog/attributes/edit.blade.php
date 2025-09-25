@@ -328,6 +328,14 @@
                                 </x-admin::datagrid>
                             </div>
                         </div>
+                        <div
+                            class="p-4 bg-white dark:bg-cherry-900 box-shadow rounded"
+                            v-if="(
+                                    selectedAttributeType == 'table'
+                                )"
+                        >
+                            @includeIf('admin::catalog.attributes.types.table', ['locales' => $locales])
+                        </div>
                     </div>
 
                     <!-- Right sub-component -->
@@ -566,11 +574,11 @@
                                         for="is_filterable"
                                         value="1"
                                         :checked="(boolean) $isFilterable"
-                                        :disabled="$attribute->code === 'sku'"
+                                        :disabled="$attribute->code === 'sku' || $attribute->type === 'table'"
                                     />
 
                                     <label
-                                        class="text-xs text-gray-600 dark:text-gray-300 font-medium {{ $attribute->code === 'sku' ? 'cursor-not-allowed' : 'cursor-pointer' }}"
+                                        class="text-xs text-gray-600 dark:text-gray-300 font-medium {{ $attribute->code === 'sku' || $attribute->type === 'table' ? 'cursor-not-allowed' : 'cursor-pointer' }}"
                                         for="is_filterable"
                                     >
                                         @lang('admin::app.catalog.attributes.edit.is-filterable')

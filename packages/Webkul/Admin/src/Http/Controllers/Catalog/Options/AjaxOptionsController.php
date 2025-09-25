@@ -5,6 +5,7 @@ namespace Webkul\Admin\Http\Controllers\Catalog\Options;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\JsonResponse;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Attribute\Repositories\AttributeColumnOptionRepository;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeGroupRepository;
 use Webkul\Attribute\Repositories\AttributeOptionRepository;
@@ -43,6 +44,11 @@ class AjaxOptionsController extends Controller
     const ENTITY_ATTRIBUTE = 'attributes';
 
     /**
+     * This is used for fetching attribute column options
+     */
+    const ENTITY_ATTRIBUTE_COLUMN = 'attribute_column';
+
+    /**
      * Return instance of Controller
      */
     public function __construct(
@@ -50,7 +56,8 @@ class AjaxOptionsController extends Controller
         protected AttributeOptionRepository $attributeOptionsRepository,
         protected AttributeFamilyRepository $attributeFamilyRepository,
         protected AttributeGroupRepository $attributeGroupRepository,
-        protected AttributeRepository $attributeRepository
+        protected AttributeRepository $attributeRepository,
+        protected AttributeColumnOptionRepository $attributeColumnOptionRepository
     ) {}
 
     /**
@@ -140,6 +147,7 @@ class AjaxOptionsController extends Controller
             self::ENTITY_ATTRIBUTE_FAMILY      => $this->attributeFamilyRepository,
             self::ENTITY_ATTRIBUTE_GROUP       => $this->attributeGroupRepository,
             self::ENTITY_ATTRIBUTE             => $this->attributeRepository,
+            self::ENTITY_ATTRIBUTE_COLUMN      => $this->attributeColumnOptionRepository,
             default                            => throw new \Exception('Not implemented for '.$entityName)
         };
     }
