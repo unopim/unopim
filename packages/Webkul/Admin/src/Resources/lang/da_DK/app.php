@@ -2006,6 +2006,7 @@ return [
                 'ai-btn-info'        => 'Generer billede',
                 'allowed-types'      => 'png, jpeg, jpg',
                 'not-allowed-error'  => 'Kun billedfiler (.jpeg, .jpg, .png, ..) er tilladt.',
+                'upload-media-btn'   => 'Upload medier',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

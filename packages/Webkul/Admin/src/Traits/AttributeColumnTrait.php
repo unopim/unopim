@@ -46,6 +46,9 @@ trait AttributeColumnTrait
             case 'image':
                 $column['closure'] = $this->getImageClosure();
                 break;
+            case 'gallery':
+                $column['closure'] = $this->getGalleryClosure();
+                break;
             case 'dropdown':
                 $column['options'] = $this->getDropdownOptions($attribute);
                 break;
@@ -73,6 +76,35 @@ trait AttributeColumnTrait
     protected function getImageClosure()
     {
         return fn ($value) => ! empty($value) ? Storage::url(is_array($value) ? $value[0] : $value) : '';
+    }
+
+    protected function getGalleryClosure()
+    {
+        return function ($value) {
+            if (empty($value)) {
+                return '';
+            }
+
+            $first = is_array($value) ? $value[0] : $value;
+
+            try {
+                $mime = Storage::mimeType($first) ?: '';
+            } catch (\Exception $e) {
+                $mime = '';
+            }
+
+            if (str_starts_with($mime, 'video/')) {
+                return [
+                    'type' => 'video',
+                    'url'  => Storage::url($first),
+                ];
+            }
+
+            return [
+                'type' => 'image',
+                'url'  => Storage::url($first),
+            ];
+        };
     }
 
     protected function getDropdownOptions($attribute)

@@ -2304,6 +2304,7 @@ return [
                 'ai-add-image-btn'  => 'У тебя волшебство',
                 'ai-btn-info'       => 'Генерировать изображение',
                 'allowed-types'     => 'Png, JPEG, JPG',
+                'upload-media-btn'  => 'Загрузить медиа',
                 'not-allowed-error' => 'Разрешены только файлы изображений (.jpeg, .jpg, .png, ..).',
 
                 'ai-generation' => [

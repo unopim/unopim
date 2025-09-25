@@ -25,15 +25,35 @@ class FileOrImageValidValue implements ValidationRule
         protected array $allowedExtensions = [],
         protected bool $isMultiple = false
     ) {
-        if (! $this->allowedExtensions) {
-            $this->allowedExtensions = $this->isImage ? self::IMAGE_ALLOWED_EXTENSIONS : self::FILE_ALLOWED_EXTENSION;
-        }
+        $this->allowedExtensions = $allowedExtensions ?: (
+            $this->isImage ? self::IMAGE_ALLOWED_EXTENSIONS : self::FILE_ALLOWED_EXTENSION
+        );
 
-        if (! $this->allowedMimes) {
-            $this->allowedMimes = $this->isImage ? self::IMAGE_ALLOWED_EXTENSIONS : self::FILE_ALLOWED_EXTENSION;
-        }
+        $this->allowedMimes = $allowedMimes ?: (
+            $this->isImage ? self::IMAGE_ALLOWED_EXTENSIONS : self::FILE_ALLOWED_EXTENSION
+        );
 
         $this->fileExtensionMatchRule = new FileMimeExtensionMatch;
+    }
+
+    /**
+     * Public method to merge additional extensions.
+     */
+    public function mergeAllowedExtensions(array $extensions): self
+    {
+        $this->allowedExtensions = array_unique(array_merge($this->allowedExtensions, $extensions));
+
+        return $this;
+    }
+
+    /**
+     * Public method to merge additional mimes.
+     */
+    public function mergeAllowedMimes(array $mimes): self
+    {
+        $this->allowedMimes = array_unique(array_merge($this->allowedMimes, $mimes));
+
+        return $this;
     }
 
     /**
@@ -43,9 +63,7 @@ class FileOrImageValidValue implements ValidationRule
     {
         // For gallery attribute during import which has comma separated values
         if ($this->isMultiple && is_string($value) && str_contains($value, ',')) {
-            $value = explode(',', $value);
-
-            $value = array_filter($value, 'trim');
+            $value = array_filter(explode(',', $value), 'trim');
         }
 
         $this->validateFileOrPath($attribute, $value, $fail);
@@ -76,13 +94,11 @@ class FileOrImageValidValue implements ValidationRule
     {
         $extension = $value instanceof UploadedFile ? $value->getClientOriginalExtension() : $value->getExtension();
 
-        if ($this->allowedExtensions && ! in_array($extension, $this->allowedExtensions)) {
+        if ($this->allowedExtensions && ! in_array($extension, $this->allowedExtensions, true)) {
             $fail('validation.extensions')->translate(['values' => implode(', ', $this->allowedExtensions)]);
 
             return false;
         }
-
-        $mimeType = $value->getMimeType();
 
         if ($this->allowedMimes && ! $this->validateMimes($attribute, $value, $this->allowedMimes)) {
             $fail('validation.mimes')->translate(['values' => implode(', ', $this->allowedMimes)]);
