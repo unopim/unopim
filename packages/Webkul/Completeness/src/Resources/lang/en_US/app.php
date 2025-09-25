@@ -37,7 +37,7 @@ return [
         'products' => [
             'index' => [
                 'datagrid' => [
-                    'missing-completeness-setting' => 'No setting',
+                    'missing-completeness-setting' => 'N/A',
                 ],
             ],
 
