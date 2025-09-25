@@ -61,7 +61,9 @@ class CompletenessSettingsController extends Controller
             }
         }
 
-        BulkProductCompletenessJob::dispatch([], $familyId);
+        if (! empty($toDelete) || ! empty($toInsert)) {
+            BulkProductCompletenessJob::dispatch([], $familyId);
+        }
 
         return response()->json([
             'success' => true,
@@ -77,6 +79,8 @@ class CompletenessSettingsController extends Controller
         $attributeIds = $data['indices'] ?? [];
 
         $newCodes = array_filter(explode(',', $data['channel_requirements'] ?? ''));
+
+        $hasChanged = false;
 
         foreach ($attributeIds as $attributeId) {
             $existingCodes = $this->completenessSettingsRepository->findWhere([
@@ -110,9 +114,15 @@ class CompletenessSettingsController extends Controller
                     ]);
                 }
             }
+
+            if (! empty($toDelete) || ! empty($toInsert)) {
+                $hasChanged = true;
+            }
         }
 
-        BulkProductCompletenessJob::dispatch([], $familyId);
+        if ($hasChanged) {
+            BulkProductCompletenessJob::dispatch([], $familyId);
+        }
 
         return response()->json([
             'success' => true,
