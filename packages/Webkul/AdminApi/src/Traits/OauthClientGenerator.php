@@ -2,7 +2,9 @@
 
 namespace Webkul\AdminApi\Traits;
 
-use Webkul\AdminApi\Models\Client;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Laravel\Passport\Client;
 
 trait OauthClientGenerator
 {
@@ -16,9 +18,33 @@ trait OauthClientGenerator
         $providers = array_keys(config('auth.providers'));
         $provider = $providers[0];
 
-        $client = $this->clients->createPasswordGrantClient(
-            $user_id, $name, 'http://localhost', $provider
-        );
+        $driver = DB::getDriverName();
+
+        switch ($driver) {
+            case 'pgsql':
+                $client = new Client;
+                $client->id = Str::uuid()->toString();
+                $client->user_id = $user_id;
+                $client->name = $name;
+                $client->secret = Str::random(40);
+                $client->provider = $provider;
+                $client->redirect = 'http://localhost';
+                $client->personal_access_client = false;
+                $client->password_client = true;
+                $client->revoked = false;
+                $client->save();
+                break;
+
+            case 'mysql':
+            default:
+                $client = $this->clients->createPasswordGrantClient(
+                    $user_id,
+                    $name,
+                    'http://localhost',
+                    $provider
+                );
+                break;
+        }
 
         return $client;
     }

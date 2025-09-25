@@ -24,6 +24,10 @@ class JobInstances extends Model implements HistoryContract, JobInstancesContrac
         'filters' => 'array',
     ];
 
+    protected $attributes = [
+        'action' => '',
+    ];
+
     /**
      * The attributes that are mass assignable.
      *

@@ -4,6 +4,7 @@ namespace Webkul\Admin\Http\Requests;
 
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Core\Rules\AlphaNumericSpace;
@@ -37,9 +38,15 @@ class UserForm extends FormRequest
      */
     public function rules()
     {
+        $id = $this->id ?: null;
+
         return [
             'name'                  => ['required', new AlphaNumericSpace],
-            'email'                 => 'required|email|unique:admins,email,'.$this->id,
+            'email'                 => [
+                'required',
+                'email',
+                Rule::unique('admins', 'email')->ignore($id, 'id'),
+            ],
             'password'              => 'nullable',
             'password_confirmation' => 'nullable|required_with:password|same:password',
             'status'                => 'sometimes',

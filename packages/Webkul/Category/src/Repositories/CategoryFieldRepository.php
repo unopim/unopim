@@ -39,6 +39,23 @@ class CategoryFieldRepository extends Repository
      */
     public function create(array $data)
     {
+        $driver = DB::getDriverName();
+
+        switch ($driver) {
+            case 'pgsql':
+                $sequence = $this->model->getTable().'_id_seq';
+                DB::statement("SELECT setval('{$sequence}', (SELECT COALESCE(MAX(id), 0) + 1 FROM {$this->model->getTable()}), false)");
+                break;
+
+            case 'mysql':
+                $table = $this->model->getTable();
+                DB::statement("ALTER TABLE {$table} AUTO_INCREMENT = 1");
+                break;
+
+            default:
+                break;
+        }
+
         $categoryField = parent::create($data);
 
         if (
@@ -46,6 +63,19 @@ class CategoryFieldRepository extends Repository
             || ! isset($data['options'])
         ) {
             return $categoryField;
+        }
+
+        switch ($driver) {
+            case 'pgsql':
+                $optionTable = $this->categoryFieldOptionRepository->getModel()->getTable();
+                $optionSeq = $optionTable.'_id_seq';
+                DB::statement("SELECT setval('{$optionSeq}', (SELECT COALESCE(MAX(id), 0) + 1 FROM {$optionTable}), false)");
+                break;
+
+            case 'mysql':
+                $optionTable = $this->categoryFieldOptionRepository->getModel()->getTable();
+                DB::statement("ALTER TABLE {$optionTable} AUTO_INCREMENT = 1");
+                break;
         }
 
         foreach ($data['options'] as $option) {
@@ -56,6 +86,7 @@ class CategoryFieldRepository extends Repository
 
         return $categoryField;
     }
+
 
     /**
      * Update a category field in the database and its options if present.
