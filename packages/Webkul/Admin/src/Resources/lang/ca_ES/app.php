@@ -1987,6 +1987,8 @@ return [
         'imports'                  => 'Imports',
         'invoices'                 => 'Factures',
         'locales'                  => 'Locales',
+        'mass-update'              => 'Actualització en massa',
+        'mass-delete'              => 'Eliminació en massa',
         'magic-ai'                 => 'AI màgic',
         'mass-update'              => 'Actualització en massa',
         'mass-delete'              => 'Eliminació en massa',

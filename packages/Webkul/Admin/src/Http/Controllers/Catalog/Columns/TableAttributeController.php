@@ -7,14 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Webkul\Admin\Http\Controllers\Controller;
-use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeColumnOption;
 use Webkul\Attribute\Repositories\AttributeColumnOptionRepository;
 use Webkul\Attribute\Repositories\AttributeColumnRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
-use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Core\Rules\Code;
-use Webkul\Product\Repositories\ProductRepository;
 
 class TableAttributeController extends Controller
 {
@@ -25,8 +22,6 @@ class TableAttributeController extends Controller
      */
     public function __construct(
         protected AttributeRepository $attributeRepository,
-        protected ProductRepository $productRepository,
-        protected LocaleRepository $localeRepository,
         protected AttributeColumnRepository $attributeColumnRepository,
         protected AttributeColumnOptionRepository $attributeColumnOptionRepository
     ) {}

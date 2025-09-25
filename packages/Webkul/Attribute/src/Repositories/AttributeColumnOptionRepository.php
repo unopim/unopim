@@ -2,6 +2,7 @@
 
 namespace Webkul\Attribute\Repositories;
 
+use Webkul\Attribute\Contracts\AttributeColumnOption;
 use Webkul\Core\Eloquent\Repository;
 
 class AttributeColumnOptionRepository extends Repository
@@ -11,6 +12,6 @@ class AttributeColumnOptionRepository extends Repository
      */
     public function model(): string
     {
-        return 'Webkul\Attribute\Contracts\AttributeColumnOption';
+        return AttributeColumnOption::class;
     }
 }

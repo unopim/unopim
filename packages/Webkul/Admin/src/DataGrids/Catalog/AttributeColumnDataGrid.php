@@ -106,7 +106,7 @@ class AttributeColumnDataGrid extends DataGrid
                 'url'    => function ($row) {
                     return route('admin.catalog.attributes.column.get', $row->id);
                 },
-                'frontend_view'  => 'view-large-model',
+                'frontend_view'  => 'view-large-modal',
             ]);
         }
 

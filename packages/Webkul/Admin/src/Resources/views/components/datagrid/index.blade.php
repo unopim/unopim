@@ -822,7 +822,7 @@
                         case 'get':
                             if (action?.frontend_view === 'view-modal') {
                                 this.$emitter.emit('open-v-confirm-modal', {'url': action.url});
-                            } else if(action?.frontend_view === 'view-large-model') {
+                            } else if(action?.frontend_view === 'view-large-modal') {
                                 this.$emitter.emit('open-v-large-modal', {'url': action.url});
                             } else {
                                 window.location.href = action.url;

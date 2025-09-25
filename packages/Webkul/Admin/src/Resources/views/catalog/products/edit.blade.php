@@ -132,7 +132,7 @@
         {!! view_render_event('unopim.admin.catalog.product.edit.form.before', ['product' => $product]) !!}
 
         <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
-            <div class="left-column flex flex-col gap-2 flex-1 max-xl:flex-auto">
+            <div class="left-column flex flex-col gap-2 flex-1 max-xl:flex-auto w-[64%]">
                 @foreach ($product->attribute_family->familyGroups()->orderBy('position')->get() as $group)
                     {!! view_render_event('unopim.admin.catalog.product.edit.form.column_before', ['product' => $product]) !!}
 
@@ -182,9 +182,9 @@
 
                 <!-- Related, Cross Sells, Up Sells View Blade File -->
                 @include('admin::catalog.products.edit.links', [
-                    'upSellAssociations' => $product->values['associations']['up_sells'] ?? [],
+                    'upSellAssociations'    => $product->values['associations']['up_sells'] ?? [],
                     'crossSellAssociations' => $product->values['associations']['cross_sells'] ?? [],
-                    'relatedAssociations' => $product->values['associations']['related_products'] ?? [],
+                    'relatedAssociations'   => $product->values['associations']['related_products'] ?? [],
                 ])
 
                 <!-- Include Product Type Additional Blade Files If Any -->

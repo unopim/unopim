@@ -42,7 +42,7 @@
             ];
         }
 
-        $columnValidationTypesJson = json_encode($validationTypes);
+        $columnValidationTypesJson = $validationTypes;
         $columnTypesJson = json_encode($columnTypes);
     @endphp
 
@@ -108,7 +108,7 @@
 
                 <x-slot:footer>
                     <button type="submit" class="primary-button">
-                        @lang('admin::app.catalog.attributes.edit.column.save-btn')
+                        @lang('admin::app.catalog.attributes.edit.option.save-btn')
                     </button>
                 </x-slot>
             </x-admin::modal>
@@ -208,11 +208,11 @@
                     <div class="bg-white dark:bg-gray-900 p-1">
                         <div class="grid grid-cols-2 gap-4">
                             <!-- Left Panel -->
-                            <div class="">
+                            <div>
                                 <p class="text-md mb-2 text-gray-800 dark:text-white font-bold">
-                                @lang('admin::app.catalog.attributes.edit.column.title')
+                                    @lang('admin::app.catalog.attributes.edit.column.title')
                                 </p>
-                                <!-- Code -->
+
                                 <x-admin::form.control-group class="w-full mt-0">
                                     <x-admin::form.control-group.label class="required">
                                     @lang('admin::app.catalog.attributes.edit.code')
@@ -355,20 +355,16 @@
                                                 class="w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600"
                                             />
                                         </div>
-                        
-                                    </div>
-                                    <div class="">
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </x-slot:content>
 
                 <x-slot:footer>
                     <button type="submit" class="primary-button">
-                        @lang('admin::app.catalog.attributes.edit.option.save-btn')
+                        @lang('admin::app.catalog.attributes.edit.column.save-btn')
                     </button>
                 </x-slot>
             </x-admin::modal>
@@ -391,9 +387,9 @@ app.component('v-edit-table-attribute', {
             updatedOption: [],
             columnIsNew: true,
             validationType: '',
-            columnValidationTypesJson: JSON.parse('{!! $columnValidationTypesJson !!}'),
+            columnValidationTypesJson: @json($columnValidationTypesJson),
             type: '',
-            typeLabels: JSON.parse('{!! $columnTypesJson !!}'),
+            typeLabels: JSON.parse(@json($columnTypesJson)),
             filteredValidationTypes: null,
             selectedValidation: null,
             columnId: null,
@@ -544,7 +540,6 @@ app.component('v-edit-table-attribute', {
                     this.activeOptionId = null;
                 }
 
-                console.log(this.optionData);
                 data.validation = typeof data.validation === 'string'
                     ? data.validation.split(',').map(v => v.trim())
                     : [];
@@ -613,7 +608,7 @@ app.component('v-edit-table-attribute', {
 
         editColumn(params, { resetForm }) {
             const updateurl = this.updateColumnRoute.replace('COLUMN_ID', this.columnId);
-            console.log(params);
+
             params.translations.forEach(item => {
                 if (item.locale) {
                     params[item.locale] = { label: item.label };

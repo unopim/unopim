@@ -67,25 +67,6 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
         'ai_translate',
     ];
 
-    /**
-     * Attribute type fields.
-     *
-     * @var array
-     */
-    public $attributeTypeFields = [
-        'text'        => 'text_value',
-        'textarea'    => 'text_value',
-        'price'       => 'float_value',
-        'boolean'     => 'boolean_value',
-        'select'      => 'integer_value',
-        'multiselect' => 'text_value',
-        'datetime'    => 'datetime_value',
-        'date'        => 'date_value',
-        'file'        => 'text_value',
-        'image'       => 'text_value',
-        'checkbox'    => 'text_value',
-    ];
-
     const NON_DELETABLE_ATTRIBUTE_CODE = 'sku';
 
     /**

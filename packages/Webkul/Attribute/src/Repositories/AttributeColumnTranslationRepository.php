@@ -2,6 +2,7 @@
 
 namespace Webkul\Attribute\Repositories;
 
+use Webkul\Attribute\Contracts\AttributeColumnTranslation;
 use Webkul\Core\Eloquent\Repository;
 
 class AttributeColumnTranslationRepository extends Repository
@@ -11,6 +12,6 @@ class AttributeColumnTranslationRepository extends Repository
      */
     public function model(): string
     {
-        return 'Webkul\Attribute\Contracts\AttributeColumnTranslation';
+        return AttributeColumnTranslation::class;
     }
 }

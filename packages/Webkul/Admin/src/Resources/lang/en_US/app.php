@@ -1577,8 +1577,7 @@ return [
             'save-message'    => 'Configuration saved successfully',
             'search'          => 'Search',
             'title'           => 'Configuration',
-
-            'general' => [
+            'general'         => [
                 'info'  => '',
                 'title' => 'General',
 
@@ -1588,9 +1587,8 @@ return [
                 ],
 
                 'magic-ai' => [
-                    'info'  => 'Set Magic AI options.',
-                    'title' => 'Magic AI',
-
+                    'info'     => 'Set Magic AI options.',
+                    'title'    => 'Magic AI',
                     'settings' => [
                         'api-key'        => 'API Key',
                         'enabled'        => 'Enabled',
@@ -1605,6 +1603,19 @@ return [
                         'enabled'    => 'Enabled',
                         'title'      => 'Image Generation',
                         'title-info' => 'This feature will enable the Magic AI for every image upload, where you want to generate images using DALL-E.<br/><br/>When Enable, go to any image upload to generate image.',
+                    ],
+
+                    'translation'   => [
+                        'title'                      => 'Translation',
+                        'enabled'                    => 'Enabled',
+                        'title-info'                 => 'This feature will enable Magic AI for translating text, allowing you to convert text from one language to another seamlessly.',
+                        'global-source-channel'      => 'Source Channel',
+                        'global-source-locale'       => 'Source Locale',
+                        'translation-model'          => 'Translation Model',
+                        'replace-existing-value'     => 'Replace Existing Value',
+                        'target-channel'             => 'Target Channel',
+                        'target-locales'             => 'Target Locales',
+                        'replace-existing-value-info'=> 'Replace the existing value if it already exists.',
                     ],
                 ],
             ],
@@ -1996,6 +2007,8 @@ return [
         'search-terms'             => 'Search Terms',
         'settings'                 => 'Settings',
         'shipments'                => 'Shipments',
+        'mass-update'              => 'Mass Update',
+        'mass-delete'              => 'Mass Delete',
         'sitemaps'                 => 'Sitemaps',
         'subscribers'              => 'Newsletter Subscribers',
         'tax-categories'           => 'Tax Categories',

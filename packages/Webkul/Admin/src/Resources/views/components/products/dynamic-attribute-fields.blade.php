@@ -184,10 +184,9 @@
 
                         foreach ($value as &$val) {
                             foreach ($imageColumns as $image) {
-                                if (!empty($val[$image])) {
+                                if (! empty($val[$image])) {
                                     $val['url'] = Storage::url($val[$image]);
-                                    $val[$image] = ['url' => Storage::url($val[$image]),
-                                        'val' => $val[$image]];
+                                    $val[$image] = ['url' => Storage::url($val[$image]), 'val' => $val[$image]];
                                 }
                             }
                         }

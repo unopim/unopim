@@ -46,7 +46,7 @@
                 >
                     <template #item="{ element, index }">
                         <x-admin::table.thead.tr
-                            class="border rounded-md border-slate-300 dark:border-gray-600 hover:bg-violet-50 dark:hover:bg-cherry-800"
+                            class="border rounded-md border-slate-300 dark:!border-gray-600 hover:bg-violet-50 dark:hover:bg-cherry-800"
                             v-show="!element.isDelete"
                         >
                             <input type="hidden" :name="fieldName + '[' + index + '][isNew]'" :value="element.isNew" />
@@ -108,7 +108,7 @@
                                         <label
                                             v-if="!element[column.code]?.['val']"
                                             :for="'image_' + index + '_' + column.code"
-                                            class="text-blue-500 text-sm cursor-pointer hover:text-blue-700"
+                                            class="text-sm cursor-pointer text-gray-800 dark:text-gray-300"
                                         >
                                             @lang('admin::app.catalog.attributes.edit.select-image')
                                         </label>
@@ -144,7 +144,7 @@
                                         v-bind="field"
                                         track-by="code"
                                         label-by="label"
-                                        :class="[errors.length ? 'border border-red-500' : 'w-[120px]']"
+                                        :class="[errors.length ? 'border border-red-500' : 'w-[147px]']"
                                         list-route="{{ route('admin.catalog.options.fetch-all') }}"
                                     />
 
@@ -156,7 +156,7 @@
                                         track-by="code"
                                         label-by="label"
                                         multiple
-                                        :class="[errors.length ? 'border border-red-500' : 'w-[120px]']"
+                                        :class="[errors.length ? 'border border-red-500' : 'w-[147px]']"
                                         list-route="{{ route('admin.catalog.options.fetch-all') }}"
                                     />
                                 </v-field>
