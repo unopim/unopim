@@ -29,11 +29,11 @@ class AttributeCompletenessDataGrid extends DataGrid
 
         $queryBuilder = DB::table('attributes')
             ->join('attribute_group_mappings', 'attributes.id', '=', 'attribute_group_mappings.attribute_id')
-            ->join('attribute_groups', 'attribute_group_mappings.attribute_family_group_id', '=', 'attribute_groups.id')
             ->join('attribute_family_group_mappings', function ($join) use ($familyId) {
-                $join->on('attribute_groups.id', '=', 'attribute_family_group_mappings.attribute_group_id')
+                $join->on('attribute_group_mappings.attribute_family_group_id', '=', 'attribute_family_group_mappings.id')
                     ->where('attribute_family_group_mappings.attribute_family_id', '=', $familyId);
             })
+            ->join('attribute_groups', 'attribute_family_group_mappings.attribute_group_id', '=', 'attribute_groups.id')
             ->leftJoin('completeness_settings', function ($join) use ($familyId) {
                 $join->on('attributes.id', '=', 'completeness_settings.attribute_id')
                     ->where('completeness_settings.family_id', '=', $familyId);
