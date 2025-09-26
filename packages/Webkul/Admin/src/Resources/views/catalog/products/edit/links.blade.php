@@ -176,11 +176,11 @@
                     ],
 
                     addedProducts: {
-                        'up_sells': @json($product->whereIn('sku', $upSellAssociations)->get()->map(fn ($item) => $item->normalizeWithImage())),
+                        'up_sells': @json($upSellAssociations ? $product->whereIn('sku', $upSellAssociations)->get()->map(fn ($item) => $item->normalizeWithImage()) : []),
 
-                        'cross_sells': @json($product->whereIn('sku', $crossSellAssociations)->get()->map(fn ($item) => $item->normalizeWithImage())),
+                        'cross_sells': @json($crossSellAssociations ? $product->whereIn('sku', $crossSellAssociations)->get()->map(fn ($item) => $item->normalizeWithImage()) : []),
 
-                        'related_products': @json($product->whereIn('sku', $relatedAssociations)->get()->map(fn ($item) => $item->normalizeWithImage()))
+                        'related_products': @json($relatedAssociations ? $product->whereIn('sku', $relatedAssociations)->get()->map(fn ($item) => $item->normalizeWithImage()) : [])
                     },
 
                     queryParams: {

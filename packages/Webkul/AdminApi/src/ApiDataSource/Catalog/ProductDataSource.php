@@ -5,6 +5,7 @@ namespace Webkul\AdminApi\ApiDataSource\Catalog;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Webkul\AdminApi\ApiDataSource;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
+use Webkul\Completeness\Repositories\ProductCompletenessScoreRepository;
 use Webkul\Product\Database\Eloquent\Builder;
 use Webkul\Product\Repositories\ProductRepository;
 
@@ -24,7 +25,8 @@ class ProductDataSource extends ApiDataSource
      */
     public function __construct(
         protected ProductRepository $productRepository,
-        protected AttributeFamilyRepository $attributeFamilyRepository
+        protected AttributeFamilyRepository $attributeFamilyRepository,
+        protected ProductCompletenessScoreRepository $productCompletenessScoreRepository
     ) {}
 
     /**
@@ -50,7 +52,12 @@ class ProductDataSource extends ApiDataSource
     {
         $paginator = $this->paginator->toArray();
 
-        return array_map([$this, 'normalizeProduct'], $paginator['data'] ?? []);
+        $withCompleteness = filter_var(request()->get('with_completeness', false), FILTER_VALIDATE_BOOLEAN);
+
+        return array_map(
+            fn ($item) => $this->normalizeProduct($item, $withCompleteness),
+            $paginator['data'] ?? [],
+        );
     }
 
     /**
@@ -83,7 +90,9 @@ class ProductDataSource extends ApiDataSource
             );
         }
 
-        return $this->normalizeProduct($product);
+        $withCompleteness = filter_var(request()->get('with_completeness', false), FILTER_VALIDATE_BOOLEAN);
+
+        return $this->normalizeProduct($product, $withCompleteness);
     }
 
     public function getSuperAttributes($data)
@@ -232,7 +241,7 @@ class ProductDataSource extends ApiDataSource
     /**
      * Normalize product data for API response
      */
-    protected function normalizeProduct(array $product): array
+    protected function normalizeProduct(array $product, bool $withCompleteness = false): array
     {
         $responseData = [
             'sku'        => $product['sku'],
@@ -253,6 +262,27 @@ class ProductDataSource extends ApiDataSource
             $responseData['variants'] = $this->getVariants($product, $superAttributes);
         }
 
+        if ($withCompleteness) {
+            $responseData['completeness'] = $this->getCompletenessScores($product['id']) ?? 'N/A';
+        }
+
         return $responseData;
+    }
+
+    protected function getCompletenessScores(string $id): array
+    {
+        $completenessScores = $this->productCompletenessScoreRepository->findByField('product_id', $id);
+
+        $completenessData = [];
+
+        foreach ($completenessScores as $completeness) {
+            $completenessData[] = [
+                'channel' => $completeness->channel->code,
+                'locale'  => $completeness->locale->code,
+                'score'   => $completeness->score,
+            ];
+        }
+
+        return $completenessData;
     }
 }

@@ -19,6 +19,7 @@ uses(Webkul\DataGrid\Tests\DataGridTestCase::class)->in('../packages/Webkul/Data
 uses(Webkul\Installer\Tests\UserCreateCommandTestCase::class)->in('../packages/Webkul/Installer/tests');
 uses(Webkul\Core\Tests\CoreTestCase::class)->in('../packages/Webkul/ElasticSearch/tests');
 uses(Webkul\Admin\Tests\AdminTestCase::class)->in('../packages/Webkul/DataTransfer/tests');
+uses(Webkul\Completeness\Tests\CompletenessTestCase::class)->in('../packages/Webkul/Completeness/tests');
 
 /*
 |--------------------------------------------------------------------------

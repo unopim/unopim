@@ -381,6 +381,18 @@
         @apply text-red-600;
     }
 
+    .pill-low {
+        @apply bg-red-600 border border-red-700;
+    }
+
+    .pill-medium {
+        @apply bg-yellow-500 border border-yellow-600;
+    }
+
+    .pill-high {
+        @apply bg-green-600 border border-green-700;
+    }
+
     .shimmer {
         animation-duration: 2.2s;
         animation-fill-mode: forwards;

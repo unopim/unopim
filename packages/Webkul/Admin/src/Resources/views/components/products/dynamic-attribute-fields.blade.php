@@ -1,11 +1,12 @@
 @props([
-    'fields'             => [],
-    'currentLocaleCode'  => core()->getRequestedLocaleCode(),
-    'currentChannelCode' => core()->getRequestedChannelCode(),
-    'fieldsWrapper'      => 'values',
-    'fieldValues'        => [],
-    'channelCurrencies'  => [],
-    'variantFields'      => [],
+    'fields'                 => [],
+    'currentLocaleCode'      => core()->getRequestedLocaleCode(),
+    'currentChannelCode'     => core()->getRequestedChannelCode(),
+    'fieldsWrapper'          => 'values',
+    'fieldValues'            => [],
+    'channelCurrencies'      => [],
+    'variantFields'          => [],
+    'completenessAttributes' => []
 ])
 
 @foreach($fields as $field)
@@ -24,9 +25,9 @@
 
         $formattedoptions = [];
 
-        $fieldName = $fieldsWrapper . $field->getAttributeInputFieldName($currentChannelCode, $currentLocaleCode);
+        $fieldName = $fieldsWrapper.$field->getAttributeInputFieldName($currentChannelCode, $currentLocaleCode);
 
-        $flatFieldName = $fieldsWrapper . $field->getFlatAttributeName($currentChannelCode, $currentLocaleCode);
+        $flatFieldName = $fieldsWrapper.$field->getFlatAttributeName($currentChannelCode, $currentLocaleCode);
 
         if ($fieldValues) {
             $value = $field->getValueFromProductValues($fieldValues, $currentChannelCode, $currentLocaleCode);
@@ -50,6 +51,10 @@
 
                 @if ($field->is_required || $isConfigurableAttribute)
                     <span class="required"></span>
+                @endif
+
+                @if (isset($completenessAttributes[$field->id]) && ! isset($value))
+                    <span class="inline-block w-2 h-2 rounded-full bg-yellow-500"></span>
                 @endif
             </x-admin::form.control-group.label>
 

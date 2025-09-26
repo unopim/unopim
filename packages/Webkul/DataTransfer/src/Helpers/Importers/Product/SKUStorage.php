@@ -123,4 +123,24 @@ class SKUStorage
     {
         return empty($this->items);
     }
+
+    /**
+     * Get all items in a normalized format with sku as key
+     */
+    public function getItems(): array
+    {
+        $allItems = [];
+
+        foreach ($this->items as $key => $item) {
+            $data = explode(self::DELIMITER, $item);
+
+            $allItems[$key] = [
+                'id'                  => $data[0],
+                'type'                => $data[1],
+                'attribute_family_id' => $data[2],
+            ];
+        }
+
+        return $allItems;
+    }
 }

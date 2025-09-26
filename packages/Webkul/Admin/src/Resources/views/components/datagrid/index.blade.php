@@ -697,9 +697,18 @@
 
                     const method = action.method.toLowerCase();
                     const actionType = action?.options?.actionType?.toLowerCase() ?? '';
+                    const modal = action?.options?.modal ?? null;
 
-                    this.$emitter.emit('delete' === actionType ? 'open-delete-modal': 'open-confirm-modal', {
-                        agree: () => {
+                    let modalEvent = 'open-confirm-modal';
+
+                    if (actionType === 'delete') {
+                        modalEvent = 'open-delete-modal';
+                    } else if (modal) {
+                        modalEvent = modal;
+                    }
+
+                    this.$emitter.emit(modalEvent, {
+                        agree: (data) => {
                             switch (method) {
                                 case 'post':
                                 case 'put':
@@ -707,14 +716,26 @@
                                     this.$axios[method](action.url, {
                                             indices: this.applied.massActions.indices,
                                             value: this.applied.massActions.value,
+                                            filter: data
                                         })
                                         .then(response => {
-                                            this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
+                                            if (response.data.redirect && actionType === 'redirect') {
+                                                window.location.href = response.data.redirect;
+                                                return;
+                                            }
+
+                                            this.$emitter.emit('add-flash', {
+                                                type: 'success',
+                                                message: response.data.message
+                                            });
 
                                             this.get();
                                         })
                                         .catch((error) => {
-                                            this.$emitter.emit('add-flash', { type: 'error', message: error.response.data.message });
+                                            this.$emitter.emit('add-flash', {
+                                                type: 'error',
+                                                message: error.response.data.message
+                                            });
                                         });
 
                                     break;
@@ -724,12 +745,18 @@
                                             indices: this.applied.massActions.indices
                                         })
                                         .then(response => {
-                                            this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
+                                            this.$emitter.emit('add-flash', {
+                                                type: 'success',
+                                                message: response.data.message
+                                            });
 
                                             this.get();
                                         })
                                         .catch((error) => {
-                                            this.$emitter.emit('add-flash', { type: 'error', message: error.response.data.message });
+                                            this.$emitter.emit('add-flash', {
+                                                type: 'error',
+                                                message: error.response.data.message
+                                            });
                                         });
 
                                     break;
@@ -740,7 +767,7 @@
                                     break;
                             }
 
-                            this.applied.massActions.indices  = [];
+                            this.applied.massActions.indices = [];
                         }
                     });
                 },

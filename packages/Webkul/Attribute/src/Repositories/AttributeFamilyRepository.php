@@ -79,10 +79,17 @@ class AttributeFamilyRepository extends Repository
         $newValue = [];
         $oldValue = [];
 
+        $addedAndRemovedAttributes = [
+            'added'   => [],
+            'removed' => [],
+        ];
+
         foreach ($data['attribute_groups'] ?? [] as $attributeGroupId => $attributeGroupInputs) {
             $new = [];
             $old = [];
+
             $attributeGroupMappingId = $attributeGroupInputs['attribute_groups_mapping'];
+
             if (empty($attributeGroupMappingId)) {
                 $familyGroupMapping = $this->attributeFamilyGroupMappingRepository->create([
                     'attribute_family_id' => $family->id,
@@ -99,13 +106,14 @@ class AttributeFamilyRepository extends Repository
 
                 foreach ($attributeGroupInputs['custom_attributes'] as $attributeInputs) {
                     $attribute = $this->attributeRepository->find($attributeInputs['id']);
+
                     $new[] = $attribute->toArray()['code'];
+
                     $familyGroupMapping->customAttributes()->save($attribute, [
                         'position' => $attributeInputs['position'],
                     ]);
                 }
             } else {
-
                 if (is_numeric($index = $previousAttributeGroupMappingIds->search($attributeGroupMappingId))) {
                     $previousAttributeGroupMappingIds->forget($index);
                 }
@@ -150,14 +158,28 @@ class AttributeFamilyRepository extends Repository
                     $familyGroupMapping->customAttributes()->detach($previousAttributeIds);
                 }
             }
+
+            $addedAndRemovedAttributes['added'] = array_merge($addedAndRemovedAttributes['added'], array_diff($new, $old));
+            $addedAndRemovedAttributes['removed'] = array_merge($addedAndRemovedAttributes['removed'], array_diff($old, $new));
+
             $newValue[$groupCode] = implode(', ', $new);
             $oldValue[$groupCode] = implode(', ', $old);
         }
 
         foreach ($previousAttributeGroupMappingIds as $mappingId) {
-            $attributeGroup = $this->attributeGroupRepository->findWhere(['id' => $mappingId]);
+            $attributeGroup = $this->attributeGroupRepository->find(['id' => $mappingId]);
+
             $oldValue['attribute_group'][] = $attributeGroup->first()?->toArray()['code'];
+
             $this->attributeFamilyGroupMappingRepository->delete($mappingId);
+        }
+
+        if (! empty($addedAndRemovedAttributes['added']) || ! empty($addedAndRemovedAttributes['removed'])) {
+            Event::dispatch('catalog.attribute_family.attributes.changed', [
+                'data'      => $addedAndRemovedAttributes['added'],
+                'removed'   => $addedAndRemovedAttributes['removed'],
+                'family_id' => $id,
+            ]);
         }
 
         Event::dispatch('core.model.proxy.sync.AttributeFamilyGroupMapping', ['old_values' => $oldValue, 'new_values' => $newValue, 'model' => $familyGroupMapping]);

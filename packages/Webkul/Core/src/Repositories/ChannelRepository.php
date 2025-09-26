@@ -2,6 +2,7 @@
 
 namespace Webkul\Core\Repositories;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use Webkul\Core\Eloquent\Repository;
 
@@ -86,6 +87,17 @@ class ChannelRepository extends Repository
             'currencies',
             'root_category',
         ]);
+    }
 
+    public function getChannelAsOptions(): Collection
+    {
+        return $this->all()->map(function ($channel) {
+            $channelLabel = $channel->name;
+
+            return [
+                'code'  => $channel->code,
+                'label' => empty($channelLabel) ? "[$channel->code]" : $channelLabel,
+            ];
+        });
     }
 }

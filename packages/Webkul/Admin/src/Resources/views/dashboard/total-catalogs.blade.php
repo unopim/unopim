@@ -76,7 +76,6 @@
     </script>
 
 
-    <!-- Entity Count display Vue Component Template -->
     <script type="text/x-template" id="v-entity-count-display-template">
         <div class="flex gap-3 p-4 bg-white dark:bg-cherry-900 box-shadow rounded-lg flex-1 min-w-[200px] ">
             <div class="w-full h-[60px] max-w-[60px] max-h-[60px]">

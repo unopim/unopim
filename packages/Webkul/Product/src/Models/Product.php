@@ -15,6 +15,8 @@ use Shetabit\Visitor\Traits\Visitable;
 use Webkul\Attribute\Models\AttributeFamilyProxy;
 use Webkul\Attribute\Models\AttributeProxy;
 use Webkul\Attribute\Repositories\AttributeRepository;
+use Webkul\Completeness\Models\CompletenessSetting;
+use Webkul\Completeness\Models\ProductCompletenessScore;
 use Webkul\HistoryControl\Contracts\HistoryAuditable;
 use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
 use Webkul\HistoryControl\Presenters\BooleanPresenter;
@@ -175,6 +177,41 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
     {
         return $this->getTypeInstance()
             ->getEditableAttributes($group, $skipSuperAttribute);
+    }
+
+    public function completenessScores()
+    {
+        return $this->hasMany(ProductCompletenessScore::class, 'product_id');
+    }
+
+    public function getCompletenessScore($channelId = null, $select = ['locale_id', 'score', 'missing_count']): array
+    {
+        $channelId = $channelId ?: core()->getRequestedChannel()?->id;
+
+        if (! $channelId) {
+            return [];
+        }
+
+        $scores = [];
+
+        foreach ($this->completenessScores()->where('channel_id', $channelId)->select($select)->get() as $score) {
+            $scores[$score->locale_id] = $score->toArray();
+        }
+
+        return $scores;
+    }
+
+    public function getCompletenessAttributes($channelId = null)
+    {
+        $channelId = $channelId ?: core()->getRequestedChannel()?->id;
+
+        if (! $channelId || ! $this->attribute_family_id) {
+            return [];
+        }
+
+        return CompletenessSetting::where('family_id', $this->attribute_family_id)
+            ->where('channel_id', $channelId)
+            ->get();
     }
 
     /**

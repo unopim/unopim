@@ -165,11 +165,11 @@
             methods: {
                 openDrawer() {
                     this.$refs.searchProductDrawer.open();
+                    this.search();
                 },
 
                 search() {
-                    if (this.searchTerm.length <= 1) {
-                        this.searchedProducts = [];
+                    if (this.searchTerm.length <= 1 && !this.searchedProducts.length == 0) {
 
                         return;
                     }
