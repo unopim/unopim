@@ -123,11 +123,11 @@ class WebhookService
 
     protected function storeBatchLogs($products, int $status): void
     {
-        $adminUser = auth('admin')->getUser()->toArray();
+        $adminName = auth('admin')->user()?->name;
 
         foreach ($products as $product) {
             $data = [
-                'user'   => $adminUser['name'] ?? null,
+                'user'   => $adminName ?? null,
                 'sku'    => $product->sku ?? ($product['sku'] ?? null),
                 'status' => $status,
             ];

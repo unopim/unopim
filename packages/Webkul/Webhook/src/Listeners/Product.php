@@ -30,21 +30,15 @@ class Product
         $code = $product->sku;
         $type = $product->type;
 
-        $settings = $this->settingsRepository->getAllDataAndNormalize();
-
-        if (! empty($settings['webhook_active'])) {
+        if ($this->settingsRepository->isWebhookActive()) {
             $this->webhookService->sendDataToWebhook($code, $type);
         }
     }
 
     public function afterBulkUpdate(array $ids)
     {
-        $settings = $this->settingsRepository->getAllDataAndNormalize();
-
-        if (empty($settings['webhook_active'])) {
-            return;
+        if ($this->settingsRepository->isWebhookActive()) {
+            $this->webhookService->sendBatchByIds($ids);
         }
-
-        $this->webhookService->sendBatchByIds($ids);
     }
 }

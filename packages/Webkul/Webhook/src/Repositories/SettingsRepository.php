@@ -45,4 +45,9 @@ class SettingsRepository extends Repository
 
         return $normalizedData;
     }
+
+    public function isWebhookActive(): bool
+    {
+        return (bool) ((int) $this->where('field', 'webhook_active')->first()?->value ?? 0);
+    }
 }
