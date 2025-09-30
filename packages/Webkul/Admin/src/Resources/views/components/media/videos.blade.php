@@ -1,5 +1,5 @@
 @props([
-    'name'           => 'images',
+    'name'           => 'videos',
     'allowMultiple'  => false,
     'uploadedVideos' => [],
     'width'          => '210px',
