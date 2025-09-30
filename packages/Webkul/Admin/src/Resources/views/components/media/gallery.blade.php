@@ -48,6 +48,38 @@
                             </p>
                         </div>
                     </label>
+
+                    <label
+                        v-else
+                        class="grid justify-items-center items-center w-full h-[120px] max-w-[210px] max-h-[120px] border border-dashed dark:border-cherry-800 rounded cursor-pointer transition-all hover:border-gray-400 border-gray-300"
+                        :style="{'max-width': this.width, 'max-height': this.height}"
+                        :for="$.uid + '_imageInput'"
+                    >
+                        <div class="flex flex-col items-center justify-center">
+                            <span class="icon-image text-2xl"></span>
+
+                            <p class="grid text-sm text-gray-700 dark:text-gray-300 font-semibold text-center">
+                                @lang('admin::app.components.media.images.upload-media-btn')
+                                <span class="text-xs mt-1 text-gray-600 dark:text-gray-300 font-medium text-center">
+                                    @lang('admin::app.components.media.images.allowed-types')
+                                </span>
+                                <span class="text-xs text-gray-600 dark:text-gray-300 font-medium text-center">
+                                    @lang('admin::app.components.media.videos.allowed-types')
+                                </span>
+
+                            </p>
+
+                            <input
+                                type="file"
+                                class="hidden"
+                                :id="$.uid + '_imageInput'"
+                                accept="image/*, video/*"
+                                :multiple="allowMultiple"
+                                :ref="$.uid + '_imageInput'"
+                                @change="add"
+                            />
+                        </div>
+                    </label>
                 </div>
 
                 <!-- Uploaded Images -->
