@@ -38,6 +38,7 @@ return [
             'index' => [
                 'datagrid' => [
                     'missing-completeness-setting' => 'Không có cài đặt',
+                    'completeness'                 => 'Đầy đủ',
                 ],
             ],
 

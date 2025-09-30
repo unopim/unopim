@@ -38,6 +38,7 @@ return [
             'index' => [
                 'datagrid' => [
                     'missing-completeness-setting' => '无设置',
+                    'completeness'                 => '完整',
                 ],
             ],
 

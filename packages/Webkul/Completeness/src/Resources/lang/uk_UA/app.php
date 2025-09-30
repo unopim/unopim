@@ -38,6 +38,7 @@ return [
             'index' => [
                 'datagrid' => [
                     'missing-completeness-setting' => 'Немає налаштувань',
+                    'completeness'                 => 'Повний',
                 ],
             ],
 

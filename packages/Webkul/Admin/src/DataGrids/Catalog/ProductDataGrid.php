@@ -247,7 +247,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
             'completeness' => [
                 'index'   => 'completeness',
-                'label'   => trans('completeness::app.components.layouts.sidebar.completeness'),
+                'label'   => trans('completeness::app.catalog.products.index.datagrid.completeness'),
                 'type'    => 'integer',
                 'closure' => function ($row) {
                     if (is_null($row->completeness)) {

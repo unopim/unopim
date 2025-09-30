@@ -38,6 +38,7 @@ return [
             'index' => [
                 'datagrid' => [
                     'missing-completeness-setting' => '설정 없음',
+                    'completeness'                 => '완전',
                 ],
             ],
 
