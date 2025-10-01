@@ -42,7 +42,7 @@ class WebhookService
 
         $response = Http::post($webhookUrl, $webhookData);
 
-        $this->storeLogs($code, $response->successful() ? 1 : 0);
+        $this->storeLogs($code, $response->successful() ? 1 : 0, $this->normalizeResponseForLog($response));
 
         return $response;
     }
@@ -94,7 +94,7 @@ class WebhookService
 
         $status = $response->successful() ? 1 : 0;
 
-        $this->storeBatchLogs($products, $status);
+        $this->storeBatchLogs($products, $status, $this->normalizeResponseForLog($response));
 
         return $response;
     }
@@ -108,7 +108,7 @@ class WebhookService
         };
     }
 
-    protected function storeLogs(string $code, int $status): void
+    protected function storeLogs(string $code, int $status, $response = null): void
     {
         $adminUser = auth('admin')->getUser()->toArray();
 
@@ -116,12 +116,13 @@ class WebhookService
             'user'   => $adminUser['name'] ?? null,
             'sku'    => $code,
             'status' => $status,
+            'extra'  => ['response' => $response],
         ];
 
         $this->logsRepository->create($data);
     }
 
-    protected function storeBatchLogs($products, int $status): void
+    protected function storeBatchLogs($products, int $status, $response = null): void
     {
         $adminName = auth('admin')->user()?->name;
 
@@ -130,6 +131,7 @@ class WebhookService
                 'user'   => $adminName ?? null,
                 'sku'    => $product->sku ?? ($product['sku'] ?? null),
                 'status' => $status,
+                'extra'  => ['response' => $response],
             ];
 
             $this->logsRepository->create($data);
@@ -174,5 +176,17 @@ class WebhookService
         }
 
         return $normalized;
+    }
+
+    private function normalizeResponseForLog($response): mixed
+    {
+        if ($response instanceof Response) {
+            return [
+                'status' => $response->status(),
+                'body'   => $response->body(),
+            ];
+        }
+
+        return $response;
     }
 }

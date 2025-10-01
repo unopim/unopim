@@ -4,7 +4,7 @@ namespace Webkul\Webhook\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
-use Webkul\Webhook\DataGrids\Logs\LogsDataGrid;
+use Webkul\Webhook\DataGrids\LogsDataGrid;
 use Webkul\Webhook\Repositories\LogsRepository;
 
 class LogsController
@@ -28,7 +28,7 @@ class LogsController
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified resource.
      */
     public function destroy(int $id): JsonResponse
     {

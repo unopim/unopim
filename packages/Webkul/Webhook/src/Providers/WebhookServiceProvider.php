@@ -14,7 +14,7 @@ class WebhookServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Route::middleware('web')->group(__DIR__.'/../Routes/webhook-routes.php');
+        Route::middleware('web')->group(__DIR__.'/../Routes/web.php');
 
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
 

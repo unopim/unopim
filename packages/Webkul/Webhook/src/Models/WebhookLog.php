@@ -2,18 +2,11 @@
 
 namespace Webkul\Webhook\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Logs extends Model
+class WebhookLog extends Model
 {
-    use HasFactory;
-
     protected $table = 'webhook_logs';
-
-    protected $id = 2;
-
-    public $timestamps = true;
 
     protected $fillable = [
         'sku',
@@ -23,6 +16,6 @@ class Logs extends Model
     ];
 
     protected $casts = [
-        'extra' => 'jsonResponse',
+        'extra' => 'array',
     ];
 }

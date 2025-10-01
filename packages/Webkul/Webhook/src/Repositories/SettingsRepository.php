@@ -3,7 +3,7 @@
 namespace Webkul\Webhook\Repositories;
 
 use Webkul\Core\Eloquent\Repository;
-use Webkul\Webhook\Models\Settings;
+use Webkul\Webhook\Models\WebhookSetting;
 
 class SettingsRepository extends Repository
 {
@@ -12,12 +12,12 @@ class SettingsRepository extends Repository
      */
     public function model(): string
     {
-        return Settings::class;
+        return WebhookSetting::class;
     }
 
     public function createOrUpdate(string $field, $value, array $extra = [])
     {
-        $config = Settings::updateOrCreate(
+        $config = $this->updateOrCreate(
             ['field' => $field],
             [
                 'value' => $value,

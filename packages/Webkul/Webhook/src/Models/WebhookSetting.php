@@ -2,24 +2,21 @@
 
 namespace Webkul\Webhook\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Webkul\HistoryControl\Contracts\HistoryAuditable;
 use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Webhook\Presenters\SettingsPresenter;
 
-class Settings extends Model implements HistoryAuditable, PresentableHistoryInterface
+class WebhookSetting extends Model implements HistoryAuditable, PresentableHistoryInterface
 {
-    use HasFactory, HistoryTrait;
+    use HistoryTrait;
 
     protected $auditExclude = ['value', 'extras'];
 
     protected $historyTags = ['webhook_history'];
 
     protected $table = 'webhook_settings';
-
-    protected $id = 1;
 
     public $timestamps = true;
 
@@ -47,6 +44,6 @@ class Settings extends Model implements HistoryAuditable, PresentableHistoryInte
      */
     public function getPrimaryModelIdForHistory(): int
     {
-        return $this->id;
+        return 1;
     }
 }

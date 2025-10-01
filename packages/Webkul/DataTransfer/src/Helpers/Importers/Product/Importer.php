@@ -32,7 +32,6 @@ use Webkul\ElasticSearch\Observers\Product as ElasticProductObserver;
 use Webkul\Product\Models\Product as ProductModel;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Type\AbstractType;
-use Webkul\User\Models\AdminProxy;
 
 class Importer extends AbstractImporter
 {
@@ -657,10 +656,6 @@ class Importer extends AbstractImporter
             $this->prepareConfigurableAttributes($rowData, $products, $isExisting);
         }
 
-        $user = AdminProxy::find($batch->user_id);
-
-        auth('admin')->login($user);
-
         $this->saveProducts($products);
 
         return true;
@@ -735,7 +730,7 @@ class Importer extends AbstractImporter
      */
     public function saveProducts(array $products): void
     {
-        Event::dispatch('catalog.product.bulk-save.before');
+        Event::dispatch('data_transfer.imports.batch.product.save.before');
 
         $ids = [];
 
@@ -771,7 +766,7 @@ class Importer extends AbstractImporter
             }
         }
 
-        Event::dispatch('catalog.product.bulk-save.after', ['product_id' => $ids]);
+        Event::dispatch('data_transfer.imports.batch.product.save.after', ['product_id' => $ids]);
     }
 
     /**

@@ -3,7 +3,7 @@
 namespace Webkul\Webhook\Repositories;
 
 use Webkul\Core\Eloquent\Repository;
-use Webkul\Webhook\Models\Logs;
+use Webkul\Webhook\Models\WebhookLog;
 
 class LogsRepository extends Repository
 {
@@ -12,6 +12,6 @@ class LogsRepository extends Repository
      */
     public function model(): string
     {
-        return Logs::class;
+        return WebhookLog::class;
     }
 }

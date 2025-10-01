@@ -5,7 +5,7 @@ return [
         'key'   => 'configuration.webhook',
         'name'  => 'webhook::app.acl.webhook.index',
         'route' => 'webhook.settings.index',
-        'sort'  => 12,
+        'sort'  => 3,
     ],
     [
         'key'   => 'configuration.webhook.settings',
@@ -23,7 +23,7 @@ return [
         'key'   => 'configuration.webhook.logs',
         'name'  => 'webhook::app.acl.logs.index',
         'route' => 'webhook.logs.index',
-        'sort'  => 1,
+        'sort'  => 2,
     ],
     [
         'key'   => 'configuration.webhook.logs.delete',

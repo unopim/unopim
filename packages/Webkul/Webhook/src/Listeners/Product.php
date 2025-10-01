@@ -2,6 +2,7 @@
 
 namespace Webkul\Webhook\Listeners;
 
+use Webkul\Webhook\Jobs\SendBulkProductWebhook;
 use Webkul\Webhook\Repositories\LogsRepository;
 use Webkul\Webhook\Repositories\SettingsRepository;
 use Webkul\Webhook\Services\WebhookService;
@@ -37,8 +38,10 @@ class Product
 
     public function afterBulkUpdate(array $ids)
     {
-        if ($this->settingsRepository->isWebhookActive()) {
-            $this->webhookService->sendBatchByIds($ids);
+        if (! $this->settingsRepository->isWebhookActive()) {
+            return;
         }
+
+        SendBulkProductWebhook::dispatch($ids, auth('admin')?->user()?->id);
     }
 }

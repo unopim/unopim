@@ -5,7 +5,7 @@ namespace Webkul\Webhook\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
-use Webkul\Webhook\Models\Settings;
+use Webkul\Webhook\Models\WebhookSetting;
 use Webkul\Webhook\Repositories\SettingsRepository;
 
 class SettingsController
@@ -33,15 +33,13 @@ class SettingsController
     {
         $active = (int) $request->get('webhook_active', '0');
 
-        $settings = [
-            'webhook_active' => $active,
-        ];
+        $settings = ['webhook_active' => $active];
 
         if ($active) {
             $settings['webhook_url'] = $request->filled('webhook_url') ? $request->webhook_url : null;
         }
 
-        Settings::$auditingDisabled = true;
+        WebhookSetting::$auditingDisabled = true;
 
         $setting = null;
 
@@ -51,7 +49,7 @@ class SettingsController
             $setting = $this->settingsRepository->createOrUpdate($field, $value);
         }
 
-        Settings::$auditingDisabled = false;
+        WebhookSetting::$auditingDisabled = false;
 
         Event::dispatch('core.model.proxy.sync.webhookSettings', [
             'old_values' => $oldSettings,

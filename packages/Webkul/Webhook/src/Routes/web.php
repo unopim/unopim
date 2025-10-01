@@ -9,7 +9,6 @@ use Webkul\Webhook\Http\Controllers\SettingsController;
  */
 Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], function () {
     Route::prefix('webhook')->group(function () {
-
         Route::controller(SettingsController::class)->prefix('settings')->group(function () {
             Route::get('', 'index')->name('webhook.settings.index');
             Route::post('/', 'store')->name('webhook.settings.store');
@@ -24,5 +23,4 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
             Route::post('mass-delete', 'massDestroy')->name('webhook.logs.mass_delete');
         });
     });
-
 });

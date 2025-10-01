@@ -1,14 +1,12 @@
 <?php
 
-namespace Webkul\Webhook\DataGrids\Logs;
+namespace Webkul\Webhook\DataGrids;
 
 use Illuminate\Support\Facades\DB;
 use Webkul\DataGrid\DataGrid;
 
 class LogsDataGrid extends DataGrid
 {
-    protected $sortColumn = 'id';
-
     /**
      * Search Placeholder
      *
@@ -23,7 +21,7 @@ class LogsDataGrid extends DataGrid
      */
     public function prepareQueryBuilder()
     {
-        $queryBuilder = DB::table('webhook_logs')->addSelect(
+        $queryBuilder = DB::table('webhook_logs')->select(
             'id',
             'created_at',
             'sku',
@@ -87,12 +85,9 @@ class LogsDataGrid extends DataGrid
             'filterable' => true,
             'sortable'   => true,
             'closure'    => function ($row) {
-                if ($row->status) {
-                    return '<p class="break-words"><p class="label-completed">Success</p></p>';
-                } else {
-                    return '<p class="break-words"><p class="label-canceled">Failed</p></p>';
-                }
-
+                return $row->status
+                    ? '<span class="break-words label-completed">'.trans('webhook::app.logs.index.datagrid.success').'</span>'
+                    : '<span class="break-words label-canceled">'.trans('webhook::app.logs.index.datagrid.failed').'</span>';
             },
         ]);
     }
@@ -108,7 +103,7 @@ class LogsDataGrid extends DataGrid
             $this->addAction([
                 'index'  => 'delete',
                 'icon'   => 'icon-delete',
-                'title'  => trans('admin::app.settings.locales.index.datagrid.delete'),
+                'title'  => trans('webhook::app.logs.index.datagrid.delete'),
                 'method' => 'DELETE',
                 'url'    => function ($row) {
                     return route('webhook.logs.delete', $row->id);
@@ -126,7 +121,7 @@ class LogsDataGrid extends DataGrid
     {
         if (bouncer()->hasPermission('configuration.webhook.logs.mass_delete')) {
             $this->addMassAction([
-                'title'   => trans('admin::app.settings.locales.index.datagrid.delete'),
+                'title'   => trans('webhook::app.logs.index.datagrid.delete'),
                 'url'     => route('webhook.logs.mass_delete'),
                 'method'  => 'POST',
                 'options' => ['actionType' => 'delete'],

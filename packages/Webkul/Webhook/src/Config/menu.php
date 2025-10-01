@@ -5,7 +5,7 @@ return [
         'key'   => 'configuration.webhook',
         'name'  => 'webhook::app.components.layouts.sidebar.menu.webhook.name',
         'route' => 'webhook.settings.index',
-        'sort'  => 10,
+        'sort'  => 3,
         'icon'  => 'icon-webhook',
     ], [
         'key'    => 'configuration.webhook.settings',
@@ -21,6 +21,6 @@ return [
         'key'    => 'configuration.webhook.history',
         'name'   => 'webhook::app.components.layouts.sidebar.menu.webhook.submenu.settings.history.name',
         'route'  => 'webhook.settings.history.get',
-        'sort'   => 2,
+        'sort'   => 3,
     ],
 ];
