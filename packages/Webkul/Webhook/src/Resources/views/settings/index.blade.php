@@ -151,14 +151,19 @@
                                     type: 'success',
                                     message: response.data.message
                                 });
+
+                                this.formData.webhook_url = response?.data?.data?.field === 'webhook_url' ? response?.data?.data?.value : this.formData.webhook_url;
                             })
                             .catch(error => {
+                                this.$emitter.emit('add-flash', {
+                                    type: 'error',
+                                    message: error.response.data.message
+                                });
+
                                 if (error.status == 400) {
                                     setErrors(error.response.data.errors);
                                 }
-                            }).then(() => {
-                                this.isLoading = false;
-                            });
+                            }).finally(() => this.isLoading = false);
                     },
                 },
             });

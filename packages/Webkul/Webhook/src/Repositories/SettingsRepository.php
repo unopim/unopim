@@ -50,4 +50,9 @@ class SettingsRepository extends Repository
     {
         return (bool) ((int) $this->where('field', 'webhook_active')->first()?->value ?? 0);
     }
+
+    public function getWebhookUrl(): ?string
+    {
+        return $this->where('field', 'webhook_url')->first()?->value;
+    }
 }

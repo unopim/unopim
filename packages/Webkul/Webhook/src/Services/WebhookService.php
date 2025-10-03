@@ -4,9 +4,9 @@ namespace Webkul\Webhook\Services;
 
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
-use Webkul\AdminApi\ApiDataSource\Catalog\ConfigurableProductDataSource;
-use Webkul\AdminApi\ApiDataSource\Catalog\SimpleProductDataSource;
+use Webkul\Product\Contracts\Product;
 use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Webhook\Helpers\ProductComparer;
 use Webkul\Webhook\Repositories\LogsRepository;
 use Webkul\Webhook\Repositories\SettingsRepository;
 
@@ -24,25 +24,27 @@ class WebhookService
     /**
      * Send product data to configured webhook URL.
      */
-    public function sendDataToWebhook(string $code, string $type, bool $isWebhookBtn = false): Response
+    public function sendDataToWebhook(Product $product, array $productChanges = []): ?Response
     {
         $webhookData = [];
 
-        $settings = $this->settingsRepository->getAllDataAndNormalize();
-
-        $webhookUrl = $settings['webhook_url'] ?? null;
+        $webhookUrl = $this->settingsRepository->getWebhookUrl();
 
         if (empty($webhookUrl)) {
-            return Http::response(['error' => 'webhook_url not configured'], 400);
+            return null;
         }
 
-        $productData = $this->getProductDataByCode($code, $type);
-
-        $webhookData['product'] = $productData;
+        $webhookData = [
+            'event'     => 'product.updated',
+            'timestamp' => now()->toDateTimeString(),
+            'data'      => [
+                $this->normalizeWebhookData($product, $productChanges),
+            ],
+        ];
 
         $response = Http::post($webhookUrl, $webhookData);
 
-        $this->storeLogs($code, $response->successful() ? 1 : 0, $this->normalizeResponseForLog($response));
+        $this->storeLogs($product->sku, $response->successful() ? 1 : 0, $this->normalizeResponseForLog($response));
 
         return $response;
     }
@@ -50,62 +52,65 @@ class WebhookService
     /**
      * Send a batch of products to the webhook by their IDs.
      */
-    public function sendBatchByIds(array $ids, bool $isWebhookBtn = false): Response
+    public function sendBatchByIds(array $ids): ?Response
     {
         $products = $this->productRepository->findWhereIn('id', $ids);
 
-        return $this->sendBatch($products, $isWebhookBtn);
+        return $this->sendBatch($products);
     }
 
     /**
      * Send a batch of products to the webhook by their SKUs.
      */
-    public function sendBatchBySkus(array $skus, bool $isWebhookBtn = false): Response
+    public function sendBatchBySkus(array $skus): ?Response
     {
         $products = $this->productRepository->findWhereIn('sku', $skus);
 
-        return $this->sendBatch($products, $isWebhookBtn);
+        return $this->sendBatch($products);
     }
 
     /**
      * Internal helper to send a collection of product models as a single batch payload.
      */
-    protected function sendBatch($products, bool $isWebhookBtn = false): Response
+    protected function sendBatch($products): ?Response
     {
         $webhookData = [];
 
-        $settings = $this->settingsRepository->getAllDataAndNormalize();
-
-        $webhookUrl = $settings['webhook_url'] ?? null;
+        $webhookUrl = $this->settingsRepository->getWebhookUrl();
 
         if (empty($webhookUrl)) {
-            return Http::response(['error' => 'webhook_url not configured'], 400);
+            return null;
         }
 
         $normalized = [];
 
         foreach ($products as $product) {
-            $normalized[] = $this->normalizeProductModel($product);
+            $productChanges = $this->getProductChangesForWebhook($product);
+
+            if (empty($productChanges)) {
+                continue;
+            }
+
+            $normalized[] = $this->normalizeWebhookData($product, $productChanges);
         }
 
-        $webhookData['products'] = $normalized;
+        if (empty($normalized)) {
+            return null;
+        }
 
-        $response = Http::post($webhookUrl, $webhookData);
+        $webhookData = [
+            'event'     => 'product.updated',
+            'timestamp' => now()->toDateTimeString(),
+            'data'      => $normalized,
+        ];
+
+        $response = Http::post($webhookUrl, $normalized);
 
         $status = $response->successful() ? 1 : 0;
 
         $this->storeBatchLogs($products, $status, $this->normalizeResponseForLog($response));
 
         return $response;
-    }
-
-    protected function getProductDataByCode(string $code, string $type): array
-    {
-        return match ($type) {
-            'simple'       => app(SimpleProductDataSource::class)->getByCode($code),
-            'configurable' => app(ConfigurableProductDataSource::class)->getByCode($code),
-            default        => []
-        };
     }
 
     protected function storeLogs(string $code, int $status, $response = null): void
@@ -138,41 +143,26 @@ class WebhookService
         }
     }
 
-    protected function normalizeProductModel($product): array
+    protected function normalizeWebhookData(Product $product, array $productChanges = []): array
     {
         $sku = $product->sku ?? ($product['sku'] ?? null);
         $type = $product->type ?? ($product['type'] ?? null);
 
         $normalized = [
-            'sku'        => $sku,
-            'status'     => isset($product->status) ? (bool) $product->status : (bool) ($product['status'] ?? null),
-            'parent'     => $product->parent->sku ?? ($product['parent']['sku'] ?? null),
-            'family'     => $product->attribute_family->code ?? ($product['attribute_family']['code'] ?? null),
-            'type'       => $type,
-            'additional' => $product->additional ?? ($product['additional'] ?? null),
-            'created_at' => $product->created_at ?? ($product['created_at'] ?? null),
-            'updated_at' => $product->updated_at ?? ($product['updated_at'] ?? null),
-            'values'     => $product->values ?? ($product['values'] ?? []),
+            'id'       => $product->id,
+            'status'   => (bool) ($product->status ?? ($product['status'])),
+            'sku'      => $sku,
+            'type'     => $type,
+            'changes'  => $productChanges,
         ];
 
-        if ($type === config('product_types.configurable.key')) {
-            try {
-                $normalized['super_attributes'] = $this->productRepository->getSuperAttributes($product);
-            } catch (\Throwable $e) {
-                $normalized['super_attributes'] = [];
-            }
-
-            $variants = [];
-
-            if (isset($product->variants) && is_iterable($product->variants)) {
-                foreach ($product->variants as $variant) {
-                    $variants[] = [
-                        'sku' => $variant->sku ?? ($variant['sku'] ?? null),
-                    ];
-                }
-            }
-
-            $normalized['variants'] = $variants;
+        if ($type === 'configurable') {
+            $normalized['variants'] = $product->variants->map(function ($variant) {
+                return [
+                    'sku'    => $variant->sku,
+                    'status' => (bool) $variant->status,
+                ];
+            })->toArray();
         }
 
         return $normalized;
@@ -188,5 +178,36 @@ class WebhookService
         }
 
         return $response;
+    }
+
+    public function getProductChangesForWebhook(Product $product): array
+    {
+        $latestChanges = $product->audits()->latest()->first();
+
+        if (! $latestChanges) {
+            return [];
+        }
+
+        $changeTime = $latestChanges->updated_at;
+        $productTime = $product->updated_at;
+
+        if ($productTime->diffInMinutes(now()) > 60) {
+            return [];
+        }
+
+        if ($changeTime->diffInSeconds($productTime) > 2) {
+            return [];
+        }
+
+        $oldRaw = $latestChanges->old_values ?? [];
+        $newRaw = $latestChanges->new_values ?? [];
+
+        $diff = ProductComparer::compare($oldRaw, $newRaw);
+
+        if (! empty($diff['added']) || ! empty($diff['removed']) || ! empty($diff['changed'])) {
+            return $diff;
+        }
+
+        return [];
     }
 }

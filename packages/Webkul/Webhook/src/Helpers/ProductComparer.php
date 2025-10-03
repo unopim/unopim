@@ -1,6 +1,6 @@
 <?php
 
-namespace Webkul\HistoryControl\Presenters;
+namespace Webkul\Webhook\Helpers;
 
 class ProductComparer
 {
@@ -16,6 +16,20 @@ class ProductComparer
     ];
 
     public static $channelAndLocaleSpecific = 'channel_locale_specific';
+
+    public static function compare(mixed $oldValues, mixed $newValues): array
+    {
+        $diff = ! empty($oldValues['values']) || ! empty($newValues['values']) ? static::compareValues($oldValues['values'] ?? [], $newValues['values'] ?? []) : [];
+
+        if (! empty($oldValues['status'])) {
+            $diff['changed']['status'] = [
+                'old' => $oldValues['status'],
+                'new' => $newValues['status'] ?? null,
+            ];
+        }
+
+        return $diff;
+    }
 
     /**
      * Returns diff in structured format: added / removed / changed

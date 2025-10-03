@@ -28,11 +28,8 @@ class Product
      */
     public function afterUpdate($product)
     {
-        $code = $product->sku;
-        $type = $product->type;
-
-        if ($this->settingsRepository->isWebhookActive()) {
-            $this->webhookService->sendDataToWebhook($code, $type);
+        if ($this->settingsRepository->isWebhookActive() && $productChanges = $this->webhookService->getProductChangesForWebhook($product)) {
+            $this->webhookService->sendDataToWebhook($product, $productChanges);
         }
     }
 
