@@ -268,8 +268,6 @@
 
             mounted() {
                 this.init();
-                this.fetchSystemPrompts();
-
                 this.$emitter.on('change-theme', (theme) => {
                     tinymce.get(0).destroy();
 
@@ -441,9 +439,6 @@
                                 this.fetchDefaultPrompts();
                             }
 
-                            if (this.systemPrompts.length === 0) {
-                                this.fetchSystemPrompts();
-                            }
 
                             const tribute = this.$tribute.init({
                                 values: this.fetchSuggestionValues,
@@ -530,7 +525,7 @@
                     this.isLoading = true;
 
                     var formData = new FormData(this.$refs.magicAiGenerateForm);
-                    
+
                     let model = formData.getAll('model');
 
                     model = model.filter((value) => value !== '')[0];

@@ -7,9 +7,9 @@
     $value = core()->getConfigData($nameKey);
 @endphp
 
-<v-domain-model 
-    label="@lang($field['title'])" 
-    name="{{ $name }}" 
+<v-domain-model
+    label="@lang($field['title'])"
+    name="{{ $name }}"
     :value='@json($value)'>
 </v-domain-model>
 
