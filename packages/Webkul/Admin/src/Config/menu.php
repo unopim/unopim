@@ -144,5 +144,18 @@ return [
         'params' => ['general', 'magic_ai'],
         'sort'   => 1,
         'icon'   => '',
+    ], [
+        'key'    => 'configuration.magic-ai.general',
+        'name'   => 'admin::app.components.layouts.sidebar.general-tab',
+        'route'  => 'admin.configuration.edit',
+        'params' => ['general', 'magic_ai'],
+        'sort'   => 1,
+        'icon'   => '',
+    ], [
+        'key'    => 'configuration.magic-ai.prompt',
+        'name'   => 'admin::app.components.layouts.sidebar.prompt',
+        'route'  => 'admin.magic_ai.prompt.index',
+        'sort'   => 2,
+        'icon'   => '',
     ],
 ];

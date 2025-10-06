@@ -1,0 +1,35 @@
+{
+  "cookies": [
+    {
+      "name": "XSRF-TOKEN",
+      "value": "eyJpdiI6InVFRThNck1Qdkxoek01dDM2ZGZuL3c9PSIsInZhbHVlIjoiYW1lbzhFdTNsdEo4amNjMCtrdXhiQ0p2OFpWUWUrR1hQUG9MMnh5TjVVK3VVZzJSTGNqc3BjNnoxblNaWlhpaDJUZmkxUkpYRUxZeTlyem5KcG1VM2lIbEd5NGNEdXZmRW9vL0tTTW5PVXFSb2t6N3VLU3hiaXZHLy9sTzZMZTgiLCJtYWMiOiJmYzg2Y2IzY2FiOGQyM2M0ZDNkYmU0ZDE2NmE1ZjNjOTk3MzEzODg0OTcxMWEwMjBiZGE1NDVmNTE3YzlmYzU2IiwidGFnIjoiIn0%3D",
+      "domain": "127.0.0.1",
+      "path": "/",
+      "expires": 1755776679.110204,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "unopim_session",
+      "value": "eyJpdiI6ImxJLzVMMWc2ZyswUEpaWDZsMGxxQmc9PSIsInZhbHVlIjoiZm93SFhib3JBa0FiMW1tWTVucm9CZTVYUm5hYmpMUjJ2V2owbHNPeU9BSUh2ajcyQ0M3U285MjhSa2RsV3EzalVtaXRmbEhObzEyVHRGZ1BuT0hKeFAxN1dxV1hSUjlsWEkreldMb1g4TGJ6MkY4Y29yUGRnWG1UYU5PQnJmdXUiLCJtYWMiOiIyNzMwMDEzNmYyMjYzZGFkMjljNDJjZGJkOTdiZDI1MmM4MDg0OGNkNGEyNDYzNGNkOWFiZGY3NTdkN2RhYzVkIiwidGFnIjoiIn0%3D",
+      "domain": "127.0.0.1",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "http://127.0.0.1:8000",
+      "localStorage": [
+        {
+          "name": "phpdebugbar-height",
+          "value": "300"
+        }
+      ]
+    }
+  ]
+}

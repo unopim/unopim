@@ -430,7 +430,9 @@
 
                 async fetchDefaultPrompts() {
                     try {
-                        const response = await axios.get("{{ route('admin.magic_ai.default_prompt') }}");
+                        const response = await axios.get("{{ route('admin.magic_ai.default_prompt') }}", {
+                            params: { field: this.entityName }
+                        });
                         this.defaultPrompts = response.data.prompts;
                     } catch (error) {
                         console.error("Failed to fetch AI models:", error);
@@ -443,7 +445,7 @@
                         return;
                     }
 
-                    const response = await fetch(`{{ route('admin.magic_ai.suggestion_values') }}?query=${text}&&entity_name=${this.entityName}}&&locale={{ core()->getRequestedLocaleCode() }}`);
+                    const response = await fetch(`{{ route('admin.magic_ai.suggestion_values') }}?query=${text}&&entity_name=${this.entityName}&&locale={{ core()->getRequestedLocaleCode() }}`);
                     const data = await response.json();
                     this.suggestionValues = data;
 
@@ -477,7 +479,7 @@
                         .then(response => {
                             this.isLoading = false;
 
-                            this.ai.content = response.data.content;
+                            this.ai.content = response.data.content.replace(/<think[^>]*>.*?<\/think>/gs, '');
                         })
                         .catch(error => {
                             this.isLoading = false;
@@ -492,7 +494,7 @@
 
                 getResourceType() {
                     switch (this.entityName) {
-                        case 'category-field':
+                        case 'category_field':
                             return 'category';
                         default:
                             return 'product';

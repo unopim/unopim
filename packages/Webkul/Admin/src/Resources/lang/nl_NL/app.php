@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => 'Vertalen',
+                    'title'                    => 'Vertalen',
+                    'source-channel'           => 'Bronkanaal',
+                    'locale'                   => 'Bronlocatie',
+                    'translated-content'       => 'Vertaald inhoud',
+                    'translating'              => 'Vertalen',
+                    'apply'                    => 'Toepassen',
+                    'cancel'                   => 'Annuleren',
+                    'target-locales'           => 'Doellocaties',
+                    'target-channel'           => 'Doelkanaal',
+                    'attributes'               => 'Kenmerken',
+                    'source-content'           => 'Broninhoud',
+                    'tranlated-job-processed'  => 'De taak voor het opslaan van vertaalde inhoud is verwerkt.',
+                ],
+
                 'product-info' => [
                     'title'        => 'Productinformatie',
                     'status'       => 'Status',
@@ -417,6 +433,7 @@ return [
                 'same-code-error'       => 'De optiecode moet uniek zijn.',
                 'usable-in-grid'        => 'Bruikbaar in het rooster',
                 'is-filterable'         => 'Is filterbaar',
+                'ai-translate'          => 'AI Vertaling',
 
                 'option' => [
                     'color'    => 'Kleurstaal',
@@ -484,6 +501,7 @@ return [
                 'same-code-error'       => 'De optiecode moet uniek zijn.',
                 'usable-in-grid'        => 'Bruikbaar in het rooster',
                 'is-filterable'         => 'Is filterbaar',
+                'ai-translate'          => 'AI Vertaling',
 
                 'option' => [
                     'create-success'      => 'Attribuutoptie met succes gemaakt',
@@ -1639,6 +1657,18 @@ return [
                         'title-info' => 'Deze functie maakt de Magic AI mogelijk voor elke upload van afbeeldingen, waarbij u afbeeldingen wilt genereren met Dall-E. <br/> <br/> Wanneer u ingeschakeld, gaat u naar een afbeelding upload om afbeelding te genereren.',
                     ],
 
+                    'translation'   => [
+                        'title'                  => 'Vertaling',
+                        'enabled'                => 'Ingeschakeld',
+                        'title-info'             => 'Met deze functie wordt Magic AI ingeschakeld voor het vertalen van tekst, zodat u tekst moeiteloos van de ene taal naar de andere kunt converteren.',
+                        'global-source-channel'  => 'Bronkanaal',
+                        'global-source-locale'   => 'Bronlocatie',
+                        'translation-model'      => 'Vertaalmodel',
+                        'replace-existing-value' => 'Bestaande waarde vervangen',
+                        'target-channel'         => 'Doelkanaal',
+                        'target-locales'         => 'Doellocaties',
+                    ],
+
                     'review-translation' => [
                         'dolphin-phi'       => 'Dolfijn phi',
                         'enabled'           => 'Ingeschakeld',
@@ -2061,6 +2091,38 @@ return [
             're-generate-secret-key-success' => 'API Secret Key wordt met succes geregenereerd',
             'client-not-found'               => 'Klant niet gevonden',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'Titel',
+                'prompt'        => 'Prompt',
+                'type'          => 'Type',
+                'created-at'    => 'Aangemaakt op',
+                'updated-at'    => 'Bijgewerkt op',
+                'actions'       => 'Acties',
+                'edit'          => 'Bewerken',
+                'delete'        => 'Verwijderen',
+                'product'       => 'Product',
+                'category'      => 'Categorie',
+            ],
+            'create' => [
+                'title'         => 'Prompt',
+                'create-btn'    => 'Prompt maken',
+                'edit-title'    => 'Prompt bewerken',
+                'create-title'  => 'Nieuwe prompt maken',
+                'label-title'   => 'Titel',
+                'type'          => 'Type',
+                'prompt'        => 'Prompt',
+                'save-btn'      => 'Prompt opslaan',
+            ],
+            'message' => [
+                'save-success'      => 'Prompt succesvol opgeslagen.',
+                'update-success'    => 'Prompt succesvol bijgewerkt.',
+                'delete-success'    => 'Prompt succesvol verwijderd.',
+                'delete-fail'       => 'Prompt verwijderen mislukt.',
+            ],
+        ],
     ],
 
     'components' => [
@@ -2147,6 +2209,8 @@ return [
                 'url-rewrites'             => 'URL -herschrijvingen',
                 'users'                    => 'Gebruikers',
                 'integrations'             => 'Integratie',
+                'prompt'                   => 'Prompt',
+                'general-tab'              => 'Configuratie',
             ],
         ],
 
@@ -2421,6 +2485,8 @@ return [
         'restore'                  => 'Herstellen',
         'integrations'             => 'Integratie',
         'api'                      => 'API',
+        'mass-update'              => 'Massabijwerking',
+        'mass-delete'              => 'Massaverwijdering',
     ],
 
     'errors' => [

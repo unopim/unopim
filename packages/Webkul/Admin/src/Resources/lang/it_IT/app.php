@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => 'Traduci',
+                    'title'                    => 'Traduci',
+                    'source-channel'           => 'Canale di origine',
+                    'locale'                   => 'Localizzazione di origine',
+                    'translated-content'       => 'Contenuto tradotto',
+                    'translating'              => 'Traduzione in corso',
+                    'apply'                    => 'Applica',
+                    'cancel'                   => 'Annulla',
+                    'target-locales'           => 'Localizzazioni di destinazione',
+                    'target-channel'           => 'Canale di destinazione',
+                    'attributes'               => 'Attributi',
+                    'source-content'           => 'Contenuto di origine',
+                    'tranlated-job-processed'  => 'Elaborazione del lavoro di archiviazione dei contenuti tradotti completata.',
+                ],
+
                 'product-info' => [
                     'title'        => 'Informazioni sul prodotto',
                     'status'       => 'Stato',
@@ -416,6 +432,7 @@ return [
                 'same-code-error'       => 'Il codice dell\'opzione deve essere unico.',
                 'usable-in-grid'        => 'Usabile nella griglia',
                 'is-filterable'         => 'È filtrabile',
+                'ai-translate'          => 'Traduzione IA',
 
                 'option' => [
                     'color'    => 'Colore campione',
@@ -482,6 +499,7 @@ return [
                 'yes'                   => 'Sì',
                 'same-code-error'       => 'Il codice dell\'opzione deve essere unico.',
                 'usable-in-grid'        => 'Usabile nella griglia',
+                'ai-translate'          => 'Traduzione IA',
 
                 'option' => [
                     'create-success'      => 'Opzione attributo creata con successo',
@@ -1620,6 +1638,8 @@ return [
         'tracker'                  => 'Tracker di lavoro',
         'imports'                  => 'Importazioni',
         'exports'                  => 'Esportazioni',
+        'mass-update'              => 'Aggiornamento di massa',
+        'mass-delete'              => 'Eliminazione di massa',
     ],
 
     'errors' => [
@@ -1740,6 +1760,18 @@ return [
                         'title'          => 'Impostazioni Generali',
                         'title-info'     => 'Migliora la tua esperienza con Magic AI inserendo la tua esclusiva Chiave API e specificando l\'Organizzazione pertinente per un\'integrazione senza problemi. Prendi il controllo delle tue credenziali OpenAI e personalizza le impostazioni secondo le tue esigenze specifiche.',
                     ],
+
+                    'translation'   => [
+                        'title'                  => 'Traduzione',
+                        'enabled'                => 'Abilitato',
+                        'title-info'             => 'Questa funzionalità attiverà Magic AI per tradurre il testo, consentendoti di convertire il testo da una lingua all’altra senza problemi.',
+                        'global-source-channel'  => 'Canale Sorgente',
+                        'global-source-locale'   => 'Lingua Sorgente',
+                        'translation-model'      => 'Modello di Traduzione',
+                        'replace-existing-value' => 'Sostituisci Valore Esistente',
+                        'target-channel'         => 'Canale di Destinazione',
+                        'target-locales'         => 'Lingue di Destinazione',
+                    ],
                 ],
             ],
         ],
@@ -1801,6 +1833,38 @@ return [
             're-generate-secret-key-success' => 'Chiave segreta API rigenerata con successo',
             'client-not-found'               => 'Cliente non trovato',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'Titolo',
+                'prompt'        => 'Prompt',
+                'type'          => 'Tipo',
+                'created-at'    => 'Creato il',
+                'updated-at'    => 'Aggiornato il',
+                'actions'       => 'Azioni',
+                'edit'          => 'Modifica',
+                'delete'        => 'Elimina',
+                'product'       => 'Prodotto',
+                'category'      => 'Categoria',
+            ],
+            'create' => [
+                'title'         => 'Prompt',
+                'create-btn'    => 'Crea Prompt',
+                'edit-title'    => 'Modifica Prompt',
+                'create-title'  => 'Crea Nuovo Prompt',
+                'label-title'   => 'Titolo',
+                'type'          => 'Tipo',
+                'prompt'        => 'Prompt',
+                'save-btn'      => 'Salva Prompt',
+            ],
+            'message' => [
+                'save-success'      => 'Prompt salvato con successo.',
+                'update-success'    => 'Prompt aggiornato con successo.',
+                'delete-success'    => 'Prompt eliminato con successo.',
+                'delete-fail'       => 'Impossibile eliminare il prompt.',
+            ],
+        ],
     ],
 
     'components' => [
@@ -1843,6 +1907,8 @@ return [
                 'themes'             => 'Temi',
                 'users'              => 'Utenti',
                 'integrations'       => 'Integrazioni',
+                'prompt'             => 'Richiesta',
+                'general-tab'        => 'Configurazione',
             ],
         ],
 

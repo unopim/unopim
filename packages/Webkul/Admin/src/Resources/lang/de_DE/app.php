@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => 'Übersetzen',
+                    'title'                    => 'Übersetzen',
+                    'source-channel'           => 'Quellkanal',
+                    'locale'                   => 'Quellsprache',
+                    'translated-content'       => 'Übersetzter Inhalt',
+                    'translating'              => 'Übersetzen',
+                    'apply'                    => 'Anwenden',
+                    'cancel'                   => 'Abbrechen',
+                    'target-locales'           => 'Zielsprachen',
+                    'target-channel'           => 'Zielkanal',
+                    'attributes'               => 'Attribute',
+                    'source-content'           => 'Quellinhalt',
+                    'tranlated-job-processed'  => 'Verarbeitungsauftrag für übersetzte Inhalte abgeschlossen.',
+                ],
+
                 'product-info' => [
                     'title'        => 'Produktinformationen',
                     'status'       => 'Status',
@@ -416,6 +432,8 @@ return [
                 'same-code-error'       => 'Der Optionscode muss eindeutig sein.',
                 'usable-in-grid'        => 'Verwendbar im Raster',
                 'is-filterable'         => 'Ist filterbar',
+                'ai-translate'          => 'KI Übersetzen',
+
                 'option'                => [
                     'color'    => 'Farbfeld',
                     'dropdown' => 'Dropdown',
@@ -481,6 +499,7 @@ return [
                 'same-code-error'       => 'Der Optionscode muss eindeutig sein.',
                 'usable-in-grid'        => 'Verwendbar im Raster',
                 'is-filterable'         => 'Ist filterbar',
+                'ai-translate'          => 'KI Übersetzen',
 
                 'option' => [
                     'create-success'       => 'Attributoption erfolgreich erstellt',
@@ -1596,6 +1615,18 @@ return [
                         'title'      => 'Bilderzeugung',
                         'title-info' => 'Diese Funktion aktiviert die Magic AI für jeden Bild-Upload, bei dem Sie Bilder mit DALL-E generieren möchten.<br/><br/>Wenn aktiviert, gehen Sie zu einem beliebigen Bild-Upload, um ein Bild zu generieren.',
                     ],
+
+                    'translation'   => [
+                        'title'                  => 'Übersetzung',
+                        'enabled'                => 'Aktiviert',
+                        'title-info'             => 'Diese Funktion aktiviert Magic AI zur Übersetzung von Texten und ermöglicht es Ihnen, Texte nahtlos von einer Sprache in eine andere zu konvertieren.',
+                        'global-source-channel'  => 'Quellkanal',
+                        'global-source-locale'   => 'Quellsprache',
+                        'translation-model'      => 'Übersetzungsmodell',
+                        'replace-existing-value' => 'Vorhandenen Wert ersetzen',
+                        'target-channel'         => 'Zielkanal',
+                        'target-locales'         => 'Zielsprachen',
+                    ],
                 ],
             ],
         ],
@@ -1657,6 +1688,38 @@ return [
             're-generate-secret-key-success' => 'API-Geheimschlüssel wurde erfolgreich neu generiert',
             'client-not-found'               => 'Client nicht gefunden',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'Titel',
+                'prompt'        => 'Aufforderung',
+                'type'          => 'Typ',
+                'created-at'    => 'Erstellt am',
+                'updated-at'    => 'Aktualisiert am',
+                'actions'       => 'Aktionen',
+                'edit'          => 'Bearbeiten',
+                'delete'        => 'Löschen',
+                'product'       => 'Produkt',
+                'category'      => 'Kategorie',
+            ],
+            'create' => [
+                'title'         => 'Aufforderung',
+                'create-btn'    => 'Aufforderung erstellen',
+                'edit-title'    => 'Aufforderung bearbeiten',
+                'create-title'  => 'Neue Aufforderung erstellen',
+                'label-title'   => 'Titel',
+                'type'          => 'Typ',
+                'prompt'        => 'Aufforderung',
+                'save-btn'      => 'Aufforderung speichern',
+            ],
+            'message' => [
+                'save-success'      => 'Aufforderung erfolgreich gespeichert.',
+                'update-success'    => 'Aufforderung erfolgreich aktualisiert.',
+                'delete-success'    => 'Aufforderung erfolgreich gelöscht.',
+                'delete-fail'       => 'Aufforderung konnte nicht gelöscht werden.',
+            ],
+        ],
     ],
 
     'components' => [
@@ -1699,6 +1762,8 @@ return [
                 'themes'             => 'Designs',
                 'users'              => 'Benutzer',
                 'integrations'       => 'Integrationen',
+                'prompt'             => 'Eingabeaufforderung',
+                'general-tab'        => 'Konfiguration',
             ],
         ],
 
@@ -1971,6 +2036,8 @@ return [
         'tracker'                  => 'Job-Tracker',
         'imports'                  => 'Importe',
         'exports'                  => 'Exporte',
+        'mass-update'              => 'Massenaktualisierung',
+        'mass-delete'              => 'Massenlöschung',
     ],
 
     'errors' => [

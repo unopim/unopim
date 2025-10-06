@@ -51,8 +51,6 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
             Route::put('update-sort', 'updateSort')->name('admin.catalog.attributes.options.update_sort');
 
             Route::delete('delete/{id}', 'destroy')->name('admin.catalog.attributes.options.delete');
-
-            Route::post('mass-delete', 'massDestroy')->name('admin.catalog.attributes.options.mass_delete');
         });
 
         /**
@@ -70,8 +68,6 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
             Route::put('edit/{id}', 'update')->name('admin.catalog.attribute.groups.update');
 
             Route::delete('edit/{id}', 'destroy')->name('admin.catalog.attribute.groups.delete');
-
-            Route::post('mass-delete', 'massDestroy')->name('admin.catalog.attribute.groups.mass_delete');
         });
 
         /**
@@ -113,7 +109,9 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
             Route::get('search', 'search')->name('admin.catalog.categories.search');
 
-            Route::get('tree', 'tree')->name('admin.catalog.categories.tree');
+            Route::post('tree', 'tree')->name('admin.catalog.categories.tree');
+
+            Route::get('children-tree', 'children')->name('admin.catalog.categories.children.tree');
         });
 
         /**
@@ -175,6 +173,10 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
             Route::get('search', 'search')->name('admin.catalog.products.search');
 
             Route::post('check-variant', 'checkVariantUniqueness')->name('admin.catalog.products.check-variant');
+
+            Route::get('get/locale', 'getLocale')->name('admin.catalog.product.get_locale');
+
+            Route::get('get/attributes', 'getAttribute')->name('admin.catalog.product.get_attribute');
         });
 
         Route::controller(ProductBulkEditController::class)->prefix('products/bulkedit')->group(function () {

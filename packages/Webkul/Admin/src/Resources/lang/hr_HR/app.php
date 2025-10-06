@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => 'Prevedi',
+                    'title'                    => 'Prevedi',
+                    'source-channel'           => 'Izvorni kanal',
+                    'locale'                   => 'Izvorna lokalizacija',
+                    'translated-content'       => 'Prevedeni sadržaj',
+                    'translating'              => 'Prevođenje',
+                    'apply'                    => 'Primijeni',
+                    'cancel'                   => 'Odustani',
+                    'target-locales'           => 'Ciljne lokalizacije',
+                    'target-channel'           => 'Ciljni kanal',
+                    'attributes'               => 'Atributi',
+                    'source-content'           => 'Izvorni sadržaj',
+                    'tranlated-job-processed'  => 'Zadatak spremanja prevedenog sadržaja je obrađen.',
+                ],
+
                 'product-info' => [
                     'title'        => 'Informacije o proizvodu',
                     'status'       => 'Status',
@@ -716,6 +732,7 @@ return [
                 'set-section-right'   => 'Sekcija Konfiguracije',
                 'settings'            => 'Postavke',
                 'same-code-error'     => 'Kod opcije mora biti jedinstven.',
+                'ai-translate'        => 'AI Prijevod',
 
                 'option' => [
                     'dropdown' => 'Padajući Izbornik',
@@ -781,6 +798,7 @@ return [
                 'set-section-right'   => 'Sekcija Konfiguracije',
                 'settings'            => 'Postavke',
                 'same-code-error'     => 'Kod opcije mora biti jedinstven.',
+                'ai-translate'        => 'AI Prijevod',
 
                 'option' => [
                     'dropdown' => 'Padajući Izbornik',
@@ -1621,6 +1639,8 @@ return [
         'tracker'                  => 'Praćenje poslova',
         'imports'                  => 'Uvozi',
         'exports'                  => 'Izvozi',
+        'mass-update'              => 'Masovno ažuriranje',
+        'mass-delete'              => 'Masovno brisanje',
     ],
 
     'errors' => [
@@ -1741,6 +1761,18 @@ return [
                         'title'          => 'Opće postavke',
                         'title-info'     => 'Poboljšajte svoje iskustvo s Magic AI unosom svog ekskluzivnog API ključa i označite odgovarajuću organizaciju za lakšu integraciju. Preuzmite kontrolu nad svojim OpenAI vjerodajnicama i prilagodite postavke prema vašim specifičnim potrebama.',
                     ],
+
+                    'translation'   => [
+                        'title'                  => 'Prijevod',
+                        'enabled'                => 'Omogućeno',
+                        'title-info'             => 'Ova značajka omogućuje Magic AI-u prevođenje teksta, omogućujući vam jednostavno pretvaranje teksta s jednog jezika na drugi.',
+                        'global-source-channel'  => 'Izvorni kanal',
+                        'global-source-locale'   => 'Izvorni jezik',
+                        'translation-model'      => 'Model prijevoda',
+                        'replace-existing-value' => 'Zamijeni postojeću vrijednost',
+                        'target-channel'         => 'Ciljani kanal',
+                        'target-locales'         => 'Ciljani jezici',
+                    ],
                 ],
             ],
         ],
@@ -1802,6 +1834,38 @@ return [
             're-generate-secret-key-success' => 'API tajni ključ je uspješno ponovno generiran',
             'client-not-found'               => 'Klijent nije pronađen',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'Naslov',
+                'prompt'        => 'Upit',
+                'type'          => 'Tip',
+                'created-at'    => 'Kreirano',
+                'updated-at'    => 'Ažurirano',
+                'actions'       => 'Radnje',
+                'edit'          => 'Uredi',
+                'delete'        => 'Obriši',
+                'product'       => 'Proizvod',
+                'category'      => 'Kategorija',
+            ],
+            'create' => [
+                'title'         => 'Upit',
+                'create-btn'    => 'Kreiraj upit',
+                'edit-title'    => 'Uredi upit',
+                'create-title'  => 'Kreiraj novi upit',
+                'label-title'   => 'Naslov',
+                'type'          => 'Tip',
+                'prompt'        => 'Upit',
+                'save-btn'      => 'Spremi upit',
+            ],
+            'message' => [
+                'save-success'      => 'Upit je uspješno spremljen.',
+                'update-success'    => 'Upit je uspješno ažuriran.',
+                'delete-success'    => 'Upit je uspješno obrisan.',
+                'delete-fail'       => 'Brisanje upita nije uspjelo.',
+            ],
+        ],
     ],
 
     'components' => [
@@ -1844,6 +1908,8 @@ return [
                 'themes'             => 'Teme',
                 'users'              => 'Korisnici',
                 'integrations'       => 'Integracije',
+                'prompt'             => 'Upit',
+                'general-tab'        => 'Konfiguracija',
             ],
         ],
 

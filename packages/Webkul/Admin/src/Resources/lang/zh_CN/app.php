@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => '翻译',
+                    'title'                    => '翻译',
+                    'source-channel'           => '源频道',
+                    'locale'                   => '源语言区域',
+                    'translated-content'       => '翻译内容',
+                    'translating'              => '正在翻译',
+                    'apply'                    => '应用',
+                    'cancel'                   => '取消',
+                    'target-locales'           => '目标语言区域',
+                    'target-channel'           => '目标频道',
+                    'attributes'               => '属性',
+                    'source-content'           => '源内容',
+                    'tranlated-job-processed'  => '翻译内容存储任务已完成。',
+                ],
+
                 'product-info' => [
                     'title'        => '产品信息',
                     'status'       => '状态',
@@ -416,6 +432,7 @@ return [
                 'same-code-error'       => '选项代码必须是唯一的。',
                 'usable-in-grid'        => '可在网格中使用',
                 'is-filterable'         => '可筛选',
+                'ai-translate'          => 'AI翻译',
 
                 'option' => [
                     'color'    => '色板',
@@ -482,6 +499,7 @@ return [
                 'same-code-error'       => '选项代码必须是唯一的。',
                 'usable-in-grid'        => '可在网格中使用',
                 'is-filterable'         => '可筛选',
+                'ai-translate'          => 'AI翻译',
 
                 'option' => [
                     'create-success'       => '属性选项创建成功',
@@ -1594,6 +1612,18 @@ return [
                         'title'      => '影像生成',
                         'title-info' => '此功能將為每次圖像上傳啟用 Magic AI，您希望使用 DALL-E 生成圖像。',
                     ],
+
+                    'translation'   => [
+                        'title'                  => '翻译',
+                        'enabled'                => '启用',
+                        'title-info'             => '此功能将启用 Magic AI 来翻译文本，使您能够轻松地将文本从一种语言转换为另一种语言。',
+                        'global-source-channel'  => '源频道',
+                        'global-source-locale'   => '源语言环境',
+                        'translation-model'      => '翻译模型',
+                        'replace-existing-value' => '替换现有值',
+                        'target-channel'         => '目标频道',
+                        'target-locales'         => '目标语言环境',
+                    ],
                 ],
             ],
         ],
@@ -1655,6 +1685,38 @@ return [
             're-generate-secret-key-success' => 'API秘密密钥已成功再生',
             'client-not-found'               => '未找到客户',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => '标题',
+                'prompt'        => '提示',
+                'type'          => '类型',
+                'created-at'    => '创建时间',
+                'updated-at'    => '更新时间',
+                'actions'       => '操作',
+                'edit'          => '编辑',
+                'delete'        => '删除',
+                'product'       => '产品',
+                'category'      => '分类',
+            ],
+            'create' => [
+                'title'         => '提示',
+                'create-btn'    => '创建提示',
+                'edit-title'    => '编辑提示',
+                'create-title'  => '创建新提示',
+                'label-title'   => '标题',
+                'type'          => '类型',
+                'prompt'        => '提示',
+                'save-btn'      => '保存提示',
+            ],
+            'message' => [
+                'save-success'      => '提示已成功保存。',
+                'update-success'    => '提示已成功更新。',
+                'delete-success'    => '提示已成功删除。',
+                'delete-fail'       => '删除提示失败。',
+            ],
+        ],
     ],
 
     'components' => [
@@ -1694,6 +1756,8 @@ return [
                 'settings'           => '设置',
                 'users'              => '用户',
                 'integrations'       => '集成',
+                'prompt'             => '提示',
+                'general-tab'        => '配置',
             ],
         ],
 
@@ -1971,6 +2035,8 @@ return [
         'tracker'                  => '工作追踪',
         'imports'                  => '导入',
         'exports'                  => '出口',
+        'mass-update'              => '批量更新',
+        'mass-delete'              => '批量删除',
     ],
 
     'errors' => [

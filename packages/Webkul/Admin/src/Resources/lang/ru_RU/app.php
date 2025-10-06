@@ -265,6 +265,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => 'Перевести',
+                    'title'                    => 'Перевод',
+                    'source-channel'           => 'Исходный канал',
+                    'locale'                   => 'Исходная локализация',
+                    'translated-content'       => 'Переведённый контент',
+                    'translating'              => 'Перевод...',
+                    'apply'                    => 'Применить',
+                    'cancel'                   => 'Отмена',
+                    'target-locales'           => 'Целевые локализации',
+                    'target-channel'           => 'Целевой канал',
+                    'attributes'               => 'Атрибуты',
+                    'source-content'           => 'Исходный контент',
+                    'tranlated-job-processed'  => 'Задача сохранения переведённого контента выполнена.',
+                ],
+
                 'product-info' => [
                     'title'        => 'Информация о продукте',
                     'status'       => 'Статус',
@@ -414,6 +430,7 @@ return [
                 'same-code-error'       => 'Код опции должен быть уникальным.',
                 'usable-in-grid'        => 'Используется в сетке',
                 'is-filterable'         => 'Фильтруемый',
+                'ai-translate'          => 'Перевод ИИ',
 
                 'option' => [
                     'color'    => 'Образец цвета',
@@ -481,6 +498,7 @@ return [
                 'same-code-error'       => 'Код опции должен быть уникальным.',
                 'usable-in-grid'        => 'Пользуемое в сетке',
                 'is-filterable'         => 'Фильтруемый',
+                'ai-translate'          => 'Перевод ИИ',
 
                 'option' => [
                     'create-success'      => 'Параметр атрибута успешно создан',
@@ -1637,6 +1655,18 @@ return [
                         'title-info' => 'Эта функция будет включать магический ИИ для каждой загрузки изображения, где вы хотите генерировать изображения, используя Dall-E. <br/> <br/> при включении, перейдите в любую загрузку изображения, чтобы сгенерировать изображение.',
                     ],
 
+                    'translation'   => [
+                        'title'                  => 'Перевод',
+                        'enabled'                => 'Включено',
+                        'title-info'             => 'Эта функция активирует Magic AI для перевода текста, позволяя легко конвертировать текст с одного языка на другой.',
+                        'global-source-channel'  => 'Источник Канала',
+                        'global-source-locale'   => 'Язык Источника',
+                        'translation-model'      => 'Модель Перевода',
+                        'replace-existing-value' => 'Заменить Существующее Значение',
+                        'target-channel'         => 'Целевой Канал',
+                        'target-locales'         => 'Целевые Локали',
+                    ],
+
                     'review-translation' => [
                         'dolphin-phi'       => 'Dolphin Phi',
                         'enabled'           => 'Включено',
@@ -2059,6 +2089,38 @@ return [
             're-generate-secret-key-success' => 'API Secret Key успешно регенерируется',
             'client-not-found'               => 'Клиент не найден',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'Заголовок',
+                'prompt'        => 'Подсказка',
+                'type'          => 'Тип',
+                'created-at'    => 'Создано',
+                'updated-at'    => 'Обновлено',
+                'actions'       => 'Действия',
+                'edit'          => 'Редактировать',
+                'delete'        => 'Удалить',
+                'product'       => 'Продукт',
+                'category'      => 'Категория',
+            ],
+            'create' => [
+                'title'         => 'Подсказка',
+                'create-btn'    => 'Создать подсказку',
+                'edit-title'    => 'Редактировать подсказку',
+                'create-title'  => 'Создать новую подсказку',
+                'label-title'   => 'Заголовок',
+                'type'          => 'Тип',
+                'prompt'        => 'Подсказка',
+                'save-btn'      => 'Сохранить подсказку',
+            ],
+            'message' => [
+                'save-success'      => 'Подсказка успешно сохранена.',
+                'update-success'    => 'Подсказка успешно обновлена.',
+                'delete-success'    => 'Подсказка успешно удалена.',
+                'delete-fail'       => 'Не удалось удалить подсказку.',
+            ],
+        ],
     ],
 
     'components' => [
@@ -2145,6 +2207,8 @@ return [
                 'url-rewrites'             => 'URL переписывает',
                 'users'                    => 'Пользователи',
                 'integrations'             => 'Интеграции',
+                'prompt'                   => 'Подсказка',
+                'general-tab'              => 'Настройки',
             ],
         ],
 
@@ -2420,6 +2484,8 @@ return [
         'restore'                  => 'Восстановить',
         'integrations'             => 'Интеграции',
         'api'                      => 'API',
+        'mass-update'              => 'Массовое обновление',
+        'mass-delete'              => 'Массовое удаление',
     ],
 
     'errors' => [

@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => 'Traduire',
+                    'title'                    => 'Traduire',
+                    'source-channel'           => 'Canal source',
+                    'locale'                   => 'Paramètres régionaux source',
+                    'translated-content'       => 'Contenu traduit',
+                    'translating'              => 'Traduction en cours',
+                    'apply'                    => 'Appliquer',
+                    'cancel'                   => 'Annuler',
+                    'target-locales'           => 'Paramètres régionaux cibles',
+                    'target-channel'           => 'Canal cible',
+                    'attributes'               => 'Attributs',
+                    'source-content'           => 'Contenu source',
+                    'tranlated-job-processed'  => 'Tâche de stockage du contenu traduit traitée.',
+                ],
+
                 'product-info' => [
                     'title'        => 'Informations sur le produit',
                     'status'       => 'Statut',
@@ -416,6 +432,7 @@ return [
                 'yes'                   => 'Oui',
                 'same-code-error'       => 'Le code d\'option doit être unique.',
                 'usable-in-grid'        => 'Disponible dans la liste des produits',
+                'ai-translate'          => 'Traduction IA',
 
                 'option' => [
                     'color'    => 'Couleur',
@@ -482,6 +499,7 @@ return [
                 'yes'                   => 'Oui',
                 'same-code-error'       => 'Le code d\'option doit être unique.',
                 'usable-in-grid'        => 'Disponible dans la liste des produits',
+                'ai-translate'          => 'Traduction IA',
 
                 'option' => [
                     'create-success'       => 'Option de champ de catégorie créée avec succès',
@@ -1589,6 +1607,18 @@ return [
                         'title'      => 'Génération d\'images',
                         'title-info' => 'Cette fonctionnalité activera Magic AI pour chaque téléchargement d\'image, où vous souhaitez générer des images à l\'aide de DALL-E.<br/><br/>Lorsque cette option est activée, accédez à n\'importe quel téléchargement d\'image pour générer une image.',
                     ],
+
+                    'translation'   => [
+                        'title'                  => 'Traduction',
+                        'enabled'                => 'Activé',
+                        'title-info'             => 'Cette fonctionnalité active Magic AI pour traduire du texte, vous permettant de convertir du texte d’une langue à une autre en toute transparence.',
+                        'global-source-channel'  => 'Canal source',
+                        'global-source-locale'   => 'Langue source',
+                        'translation-model'      => 'Modèle de traduction',
+                        'replace-existing-value' => 'Remplacer la valeur existante',
+                        'target-channel'         => 'Canal cible',
+                        'target-locales'         => 'Langues cibles',
+                    ],
                 ],
             ],
         ],
@@ -1650,6 +1680,38 @@ return [
             're-generate-secret-key-success' => 'La clé secrète API a été régénérée avec succès',
             'client-not-found'               => 'Client introuvable',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'Titre',
+                'prompt'        => 'Invite',
+                'type'          => 'Type',
+                'created-at'    => 'Créé le',
+                'updated-at'    => 'Mis à jour le',
+                'actions'       => 'Actions',
+                'edit'          => 'Modifier',
+                'delete'        => 'Supprimer',
+                'product'       => 'Produit',
+                'category'      => 'Catégorie',
+            ],
+            'create' => [
+                'title'         => 'Invite',
+                'create-btn'    => 'Créer une invite',
+                'edit-title'    => 'Modifier l\'invite',
+                'create-title'  => 'Créer une nouvelle invite',
+                'label-title'   => 'Titre',
+                'type'          => 'Type',
+                'prompt'        => 'Invite',
+                'save-btn'      => 'Enregistrer l\'invite',
+            ],
+            'message' => [
+                'save-success'      => 'Invite enregistrée avec succès.',
+                'update-success'    => 'Invite mise à jour avec succès.',
+                'delete-success'    => 'Invite supprimée avec succès.',
+                'delete-fail'       => 'Échec de la suppression de l\'invite.',
+            ],
+        ],
     ],
 
     'components' => [
@@ -1692,6 +1754,8 @@ return [
                 'themes'             => 'Thèmes',
                 'users'              => 'Utilisateurs',
                 'integrations'       => 'Intégration',
+                'prompt'             => 'Invite',
+                'general-tab'        => 'Configuration',
             ],
         ],
 
@@ -1942,6 +2006,8 @@ return [
         'api'                => 'API',
         'tracker'            => 'Suivi des tâches',
         'exports'            => 'Exports',
+        'mass-update'        => 'Mise à jour en masse',
+        'mass-delete'        => 'Suppression en masse',
     ],
 
     'errors' => [

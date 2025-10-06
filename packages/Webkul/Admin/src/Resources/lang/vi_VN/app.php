@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => 'Dịch',
+                    'title'                    => 'Dịch',
+                    'source-channel'           => 'Kênh Nguồn',
+                    'locale'                   => 'Ngôn Ngữ Nguồn',
+                    'translated-content'       => 'Nội Dung Đã Dịch',
+                    'translating'              => 'Đang Dịch',
+                    'apply'                    => 'Áp Dụng',
+                    'cancel'                   => 'Hủy',
+                    'target-locales'           => 'Ngôn Ngữ Đích',
+                    'target-channel'           => 'Kênh Đích',
+                    'attributes'               => 'Thuộc Tính',
+                    'source-content'           => 'Nội Dung Nguồn',
+                    'tranlated-job-processed'  => 'Nhiệm vụ lưu nội dung đã dịch đã được xử lý.',
+                ],
+
                 'product-info' => [
                     'title'        => 'Thông tin sản phẩm',
                     'status'       => 'Trạng thái',
@@ -416,6 +432,7 @@ return [
                 'same-code-error'       => 'Mã của tuỳ chọn phải duy nhất.',
                 'usable-in-grid'        => 'Có thể sử dụng trong lưới',
                 'is-filterable'         => 'Có thể lọc',
+                'ai-translate'          => 'Dịch thuật AI',
 
                 'option' => [
                     'color'    => 'Mẫu màu sắc',
@@ -483,6 +500,7 @@ return [
                 'same-code-error'       => 'Mã của tuỳ chọn phải duy nhất.',
                 'usable-in-grid'        => 'Có thể sử dụng trong lưới',
                 'is-filterable'         => 'Có thể lọc',
+                'ai-translate'          => 'Dịch thuật AI',
 
                 'option' => [
                     'create-success'      => 'Tùy chọn thuộc tính đã được tạo thành công',
@@ -1621,6 +1639,8 @@ return [
         'tracker'                  => 'Theo dõi công việc',
         'imports'                  => 'Nhập khẩu',
         'exports'                  => 'Xuất khẩu',
+        'mass-update'              => 'Cập nhật hàng loạt',
+        'mass-delete'              => 'Xóa hàng loạt',
     ],
 
     'errors' => [
@@ -1741,6 +1761,18 @@ return [
                         'title'          => 'Cài đặt chung',
                         'title-info'     => 'Nâng cao trải nghiệm của bạn với Magic AI bằng cách nhập API Key của bạn và xác định Tổ chức liên quan cho tích hợp dễ dàng. Kiểm soát các thông tin của bạn với OpenAI và tùy chỉnh các cài đặt theo nhu cầu cụ thể của bạn.',
                     ],
+
+                    'translation'   => [
+                        'title'                  => 'Dịch thuật',
+                        'enabled'                => 'Đã bật',
+                        'title-info'             => 'Tính năng này sẽ kích hoạt Magic AI để dịch văn bản, cho phép bạn chuyển đổi văn bản từ ngôn ngữ này sang ngôn ngữ khác một cách dễ dàng.',
+                        'global-source-channel'  => 'Kênh Nguồn',
+                        'global-source-locale'   => 'Ngôn Ngữ Nguồn',
+                        'translation-model'      => 'Mô Hình Dịch',
+                        'replace-existing-value' => 'Thay Thế Giá Trị Hiện Có',
+                        'target-channel'         => 'Kênh Mục Tiêu',
+                        'target-locales'         => 'Ngôn Ngữ Mục Tiêu',
+                    ],
                 ],
             ],
         ],
@@ -1802,6 +1834,38 @@ return [
             're-generate-secret-key-success' => 'Khóa bí mật API đã được tạo lại thành công',
             'client-not-found'               => 'Không tìm thấy khách hàng',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'Tiêu đề',
+                'prompt'        => 'Gợi ý',
+                'type'          => 'Loại',
+                'created-at'    => 'Ngày tạo',
+                'updated-at'    => 'Ngày cập nhật',
+                'actions'       => 'Hành động',
+                'edit'          => 'Chỉnh sửa',
+                'delete'        => 'Xóa',
+                'product'       => 'Sản phẩm',
+                'category'      => 'Danh mục',
+            ],
+            'create' => [
+                'title'         => 'Gợi ý',
+                'create-btn'    => 'Tạo Gợi ý',
+                'edit-title'    => 'Chỉnh sửa Gợi ý',
+                'create-title'  => 'Tạo Gợi ý Mới',
+                'label-title'   => 'Tiêu đề',
+                'type'          => 'Loại',
+                'prompt'        => 'Gợi ý',
+                'save-btn'      => 'Lưu Gợi ý',
+            ],
+            'message' => [
+                'save-success'      => 'Gợi ý đã được lưu thành công.',
+                'update-success'    => 'Gợi ý đã được cập nhật thành công.',
+                'delete-success'    => 'Gợi ý đã được xóa thành công.',
+                'delete-fail'       => 'Không thể xóa gợi ý.',
+            ],
+        ],
     ],
 
     'components' => [
@@ -1844,6 +1908,8 @@ return [
                 'themes'             => 'Chủ đề',
                 'users'              => 'Người dùng',
                 'integrations'       => 'Tích hợp',
+                'prompt'             => 'Nhắc nhở',
+                'general-tab'        => 'Cấu hình',
             ],
         ],
 

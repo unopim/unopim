@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => 'Käännä',
+                    'title'                    => 'Käännä',
+                    'source-channel'           => 'Lähdekanava',
+                    'locale'                   => 'Lähdealue',
+                    'translated-content'       => 'Käännetty sisältö',
+                    'translating'              => 'Käännetään',
+                    'apply'                    => 'Käytä',
+                    'cancel'                   => 'Peruuta',
+                    'target-locales'           => 'Kohdealueet',
+                    'target-channel'           => 'Kohdekanava',
+                    'attributes'               => 'Ominaisuudet',
+                    'source-content'           => 'Lähdesisältö',
+                    'tranlated-job-processed'  => 'Käännetyn sisällön tallennustehtävä käsitelty.',
+                ],
+
                 'product-info' => [
                     'title'        => 'Tuotetiedot',
                     'status'       => 'Tila',
@@ -416,6 +432,7 @@ return [
                 'same-code-error'       => 'Vaihtoehdon koodin tulee olla ainutlaatuinen.',
                 'usable-in-grid'        => 'Käytettävissä ruudukossa',
                 'is-filterable'         => 'On suodatettavissa',
+                'ai-translate'          => 'AI Käännös',
 
                 'option' => [
                     'color'    => 'Väri',
@@ -483,6 +500,7 @@ return [
                 'same-code-error'       => 'Vaihtoehdon koodin tulee olla ainutlaatuinen.',
                 'usable-in-grid'        => 'Käytettävissä ruudukossa',
                 'is-filterable'         => 'On suodatettavissa',
+                'ai-translate'          => 'AI Käännös',
 
                 'option' => [
                     'create-success'       => 'Attribuuttivaihtoehto luotiin onnistuneesti',
@@ -1620,6 +1638,8 @@ return [
         'tracker'                  => 'Työseuranta',
         'imports'                  => 'Tuonti',
         'exports'                  => 'Vienti',
+        'mass-update'              => 'Määräpäivitys',
+        'mass-delete'              => 'Määräpoisto',
     ],
 
     'errors' => [
@@ -1747,6 +1767,18 @@ return [
                         'title'      => 'Kuvan luominen',
                         'title-info' => 'Tämä toiminto mahdollistaa kuvan luomisen jokaisen kuvan lataamisen yhteydessä, jossa kuvia halutaan luoda käyttäen DALL-E:tä.<br/><br/>Käyttöönoton jälkeen voit käyttää kuvan luomista kuvien lataamisen yhteydessä.',
                     ],
+
+                    'translation'   => [
+                        'title'                  => 'Käännös',
+                        'enabled'                => 'Käytössä',
+                        'title-info'             => 'Tämä ominaisuus aktivoi Magic AI:n tekstien kääntämiseen, mahdollistaen tekstin muuttamisen yhdeltä kieleltä toiselle saumattomasti.',
+                        'global-source-channel'  => 'Lähdekanava',
+                        'global-source-locale'   => 'Lähdekieli',
+                        'translation-model'      => 'Käännösmalli',
+                        'replace-existing-value' => 'Korvaa nykyinen arvo',
+                        'target-channel'         => 'Kohdekanava',
+                        'target-locales'         => 'Kohdekielet',
+                    ],
                 ],
             ],
         ],
@@ -1808,6 +1840,38 @@ return [
             're-generate-secret-key-success' => 'API-salainen avain luotiin uudelleen onnistuneesti',
             'client-not-found'               => 'Asiakasta ei löytynyt',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'Tunnus',
+                'title'         => 'Otsikko',
+                'prompt'        => 'Kehotus',
+                'type'          => 'Tyyppi',
+                'created-at'    => 'Luotu',
+                'updated-at'    => 'Päivitetty',
+                'actions'       => 'Toiminnot',
+                'edit'          => 'Muokkaa',
+                'delete'        => 'Poista',
+                'product'       => 'Tuote',
+                'category'      => 'Kategoria',
+            ],
+            'create' => [
+                'title'         => 'Kehotus',
+                'create-btn'    => 'Luo Kehotus',
+                'edit-title'    => 'Muokkaa Kehotusta',
+                'create-title'  => 'Luo Uusi Kehotus',
+                'label-title'   => 'Otsikko',
+                'type'          => 'Tyyppi',
+                'prompt'        => 'Kehotus',
+                'save-btn'      => 'Tallenna Kehotus',
+            ],
+            'message' => [
+                'save-success'      => 'Kehotus tallennettu onnistuneesti.',
+                'update-success'    => 'Kehotus päivitetty onnistuneesti.',
+                'delete-success'    => 'Kehotus poistettu onnistuneesti.',
+                'delete-fail'       => 'Kehotuksen poistaminen epäonnistui.',
+            ],
+        ],
     ],
 
     'components' => [
@@ -1850,6 +1914,8 @@ return [
                 'themes'             => 'Teemat',
                 'users'              => 'Käyttäjät',
                 'integrations'       => 'Integraatiot',
+                'prompt'             => 'Kehote',
+                'general-tab'        => 'Määritys',
             ],
         ],
 

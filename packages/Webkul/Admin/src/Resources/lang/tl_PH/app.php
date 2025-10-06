@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => 'Isalin',
+                    'title'                    => 'Pagsasalin',
+                    'source-channel'           => 'Pinagmulan ng Channel',
+                    'locale'                   => 'Wikang Pinagmulan',
+                    'translated-content'       => 'Isinaling Nilalaman',
+                    'translating'              => 'Isinasalin',
+                    'apply'                    => 'I-apply',
+                    'cancel'                   => 'Kanselahin',
+                    'target-locales'           => 'Target na Wika',
+                    'target-channel'           => 'Target na Channel',
+                    'attributes'               => 'Mga Katangian',
+                    'source-content'           => 'Nilalaman ng Pinagmulan',
+                    'tranlated-job-processed'  => 'Natapos na ang proseso ng trabaho para sa isinaling nilalaman.',
+                ],
+
                 'product-info' => [
                     'title'        => 'Impormasyon ng Produkto',
                     'status'       => 'Katayuan',
@@ -410,6 +426,7 @@ return [
                 'same-code-error'       => 'Ang code ng opsyon ay dapat na natangi.',
                 'usable-in-grid'        => 'Magagamit sa grid',
                 'is-filterable'         => 'Nafifilter',
+                'ai-translate'          => 'AI Pagsasalin',
 
                 'option' => [
                     'color'    => 'Color Swatch',
@@ -477,6 +494,7 @@ return [
                 'same-code-error'       => 'Ang code ng opsyon ay dapat na natangi.',
                 'usable-in-grid'        => 'Magagamit sa grid',
                 'is-filterable'         => 'Nafifilter',
+                'ai-translate'          => 'AI Pagsasalin',
 
                 'option' => [
                     'create-success'      => 'Matagumpay na nalikha ang Opsyon ng Katangian',
@@ -1615,6 +1633,8 @@ return [
         'tracker'                  => 'Tagasunod ng Trabaho',
         'imports'                  => 'Mga Pag-import',
         'exports'                  => 'Mga Pag-export',
+        'mass-update'              => 'Maramihang pag-update',
+        'mass-delete'              => 'Maramihang pagtanggal',
     ],
 
     'errors' => [
@@ -1735,6 +1755,18 @@ return [
                         'title'          => 'Mga Pangunahing Setting',
                         'title-info'     => 'Palakihin ang iyong karanasan sa Magic AI sa pamamagitan ng pagpasok ng iyong eksklusibong API Key at pag-indicate ng kaukulang Organisasyon para sa walang putol na pagsasama. Kunin ang kontrol sa iyong mga kredensyal ng OpenAI at i-customize ang mga setting ayon sa iyong mga partikular na pangangailangan.',
                     ],
+
+                    'translation'   => [
+                        'title'                  => 'Pagsasalin',
+                        'enabled'                => 'Pinagana',
+                        'title-info'             => 'Pinapagana ng tampok na ito ang Magic AI para magsalin ng teksto, na nagbibigay-daan sa iyo na madaling i-convert ang teksto mula sa isang wika patungo sa isa pa.',
+                        'global-source-channel'  => 'Pinagmulan na Channel',
+                        'global-source-locale'   => 'Pinagmulan na Wika',
+                        'translation-model'      => 'Modelo ng Pagsasalin',
+                        'replace-existing-value' => 'Palitan ang Umiiral na Halaga',
+                        'target-channel'         => 'Target na Channel',
+                        'target-locales'         => 'Target na Mga Wika',
+                    ],
                 ],
             ],
         ],
@@ -1796,6 +1828,38 @@ return [
             're-generate-secret-key-success' => 'Ang API secret key ay matagumpay na na-regenerate',
             'client-not-found'               => 'Ang client ay hindi natagpuan',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'Pamagat',
+                'prompt'        => 'Prompt',
+                'type'          => 'Uri',
+                'created-at'    => 'Nilikha noong',
+                'updated-at'    => 'In-update noong',
+                'actions'       => 'Mga Aksyon',
+                'edit'          => 'I-edit',
+                'delete'        => 'Burahin',
+                'product'       => 'Produkto',
+                'category'      => 'Kategorya',
+            ],
+            'create' => [
+                'title'         => 'Prompt',
+                'create-btn'    => 'Lumikha ng Prompt',
+                'edit-title'    => 'I-edit ang Prompt',
+                'create-title'  => 'Lumikha ng Bagong Prompt',
+                'label-title'   => 'Pamagat',
+                'type'          => 'Uri',
+                'prompt'        => 'Prompt',
+                'save-btn'      => 'I-save ang Prompt',
+            ],
+            'message' => [
+                'save-success'      => 'Matagumpay na na-save ang prompt.',
+                'update-success'    => 'Matagumpay na na-update ang prompt.',
+                'delete-success'    => 'Matagumpay na nabura ang prompt.',
+                'delete-fail'       => 'Nabigo sa pagbura ng prompt.',
+            ],
+        ],
     ],
 
     'components' => [
@@ -1838,6 +1902,8 @@ return [
                 'themes'             => 'Themes',
                 'users'              => 'Users',
                 'integrations'       => 'Integrations',
+                'prompt'             => 'Prompto',
+                'general-tab'        => 'Konpigurasyon',
             ],
         ],
 

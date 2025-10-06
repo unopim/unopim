@@ -308,6 +308,7 @@
                                         name="value_per_locale"
                                         value="1"
                                         for="value_per_locale"
+                                        @input="checkValuePerLocale"
                                     />
                 
                                     <label
@@ -315,6 +316,24 @@
                                         for="value_per_locale"
                                     >
                                         @lang('admin::app.catalog.attributes.edit.value-per-locale')
+                                    </label>
+                                </x-admin::form.control-group>
+                                <!-- AI Translate -->
+                                <x-admin::form.control-group class="flex gap-2.5 items-center !mb-2 select-none" v-show=" ((selectedAttributeType == 'textarea') || (selectedAttributeType == 'text')) && (valuePerLocale == 1)">
+
+                                    <x-admin::form.control-group.control
+                                        type="checkbox"
+                                        id="ai_translate"
+                                        name="ai_translate"
+                                        value="1"
+                                        for="ai_translate"
+                                    />
+
+                                    <label
+                                        class="text-xs text-gray-600 dark:text-gray-300 font-medium cursor-pointer"
+                                        for="ai_translate"
+                                    >
+                                        @lang('admin::app.catalog.attributes.create.ai-translate')
                                     </label>
                                 </x-admin::form.control-group>
 
@@ -396,9 +415,10 @@
 
                         swatchValue: [
                             {
-                                image: [],
-                            }
-                        ],
+                            image: [],
+                        }
+                    ],
+                        valuePerLocale: 0,
                     }
                 },
                 watch: {
@@ -420,6 +440,10 @@
                             return value;
                         }
                     },
+
+                    checkValuePerLocale() {
+                        this.valuePerLocale = this.valuePerLocale === 0 ? 1 : 0;
+                    }
                 },
             });
         </script>

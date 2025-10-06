@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => 'Tłumacz',
+                    'title'                    => 'Tłumacz',
+                    'source-channel'           => 'Kanał źródłowy',
+                    'locale'                   => 'Ustawienia regionalne źródła',
+                    'translated-content'       => 'Przetłumaczona treść',
+                    'translating'              => 'Tłumaczenie',
+                    'apply'                    => 'Zastosuj',
+                    'cancel'                   => 'Anuluj',
+                    'target-locales'           => 'Docelowe ustawienia regionalne',
+                    'target-channel'           => 'Kanał docelowy',
+                    'attributes'               => 'Atrybuty',
+                    'source-content'           => 'Treść źródłowa',
+                    'tranlated-job-processed'  => 'Zadanie zapisania przetłumaczonej treści zostało przetworzone.',
+                ],
+
                 'product-info' => [
                     'title'        => 'Informacje o produkcie',
                     'status'       => 'Status',
@@ -416,6 +432,7 @@ return [
                 'same-code-error'       => 'Kod opcji musi być unikalny.',
                 'usable-in-grid'        => 'Można używać w siatce',
                 'is-filterable'         => 'Jest filtrowalne',
+                'ai-translate'          => 'Tłumaczenie SI',
 
                 'option' => [
                     'color'    => 'Kolor próbki',
@@ -483,6 +500,7 @@ return [
                 'same-code-error'       => 'Kod opcji musi być unikalny.',
                 'usable-in-grid'        => 'Można używać w siatce',
                 'is-filterable'         => 'Jest filtrowalne',
+                'ai-translate'          => 'Tłumaczenie SI',
 
                 'option' => [
                     'create-success'      => 'Opcja atrybutu została pomyślnie utworzona',
@@ -1621,6 +1639,8 @@ return [
         'tracker'                  => 'Śledzenie',
         'imports'                  => 'Importy',
         'exports'                  => 'Eksporty',
+        'mass-update'              => 'Masowa aktualizacja',
+        'mass-delete'              => 'Masowe usuwanie',
     ],
 
     'errors' => [
@@ -1741,6 +1761,18 @@ return [
                         'title'          => 'Ogólne ustawienia',
                         'title-info'     => 'Popraw swoje doświadczenie z Magic AI, wpisując swój unikalny Klucz API i wskazując odpowiednią Organizację do łatwej integracji. Przejmij kontrolę nad swoimi danymi OpenAI i dostosuj ustawienia do swoich specyficznych potrzeb.',
                     ],
+
+                    'translation'   => [
+                        'title'                  => 'Tłumaczenie',
+                        'enabled'                => 'Włączone',
+                        'title-info'             => 'Ta funkcja aktywuje Magic AI do tłumaczenia tekstu, umożliwiając płynne konwertowanie tekstu z jednego języka na inny.',
+                        'global-source-channel'  => 'Kanał źródłowy',
+                        'global-source-locale'   => 'Język źródłowy',
+                        'translation-model'      => 'Model tłumaczenia',
+                        'replace-existing-value' => 'Zastąp istniejącą wartość',
+                        'target-channel'         => 'Kanał docelowy',
+                        'target-locales'         => 'Języki docelowe',
+                    ],
                 ],
             ],
         ],
@@ -1802,6 +1834,38 @@ return [
             're-generate-secret-key-success' => 'Klucz tajny API został pomyślnie wygenerowany ponownie',
             'client-not-found'               => 'Klient nie został znaleziony',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'Tytuł',
+                'prompt'        => 'Podpowiedź',
+                'type'          => 'Typ',
+                'created-at'    => 'Utworzono',
+                'updated-at'    => 'Zaktualizowano',
+                'actions'       => 'Akcje',
+                'edit'          => 'Edytuj',
+                'delete'        => 'Usuń',
+                'product'       => 'Produkt',
+                'category'      => 'Kategoria',
+            ],
+            'create' => [
+                'title'         => 'Podpowiedź',
+                'create-btn'    => 'Utwórz podpowiedź',
+                'edit-title'    => 'Edytuj podpowiedź',
+                'create-title'  => 'Utwórz nową podpowiedź',
+                'label-title'   => 'Tytuł',
+                'type'          => 'Typ',
+                'prompt'        => 'Podpowiedź',
+                'save-btn'      => 'Zapisz podpowiedź',
+            ],
+            'message' => [
+                'save-success'      => 'Podpowiedź została pomyślnie zapisana.',
+                'update-success'    => 'Podpowiedź została pomyślnie zaktualizowana.',
+                'delete-success'    => 'Podpowiedź została pomyślnie usunięta.',
+                'delete-fail'       => 'Nie udało się usunąć podpowiedzi.',
+            ],
+        ],
     ],
 
     'components' => [
@@ -1844,6 +1908,8 @@ return [
                 'themes'             => 'Motywy',
                 'users'              => 'Użytkownicy',
                 'integrations'       => 'Integracje',
+                'prompt'             => 'Komunikat',
+                'general-tab'        => 'Konfiguracja',
             ],
         ],
 

@@ -8,6 +8,7 @@ use Webkul\Category\Validator\FieldValidator;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
 use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Helpers\Exporters\AbstractExporter;
+use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
 use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 
@@ -128,6 +129,8 @@ class Exporter extends AbstractExporter
                     $this->copyMedia($exitingFilePath, $newfilePath);
                 }
             }
+
+            $fieldValues[$field->code] = EscapeFormulaOperators::escapeValue($additionalData[$field->code] ?? null);
         }
 
         return $fieldValues;

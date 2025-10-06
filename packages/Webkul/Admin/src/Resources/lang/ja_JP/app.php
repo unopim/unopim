@@ -268,6 +268,22 @@ return [
                     ],
                 ],
 
+                'translate' => [
+                    'translate-btn'            => '翻訳',
+                    'title'                    => '翻訳',
+                    'source-channel'           => 'ソースチャンネル',
+                    'locale'                   => 'ソースロケール',
+                    'translated-content'       => '翻訳されたコンテンツ',
+                    'translating'              => '翻訳中',
+                    'apply'                    => '適用',
+                    'cancel'                   => 'キャンセル',
+                    'target-locales'           => 'ターゲットロケール',
+                    'target-channel'           => 'ターゲットチャンネル',
+                    'attributes'               => '属性',
+                    'source-content'           => 'ソースコンテンツ',
+                    'tranlated-job-processed'  => '翻訳されたコンテンツ保存タスクが処理されました。',
+                ],
+
                 'product-info' => [
                     'title'        => '製品情報',
                     'status'       => 'ステータス',
@@ -416,6 +432,7 @@ return [
                 'same-code-error'       => 'オプション コードは一意である必要があります。',
                 'usable-in-grid'        => 'グリッドで使用可能',
                 'is-filterable'         => 'フィルタリング可能',
+                'ai-translate'          => 'AI翻訳',
 
                 'option' => [
                     'color'    => 'カラー スウォッチ',
@@ -481,6 +498,7 @@ return [
                 'yes'                   => 'はい',
                 'same-code-error'       => 'オプション コードは一意である必要があります。',
                 'usable-in-grid'        => 'グリッドで使用可能',
+                'ai-translate'          => 'AI翻訳',
 
                 'option' => [
                     'create-success'      => '属性オプションが正常に作成されました',
@@ -1596,6 +1614,18 @@ return [
                         'title'      => '画像生成',
                         'title-info' => 'この機能は、DALL-E を使用して画像を生成するすべての画像アップロードで Magic AI を有効にします。<br/><br/>有効にすると、任意の画像アップロードに移動して画像を生成します。',
                     ],
+
+                    'translation'   => [
+                        'title'                  => '翻訳',
+                        'enabled'                => '有効',
+                        'title-info'             => 'この機能を有効にすると、Magic AIを使用してテキストを翻訳し、テキストをシームレスに別の言語に変換できます。',
+                        'global-source-channel'  => 'ソースチャンネル',
+                        'global-source-locale'   => 'ソースロケール',
+                        'translation-model'      => '翻訳モデル',
+                        'replace-existing-value' => '既存の値を置き換える',
+                        'target-channel'         => 'ターゲットチャンネル',
+                        'target-locales'         => 'ターゲットロケール',
+                    ],
                 ],
             ],
         ],
@@ -1657,6 +1687,38 @@ return [
             're-generate-secret-key-success' => 'API シークレット キーが正常に再生成されました',
             'client-not-found'               => 'クライアントが見つかりません',
         ],
+
+        'prompt' => [
+            'datagrid' => [
+                'id'            => 'ID',
+                'title'         => 'タイトル',
+                'prompt'        => 'プロンプト',
+                'type'          => 'タイプ',
+                'created-at'    => '作成日時',
+                'updated-at'    => '更新日時',
+                'actions'       => '操作',
+                'edit'          => '編集',
+                'delete'        => '削除',
+                'product'       => '製品',
+                'category'      => 'カテゴリ',
+            ],
+            'create' => [
+                'title'         => 'プロンプト',
+                'create-btn'    => 'プロンプトを作成',
+                'edit-title'    => 'プロンプトを編集',
+                'create-title'  => '新しいプロンプトを作成',
+                'label-title'   => 'タイトル',
+                'type'          => 'タイプ',
+                'prompt'        => 'プロンプト',
+                'save-btn'      => 'プロンプトを保存',
+            ],
+            'message' => [
+                'save-success'      => 'プロンプトが正常に保存されました。',
+                'update-success'    => 'プロンプトが正常に更新されました。',
+                'delete-success'    => 'プロンプトが正常に削除されました。',
+                'delete-fail'       => 'プロンプトの削除に失敗しました。',
+            ],
+        ],
     ],
 
     'components' => [
@@ -1699,6 +1761,8 @@ return [
                 'themes'             => 'テーマ',
                 'users'              => 'ユーザー',
                 'integrations'       => '統合',
+                'prompt'             => 'プロンプト',
+                'general-tab'        => '設定',
             ],
         ],
 
@@ -1971,6 +2035,8 @@ return [
         'tracker'                  => 'ジョブ トラッカー',
         'imports'                  => 'インポート',
         'exports'                  => 'エクスポート',
+        'mass-update'              => '一括更新',
+        'mass-delete'              => '一括削除',
     ],
 
     'errors' => [

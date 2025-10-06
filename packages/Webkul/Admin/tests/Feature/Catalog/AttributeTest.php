@@ -321,3 +321,60 @@ it('should enable Wysiwyg in textarea type attribute', function () {
 
     $this->assertDatabaseHas($this->getFullTableName(Attribute::class), $updatedData);
 });
+
+it('should set enabled to ai_translate field at attribute creation', function () {
+    $this->loginAsAdmin();
+
+    $attribute = [
+        'code'            => 'testAttribute',
+        'type'            => 'text',
+        'value_per_locale'=> 1,
+        'ai_translate'    => 1,
+    ];
+
+    $response = postJson(route('admin.catalog.attributes.store'), $attribute);
+
+    $response->assertStatus(302)
+        ->assertRedirect(route('admin.catalog.attributes.edit', ['id' => Attribute::where('code', 'testAttribute')->first()->id]));
+
+    $this->assertDatabaseHas($this->getFullTableName(Attribute::class), $attribute);
+});
+
+it('should not set enabled to ai_translate field at attribute creation', function () {
+    $this->loginAsAdmin();
+
+    $attribute = [
+        'code'         => 'testAttribute',
+        'type'         => 'gallery',
+        'ai_translate' => 1,
+    ];
+
+    $response = postJson(route('admin.catalog.attributes.store'), $attribute);
+
+    $response->assertStatus(302)
+        ->assertRedirect(route('admin.catalog.attributes.edit', ['id' => Attribute::where('code', 'testAttribute')->first()->id]));
+
+    $this->assertDatabaseMissing($this->getFullTableName(Attribute::class), [
+        'ai_translate' => 1,
+    ]);
+});
+
+it('should update the ai_translate property in Attribute', function () {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create();
+
+    $updatedData = [
+        'code'             => $attribute->code,
+        'type'             => $attribute->type,
+        'is_required'      => 1,
+        'ai_translate'     => ($attribute->type === 'text' || $attribute->type === 'textarea') && $attribute->value_per_locale == 1 ? 1 : 0,
+    ];
+
+    $response = putJson(route('admin.catalog.attributes.update', $attribute->id), $updatedData);
+
+    $response->assertStatus(302)
+        ->assertRedirect(route('admin.catalog.attributes.edit', $attribute->id));
+
+    $this->assertDatabaseHas($this->getFullTableName(Attribute::class), $updatedData);
+});
