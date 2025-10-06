@@ -46,7 +46,7 @@ it('should create a new system prompt successfully', function () {
     $systemPrompt = MagicAISystemPrompt::factory()->make()->toArray();
     $this->post(route('admin.magic_ai.system_prompt.store', $systemPrompt))
         ->assertOk()
-        ->assertJsonFragment(['message' => trans('admin::app.configuration.prompt.message.save-success')]);
+        ->assertJsonFragment(['message' => trans('admin::app.configuration.system-prompt.message.save-success')]);
     $this->assertDatabaseHas($this->getFullTableName(MagicAISystemPrompt::class), [
         'title'        => $systemPrompt['title'],
         'tone'         => $systemPrompt['tone'],
@@ -69,7 +69,7 @@ it('should update a system prompt successfully', function () {
 
     $this->put(route('admin.magic_ai.system_prompt.update'), $data)
         ->assertStatus(200)
-        ->assertJsonFragment(['message' => trans('admin::app.configuration.prompt.message.update-success')]);
+        ->assertJsonFragment(['message' => trans('admin::app.configuration.system-prompt.message.update-success')]);
     $this->assertDatabaseHas($this->getFullTableName(MagicAISystemPrompt::class), $data);
 });
 
@@ -77,7 +77,7 @@ it('should delete system prompt successfully', function () {
     $prompt = MagicAISystemPrompt::factory()->create();
     $this->delete(route('admin.magic_ai.system_prompt.delete', $prompt->id))
         ->assertOk()
-        ->assertJsonFragment(['message' => trans('admin::app.configuration.prompt.message.delete-success')]);
+        ->assertJsonFragment(['message' => trans('admin::app.configuration.system-prompt.message.delete-success')]);
     $this->assertDatabaseMissing(
         $this->getFullTableName(MagicAISystemPrompt::class),
         [
