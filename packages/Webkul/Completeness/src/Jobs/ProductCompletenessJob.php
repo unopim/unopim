@@ -121,6 +121,11 @@ class ProductCompletenessJob implements ShouldQueue
             $locales = $channel['locales'] ?? [];
 
             if (! isset($settingsByChannel[$channelId]) || empty($locales)) {
+                // Remove existing completeness result for this channel and product if any exists
+                $this->completenessResultsRepository
+                    ->where(['product_id' => $product['id'], 'channel_id' => $channelId])
+                    ->delete();
+
                 continue;
             }
 
