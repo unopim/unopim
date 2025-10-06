@@ -50,7 +50,7 @@ class MagicAISystemPromptController extends Controller
         $this->magicAiSystemPromptRepository->create($data);
 
         return new JsonResponse([
-            'message' => trans('admin::app.configuration.prompt.message.save-success'),
+            'message' => trans('admin::app.configuration.system-prompt.message.save-success'),
         ]);
     }
 
@@ -84,7 +84,7 @@ class MagicAISystemPromptController extends Controller
         $this->magicAiSystemPromptRepository->update($data, $id);
 
         return new JsonResponse([
-            'message' => trans('admin::app.configuration.prompt.message.update-success'),
+            'message' => trans('admin::app.configuration.system-prompt.message.update-success'),
         ]);
     }
 
@@ -94,13 +94,13 @@ class MagicAISystemPromptController extends Controller
             $this->magicAiSystemPromptRepository->delete($id);
 
             return new JsonResponse([
-                'message' => trans('admin::app.configuration.prompt.message.delete-success'),
+                'message' => trans('admin::app.configuration.system-prompt.message.delete-success'),
             ]);
         } catch (\Exception $e) {
             Log::info($e);
 
             return new JsonResponse([
-                'message' => trans('admin::app.configuration.prompt.message.delete-fail'),
+                'message' => trans('admin::app.configuration.system-prompt.message.delete-fail'),
             ], 500);
         }
     }

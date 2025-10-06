@@ -32,7 +32,7 @@
                     <button
                         type="button"
                         class="primary-button"
-                        @click="selectedPrompt=0;resetForm();$refs.promptUpdateOrCreateModal.toggle();toggleMagicAIModal()"
+                        @click="selectedPrompt=0;resetForm();$refs.promptUpdateOrCreateModal.toggle();"
                     >
                         @lang('admin::app.configuration.system-prompt.create.create-btn')
                     </button>
@@ -307,7 +307,6 @@
                                 this.max_tokens = data.max_tokens;
                                 this.temperature = data.temperature;
                                 this.$refs.promptUpdateOrCreateModal.toggle();
-                                this.toggleMagicAIModal();
                             })
                     },
 

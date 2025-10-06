@@ -77,7 +77,7 @@
                                 <x-admin::form.control-group>
                                     <!-- Label for the Select Element -->
                                     <x-admin::form.control-group.label class="required">
-                                    @lang('Prompt Tone')
+                                    @lang('admin::app.configuration.system-prompt.create.prompt-tone')
                                     </x-admin::form.control-group.label>
 
                                     @php
