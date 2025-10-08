@@ -111,48 +111,92 @@
                                         type="text"
                                         name="title"
                                         v-model="title"
+                                        rules="required"
                                     />
                                     <x-admin::form.control-group.error control-name="title" />
                                 </x-admin::form.control-group>
 
-                                <!-- Select Component -->
+                                <!-- Type Input -->
                                 <x-admin::form.control-group>
-                                <!-- Label for the Select Element -->
-                                <x-admin::form.control-group.label class="required">
-                                @lang('admin::app.configuration.prompt.create.type')
-                                </x-admin::form.control-group.label>
+                                    <x-admin::form.control-group.label class="required">
+                                    @lang('admin::app.configuration.prompt.create.type')
+                                    </x-admin::form.control-group.label>
 
-                                @php
-                                    $supportedTypes = ['product', 'category'];
-                                    $options = [];
-                                    foreach($supportedTypes as $type) {
-                                        $options[] = [
-                                            'id'    => $type,
-                                            'label' => ucfirst($type)
-                                        ];
-                                    }
-                                    $optionsInJson = json_encode($options);
-                                @endphp
+                                    @php
+                                        $supportedTypes = ['product', 'category'];
+                                        $options = [];
+                                        foreach($supportedTypes as $type) {
+                                            $options[] = [
+                                                'id'    => $type,
+                                                'label' => ucfirst($type)
+                                            ];
+                                        }
+                                        $optionsInJson = json_encode($options);
+                                    @endphp
+                                    
+                                    <x-admin::form.control-group.control
+                                        type="select"
+                                        id="type"
+                                        name="type"
+                                        v-model="type"
+                                        rules="required"
+                                        :options="$optionsInJson"
+                                        :value="old('section') ?? $supportedTypes[0]"
+                                        track-by="id"
+                                        label-by="label"
+                                        @input="checkType($event)"
+                                    >
+                                    </x-admin::form.control-group.control>
 
-                                <!-- The Select Control with dynamic options -->
-                                <x-admin::form.control-group.control
-                                    type="select"
-                                    id="type"
-                                    name="type"
-                                    v-model="type"
-                                    rules="required"
-                                    :options="$optionsInJson"
-                                    :value="old('section') ?? $supportedTypes[0]"
-                                    track-by="id"
-                                    label-by="label"
-                                    @input="checkType($event)"
-                                >
-                                </x-admin::form.control-group.control>
-
-                                <!-- Error handling for the Select element -->
-                                <x-admin::form.control-group.error control-name="section" />
+                                    <x-admin::form.control-group.error control-name="section" />
                                 </x-admin::form.control-group>
 
+
+                                 <!-- Tone Input -->
+                                <x-admin::form.control-group>
+                                    <x-admin::form.control-group.label class="required">
+                                        @lang('admin::app.configuration.system-prompt.datagrid.tone')
+                                    </x-admin::form.control-group.label>
+
+                                    @php
+                                        $promptOptions = app(\Webkul\MagicAI\Repository\MagicAISystemPromptRepository::class)->getAllPromptOptions();
+                                        $options = [];
+                                        $defaultPrompt = null;
+
+                                        foreach ($promptOptions as $prompt) {
+                                            $options[] = [
+                                                'id'    => $prompt['id'],
+                                                'label' => $prompt['label'],
+                                            ];
+                                            if ($defaultPrompt === null && $prompt['is_enabled']) {
+                                                $defaultPrompt = $prompt['id'];
+                                            }
+                                        }
+                                        
+                                        if ($defaultPrompt === null && count($options)) {
+                                            $defaultPrompt = $options[0]['id'];
+                                        }
+
+                                        $optionsJson = json_encode($options);
+                                    @endphp
+
+                   
+                                    <x-admin::form.control-group.control
+                                        type="select"
+                                        id="tone"
+                                        name="tone"
+                                        rules="required"
+                                        :options="$optionsJson"   
+                                        v-model="tone"
+                                        track-by="id"
+                                        label-by="label"
+                                    >
+                                    </x-admin::form.control-group.control>
+                                    <x-admin::form.control-group.error control-name="tone" />
+                                </x-admin::form.control-group>
+
+
+                                <!--Prompt Input -->
                                 <x-admin::form.control-group>
                                     <x-admin::form.control-group.label class="required">
                                         @lang('admin::app.configuration.prompt.create.prompt')
@@ -174,6 +218,7 @@
                                             <span class="icon-at"></span>
                                         </div>
                                     </div>
+                                    <x-admin::form.control-group.error control-name="prompt" />
                                 </x-admin::form.control-group>
                             </x-slot>
 
@@ -203,13 +248,13 @@
                         attributes: [],
                         ai: {
                             prompt: '',
-
                         },
                         selectedPrompt: 0,
                         title: null,
                         type: null,
                         id: null,
                         entityName: null,
+                        tone: @json($defaultPrompt),
                     };
                 },
 
@@ -241,11 +286,13 @@
                     }) {
                         let formData = new FormData(this.$refs.promptCreateForm);
 
+
                         if (params.id) {
                             formData.append('_method', 'put');
                         }
 
-                        this.$axios.post(params.id ? "{{ route('admin.magic_ai.prompt.update') }}" : "{{ route('admin.magic_ai.prompt.store') }}", formData)
+                        this.$axios.post(params.id ? "{{ route('admin.magic_ai.prompt.update') }}" :
+                                "{{ route('admin.magic_ai.prompt.store') }}", formData)
                             .then((response) => {
                                 this.$refs.promptUpdateOrCreateModal.close();
 
@@ -275,7 +322,8 @@
                                     fillAttr: 'code',
                                     noMatchTemplate: "@lang('admin::app.common.no-match-found')",
                                     selectTemplate: (item) => `@${item.original.code}`,
-                                    menuItemTemplate: (item) => `<div class="p-1.5 rounded-md text-base cursor-pointer transition-all max-sm:place-self-center">${item.original.name || '[' + item.original.code + ']'}</div>`,
+                                    menuItemTemplate: (item) =>
+                                        `<div class="p-1.5 rounded-md text-base cursor-pointer transition-all max-sm:place-self-center">${item.original.name || '[' + item.original.code + ']'}</div>`,
                                 });
                                 tribute.attach(this.$refs.promptInput);
 
@@ -301,7 +349,9 @@
                         });
                     },
                     async fetchSuggestionValues(text, cb) {
-                        const response = await fetch(`{{ route('admin.magic_ai.suggestion_values') }}?query=${text}&&entity_name=${this.entityName}&&locale={{ core()->getRequestedLocaleCode() }}`);
+                        const response = await fetch(
+                            `{{ route('admin.magic_ai.suggestion_values') }}?query=${text}&&entity_name=${this.entityName}&&locale={{ core()->getRequestedLocaleCode() }}`
+                        );
                         const data = await response.json();
                         this.suggestionValues = data;
                         cb(this.suggestionValues);
@@ -315,6 +365,7 @@
                                 this.title = data.title;
                                 this.ai.prompt = data.prompt;
                                 this.type = data.type;
+                                this.tone = data.tone;
                                 this.$refs.promptUpdateOrCreateModal.toggle();
                                 this.toggleMagicAIModal();
                             })
@@ -325,9 +376,9 @@
                         this.type = "product";
                         this.ai.prompt = '';
                         this.id = null;
-                        this.entityName = null
+                        this.entityName = null;
+                        this.tone = @json($defaultPrompt);
                     }
-
                 }
             });
         </script>

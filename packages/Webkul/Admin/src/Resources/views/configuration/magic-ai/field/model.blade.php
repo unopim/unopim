@@ -21,12 +21,20 @@
                 <button type="button" class="primary-button" @click="validated"> Validate Credentials </button>
             </div>
             <div>
-
+                <!-- Groq -->
                 <x-admin::form.control-group class="mb-4" v-if="aiCredentials.api_platform === 'groq'">
                     <x-admin::form.control-group.label>
                         @{{ label }}
                         @php
-                            $modelOptions = ["deepseek-r1-distill-llama-70b", "qwen-qwq-32b", "llama3-8b-8192"];
+                            $modelOptions = [ 
+                                "deepseek-r1-distill-llama-70b",
+                                "llama-3.1-8b-instant",
+                                "openai/gpt-oss-120b",
+                                "openai/gpt-oss-20b",
+                                "groq/compound",
+                                "qwen/qwen3-32b",
+                                "moonshotai/kimi-k2-instruct-0905"
+                            ];
                             $options = [];
                             foreach($modelOptions as $option) {
                                 $options[] = [
@@ -34,7 +42,6 @@
                                     'label' => $option,
                                 ];
                             }
-
                             $optionsInJson = json_encode($options);
                         @endphp
                     </x-admin::form.control-group.label>
@@ -53,11 +60,19 @@
                     />
                     <x-admin::form.control-group.error ::control-name="name" />
                 </x-admin::form.control-group>
+
+                <!-- Open AI -->
                 <x-admin::form.control-group class="mb-4" v-if="aiCredentials.api_platform === 'openai'">
                     <x-admin::form.control-group.label>
                         @{{ label }}
                         @php
-                            $modelOptions = ["gpt-4o", "gpt-4o-mini", "gpt-3.5-turbo", "dall-e-2", "dall-e-3"];
+                            $modelOptions = [
+                                "gpt-4o", 
+                                "gpt-4o-mini", 
+                                "gpt-3.5-turbo", 
+                                "dall-e-2", 
+                                "dall-e-3"
+                            ];
                             $options = [];
                             foreach($modelOptions as $option) {
                                 $options[] = [
@@ -84,11 +99,20 @@
                     />
                     <x-admin::form.control-group.error ::control-name="name" />
                 </x-admin::form.control-group>
+
+                <!-- Ollama -->
                 <x-admin::form.control-group class="mb-4" v-if="aiCredentials.api_platform === 'ollama'">
                     <x-admin::form.control-group.label>
                         @{{ label }}
                         @php
-                            $modelOptions = ["llava"];
+                            $modelOptions = [
+                                "llama2", 
+                                "llama3",  
+                                "mistral", 
+                                "qwen", 
+                                "deepseek-coder", 
+                                "phi", 
+                                "llava"];
                             $options = [];
                             foreach($modelOptions as $option) {
                                 $options[] = [
@@ -96,6 +120,38 @@
                                     'label' => $option,
                                 ];
                             }
+                            $optionsInJson = json_encode($options);
+                        @endphp
+                    </x-admin::form.control-group.label>
+                    <x-admin::form.control-group.control
+                        type="multiselect"
+                        ref="aiModelRef"
+                        ::id="name"
+                        ::name="name"
+                        :options="$optionsInJson"
+                        ::value="value"
+                        ::label="label"
+                        ::placeholder="label"
+                        track-by="id"
+                        label-by="label"
+                        @input="getOptionValue"
+                    />
+                    <x-admin::form.control-group.error ::control-name="name" />
+                </x-admin::form.control-group>
+
+                <!-- Gemini -->
+                <x-admin::form.control-group class="mb-4" v-if="aiCredentials.api_platform === 'gemini'">
+                    <x-admin::form.control-group.label>
+                        @{{ label }}
+                        @php
+                            $modelOptions = [
+                                "gemini-2.5-pro",
+                                "gemini-2.5-flash",
+                                "gemini-2.0-flash",
+                                "gemini-1.5-flash-latest",
+                                "gemini-1.5-pro",
+                            ];
+                            $options = array_map(fn($option) => ['id' => $option, 'label' => $option], $modelOptions);
                             $optionsInJson = json_encode($options);
                         @endphp
                     </x-admin::form.control-group.label>
@@ -176,7 +232,6 @@
                 },
                 async validated() {
                     try {
-                        
                         const response = await axios.get("{{ route('admin.magic_ai.validate_credential') }}", {
                             params: this.aiCredentials
                         });
@@ -191,12 +246,11 @@
                             type: 'error',
                             message: error.response.data.message
                         });
-
                     }
                 },
 
-                getOptionValue(event){
-                    this.$emitter.emit('model_value_change',event);
+                getOptionValue(event) {
+                    this.$emitter.emit('model_value_change', event);
                 }
             }
         });

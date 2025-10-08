@@ -465,7 +465,7 @@
                     this.$emit('input', JSON.stringify(newValue));
                 },
             },
-            
+
             methods: {
                 parseOptions() {
                     try {
@@ -644,7 +644,7 @@
                 :multiple="true"
                 :searchable="true"
                 :placeholder="placeholder"
-                :close-on-select="false"
+                :close-on-select="true"
                 :clear-on-select="false"
                 :show-no-results="true"
                 :hide-selected="true"
@@ -783,7 +783,7 @@
                 :multiple="true"
                 :searchable="true"
                 :placeholder="placeholder"
-                :close-on-select="false"
+                :close-on-select="true"
                 :clear-on-select="false"
                 :show-no-results="true"
                 :hide-selected="true"
