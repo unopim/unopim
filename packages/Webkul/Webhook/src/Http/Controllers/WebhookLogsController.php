@@ -7,7 +7,7 @@ use Webkul\Admin\Http\Requests\MassDestroyRequest;
 use Webkul\Webhook\DataGrids\LogsDataGrid;
 use Webkul\Webhook\Repositories\LogsRepository;
 
-class LogsController
+class WebhookLogsController
 {
     public function __construct(
         protected LogsRepository $logsRepository

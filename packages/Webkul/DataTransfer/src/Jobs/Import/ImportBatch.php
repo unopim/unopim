@@ -41,11 +41,10 @@ class ImportBatch implements ShouldQueue
     public function failed(\Throwable $exception)
     {
         JobLogger::make($this->jobTrackId)->error($exception->getMessage(), [
-            'batch_id' => $this->importBatch->id
+            'batch_id' => $this->importBatch->id,
         ]);
 
         $this->importBatch->state = 'failed';
         $this->importBatch->save();
     }
-
 }

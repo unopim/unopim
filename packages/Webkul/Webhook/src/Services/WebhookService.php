@@ -149,11 +149,11 @@ class WebhookService
         $type = $product->type ?? ($product['type'] ?? null);
 
         $normalized = [
-            'id'       => $product->id,
-            'status'   => (bool) ($product->status ?? ($product['status'])),
-            'sku'      => $sku,
-            'type'     => $type,
-            'changes'  => $productChanges,
+            'id'      => $product->id,
+            'status'  => (bool) ($product->status ?? ($product['status'])),
+            'sku'     => $sku,
+            'type'    => $type,
+            'changes' => $productChanges,
         ];
 
         if ($type === 'configurable') {

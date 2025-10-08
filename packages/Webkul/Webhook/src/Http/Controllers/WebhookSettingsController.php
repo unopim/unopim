@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Event;
 use Webkul\Webhook\Models\WebhookSetting;
 use Webkul\Webhook\Repositories\SettingsRepository;
 
-class SettingsController
+class WebhookSettingsController
 {
     public function __construct(
         protected SettingsRepository $settingsRepository,
