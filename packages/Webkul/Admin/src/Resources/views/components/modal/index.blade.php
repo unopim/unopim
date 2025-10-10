@@ -167,7 +167,7 @@
 
                     this.$nextTick(() => {
                         this.checkOverflow();
-                    });  
+                    });
                 },
 
                 close() {

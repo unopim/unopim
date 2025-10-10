@@ -559,6 +559,8 @@
                     e.stopPropagation();
 
                     this.currentStep += 1;
+
+                    this.$refs.translationModal.isOverflowing = true;
                 },
                 handleToggle(params) {
                     if (false === params?.isActive) {
