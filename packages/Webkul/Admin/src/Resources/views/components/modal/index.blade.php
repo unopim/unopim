@@ -117,18 +117,26 @@
                 return {
                     isOpen: this.isActive,
                     isOverflowing: false,
+                    modalType: this.type,
                     sizeMap: {
                         small: "max-w-[400px]",
                         medium: "max-w-[568px]",
-                        large: "max-w-[900px]"
+                        large: "max-w-[900px]",
+                        full: "max-w-[calc(100vw-100px)]"
                     }
                 };
             },
 
             computed: {
                 modalSize() {
-                    return this.sizeMap[this.type] || this.sizeMap['medium'];
+                    return this.sizeMap[this.modalType] || this.sizeMap.medium; // Default to medium
                 }
+            },
+
+            mounted() {
+                this.$emitter.on('modal-size-change', (size) => {
+                    this.modalType = size;
+                });
             },
 
             methods: {
