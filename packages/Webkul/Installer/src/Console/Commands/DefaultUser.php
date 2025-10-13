@@ -307,7 +307,7 @@ class DefaultUser extends Command
 
         $localeId = DB::table('locales')->where('code', $defaultLocale)->where('status', 1)->first()?->id ?? 58;
 
-        $driver = DB::getDriverName(); 
+        $driver = DB::getDriverName();
 
         switch ($driver) {
             case 'pgsql':
@@ -339,7 +339,6 @@ class DefaultUser extends Command
                         ->where('permission_type', 'custom')
                         ->whereRaw('"permissions"::jsonb @> ?', [json_encode(['dashboard'])])
                         ->first()?->id;
-
 
                 break;
 
@@ -389,9 +388,9 @@ class DefaultUser extends Command
 
             $this->info('-----------------------------');
             $this->info('Congratulations! The User has been created successfully.');
-            $this->info('Please navigate to: ' . env('APP_URL') . '/admin and use the following credentials:');
-            $this->info('Email: ' . $userEmail);
-            $this->info('Password: ' . $userPassword);
+            $this->info('Please navigate to: '.env('APP_URL').'/admin and use the following credentials:');
+            $this->info('Email: '.$userEmail);
+            $this->info('Password: '.$userPassword);
             $this->info('Cheers!');
             Log::info('Congratulations! The User has been created successfully');
         } catch (\Exception $e) {

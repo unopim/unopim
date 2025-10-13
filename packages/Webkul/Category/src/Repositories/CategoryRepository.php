@@ -118,7 +118,7 @@ class CategoryRepository extends Repository
 
         switch ($driver) {
             case 'pgsql':
-                if (isset($data['parent_id']) && !is_numeric($data['parent_id'])) {
+                if (isset($data['parent_id']) && ! is_numeric($data['parent_id'])) {
                     $data['parent_id'] = (string) $data['parent_id'];
                 }
                 break;
@@ -132,7 +132,6 @@ class CategoryRepository extends Repository
 
         return $category;
     }
-
 
     /**
      * Specify category tree.

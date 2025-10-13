@@ -58,7 +58,7 @@ it('should not allow duplicate option code for the same attribute', function () 
             $this->assertEquals(
                 0,
                 $count,
-                "AttributeOption with same code exists but id differs (pgsql check failed)."
+                'AttributeOption with same code exists but id differs (pgsql check failed).'
             );
             break;
 
@@ -68,7 +68,7 @@ it('should not allow duplicate option code for the same attribute', function () 
                 $this->getFullTableName(AttributeOption::class),
                 [
                     'code'         => $option->code,
-                    'id'           => '!= ' . $option->id,
+                    'id'           => '!= '.$option->id,
                     'attribute_id' => $attributeId,
                 ]
             );
@@ -206,8 +206,8 @@ it('should return the attribute option for edit modal', function () {
     $option = $attribute->options()->first();
 
     $translation = $option->translations()->create([
-        'label' => 'Option Label',
-        'locale' => app()->getLocale() ?? 'en_US'
+        'label'  => 'Option Label',
+        'locale' => app()->getLocale() ?? 'en_US',
     ]);
 
     $translation->locale = 'en_US';

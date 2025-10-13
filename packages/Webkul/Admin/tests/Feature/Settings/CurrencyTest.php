@@ -1,12 +1,12 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Webkul\Core\Models\Channel;
 use Webkul\Core\Models\Currency;
 
 use function Pest\Laravel\get;
 use function Pest\Laravel\postJson;
 use function Pest\Laravel\putJson;
-use Illuminate\Support\Facades\DB;
 
 it('should returns the currency index page', function () {
     $this->loginAsAdmin();
@@ -72,10 +72,10 @@ it('should update the currency', function () {
     $this->loginAsAdmin();
 
     $currency = Currency::factory()->create([
-        'code'   => 'DOP',
-        'symbol' => '$',
+        'code'    => 'DOP',
+        'symbol'  => '$',
         'decimal' => 2,
-        'status' => 1,
+        'status'  => 1,
     ]);
 
     $driver = DB::getDriverName();
@@ -110,8 +110,6 @@ it('should update the currency', function () {
     ]);
 
 });
-
-
 
 it('should give validation message for code', function () {
     $this->loginAsAdmin();

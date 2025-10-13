@@ -1,8 +1,7 @@
 <?php
 
-use Webkul\Core\Models\Locale;
-
 use Illuminate\Support\Facades\DB;
+use Webkul\Core\Models\Locale;
 
 beforeEach(function () {
     $this->headers = $this->getAuthenticationHeaders();

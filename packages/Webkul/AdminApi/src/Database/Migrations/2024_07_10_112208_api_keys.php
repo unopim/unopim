@@ -21,7 +21,7 @@ return new class extends Migration
             $table->uuid('oauth_client_id')->nullable()->index();
             $table->string('permission_type');
 
-            if ('pgsql' === $driver) {
+            if ($driver === 'pgsql') {
                 $table->boolean('revoked')->default(false);
             } else {
                 $table->boolean('revoked');
@@ -35,7 +35,7 @@ return new class extends Migration
                 ->on('admins')
                 ->onDelete('cascade');
         });
-        }
+    }
 
     /**
      * Reverse the migrations.

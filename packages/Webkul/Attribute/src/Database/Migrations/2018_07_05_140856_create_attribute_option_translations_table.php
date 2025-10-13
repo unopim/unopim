@@ -28,19 +28,18 @@ return new class extends Migration
                 case 'pgsql':
                 default:
                     $table->bigInteger('attribute_option_id');
-                     $table->string('locale')->nullable();
+                    $table->string('locale')->nullable();
                     break;
             }
 
-           
             $table->text('label')->nullable();
 
             $table->unique(['attribute_option_id', 'locale']);
 
             $table->foreign('attribute_option_id')
-                  ->references('id')
-                  ->on('attribute_options')
-                  ->onDelete('cascade');
+                ->references('id')
+                ->on('attribute_options')
+                ->onDelete('cascade');
         });
     }
 

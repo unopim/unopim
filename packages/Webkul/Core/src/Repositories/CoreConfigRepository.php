@@ -53,7 +53,7 @@ class CoreConfigRepository extends Repository
                     }
                 }
 
-                if (is_array($value) && !isset($value['delete'])) {
+                if (is_array($value) && ! isset($value['delete'])) {
                     $value = implode(',', $value);
                 }
 
@@ -63,9 +63,9 @@ class CoreConfigRepository extends Repository
                     $value = request()->file($fieldName)->store('configuration');
                 }
 
-                if (!count($coreConfigValue)) {
+                if (! count($coreConfigValue)) {
                     if (DB::getDriverName() === 'pgsql') {
-                        $sequence = $this->model->getTable() . '_id_seq';
+                        $sequence = $this->model->getTable().'_id_seq';
                         DB::statement("
                             SELECT setval(
                                 '{$sequence}',

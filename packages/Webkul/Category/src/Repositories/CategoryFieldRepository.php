@@ -87,7 +87,6 @@ class CategoryFieldRepository extends Repository
         return $categoryField;
     }
 
-
     /**
      * Update a category field in the database and its options if present.
      *

@@ -17,17 +17,17 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) use ($driver) {
             $table->id();
             $table->string('sku')->unique();
-      
-            if ('pgsql' === $driver) {
-                  $table->string('type')->default('simple');
+
+            if ($driver === 'pgsql') {
+                $table->string('type')->default('simple');
             } else {
-                  $table->string('type');
+                $table->string('type');
             }
 
             $table->unsignedInteger('parent_id')->nullable();
             $table->unsignedInteger('attribute_family_id')->nullable();
 
-            if ('pgsql' === $driver) {
+            if ($driver === 'pgsql') {
                 $table->jsonb('values')->nullable();
                 $table->jsonb('additional')->nullable();
             } else {

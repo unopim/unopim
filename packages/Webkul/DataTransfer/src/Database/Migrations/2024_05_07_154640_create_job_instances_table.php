@@ -25,7 +25,7 @@ return new class extends Migration
                 $table->string('type');
             }
 
-           $table->string('action')->default('')->nullable(false);
+            $table->string('action')->default('')->nullable(false);
 
             $table->string('validation_strategy')->default('skip');
             $table->integer('allowed_errors')->default(0);
