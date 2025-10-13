@@ -93,6 +93,11 @@ class AttributeColumnDataGrid extends DataGrid
             'searchable' => false,
             'sortable'   => true,
             'filterable' => true,
+            'closure'    => fn ($row) => $row->validation
+                ? collect(explode(',', $row->validation))
+                    ->map(fn ($rule) => trans('admin::app.catalog.attributes.create.'.trim($rule)))
+                    ->implode(', ')
+                : '',
         ]);
     }
 

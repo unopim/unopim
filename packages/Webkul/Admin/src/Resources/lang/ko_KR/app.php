@@ -492,6 +492,8 @@ return [
                     'create-success'      => '속성 열이 성공적으로 생성되었습니다',
                     'update-success'      => '속성 열이 성공적으로 업데이트되었습니다',
                     'delete-success'      => '속성 열이 성공적으로 삭제되었습니다',
+                    'create-failed'       => '속성 열 생성에 실패했습니다',
+                    'update-failed'       => '속성 열 업데이트에 실패했습니다',
                 ],
 
                 'table-attribute' => [
@@ -508,6 +510,8 @@ return [
                 'option'              => [
                     'create-success'  => '속성 열 옵션이 성공적으로 생성되었습니다',
                     'update-success'  => '속성 열 옵션이 성공적으로 업데이트되었습니다',
+                    'delete-success'  => '속성 열 옵션이 성공적으로 삭제되었습니다',
+                    'delete-failed'   => '속성 열 옵션 삭제에 실패했습니다',
                 ],
             ],
 

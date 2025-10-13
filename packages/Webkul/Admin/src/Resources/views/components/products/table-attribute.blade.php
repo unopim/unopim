@@ -60,13 +60,25 @@
                                     :value="element[column.code]"
                                 >
                                     <input
-                                        v-if="['text', 'date'].includes(getType(column.type))"
+                                        v-if="getType(column.type) === 'text'"
                                         :type="getType(column.type)"
                                         :name="fieldName + '[' + index + '][' + column.code + ']'"
                                         v-model="element[column.code]"
                                         v-bind="field"
                                         class="py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600"
                                     />
+
+                                    <input
+                                        v-if="getType(column.type) === 'date'"
+                                        type="date"
+                                        :name="fieldName + '[' + index + '][' + column.code + ']'"
+                                        v-model="element[column.code]"
+                                        min="1900-01-01"
+                                        max="9999-12-31"
+                                        v-bind="field"
+                                        class="py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600"
+                                    />
+
 
                                     <!-- Image Input -->
                                     <div v-if="getType(column.type) === 'image'" class="flex">

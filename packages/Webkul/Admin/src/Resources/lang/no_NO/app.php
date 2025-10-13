@@ -490,6 +490,8 @@ return [
                     'create-success'      => 'Attributtkolonne ble opprettet',
                     'update-success'      => 'Attributtkolonne ble oppdatert',
                     'delete-success'      => 'Attributtkolonne ble slettet',
+                    'create-failed'       => 'Kunne ikke opprette attributtkolonne',
+                    'update-failed'       => 'Kunne ikke oppdatere attributtkolonne',
                 ],
 
                 'table-attribute' => [
@@ -506,6 +508,8 @@ return [
                 'option'              => [
                     'create-success'  => 'Attributtkolonnealternativ opprettet',
                     'update-success'  => 'Attributtkolonnealternativ oppdatert',
+                    'delete-success'  => 'Attributtkolonnealternativet ble slettet',
+                    'delete-failed'   => 'Kunne ikke slette attributtkolonnealternativ',
                 ],
             ],
 

@@ -490,6 +490,8 @@ return [
                     'create-success'      => 'Coloana atributului a fost creată cu succes',
                     'update-success'      => 'Coloana atributului a fost actualizată cu succes',
                     'delete-success'      => 'Coloana atributului a fost ștearsă cu succes',
+                    'create-failed'       => 'Crearea coloanei atributului a eșuat',
+                    'update-failed'       => 'Actualizarea coloanei atributului a eșuat',
                 ],
 
                 'table-attribute' => [
@@ -506,6 +508,8 @@ return [
                 'option'              => [
                     'create-success'  => 'Opțiunea coloanei atributului a fost creată cu succes',
                     'update-success'  => 'Opțiunea coloanei atributului a fost actualizată cu succes',
+                    'delete-success'  => 'Opțiunea coloanei atributului a fost ștersă cu succes',
+                    'delete-failed'   => 'Ștergerea opțiunii coloanei atributului a eșuat',
                 ],
             ],
 

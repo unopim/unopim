@@ -489,6 +489,8 @@ return [
                     'create-success'      => '屬性欄位建立成功',
                     'update-success'      => '屬性欄位更新成功',
                     'delete-success'      => '屬性欄位刪除成功',
+                    'create-failed'       => '建立屬性欄位失敗',
+                    'update-failed'       => '更新屬性欄位失敗',
                 ],
 
                 'table-attribute' => [
@@ -505,6 +507,8 @@ return [
                 'option'              => [
                     'create-success'  => '屬性欄位選項建立成功',
                     'update-success'  => '屬性欄位選項更新成功',
+                    'delete-success'  => '屬性欄位選項已成功刪除',
+                    'delete-failed'   => '刪除屬性欄位選項失敗',
                 ],
             ],
 

@@ -492,6 +492,8 @@ return [
                     'create-success'      => 'تم إنشاء عمود السمة بنجاح',
                     'update-success'      => 'تم تحديث عمود السمة بنجاح',
                     'delete-success'      => 'تم حذف عمود السمة بنجاح',
+                    'create-failed'       => 'فشل في إنشاء عمود السمة',
+                    'update-failed'       => 'فشل في تحديث عمود السمة',
                 ],
 
                 'table-attribute' => [
@@ -509,6 +511,8 @@ return [
                 'option'              => [
                     'create-success' => 'تم إنشاء خيار عمود السمة بنجاح',
                     'update-success' => 'تم تحديث خيار عمود السمة بنجاح',
+                    'delete-success' => 'تم حذف خيار عمود السمة بنجاح',
+                    'delete-failed'  => 'فشل في حذف خيار عمود السمة',
                 ],
             ],
 

@@ -491,6 +491,8 @@ return [
                     'create-success'      => 'Аттрибутын багана амжилттай үүслээ',
                     'update-success'      => 'Аттрибутын багана амжилттай шинэчлэгдлээ',
                     'delete-success'      => 'Аттрибутын багана амжилттай устгагдлаа',
+                    'create-failed'       => 'Attribute Column үүсгэхэд амжилтгүй боллоо',
+                    'update-failed'       => 'Attribute Column шинэчлэхэд амжилтгүй боллоо',
                 ],
 
                 'table-attribute' => [
@@ -508,6 +510,8 @@ return [
                 'option'              => [
                     'create-success'  => 'Атрибутын баганын сонголт амжилттай үүслээ',
                     'update-success'  => 'Атрибутын баганын сонголт амжилттай шинэчлэгдлээ',
+                    'delete-success'  => 'Attribute Column Option амжилттай устгагдлаа',
+                    'delete-failed'   => 'Attribute Column Option устгахад амжилтгүй боллоо',
                 ],
             ],
 

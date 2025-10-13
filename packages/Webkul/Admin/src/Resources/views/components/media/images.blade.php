@@ -9,9 +9,9 @@
 
 <v-media-images
     name="{{ $name }}"
-    v-bind:allow-multiple="{{ $allowMultiple ? true : false }}"
+    v-bind:allow-multiple="{{ $allowMultiple ? 'true' : 'false' }}"
     v-bind:show-placeholders="{{ $showPlaceholders ? 'true' : 'false' }}"
-    :uploaded-images='{{ json_encode($uploadedImages) }}'
+    :uploaded-images='@json($uploadedImages)'
     width="{{ $width }}"
     height="{{ $height }}"
     :errors="errors"

@@ -492,6 +492,8 @@ return [
                     'create-success'      => 'Attributkolonne blev oprettet',
                     'update-success'      => 'Attributkolonne blev opdateret',
                     'delete-success'      => 'Attributkolonne blev slettet',
+                    'create-failed'       => 'Kunne ikke oprette attributkolonne',
+                    'update-failed'       => 'Kunne ikke opdatere attributkolonne',
                 ],
 
                 'table-attribute' => [
@@ -508,6 +510,8 @@ return [
                 'option'              => [
                     'create-success'  => 'Attributkolonnevalg oprettet med succes',
                     'update-success'  => 'Attributkolonnevalg opdateret med succes',
+                    'delete-success'  => 'Attributkolonneindstilling blev slettet med succes',
+                    'delete-failed'   => 'Kunne ikke slette attributkolonneindstilling',
                 ],
             ],
 

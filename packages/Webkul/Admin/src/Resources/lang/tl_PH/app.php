@@ -489,6 +489,8 @@ return [
                     'create-success'      => 'Matagumpay na nalikha ang Attribute Column',
                     'update-success'      => 'Matagumpay na na-update ang Attribute Column',
                     'delete-success'      => 'Matagumpay na nabura ang Attribute Column',
+                    'create-failed'       => 'Nabigong Lumikha ng Attribute Column',
+                    'update-failed'       => 'Nabigong I-update ang Attribute Column',
                 ],
 
                 'table-attribute' => [
@@ -505,6 +507,8 @@ return [
                 'option'              => [
                     'create-success'  => 'Matagumpay na nalikha ang opsyon ng attribute column',
                     'update-success'  => 'Matagumpay na na-update ang opsyon ng attribute column',
+                    'delete-success'  => 'Matagumpay na Natanggal ang Opsyon ng Column ng Attribute',
+                    'delete-failed'   => 'Nabigong Tanggalin ang Attribute Column Option',
                 ],
             ],
 

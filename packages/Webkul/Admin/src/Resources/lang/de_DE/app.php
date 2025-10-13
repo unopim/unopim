@@ -488,6 +488,8 @@ return [
                     'create-success'      => 'Attributspalte wurde erfolgreich erstellt',
                     'update-success'      => 'Attributspalte wurde erfolgreich aktualisiert',
                     'delete-success'      => 'Attributspalte wurde erfolgreich gelöscht',
+                    'create-failed'       => 'Erstellen der Attribut-Spalte fehlgeschlagen',
+                    'update-failed'       => 'Aktualisierung der Attribut-Spalte fehlgeschlagen',
                 ],
 
                 'table-attribute' => [
@@ -504,6 +506,8 @@ return [
                 'option'              => [
                     'create-success'  => 'Attributspalten-Option erfolgreich erstellt',
                     'update-success'  => 'Attributspalten-Option erfolgreich aktualisiert',
+                    'delete-success'  => 'Attribut-Spaltenoption erfolgreich gelöscht',
+                    'delete-failed'   => 'Löschen der Attribut-Spaltenoption fehlgeschlagen',
                 ],
             ],
 

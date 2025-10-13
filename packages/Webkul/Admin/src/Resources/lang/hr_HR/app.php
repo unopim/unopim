@@ -490,6 +490,8 @@ return [
                     'create-success'      => 'Stupac atributa je uspješno stvoren',
                     'update-success'      => 'Stupac atributa je uspješno ažuriran',
                     'delete-success'      => 'Stupac atributa je uspješno izbrisan',
+                    'create-failed'       => 'Neuspjelo kreiranje stupca atributa',
+                    'update-failed'       => 'Neuspjela nadogradnja stupca atributa',
                 ],
 
                 'table-attribute' => [
@@ -506,6 +508,8 @@ return [
                 'option'              => [
                     'create-success'  => 'Opcija stupca atributa uspješno stvorena',
                     'update-success'  => 'Opcija stupca atributa uspješno ažurirana',
+                    'delete-success'  => 'Opcija stupca atributa uspješno je izbrisana',
+                    'delete-failed'   => 'Neuspjelo brisanje opcije stupca atributa',
                 ],
             ],
 

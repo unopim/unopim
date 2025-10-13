@@ -489,6 +489,8 @@ return [
                     'create-success'      => '属性列创建成功',
                     'update-success'      => '属性列更新成功',
                     'delete-success'      => '属性列删除成功',
+                    'create-failed'       => '创建属性列失败',
+                    'update-failed'       => '更新属性列失败',
                 ],
 
                 'table-attribute' => [
@@ -505,6 +507,8 @@ return [
                 'option'              => [
                     'create-success'  => '属性列选项创建成功',
                     'update-success'  => '属性列选项更新成功',
+                    'delete-success'  => '属性列选项删除成功',
+                    'delete-failed'   => '删除属性列选项失败',
                 ],
             ],
 

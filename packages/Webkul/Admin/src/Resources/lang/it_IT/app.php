@@ -489,6 +489,8 @@ return [
                     'create-success'      => 'Colonna attributo creata con successo',
                     'update-success'      => 'Colonna attributo aggiornata con successo',
                     'delete-success'      => 'Colonna attributo eliminata con successo',
+                    'create-failed'       => 'Creazione della colonna attributo non riuscita',
+                    'update-failed'       => 'Aggiornamento della colonna attributo non riuscito',
                 ],
 
                 'table-attribute' => [
@@ -506,6 +508,8 @@ return [
                 'option'              => [
                     'create-success'  => 'Opzione colonna attributo creata con successo',
                     'update-success'  => 'Opzione colonna attributo aggiornata con successo',
+                    'delete-success'  => 'Opzione colonna attributo eliminata con successo',
+                    'delete-failed'   => 'Eliminazione dell\'opzione della colonna attributo non riuscita',
                 ],
             ],
 

@@ -413,6 +413,8 @@ return [
                     'create-success'      => 'Kolumna atrybutu została pomyślnie utworzona',
                     'update-success'      => 'Kolumna atrybutu została pomyślnie zaktualizowana',
                     'delete-success'      => 'Kolumna atrybutu została pomyślnie usunięta',
+                    'create-failed'       => 'Nie udało się utworzyć kolumny atrybutu',
+                    'update-failed'       => 'Nie udało się zaktualizować kolumny atrybutu',
                 ],
 
                 'table-attribute' => [
@@ -507,6 +509,8 @@ return [
                 'option'              => [
                     'create-success'  => 'Opcja kolumny atrybutu została pomyślnie utworzona',
                     'update-success'  => 'Opcja kolumny atrybutu została pomyślnie zaktualizowana',
+                    'delete-success'  => 'Opcja kolumny atrybutu została pomyślnie usunięta',
+                    'delete-failed'   => 'Nie udało się usunąć opcji kolumny atrybutu',
                 ],
             ],
 

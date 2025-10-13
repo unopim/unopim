@@ -490,6 +490,8 @@ return [
                     'create-success'      => 'Tạo cột thuộc tính thành công',
                     'update-success'      => 'Cập nhật cột thuộc tính thành công',
                     'delete-success'      => 'Xóa cột thuộc tính thành công',
+                    'create-failed'       => 'Tạo cột thuộc tính thất bại',
+                    'update-failed'       => 'Cập nhật cột thuộc tính thất bại',
                 ],
 
                 'table-attribute' => [
@@ -506,6 +508,8 @@ return [
                 'option'              => [
                     'create-success'  => 'Tùy chọn cột thuộc tính đã được tạo thành công',
                     'update-success'  => 'Tùy chọn cột thuộc tính đã được cập nhật thành công',
+                    'delete-success'  => 'Tùy chọn cột thuộc tính đã được xóa thành công',
+                    'delete-failed'   => 'Xóa tùy chọn cột thuộc tính thất bại',
                 ],
             ],
 

@@ -491,6 +491,8 @@ return [
                     'create-success'      => 'Attribuutkolom succesvol aangemaakt',
                     'update-success'      => 'Attribuutkolom succesvol bijgewerkt',
                     'delete-success'      => 'Attribuutkolom succesvol verwijderd',
+                    'create-failed'       => 'Attribuutkolom aanmaken mislukt',
+                    'update-failed'       => 'Attribuutkolom bijwerken mislukt',
                 ],
 
                 'table-attribute' => [
@@ -507,6 +509,8 @@ return [
                 'option'              => [
                     'create-success'  => 'Attribuutkolomoptie succesvol aangemaakt',
                     'update-success'  => 'Attribuutkolomoptie succesvol bijgewerkt',
+                    'delete-success'  => 'Attribuutkolomoptie succesvol verwijderd',
+                    'delete-failed'   => 'Attribuutkolomoptie verwijderen mislukt',
                 ],
             ],
 

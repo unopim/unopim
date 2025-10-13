@@ -488,6 +488,8 @@ return [
                     'create-success'      => 'Attribute column created successfully',
                     'update-success'      => 'Attribute column updated successfully',
                     'delete-success'      => 'Attribute column deleted successfully',
+                    'create-failed'       => 'Failed to Create Attribute Column',
+                    'update-failed'       => 'Failed to Update Attribute Column',
                 ],
 
                 'table-attribute' => [
@@ -505,6 +507,8 @@ return [
                 'option'              => [
                     'create-success'  => 'Attribute Column Option Created Successfully',
                     'update-success'  => 'Attribute Column Option Updated Successfully',
+                    'delete-success'  => 'Attribute Column Option Deleted Successfully',
+                    'delete-failed'   => 'Failed to Delete Attribute Column Option',
                 ],
             ],
 

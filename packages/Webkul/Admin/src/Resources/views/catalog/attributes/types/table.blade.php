@@ -28,7 +28,7 @@
         $columnValidationTypes = [
             'number'   => ['text'],
             'email'    => ['text'],
-            'required' => ['text', 'boolean', 'date', 'select', 'multiselect'],
+            'required' => ['text', 'date', 'select', 'multiselect'],
             'decimal'  => ['text'],
         ];
 
@@ -117,7 +117,7 @@
 
     <x-admin::form v-slot="{ meta, errors, handleSubmit }" as="div" ref="addColumnForm">
         <form @submit.prevent="handleSubmit($event, storeColumns)" enctype="multipart/form-data" ref="addColumnsForm">
-            <x-admin::modal ref="addColumns" type="small">
+            <x-admin::modal ref="addColumns" type="large">
                 <x-slot:header>
                     <p class="text-lg text-gray-800 dark:text-white font-bold">
                     @lang('admin::app.catalog.attributes.edit.add-column')
@@ -125,62 +125,86 @@
                 </x-slot>
 
                 <x-slot:content :class="'bg-white dark:bg-gray-900'">
-                    <div class="grid grid-cols-1 gap-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-md mb-2 text-gray-800 dark:text-white font-bold">
+                                @lang('admin::app.catalog.attributes.edit.column.title')
+                            </p>
+                            <x-admin::form.control-group>
+                                <x-admin::form.control-group.label class="required">
+                                    @lang('admin::app.catalog.attributes.edit.code')
+                                </x-admin::form.control-group.label>                      
+    
+                                <x-admin::form.control-group.control
+                                    type="text"
+                                    name="code"
+                                    rules="required"
+                                    :label="trans('admin::app.catalog.attributes.edit.code')"
+                                    :placeholder="trans('admin::app.catalog.attributes.edit.code')"
+                                />
+                                <x-admin::form.control-group.error control-name="code" />
+                            </x-admin::form.control-group>
+    
+                            <x-admin::form.control-group>
+                                <x-admin::form.control-group.label class="required">
+                                    @lang('admin::app.catalog.attributes.edit.table-attribute.type')
+                                </x-admin::form.control-group.label>
+    
+                                <x-admin::form.control-group.control
+                                    type="select"
+                                    name="type"
+                                    rules="required"
+                                    :options="$columnTypesJson"
+                                    track-by="key"
+                                    label-by="label"
+                                    v-model="selectedType"
+                                />
+    
+                                <x-admin::form.control-group.error control-name="type" />
+                            </x-admin::form.control-group>
+    
+                            <x-admin::form.control-group>
+                                <x-admin::form.control-group.label>
+                                    @lang('admin::app.catalog.attributes.edit.validation')
+                                </x-admin::form.control-group.label>
+    
+                                <x-admin::form.control-group.control
+                                    type="multiselect"
+                                    name="validation"
+                                    :label="trans('admin::app.catalog.attributes.edit.code')"
+                                    :placeholder="trans('admin::app.catalog.attributes.edit.validation')"
+                                    ref="validation"
+                                    ::disabled="true !== columnIsNew"
+                                    ::options="filteredValidationTypes"
+                                    track-by="id"
+                                    label-by="label"
+                                    v-model="selectedValidation"
+                                />
+    
+                                <x-admin::form.control-group.error control-name="validation" />
+                            </x-admin::form.control-group>
+                        </div>
 
-                        <x-admin::form.control-group>
-                            <x-admin::form.control-group.label class="required">
-                                @lang('admin::app.catalog.attributes.edit.code')
-                            </x-admin::form.control-group.label>
+                        <div class="overflow-auto" style="max-height:246px">
+                            <p class="text-md mb-2 text-gray-800 dark:text-white font-bold">
+                            @lang('admin::app.catalog.attributes.edit.label')
+                            </p>
+                            @foreach ($locales as $index => $locale)
+                                <x-admin::form.control-group class="w-full mb-2.5">
+                                    <x-admin::form.control-group.label>
+                                        {{ $locale->name }}
+                                    </x-admin::form.control-group.label>
 
-                            <x-admin::form.control-group.control
-                                type="text"
-                                name="code"
-                                rules="required"
-                                :label="trans('admin::app.catalog.attributes.edit.code')"
-                                :placeholder="trans('admin::app.catalog.attributes.edit.code')"
-                            />
-                            <x-admin::form.control-group.error control-name="code" />
-                        </x-admin::form.control-group>
+                                    <x-admin::form.control-group.control
+                                        type="text"
+                                        name="{{ $locale->code }}[label]"
+                                        :label="$locale->name"
+                                    />
 
-                        <x-admin::form.control-group>
-                            <x-admin::form.control-group.label class="required">
-                                @lang('admin::app.catalog.attributes.edit.table-attribute.type')
-                            </x-admin::form.control-group.label>
-
-                            <x-admin::form.control-group.control
-                                type="select"
-                                name="type"
-                                rules="required"
-                                :options="$columnTypesJson"
-                                track-by="key"
-                                label-by="label"
-                                v-model="selectedType"
-                            />
-
-                            <x-admin::form.control-group.error control-name="type" />
-                        </x-admin::form.control-group>
-
-                        <x-admin::form.control-group>
-                            <x-admin::form.control-group.label>
-                                @lang('admin::app.catalog.attributes.edit.validation')
-                            </x-admin::form.control-group.label>
-
-                            <x-admin::form.control-group.control
-                                type="multiselect"
-                                name="validation"
-                                :label="trans('admin::app.catalog.attributes.edit.code')"
-                                :placeholder="trans('admin::app.catalog.attributes.edit.code')"
-                                ref="validation"
-                                ::disabled="true !== columnIsNew"
-                                ::options="filteredValidationTypes"
-                                track-by="id"
-                                label-by="label"
-                                v-model="selectedValidation"
-                            />
-
-                            <x-admin::form.control-group.error control-name="validation" />
-                        </x-admin::form.control-group>
-
+                                    <x-admin::form.control-group.error control-name="translations[{{ $index }}]label" />
+                                </x-admin::form.control-group>
+                            @endforeach
+                        </div>
                     </div>
                 </x-slot>
 
@@ -251,7 +275,6 @@
                                         type="multiselect"
                                         name="validation"
                                         ::options="filteredValidationTypes"
-                                        ::disabled="true"
                                         track-by="id"
                                         label-by="label"
                                     />
@@ -289,8 +312,10 @@
                             </div>
                             <!-- Options Section -->
                             <div class="border border-slate-300 dark:border-gray-800 rounded p-2 grid grid-cols-2 gap-4 mt-8">
+                                <!-- Left Pannel -->
                                 <div class="col-span-1 space-y-2 overflow-auto border-r pr-4" style="max-height:246px"   @scroll="onScroll" >
-                                    <div class="flex justify-between items-center mb-2">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <!-- Search Section -->
                                         <div class="cursor-pointer w-[254px] text-violet-700 font-semibold text-md mr-1" >
                                             <div class="relative w-full flex items-center justify-center mb-3" >
                                                 <input
@@ -304,7 +329,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="cursor-pointer text-violet-700 font-semibold text-md mr-1" @click="$refs.addOption.toggle();">
+                                        <div class="secondary-button text-sm" @click="$refs.addOption.toggle();">
                                         @lang('admin::app.catalog.attributes.create.add-option')
                                         </div>
                                     </div>
@@ -322,7 +347,6 @@
                                         <span style="width:80%" class="w-[80%] flex gap-2.5 p-1.5 items-center cursor-pointer peer active"         :class="{ 'text-violet-700 font-semibold bg-violet-100 rounded-lg dark:bg-violet-200': activeOptionId === option.id }"
                                         >@{{ option.code }}</span>
                                         <span
-                                            v-if="activeOptionId === option.id"
                                             class="w-[20%] icon-delete p-1.5 rounded-md text-2xl cursor-pointer transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center flex justify-center items-center"
                                             @click.stop="deleteOption(option.id)"
                                         >
@@ -330,12 +354,12 @@
                     
                                     </div>
                                 </div>
-
+                                <!-- Right Pannel -->
                                 <div class="col-span-1 overflow-auto"  style="max-height:246px" v-if="optionData.length > 0">
                                     <div class="flex justify-between items-center pb-2 text-gray-800 dark:text-white text-base font-semibold">
                                         <span>@lang('admin::app.catalog.attribute-groups.edit.label')</span>
                                         <span 
-                                            class="cursor-pointer text-violet-700 font-semibold text-md mr-1 p-2"
+                                            class="secondary-button text-sm"
                                             @click="saveOption()"
                                         >
                                         @lang('admin::app.catalog.attributes.edit.table-attribute.save')
@@ -343,7 +367,7 @@
                                     </div>
 
                                     <div>
-                                        <div v-if="optionData.length > 0" v-for="locale in locales" :key="locale.code">
+                                        <div v-if="optionData.length > 0" v-for="locale in locales" :key="locale.code" class="mb-4 w-full">
                                             <label class="flex gap-1 items-center mb-1.5 text-xs text-gray-800 dark:text-white font-medium">
                                                 @{{ locale.name }}
                                             </label>
@@ -483,21 +507,25 @@ app.component('v-edit-table-attribute', {
         deleteOption(id) {
             const url = this.deleteOptionRoute.replace('OPTION_ID', id);
 
-            this.$axios.delete(url)
-                .then(response => {
-                    this.$emitter.emit('add-flash', {
-                        type: 'success',
-                        message: "@lang('admin::app.catalog.attributes.edit.table.save-success')"
-                    });
-                    this.reloadOptions();
-                })
-                .catch(error => {
-                    this.$emitter.emit('add-flash', {
-                        type: 'error',
-                        message: "@lang('admin::app.catalog.attributes.edit.table.save-failed')"
-                    });
-                    console.error(error);
-                });
+            this.$emitter.emit('open-delete-modal', {
+                agree: () => {
+                    this.$axios.delete(url)
+                        .then(response => {
+                            this.$emitter.emit('add-flash', {
+                                type: 'success',
+                                message: "@lang('admin::app.catalog.attributes.column.option.delete-success')"
+                            });
+                            this.reloadOptions();
+                        })
+                        .catch(error => {
+                            this.$emitter.emit('add-flash', {
+                                type: 'error',
+                                message: "@lang('admin::app.catalog.attributes.column.option.delete-failed')"
+                            });
+                            console.error(error);
+                        });
+                }
+            });
         },
 
         getTranslationLabel(optionId, localeCode) {
@@ -595,7 +623,7 @@ app.component('v-edit-table-attribute', {
                 .then(response => {
                     this.$emitter.emit('add-flash', {
                         type: 'success',
-                        message: "@lang('admin::app.catalog.attributes.edit.table-attribute.save-success')"
+                        message: "@lang('admin::app.catalog.attributes.column.option.update-success')"
                     });
 
                     this.reloadOptions();
@@ -609,6 +637,17 @@ app.component('v-edit-table-attribute', {
         editColumn(params, { resetForm }) {
             const updateurl = this.updateColumnRoute.replace('COLUMN_ID', this.columnId);
 
+            let validation = this.parseValue(params.validation) || [];
+
+            if (
+                Array.isArray(validation) &&
+                validation.every(item => typeof item === 'object' && item !== null && 'id' in item)
+            ) {
+                params.validation = validation.map(item => item.id).join(',');
+            } else {
+                params.validation = validation.join(',');
+            }
+
             params.translations.forEach(item => {
                 if (item.locale) {
                     params[item.locale] = { label: item.label };
@@ -619,7 +658,7 @@ app.component('v-edit-table-attribute', {
                 .then(response => {
                     this.$emitter.emit('add-flash', {
                         type: 'success',
-                        message: "@lang('admin::app.catalog.attributes.edit.table-attribute.save-success')"
+                        message: "@lang('admin::app.catalog.attributes.edit.column.update-success')"
                     });
                     this.$refs.columnDatagrid.get();
                     this.$refs.editColumns.toggle();
@@ -627,7 +666,7 @@ app.component('v-edit-table-attribute', {
                 .catch(error => {
                     this.$emitter.emit('add-flash', {
                         type: 'error',
-                        message: "@lang('admin::app.catalog.attributes.edit.table-attribute.save-failed')"
+                        message: "@lang('admin::app.catalog.attributes.edit.column.update-failed')"
                     });
                     console.error(error);
                 });
@@ -653,7 +692,7 @@ app.component('v-edit-table-attribute', {
                 .then(response => {
                     this.$emitter.emit('add-flash', {
                         type: 'success',
-                        message: "@lang('admin::app.catalog.attributes.edit.table-attribute.save-success')"
+                        message: "@lang('admin::app.catalog.attributes.column.option.create-success')"
                     });
                     this.reloadOptions();
                     this.$refs.addOption.toggle();
@@ -676,7 +715,7 @@ app.component('v-edit-table-attribute', {
                 .then(response => {
                     this.$emitter.emit('add-flash', {
                         type: 'success',
-                        message: "@lang('admin::app.catalog.attributes.edit.table-attribute.save-success')"
+                        message: "@lang('admin::app.catalog.attributes.edit.column.create-success')"
                     });
                     this.$refs.columnDatagrid.get();
                     this.$refs.addColumns.toggle();
@@ -685,7 +724,7 @@ app.component('v-edit-table-attribute', {
                 .catch(error => {
                     this.$emitter.emit('add-flash', {
                         type: 'error',
-                        message: "@lang('admin::app.catalog.attributes.edit.table-attribute.save-failed')"
+                        message: "@lang('admin::app.catalog.attributes.edit.column.create-failed')"
                     });
                     if (error.response.status === 422) {
                         this.$refs.addColumnForm.setErrors(error.response.data.errors);

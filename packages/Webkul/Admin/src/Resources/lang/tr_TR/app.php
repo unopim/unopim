@@ -490,6 +490,8 @@ return [
                     'create-success'      => 'Öznitelik sütunu başarıyla oluşturuldu',
                     'update-success'      => 'Öznitelik sütunu başarıyla güncellendi',
                     'delete-success'      => 'Öznitelik sütunu başarıyla silindi',
+                    'create-failed'       => 'Özellik Sütunu Oluşturulamadı',
+                    'update-failed'       => 'Özellik Sütunu Güncellenemedi',
                 ],
 
                 'table-attribute' => [
@@ -506,6 +508,8 @@ return [
                 'option'              => [
                     'create-success'  => 'Öznitelik sütun seçeneği başarıyla oluşturuldu',
                     'update-success'  => 'Öznitelik sütun seçeneği başarıyla güncellendi',
+                    'delete-success'  => 'Özellik Sütunu Seçeneği Başarıyla Silindi',
+                    'delete-failed'   => 'Özellik Sütunu Seçeneği Silinemedi',
                 ],
             ],
 

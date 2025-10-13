@@ -491,6 +491,8 @@ return [
                     'create-success'      => 'Attributkolumn skapades framgångsrikt',
                     'update-success'      => 'Attributkolumn uppdaterades framgångsrikt',
                     'delete-success'      => 'Attributkolumn raderades framgångsrikt',
+                    'create-failed'       => 'Misslyckades med att skapa attributkolumn',
+                    'update-failed'       => 'Misslyckades med att uppdatera attributkolumn',
                 ],
 
                 'table-attribute' => [
@@ -507,6 +509,8 @@ return [
                 'option'              => [
                     'create-success'  => 'Attributkolumnalternativ har skapats',
                     'update-success'  => 'Attributkolumnalternativ har uppdaterats',
+                    'delete-success'  => 'Attributkolumnalternativet har raderats',
+                    'delete-failed'   => 'Misslyckades med att ta bort attributkolumnalternativ',
                 ],
             ],
 

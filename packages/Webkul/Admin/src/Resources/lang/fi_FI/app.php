@@ -490,6 +490,8 @@ return [
                     'create-success'      => 'Attribuuttisarake luotu onnistuneesti',
                     'update-success'      => 'Attribuuttisarake päivitetty onnistuneesti',
                     'delete-success'      => 'Attribuuttisarake poistettu onnistuneesti',
+                    'create-failed'       => 'Attribuuttisarakkeen luominen epäonnistui',
+                    'update-failed'       => 'Attribuuttisarakkeen päivittäminen epäonnistui',
                 ],
 
                 'table-attribute' => [
@@ -506,6 +508,8 @@ return [
                 'option'              => [
                     'create-success'  => 'Attribuuttisarakkeen vaihtoehto luotu onnistuneesti',
                     'update-success'  => 'Attribuuttisarakkeen vaihtoehto päivitetty onnistuneesti',
+                    'delete-success'  => 'Attribuuttisarakkeen vaihtoehto poistettiin onnistuneesti',
+                    'delete-failed'   => 'Attribuuttisarakkeen vaihtoehdon poistaminen epäonnistui',
                 ],
             ],
 

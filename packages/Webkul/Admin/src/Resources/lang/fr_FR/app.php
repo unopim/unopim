@@ -488,6 +488,8 @@ return [
                     'create-success'      => 'Colonne d’attribut créée avec succès',
                     'update-success'      => 'Colonne d’attribut mise à jour avec succès',
                     'delete-success'      => 'Colonne d’attribut supprimée avec succès',
+                    'create-failed'       => 'Échec de la création de la colonne d\'attribut',
+                    'update-failed'       => 'Échec de la mise à jour de la colonne d\'attribut',
                 ],
 
                 'table-attribute' => [
@@ -504,6 +506,8 @@ return [
                 'option'              => [
                     'create-success'  => 'Option de colonne d\'attribut créée avec succès',
                     'update-success'  => 'Option de colonne d\'attribut mise à jour avec succès',
+                    'delete-success'  => 'Option de colonne d\'attribut supprimée avec succès',
+                    'delete-failed'   => 'Échec de la suppression de l\'option de colonne d\'attribut',
                 ],
             ],
 

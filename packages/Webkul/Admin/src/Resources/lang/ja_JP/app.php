@@ -488,6 +488,8 @@ return [
                     'create-success'      => '属性カラムが正常に作成されました',
                     'update-success'      => '属性カラムが正常に更新されました',
                     'delete-success'      => '属性カラムが正常に削除されました',
+                    'create-failed'       => '属性列の作成に失敗しました',
+                    'update-failed'       => '属性列の更新に失敗しました',
                 ],
 
                 'table-attribute' => [
@@ -504,6 +506,9 @@ return [
                 'option'              => [
                     'create-success'  => '属性列オプションが正常に作成されました',
                     'update-success'  => '属性列オプションが正常に更新されました',
+                    'delete-success'  => '属性列オプションが正常に削除されました',
+                    'delete-failed'   => '属性列オプションの削除に失敗しました',
+
                 ],
             ],
 

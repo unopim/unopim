@@ -36,7 +36,7 @@ class TableAttributeController extends Controller
     {
         $attribute = $this->attributeRepository->where('type', 'table')->findOrFail($attributeId);
 
-        $validated = $request->validate([
+        $rules = [
             'code' => [
                 'required',
                 'string',
@@ -47,11 +47,9 @@ class TableAttributeController extends Controller
             ],
             'type'       => 'required|in:text,select,multiselect,image,date,boolean',
             'validation' => 'nullable|string',
-        ]);
+        ];
 
-        foreach (core()->getAllActiveLocales() as $locale) {
-            $validated[$locale->code] = ['label' => ''];
-        }
+        $validated = $this->validateWithLocales($request, $rules);
 
         $this->attributeColumnRepository->create(array_merge($validated, [
             'attribute_id' => $attribute->id,
@@ -93,13 +91,14 @@ class TableAttributeController extends Controller
     public function updateColumn(Request $request, $columnId)
     {
         $request->validate([
-            'code' => ['required', new Code],
-            'type' => 'required',
+            'code'       => ['required', new Code],
+            'type'       => 'required',
+            'validation' => 'nullable|string',
         ]);
 
         $column = $this->attributeColumnRepository->findOrFail($columnId);
 
-        $data = $request->except(['type', 'code', 'validation', 'options']);
+        $data = $request->except(['type', 'code', 'options']);
 
         $this->attributeColumnRepository->update($data, $columnId);
 
@@ -221,14 +220,16 @@ class TableAttributeController extends Controller
             ])->status(422);
         }
 
-        $validated = $request->validate([
+        $rules = [
             'code' => [
                 'required',
                 new Code,
                 Rule::unique('attribute_column_options', 'code')
                     ->where('attribute_column_id', $columnId),
             ],
-        ]);
+        ];
+
+        $validated = $this->validateWithLocales($request, $rules);
 
         try {
             $option = $column->options()->create($validated);
@@ -255,5 +256,19 @@ class TableAttributeController extends Controller
         $option->delete();
 
         return response()->json(['message' => trans('admin::app.catalog.attributes.edit.option.delete-success')]);
+    }
+
+    /**
+     * Validate request with additional locale rules.
+     *
+     * @param  string  $localeField
+     */
+    public function validateWithLocales(Request $request, array $rules): array
+    {
+        foreach (core()->getAllActiveLocales() as $locale) {
+            $rules[$locale->code.'.label'] = 'string';
+        }
+
+        return $request->validate($rules);
     }
 }

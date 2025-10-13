@@ -489,6 +489,8 @@ return [
                     'create-success'      => 'Kolom atribut berhasil dibuat',
                     'update-success'      => 'Kolom atribut berhasil diperbarui',
                     'delete-success'      => 'Kolom atribut berhasil dihapus',
+                    'create-failed'       => 'Gagal Membuat Kolom Atribut',
+                    'update-failed'       => 'Gagal Memperbarui Kolom Atribut',
                 ],
 
                 'table-attribute' => [
@@ -505,6 +507,8 @@ return [
                 'option'              => [
                     'create-success'  => 'Opsi kolom atribut berhasil dibuat',
                     'update-success'  => 'Opsi kolom atribut berhasil diperbarui',
+                    'delete-success'  => 'Opsi Kolom Atribut Berhasil Dihapus',
+                    'delete-failed'   => 'Gagal Menghapus Opsi Kolom Atribut',
                 ],
             ],
 
