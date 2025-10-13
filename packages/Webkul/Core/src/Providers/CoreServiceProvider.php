@@ -5,6 +5,7 @@ namespace Webkul\Core\Providers;
 use Elastic\Elasticsearch\Client as ElasticSearchClient;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\AliasLoader;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Webkul\Core\Core;
@@ -12,6 +13,7 @@ use Webkul\Core\ElasticSearch;
 use Webkul\Core\Exceptions\Handler;
 use Webkul\Core\Facades\Core as CoreFacade;
 use Webkul\Core\Facades\ElasticSearch as ElasticSearchFacade;
+use Webkul\Core\Helpers\DatabaseGrammarBuilder;
 use Webkul\Core\View\Compilers\BladeCompiler;
 use Webkul\Theme\ViewRenderEventManager;
 
@@ -73,6 +75,8 @@ class CoreServiceProvider extends ServiceProvider
                 'as'   => 'imagecache',
             ])->where(['filename' => $filenamePattern]);
         }
+
+        DB::macro('grammar', fn () => new DatabaseGrammarBuilder);
     }
 
     /**

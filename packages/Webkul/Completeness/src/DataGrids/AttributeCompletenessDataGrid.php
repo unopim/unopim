@@ -53,7 +53,7 @@ class AttributeCompletenessDataGrid extends DataGrid
                     ELSE {$tablePrefix}attribute_translations.name
                 END AS name
             "),
-                DB::raw("GROUP_CONCAT(DISTINCT {$tablePrefix}channels.code ORDER BY {$tablePrefix}channels.code ASC SEPARATOR ', ') AS channel_required")
+                DB::raw(DB::grammar()->groupConcat('channels.code', 'channel_required', 'channels.code', true)),
             )
             ->groupBy(
                 'attributes.id',
