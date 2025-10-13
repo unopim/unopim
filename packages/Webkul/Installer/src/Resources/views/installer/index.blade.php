@@ -454,13 +454,11 @@
                                             @lang('installer::app.installer.index.environment-configuration.mysql')
                                         </option>
 
-                                        <!-- @TODO: Future support for -->
-
-                                        <!-- <option value="pgsql">
+                                        <option value="pgsql">
                                             @lang('installer::app.installer.index.environment-configuration.pgsql')
                                         </option>
-
-                                        <option value="sqlsrv">
+                                        <!-- @TODO: Future support for -->
+                                        <!-- <option value="sqlsrv">
                                             @lang('installer::app.installer.index.environment-configuration.sqlsrv')
                                         </option> -->
                                     </x-installer::form.control-group.control>
@@ -1236,7 +1234,7 @@
                         FormSubmit(params, { setErrors }) {
                             const stepActions = {
                                 envDatabase: (setErrors) => {
-                                    if (params.db_connection === 'mysql') {
+                                    if (params.db_connection === 'mysql' || params.db_connection === 'pgsql') {
                                         this.completeStep('envDatabase', 'readyForInstallation', 'active', 'complete', setErrors);
 
                                         this.envData = { ...this.envData, ...params };

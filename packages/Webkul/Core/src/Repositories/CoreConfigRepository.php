@@ -3,6 +3,7 @@
 namespace Webkul\Core\Repositories;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -30,18 +31,13 @@ class CoreConfigRepository extends Repository
     {
         Event::dispatch('core.configuration.save.before');
 
-        $channel = null;
-        $locale = null;
+        $channel = $locale = null;
 
-        if (
-            isset($data['locale']) && $data['locale']
-            || isset($data['channel']) && $data['channel']
-        ) {
-            $locale = $data['locale'];
-            $channel = $data['channel'];
+        if ((isset($data['locale']) && $data['locale']) || (isset($data['channel']) && $data['channel'])) {
+            $locale = $data['locale'] ?? null;
+            $channel = $data['channel'] ?? null;
 
-            unset($data['locale']);
-            unset($data['channel']);
+            unset($data['locale'], $data['channel']);
         }
 
         foreach ($data as $method => $fieldData) {
@@ -49,38 +45,41 @@ class CoreConfigRepository extends Repository
 
             foreach ($recursiveData as $fieldName => $value) {
                 $field = core()->getConfigField($fieldName);
-                if (
-                    $field['type'] === 'password' &&
-                    preg_match('/^\*+$/', $value)
-                ) {
-                    $original = core()->getConfigData($fieldName);
 
+                if ($field['type'] === 'password' && preg_match('/^\*+$/', $value)) {
+                    $original = core()->getConfigData($fieldName);
                     if (strlen($value) === strlen($original)) {
                         $value = $original;
                     }
                 }
 
-                if (
-                    gettype($value) == 'array'
-                    && ! isset($value['delete'])
-                ) {
+                if (is_array($value) && !isset($value['delete'])) {
                     $value = implode(',', $value);
                 }
 
-                $coreConfigValue = $this->model
-                    ->where('code', $fieldName)
-                    ->get();
+                $coreConfigValue = $this->model->where('code', $fieldName)->get();
 
                 if (request()->hasFile($fieldName)) {
                     $value = request()->file($fieldName)->store('configuration');
                 }
 
-                if (! count($coreConfigValue)) {
+                if (!count($coreConfigValue)) {
+                    if (DB::getDriverName() === 'pgsql') {
+                        $sequence = $this->model->getTable() . '_id_seq';
+                        DB::statement("
+                            SELECT setval(
+                                '{$sequence}',
+                                (SELECT COALESCE(MAX(id),0)+1 FROM {$this->model->getTable()}),
+                                false
+                            )
+                        ");
+                    }
+
                     parent::create([
                         'code'         => $fieldName,
                         'value'        => $value,
-                        'locale_code'  => null,
-                        'channel_code' => null,
+                        'locale_code'  => $locale,
+                        'channel_code' => $channel,
                     ]);
                 } else {
                     foreach ($coreConfigValue as $coreConfig) {
@@ -94,8 +93,8 @@ class CoreConfigRepository extends Repository
                             parent::update([
                                 'code'         => $fieldName,
                                 'value'        => $value,
-                                'locale_code'  => null,
-                                'channel_code' => null,
+                                'locale_code'  => $locale,
+                                'channel_code' => $channel,
                             ], $coreConfig->id);
                         }
                     }

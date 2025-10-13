@@ -3,6 +3,7 @@
 namespace Webkul\Admin\Http\Controllers\Catalog;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Webkul\Admin\DataGrids\Catalog\AttributeFamilyDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
@@ -60,31 +61,54 @@ class AttributeFamilyController extends Controller
      */
     private function normalize($attributeFamily = null)
     {
-        $familyGroupMappings = $attributeFamily?->attributeFamilyGroupMappings()->with('attributeGroups')->get()->map(function ($familyGroupMapping) {
-            $attributeGroup = $familyGroupMapping->attributeGroups->first();
+        $driver = DB::getDriverName();
 
-            $customAttributes = $attributeGroup->customAttributes($familyGroupMapping->attribute_family_id)->map(function ($attribute) use ($attributeGroup) {
-                $attributeArray = $attribute->toArray();
+        $familyGroupMappings = $attributeFamily?->attributeFamilyGroupMappings()
+            ->with(['attributeGroups' => function ($query) {
+                $query->select(
+                    'attribute_groups.id as attribute_group_id',
+                    'attribute_groups.code',
+                    DB::raw('COALESCE(attribute_group_translations.name, attribute_groups.code) as attribute_group_name')
+                )
+                    ->leftJoin(
+                        'attribute_group_translations',
+                        'attribute_group_translations.attribute_group_id',
+                        '=',
+                        'attribute_groups.id'
+                    )
+                    ->groupBy('attribute_groups.id', 'attribute_groups.code', 'attribute_group_translations.name');
+            }])
+            ->get()
+            ->map(function ($familyGroupMapping) {
+                $attributeGroup = $familyGroupMapping->attributeGroups->first();
+
+                $customAttributes = $attributeGroup
+                    ? $attributeGroup->customAttributes($familyGroupMapping->attribute_family_id)
+                        ->map(function ($attribute) use ($attributeGroup) {
+                            $attributeArray = $attribute->toArray();
+
+                            return [
+                                'id'       => $attributeArray['id'],
+                                'code'     => $attributeArray['code'],
+                                'group_id' => $attributeGroup->attribute_group_id,
+                                'name'     => ! empty($attributeArray['name'])
+                                    ? $attributeArray['name']
+                                    : '['.$attributeArray['code'].']',
+                                'type'     => $attributeArray['type'],
+                            ];
+                        })->toArray()
+                    : [];
+
+                $attributeGroup = $attributeGroup?->toArray() ?? [];
 
                 return [
-                    'id'       => $attributeArray['id'],
-                    'code'     => $attributeArray['code'],
-                    'group_id' => $attributeGroup->id,
-                    'name'     => ! empty($attributeArray['name']) ? $attributeArray['name'] : '['.$attributeArray['code'].']',
-                    'type'     => $attributeArray['type'],
+                    'id'               => $attributeGroup['attribute_group_id'] ?? null,
+                    'code'             => $attributeGroup['code'] ?? null,
+                    'group_mapping_id' => $familyGroupMapping->id,
+                    'name'             => $attributeGroup['attribute_group_name'] ?? ('['.($attributeGroup['code'] ?? '').']'),
+                    'customAttributes' => $customAttributes,
                 ];
             })->toArray();
-
-            $attributeGroup = $attributeGroup?->toArray() ?? [];
-
-            return [
-                'id'               => $attributeGroup['id'],
-                'code'             => $attributeGroup['code'],
-                'group_mapping_id' => $familyGroupMapping->id,
-                'name'             => ! empty($attributeGroup['name']) ? $attributeGroup['name'] : '['.$attributeGroup['code'].']',
-                'customAttributes' => $customAttributes,
-            ];
-        })->toArray();
 
         return [
             'locales'         => $this->localeRepository->getActiveLocales(),

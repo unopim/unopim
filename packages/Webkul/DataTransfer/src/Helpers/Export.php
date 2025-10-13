@@ -249,12 +249,31 @@ class Export
      */
     public function completed(): void
     {
+        $driver = DB::getDriverName();
+
+        switch ($driver) {
+            case 'pgsql':
+                // PostgreSQL JSON operators
+                $selects = [
+                    DB::raw("SUM((summary->>'processed')::int) AS processed"),
+                    DB::raw("SUM((summary->>'created')::int) AS created"),
+                    DB::raw("SUM((summary->>'skipped')::int) AS skipped"),
+                ];
+                break;
+
+            case 'mysql':
+            default:
+                // MySQL JSON functions
+                $selects = [
+                    DB::raw("SUM(json_unquote(json_extract(summary, '$.\"processed\"'))) AS processed"),
+                    DB::raw("SUM(json_unquote(json_extract(summary, '$.\"created\"'))) AS created"),
+                    DB::raw("SUM(json_unquote(json_extract(summary, '$.\"skipped\"'))) AS skipped"),
+                ];
+                break;
+        }
+
         $summary = $this->jobTrackBatchRepository
-            ->select(
-                DB::raw('SUM(json_unquote(json_extract(summary, \'$."processed"\'))) AS processed'),
-                DB::raw('SUM(json_unquote(json_extract(summary, \'$."created"\'))) AS created'),
-                DB::raw('SUM(json_unquote(json_extract(summary, \'$."skipped"\'))) AS skipped'),
-            )
+            ->select(...$selects)
             ->where('job_track_id', $this->export->id)
             ->groupBy('job_track_id')
             ->first()?->toArray();
@@ -329,17 +348,38 @@ class Export
             ? round($completed / $total * 100)
             : 0;
 
-        $summary = $this->jobTrackBatchRepository
-            ->select(
-                DB::raw('SUM(json_unquote(json_extract(summary, \'$."processed"\'))) AS processed'),
-                DB::raw('SUM(json_unquote(json_extract(summary, \'$."created"\'))) AS created'),
-                DB::raw('SUM(json_unquote(json_extract(summary, \'$."skipped"\'))) AS skipped'),
-            )
-            ->where('job_track_id', $this->export->id)
-            ->where('state', $state)
-            ->groupBy('job_track_id')
-            ->first()
-            ?->toArray();
+        $driver = DB::getDriverName();
+
+        switch ($driver) {
+            case 'pgsql':
+                $summary = $this->jobTrackBatchRepository
+                    ->select(
+                        DB::raw("SUM((summary->>'processed')::int) AS processed"),
+                        DB::raw("SUM((summary->>'created')::int) AS created"),
+                        DB::raw("SUM((summary->>'skipped')::int) AS skipped"),
+                    )
+                    ->where('job_track_id', $this->export->id)
+                    ->where('state', $state)
+                    ->groupBy('job_track_id')
+                    ->first()
+                    ?->toArray();
+                break;
+
+            case 'mysql':
+            default:
+                $summary = $this->jobTrackBatchRepository
+                    ->select(
+                        DB::raw("SUM(JSON_UNQUOTE(JSON_EXTRACT(summary, '$.\"processed\"'))) AS processed"),
+                        DB::raw("SUM(JSON_UNQUOTE(JSON_EXTRACT(summary, '$.\"created\"'))) AS created"),
+                        DB::raw("SUM(JSON_UNQUOTE(JSON_EXTRACT(summary, '$.\"skipped\"'))) AS skipped"),
+                    )
+                    ->where('job_track_id', $this->export->id)
+                    ->where('state', $state)
+                    ->groupBy('job_track_id')
+                    ->first()
+                    ?->toArray();
+                break;
+        }
 
         return [
             'batches' => [

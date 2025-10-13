@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -12,17 +13,29 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('api_keys', function (Blueprint $table) {
-            $table->increments('id');
+            $driver = DB::getDriverName();
+
+            $table->id();
             $table->string('name');
-            $table->integer('admin_id')->unsigned();
+            $table->unsignedBigInteger('admin_id');
             $table->uuid('oauth_client_id')->nullable()->index();
             $table->string('permission_type');
-            $table->boolean('revoked');
+
+            if ('pgsql' === $driver) {
+                $table->boolean('revoked')->default(false);
+            } else {
+                $table->boolean('revoked');
+            }
+
             $table->json('permissions')->nullable();
             $table->timestamps();
-            $table->foreign('admin_id')->references('id')->on('admins')->onDelete('cascade');
+
+            $table->foreign('admin_id')
+                ->references('id')
+                ->on('admins')
+                ->onDelete('cascade');
         });
-    }
+        }
 
     /**
      * Reverse the migrations.
