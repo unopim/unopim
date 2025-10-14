@@ -4,6 +4,7 @@ namespace Webkul\Installer\Database\Seeders\User;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Webkul\Core\Helpers\Database\DatabaseSequenceHelper;
 
 class RolesTableSeeder extends Seeder
 {
@@ -27,5 +28,7 @@ class RolesTableSeeder extends Seeder
             'description'     => trans('installer::app.seeders.user.roles.description', [], $defaultLocale),
             'permission_type' => 'all',
         ]);
+
+        DatabaseSequenceHelper::fixSequence('roles');
     }
 }

@@ -3,7 +3,6 @@
 namespace Webkul\Core\Repositories;
 
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -64,17 +63,6 @@ class CoreConfigRepository extends Repository
                 }
 
                 if (! count($coreConfigValue)) {
-                    if (DB::getDriverName() === 'pgsql') {
-                        $sequence = $this->model->getTable().'_id_seq';
-                        DB::statement("
-                            SELECT setval(
-                                '{$sequence}',
-                                (SELECT COALESCE(MAX(id),0)+1 FROM {$this->model->getTable()}),
-                                false
-                            )
-                        ");
-                    }
-
                     parent::create([
                         'code'         => $fieldName,
                         'value'        => $value,

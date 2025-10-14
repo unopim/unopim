@@ -38,19 +38,6 @@ class ProductRepository extends Repository
      */
     public function create(array $data)
     {
-        $driver = DB::getDriverName();
-
-        switch ($driver) {
-            case 'pgsql':
-                $sequence = $this->model->getTable().'_id_seq';
-                DB::statement("SELECT setval('{$sequence}', (SELECT COALESCE(MAX(id), 0) + 1 FROM {$this->model->getTable()}), false)");
-                break;
-
-            case 'mysql':
-            default:
-                break;
-        }
-
         $typeInstance = app(config('product_types.'.$data['type'].'.class'));
 
         $product = $typeInstance->create($data);

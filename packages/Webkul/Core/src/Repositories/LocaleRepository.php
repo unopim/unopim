@@ -2,7 +2,6 @@
 
 namespace Webkul\Core\Repositories;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Core\Contracts\Locale;
@@ -26,25 +25,6 @@ class LocaleRepository extends Repository
     public function create(array $attributes)
     {
         Event::dispatch('core.locale.create.before');
-
-        $driver = DB::getDriverName();
-
-        switch ($driver) {
-            case 'pgsql':
-                $sequence = $this->model->getTable().'_id_seq';
-                DB::statement("
-                    SELECT setval(
-                        '{$sequence}',
-                        (SELECT COALESCE(MAX(id), 0) + 1 FROM {$this->model->getTable()}),
-                        false
-                    )
-                ");
-                break;
-
-            case 'mysql':
-            default:
-                break;
-        }
 
         $locale = parent::create($attributes);
 

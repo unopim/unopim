@@ -13,7 +13,7 @@ use Webkul\Core\ElasticSearch;
 use Webkul\Core\Exceptions\Handler;
 use Webkul\Core\Facades\Core as CoreFacade;
 use Webkul\Core\Facades\ElasticSearch as ElasticSearchFacade;
-use Webkul\Core\Helpers\DatabaseGrammarBuilder;
+use Webkul\Core\Helpers\Database\GrammarQueryManager;
 use Webkul\Core\View\Compilers\BladeCompiler;
 use Webkul\Theme\ViewRenderEventManager;
 
@@ -76,7 +76,7 @@ class CoreServiceProvider extends ServiceProvider
             ])->where(['filename' => $filenamePattern]);
         }
 
-        DB::macro('grammar', fn () => new DatabaseGrammarBuilder);
+        DB::macro('grammar', fn () => GrammarQueryManager::getGrammar());
     }
 
     /**

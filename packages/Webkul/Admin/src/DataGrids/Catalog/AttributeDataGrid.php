@@ -25,7 +25,8 @@ class AttributeDataGrid extends DataGrid
     public function prepareQueryBuilder()
     {
         $tablePrefix = DB::getTablePrefix();
-        $driver = DB::getDriverName();
+
+        $grammar = DB::grammar();
 
         $queryBuilder = DB::table('attributes')
             ->leftJoin('attribute_translations as attribute_name', function ($join) {
@@ -40,33 +41,16 @@ class AttributeDataGrid extends DataGrid
                 'is_unique',
                 'value_per_locale',
                 'value_per_channel',
-                'created_at'
+                'created_at',
+                DB::raw(
+                    "(CASE 
+                        WHEN {$tablePrefix}attribute_name.name IS NULL 
+                            OR ".$grammar->length("TRIM({$tablePrefix}attribute_name.name)").' < 1
+                        THEN '.$grammar->concat("'['", "{$tablePrefix}attributes.code", "']'")."
+                        ELSE {$tablePrefix}attribute_name.name
+                    END) AS name"
+                )
             );
-
-        switch ($driver) {
-            case 'pgsql':
-                $queryBuilder->addSelect(DB::raw(
-                    "(CASE 
-                        WHEN {$tablePrefix}attribute_name.name IS NULL 
-                             OR LENGTH(TRIM({$tablePrefix}attribute_name.name)) < 1 
-                        THEN '[' || {$tablePrefix}attributes.code || ']' 
-                        ELSE {$tablePrefix}attribute_name.name 
-                    END) as name"
-                ));
-                break;
-
-            case 'mysql':
-            default:
-                $queryBuilder->addSelect(DB::raw(
-                    "(CASE 
-                        WHEN {$tablePrefix}attribute_name.name IS NULL 
-                             OR CHAR_LENGTH(TRIM({$tablePrefix}attribute_name.name)) < 1 
-                        THEN CONCAT('[', {$tablePrefix}attributes.code, ']') 
-                        ELSE {$tablePrefix}attribute_name.name 
-                    END) as name"
-                ));
-                break;
-        }
 
         return $queryBuilder;
     }

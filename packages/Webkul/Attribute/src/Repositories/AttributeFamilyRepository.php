@@ -3,7 +3,6 @@
 namespace Webkul\Attribute\Repositories;
 
 use Illuminate\Container\Container;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Webkul\Core\Eloquent\Repository;
 
@@ -40,31 +39,12 @@ class AttributeFamilyRepository extends Repository
 
         unset($data['attribute_groups']);
 
-        $driver = DB::getDriverName();
-
-        switch ($driver) {
-            case 'pgsql':
-                $sequence = $this->model->getTable().'_id_seq';
-                DB::statement("SELECT setval('{$sequence}', (SELECT COALESCE(MAX(id), 0) + 1 FROM {$this->model->getTable()}), false)");
-                break;
-
-            case 'mysql':
-            default:
-                break;
-        }
-
         $family = parent::create($data);
 
         foreach ($attributeGroups as $key => $group) {
             $customAttributes = $group['custom_attributes'] ?? [];
 
             unset($group['custom_attributes']);
-
-            if ($driver === 'pgsql') {
-                $mappingTable = $this->attributeFamilyGroupMappingRepository->getModel()->getTable();
-                $mappingSeq = $mappingTable.'_id_seq';
-                DB::statement("SELECT setval('{$mappingSeq}', (SELECT COALESCE(MAX(id), 0) + 1 FROM {$mappingTable}), false)");
-            }
 
             $familyGroupMapping = $this->attributeFamilyGroupMappingRepository->create([
                 'attribute_family_id' => $family->id,

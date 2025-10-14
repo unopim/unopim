@@ -17,6 +17,5 @@ class DatabaseSeeder extends Seeder
         $this->call(LocalesTableSeeder::class, false, ['parameters' => $parameters]);
         $this->call(CurrencyTableSeeder::class, false, ['parameters' => $parameters]);
         $this->call(ChannelTableSeeder::class, false, ['parameters' => $parameters]);
-        $this->call(ConfigTableSeeder::class, false, ['parameters' => $parameters]);
     }
 }

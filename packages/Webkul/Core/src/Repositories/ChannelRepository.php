@@ -3,7 +3,6 @@
 namespace Webkul\Core\Repositories;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Webkul\Core\Eloquent\Repository;
 
@@ -38,25 +37,6 @@ class ChannelRepository extends Repository
                     $data[$locale->code][$attribute] = $data[$attribute];
                 }
             }
-        }
-
-        $driver = DB::getDriverName();
-
-        switch ($driver) {
-            case 'pgsql':
-                $sequence = $model->getTable().'_id_seq';
-                DB::statement("
-                    SELECT setval(
-                        '{$sequence}',
-                        (SELECT COALESCE(MAX(id), 0) + 1 FROM {$model->getTable()}),
-                        false
-                    )
-                ");
-                break;
-
-            case 'mysql':
-            default:
-                break;
         }
 
         $channel = parent::create($data);

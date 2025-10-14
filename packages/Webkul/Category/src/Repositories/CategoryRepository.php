@@ -63,19 +63,6 @@ class CategoryRepository extends Repository
      */
     public function create(array $data, bool $withoutFormattingValues = false)
     {
-        $driver = DB::getDriverName();
-
-        switch ($driver) {
-            case 'pgsql':
-                $sequence = $this->model->getTable().'_id_seq';
-                DB::statement("SELECT setval('{$sequence}', (SELECT COALESCE(MAX(id), 0) + 1 FROM {$this->model->getTable()}), false)");
-                break;
-
-            case 'mysql':
-            default:
-                break;
-        }
-
         $category = $this->model->create($data);
 
         if (isset($data[self::ADDITIONAL_VALUES_KEY])) {

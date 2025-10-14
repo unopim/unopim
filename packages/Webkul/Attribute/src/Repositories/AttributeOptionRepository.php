@@ -29,19 +29,6 @@ class AttributeOptionRepository extends Repository
             $data['sort_order'] = $maxSortOrder ? $maxSortOrder + 1 : 1;
         }
 
-        $driver = DB::getDriverName();
-
-        switch ($driver) {
-            case 'pgsql':
-                $sequence = $this->model->getTable().'_id_seq';
-                DB::statement("SELECT setval('{$sequence}', (SELECT COALESCE(MAX(id), 0) + 1 FROM {$this->model->getTable()}), false)");
-                break;
-
-            case 'mysql':
-            default:
-                break;
-        }
-
         $option = parent::create($data);
 
         return $option;

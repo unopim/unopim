@@ -2,7 +2,6 @@
 
 namespace Webkul\User\Repositories;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Webkul\Core\Eloquent\Repository;
 
@@ -24,19 +23,6 @@ class AdminRepository extends Repository
             unset($data['id']);
         } else {
             $data['id'] = (int) $data['id'];
-        }
-
-        $driver = DB::getDriverName();
-
-        if ($driver === 'pgsql') {
-            $sequence = $this->model->getTable().'_id_seq';
-            DB::statement("
-                SELECT setval(
-                    '{$sequence}',
-                    (SELECT COALESCE(MAX(id), 0) + 1 FROM {$this->model->getTable()}),
-                    false
-                )
-            ");
         }
 
         $admin = parent::create($data);

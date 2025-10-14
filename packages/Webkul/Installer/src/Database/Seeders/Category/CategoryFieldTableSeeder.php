@@ -5,6 +5,7 @@ namespace Webkul\Installer\Database\Seeders\Category;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Webkul\Core\Helpers\Database\DatabaseSequenceHelper;
 
 /*
  * CategoryField table seeder.
@@ -77,5 +78,7 @@ class CategoryFieldTableSeeder extends Seeder
                 ],
             ]);
         }
+
+        DatabaseSequenceHelper::fixSequences(['category_fields', 'category_field_translations']);
     }
 }
