@@ -40,6 +40,10 @@
         <testsuite name="DataTransfer Package UnitTest">
             <directory suffix="Test.php">./packages/Webkul/DataTransfer/tests/Unit</directory>
         </testsuite>
+
+        <testsuite name="Completeness Feature Tests">
+            <directory suffix="Test.php">./packages/Webkul/Completeness/tests/Feature</directory>
+        </testsuite>
     </testsuites>
 
     <source>

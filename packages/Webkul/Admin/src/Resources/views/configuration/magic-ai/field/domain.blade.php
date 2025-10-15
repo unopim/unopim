@@ -60,6 +60,8 @@
                             this.api_domain = 'api.openai.com';
                         } else if (dom == 'groq') {
                             this.api_domain = 'api.groq.com';
+                        } else if (dom == 'gemini') {
+                            this.api_domain = 'generativelanguage.googleapis.com';
                         } else {
                             this.api_domain = 'localhost';
                         }

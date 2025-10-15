@@ -40,4 +40,13 @@
             @include('admin::dashboard.total-catalog-structure')
         </div>
     </div>
+
+    <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
+        <div class="flex flex-col gap-2 w-full">
+            <p class="text-base text-zinc-800 dark:text-slate-50 font-bold">
+            </p>
+
+            @includeIf('completeness::dashboard.index')
+        </div>
+    </div>
 </x-admin::layouts>

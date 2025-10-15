@@ -197,6 +197,7 @@ return [
         Webkul\User\Providers\UserServiceProvider::class,
         Webkul\ElasticSearch\Providers\ElasticSearchServiceProvider::class,
         Webkul\Webhook\Providers\WebhookServiceProvider::class,
+        Webkul\Completeness\Providers\CompletenessServiceProvider::class,
     ])->toArray(),
 
     /*
