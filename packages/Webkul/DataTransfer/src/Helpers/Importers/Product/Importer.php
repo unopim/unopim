@@ -737,9 +737,15 @@ class Importer extends AbstractImporter
      */
     public function saveProducts(array $products): void
     {
+        Event::dispatch('data_transfer.imports.batch.product.save.before');
+
+        $ids = [];
+
         if (! empty($products['update'])) {
             foreach ($products['update'] as $productData) {
                 $id = $this->skuStorage->get($productData['sku'])['id'];
+
+                $ids[] = $id;
 
                 $product = $this->productRepository->updateWithValues($productData, $id);
 
@@ -759,11 +765,15 @@ class Importer extends AbstractImporter
                     'attribute_family_id' => $product->attribute_family_id,
                 ]);
 
+                $ids[] = $product->id;
+
                 unset($product);
 
                 $this->createdItemsCount++;
             }
         }
+
+        Event::dispatch('data_transfer.imports.batch.product.save.after', ['product_id' => $ids]);
     }
 
     /**

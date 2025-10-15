@@ -337,7 +337,7 @@ abstract class AbstractImporter
 
         $typeBatches = [];
 
-        $this->import->batches()->chunk(100, function ($batches) {
+        $this->import->batches()->chunk(100, function ($batches) use (&$typeBatches) {
             foreach ($batches as $batch) {
                 $typeBatches['import'][] = new ImportBatchJob($batch, $this->import->id);
 
