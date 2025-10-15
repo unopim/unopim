@@ -31,6 +31,10 @@ class WebhookSettingsController
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'webhook_url' => 'url',
+        ]);
+
         $active = (int) $request->get('webhook_active', '0');
 
         $settings = [

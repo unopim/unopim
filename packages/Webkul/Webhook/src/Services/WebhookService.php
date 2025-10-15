@@ -42,9 +42,15 @@ class WebhookService
             ],
         ];
 
-        $response = Http::post($webhookUrl, $webhookData);
+        try {
+            $response = Http::post($webhookUrl, $webhookData);
+        } catch (\Exception $e) {
+            $response = null;
 
-        $this->storeLogs($product->sku, $response->successful() ? 1 : 0, $this->normalizeResponseForLog($response));
+            report($e);
+        }
+
+        $this->storeLogs($product->sku, $response?->successful() ? 1 : 0, $this->normalizeResponseForLog($response ?? $e));
 
         return $response;
     }
@@ -104,11 +110,17 @@ class WebhookService
             'data'      => $normalized,
         ];
 
-        $response = Http::post($webhookUrl, $normalized);
+        try {
+            $response = Http::post($webhookUrl, $normalized);
+        } catch (\Exception $e) {
+            $response = null;
 
-        $status = $response->successful() ? 1 : 0;
+            report($e);
+        }
 
-        $this->storeBatchLogs($products, $status, $this->normalizeResponseForLog($response));
+        $status = $response?->successful() ? 1 : 0;
+
+        $this->storeBatchLogs($products, $status, $this->normalizeResponseForLog($response ?? $e));
 
         return $response;
     }
@@ -174,6 +186,13 @@ class WebhookService
             return [
                 'status' => $response->status(),
                 'body'   => $response->body(),
+            ];
+        }
+
+        if ($response instanceof \Exception) {
+            return [
+                'status' => $response->getCode(),
+                'error'  => $response->getMessage(),
             ];
         }
 
