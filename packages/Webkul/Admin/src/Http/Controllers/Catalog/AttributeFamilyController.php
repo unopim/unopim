@@ -61,8 +61,6 @@ class AttributeFamilyController extends Controller
      */
     private function normalize($attributeFamily = null)
     {
-        $driver = DB::getDriverName();
-
         $familyGroupMappings = $attributeFamily?->attributeFamilyGroupMappings()
             ->with(['attributeGroups' => function ($query) {
                 $query->select(

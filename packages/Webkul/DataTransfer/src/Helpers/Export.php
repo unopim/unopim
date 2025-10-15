@@ -348,38 +348,19 @@ class Export
             ? round($completed / $total * 100)
             : 0;
 
-        $driver = DB::getDriverName();
+        $grammar = DB::grammar();
 
-        switch ($driver) {
-            case 'pgsql':
-                $summary = $this->jobTrackBatchRepository
-                    ->select(
-                        DB::raw("SUM((summary->>'processed')::int) AS processed"),
-                        DB::raw("SUM((summary->>'created')::int) AS created"),
-                        DB::raw("SUM((summary->>'skipped')::int) AS skipped"),
-                    )
-                    ->where('job_track_id', $this->export->id)
-                    ->where('state', $state)
-                    ->groupBy('job_track_id')
-                    ->first()
-                    ?->toArray();
-                break;
-
-            case 'mysql':
-            default:
-                $summary = $this->jobTrackBatchRepository
-                    ->select(
-                        DB::raw("SUM(JSON_UNQUOTE(JSON_EXTRACT(summary, '$.\"processed\"'))) AS processed"),
-                        DB::raw("SUM(JSON_UNQUOTE(JSON_EXTRACT(summary, '$.\"created\"'))) AS created"),
-                        DB::raw("SUM(JSON_UNQUOTE(JSON_EXTRACT(summary, '$.\"skipped\"'))) AS skipped"),
-                    )
-                    ->where('job_track_id', $this->export->id)
-                    ->where('state', $state)
-                    ->groupBy('job_track_id')
-                    ->first()
-                    ?->toArray();
-                break;
-        }
+        $summary = $this->jobTrackBatchRepository
+            ->select(
+                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'processed')} as int)) AS processed"),
+                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'created')} as int)) AS created"),
+                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'skipped')} as int)) AS skipped"),
+            )
+            ->where('job_track_id', $this->export->id)
+            ->where('state', $state)
+            ->groupBy('job_track_id')
+            ->first()
+            ?->toArray();
 
         return [
             'batches' => [

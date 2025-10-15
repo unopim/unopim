@@ -15,7 +15,9 @@ class AttributeGroupDataGrid extends DataGrid
     public function prepareQueryBuilder()
     {
         $tablePrefix = DB::getTablePrefix();
-        $driver = DB::getDriverName();
+        $grammar = DB::grammar();
+
+        $nameField = "{$tablePrefix}attribute_group_name.name";
 
         $queryBuilder = DB::table('attribute_groups')
             ->leftJoin('attribute_group_translations as attribute_group_name', function ($join) {
@@ -24,33 +26,16 @@ class AttributeGroupDataGrid extends DataGrid
             })
             ->select(
                 'attribute_groups.id',
-                'attribute_groups.code'
+                'attribute_groups.code',
+                DB::raw(
+                    "(CASE 
+                        WHEN $nameField IS NULL 
+                            OR ".$grammar->length("TRIM($nameField)")." < 1 
+                        THEN ".$grammar->concat("'['", "{$tablePrefix}attribute_groups.code", "']'")."
+                        ELSE $nameField 
+                    END) as name"
+                )
             );
-
-        switch ($driver) {
-            case 'pgsql':
-                $queryBuilder->addSelect(DB::raw(
-                    "(CASE 
-                        WHEN {$tablePrefix}attribute_group_name.name IS NULL 
-                            OR LENGTH(TRIM({$tablePrefix}attribute_group_name.name)) < 1 
-                        THEN '[' || {$tablePrefix}attribute_groups.code || ']' 
-                        ELSE {$tablePrefix}attribute_group_name.name 
-                    END) as name"
-                ));
-                break;
-
-            case 'mysql':
-            default:
-                $queryBuilder->addSelect(DB::raw(
-                    "(CASE 
-                        WHEN {$tablePrefix}attribute_group_name.name IS NULL 
-                            OR CHAR_LENGTH(TRIM({$tablePrefix}attribute_group_name.name)) < 1 
-                        THEN CONCAT('[', {$tablePrefix}attribute_groups.code, ']') 
-                        ELSE {$tablePrefix}attribute_group_name.name 
-                    END) as name"
-                ));
-                break;
-        }
 
         $this->addFilter('id', 'attribute_groups.id');
 

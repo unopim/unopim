@@ -35,7 +35,7 @@ class CategoryFieldDataGrid extends DataGrid
     public function prepareQueryBuilder()
     {
         $tablePrefix = DB::getTablePrefix();
-        $driver = DB::getDriverName();
+        $grammar = DB::grammar();
 
         $queryBuilder = DB::table('category_fields')
             ->leftJoin('category_field_translations as requested_category_field_translation', function ($leftJoin) {
@@ -51,31 +51,14 @@ class CategoryFieldDataGrid extends DataGrid
                 'value_per_locale',
                 'status',
                 'position',
-                'created_at'
+                'created_at',
+                DB::raw("
+                (CASE 
+                    WHEN {$grammar->length("TRIM({$tablePrefix}requested_category_field_translation.name)")} < 1 
+                    THEN {$grammar->concat("'['", 'code', "']'")} 
+                    ELSE {$tablePrefix}requested_category_field_translation.name 
+                END) as name")
             );
-
-        switch ($driver) {
-            case 'pgsql':
-                $queryBuilder->addSelect(DB::raw(
-                    "(CASE 
-                        WHEN LENGTH(TRIM({$tablePrefix}requested_category_field_translation.name)) < 1 
-                        THEN '[' || code || ']' 
-                        ELSE {$tablePrefix}requested_category_field_translation.name 
-                    END) as name"
-                ));
-                break;
-
-            case 'mysql':
-            default:
-                $queryBuilder->addSelect(DB::raw(
-                    "(CASE 
-                        WHEN CHAR_LENGTH(TRIM({$tablePrefix}requested_category_field_translation.name)) < 1 
-                        THEN CONCAT('[', code , ']') 
-                        ELSE {$tablePrefix}requested_category_field_translation.name 
-                    END) as name"
-                ));
-                break;
-        }
 
         $this->addFilter('name', 'requested_category_field_translation.name');
 

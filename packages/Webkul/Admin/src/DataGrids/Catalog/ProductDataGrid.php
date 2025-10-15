@@ -85,7 +85,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     public function prepareQueryBuilder()
     {
         $tablePrefix = DB::getTablePrefix();
-        $driver = DB::getDriverName();
+
+        $grammar = DB::grammar();
 
         $this->prepareQuery = ProductQueryBuilderFactory::make()->prepareQueryBuilder();
 
@@ -103,36 +104,19 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'products.created_at',
                 'products.updated_at',
                 'parent_products.sku as parent',
+                DB::raw(
+                    "(CASE
+                        WHEN {$tablePrefix}attribute_family_name.name IS NULL
+                            OR {$grammar->length("TRIM({$tablePrefix}attribute_family_name.name)")} < 1
+                        THEN {$grammar->concat("'['", "{$tablePrefix}af.code", "']'")}
+                        ELSE {$tablePrefix}attribute_family_name.name
+                    END) as attribute_family"
+                ),
                 DB::raw('
                     COALESCE('.$tablePrefix.'products.values, '.$tablePrefix.'parent_products.values) as raw_values
                 '),
-                'products.avg_completeness_score as completeness'
+                'products.avg_completeness_score as completeness',
             );
-
-        switch ($driver) {
-            case 'pgsql':
-                $queryBuilder->addSelect(DB::raw(
-                    "(CASE
-                        WHEN {$tablePrefix}attribute_family_name.name IS NULL
-                            OR LENGTH(TRIM({$tablePrefix}attribute_family_name.name)) < 1
-                        THEN '[' || {$tablePrefix}af.code || ']'
-                        ELSE {$tablePrefix}attribute_family_name.name
-                    END) as attribute_family"
-                ));
-                break;
-
-            case 'mysql':
-            default:
-                $queryBuilder->addSelect(DB::raw(
-                    "(CASE
-                        WHEN {$tablePrefix}attribute_family_name.name IS NULL
-                            OR CHAR_LENGTH(TRIM({$tablePrefix}attribute_family_name.name)) < 1
-                        THEN CONCAT('[', {$tablePrefix}af.code, ']')
-                        ELSE {$tablePrefix}attribute_family_name.name
-                    END) as attribute_family"
-                ));
-                break;
-        }
 
         return $queryBuilder;
     }

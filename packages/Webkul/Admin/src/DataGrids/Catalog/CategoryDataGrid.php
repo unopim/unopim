@@ -50,27 +50,17 @@ class CategoryDataGrid extends DataGrid
     {
         $tablePrefix = DB::getTablePrefix();
         $localeCode = core()->getRequestedLocaleCode();
-        $driver = DB::getDriverName();
 
-        $subQuery = $this->getSubQuery($localeCode, $tablePrefix, $driver);
+        $grammar = DB::grammar();
 
-        // Choose SQL depending on driver
-        switch ($driver) {
-            case 'mysql':
-                $categoryNameExpr = "(CASE WHEN JSON_UNQUOTE(JSON_EXTRACT({$tablePrefix}cat.additional_data, '$.locale_specific.{$localeCode}.name')) IS NOT NULL 
-                        THEN REPLACE(JSON_UNQUOTE(JSON_EXTRACT({$tablePrefix}cat.additional_data, '$.locale_specific.{$localeCode}.name')), '\"', '') 
-                        ELSE CONCAT('[', {$tablePrefix}cat.code, ']') END)";
-                break;
+        $subQuery = $this->getSubQuery($localeCode, $tablePrefix);
+        
+        $jsonExpr = $grammar->jsonExtract("{$tablePrefix}cat.additional_data", 'locale_specific', $localeCode, 'name');
 
-            case 'pgsql':
-                $categoryNameExpr = "(CASE WHEN {$tablePrefix}cat.additional_data->'locale_specific'->'{$localeCode}'->>'name' IS NOT NULL 
-                        THEN {$tablePrefix}cat.additional_data->'locale_specific'->'{$localeCode}'->>'name'
-                        ELSE '[' || {$tablePrefix}cat.code || ']' END)";
-                break;
-
-            default:
-                throw new \Exception("Unsupported driver: {$driver}");
-        }
+        $categoryNameExpr = "(CASE WHEN {$jsonExpr} IS NOT NULL 
+            THEN REPLACE({$jsonExpr}, '\"', '') 
+            ELSE {$grammar->concat("'['", "{$tablePrefix}cat.code", "']'")} 
+        END)";
 
         $queryBuilder = DB::table('categories as cat')
             ->select(
@@ -209,17 +199,9 @@ class CategoryDataGrid extends DataGrid
 
             $ids = collect($results['hits']['hits'])->pluck('_id')->toArray();
 
-            $driver = DB::getDriverName();
-
             if (! empty($ids)) {
-                if ($driver === 'mysql') {
-                    $this->queryBuilder->whereIn('cat.id', $ids)
-                        ->orderByRaw('FIELD('.DB::getTablePrefix().'cat.id, '.implode(',', $ids).')');
-                } elseif ($driver === 'pgsql') {
-                    $idList = implode(',', $ids);
-                    $this->queryBuilder->whereIn('cat.id', $ids)
-                        ->orderByRaw("array_position(ARRAY[{$idList}]::int[], cat.id)");
-                }
+                $this->queryBuilder->whereIn('cat.id', $ids)
+                    ->orderByRaw(DB::grammar()->orderByField(DB::getTablePrefix().'cat.id', $ids));
             }
 
             $total = $results['hits']['total']['value'];
@@ -428,53 +410,34 @@ class CategoryDataGrid extends DataGrid
     /**
      * Creates a query to fetch the parent names of the categories
      */
-    private function getSubQuery(string $locale, string $tablePrefix, string $driver): string
+    private function getSubQuery(string $locale, string $tablePrefix): string
     {
-        switch ($driver) {
-            case 'mysql':
-                return "WITH RECURSIVE tree_view AS (
-                    SELECT id,
-                        parent_id,
-                        (CASE WHEN JSON_UNQUOTE(JSON_EXTRACT(additional_data, '$.locale_specific.{$locale}.name')) IS NOT NULL 
-                            THEN REPLACE(JSON_UNQUOTE(JSON_EXTRACT(additional_data, '$.locale_specific.{$locale}.name')), '\"', '') 
-                            ELSE CONCAT('[', code, ']') END) as name
-                    FROM {$tablePrefix}categories
-                    WHERE parent_id IS NULL
-                    UNION ALL
-                    SELECT parent.id,
-                        parent.parent_id,
-                        CONCAT(tree_view.name, ' / ', 
-                            (CASE WHEN JSON_UNQUOTE(JSON_EXTRACT(parent.additional_data, '$.locale_specific.{$locale}.name')) IS NOT NULL 
-                                THEN REPLACE(JSON_UNQUOTE(JSON_EXTRACT(parent.additional_data, '$.locale_specific.{$locale}.name')), '\"', '') 
-                                ELSE CONCAT('[', parent.code, ']') END)) AS name
-                    FROM {$tablePrefix}categories parent
-                    JOIN tree_view ON parent.parent_id = tree_view.id
-                )
-                SELECT id, parent_id, name FROM tree_view";
+        $grammar = DB::grammar();
 
-            case 'pgsql':
-                return "WITH RECURSIVE tree_view AS (
-                    SELECT id,
-                        parent_id,
-                        (CASE WHEN additional_data->'locale_specific'->'{$locale}'->>'name' IS NOT NULL 
-                            THEN additional_data->'locale_specific'->'{$locale}'->>'name'
-                            ELSE '[' || code || ']' END) as name
-                    FROM {$tablePrefix}categories
-                    WHERE parent_id IS NULL
-                    UNION ALL
-                    SELECT parent.id,
-                        parent.parent_id,
-                        tree_view.name || ' / ' || 
-                        (CASE WHEN parent.additional_data->'locale_specific'->'{$locale}'->>'name' IS NOT NULL 
-                            THEN parent.additional_data->'locale_specific'->'{$locale}'->>'name'
-                            ELSE '[' || parent.code || ']' END) as name
-                    FROM {$tablePrefix}categories parent
-                    JOIN tree_view ON parent.parent_id = tree_view.id
-                )
-                SELECT id, parent_id, name FROM tree_view";
+        $jsonExpr = $grammar->jsonExtract('additional_data', 'locale_specific', $locale, 'name');
 
-            default:
-                throw new \Exception("Unsupported driver: {$driver}");
-        }
+        $codeFallback = $grammar->concat("'['", "code", "']'");
+
+        $caseNameExpr = "(CASE WHEN {$jsonExpr} IS NOT NULL THEN REPLACE({$jsonExpr}, '\"', '') ELSE {$codeFallback} END)";
+
+        $pathConcatExpr = $grammar->concat('tree_view.name', "' / '", $caseNameExpr);
+
+        return "
+            WITH RECURSIVE tree_view AS (
+                SELECT id,
+                    parent_id,
+                    {$caseNameExpr} as name
+                FROM {$tablePrefix}categories
+                WHERE parent_id IS NULL
+                UNION ALL
+                SELECT parent.id,
+                    parent.parent_id,
+                    {$pathConcatExpr} as name
+                FROM {$tablePrefix}categories parent
+                JOIN tree_view ON parent.parent_id = tree_view.id
+            )
+            SELECT id, parent_id, name
+            FROM tree_view
+        ";
     }
 }

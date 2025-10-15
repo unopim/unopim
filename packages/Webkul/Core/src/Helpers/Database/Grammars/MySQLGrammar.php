@@ -38,4 +38,18 @@ class MySQLGrammar implements BaseGrammar
     {
         return "CHAR_LENGTH({$column})";
     }
+
+    public function jsonExtract(string $column, string ...$pathSegments): string
+    {
+        $jsonPath = '$.'.implode('.', $pathSegments);
+
+        return "JSON_UNQUOTE(JSON_EXTRACT({$column}, '{$jsonPath}'))";
+    }
+
+    public function orderByField(string $column, array $ids, string $type = ''): string
+    {
+        $idList = implode(',', $ids);
+
+        return "FIELD({$column}, {$idList})";
+    }
 }

@@ -39,4 +39,24 @@ class PostgresGrammar implements BaseGrammar
     {
         return "LENGTH({$column})";
     }
+
+    public function jsonExtract(string $column, string ...$pathSegments): string
+    {
+        $operators = count($pathSegments) > 1 ? array_map(fn ($part) => "'{$part}'", $pathSegments) : $pathSegments;
+
+        $lastKey = array_pop($operators);
+
+        $jsonString = ! empty($operators)
+            ? "{$column}->".implode('->', $operators)."->>{$lastKey}"
+            : "{$column}->>'{$lastKey}'";
+
+        return $jsonString;
+    }
+
+    public function orderByField(string $column, array $values, string $type = 'int'): string
+    {
+        $idList = implode(',', $values);
+
+        return "array_position(ARRAY[{$idList}]::{$type}[], {$column})";
+    }
 }
