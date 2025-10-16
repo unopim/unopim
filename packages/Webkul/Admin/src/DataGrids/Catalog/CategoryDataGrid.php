@@ -54,7 +54,7 @@ class CategoryDataGrid extends DataGrid
         $grammar = DB::grammar();
 
         $subQuery = $this->getSubQuery($localeCode, $tablePrefix);
-        
+
         $jsonExpr = $grammar->jsonExtract("{$tablePrefix}cat.additional_data", 'locale_specific', $localeCode, 'name');
 
         $categoryNameExpr = "(CASE WHEN {$jsonExpr} IS NOT NULL 
@@ -236,7 +236,6 @@ class CategoryDataGrid extends DataGrid
         $filters = [];
 
         $localeCode = core()->getRequestedLocaleCode();
-        $driver = DB::getDriverName();
 
         foreach ($params as $attribute => $value) {
             if (in_array($attribute, ['channel', 'locale'])) {
@@ -247,22 +246,7 @@ class CategoryDataGrid extends DataGrid
                 $attribute = 'name';
             }
 
-            switch ($driver) {
-                case 'pgsql':
-                    $value = array_map(function ($val) {
-                        if ($val instanceof \Illuminate\Database\Query\Expression) {
-                            return (string) $val->getValue(DB::connection()->getQueryGrammar());
-                        }
-
-                        return $val;
-                    }, (array) $value);
-                    break;
-
-                case 'mysql':
-                default:
-                    $value = (array) $value;
-                    break;
-            }
+            $value = (array) $value;
 
             $value = array_filter($value, function ($val) {
                 return $val !== null && $val !== '';
@@ -281,25 +265,7 @@ class CategoryDataGrid extends DataGrid
      */
     public function getFilterValue(mixed $attribute, mixed $values, string $localeCode): array
     {
-        $driver = DB::getDriverName();
-
-        // Normalize values depending on DB driver
-        switch ($driver) {
-            case 'pgsql':
-                $values = array_map(function ($val) {
-                    if ($val instanceof \Illuminate\Database\Query\Expression) {
-                        return (string) $val->getValue(DB::connection()->getQueryGrammar());
-                    }
-
-                    return $val;
-                }, (array) $values);
-                break;
-
-            case 'mysql':
-            default:
-                $values = (array) $values;
-                break;
-        }
+        $values = (array) $values;
 
         switch ($attribute) {
             /** For Grid search filter the parameter is sent as name */
@@ -363,41 +329,18 @@ class CategoryDataGrid extends DataGrid
      */
     protected function getElasticSort($params): array
     {
-        $driver = DB::getDriverName();
-
         $sort = $params['column'] ?? $this->primaryColumn;
 
-        switch ($driver) {
-            case 'pgsql':
-                // Convert Expression to string if needed
-                if ($sort instanceof \Illuminate\Database\Query\Expression) {
-                    $sort = (string) $sort->getValue(DB::connection()->getQueryGrammar());
-                }
+        if ($sort == 'category_name') {
+            $sort = 'name.keyword';
+        }
 
-                // Map column aliases for Postgres
-                if ($sort === 'category_name') {
-                    $sort = 'name.keyword';
-                } elseif ($sort === 'code') {
-                    $sort = 'code.keyword';
-                } elseif ($sort === 'category_id') {
-                    $sort = 'id';
-                }
-                break;
+        if ($sort == 'code') {
+            $sort .= '.keyword';
+        }
 
-            case 'mysql':
-            default:
-                if ($sort == 'category_name') {
-                    $sort = 'name.keyword';
-                }
-
-                if ($sort == 'code') {
-                    $sort .= '.keyword';
-                }
-
-                if ($sort === 'category_id') {
-                    $sort = 'id';
-                }
-                break;
+        if ($sort === 'category_id') {
+            $sort = 'id';
         }
 
         return [
@@ -416,7 +359,7 @@ class CategoryDataGrid extends DataGrid
 
         $jsonExpr = $grammar->jsonExtract('additional_data', 'locale_specific', $locale, 'name');
 
-        $codeFallback = $grammar->concat("'['", "code", "']'");
+        $codeFallback = $grammar->concat("'['", 'code', "']'");
 
         $caseNameExpr = "(CASE WHEN {$jsonExpr} IS NOT NULL THEN REPLACE({$jsonExpr}, '\"', '') ELSE {$codeFallback} END)";
 

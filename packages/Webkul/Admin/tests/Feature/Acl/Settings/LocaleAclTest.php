@@ -36,7 +36,7 @@ it('should create the locale if has permission', function () {
 
     $this->assertDatabaseHas($this->getFullTableName(Locale::class), [
         'code'   => 'zh_Hans_CN',
-        'status' => 1,
+        'status' => true,
     ]);
 });
 
@@ -54,7 +54,10 @@ it('should return the locale json for edit if have permission', function () {
 
     $this->get(route('admin.settings.locales.edit', $locale->id))
         ->assertOk()
-        ->assertJsonFragment($locale->toArray());
+        ->assertJsonFragment([
+            ...$locale->toArray(),
+            'status' => $locale->status ? true : false,
+        ]);
 });
 
 it('should not be able to delete locale if does not have permission', function () {

@@ -419,22 +419,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
             if (! empty($ids)) {
                 $tablePrefix = DB::getTablePrefix();
-                $driver = DB::getDriverName();
 
-                switch ($driver) {
-                    case 'pgsql':
-                        $this->queryBuilder->orderByRaw(
-                            'array_position(ARRAY['.implode(',', $ids)."]::int[], {$tablePrefix}products.id)"
-                        );
-                        break;
-
-                    case 'mysql':
-                    default:
-                        $this->queryBuilder->orderByRaw(
-                            "FIELD({$tablePrefix}products.id, ".implode(',', $ids).')'
-                        );
-                        break;
-                }
+                $this->queryBuilder->orderByRaw(
+                    DB::grammar()->orderByField(DB::getTablePrefix().'products.id', $ids)
+                );
             }
 
             if (isset($requestedParams['export']) && (bool) $requestedParams['export']) {

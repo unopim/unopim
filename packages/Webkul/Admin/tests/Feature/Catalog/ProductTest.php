@@ -46,7 +46,7 @@ it('should return the product datagrid', function () {
 it('should return unique validation for product sku while creating', function () {
     $this->loginAsAdmin();
 
-    $product = Product::factory()->create();
+    $product = Product::factory()->configurable()->create();
 
     $data = [
         'sku'                 => $product->sku,
@@ -54,7 +54,7 @@ it('should return unique validation for product sku while creating', function ()
         'attribute_family_id' => $product->attribute_family_id,
     ];
 
-    $this->post(route('admin.catalog.products.store', $data))
+    $this->post(route('admin.catalog.products.store'), $data)
         ->assertRedirect()
         ->assertInvalid('sku');
 

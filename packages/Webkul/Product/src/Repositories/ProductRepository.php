@@ -228,7 +228,8 @@ class ProductRepository extends Repository
         ])->scopeQuery(function ($query) use ($params) {
             $prefix = DB::getTablePrefix();
 
-            $qb = $query->distinct()
+            // Check if distinct is actually required here
+            $qb = $query
                 ->select('products.*')
                 ->leftJoin('products as variants', DB::raw('COALESCE('.$prefix.'variants.parent_id, '.$prefix.'variants.id)'), '=', 'products.id');
 

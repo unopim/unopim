@@ -52,4 +52,9 @@ class MySQLGrammar implements BaseGrammar
 
         return "FIELD({$column}, {$idList})";
     }
+
+    public function jsonPath(string $column, string ...$pathSegments): string
+    {
+        return '$.'.implode('.', $pathSegments);
+    }
 }

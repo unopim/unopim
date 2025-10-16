@@ -23,8 +23,8 @@ it('should create the currency', function () {
     $response = postJson(route('admin.settings.currencies.store'),
         [
             'code'    => 'DOP',
-            'symbol'  => 'RD$',
-            'decimal' => '',
+            'symbol'  => 'Rs',
+            'decimal' => 1,
             'status'  => 1,
         ],
     );
@@ -81,22 +81,12 @@ it('should update the currency', function () {
     $driver = DB::getDriverName();
 
     $data = [
-        'id'     => $currency->id,
-        'code'   => 'DOP',
-        'symbol' => '$$',
-        'status' => 0,
+        'id'      => $currency->id,
+        'code'    => 'DOP',
+        'symbol'  => '$$',
+        'status'  => 0,
+        'decimal' => 0,
     ];
-
-    switch ($driver) {
-        case 'pgsql':
-            $data['decimal'] = $currency->decimal ?? 0;
-            break;
-
-        case 'mysql':
-        default:
-            $data['decimal'] = '';
-            break;
-    }
 
     $response = putJson(route('admin.settings.currencies.update'), $data);
 
@@ -118,7 +108,7 @@ it('should give validation message for code', function () {
         [
             'code'    => 'DO',
             'symbol'  => '$$',
-            'decimal' => '',
+            'decimal' => 2,
             'status'  => 0,
         ],
     );
@@ -182,8 +172,8 @@ it('should not update the code of currency', function () {
         [
             'id'      => $currency->id,
             'code'    => 'DOP',
-            'symbol'  => 'RD$',
-            'decimal' => '',
+            'symbol'  => 'Rs',
+            'decimal' => 1,
             'status'  => 0,
         ],
     );
@@ -192,7 +182,7 @@ it('should not update the code of currency', function () {
 
     $this->assertDatabaseHas($this->getFullTableName(Currency::class), [
         'code'   => $currency->code,
-        'symbol' => 'RD$',
+        'symbol' => 'Rs',
     ]);
 });
 

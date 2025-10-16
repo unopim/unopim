@@ -45,35 +45,13 @@ it('should not allow duplicate option code for the same attribute', function () 
         ->assertStatus(422)
         ->assertJsonValidationErrors('code');
 
-    $driver = DB::getDriverName();
+    $exists = DB::table($this->getFullTableName(AttributeOption::class))
+        ->where('code', $option->code)
+        ->where('attribute_id', $attributeId)
+        ->where('id', '!=', $option->id)
+        ->exists();
 
-    switch ($driver) {
-        case 'pgsql':
-            $count = DB::table($this->getFullTableName(AttributeOption::class))
-                ->where('code', $option->code)
-                ->where('attribute_id', $attributeId)
-                ->where('id', '!=', $option->id)
-                ->count();
-
-            $this->assertEquals(
-                0,
-                $count,
-                'AttributeOption with same code exists but id differs (pgsql check failed).'
-            );
-            break;
-
-        case 'mysql':
-        default:
-            $this->assertDatabaseMissing(
-                $this->getFullTableName(AttributeOption::class),
-                [
-                    'code'         => $option->code,
-                    'id'           => '!= '.$option->id,
-                    'attribute_id' => $attributeId,
-                ]
-            );
-            break;
-    }
+    expect($exists)->toBeFalse();
 });
 
 it('should create the attribute option', function () {
