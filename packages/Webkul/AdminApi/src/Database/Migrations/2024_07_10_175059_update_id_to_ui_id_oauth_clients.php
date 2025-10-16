@@ -17,7 +17,7 @@ return new class extends Migration
         switch ($driver) {
             case 'mysql':
                 Schema::table('oauth_clients', function (Blueprint $table) {
-                    $table->uuid('id')->primary()->change();
+                    $table->uuid('id')->change();
                 });
                 break;
 

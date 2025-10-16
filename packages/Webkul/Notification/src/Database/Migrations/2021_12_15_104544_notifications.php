@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('notifications', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->string('type');
             $table->boolean('read')->default(0);
             $table->timestamps();

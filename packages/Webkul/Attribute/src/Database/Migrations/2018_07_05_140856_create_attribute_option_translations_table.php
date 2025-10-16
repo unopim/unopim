@@ -16,30 +16,18 @@ return new class extends Migration
     {
         $driver = DB::getDriverName();
 
-        Schema::create('attribute_option_translations', function (Blueprint $table) use ($driver) {
+        Schema::create('attribute_option_translations', function (Blueprint $table) {
             $table->id();
 
-            switch ($driver) {
-                case 'mysql':
-                    $table->unsignedBigInteger('attribute_option_id');
-                    $table->string('locale');
-                    break;
+            $table->foreignId('attribute_option_id')
+                ->constrained('attribute_options')
+                ->cascadeOnDelete();
 
-                case 'pgsql':
-                default:
-                    $table->bigInteger('attribute_option_id');
-                    $table->string('locale')->nullable();
-                    break;
-            }
+            $table->string('locale');
 
             $table->text('label')->nullable();
 
             $table->unique(['attribute_option_id', 'locale']);
-
-            $table->foreign('attribute_option_id')
-                ->references('id')
-                ->on('attribute_options')
-                ->onDelete('cascade');
         });
     }
 

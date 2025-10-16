@@ -28,10 +28,11 @@ return new class extends Migration
             $table->string('error_file_path')->nullable();
             $table->json('summary')->nullable();
             $table->json('meta')->nullable();
-            $table->integer('job_instances_id')->unsigned();
-            $table->foreign('job_instances_id')->references('id')->on('job_instances')->onDelete('cascade');
-            $table->integer('user_id')->nullable()->unsigned();
-            $table->foreign('user_id')->references('id')->on('admins')->onDelete('set null');
+
+            $table->foreignId('job_instances_id')->constrained('job_instances')->cascadeOnDelete();
+
+            $table->foreignId('user_id')->nullable()->constrained('admins')->nullOnDelete();
+
             $table->datetime('started_at')->nullable();
             $table->datetime('completed_at')->nullable();
 

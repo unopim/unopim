@@ -14,16 +14,11 @@ return new class extends Migration
     {
         $driver = DB::getDriverName();
 
-        Schema::create('job_instances', function (Blueprint $table) use ($driver) {
+        Schema::create('job_instances', function (Blueprint $table) {
             $table->id();
             $table->string('code')->unique();
             $table->string('entity_type');
-
-            if ($driver === 'mysql') {
-                $table->enum('type', ['import', 'export', 'system']);
-            } else {
-                $table->string('type');
-            }
+            $table->enum('type', ['import', 'export', 'system']);
 
             $table->string('action')->default('')->nullable(false);
 
@@ -35,14 +30,6 @@ return new class extends Migration
 
             $table->timestamps();
         });
-
-        if ($driver === 'pgsql') {
-            DB::statement(
-                "ALTER TABLE job_instances 
-                 ADD CONSTRAINT job_instances_type_check 
-                 CHECK (type IN ('import','export','system'))"
-            );
-        }
     }
 
     /**

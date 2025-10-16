@@ -23,8 +23,7 @@ return new class extends Migration
             $table->integer('role_id')->unsigned();
             $table->string('image')->nullable();
             $table->string('timezone', 40)->default('UTC');
-            $table->unsignedInteger('ui_locale_id')->nullable()->comment('for ui locale');
-            $table->foreign('ui_locale_id')->references('id')->on('locales');
+            $table->foreignId('ui_locale_id')->constrained('locales');
             $table->rememberToken();
             $table->timestamps();
         });

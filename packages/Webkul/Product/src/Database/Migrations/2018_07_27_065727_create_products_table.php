@@ -2,7 +2,6 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -10,41 +9,28 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
-        $driver = DB::getDriverName();
-
-        Schema::create('products', function (Blueprint $table) use ($driver) {
+        Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('sku')->unique();
+            $table->string('type');
 
-            if ($driver === 'pgsql') {
-                $table->string('type')->default('simple');
-            } else {
-                $table->string('type');
-            }
+            $table->foreignId('parent_id')
+                ->nullable()
+                ->constrained('products')
+                ->cascadeOnDelete();
 
-            $table->unsignedInteger('parent_id')->nullable();
-            $table->unsignedInteger('attribute_family_id')->nullable();
+            $table->foreignId('attribute_family_id')
+                ->nullable()
+                ->constrained('attribute_families');
 
-            if ($driver === 'pgsql') {
-                $table->jsonb('values')->nullable();
-                $table->jsonb('additional')->nullable();
-            } else {
-                $table->json('values')->nullable();
-                $table->json('additional')->nullable();
-            }
+            $table->json('values')->nullable();
+            $table->json('additional')->nullable();
 
             $table->timestamps();
 
-            $table->foreign('attribute_family_id')
-                ->references('id')
-                ->on('attribute_families')
-                ->onDelete('restrict');
-        });
-
-        Schema::table('products', function (Blueprint $table) {
-            $table->foreign('parent_id')->references('id')->on('products')->onDelete('cascade');
+            /** Indexes */
             $table->index('sku');
             $table->index('type');
             $table->index('attribute_family_id');
@@ -53,21 +39,24 @@ return new class extends Migration
         });
 
         Schema::create('product_relations', function (Blueprint $table) {
-            $table->unsignedInteger('parent_id');
-            $table->unsignedInteger('child_id');
+            $table->foreignId('parent_id')
+                ->constrained('products')
+                ->cascadeOnDelete();
 
-            $table->foreign('parent_id')->references('id')->on('products')->onDelete('cascade');
-            $table->foreign('child_id')->references('id')->on('products')->onDelete('cascade');
+            $table->foreignId('child_id')
+                ->constrained('products')
+                ->cascadeOnDelete();
 
             $table->unique(['parent_id', 'child_id']);
         });
 
         Schema::create('product_super_attributes', function (Blueprint $table) {
-            $table->unsignedInteger('product_id');
-            $table->unsignedInteger('attribute_id');
+            $table->foreignId('product_id')
+                ->constrained('products')
+                ->cascadeOnDelete();
 
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
-            $table->foreign('attribute_id')->references('id')->on('attributes')->onDelete('restrict');
+            $table->foreignId('attribute_id')
+                ->constrained('attributes');
 
             $table->unique(['product_id', 'attribute_id']);
         });
@@ -76,7 +65,7 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('product_super_attributes');
         Schema::dropIfExists('product_relations');

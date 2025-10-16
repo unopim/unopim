@@ -15,12 +15,15 @@ return new class extends Migration
     {
         Schema::create('attribute_translations', function (Blueprint $table) {
             $table->id();
-            $table->integer('attribute_id')->unsigned();
+
+            $table->foreignId('attribute_id')
+                ->constrained('attributes')
+                ->cascadeOnDelete();
+
             $table->string('locale')->nullable();
             $table->text('name')->nullable();
 
             $table->unique(['attribute_id', 'locale']);
-            $table->foreign('attribute_id')->references('id')->on('attributes')->onDelete('cascade');
             /** Indexes */
             $table->index('attribute_id');
             $table->index(['locale', 'attribute_id']);
