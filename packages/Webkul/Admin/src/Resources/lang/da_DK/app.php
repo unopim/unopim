@@ -294,6 +294,49 @@ return [
                     'product-type' => 'Produkttype',
                 ],
             ],
+            'bulk-edit' => [
+                'validation' => [
+                    'decimal'                    => 'Indtast venligst et gyldigt decimaltal.',
+                    'number'                     => 'Indtast venligst et gyldigt heltal.',
+                    'email'                      => 'Indtast venligst en gyldig e-mailadresse.',
+                    'url'                        => 'Indtast venligst en gyldig URL.',
+                    'regex'                      => 'Værdien matcher ikke det krævede mønster.',
+                    'invalid-pattern'            => 'Ugyldigt brugerdefineret mønster angivet.',
+                    'select-attribute-or-family' => 'Vælg mindst ét attribut eller en attributfamilie.',
+                    'failed'                     => 'Validering mislykkedes.',
+                ],
+
+                'modal'                      => [
+                    'title'            => 'Attributter til masse-redigering',
+                    'btn-cancel'       => 'Annuller',
+                    'btn-proceed'      => 'Fortsæt',
+                    'attribute-family' => 'Vælg attributfamilie',
+                ],
+
+                'index' => [
+                    'no-product'    => 'Ingen produkter valgt til masse-redigering.',
+                ],
+
+                'filter' => [
+                    'many-product'      => 'For mange produkter er valgt.',
+                    'redirect-message'  => 'Omdirigerer til masse-redigeringsvisning.',
+                ],
+
+                'handle-save' => [
+                    'edit-success'  => 'Masse-redigering lykkedes.',
+                ],
+
+                'id'              => 'ID',
+                'no-changes'      => 'Ingen ændringer at gemme.',
+                'success'         => 'Handling gennemført med succes.',
+                'fetch-failed'    => 'Hentning mislykkedes.',
+                'action'          => 'Masseændring',
+                'gallery-preview' => 'Galleri forhåndsvisning',
+                'img-preview'     => 'Billedforhåndsvisning',
+                'no-image'        => 'Intet billede',
+                'img-fail'        => 'Billedupload mislykkedes.',
+                'no-opton'        => 'No Options',
+            ],
 
             'create-success'          => 'Produkt oprettet med succes',
             'delete-failed'           => 'Produkt sletning mislykkedes',

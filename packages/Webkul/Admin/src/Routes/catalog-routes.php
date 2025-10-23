@@ -8,6 +8,7 @@ use Webkul\Admin\Http\Controllers\Catalog\AttributeOptionController;
 use Webkul\Admin\Http\Controllers\Catalog\CategoryController;
 use Webkul\Admin\Http\Controllers\Catalog\CategoryFieldController;
 use Webkul\Admin\Http\Controllers\Catalog\Options\AjaxOptionsController;
+use Webkul\Admin\Http\Controllers\Catalog\ProductBulkEditController;
 use Webkul\Admin\Http\Controllers\Catalog\ProductController;
 use Webkul\Admin\Http\Middleware\EnsureChannelLocaleIsValid;
 
@@ -176,6 +177,18 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
             Route::get('get/locale', 'getLocale')->name('admin.catalog.product.get_locale');
 
             Route::get('get/attributes', 'getAttribute')->name('admin.catalog.product.get_attribute');
+        });
+
+        Route::controller(ProductBulkEditController::class)->prefix('products/bulkedit')->group(function () {
+            Route::get('', 'index')->name('admin.catalog.products.bulkedit');
+
+            Route::get('fetch-attributes', 'getAttributes')->name('admin.catalog.bulkedit.attributes.fetch-all');
+
+            Route::post('filters', 'filters')->name('admin.catalog.products.bulkedit.filters');
+
+            Route::post('save', 'handleBulkSave')->name('admin.catalog.products.bulk-edit.save');
+
+            Route::post('save-media', 'storeProductMedia')->name('admin.catalog.products.bulk-edit.save-media');
         });
     });
 });

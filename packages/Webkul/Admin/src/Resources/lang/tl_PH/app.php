@@ -294,6 +294,43 @@ return [
                     'product-type' => 'Uri ng Produkto',
                 ],
             ],
+            'bulk-edit' => [
+                'validation' => [
+                    'decimal'                    => 'Pakilagay ng wastong decimal na numero.',
+                    'number'                     => 'Pakilagay ng wastong buumbilang.',
+                    'email'                      => 'Pakilagay ng wastong email address.',
+                    'url'                        => 'Pakilagay ng wastong URL.',
+                    'regex'                      => 'Hindi tumutugma ang halaga sa kinakailangang pattern.',
+                    'invalid-pattern'            => 'Di-wastong pasadyang pattern ang ibinigay.',
+                    'select-attribute-or-family' => 'Mangyaring pumili ng kahit isang attribute o isang pamilya ng attribute.',
+                    'failed'                     => 'Nabigo ang pagpapatunay.', ],
+                'modal'                      => [
+                    'title'            => 'Mga Attribute para sa Bulk Edit',
+                    'btn-cancel'       => 'Kanselahin',
+                    'btn-proceed'      => 'Magpatuloy',
+                    'attribute-family' => 'Pumili ng Pamilya ng Attribute',
+                ],
+                'index' => [
+                    'no-product'    => 'Walang napiling produkto para sa bulk edit.',
+                ],
+                'filter' => [
+                    'many-product'      => 'Sobra ang bilang ng mga napiling produkto.',
+                    'redirect-message'  => 'Nire-redirect sa view ng bulk edit.',
+                ],
+                'handle-save' => [
+                    'edit-success'  => 'Matagumpay ang bulk edit.',
+                ],
+                'id'              => 'ID',
+                'no-changes'      => 'Walang pagbabago para i-save.',
+                'success'         => 'Matagumpay na naisagawa ang gawain.',
+                'fetch-failed'    => 'Hindi nakuha ang datos.',
+                'action'          => 'Maramihang Pag-edit',
+                'gallery-preview' => 'Gallery Preview',
+                'img-preview'     => 'Image Preview',
+                'no-image'        => 'Walang Imahe',
+                'img-fail'        => 'Nabigo ang pag-upload ng imahe',
+                'no-opton'        => 'Walang Opsyon',
+            ],
 
             'create-success'          => 'Matagumpay na nalikha ang produkto',
             'delete-failed'           => 'Nabigong tanggalin ang produkto',

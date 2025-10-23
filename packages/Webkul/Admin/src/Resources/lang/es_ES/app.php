@@ -295,6 +295,49 @@ return [
                 ],
             ],
 
+            'bulk-edit' => [
+                'validation' => [
+                    'decimal'                    => 'Por favor, introduce un número decimal válido.',
+                    'number'                     => 'Por favor, introduce un número entero válido.',
+                    'email'                      => 'Por favor, introduce una dirección de correo válida.',
+                    'url'                        => 'Por favor, introduce una URL válida.',
+                    'regex'                      => 'El valor no coincide con el patrón requerido.',
+                    'invalid-pattern'            => 'Patrón personalizado no válido.',
+                    'select-attribute-or-family' => 'Por favor, seleccione al menos un atributo o una familia de atributos.',
+                    'failed'                     => 'La validación ha fallado.',
+                ],
+                'modal'                      => [
+                    'title'            => 'Atributos para edición masiva',
+                    'btn-cancel'       => 'Cancelar',
+                    'btn-proceed'      => 'Continuar',
+                    'attribute-family' => 'Seleccionar familia de atributos',
+                ],
+
+                'index' => [
+                    'no-product'    => 'No se seleccionaron productos para la edición masiva.',
+                ],
+
+                'filter' => [
+                    'many-product'      => 'Se seleccionaron demasiados productos.',
+                    'redirect-message'  => 'Redirigiendo a la vista de edición masiva.',
+                ],
+
+                'handle-save' => [
+                    'edit-success'  => 'Edición masiva exitosa.',
+                ],
+
+                'id'              => 'ID',
+                'no-changes'      => 'No hay cambios para guardar.',
+                'success'         => 'Operación completada con éxito.',
+                'fetch-failed'    => 'Error al obtener los datos.',
+                'action'          => 'Edición masiva',
+                'gallery-preview' => 'Vista previa de galería',
+                'img-preview'     => 'Vista previa de imagen',
+                'no-image'        => 'Sin imagen',
+                'img-fail'        => 'Fallo al subir la imagen.',
+                'no-opton'        => 'No Options',
+            ],
+
             'create-success'          => 'Producto creado con éxito',
             'delete-failed'           => 'Producto eliminado Falló',
             'delete-success'          => 'Producto eliminado con éxito',

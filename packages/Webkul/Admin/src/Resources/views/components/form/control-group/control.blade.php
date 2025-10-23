@@ -1087,7 +1087,7 @@
                 },
                 listRoute: {
                     type: String,
-                    default: '{{ route('admin.catalog.options.fetch-all')}}'
+                    default: "{{ route('admin.catalog.options.fetch-all')}}"
                 },
                 queryParams: Array,
             },
@@ -1126,7 +1126,6 @@
             },
 
             mounted() {
-                this.$refs['multiselect__handler__']._.refs.list.addEventListener('scroll', this.onScroll);
 
                 if (this.selectedValue && typeof this.selectedValue != 'object') {
                     this.initializeValue();
@@ -1209,16 +1208,25 @@
                 openedSelect(id) {
                     if (this.optionsList.length < 1) {
                         this.isLoading = true;
-
+                        
                         this.$axios.get(this.listRoute, {params: this.params})
-                            .then((result) => {
-                                this.optionsList = result.data.options;
-                                this.lastPage = result.data.lastPage;
-                                this.params.page = result.data.page;
-
-                                this.isLoading = false;
-                            });
+                        .then((result) => {
+                            this.optionsList = result.data.options;
+                            this.lastPage = result.data.lastPage;
+                            this.params.page = result.data.page;
+                            
+                            this.isLoading = false;
+                        });
                     }
+
+                    this.$nextTick(() => {
+                        const listEl = this.$refs['multiselect__handler__'].$el.querySelector('.multiselect__content-wrapper');
+
+                        if (listEl) {
+                            listEl.removeEventListener('scroll', this.onScroll);
+                            listEl.addEventListener('scroll', this.onScroll);
+                        }
+                    });
                 },
                 onScroll(e) {
                     const element = this.$refs['multiselect__handler__']._.refs.list;
