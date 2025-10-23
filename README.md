@@ -22,9 +22,13 @@ Ensure your server meets the following requirements:
 - **MySQL**: Version 8.0.32 or higher
 
 ## ⚙️ Scalability
- - [Learn how UnoPim scales to handle over **10 million products**:](https://unopim.com/scaling-unopim-for-10-million-products/)
-   
-     ![10 million products](https://github.com/user-attachments/assets/c264d658-3723-46ff-8b60-2b9506a7a412)
+
+- [Learn how UnoPim scales to handle over **10 million products**](https://unopim.com/scaling-unopim-for-10-million-products/)
+
+  <a href="https://unopim.com/scaling-unopim-for-10-million-products/" target="_blank">
+    <img src="https://github.com/user-attachments/assets/c264d658-3723-46ff-8b60-2b9506a7a412" alt="10 million products" width="790">
+  </a>
+
 
 ## ✨ Features
 
