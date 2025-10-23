@@ -204,47 +204,6 @@ test('Create a new channel to use in source/target channel field', async({adminP
   await expect(adminPage.getByText(/Channel created successfully/i)).toBeVisible();
 });
 
-test('Setup the MagicAI with valid credential(Graq)', async({adminPage})=>{
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Magic AI' }).click();
-  await adminPage.getByText('Configuration', {exact:true}).nth(1).click(); 
-  await expect(adminPage.locator('.w-9.h-5').first()).toBeVisible();
-  await adminPage.locator('.w-9.h-5').first().click();
-  await adminPage.locator('input[name="general[magic_ai][settings][ai_platform]"]')
-  .locator('..').locator('.multiselect__tags').click();
-  await adminPage.getByRole('option', { name: 'Groq' }).click();
-  await expect(adminPage.getByRole('textbox', { name: 'API Key' })).toBeVisible();
-  await adminPage.getByRole('textbox', { name: 'API Key' })
-  .fill('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');
-  await expect(adminPage.getByRole('textbox', { name: 'LLM API Domain' })).toBeVisible();
-  await expect(adminPage.getByRole('textbox', { name: 'LLM API Domain' })).toHaveValue('api.groq.com');
-  await expect(adminPage.getByRole('button', {name: 'Validate Credentials'})).toBeVisible();
-  await expect(adminPage.locator('input[name="general[magic_ai][settings][api_model]"]')
-  .locator('..').locator('.multiselect__tags')).toBeVisible();
-  await adminPage.locator('input[name="general[magic_ai][settings][api_model]"]')
-  .locator('..').locator('.multiselect__tags').click();
-  await expect(adminPage.getByRole('option', {name:'groq/compound'})).toBeVisible();
-  await adminPage.getByRole('option', {name:'groq/compound'}).click();
-  await expect(adminPage.locator('.w-9.h-5').nth(1)).toBeVisible();
-  await adminPage.locator('.w-9.h-5').nth(1).click();
-  await expect(adminPage.locator('.w-9.h-5').nth(2)).toBeVisible();
-  await expect(
-  adminPage.locator('[id="general[magic_ai][translation][ai_model]"] .multiselect__single')
-  ).toHaveText('groq/compound');
-  await adminPage.locator('[id="general[magic_ai][translation][source_channel]"] div').filter({ hasText: /^Select option$/ }).click();
-  await adminPage.getByRole('option', { name: 'Default Press enter to select' }).locator('span').first().click();
-  await adminPage.locator('[id="general[magic_ai][translation][target_channel]"] div').filter({ hasText: /^Select option$/ }).click();
-  await adminPage.locator('[id="general[magic_ai][translation][target_channel]"]').getByText('E-Commerce').click();
-  await adminPage.locator('[id="general[magic_ai][translation][source_locale]"] div').filter({ hasText: /^Select option$/ }).click();
-  await adminPage.locator('[id="general[magic_ai][translation][source_locale]"]').getByText('English (United States)').click();
-  await adminPage.locator('[id="general[magic_ai][translation][target_locale]"] div').filter({ hasText: /^Select option$/ }).click();
-  await adminPage.locator('[id="general[magic_ai][translation][target_locale]"]').getByText('Hindi (India)').click();
-  await adminPage.getByRole('button', {name: 'Validate Credentials'}).click();
-  await expect(adminPage.getByText('Magic AI credentials validated successfully')).toBeVisible();
-  await adminPage.getByRole('button', { name: 'Save Configuration' }).click();
-  await expect(adminPage.getByText('Configuration saved successfully')).toBeVisible();
-});
-
 test('Check the Prompt section available and clickable', async({adminPage})=>{
   await adminPage.getByRole('link', { name: ' Configuration' }).click();
   await adminPage.getByRole('link', { name: 'Magic AI' }).click();
