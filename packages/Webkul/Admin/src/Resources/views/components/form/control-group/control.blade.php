@@ -519,6 +519,7 @@
                 :clear-on-select="true"
                 :show-no-results="true"
                 :hide-selected="true"
+                :disabled="disabled"
                 :name="name"
                 v-model="selectedValue"
                 v-bind="field"
@@ -558,6 +559,10 @@
                 onselect: {
                     default: true
                 },
+                disabled: {
+                    type: Boolean,
+                    default: false
+                }
             },
             
             data() {

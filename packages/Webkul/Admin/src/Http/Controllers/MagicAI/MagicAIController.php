@@ -357,15 +357,18 @@ class MagicAIController extends Controller
         $arr = ProductValueMapperFacade::getChannelLocaleSpecificFields($productData, $channel, $locale);
         $sourceField = explode(',', request()->input('attributes'));
         $result = [];
+
         foreach ($sourceField as $field) {
             if (! empty($arr) && array_key_exists($field, $arr)) {
                 $attribute = $this->attributeRepository->where('code', $field)->first();
-                $result[] = [
+
+                $result[$field] = [
                     'fieldLabel'     => $attribute->name,
                     'fieldName'      => $field,
                     'isTranslatable' => ! empty($arr) && array_key_exists($field, $arr),
                     'sourceData'     => ! empty($arr) && array_key_exists($field, $arr) ? $arr[$field] : null,
                     'translatedData' => null,
+                    'type'           => $attribute->type,
                 ];
             }
         }
@@ -377,43 +380,52 @@ class MagicAIController extends Controller
     {
         $attributes = $this->isAllAttributeTranslatable();
 
-        foreach ($attributes as $key => $attribute) {
-            $field = $attribute['fieldName'];
-            $type = $this->attributeRepository->findByField('code', $field)->first()->type;
-            $attributes[$key]['type'] = $type;
-
-            if ($attribute['isTranslatable'] != false) {
-                $targetLocales = explode(',', request()->input('targetLocale'));
-                $translatedData = [];
-
-                foreach ($targetLocales as $locale) {
-                    $value = null;
-                    $p = "Translate @$field into $locale. Return only the translated value wrapped in a single <p> tag. Do not include any additional text, descriptions, or explanations.";
-                    $prompt = $this->promptService->getPrompt(
-                        $p,
-                        request()->input('resource_id'),
-                        request()->input('resource_type')
-                    );
-
-                    $response = MagicAI::setModel(request()->input('model'))
-                        ->setPlatForm(core()->getConfigData('general.magic_ai.settings.ai_platform'))
-                        ->setPrompt($prompt)
-                        ->ask();
-
-                    preg_match_all('/<p>(.*?)<\/p>/', $response, $matches);
-                    $value = end($matches[1]);
-
-                    $translatedData[] = [
-                        'locale'  => $locale,
-                        'content' => $value,
-                    ];
-                }
-
-                $attributes[$key]['translatedData'] = $translatedData;
-            }
+        if (empty($attributes)) {
+            return new JsonResponse([]);
         }
 
-        return new JsonResponse($attributes);
+        $responseData = [
+            'headers'    => (array_merge(['locale'], array_column($attributes, 'fieldLabel'))),
+            'fields'     => $attributes,
+            'translated' => [],
+        ];
+
+        $targetLocales = explode(',', request()->input('targetLocale'));
+
+        foreach ($targetLocales as $locale) {
+            $translatedDataForLocale = [];
+
+            foreach ($attributes as $key => $attribute) {
+                $field = $attribute['fieldName'];
+
+                $value = null;
+
+                $p = "Translate @$field into $locale. Return only the translated value wrapped in a single <p> tag. Do not include any additional text, descriptions, or explanations.";
+
+                $prompt = $this->promptService->getPrompt(
+                    $p,
+                    request()->input('resource_id'),
+                    request()->input('resource_type')
+                );
+
+                $response = MagicAI::setModel(request()->input('model'))
+                    ->setPlatForm(core()->getConfigData('general.magic_ai.settings.ai_platform'))
+                    ->setPrompt($prompt)
+                    ->ask();
+
+                preg_match_all('/<p>(.*?)<\/p>/', $response, $matches);
+                $value = end($matches[1]);
+
+                $translatedDataForLocale[$field] = [
+                    'field'   => $field,
+                    'content' => $value,
+                ];
+            }
+
+            $responseData['translated'][$locale] = $translatedDataForLocale;
+        }
+
+        return new JsonResponse($responseData);
     }
 
     public function saveAllTranslatedAttributes()

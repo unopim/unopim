@@ -1,5 +1,4 @@
 @inject('coreConfigRepository', 'Webkul\Core\Repositories\CoreConfigRepository')
-@inject('magicAI', 'Webkul\MagicAI\MagicAI')
 
 @php
     $nameKey = $item['key'] . '.' . $field['name'];
@@ -17,25 +16,28 @@
     <script type="text/x-template" id="v-translation-channel-template">
         <div class="grid gap-2.5 content-start ">
             <x-admin::form.control-group class="last:!mb-0 w-full" >
-                <x-admin::form.control-group.label>
+                <x-admin::form.control-group.label ::class="isTranslationEnabled ? 'required' : ''">
                         @{{ label }}
                 </x-admin::form.control-group.label>
                 @php
                     $channels = core()->getAllChannels();
+
                     $options = [];
-                    foreach($channels as $channel)
-                    {
+
+                    foreach ($channels as $channel) {
+                        $channelName = $channel->name;
+
                         $options[] = [
-                            'id' => $channel->code,
-                            'label' => $channel->name,
-                            ];
-                        }
+                            'id'    => $channel->code,
+                            'label' => empty($channelName) ? "[$channel->code]" : $channelName,
+                        ];
+                    }
                 @endphp
                 <x-admin::form.control-group.control
                     type="select"
                     ::id="name"
                     ::name="name"
-                    rules="required"
+                    ::rules="{ 'required': isTranslationEnabled }"
                     v-model="sourceChannel"
                     ::label="label"
                     :options="json_encode($options)"
@@ -59,8 +61,16 @@
             ],
             data: function() {
                 return {
+                    isTranslationEnabled: Boolean('{{ core()->getConfigData("general.magic_ai.translation.enabled") == 1 }}')
+                };
+            },
 
-                }
+            mounted() {
+                this.$emitter.on('config-value-changed', (data) => {
+                    if (data.fieldName == 'general[magic_ai][translation][enabled]') {
+                        this.isTranslationEnabled = parseInt(data.value || 0) === 1;
+                    }
+                });
             },
 
             methods: {
