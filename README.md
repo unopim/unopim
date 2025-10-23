@@ -21,6 +21,11 @@ Ensure your server meets the following requirements:
 - **Composer**: 2.5 or higher
 - **MySQL**: Version 8.0.32 or higher
 
+## ⚙️ Scalability
+ - [Learn how UnoPim scales to handle over **10 million products**:](https://unopim.com/scaling-unopim-for-10-million-products/)
+   
+     ![10 million products](https://github.com/user-attachments/assets/c264d658-3723-46ff-8b60-2b9506a7a412)
+
 ## ✨ Features
 
 - **Centralized Product Management**  
