@@ -1,4 +1,9 @@
 const { test, expect } = require('../../utils/fixtures');
+require('dotenv').config();
+
+const groqapikey = process.env.GROQ_API_KEY;
+const groqinvalidapikey = process.env.GROQ_INVALID_KEY;
+
 test.describe('UnoPim Magic AI tests cases', () => {
 test('Check the Magic AI Visibility', async({adminPage})=>{
   await expect(adminPage.getByRole('link', { name: ' Configuration' })).toBeVisible();
@@ -79,7 +84,7 @@ test('Check the Validate button is visible by filling the value in api key', asy
   await adminPage.getByRole('link', { name: 'Magic AI' }).click();
   await expect(adminPage).toHaveURL(/.*\/admin\/configuration\/general\/magic_ai/);
   await expect(adminPage.getByRole('textbox', { name: 'API Key' })).toBeVisible();
-  await adminPage.getByRole('textbox', { name: 'API Key' }).fill('svdhdsvsdjh');
+  await adminPage.getByRole('textbox', { name: 'API Key' }).fill(groqinvalidapikey);
   await expect(adminPage.getByRole('button', {name: 'Validate Credentials'})).toBeVisible();
 });
 
@@ -91,7 +96,7 @@ test('Validate the credential by filling randam invalid value', async({adminPage
   .locator('..').locator('.multiselect__tags').click();
   await adminPage.getByRole('option', { name: 'Openai' }).click();
   await expect(adminPage.getByRole('textbox', { name: 'API Key' })).toBeVisible();
-  await adminPage.getByRole('textbox', { name: 'API Key' }).fill('svdhdsvsdjh');
+  await adminPage.getByRole('textbox', { name: 'API Key' }).fill(groqinvalidapikey);
   await expect(adminPage.getByRole('textbox', { name: 'LLM API Domain' })).toBeVisible();
   await adminPage.getByRole('textbox', { name: 'LLM API Domain' }).fill('skdjcvh');
   await expect(adminPage.getByRole('button', {name: 'Validate Credentials'})).toBeVisible();
@@ -186,22 +191,42 @@ test('Assign the locale to default channel', async({adminPage})=>{
   await expect(adminPage.getByText(/Update Channel Successfully/i)).toBeVisible();
 });
 
-test('Create a new channel to use in source/target channel field', async({adminPage})=>{
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Channels' }).click();
-  await adminPage.getByRole('link', { name: 'Create Channel' }).click();
-  await adminPage.getByRole('textbox', { name: 'Code' }).fill('eCommerce');
-  await adminPage.locator('div').filter({ hasText: /^Select Root Category$/ }).click();
-  await adminPage.getByRole('option', { name: '[root]' }).locator('span').first().click();
-  await adminPage.locator('input[name="en_US\\[name\\]"]').fill('E-Commerce');
-  await adminPage.locator('div').filter({ hasText: /^Select Locales$/ }).click();
-  await adminPage.getByRole('combobox').filter({ hasText: 'English (United States)' }).locator('div').first().click();
-  await adminPage.getByRole('option', {name:'Hindi (India)'}).click();
-  await adminPage.getByRole('option', { name: 'English (United States)' }).locator('span').first().click();
-  await adminPage.locator('div').filter({ hasText: /^Select currencies$/ }).click();
-  await adminPage.getByRole('option', { name: 'US Dollar' }).locator('span').first().click();
-  await adminPage.getByRole('button', { name: 'Save Channel' }).click();
-  await expect(adminPage.getByText(/Channel created successfully/i)).toBeVisible();
+test('Setup the MagicAI with valid credential(Graq)', async({adminPage})=>{
+  await adminPage.getByRole('link', { name: ' Configuration' }).click();
+  await adminPage.getByRole('link', { name: 'Magic AI' }).click();
+  await adminPage.getByText('Configuration', {exact:true}).nth(1).click(); 
+  await expect(adminPage.locator('.w-9.h-5').first()).toBeVisible();
+  await adminPage.locator('.w-9.h-5').first().click();
+  await adminPage.locator('input[name="general[magic_ai][settings][ai_platform]"]')
+  .locator('..').locator('.multiselect__tags').click();
+  await adminPage.getByRole('option', { name: 'Groq' }).click();
+  await expect(adminPage.getByRole('textbox', { name: 'API Key' })).toBeVisible();
+  await adminPage.getByRole('textbox', { name: 'API Key' }).fill(groqapikey);
+  await expect(adminPage.getByRole('textbox', { name: 'LLM API Domain' })).toBeVisible();
+  await expect(adminPage.getByRole('textbox', { name: 'LLM API Domain' })).toHaveValue('api.groq.com');
+  await expect(adminPage.getByRole('button', {name: 'Validate Credentials'})).toBeVisible();
+  await expect(adminPage.locator('input[name="general[magic_ai][settings][api_model]"]')
+  .locator('..').locator('.multiselect__tags')).toBeVisible();
+  await adminPage.locator('input[name="general[magic_ai][settings][api_model]"]')
+  .locator('..').locator('.multiselect__tags').click();
+  await expect(adminPage.getByRole('option', {name:'groq/compound'})).toBeVisible();
+  await adminPage.getByRole('option', {name:'groq/compound'}).click();
+  await expect(adminPage.locator('.w-9.h-5').nth(1)).toBeVisible();
+  await adminPage.locator('.w-9.h-5').nth(1).click();
+  await expect(adminPage.locator('.w-9.h-5').nth(2)).toBeVisible();
+  await expect(
+  adminPage.locator('[id="general[magic_ai][translation][ai_model]"] .multiselect__single')
+  ).toHaveText('groq/compound');
+  await adminPage.locator('[id="general[magic_ai][translation][source_channel]"] div').filter({ hasText: /^Select option$/ }).click();
+  await adminPage.getByRole('option', { name: 'Default Press enter to select' }).locator('span').first().click();
+  await adminPage.locator('[id="general[magic_ai][translation][target_channel]"] div').filter({ hasText: /^Select option$/ }).click();
+  await adminPage.locator('[id="general[magic_ai][translation][target_channel]"]').getByText('Default').click();
+  await adminPage.locator('[id="general[magic_ai][translation][source_locale]"] div').filter({ hasText: /^Select option$/ }).click();
+  await adminPage.locator('[id="general[magic_ai][translation][source_locale]"]').getByText('English (United States)').click();
+  await adminPage.getByRole('button', {name: 'Validate Credentials'}).click();
+  await expect(adminPage.getByText('Magic AI credentials validated successfully')).toBeVisible();
+  await adminPage.getByRole('button', { name: 'Save Configuration' }).click();
+  await expect(adminPage.getByText('Configuration saved successfully')).toBeVisible();
 });
 
 test('Check the Prompt section available and clickable', async({adminPage})=>{
@@ -526,6 +551,75 @@ test('Check that AI Translate is visible on Short-Description', async({adminPage
   await expect(adminPage.getByRole('button', { name: 'Translate' }).first()).toBeVisible();
 });
 
+// test('Check more option and translate is visible', async ({ adminPage }) => {
+//   await adminPage.getByRole('link', { name: ' Catalog' }).click();
+//   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
+//   await itemRow.locator('span[title="Edit"]').first().click();
+//   await expect(adminPage.locator('span[title="More Actions"]')).toBeVisible();
+//   await adminPage.locator('span[title="More Actions"]').click();
+//   await expect(adminPage.locator('span[title="Translate"]')).toBeVisible();
+// });
+
+// test('Click on Translate and verify the fields', async({adminPage})=>{
+//   await adminPage.getByRole('link', { name: ' Catalog' }).click();
+//   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
+//   await itemRow.locator('span[title="Edit"]').first().click();
+//   await adminPage.locator('span[title="More Actions"]').click();
+//   await adminPage.locator('span[title="Translate"]').click();
+//   await expect(adminPage.getByText('Step 1: Select Source Channel, Language and Attributes')).toBeVisible();
+//   await expect(adminPage.locator('span.multiselect__single', { hasText: 'Default' })).toBeVisible();
+//   await expect(adminPage.locator('span.multiselect__single', { hasText: 'English (United States)' })).toBeVisible();
+//   await expect(adminPage.locator('div.multiselect__tags', { hasText: 'Short Description' })).toBeVisible();
+//   await expect(adminPage.getByRole('button', { name: 'Next' })).toBeVisible();
+// });
+
+// test('Click on next and verify the step 2 fields', async({adminPage})=>{
+//   await adminPage.getByRole('link', { name: ' Catalog' }).click();
+//   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
+//   await itemRow.locator('span[title="Edit"]').first().click();
+//   await adminPage.locator('span[title="More Actions"]').click();
+//   await adminPage.locator('span[title="Translate"]').click();
+//   await adminPage.getByRole('button', { name: 'Next' }).click();
+//   await expect(adminPage.getByText('Step 2: Select Target Channel and Languages')).toBeVisible();
+//   await expect(adminPage.locator('span.multiselect__single', { hasText: 'Default' }).nth(1)).toBeVisible();
+//   await expect(adminPage.locator('div.multiselect__tags', { hasText: 'Hindi (India)' })).toBeVisible();
+//   await expect(adminPage.getByRole('button', { name: 'Cancel' })).toBeVisible();
+//   await expect(adminPage.getByRole('button', { name: 'Translate' }).nth(1)).toBeVisible();
+// });
+
+// test('Verify the fields in translated content after click on Translate button', async({adminPage})=>{
+//   await adminPage.getByRole('link', { name: ' Catalog' }).click();
+//   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
+//   await itemRow.locator('span[title="Edit"]').first().click();
+//   await adminPage.locator('span[title="More Actions"]').click();
+//   await adminPage.locator('span[title="Translate"]').click();
+//   await adminPage.getByRole('button', { name: 'Next' }).click();
+//   await adminPage.locator('button.primary-button:has-text("Translate")').click();
+//   await adminPage.waitForTimeout(20000);
+//   await expect(adminPage.getByText('Translated Content')).toBeVisible();
+//   await expect(adminPage.getByRole('button', {name:'Apply'})).toBeVisible();
+// });
+
+// test('Translate the content in the hindi', async({adminPage})=>{
+//   await adminPage.getByRole('link', { name: ' Catalog' }).click();
+//   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
+//   await itemRow.locator('span[title="Edit"]').first().click();
+//   await adminPage.locator('span[title="More Actions"]').click();
+//   await adminPage.locator('span[title="Translate"]').click();
+//   await adminPage.getByRole('button', { name: 'Next' }).click();
+//   await adminPage.locator('button.primary-button:has-text("Translate")').click();
+//   await adminPage.waitForTimeout(20000);
+//   await adminPage.getByRole('button', { name: 'Apply' }).click();
+//   await expect(adminPage.getByText('Translation job launched for product update')).toBeVisible();
+//   await adminPage.waitForTimeout(500);
+//   await adminPage.getByRole('button', { name: ' English (United States) ' }).click();
+//   await adminPage.getByRole('link', { name: 'Hindi (India)' }).click();
+//   const frame = await adminPage.frameLocator('#short_description_ifr');
+//   const bodyText = await frame.locator('body').innerText();
+//   const containsHindi = /[\u0900-\u097F]/.test(bodyText);
+//   console.log('Contains Hindi:', containsHindi);
+//   await expect(containsHindi).toBe(true);
+// });
 test('Translate the content in the hindi', async({adminPage})=>{
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });

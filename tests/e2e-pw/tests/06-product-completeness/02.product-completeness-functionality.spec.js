@@ -43,37 +43,34 @@ test.describe('Verify the behvaiour of Product Completenss feature', () => {
     await expect(adminPage.getByText('Completeness updated successfully Close').first()).toBeVisible();
 });
 
-//   test('Verify for the Completness feature on Product Edit page', async ({ adminPage }) => {
-//     await adminPage.getByRole('link', { name: ' Catalog' }).click();
-//     await adminPage.getByRole('link', { name: 'Products' }).click();
-//     const itemRow = adminPage.locator('div', { hasText: 'NAScore' });
-//     await itemRow.locator('span[title="Edit"]').first().click();
-//     await expect(adminPage.getByRole('button', { name: '% Completeness 33%' })).toBeVisible();
-//     await adminPage.getByRole('button', { name: '% Completeness 33%' }).click();
-//     await expect(adminPage.getByText('2 missing required attributes')).toBeVisible();
-// });
-
-//   test('Verify for the completeness score on product grid adminPage', async ({ adminPage }) => {
-//     await adminPage.getByRole('link', { name: ' Catalog' }).click();
-//     const skuRow = adminPage.locator('div.row:has-text("NAScore")');
-//     const completeColumn = skuRow.locator('span.inline-flex.items-center.justify-center.text-center');
-//     await expect(completeColumn).toHaveText('33%');;
-// });
-
   test('Create a new channel and assigned multiple locale and currency', async ({ adminPage }) => {
     await adminPage.getByRole('link', { name: ' Settings' }).click();
     await adminPage.getByRole('link', { name: 'Locales' }).click();
-    await adminPage.locator('div').filter({ hasText: /^1af_ZAAfrikaans \(South Africa\)Disabled$/ }).locator('a').first().click();
-    await adminPage.locator('form').filter({ hasText: 'Edit Locale' }).locator('label').nth(3).click();
-    await adminPage.locator('.px-4.py-2\\.5 > div:nth-child(3)').click();
+
+    //Enable the af_ZA locale
+    await adminPage.getByRole('textbox', { name: 'Search by code' }).click();
+    await adminPage.getByRole('textbox', { name: 'Search by code' }).fill('af_ZA');
+    await adminPage.keyboard.press('Enter');
+    await adminPage.waitForTimeout(1000);
+    const itemRow = adminPage.locator('div', { hasText: 'af_ZAAfrikaans (South Africa)' });
+    await itemRow.locator('span[title="Edit"]').first().click();
+    await adminPage.locator('label[for="status"]').click();
     await adminPage.getByRole('button', { name: 'Save Locale' }).click();
-    await expect(adminPage.getByText('Locale updated successfully. Close')).toBeVisible();
+    await expect(adminPage.getByText(/Locale Updated successfully/i)).toBeVisible();
+
+    //Enable the Andorran Peseta currency
     await adminPage.getByRole('link', { name: 'Currencies' }).click();
-    await adminPage.locator('div').filter({ hasText: /^1ADPAndorran PesetaDisabled$/ }).locator('a').first().click();
-    await adminPage.locator('.rounded-full.w-9.h-5').click();
+    await adminPage.getByRole('textbox', { name: 'Search by code or id' }).click();
+    await adminPage.getByRole('textbox', { name: 'Search by code or id' }).type('adp');
+    await adminPage.keyboard.press('Enter');
+    await adminPage.waitForTimeout(1000);
+    const itemRow1 = adminPage.locator('div', { hasText: 'ADPAndorran Peseta' });
+    await itemRow1.locator('span[title="Edit"]').first().click();
+    await adminPage.locator('label[for="status"]').click();
     await adminPage.getByRole('button', { name: 'Save Currency' }).click();
-    await expect(adminPage.getByText('Currency updated successfully. Close')).toBeVisible();
-    await adminPage.getByRole('link', { name: ' Settings' }).click();
+    await expect(adminPage.getByText(/Currency updated successfully/i)).toBeVisible();
+
+    //Create a new channel and assign the above enabled locale and currency
     await adminPage.getByRole('link', { name: 'Channels' }).click();
     await adminPage.getByRole('link', { name: 'Create Channel' }).click();
     await adminPage.getByRole('textbox', { name: 'Code' }).click();
@@ -89,6 +86,7 @@ test.describe('Verify the behvaiour of Product Completenss feature', () => {
     await adminPage.getByText('Andorran Peseta').click();
     await adminPage.getByRole('option', { name: 'US Dollar' }).locator('span').first().click();
     await adminPage.getByRole('button', { name: 'Save Channel' }).click();
+    await expect(adminPage.getByText(/Channel created successfully/i)).toBeVisible();
 });
 
   test('Verify all available channels are displayed when user clicks “Configure Completeness” option', async ({ adminPage }) => {
@@ -137,22 +135,6 @@ test.describe('Verify the behvaiour of Product Completenss feature', () => {
     await expect(adminPage.getByText('of 16 Selected')).toBeVisible();
 });
 
-//   test('Verify product completeness score updates on product grid after marking all attributes as required with Sku data only', async ({ adminPage }) => {
-//     await adminPage.getByRole('link', { name: ' Catalog' }).click();
-//     const skuRow = adminPage.locator('div.row:has-text("NAScore")');
-//     const completeColumn = skuRow.locator('span.inline-flex.items-center.justify-center.text-center');
-//     await expect(completeColumn).toHaveText('6%');;
-// });
-
-//   test('Verify product completeness score updates on product Edit adminPage after marking all attributes as required with Sku data only', async ({ adminPage }) => {
-//     await adminPage.getByRole('link', { name: ' Catalog' }).click();
-//     await adminPage.getByRole('link', { name: 'Products' }).click();
-//     await adminPage.getByTitle('Edit').click();
-//     await expect(adminPage.getByRole('button', { name: '% Completeness 6%' })).toBeVisible();
-//     await adminPage.getByRole('button', { name: '% Completeness 6%' }).click();
-//     await expect(adminPage.getByText('15 missing required attributes ')).toBeVisible();
-// });
-
   test('Verify channel can be deselected for specific attribute in completeness settings', async ({ adminPage }) => {
     await adminPage.getByRole('link', { name: ' Catalog' }).click();
     await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
@@ -171,19 +153,6 @@ test.describe('Verify the behvaiour of Product Completenss feature', () => {
     await adminPage.locator('div:nth-child(3) > div:nth-child(3) > .mb-4 > div > .multiselect > .multiselect__tags > .multiselect__tags-wrap > .multiselect__tag > .multiselect__tag-icon').click();
     await expect(adminPage.getByText('Completeness updated successfully Close').first()).toBeVisible();
 });
-
-//   test('Verify product completeness score updates after deselecting 5 attribute from required in channel', async ({ adminPage }) => {
-//     await adminPage.getByRole('link', { name: ' Catalog' }).click();
-//     const skuRow = adminPage.locator('div.row:has-text("NAScore")');
-//     const completeColumn = skuRow.locator('span.inline-flex.items-center.justify-center.text-center');
-//     await expect(completeColumn).toHaveText('9%');;
-//     await adminPage.getByRole('link', { name: ' Catalog' }).click();
-//     await adminPage.getByRole('link', { name: 'Products' }).click();
-//     await adminPage.getByTitle('Edit').click();
-//     await expect(adminPage.getByRole('button', { name: '% Completeness 9%' })).toBeVisible();
-//     await adminPage.getByRole('button', { name: '% Completeness 9%' }).click();
-//     await expect(adminPage.getByText('10 missing required attributes ')).toBeVisible();
-// });
 
   test('Update the sku by filling all missing required attribute', async ({ adminPage }) => {
     await adminPage.getByRole('link', { name: ' Catalog' }).click();
@@ -211,24 +180,8 @@ test.describe('Verify the behvaiour of Product Completenss feature', () => {
     await adminPage.locator('#cost').click();
     await adminPage.locator('#cost').fill('23');
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
-
 });
-//   test('Verify completeness score is 100% on Product Edit page when all mising required attributes for channel are filled', async ({ adminPage }) => {
-//     await adminPage.getByRole('link', { name: ' Catalog' }).click();
-//     await adminPage.getByRole('link', { name: 'Products' }).click();
-//     await adminPage.getByTitle('Edit').first().click();
-//     await expect(adminPage.getByRole('button', { name: '% Completeness 100%' })).toBeVisible();
-//     await adminPage.getByRole('button', { name: '% Completeness 100%' }).click();
-//     await expect(adminPage.getByText('English (United States):100%')).toBeVisible();
 
-// });
-
-//   test('Verify completness score on product grid adminPage as 100% after filling all msiing field', async ({ adminPage }) => {
-//     await adminPage.getByRole('link', { name: ' Catalog' }).click();
-//     const skuRow = adminPage.locator('div.row:has-text("NAScore")');
-//     const completeColumn = skuRow.locator('span.inline-flex.items-center.justify-center.text-center');
-//     await expect(completeColumn).toHaveText('100%');;
-// });
   test('Verify configuring required attributes for different channels in Default Family Completeness settings', async ({ adminPage }) => {
     await adminPage.getByRole('link', { name: ' Catalog' }).click();
     await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
@@ -246,20 +199,4 @@ test.describe('Verify the behvaiour of Product Completenss feature', () => {
     await adminPage.getByRole('option', { name: 'channel3' }).locator('span').first().click();
     await expect(adminPage.getByText('Completeness updated successfully Close').first()).toBeVisible();
 });
-
-//   test('Verify for the complete score of a sku for both channel', async ({ adminPage }) => {
-//     await adminPage.getByRole('link', { name: ' Catalog' }).click();
-//     await adminPage.getByRole('link', { name: 'Products' }).click();
-//     await adminPage.getByTitle('Edit').first().click();
-//     await adminPage.getByRole('button', { name: ' Default ' }).click();
-//     await adminPage.getByRole('link', { name: 'channel3' }).click();
-//     await expect(adminPage.getByRole('button', { name: '% Completeness 67%' })).toBeVisible();
-//     await adminPage.getByRole('button', { name: '% Completeness 67%' }).click();
-//     await expect(adminPage.getByText('Afrikaans (South Africa):67%')).toBeVisible();
-//     await adminPage.getByRole('button', { name: '% Completeness 67%' }).click();
-//     await expect(adminPage.getByText('English (United States):67%')).toBeVisible();
-//     await adminPage.getByRole('button', { name: ' channel3 ' }).click();
-//     await adminPage.getByRole('link', { name: 'Default' }).click();
-//     await expect(adminPage.getByRole('button', { name: '% Completeness 100%' })).toBeVisible();
-// });
 });
