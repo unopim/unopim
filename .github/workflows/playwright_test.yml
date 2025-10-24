@@ -82,10 +82,8 @@ jobs:
           npx playwright install chromium
 
       - name: Start Queue Worker
-        run: |
+        run:
           php artisan queue:work &
-          # Force workflow to fail intentionally
-          exit 1
 
       - name: Run Playwright tests
         if: ${{ success() }}
