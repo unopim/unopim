@@ -1,19 +1,17 @@
 @pushOnce('scripts')
     <script type="text/x-template" id="v-spreadsheet-grid-template">
-
-    <tbody ref="tbody">
-        <v-spreadsheet-row
-            v-if="initialData.length"
-            :columns="columns"
-            v-for="(row, index) in initialData"
-            :key="index"
-            :rowId="index"
-            :row="row"
-            :fltColumns="fltColumns"
-        ></v-spreadsheet-row>
-    </tbody>
-
-</script>
+        <tbody ref="tbody">
+            <v-spreadsheet-row
+                v-if="initialData.length"
+                :columns="columns"
+                v-for="(row, index) in initialData"
+                :key="index"
+                :rowId="index"
+                :row="row"
+                :fltColumns="fltColumns"
+            ></v-spreadsheet-row>
+        </tbody>
+    </script>
 
     <script type="module">
         app.component('v-spreadsheet-grid', {
@@ -102,27 +100,31 @@
                     this.error = null;
 
                     this.$axios.get(this.url, {
-                            params: {
-                                limit: 10,
-                                offset: 0
-                            }
-                        })
-                        .then(response => {
-                            let data = response.data?.data || [];
-                            this.initialData = data;
-                        })
-                        .catch(console.error)
-                        .finally(() => {
-                            this.loading = false;
-                        });
+                        params: {
+                            limit: 10,
+                            offset: 0
+                        }
+                    })
+                    .then(response => {
+                        let data = response.data?.data || [];
+                        this.initialData = data;
+                    })
+                    .catch(console.error)
+                    .finally(() => {
+                        this.loading = false;
+                    });
                 },
 
-                onCellSelected({instance}) {
-                    if (!instance) {
-                        if (this.instance) this.instance.isActive = false;
+                onCellSelected({ instance }) {
+                    if (! instance) {
+                        if (this.instance) {
+                            this.instance.isActive = false;
+                        }
+
                         this.instance = null;
                         this.activeRow = null;
                         this.activeCol = null;
+
                         return;
                     }
 
@@ -133,7 +135,9 @@
                 },
 
                 handleKeydown(e) {
-                    if (this.activeRow === null || this.activeCol === null) return;
+                    if (this.activeRow === null || this.activeCol === null) {
+                        return;
+                    } 
 
                     const editing = this.activeCellInstance?.isInputFocused;
                     if (editing) {
@@ -146,6 +150,7 @@
                                 }
                             }
                         }
+
                         return;
                     }
 
@@ -163,15 +168,19 @@
                                 input.focus();
                             }
                         });
+
                         return;
                     }
+
                     if ((e.ctrlKey || e.metaKey) && e.keyCode === 67) {
                         this.copyActiveCellToClipboard();
+
                         return;
                     }
 
                     if ((e.ctrlKey || e.metaKey) && e.keyCode === 86) {
                         this.handlePasteFromClipboard(e);
+
                         return;
                     }
 
@@ -183,6 +192,7 @@
                                 input.blur();
                             }
                         }
+
                         return;
                     }
 
@@ -190,6 +200,7 @@
                     if (e.key === 'Enter' && !e.shiftKey) {
                         this.moveActiveCell('ArrowDown');
                         this.focusActiveCell();
+
                         return;
                     }
 
@@ -202,13 +213,17 @@
                         }
 
                         this.focusActiveCell();
+
                         return;
                     }
 
                     // Shift + Arrow → Range selection
                     if (e.shiftKey && e.key.startsWith('Arrow')) {
-                        if (!this.selecting) this.enableShiftSelection();
+                        if (! this.selecting) {
+                            this.enableShiftSelection();
+                        } 
                         this.handleArrowKeySelection(e.key);
+
                         return;
                     }
 
@@ -217,9 +232,9 @@
                         this.suppressNextFocus = true;
                         this.moveActiveCell(e.key);
                         this.focusActiveCell();
+
                         return;
                     }
-
                 },
 
                 async preloadOptions() {
@@ -228,7 +243,9 @@
                     );
 
                     for (const col of multiColumns) {
-                        if (this.optionsCache) continue;
+                        if (this.optionsCache) {
+                            continue;
+                        }
 
                         try {
                             const baseUrl = "{{ route('admin.catalog.options.fetch-all') }}";
@@ -269,9 +286,7 @@
                                 this.$emitter.emit(eventKey);
                             }
                         }
-                    }
-
-                    else if (this.instance) {
+                    } else if (this.instance) {
                         this.valueCopied = this.instance.internalValue;
                         this.valuesCopied = {};
                     }
@@ -301,7 +316,9 @@
                             const targetRow = startRow + offsetRow;
                             const targetCol = startCol + offsetCol;
 
-                            if (targetRow < 0 || targetCol < 0) continue;
+                            if (targetRow < 0 || targetCol < 0) {
+                                continue;
+                            }
 
                             const pasteKey = `spreadsheet-cell-paste-${targetRow}-${targetCol}`;
                             this.$emitter.emit(pasteKey, value);
@@ -325,7 +342,9 @@
                 },
 
                 emitPasteRange() {
-                    if (!this.dragStart || !this.dragStop ) return;
+                    if (! this.dragStart || ! this.dragStop) {
+                        return;
+                    }
 
                     const startRow = this.dragStart.row;
                     const startCol = this.dragStart.col;
@@ -386,11 +405,13 @@
                 finalizeDragFill(startRow, lastRow, col) {
                     const value = this.valueCopied;
 
-                    if (startRow === lastRow) return;
+                    if (startRow === lastRow) {
+                        return;
+                    }
 
-                    const [min, max] = startRow < lastRow ?
-                        [startRow + 1, lastRow] :
-                        [lastRow, startRow - 1];
+                    const [ min, max ] = startRow < lastRow
+                        ? [ startRow + 1, lastRow ]
+                        : [ lastRow, startRow - 1 ];
                     let eventKey = null;
                     for (let row = min; row <= max; row++) {
                         eventKey = `spreadsheet-cell-paste-${row}-${col}`;
@@ -404,12 +425,18 @@
 
                 highlightCell(row, col) {
                     const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-                    if (cell) cell.classList.add('bg-violet-200', 'dark:bg-cherry-900');
+
+                    if (cell) {
+                        cell.classList.add('bg-violet-200', 'dark:bg-cherry-900');
+                    }
                 },
 
                 unhighlightCell(row, col) {
                     const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-                    if (cell) cell.classList.remove('bg-violet-200', 'dark:bg-cherry-900');
+
+                    if (cell) {
+                        cell.classList.remove('bg-violet-200', 'dark:bg-cherry-900');
+                    }
                 },
 
                 updateSelectionDelta(newStopRow, newStopCol) {
@@ -508,7 +535,9 @@
                 },
 
                 clearHighlighted(startRow, startCol) {
-                    if (!this.dragStop) return;
+                    if (! this.dragStop) {
+                        return;
+                    }
 
                     let endRow = this.dragStop.row;
                     let endCol = this.dragStop.col;
@@ -556,7 +585,9 @@
                     let col = this.dragStart.col;
                     const prev = this.dragLastRow;
 
-                    if (lastRow === prev) return;
+                    if (lastRow === prev) {
+                        return;
+                    }
 
                     const [minNew, maxNew] = start < lastRow ? [start + 1, lastRow] : [lastRow, start - 1];
                     const [minOld, maxOld] = start < prev ? [start + 1, prev] : [prev, start - 1];
@@ -604,7 +635,9 @@
                     const maxRow = this.initialData.length - 1;
                     const maxCol = this.fltColumns.length - 1;
 
-                    if (!['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'].includes(key)) return;
+                    if (! ['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'].includes(key)) {
+                        return;
+                    }
 
                     let startRow = this.dragStop ? this.dragStop.row : this.activeRow;
                     let startCol = this.dragStop ? this.dragStop.col : this.activeCol;
@@ -636,7 +669,9 @@
                 },
 
                 enableShiftSelection() {
-                    if (this.selecting) return;
+                    if (this.selecting) {
+                        return;
+                    }
 
                     const keyUpEvent = (event) => {
                         if (event.key === 'Shift') {
@@ -668,12 +703,15 @@
                 },
 
                 handleClickOutside(event) {
-                    if (!this.$el.contains(event.target)) {
+                    if (! this.$el.contains(event.target)) {
                         if (this.activeCellInstance?.isInputFocused) {
                             const input = this.activeCellInstance.$refs.component?.$refs?.input;
-                            if (input) input.blur();
+                            if (input) {
+                                input.blur();
+                            }
                             this.activeCellInstance.isInputFocused = false;
                         }
+
                         this.activeRow = null;
                         this.activeCol = null;
                         this.instance = null;

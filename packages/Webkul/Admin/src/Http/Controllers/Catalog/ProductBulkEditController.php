@@ -127,7 +127,9 @@ class ProductBulkEditController extends Controller
             $this->mediaValidator->validate($requestData, $productId);
         } catch (ValidationException|ModelNotFoundException $e) {
             if ($e instanceof ModelNotFoundException) {
-                return $this->storeExceptionLog($e);
+                report($e);
+
+                return new JsonResponse(['message' => trans('admin::app.catalog.products.bulk-edit.img-fail')], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
             }
 
             return $this->validateErrorResponse($e->validator->errors()->messages());
@@ -157,7 +159,9 @@ class ProductBulkEditController extends Controller
                 ],
             ]);
         } catch (\Exception $e) {
-            return $this->storeExceptionLog($e);
+            report($e);
+
+            return new JsonResponse(['message' => trans('admin::app.catalog.products.bulk-edit.img-fail')], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -259,7 +263,6 @@ class ProductBulkEditController extends Controller
         $formattedAttributes = [];
 
         foreach ($attributes as $attribute) {
-
             $translatedLabel = $attribute->translate($currentLocaleCode);
 
             $formattedAttributes[] = [

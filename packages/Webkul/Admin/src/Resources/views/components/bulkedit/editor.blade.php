@@ -187,8 +187,6 @@
     }
 @endphp
 
-
-
 <x-admin::form.control-group.control type="hidden"/>
 
 <v-spreadsheet-editor
@@ -205,159 +203,160 @@
 ></v-spreadsheet-editor>
 
 @pushOnce('scripts')
+    <script type="text/x-template" id="v-spreadsheet-editor-template">
+        <div class="flex  justify-end gap-x-2.5">
+            <a
+                href="{{ route('admin.catalog.products.index') }}"
+                class="transparent-button"
+            >
+                @lang('admin::app.account.edit.back-btn')
+            </a>
+            <button class="primary-button" @click="handleSave">@lang('admin::app.catalog.products.edit.types.configurable.edit.save-btn')</button>
+        </div>
 
-<script type="text/x-template" id="v-spreadsheet-editor-template">
-    <div class="flex  justify-end gap-x-2.5">
-        <a
-            href="{{ route('admin.catalog.products.index') }}"
-            class="transparent-button"
-        >
-            @lang('admin::app.account.edit.back-btn')
-        </a>
-        <button class="primary-button" @click="handleSave">@lang('admin::app.catalog.products.edit.types.configurable.edit.save-btn')</button>
-    </div>
+        <div class="h-[calc(100vh-150px)] mt-2 overflow-y-auto space-y-4 rounded-lg shadow-lg">
+            <table class="table-fixed border-4 border-violet-50 border-collapse w-full dark:border-cherry-700">
+                <v-spreadsheet-header 
+                    :columns="columns" 
+                    :headers="headers"
+                />
+                <v-spreadsheet-grid 
+                    :url="fetchUrl"
+                    :columns="columns"
+                    :initial-data="initialData"
+                    :channels="channels"
+                    :channel-locales="channelLocales"
+                    :locales="allLocales"
+                    :fltColumns="fltColumns"
+                />
+            </table>
+        </div>
+    </script>
 
-    <div class="h-[calc(100vh-150px)] mt-2 overflow-y-auto space-y-4 rounded-lg shadow-lg">
-        <table class="table-fixed border-4 border-violet-50 border-collapse w-full dark:border-cherry-700">
-            <v-spreadsheet-header 
-                :columns="columns" 
-                :headers="headers"
-            />
-            <v-spreadsheet-grid 
-                :url="fetchUrl"
-                :columns="columns"
-                :initial-data="initialData"
-                :channels="channels"
-                :channel-locales="channelLocales"
-                :locales="allLocales"
-                :fltColumns="fltColumns"
-            />
-        </table>
-    </div>
-</script>
+    <script type="module">
+        app.component('v-spreadsheet-editor', {
+            template: '#v-spreadsheet-editor-template',
 
-<script type="module">
-    app.component('v-spreadsheet-editor', {
-        template: '#v-spreadsheet-editor-template',
-
-        props: {
-            columns: {
-                type: Array,
-                default: () => []
+            props: {
+                columns: {
+                    type: Array,
+                    default: () => []
+                },
+                headers: {
+                    type: Array,
+                    default: () => []
+                },
+                initialData: {
+                    type: Array,
+                    default: () => []
+                },
+                fetchUrl: {
+                    type:String
+                },
+                entitySaveUrl: {
+                    type:String,
+                },
+                allLocales: {
+                    type: Array,
+                    default: () => []
+                },
+                channels: {
+                    type: Array,
+                    default: () => []
+                },
+                channelLocales: {
+                    type: Object,
+                    default: () => ({})
+                },
+                fltColumns: {
+                    type: Object,
+                    default: () => ({})
+                },
             },
 
-            headers: {
-                type: Array,
-                default: () => []
+            data() {
+                return {
+                    allRows: this.initialRows || [],
+                    rowsPerPage: 100,
+                    currentPage: 1,
+                    isLoading: false,
+                    updatedEntityData: {},
+                };
             },
 
-            initialData: {
-                type: Array,
-                default: () => []
+            created() {
+                this.registerGlobalEvents();
             },
 
-            fetchUrl: String,
-            entitySaveUrl: String,
+            methods: {
+                registerGlobalEvents() {
+                    this.$emitter.on('update-spreadsheet-data', (data) => {
+                        this.updateEntityData(data);
+                    });
+                },
 
-            allLocales: {
-                type: Array,
-                default: () => []
+                updateEntityData({ value, entityId, column }) {
+                    const { code, channel, locale, currency } = column;
+                    if (! this.updatedEntityData[entityId]) {
+                        this.updatedEntityData[entityId] = {};
+                    }
+
+                    let data = this.updatedEntityData[entityId];
+                    let data2 = data;
+
+                    const keys = [code];
+
+                    if (channel) {
+                        keys.push(channel);
+                    }
+                    if (locale) {
+                        keys.push(locale);
+                    }
+                    if (currency) {
+                        keys.push(currency);
+                    }
+
+                    for (let i = 0; i < keys.length - 1; i++) {
+                        const key = keys[i];
+                        data[key] ||= {};
+                        data = data[key];
+                    }
+
+                    data[keys[keys.length - 1]] = value;
+                },
+
+                handleSave() {
+                    if (Object.keys(this.updatedEntityData).length === 0) {
+                        this.$emitter.emit('add-flash', {
+                            type: 'warning',
+                            message: "@lang('admin::app.catalog.products.bulk-edit.no-changes')",
+                        });
+                        return;
+                    }
+
+                    this.loading = true;
+
+                    this.$axios.post(this.entitySaveUrl, {
+                        data: this.updatedEntityData,
+                    })
+                    .then(response => {
+                        this.updatedEntityData = [];
+                        this.$emitter.emit('add-flash', {
+                            type: 'success',
+                            message: response.data.message ||  "@lang('admin::app.catalog.products.bulk-edit.success')",
+                        });
+
+                        setTimeout(() => window.location.href= "{{ route('admin.catalog.products.index') }}", 1000);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    })
+                    .finally(() => {
+                        this.loading = false;
+                    });
+                },
             },
-
-            channels: {
-                type: Array,
-                default: () => []
-            },
-
-            channelLocales: {
-                type: Object,
-                default: () => ({})
-            },
-
-            fltColumns: {
-                type: Object,
-                default: () => ({})
-            },
-        },
-
-        data() {
-            return {
-                allRows: this.initialRows || [],
-                rowsPerPage: 100,
-                currentPage: 1,
-                isLoading: false,
-                updatedEntityData: {},
-            };
-        },
-
-        created() {
-            this.registerGlobalEvents();
-        },
-
-        methods: {
-            registerGlobalEvents() {
-                this.$emitter.on('update-spreadsheet-data', (data) => {
-                    this.updateEntityData(data);
-                });
-            },
-
-            updateEntityData({ value, entityId, column }) {
-                const { code, channel, locale, currency } = column;
-                if (!this.updatedEntityData[entityId]) {
-                    this.updatedEntityData[entityId] = {};
-                }
-
-                let data = this.updatedEntityData[entityId];
-                let data2 = data;
-
-                const keys = [code];
-
-                if (channel) keys.push(channel);
-                if (locale) keys.push(locale);
-                if (currency) keys.push(currency);
-
-                for (let i = 0; i < keys.length - 1; i++) {
-                    const key = keys[i];
-                    data[key] ||= {};
-                    data = data[key];
-                }
-
-                data[keys[keys.length - 1]] = value;
-            },
-
-        handleSave() {
-            if (Object.keys(this.updatedEntityData).length === 0) {
-                this.$emitter.emit('add-flash', {
-                    type: 'warning',
-                    message: "@lang('admin::app.catalog.products.bulk-edit.no-changes')",
-                });
-                return;
-            }
-
-            this.loading = true;
-
-            this.$axios.post(this.entitySaveUrl, {
-                data: this.updatedEntityData,
-            })
-            .then(response => {
-                this.updatedEntityData = [];
-                this.$emitter.emit('add-flash', {
-                    type: 'success',
-                    message: response.data.message ||  "@lang('admin::app.catalog.products.bulk-edit.success')",
-                });
-
-                setTimeout(() => window.location.href= "{{ route('admin.catalog.products.index') }}", 1000);
-            })
-            .catch(error => {
-                console.error(error);
-            })
-            .finally(() => {
-                this.loading = false;
-            });
-        },
-
-        },
-    });
-</script>
+        });
+    </script>
 
 @endPushOnce
