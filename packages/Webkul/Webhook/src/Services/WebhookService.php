@@ -34,10 +34,66 @@ class WebhookService
             return null;
         }
 
+        $admin = auth('admin')->user()
+            ?? auth('api')->user()
+            ?? request()->user('admin')
+            ?? request()->user('api');
+
+        $timezone = is_array($admin)
+            ? ($admin['timezone'] ?? config('app.timezone'))
+            : ($admin?->timezone ?? config('app.timezone'));
+
         $webhookData = [
             'event'     => 'product.updated',
             'timestamp' => now()->toDateTimeString(),
+            'user_timezone' => $timezone,
             'data'      => [
+                $this->normalizeWebhookData($product, $productChanges),
+            ],
+        ];
+
+        try {
+            $response = Http::post($webhookUrl, $webhookData);
+        } catch (\Exception $e) {
+            $response = null;
+
+            report($e);
+        }
+
+        $this->storeLogs($product->sku, $response?->successful() ? 1 : 0, $this->normalizeResponseForLog($response ?? $e));
+
+        return $response;
+    }
+
+    /**
+     * Send product.created event to configured webhook URL.
+     */
+    public function sendCreatedToWebhook(Product $product, array $productChanges = []): ?Response
+    {
+        $webhookData = [];
+
+        $webhookUrl = $this->settingsRepository->getWebhookUrl();
+
+        if (empty($webhookUrl)) {
+            return null;
+        }
+
+        // Resolve the acting admin (session or API) so we can include their timezone
+        // in the created event payload. Fall back to app timezone when not set.
+        $admin = auth('admin')->user()
+            ?? auth('api')->user()
+            ?? request()->user('admin')
+            ?? request()->user('api');
+
+        $timezone = is_array($admin)
+            ? ($admin['timezone'] ?? config('app.timezone'))
+            : ($admin?->timezone ?? config('app.timezone'));
+
+        $webhookData = [
+            'event'         => 'product.created',
+            'timestamp'     => now()->toDateTimeString(),
+            'user_timezone' => $timezone,
+            'data'          => [
                 $this->normalizeWebhookData($product, $productChanges),
             ],
         ];
@@ -127,10 +183,19 @@ class WebhookService
 
     protected function storeLogs(string $code, int $status, $response = null): void
     {
-        $adminUser = auth('admin')->getUser()->toArray();
+        $admin = auth('admin')->user()
+            ?? auth('api')->user()
+            ?? request()->user('admin')
+            ?? request()->user('api');
+
+        if (is_array($admin)) {
+            $adminName = $admin['name'] ?? null;
+        } else {
+            $adminName = $admin?->name ?? null;
+        }
 
         $data = [
-            'user'   => $adminUser['name'] ?? null,
+            'user'   => $adminName,
             'sku'    => $code,
             'status' => $status,
             'extra'  => ['response' => $response],
@@ -141,7 +206,12 @@ class WebhookService
 
     protected function storeBatchLogs($products, int $status, $response = null): void
     {
-        $adminName = auth('admin')->user()?->name;
+        $admin = auth('admin')->user()
+            ?? auth('api')->user()
+            ?? request()->user('admin')
+            ?? request()->user('api');
+
+        $adminName = is_array($admin) ? ($admin['name'] ?? null) : ($admin?->name ?? null);
 
         foreach ($products as $product) {
             $data = [

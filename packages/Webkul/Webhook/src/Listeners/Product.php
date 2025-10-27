@@ -33,6 +33,13 @@ class Product
         }
     }
 
+    public function afterCreate($product)
+    {
+        if ($this->settingsRepository->isWebhookActive() && $productChanges = $this->webhookService->getProductChangesForWebhook($product)) {
+            $this->webhookService->sendCreatedToWebhook($product, $productChanges);
+        }
+    }
+
     public function afterBulkUpdate(array $ids)
     {
         if (! $this->settingsRepository->isWebhookActive()) {
