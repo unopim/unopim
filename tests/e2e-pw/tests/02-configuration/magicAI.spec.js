@@ -1,5 +1,4 @@
 const { test, expect } = require('../../utils/fixtures');
-require('dotenv').config();
 
 const groqapikey = process.env.GROQ_API_KEY;
 const groqinvalidapikey = process.env.GROQ_INVALID_KEY;
