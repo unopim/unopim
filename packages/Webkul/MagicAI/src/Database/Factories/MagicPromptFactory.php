@@ -15,6 +15,8 @@ class MagicPromptFactory extends Factory
             'title'  => $this->faker->sentence,
             'prompt' => $this->faker->paragraph,
             'type'   => $this->faker->randomElement(['product', 'category']),
+            'tone'   => \Webkul\MagicAI\Models\MagicAISystemPrompt::inRandomOrder()->value('id')
+                     ?? \Webkul\MagicAI\Models\MagicAISystemPrompt::factory()->create()->id,
         ];
     }
 }

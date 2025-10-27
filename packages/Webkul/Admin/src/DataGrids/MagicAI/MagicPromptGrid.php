@@ -1,6 +1,6 @@
 <?php
 
-namespace Webkul\Admin\DataGrids;
+namespace Webkul\Admin\DataGrids\MagicAI;
 
 use Illuminate\Support\Facades\DB;
 use Webkul\DataGrid\DataGrid;
