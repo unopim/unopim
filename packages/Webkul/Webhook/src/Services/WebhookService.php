@@ -44,10 +44,10 @@ class WebhookService
             : ($admin?->timezone ?? config('app.timezone'));
 
         $webhookData = [
-            'event'     => 'product.updated',
-            'timestamp' => now()->toDateTimeString(),
+            'event'         => 'product.updated',
+            'timestamp'     => now()->toDateTimeString(),
             'user_timezone' => $timezone,
-            'data'      => [
+            'data'          => [
                 $this->normalizeWebhookData($product, $productChanges),
             ],
         ];
