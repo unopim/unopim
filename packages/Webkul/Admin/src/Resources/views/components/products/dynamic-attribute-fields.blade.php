@@ -309,7 +309,7 @@
                     $value = ! empty($selectedValue) ? json_encode($selectedValue) : '';
                 @endphp
             @default
-                <x-admin::form.control-group.control
+               <x-admin::form.control-group.control
                     :type="$fieldType"
                     :id="$field->code"
                     :name="$fieldName"
@@ -321,8 +321,109 @@
                     track-by="code"
                     async="true"
                     entity-name="attribute"
-                    :attribute-id="$field->id" 
-                />
+                    :attribute-id="$field->id"
+                >
+
+                <x-slot:option>
+                    <div class="flex items-center space-x-2">
+                        <!-- Image swatch -->
+                        <div
+                            v-if="option.swatch_value_url && option.attribute.swatch_type == 'image'"
+                            class="justify-items-center border rounded relative overflow-hidden group w-12 h-12"
+                        >
+                            <img :src="option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}'"
+                             class="w-full h-full object-contain object-top rounded border" ref="optionImage" />
+
+                            <div class="flex items-center justify-center invisible w-full bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 group-hover:visible">
+                                <div class="flex justify-between">
+                                    <span
+                                        class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                        @click.stop.prevent="previewImage(option)"
+                                    ></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Color swatch -->
+                        <div v-if="option.swatch_value && option.attribute.swatch_type == 'color'"
+                            :style="{ backgroundColor: option.swatch_value }"
+                            class="w-6 h-6 rounded border"></div>
+
+                        <!-- Label -->
+                        <span>@{{ option[labelBy] }}</span>
+                    </div>
+                </x-slot:option>
+
+                <x-slot:singleLabel>
+                    <div class="flex items-center space-x-2">
+                        <div
+                            v-if="option.swatch_value_url && option.attribute.swatch_type == 'image'"
+                            class="justify-items-center border rounded relative overflow-hidden group w-12 h-12"
+                        >
+                            <img :src="option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}'"
+                             class="w-full h-full object-contain object-top rounded border" ref="optionImage" />
+
+                            <div class="flex items-center justify-center invisible w-full bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 group-hover:visible">
+                                <div class="flex justify-between">
+                                    <span
+                                        class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                        @mousedown.stop.prevent="previewImage(option)"
+                                    ></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div v-if="option.swatch_value && option.attribute.swatch_type == 'color'"
+                            :style="{ backgroundColor: option.swatch_value }"
+                            class="w-4 h-4 rounded border"></div>
+
+                        <span>@{{ option[labelBy] }}</span>
+                    </div>
+                </x-slot:singleLabel>
+
+                <x-slot:tag>
+                        <div class="multiselect__tag space-x-2 items-center justify-center" style="display:inline-flex" v-if="option.swatch_value || option.swatch_value_url">
+                            <div
+                                v-if="option.swatch_value_url && option.attribute.swatch_type == 'image'"
+                                class="justify-items-center border rounded relative overflow-hidden group w-12 h-12"
+                            >
+                                <img :src="option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}'"
+                                 class="w-full h-full object-contain object-top rounded border" ref="optionImage" />
+    
+                                <div class="flex items-center justify-center invisible w-full bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 group-hover:visible">
+                                    <div class="flex justify-between">
+                                        <span
+                                            class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                            @mousedown.stop.prevent="previewImage(option)"
+                                        ></span>
+                                    </div>
+                                </div>
+                            </div>
+    
+                            <div v-if="option.swatch_value && option.attribute.swatch_type == 'color'"
+                                :style="{ backgroundColor: option.swatch_value }"
+                                class="w-4 h-4 rounded border"></div>
+    
+                            <span>@{{ option[labelBy] }}</span>
+                            <i tabindex="1" @click="remove(option)" class="multiselect__tag-icon"></i>
+                        </div>
+                   
+                </x-slot:tag>
+
+                <x-slot name="modal">
+                    <x-admin::modal ref="imagePreviewModal">
+                        <x-slot:header>
+                            <p class="text-lg text-gray-800 dark:text-white font-bold"></p>
+                        </x-slot:header>
+                        <x-slot:content>
+                            <div style="max-width: 100%; height: 260px;">
+                                <img :src="fileUrl" class="w-full h-full object-contain object-top" />
+                            </div>
+                        </x-slot:content>
+                    </x-admin::modal>
+                </x-slot>
+                </x-admin::form.control-group.control>
+
         @endswitch
 
         @php

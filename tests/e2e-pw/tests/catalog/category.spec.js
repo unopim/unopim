@@ -1,130 +1,270 @@
-import { test, expect } from '@playwright/test';
+const { test, expect } = require('../../utils/fixtures');
+
 test.describe('UnoPim Category', () => {
-test.beforeEach(async ({ page }) => {
-   await page.goto('http://127.0.0.1:8000/admin/login');
-  await page.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
-  await page.getByRole('textbox', { name: 'Password' }).fill('admin123');
-  await page.getByRole('button', { name: 'Sign In' }).click();
-  await expect(page).toHaveURL('http://127.0.0.1:8000/admin/dashboard');
-});
+  test('Create Categories with empty Code field', async ({ adminPage }) => {
+    await adminPage.getByRole('link', { name: ' Catalog' }).click();
+    await adminPage.waitForTimeout(500);
 
-test('Create Categories with empty Code field', async ({ page }) => {
-  await page.getByRole('link', { name: ' Catalog' }).click();
-  await page.getByRole('link', { name: 'Categories' }).click();
-  await page.getByRole('link', { name: 'Create Category' }).click();
-  await page.locator('input[name="code"]').click();
-  await page.locator('input[name="code"]').fill('');
-  await page.locator('#name').click();
-  await page.locator('#name').type('Television');
-  await page.getByRole('button', { name: 'Save Category' }).click();
-  await expect(page.getByText('The code field is required')).toBeVisible();
-});
+    await adminPage.getByRole('link', { name: 'Categories' }).click();
+    await adminPage.waitForTimeout(500);
 
-test('Create Categories with empty Name field', async ({ page }) => {
-  await page.getByRole('link', { name: ' Catalog' }).click();
-  await page.getByRole('link', { name: 'Categories' }).click();
-  await page.getByRole('link', { name: 'Create Category' }).click();
-  await page.locator('input[name="code"]').click();
-  await page.locator('input[name="code"]').fill('television');
-  await page.locator('#name').click();
-  await page.locator('#name').fill('');
-  await page.getByRole('button', { name: 'Save Category' }).click();
-  await expect(page.getByText('The Name field is required')).toBeVisible();
-});
+    await adminPage.getByRole('link', { name: 'Create Category' }).click();
+    await adminPage.waitForTimeout(500);
 
-test('Create Categories with empty Code and Name field', async ({ page }) => {
-  await page.getByRole('link', { name: ' Catalog' }).click();
-  await page.getByRole('link', { name: 'Categories' }).click();
-  await page.getByRole('link', { name: 'Create Category' }).click();
-  await page.locator('input[name="code"]').click();
-  await page.locator('input[name="code"]').fill('');
-  await page.locator('#name').click();
-  await page.locator('#name').type('');
-  await page.getByRole('button', { name: 'Save Category' }).click();
-  await expect(page.getByText('The code field is required')).toBeVisible();
-  await expect(page.getByText('The Name field is required')).toBeVisible();});
+    await adminPage.locator('#name').click();
+    await adminPage.waitForTimeout(500);
 
-test('Create Categories with all field', async ({ page }) => {
-  await page.getByRole('link', { name: ' Catalog' }).click();
-  await page.getByRole('link', { name: 'Categories' }).click();
-  await page.getByRole('link', { name: 'Create Category' }).click();
-  await page.locator('input[name="code"]').click();
-  await page.locator('input[name="code"]').type('test1');
-  await page.waitForTimeout(100);
-  await page.locator('#name').click();
-  await page.locator('#name').type('Television');
-  await page.waitForTimeout(100);
-  await page.getByRole('button', { name: 'Save Category' }).click();
-  await page.waitForTimeout(500);
-  await expect(page.getByText(/Category created successfully/i)).toBeVisible();
-  await page.waitForTimeout(500);
-});
+    await adminPage.locator('#name').type('Television');
+    await adminPage.waitForTimeout(500);
 
-test('should allow category search', async ({ page }) => {
-  await page.getByRole('link', { name: ' Catalog' }).click();
-  await page.getByRole('link', { name: 'Categories' }).click();
-  await page.getByRole('textbox', { name: 'Search' }).click();
-  await page.getByRole('textbox', { name: 'Search' }).type('test1');
-  await page.keyboard.press('Enter');
-  await expect(page.locator('text=TelevisionTelevisiontest1')).toBeVisible();
-});
+    await adminPage.getByRole('button', { name: 'Save Category' }).click();
+    await adminPage.waitForTimeout(500);
 
-test('should open the filter menu when clicked', async ({ page }) => {
-  await page.getByRole('link', { name: ' Catalog' }).click();
-  await page.getByRole('link', { name: 'Categories' }).click();
-  await page.getByText('Filter', { exact: true }).click();
-  await expect(page.getByText('Apply Filters')).toBeVisible();
-});
+    await expect(adminPage.getByText('The code field is required')).toBeVisible();
+    await adminPage.waitForTimeout(500);
+  });
 
-test('should allow setting items per page', async ({ page }) => {
-  await page.getByRole('link', { name: ' Catalog' }).click();
-  await page.getByRole('link', { name: 'Categories' }).click();
-  await page.getByRole('button', { name: '' }).click();
-  await page.getByText('20', { exact: true }).click();
-  await expect(page.getByRole('button', { name: '' })).toContainText('20');
-});
+  test('Create Categories with empty Name field', async ({ adminPage }) => {
+    await adminPage.getByRole('link', { name: ' Catalog' }).click();
+    await adminPage.waitForTimeout(500);
 
-test('should perform actions on a category (Edit, Delete)', async ({ page }) => {
-  await page.getByRole('link', { name: ' Catalog' }).click();
-  await page.getByRole('link', { name: 'Categories' }).click();
-  const itemRow = page.locator('div', { hasText: 'root' });
-  await itemRow.locator('span[title="Edit"]').first().click();
-  await expect(page).toHaveURL(/\/admin\/catalog\/categories\/edit/);
-  await page.goBack();
-  await itemRow.locator('span[title="Delete"]').first().click();
-  await expect(page.locator('text=Are you sure you want to delete?')).toBeVisible();
-});
+    await adminPage.getByRole('link', { name: 'Categories' }).click();
+    await adminPage.waitForTimeout(500);
 
-test('should allow selecting all category with the mass action checkbox', async ({ page }) => {
-  await page.getByRole('link', { name: ' Catalog' }).click();
-  await page.getByRole('link', { name: 'Categories' }).click();
-  await page.click('label[for="mass_action_select_all_records"]');
-  await expect(page.locator('#mass_action_select_all_records')).toBeChecked();
-});
+    await adminPage.getByRole('link', { name: 'Create Category' }).click();
+    await adminPage.waitForTimeout(500);
 
-test('Update Categories', async ({ page }) => {
-  await page.getByRole('link', { name: ' Catalog' }).click();
-  await page.getByRole('link', { name: 'Categories' }).click();
-  await page.getByRole('textbox', { name: 'Search' }).click();
-  await page.getByRole('textbox', { name: 'Search' }).type('test1');
-  await page.keyboard.press('Enter');
-  await expect(page.locator('text=TelevisionTelevisiontest1')).toBeVisible();
-  const itemRow = page.locator('div', { hasText: 'TelevisionTelevisiontest1' });
-  await itemRow.locator('span[title="Edit"]').first().click();
-  await page.locator('#name').click();
-  await page.locator('#name').fill('LG Television');
-  await page.waitForTimeout(100);
-  await page.getByRole('button', { name: 'Save Category' }).click();
-  await expect(page.getByText(/Category updated successfully/i)).toBeVisible();
-});
+    await adminPage.locator('input[name="code"]').click();
+    await adminPage.waitForTimeout(500);
 
-test('Delete Root Category', async ({ page }) => {
-  await page.getByRole('link', { name: ' Catalog' }).click();
-  await page.getByRole('link', { name: 'Categories' }).click();
-  const itemRow = page.locator('div', { hasText: '[root][root]' });
-  await itemRow.locator('span[title="Delete"]').first().click();
-  await page.getByRole('button', { name: 'Delete' }).click();
-  await expect(page.getByText(/You cannot delete the root category that is associated with a channel./i)).toBeVisible();
-});
-});
+    await adminPage.locator('input[name="code"]').fill('television');
+    await adminPage.waitForTimeout(500);
 
+    await adminPage.getByRole('button', { name: 'Save Category' }).click();
+    await adminPage.waitForTimeout(500);
+
+    await expect(adminPage.getByText('The Name field is required')).toBeVisible();
+    await adminPage.waitForTimeout(500);
+  });
+
+  test('Create Categories with empty Code and Name field', async ({ adminPage }) => {
+    await adminPage.getByRole('link', { name: ' Catalog' }).click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.getByRole('link', { name: 'Categories' }).click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.getByRole('link', { name: 'Create Category' }).click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.locator('input[name="code"]').click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.locator('input[name="code"]').fill('');
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.locator('#name').click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.locator('#name').fill('');
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.getByRole('button', { name: 'Save Category' }).click();
+    await adminPage.waitForTimeout(500);
+
+    await expect(adminPage.getByText('The code field is required')).toBeVisible();
+    await adminPage.waitForTimeout(500);
+
+    await expect(adminPage.getByText('The Name field is required')).toBeVisible();
+    await adminPage.waitForTimeout(500);
+  });
+
+  test('Create Categories with all field', async ({ adminPage }) => {
+    await adminPage.getByRole('link', { name: ' Catalog' }).click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.getByRole('link', { name: 'Categories' }).click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.getByRole('link', { name: 'Create Category' }).click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.locator('input[name="code"]').click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.locator('input[name="code"]').type('test1');
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.locator('#name').click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.locator('#name').type('Television');
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.getByRole('button', { name: 'Save Category' }).click();
+    await adminPage.waitForTimeout(500);
+
+    await expect(adminPage.getByText(/Category created successfully/i)).toBeVisible();
+    await adminPage.waitForTimeout(500);
+  });
+
+  test('should allow category search', async ({ adminPage }) => {
+    await adminPage.getByRole('link', { name: ' Catalog' }).click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.getByRole('link', { name: 'Categories' }).click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.getByRole('textbox', { name: 'Search' }).click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.getByRole('textbox', { name: 'Search' }).type('test1');
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.keyboard.press('Enter');
+    await adminPage.waitForTimeout(500);
+
+    await expect(adminPage.locator('text=TelevisionTelevisiontest1', {exact:true})).toBeVisible();
+    await adminPage.waitForTimeout(500);
+  });
+
+  test('should open the filter menu when clicked', async ({ adminPage }) => {
+    await adminPage.getByRole('link', { name: ' Catalog' }).click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.getByRole('link', { name: 'Categories' }).click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.getByText('Filter', { exact: true }).click();
+    await adminPage.waitForTimeout(500);
+
+    await expect(adminPage.getByText('Apply Filters')).toBeVisible();
+    await adminPage.waitForTimeout(500);
+  });
+
+  test('should allow setting items per adminPage', async ({ adminPage }) => {
+    await adminPage.getByRole('link', { name: ' Catalog' }).click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.getByRole('link', { name: 'Categories' }).click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.getByRole('button', { name: '' }).click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.getByText('20', { exact: true }).click();
+    await adminPage.waitForTimeout(500);
+
+    await expect(adminPage.getByRole('button', { name: '' })).toContainText('20');
+    await adminPage.waitForTimeout(500);
+  });
+
+  test('should perform actions on a category (Edit, Delete)', async ({ adminPage }) => {
+    await adminPage.getByRole('link', { name: ' Catalog' }).click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.getByRole('link', { name: 'Categories' }).click();
+    await adminPage.waitForTimeout(500);
+
+    const itemRow = adminPage.locator('div', { hasText: 'root' });
+    await itemRow.locator('span[title="Edit"]').first().click();
+    await adminPage.waitForTimeout(500);
+
+    await expect(adminPage).toHaveURL(/\/admin\/catalog\/categories\/edit/);
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.goBack();
+    await adminPage.waitForTimeout(500);
+
+    await itemRow.locator('span[title="Delete"]').first().click();
+    await adminPage.waitForTimeout(500);
+
+    await expect(adminPage.locator('text=Are you sure you want to delete?')).toBeVisible();
+    await adminPage.waitForTimeout(500);
+  });
+
+  test('should allow selecting all category with the mass action checkbox', async ({ adminPage }) => {
+    await adminPage.getByRole('link', { name: ' Catalog' }).click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.getByRole('link', { name: 'Categories' }).click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.click('label[for="mass_action_select_all_records"]');
+    await adminPage.waitForTimeout(500);
+
+    await expect(adminPage.locator('#mass_action_select_all_records')).toBeChecked();
+    await adminPage.waitForTimeout(500);
+  });
+
+  test('Update Categories', async ({ adminPage }) => {
+    await adminPage.getByRole('link', { name: ' Catalog' }).click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.getByRole('link', { name: 'Categories' }).click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.getByRole('textbox', { name: 'Search' }).click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.getByRole('textbox', { name: 'Search' }).type('test1');
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.keyboard.press('Enter');
+    await adminPage.waitForTimeout(500);
+
+    await expect(adminPage.locator('text=TelevisionTelevisiontest1')).toBeVisible();
+    await adminPage.waitForTimeout(500);
+
+    const itemRow = adminPage.locator('div', { hasText: 'TelevisionTelevisiontest1' });
+    await itemRow.locator('span[title="Edit"]').first().click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.locator('#name').click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.locator('#name').fill('LG Television');
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.getByRole('button', { name: 'Save Category' }).click();
+    await adminPage.waitForTimeout(500);
+
+    await expect(adminPage.getByText(/Category updated successfully/i)).toBeVisible();
+    await adminPage.waitForTimeout(500);
+  });
+
+  test('Delete Category', async ({ adminPage }) => {
+    await adminPage.getByRole('link', { name: ' Catalog' }).click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.getByRole('link', { name: 'Categories' }).click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.getByText('LG TelevisionLG Televisiontest1').getByTitle('Delete').click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.waitForTimeout(500);
+
+    await expect(adminPage.getByText(/The category has been successfully deleted/i)).toBeVisible();
+    await adminPage.waitForTimeout(500);
+  });
+
+  test('Delete Root Category', async ({ adminPage }) => {
+    await adminPage.getByRole('link', { name: ' Catalog' }).click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.getByRole('link', { name: 'Categories' }).click();
+    await adminPage.waitForTimeout(500);
+
+    const itemRow = adminPage.locator('div', { hasText: '[root][root]' });
+    await itemRow.locator('span[title="Delete"]').first().click();
+    await adminPage.waitForTimeout(500);
+
+    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.waitForTimeout(500);
+
+    await expect(adminPage.getByText(/You cannot delete the root category that is associated with a channel./i)).toBeVisible();
+    await adminPage.waitForTimeout(500);
+  });
+});

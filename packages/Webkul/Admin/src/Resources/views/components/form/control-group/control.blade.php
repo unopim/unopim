@@ -1041,89 +1041,24 @@
                 v-model="selectedValue"
                 v-bind="field"
             >
-                <template #option="{ option }">
-                    <div class="flex items-center space-x-2">
-                        <!-- Image swatch -->
-                        <div
-                            v-if="option.swatch_value_url && option.attribute.swatch_type == 'image'"
-                            class="justify-items-center border rounded relative overflow-hidden group w-12 h-12"
-                        >
-                            <img :src="option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}'"
-                             class="w-full h-full object-contain object-top rounded border" ref="optionImage" />
+                @isset($option)
+                    <template v-slot:option="{ option }">
+                        {{ $option }}
+                    </template>
+                @endisset
 
-                            <div class="flex items-center justify-center invisible w-full bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 group-hover:visible">
-                                <div class="flex justify-between">
-                                    <span
-                                        class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
-                                        @click.stop.prevent="previewImage(option)"
-                                    ></span>
-                                </div>
-                            </div>
-                        </div>
+                @isset($singleLabel)
+                    <template v-slot:singleLabel="{ option }">
+                        {{ $singleLabel }}
+                    </template>
+                @endisset
 
-                        <!-- Color swatch -->
-                        <div v-if="option.swatch_value && option.attribute.swatch_type == 'color'"
-                            :style="{ backgroundColor: option.swatch_value }"
-                            class="w-6 h-6 rounded border"></div>
-
-                        <!-- Label -->
-                        <span>@{{ option[labelBy] }}</span>
-                    </div>
-                </template>
-                <template #singleLabel="{ option }">
-                    <div class="flex items-center space-x-2">
-                        <div
-                            v-if="option.swatch_value_url && option.attribute.swatch_type == 'image'"
-                            class="justify-items-center border rounded relative overflow-hidden group w-12 h-12"
-                        >
-                            <img :src="option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}'"
-                             class="w-full h-full object-contain object-top rounded border" ref="optionImage" />
-
-                            <div class="flex items-center justify-center invisible w-full bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 group-hover:visible">
-                                <div class="flex justify-between">
-                                    <span
-                                        class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
-                                        @mousedown.stop.prevent="previewImage(option)"
-                                    ></span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div v-if="option.swatch_value && option.attribute.swatch_type == 'color'"
-                            :style="{ backgroundColor: option.swatch_value }"
-                            class="w-4 h-4 rounded border"></div>
-
-                        <span>@{{ option[labelBy] }}</span>
-                    </div>
-                </template>
-                <template #tag="{ option, remove }"> 
-                    <div class="multiselect__tag space-x-2 items-center justify-center" style="display:inline-flex" v-if="option.swatch_value || option.swatch_value_url">
-                        <div
-                            v-if="option.swatch_value_url && option.attribute.swatch_type == 'image'"
-                            class="justify-items-center border rounded relative overflow-hidden group w-12 h-12"
-                        >
-                            <img :src="option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}'"
-                             class="w-full h-full object-contain object-top rounded border" ref="optionImage" />
-
-                            <div class="flex items-center justify-center invisible w-full bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 group-hover:visible">
-                                <div class="flex justify-between">
-                                    <span
-                                        class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
-                                        @mousedown.stop.prevent="previewImage(option)"
-                                    ></span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div v-if="option.swatch_value && option.attribute.swatch_type == 'color'"
-                            :style="{ backgroundColor: option.swatch_value }"
-                            class="w-4 h-4 rounded border"></div>
-
-                        <span>@{{ option[labelBy] }}</span>
-                        <i tabindex="1" @click="remove(option)" class="multiselect__tag-icon"></i>
-                    </div>
-                </template>
-            </v-multiselect>   
+                @isset($tag)
+                    <template v-slot:tag="{ option, remove }">
+                        {{ $tag }}
+                    </template>
+                @endisset
+            </v-multiselect>
             <input
                 v-model="selectedOption"
                 v-validate="'required'"

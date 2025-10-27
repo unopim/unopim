@@ -11,7 +11,7 @@
     @php
         $currentLocale = core()->getRequestedLocale();
 
-        $categoryCount = $categories->count();
+        $categoryCount = count($categories);
 
         $isEmptyRightSection = $rightCategoryFields?->isEmpty();
     @endphp
@@ -147,18 +147,20 @@
                                 </h2>
 
                                 <!-- Radio select button -->
-                                <div class="flex flex-col gap-3">
-                                    <x-admin::tree.view
+                                <div class="flex flex-col gap-3 h-[calc(100vh-100px)] overflow-y-auto">
+                                    <x-admin::tree.category.view
                                         input-type="radio"
                                         name-field="parent_id"
                                         label-field="name"
                                         value-field="id"
                                         id-field="id"
+                                        :current-category="$category->id"
+                                        :expanded-branch="json_encode($branchToParent)"
                                         :items="json_encode($categories)"
                                         :value="old('parent_id') ?? json_encode($category->parent_id)"
                                         :fallback-locale="config('app.fallback_locale')"
                                     >
-                                    </x-admin::tree.view>
+                                    </x-admin::tree.category.view>
                                 </div>
                             </div>
                         </div>
