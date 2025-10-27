@@ -56,7 +56,15 @@ class LogsDataGrid extends DataGrid
             'filterable' => false,
             'sortable'   => false,
             'closure'    => function ($row) {
-                return '<span class="icon-calendar"></span> '.$row->created_at;
+                $timezone = auth('admin')->user()->timezone ?? config('app.timezone');
+
+                try {
+                    $display = \Carbon\Carbon::parse($row->created_at)->setTimezone($timezone)->toDateTimeString();
+                } catch (\Exception $e) {
+                    $display = $row->created_at;
+                }
+
+                return '<span class="icon-calendar"></span> '.$display;
             },
         ]);
 
