@@ -304,12 +304,6 @@
                             'swatch_value_url'  => $option->swatch_value_url,
                             'attribute'         => ['swatch_type' => $field->swatch_type],
                             'label'             => ! empty($translatedOptionLabel) ? $translatedOptionLabel : "[{$option->code}]",
-                            'id'                => $option->id,
-                            'code'              => $option->code,
-                            'swatch_value'      => $option->swatch_value,
-                            'swatch_value_url'  => $option->swatch_value_url,
-                            'attribute'         => ['swatch_type' => $field->swatch_type],
-                            'label'             => ! empty($translatedOptionLabel) ? $translatedOptionLabel : "[{$option->code}]",
                         ];
                     }
 
@@ -320,7 +314,6 @@
                     $value = ! empty($selectedValue) ? json_encode($selectedValue) : '';
                 @endphp
             @default
-               <x-admin::form.control-group.control
                <x-admin::form.control-group.control
                     :type="$fieldType"
                     :id="$field->code"
