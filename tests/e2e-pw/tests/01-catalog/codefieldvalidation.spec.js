@@ -8,34 +8,43 @@ test.beforeEach(async ({adminPage}) => {
 });    
 test('check the code field with less than 191 character', async ({ adminPage }) => {
   await adminPage.locator('input[name="code"]').click();
-  await adminPage.waitForTimeout(300);
+  await adminPage.waitForTimeout(500);
   await adminPage.locator('input[name="code"]').fill('Playwrightrectoryexistence');
-  await adminPage.waitForTimeout(300);
+  await adminPage.waitForTimeout(500);
   await adminPage.locator('#name').click();
+  await adminPage.waitForTimeout(500);
   await adminPage.locator('#name').type('Playwright1', { delay: 100 });
+  await adminPage.waitForTimeout(500);
   await adminPage.getByRole('button', { name: 'Save Category' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.getByText(/Category created successfully/i)).toBeVisible();
 });
 
 test('check the code field with exactly 191 character', async ({ adminPage }) => {
   await adminPage.locator('input[name="code"]').click();
-  await adminPage.waitForTimeout(300);
+  await adminPage.waitForTimeout(500);
   await adminPage.locator('input[name="code"]').fill('PlaywrightreportfoldernotfoundatthegivenpathEnsuretestsrannwithreporterhtmlandthepathiscorrectbeforeuploadingartifactskshbvsvbdfhvbdfhvbsdhfvbsdhfvbdfshvbsdfhvbfdvbvbfhvuyvuvbyutvbfhvjufdvbsj');
-  await adminPage.waitForTimeout(300);
+  await adminPage.waitForTimeout(500);
   await adminPage.locator('#name').click();
+  await adminPage.waitForTimeout(500);
   await adminPage.locator('#name').type('Playwright2', { delay: 100 });
+  await adminPage.waitForTimeout(500);
   await adminPage.getByRole('button', { name: 'Save Category' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.getByText(/Category created successfully/i)).toBeVisible();
 });
 
 test('check the code field with more than 191 character', async ({ adminPage }) => {
   await adminPage.locator('input[name="code"]').click();
-  await adminPage.waitForTimeout(300);
+  await adminPage.waitForTimeout(500);
   await adminPage.locator('input[name="code"]').fill('PlaywrightreportfoldernotfoundatthegivenpdfgfgsdkjjfgathEnsuretestsrannwithreporterhtmlandthepathiscorrectbeforeuploadingartifactskshbvsvbdfhvbdfhvbsdhfvbsdhfvbdfshvbsdfhvbfdvbvbfhvuyvuvbyutvbfhvjufdvbsj');
-  await adminPage.waitForTimeout(300);
+  await adminPage.waitForTimeout(500);
   await adminPage.locator('#name').click();
+  await adminPage.waitForTimeout(500);
   await adminPage.locator('#name').type('Playwright3', { delay: 100 });
+  await adminPage.waitForTimeout(500);
   await adminPage.getByRole('button', { name: 'Save Category' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.getByText(/Category created successfully/i)).toBeVisible();
 });
 
@@ -45,8 +54,11 @@ test('able to enter the number first in code field', async ({ adminPage }) => {
   await adminPage.locator('input[name="code"]').fill('165sdfvjaef');
   await adminPage.waitForTimeout(1000);
   await adminPage.locator('#name').click();
+  await adminPage.waitForTimeout(500);
   await adminPage.locator('#name').type('Playwright4', { delay: 100 });
+  await adminPage.waitForTimeout(500);
   await adminPage.getByRole('button', { name: 'Save Category' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.getByText(/Category created successfully/i)).toBeVisible();
 });
 

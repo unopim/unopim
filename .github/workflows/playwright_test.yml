@@ -82,8 +82,7 @@ jobs:
           npx playwright install chromium
 
       - name: Start Queue Worker
-        run:
-          php artisan queue:work &
+        run: php artisan queue:work &
 
       - name: Run Playwright tests
         if: ${{ success() }}

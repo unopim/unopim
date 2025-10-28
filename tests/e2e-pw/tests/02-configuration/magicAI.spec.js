@@ -629,8 +629,6 @@ test('Translate the content in the hindi', async({adminPage})=>{
   await adminPage.getByRole('button', { name: 'Apply' }).click();
   await expect(adminPage.getByText('Transalated contents store')).toBeVisible();
   await adminPage.waitForTimeout(500);
-  await adminPage.getByRole('button', { name: ' Default ' }).click();
-  await adminPage.getByRole('link', { name: 'E-Commerce' }).click();
   await adminPage.getByRole('button', { name: ' English (United States) ' }).click();
   await adminPage.getByRole('link', { name: 'Hindi (India)' }).click();
   const frame = await adminPage.frameLocator('#short_description_ifr');

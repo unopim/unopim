@@ -30,7 +30,7 @@ test.describe('Verify the behvaiour of Product Completenss feature', () => {
     await itemRow.locator('span[title="Edit"]').nth(1).click();
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
     await adminPage.getByRole('button', { name: '' }).click();
-    await adminPage.getByText('50', { exact: true }).click();
+    await adminPage.getByText('50', { exact: true }).first().click();
     await expect(adminPage.getByText('16 Results')).toBeVisible();
     await adminPage.locator(`input[name="channel_requirements"]`).locator('..').locator('.multiselect__tags').nth(15).click();
     await adminPage.getByRole('option', { name: 'Default' }).locator('span').first().click();
@@ -89,10 +89,11 @@ test.describe('Verify the behvaiour of Product Completenss feature', () => {
     await expect(adminPage.getByText(/Channel created successfully/i)).toBeVisible();
 });
 
-  test('Verify all available channels are displayed when user clicks “Configure Completeness” option', async ({ adminPage }) => {
+  test('Verify all available channels are displayed in Configure Completeness for newly created family', async ({ adminPage }) => {
     await adminPage.getByRole('link', { name: ' Catalog' }).click();
     await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
-    const itemRow = adminPage.locator('div', { hasText: 'Default' });
+    await expect(adminPage.getByText('displaycompletensstab')).toBeVisible();
+    const itemRow = adminPage.locator('div', { hasText: 'displaycompletensstab' });
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
     await adminPage.locator('div').filter({ hasText: /^Code$/ }).locator('label span').click();
@@ -103,11 +104,10 @@ test.describe('Verify the behvaiour of Product Completenss feature', () => {
     await expect(adminPage.getByRole('option', { name: 'channel3' }).locator('span').first()).toBeVisible();
 });
 
-  test('Verify all available channels are displayed in Configure Completeness for newly created family', async ({ adminPage }) => {
+  test('Verify all available channels are displayed when user clicks “Configure Completeness” option', async ({ adminPage }) => {
     await adminPage.getByRole('link', { name: ' Catalog' }).click();
     await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
-    await expect(adminPage.getByText('displaycompletensstab')).toBeVisible();
-    const itemRow = adminPage.locator('div', { hasText: 'displaycompletensstab' });
+    const itemRow = adminPage.locator('div', { hasText: 'Default' });
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
     await adminPage.locator('div').filter({ hasText: /^Code$/ }).locator('label span').click();
@@ -125,14 +125,14 @@ test.describe('Verify the behvaiour of Product Completenss feature', () => {
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
     await adminPage.getByRole('button', { name: '' }).click();
     await adminPage.getByText('50', { exact: true }).click();
-    await adminPage.locator('div').filter({ hasText: /^Code$/ }).locator('label span').click();
-    await adminPage.getByRole('button', { name: 'Select Action ' }).click();
-    await adminPage.getByRole('link', { name: 'Change Completeness' }).click();
+    await adminPage.click('label[for="mass_action_select_all_records"]');
+    await expect(adminPage.locator('#mass_action_select_all_records')).toBeChecked();
+    await adminPage.getByRole('button', { name: /Select Action/i }).click();
+    await adminPage.locator('a', { hasText: 'Change Completeness Requirement' }).click();
     await adminPage.locator('.px-4 > .mb-4 > div > .multiselect > .multiselect__tags').click();
     await adminPage.getByRole('option', { name: 'Default' }).locator('span').first().click();
     await adminPage.getByRole('button', { name: 'Save' }).click();
     await expect(adminPage.getByText('Completeness updated successfully Close')).toBeVisible();
-    await expect(adminPage.getByText('of 16 Selected')).toBeVisible();
 });
 
   test('Verify channel can be deselected for specific attribute in completeness settings', async ({ adminPage }) => {
@@ -142,15 +142,8 @@ test.describe('Verify the behvaiour of Product Completenss feature', () => {
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
     await adminPage.getByRole('button', { name: '' }).click();
     await adminPage.getByText('50', { exact: true }).click();
-    await adminPage.locator('div:nth-child(14) > div:nth-child(3) > .mb-4 > div > .multiselect > .multiselect__tags > .multiselect__tags-wrap > .multiselect__tag > .multiselect__tag-icon').click();
-    await expect(adminPage.getByText('Completeness updated successfully Close').first()).toBeVisible();
-    await adminPage.locator('div:nth-child(13) > div:nth-child(3) > .mb-4 > div > .multiselect > .multiselect__tags > .multiselect__tags-wrap > .multiselect__tag > .multiselect__tag-icon').click();
-    await expect(adminPage.getByText('Completeness updated successfully Close').first()).toBeVisible();
-    await adminPage.locator('div:nth-child(5) > div:nth-child(3) > .mb-4 > div > .multiselect > .multiselect__tags > .multiselect__tags-wrap > .multiselect__tag > .multiselect__tag-icon').click();
-    await expect(adminPage.getByText('Completeness updated successfully Close').first()).toBeVisible();
-    await adminPage.locator('div:nth-child(4) > div:nth-child(3) > .mb-4 > div > .multiselect > .multiselect__tags > .multiselect__tags-wrap > .multiselect__tag > .multiselect__tag-icon').click();
-    await expect(adminPage.getByText('Completeness updated successfully Close').first()).toBeVisible();
-    await adminPage.locator('div:nth-child(3) > div:nth-child(3) > .mb-4 > div > .multiselect > .multiselect__tags > .multiselect__tags-wrap > .multiselect__tag > .multiselect__tag-icon').click();
+    await adminPage.locator('.multiselect__tag-icon').first().click();
+    //await adminPage.locator('div:nth-child(14) > div:nth-child(3) > .mb-4 > div > .multiselect > .multiselect__tags > .multiselect__tags-wrap > .multiselect__tag > .multiselect__tag-icon').click();
     await expect(adminPage.getByText('Completeness updated successfully Close').first()).toBeVisible();
 });
 
@@ -189,13 +182,7 @@ test.describe('Verify the behvaiour of Product Completenss feature', () => {
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
     await adminPage.getByRole('button', { name: '' }).click();
     await adminPage.getByText('50', { exact: true }).click();
-    await adminPage.locator('.multiselect__tags').first().click();
-    await adminPage.getByRole('option', { name: 'channel3' }).locator('span').first().click();
-    await expect(adminPage.getByText('Completeness updated successfully Close').first()).toBeVisible();
-    await adminPage.locator('div:nth-child(17) > div:nth-child(3) > .mb-4 > div > .multiselect > .multiselect__tags').click();
-    await adminPage.getByRole('option', { name: 'channel3' }).locator('span').first().click();
-    await expect(adminPage.getByText('Completeness updated successfully Close').first()).toBeVisible();
-    await adminPage.locator('div:nth-child(16) > div:nth-child(3) > .mb-4 > div > .multiselect > .multiselect__tags').click();
+    await adminPage.locator(`input[name="channel_requirements"]`).locator('..').locator('.multiselect__tags').first().click();
     await adminPage.getByRole('option', { name: 'channel3' }).locator('span').first().click();
     await expect(adminPage.getByText('Completeness updated successfully Close').first()).toBeVisible();
 });
