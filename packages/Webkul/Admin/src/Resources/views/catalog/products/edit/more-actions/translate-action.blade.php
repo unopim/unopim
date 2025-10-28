@@ -39,6 +39,7 @@
             <form @submit="handleSubmit($event, translate)" ref="translationForm">
                 <x-admin::modal
                     ref="translationModal"
+                    clip
                     @toggle="handleToggle"
                 >
                     <x-slot:header>
@@ -47,6 +48,7 @@
                         </p>
                     </x-slot>
                     <x-slot:content class="flex gap-5 mt-3.5 max-xl:flex-wrap">
+                        <div class="w-full max-h-[calc(100vh-160px)] overflow-y-auto pr-2">
                         <section class="left-column flex flex-col gap-2 flex-1/5" :class="currentStep === 3 ? '' : 'w-full'">
                             <section class="grid gap-2 items-center justify-center modal-steps-section mb-4 dark:text-white">
                                 <div class="flex justify-center items-center">
@@ -231,6 +233,7 @@
                                  </tbody>
                             </table>
                         </section>
+                        </div>
                     </x-slot>
 
                     <x-slot:footer>

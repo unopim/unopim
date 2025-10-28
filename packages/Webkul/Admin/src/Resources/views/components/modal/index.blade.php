@@ -84,8 +84,8 @@
                     <div class="flex min-h-full items-end justify-center p-4 sm:items-center sm:p-0">
                         <div
                             ref="modalContent"
-                            class="w-full max-h-[96%] z-[999] absolute ltr:left-1/2 rtl:right-1/2 top-1/2 rounded-lg bg-white dark:bg-gray-900 box-shadow max-md:w-[90%] ltr:-translate-x-1/2 rtl:translate-x-1/2 -translate-y-1/2 overflow-y-auto"
-                            :class="[modalSize, { 'overflow-y-auto': isOverflowing }]"
+                            class="w-full max-h-[96%] z-[999] absolute ltr:left-1/2 rtl:right-1/2 top-1/2 rounded-lg bg-white dark:bg-gray-900 box-shadow max-md:w-[90%] ltr:-translate-x-1/2 rtl:translate-x-1/2 -translate-y-1/2"
+                            :class="[modalSize, { 'overflow-y-auto': isOverflowing, 'overflow-hidden': clip }]"
                         >
                             <!-- Header Slot -->
                             <slot
@@ -111,7 +111,7 @@
         app.component('v-modal', {
             template: '#v-modal-template',
 
-            props: ['isActive', 'type'],
+            props: ['isActive', 'type', 'clip'],
 
             data() {
                 return {
@@ -136,7 +136,34 @@
             mounted() {
                 this.$emitter.on('modal-size-change', (size) => {
                     this.modalType = size;
+
+                    this.$nextTick(() => {
+                        this.checkOverflow();
+                    });
                 });
+
+                this._onWindowResize = () => {
+                    if (this.isOpen) {
+                        this.checkOverflow();
+                    }
+                };
+
+                window.addEventListener('resize', this._onWindowResize);
+                window.addEventListener('orientationchange', this._onWindowResize);
+            },
+
+            beforeUnmount() {
+                if (this._onWindowResize) {
+                    window.removeEventListener('resize', this._onWindowResize);
+                    window.removeEventListener('orientationchange', this._onWindowResize);
+                }
+            },
+
+            beforeDestroy() {
+                if (this._onWindowResize) {
+                    window.removeEventListener('resize', this._onWindowResize);
+                    window.removeEventListener('orientationchange', this._onWindowResize);
+                }
             },
 
             methods: {

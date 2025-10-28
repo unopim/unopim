@@ -77,7 +77,7 @@
                 ref="translationForm"
             >
                 <form @submit="handleSubmit($event, translate)" ref="translationForm">
-                    <x-admin::modal ref="translationModal" @toggle="handleToggle">
+                    <x-admin::modal ref="translationModal" clip @toggle="handleToggle">
                         <x-slot:header>
                             <p class="flex items-center text-lg text-gray-800 dark:text-white font-bold">
                                 @lang('admin::app.catalog.products.edit.translate.title')
