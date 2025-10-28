@@ -1,4 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
+require('dotenv').config();
 
 const groqapikey = process.env.GROQ_API_KEY;
 const groqinvalidapikey = process.env.GROQ_INVALID_KEY;
@@ -625,7 +626,7 @@ test('Translate the content in the hindi', async({adminPage})=>{
   await itemRow.locator('span[title="Edit"]').first().click();
   await adminPage.getByRole('button', { name: 'Translate' }).first().click();
   await adminPage.getByRole('button', { name: 'Translate' }).nth(1).click();
-  await adminPage.waitForTimeout(20000);
+  await adminPage.waitForTimeout(25000);
   await adminPage.getByRole('button', { name: 'Apply' }).click();
   await expect(adminPage.getByText('Transalated contents store')).toBeVisible();
   await adminPage.waitForTimeout(500);
