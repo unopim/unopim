@@ -93,11 +93,11 @@
                                     </div>
         
                                     <div class="flex justify-around items-center text-center dark:text-slate-50">
-                                        <p class="text-sm" :class="currentStep === 1 ? 'text-violet-700' : ''">@lang('admin::app.catalog.products.edit.translate.step') 1 <br> @lang('admin::app.catalog.products.edit.translate.select-source')</p>
+                                        <p class="text-sm" :class="currentStep === 1 ? 'text-violet-700' : ''">@lang('admin::app.catalog.products.edit.translate.step') 1 <br> '@lang('admin::app.catalog.products.edit.translate.select-source')'</p>
                                         <p class="text-sm" :class="currentStep === 2 ? 'text-violet-700' : ''">@lang('admin::app.catalog.products.edit.translate.step') 2 <br> @lang('admin::app.catalog.products.edit.translate.select-target')</p>
                                     </div>
         
-                                    @lang('admin::app.catalog.products.edit.translate.first-step-title')
+                                    @lang('admin::app.catalog.products.edit.translate.first-step-title-attributes')
                                 </section>
         
                                 <section class="bg-violet-50 dark:bg-cherry-800 rounded-md mb-2 p-3" id="step-1">
@@ -544,6 +544,7 @@
                     e.stopPropagation();
 
                     this.currentStep += 1;
+                    this.$refs.translationModal.isOverflowing = true;
                 },
                 handleToggle(params) {
                     if (false === params?.isActive) {
