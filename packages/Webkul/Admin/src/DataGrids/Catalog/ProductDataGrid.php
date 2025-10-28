@@ -891,15 +891,11 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         foreach ($this->columns as $column) {
             $code = $column->index;
             if (! isset($this->attributeColumns[$code])) {
-            $code = $column->index;
-            if (! isset($this->attributeColumns[$code])) {
                 continue;
             }
 
             $value = $values[$code] ?? null;
-            $value = $values[$code] ?? null;
             if ($closure = $column->closure) {
-                $record->{$column->index} = $closure($value, $record);
                 $record->{$column->index} = $closure($value, $record);
 
                 continue;
