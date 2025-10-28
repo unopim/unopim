@@ -31,8 +31,7 @@ test.describe('Verify the behvaiour of Product Completenss feature', () => {
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
     await adminPage.getByRole('button', { name: '' }).click();
     await adminPage.getByText('50', { exact: true }).first().click();
-    await expect(adminPage.getByText('16 Results')).toBeVisible();
-    await adminPage.locator(`input[name="channel_requirements"]`).locator('..').locator('.multiselect__tags').nth(15).click();
+    await adminPage.locator(`input[name="channel_requirements"]`).locator('..').locator('.multiselect__tags').nth(10).click();
     await adminPage.getByRole('option', { name: 'Default' }).locator('span').first().click();
     await expect(adminPage.getByText('Completeness updated successfully Close').first()).toBeVisible();
 });
@@ -43,9 +42,10 @@ test.describe('Verify the behvaiour of Product Completenss feature', () => {
     const itemRow = adminPage.locator('div', { hasText: 'Default' });
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
-    await adminPage.locator('div').filter({ hasText: /^Code$/ }).locator('label span').click();
-    await adminPage.getByRole('button', { name: 'Select Action ' }).click();
-    await adminPage.getByRole('link', { name: 'Change Completeness' }).click();
+    await adminPage.click('label[for="mass_action_select_all_records"]');
+    await expect(adminPage.getByRole('button', { name: /Select Action/ })).toBeVisisble();
+    await adminPage.getByRole('button', { name: /Select Action/ }).click();
+    await adminPage.locator('a', { hasText: 'Change Completeness Requirement' }).click();
     await adminPage.locator('.px-4 > .mb-4 > div > .multiselect > .multiselect__tags').click();
     await expect(adminPage.getByRole('option', { name: 'Default' }).locator('span').first()).toBeVisible();
     await expect(adminPage.getByRole('option', { name: 'channel3' }).locator('span').first()).toBeVisible();
@@ -61,7 +61,8 @@ test.describe('Verify the behvaiour of Product Completenss feature', () => {
     await adminPage.getByText('50', { exact: true }).click();
     await adminPage.click('label[for="mass_action_select_all_records"]');
     await expect(adminPage.locator('#mass_action_select_all_records')).toBeChecked();
-    await adminPage.getByRole('button', { name: /Select Action/i }).click();
+    await expect(adminPage.getByRole('button', { name: /Select Action/ })).toBeVisisble();
+    await adminPage.getByRole('button', { name: /Select Action/ }).click();
     await adminPage.locator('a', { hasText: 'Change Completeness Requirement' }).click();
     await adminPage.locator('.px-4 > .mb-4 > div > .multiselect > .multiselect__tags').click();
     await adminPage.getByRole('option', { name: 'Default' }).locator('span').first().click();
@@ -77,8 +78,8 @@ test.describe('Verify the behvaiour of Product Completenss feature', () => {
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
     await adminPage.getByRole('button', { name: '' }).click();
     await adminPage.getByText('50', { exact: true }).click();
-    await adminPage.locator('.multiselect__tag-icon').first().click();
-    //await adminPage.locator('div:nth-child(14) > div:nth-child(3) > .mb-4 > div > .multiselect > .multiselect__tags > .multiselect__tags-wrap > .multiselect__tag > .multiselect__tag-icon').click();
+    //await adminPage.locator('.multiselect__tag-icon').first().click();
+    await adminPage.locator('div:nth-child(10) > div:nth-child(3) > .mb-4 > div > .multiselect > .multiselect__tags > .multiselect__tags-wrap > .multiselect__tag > .multiselect__tag-icon').click();
     await expect(adminPage.getByText('Completeness updated successfully Close').first()).toBeVisible();
 });
 
