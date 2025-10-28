@@ -921,13 +921,21 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                         })
                         ->first();
 
-                    if (! $option?->swatch_value) {
+                    if (! $option) {
                         return null;
                     }
 
+                    $swatchValue = $option->swatch_value
+                        ? "storage/{$option->swatch_value}"
+                        : null;
+
+                    $imageUrl = ($swatchValue && file_exists(public_path($swatchValue)))
+                        ? asset($swatchValue)
+                        : unopim_asset('images/product-placeholders/front.svg');
+
                     return $attribute->swatch_type === 'color'
                         ? "<div style='background-color: {$option->swatch_value};' class='h-[25px] w-[25px] rounded-md border border-gray-200 dark:border-gray-800 inline-block'></div>"
-                        : "<img src='".asset("storage/{$option->swatch_value}")."' alt='".e($optionValue)."' class='h-[46px] w-[46px] max-w-[46px] min-w-[46px] max-h-[46px] min-h-[46px] rounded-lg border border-gray-300 shadow-sm object-cover inline-block' />";
+                        : "<img src='".$imageUrl."' alt='".e($optionValue)."' class='h-[46px] w-[46px] max-w-[46px] min-w-[46px] max-h-[46px] min-h-[46px] rounded-lg border border-gray-300 shadow-sm object-cover inline-block' />";
                 };
 
                 if ($attribute->type === 'multiselect') {

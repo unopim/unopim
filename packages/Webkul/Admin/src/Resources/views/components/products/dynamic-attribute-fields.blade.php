@@ -333,7 +333,7 @@
                     <div class="flex items-center space-x-2">
                         <!-- Image swatch -->
                         <div
-                            v-if="option.swatch_value_url && option.attribute.swatch_type == 'image'"
+                            v-if="option.attribute.swatch_type == 'image'"
                             class="justify-items-center border rounded relative overflow-hidden group w-12 h-12"
                         >
                             <img :src="option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}'"
@@ -387,9 +387,9 @@
                 </x-slot:singleLabel>
 
                 <x-slot:tag>
-                        <div class="multiselect__tag space-x-2 items-center justify-center" style="display:inline-flex" v-if="option.swatch_value || option.swatch_value_url">
+                        <div class="multiselect__tag space-x-2 items-center justify-center" style="display:inline-flex">
                             <div
-                                v-if="option.swatch_value_url && option.attribute.swatch_type == 'image'"
+                                v-if="option.attribute.swatch_type == 'image'"
                                 class="justify-items-center border rounded relative overflow-hidden group w-12 h-12"
                             >
                                 <img :src="option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}'"
