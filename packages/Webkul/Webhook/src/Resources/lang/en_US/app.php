@@ -59,11 +59,13 @@ return [
             'index' => 'Webhook',
         ],
         'settings' => [
-            'index' => 'Settings',
+            'index'  => 'Settings',
+            'update' => 'Update Settings',
         ],
         'logs' => [
-            'index'  => 'Logs',
-            'delete' => 'Delete',
+            'index'       => 'Logs',
+            'delete'      => 'Delete',
+            'mass-delete' => 'Mass Delete',
         ],
     ],
 
