@@ -53,7 +53,7 @@ class AttributeOption extends TranslatableModel implements AttributeOptionContra
     public function swatch_value_url()
     {
         $attribute = $this->attribute;
-        
+
         if (
             $this->swatch_value
             && $attribute
