@@ -623,9 +623,11 @@ test('Translate the content in the hindi', async({adminPage})=>{
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
   await itemRow.locator('span[title="Edit"]').first().click();
+  await adminPage.waitForTimeout(500);
   await adminPage.getByRole('button', { name: 'Translate' }).first().click();
+  await adminPage.waitForTimeout(500);
   await adminPage.getByRole('button', { name: 'Translate' }).nth(1).click();
-  await adminPage.waitForTimeout(25000);
+  await adminPage.waitForTimeout(100000);
   await adminPage.getByRole('button', { name: 'Apply' }).click();
   await expect(adminPage.getByText('Transalated contents store')).toBeVisible();
   await adminPage.waitForTimeout(500);

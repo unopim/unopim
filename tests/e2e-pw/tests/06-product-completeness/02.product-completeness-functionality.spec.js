@@ -26,11 +26,15 @@ test.describe('Verify the behvaiour of Product Completenss feature', () => {
   test('Verify that attributes can be set as required from Completeness tab in default family', async ({ adminPage }) => {
     await adminPage.getByRole('link', { name: ' Catalog' }).click();
     await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
+    await adminPage.getByRole('textbox', { name: 'Search' }).click();
+    await adminPage.getByRole('textbox', { name: 'Search' }).type('default');
+    await adminPage.keyboard.press('Enter');
     const itemRow = adminPage.locator('div', { hasText: 'Default'});
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
     await adminPage.getByRole('button', { name: '' }).click();
     await adminPage.getByText('50', { exact: true }).first().click();
+    await expect(adminPage.getByText('16 Results')).toBeVisible();
     await adminPage.locator(`input[name="channel_requirements"]`).locator('..').locator('.multiselect__tags').nth(10).click();
     await adminPage.getByRole('option', { name: 'Default' }).locator('span').first().click();
     await expect(adminPage.getByText('Completeness updated successfully Close').first()).toBeVisible();
@@ -39,13 +43,15 @@ test.describe('Verify the behvaiour of Product Completenss feature', () => {
   test('Verify all available channels are displayed when user clicks “Configure Completeness” option', async ({ adminPage }) => {
     await adminPage.getByRole('link', { name: ' Catalog' }).click();
     await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
+    await adminPage.getByRole('textbox', { name: 'Search' }).click();
+    await adminPage.getByRole('textbox', { name: 'Search' }).type('default');
+    await adminPage.keyboard.press('Enter');
     const itemRow = adminPage.locator('div', { hasText: 'Default' });
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
-    await adminPage.click('label[for="mass_action_select_all_records"]');
-    await expect(adminPage.getByRole('button', { name: /Select Action/ })).toBeVisisble();
-    await adminPage.getByRole('button', { name: /Select Action/ }).click();
-    await adminPage.locator('a', { hasText: 'Change Completeness Requirement' }).click();
+    await adminPage.locator('div').filter({ hasText: /^Code$/ }).locator('label span').click();
+    await adminPage.getByRole('button', { name: 'Select Action ' }).click();
+    await adminPage.getByRole('link', { name: 'Change Completeness' }).click();
     await adminPage.locator('.px-4 > .mb-4 > div > .multiselect > .multiselect__tags').click();
     await expect(adminPage.getByRole('option', { name: 'Default' }).locator('span').first()).toBeVisible();
     await expect(adminPage.getByRole('option', { name: 'channel3' }).locator('span').first()).toBeVisible();
@@ -54,6 +60,9 @@ test.describe('Verify the behvaiour of Product Completenss feature', () => {
   test('Verify bulk selection of attributes for required channel updates product completeness visibility', async ({ adminPage }) => {
     await adminPage.getByRole('link', { name: ' Catalog' }).click();
     await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
+    await adminPage.getByRole('textbox', { name: 'Search' }).click();
+    await adminPage.getByRole('textbox', { name: 'Search' }).type('default');
+    await adminPage.keyboard.press('Enter');
     const itemRow = adminPage.locator('div', { hasText: 'Default'});
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
@@ -61,8 +70,7 @@ test.describe('Verify the behvaiour of Product Completenss feature', () => {
     await adminPage.getByText('50', { exact: true }).click();
     await adminPage.click('label[for="mass_action_select_all_records"]');
     await expect(adminPage.locator('#mass_action_select_all_records')).toBeChecked();
-    await expect(adminPage.getByRole('button', { name: /Select Action/ })).toBeVisisble();
-    await adminPage.getByRole('button', { name: /Select Action/ }).click();
+    await adminPage.getByRole('button', { name: /Select Action/i }).click();
     await adminPage.locator('a', { hasText: 'Change Completeness Requirement' }).click();
     await adminPage.locator('.px-4 > .mb-4 > div > .multiselect > .multiselect__tags').click();
     await adminPage.getByRole('option', { name: 'Default' }).locator('span').first().click();
@@ -73,13 +81,16 @@ test.describe('Verify the behvaiour of Product Completenss feature', () => {
   test('Verify channel can be deselected for specific attribute in completeness settings', async ({ adminPage }) => {
     await adminPage.getByRole('link', { name: ' Catalog' }).click();
     await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
+    await adminPage.getByRole('textbox', { name: 'Search' }).click();
+    await adminPage.getByRole('textbox', { name: 'Search' }).type('default');
+    await adminPage.keyboard.press('Enter');
     const itemRow = adminPage.locator('div', { hasText: 'Default'});
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
     await adminPage.getByRole('button', { name: '' }).click();
     await adminPage.getByText('50', { exact: true }).click();
-    //await adminPage.locator('.multiselect__tag-icon').first().click();
-    await adminPage.locator('div:nth-child(10) > div:nth-child(3) > .mb-4 > div > .multiselect > .multiselect__tags > .multiselect__tags-wrap > .multiselect__tag > .multiselect__tag-icon').click();
+    await adminPage.locator('.multiselect__tag-icon').first().click();
+    //await adminPage.locator('div:nth-child(14) > div:nth-child(3) > .mb-4 > div > .multiselect > .multiselect__tags > .multiselect__tags-wrap > .multiselect__tag > .multiselect__tag-icon').click();
     await expect(adminPage.getByText('Completeness updated successfully Close').first()).toBeVisible();
 });
 
@@ -114,6 +125,9 @@ test.describe('Verify the behvaiour of Product Completenss feature', () => {
   test('Verify configuring required attributes for different channels in Default Family Completeness settings', async ({ adminPage }) => {
     await adminPage.getByRole('link', { name: ' Catalog' }).click();
     await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
+    await adminPage.getByRole('textbox', { name: 'Search' }).click();
+    await adminPage.getByRole('textbox', { name: 'Search' }).type('default');
+    await adminPage.keyboard.press('Enter');
     const itemRow = adminPage.locator('div', { hasText: 'Default'});
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
