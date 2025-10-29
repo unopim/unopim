@@ -627,7 +627,7 @@ test('Translate the content in the hindi', async({adminPage})=>{
   await adminPage.getByRole('button', { name: 'Translate' }).first().click();
   await adminPage.waitForTimeout(500);
   await adminPage.getByRole('button', { name: 'Translate' }).nth(1).click();
-  await adminPage.waitForTimeout(100000);
+  await adminPage.waitForTimeout(30000);
   await adminPage.getByRole('button', { name: 'Apply' }).click();
   await expect(adminPage.getByText('Transalated contents store')).toBeVisible();
   await adminPage.waitForTimeout(500);
