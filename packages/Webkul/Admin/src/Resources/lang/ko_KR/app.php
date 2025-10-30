@@ -458,6 +458,7 @@ return [
                 'usable-in-grid'        => '그리드에서 사용 가능',
                 'is-filterable'         => '필터링 가능',
                 'ai-translate'          => 'AI 번역',
+                'invalid-swatch-type'   => ':attribute 은(는) 속성 타입 :type에서 스와치 타입 :swatch_type와 함께 허용되지 않습니다.',
 
                 'option' => [
                     'create-success'      => '속성 옵션이 성공적으로 생성되었습니다.',
@@ -466,6 +467,10 @@ return [
                     'sort-update-failure' => '정렬 순서를 업데이트하지 못했습니다.',
                     'sort-update-success' => '정렬 순서가 성공적으로 업데이트되었습니다.',
                     'update-success'      => '속성 옵션이 성공적으로 업데이트되었습니다.',
+                    'color'               => '샘플 색상',
+                    'dropdown'            => '드롭다운',
+                    'image'               => '샘플 이미지',
+                    'text'                => '텍스트 샘플',
                 ],
             ],
 

@@ -459,6 +459,7 @@ return [
                 'usable-in-grid'        => 'Сүлжээнд ашиглах боломжтой',
                 'is-filterable'         => 'Шүүж болох',
                 'ai-translate'          => 'ХИ Орчуулга',
+                'invalid-swatch-type'   => ':attribute нь :type төрлийн attribute-д :swatch_type swatch type ашиглахыг зөвшөөрдөггүй.',
 
                 'option' => [
                     'create-success'      => 'Аттрибутын сонголт амжилттай бүтээгдсэн',
@@ -467,6 +468,10 @@ return [
                     'sort-update-failure' => 'Эрэмбэлэлтийн дарааллыг шинэчлэхэд амжилтгүй боллоо',
                     'sort-update-success' => 'Эрэмбэлэлтийн дараалал амжилттай шинэчлэгдсэн',
                     'update-success'      => 'Аттрибутын сонголтыг амжилттай шинэчилсэн',
+                    'color'               => 'Өнгөт сэлгэлт',
+                    'dropdown'            => 'Дусах',
+                    'image'               => 'Зургийн залгуур',
+                    'text'                => 'Текст swatch',
                 ],
             ],
 

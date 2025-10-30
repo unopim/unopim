@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\UploadedFile;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeOption;
 use Webkul\Attribute\Models\AttributeOptionTranslation;
@@ -16,6 +17,7 @@ it('should return the list of all attributes', function () {
     $attributeData = [
         'code'              => $attribute->code,
         'type'              => $attribute->type,
+        'swatch_type'       => $attribute->swatch_type,
         'validation'        => $attribute->validation,
         'regex_pattern'     => $attribute->regex_pattern,
         'position'          => $attribute->position,
@@ -34,6 +36,7 @@ it('should return the list of all attributes', function () {
                 '*' => [
                     'code',
                     'type',
+                    'swatch_type',
                     'validation',
                     'regex_pattern',
                     'position',
@@ -692,4 +695,135 @@ it('should update attribute options for an attribute successfully', function () 
             ],
         ],
     ]);
+});
+
+it('should successfully upload an image swatch', function () {
+    $attribute = Attribute::factory()->create([
+        'code'        => 'color_attribute',
+        'type'        => 'select',
+        'swatch_type' => 'image',
+    ]);
+
+    $option = AttributeOption::factory()->create([
+        'attribute_id' => $attribute->id,
+        'code'         => 'red_option',
+    ]);
+
+    $file = UploadedFile::fake()->image('swatch.jpg');
+
+    $response = $this->withHeaders($this->headers)->postJson(
+        route('admin.api.media-files.attribute.options.store'),
+        [
+            'attribute_code' => $attribute->code,
+            'code'           => $option->code,
+            'file'           => $file,
+        ]
+    );
+
+    $response->assertOk()
+        ->assertJsonStructure([
+            'success',
+            'message',
+            'data' => ['code', 'swatch_value', 'swatch_value_url'],
+        ]);
+
+    $option->refresh();
+
+    expect($option->swatch_value)->not->toBeNull();
+    expect($option->swatch_value_url)->toContain('storage');
+});
+
+it('should return validation error for missing file', function () {
+    $attribute = Attribute::factory()->create([
+        'code'        => 'color_attribute',
+        'type'        => 'select',
+        'swatch_type' => 'image',
+    ]);
+
+    $option = AttributeOption::factory()->create([
+        'attribute_id' => $attribute->id,
+        'code'         => 'red_option',
+    ]);
+
+    $response = $this->withHeaders($this->headers)->postJson(
+        route('admin.api.media-files.attribute.options.store'),
+        [
+            'attribute_code' => $attribute->code,
+            'code'           => $option->code,
+        ]
+    );
+
+    $response->assertStatus(422)
+        ->assertJsonStructure([
+            'message',
+            'errors' => ['file'],
+        ]);
+
+});
+
+it('should return error if attribute does not exist', function () {
+    $response = $this->withHeaders($this->headers)->postJson(
+        route('admin.api.media-files.attribute.options.store'),
+        [
+            'attribute_code' => 'non_existing_attr',
+            'code'           => 'option_code',
+            'file'           => UploadedFile::fake()->image('swatch.jpg'),
+        ]
+    );
+
+    $response->assertStatus(422)
+        ->assertJsonStructure([
+            'message',
+            'errors' => ['code', 'attribute_code'],
+        ]);
+
+});
+
+it('should return error if attribute option does not exist', function () {
+    $attribute = Attribute::factory()->create([
+        'code'        => 'color_attribute',
+        'type'        => 'select',
+        'swatch_type' => 'image',
+    ]);
+
+    $response = $this->withHeaders($this->headers)->postJson(
+        route('admin.api.media-files.attribute.options.store'),
+        [
+            'attribute_code' => $attribute->code,
+            'code'           => 'non_existing_option',
+            'file'           => UploadedFile::fake()->image('swatch.jpg'),
+        ]
+    );
+
+    $response->assertStatus(422)
+        ->assertJsonStructure([
+            'message',
+            'errors' => ['code'],
+        ]);
+
+});
+
+it('should return validation error if swatch_type is not image', function () {
+    $attribute = Attribute::factory()->create([
+        'code'        => 'color_attribute',
+        'type'        => 'select',
+        'swatch_type' => 'color',
+    ]);
+
+    $option = AttributeOption::factory()->create([
+        'attribute_id' => $attribute->id,
+        'code'         => 'red_option',
+    ]);
+
+    $response = $this->withHeaders($this->headers)->postJson(
+        route('admin.api.media-files.attribute.options.store'),
+        [
+            'attribute_code' => $attribute->code,
+            'code'           => $option->code,
+            'file'           => UploadedFile::fake()->image('swatch.jpg'),
+        ]
+    );
+
+    $response->assertStatus(422)
+        ->assertJsonStructure(['errors' => ['file']]);
 });

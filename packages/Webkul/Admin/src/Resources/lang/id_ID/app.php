@@ -457,6 +457,7 @@ return [
                 'usable-in-grid'        => 'Dapat digunakan dalam grid',
                 'is-filterable'         => 'Dapat difilter',
                 'ai-translate'          => 'AI Terjemahan',
+                'invalid-swatch-type'   => ':attribute tidak diizinkan untuk tipe atribut :type dengan tipe swatch :swatch_type.',
 
                 'option' => [
                     'create-success'      => 'Opsi atribut berhasil dibuat',
@@ -465,6 +466,10 @@ return [
                     'sort-update-failure' => 'Gagal memperbarui urutan sortir',
                     'sort-update-success' => 'Urutan sortir berhasil diperbarui',
                     'update-success'      => 'Opsi atribut berhasil diperbarui',
+                    'color'               => 'Color Swatch',
+                    'dropdown'            => 'Dropdown',
+                    'image'               => 'Gambar gambar',
+                    'text'                => 'Swatch Teks',
                 ],
             ],
 

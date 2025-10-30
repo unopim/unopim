@@ -768,7 +768,7 @@
     </script>
 
 
-<script type="text/x-template" id="v-taggingselect-handler-template">
+    <script type="text/x-template" id="v-taggingselect-handler-template">
         <div>
             <v-multiselect
                 id="ajax"
@@ -833,7 +833,7 @@
                 isLoading: Boolean,
                 listRoute: {
                     type: String,
-                    default: '{{ route('admin.catalog.options.fetch-all')}}'
+                    default: "{{ route('admin.catalog.options.fetch-all')}}"
                 },
                 queryParams: Array,
             },
@@ -1046,6 +1046,23 @@
                 v-model="selectedValue"
                 v-bind="field"
             >
+                @isset($option)
+                    <template v-slot:option="{ option }">
+                        {{ $option }}
+                    </template>
+                @endisset
+
+                @isset($singleLabel)
+                    <template v-slot:singleLabel="{ option }">
+                        {{ $singleLabel }}
+                    </template>
+                @endisset
+
+                @isset($tag)
+                    <template v-slot:tag="{ option, remove }">
+                        {{ $tag }}
+                    </template>
+                @endisset
             </v-multiselect>
             <input
                 v-model="selectedOption"
@@ -1053,6 +1070,19 @@
                 :name="name"
                 type="hidden"
             >
+        </div>
+        
+        <div class="overflow-auto w-full">
+            <x-admin::modal ref="imagePreviewModal">
+                <x-slot:header>
+                    <p class="text-lg text-gray-800 dark:text-white font-bold"></p>
+                </x-slot>
+                <x-slot:content>
+                    <div style="max-width: 100%; height: 260px;">
+                        <img :src="fileUrl" class="w-full h-full object-contain object-top" />
+                    </div>
+                </x-slot>
+            </x-admin::modal>
         </div>
          
     </script>
@@ -1087,7 +1117,7 @@
                 },
                 listRoute: {
                     type: String,
-                    default: '{{ route('admin.catalog.options.fetch-all')}}'
+                    default: "{{ route('admin.catalog.options.fetch-all')}}"
                 },
                 queryParams: Array,
             },
@@ -1126,7 +1156,12 @@
             },
 
             mounted() {
-                this.$refs['multiselect__handler__']._.refs.list.addEventListener('scroll', this.onScroll);
+                this.$nextTick(() => {
+                    const listRef = this.$refs['multiselect__handler__']?._?.refs?.list;
+                    if (listRef) {
+                        listRef.addEventListener('scroll', this.onScroll);
+                    }
+                });
 
                 if (this.selectedValue && typeof this.selectedValue != 'object') {
                     this.initializeValue();
@@ -1277,6 +1312,11 @@
                         }
                     });
                 },
+
+                previewImage(option) {
+                    this.fileUrl = option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}';
+                    this.$refs.imagePreviewModal.toggle();
+                }
             }
         });
     </script>

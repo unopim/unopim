@@ -393,6 +393,7 @@ return [
                 'usable-in-grid'        => 'Usable in grid',
                 'is-filterable'         => 'Is Filterable',
                 'ai-translate'          => 'AI Translate',
+                'invalid-swatch-type'   => 'The :attribute is not allowed for attribute type :type with swatch type :swatch_type.',
 
                 'option' => [
                     'color'    => 'Color Swatch',
@@ -468,6 +469,10 @@ return [
                     'sort-update-success' => 'Sort Order Updated Successfully',
                     'sort-update-failure' => 'Failed to Update Sort Order',
                     'delete-success'      => 'Attribute Option Deleted Successfully',
+                    'color'               => 'Color Swatch',
+                    'dropdown'            => 'Dropdown',
+                    'image'               => 'Image Swatch',
+                    'text'                => 'Text Swatch',
                 ],
             ],
 

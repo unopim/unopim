@@ -457,6 +457,7 @@ return [
                 'same-code-error'       => 'Il codice dell\'opzione deve essere unico.',
                 'usable-in-grid'        => 'Usabile nella griglia',
                 'ai-translate'          => 'Traduzione IA',
+                'invalid-swatch-type'   => ':attribute non è consentito per il tipo di attributo :type con tipo di swatch :swatch_type.',
 
                 'option' => [
                     'create-success'      => 'Opzione attributo creata con successo',
@@ -465,6 +466,10 @@ return [
                     'sort-update-failure' => 'Aggiornamento dell\'ordinamento non riuscito',
                     'sort-update-success' => 'Ordinamento aggiornato con successo',
                     'update-success'      => 'Opzione attributo aggiornata con successo',
+                    'color'               => 'Colore campione',
+                    'dropdown'            => 'Menu a discesa',
+                    'image'               => 'Immagine campione',
+                    'text'                => 'Testo campione',
                 ],
             ],
 

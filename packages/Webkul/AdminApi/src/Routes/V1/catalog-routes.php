@@ -76,6 +76,10 @@ Route::group([
         Route::prefix('product')->group(function () {
             Route::post('', 'storeProductMedia')->name('admin.api.media-files.product.store');
         });
+
+        Route::prefix('swatch')->group(function () {
+            Route::post('', 'storeSwatchMedia')->name('admin.api.media-files.attribute.options.store');
+        });
     });
 
     /** Products API Routes */

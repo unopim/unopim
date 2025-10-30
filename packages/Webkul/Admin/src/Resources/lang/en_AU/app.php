@@ -457,6 +457,7 @@ return [
                 'usable-in-grid'        => 'Usable in grid',
                 'is-filterable'         => 'Is filterable',
                 'ai-translate'          => 'AI Translate',
+                'invalid-swatch-type'   => 'The :attribute is not allowed for attribute type :type with swatch type :swatch_type.',
 
                 'option' => [
                     'create-success'      => 'Attribute Option Created Successfully',
@@ -465,6 +466,10 @@ return [
                     'sort-update-failure' => 'Failed to Update Sort Order',
                     'sort-update-success' => 'Sort Order Updated Successfully',
                     'update-success'      => 'Attribute Option Updated Successfully',
+                    'color'               => 'Colour Swatch',
+                    'dropdown'            => 'Dropdown',
+                    'image'               => 'Image Swatch',
+                    'text'                => 'Text Swatch',
                 ],
             ],
 

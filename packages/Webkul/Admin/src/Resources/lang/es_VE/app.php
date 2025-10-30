@@ -458,6 +458,7 @@ return [
                 'usable-in-grid'        => 'Utilizable en cuadrícula',
                 'is-filterable'         => 'Es filtrable',
                 'ai-translate'          => 'Traducción IA',
+                'invalid-swatch-type'   => ':attribute no está permitido para el tipo de atributo :type con tipo de swatch :swatch_type.',
 
                 'option' => [
                     'create-success'      => 'Attribute Option Created Successfully',
@@ -466,6 +467,10 @@ return [
                     'sort-update-failure' => 'Failed to Update Sort Order',
                     'sort-update-success' => 'Sort Order Updated Successfully',
                     'update-success'      => 'Attribute Option Updated Successfully',
+                    'color'               => 'Muestra de color',
+                    'dropdown'            => 'Desplegable',
+                    'image'               => 'Muestra de imagen',
+                    'text'                => 'Muestra de texto',
                 ],
             ],
 

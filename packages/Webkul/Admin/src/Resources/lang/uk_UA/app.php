@@ -458,6 +458,7 @@ return [
                 'usable-in-grid'        => 'Доступно в сітці',
                 'is-filterable'         => 'Фільтрований',
                 'ai-translate'          => 'Переклад ШІ',
+                'invalid-swatch-type'   => ':attribute не дозволено для типу атрибуту :type зі swatch-типом :swatch_type.',
 
                 'option' => [
                     'create-success'      => 'Опцію атрибута успішно створено',
@@ -466,6 +467,10 @@ return [
                     'sort-update-failure' => 'Не вдалося оновити порядок сортування',
                     'sort-update-success' => 'Порядок сортування успішно оновлено',
                     'update-success'      => 'Опцію атрибута успішно оновлено',
+                    'color'               => 'Колір шаблону',
+                    'dropdown'            => 'Випадаючий список',
+                    'image'               => 'Шаблон зображення',
+                    'text'                => 'Текстовий шаблон',
                 ],
             ],
 
