@@ -57,4 +57,9 @@ class MySQLGrammar implements BaseGrammar
     {
         return '$.'.implode('.', $pathSegments);
     }
+
+    public function getBooleanValue(mixed $value): int
+    {
+        return filter_var($value, FILTER_VALIDATE_BOOLEAN) ? 1 : 0;
+    }
 }

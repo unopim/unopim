@@ -74,4 +74,9 @@ class PostgresGrammar implements BaseGrammar
 
         return $expr;
     }
+
+    public function getBooleanValue(mixed $value): string
+    {
+        return filter_var($value, FILTER_VALIDATE_BOOLEAN) ? 't' : 'f';
+    }
 }
