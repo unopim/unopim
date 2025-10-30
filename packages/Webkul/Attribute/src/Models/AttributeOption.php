@@ -52,11 +52,9 @@ class AttributeOption extends TranslatableModel implements AttributeOptionContra
      */
     public function swatch_value_url()
     {
-        $attribute = $this->attribute;
-
         if (
-            $this->swatch_value
-            && $attribute
+            $this->attribute
+            && $this->swatch_value
             && $this->attribute->swatch_type == 'image'
         ) {
             return Storage::url($this->swatch_value);

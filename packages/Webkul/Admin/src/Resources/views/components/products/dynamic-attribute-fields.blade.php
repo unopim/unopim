@@ -421,7 +421,7 @@
                             <p class="text-lg text-gray-800 dark:text-white font-bold"></p>
                         </x-slot:header>
                         <x-slot:content>
-                            <div style="max-width: 100%; height: 260px;">
+                            <div class="max-w-full h-[260px]">
                                 <img :src="fileUrl" class="w-full h-full object-contain object-top" />
                             </div>
                         </x-slot:content>

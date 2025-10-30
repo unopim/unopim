@@ -260,9 +260,6 @@
                                         
                                     <x-admin::form.control-group.error control-name="swatch_type" />
                                 </x-admin::form.control-group>
-
-                                <div class="w-full">
-                                </div>
                             </div>
 
                             <!-- For Attribute Options If Data Exist -->
@@ -275,7 +272,7 @@
                                         <template v-if="! isLoading">
                                             <div
                                                 class="row grid grid-rows-1 gap-2.5 items-center px-4 py-2.5 border-b bg-violet-50 dark:border-cherry-800 dark:bg-cherry-900 font-semibold"
-                                                :style="'grid-template-columns: 0.2fr repeat(' + (actions.length ? columns.length + (selectedSwatchType=='color' || selectedSwatchType == 'image' ? 2 : 1 ) : (columns.length )) + ', 1fr)'"
+                                                :style="'grid-template-columns: 0.2fr repeat(' + (actions.length ? columns.length + (selectedSwatchType == 'color' || selectedSwatchType == 'image' ? 2 : 1 ) : (columns.length )) + ', 1fr)'"
                                             >
                                             <!-- Empty div to manage layout  -->
                                             <div>
@@ -350,7 +347,7 @@
                                                     <div v-if="selectedSwatchType == 'image'">
                                                         <div>
                                                                 <img
-                                                                    :src="record.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}'"
+                                                                    :src="record.swatch_value ? '{{ Storage::url('') }}'+record.swatch_value : '{{ unopim_asset('images/product-placeholders/front.svg') }}'"
                                                                     class="h-[50px] w-[50px] max-w-[50px] min-w-[50px] max-h-[50px] min-h-[50px] rounded-lg border border-gray-300 shadow-sm object-cover"
                                                                 >
                                                         </div>
@@ -875,11 +872,10 @@
 
                             if (fileInput && fileInput.files.length > 0) {
                                 formData.append('swatch_value', fileInput.files[0]);
-                            } else if (!this.swatchValue.image?.length) {
+                            } else if (! this.swatchValue.image?.length) {
                                 formData.append('swatch_value', '');
                             } else {
-                                const relativePath = params.swatch_value;
-                                formData.append('swatch_value', relativePath);
+                                formData.append('swatch_value', params.swatch_value ?? '');
                             }
                         } else if (this.selectedSwatchType === 'color') {
                             formData.append('swatch_value', params.swatch_value ?? '');

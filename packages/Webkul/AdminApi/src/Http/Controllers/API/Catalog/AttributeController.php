@@ -2,6 +2,7 @@
 
 namespace Webkul\AdminApi\Http\Controllers\API\Catalog;
 
+use App\Rules\ValidSwatchValue;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Validator;
@@ -256,23 +257,7 @@ class AttributeController extends ApiController
                 }),
                 new Code,
             ],
-            'swatch_value' => [
-                function ($attribute, $value, $fail) use ($attributeId) {
-                    if (! empty($value)) {
-                        $attr = $this->attributeRepository->find($attributeId);
-
-                        $isValid = in_array($attr?->type, ['select', 'multiselect'], true) && in_array($attr?->swatch_type, ['color', 'image'], true);
-
-                        if (! $isValid) {
-                            $fail(trans('admin::app.catalog.attributes.create.invalid-swatch-type', [
-                                'attribute'   => $attribute,
-                                'type'        => $attr?->type,
-                                'swatch_type' => $attr?->swatch_type ?? 'none',
-                            ]));
-                        }
-                    }
-                },
-            ],
+            'swatch_value' => [new ValidSwatchValue($attributeId)],
         ];
 
         return Validator::make($requestData, $rules);
