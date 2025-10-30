@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Rules;
+namespace Webkul\Attribute\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;

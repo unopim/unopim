@@ -2,7 +2,6 @@
 
 namespace Webkul\AdminApi\Http\Controllers\API\Catalog;
 
-use App\Rules\ValidSwatchValue;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Validator;
@@ -16,6 +15,7 @@ use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Attribute\Rules\NotSupportedAttributes;
 use Webkul\Attribute\Rules\SwatchTypes;
 use Webkul\Attribute\Rules\ValidationTypes;
+use Webkul\Attribute\Rules\ValidSwatchValue;
 use Webkul\Core\Rules\Code;
 
 class AttributeController extends ApiController
