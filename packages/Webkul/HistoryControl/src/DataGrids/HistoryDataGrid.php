@@ -34,12 +34,19 @@ class HistoryDataGrid extends DataGrid
 
         $queryBuilder = DB::table('audits as his')
             ->leftJoin('admins', 'his.user_id', '=', 'admins.id')
-            ->select('his.id', 'his.tags as entity_type', 'his.event', 'admins.name as user', 'his.updated_at', 'his.version_id')
+            ->select(
+                'his.id',
+                'his.tags as entity_type',
+                'his.event',
+                'admins.name as user',
+                'his.updated_at',
+                'his.version_id'
+            )
             ->where(function ($query) {
                 $query->where('his.tags', '=', $this->entityName)
                     ->where('his.history_id', '=', $this->entityId);
             })
-            ->groupBy('his.updated_at', 'his.user_id');
+            ->groupBy('his.updated_at', 'his.user_id', 'his.id', 'admins.name');
 
         return $queryBuilder;
     }
