@@ -30,8 +30,8 @@ class AttributeGroupDataGrid extends DataGrid
                 DB::raw(
                     "(CASE 
                         WHEN $nameField IS NULL 
-                            OR ".$grammar->length("TRIM($nameField)")." < 1 
-                        THEN ".$grammar->concat("'['", "{$tablePrefix}attribute_groups.code", "']'")."
+                            OR ".$grammar->length("TRIM($nameField)").' < 1 
+                        THEN '.$grammar->concat("'['", "{$tablePrefix}attribute_groups.code", "']'")."
                         ELSE $nameField 
                     END) as name"
                 )

@@ -28,8 +28,8 @@ class AttributeFamilyDataGrid extends DataGrid
                 DB::raw(
                     "(CASE 
                         WHEN {$tablePrefix}attribute_family_name.name IS NULL 
-                            OR ".$grammar->length("TRIM({$tablePrefix}attribute_family_name.name)")." < 1 
-                        THEN ".$grammar->concat("'['", "{$tablePrefix}attribute_families.code", "']'")."
+                            OR ".$grammar->length("TRIM({$tablePrefix}attribute_family_name.name)").' < 1 
+                        THEN '.$grammar->concat("'['", "{$tablePrefix}attribute_families.code", "']'")."
                         ELSE {$tablePrefix}attribute_family_name.name 
                     END) as name"
                 )

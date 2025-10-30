@@ -4,7 +4,6 @@ namespace Webkul\Category\Repositories;
 
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\DB;
 use Webkul\Category\Contracts\Category;
 use Webkul\Core\Eloquent\Repository;
 use Webkul\Core\Filesystem\FileStorer;
