@@ -22,7 +22,7 @@ interface Grammar
 
     public function orderByField(string $column, array $ids, string $type = ''): string;
 
-    public function jsonPath(string $column, string ...$pathSegments): string;
+    public function getRegexOperator(): string;
 
     public function getBooleanValue(mixed $value);
 }

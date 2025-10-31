@@ -62,19 +62,9 @@ class PostgresGrammar implements Grammar
         return "array_position(ARRAY[{$idList}]::{$type}[], {$column})";
     }
 
-    public function jsonPath(string $column, string ...$pathSegments): string
+    public function getRegexOperator(): string
     {
-        $expr = $column;
-
-        $lastPart = array_pop($pathSegments);
-
-        foreach ($pathSegments as $part) {
-            $expr .= "->'{$part}'";
-        }
-
-        $expr .= "->>'{$lastPart}'";
-
-        return $expr;
+        return '~';
     }
 
     public function getBooleanValue(mixed $value)

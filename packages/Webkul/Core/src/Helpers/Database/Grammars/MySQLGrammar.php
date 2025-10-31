@@ -55,9 +55,9 @@ class MySQLGrammar implements Grammar
         return "FIELD({$column}, {$idList})";
     }
 
-    public function jsonPath(string $column, string ...$pathSegments): string
+    public function getRegexOperator(): string
     {
-        return '$.'.implode('.', $pathSegments);
+        return 'REGEXP';
     }
 
     public function getBooleanValue(mixed $value)

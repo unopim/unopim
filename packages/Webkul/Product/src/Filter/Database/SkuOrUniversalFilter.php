@@ -2,6 +2,7 @@
 
 namespace Webkul\Product\Filter\Database;
 
+use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Services\AttributeService;
 use Webkul\ElasticSearch\QueryString;
 
@@ -37,10 +38,13 @@ class SkuOrUniversalFilter extends AbstractDatabaseAttributeFilter
             $channel = $attribute->value_per_channel ? $options['channel'] : null;
 
             $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
+
             $escapedValue = QueryString::escapeValue(current((array) $value));
 
+            $searchPath = DB::grammar()->jsonExtract($this->getSearchTablePath($options), ...$attributePath);
+
             $this->queryBuilder->orWhereRaw(
-                sprintf("LOWER(JSON_UNQUOTE(JSON_EXTRACT(%s, '%s'))) LIKE ?", $this->getSearchTablePath($options), $attributePath),
+                sprintf("LOWER($searchPath) LIKE ?"),
                 "%$escapedValue%"
             );
         }

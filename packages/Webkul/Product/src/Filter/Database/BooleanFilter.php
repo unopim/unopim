@@ -2,6 +2,7 @@
 
 namespace Webkul\Product\Filter\Database;
 
+use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\ElasticSearch\Contracts\Filter as FilterContract;
 use Webkul\ElasticSearch\Enums\FilterOperators;
@@ -39,36 +40,39 @@ class BooleanFilter extends AbstractDatabaseAttributeFilter implements FilterCon
 
         $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
 
+        $grammar = DB::grammar();
+
+        $searchPath = $grammar->jsonExtract($this->getSearchTablePath($options), ...$attributePath);
+
+        $searchPath .= ' '.$grammar->getRegexOperator().' ?';
+
         switch ($operator) {
             case FilterOperators::IN:
                 $this->queryBuilder->whereRaw(
-                    sprintf(
-                        "JSON_UNQUOTE(JSON_EXTRACT(%s, '%s')) REGEXP ?",
-                        $this->getSearchTablePath($options),
-                        $attributePath
-                    ),
-                    [is_array($value) ? implode('|', array_map(function ($val) {
-                        return ($val == '1') ? 'true' : 'false';
-                    }, $value)) : (($value == '1') ? 'true' : 'false')]
+                    $searchPath,
+                    $this->formatBooleanValue($value)
                 );
 
                 break;
 
             case FilterOperators::EQUAL:
                 $this->queryBuilder->whereRaw(
-                    sprintf(
-                        "JSON_UNQUOTE(JSON_EXTRACT(%s, '%s')) REGEXP ?",
-                        $this->getSearchTablePath($options),
-                        $attributePath
-                    ),
-                    [is_array($value) ? implode('|', array_map(function ($val) {
-                        return ($val == '1') ? 'true' : 'false';
-                    }, $value)) : (($value == '1') ? 'true' : 'false')]
+                    $searchPath,
+                    $this->formatBooleanValue($value),
                 );
 
                 break;
         }
 
         return $this;
+    }
+
+    private function formatBooleanValue(mixed $value): array
+    {
+        return [
+            is_array($value)
+                ? implode('|', array_map(fn ($val) => ($val == '1' ? 'true' : 'false'), $value))
+                : ($value == '1' ? 'true' : 'false'),
+        ];
     }
 }

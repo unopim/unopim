@@ -2,6 +2,7 @@
 
 namespace Webkul\Product\Filter\Database;
 
+use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\ElasticSearch\Enums\FilterOperators;
 use Webkul\ElasticSearch\QueryString;
@@ -39,21 +40,26 @@ class TextFilter extends AbstractDatabaseAttributeFilter
 
         $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
 
+        $grammar = DB::grammar();
+
+        $searchPath = $grammar->jsonExtract($this->getSearchTablePath($options), ...$attributePath);
+
         switch ($operator) {
             case FilterOperators::IN:
                 $this->queryBuilder->whereRaw(
-                    sprintf("JSON_UNQUOTE(JSON_EXTRACT(%s, '%s')) REGEXP ?", $this->getSearchTablePath($options), $attributePath),
+                    $searchPath.' '.$grammar->getRegexOperator().' ?',
                     is_array($value) ? implode('|', $value) : $value
                 );
 
                 break;
 
             case FilterOperators::CONTAINS:
-                $this->queryBuilder->where(function ($query) use ($attributePath, $options, $value) {
+                $this->queryBuilder->where(function ($query) use ($searchPath, $value) {
                     foreach ($value as $val) {
                         $escapedValue = strtolower(QueryString::escapeValue($val));
+
                         $query->orWhereRaw(
-                            sprintf("LOWER(JSON_UNQUOTE(JSON_EXTRACT(%s, '%s'))) LIKE ?", $this->getSearchTablePath($options), $attributePath),
+                            "LOWER($searchPath) LIKE ?",
                             "%$escapedValue%"
                         );
                     }

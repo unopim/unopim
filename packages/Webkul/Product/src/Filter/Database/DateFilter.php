@@ -2,6 +2,7 @@
 
 namespace Webkul\Product\Filter\Database;
 
+use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\ElasticSearch\Enums\FilterOperators;
 
@@ -38,10 +39,14 @@ class DateFilter extends AbstractDatabaseAttributeFilter
 
         $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
 
+        $grammar = DB::grammar();
+
+        $searchPath = $grammar->jsonExtract($this->getSearchTablePath($options), ...$attributePath);
+
         switch ($operator) {
             case FilterOperators::IN:
                 $this->queryBuilder->whereRaw(
-                    sprintf("JSON_UNQUOTE(JSON_EXTRACT(%s, '%s')) REGEXP ?", $this->getSearchTablePath($options), $attributePath),
+                    $searchPath.' '.$grammar->getRegexOperator().' ?',
                     is_array($value) ? implode('|', $value) : $value
                 );
 
@@ -49,7 +54,7 @@ class DateFilter extends AbstractDatabaseAttributeFilter
 
             case FilterOperators::RANGE:
                 $this->queryBuilder->whereRaw(
-                    sprintf("JSON_UNQUOTE(JSON_EXTRACT(%s, '%s')) BETWEEN ? AND ?", $this->getSearchTablePath($options), $attributePath),
+                    $searchPath.' BETWEEN ? AND ?',
                     [
                         ($value[0] ?? '').' 00:00:01',
                         ($value[1] ?? '').' 23:59:59',
