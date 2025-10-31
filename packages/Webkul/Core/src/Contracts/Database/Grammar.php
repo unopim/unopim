@@ -1,8 +1,8 @@
 <?php
 
-namespace Webkul\Core\Helpers\Database\Grammars;
+namespace Webkul\Core\Contracts\Database;
 
-interface BaseGrammar
+interface Grammar
 {
     public function groupConcat(
         string $column,
@@ -17,4 +17,12 @@ interface BaseGrammar
     public function coalesce(array $columns, ?string $alias = null): string;
 
     public function length(string $column): string;
+
+    public function jsonExtract(string $column, string ...$pathSegments): string;
+
+    public function orderByField(string $column, array $ids, string $type = ''): string;
+
+    public function jsonPath(string $column, string ...$pathSegments): string;
+
+    public function getBooleanValue(mixed $value);
 }

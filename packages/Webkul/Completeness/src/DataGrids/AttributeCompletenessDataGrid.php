@@ -47,12 +47,12 @@ class AttributeCompletenessDataGrid extends DataGrid
                 'attributes.id',
                 'attributes.code',
                 DB::raw("
-                CASE
-                    WHEN {$tablePrefix}attribute_translations.name IS NULL OR CHAR_LENGTH(TRIM({$tablePrefix}attribute_translations.name)) < 1
-                    THEN CONCAT('[', {$tablePrefix}attributes.code, ']')
-                    ELSE {$tablePrefix}attribute_translations.name
-                END AS name
-            "),
+                    CASE
+                        WHEN {$tablePrefix}attribute_translations.name IS NULL OR CHAR_LENGTH(TRIM({$tablePrefix}attribute_translations.name)) < 1
+                        THEN CONCAT('[', {$tablePrefix}attributes.code, ']')
+                        ELSE {$tablePrefix}attribute_translations.name
+                    END AS name
+                "),
                 DB::raw(DB::grammar()->groupConcat('channels.code', 'channel_required', 'channels.code', true)),
             )
             ->groupBy(

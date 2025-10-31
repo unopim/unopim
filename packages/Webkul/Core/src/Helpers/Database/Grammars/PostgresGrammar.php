@@ -2,7 +2,9 @@
 
 namespace Webkul\Core\Helpers\Database\Grammars;
 
-class PostgresGrammar implements BaseGrammar
+use Webkul\Core\Contracts\Database\Grammar;
+
+class PostgresGrammar implements Grammar
 {
     public function groupConcat(
         string $column,
@@ -75,7 +77,7 @@ class PostgresGrammar implements BaseGrammar
         return $expr;
     }
 
-    public function getBooleanValue(mixed $value): string
+    public function getBooleanValue(mixed $value)
     {
         return filter_var($value, FILTER_VALIDATE_BOOLEAN) ? 't' : 'f';
     }

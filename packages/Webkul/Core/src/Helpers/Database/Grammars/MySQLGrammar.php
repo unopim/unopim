@@ -2,7 +2,9 @@
 
 namespace Webkul\Core\Helpers\Database\Grammars;
 
-class MySQLGrammar implements BaseGrammar
+use Webkul\Core\Contracts\Database\Grammar;
+
+class MySQLGrammar implements Grammar
 {
     public function groupConcat(
         string $column,
@@ -58,7 +60,7 @@ class MySQLGrammar implements BaseGrammar
         return '$.'.implode('.', $pathSegments);
     }
 
-    public function getBooleanValue(mixed $value): int
+    public function getBooleanValue(mixed $value)
     {
         return filter_var($value, FILTER_VALIDATE_BOOLEAN) ? 1 : 0;
     }
