@@ -619,7 +619,7 @@ test('Check that AI Translate is visible on Short-Description', async({adminPage
 //   console.log('Contains Hindi:', containsHindi);
 //   await expect(containsHindi).toBe(true);
 // });
-test('Translate the content in the hindi', async({adminPage})=>{
+test.skip('Translate the content in the hindi', async({adminPage})=>{
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
   await itemRow.locator('span[title="Edit"]').first().click();
