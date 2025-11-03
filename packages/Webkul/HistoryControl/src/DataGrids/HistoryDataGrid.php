@@ -7,6 +7,8 @@ use Webkul\DataGrid\DataGrid;
 
 class HistoryDataGrid extends DataGrid
 {
+    protected $primaryColumn = 'version_id';
+
     /**
      * Datagrid entity name
      */
@@ -35,9 +37,6 @@ class HistoryDataGrid extends DataGrid
         $queryBuilder = DB::table('audits as his')
             ->leftJoin('admins', 'his.user_id', '=', 'admins.id')
             ->select(
-                'his.id',
-                'his.tags as entity_type',
-                'his.event',
                 'admins.name as user',
                 'his.updated_at',
                 'his.version_id'
@@ -46,7 +45,7 @@ class HistoryDataGrid extends DataGrid
                 $query->where('his.tags', '=', $this->entityName)
                     ->where('his.history_id', '=', $this->entityId);
             })
-            ->groupBy('his.updated_at', 'his.user_id', 'his.id', 'admins.name');
+            ->groupBy('his.updated_at', 'his.user_id', 'his.version_id', 'admins.name');
 
         return $queryBuilder;
     }
@@ -58,15 +57,6 @@ class HistoryDataGrid extends DataGrid
      */
     public function prepareColumns()
     {
-        $this->addColumn([
-            'index'      => 'id',
-            'label'      => trans('admin::app.catalog.products.index.datagrid.id'),
-            'type'       => 'id',
-            'searchable' => false,
-            'filterable' => false,
-            'sortable'   => false,
-        ]);
-
         $this->addColumn([
             'index'      => 'updated_at',
             'label'      => trans('admin::app.catalog.history.index.datagrid.date_time'),
