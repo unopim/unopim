@@ -249,31 +249,14 @@ class Export
      */
     public function completed(): void
     {
-        $driver = DB::getDriverName();
-
-        switch ($driver) {
-            case 'pgsql':
-                // PostgreSQL JSON operators
-                $selects = [
-                    DB::raw("SUM((summary->>'processed')::int) AS processed"),
-                    DB::raw("SUM((summary->>'created')::int) AS created"),
-                    DB::raw("SUM((summary->>'skipped')::int) AS skipped"),
-                ];
-                break;
-
-            case 'mysql':
-            default:
-                // MySQL JSON functions
-                $selects = [
-                    DB::raw("SUM(json_unquote(json_extract(summary, '$.\"processed\"'))) AS processed"),
-                    DB::raw("SUM(json_unquote(json_extract(summary, '$.\"created\"'))) AS created"),
-                    DB::raw("SUM(json_unquote(json_extract(summary, '$.\"skipped\"'))) AS skipped"),
-                ];
-                break;
-        }
+        $grammar = DB::grammar();
 
         $summary = $this->jobTrackBatchRepository
-            ->select(...$selects)
+            ->select(
+                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'created')} as int)) AS created"),
+                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'processed')} as int)) AS processed"),
+                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'skipped')} as int)) AS skipped"),
+            )
             ->where('job_track_id', $this->export->id)
             ->groupBy('job_track_id')
             ->first()?->toArray();

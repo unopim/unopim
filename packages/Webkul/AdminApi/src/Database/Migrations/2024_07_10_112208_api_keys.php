@@ -13,19 +13,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('api_keys', function (Blueprint $table) {
-            $driver = DB::getDriverName();
-
             $table->id();
             $table->string('name');
             $table->unsignedBigInteger('admin_id');
             $table->uuid('oauth_client_id')->nullable()->index();
             $table->string('permission_type');
-
-            if ($driver === 'pgsql') {
-                $table->boolean('revoked')->default(false);
-            } else {
-                $table->boolean('revoked');
-            }
+            $table->boolean('revoked');
 
             $table->json('permissions')->nullable();
             $table->timestamps();

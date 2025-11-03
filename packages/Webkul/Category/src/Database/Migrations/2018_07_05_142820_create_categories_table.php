@@ -20,15 +20,6 @@ return new class extends Migration
             $table->string('code')->unique();
             NestedSet::columns($table);
 
-            switch ($driver) {
-                case 'pgsql':
-                    $table->unsignedBigInteger('parent_id')->nullable()->change();
-                    break;
-                case 'mysql':
-                    $table->unsignedInteger('parent_id')->nullable()->change();
-                    break;
-            }
-
             $table->timestamps();
             $table->index('code');
         });

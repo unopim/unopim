@@ -14,8 +14,6 @@ return new class extends Migration
      */
     public function up()
     {
-        $driver = DB::getDriverName();
-
         Schema::create('attribute_option_translations', function (Blueprint $table) {
             $table->id();
 

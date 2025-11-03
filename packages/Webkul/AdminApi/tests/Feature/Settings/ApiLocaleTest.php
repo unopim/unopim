@@ -61,8 +61,6 @@ it('should filter the locale based on status', function () {
         ],
     ];
 
-    $driver = DB::getDriverName();
-
     $response = $this->withHeaders($this->headers)
         ->json('GET', route('admin.api.locales.index', ['filters' => json_encode($filters)]))
         ->assertOK()

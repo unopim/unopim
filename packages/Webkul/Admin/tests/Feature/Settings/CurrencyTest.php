@@ -78,8 +78,6 @@ it('should update the currency', function () {
         'status'  => 1,
     ]);
 
-    $driver = DB::getDriverName();
-
     $data = [
         'id'      => $currency->id,
         'code'    => 'DOP',

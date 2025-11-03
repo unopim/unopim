@@ -18,33 +18,12 @@ trait OauthClientGenerator
         $providers = array_keys(config('auth.providers'));
         $provider = $providers[0];
 
-        $driver = DB::getDriverName();
-
-        switch ($driver) {
-            case 'pgsql':
-                $client = new Client;
-                $client->id = Str::uuid()->toString();
-                $client->user_id = $user_id;
-                $client->name = $name;
-                $client->secret = Str::random(40);
-                $client->provider = $provider;
-                $client->redirect = 'http://localhost';
-                $client->personal_access_client = false;
-                $client->password_client = true;
-                $client->revoked = false;
-                $client->save();
-                break;
-
-            case 'mysql':
-            default:
-                $client = $this->clients->createPasswordGrantClient(
-                    $user_id,
-                    $name,
-                    'http://localhost',
-                    $provider
-                );
-                break;
-        }
+        $client = $this->clients->createPasswordGrantClient(
+            $user_id,
+            $name,
+            'http://localhost',
+            $provider
+        );
 
         return $client;
     }

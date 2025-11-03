@@ -12,8 +12,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $driver = DB::getDriverName();
-
         Schema::create('job_instances', function (Blueprint $table) {
             $table->id();
             $table->string('code')->unique();

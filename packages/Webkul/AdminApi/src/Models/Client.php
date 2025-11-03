@@ -11,22 +11,9 @@ class Client extends PassportClient
 {
     use HasUuids;
 
-    public function __construct(array $attributes = [])
-    {
-        parent::__construct($attributes);
+    public $incrementing = true;
 
-        $driver = DB::getDriverName();
-
-        if ($driver === 'pgsql') {
-            // PostgreSQL → UUID primary key
-            $this->incrementing = false;
-            $this->keyType = 'string';
-        } else {
-            // MySQL → auto-increment bigint
-            $this->incrementing = true;
-            $this->keyType = 'int';
-        }
-    }
+    protected $keyType = 'string';
 
     /**
      * Get the admins.

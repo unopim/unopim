@@ -474,34 +474,18 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $sortColumn = $requestedSort['column'] ?? $this->sortColumn ?? $this->primaryColumn;
         $sortOrder = $requestedSort['order'] ?? $this->sortOrder;
 
-        $tablePrefix = DB::getTablePrefix();
-        $driver = DB::getDriverName();
-
         if ($attributePath = $this->getAttributePathForSort($sortColumn)) {
-            switch ($driver) {
-                case 'pgsql':
-                    $jsonPath = trim($attributePath, '$.');
-                    $pathParts = explode('.', $jsonPath);
-                    $pgExpr = $tablePrefix.'products.values';
-                    foreach ($pathParts as $i => $part) {
-                        $pgExpr .= $i === array_key_last($pathParts)
-                            ? "->>'$part'"
-                            : "->'$part'";
-                    }
+            $attribute = $this->attributeService->findAttributeByCode($sortColumn) ?? 'text';
 
-                    return $this->queryBuilder->orderByRaw("$pgExpr $sortOrder");
+            $castType = $attribute?->type === 'price' || $attribute->validation === 'numeric'
+                ? 'int'
+                : 'text';
 
-                case 'mysql':
-                default:
-                    return $this->queryBuilder->orderByRaw(
-                        sprintf(
-                            "JSON_UNQUOTE(JSON_EXTRACT(%sproducts.values, '%s')) %s",
-                            $tablePrefix,
-                            $attributePath,
-                            $sortOrder
-                        )
-                    );
-            }
+            $jsonCondition = DB::grammar()->jsonExtract(DB::getTablePrefix().'products.values', ...$attributePath);
+
+            return $this->queryBuilder->orderByRaw(
+                "CAST($jsonCondition AS $castType) $sortOrder",
+            );
         }
 
         return $this->queryBuilder->orderBy($sortColumn, $sortOrder);
@@ -647,7 +631,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $currencyCode = $channel?->currencies?->first()?->code;
         $channel = $channel->code;
 
-        $driver = DB::getDriverName();
         $attributeType = $attribute->type;
 
         if ($searchEngine === 'elasticsearch') {
@@ -668,37 +651,17 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             return $path;
         }
 
-        switch ($driver) {
-            case 'pgsql':
-                $pgPath = [$attribute->getScope($locale, $channel), $attribute->code];
+        $driver = DB::grammar();
 
-                if ($attributeType === 'price' && $currencyCode) {
-                    $pgPath[] = $currencyCode;
-                }
+        $path = explode('.', $attribute->getScope($locale, $channel));
 
-                $expr = 'products.values';
-                foreach ($pgPath as $i => $part) {
-                    $expr .= $i === array_key_last($pgPath)
-                        ? "->>'$part'"   // last part as text
-                        : "->'$part'";
-                }
+        $path[] = $attributeCode;
 
-                return $expr;
-
-            case 'mysql':
-            default:
-                $path = sprintf(
-                    '$.%s.%s',
-                    $attribute->getScope($locale, $channel),
-                    $attribute->code
-                );
-
-                if ($attributeType === 'price' && $currencyCode) {
-                    $path .= '.'.$currencyCode;
-                }
-
-                return $path;
+        if ($attributeType === 'price' && $currencyCode) {
+            $path[] = $currencyCode;
         }
+
+        return $path;
     }
 
     /**
@@ -829,16 +792,11 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             return [];
         }
 
-        switch (DB::getDriverName()) {
-            case 'pgsql':
-                // In PostgreSQL JSON/JSONB fields are already arrays
-                return is_array($values) ? $values : [];
-
-            case 'mysql':
-            default:
-                // In MySQL JSON is stored as string → decode it
-                return is_string($values) ? (json_decode($values, true) ?? []) : [];
+        if (is_array($values)) {
+            return $values;
         }
+
+        return is_string($values) ? (json_decode($values, true) ?? []) : [];
     }
 
     /**
