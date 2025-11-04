@@ -51,7 +51,7 @@ class CategoryDataGrid extends DataGrid
         $tablePrefix = DB::getTablePrefix();
         $localeCode = core()->getRequestedLocaleCode();
 
-        $grammar = DB::grammar();
+        $grammar = DB::rawQueryGrammar();
 
         $subQuery = $this->getSubQuery($localeCode, $tablePrefix);
 
@@ -201,7 +201,7 @@ class CategoryDataGrid extends DataGrid
 
             if (! empty($ids)) {
                 $this->queryBuilder->whereIn('cat.id', $ids)
-                    ->orderByRaw(DB::grammar()->orderByField(DB::getTablePrefix().'cat.id', $ids));
+                    ->orderByRaw(DB::rawQueryGrammar()->orderByField(DB::getTablePrefix().'cat.id', $ids));
             }
 
             $total = $results['hits']['total']['value'];
@@ -355,7 +355,7 @@ class CategoryDataGrid extends DataGrid
      */
     private function getSubQuery(string $locale, string $tablePrefix): string
     {
-        $grammar = DB::grammar();
+        $grammar = DB::rawQueryGrammar();
 
         $jsonExpr = $grammar->jsonExtract('additional_data', 'locale_specific', $locale, 'name');
 

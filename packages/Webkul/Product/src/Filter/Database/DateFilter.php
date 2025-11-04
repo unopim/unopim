@@ -39,7 +39,7 @@ class DateFilter extends AbstractDatabaseAttributeFilter
 
         $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
 
-        $grammar = DB::grammar();
+        $grammar = DB::rawQueryGrammar();
 
         $searchPath = $grammar->jsonExtract($this->getSearchTablePath($options), ...$attributePath);
 

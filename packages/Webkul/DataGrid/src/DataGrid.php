@@ -288,7 +288,7 @@ abstract class DataGrid
                     case ColumnTypeEnum::BOOLEAN->value:
                         $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues) {
                             foreach ($requestedValues as $value) {
-                                $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), 'LIKE', '%'.DB::grammar()->getBooleanValue($value).'%');
+                                $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), 'LIKE', '%'.DB::rawQueryGrammar()->getBooleanValue($value).'%');
                             }
                         });
 

@@ -42,7 +42,7 @@ class PriceFilter extends AbstractDatabaseAttributeFilter
         // Add currency to the attribute path to access the filtered price value like USD, EUR
         $attributePath[] = $value[0];
 
-        $grammar = DB::grammar();
+        $grammar = DB::rawQueryGrammar();
 
         $searchPath = $grammar->jsonExtract($this->getSearchTablePath($options), ...$attributePath);
 

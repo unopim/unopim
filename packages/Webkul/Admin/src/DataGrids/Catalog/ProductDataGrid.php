@@ -86,7 +86,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     {
         $tablePrefix = DB::getTablePrefix();
 
-        $grammar = DB::grammar();
+        $grammar = DB::rawQueryGrammar();
 
         $this->prepareQuery = ProductQueryBuilderFactory::make()->prepareQueryBuilder();
 
@@ -421,7 +421,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 $tablePrefix = DB::getTablePrefix();
 
                 $this->queryBuilder->orderByRaw(
-                    DB::grammar()->orderByField(DB::getTablePrefix().'products.id', $ids)
+                    DB::rawQueryGrammar()->orderByField(DB::getTablePrefix().'products.id', $ids)
                 );
             }
 
@@ -481,7 +481,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 ? 'int'
                 : 'text';
 
-            $jsonCondition = DB::grammar()->jsonExtract(DB::getTablePrefix().'products.values', ...$attributePath);
+            $jsonCondition = DB::rawQueryGrammar()->jsonExtract(DB::getTablePrefix().'products.values', ...$attributePath);
 
             return $this->queryBuilder->orderByRaw(
                 "CAST($jsonCondition AS $castType) $sortOrder",
@@ -651,7 +651,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             return $path;
         }
 
-        $driver = DB::grammar();
+        $driver = DB::rawQueryGrammar();
 
         $path = explode('.', $attribute->getScope($locale, $channel));
 

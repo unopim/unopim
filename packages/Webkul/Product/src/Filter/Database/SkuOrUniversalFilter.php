@@ -41,7 +41,7 @@ class SkuOrUniversalFilter extends AbstractDatabaseAttributeFilter
 
             $escapedValue = QueryString::escapeValue(current((array) $value));
 
-            $searchPath = DB::grammar()->jsonExtract($this->getSearchTablePath($options), ...$attributePath);
+            $searchPath = DB::rawQueryGrammar()->jsonExtract($this->getSearchTablePath($options), ...$attributePath);
 
             $this->queryBuilder->orWhereRaw(
                 sprintf("LOWER($searchPath) LIKE ?"),

@@ -15,7 +15,7 @@ class AttributeFamilyDataGrid extends DataGrid
     public function prepareQueryBuilder()
     {
         $tablePrefix = DB::getTablePrefix();
-        $grammar = DB::grammar();
+        $grammar = DB::rawQueryGrammar();
 
         $queryBuilder = DB::table('attribute_families')
             ->leftJoin('attribute_family_translations as attribute_family_name', function ($join) {

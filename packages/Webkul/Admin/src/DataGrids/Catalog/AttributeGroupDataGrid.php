@@ -15,7 +15,7 @@ class AttributeGroupDataGrid extends DataGrid
     public function prepareQueryBuilder()
     {
         $tablePrefix = DB::getTablePrefix();
-        $grammar = DB::grammar();
+        $grammar = DB::rawQueryGrammar();
 
         $nameField = "{$tablePrefix}attribute_group_name.name";
 

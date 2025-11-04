@@ -411,7 +411,7 @@ class Import
      */
     public function completed(): void
     {
-        $grammar = DB::grammar();
+        $grammar = DB::rawQueryGrammar();
 
         $summary = $this->jobTrackBatchRepository
             ->select(
@@ -450,7 +450,7 @@ class Import
             ? round($completed / $total * 100)
             : 0;
 
-        $grammar = DB::grammar();
+        $grammar = DB::rawQueryGrammar();
 
         $summary = $this->jobTrackBatchRepository
             ->select(

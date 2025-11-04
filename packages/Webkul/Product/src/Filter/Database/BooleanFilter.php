@@ -40,7 +40,7 @@ class BooleanFilter extends AbstractDatabaseAttributeFilter implements FilterCon
 
         $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
 
-        $grammar = DB::grammar();
+        $grammar = DB::rawQueryGrammar();
 
         $searchPath = $grammar->jsonExtract($this->getSearchTablePath($options), ...$attributePath);
 

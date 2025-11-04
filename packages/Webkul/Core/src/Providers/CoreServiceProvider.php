@@ -76,7 +76,7 @@ class CoreServiceProvider extends ServiceProvider
             ])->where(['filename' => $filenamePattern]);
         }
 
-        DB::macro('grammar', fn () => GrammarQueryManager::getGrammar());
+        DB::macro('rawQueryGrammar', fn () => GrammarQueryManager::getGrammar());
     }
 
     /**

@@ -26,7 +26,7 @@ class AttributeDataGrid extends DataGrid
     {
         $tablePrefix = DB::getTablePrefix();
 
-        $grammar = DB::grammar();
+        $grammar = DB::rawQueryGrammar();
 
         $queryBuilder = DB::table('attributes')
             ->leftJoin('attribute_translations as attribute_name', function ($join) {
