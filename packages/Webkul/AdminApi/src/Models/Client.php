@@ -3,7 +3,6 @@
 namespace Webkul\AdminApi\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Support\Facades\DB;
 use Laravel\Passport\Client as PassportClient;
 use Webkul\User\Models\AdminProxy;
 

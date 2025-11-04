@@ -2,7 +2,6 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Kalnoy\Nestedset\NestedSet;
 
@@ -13,9 +12,7 @@ return new class extends Migration
      */
     public function up()
     {
-        $driver = DB::getDriverName();
-
-        Schema::create('categories', function (Blueprint $table) use ($driver) {
+        Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->string('code')->unique();
             NestedSet::columns($table);

@@ -2,8 +2,6 @@
 
 namespace Webkul\AdminApi\Traits;
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Laravel\Passport\Client;
 
 trait OauthClientGenerator

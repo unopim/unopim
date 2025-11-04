@@ -2,7 +2,6 @@
 
 namespace Webkul\AdminApi\Repositories;
 
-use Illuminate\Support\Facades\DB;
 use Webkul\AdminApi\Models\Apikey;
 use Webkul\Core\Eloquent\Repository;
 
