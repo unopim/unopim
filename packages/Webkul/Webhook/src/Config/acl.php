@@ -31,5 +31,10 @@ return [
         'name'  => 'webhook::app.acl.logs.mass-delete',
         'route' => 'webhook.logs.mass_delete',
         'sort'  => 2,
+    ], [
+        'key'   => 'configuration.webhook.history',
+        'name'  => 'webhook::app.acl.history.index',
+        'route' => 'webhook.settings.history.get',
+        'sort'  => 3,
     ],
 ];

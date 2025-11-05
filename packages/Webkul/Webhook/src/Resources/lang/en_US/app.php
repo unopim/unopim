@@ -67,6 +67,9 @@ return [
             'delete'      => 'Delete',
             'mass-delete' => 'Mass Delete',
         ],
+        'history' => [
+            'index' => 'History',
+        ],
     ],
 
     'configuration' => [
