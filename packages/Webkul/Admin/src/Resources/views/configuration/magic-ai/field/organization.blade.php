@@ -1,5 +1,4 @@
 @inject('coreConfigRepository', 'Webkul\Core\Repositories\CoreConfigRepository')
-@inject('magicAI', 'Webkul\MagicAI\MagicAI')
 
 @php
     $nameKey = $item['key'] . '.' . $field['name'];
@@ -12,16 +11,16 @@
     label="@lang($field['title'])"
     name="{{ $name }}"
     :value="'{{$value}}'"
-    api_plateform={{$api_platform}}>
+    api_platform={{$api_platform}}>
 </v-production-model>
 
 @pushOnce('scripts')
     <script type="text/x-template" id="v-production-model-template">
         <div class="grid gap-2.5 content-start">
             <div>
-                <template v-if="plateform === 'openai' || show">
+                <template v-if="platform === 'openai' || show">
                     <x-admin::form.control-group class="mb-4">
-                        <x-admin::form.control-group.label>
+                        <x-admin::form.control-group.label class="required">
                             @{{ label }}
                         </x-admin::form.control-group.label>
                         <x-admin::form.control-group.control
@@ -51,13 +50,13 @@
                 'name',
                 'validations',
                 'value',
-                'api_plateform'
+                'api_platform'
             ],
             data: function() {
                 return {
                     value: this.value,
                     show: false,
-                    plateform: this.api_plateform
+                    platform: this.api_platform
                 }
             },
             mounted() {
@@ -69,7 +68,7 @@
                             this.show = true;
                         } else {
                             this.show = false;
-                            this.plateform = 'other';
+                            this.platform = 'other';
                         }
 
                         this.$emitter.emit('config-value-changed', {
@@ -89,7 +88,6 @@
                     }
                 },
                 emitChangeEvent(value, fieldName) {
-
                     this.$emitter.emit('config-value-changed', {
                         fieldName,
                         value: value.replace(/\s+/g, ''),
