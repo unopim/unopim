@@ -25,23 +25,4 @@ class AttributeGroupRepository extends Repository
     {
         return $this->with(['translations']);
     }
-
-    /**
-     * Create a new Attribute Group with translations.
-     *
-     * @return \Webkul\Attribute\Contracts\AttributeGroup
-     */
-    public function create(array $data)
-    {
-        unset($data['id']);
-        $translations = Arr::pull($data, 'translations', []);
-
-        $attributeGroup = parent::create($data);
-
-        if (! empty($translations)) {
-            $attributeGroup->translations()->createMany($translations);
-        }
-
-        return $attributeGroup;
-    }
 }

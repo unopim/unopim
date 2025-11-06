@@ -187,7 +187,6 @@ class ApiKeysController extends Controller
 
         $id = $name = $data['apiId'];
 
-        $clientId = null;
         $clientId = $client->getKey();
 
         $apiKey = $this->apiKeyRepository->update([

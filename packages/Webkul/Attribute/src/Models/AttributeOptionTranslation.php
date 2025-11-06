@@ -13,7 +13,7 @@ class AttributeOptionTranslation extends Model implements AttributeOptionTransla
 
     public $timestamps = false;
 
-    protected $fillable = ['label', 'locale'];
+    protected $fillable = ['label'];
 
     protected $historyTags = ['attribute'];
 

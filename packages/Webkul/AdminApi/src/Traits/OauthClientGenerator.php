@@ -2,7 +2,7 @@
 
 namespace Webkul\AdminApi\Traits;
 
-use Laravel\Passport\Client;
+use Webkul\AdminApi\Models\Client;
 
 trait OauthClientGenerator
 {
