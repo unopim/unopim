@@ -309,16 +309,16 @@ class DefaultUser extends Command
 
         $role = $isAdmin
             ? DB::table('roles')->where('permission_type', 'all')->first()?->id
-            : DB::table('roles')->where('permission_type', 'custom')->first()?->id;
+            : DB::table('roles')->where('permission_type', 'custom')->whereJsonContains('permissions', 'dashboard')->first()?->id;
 
         if (! $role) {
-            DB::table('roles')->updateOrInsert(
+            DB::table('roles')->insert(
                 [
                     'name'            => $isAdmin ? 'Admin' : 'User',
                     'description'     => $isAdmin ? 'This role users will have all the access' : 'This role users have limited access',
                     'permission_type' => $isAdmin ? 'all' : 'custom',
                     'permissions'     => ! $isAdmin ? json_encode(['dashboard']) : null,
-                ]
+                ],
             );
         }
 
