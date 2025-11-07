@@ -16,9 +16,7 @@ return new class extends Migration
         Schema::create('attribute_option_translations', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('attribute_option_id')->unsigned();
-
             $table->string('locale');
-
             $table->text('label')->nullable();
 
             $table->unique(['attribute_option_id', 'locale']);

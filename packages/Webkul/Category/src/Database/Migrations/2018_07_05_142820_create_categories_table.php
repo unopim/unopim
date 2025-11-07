@@ -9,6 +9,8 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * @return void
      */
     public function up()
     {
@@ -16,14 +18,16 @@ return new class extends Migration
             $table->increments('id');
             $table->string('code')->unique();
             NestedSet::columns($table);
-
             $table->timestamps();
+            /** Indexes */
             $table->index('code');
         });
     }
 
     /**
      * Reverse the migrations.
+     *
+     * @return void
      */
     public function down()
     {

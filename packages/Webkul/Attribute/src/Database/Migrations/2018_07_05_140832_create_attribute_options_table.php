@@ -16,11 +16,12 @@ return new class extends Migration
         Schema::create('attribute_options', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('attribute_id')->unsigned();
-
             $table->string('code');
             $table->integer('sort_order')->nullable();
             $table->string('swatch_value')->nullable();
+
             $table->unique(['code', 'attribute_id'], 'unique_code_attribute_id_index');
+
             $table->foreign('attribute_id')->references('id')->on('attributes')->onDelete('cascade');
         });
     }

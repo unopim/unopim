@@ -18,7 +18,6 @@ return new class extends Migration
             $table->uuid('oauth_client_id')->nullable()->index();
             $table->string('permission_type');
             $table->boolean('revoked');
-
             $table->json('permissions')->nullable();
             $table->timestamps();
             $table->foreign('admin_id')->references('id')->on('admins')->onDelete('cascade');

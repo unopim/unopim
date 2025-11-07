@@ -24,13 +24,11 @@ return new class extends Migration
         Schema::create('attribute_group_mappings', function (Blueprint $table) {
             $table->integer('attribute_id')->unsigned();
             $table->integer('attribute_family_group_id')->unsigned();
-
             $table->integer('position')->nullable();
 
+            $table->primary(['attribute_id', 'attribute_family_group_id']);
             $table->foreign('attribute_id')->references('id')->on('attributes')->onDelete('cascade');
             $table->foreign('attribute_family_group_id')->references('id')->on('attribute_family_group_mappings')->onDelete('cascade');
-
-            $table->primary(['attribute_id', 'attribute_family_group_id']);
         });
     }
 

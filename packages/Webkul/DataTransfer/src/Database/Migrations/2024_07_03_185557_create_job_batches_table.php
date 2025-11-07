@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('state')->default('pending');
             $table->json('data');
             $table->json('summary')->nullable();
-
             $table->integer('job_track_id')->unsigned();
 
             $table->foreign('job_track_id')->references('id')->on('job_track')->onDelete('cascade');

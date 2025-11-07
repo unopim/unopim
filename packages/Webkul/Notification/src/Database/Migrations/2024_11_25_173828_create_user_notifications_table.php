@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->integer('admin_id')->unsigned()->nullable();
             $table->integer('notification_id')->unsigned()->nullable();
-
             $table->boolean('read')->default(0);
             $table->timestamps();
 
