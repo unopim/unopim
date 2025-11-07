@@ -59,7 +59,10 @@ class LocaleController extends Controller
         $locale = $this->localeRepository->findOrFail($id);
 
         return new JsonResponse([
-            'data' => $locale,
+            'data' => [
+                ...$locale->toArray(),
+                'status' => (bool) $locale->status,
+            ],
         ]);
     }
 
@@ -69,7 +72,7 @@ class LocaleController extends Controller
     public function update(): JsonResponse
     {
         $this->validate(request(), [
-            'status'      => 'boolean',
+            'status' => 'boolean',
         ]);
 
         if (! request()->status && $this->localeRepository->checkLocaleBeingUsed(request()->id)) {

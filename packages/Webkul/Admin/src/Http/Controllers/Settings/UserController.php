@@ -100,7 +100,10 @@ class UserController extends Controller
 
         return new JsonResponse([
             'roles'    => $roles,
-            'user'     => $user,
+            'user'     => [
+                ...$user->toArray(),
+                'status' => (bool) $user->status,
+            ],
             'timezone' => $timezone,
         ]);
     }
