@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('admins', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password')->nullable();
@@ -23,7 +23,8 @@ return new class extends Migration
             $table->integer('role_id')->unsigned();
             $table->string('image')->nullable();
             $table->string('timezone', 40)->default('UTC');
-            $table->foreignId('ui_locale_id')->constrained('locales');
+            $table->unsignedInteger('ui_locale_id')->nullable()->comment('for ui locale');
+            $table->foreign('ui_locale_id')->references('id')->on('locales');
             $table->rememberToken();
             $table->timestamps();
         });

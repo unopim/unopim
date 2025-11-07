@@ -14,11 +14,14 @@ return new class extends Migration
         Schema::create('completeness_settings', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('family_id')->constrained('attribute_families')->cascadeOnDelete();
+            $table->unsignedInteger('family_id');
+            $table->foreign('family_id')->references('id')->on('attribute_families')->cascadeOnDelete();
 
-            $table->foreignId('attribute_id')->constrained('attributes')->cascadeOnDelete();
+            $table->unsignedInteger('attribute_id');
+            $table->foreign('attribute_id')->references('id')->on('attributes')->cascadeOnDelete();
 
-            $table->foreignId('channel_id')->constrained('channels')->cascadeOnDelete();
+            $table->unsignedInteger('channel_id');
+            $table->foreign('channel_id')->references('id')->on('channels')->cascadeOnDelete();
 
             $table->timestamps();
         });

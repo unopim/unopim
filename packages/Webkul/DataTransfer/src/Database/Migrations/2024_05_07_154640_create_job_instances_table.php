@@ -12,17 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('job_instances', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
             $table->string('code')->unique();
             $table->string('entity_type');
             $table->enum('type', ['import', 'export', 'system']);
 
-            $table->string('action')->default('')->nullable(false);
+            $table->string('action');
+            $table->string('validation_strategy');
 
-            $table->string('validation_strategy')->default('skip');
             $table->integer('allowed_errors')->default(0);
-            $table->char('field_separator', 1)->default(',');
-            $table->string('file_path')->nullable();
+            $table->char('field_separator', 1);
+            $table->string('file_path');
             $table->string('images_directory_path')->nullable();
 
             $table->timestamps();

@@ -2,7 +2,6 @@
 
 namespace Webkul\Attribute\Repositories;
 
-use Illuminate\Support\Arr;
 use Webkul\Core\Eloquent\Repository;
 
 class AttributeGroupRepository extends Repository

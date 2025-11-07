@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('attributes', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
             $table->string('code')->unique();
             $table->string('type');
             $table->string('swatch_type')->nullable();

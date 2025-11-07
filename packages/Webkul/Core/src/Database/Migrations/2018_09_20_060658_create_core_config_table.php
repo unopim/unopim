@@ -12,7 +12,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('core_config', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
             $table->string('code');
             $table->text('value');
             $table->string('channel_code')->nullable();

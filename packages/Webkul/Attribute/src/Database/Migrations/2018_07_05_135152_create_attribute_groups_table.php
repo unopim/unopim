@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('attribute_groups', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
             $table->string('code');
             $table->boolean('is_user_defined')->default(1);
         });

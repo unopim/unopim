@@ -12,11 +12,11 @@ return new class extends Migration
     public function up()
     {
         Schema::create('currencies', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
             $table->string('code');
             $table->string('symbol')->nullable();
             $table->boolean('status')->default(0);
-            $table->integer('decimal')->default(2);
+            $table->integer('decimal')->unsigned()->default(2);
             $table->timestamps();
         });
     }

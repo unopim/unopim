@@ -12,37 +12,32 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('channels', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
             $table->string('code');
-            $table->foreignId('root_category_id')
-                ->nullable()
-                ->constrained('categories')
-                ->nullOnDelete();
+            $table->integer('root_category_id')->nullable()->unsigned();
 
             $table->timestamps();
+
+            $table->foreign('root_category_id')->references('id')->on('categories')->onDelete('set null');
         });
 
         Schema::create('channel_locales', function (Blueprint $table) {
-            $table->foreignId('channel_id')
-                ->constrained('channels')
-                ->cascadeOnDelete();
-
-            $table->foreignId('locale_id')
-                ->constrained('locales')
-                ->cascadeOnDelete();
+            $table->integer('channel_id')->unsigned();
+            $table->integer('locale_id')->unsigned();
 
             $table->primary(['channel_id', 'locale_id']);
+
+            $table->foreign('channel_id')->references('id')->on('channels')->onDelete('cascade');
+            $table->foreign('locale_id')->references('id')->on('locales')->onDelete('cascade');
         });
 
         Schema::create('channel_currencies', function (Blueprint $table) {
-            $table->foreignId('channel_id')
-                ->constrained('channels')
-                ->cascadeOnDelete();
-            $table->foreignId('currency_id')
-                ->constrained('currencies')
-                ->cascadeOnDelete();
+            $table->integer('channel_id')->unsigned();
+            $table->integer('currency_id')->unsigned();
 
             $table->primary(['channel_id', 'currency_id']);
+            $table->foreign('channel_id')->references('id')->on('channels')->onDelete('cascade');
+            $table->foreign('currency_id')->references('id')->on('currencies')->onDelete('cascade');
         });
     }
 

@@ -12,12 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('job_track_batches', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
             $table->string('state')->default('pending');
             $table->json('data');
             $table->json('summary')->nullable();
 
-            $table->foreignId('job_track_id')->constrained('job_track')->cascadeOnDelete();
+            $table->integer('job_track_id')->unsigned();
+
+            $table->foreign('job_track_id')->references('id')->on('job_track')->onDelete('cascade');
         });
     }
 

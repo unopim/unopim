@@ -14,11 +14,14 @@ return new class extends Migration
         Schema::create('product_completeness', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
+            $table->unsignedInteger('product_id');
+            $table->foreign('product_id')->references('id')->on('products')->cascadeOnDelete();
 
-            $table->foreignId('channel_id')->constrained('channels')->cascadeOnDelete();
+            $table->unsignedInteger('channel_id');
+            $table->foreign('channel_id')->references('id')->on('channels')->cascadeOnDelete();
 
-            $table->foreignId('locale_id')->constrained('locales')->cascadeOnDelete();
+            $table->unsignedInteger('locale_id');
+            $table->foreign('locale_id')->references('id')->on('locales')->cascadeOnDelete();
 
             $table->unsignedInteger('score');
 

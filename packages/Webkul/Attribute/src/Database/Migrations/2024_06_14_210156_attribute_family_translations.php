@@ -12,13 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('attribute_family_translations', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('attribute_family_id')->constrained('attribute_families')->cascadeOnDelete();
+            $table->increments('id');
+            $table->integer('attribute_family_id')->unsigned();
 
             $table->string('locale');
             $table->text('name')->nullable();
 
             $table->unique(['attribute_family_id', 'locale']);
+            $table->foreign('attribute_family_id')->references('id')->on('attribute_families')->onDelete('cascade');
         });
     }
 

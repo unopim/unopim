@@ -12,20 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('api_keys', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
             $table->string('name');
-            $table->unsignedBigInteger('admin_id');
+            $table->integer('admin_id')->unsigned();
             $table->uuid('oauth_client_id')->nullable()->index();
             $table->string('permission_type');
             $table->boolean('revoked');
 
             $table->json('permissions')->nullable();
             $table->timestamps();
-
-            $table->foreign('admin_id')
-                ->references('id')
-                ->on('admins')
-                ->onDelete('cascade');
+            $table->foreign('admin_id')->references('id')->on('admins')->onDelete('cascade');
         });
     }
 

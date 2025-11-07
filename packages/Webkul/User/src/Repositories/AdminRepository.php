@@ -2,7 +2,6 @@
 
 namespace Webkul\User\Repositories;
 
-use Illuminate\Support\Facades\Event;
 use Webkul\Core\Eloquent\Repository;
 
 class AdminRepository extends Repository
@@ -13,23 +12,6 @@ class AdminRepository extends Repository
     public function model(): string
     {
         return 'Webkul\User\Contracts\Admin';
-    }
-
-    public function create(array $data)
-    {
-        Event::dispatch('user.admin.create.before');
-
-        if (empty($data['id'])) {
-            unset($data['id']);
-        } else {
-            $data['id'] = (int) $data['id'];
-        }
-
-        $admin = parent::create($data);
-
-        Event::dispatch('user.admin.create.after', $admin);
-
-        return $admin;
     }
 
     /**

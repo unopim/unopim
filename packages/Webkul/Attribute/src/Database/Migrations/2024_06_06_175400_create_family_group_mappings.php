@@ -12,18 +12,23 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('attribute_family_group_mappings', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('attribute_family_id')->constrained('attribute_families')->cascadeOnDelete();
-            $table->foreignId('attribute_group_id')->constrained('attribute_groups')->cascadeOnDelete();
-
+            $table->increments('id');
+            $table->integer('attribute_family_id')->unsigned();
+            $table->integer('attribute_group_id')->unsigned();
             $table->integer('position')->nullable();
+
+            $table->foreign('attribute_family_id')->references('id')->on('attribute_families')->onDelete('cascade');
+            $table->foreign('attribute_group_id')->references('id')->on('attribute_groups')->onDelete('cascade');
         });
 
         Schema::create('attribute_group_mappings', function (Blueprint $table) {
-            $table->foreignId('attribute_id')->constrained('attributes')->cascadeOnDelete();
-            $table->foreignId('attribute_family_group_id')->constrained('attribute_family_group_mappings')->cascadeOnDelete();
+            $table->integer('attribute_id')->unsigned();
+            $table->integer('attribute_family_group_id')->unsigned();
 
             $table->integer('position')->nullable();
+
+            $table->foreign('attribute_id')->references('id')->on('attributes')->onDelete('cascade');
+            $table->foreign('attribute_family_group_id')->references('id')->on('attribute_family_group_mappings')->onDelete('cascade');
 
             $table->primary(['attribute_id', 'attribute_family_group_id']);
         });

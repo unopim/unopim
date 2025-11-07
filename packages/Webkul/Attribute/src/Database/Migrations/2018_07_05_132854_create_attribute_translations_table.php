@@ -14,14 +14,13 @@ return new class extends Migration
     public function up()
     {
         Schema::create('attribute_translations', function (Blueprint $table) {
-            $table->id();
-
-            $table->foreignId('attribute_id')
-                ->constrained('attributes')
-                ->cascadeOnDelete();
+            $table->increments('id');
+            $table->integer('attribute_id')->unsigned();
 
             $table->string('locale')->nullable();
             $table->text('name')->nullable();
+
+            $table->foreign('attribute_id')->references('id')->on('attributes')->onDelete('cascade');
 
             $table->unique(['attribute_id', 'locale']);
             /** Indexes */

@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('channel_translations', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('channel_id')->constrained('channels')->cascadeOnDelete();
+            $table->integer('channel_id')->unsigned();
 
             $table->string('locale')->index();
             $table->string('name');
             $table->timestamps();
 
             $table->unique(['channel_id', 'locale']);
+            $table->foreign('channel_id')->references('id')->on('channels')->onDelete('cascade');
         });
     }
 
