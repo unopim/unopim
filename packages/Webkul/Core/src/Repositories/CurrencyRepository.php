@@ -25,7 +25,7 @@ class CurrencyRepository extends Repository
     {
         Event::dispatch('core.currency.create.before');
 
-        if (isset($attributes['decimal']) && $attributes['decimal'] === '') {
+        if (empty($attributes['decimal'])) {
             $attributes['decimal'] = 0;
         }
 
@@ -44,6 +44,10 @@ class CurrencyRepository extends Repository
     public function update(array $attributes, $id)
     {
         Event::dispatch('core.currency.update.before', $id);
+
+        if (empty($attributes['decimal'])) {
+            $attributes['decimal'] = 0;
+        }
 
         $currency = parent::update($attributes, $id);
 
