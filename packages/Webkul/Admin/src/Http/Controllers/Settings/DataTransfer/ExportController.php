@@ -97,8 +97,8 @@ class ExportController extends Controller
             array_merge(
                 [
                     'validation_strategy' => 'skip',
-                    'type'   => self::TYPE,
-                    'action' => 'fetch',
+                    'type'                => self::TYPE,
+                    'action'              => 'fetch',
                 ],
                 $data
             )

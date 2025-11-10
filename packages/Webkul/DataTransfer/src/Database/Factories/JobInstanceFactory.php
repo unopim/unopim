@@ -77,6 +77,8 @@ class JobInstanceFactory extends Factory
         return $this->state(function () {
             return [
                 'type'    => 'export',
+                'action'                => 'export',
+                'validation_strategy'   => '',
                 'filters' => [
                     'file_format' => 'Csv',
                     'with_media'  => 1,
