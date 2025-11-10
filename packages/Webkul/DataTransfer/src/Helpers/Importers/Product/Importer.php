@@ -484,7 +484,7 @@ class Importer extends AbstractImporter
     {
         $mediaTypes = ['image', 'file', 'gallery'];
         $mediaAttributes = $this->attributes->whereIn('type', $mediaTypes);
-        $imageDirPath = $this->import->images_directory_path;
+        $imageDirPath = $this->import->images_directory_path ?? '';
 
         foreach ($mediaAttributes as $attribute) {
             $code = $attribute->code;

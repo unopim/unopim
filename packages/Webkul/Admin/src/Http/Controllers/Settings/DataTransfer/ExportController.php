@@ -96,6 +96,7 @@ class ExportController extends Controller
         $export = $this->jobInstancesRepository->create(
             array_merge(
                 [
+                    'validation_strategy' => 'skip',
                     'type'   => self::TYPE,
                     'action' => 'fetch',
                 ],
@@ -262,15 +263,18 @@ class ExportController extends Controller
             Event::dispatch('data_transfer.exports.export.now.before', $jobInstance);
 
             $jobTrackInstance = $this->jobTrackRepository->create([
-                'state'            => Export::STATE_PENDING,
-                'allowed_errors'   => $jobInstance->allowed_errors,
-                'field_separator'  => $jobInstance->field_separator,
-                'file_path'        => $jobInstance->file_path,
-                'meta'             => $jobInstance->toJson(),
-                'job_instances_id' => $jobInstance->id,
-                'user_id'          => $userId,
-                'created_at'       => now(),
-                'updated_at'       => now(),
+                'action'              => 'export',
+                'validation_strategy' => 'skip',
+                'type'                => 'export',
+                'state'               => Export::STATE_PENDING,
+                'allowed_errors'      => $jobInstance->allowed_errors,
+                'field_separator'     => $jobInstance->field_separator,
+                'file_path'           => $jobInstance->file_path,
+                'meta'                => $jobInstance->toJson(),
+                'job_instances_id'    => $jobInstance->id,
+                'user_id'             => $userId,
+                'created_at'          => now(),
+                'updated_at'          => now(),
             ]);
 
             // Dispatch the Export job
