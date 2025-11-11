@@ -195,6 +195,7 @@
                     v-bind="field"
                     :class="[errors.length ? 'border border-red-500' : '']"
                     multiple="true"
+                    :onselect="false"
                     {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label']) }}
                 >
                 </v-async-select-handler>
@@ -202,6 +203,7 @@
                 <v-multiselect-handler
                     name="{{ $name }}"
                     v-bind="field"
+                    :onselect="false"
                     :class="[errors.length ? 'border border-red-500' : '']"
                     {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label']) }}
                 >
@@ -463,7 +465,7 @@
                     this.$emit('input', JSON.stringify(newValue));
                 },
             },
-            
+
             methods: {
                 parseOptions() {
                     try {
@@ -513,10 +515,11 @@
                 :multiple="true"
                 :searchable="true"
                 :placeholder="placeholder"
-                :close-on-select="true"
+                :close-on-select="onselect"
                 :clear-on-select="true"
                 :show-no-results="true"
                 :hide-selected="true"
+                :disabled="disabled"
                 :name="name"
                 v-model="selectedValue"
                 v-bind="field"
@@ -553,6 +556,13 @@
                 value: String,
                 field: Array,
                 placeholder: String,
+                onselect: {
+                    default: true
+                },
+                disabled: {
+                    type: Boolean,
+                    default: false
+                }
             },
             
             data() {
@@ -639,7 +649,7 @@
                 :multiple="true"
                 :searchable="true"
                 :placeholder="placeholder"
-                :close-on-select="false"
+                :close-on-select="true"
                 :clear-on-select="false"
                 :show-no-results="true"
                 :hide-selected="true"
@@ -778,7 +788,7 @@
                 :multiple="true"
                 :searchable="true"
                 :placeholder="placeholder"
-                :close-on-select="false"
+                :close-on-select="true"
                 :clear-on-select="false"
                 :show-no-results="true"
                 :hide-selected="true"
@@ -1025,7 +1035,7 @@
                 :loading="isLoading ?? false"
                 :max-height="600"
                 :internal-search="false"
-                :close-on-select="true"
+                :close-on-select="onselect"
                 :clear-on-select="false"
                 :show-no-results="true"
                 :hide-selected="false"
@@ -1041,7 +1051,7 @@
                 v-model="selectedValue"
                 v-bind="field"
             >
-            </v-multiselect>   
+            </v-multiselect>
             <input
                 v-model="selectedOption"
                 v-validate="'required'"
@@ -1076,6 +1086,10 @@
                 entityName: String,
                 attributeId: String,
                 multiple: Boolean,
+                onselect: {
+                    type: Boolean,
+                    default: true
+                },
                 listRoute: {
                     type: String,
                     default: '{{ route('admin.catalog.options.fetch-all')}}'

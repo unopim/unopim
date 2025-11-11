@@ -155,7 +155,18 @@ class ProductController extends Controller
     {
         $product = $this->productRepository->findOrFail($id);
 
-        return view('admin::catalog.products.edit', compact('product'));
+        $requestedChannelId = core()->getRequestedChannel()->id;
+
+        $requiredAttributes = $product->getCompletenessAttributes($requestedChannelId, core()->getRequestedLocale()->id)
+            ->keyBy('attribute_id')
+            ->map(fn ($item) => $item->attribute_id)
+            ->toArray();
+
+        $scores = $product->getCompletenessScore($requestedChannelId);
+
+        $averageScore = count($scores) ? round(array_sum(array_column($scores, 'score')) / count($scores)) : null;
+
+        return view('admin::catalog.products.edit', compact('product', 'requiredAttributes', 'scores', 'averageScore'));
     }
 
     /**
@@ -391,10 +402,18 @@ class ProductController extends Controller
 
     public function getLocale(): JsonResponse
     {
-        $channel = request()->channel;
-        $result = $this->channelRepository->findOneByField('code', $channel);
-        $locales = $result->locales()->select('locales.code')->get();
+        $channel = $this->channelRepository->findOneByField('code', request()->channel);
+
+        if (! $channel) {
+            return new JsonResponse([
+                'locales' => [],
+            ]);
+        }
+
+        $locales = $channel->locales()->get();
+
         $options = [];
+
         foreach ($locales as $locale) {
             $options[] = [
                 'id'    => $locale->code,
@@ -412,6 +431,7 @@ class ProductController extends Controller
         $product = $this->productRepository->findByField('id', request()->productId)->first();
         $attributes = $product->getEditableAttributes()->where('ai_translate', 1)->select('code', 'name', 'type', 'ai_translate');
         $attributeOptions = [];
+
         if ($attributes) {
             foreach ($attributes as $attribute) {
                 $attributeOptions[] = [

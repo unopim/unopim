@@ -1,3 +1,8 @@
+@props([
+    'activeTab' => 'general',
+    'historyId' => null,
+])
+
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}" dir="ltr" class="{{ (request()->cookie('dark_mode') ?? 0) ? 'dark' : '' }}">
     <head>
@@ -88,49 +93,55 @@
                         @php
                             $hasPermission = bouncer()->hasPermission('history');
 
-                            $activeTab = $hasPermission ?
-                                request()->getQueryString() === 'history=' ? "history" : "general"
-                                : 'general';
+                            $activeTab = $hasPermission
+                                ? (request()->has('history') ? 'history' : $activeTab)
+                                : ($activeTab ?? 'general');
 
                             $items = [
                                 [
                                     'url'    => '?',
                                     'name'   => 'admin::app.components.layouts.sidebar.general',
-                                    'active' => $activeTab === 'general' ? true : false,
+                                    'active' => $activeTab === 'general',
                                 ],
                             ];
-
-                            if ($hasPermission) {
-                                $items[] = [
-                                    'url'    => '?history',
-                                    'name'   => 'admin::app.components.layouts.sidebar.history',
-                                    'active' => $activeTab === 'history' ? true : false,
-                                ];
-                            }
                         @endphp
 
                         <div class="flex gap-4 mb-4 pt-2 border-b-2 max-sm:hidden dark:border-gray-800">
-                            @foreach ($items as $key => $item)
+                            {{-- First: default tabs --}}
+                            @foreach ($items as $item)
                                 <a href="{{ $item['url'] }}">
-                                    <div class="{{  $item['active'] ? "-mb-px border-violet-700  border-b-2 transition" : '' }} pb-3.5 px-2.5 text-base  font-medium text-gray-600 dark:text-gray-300 cursor-pointer">
+                                    <div class="{{ $item['active'] ? '-mb-px border-violet-700 border-b-2 transition' : '' }} pb-3.5 px-2.5 text-base font-medium text-gray-600 dark:text-gray-300 cursor-pointer">
                                         @lang($item['name'])
                                     </div>
                                 </a>
                             @endforeach
-                        </div>    
+
+                            {{ $tabs ?? '' }}
+
+                            @if ($hasPermission)
+                                <a href="?history">
+                                    <div class="{{ $activeTab === 'history' ? '-mb-px border-violet-700 border-b-2 transition' : '' }} pb-3.5 px-2.5 text-base font-medium text-gray-600 dark:text-gray-300 cursor-pointer">
+                                        @lang('admin::app.components.layouts.sidebar.history')
+                                    </div>
+                                </a>
+                            @endif
+                        </div>
                     </div>
-                    @if ($activeTab === 'general')    
+
+                    @if ($activeTab === 'general')
                         {{ $slot }}
                     @endif
 
+                    {{ $tabContents ?? '' }}
+
                     @if ($activeTab === 'history')
-                        {!! view_render_event('unopim.settings.channels.list.before') !!}
-                        
-                        <x-admin::history src="{{ route('admin.history.index',[$entityName, request()->id]) }}" >
-                            
+                        {!! view_render_event('unopim.admin.layout.history.before') !!}
+
+                        <x-admin::history src="{{ route('admin.history.index',[$entityName, ($historyId ?? request()->id)]) }}" >
+
                         </x-admin::history>
 
-                        {!! view_render_event('unopim.settings.channels.list.after') !!}        
+                        {!! view_render_event('unopim.admin.layout.history.after') !!}
                     @endif
                 </div>
             </div>

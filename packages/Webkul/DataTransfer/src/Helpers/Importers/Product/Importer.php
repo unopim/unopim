@@ -18,6 +18,8 @@ use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeOptionRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Category\Repositories\CategoryRepository;
+use Webkul\Completeness\Jobs\BulkProductCompletenessJob;
+use Webkul\Completeness\Observers\Product as CompletenessProductObserver;
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Rules\Slug;
@@ -54,11 +56,6 @@ class Importer extends AbstractImporter
      * Product type configurable
      */
     public const PRODUCT_TYPE_CONFIGURABLE = 'configurable';
-
-    /**
-     * Product type bundle
-     */
-    public const PRODUCT_TYPE_BUNDLE = 'bundle';
 
     /**
      * Product type grouped
@@ -559,6 +556,8 @@ class Importer extends AbstractImporter
 
         ElasticProductObserver::disable();
 
+        CompletenessProductObserver::disable();
+
         if ($batch->jobTrack->action == Import::ACTION_DELETE) {
             $this->deleteProducts($batch);
         } else {
@@ -579,6 +578,14 @@ class Importer extends AbstractImporter
         ], $batch->id);
 
         Event::dispatch('data_transfer.imports.batch.import.after', $batch);
+
+        $ids = [];
+
+        foreach ($this->skuStorage->getItems() as $sku => $item) {
+            $ids[] = $item['id'];
+        }
+
+        BulkProductCompletenessJob::dispatch($ids);
 
         return true;
     }
@@ -730,9 +737,15 @@ class Importer extends AbstractImporter
      */
     public function saveProducts(array $products): void
     {
+        Event::dispatch('data_transfer.imports.batch.product.save.before');
+
+        $ids = [];
+
         if (! empty($products['update'])) {
             foreach ($products['update'] as $productData) {
                 $id = $this->skuStorage->get($productData['sku'])['id'];
+
+                $ids[] = $id;
 
                 $product = $this->productRepository->updateWithValues($productData, $id);
 
@@ -752,11 +765,15 @@ class Importer extends AbstractImporter
                     'attribute_family_id' => $product->attribute_family_id,
                 ]);
 
+                $ids[] = $product->id;
+
                 unset($product);
 
                 $this->createdItemsCount++;
             }
         }
+
+        Event::dispatch('data_transfer.imports.batch.product.save.after', ['product_id' => $ids]);
     }
 
     /**
