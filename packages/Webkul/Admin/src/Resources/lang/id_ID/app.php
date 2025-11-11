@@ -294,6 +294,49 @@ return [
                     'product-type' => 'Tipe Produk',
                 ],
             ],
+            'bulk-edit' => [
+                'validation' => [
+                    'decimal'                    => 'Silakan masukkan angka desimal yang valid.',
+                    'number'                     => 'Silakan masukkan angka bulat yang valid.',
+                    'email'                      => 'Silakan masukkan alamat email yang valid.',
+                    'url'                        => 'Silakan masukkan URL yang valid.',
+                    'regex'                      => 'Nilai tidak sesuai dengan pola yang diperlukan.',
+                    'invalid-pattern'            => 'Pola khusus tidak valid.',
+                    'select-attribute-or-family' => 'Silakan pilih setidaknya satu atribut atau satu keluarga atribut.',
+                    'failed'                     => 'Validasi gagal.',
+                ],
+
+                'modal'                      => [
+                    'title'            => 'Atribut untuk Sunting Massal',
+                    'btn-cancel'       => 'Batal',
+                    'btn-proceed'      => 'Lanjutkan',
+                    'attribute-family' => 'Pilih Keluarga Atribut',
+                ],
+
+                'index' => [
+                    'no-product'    => 'Tidak ada produk yang dipilih untuk sunting massal.',
+                ],
+
+                'filter' => [
+                    'many-product'      => 'Terlalu banyak produk yang dipilih.',
+                    'redirect-message'  => 'Mengalihkan ke tampilan sunting massal.',
+                ],
+
+                'handle-save' => [
+                    'edit-success'  => 'Sunting massal berhasil.',
+                ],
+
+                'id'              => 'ID',
+                'no-changes'      => 'Tidak ada perubahan untuk disimpan.',
+                'success'         => 'Pekerjaan berhasil dijalankan.',
+                'fetch-failed'    => 'Gagal mengambil data.',
+                'action'          => 'Edit Massal',
+                'gallery-preview' => 'Pratinjau Galeri',
+                'img-preview'     => 'Pratinjau Gambar',
+                'no-image'        => 'Tidak Ada Gambar',
+                'img-fail'        => 'Unggah gambar gagal',
+                'no-opton'        => 'Tidak Ada Opsi',
+            ],
 
             'create-success'          => 'Produk berhasil dibuat',
             'delete-failed'           => 'Produk dihapus gagal',

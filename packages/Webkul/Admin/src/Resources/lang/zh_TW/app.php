@@ -294,6 +294,49 @@ return [
                     'product-type' => '產品類型',
                 ],
             ],
+            'bulk-edit' => [
+                'validation' => [
+                    'decimal'                    => '請輸入有效的小數。',
+                    'number'                     => '請輸入有效的整數。',
+                    'email'                      => '請輸入有效的電子郵件地址。',
+                    'url'                        => '請輸入有效的網址。',
+                    'regex'                      => '值不符合所需的格式。',
+                    'invalid-pattern'            => '提供了無效的自訂模式。',
+                    'select-attribute-or-family' => '請至少選擇一個屬性或屬性族。',
+                    'failed'                     => '驗證失敗。',
+                ],
+
+                'modal'                      => [
+                    'title'            => '批次編輯的屬性',
+                    'btn-cancel'       => '取消',
+                    'btn-proceed'      => '繼續',
+                    'attribute-family' => '選擇屬性族',
+                ],
+
+                'index' => [
+                    'no-product'    => '未選擇任何產品進行批次編輯。',
+                ],
+
+                'filter' => [
+                    'many-product'      => '選擇的產品過多。',
+                    'redirect-message'  => '正在重新導向至批次編輯視圖。',
+                ],
+
+                'handle-save' => [
+                    'edit-success'  => '批次編輯成功。',
+                ],
+
+                'id'              => 'ID',
+                'no-changes'      => '沒有要儲存的變更。',
+                'success'         => '任務執行成功。',
+                'fetch-failed'    => '取得資料失敗。',
+                'action'          => '批次編輯',
+                'gallery-preview' => '圖庫預覽',
+                'img-preview'     => '圖片預覽',
+                'no-image'        => '無圖片',
+                'img-fail'        => '圖片上傳失敗',
+                'no-opton'        => '無選項',
+            ],
 
             'create-success'          => '產品創建成功',
             'delete-failed'           => '刪除產品時出錯',

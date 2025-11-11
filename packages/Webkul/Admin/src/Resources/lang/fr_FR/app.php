@@ -294,6 +294,49 @@ return [
                     'product-type' => 'Type de produit',
                 ],
             ],
+            'bulk-edit' => [
+                'validation' => [
+                    'decimal'                    => 'Veuillez entrer un nombre décimal valide.',
+                    'number'                     => 'Veuillez entrer un nombre entier valide.',
+                    'email'                      => 'Veuillez entrer une adresse e-mail valide.',
+                    'url'                        => 'Veuillez entrer une URL valide.',
+                    'regex'                      => 'La valeur ne correspond pas au modèle requis.',
+                    'invalid-pattern'            => 'Modèle personnalisé invalide fourni.',
+                    'select-attribute-or-family' => 'Veuillez sélectionner au moins un attribut ou une famille d’attributs.',
+                    'failed'                     => 'La validation a échoué.',
+                ],
+
+                'modal'                      => [
+                    'title'            => 'Attributs pour l’édition en masse',
+                    'btn-cancel'       => 'Annuler',
+                    'btn-proceed'      => 'Continuer',
+                    'attribute-family' => 'Sélectionner une famille d’attributs',
+                ],
+
+                'index' => [
+                    'no-product'    => 'Aucun produit sélectionné pour l’édition en masse.',
+                ],
+
+                'filter' => [
+                    'many-product'      => 'Trop de produits sélectionnés.',
+                    'redirect-message'  => 'Redirection vers la vue d’édition en masse.',
+                ],
+
+                'handle-save' => [
+                    'edit-success'  => 'Édition en masse réussie.',
+                ],
+
+                'id'              => 'ID',
+                'no-changes'      => 'Aucun changement à enregistrer.',
+                'success'         => 'Opération réussie.',
+                'fetch-failed'    => 'Échec de la récupération.',
+                'action'          => 'Édition en masse',
+                'gallery-preview' => 'Aperçu de la galerie',
+                'img-preview'     => 'Aperçu de l’image',
+                'no-image'        => 'Pas d’image',
+                'img-fail'        => 'Échec du téléchargement de l’image.',
+                'no-opton'        => 'No Options',
+            ],
 
             'create-success'          => 'Produit créé avec succès',
             'delete-failed'           => 'Erreur lors de la suppression du produit',
