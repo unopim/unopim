@@ -15,8 +15,6 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
             Route::get('form-data', 'listSettings')->name('webhook.settings.get');
         });
 
-        Route::get('history', [WebhookSettingsController::class, 'listHistory'])->name('webhook.settings.history.get');
-
         Route::controller(WebhookLogsController::class)->prefix('logs')->group(function () {
             Route::get('', 'index')->name('webhook.logs.index');
             Route::delete('delete/{id}', 'destroy')->name('webhook.logs.delete');

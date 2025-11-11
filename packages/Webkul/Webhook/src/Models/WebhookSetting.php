@@ -14,7 +14,7 @@ class WebhookSetting extends Model implements HistoryAuditable, PresentableHisto
 
     protected $auditExclude = ['value', 'extras'];
 
-    protected $historyTags = ['webhook_history'];
+    protected $historyTags = ['webhook_settings'];
 
     protected $table = 'webhook_settings';
 

@@ -73,9 +73,4 @@ class WebhookSettingsController
             'data' => $this->settingsRepository->getAllDataAndNormalize(),
         ]);
     }
-
-    public function listHistory()
-    {
-        return view('webhook::settings.history');
-    }
 }

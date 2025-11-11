@@ -20,9 +20,6 @@ return [
                                     'label' => 'Webhook URL',
                                 ],
                                 'success' => 'Webhook settings saved successfully',
-                                'history' => [
-                                    'name' => 'History',
-                                ],
                             ],
                             'logs' => [
                                 'name' => 'Logs',
@@ -67,9 +64,6 @@ return [
             'delete'      => 'Delete',
             'mass-delete' => 'Mass Delete',
         ],
-        'history' => [
-            'index' => 'History',
-        ],
     ],
 
     'configuration' => [
@@ -77,6 +71,7 @@ return [
             'settings' => [
                 'index' => [
                     'title' => 'Webhook Settings',
+                    'logs-title' => 'Logs',
                 ],
             ],
 
