@@ -2350,6 +2350,7 @@ return [
                 'ai-btn-info'        => 'توليد الصورة',
                 'allowed-types'      => 'بابوا نيو غينيا، الحياة السياسية في فرنسا، JPG',
                 'not-allowed-error'  => 'يُسمح فقط بملفات الصور (.jpeg، .jpg، .png، ..).',
+                'upload-media-btn'   => 'رفع الوسائط',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

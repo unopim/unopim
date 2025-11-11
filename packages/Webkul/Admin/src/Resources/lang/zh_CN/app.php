@@ -1895,6 +1895,7 @@ return [
                 'ai-btn-info'        => '生成图像',
                 'allowed-types'      => 'PNG，JPEG，JPG',
                 'not-allowed-error'  => '仅允许图像文件（.jpeg，.jpg，.png，..）。',
+                'upload-media-btn'   => '上传媒体',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

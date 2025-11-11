@@ -1894,6 +1894,7 @@ return [
                 'ai-btn-info'        => 'Générer une image',
                 'allowed-types'      => 'png, jpeg, jpg',
                 'not-allowed-error'  => 'Seuls les fichiers d\'images (.jpeg, .jpg, .png...) sont autorisés.',
+                'upload-media-btn'   => 'Téléverser des médias',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

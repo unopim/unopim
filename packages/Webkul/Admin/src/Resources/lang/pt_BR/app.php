@@ -2048,6 +2048,7 @@ return [
                 'ai-btn-info'        => 'Gerar Imagem',
                 'allowed-types'      => 'png, jpeg, jpg',
                 'not-allowed-error'  => 'Apenas arquivos de imagem (.jpeg, .jpg, .png, ..) são permitidos.',
+                'upload-media-btn'   => 'Fazer upload de mídia',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

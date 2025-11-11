@@ -2047,6 +2047,7 @@ return [
                 'ai-btn-info'        => 'Genera immagine',
                 'allowed-types'      => 'png, jpeg, jpg',
                 'not-allowed-error'  => 'Sono consentiti solo file di immagini (.jpeg, .jpg, .png, ..).',
+                'upload-media-btn'   => 'Carica media',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

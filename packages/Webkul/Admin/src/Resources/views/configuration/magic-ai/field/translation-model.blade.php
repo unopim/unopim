@@ -1,5 +1,4 @@
 @inject('coreConfigRepository', 'Webkul\Core\Repositories\CoreConfigRepository')
-@inject('magicAI', 'Webkul\MagicAI\MagicAI')
 
 @php
     $nameKey = $item['key'] . '.' . $field['name'];
@@ -18,19 +17,19 @@
         <div class="grid gap-2.5 content-start">
             <div>
                 <x-admin::form.control-group class="last:!mb-0" v-if="! modelOptions">
-                    <x-admin::form.control-group.label>
+                    <x-admin::form.control-group.label ::class="isTranslationEnabled ? 'required' : ''">
                         @{{ label }}
                     </x-admin::form.control-group.label>
                     @php
                         $models = core()->getConfigData('general.magic_ai.settings.api_model');
                         $models = explode(',', $models);
                         $options = [];
-                        foreach ($models as $model)
-                        {
+
+                        foreach ($models as $model) {
                             $options[] = [
-                                'id' => $model,
+                                'id'    => $model,
                                 'label' => $model,
-                                ];
+                            ];
                         }
                     @endphp
                     <x-admin::form.control-group.control
@@ -38,7 +37,7 @@
                         ::id="name"
                         ::name="name"
                         ref="translationModelRef"
-                        rules="required"
+                        ::rules="{ 'required': isTranslationEnabled }"
                         ::label="label"
                         :options="json_encode($options)"
                         ::value="value"
@@ -50,7 +49,7 @@
                 </x-admin::form.control-group>
 
                 <x-admin::form.control-group class="mb-4" v-if="modelOptions">
-                    <x-admin::form.control-group.label>
+                    <x-admin::form.control-group.label ::class="isTranslationEnabled ? 'required' : ''">
                         @{{ label }}
                     </x-admin::form.control-group.label>
 
@@ -88,7 +87,8 @@
                     selectedValue: this.value,
                     selectedModelOption: null,
                     componentKey: 0,
-                }
+                    isTranslationEnabled: Boolean('{{ core()->getConfigData("general.magic_ai.translation.enabled") == 1 }}')
+                };
             },
 
             mounted() {
@@ -107,6 +107,10 @@
                 });
 
                 this.$emitter.on('config-value-changed', (data) => {
+                    if (data.fieldName == 'general[magic_ai][translation][enabled]') {
+                        this.isTranslationEnabled = parseInt(data.value || 0) === 1;
+                    }
+
                     if (data.fieldName === "general[magic_ai][settings][ai_platform]") {
                         this.$refs['translationModelRef'].selectedValue = null;
                     }

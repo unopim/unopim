@@ -2048,6 +2048,7 @@ return [
                 'ai-btn-info'        => 'Wygeneruj obraz',
                 'allowed-types'      => 'png, jpeg, jpg',
                 'not-allowed-error'  => 'Tylko pliki graficzne (.jpeg, .jpg, .png, ..) są dozwolone.',
+                'upload-media-btn'   => 'Prześlij media',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

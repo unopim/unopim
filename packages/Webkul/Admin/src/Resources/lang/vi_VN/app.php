@@ -2048,6 +2048,7 @@ return [
                 'ai-btn-info'        => 'Tạo ảnh',
                 'allowed-types'      => 'png, jpeg, jpg',
                 'not-allowed-error'  => 'Chỉ cho phép các tệp hình ảnh (.jpeg, .jpg, .png, ..)',
+                'upload-media-btn'   => 'Tải lên phương tiện',
             ],
 
             'videos' => [

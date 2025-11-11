@@ -2054,6 +2054,7 @@ return [
                 'ai-btn-info'        => 'Luo kuva',
                 'allowed-types'      => 'png, jpeg, jpg',
                 'not-allowed-error'  => 'Vain kuva tiedostot (.jpeg, .jpg, .png, ..) ovat sallittuja.',
+                'upload-media-btn'   => 'Lataa mediaa',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

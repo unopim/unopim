@@ -120,12 +120,38 @@
                                  >
                                     <template v-if="column.type === 'image'">
                                         <img
-                                        :src="record[column.index] ? record[column.index] : '{{ unopim_asset('images/placeholder.svg') }}'"
-                                        alt="Thumbnail"
-                                        width="74"
-                                        height="74"
-                                        class="h-[120px] max-w-[60px] min-w-[60px] max-h-[60px] min-h-[60px] rounded-lg border border-gray-300 shadow-sm object-cover"
-                                    />
+                                            :src="record[column.index] ? record[column.index] : '{{ unopim_asset('images/placeholder.svg') }}'"
+                                            alt="Thumbnail"
+                                            width="74"
+                                            height="74"
+                                            class="h-[120px] max-w-[60px] min-w-[60px] max-h-[60px] min-h-[60px] rounded-lg border border-gray-300 shadow-sm object-cover"
+                                        />
+                                    </template>
+
+                                    <template v-else-if="column.type === 'gallery'">
+                                        <template v-if="record[column.index]?.type === 'video'">
+                                            <div class="relative h-[120px] max-w-[60px] min-w-[60px] max-h-[60px] min-h-[60px]">
+                                                <video
+                                                    :src="record[column.index].url"
+                                                    width="74"
+                                                    height="74"
+                                                    class="h-full w-full rounded-lg border border-gray-300 shadow-sm object-cover"
+                                                ></video>
+
+                                                <!-- Overlay that blocks clicks -->
+                                                <div class="absolute inset-0 bg-transparent z-10"></div>
+                                            </div>
+                                        </template>
+
+                                        <template v-else>
+                                            <img
+                                                :src="record[column.index]?.url ? record[column.index].url : '{{ unopim_asset('images/placeholder.svg') }}'"
+                                                alt="Thumbnail"
+                                                width="74"
+                                                height="74"
+                                                class="h-[120px] max-w-[60px] min-w-[60px] max-h-[60px] min-h-[60px] rounded-lg border border-gray-300 shadow-sm object-cover"
+                                            />
+                                        </template>
                                     </template>
 
                                     <template v-else-if="typeof record[column.index] === 'string' && record[column.index].length > 25">

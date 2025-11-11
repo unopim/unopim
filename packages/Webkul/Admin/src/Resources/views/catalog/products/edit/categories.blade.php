@@ -15,7 +15,7 @@
     {!! view_render_event('unopim.admin.catalog.product.edit.form.categories.controls.before', ['product' => $product]) !!}
 
     <!-- Panel Content -->
-    <div class="mb-5 text-sm text-gray-600 dark:text-gray-300 h-[calc(100vh-100px)] overflow-y-auto">
+    <div class="mb-5 text-sm text-gray-600 dark:text-gray-300 max-h-[400px] overflow-y-auto">
 
         <v-product-categories>
             <x-admin::shimmer.tree />
