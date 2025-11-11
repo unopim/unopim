@@ -2002,6 +2002,7 @@ return [
                 'ai-btn-info'        => 'Generate Image',
                 'allowed-types'      => 'png, jpeg, jpg',
                 'not-allowed-error'  => 'Only images files (.jpeg, .jpg, .png, ..) are allowed.',
+                'upload-media-btn'   => 'Upload Media',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

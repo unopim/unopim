@@ -561,7 +561,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 $value = current($value);
                 break;
             case 'image':
-            case 'galllery':
+            case 'gallery':
             case 'string':
                 $operator = FilterOperators::CONTAINS;
                 break;

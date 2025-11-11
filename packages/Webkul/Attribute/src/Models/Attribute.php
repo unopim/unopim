@@ -402,9 +402,14 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
                 $rules[] = new FileOrImageValidValue;
 
                 break;
-            case AttributeTypes::IMAGE_ATTRIBUTE_TYPE:
             case AttributeTypes::GALLERY_ATTRIBUTE_TYPE:
-                $rules[] = new FileOrImageValidValue(isImage: true, isMultiple: $this->type === AttributeTypes::GALLERY_ATTRIBUTE_TYPE);
+                $rules[] = (new FileOrImageValidValue(isImage: true, isMultiple: true))
+                    ->mergeAllowedExtensions(['mp4', 'webm', 'mkv'])
+                    ->mergeAllowedMimes(['mp4', 'webm', 'mkv']);
+
+                break;
+            case AttributeTypes::IMAGE_ATTRIBUTE_TYPE:
+                $rules[] = new FileOrImageValidValue(isImage: true);
 
                 break;
         }
@@ -432,8 +437,10 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
             case self::CHECKBOX_FIELD_TYPE:
                 $filterType = 'dropdown';
                 break;
-            case self::IMAGE_ATTRIBUTE_TYPE:
             case self::GALLERY_ATTRIBUTE_TYPE:
+                $filterType = 'gallery';
+                break;
+            case self::IMAGE_ATTRIBUTE_TYPE:
                 $filterType = 'image';
                 break;
             case self::PRICE_FIELD_TYPE:

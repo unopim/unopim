@@ -2005,6 +2005,7 @@ return [
                 'ai-btn-info'        => 'Generiraj sliku',
                 'allowed-types'      => 'png, jpeg, jpg',
                 'not-allowed-error'  => 'Dozvoljeni su samo datoteke s slikama (.jpeg, .jpg, .png, ..).',
+                'upload-media-btn'   => 'Prenesi medije',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

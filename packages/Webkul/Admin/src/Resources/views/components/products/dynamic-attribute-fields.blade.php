@@ -183,11 +183,16 @@
                 @break
             @case('gallery')
                 @php
-                    $savedImages = ! empty($value) ? array_map(function ($image, $index) {
+                    $savedData = ! empty($value) ? array_map(function ($media, $index) {
+                        $mimeType = Storage::exists($media) ? Storage::mimeType($media) : null;
+                        $fileName = basename($media);
+
                         return [
-                        'id' => uniqid(),
-                        'url' => Storage::url($image),
-                        'value' => $image,
+                            'id'    => uniqid(),
+                            'url'   => Storage::url($media),
+                            'value' => $media,
+                            'type'  => $mimeType,
+                            'name'  => $fileName,
                         ];
                     }, (array)$value, array_keys((array)$value)) : [];
                 @endphp
@@ -197,12 +202,12 @@
                     <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
-                <x-admin::media.images
+                <x-admin::media.gallery
                     name="{{ $fieldName }}"
                     ::class="[errors && errors['{{ $fieldName }}'] ? 'border !border-red-600 hover:border-red-600' : '']"
                     :id="$field->code"
                     ::rules="{{ $field->getValidationsField() }}"
-                    :uploaded-images="! empty($value) ? $savedImages : []"
+                    :uploaded-images="! empty($value) ? $savedData : []"
                     :allow-multiple=true
                     width='210px'
                 />
