@@ -36,13 +36,13 @@ class WebhookLogsController
             $this->logsRepository->delete($id);
 
             return new JsonResponse([
-                'message' => trans('webhook::app.logs.index.delete-success'),
+                'message' => trans('webhook::app.configuration.webhook.logs.index.delete-success'),
             ]);
         } catch (\Exception $e) {
             report($e);
 
             return response()->json([
-                'message' => trans('webhook::app.logs.index.delete-failed'),
+                'message' => trans('webhook::app.configuration.webhook.logs.index.delete-failed'),
             ], 500);
         }
     }
@@ -73,7 +73,7 @@ class WebhookLogsController
         }
 
         return new JsonResponse([
-            'message' => trans('webhook::app.logs.index.delete-success'),
+            'message' => trans('webhook::app.configuration.webhook.logs.index.delete-success'),
         ], JsonResponse::HTTP_OK);
     }
 }

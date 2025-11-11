@@ -6,45 +6,10 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name'    => 'Webhooks',
-                        'submenu' => [
-                            'settings' => [
-                                'name'    => 'Settings',
-                                'title'   => 'Webhook Settings',
-                                'save'    => 'Save',
-                                'general' => 'General',
-                                'active'  => [
-                                    'label' => 'Active Webhook',
-                                ],
-                                'webhook_url' => [
-                                    'label' => 'Webhook URL',
-                                ],
-                                'success' => 'Webhook settings saved successfully',
-                            ],
-                            'logs' => [
-                                'name' => 'Logs',
-                            ],
-                        ],
+                        'name' => 'Webhooks',
                     ],
                 ],
             ],
-        ],
-    ],
-    'logs' => [
-        'index' => [
-            'datagrid' => [
-                'id'         => 'Id',
-                'sku'        => 'SKU',
-                'created_at' => 'Date/Time',
-                'user'       => 'User',
-                'status'     => 'Status',
-                'success'    => 'Success',
-                'failed'     => 'Failed',
-                'delete'     => 'Delete',
-            ],
-            'title'          => 'Webhook Logs',
-            'delete-success' => 'Webhook logs deleted successfully',
-            'delete-failed'  => 'Webhook logs deletion failed unexpectedly',
         ],
     ],
     'webhook-action' => [
@@ -70,14 +35,37 @@ return [
         'webhook' => [
             'settings' => [
                 'index' => [
-                    'title' => 'Webhook Settings',
+                    'name'    => 'Settings',
+                    'title'   => 'Webhook Settings',
+                    'save'    => 'Save',
+                    'general' => 'General',
+                    'active'  => [
+                        'label' => 'Active Webhook',
+                    ],
+                    'webhook_url' => [
+                        'label' => 'Webhook URL',
+                    ],
+                    'success'    => 'Webhook settings saved successfully',
+                    'title'      => 'Webhook Settings',
                     'logs-title' => 'Logs',
                 ],
             ],
 
             'logs' => [
                 'index' => [
-                    'title' => 'Webhook logs',
+                    'datagrid' => [
+                        'id'         => 'Id',
+                        'sku'        => 'SKU',
+                        'created_at' => 'Date/Time',
+                        'user'       => 'User',
+                        'status'     => 'Status',
+                        'success'    => 'Success',
+                        'failed'     => 'Failed',
+                        'delete'     => 'Delete',
+                    ],
+                    'title'          => 'Webhook Logs',
+                    'delete-success' => 'Webhook logs deleted successfully',
+                    'delete-failed'  => 'Webhook logs deletion failed unexpectedly',
                 ],
             ],
         ],

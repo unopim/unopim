@@ -41,7 +41,7 @@ class LogsDataGrid extends DataGrid
     {
         $this->addColumn([
             'index'      => 'id',
-            'label'      => trans('webhook::app.logs.index.datagrid.id'),
+            'label'      => trans('webhook::app.configuration.webhook.logs.index.datagrid.id'),
             'type'       => 'integer',
             'searchable' => false,
             'filterable' => false,
@@ -50,7 +50,7 @@ class LogsDataGrid extends DataGrid
 
         $this->addColumn([
             'index'      => 'created_at',
-            'label'      => trans('webhook::app.logs.index.datagrid.created_at'),
+            'label'      => trans('webhook::app.configuration.webhook.logs.index.datagrid.created_at'),
             'type'       => 'date_range',
             'searchable' => false,
             'filterable' => false,
@@ -70,7 +70,7 @@ class LogsDataGrid extends DataGrid
 
         $this->addColumn([
             'index'      => 'sku',
-            'label'      => trans('webhook::app.logs.index.datagrid.sku'),
+            'label'      => trans('webhook::app.configuration.webhook.logs.index.datagrid.sku'),
             'type'       => 'string',
             'searchable' => true,
             'filterable' => true,
@@ -79,7 +79,7 @@ class LogsDataGrid extends DataGrid
 
         $this->addColumn([
             'index'      => 'user',
-            'label'      => trans('webhook::app.logs.index.datagrid.user'),
+            'label'      => trans('webhook::app.configuration.webhook.logs.index.datagrid.user'),
             'type'       => 'string',
             'searchable' => true,
             'filterable' => true,
@@ -87,15 +87,15 @@ class LogsDataGrid extends DataGrid
         ]);
         $this->addColumn([
             'index'      => 'status',
-            'label'      => trans('webhook::app.logs.index.datagrid.status'),
+            'label'      => trans('webhook::app.configuration.webhook.logs.index.datagrid.status'),
             'type'       => 'string',
             'searchable' => true,
             'filterable' => true,
             'sortable'   => true,
             'closure'    => function ($row) {
                 return $row->status
-                    ? '<span class="break-words label-completed">'.trans('webhook::app.logs.index.datagrid.success').'</span>'
-                    : '<span class="break-words label-canceled">'.trans('webhook::app.logs.index.datagrid.failed').'</span>';
+                    ? '<span class="break-words label-completed">'.trans('webhook::app.configuration.webhook.logs.index.datagrid.success').'</span>'
+                    : '<span class="break-words label-canceled">'.trans('webhook::app.configuration.webhook.logs.index.datagrid.failed').'</span>';
             },
         ]);
     }
@@ -111,7 +111,7 @@ class LogsDataGrid extends DataGrid
             $this->addAction([
                 'index'  => 'delete',
                 'icon'   => 'icon-delete',
-                'title'  => trans('webhook::app.logs.index.datagrid.delete'),
+                'title'  => trans('webhook::app.configuration.webhook.logs.index.datagrid.delete'),
                 'method' => 'DELETE',
                 'url'    => function ($row) {
                     return route('webhook.logs.delete', $row->id);
@@ -129,7 +129,7 @@ class LogsDataGrid extends DataGrid
     {
         if (bouncer()->hasPermission('configuration.webhook.logs.mass_delete')) {
             $this->addMassAction([
-                'title'   => trans('webhook::app.logs.index.datagrid.delete'),
+                'title'   => trans('webhook::app.configuration.webhook.logs.index.datagrid.delete'),
                 'url'     => route('webhook.logs.mass_delete'),
                 'method'  => 'POST',
                 'options' => ['actionType' => 'delete'],
