@@ -36,7 +36,7 @@
 
     @isset($footer)
         <template v-slot:footer>
-            <div {{ $content->attributes->merge(['class' => 'flex justify-end px-4 py-2.5']) }}>
+            <div {{ $footer->attributes->merge(['class' => 'flex justify-end px-4 py-2.5']) }}>
                 {{ $footer }}
             </div>
         </template>
@@ -82,9 +82,10 @@
                     v-if="isOpen"
                 >
                     <div class="flex min-h-full items-end justify-center p-4 sm:items-center sm:p-0">
-                        <div 
-                            class="w-full max-h-[96%] overflow-y-auto z-[999] absolute ltr:left-1/2 rtl:right-1/2 top-1/2 rounded-lg bg-white dark:bg-gray-900 box-shadow max-md:w-[90%] ltr:-translate-x-1/2 rtl:translate-x-1/2 -translate-y-1/2"
-                            :class="modalSize"
+                        <div
+                            ref="modalContent"
+                            class="w-full max-h-[96%] z-[999] absolute ltr:left-1/2 rtl:right-1/2 top-1/2 rounded-lg bg-white dark:bg-gray-900 box-shadow max-md:w-[90%] ltr:-translate-x-1/2 rtl:translate-x-1/2 -translate-y-1/2"
+                            :class="[modalSize, { 'overflow-y-auto': isOverflowing, 'overflow-hidden': clip }]"
                         >
                             <!-- Header Slot -->
                             <slot
@@ -110,22 +111,58 @@
         app.component('v-modal', {
             template: '#v-modal-template',
 
-            props: ['isActive', 'type'],
+            props: ['isActive', 'type', 'clip'],
 
             data() {
                 return {
                     isOpen: this.isActive,
+                    isOverflowing: false,
+                    modalType: this.type,
                     sizeMap: {
                         small: "max-w-[400px]",
                         medium: "max-w-[568px]",
-                        large: "max-w-[900px]"
+                        large: "max-w-[900px]",
+                        full: "max-w-[calc(100vw-100px)]"
                     }
                 };
             },
 
             computed: {
                 modalSize() {
-                    return this.sizeMap[this.type] || "max-w-[568px]"; // Default to medium
+                    return this.sizeMap[this.modalType] || this.sizeMap.medium; // Default to medium
+                }
+            },
+
+            mounted() {
+                this.$emitter.on('modal-size-change', (size) => {
+                    this.modalType = size;
+
+                    this.$nextTick(() => {
+                        this.checkOverflow();
+                    });
+                });
+
+                this._onWindowResize = () => {
+                    if (this.isOpen) {
+                        this.checkOverflow();
+                    }
+                };
+
+                window.addEventListener('resize', this._onWindowResize);
+                window.addEventListener('orientationchange', this._onWindowResize);
+            },
+
+            beforeUnmount() {
+                if (this._onWindowResize) {
+                    window.removeEventListener('resize', this._onWindowResize);
+                    window.removeEventListener('orientationchange', this._onWindowResize);
+                }
+            },
+
+            beforeDestroy() {
+                if (this._onWindowResize) {
+                    window.removeEventListener('resize', this._onWindowResize);
+                    window.removeEventListener('orientationchange', this._onWindowResize);
                 }
             },
 
@@ -140,6 +177,12 @@
                     }
 
                     this.$emit('toggle', { isActive: this.isOpen });
+
+                    if (this.isOpen) {
+                        this.$nextTick(() => {
+                            this.checkOverflow();
+                        });
+                    }
                 },
 
                 open() {
@@ -148,6 +191,10 @@
                     document.body.style.overflow = 'hidden';
 
                     this.$emit('open', { isActive: this.isOpen });
+
+                    this.$nextTick(() => {
+                        this.checkOverflow();
+                    });
                 },
 
                 close() {
@@ -156,7 +203,15 @@
                     document.body.style.overflow = 'auto';
 
                     this.$emit('close', { isActive: this.isOpen });
-                }
+                },
+
+                checkOverflow() {
+                    const el = this.$refs.modalContent;
+
+                    if (el) {
+                        this.isOverflowing = el.scrollHeight > window.innerHeight * 0.96;
+                    }
+                },
             }
         });
     </script>

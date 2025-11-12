@@ -80,7 +80,9 @@
             "Webkul\\Theme\\": "packages/Webkul/Theme/src",
             "Webkul\\User\\": "packages/Webkul/User/src",
             "Webkul\\AdminApi\\": "packages/Webkul/AdminApi/src",
-            "Webkul\\ElasticSearch\\": "packages/Webkul/ElasticSearch/src"
+            "Webkul\\ElasticSearch\\": "packages/Webkul/ElasticSearch/src",
+            "Webkul\\Webhook\\": "packages/Webkul/Webhook/src",
+            "Webkul\\Completeness\\": "packages/Webkul/Completeness/src"
         }
     },
     "autoload-dev": {
@@ -91,7 +93,8 @@
             "Webkul\\DataGrid\\Tests\\": "packages/Webkul/DataGrid/tests",
             "Webkul\\User\\Tests\\": "packages/Webkul/User/tests",
             "Webkul\\AdminApi\\Tests\\": "packages/Webkul/AdminApi/tests",
-            "Webkul\\Installer\\Tests\\": "packages/Webkul/Installer/tests"
+            "Webkul\\Installer\\Tests\\": "packages/Webkul/Installer/tests",
+            "Webkul\\Completeness\\Tests\\": "packages/Webkul/Completeness/tests"
         }
     },
     "scripts": {

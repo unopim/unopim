@@ -3,7 +3,11 @@
 use Webkul\AdminApi\Models\Apikey;
 
 it('should display the magic ai tab if has permission', function () {
-    $this->loginWithPermissions('custom', ['configuration', 'configuration.magic-ai']);
+    $this->loginWithPermissions('custom', [
+        'configuration',
+        'configuration.magic-ai',
+        'configuration.magic-ai.general',
+    ]);
 
     $this->get(route('admin.configuration.edit', ['general', 'magic_ai']))
         ->assertOk()

@@ -59,6 +59,7 @@ it('should create new row for MagicAiprompt', function () {
         'title'  => $prompt['title'],
         'prompt' => $prompt['prompt'],
         'type'   => $prompt['type'],
+        'tone'   => $prompt['tone'],
     ]);
 });
 
@@ -70,6 +71,7 @@ it('should update with given data', function () {
         'title'  => 'hello prompt',
         'prompt' => 'update to @color and @name',
         'type'   => 'product',
+        'tone'   => $prompt->tone,
     ];
 
     $this->put(route('admin.magic_ai.prompt.update'), $data)

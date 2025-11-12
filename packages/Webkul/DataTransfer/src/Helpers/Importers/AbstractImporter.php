@@ -65,7 +65,7 @@ abstract class AbstractImporter
         self::ERROR_CODE_COLUMNS_NUMBER      => 'data_transfer::app.validation.errors.column-numbers',
     ];
 
-    public const BATCH_SIZE = 1;
+    public const BATCH_SIZE = 100;
 
     /**
      * Is linking required
@@ -337,17 +337,19 @@ abstract class AbstractImporter
 
         $typeBatches = [];
 
-        foreach ($this->import->batches as $batch) {
-            $typeBatches['import'][] = new ImportBatchJob($batch, $this->import->id);
+        $this->import->batches()->chunk(100, function ($batches) use (&$typeBatches) {
+            foreach ($batches as $batch) {
+                $typeBatches['import'][] = new ImportBatchJob($batch, $this->import->id);
 
-            if ($this->isLinkingRequired()) {
-                $typeBatches['link'][] = new LinkBatchJob($batch);
-            }
+                if ($this->isLinkingRequired()) {
+                    $typeBatches['link'][] = new LinkBatchJob($batch);
+                }
 
-            if ($this->isIndexingRequired()) {
-                $typeBatches['import'][] = new IndexBatchJob($batch, $this->import->id);
+                if ($this->isIndexingRequired()) {
+                    $typeBatches['import'][] = new IndexBatchJob($batch, $this->import->id);
+                }
             }
-        }
+        });
 
         $chain[] = Bus::batch($typeBatches['import']);
 

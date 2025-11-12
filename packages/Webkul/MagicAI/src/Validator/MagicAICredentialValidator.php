@@ -8,6 +8,10 @@ use Illuminate\Validation\ValidationException;
 use OpenAI\ValueObjects\Transporter\BaseUri;
 use Webkul\MagicAI\Contracts\Validator\ConfigValidator;
 use Webkul\MagicAI\MagicAI;
+use Webkul\MagicAI\Services\Gemini;
+use Webkul\MagicAI\Services\Groq;
+use Webkul\MagicAI\Services\Ollama;
+use Webkul\MagicAI\Services\OpenAI;
 
 class MagicAICredentialValidator implements ConfigValidator
 {
@@ -17,8 +21,9 @@ class MagicAICredentialValidator implements ConfigValidator
     ];
 
     const MODEL_ENDPOINTS = [
-        MagicAI::MAGIC_OPEN_AI => 'v1/models',
-        MagicAI::MAGIC_GROQ_AI => 'openai/v1/models',
+        MagicAI::MAGIC_OPEN_AI   => 'v1/models',
+        MagicAI::MAGIC_GROQ_AI   => 'openai/v1/models',
+        MagicAI::MAGIC_GEMINI_AI => 'v1beta/models',
     ];
 
     protected ?string $baseUri = null;
@@ -40,8 +45,8 @@ class MagicAICredentialValidator implements ConfigValidator
 
         $rules = [
             'enabled'       => 'required|in:0,1',
-            'ai_platform'   => 'required|in:openai,ollama,groq',
-            'api_key'       => 'required_if:ai_platform,openai|string|min:10',
+            'ai_platform'   => 'required|in:openai,ollama,groq,gemini',
+            'api_key'       => 'required|string|min:10',
             'organization'  => 'nullable|string',
             'api_domain'    => 'required|url',
             'api_model'     => 'nullable|string',
@@ -54,43 +59,59 @@ class MagicAICredentialValidator implements ConfigValidator
         }
 
         if ($credentials['ai_platform'] === 'ollama') {
-            return self::DEFAULT_MODELS;
+            return Ollama::formatModelsResponse(['models' => self::DEFAULT_MODELS]);
         }
 
         try {
             if (preg_match('/^\*+$/', $credentials['api_key'])) {
                 $original = core()->getConfigData('general.magic_ai.settings.api_key');
-
                 if (strlen($credentials['api_key']) === strlen($original)) {
                     $credentials['api_key'] = $original;
                 }
             }
 
-            $this->baseUri = $credentials['api_domain'];
-            $baseUri = BaseUri::from($this->baseUri ?: 'api.openai.com')->toString();
+            $this->baseUri = $credentials['api_domain'] ?? null;
+            $baseUri = BaseUri::from($this->baseUri ?: 'https://api.openai.com')->toString();
 
-            $modelEndpoint = self::MODEL_ENDPOINTS[$credentials['ai_platform'] ?? 'openai'];
+            $platform = $credentials['ai_platform'];
+            $modelEndpoint = self::MODEL_ENDPOINTS[$platform] ?? null;
 
-            $response = $this->client->get($baseUri.$modelEndpoint, [
-                'headers' => [
-                    'Authorization' => 'Bearer '.$credentials['api_key'],
-                    'Content-Type'  => 'application/json',
-                ],
-            ]);
-
-            $body = $response->getBody();
-            $data = json_decode($body, true);
-
-            $formattedModels = [];
-
-            foreach (($data['data'] ?? []) as $model) {
-                $formattedModels[] = [
-                    'id'    => $model['id'],
-                    'label' => $model['id'],
-                ];
+            if (! $modelEndpoint) {
+                return self::DEFAULT_MODELS;
             }
 
-            return $formattedModels;
+            $url = rtrim($baseUri, '/').'/'.ltrim($modelEndpoint, '/');
+
+            $requestOptions = [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                ],
+            ];
+
+            if ($platform === MagicAI::MAGIC_GEMINI_AI) {
+                $url .= '?key='.$credentials['api_key'];
+            } else {
+                $requestOptions['headers']['Authorization'] = 'Bearer '.$credentials['api_key'];
+            }
+
+            $response = $this->client->get($url, $requestOptions);
+            $data = json_decode($response->getBody(), true);
+
+            switch ($platform) {
+                case MagicAI::MAGIC_GEMINI_AI:
+                    $formattedModels = Gemini::formatModelsResponse($data);
+                    break;
+                case MagicAI::MAGIC_OPEN_AI:
+                    $formattedModels = OpenAI::formatModelsResponse($data);
+                    break;
+                case MagicAI::MAGIC_GROQ_AI:
+                    $formattedModels = Groq::formatModelsResponse($data);
+                    break;
+                default:
+                    $formattedModels = self::DEFAULT_MODELS;
+            }
+
+            return $formattedModels ?: self::DEFAULT_MODELS;
         } catch (\Exception $e) {
             report($e);
             throw ValidationException::withMessages([

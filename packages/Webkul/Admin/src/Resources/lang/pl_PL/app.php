@@ -294,6 +294,49 @@ return [
                     'product-type' => 'Typ produktu',
                 ],
             ],
+            'bulk-edit' => [
+                'validation' => [
+                    'decimal'                    => 'Wprowadź poprawną liczbę dziesiętną.',
+                    'number'                     => 'Wprowadź poprawną liczbę całkowitą.',
+                    'email'                      => 'Wprowadź poprawny adres e-mail.',
+                    'url'                        => 'Wprowadź poprawny adres URL.',
+                    'regex'                      => 'Wartość nie pasuje do wymaganego wzoru.',
+                    'invalid-pattern'            => 'Podano nieprawidłowy własny wzorzec.',
+                    'select-attribute-or-family' => 'Proszę wybrać co najmniej jeden atrybut lub rodzinę atrybutów.',
+                    'failed'                     => 'Walidacja nie powiodła się.',
+                ],
+
+                'modal'                      => [
+                    'title'            => 'Atrybuty do edycji zbiorczej',
+                    'btn-cancel'       => 'Anuluj',
+                    'btn-proceed'      => 'Kontynuuj',
+                    'attribute-family' => 'Wybierz rodzinę atrybutów',
+                ],
+
+                'index' => [
+                    'no-product'    => 'Nie wybrano żadnych produktów do edycji zbiorczej.',
+                ],
+
+                'filter' => [
+                    'many-product'      => 'Wybrano zbyt wiele produktów.',
+                    'redirect-message'  => 'Przekierowanie do widoku edycji zbiorczej.',
+                ],
+
+                'handle-save' => [
+                    'edit-success'  => 'Edycja zbiorcza zakończona sukcesem.',
+                ],
+
+                'id'              => 'ID',
+                'no-changes'      => 'Brak zmian do zapisania.',
+                'success'         => 'Zadanie zostało pomyślnie wykonane.',
+                'fetch-failed'    => 'Nie udało się pobrać.',
+                'action'          => 'Edycja zbiorcza',
+                'gallery-preview' => 'Podgląd galerii',
+                'img-preview'     => 'Podgląd obrazu',
+                'no-image'        => 'Brak obrazu',
+                'img-fail'        => 'Przesyłanie obrazu nie powiodło się',
+                'no-opton'        => 'Brak opcji',
+            ],
 
             'create-success'          => 'Produkt został pomyślnie utworzony',
             'delete-failed'           => 'Usuwanie produktu nie powiodło się',
@@ -2005,6 +2048,7 @@ return [
                 'ai-btn-info'        => 'Wygeneruj obraz',
                 'allowed-types'      => 'png, jpeg, jpg',
                 'not-allowed-error'  => 'Tylko pliki graficzne (.jpeg, .jpg, .png, ..) są dozwolone.',
+                'upload-media-btn'   => 'Prześlij media',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

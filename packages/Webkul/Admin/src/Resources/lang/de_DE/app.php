@@ -295,6 +295,50 @@ return [
                 ],
             ],
 
+            'bulk-edit' => [
+                'validation' => [
+                    'decimal'                    => 'Bitte geben Sie eine gültige Dezimalzahl ein.',
+                    'number'                     => 'Bitte geben Sie eine gültige ganze Zahl ein.',
+                    'email'                      => 'Bitte geben Sie eine gültige E-Mail-Adresse ein.',
+                    'url'                        => 'Bitte geben Sie eine gültige URL ein.',
+                    'regex'                      => 'Der Wert entspricht nicht dem erforderlichen Muster.',
+                    'invalid-pattern'            => 'Ungültiges benutzerdefiniertes Muster angegeben.',
+                    'select-attribute-or-family' => 'Bitte wählen Sie mindestens ein Attribut oder eine Attributfamilie aus.',
+                    'failed'                     => 'Validierung fehlgeschlagen.',
+                ],
+
+                'modal'                      => [
+                    'title'            => 'Attribute für Massenbearbeitung',
+                    'btn-cancel'       => 'Abbrechen',
+                    'btn-proceed'      => 'Fortfahren',
+                    'attribute-family' => 'Attributfamilie auswählen',
+                ],
+
+                'index' => [
+                    'no-product'    => 'Keine Produkte zur Massenbearbeitung ausgewählt.',
+                ],
+
+                'filter' => [
+                    'many-product'      => 'Zu viele Produkte ausgewählt.',
+                    'redirect-message'  => 'Weiterleitung zur Massenbearbeitungsansicht.',
+                ],
+
+                'handle-save' => [
+                    'edit-success'  => 'Massenbearbeitung erfolgreich.',
+                ],
+
+                'id'              => 'ID',
+                'no-changes'      => 'Keine Änderungen zum Speichern.',
+                'success'         => 'Vorgang erfolgreich abgeschlossen.',
+                'fetch-failed'    => 'Abruf fehlgeschlagen.',
+                'action'          => 'Massenbearbeitung',
+                'gallery-preview' => 'Galerievorschau',
+                'img-preview'     => 'Bildvorschau',
+                'no-image'        => 'Kein Bild',
+                'img-fail'        => 'Bildupload fehlgeschlagen.',
+                'no-option'       => 'No Options',
+            ],
+
             'create-success'          => 'Produkt erfolgreich erstellt',
             'delete-failed'           => 'Produkt gelöscht Fehlgeschlagen',
             'delete-success'          => 'Produkt erfolgreich gelöscht',
@@ -1858,6 +1902,7 @@ return [
                 'ai-btn-info'        => 'Bild generieren',
                 'allowed-types'      => 'png, jpeg, jpg',
                 'not-allowed-error'  => 'Nur Bilddateien (.jpeg, .jpg, .png, ..) sind zulässig.',
+                'upload-media-btn'   => 'Medien hochladen',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

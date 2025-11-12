@@ -294,6 +294,49 @@ return [
                     'product-type' => 'Loại sản phẩm',
                 ],
             ],
+            'bulk-edit' => [
+                'validation' => [
+                    'decimal'                    => 'Vui lòng nhập một số thập phân hợp lệ.',
+                    'number'                     => 'Vui lòng nhập một số nguyên hợp lệ.',
+                    'email'                      => 'Vui lòng nhập một địa chỉ email hợp lệ.',
+                    'url'                        => 'Vui lòng nhập một URL hợp lệ.',
+                    'regex'                      => 'Giá trị không khớp với mẫu yêu cầu.',
+                    'invalid-pattern'            => 'Mẫu tùy chỉnh không hợp lệ.',
+                    'select-attribute-or-family' => 'Vui lòng chọn ít nhất một thuộc tính hoặc một nhóm thuộc tính.',
+                    'failed'                     => 'Xác thực không thành công.',
+                ],
+
+                'modal'                      => [
+                    'title'            => 'Thuộc tính cho chỉnh sửa hàng loạt',
+                    'btn-cancel'       => 'Hủy',
+                    'btn-proceed'      => 'Tiếp tục',
+                    'attribute-family' => 'Chọn nhóm thuộc tính',
+                ],
+
+                'index' => [
+                    'no-product'    => 'Chưa chọn sản phẩm nào để chỉnh sửa hàng loạt.',
+                ],
+
+                'filter' => [
+                    'many-product'      => 'Đã chọn quá nhiều sản phẩm.',
+                    'redirect-message'  => 'Đang chuyển đến chế độ chỉnh sửa hàng loạt.',
+                ],
+
+                'handle-save' => [
+                    'edit-success'  => 'Chỉnh sửa hàng loạt thành công.',
+                ],
+
+                'id'              => 'ID',
+                'no-changes'      => 'Không có thay đổi nào để lưu.',
+                'success'         => 'Thực thi công việc thành công.',
+                'fetch-failed'    => 'Lấy dữ liệu thất bại.',
+                'action'          => 'Chỉnh sửa hàng loạt',
+                'gallery-preview' => 'Xem trước thư viện',
+                'img-preview'     => 'Xem trước hình ảnh',
+                'no-image'        => 'Không có hình ảnh',
+                'img-fail'        => 'Tải hình ảnh thất bại',
+                'no-opton'        => 'Không có tùy chọn',
+            ],
 
             'create-success'          => 'Sản phẩm đã được tạo thành công',
             'delete-failed'           => 'Đã có lỗi khi xóa sản phẩm',
@@ -2005,6 +2048,7 @@ return [
                 'ai-btn-info'        => 'Tạo ảnh',
                 'allowed-types'      => 'png, jpeg, jpg',
                 'not-allowed-error'  => 'Chỉ cho phép các tệp hình ảnh (.jpeg, .jpg, .png, ..)',
+                'upload-media-btn'   => 'Tải lên phương tiện',
             ],
 
             'videos' => [

@@ -294,6 +294,49 @@ return [
                     'product-type' => 'Tipo de Produto',
                 ],
             ],
+            'bulk-edit' => [
+                'validation' => [
+                    'decimal'                    => 'Por favor, insira um número decimal válido.',
+                    'number'                     => 'Por favor, insira um número inteiro válido.',
+                    'email'                      => 'Por favor, insira um endereço de e-mail válido.',
+                    'url'                        => 'Por favor, insira uma URL válida.',
+                    'regex'                      => 'O valor não corresponde ao padrão exigido.',
+                    'invalid-pattern'            => 'Padrão personalizado inválido fornecido.',
+                    'select-attribute-or-family' => 'Selecione pelo menos um atributo ou uma família de atributos.',
+                    'failed'                     => 'A validação falhou.',
+                ],
+
+                'modal'                      => [
+                    'title'            => 'Atributos para edição em massa',
+                    'btn-cancel'       => 'Cancelar',
+                    'btn-proceed'      => 'Prosseguir',
+                    'attribute-family' => 'Selecionar família de atributos',
+                ],
+
+                'index' => [
+                    'no-product'    => 'Nenhum produto selecionado para edição em massa.',
+                ],
+
+                'filter' => [
+                    'many-product'      => 'Produtos demais selecionados.',
+                    'redirect-message'  => 'Redirecionando para a visualização de edição em massa.',
+                ],
+
+                'handle-save' => [
+                    'edit-success'  => 'Edição em massa realizada com sucesso.',
+                ],
+
+                'id'              => 'ID',
+                'no-changes'      => 'Nenhuma alteração para salvar.',
+                'success'         => 'A tarefa foi executada com sucesso.',
+                'fetch-failed'    => 'Falha ao buscar.',
+                'action'          => 'Edição em massa',
+                'gallery-preview' => 'Pré-visualização da Galeria',
+                'img-preview'     => 'Pré-visualização da Imagem',
+                'no-image'        => 'Sem Imagem',
+                'img-fail'        => 'Falha no envio da imagem',
+                'no-opton'        => 'Nenhuma opção',
+            ],
 
             'create-success'          => 'Produto criado com sucesso',
             'delete-failed'           => 'Falha ao excluir o produto',
@@ -2005,6 +2048,7 @@ return [
                 'ai-btn-info'        => 'Gerar Imagem',
                 'allowed-types'      => 'png, jpeg, jpg',
                 'not-allowed-error'  => 'Apenas arquivos de imagem (.jpeg, .jpg, .png, ..) são permitidos.',
+                'upload-media-btn'   => 'Fazer upload de mídia',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

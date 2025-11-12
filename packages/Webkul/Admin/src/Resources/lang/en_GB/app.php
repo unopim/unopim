@@ -293,7 +293,49 @@ return [
                     'product-type' => 'Product Type',
                 ],
             ],
+            'bulk-edit' => [
+                'validation' => [
+                    'decimal'                    => 'Please enter a valid decimal number.',
+                    'number'                     => 'Please enter a valid whole number.',
+                    'email'                      => 'Please enter a valid email address.',
+                    'url'                        => 'Please enter a valid URL.',
+                    'regex'                      => 'Value does not match the required pattern.',
+                    'invalid-pattern'            => 'Invalid custom pattern provided.',
+                    'select-attribute-or-family' => 'Please select at least one attribute or an attribute family.',
+                    'failed'                     => 'Validation failed.',
+                ],
 
+                'modal'                      => [
+                    'title'            => 'Attributes For Bulk Edit',
+                    'btn-cancel'       => 'Cancel',
+                    'btn-proceed'      => 'Proceed',
+                    'attribute-family' => 'Select Attribute Family',
+                ],
+
+                'index' => [
+                    'no-product'    => 'No products selected for bulk edit.',
+                ],
+
+                'filter' => [
+                    'many-product'      => 'Too many products selected.',
+                    'redirect-message'  => 'Redirecting to bulk edit view.',
+                ],
+
+                'handle-save' => [
+                    'edit-success'  => 'Bulk edit successful.',
+                ],
+
+                'id'              => 'ID',
+                'no-changes'      => 'No changes to save.',
+                'success'         => 'Job executed successfully.',
+                'fetch-failed'    => 'Failed to fetch.',
+                'action'          => 'Bulk Edit',
+                'gallery-preview' => 'Gallery Preview',
+                'img-preview'     => 'Image Preview',
+                'no-image'        => 'No Image',
+                'img-fail'        => 'Image upload failed',
+                'no-option'       => 'No Options',
+            ],
             'create-success'          => 'Product created successfully',
             'delete-failed'           => 'Product deleted Failed',
             'delete-success'          => 'Product deleted successfully',
@@ -2008,6 +2050,7 @@ return [
                 'ai-btn-info'        => 'Generate Image',
                 'allowed-types'      => 'png, jpeg, jpg',
                 'not-allowed-error'  => 'Only image files (.jpeg, .jpg, .png, ..) are allowed.',
+                'upload-media-btn'   => 'Upload Media',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

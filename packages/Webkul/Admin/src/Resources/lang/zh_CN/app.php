@@ -294,6 +294,49 @@ return [
                     'product-type' => '产品类型',
                 ],
             ],
+            'bulk-edit' => [
+                'validation' => [
+                    'decimal'                    => '请输入有效的小数。',
+                    'number'                     => '请输入有效的整数。',
+                    'email'                      => '请输入有效的电子邮件地址。',
+                    'url'                        => '请输入有效的URL地址。',
+                    'regex'                      => '该值不符合所需的模式。',
+                    'invalid-pattern'            => '提供了无效的自定义模式。',
+                    'select-attribute-or-family' => '请选择至少一个属性或一个属性族。',
+                    'failed'                     => '验证失败。',
+                ],
+
+                'modal'                      => [
+                    'title'            => '批量编辑的属性',
+                    'btn-cancel'       => '取消',
+                    'btn-proceed'      => '继续',
+                    'attribute-family' => '选择属性族',
+                ],
+
+                'index' => [
+                    'no-product'    => '未选择要批量编辑的产品。',
+                ],
+
+                'filter' => [
+                    'many-product'      => '选择的产品过多。',
+                    'redirect-message'  => '正在跳转到批量编辑视图。',
+                ],
+
+                'handle-save' => [
+                    'edit-success'  => '批量编辑成功。',
+                ],
+
+                'id'              => 'ID',
+                'no-changes'      => '没有可保存的更改。',
+                'success'         => '任务已成功执行。',
+                'fetch-failed'    => '获取失败。',
+                'action'          => '批量编辑',
+                'gallery-preview' => '图库预览',
+                'img-preview'     => '图片预览',
+                'no-image'        => '无图片',
+                'img-fail'        => '图片上传失败',
+                'no-opton'        => '无选项',
+            ],
 
             'create-success'          => '成功创建的产品',
             'delete-failed'           => '产品删除失败',
@@ -1852,6 +1895,7 @@ return [
                 'ai-btn-info'        => '生成图像',
                 'allowed-types'      => 'PNG，JPEG，JPG',
                 'not-allowed-error'  => '仅允许图像文件（.jpeg，.jpg，.png，..）。',
+                'upload-media-btn'   => '上传媒体',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

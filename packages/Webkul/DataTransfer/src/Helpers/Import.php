@@ -441,8 +441,8 @@ class Import
      */
     public function stats(string $state): array
     {
-        $total = $this->import->batches->count();
-        $completed = $this->import->batches->where('state', $state)->count();
+        $total = $this->import->batches()->count();
+        $completed = $this->import->batches()->where('state', $state)->count();
 
         $progress = $total
             ? round($completed / $total * 100)
