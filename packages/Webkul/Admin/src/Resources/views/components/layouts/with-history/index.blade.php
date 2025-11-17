@@ -1,5 +1,6 @@
 @props([
-    'activeTab' => 'general'
+    'activeTab' => 'general',
+    'historyId' => null,
 ])
 
 <!DOCTYPE html>
@@ -94,7 +95,7 @@
 
                             $activeTab = $hasPermission
                                 ? (request()->has('history') ? 'history' : $activeTab)
-                                : 'general';
+                                : ($activeTab ?? 'general');
 
                             $items = [
                                 [
@@ -134,13 +135,13 @@
                     {{ $tabContents ?? '' }}
 
                     @if ($activeTab === 'history')
-                        {!! view_render_event('unopim.settings.channels.list.before') !!}
+                        {!! view_render_event('unopim.admin.layout.history.before') !!}
 
-                        <x-admin::history src="{{ route('admin.history.index',[$entityName, request()->id]) }}" >
+                        <x-admin::history src="{{ route('admin.history.index',[$entityName, ($historyId ?? request()->id)]) }}" >
 
                         </x-admin::history>
 
-                        {!! view_render_event('unopim.settings.channels.list.after') !!}        
+                        {!! view_render_event('unopim.admin.layout.history.after') !!}
                     @endif
                 </div>
             </div>

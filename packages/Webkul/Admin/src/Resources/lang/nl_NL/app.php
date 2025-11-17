@@ -294,6 +294,49 @@ return [
                     'product-type' => 'Producttype',
                 ],
             ],
+            'bulk-edit' => [
+                'validation' => [
+                    'decimal'                    => 'Voer een geldig decimaal getal in.',
+                    'number'                     => 'Voer een geldig geheel getal in.',
+                    'email'                      => 'Voer een geldig e-mailadres in.',
+                    'url'                        => 'Voer een geldige URL in.',
+                    'regex'                      => 'Waarde komt niet overeen met het vereiste patroon.',
+                    'invalid-pattern'            => 'Ongeldig aangepast patroon opgegeven.',
+                    'select-attribute-or-family' => 'Selecteer ten minste één attribuut of een attribuutfamilie.',
+                    'failed'                     => 'Validatie mislukt.',
+                ],
+
+                'modal'                      => [
+                    'title'            => 'Attributen voor bulkbewerking',
+                    'btn-cancel'       => 'Annuleren',
+                    'btn-proceed'      => 'Doorgaan',
+                    'attribute-family' => 'Attribuutfamilie selecteren',
+                ],
+
+                'index' => [
+                    'no-product'    => 'Geen producten geselecteerd voor bulkbewerking.',
+                ],
+
+                'filter' => [
+                    'many-product'      => 'Te veel producten geselecteerd.',
+                    'redirect-message'  => 'Doorverwijzen naar bulkbewerkingsweergave.',
+                ],
+
+                'handle-save' => [
+                    'edit-success'  => 'Bulkbewerking succesvol uitgevoerd.',
+                ],
+
+                'id'              => 'ID',
+                'no-changes'      => 'Geen wijzigingen om op te slaan.',
+                'success'         => 'Taak succesvol uitgevoerd.',
+                'fetch-failed'    => 'Ophalen mislukt.',
+                'action'          => 'Bulk Bewerken',
+                'gallery-preview' => 'Galerijvoorbeeld',
+                'img-preview'     => 'Afbeeldingvoorbeeld',
+                'no-image'        => 'Geen Afbeelding',
+                'img-fail'        => 'Uploaden van afbeelding mislukt',
+                'no-opton'        => 'Geen opties',
+            ],
 
             'create-success'          => 'Product met succes gemaakt',
             'delete-failed'           => 'Product verwijderd mislukt',
@@ -2306,6 +2349,7 @@ return [
                 'ai-btn-info'        => 'Afbeelding genereren',
                 'allowed-types'      => 'PNG, JPEG, JPG',
                 'not-allowed-error'  => 'Alleen afbeeldingenbestanden (.JPEG, .JPG, .png, ..) zijn toegestaan.',
+                'upload-media-btn'   => 'Media uploaden',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

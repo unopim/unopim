@@ -294,6 +294,49 @@ return [
                     'product-type' => '제품 유형',
                 ],
             ],
+            'bulk-edit' => [
+                'validation' => [
+                    'decimal'                    => '유효한 소수점을 입력하세요.',
+                    'number'                     => '유효한 정수를 입력하세요.',
+                    'email'                      => '유효한 이메일 주소를 입력하세요.',
+                    'url'                        => '유효한 URL을 입력하세요.',
+                    'regex'                      => '값이 요구되는 패턴과 일치하지 않습니다.',
+                    'invalid-pattern'            => '잘못된 사용자 지정 패턴입니다.',
+                    'select-attribute-or-family' => '하나 이상의 속성 또는 속성 패밀리를 선택하세요.',
+                    'failed'                     => '유효성 검사 실패.',
+                ],
+
+                'modal'                      => [
+                    'title'            => '일괄 편집용 속성',
+                    'btn-cancel'       => '취소',
+                    'btn-proceed'      => '진행',
+                    'attribute-family' => '속성 패밀리 선택',
+                ],
+
+                'index' => [
+                    'no-product'    => '일괄 편집할 제품이 선택되지 않았습니다.',
+                ],
+
+                'filter' => [
+                    'many-product'      => '선택된 제품이 너무 많습니다.',
+                    'redirect-message'  => '일괄 편집 화면으로 리디렉션 중입니다.',
+                ],
+
+                'handle-save' => [
+                    'edit-success'  => '일괄 편집이 성공적으로 완료되었습니다.',
+                ],
+
+                'id'              => 'ID',
+                'no-changes'      => '저장할 변경 사항이 없습니다.',
+                'success'         => '작업이 성공적으로 실행되었습니다.',
+                'fetch-failed'    => '가져오기 실패.',
+                'action'          => '일괄 편집',
+                'gallery-preview' => '갤러리 미리보기',
+                'img-preview'     => '이미지 미리보기',
+                'no-image'        => '이미지 없음',
+                'img-fail'        => '이미지 업로드 실패',
+                'no-opton'        => '옵션 없음',
+            ],
 
             'create-success'          => '제품이 성공적으로 생성되었습니다',
             'delete-failed'           => '제품 삭제 실패',
@@ -2005,6 +2048,7 @@ return [
                 'ai-btn-info'        => '이미지 생성',
                 'allowed-types'      => 'png, jpeg, jpg',
                 'not-allowed-error'  => '이미지 파일만 허용됩니다 (.jpeg, .jpg, .png, ..).',
+                'upload-media-btn'   => '미디어 업로드',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

@@ -294,6 +294,49 @@ return [
                     'product-type' => 'Tipo di prodotto',
                 ],
             ],
+            'bulk-edit' => [
+                'validation' => [
+                    'decimal'                    => 'Inserisci un numero decimale valido.',
+                    'number'                     => 'Inserisci un numero intero valido.',
+                    'email'                      => 'Inserisci un indirizzo email valido.',
+                    'url'                        => 'Inserisci un URL valido.',
+                    'regex'                      => 'Il valore non corrisponde al formato richiesto.',
+                    'invalid-pattern'            => 'Formato personalizzato non valido.',
+                    'select-attribute-or-family' => 'Seleziona almeno un attributo o una famiglia di attributi.',
+                    'failed'                     => 'Validazione non riuscita.',
+                ],
+
+                'modal'                      => [
+                    'title'            => 'Attributi per modifica massiva',
+                    'btn-cancel'       => 'Annulla',
+                    'btn-proceed'      => 'Procedi',
+                    'attribute-family' => 'Seleziona famiglia di attributi',
+                ],
+
+                'index' => [
+                    'no-product'    => 'Nessun prodotto selezionato per la modifica massiva.',
+                ],
+
+                'filter' => [
+                    'many-product'      => 'Troppi prodotti selezionati.',
+                    'redirect-message'  => 'Reindirizzamento alla vista di modifica massiva.',
+                ],
+
+                'handle-save' => [
+                    'edit-success'  => 'Modifica massiva completata con successo.',
+                ],
+
+                'id'              => 'ID',
+                'no-changes'      => 'Nessuna modifica da salvare.',
+                'success'         => 'Operazione completata con successo.',
+                'fetch-failed'    => 'Impossibile recuperare i dati.',
+                'action'          => 'Modifica di massa',
+                'gallery-preview' => 'Anteprima Galleria',
+                'img-preview'     => 'Anteprima Immagine',
+                'no-image'        => 'Nessuna Immagine',
+                'img-fail'        => 'Caricamento immagine fallito',
+                'no-opton'        => 'Nessuna opzione',
+            ],
 
             'create-success'          => 'Prodotto creato con successo',
             'delete-failed'           => 'Eliminazione del prodotto non riuscita',
@@ -2004,6 +2047,7 @@ return [
                 'ai-btn-info'        => 'Genera immagine',
                 'allowed-types'      => 'png, jpeg, jpg',
                 'not-allowed-error'  => 'Sono consentiti solo file di immagini (.jpeg, .jpg, .png, ..).',
+                'upload-media-btn'   => 'Carica media',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

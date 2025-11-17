@@ -294,6 +294,49 @@ return [
                     'product-type' => 'Produkttype',
                 ],
             ],
+            'bulk-edit' => [
+                'validation' => [
+                    'decimal'                    => 'Vennligst oppgi et gyldig desimaltall.',
+                    'number'                     => 'Vennligst oppgi et gyldig heltall.',
+                    'email'                      => 'Vennligst oppgi en gyldig e-postadresse.',
+                    'url'                        => 'Vennligst oppgi en gyldig URL.',
+                    'regex'                      => 'Verdien samsvarer ikke med det nødvendige mønsteret.',
+                    'invalid-pattern'            => 'Ugyldig egendefinert mønster angitt.',
+                    'select-attribute-or-family' => 'Vennligst velg minst ett attributt eller en attributtfamilie.',
+                    'failed'                     => 'Validering mislyktes.',
+                ],
+
+                'modal'                      => [
+                    'title'            => 'Attributter for masseendring',
+                    'btn-cancel'       => 'Avbryt',
+                    'btn-proceed'      => 'Fortsett',
+                    'attribute-family' => 'Velg attributtfamilie',
+                ],
+
+                'index' => [
+                    'no-product'    => 'Ingen produkter valgt for masseendring.',
+                ],
+
+                'filter' => [
+                    'many-product'      => 'For mange produkter valgt.',
+                    'redirect-message'  => 'Omdirigerer til visning for masseendring.',
+                ],
+
+                'handle-save' => [
+                    'edit-success'  => 'Masseendring vellykket.',
+                ],
+
+                'id'              => 'ID',
+                'no-changes'      => 'Ingen endringer å lagre.',
+                'success'         => 'Jobb fullført.',
+                'fetch-failed'    => 'Henting mislyktes.',
+                'action'          => 'Masseendring',
+                'gallery-preview' => 'Galleri forhåndsvisning',
+                'img-preview'     => 'Bilde forhåndsvisning',
+                'no-image'        => 'Ingen bilde',
+                'img-fail'        => 'Opplasting av bilde mislyktes',
+                'no-opton'        => 'Ingen alternativer',
+            ],
 
             'create-success'          => 'Produkt opprettet vellykket',
             'delete-failed'           => 'Sletting av produkt mislyktes',
@@ -2005,6 +2048,7 @@ return [
                 'ai-btn-info'        => 'Generer bilde',
                 'allowed-types'      => 'png, jpeg, jpg',
                 'not-allowed-error'  => 'Bare bildestørrelser (.jpeg, .jpg, .png, ..) er tillatt.',
+                'upload-media-btn'   => 'Last opp medier',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',
