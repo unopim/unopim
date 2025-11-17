@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-test.describe.skip('UnoPim Webhook test cases', () => {
+test.describe('UnoPim Webhook test cases', () => {
 test('Check the webhook option after installtion', async({adminPage})=>{
   await expect(adminPage.getByRole('link', { name: ' Configuration' })).toBeVisible();
   await adminPage.getByRole('link', { name: ' Configuration' }).click();
