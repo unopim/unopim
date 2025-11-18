@@ -1,14 +1,15 @@
-# v0.4.0
+# v0.4.x
+
+## v0.4.0
 
 ## Features
-
-- Added **Custom Prompts** for Magic AI content generation and **Product Values Translation** to translate an attribute value in multiple other languages with Magic AI.  
-- Implemented **System Prompt Management** for configuring AI prompt behavior and max token settings.
-- Introduced **Product Completeness**, providing completeness score and evaluation of product data quality based on completeness settings.
-- Added **Product Update Webhook**, enabling external systems to react to real-time product updates.
-- Added **Product Bulk Edit** with advanced multi-product editing capabilities for faster workflows.
-- Added **Video Support** in the gallery attribute. Fixes issue: [#84](https://github.com/unopim/unopim/issues/84)
 - Added **PostgreSQL Support** for improved cross-database compatibility. Fixes issue: [#45](https://github.com/unopim/unopim/issues/45)
+- Implemented **System Prompt Management** for configuring AI prompt behavior and max token settings.
+- Added **Custom Prompts** for Magic AI content generation and **Product Values Translation** to translate an attribute value in multiple other languages with Magic AI.  
+- Introduced **Product Completeness**, providing completeness score and evaluation of product data quality based on completeness settings.
+- Added **Product Bulk Edit** with advanced multi-product editing capabilities for faster workflows.
+- Added **Product Update Webhook**, enabling external systems to react to real-time product updates.
+- Added **Video Support** in the gallery attribute. Fixes issue: [#84](https://github.com/unopim/unopim/issues/84)
 
 ## Improvements
 
@@ -24,9 +25,10 @@
 - Corrected handling of the `@lang` directive to ensure consistent and secure output rendering on the import job page.  
 
 ## Dependency Updates
-
 - Bump enshrined/svg-sanitize from `0.16.0` to `0.22.0`
 - Bump phpoffice/phpspreadsheet from `1.29.9` to `1.30.0`
+
+# v0.3.x
 
 ## v0.3.2 - 2025-08-26
 
@@ -80,6 +82,7 @@
 * Updated Finnish translations [#161](https://github.com/unopim/unopim/pull/161)
 * Optimized attribute options grid performance for large datasets
  
+# v0.2.x
  
 ## v0.2.0 - 2025-03-26
 ### ✨ **Features**  
