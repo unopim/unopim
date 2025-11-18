@@ -1,3 +1,21 @@
+## v0.3.2 - 2025-08-26
+
+### Fixes
+
+* Fixed failure of product export when 'with media' filter is enabled
+* Fixed category export job failing due to uninitialized file buffer
+
+## v0.3.1 - 2025-08-22
+
+### Fixes
+
+* Fix: escape CSV formula operators in export files [CVE-2025-55745]
+* Fix: added ACL permissions for mass action routes [CVE-2025-55745]
+
+### Chores
+
+* Chore: update security policy for supported version
+
 ## v0.3.0 - 2025-07-28
 
 ### Features
