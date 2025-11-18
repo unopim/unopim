@@ -1,8 +1,8 @@
-# v0.4.x
+# v1.0.x
 
-## v0.4.0
+## v1.0.0
 
-## Features
+### Features
 - Added **PostgreSQL Support** for improved cross-database compatibility. Fixes issue: [#45](https://github.com/unopim/unopim/issues/45)
 - Implemented **System Prompt Management** for configuring AI prompt behavior and max token settings.
 - Added **Custom Prompts** for Magic AI content generation and **Product Values Translation** to translate an attribute value in multiple other languages with Magic AI.  
@@ -11,20 +11,18 @@
 - Added **Product Update Webhook**, enabling external systems to react to real-time product updates.
 - Added **Video Support** in the gallery attribute. Fixes issue: [#84](https://github.com/unopim/unopim/issues/84)
 
-## Improvements
-
+### Improvements
 - Optimized **Category Tree Rendering**, significantly reducing load times for large catalogs. Fixes issue: [#176](https://github.com/unopim/unopim/issues/176)
-
 - Updated **Import Job Configuration**:
   - Timeout set to `0` for long-running jobs.
   - Batch size increased to `100`.
   - Stats calculation for job progress uses query instead of eager loading all batches for counting completed state.
 
-## Bug Fixes
+### Bug Fixes
 
 - Corrected handling of the `@lang` directive to ensure consistent and secure output rendering on the import job page.  
 
-## Dependency Updates
+### Dependency Updates
 - Bump enshrined/svg-sanitize from `0.16.0` to `0.22.0`
 - Bump phpoffice/phpspreadsheet from `1.29.9` to `1.30.0`
 
