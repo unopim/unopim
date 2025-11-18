@@ -478,13 +478,19 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             $attribute = $this->attributeService->findAttributeByCode($sortColumn) ?? 'text';
 
             $castType = $attribute?->type === 'price' || $attribute->validation === 'numeric'
-                ? 'int'
-                : 'text';
+                ? 'DECIMAL'
+                : null;
 
             $jsonCondition = DB::rawQueryGrammar()->jsonExtract(DB::getTablePrefix().'products.values', ...$attributePath);
 
+            if ($castType) {
+                return $this->queryBuilder->orderByRaw(
+                    "CAST($jsonCondition AS $castType) $sortOrder",
+                );
+            }
+
             return $this->queryBuilder->orderByRaw(
-                "CAST($jsonCondition AS $castType) $sortOrder",
+                "LOWER($jsonCondition) $sortOrder",
             );
         }
 
