@@ -415,9 +415,9 @@ class Import
 
         $summary = $this->jobTrackBatchRepository
             ->select(
-                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'created')} as int)) AS created"),
-                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'updated')} as int)) AS updated"),
-                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'deleted')} as int)) AS deleted"),
+                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'created')} as DECIMAl)) AS created"),
+                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'updated')} as DECIMAl)) AS updated"),
+                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'deleted')} as DECIMAl)) AS deleted"),
             )
             ->where('job_track_id', $this->import->id)
             ->groupBy('job_track_id')
@@ -454,9 +454,9 @@ class Import
 
         $summary = $this->jobTrackBatchRepository
             ->select(
-                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'created')} as int)) AS created"),
-                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'updated')} as int)) AS updated"),
-                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'deleted')} as int)) AS deleted"),
+                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'created')} as DECIMAL)) AS created"),
+                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'updated')} as DECIMAL)) AS updated"),
+                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'deleted')} as DECIMAL)) AS deleted"),
             )
             ->where('job_track_id', $this->import->id)
             ->where('state', $state)

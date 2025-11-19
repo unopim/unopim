@@ -253,9 +253,9 @@ class Export
 
         $summary = $this->jobTrackBatchRepository
             ->select(
-                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'created')} as int)) AS created"),
-                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'processed')} as int)) AS processed"),
-                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'skipped')} as int)) AS skipped"),
+                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'created')} as DECIMAl)) AS created"),
+                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'processed')} as DECIMAl)) AS processed"),
+                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'skipped')} as DECIMAl)) AS skipped"),
             )
             ->where('job_track_id', $this->export->id)
             ->groupBy('job_track_id')
@@ -335,9 +335,9 @@ class Export
 
         $summary = $this->jobTrackBatchRepository
             ->select(
-                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'processed')} as int)) AS processed"),
-                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'created')} as int)) AS created"),
-                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'skipped')} as int)) AS skipped"),
+                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'processed')} as DECIMAL)) AS processed"),
+                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'created')} as DECIMAL)) AS created"),
+                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'skipped')} as DECIMAL)) AS skipped"),
             )
             ->where('job_track_id', $this->export->id)
             ->where('state', $state)
