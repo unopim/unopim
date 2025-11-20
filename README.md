@@ -111,10 +111,10 @@ To get started with UnoPim, follow these steps:
    Open your browser and go to `http://localhost:8000`.
 
 5. **Queue Operations**:  
-   To execute import/export operations, initiate the Queue command:
+   To execute import/export operations and product completeness score calculation initiate the Queue command:
 
    ```bash
-   php artisan queue:work
+   php artisan queue:work --queue=system,default
    ```
 
 ## 🐳 Installation with Docker
