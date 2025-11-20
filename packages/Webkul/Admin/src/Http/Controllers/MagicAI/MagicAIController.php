@@ -140,7 +140,7 @@ class MagicAIController extends Controller
             report($e);
 
             return new JsonResponse([
-                'message' => trans('admin::app.catalog.products.index.magic-ai-error'),
+                'message' => $e->getMessage(),
             ], 400);
         }
     }
