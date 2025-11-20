@@ -4,6 +4,7 @@ namespace Webkul\Installer\Database\Seeders\Attribute;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Webkul\Core\Helpers\Database\DatabaseSequenceHelper;
 
 class AttributeFamilyTableSeeder extends Seeder
 {
@@ -157,6 +158,12 @@ class AttributeFamilyTableSeeder extends Seeder
                 'attribute_family_group_id' => 5,
                 'position'                  => 5,
             ],
+        ]);
+
+        DatabaseSequenceHelper::fixSequences([
+            'attribute_families',
+            'attribute_family_translations',
+            'attribute_family_group_mappings',
         ]);
     }
 }

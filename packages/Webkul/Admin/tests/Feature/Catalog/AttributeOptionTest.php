@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeOption;
 use Webkul\Attribute\Models\AttributeOptionTranslation;
@@ -44,7 +45,13 @@ it('should not allow duplicate option code for the same attribute', function () 
         ->assertStatus(422)
         ->assertJsonValidationErrors('code');
 
-    $this->assertDatabaseMissing($this->getFullTableName(AttributeOption::class), ['code' => $option->code, 'id' => '!= '.$option->id, 'attribute_id' => $attributeId]);
+    $exists = DB::table($this->getFullTableName(AttributeOption::class))
+        ->where('code', $option->code)
+        ->where('attribute_id', $attributeId)
+        ->where('id', '!=', $option->id)
+        ->exists();
+
+    expect($exists)->toBeFalse();
 });
 
 it('should create the attribute option', function () {
@@ -176,11 +183,11 @@ it('should return the attribute option for edit modal', function () {
     $attributeId = $attribute->id;
     $option = $attribute->options()->first();
 
-    $translation = $option->translations()->create([
-        'label' => 'Option Label',
-    ]);
+    $locale = app()->getLocale() ?? 'en_US';
 
-    $translation->locale = 'en_US';
+    $translation = $option->getNewTranslation($locale);
+
+    $translation->label = 'Option Label';
     $translation->save();
 
     $response = $this->getJson(route('admin.catalog.attributes.options.edit', [$attributeId, $option->id]))
@@ -201,7 +208,7 @@ it('should return the attribute option for edit modal', function () {
     $this->assertEquals($attributeId, $response['attribute_id']);
 
     $this->assertEquals(
-        $option->translations->where('locale', 'en_US')->first()?->label,
-        $response['locales']['en_US']
+        $option->translations->where('locale', $locale)->first()?->label,
+        $response['locales'][$locale]
     );
 });

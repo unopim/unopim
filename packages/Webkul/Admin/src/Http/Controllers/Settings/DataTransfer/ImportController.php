@@ -271,6 +271,7 @@ class ImportController extends Controller
 
             // Create a job track instance
             $jobTrackInstance = $this->jobTrackRepository->create([
+                'type'                  => 'import',
                 'state'                 => Import::STATE_PENDING,
                 'validation_strategy'   => $import->validation_strategy,
                 'allowed_errors'        => $import->allowed_errors,

@@ -5,6 +5,7 @@ namespace Webkul\Installer\Database\Seeders\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Webkul\Core\Helpers\Database\DatabaseSequenceHelper;
 
 class AdminsTableSeeder extends Seeder
 {
@@ -35,5 +36,7 @@ class AdminsTableSeeder extends Seeder
             'role_id'       => 1,
             'ui_locale_id'  => $defaultLocaleId,
         ]);
+
+        DatabaseSequenceHelper::fixSequence('admins');
     }
 }

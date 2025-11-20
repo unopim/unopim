@@ -35,12 +35,12 @@ class CategoryFieldDataGrid extends DataGrid
     public function prepareQueryBuilder()
     {
         $tablePrefix = DB::getTablePrefix();
+        $grammar = DB::rawQueryGrammar();
 
         $queryBuilder = DB::table('category_fields')
             ->leftJoin('category_field_translations as requested_category_field_translation', function ($leftJoin) {
                 $leftJoin->on('requested_category_field_translation.category_field_id', '=', 'category_fields.id')
                     ->where('requested_category_field_translation.locale', core()->getRequestedLocaleCode());
-
             })
             ->select(
                 'category_fields.id',
@@ -52,7 +52,12 @@ class CategoryFieldDataGrid extends DataGrid
                 'status',
                 'position',
                 'created_at',
-                DB::raw('(CASE WHEN CHAR_LENGTH(TRIM('.$tablePrefix.'requested_category_field_translation.name)) < 1 THEN CONCAT("[", code , "]") ELSE '.$tablePrefix.'requested_category_field_translation.name END) as name'),
+                DB::raw("
+                (CASE 
+                    WHEN {$grammar->length("TRIM({$tablePrefix}requested_category_field_translation.name)")} < 1 
+                    THEN {$grammar->concat("'['", 'code', "']'")} 
+                    ELSE {$tablePrefix}requested_category_field_translation.name 
+                END) as name")
             );
 
         $this->addFilter('name', 'requested_category_field_translation.name');

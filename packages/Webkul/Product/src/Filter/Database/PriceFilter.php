@@ -2,6 +2,7 @@
 
 namespace Webkul\Product\Filter\Database;
 
+use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\ElasticSearch\Enums\FilterOperators;
 
@@ -38,10 +39,17 @@ class PriceFilter extends AbstractDatabaseAttributeFilter
 
         $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
 
+        // Add currency to the attribute path to access the filtered price value like USD, EUR
+        $attributePath[] = $value[0];
+
+        $grammar = DB::rawQueryGrammar();
+
+        $searchPath = $grammar->jsonExtract($this->getSearchTablePath($options), ...$attributePath);
+
         switch ($operator) {
             case FilterOperators::IN:
                 $this->queryBuilder->whereRaw(
-                    sprintf("JSON_UNQUOTE(JSON_EXTRACT(%s, '%s')) REGEXP ?", $this->getSearchTablePath($options), sprintf('%s.%s', $attributePath, $value[0])),
+                    $searchPath.' '.$grammar->getRegexOperator().' ?',
                     $value[1]
                 );
 
@@ -49,7 +57,7 @@ class PriceFilter extends AbstractDatabaseAttributeFilter
 
             case FilterOperators::EQUAL:
                 $this->queryBuilder->whereRaw(
-                    sprintf("CAST(JSON_UNQUOTE(JSON_EXTRACT(%s, '%s')) AS DECIMAL(8,2)) = ?", $this->getSearchTablePath($options), sprintf('%s.%s', $attributePath, $value[0])),
+                    "CAST($searchPath AS DECIMAL(8,2)) = ?",
                     $value[1]
                 );
 

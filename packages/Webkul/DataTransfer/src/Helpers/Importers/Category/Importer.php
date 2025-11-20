@@ -38,11 +38,6 @@ class Importer extends AbstractImporter
     public const INVALID_DISPLAY_MODE = 'invalid_display_mode';
 
     /**
-     * Enabled Value per locale
-     */
-    public const VALUE_PER_LOCALE = 1;
-
-    /**
      * Error code for non existing code
      */
     public const ERROR_NOT_FOUND_LOCALE = 'slug_not_found_to_delete';
@@ -359,7 +354,7 @@ class Importer extends AbstractImporter
 
         /** additional fields data import  */
         $categoryFields = $this->getCategoryFields();
-        $imageDirPath = $this->import->images_directory_path;
+        $imageDirPath = $this->import->images_directory_path ?? '';
 
         foreach ($rowData as $field => $value) {
             if (! in_array($field, $categoryFields)) {
@@ -372,7 +367,7 @@ class Importer extends AbstractImporter
 
             $value = EscapeFormulaOperators::unescapeValue($value);
 
-            if ($catalogField->value_per_locale === self::VALUE_PER_LOCALE) {
+            if ($catalogField->value_per_locale) {
                 $locale = $rowData['locale'] ?? null;
                 if ($locale) {
                     $data['additional_data']['locale_specific'][$locale][$field] = $value;

@@ -238,14 +238,6 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
     }
 
     /**
-     * Is attribute usable in product grid or not
-     */
-    public function isUsableInGrid(): bool
-    {
-        return (bool) $this->usable_in_grid;
-    }
-
-    /**
      * Checks if this attribute is based on both locale and channel
      */
     public function isLocaleAndChannelBasedAttribute(): bool
@@ -467,12 +459,12 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
     public function getScope(?string $locale = null, ?string $channel = null): string
     {
         return ($this->value_per_locale && $this->value_per_channel)
-        ? sprintf('channel_locale_specific.%s.%s', $channel, $locale)
-        : ($this->value_per_locale
-            ? sprintf('locale_specific.%s', $locale)
-            : ($this->value_per_channel
-                ? sprintf('channel_specific.%s', $channel)
-                : 'common'));
+            ? sprintf('channel_locale_specific.%s.%s', $channel, $locale)
+            : ($this->value_per_locale
+                ? sprintf('locale_specific.%s', $locale)
+                : ($this->value_per_channel
+                    ? sprintf('channel_specific.%s', $channel)
+                    : 'common'));
     }
 
     /**
