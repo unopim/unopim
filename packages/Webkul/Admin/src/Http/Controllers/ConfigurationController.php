@@ -6,9 +6,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Admin\Http\Requests\ConfigurationForm;
+use Webkul\Core\Contracts\Validator\ConfigValidator;
 use Webkul\Core\Repositories\CoreConfigRepository;
 use Webkul\Core\Tree;
-use Webkul\Core\Contracts\Validator\ConfigValidator;
 
 class ConfigurationController extends Controller
 {
