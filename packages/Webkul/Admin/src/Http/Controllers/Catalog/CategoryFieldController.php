@@ -62,7 +62,7 @@ class CategoryFieldController extends Controller
             'code'     => ['required', 'unique:category_fields,code', new Code, new NotSupportedFields],
             'type'     => 'required',
             'status'   => 'required',
-            'position' => 'required',
+            'position' => 'required|min:0',
             'section'  => 'required',
         ]);
 

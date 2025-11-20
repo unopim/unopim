@@ -144,7 +144,7 @@ class ProductCompletenessJob implements ShouldQueue
             );
         }
 
-        $averageScore = round($averageScore / $channelCount);
+        $averageScore = $averageScore ? round($averageScore / $channelCount) : null;
 
         DB::table('products')->where('id', $product['id'])->update(['avg_completeness_score' => $averageScore]);
     }

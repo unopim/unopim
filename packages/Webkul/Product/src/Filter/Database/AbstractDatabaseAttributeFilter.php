@@ -9,7 +9,7 @@ abstract class AbstractDatabaseAttributeFilter extends AbstractAttributeFilter
 {
     protected function getScopedAttributePath($attribute, ?string $locale = null, ?string $channel = null)
     {
-        return sprintf('$.%s.%s', $attribute->getScope($locale, $channel), $attribute->code);
+        return explode('.', $attribute->getScope($locale, $channel).'.'.$attribute->code);
     }
 
     protected function getSearchTablePath(array $options = [])

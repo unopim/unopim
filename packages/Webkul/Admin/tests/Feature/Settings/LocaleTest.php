@@ -59,7 +59,10 @@ it('should return the locale as json for edit modal', function () {
 
     $this->get(route('admin.settings.locales.edit', $locale->id))
         ->assertOk()
-        ->assertJsonFragment($locale->toArray());
+        ->assertJsonFragment([
+            ...$locale->toArray(),
+            'status' => $locale->status ? true : false,
+        ]);
 });
 
 it('should update an existing locale status', function () {

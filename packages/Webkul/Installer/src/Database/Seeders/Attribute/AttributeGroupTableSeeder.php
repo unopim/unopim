@@ -4,6 +4,7 @@ namespace Webkul\Installer\Database\Seeders\Attribute;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Webkul\Core\Helpers\Database\DatabaseSequenceHelper;
 
 class AttributeGroupTableSeeder extends Seeder
 {
@@ -67,5 +68,7 @@ class AttributeGroupTableSeeder extends Seeder
                 ],
             ]);
         }
+
+        DatabaseSequenceHelper::fixSequences(['attribute_groups', 'attribute_group_translations']);
     }
 }

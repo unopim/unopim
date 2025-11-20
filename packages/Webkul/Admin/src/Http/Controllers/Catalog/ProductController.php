@@ -55,24 +55,6 @@ class ProductController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function create()
-    {
-        $families = $this->attributeFamilyRepository->all();
-
-        $configurableFamily = null;
-
-        if ($familyId = request()->get('family')) {
-            $configurableFamily = $this->attributeFamilyRepository->find($familyId);
-        }
-
-        return view('admin::catalog.products.create', compact('families', 'configurableFamily'));
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @return \Illuminate\Http\JsonResponse
