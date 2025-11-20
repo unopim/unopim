@@ -4,6 +4,7 @@ namespace Webkul\Installer\Database\Seeders\Attribute;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Webkul\Core\Helpers\Database\DatabaseSequenceHelper;
 
 class AttributeOptionTableSeeder extends Seeder
 {
@@ -113,5 +114,7 @@ class AttributeOptionTableSeeder extends Seeder
                 ],
             ]);
         }
+
+        DatabaseSequenceHelper::fixSequences(['attribute_options', 'attribute_option_translations']);
     }
 }

@@ -9,7 +9,7 @@ use Webkul\Category\Repositories\CategoryRepository;
 /*
  * Category bulk table seeder.
  *
- * Command: php artisan db:seed --class=Webkul\\Category\\Database\\Seeders\\CategoryBulkTableSeeder
+ * Command: php artisan db:seed --class=Webkul\\Installer\\Database\\Seeders\\Category\\CategoryBulkTableSeeder
  *
  * This seeder has not included anywhere just for development purpose.
  */
@@ -31,7 +31,7 @@ class CategoryBulkTableSeeder extends Seeder
     {
         for ($i = 0; $i < $this->numberOfParentCategories; $i++) {
             $createdCategory = $this->categoryRepository->create([
-                'name'        => $this->faker->firstName,
+                'code'        => $this->faker->firstName.rand(1, 1000),
                 'parent_id'   => 1,
             ]);
 
@@ -39,7 +39,7 @@ class CategoryBulkTableSeeder extends Seeder
                 for ($j = 0; $j < $this->numberOfChildCategories; $j++) {
 
                     $this->categoryRepository->create([
-                        'name'        => $this->faker->firstName,
+                        'code'        => $this->faker->firstName.rand(1000, 10000),
                         'parent_id'   => $createdCategory->id,
                     ]);
                 }

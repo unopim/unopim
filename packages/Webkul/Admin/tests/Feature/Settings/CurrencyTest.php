@@ -22,8 +22,8 @@ it('should create the currency', function () {
     $response = postJson(route('admin.settings.currencies.store'),
         [
             'code'    => 'DOP',
-            'symbol'  => 'RD$',
-            'decimal' => '',
+            'symbol'  => 'Rs',
+            'decimal' => 1,
             'status'  => 1,
         ],
     );
@@ -71,26 +71,31 @@ it('should update the currency', function () {
     $this->loginAsAdmin();
 
     $currency = Currency::factory()->create([
-        'code'   => 'DOP',
-        'symbol' => '$',
+        'code'    => 'DOP',
+        'symbol'  => '$',
+        'decimal' => 2,
+        'status'  => 1,
     ]);
 
-    $response = putJson(route('admin.settings.currencies.update'),
-        [
-            'id'      => $currency->id,
-            'code'    => 'DOP',
-            'symbol'  => '$$',
-            'decimal' => '',
-            'status'  => 0,
-        ],
-    );
+    $data = [
+        'id'      => $currency->id,
+        'code'    => 'DOP',
+        'symbol'  => '$$',
+        'status'  => 0,
+        'decimal' => 0,
+    ];
+
+    $response = putJson(route('admin.settings.currencies.update'), $data);
 
     $response->assertStatus(200);
 
     $this->assertDatabaseHas($this->getFullTableName(Currency::class), [
         'code'   => $currency->code,
         'symbol' => '$$',
+        'decimal'=> $data['decimal'],
+        'status' => 0,
     ]);
+
 });
 
 it('should give validation message for code', function () {
@@ -100,7 +105,7 @@ it('should give validation message for code', function () {
         [
             'code'    => 'DO',
             'symbol'  => '$$',
-            'decimal' => '',
+            'decimal' => 2,
             'status'  => 0,
         ],
     );
@@ -164,8 +169,8 @@ it('should not update the code of currency', function () {
         [
             'id'      => $currency->id,
             'code'    => 'DOP',
-            'symbol'  => 'RD$',
-            'decimal' => '',
+            'symbol'  => 'Rs',
+            'decimal' => 1,
             'status'  => 0,
         ],
     );
@@ -174,7 +179,7 @@ it('should not update the code of currency', function () {
 
     $this->assertDatabaseHas($this->getFullTableName(Currency::class), [
         'code'   => $currency->code,
-        'symbol' => 'RD$',
+        'symbol' => 'Rs',
     ]);
 });
 

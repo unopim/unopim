@@ -187,14 +187,16 @@ class ApiKeysController extends Controller
 
         $id = $name = $data['apiId'];
 
+        $clientId = $client->getKey();
+
         $apiKey = $this->apiKeyRepository->update([
-            'oauth_client_id' => $client->getKey(),
+            'oauth_client_id' => $clientId,
         ], $id);
 
         return new JsonResponse([
-            'client_id'       => $client->getKey(),
+            'client_id'       => $clientId,
             'secret_key'      => $client->plainSecret,
-            'oauth_client_id' => $client->getKey(),
+            'oauth_client_id' => $clientId,
         ]);
     }
 

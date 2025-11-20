@@ -4,6 +4,7 @@ namespace Webkul\Installer\Database\Seeders\Core;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Webkul\Core\Helpers\Database\DatabaseSequenceHelper;
 
 class LocalesTableSeeder extends Seeder
 {
@@ -259,5 +260,7 @@ class LocalesTableSeeder extends Seeder
                 ],
             ]);
         }
+
+        DatabaseSequenceHelper::fixSequence('locales');
     }
 }

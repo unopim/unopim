@@ -189,6 +189,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
         if ($this->type === 'file') {
             $validations[] = 'file';
             $validations[] = 'max:'.(core()->getConfigData('catalog.products.attribute.file_attribute_upload_size') ?? '2048');
+            $validations[] = new FileOrImageValidValue;
         }
 
         if ($this->type === 'image') {
@@ -199,9 +200,15 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
             if ($retVal) {
                 $validations[] = 'max:'.$retVal.'';
             }
+
+            $validations[] = new FileOrImageValidValue(isImage: true);
         }
 
-        $validations[] = new FileOrImageValidValue(isImage: $this->type != AttributeTypes::FILE_ATTRIBUTE_TYPE, isMultiple: $this->type === AttributeTypes::GALLERY_ATTRIBUTE_TYPE);
+        if ($this->type === AttributeTypes::GALLERY_ATTRIBUTE_TYPE) {
+            $validations[] = (new FileOrImageValidValue(isImage: true, isMultiple: true))
+                ->mergeAllowedExtensions(['mp4', 'webm', 'mkv'])
+                ->mergeAllowedMimes(['mp4', 'webm', 'mkv']);
+        }
 
         return $validations;
     }
@@ -228,14 +235,6 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
     public function isChannelBasedAttribute(): bool
     {
         return (bool) $this->value_per_channel;
-    }
-
-    /**
-     * Is attribute usable in product grid or not
-     */
-    public function isUsableInGrid(): bool
-    {
-        return (bool) $this->usable_in_grid;
     }
 
     /**
@@ -460,12 +459,12 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
     public function getScope(?string $locale = null, ?string $channel = null): string
     {
         return ($this->value_per_locale && $this->value_per_channel)
-        ? sprintf('channel_locale_specific.%s.%s', $channel, $locale)
-        : ($this->value_per_locale
-            ? sprintf('locale_specific.%s', $locale)
-            : ($this->value_per_channel
-                ? sprintf('channel_specific.%s', $channel)
-                : 'common'));
+            ? sprintf('channel_locale_specific.%s.%s', $channel, $locale)
+            : ($this->value_per_locale
+                ? sprintf('locale_specific.%s', $locale)
+                : ($this->value_per_channel
+                    ? sprintf('channel_specific.%s', $channel)
+                    : 'common'));
     }
 
     /**

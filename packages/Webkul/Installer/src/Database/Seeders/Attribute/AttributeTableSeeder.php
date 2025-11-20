@@ -5,6 +5,7 @@ namespace Webkul\Installer\Database\Seeders\Attribute;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Webkul\Core\Helpers\Database\DatabaseSequenceHelper;
 
 class AttributeTableSeeder extends Seeder
 {
@@ -474,5 +475,7 @@ class AttributeTableSeeder extends Seeder
                 ],
             ]);
         }
+
+        DatabaseSequenceHelper::fixSequences(['attributes', 'attribute_translations']);
     }
 }

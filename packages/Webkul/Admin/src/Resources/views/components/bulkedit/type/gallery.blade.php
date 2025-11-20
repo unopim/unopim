@@ -17,7 +17,7 @@
         type="file"
         ref="fileInput"
         class="hidden"
-        accept="image/*"
+        accept="image/*, video/*"
         multiple
         @change="onFileChange"
       />
@@ -31,14 +31,23 @@
       <x-slot:content>
         <div v-if="imageList.length" class="grid grid-cols-3 gap-4 max-h-[260px] overflow-auto">
           <div v-for="(img, index) in imageList" :key="index" class="relative group">
-            <img :src="baseUrl + img" class="w-full h-24 object-cover rounded border" />
+            <video
+              v-if="isVideo(img)"
+              :src="baseUrl + img"
+              class="w-full h-24 object-cover rounded border"
+            />
+            <img
+              v-else
+              :src="baseUrl + img"
+              class="w-full h-24 object-cover rounded border"
+            />
             <div class="flex flex-col justify-between invisible w-full p-3 bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 transition-all group-hover:visible">
               <p class="text-xs text-gray-600 dark:text-gray-300 font-semibold break-all"></p>
                 <div
                   class="absolute inset-0 bg-white dark:bg-cherry-800 bg-opacity-80 rounded flex justify-end p-2 opacity-80 transition-all group-hover:visible"
                 >
                   <span
-                    class="icon-delete text-xl p-1 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                    class="icon-delete text-xl p-1 max-h-min rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
                     @click="removeImage"
                   ></span>
                 </div>
@@ -159,6 +168,10 @@
             entityId: this.entityId,
             column: this.column,
           });
+        },
+
+        isVideo(filePath) {
+          return /\.(mp4|webm|mkv)(\?.*)?$/i.test(filePath || '');
         }
       },
     });

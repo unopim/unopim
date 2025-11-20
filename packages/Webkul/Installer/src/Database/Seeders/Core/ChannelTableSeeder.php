@@ -4,6 +4,7 @@ namespace Webkul\Installer\Database\Seeders\Core;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Webkul\Core\Helpers\Database\DatabaseSequenceHelper;
 
 class ChannelTableSeeder extends Seeder
 {
@@ -68,5 +69,7 @@ class ChannelTableSeeder extends Seeder
                 ],
             ]);
         }
+
+        DatabaseSequenceHelper::fixSequence('channels');
     }
 }

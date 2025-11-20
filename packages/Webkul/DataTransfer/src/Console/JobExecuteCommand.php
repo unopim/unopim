@@ -150,6 +150,7 @@ class JobExecuteCommand extends Command
 
         // Create a new job track instance in the database
         $jobTrackInstance = $this->jobTrackRepository->create([
+            'type'                  => $jobInstance->type,
             'state'                 => Export::STATE_PENDING,
             'validation_strategy'   => $jobInstance->validation_strategy,
             'allowed_errors'        => $jobInstance->allowed_errors,
