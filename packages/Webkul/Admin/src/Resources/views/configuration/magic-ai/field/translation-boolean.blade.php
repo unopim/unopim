@@ -65,8 +65,10 @@
 
                         this.localValue = isEnabled ? 1 : 0;
                         this.isDisabled = !isEnabled;
+
+                        this.emitChangeEvent(this.localValue, this.name);
                     }
-                })
+                });
             },
 
             methods: {

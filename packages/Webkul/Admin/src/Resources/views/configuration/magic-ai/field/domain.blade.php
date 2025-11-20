@@ -24,7 +24,6 @@
                         type="text"
                         ::id="name"
                         ::name="name"
-                        rules="required"
                         v-model="api_domain"
                         ::label="label"
                         ::placeholder="label"
