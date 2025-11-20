@@ -23,7 +23,6 @@ class WebhookServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/../Resources/views', 'webhook');
 
         $this->app->register(EventServiceProvider::class);
-        $this->app->register(ModuleServiceProvider::class);
     }
 
     /**
