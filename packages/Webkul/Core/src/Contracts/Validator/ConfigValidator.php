@@ -1,6 +1,6 @@
 <?php
 
-namespace Webkul\MagicAI\Contracts\Validator;
+namespace Webkul\Core\Contracts\Validator;
 
 interface ConfigValidator
 {

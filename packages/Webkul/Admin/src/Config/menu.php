@@ -134,7 +134,8 @@ return [
     [
         'key'    => 'configuration',
         'name'   => 'admin::app.components.layouts.sidebar.configure',
-        'route'  => 'admin.configuration.integrations.index',
+        'route'  => 'admin.configuration.edit',
+        'params' => ['general', 'magic_ai'],
         'sort'   => 9,
         'icon'   => 'icon-configuration',
     ], [

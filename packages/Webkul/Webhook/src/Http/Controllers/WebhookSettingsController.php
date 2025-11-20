@@ -63,7 +63,7 @@ class WebhookSettingsController
         return response()->json([
             'success' => true,
             'data'    => $setting,
-            'message' => trans('webhook::app.components.layouts.sidebar.menu.webhook.submenu.settings.success'),
+            'message' => trans('webhook::app.configuration.webhook.settings.index.success'),
         ]);
     }
 
