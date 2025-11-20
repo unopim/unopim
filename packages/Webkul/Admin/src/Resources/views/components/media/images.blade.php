@@ -43,8 +43,6 @@
                                 <p class="grid text-sm text-gray-600 dark:text-gray-300 font-semibold text-center">
                                     @lang('admin::app.components.media.images.add-image-btn')
                                 </p>
-
-
                             </div>
                         </label>
 
@@ -425,60 +423,71 @@
     </script>
 
     <script type="text/x-template" id="v-media-image-item-template">
-        <div class="justify-items-center border rounded p-1 min-w-[120px] max-h-[120px] relative rounded overflow-hidden transition-all hover:border-gray-400 group"  :style="{'width': this.width, 'height': this.height}">
-            <img
-                :src="image.url"
-                class="w-full h-full object-contain object-top"
-            />
-            <x-admin::modal ref="imagePreviewModal">
-                <x-slot:header>
-                    <p class="text-lg text-gray-800 dark:text-white font-bold">
-                    </p>
-                </x-slot>
-                <x-slot:content>
-                <div style="max-width: 100%;height: 260px;">
-                    <img
-                        :src="image.url"
-                        class="w-full h-full object-contain object-top"
-                    />
-                </div>
-                </x-slot>
-            </x-admin::modal>
-
-            <div class="flex flex-col justify-between invisible w-full p-3 bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 transition-all group-hover:visible">
-                <!-- Image Name -->
-                <p class="text-xs text-gray-600 dark:text-gray-300 font-semibold break-all"></p>
-
-                <!-- Actions -->
-                <div class="flex justify-between">
-                    <span
-                        class="icon-delete text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
-                        @click="remove"
-                    ></span>
-                    <span
-                        class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
-                        @click="preview"
-                    ></span>
-                    <label
-                        class="icon-edit text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
-                        :for="$.uid + '_imageInput_' + index"
-                    ></label>
-
-                    <input type="hidden" :name="name + '[' + image.id + ']'" v-if="allowMultiple && ! image.is_new && image.value" :value="image.value"/>
-
-                    <input type="hidden" :name="name" v-if="! allowMultiple && ! image.is_new && image.value" :value="image.value"/>
-
-                    <input
-                        type="file"
-                        :name="name + '[]'"
-                        class="hidden"
-                        accept="image/*"
-                        :id="$.uid + '_imageInput_' + index"
-                        :ref="$.uid + '_imageInput_' + index"
-                        @change="edit"
-                    />
+        <div class="grid gap-1.6 max-w-max p-1 text-gray-600 dark:text-gray-300 group border border-dashed border-gray-300 rounded transition-all hover:border-gray-400 group-hover:visible">
+            <div
+                class="justify-items-center p-1 min-w-[120px] max-h-[120px] relative overflow-hidden transition-all group"
+                :style="{'width': this.width, 'height': this.height}"
+            >
+                <img
+                    :src="image.url"
+                    class="w-full h-full object-contain object-top"
+                />
+                <x-admin::modal ref="imagePreviewModal">
+                    <x-slot:header>
+                        <p class="text-lg text-gray-800 dark:text-white font-bold">
+                            @{{ getDisplayFileName(image.name) }}
+                        </p>
+                    </x-slot>
+                    <x-slot:content>
+                        <div style="max-width: 100%;height: 260px;">
+                            <img
+                                :src="image.url"
+                                class="w-full h-full object-contain object-top"
+                            />
+                        </div>
+                    </x-slot>
+                </x-admin::modal>
+    
+                <div class="flex flex-col justify-between invisible w-full p-3 bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 transition-all group-hover:visible">
+                    <!-- Image Name -->
+                    <p class="text-xs text-gray-600 dark:text-gray-300 font-semibold break-all"></p>
+    
+                    <!-- Actions -->
+                    <div class="flex justify-between">
+                        <span
+                            class="icon-delete text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                            @click="remove"
+                        ></span>
+                        <span
+                            class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                            @click="preview"
+                        ></span>
+                        <label
+                            class="icon-edit text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                            :for="$.uid + '_imageInput_' + index"
+                        ></label>
+    
+                        <input type="hidden" :name="name + '[' + image.id + ']'" v-if="allowMultiple && ! image.is_new && image.value" :value="image.value"/>
+    
+                        <input type="hidden" :name="name" v-if="! allowMultiple && ! image.is_new && image.value" :value="image.value"/>
+    
+                        <input
+                            type="file"
+                            :name="name + '[]'"
+                            class="hidden"
+                            accept="image/*"
+                            :id="$.uid + '_imageInput_' + index"
+                            :ref="$.uid + '_imageInput_' + index"
+                            @change="edit"
+                        />
+                    </div>
                 </div>
             </div>
+
+            <!-- Image Name -->
+            <label class="mt-1 grid text-xs text-gray-700 dark:text-gray-300 font-medium text-center break-all" :key="image.url">
+                    @{{ getDisplayFileName(image.name) }}
+            </label>
         </div>
     </script>
 
@@ -618,7 +627,8 @@
                         this.images.push({
                             id: 'image_' + this.images.length,
                             url: '',
-                            file: file
+                            file: file,
+                            name: file.name
                         });
                     });
 
@@ -844,6 +854,13 @@
 
                     reader.readAsDataURL(file);
                 },
+                getDisplayFileName(fileName) {
+                    if (fileName.length > 29) {
+                        return fileName.substring(0, 20) + '...' + fileName.substring(fileName.lastIndexOf('.'));
+                    }
+
+                    return fileName;
+                }
             }
         });
     </script>

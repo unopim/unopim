@@ -189,6 +189,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
         if ($this->type === 'file') {
             $validations[] = 'file';
             $validations[] = 'max:'.(core()->getConfigData('catalog.products.attribute.file_attribute_upload_size') ?? '2048');
+            $validations[] = new FileOrImageValidValue;
         }
 
         if ($this->type === 'image') {
@@ -199,9 +200,15 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
             if ($retVal) {
                 $validations[] = 'max:'.$retVal.'';
             }
+
+            $validations[] = new FileOrImageValidValue(isImage: true);
         }
 
-        $validations[] = new FileOrImageValidValue(isImage: $this->type != AttributeTypes::FILE_ATTRIBUTE_TYPE, isMultiple: $this->type === AttributeTypes::GALLERY_ATTRIBUTE_TYPE);
+        if ($this->type === AttributeTypes::GALLERY_ATTRIBUTE_TYPE) {
+            $validations[] = (new FileOrImageValidValue(isImage: true, isMultiple: true))
+                ->mergeAllowedExtensions(['mp4', 'webm', 'mkv'])
+                ->mergeAllowedMimes(['mp4', 'webm', 'mkv']);
+        }
 
         return $validations;
     }

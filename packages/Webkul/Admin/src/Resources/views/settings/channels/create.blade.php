@@ -150,7 +150,12 @@
                             </x-admin::form.control-group.label>
 
                             @php
-                                 $options = json_encode(core()->getAllActiveLocales()->toArray());
+                                $options = json_encode(core()->getAllActiveLocales()->toArray());
+                                $oldLocales = old('locales');
+
+                                if (is_array($oldLocales)) {
+                                    $oldLocales = json_encode($oldLocales);
+                                }
                             @endphp
 
                             <x-admin::form.control-group.control
@@ -159,7 +164,7 @@
                                 name="locales"
                                 rules="required"
                                 :options="$options"
-                                :value="old('locales')"
+                                :value="$oldLocales"
                                 :label="trans('admin::app.settings.channels.edit.locales')"
                                 :placeholder="trans('admin::app.settings.channels.edit.select-locales')"
                                 track-by="id"

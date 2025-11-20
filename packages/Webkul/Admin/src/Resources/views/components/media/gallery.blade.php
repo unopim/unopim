@@ -448,7 +448,7 @@
                 />
                 <x-admin::modal ref="mediaPreviewModal" type="large">
                     <x-slot:header>
-                            <p class="text-sm text-gray-800 dark:text-white font-bold"><span> @{{ getDisplayFileName(image.name) }} </span></p>
+                        <p class="text-sm text-gray-800 dark:text-white font-bold"><span> @{{ getDisplayFileName(image.name) }} </span></p>
                     </x-slot>
                     <x-slot:content>
                         <div>
