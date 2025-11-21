@@ -19,11 +19,15 @@ return new class extends Migration
                 Schema::table('oauth_personal_access_clients', function (Blueprint $table) {
                     $table->uuid('client_id')->change();
                 });
+
                 break;
 
             case 'pgsql':
-                DB::statement('ALTER TABLE oauth_personal_access_clients ALTER COLUMN client_id DROP DEFAULT;');
-                DB::statement('ALTER TABLE oauth_personal_access_clients ALTER COLUMN client_id TYPE uuid USING md5(client_id::text)::uuid;');
+                $tablePrefix = DB::getTablePrefix();
+
+                DB::statement("ALTER TABLE {$tablePrefix}oauth_personal_access_clients ALTER COLUMN client_id DROP DEFAULT;");
+                DB::statement("ALTER TABLE {$tablePrefix}oauth_personal_access_clients ALTER COLUMN client_id TYPE uuid USING md5(client_id::text)::uuid;");
+
                 break;
         }
     }
@@ -43,8 +47,9 @@ return new class extends Migration
                 break;
 
             case 'pgsql':
-                DB::statement('ALTER TABLE oauth_personal_access_clients ALTER COLUMN client_id DROP DEFAULT;');
-                DB::statement('ALTER TABLE oauth_personal_access_clients ALTER COLUMN client_id TYPE bigint USING 1;');
+                $tablePrefix = DB::getTablePrefix();
+                DB::statement("ALTER TABLE {$tablePrefix}oauth_personal_access_clients ALTER COLUMN client_id DROP DEFAULT;");
+                DB::statement("ALTER TABLE {$tablePrefix}oauth_personal_access_clients ALTER COLUMN client_id TYPE bigint USING 1;");
                 break;
         }
     }
