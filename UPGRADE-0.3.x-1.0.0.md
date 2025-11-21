@@ -59,12 +59,8 @@ Ensure that the system is cleared of any cached data and properly linked:
 php artisan optimize:clear
 php artisan storage:link
 ```
-Here’s the updated version with the **note about queues moved into Step 6** instead of appearing after Step 7.
-I kept everything else unchanged.
 
----
-
-### 6. **Process system queue jobs**
+### 7. **Process system queue jobs**
 
 Unopim now uses two queues: **system** and **default**.
 
@@ -83,7 +79,7 @@ You may also choose to set up **dedicated workers** for each queue.
 php artisan queue:work --queue=system,default
 ```
 
-### 7. **Restart the Queue Worker**
+### 8. **Restart the Queue Worker**
 
 If you are using a process manager like Supervisor to manage the `queue:work` command, restart the relevant service to apply the changes. Replace `unopim-worker` with your actual worker name, if different:
 
