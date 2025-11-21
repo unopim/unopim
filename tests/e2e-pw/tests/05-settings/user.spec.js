@@ -17,7 +17,7 @@ test('Create User with empty name field', async ({ adminPage }) => {
   await adminPage.getByRole('option', { name: 'English (United States)' }).locator('span').first().click();
   await adminPage.locator('div').filter({ hasText: /^Timezone$/ }).click();
   await adminPage.getByRole('textbox', { name: 'timezone-searchbox' }).fill('new_y');
-  await adminPage.getByRole('option', { name: 'America/New_York (-04:00)' }).locator('span').first().click();
+  await adminPage.keyboard.press("Enter");
   await adminPage.locator('div').filter({ hasText: /^Role$/ }).nth(1).click();
   await adminPage.getByRole('option', { name: 'Administrator' }).locator('span').first().click();
   await adminPage.locator('label[for="status"]').click();
@@ -41,7 +41,7 @@ test('Create User with empty Email field', async ({ adminPage }) => {
   await adminPage.getByRole('option', { name: 'English (United States)' }).locator('span').first().click();
   await adminPage.locator('div').filter({ hasText: /^Timezone$/ }).click();
   await adminPage.getByRole('textbox', { name: 'timezone-searchbox' }).fill('new_y');
-  await adminPage.getByRole('option', { name: 'America/New_York (-04:00)' }).locator('span').first().click();
+  await adminPage.keyboard.press("Enter");
   await adminPage.locator('div').filter({ hasText: /^Role$/ }).nth(1).click();
   await adminPage.getByRole('option', { name: 'Administrator' }).locator('span').first().click();
   await adminPage.locator('label[for="status"]').click();
@@ -65,7 +65,7 @@ test('Create User with empty password field', async ({ adminPage }) => {
   await adminPage.getByRole('option', { name: 'English (United States)' }).locator('span').first().click();
   await adminPage.locator('div').filter({ hasText: /^Timezone$/ }).click();
   await adminPage.getByRole('textbox', { name: 'timezone-searchbox' }).fill('new_y');
-  await adminPage.getByRole('option', { name: 'America/New_York (-04:00)' }).locator('span').first().click();
+  await adminPage.keyboard.press("Enter");
   await adminPage.locator('div').filter({ hasText: /^Role$/ }).nth(1).click();
   await adminPage.getByRole('option', { name: 'Administrator' }).locator('span').first().click();
   await adminPage.locator('label[for="status"]').click();
@@ -89,7 +89,7 @@ test('Create User with empty confirm password field', async ({ adminPage }) => {
   await adminPage.getByRole('option', { name: 'English (United States)' }).locator('span').first().click();
   await adminPage.locator('div').filter({ hasText: /^Timezone$/ }).click();
   await adminPage.getByRole('textbox', { name: 'timezone-searchbox' }).fill('new_y');
-  await adminPage.getByRole('option', { name: 'America/New_York (-04:00)' }).locator('span').first().click();
+  await adminPage.keyboard.press("Enter");
   await adminPage.locator('div').filter({ hasText: /^Role$/ }).nth(1).click();
   await adminPage.getByRole('option', { name: 'Administrator' }).locator('span').first().click();
   await adminPage.locator('label[for="status"]').click();
@@ -113,7 +113,7 @@ test('Create User with different password in confirm password field', async ({ a
   await adminPage.getByRole('option', { name: 'English (United States)' }).locator('span').first().click();
   await adminPage.locator('div').filter({ hasText: /^Timezone$/ }).click();
   await adminPage.getByRole('textbox', { name: 'timezone-searchbox' }).fill('new_y');
-  await adminPage.getByRole('option', { name: 'America/New_York (-04:00)' }).locator('span').first().click();
+  await adminPage.keyboard.press("Enter");
   await adminPage.locator('div').filter({ hasText: /^Role$/ }).nth(1).click();
   await adminPage.getByRole('option', { name: 'Administrator' }).locator('span').first().click();
   await adminPage.locator('label[for="status"]').click();
@@ -135,7 +135,7 @@ test('Create User with empty UI locale field', async ({ adminPage }) => {
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).fill('testing123');
   await adminPage.locator('div').filter({ hasText: /^Timezone$/ }).click();
   await adminPage.getByRole('textbox', { name: 'timezone-searchbox' }).fill('new_y');
-  await adminPage.getByRole('option', { name: 'America/New_York (-04:00)' }).locator('span').first().click();
+  await adminPage.keyboard.press("Enter");
   await adminPage.locator('div').filter({ hasText: /^Role$/ }).nth(1).click();
   await adminPage.getByRole('option', { name: 'Administrator' }).locator('span').first().click();
   await adminPage.locator('label[for="status"]').click();
@@ -180,7 +180,7 @@ test('Create User with empty Role field', async ({ adminPage }) => {
   await adminPage.getByRole('option', { name: 'English (United States)' }).locator('span').first().click();
   await adminPage.locator('div').filter({ hasText: /^Timezone$/ }).click();
   await adminPage.getByRole('textbox', { name: 'timezone-searchbox' }).fill('new_y');
-  await adminPage.getByRole('option', { name: 'America/New_York (-04:00)' }).locator('span').first().click();
+  await adminPage.keyboard.press("Enter");
   await adminPage.locator('label[for="status"]').click();
   await adminPage.getByRole('button', { name: 'Save User' }).click();
   await expect(adminPage.getByText(/The Role field is required/i)).toBeVisible();
@@ -202,7 +202,7 @@ test('Create User', async ({ adminPage }) => {
   await adminPage.getByRole('option', { name: 'English (United States)' }).locator('span').first().click();
   await adminPage.locator('div').filter({ hasText: /^Timezone$/ }).click();
   await adminPage.getByRole('textbox', { name: 'timezone-searchbox' }).fill('new_y');
-  await adminPage.getByRole('option', { name: 'America/New_York (-04:00)' }).locator('span').first().click();
+  await adminPage.keyboard.press("Enter");
   await adminPage.locator('div').filter({ hasText: /^Role$/ }).nth(1).click();
   await adminPage.getByRole('option', { name: 'Administrator' }).locator('span').first().click();
   await adminPage.locator('label[for="status"]').click();

@@ -11,7 +11,9 @@ test('Create category field with empty Code', async ({ adminPage }) => {
   await adminPage.getByRole('option', { name: 'Text' }).locator('span').first().click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Suggestion');
+  await adminPage.waitForTimeout(500);
   await adminPage.getByRole('button', { name: 'Save Category Field' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.getByText('The Code field is required ')).toBeVisible();
 });
 
@@ -23,7 +25,9 @@ test('Create category field with empty Type', async ({ adminPage }) => {
   await adminPage.getByRole('textbox', { name: 'Code' }).fill('suggestion');
   await adminPage.locator('input[name="en_US\\[name\\]"]').click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Suggestion');
+  await adminPage.waitForTimeout(500);
   await adminPage.getByRole('button', { name: 'Save Category Field' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.getByText('The Type field is required ')).toBeVisible();
 });
 
@@ -35,7 +39,9 @@ test('Create category field with empty Code and Type', async ({ adminPage }) => 
   await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
   await adminPage.locator('input[name="en_US\\[name\\]"]').click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Suggestion');
+  await adminPage.waitForTimeout(500);
   await adminPage.getByRole('button', { name: 'Save Category Field' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.getByText('The Code field is required ')).toBeVisible();
   await expect(adminPage.getByText('The Type field is required ')).toBeVisible();
 });
@@ -50,7 +56,9 @@ test('Create category field', async ({ adminPage }) => {
   await adminPage.getByRole('option', { name: 'Text' }).locator('span').first().click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Suggestion');
+  await adminPage.waitForTimeout(500);
   await adminPage.getByRole('button', { name: 'Save Category Field' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.getByText(/Category Field Created Successfully/i)).toBeVisible();
 });
 
@@ -87,6 +95,7 @@ test('should perform actions on a category (Edit, Delete)', async ({ adminPage }
   await expect(adminPage).toHaveURL(/\/admin\/catalog\/category-fields\/edit/);
   await adminPage.goBack();
   await itemRow.locator('span[title="Delete"]').first().click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.locator('text=Are you sure you want to delete?')).toBeVisible();
 });
 
@@ -103,7 +112,9 @@ test('update category field', async ({ adminPage }) => {
   await adminPage.getByText('test1Suggestion').getByTitle('Edit').click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').fill('soogesan');
+  await adminPage.waitForTimeout(500);
   await adminPage.getByRole('button', { name: 'Save Category Field' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.getByText(/Category Field Updated Successfully/i)).toBeVisible();
 });
 
@@ -112,6 +123,7 @@ test('delete category field', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: 'Category Fields' }).click();
   await adminPage.getByText('test1soogesan').getByTitle('Delete').click();
   await adminPage.getByRole('button', { name: 'Delete' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.getByText(/Category Field Deleted Successfully/i)).toBeVisible();
 });
 
@@ -120,6 +132,7 @@ test('delete default category field', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: 'Category Fields' }).click();
   await adminPage.getByText('nameName').getByTitle('Delete').click();
   await adminPage.getByRole('button', { name: 'Delete' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.getByText(/This category field can not be deleted./i)).toBeVisible();
 });
 });

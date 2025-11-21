@@ -1,5 +1,4 @@
 const { test, expect } = require('../../utils/fixtures');
-
 const groqapikey = process.env.GROQ_API_KEY;
 const groqinvalidapikey = process.env.GROQ_INVALID_KEY;
 
@@ -287,6 +286,7 @@ test('Click on save prompt with empty fields', async({adminPage})=>{
   await adminPage.getByRole('link', { name: 'Prompt', exact: true }).click();
   await expect(adminPage.getByRole('button', { name: 'Create Prompt' })).toBeVisible();
   await adminPage.getByRole('button', { name: 'Create Prompt' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.getByRole('button', { name: 'Save Prompt' })).toBeVisible();
   await adminPage.getByRole('button', { name: 'Save Prompt' }).click();
   await expect(adminPage.getByText('The title field is required')).toBeVisible();
@@ -550,86 +550,66 @@ test('Check that AI Translate is visible on Short-Description', async({adminPage
   await expect(adminPage.getByRole('button', { name: 'Translate' }).first()).toBeVisible();
 });
 
-// test('Check more option and translate is visible', async ({ adminPage }) => {
-//   await adminPage.getByRole('link', { name: ' Catalog' }).click();
-//   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
-//   await itemRow.locator('span[title="Edit"]').first().click();
-//   await expect(adminPage.locator('span[title="More Actions"]')).toBeVisible();
-//   await adminPage.locator('span[title="More Actions"]').click();
-//   await expect(adminPage.locator('span[title="Translate"]')).toBeVisible();
-// });
+test('Check more option and translate is visible', async ({ adminPage }) => {
+  await adminPage.getByRole('link', { name: ' Catalog' }).click();
+  const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
+  await itemRow.locator('span[title="Edit"]').first().click();
+  await expect(adminPage.locator('span[title="More Actions"]')).toBeVisible();
+  await adminPage.locator('span[title="More Actions"]').click();
+  await expect(adminPage.locator('span[title="Translate"]')).toBeVisible();
+});
 
-// test('Click on Translate and verify the fields', async({adminPage})=>{
-//   await adminPage.getByRole('link', { name: ' Catalog' }).click();
-//   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
-//   await itemRow.locator('span[title="Edit"]').first().click();
-//   await adminPage.locator('span[title="More Actions"]').click();
-//   await adminPage.locator('span[title="Translate"]').click();
-//   await expect(adminPage.getByText('Step 1: Select Source Channel, Language and Attributes')).toBeVisible();
-//   await expect(adminPage.locator('span.multiselect__single', { hasText: 'Default' })).toBeVisible();
-//   await expect(adminPage.locator('span.multiselect__single', { hasText: 'English (United States)' })).toBeVisible();
-//   await expect(adminPage.locator('div.multiselect__tags', { hasText: 'Short Description' })).toBeVisible();
-//   await expect(adminPage.getByRole('button', { name: 'Next' })).toBeVisible();
-// });
+test('Click on Translate and verify the fields', async({adminPage})=>{
+  await adminPage.getByRole('link', { name: ' Catalog' }).click();
+  const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
+  await itemRow.locator('span[title="Edit"]').first().click();
+  await adminPage.locator('span[title="More Actions"]').click();
+  await adminPage.locator('span[title="Translate"]').click();
+  await expect(adminPage.getByText('Step 1: Select Source Channel, Language and Attributes')).toBeVisible();
+  await expect(adminPage.locator('span.multiselect__single', { hasText: 'Default' })).toBeVisible();
+  await expect(adminPage.locator('span.multiselect__single', { hasText: 'English (United States)' })).toBeVisible();
+  await expect(adminPage.locator('div.multiselect__tags', { hasText: 'Short Description' })).toBeVisible();
+  await expect(adminPage.getByRole('button', { name: 'Next' })).toBeVisible();
+});
 
-// test('Click on next and verify the step 2 fields', async({adminPage})=>{
-//   await adminPage.getByRole('link', { name: ' Catalog' }).click();
-//   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
-//   await itemRow.locator('span[title="Edit"]').first().click();
-//   await adminPage.locator('span[title="More Actions"]').click();
-//   await adminPage.locator('span[title="Translate"]').click();
-//   await adminPage.getByRole('button', { name: 'Next' }).click();
-//   await expect(adminPage.getByText('Step 2: Select Target Channel and Languages')).toBeVisible();
-//   await expect(adminPage.locator('span.multiselect__single', { hasText: 'Default' }).nth(1)).toBeVisible();
-//   await expect(adminPage.locator('div.multiselect__tags', { hasText: 'Hindi (India)' })).toBeVisible();
-//   await expect(adminPage.getByRole('button', { name: 'Cancel' })).toBeVisible();
-//   await expect(adminPage.getByRole('button', { name: 'Translate' }).nth(1)).toBeVisible();
-// });
+test('Click on next and verify the step 2 fields', async({adminPage})=>{
+  await adminPage.getByRole('link', { name: ' Catalog' }).click();
+  const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
+  await itemRow.locator('span[title="Edit"]').first().click();
+  await adminPage.locator('span[title="More Actions"]').click();
+  await adminPage.locator('span[title="Translate"]').click();
+  await adminPage.getByRole('button', { name: 'Next' }).click();
+  await expect(adminPage.getByText('Step 2: Select Target Channel and Languages')).toBeVisible();
+  await expect(adminPage.locator('span.multiselect__single', { hasText: 'Default' }).nth(1)).toBeVisible();
+  await expect(adminPage.locator('div.multiselect__tags', { hasText: 'Hindi (India)' })).toBeVisible();
+  await expect(adminPage.getByRole('button', { name: 'Cancel' })).toBeVisible();
+  await expect(adminPage.getByRole('button', { name: 'Translate' }).nth(1)).toBeVisible();
+});
 
-// test('Verify the fields in translated content after click on Translate button', async({adminPage})=>{
-//   await adminPage.getByRole('link', { name: ' Catalog' }).click();
-//   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
-//   await itemRow.locator('span[title="Edit"]').first().click();
-//   await adminPage.locator('span[title="More Actions"]').click();
-//   await adminPage.locator('span[title="Translate"]').click();
-//   await adminPage.getByRole('button', { name: 'Next' }).click();
-//   await adminPage.locator('button.primary-button:has-text("Translate")').click();
-//   await adminPage.waitForTimeout(20000);
-//   await expect(adminPage.getByText('Translated Content')).toBeVisible();
-//   await expect(adminPage.getByRole('button', {name:'Apply'})).toBeVisible();
-// });
+test('Verify the fields in translated content after click on Translate button', async({adminPage})=>{
+  await adminPage.getByRole('link', { name: ' Catalog' }).click();
+  const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
+  await itemRow.locator('span[title="Edit"]').first().click();
+  await adminPage.locator('span[title="More Actions"]').click();
+  await adminPage.locator('span[title="Translate"]').click();
+  await adminPage.getByRole('button', { name: 'Next' }).click();
+  await adminPage.locator('button.primary-button:has-text("Translate")').click();
+  await adminPage.waitForTimeout(20000);
+  await expect(adminPage.getByText('Translated Content')).toBeVisible();
+  await expect(adminPage.getByRole('button', {name:'Apply'})).toBeVisible();
+});
 
-// test('Translate the content in the hindi', async({adminPage})=>{
-//   await adminPage.getByRole('link', { name: ' Catalog' }).click();
-//   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
-//   await itemRow.locator('span[title="Edit"]').first().click();
-//   await adminPage.locator('span[title="More Actions"]').click();
-//   await adminPage.locator('span[title="Translate"]').click();
-//   await adminPage.getByRole('button', { name: 'Next' }).click();
-//   await adminPage.locator('button.primary-button:has-text("Translate")').click();
-//   await adminPage.waitForTimeout(20000);
-//   await adminPage.getByRole('button', { name: 'Apply' }).click();
-//   await expect(adminPage.getByText('Translation job launched for product update')).toBeVisible();
-//   await adminPage.waitForTimeout(500);
-//   await adminPage.getByRole('button', { name: ' English (United States) ' }).click();
-//   await adminPage.getByRole('link', { name: 'Hindi (India)' }).click();
-//   const frame = await adminPage.frameLocator('#short_description_ifr');
-//   const bodyText = await frame.locator('body').innerText();
-//   const containsHindi = /[\u0900-\u097F]/.test(bodyText);
-//   console.log('Contains Hindi:', containsHindi);
-//   await expect(containsHindi).toBe(true);
-// });
 test.skip('Translate the content in the hindi', async({adminPage})=>{
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
   await itemRow.locator('span[title="Edit"]').first().click();
-  await adminPage.waitForTimeout(500);
-  await adminPage.getByRole('button', { name: 'Translate' }).first().click();
-  await adminPage.waitForTimeout(500);
-  await adminPage.getByRole('button', { name: 'Translate' }).nth(1).click();
-  await adminPage.waitForTimeout(30000);
+  await adminPage.locator('span[title="More Actions"]').click();
+  await adminPage.locator('span[title="Translate"]').click();
+  await adminPage.getByRole('button', { name: 'Next' }).click();
+  await adminPage.locator('button.primary-button:has-text("Translate")').click();
+  await adminPage.waitForTimeout(20000);
   await adminPage.getByRole('button', { name: 'Apply' }).click();
-  await expect(adminPage.getByText('Transalated contents store')).toBeVisible();
+  await expect(adminPage.getByText('Translation job launched for product update')).toBeVisible();
   await adminPage.waitForTimeout(500);
   await adminPage.getByRole('button', { name: ' English (United States) ' }).click();
   await adminPage.getByRole('link', { name: 'Hindi (India)' }).click();

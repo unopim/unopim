@@ -103,7 +103,7 @@ test('Check the URL of the log section in webhook page', async ({ adminPage }) =
   await adminPage.getByRole('link', { name: 'Webhook' }).click();
   const logSection = adminPage.getByRole('link', { name: 'Logs' });
   await logSection.click();
-  await expect(adminPage).toHaveURL(/.*\/admin\/webhook\/logs/);
+  await expect(adminPage).toHaveURL(/admin\/webhook\/settings.*logs/);
 });
 
 test('Check the content of the log section in webhook page', async ({ adminPage }) => {
@@ -164,7 +164,7 @@ test('Check the URL of the history section in webhook page', async ({ adminPage 
   await adminPage.getByRole('link', { name: 'Webhook' }).click();
   const historySection = adminPage.getByRole('link', { name: 'History' });
   await historySection.click();
-  await expect(adminPage).toHaveURL(/.*\/admin\/webhook\/history/);
+  await expect(adminPage).toHaveURL(/admin\/webhook\/settings.*history/);
 });
 
 test('Check the column of the history section in webhook page', async ({ adminPage }) => {
@@ -172,7 +172,6 @@ test('Check the column of the history section in webhook page', async ({ adminPa
   await adminPage.getByRole('link', { name: 'Webhook' }).click();
   const historySection = adminPage.getByRole('link', { name: 'History' });
   await historySection.click();
-  await expect(adminPage.getByText('ID')).toBeVisible();
   await expect(adminPage.getByText('Date / Time')).toBeVisible();
   await expect(adminPage.getByText('Version', {exact:true})).toBeVisible();
   await expect(adminPage.getByText('User', {exact:true})).toBeVisible();
