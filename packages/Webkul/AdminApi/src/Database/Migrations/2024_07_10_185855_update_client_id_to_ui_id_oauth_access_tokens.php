@@ -22,8 +22,10 @@ return new class extends Migration
                 break;
 
             case 'pgsql':
-                DB::statement('ALTER TABLE oauth_access_tokens ALTER COLUMN client_id DROP DEFAULT;');
-                DB::statement('ALTER TABLE oauth_access_tokens ALTER COLUMN client_id TYPE uuid USING md5(client_id::text)::uuid;');
+                $tablePrefix = DB::getTablePrefix();
+
+                DB::statement("ALTER TABLE {$tablePrefix}oauth_access_tokens ALTER COLUMN client_id DROP DEFAULT;");
+                DB::statement("ALTER TABLE {$tablePrefix}oauth_access_tokens ALTER COLUMN client_id TYPE uuid USING md5(client_id::text)::uuid;");
                 break;
         }
     }
@@ -43,8 +45,10 @@ return new class extends Migration
                 break;
 
             case 'pgsql':
-                DB::statement('ALTER TABLE oauth_access_tokens ALTER COLUMN client_id DROP DEFAULT;');
-                DB::statement('ALTER TABLE oauth_access_tokens ALTER COLUMN client_id TYPE bigint USING 1;');
+                $tablePrefix = DB::getTablePrefix();
+
+                DB::statement("ALTER TABLE {$tablePrefix}oauth_access_tokens ALTER COLUMN client_id DROP DEFAULT;");
+                DB::statement("ALTER TABLE {$tablePrefix}oauth_access_tokens ALTER COLUMN client_id TYPE bigint USING 1;");
                 break;
         }
     }
