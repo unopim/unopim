@@ -9,7 +9,9 @@ test('Create Attribute Group with empty Code field', async ({ adminPage }) => {
   await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
   await adminPage.locator('input[name="en_US\\[name\\]"]').click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Product Description');
+  await adminPage.waitForTimeout(500);
   await adminPage.getByRole('button', { name: 'Save Attribute Group' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.getByText('The Code field is required')).toBeVisible();
 });
 
@@ -21,7 +23,9 @@ test('Create Attribute Group', async ({ adminPage }) => {
   await adminPage.getByRole('textbox', { name: 'Code' }).fill('product_description');
   await adminPage.locator('input[name="en_US\\[name\\]"]').click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Product Description');
+  await adminPage.waitForTimeout(500);
   await adminPage.getByRole('button', { name: 'Save Attribute Group' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.getByText(/Attribute Group Created Successfully/i)).toBeVisible();
 });
 
@@ -66,7 +70,9 @@ test('Update attribute group', async ({ adminPage }) => {
   await adminPage.getByText('product_descriptionProduct Description').getByTitle('Edit').click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').fill('prudact discripsan');
+  await adminPage.waitForTimeout(500);
   await adminPage.getByRole('button', { name: 'Save Attribute Group' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.getByText(/Attribute Group Updated Successfully/i)).toBeVisible();
 });
 
@@ -74,7 +80,9 @@ test('Delete Attribute Group', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   await adminPage.getByRole('link', { name: 'Attribute Groups' }).click();
   await adminPage.getByText('product_descriptionprudact discripsan').getByTitle('Delete').click();
+  await adminPage.waitForTimeout(500);
   await adminPage.getByRole('button', { name: 'Delete' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.getByText(/Attribute Group Deleted Successfully/i)).toBeVisible();
 });
 });
