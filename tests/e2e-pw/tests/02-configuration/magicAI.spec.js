@@ -352,7 +352,7 @@ test('Create a System prompt with all field', async({adminPage})=>{
 });
 
 test('Create a Prompt with all the field for Product', async({adminPage})=>{
-  wait adminPage.getByRole('link', { name: ' Configuration' }).click();
+  await adminPage.getByRole('link', { name: ' Configuration' }).click();
   await adminPage.getByRole('link', { name: 'Magic AI' }).click();
   await adminPage.getByRole('link', { name: 'Prompt', exact: true }).click();
   await adminPage.getByRole('button', { name: 'Create Prompt' }).click();
