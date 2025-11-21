@@ -195,6 +195,10 @@ class BulkProductUpdate implements ShouldQueue
                             break;
                         }
 
+                        if ($attribute->type === 'price') {
+                            $value = $this->processCommonPriceValues($attributeCode, $value, $values['common'] ?? []);
+                        }
+
                         $attribute->setProductValue($value, $values);
                         break;
                 }
@@ -422,5 +426,13 @@ class BulkProductUpdate implements ShouldQueue
         }
 
         return $this->familyAttributeCache[$familyId];
+    }
+
+    /**
+     * Process price values for common attribute
+     */
+    protected function processCommonPriceValues(string $field, array $newData, array $oldData): array
+    {
+        return array_merge($oldData[$field] ?? [], $newData);
     }
 }

@@ -160,13 +160,10 @@
                         $value = current($value);
                     }
 
-                    $fileName = last(explode('/', $value));
-
                     $savedImage = ! empty($value) ? [
                         'id'    => 0,
                         'url'   => Storage::url($value),
                         'value' => $value,
-                        'name'  => $fileName,
                     ] : [];
                 @endphp
 

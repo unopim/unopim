@@ -10,6 +10,7 @@
 - Added **Product Bulk Edit** with advanced multi-product editing capabilities for faster workflows.
 - Added **Product Update Webhook**, enabling external systems to react to real-time product updates.
 - Added **Video Support** in the gallery attribute. Fixes issue: [#84](https://github.com/unopim/unopim/issues/84)
+* Completeness calculation jobs use the system queue. Start queue worker using: `php artisan queue:work --queue=system,default`
 
 ### Improvements
 - Optimized **Category Tree Rendering**, significantly reducing load times for large catalogs. Fixes issue: [#176](https://github.com/unopim/unopim/issues/176)

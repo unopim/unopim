@@ -435,7 +435,7 @@
                 <x-admin::modal ref="imagePreviewModal">
                     <x-slot:header>
                         <p class="text-lg text-gray-800 dark:text-white font-bold">
-                            @{{ getDisplayFileName(image.name) }}
+                            @{{ getDisplayFileName(image) }}
                         </p>
                     </x-slot>
                     <x-slot:content>
@@ -486,7 +486,7 @@
 
             <!-- Image Name -->
             <label class="mt-1 grid text-xs text-gray-700 dark:text-gray-300 font-medium text-center break-all" :key="image.url">
-                    @{{ getDisplayFileName(image.name) }}
+                    @{{ getDisplayFileName(image) }}
             </label>
         </div>
     </script>
@@ -850,17 +850,29 @@
 
                     reader.onload = (e) => {
                         this.image.url = e.target.result;
+                        this.image.name = file.name;
                     }
 
                     reader.readAsDataURL(file);
                 },
-                getDisplayFileName(fileName) {
-                    if (fileName.length > 29) {
+                getDisplayFileName(image) {
+                    let fileName = image?.name ?? (image?.value ? this.getNameFromValue(image.value) : '');
+
+                    if ((fileName?.length ?? 0) > 29) {
                         return fileName.substring(0, 20) + '...' + fileName.substring(fileName.lastIndexOf('.'));
                     }
 
                     return fileName;
-                }
+                },
+                getNameFromValue(path) {
+                    if (! path) {
+                        return "";
+                    }
+
+                    const parts = path.split('/').filter(Boolean);
+
+                    return parts.pop();
+                },
             }
         });
     </script>
