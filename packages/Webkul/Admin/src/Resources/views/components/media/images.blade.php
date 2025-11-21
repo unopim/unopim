@@ -858,8 +858,8 @@
                 getDisplayFileName(image) {
                     let fileName = image?.name ?? (image?.value ? this.getNameFromValue(image.value) : '');
 
-                    if ((fileName?.length ?? 0) > 29) {
-                        return fileName.substring(0, 20) + '...' + fileName.substring(fileName.lastIndexOf('.'));
+                    if ((fileName?.length ?? 0) > 20) {
+                        return fileName.substring(0, 13) + '...' + fileName.substring(fileName.lastIndexOf('.'));
                     }
 
                     return fileName;
