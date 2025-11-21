@@ -14,12 +14,15 @@ UnoPim is an open-source Product Information Management (PIM) system built on th
 
 Ensure your server meets the following requirements:
 
-- **Server**: Nginx or Apache2
-- **RAM**: 8GB
-- **Node.js**: 18.17.1 LTS or higher
-- **PHP**: 8.2 or higher
-- **Composer**: 2.5 or higher
-- **MySQL**: Version 8.0.32 or higher
+* **Server**: Nginx or Apache2
+* **RAM**: 8GB
+* **Node.js**: **18.17.1 LTS** or higher
+* **PHP**: **8.2** or higher
+* **Composer**: **2.5** or higher
+* **Database (choose one):**
+  * **MySQL**: 8.0.32 or higher
+  * **PostgreSQL**: **14.x or higher** *(recommended)*
+
 
 ## ⚙️ Scalability
 
