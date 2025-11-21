@@ -352,29 +352,21 @@ test('Create a System prompt with all field', async({adminPage})=>{
 });
 
 test('Create a Prompt with all the field for Product', async({adminPage})=>{
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.waitForLoadState('networkidle');
+  wait adminPage.getByRole('link', { name: ' Configuration' }).click();
   await adminPage.getByRole('link', { name: 'Magic AI' }).click();
-  await adminPage.waitForLoadState('networkidle');
   await adminPage.getByRole('link', { name: 'Prompt', exact: true }).click();
-  await adminPage.waitForURL('**/admin/magic-ai/prompts');
-  await adminPage.waitForLoadState('networkidle');
   await adminPage.getByRole('button', { name: 'Create Prompt' }).click();
-  await adminPage.waitForLoadState('networkidle');
-  const titleInput = adminPage.locator('input[name="title"]');
-  await titleInput.waitFor({ state: 'visible', timeout: 10000 });
-  await titleInput.fill('Create Description');
+  await adminPage.locator('input[name="title"]').click();
+  await adminPage.locator('input[name="title"]').fill('Create Description');
   const typeValue = await adminPage.locator('input[name="type"] + .multiselect__single').textContent();
-  expect(typeValue?.trim()).toBe('Product');
+  expect(typeValue.trim()).toBe('Product');
   const toneValue = await adminPage.locator('input[name="tone"] + .multiselect__single').textContent();
-  expect(toneValue?.trim()).toBe('Friendly Assistant');
-  const promptTextarea = adminPage.locator('textarea[name="prompt"]');
-  await promptTextarea.waitFor({ state: 'visible', timeout: 10000 });
-  await promptTextarea.fill(
-    'Write the product @description with the help of @name in very detailed with minor information.'
-  );
+  expect(toneValue.trim()).toBe('Friendly Assistant');
+  await adminPage.locator('textarea[name="prompt"]').click();
+  await adminPage.locator('textarea[name="prompt"]')
+  .fill('Write the product @description with the help of @name in very detailed with minor information.');
   await adminPage.getByRole('button', { name: 'Save Prompt' }).click();
-  await expect(adminPage.getByText('Prompt saved successfully.')).toBeVisible({ timeout: 10000 });
+  await expect(adminPage.getByText('Prompt saved successfully.')).toBeVisible();
 });
 
 test('Create a Prompt with all the field for Category', async({adminPage})=>{
