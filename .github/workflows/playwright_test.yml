@@ -29,6 +29,10 @@ jobs:
           --health-timeout=5s
           --health-retries=5
 
+    env:
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      GROQ_INVALID_KEY: ${{ secrets.GROQ_INVALID_KEY }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4

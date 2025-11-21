@@ -9,6 +9,7 @@ test('with empty product type field', async ({ adminPage }) => {
   await adminPage.locator('input[name="sku"]').click();
   await adminPage.locator('input[name="sku"]').fill('acer456');
   await adminPage.getByRole('button', { name: 'Save Product' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.locator('div.border-red-500 + p.text-red-600')).toHaveText('The Type field is required');
 });
 
@@ -20,6 +21,7 @@ test('with empty family field', async ({ adminPage }) => {
   await adminPage.locator('input[name="sku"]').click();
   await adminPage.locator('input[name="sku"]').fill('acer456');
   await adminPage.getByRole('button', { name: 'Save Product' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.locator('div.border-red-500 + p.text-red-600')).toHaveText('The Family field is required');
 });
 
@@ -31,6 +33,7 @@ test('with empty sku field', async ({ adminPage }) => {
   await adminPage.locator('input[name="attribute_family_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option', { name: 'Default' }).locator('span').first().click();
   await adminPage.getByRole('button', { name: 'Save Product' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.locator('input[name="sku"] + p.text-red-600')).toHaveText('The SKU field is required');
 });
 
@@ -40,6 +43,7 @@ test('with empty product type and family field', async ({ adminPage }) => {
   await adminPage.locator('input[name="sku"]').click();
   await adminPage.locator('input[name="sku"]').fill('acer456');
   await adminPage.getByRole('button', { name: 'Save Product' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.getByText('The Type field is required')).toBeVisible();
   await expect(adminPage.getByText('The Family field is required')).toBeVisible();
 });
@@ -50,6 +54,7 @@ test('with empty product type and sku field', async ({ adminPage }) => {
   await adminPage.locator('input[name="attribute_family_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option', { name: 'Default' }).locator('span').first().click();
   await adminPage.getByRole('button', { name: 'Save Product' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.locator('div.border-red-500 + p.text-red-600')).toHaveText('The Type field is required');
   await expect(adminPage.locator('input[name="sku"] + p.text-red-600')).toHaveText('The SKU field is required');
 });
@@ -60,6 +65,7 @@ test('with empty family and sku field', async ({ adminPage }) => {
   await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option', { name: 'Simple' }).locator('span').first().click();
   await adminPage.getByRole('button', { name: 'Save Product' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.locator('div.border-red-500 + p.text-red-600')).toHaveText('The Family field is required');
   await expect(adminPage.locator('input[name="sku"] + p.text-red-600')).toHaveText('The SKU field is required');
 });
@@ -68,6 +74,7 @@ test('with all field empty', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   await adminPage.getByRole('button', { name: 'Create Product' }).click();
   await adminPage.getByRole('button', { name: 'Save Product' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.getByText('The Type field is required')).toBeVisible();
   await expect(adminPage.getByText('The Family field is required')).toBeVisible();
   await expect(adminPage.locator('input[name="sku"] + p.text-red-600')).toHaveText('The SKU field is required');
@@ -83,6 +90,7 @@ test('Create Simple Product with all input', async ({ adminPage }) => {
   await adminPage.locator('input[name="sku"]').click();
   await adminPage.locator('input[name="sku"]').fill('acer456');
   await adminPage.getByRole('button', { name: 'Save Product' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.getByText(/Product created successfully/i)).toBeVisible();
 });
 
@@ -96,6 +104,7 @@ test('Create Simple Product with same SKU', async ({ adminPage }) => {
   await adminPage.locator('input[name="sku"]').click();
   await adminPage.locator('input[name="sku"]').fill('acer456');
   await adminPage.getByRole('button', { name: 'Save Product' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.locator('input[name="sku"] + p.text-red-600')).toHaveText('The sku has already been taken.');
 });
 
@@ -146,6 +155,7 @@ test('should perform actions on a product (Edit, Copy, Delete)', async ({ adminP
   const itemNRow = await adminPage.locator('div', { hasText: 'temporary-sku' });
   await itemNRow.locator('span[title="Delete"]').first().click();
   await adminPage.getByRole('button', { name: 'Delete' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.getByText(/Product deleted successfully/i)).toBeVisible();
   await itemRow.locator('span[title="Delete"]').first().click();
   await expect(adminPage.locator('text=Are you sure you want to delete?')).toBeVisible();
@@ -195,6 +205,7 @@ test('Delete simple product', async ({ adminPage }) => {
   const itemRow = await adminPage.locator('div', { hasText: 'acer456' });
   await itemRow.locator('span[title="Delete"]').first().click();
   await adminPage.getByRole('button', { name: 'Delete' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.getByText(/Product deleted successfully/i)).toBeVisible();
 });
 
@@ -210,6 +221,7 @@ test('Create Configurable Product', async ({ adminPage }) => {
   await adminPage.getByRole('button', { name: 'Save Product' }).click();
   await adminPage.getByRole('paragraph').filter({ hasText: 'Brand' }).locator('span').click();
   await adminPage.getByRole('button', { name: 'Save Product' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.getByText(/Product created successfully/i)).toBeVisible();
 });
 
@@ -249,6 +261,7 @@ test('Delete configurable product', async ({ adminPage }) => {
   const itemRow = await adminPage.locator('div', { hasText: 'realme1245' });
   await itemRow.locator('span[title="Delete"]').first().click();
   await adminPage.click('button:has-text("Delete")');
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.getByText(/Product deleted successfully/i)).toBeVisible();
 });
 });

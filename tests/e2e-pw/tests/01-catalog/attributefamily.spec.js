@@ -9,7 +9,9 @@ test('Create Attribute family with empty code field', async ({ adminPage }) => {
   await adminPage.getByRole('textbox', { name: 'Enter Code' }).fill('');
   await adminPage.locator('input[name="en_US\\[name\\]"]').click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Header');
+  await adminPage.waitForTimeout(500);
   await adminPage.getByRole('button', { name: 'Save Attribute Family' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.getByText('The Code field is required')).toBeVisible();
 });
 
@@ -21,7 +23,9 @@ test('Create Attribute family', async ({ adminPage }) => {
   await adminPage.getByRole('textbox', { name: 'Enter Code' }).fill('header');
   await adminPage.locator('input[name="en_US\\[name\\]"]').click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Header');
+  await adminPage.waitForTimeout(500);
   await adminPage.getByRole('button', { name: 'Save Attribute Family' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.getByText(/Family created successfully/i)).toBeVisible();
 });
 
@@ -60,6 +64,7 @@ test('should perform actions on a attribute family (Edit, Copy, Delete)', async 
   await expect(adminPage).toHaveURL(/\/admin\/catalog\/families\/copy/);
   await adminPage.goBack();
   await itemRow.locator('span[title="Delete"]').first().click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.locator('text=Are you sure you want to delete?')).toBeVisible();
 });
 
@@ -84,7 +89,9 @@ test('Edit Attribute Family', async ({ adminPage }) => {
   await adminPage.mouse.move(dropBox.x + dropBox.width / 2, dropBox.y + dropBox.height / 2, { steps: 10 });
   await adminPage.mouse.up();
   }
+  await adminPage.waitForTimeout(500);
   await adminPage.getByRole('button', { name: 'Save Attribute Family' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.getByText(/Family updated successfully/i)).toBeVisible();
 });
 
@@ -92,7 +99,9 @@ test('Delete Attribute Family', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
   await adminPage.getByText('headerFooter').getByTitle('Delete').click();
+  await adminPage.waitForTimeout(500);
   await adminPage.getByRole('button', { name: 'Delete' }).click();
+  await adminPage.waitForTimeout(500);
   await expect(adminPage.getByText(/Family deleted successfully/i)).toBeVisible();
 });
 });
