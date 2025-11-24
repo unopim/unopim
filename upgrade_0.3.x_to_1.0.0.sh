@@ -77,7 +77,6 @@ if [[ "$(echo -e "$CURRENT_VERSION\n$UPGRADE_VERSION" | sort -V | head -n 1)" ==
 fi
 
 echo "✅ Upgrading to version: $UPGRADE_TO_VERSION_TAG"
-
 # 3. Create backup
 TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
 BACKUP_PATH="$BACKUP_DIR/$CURRENT_VERSION-unopim-backup-$TIMESTAMP.zip"
