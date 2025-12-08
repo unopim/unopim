@@ -14,7 +14,7 @@ use Webkul\Admin\Http\Requests\ProductForm;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Core\Repositories\ChannelRepository;
-use Webkul\Core\Rules\Slug;
+use Webkul\Core\Rules\Sku;
 use Webkul\Product\Helpers\ProductType;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Type\AbstractType;
@@ -70,7 +70,7 @@ class ProductController extends Controller
         $this->validate(request(), [
             'type'                => 'required',
             'attribute_family_id' => 'required',
-            'sku'                 => ['required', 'unique:products,sku', new Slug],
+            'sku'                 => ['required', 'unique:products,sku', new Sku],
             'super_attributes'    => 'array|min:1',
         ]);
 
