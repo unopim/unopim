@@ -84,6 +84,10 @@ class AbstractOptionsController extends Controller
     {
         $translation = $option->translate($currentLocaleCode);
 
+        if (! $translation) {
+            return '';
+        }
+
         return $translation?->{$this->getTranslationColumnName($entityName)};
     }
 

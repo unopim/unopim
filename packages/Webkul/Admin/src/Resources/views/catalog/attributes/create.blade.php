@@ -160,7 +160,7 @@
                                     class="cursor-pointer"
                                     name="swatch_type"
                                     rules="required"
-                                    :value="old('type')"
+                                    :value="old('swatch_type', 'text')"
                                     :label="trans('admin::app.catalog.attributes.create.swatch')"
                                     :options="$optionsInJson"
                                     track-by="id"
