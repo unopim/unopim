@@ -6,7 +6,7 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use OpenAI\ValueObjects\Transporter\BaseUri;
-use Webkul\MagicAI\Contracts\Validator\ConfigValidator;
+use Webkul\Core\Contracts\Validator\ConfigValidator;
 use Webkul\MagicAI\MagicAI;
 use Webkul\MagicAI\Services\Gemini;
 use Webkul\MagicAI\Services\Groq;

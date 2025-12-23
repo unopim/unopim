@@ -60,7 +60,8 @@ it('should filter the locale based on status', function () {
         ],
     ];
 
-    $this->withHeaders($this->headers)->json('GET', route('admin.api.locales.index', ['filters' => json_encode($filters)]))
+    $response = $this->withHeaders($this->headers)
+        ->json('GET', route('admin.api.locales.index', ['filters' => json_encode($filters)]))
         ->assertOK()
         ->assertJsonStructure([
             'data' => [
@@ -78,8 +79,10 @@ it('should filter the locale based on status', function () {
                 'next',
                 'prev',
             ],
-        ])
-        ->assertJsonFragment(['code' => $locale->code, 'status' => $locale->status])
+        ]);
+
+    $response
+        ->assertJsonFragment(['code' => $locale->code, 'status' => (int) $locale->status])
         ->assertJsonFragment(['total' => Locale::where('status', 1)->count()]);
 });
 

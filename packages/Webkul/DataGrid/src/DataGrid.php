@@ -4,6 +4,7 @@ namespace Webkul\DataGrid;
 
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use Webkul\Admin\Exports\DataGridExport;
@@ -284,12 +285,21 @@ abstract class DataGrid
                         });
                         break;
 
+                    case ColumnTypeEnum::BOOLEAN->value:
+                        $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues) {
+                            foreach ($requestedValues as $value) {
+                                $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), 'LIKE', '%'.DB::rawQueryGrammar()->getBooleanValue($value).'%');
+                            }
+                        });
+
+                        break;
                     default:
                         $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues) {
                             foreach ($requestedValues as $value) {
                                 $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), 'LIKE', '%'.$value.'%');
                             }
                         });
+
                         break;
                 }
             }

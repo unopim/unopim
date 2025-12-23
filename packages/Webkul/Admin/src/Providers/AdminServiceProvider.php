@@ -87,9 +87,8 @@ class AdminServiceProvider extends ServiceProvider
                 $tree->add($item, 'menu');
             }
 
-            $tree->items = $tree->removeUnauthorizedUrls();
-
             $tree->items = core()->sortItems($tree->items);
+            $tree->items = $tree->removeUnauthorizedUrls();
 
             $view->with('menu', $tree);
         });

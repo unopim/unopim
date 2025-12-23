@@ -47,7 +47,7 @@ it('should fetch single currency by code', function () {
             'status',
             'label',
         ])
-        ->assertJson(['code' => $currency->code, 'status' => $currency->status, 'label' => core()->getCurrencyLabel($currency->code, core()->getCurrentLocale()->code)]);
+        ->assertJson(['code' => $currency->code, 'status' => (int) $currency->status, 'label' => core()->getCurrencyLabel($currency->code, core()->getCurrentLocale()->code)]);
 });
 
 it('should filter the currencies based on status', function () {
@@ -82,8 +82,8 @@ it('should filter the currencies based on status', function () {
                 'prev',
             ],
         ])
-        ->assertJsonFragment(['code' => $currency->code, 'status' => $currency->status, 'label' => core()->getCurrencyLabel($currency->code, core()->getCurrentLocale()->code)])
-        ->assertJsonFragment(['total' => Currency::where('status', 1)->count()]);
+        ->assertJsonFragment(['code' => $currency->code, 'status' => (int) $currency->status, 'label' => core()->getCurrencyLabel($currency->code, core()->getCurrentLocale()->code)])
+        ->assertJsonFragment(['total' => Currency::where('status', true)->count()]);
 });
 
 it('should return validation error when filtering based on any other field than status', function () {

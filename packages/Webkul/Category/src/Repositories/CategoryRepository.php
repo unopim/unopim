@@ -68,7 +68,9 @@ class CategoryRepository extends Repository
             /**
              * For csv or xls when values are already formatted
              */
-            $data = $withoutFormattingValues ? $data : $this->prepareAdditionalData($data, $category);
+            $data = $withoutFormattingValues
+                ? $data
+                : $this->prepareAdditionalData($data, $category);
 
             $category->additional_data = $data[self::ADDITIONAL_VALUES_KEY];
 

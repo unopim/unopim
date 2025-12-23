@@ -519,6 +519,7 @@
                 :clear-on-select="true"
                 :show-no-results="true"
                 :hide-selected="true"
+                :disabled="disabled"
                 :name="name"
                 v-model="selectedValue"
                 v-bind="field"
@@ -558,6 +559,10 @@
                 onselect: {
                     default: true
                 },
+                disabled: {
+                    type: Boolean,
+                    default: false
+                }
             },
             
             data() {
@@ -1244,16 +1249,25 @@
                 openedSelect(id) {
                     if (this.optionsList.length < 1) {
                         this.isLoading = true;
-
+                        
                         this.$axios.get(this.listRoute, {params: this.params})
-                            .then((result) => {
-                                this.optionsList = result.data.options;
-                                this.lastPage = result.data.lastPage;
-                                this.params.page = result.data.page;
-
-                                this.isLoading = false;
-                            });
+                        .then((result) => {
+                            this.optionsList = result.data.options;
+                            this.lastPage = result.data.lastPage;
+                            this.params.page = result.data.page;
+                            
+                            this.isLoading = false;
+                        });
                     }
+
+                    this.$nextTick(() => {
+                        const listEl = this.$refs['multiselect__handler__'].$el.querySelector('.multiselect__content-wrapper');
+
+                        if (listEl) {
+                            listEl.removeEventListener('scroll', this.onScroll);
+                            listEl.addEventListener('scroll', this.onScroll);
+                        }
+                    });
                 },
                 onScroll(e) {
                     const element = this.$refs['multiselect__handler__']._.refs.list;

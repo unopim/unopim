@@ -89,8 +89,16 @@ class AttributeController extends Controller
         ]);
 
         $requestData = request()->all();
-        $requestData['ai_translate'] = (isset($requestData['value_per_locale']) && $requestData['value_per_locale'] == self::VALUE_PER_LOCALE_ENABLED &&
-            in_array($requestData['type'], [self::TEXT, self::TEXTAREA])) ? self::AI_TRANSLATE_ENABLED : self::AI_TRANSLATE_DISABLED;
+
+        $requestData['ai_translate'] = self::AI_TRANSLATE_DISABLED;
+
+        if (
+            isset($requestData['value_per_locale'])
+            && $requestData['value_per_locale'] == self::VALUE_PER_LOCALE_ENABLED
+            && in_array($requestData['type'], [self::TEXT, self::TEXTAREA])
+        ) {
+            $requestData['ai_translate'] = self::AI_TRANSLATE_ENABLED;
+        }
 
         Event::dispatch('catalog.attribute.create.before');
 
@@ -141,7 +149,8 @@ class AttributeController extends Controller
         ]);
 
         $requestData = request()->except(['type', 'code', 'value_per_locale', 'value_per_channel', 'is_unique']);
-        if (! array_key_exists('ai_translate', $requestData)) {
+
+        if (empty($requestData['ai_translate'])) {
             $requestData['ai_translate'] = self::AI_TRANSLATE_DISABLED;
         }
 

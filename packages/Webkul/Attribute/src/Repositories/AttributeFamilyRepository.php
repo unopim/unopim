@@ -59,7 +59,10 @@ class AttributeFamilyRepository extends Repository
                     $attributeModel = $this->attributeRepository->findOneByField('code', $attribute['code']);
                 }
 
-                $familyGroupMapping->customAttributes()->save($attributeModel, ['position' => $key + 1]);
+                $familyGroupMapping->customAttributes()->save(
+                    $attributeModel,
+                    ['position' => $key + 1]
+                );
             }
         }
 

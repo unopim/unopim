@@ -49,24 +49,32 @@ class CategoryDataGrid extends DataGrid
     public function prepareQueryBuilder()
     {
         $tablePrefix = DB::getTablePrefix();
-
         $localeCode = core()->getRequestedLocaleCode();
 
+        $grammar = DB::rawQueryGrammar();
+
         $subQuery = $this->getSubQuery($localeCode, $tablePrefix);
+
+        $jsonExpr = $grammar->jsonExtract("{$tablePrefix}cat.additional_data", 'locale_specific', $localeCode, 'name');
+
+        $categoryNameExpr = "(CASE WHEN {$jsonExpr} IS NOT NULL 
+            THEN REPLACE({$jsonExpr}, '\"', '') 
+            ELSE {$grammar->concat("'['", "{$tablePrefix}cat.code", "']'")} 
+        END)";
 
         $queryBuilder = DB::table('categories as cat')
             ->select(
                 'cat.id as category_id',
                 'cat.code as code',
-                DB::raw('(CASE WHEN JSON_UNQUOTE(JSON_EXTRACT('.$tablePrefix."cat.additional_data, '$.locale_specific.".$localeCode.".name')) IS NOT NULL THEN REPLACE(JSON_UNQUOTE(JSON_EXTRACT(".$tablePrefix."cat.additional_data, '$.locale_specific.".$localeCode.".name')), '\"', '') ELSE CONCAT('[', ".$tablePrefix."cat.code, ']') END) as category_name"),
-                DB::raw('category_display_names.name as display_name'),
+                DB::raw($categoryNameExpr.' as category_name'),
+                DB::raw('category_display_names.name as display_name')
             )
-            ->leftJoin(DB::raw("({$subQuery->toSql()}) as category_display_names"), function ($leftJoin) {
+            ->leftJoin(DB::raw("({$subQuery}) as category_display_names"), function ($leftJoin) {
                 $leftJoin->on('cat.id', '=', DB::raw('category_display_names.id'));
             })
             ->groupBy('cat.id', 'cat.code', DB::raw('category_display_names.name'));
 
-        $this->addFilter('category_name', DB::raw('CASE WHEN JSON_UNQUOTE(JSON_EXTRACT('.$tablePrefix."cat.additional_data, '$.locale_specific.".$localeCode.".name')) IS NOT NULL THEN REPLACE(JSON_UNQUOTE(JSON_EXTRACT(".$tablePrefix."cat.additional_data, '$.locale_specific.".$localeCode.".name')), '\"', '') ELSE CONCAT('[', ".$tablePrefix."cat.code, ']') END"));
+        $this->addFilter('category_name', DB::raw($categoryNameExpr));
 
         return $queryBuilder;
     }
@@ -191,8 +199,10 @@ class CategoryDataGrid extends DataGrid
 
             $ids = collect($results['hits']['hits'])->pluck('_id')->toArray();
 
-            $this->queryBuilder->whereIn('cat.id', $ids)
-                ->orderBy(DB::raw('FIELD('.DB::getTablePrefix().'cat.id, '.implode(',', $ids).')'));
+            if (! empty($ids)) {
+                $this->queryBuilder->whereIn('cat.id', $ids)
+                    ->orderByRaw(DB::rawQueryGrammar()->orderByField(DB::getTablePrefix().'cat.id', $ids));
+            }
 
             $total = $results['hits']['total']['value'];
 
@@ -236,6 +246,8 @@ class CategoryDataGrid extends DataGrid
                 $attribute = 'name';
             }
 
+            $value = (array) $value;
+
             $value = array_filter($value, function ($val) {
                 return $val !== null && $val !== '';
             });
@@ -253,6 +265,8 @@ class CategoryDataGrid extends DataGrid
      */
     public function getFilterValue(mixed $attribute, mixed $values, string $localeCode): array
     {
+        $values = (array) $values;
+
         switch ($attribute) {
             /** For Grid search filter the parameter is sent as name */
             case 'name':
@@ -273,6 +287,7 @@ class CategoryDataGrid extends DataGrid
                         ],
                     ],
                 ];
+
             case 'category_name':
                 $values = current($values);
                 $escaped = preg_replace('/([+\-&|!(){}\[\]^"~*?:\\\\\/])/', '\\\\$1', $values);
@@ -338,24 +353,34 @@ class CategoryDataGrid extends DataGrid
     /**
      * Creates a query to fetch the parent names of the categories
      */
-    private function getSubQuery(string $locale, string $tablePrefix): Builder
+    private function getSubQuery(string $locale, string $tablePrefix): string
     {
-        return DB::table(DB::raw("(WITH RECURSIVE tree_view AS (
-            SELECT id,
-                parent_id,
-                (CASE WHEN JSON_UNQUOTE(JSON_EXTRACT(additional_data, '$.locale_specific.".$locale.".name')) IS NOT NULL THEN REPLACE(JSON_UNQUOTE(JSON_EXTRACT(additional_data, '$.locale_specific.".$locale.".name')), '\"', '') ELSE CONCAT('[', code, ']') END) as name
-            FROM ".$tablePrefix."categories
-            WHERE parent_id IS NULL
-            UNION ALL
+        $grammar = DB::rawQueryGrammar();
 
-            SELECT parent.id,
-                parent.parent_id,
-                CONCAT(tree_view.name, ' / ', (CASE WHEN JSON_UNQUOTE(JSON_EXTRACT(additional_data, '$.locale_specific.".$locale.".name')) IS NOT NULL THEN REPLACE(JSON_UNQUOTE(JSON_EXTRACT(additional_data, '$.locale_specific.".$locale.".name')), '\"', '') ELSE CONCAT('[', code, ']') END)) AS name
-            FROM ".$tablePrefix.'categories parent
-            JOIN tree_view ON parent.parent_id = tree_view.id
-        )
-        SELECT id, parent_id, name
-        FROM tree_view
-        ) as category_display_names'));
+        $jsonExpr = $grammar->jsonExtract('additional_data', 'locale_specific', $locale, 'name');
+
+        $codeFallback = $grammar->concat("'['", 'code', "']'");
+
+        $caseNameExpr = "(CASE WHEN {$jsonExpr} IS NOT NULL THEN REPLACE({$jsonExpr}, '\"', '') ELSE {$codeFallback} END)";
+
+        $pathConcatExpr = $grammar->concat('tree_view.name', "' / '", $caseNameExpr);
+
+        return "
+            WITH RECURSIVE tree_view AS (
+                SELECT id,
+                    parent_id,
+                    {$caseNameExpr} as name
+                FROM {$tablePrefix}categories
+                WHERE parent_id IS NULL
+                UNION ALL
+                SELECT parent.id,
+                    parent.parent_id,
+                    {$pathConcatExpr} as name
+                FROM {$tablePrefix}categories parent
+                JOIN tree_view ON parent.parent_id = tree_view.id
+            )
+            SELECT id, parent_id, name
+            FROM tree_view
+        ";
     }
 }

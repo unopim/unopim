@@ -24,6 +24,7 @@ class ApiKeyFactory extends Factory
         return [
             'name'            => $this->faker->name,
             'permission_type' => $this->faker->randomElement(['custom', 'all']),
+            'revoked'         => false,
         ];
     }
 }

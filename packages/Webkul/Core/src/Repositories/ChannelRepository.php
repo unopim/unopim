@@ -25,6 +25,12 @@ class ChannelRepository extends Repository
     {
         $model = $this->getModel();
 
+        foreach ($model->getFillable() as $field) {
+            if (isset($data[$field]) && $data[$field] === '') {
+                $data[$field] = null;
+            }
+        }
+
         foreach (core()->getAllActiveLocales() as $locale) {
             foreach ($model->translatedAttributes as $attribute) {
                 if (isset($data[$attribute])) {
@@ -35,9 +41,13 @@ class ChannelRepository extends Repository
 
         $channel = parent::create($data);
 
-        $channel->locales()->sync($data['locales']);
+        if (isset($data['locales'])) {
+            $channel->locales()->sync($data['locales']);
+        }
 
-        $channel->currencies()->sync($data['currencies']);
+        if (isset($data['currencies'])) {
+            $channel->currencies()->sync($data['currencies']);
+        }
 
         return $channel;
     }

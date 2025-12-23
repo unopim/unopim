@@ -23,7 +23,10 @@ it('should return the user as json for edit', function () {
     $response = get(route('admin.settings.users.edit', ['id' => $user->id]));
 
     $response->assertStatus(200)
-        ->assertJsonFragment($user->toArray());
+        ->assertJsonFragment([
+            ...$user->toArray(),
+            'status' => $user->status ? true : false,
+        ]);
 });
 
 it('should return the users datagrid', function () {

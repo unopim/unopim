@@ -55,24 +55,6 @@ class ProductController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function create()
-    {
-        $families = $this->attributeFamilyRepository->all();
-
-        $configurableFamily = null;
-
-        if ($familyId = request()->get('family')) {
-            $configurableFamily = $this->attributeFamilyRepository->find($familyId);
-        }
-
-        return view('admin::catalog.products.create', compact('families', 'configurableFamily'));
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @return \Illuminate\Http\JsonResponse
@@ -402,10 +384,18 @@ class ProductController extends Controller
 
     public function getLocale(): JsonResponse
     {
-        $channel = request()->channel;
-        $result = $this->channelRepository->findOneByField('code', $channel);
-        $locales = $result->locales()->select('locales.code')->get();
+        $channel = $this->channelRepository->findOneByField('code', request()->channel);
+
+        if (! $channel) {
+            return new JsonResponse([
+                'locales' => [],
+            ]);
+        }
+
+        $locales = $channel->locales()->get();
+
         $options = [];
+
         foreach ($locales as $locale) {
             $options[] = [
                 'id'    => $locale->code,
@@ -423,6 +413,7 @@ class ProductController extends Controller
         $product = $this->productRepository->findByField('id', request()->productId)->first();
         $attributes = $product->getEditableAttributes()->where('ai_translate', 1)->select('code', 'name', 'type', 'ai_translate');
         $attributeOptions = [];
+
         if ($attributes) {
             foreach ($attributes as $attribute) {
                 $attributeOptions[] = [

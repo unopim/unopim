@@ -1,3 +1,3 @@
 #!/bin/bash
 
-php artisan queue:listen
+php artisan queue:listen --queue=system,default

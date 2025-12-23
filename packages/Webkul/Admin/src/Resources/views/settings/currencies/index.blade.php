@@ -214,7 +214,9 @@
                                 </x-admin::form.control-group.label>
 
                                 <x-admin::form.control-group.control
-                                    type="text"
+                                    type="number"
+                                    min="0"
+                                    max="10"
                                     name="decimal"
                                     :value="old('decimal')"
                                     v-model="selectedCurrency.decimal"

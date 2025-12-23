@@ -306,21 +306,25 @@ class DefaultUser extends Command
         $password = password_hash($userPassword, PASSWORD_BCRYPT, ['cost' => 10]);
 
         $localeId = DB::table('locales')->where('code', $defaultLocale)->where('status', 1)->first()?->id ?? 58;
-        $role = $isAdmin ? DB::table('roles')->where('permission_type', 'all')->first()?->id : DB::table('roles')->where('permission_type', 'custom')->first()?->id;
+
+        $role = $isAdmin
+            ? DB::table('roles')->where('permission_type', 'all')->first()?->id
+            : DB::table('roles')->where('permission_type', 'custom')->whereJsonContains('permissions', 'dashboard')->first()?->id;
 
         if (! $role) {
-            DB::table('roles')->updateOrInsert(
+            DB::table('roles')->insert(
                 [
                     'name'            => $isAdmin ? 'Admin' : 'User',
                     'description'     => $isAdmin ? 'This role users will have all the access' : 'This role users have limited access',
                     'permission_type' => $isAdmin ? 'all' : 'custom',
                     'permissions'     => ! $isAdmin ? json_encode(['dashboard']) : null,
-                ]
+                ],
             );
         }
 
         $role = $isAdmin ? DB::table('roles')->where('permission_type', 'all')->first()?->id : DB::table('roles')->where('permission_type', 'custom')->first()?->id;
 
+        // Check this if email is to be passed as userEmail
         try {
             DB::table('admins')->updateOrInsert(
                 [

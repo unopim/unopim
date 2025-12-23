@@ -14,12 +14,15 @@ UnoPim is an open-source Product Information Management (PIM) system built on th
 
 Ensure your server meets the following requirements:
 
-- **Server**: Nginx or Apache2
-- **RAM**: 8GB
-- **Node.js**: 18.17.1 LTS or higher
-- **PHP**: 8.2 or higher
-- **Composer**: 2.5 or higher
-- **MySQL**: Version 8.0.32 or higher
+* **Server**: Nginx or Apache2
+* **RAM**: 8GB
+* **Node.js**: **18.17.1 LTS** or higher
+* **PHP**: **8.2** or higher
+* **Composer**: **2.5** or higher
+* **Database (choose one):**
+  * **MySQL**: 8.0.32 or higher
+  * **PostgreSQL**: **14.x or higher** *(recommended)*
+
 
 ## ⚙️ Scalability
 
@@ -111,10 +114,10 @@ To get started with UnoPim, follow these steps:
    Open your browser and go to `http://localhost:8000`.
 
 5. **Queue Operations**:  
-   To execute import/export operations, initiate the Queue command:
+   To execute import/export operations and product completeness score calculation initiate the Queue command:
 
    ```bash
-   php artisan queue:work
+   php artisan queue:work --queue=system,default
    ```
 
 ## 🐳 Installation with Docker

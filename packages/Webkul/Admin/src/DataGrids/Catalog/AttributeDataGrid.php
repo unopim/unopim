@@ -26,6 +26,8 @@ class AttributeDataGrid extends DataGrid
     {
         $tablePrefix = DB::getTablePrefix();
 
+        $grammar = DB::rawQueryGrammar();
+
         $queryBuilder = DB::table('attributes')
             ->leftJoin('attribute_translations as attribute_name', function ($join) {
                 $join->on('attribute_name.attribute_id', '=', 'attributes.id')
@@ -40,7 +42,14 @@ class AttributeDataGrid extends DataGrid
                 'value_per_locale',
                 'value_per_channel',
                 'created_at',
-                DB::raw('(CASE WHEN '.$tablePrefix.'attribute_name.name IS NULL OR CHAR_LENGTH(TRIM('.$tablePrefix.'attribute_name.name)) < 1 THEN CONCAT("[", '.$tablePrefix.'attributes.code,"]") ELSE '.$tablePrefix.'attribute_name.name END) as name')
+                DB::raw(
+                    "(CASE 
+                        WHEN {$tablePrefix}attribute_name.name IS NULL 
+                            OR ".$grammar->length("TRIM({$tablePrefix}attribute_name.name)").' < 1
+                        THEN '.$grammar->concat("'['", "{$tablePrefix}attributes.code", "']'")."
+                        ELSE {$tablePrefix}attribute_name.name
+                    END) AS name"
+                )
             );
 
         return $queryBuilder;

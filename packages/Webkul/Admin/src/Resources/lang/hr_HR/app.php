@@ -294,6 +294,49 @@ return [
                     'product-type' => 'Vrsta proizvoda',
                 ],
             ],
+            'bulk-edit' => [
+                'validation' => [
+                    'decimal'                    => 'Unesite valjani decimalni broj.',
+                    'number'                     => 'Unesite valjani cijeli broj.',
+                    'email'                      => 'Unesite valjanu e-mail adresu.',
+                    'url'                        => 'Unesite valjani URL.',
+                    'regex'                      => 'Vrijednost ne odgovara traženom obrascu.',
+                    'invalid-pattern'            => 'Unesen je nevažeći prilagođeni obrazac.',
+                    'select-attribute-or-family' => 'Molimo odaberite barem jedan atribut ili obitelj atributa.',
+                    'failed'                     => 'Provjera valjanosti nije uspjela.',
+                ],
+
+                'modal'                      => [
+                    'title'            => 'Atributi za grupno uređivanje',
+                    'btn-cancel'       => 'Odustani',
+                    'btn-proceed'      => 'Nastavi',
+                    'attribute-family' => 'Odaberite obitelj atributa',
+                ],
+
+                'index' => [
+                    'no-product'    => 'Nijedan proizvod nije odabran za grupno uređivanje.',
+                ],
+
+                'filter' => [
+                    'many-product'      => 'Odabrano je previše proizvoda.',
+                    'redirect-message'  => 'Preusmjeravanje na prikaz grupnog uređivanja.',
+                ],
+
+                'handle-save' => [
+                    'edit-success'  => 'Grupno uređivanje je uspješno.',
+                ],
+
+                'id'              => 'ID',
+                'no-changes'      => 'Nema promjena za spremiti.',
+                'success'         => 'Operacija uspješno izvršena.',
+                'fetch-failed'    => 'Preuzimanje nije uspjelo.',
+                'action'          => 'Grupno uređivanje',
+                'gallery-preview' => 'Pregled galerije',
+                'img-preview'     => 'Pregled slike',
+                'no-image'        => 'Nema slike',
+                'img-fail'        => 'Neuspješno učitavanje slike.',
+                'no-opton'        => 'No Options',
+            ],
 
             'create-success'          => 'Proizvod uspješno stvoren',
             'delete-failed'           => 'Brisanje proizvoda nije uspjelo',
@@ -2010,6 +2053,7 @@ return [
                 'ai-btn-info'        => 'Generiraj sliku',
                 'allowed-types'      => 'png, jpeg, jpg',
                 'not-allowed-error'  => 'Dozvoljeni su samo datoteke s slikama (.jpeg, .jpg, .png, ..).',
+                'upload-media-btn'   => 'Prenesi medije',
 
                 'ai-generation' => [
                     '1024x1024'        => '1024x1024',

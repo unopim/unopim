@@ -11,7 +11,6 @@ module.exports = defineConfig({
   workers: 1,
   reporter: [
     ['html', { outputFolder: 'playwright-report' }],
-    ['junit', { outputFile: 'playwright-report/results.xml' }],
   ],
   globalSetup: require.resolve('./global-setup.js'),
   use: {
@@ -25,3 +24,4 @@ module.exports = defineConfig({
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
   ],
 });
+

@@ -17,7 +17,10 @@ trait OauthClientGenerator
         $provider = $providers[0];
 
         $client = $this->clients->createPasswordGrantClient(
-            $user_id, $name, 'http://localhost', $provider
+            $user_id,
+            $name,
+            'http://localhost',
+            $provider
         );
 
         return $client;
