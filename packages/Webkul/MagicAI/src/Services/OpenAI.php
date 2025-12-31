@@ -60,27 +60,60 @@ class OpenAI implements LLMModelInterface
      */
     public function images(array $options): array
     {
-        $extraParameters = [];
+        if (in_array($this->model, ['dall-e-2', 'dall-e-3'], true)) {
 
-        if (isset($options['quality']) && $this->model !== 'dall-e-2') {
-            $extraParameters['quality'] = $options['quality'];
+            $extraParameters = [];
+
+            if (isset($options['quality']) && $this->model === 'dall-e-3') {
+                $extraParameters['quality'] = $options['quality'];
+            }
+
+            $result = BaseOpenAI::images()->create(array_merge([
+                'model'           => $this->model,
+                'prompt'          => $this->prompt,
+                'n'               => intval($options['n'] ?? 1),
+                'size'            => $options['size'],
+                'response_format' => 'b64_json',
+            ], $extraParameters));
+
+            $images = [];
+
+            foreach ($result->data as $image) {
+                $images[] = [
+                    'url' => 'data:image/png;base64,'.$image->b64_json,
+                ];
+            }
+
+            return $images;
         }
 
-        $result = BaseOpenAI::images()->create(array_merge([
-            'model'           => $this->model,
-            'prompt'          => $this->prompt,
-            'n'               => intval($options['n'] ?? 1),
-            'size'            => $options['size'],
-            'response_format' => 'b64_json',
-        ], $extraParameters));
+        if (str_starts_with($this->model, 'gpt-image')) {
 
-        $images = [];
+            $response = BaseOpenAI::responses()->create([
+                'model' => $this->model,
+                'input' => $this->prompt,
+            ]);
 
-        foreach ($result->data as $image) {
-            $images[]['url'] = 'data:image/png;base64,'.$image->b64_json;
+            $images = [];
+
+            foreach ($response->output as $output) {
+                foreach ($output->content as $content) {
+                    if ($content->type === 'output_image' && ! empty($content->image_base64)) {
+                        $images[] = [
+                            'url' => 'data:image/png;base64,'.$content->image_base64,
+                        ];
+                    }
+                }
+            }
+
+            if (empty($images)) {
+                throw new \RuntimeException('OpenAI did not return any image data.');
+            }
+
+            return $images;
         }
 
-        return $images;
+        throw new \RuntimeException("Unsupported OpenAI image model: {$this->model}");
     }
 
     /**

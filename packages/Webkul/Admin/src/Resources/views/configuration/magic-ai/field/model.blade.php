@@ -74,7 +74,10 @@
                                 "gpt-4o-mini", 
                                 "gpt-3.5-turbo", 
                                 "dall-e-2", 
-                                "dall-e-3"
+                                "dall-e-3",
+                                "gpt-image-1.5",
+                                "gpt-image-1",
+                                "gpt-image-1-mini",
                             ];
                             $options = [];
                             foreach($modelOptions as $option) {
@@ -153,6 +156,8 @@
                                 "gemini-2.0-flash",
                                 "gemini-1.5-flash-latest",
                                 "gemini-1.5-pro",
+                                "gemini-2.5-flash-image",
+                                "gemini-3-pro-image-preview",
                             ];
                             $options = array_map(fn($option) => ['id' => $option, 'label' => $option], $modelOptions);
                             $optionsInJson = json_encode($options);

@@ -58,7 +58,7 @@
                         ::id="name"
                         ::name="name"
                         ref="translationModelRef"
-                        rules="required"
+                        ::rules="{ 'required': isTranslationEnabled }"
                         ::label="label"
                         ::value="value"
                         ::options="modelOptions"

@@ -669,7 +669,7 @@
                     try {
                         const response = await axios.get("{{ route('admin.magic_ai.available_model') }}");
 
-                        this.aiModels = response.data.models.filter(model => model.id === 'dall-e-2' || model.id === 'dall-e-3');
+                        this.aiModels = response.data.models.filter(model => model.id === 'dall-e-2' || model.id === 'dall-e-3' || model.id === 'gpt-image-1.5' || model.id === 'gpt-image-1' || model.id === 'gpt-image-1-mini' || model.id === 'gemini-2.5-flash-image' || model.id === 'gemini-3-pro-image-preview');
                         this.ai.model = this.aiModels[0] ? this.aiModels[0].id : '';
                     } catch (error) {
                         console.error("Failed to fetch AI models:", error);
