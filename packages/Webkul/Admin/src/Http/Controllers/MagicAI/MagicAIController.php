@@ -145,6 +145,9 @@ class MagicAIController extends Controller
         }
     }
 
+    /**
+     * Generate a Image.
+     */
     public function image(): JsonResponse
     {
         $model = request()->input('model');
