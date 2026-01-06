@@ -54,6 +54,7 @@ class OpenAI implements LLMModelInterface
 
         return $result->choices[0]->message->content;
     }
+
     /**
      * Generate image.
      */

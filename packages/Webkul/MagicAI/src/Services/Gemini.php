@@ -80,7 +80,7 @@ class Gemini implements LLMModelInterface
             throw new \RuntimeException('Gemini API key is missing.');
         }
 
-        $endpoint =  "https://generativelanguage.googleapis.com/v1beta/models/{$this->model}:generateContent?key={$apiKey}";
+        $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/{$this->model}:generateContent?key={$apiKey}";
 
         $response = $httpClient->post($endpoint, [
             'headers' => [
