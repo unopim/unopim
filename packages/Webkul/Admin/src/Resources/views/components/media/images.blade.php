@@ -560,7 +560,7 @@
                     aiModels: [],
                     suggestionValues: [],
                     selectedModel: null,
-                    resourceId: "{{ request()->id }}",
+                    resourceId: "{{ request()->id ?? auth()->id() }}",
                     entityName: "{{ $attributes->get('entity-name', 'attribute') }}",
                 }
             },
@@ -715,7 +715,6 @@
                     this.isLoading = true;
 
                     let self = this;
-
                     params.resource_id = this.resourceId;
                     params.resource_type = this.getResourceType();
                     params.field_type = 'image';
