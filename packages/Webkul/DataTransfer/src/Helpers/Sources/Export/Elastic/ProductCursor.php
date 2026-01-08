@@ -29,7 +29,7 @@ class ProductCursor extends AbstractElasticCursor
             'track_total_hits' => true,
             '_source'          => false,
             'size'             => $size ?? $this->batchSize,
-            'sort'             => ['_id' => 'desc'],
+            'sort'             => ['id' => 'desc'],
             'stored_fields'    => [],
         ];
 
