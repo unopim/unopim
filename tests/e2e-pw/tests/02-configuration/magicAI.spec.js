@@ -509,39 +509,72 @@ test('Check the AI translate checkbox in attribute', async({adminPage})=>{
   await expect(adminPage.getByText(/Attribute Updated Successfully/)).toBeVisible();
 });
 
-test('Create product and Generate the content from the MagicAI', async({adminPage})=>{
-  await adminPage.getByRole('link', { name: ' Catalog' }).click();
-  await adminPage.getByRole('button', { name: 'Create Product' }).click();
-  await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
-  await adminPage.getByRole('option', { name: 'Simple' }).locator('span').first().click();
-  await adminPage.locator('input[name="attribute_family_id"]').locator('..').locator('.multiselect__placeholder').click();
-  await adminPage.getByRole('option', { name: 'Default' }).locator('span').first().click();
-  await adminPage.locator('input[name="sku"]').fill('mahindra-be6-batman-edition');
-  await adminPage.getByRole('button', { name: 'Save Product' }).click();
-  await expect(adminPage.getByText(/Product created successfully/i)).toBeVisible();
-  const Name = adminPage.locator('input[name="values[channel_locale_specific][default][en_US][name]"]');
-  await Name.fill('Mahindra BE 6 Batman Edition');
-  const URL = adminPage.locator('input[name="values[common][url_key]"]');
-  await URL.fill('mahindra-be6-batman-edition');
-  await adminPage.locator('input[name="values[common][color]"]').locator('..').locator('.multiselect__placeholder').click();
-  await adminPage.getByRole('option', { name: 'Black' }).locator('span').first().click();
-  await adminPage.getByRole('button', { name: 'Magic AI' }).first().click();
-  await adminPage.locator('div').filter({ hasText: /^Select option$/ }).nth(3).click();
-  await adminPage.getByRole('textbox', { name: 'default_prompt-searchbox' }).fill('Create');
-  await adminPage.getByRole('option', { name: 'Create Description Press' }).locator('span').first().click();
-  await expect(adminPage.locator('div').filter({ hasText: /^Friendly Assistant$/ })).toBeVisible();
-  await adminPage.getByRole('button', { name: 'Generate' }).click();
-  await adminPage.waitForTimeout(500);
-  await adminPage.getByRole('button', { name: 'Apply' }).click();
-  const mainDescFrame = adminPage.frameLocator('#description_ifr');
-  await mainDescFrame.locator('body').click();
-  await mainDescFrame.locator('body').type('This is the ACER Laptop with high functionality');
-  await adminPage.locator('#meta_title').fill('thakubali');
-  await adminPage.locator('#price').click();
-  await adminPage.locator('#price').fill('40000');
-  await adminPage.getByRole('button', { name: 'Save Product' }).click();
-  await expect(adminPage.getByText(/Product updated successfully/i)).toBeVisible();
-});
+test('Create product and generate the content from the MagicAI',
+  async ({ adminPage }) => {
+    test.setTimeout(90_000);
+    await adminPage.getByRole('link', { name: ' Catalog' }).click();
+    await adminPage.getByRole('button', { name: 'Create Product' }).click();
+    await adminPage.locator('input[name="type"]')
+      .locator('..')
+      .locator('.multiselect__placeholder')
+      .click();
+    await adminPage.getByRole('option', { name: 'Simple' }).first().click();
+    await adminPage.locator('input[name="attribute_family_id"]')
+      .locator('..')
+      .locator('.multiselect__placeholder')
+      .click();
+    await adminPage.getByRole('option', { name: 'Default' }).first().click();
+    await adminPage.locator('input[name="sku"]')
+      .fill('mahindra-be6-batman-edition');
+    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await expect(
+      adminPage.getByText(/Product created successfully/i)
+    ).toBeVisible({ timeout: 15_000 });
+    await adminPage.locator(
+      'input[name="values[channel_locale_specific][default][en_US][name]"]'
+    ).fill('Mahindra BE 6 Batman Edition');
+    await adminPage.locator(
+      'input[name="values[common][url_key]"]'
+    ).fill('mahindra-be6-batman-edition');
+    await adminPage.locator(
+      'input[name="values[common][color]"]'
+    ).locator('..')
+     .locator('.multiselect__placeholder')
+     .click();
+    await adminPage.getByRole('option', { name: 'Black' }).first().click();
+    await adminPage.getByRole('button', { name: 'Magic AI' }).first().click();
+    await adminPage.locator('div')
+      .filter({ hasText: /^Select option$/ })
+      .nth(3)
+      .click();
+    await adminPage
+      .getByRole('textbox', { name: 'default_prompt-searchbox' })
+      .fill('Create');
+    await adminPage
+      .getByRole('option', { name: 'Create Description Press' })
+      .first()
+      .click();
+    await expect(
+      adminPage.getByText('Friendly Assistant')
+    ).toBeVisible({ timeout: 20_000 });
+
+    await adminPage.getByRole('button', { name: 'Generate' }).click();
+    await adminPage.getByRole('button', { name: 'Apply' })
+      .waitFor({ state: 'visible', timeout: 30_000 });
+    await adminPage.getByRole('button', { name: 'Apply' }).click();
+    const mainDescFrame = adminPage.frameLocator('#description_ifr');
+    await mainDescFrame.locator('body')
+      .waitFor({ state: 'visible', timeout: 10_000 });
+    await mainDescFrame.locator('body')
+      .fill('This is the ACER Laptop with high functionality');
+    await adminPage.locator('#meta_title').fill('thakubali');
+    await adminPage.locator('#price').fill('40000');
+    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await expect(
+      adminPage.getByText(/Product updated successfully/i)
+    ).toBeVisible({ timeout: 20_000 });
+  }
+);
 
 test('Check that AI Translate is visible on Short-Description', async({adminPage})=>{
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
@@ -586,18 +619,28 @@ test('Click on next and verify the step 2 fields', async({adminPage})=>{
   await expect(adminPage.getByRole('button', { name: 'Translate' }).nth(1)).toBeVisible();
 });
 
-test('Verify the fields in translated content after click on Translate button', async({adminPage})=>{
-  await adminPage.getByRole('link', { name: ' Catalog' }).click();
-  const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
-  await itemRow.locator('span[title="Edit"]').first().click();
-  await adminPage.locator('span[title="More Actions"]').click();
-  await adminPage.locator('span[title="Translate"]').click();
-  await adminPage.getByRole('button', { name: 'Next' }).click();
-  await adminPage.locator('button.primary-button:has-text("Translate")').click();
-  await adminPage.waitForTimeout(20000);
-  await expect(adminPage.getByText('Translated Content')).toBeVisible();
-  await expect(adminPage.getByRole('button', {name:'Apply'})).toBeVisible();
-});
+test('Verify the fields in translated content after clicking on the Translate button',
+  async ({ adminPage }) => {
+    test.setTimeout(60_000);
+    await adminPage.getByRole('link', { name: ' Catalog' }).click();
+    const itemRow = adminPage.locator('div', {
+      hasText: 'mahindra-be6-batman'
+    });
+    await itemRow.locator('span[title="Edit"]').first().click();
+    await adminPage.locator('span[title="More Actions"]').click();
+    await adminPage.locator('span[title="Translate"]').click();
+    await adminPage.getByRole('button', { name: 'Next' }).click();
+    await adminPage
+      .getByRole('button', { name: 'Translate' })
+      .click();
+    await expect(
+      adminPage.getByText('Translated Content')
+    ).toBeVisible({ timeout: 30_000 });
+    await expect(
+      adminPage.getByRole('button', { name: 'Apply' })
+    ).toBeVisible({ timeout: 30_000 });
+  }
+);
 
 test.skip('Translate the content in the hindi', async({adminPage})=>{
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
