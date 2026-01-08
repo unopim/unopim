@@ -1,4 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
+require('dotenv').config();
 const groqapikey = process.env.GROQ_API_KEY;
 const groqinvalidapikey = process.env.GROQ_INVALID_KEY;
 
@@ -599,7 +600,7 @@ test('Verify the fields in translated content after click on Translate button', 
   await expect(adminPage.getByRole('button', {name:'Apply'})).toBeVisible();
 });
 
-test.skip('Translate the content in the hindi', async({adminPage})=>{
+test('Translate the content in the hindi', async({adminPage})=>{
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
   await itemRow.locator('span[title="Edit"]').first().click();
@@ -619,4 +620,24 @@ test.skip('Translate the content in the hindi', async({adminPage})=>{
   console.log('Contains Hindi:', containsHindi);
   await expect(containsHindi).toBe(true);
 });
+// test.skip('Translate the content in the hindi', async({adminPage})=>{
+//   await adminPage.getByRole('link', { name: ' Catalog' }).click();
+//   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
+//   await itemRow.locator('span[title="Edit"]').first().click();
+//   await adminPage.waitForTimeout(500);
+//   await adminPage.getByRole('button', { name: 'Translate' }).first().click();
+//   await adminPage.waitForTimeout(500);
+//   await adminPage.getByRole('button', { name: 'Translate' }).nth(1).click();
+//   await adminPage.waitForTimeout(30000);
+//   await adminPage.getByRole('button', { name: 'Apply' }).click();
+//   await expect(adminPage.getByText('Transalated contents store')).toBeVisible();
+//   await adminPage.waitForTimeout(500);
+//   await adminPage.getByRole('button', { name: ' English (United States) ' }).click();
+//   await adminPage.getByRole('link', { name: 'Hindi (India)' }).click();
+//   const frame = await adminPage.frameLocator('#short_description_ifr');
+//   const bodyText = await frame.locator('body').innerText();
+//   const containsHindi = /[\u0900-\u097F]/.test(bodyText);
+//   console.log('Contains Hindi:', containsHindi);
+//   await expect(containsHindi).toBe(true);
+// });
 }); 

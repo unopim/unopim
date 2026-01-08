@@ -577,3 +577,281 @@ test('Delete the Select type attibute', async ({ adminPage }) => {
   await expect(adminPage.getByText('Attribute Deleted Successfully')).toBeVisible();
   });
 });
+
+
+test.describe('Swatch Type Attribute Option', () => {
+    test('Check swatch type visibility on Select attribute creation', async ({ adminPage }) => {
+      await adminPage.getByRole('link', { name: ' Catalog' }).click();
+      await adminPage.getByRole('link', { name: 'Attributes' }).click();
+      await adminPage.getByRole('link', { name: 'Create Attribute' }).click();
+      await adminPage.getByRole('textbox', { name: 'Code' }).click();
+      await adminPage.getByRole('textbox', { name: 'Code' }).click();
+      await adminPage.getByRole('textbox', { name: 'Code' }).fill('swatch');
+      await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
+      await adminPage.locator('input[name="type"][type="text"]').fill('Select');
+      await adminPage.getByRole('option', { name: 'Select' }).locator('span').first().click();
+      await adminPage.locator('#swatch_type').getByRole('combobox').locator('div')
+      .filter({ hasText: 'Text Swatch' }).click();
+    });
+
+    test('Check the swatch type options for select type attribute', async ({ adminPage }) => {
+      await adminPage.getByRole('link', { name: ' Catalog' }).click();
+      await adminPage.getByRole('link', { name: 'Attributes' }).click();
+      await adminPage.getByRole('link', { name: 'Create Attribute' }).click();
+      await adminPage.getByRole('textbox', { name: 'Code' }).click();
+      await adminPage.getByRole('textbox', { name: 'Code' }).click();
+      await adminPage.getByRole('textbox', { name: 'Code' }).fill('swatch');
+      await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
+      await adminPage.locator('input[name="type"][type="text"]').fill('Select');
+      await adminPage.getByRole('option', { name: 'Select' }).locator('span').first().click();
+      await adminPage.locator('#swatch_type').getByRole('combobox').locator('div')
+      .filter({ hasText: 'Text Swatch' }).click();
+      await adminPage.locator('#swatch_type').getByRole('combobox').locator('div')
+      .filter({ hasText: 'Color Swatch' }).click();
+      await adminPage.locator('#swatch_type').getByRole('combobox').locator('div')
+      .filter({ hasText: 'Image Swatch' }).click();
+    });
+
+    test('Verify swatch type field have default value as Text Swatch', async ({ adminPage }) => {
+      await adminPage.getByRole('link', { name: ' Catalog' }).click();
+      await adminPage.getByRole('link', { name: 'Attributes' }).click();
+      await adminPage.getByRole('link', { name: 'Create Attribute' }).click();
+      await adminPage.getByRole('textbox', { name: 'Code' }).click();
+      await adminPage.getByRole('textbox', { name: 'Code' }).click();
+      await adminPage.getByRole('textbox', { name: 'Code' }).fill('swatch');
+      await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
+      await adminPage.locator('input[name="type"][type="text"]').fill('Select');
+      await adminPage.getByRole('option', { name: 'Select' }).locator('span').first().click();
+      const swatchType = await adminPage.locator('#swatch_type').getByRole('combobox').locator('div')
+      .filter({ hasText: 'Text Swatch' }).innerText();
+      expect(swatchType).toBe('Text Swatch');
+    });
+
+    test('Create a select type attribute with swatch type as text swatch', async ({ adminPage }) => {
+      await adminPage.getByRole('link', { name: ' Catalog' }).click();
+      await adminPage.getByRole('link', { name: 'Attributes' }).click();
+      await adminPage.getByRole('link', { name: 'Create Attribute' }).click();
+      await adminPage.getByRole('textbox', { name: 'Code' }).click();
+      await adminPage.getByRole('textbox', { name: 'Code' }).click();
+      await adminPage.getByRole('textbox', { name: 'Code' }).fill('text_swatch');
+      await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
+      await adminPage.locator('input[name="type"][type="text"]').fill('Select');
+      await adminPage.getByRole('option', { name: 'Select' }).locator('span').first().click();
+      const swatchType = await adminPage.locator('#swatch_type').getByRole('combobox').locator('div')
+      .filter({ hasText: 'Text Swatch' }).innerText();
+      expect(swatchType).toBe('Text Swatch');
+      await adminPage.locator('input[name="en_US[name]"]').click();
+      await adminPage.locator('input[name="en_US[name]"]').fill('Text Swatch');
+      await adminPage.getByRole('button', { name: 'Save Attribute' }).click();
+      await expect(adminPage.getByText(/Attribute Created Successfully/i).first()).toBeVisible();
+    });
+
+    test('Verify swatch type field is visible and selected swatch type is visible while editing the select type attribute', async ({ adminPage }) => {
+      await adminPage.getByRole('link', { name: ' Catalog' }).click();
+      await adminPage.getByRole('link', { name: 'Attributes' }).click();
+      const itemRow = adminPage.locator('div', { hasText: 'text_swatchText Swatch' });
+      await itemRow.locator('span[title="Edit"]').first().click();
+      const swatchTypeInput = await adminPage.locator('input[name="swatch_type"][type="text"]');
+      await expect(swatchTypeInput).toBeDisabled();
+      const hiddenInput = await adminPage.locator('input[name="swatch_type"][type="hidden"]');
+      await expect(hiddenInput).toHaveValue('text'); 
+    });
+
+    test('Edit and add the options in the Select type attibute with swatch type as text swatch', async ({ adminPage }) => {
+      await adminPage.getByRole('link', { name: ' Catalog' }).click();
+      await adminPage.getByRole('link', { name: 'Attributes' }).click();
+      const itemRow = adminPage.locator('div', { hasText: 'text_swatchText Swatch' });
+      await itemRow.locator('span[title="Edit"]').first().click();
+      await expect(adminPage.getByText('Options', { exact: true })).toBeVisible();
+      await expect(adminPage.getByText('Add Row')).toBeVisible();
+      await adminPage.getByText('Add Row').click();
+      await expect(adminPage.getByText('Add Option')).toBeVisible();
+      await adminPage.locator('form').filter({ hasText: 'Add Option' }).getByPlaceholder('Code').click();
+      await adminPage.locator('form').filter({ hasText: 'Add Option' }).getByPlaceholder('Code').fill('red');
+      await adminPage.locator('input[name="locales.en_US"]').click();
+      await adminPage.locator('input[name="locales.en_US"]').fill('Red');
+      await adminPage.getByRole('button', { name: 'Save Option' }).click();
+      await expect(adminPage.getByText('Attribute Option Created Successfully')).toBeVisible();
+      await adminPage.getByText('Add Row').click();
+      await expect(adminPage.getByText('Add Option')).toBeVisible();
+      await adminPage.locator('form').filter({ hasText: 'Add Option' }).getByPlaceholder('Code').click();
+      await adminPage.locator('form').filter({ hasText: 'Add Option' }).getByPlaceholder('Code').fill('blue');
+      await adminPage.locator('input[name="locales.en_US"]').click();
+      await adminPage.locator('input[name="locales.en_US"]').fill('Blue');
+      await adminPage.getByRole('button', { name: 'Save Option' }).click();
+      await expect(adminPage.getByText('Attribute Option Created Successfully')).toBeVisible();
+      await adminPage.getByRole('button', { name: 'Save Attribute' }).click();
+      await expect(adminPage.getByText(/Attribute Updated Successfully/i)).toBeVisible();
+    });
+
+    test('Delete the text swatch attribute option', async ({ adminPage }) => {
+      await adminPage.getByRole('link', { name: ' Catalog' }).click();
+      await adminPage.getByRole('link', { name: 'Attributes' }).click();
+      const itemRow = adminPage.locator('div', { hasText: 'text_swatchText Swatch' });
+      await itemRow.locator('span[title="Edit"]').first().click();
+      const itemRow1 = adminPage.locator('div', { hasText: 'redRed' });
+      await itemRow1.locator('span[title="Delete"]').first().click();
+      await adminPage.waitForTimeout(500);
+      await adminPage.getByRole('button', { name: 'Delete' }).click();
+      await adminPage.waitForTimeout(500);
+      await expect(adminPage.getByText('Attribute Option Deleted Successfully')).toBeVisible();
+    });
+
+    test('Create the select type attribute with swatch type as color swatch', async ({ adminPage }) => {
+      await adminPage.getByRole('link', { name: ' Catalog' }).click();
+      await adminPage.getByRole('link', { name: 'Attributes' }).click();
+      await adminPage.getByRole('link', { name: 'Create Attribute' }).click();
+      await adminPage.getByRole('textbox', { name: 'Code' }).click();
+      await adminPage.getByRole('textbox', { name: 'Code' }).click();
+      await adminPage.getByRole('textbox', { name: 'Code' }).fill('color_swatch');
+      await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
+      await adminPage.locator('input[name="type"][type="text"]').fill('Select');
+      await adminPage.getByRole('option', { name: 'Select' }).locator('span').first().click();
+      await adminPage.locator('#swatch_type').getByRole('combobox').locator('div')
+      .filter({ hasText: 'Text Swatch' }).click();
+      await adminPage.getByRole('option', { name: 'Color Swatch' }).locator('span').first().click();
+      await expect(adminPage.locator('#swatch_type').getByRole('combobox').locator('div')
+      .filter({ hasText: 'Color Swatch' }).first()).toBeVisible();
+      await adminPage.locator('input[name="en_US[name]"]').click();
+      await adminPage.locator('input[name="en_US[name]"]').fill('Color Swatch');
+      await adminPage.getByRole('button', { name: 'Save Attribute' }).click();
+      await expect(adminPage.getByText(/Attribute Created Successfully/i).first()).toBeVisible();
+    });
+
+    test('Verify swatch type field is visible and selected swatch type is visible while editing the select type attribute with color swatch', async ({ adminPage }) => {
+      await adminPage.getByRole('link', { name: ' Catalog' }).click();
+      await adminPage.getByRole('link', { name: 'Attributes' }).click();
+      const itemRow = adminPage.locator('div', { hasText: 'color_swatch_Color Swatch' });
+      await itemRow.locator('span[title="Edit"]').first().click();
+      const swatchTypeInput = await adminPage.locator('input[name="swatch_type"][type="text"]');
+      await expect(swatchTypeInput).toBeDisabled();
+      const hiddenInput = await adminPage.locator('input[name="swatch_type"][type="hidden"]');
+      await expect(hiddenInput).toHaveValue('color'); 
+    });
+
+    test('Edit and add the options in the Select type attibute with swatch type as color swatch', async ({ adminPage }) => {
+      await adminPage.getByRole('link', { name: ' Catalog' }).click();
+      await adminPage.getByRole('link', { name: 'Attributes' }).click();
+      const itemRow = adminPage.locator('div', { hasText: 'color_swatchColor Swatch' });
+      await itemRow.locator('span[title="Edit"]').first().click();
+      await expect(adminPage.getByText('Options', { exact: true })).toBeVisible();
+      await expect(adminPage.getByText('Add Row')).toBeVisible();
+      await adminPage.getByText('Add Row').click();
+      await adminPage.getByPlaceholder('Color').click();
+      await adminPage.getByPlaceholder('Color').fill('#ff0000');
+      await adminPage.locator('form').filter({ hasText: 'Add Option Color Code English' }).getByPlaceholder('Code').click();
+      await adminPage.locator('form').filter({ hasText: 'Add Option Color Code English' }).getByPlaceholder('Code').fill('red');
+      await adminPage.locator('input[name="locales\\.en_US"]').click();
+      await adminPage.locator('input[name="locales\\.en_US"]').fill('Red');
+      await adminPage.getByRole('button', { name: 'Save Option' }).click();
+      await expect(adminPage.getByText('Attribute Option Created Successfully')).toBeVisible();
+      await adminPage.getByText('Add Row').click();
+      await adminPage.getByPlaceholder('Color').click();
+      await adminPage.getByPlaceholder('Color').fill('#00faf6');
+      await adminPage.locator('form').filter({ hasText: 'Add Option Color Code English' }).getByPlaceholder('Code').click();
+      await adminPage.locator('form').filter({ hasText: 'Add Option Color Code English' }).getByPlaceholder('Code').fill('aqua_blue');
+      await adminPage.locator('input[name="locales\\.en_US"]').click();
+      await adminPage.locator('input[name="locales\\.en_US"]').fill('Aqua Blue');
+      await adminPage.getByRole('button', { name: 'Save Option' }).click();
+      await expect(adminPage.getByText('Attribute Option Created Successfully')).toBeVisible();
+      await adminPage.getByRole('button', { name: 'Save Attribute' }).click();
+      await expect(adminPage.getByText(/Attribute Updated Successfully/i)).toBeVisible(); 
+    });
+
+    test('Delete the color swatch attribute option', async ({ adminPage }) => {
+      await adminPage.getByRole('link', { name: ' Catalog' }).click();
+      await adminPage.getByRole('link', { name: 'Attributes' }).click();
+      const itemRow = adminPage.locator('div', { hasText: 'color_swatchColor Swatch' });
+      await itemRow.locator('span[title="Edit"]').first().click();
+      const itemRow1 = adminPage.locator('div', { hasText: 'redRed' });
+      await itemRow1.locator('span[title="Delete"]').first().click();
+      await adminPage.waitForTimeout(500);
+      await adminPage.getByRole('button', { name: 'Delete' }).click();
+      await adminPage.waitForTimeout(500);
+      await expect(adminPage.getByText('Attribute Option Deleted Successfully')).toBeVisible();
+    });
+
+    test('Create the select type attribute with swatch type as image swatch', async ({ adminPage }) => {
+      await adminPage.getByRole('link', { name: ' Catalog' }).click();
+      await adminPage.getByRole('link', { name: 'Attributes' }).click();
+      await adminPage.getByRole('link', { name: 'Create Attribute' }).click();
+      await adminPage.getByRole('textbox', { name: 'Code' }).click();
+      await adminPage.getByRole('textbox', { name: 'Code' }).click();
+      await adminPage.getByRole('textbox', { name: 'Code' }).fill('image_swatch');
+      await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
+      await adminPage.locator('input[name="type"][type="text"]').fill('Select');
+      await adminPage.getByRole('option', { name: 'Select' }).locator('span').first().click();
+      await adminPage.locator('#swatch_type').getByRole('combobox').locator('div')
+      .filter({ hasText: 'Text Swatch' }).click();
+      await adminPage.getByRole('option', { name: 'Image Swatch' }).locator('span').first().click();
+      await expect(adminPage.locator('#swatch_type').getByRole('combobox').locator('div')
+      .filter({ hasText: 'Image Swatch' }).first()).toBeVisible();
+      await adminPage.locator('input[name="en_US[name]"]').click();
+      await adminPage.locator('input[name="en_US[name]"]').fill('Image Swatch');
+      await adminPage.getByRole('button', { name: 'Save Attribute' }).click();
+      await expect(adminPage.getByText(/Attribute Created Successfully/i).first()).toBeVisible();
+    });
+
+    test('Verify swatch type field is visible and selected swatch type is visible while editing the select type attribute with image swatch', async ({ adminPage }) => {
+      await adminPage.getByRole('link', { name: ' Catalog' }).click();
+      await adminPage.getByRole('link', { name: 'Attributes' }).click();
+      const itemRow = adminPage.locator('div', { hasText: 'image_swatchImage Swatch' });
+      await itemRow.locator('span[title="Edit"]').first().click();
+      const swatchTypeInput = await adminPage.locator('input[name="swatch_type"][type="text"]');
+      await expect(swatchTypeInput).toBeDisabled();
+      const hiddenInput = await adminPage.locator('input[name="swatch_type"][type="hidden"]');
+      await expect(hiddenInput).toHaveValue('image'); 
+    });
+
+    test('Edit and add the options in the Select type attibute with swatch type as image swatch', async ({ adminPage }) => {
+      await adminPage.getByRole('link', { name: ' Catalog' }).click();
+      await adminPage.getByRole('link', { name: 'Attributes' }).click();
+      const itemRow = adminPage.locator('div', { hasText: 'image_swatchImage Swatch' });
+      await itemRow.locator('span[title="Edit"]').first().click();
+      await expect(adminPage.getByText('Options', { exact: true })).toBeVisible();
+      await expect(adminPage.getByText('Add Row')).toBeVisible();
+      await adminPage.getByText('Add Row').click();
+      const fileInput = adminPage.locator('input[type="file"]').first();
+      await fileInput.setInputFiles('assets/floral.jpg');
+      // await adminPage.locator('label').filter({ hasText: 'Add Image' }).nth(1).click();
+      // await adminPage.locator('body').setInputFiles('assets/floral.jpg');
+      await adminPage.locator('form').filter({ hasText: 'Add Option Image Add Image' }).getByPlaceholder('Code').click();
+  await adminPage.locator('form').filter({ hasText: 'Add Option Image Add Image' }).getByPlaceholder('Code').fill('floral_pattern');
+      // await adminPage.locator('form').filter({ hasText: 'Add Option Image Code English' }).getByPlaceholder('Code').click();
+      // await adminPage.locator('form').filter({ hasText: 'Add Option Image Code English' }).getByPlaceholder('Code').fill('floral_pattern');
+      await adminPage.locator('input[name="locales\\.en_US"]').click();
+      await adminPage.locator('input[name="locales\\.en_US"]').fill('Floral Pattern');
+      await adminPage.getByRole('button', { name: 'Save Option' }).click(); 
+      await expect(adminPage.getByText('Attribute Option Created Successfully')).toBeVisible();
+      await adminPage.getByText('Add Row').click();
+      await adminPage.locator('label').filter({ hasText: 'Add Image' }).nth(1).click();
+      await adminPage.locator('body').setInputFiles('assets/stripes.jpg');
+      await adminPage.locator('form').filter({ hasText: 'Add Option Image Code English' }).getByPlaceholder('Code').click();
+      await adminPage.locator('form').filter({ hasText: 'Add Option Image Code English' }).getByPlaceholder('Code').fill('stripes_pattern');
+      await adminPage.locator('input[name="locales\\.en_US"]').click();
+      await adminPage.locator('input[name="locales\\.en_US"]').fill('Stripes Pattern');
+      await adminPage.getByRole('button', { name: 'Save Option' }).click(); 
+      await expect(adminPage.getByText('Attribute Option Created Successfully')).toBeVisible();
+      await adminPage.getByText('Add Row').click();
+      await adminPage.locator('label').filter({ hasText: 'Add Image' }).nth(1).click();
+      await adminPage.locator('body').setInputFiles('assets/dotted.png');
+      await adminPage.locator('form').filter({ hasText: 'Add Option Image Code English' }).getByPlaceholder('Code').click();
+      await adminPage.locator('form').filter({ hasText: 'Add Option Image Code English' }).getByPlaceholder('Code').fill('dots_pattern');
+      await adminPage.locator('input[name="locales\\.en_US"]').click();
+      await adminPage.locator('input[name="locales\\.en_US"]').fill('Dots Pattern');
+      await adminPage.getByRole('button', { name: 'Save Option' }).click(); 
+      await expect(adminPage.getByText('Attribute Option Created Successfully')).toBeVisible();
+      await adminPage.getByText('Add Row').click();
+      await adminPage.locator('label').filter({ hasText: 'Add Image' }).nth(1).click();
+      await adminPage.locator('body').setInputFiles('assets/check.jpeg');
+      await adminPage.locator('form').filter({ hasText: 'Add Option Image Code English' }).getByPlaceholder('Code').click();
+      await adminPage.locator('form').filter({ hasText: 'Add Option Image Code English' }).getByPlaceholder('Code').fill('checked_pattern');
+      await adminPage.locator('input[name="locales\\.en_US"]').click();
+      await adminPage.locator('input[name="locales\\.en_US"]').fill('Checked Pattern');
+      await adminPage.getByRole('button', { name: 'Save Option' }).click(); 
+      await expect(adminPage.getByText('Attribute Option Created Successfully')).toBeVisible();
+      await adminPage.getByRole('button', { name: 'Save Attribute' }).click();
+      await expect(adminPage.getByText(/Attribute Updated Successfully/i)).toBeVisible(); 
+    });
+
+});
