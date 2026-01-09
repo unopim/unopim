@@ -16,24 +16,27 @@ trait Sanitizer
         'image/svg+xml',
     ];
 
-    /**
-     * Sanitize SVG file.
-     */
-    public function sanitizeSVG(string $path, ?string $mimeType, ?string $disk): void
+    public function sanitizeSVG($path, $mimeType)
     {
-        if ($this->isFileSVG($mimeType)) {
+        if ($this->checkMimeType($mimeType)) {
+            
             $sanitizer = new MainSanitizer;
 
-            $dirtySVG = Storage::disk($disk)->get($path);
+            $sanitizer->removeRemoteReferences(true);
 
-            Storage::disk($disk)->put($path, $sanitizer->sanitize($dirtySVG));
+            $dirtySVG = Storage::get($path);
+
+            Storage::put($path, $sanitizer->sanitize($dirtySVG));
         }
     }
 
-    /**
-     * Check file mime type
+     /**
+     * Sanitize SVG file.
+     *
+     * @param  string  $path
+     * @return void
      */
-    public function isFileSVG(?string $mimeType): bool
+    public function checkMimeType($mimeType)
     {
         return in_array($mimeType, $this->mimeTypes);
     }

@@ -124,10 +124,11 @@ class InstallerController extends Controller
 
         $parameter = [
             'parameter' => [
-                'default_locales'    => $appLocale,
-                'default_currency'   => $appCurrency,
-                'allowed_locales'    => $allowedLocales,
-                'allowed_currencies' => $allowedCurrencies,
+                'default_locales'     => $appLocale,
+                'default_currency'    => $appCurrency,
+                'allowed_locales'     => $allowedLocales,
+                'allowed_currencies'  => $allowedCurrencies,
+                'skip_admin_creation' => true,
             ],
         ];
 
@@ -151,21 +152,17 @@ class InstallerController extends Controller
         $uiLocaleId = DB::table('locales')->where('code', request()->input('locale'))->where('status', 1)->first()?->id ?? 58;
 
         try {
-            DB::table('admins')->updateOrInsert(
-                [
-                    'id' => self::USER_ID,
-                ], [
-                    'name'         => request()->input('admin'),
-                    'email'        => request()->input('email'),
-                    'timezone'     => request()->input('timezone'),
-                    'ui_locale_id' => $uiLocaleId,
-                    'password'     => $password,
-                    'role_id'      => 1,
-                    'status'       => 1,
-                ]
-            );
+            DB::table('admins')->insert([
+                'id'      => self::USER_ID,
+                'name'    => request()->input('admin'),
+                'email'   => request()->input('email'),
+                'password'=> $password,
+                'role_id' => 1,
+                'status'  => 1,
+            ]);
         } catch (\Throwable $th) {
-            dd($th);
+            // dd($th);
+            Log::error('Error in Admin installer config setup: '.$th->getMessage());
         }
     }
 
