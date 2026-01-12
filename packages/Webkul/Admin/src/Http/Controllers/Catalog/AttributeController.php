@@ -75,13 +75,8 @@ class AttributeController extends Controller
             'code'        => ['required', 'not_in:type,attribute_family_id', 'unique:attributes,code', new Code, new NotSupportedAttributes],
             'type'        => 'required',
             'swatch_type' => [
-                'nullable',
+                'required_if:type,select,multiselect',
                 new SwatchTypes,
-                function ($attribute, $value, $fail) {
-                    if (! in_array(request('type'), ['select', 'multiselect']) && ! is_null($value)) {
-                        $fail(trans('validation.null', ['attribute' => $attribute]));
-                    }
-                },
             ],
         ]);
 
@@ -135,13 +130,8 @@ class AttributeController extends Controller
             'code'        => ['required', 'unique:attributes,code,'.$id, new Code],
             'type'        => 'required',
             'swatch_type' => [
-                'nullable',
+                'required_if:type,select,multiselect',
                 new SwatchTypes,
-                function ($attribute, $value, $fail) {
-                    if (! in_array(request('type'), ['select', 'multiselect']) && ! is_null($value)) {
-                        $fail(trans('core::validation.not-supported', ['attribute' => $attribute, 'unsupported' => request('type')]));
-                    }
-                },
             ],
         ]);
 

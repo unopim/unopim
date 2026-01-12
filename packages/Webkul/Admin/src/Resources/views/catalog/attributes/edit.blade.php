@@ -230,7 +230,7 @@
                                     class="mb-2.5 w-full"
                                 >
                                     <x-admin::form.control-group.label for="swatchType">
-                                        @lang('admin::app.catalog.attributes.edit.input-options')
+                                        @lang('admin::app.catalog.attributes.create.swatch')
                                     </x-admin::form.control-group.label>
 
                                     @php

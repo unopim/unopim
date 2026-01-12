@@ -137,7 +137,7 @@
 
                             <x-admin::form.control-group v-if="(selectedAttributeType == 'select' || selectedAttributeType == 'multiselect')">
                                 <x-admin::form.control-group.label class="required">
-                                    @lang('admin::app.catalog.attributes.edit.input-options')
+                                    @lang('admin::app.catalog.attributes.create.swatch')
                                 </x-admin::form.control-group.label>
 
                                 @php
@@ -434,9 +434,9 @@
                     return {
                         optionRowCount: 1,
 
-                        attributeType: '',
+                        attributeType: @json(old('type')) ?? '',
 
-                        selectedAttributeType: '',
+                        selectedAttributeType: @json(old('type')) ?? '',
 
                         validationType: '',
 

@@ -14,7 +14,7 @@ class SwatchTypes implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (! in_array($value, SwatchTypeEnum::getValues(), true)) {
-            $fail('core::validation.type')->translate();
+            $fail(trans('core::validation.type'));
         }
     }
 }
