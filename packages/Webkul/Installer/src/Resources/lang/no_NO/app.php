@@ -98,6 +98,10 @@ return [
     ],
 
     'installer' => [
+        'middleware' => [
+            'already-installed' => 'Applikasjonen er allerede installert.',
+        ],
+
         'index' => [
             'create-administrator' => [
                 'admin'            => 'Administrator',

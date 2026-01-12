@@ -98,7 +98,7 @@ return [
     ],
 
     'installer' => [
-        
+
         'middleware' => [
             'already-installed' => 'Додаток вже встановлено.',
         ],

@@ -161,7 +161,6 @@ class InstallerController extends Controller
                 'status'  => 1,
             ]);
         } catch (\Throwable $th) {
-            // dd($th);
             Log::error('Error in Admin installer config setup: '.$th->getMessage());
         }
     }

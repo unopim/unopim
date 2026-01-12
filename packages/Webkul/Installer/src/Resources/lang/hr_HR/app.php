@@ -109,6 +109,12 @@ return [
     ],
 
     'installer' => [
+
+        'middleware' => [
+            'already-installed' => 'Aplikacija je već instalirana.',
+        ],
+
+
         'index' => [
             'create-administrator' => [
                 'admin'            => 'Administrator',

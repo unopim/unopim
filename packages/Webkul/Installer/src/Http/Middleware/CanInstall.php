@@ -20,7 +20,7 @@ class CanInstall
         if (Str::contains($request->getPathInfo(), '/install')) {
             if ($this->isAlreadyInstalled()) {
                 if (! $request->ajax()) {
-                    return redirect()->route('shop.home.index');
+                    return redirect()->route('admin.dashboard.index');
                 }
 
                 return response()->json([

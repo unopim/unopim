@@ -302,6 +302,11 @@ return [
     ],
 
     'installer' => [
+        'middleware' => [
+            'already-installed' => 'The application is already installed.',
+        ],
+
+
         'index' => [
             'create-administrator' => [
                 'admin'            => 'Admin',
