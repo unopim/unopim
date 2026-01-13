@@ -109,7 +109,6 @@ return [
     ],
 
     'installer' => [
-
         'middleware' => [
             'already-installed' => '应用程序已经安装。',
         ],

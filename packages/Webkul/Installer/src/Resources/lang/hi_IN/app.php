@@ -109,7 +109,6 @@ return [
     ],
 
     'installer' => [
-
         'middleware' => [
             'already-installed' => 'एप्लिकेशन पहले से ही इंस्टॉल है।',
         ],

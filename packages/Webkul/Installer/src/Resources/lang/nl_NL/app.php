@@ -109,7 +109,6 @@ return [
     ],
 
     'installer' => [
-
         'middleware' => [
             'already-installed' => 'Applicatie is al geïnstalleerd.',
         ],

@@ -98,7 +98,6 @@ return [
     ],
 
     'installer' => [
-
         'middleware' => [
             'already-installed' => 'Aplikacja jest już zainstalowana.',
         ],

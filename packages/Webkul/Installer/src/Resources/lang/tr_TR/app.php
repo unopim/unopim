@@ -98,7 +98,6 @@ return [
     ],
 
     'installer' => [
-
         'middleware' => [
             'already-installed' => 'Uygulama zaten yüklü.',
         ],
