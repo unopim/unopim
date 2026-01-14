@@ -7,18 +7,24 @@
     $selectedOptions = json_encode(explode(',', $selectedOptions) ?? []);
 @endphp
 
-<v-ai-model
-    label="@lang($field['title'])"
-    name="{{ $name }}"
-    :value="{{ $selectedOptions }}">
+<v-ai-model label="@lang($field['title'])" name="{{ $name }}" :value="{{ $selectedOptions }}">
 </v-ai-model>
 
 @pushOnce('scripts')
     <script type="text/x-template" id="v-ai-model-template">
         <div class="grid gap-2.5 content-start">
             <div class="flex gap-x-2.5 items-center" v-if="!isValid">
-                <button type="button" class="primary-button" @click="validated"> Validate Credentials </button>
+                <button
+                    type="button"
+                    class="primary-button"
+                    @click="validated"
+                    :disabled="!canValidate"
+                    :class="{ 'opacity-50 cursor-not-allowed': !canValidate }"
+                >
+                    Validate Credentials
+                </button>
             </div>
+
             <div>
                 <!-- Groq -->
                 <x-admin::form.control-group class="mb-4" v-if="aiCredentials.api_platform === 'groq'">
@@ -233,6 +239,19 @@
                 });
             },
 
+            computed: {
+                canValidate() {
+                    return (
+                        this.aiCredentials.enabled &&
+                        this.aiCredentials.api_platform &&
+                        this.aiCredentials.api_key &&
+                        this.aiCredentials.api_key.trim() !== '' &&
+                        this.aiCredentials.api_domain
+                    );
+                }
+            },
+
+
             methods: {
                 parseJson(value) {
                     try {
@@ -252,7 +271,6 @@
                         });
                         this.isValid = true;
                     } catch (error) {
-                        console.error("Failed to fetch AI models:", error);
                         this.$emitter.emit('add-flash', {
                             type: 'error',
                             message: error.response.data.message

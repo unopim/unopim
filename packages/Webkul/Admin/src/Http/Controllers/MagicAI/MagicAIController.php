@@ -139,8 +139,14 @@ class MagicAIController extends Controller
         } catch (\Exception $e) {
             report($e);
 
+            $message = $e->getMessage();
+
+            if (str_contains($message, 'cURL error 28')) {
+                $message = 'The AI response is taking longer than expected. Please try again.';
+            }
+
             return new JsonResponse([
-                'message' => $e->getMessage(),
+                'message' => $message,
             ], 400);
         }
     }
