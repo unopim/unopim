@@ -1024,7 +1024,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             ? array_map($mapSwatch, $value)
             : $mapSwatch($value);
 
-        return "<div class='flex flex-wrap items-center gap-2 min-w-0'>".$swatchHtml." <span class='ml-1 break-words text-nowrap overflow-hidden text-ellipsis hover:text-wrap min-w-0 flex-1'>".e($value).'</span></div>';
+        return "<div class='flex flex-wrap items-center gap-2 min-w-0'>".$swatchHtml."</div>";
     }
 
     protected function isSwatchAttribute($attribute): bool
