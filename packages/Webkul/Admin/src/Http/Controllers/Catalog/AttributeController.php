@@ -60,7 +60,6 @@ class AttributeController extends Controller
      */
     public function create()
     {
-
         return view('admin::catalog.attributes.create', ['locales' => $this->localeRepository->getActiveLocales(), 'swatchTypes' => SwatchTypeEnum::getValues()]);
     }
 

@@ -838,7 +838,7 @@
                 isLoading: Boolean,
                 listRoute: {
                     type: String,
-                    default: "{{ route('admin.catalog.options.fetch-all')}}"
+                    default: '{{ route('admin.catalog.options.fetch-all') }}'
                 },
                 queryParams: Array,
             },
