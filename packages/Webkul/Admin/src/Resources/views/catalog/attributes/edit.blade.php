@@ -70,7 +70,7 @@
                                 </x-admin::form.control-group.label>
 
                                 @php
-                                    $selectedOption = old('type') ?: $attribute->code;
+                                    $selectedOption = old('code') ?: $attribute->code;
                                 @endphp
 
                                 <x-admin::form.control-group.control
