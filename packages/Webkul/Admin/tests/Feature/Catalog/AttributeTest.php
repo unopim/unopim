@@ -1,5 +1,6 @@
 <?php
 
+use Webkul\Attribute\Enums\SwatchTypeEnum;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Core\Models\Locale;
 
@@ -256,15 +257,16 @@ it('should update attribute options', function () {
     $this->loginAsAdmin();
 
     $attribute = Attribute::factory()->create(['type' => 'select']);
-
+    $swatchType = collect(SwatchTypeEnum::cases())->random()->value;
     $locales = Locale::where('status', 1)->limit(1);
     $locale = $locales->first()->toArray();
     $option = $attribute->options()->first();
 
     $updatedData = [
-        'code'    => $attribute->code,
-        'type'    => $attribute->type,
-        'options' => [
+        'code'        => $attribute->code,
+        'type'        => $attribute->type,
+        'swatch_type' => $swatchType,
+        'options'     => [
             $option->id => [
                 'isNew'         => false,
                 'isDelete'      => false,
@@ -283,12 +285,14 @@ it('should delete an attribute option', function () {
     $this->loginAsAdmin();
 
     $attribute = Attribute::factory()->create(['type' => 'select']);
+    $swatchType = collect(SwatchTypeEnum::cases())->random()->value;
     $option = $attribute->options()->first();
 
     $updatedData = [
-        'code'    => $attribute->code,
-        'type'    => $attribute->type,
-        'options' => [
+        'code'        => $attribute->code,
+        'type'        => $attribute->type,
+        'swatch_type' => $swatchType,
+        'options'     => [
             $option->id => [
                 'isNew'    => false,
                 'isDelete' => true,

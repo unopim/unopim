@@ -75,6 +75,7 @@ class AttributeController extends Controller
             'type'        => 'required',
             'swatch_type' => [
                 'required_if:type,select,multiselect',
+                'prohibited_unless:type,select,multiselect',
                 new SwatchTypes,
             ],
         ]);
@@ -130,6 +131,7 @@ class AttributeController extends Controller
             'type'        => 'required',
             'swatch_type' => [
                 'required_if:type,select,multiselect',
+                'prohibited_unless:type,select,multiselect',
                 new SwatchTypes,
             ],
         ]);
