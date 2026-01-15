@@ -96,7 +96,7 @@
                     this.selectedValue = null;
                     if (!Array.isArray(data)) {
                         let options = JSON.parse(data);
-                        options = options.filter(option => option.id != 'dall-e-2' && option.id != 'dall-e-3');
+                        options = options.filter(option => option.id != 'dall-e-2' && option.id != 'dall-e-3' && option.id != 'gpt-image-1.5' && option.id != 'gpt-image-1' && option.id != 'gpt-image-1-mini' && option.id != 'gemini-2.5-flash-image'&& option.id != 'gemini-3-pro-image-preview');
                         this.modelOptions = options;
                         this.selectedModelOption = options[0]?.id || null;
                         this.componentKey++;
