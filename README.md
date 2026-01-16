@@ -163,6 +163,7 @@ Once installed, you can start adding and managing your products. The intuitive i
 ## 📬 Postman API Collection
 
 To interact with UnoPim's API, you can use our official Postman collection:
+[UnoPim APIs Documentation](https://documenter.getpostman.com/view/37137259/2sBXVhEWjS)
 
 [UnoPim APIs on Postman](https://www.postman.com/unopim/unopim-apis/collection/kzy03uh/official-unopim-apis?ctx=info)
 
