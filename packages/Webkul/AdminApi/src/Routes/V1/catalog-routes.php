@@ -67,8 +67,6 @@ Route::group([
 
     /** Media API Routes */
     Route::controller(MediaFileController::class)->prefix('media-files')->group(function () {
-        // Route::get('', 'index')->name('admin.api.categories.index');
-        // Route::get('{code}', 'get')->name('admin.api.categories.get');
         Route::prefix('category')->group(function () {
             Route::post('', 'storeCategoryMedia')->name('admin.api.media-files.category.store');
         });
