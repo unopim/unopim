@@ -869,5 +869,4 @@ test.describe('Swatch Type Attribute Option', () => {
     await adminPage.getByRole('textbox', { name: 'Search', exact: true }).press('Enter');
     await expect(adminPage.getByText('floral_patternFloral Pattern')).toBeVisible();
   });
-
 });

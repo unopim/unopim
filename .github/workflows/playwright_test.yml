@@ -32,6 +32,11 @@ jobs:
     env:
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       GROQ_INVALID_KEY: ${{ secrets.GROQ_INVALID_KEY }}
+      UNOPIM_URL: ${{ secrets.UNOPIM_URL }}
+      ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
+      ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+      INVALID_ADMIN_EMAIL: ${{ secrets.INVALID_ADMIN_EMAIL }}
+      INVALID_ADMIN_PASSWORD: ${{ secrets.INVALID_ADMIN_PASSWORD }}
 
     steps:
       - name: Checkout
@@ -88,7 +93,7 @@ jobs:
         if: ${{ success() }}
         run: |
           cd tests/e2e-pw
-          npx playwright test --reporter=list || true
+          npx playwright test --reporter=list
 
       - name: Upload Playwright report
         if: always()
