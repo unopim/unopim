@@ -33,7 +33,7 @@
             </div>
         </div>
 
-        <!-- Full Pannel -->
+        <!-- Full Panel -->
         <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
             <!-- Left sub Component -->
             <div class="flex flex-col gap-2 flex-1">

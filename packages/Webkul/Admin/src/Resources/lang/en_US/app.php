@@ -1627,7 +1627,7 @@ return [
                     'image-generation' => [
                         'enabled'    => 'Enabled',
                         'title'      => 'Image Generation',
-                        'title-info' => 'This feature will enable the Magic AI for every image upload, where you want to generate images using DALL-E.<br/><br/>When Enable, go to any image upload to generate image.',
+                        'title-info' => 'This feature will enable the Magic AI for every image upload, where you want to generate images using Latest AI Models.<br/><br/>When Enable, go to any image upload to generate image.',
                     ],
 
                     'translation' => [
