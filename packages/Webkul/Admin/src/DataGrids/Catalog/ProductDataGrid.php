@@ -234,6 +234,9 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'searchable' => false,
                 'filterable' => true,
                 'sortable'   => true,
+                'closure'    => function ($row) {
+                    return core()->formatDateWithTimeZone($row->updated_at, 'Y-m-d H:i:s');
+                },
             ],
 
             'completeness' => [
