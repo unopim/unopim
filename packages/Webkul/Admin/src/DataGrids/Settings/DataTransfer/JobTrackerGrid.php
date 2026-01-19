@@ -11,7 +11,7 @@ class JobTrackerGrid extends DataGrid
     protected $importers;
 
     /**
-     * Intitialize the importers
+     * Initialize the importers
      */
     public function __construct()
     {

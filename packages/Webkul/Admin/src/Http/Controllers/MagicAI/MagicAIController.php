@@ -222,7 +222,9 @@ class MagicAIController extends Controller
         return view('admin::configuration.magic-ai-prompt.index');
     }
 
-    // Merge the Tone and Prompt here and send the updated prompt on function,
+    /**
+     * Merge tone with prompt and send the final prompt to the function.
+     */
     public function store(): JsonResponse
     {
         $this->validate(request(), [

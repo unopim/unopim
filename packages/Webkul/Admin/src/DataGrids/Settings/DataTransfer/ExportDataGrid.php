@@ -10,7 +10,7 @@ class ExportDataGrid extends DataGrid
     protected $exporters;
 
     /**
-     * Intitialize the exporters
+     * Initialize the exporters
      */
     public function __construct()
     {
