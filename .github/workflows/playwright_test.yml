@@ -2,6 +2,7 @@ name: Playwright Tests
 
 on: [push, pull_request]
 
+
 permissions:
   contents: read
 
@@ -32,6 +33,11 @@ jobs:
     env:
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       GROQ_INVALID_KEY: ${{ secrets.GROQ_INVALID_KEY }}
+      UNOPIM_URL: ${{ secrets.UNOPIM_URL }}
+      ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
+      ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+      INVALID_ADMIN_EMAIL: ${{ secrets.INVALID_ADMIN_EMAIL }}
+      INVALID_ADMIN_PASSWORD: ${{ secrets.INVALID_ADMIN_PASSWORD }}
 
     steps:
       - name: Checkout
@@ -81,7 +87,11 @@ jobs:
           npx playwright install-deps chromium
           npx playwright install chromium
 
+      - name: Start Queue Worker
+        run: php artisan queue:work &
+
       - name: Run Playwright tests
+        if: ${{ success() }}
         run: |
           cd tests/e2e-pw
           npx playwright test --reporter=list
@@ -92,3 +102,4 @@ jobs:
         with:
           name: playwright-report
           path: tests/e2e-pw/playwright-report
+
