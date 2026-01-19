@@ -56,6 +56,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
         'type',
         'enable_wysiwyg',
         'position',
+        'swatch_type',
         'is_required',
         'is_unique',
         'validation',

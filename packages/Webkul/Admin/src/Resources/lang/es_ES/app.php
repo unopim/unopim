@@ -418,7 +418,7 @@ return [
                 'save-btn'              => 'Atributo Guardar',
                 'select'                => 'Seleccionar',
                 'select-type'           => 'Seleccione el tipo de atributo',
-                'swatch'                => 'Muestra de tela',
+                'swatch'                => 'Muestra de tela tipo',
                 'text'                  => 'Texto',
                 'textarea'              => 'Textea',
                 'title'                 => 'Agregar atributo',
@@ -485,7 +485,7 @@ return [
                 'save-btn'              => 'Atributo Guardar',
                 'select'                => 'Seleccionar',
                 'select-type'           => 'Seleccione el tipo de atributo',
-                'swatch'                => 'Muestra de tela',
+                'swatch'                => 'Muestra de tela tipo',
                 'text'                  => 'Texto',
                 'textarea'              => 'Textea',
                 'title'                 => 'Editar atributo',
@@ -500,6 +500,7 @@ return [
                 'usable-in-grid'        => 'Usable en la red',
                 'is-filterable'         => 'Es filtrable',
                 'ai-translate'          => 'Traducción IA',
+                'invalid-swatch-type'   => ':attribute no está permitido para el tipo de atributo :type con tipo de swatch :swatch_type.',
 
                 'option' => [
                     'create-success'       => 'Opción de atributo creada correctamente',
@@ -508,6 +509,10 @@ return [
                     'sort-update-failure'  => 'No se pudo actualizar el orden',
                     'sort-update-success'  => 'Orden actualizado correctamente',
                     'update-success'       => 'Opción de atributo actualizada correctamente',
+                    'color'                => 'Muestra de color',
+                    'dropdown'             => 'Desplegable',
+                    'image'                => 'Muestra de imagen',
+                    'text'                 => 'Muestra de texto',
                 ],
             ],
 

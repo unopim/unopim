@@ -418,7 +418,7 @@ return [
                 'save-btn'              => 'Tallenna ominaisuus',
                 'select'                => 'Valintalista',
                 'select-type'           => 'Valitse ominaisuuden tyyppi',
-                'swatch'                => 'Näyte',
+                'swatch'                => 'Näyte tyyppi',
                 'text'                  => 'Teksti',
                 'textarea'              => 'Tekstikenttä',
                 'title'                 => 'Lisää ominaisuus',
@@ -486,7 +486,7 @@ return [
                 'save-btn'              => 'Tallenna ominaisuus',
                 'select'                => 'Valitse',
                 'select-type'           => 'Valitse ominaisuuden tyyppi',
-                'swatch'                => 'Näyte',
+                'swatch'                => 'Näyte tyyppi',
                 'text'                  => 'Teksti',
                 'textarea'              => 'Tekstikenttä',
                 'title'                 => 'Muokkaa ominaisuutta',
@@ -501,6 +501,7 @@ return [
                 'usable-in-grid'        => 'Käytettävissä ruudukossa',
                 'is-filterable'         => 'On suodatettavissa',
                 'ai-translate'          => 'AI Käännös',
+                'invalid-swatch-type'   => ':attribute ei ole sallittu attribuuttityypille :type, jossa on swatch-tyyppi :swatch_type.',
 
                 'option' => [
                     'create-success'       => 'Attribuuttivaihtoehto luotiin onnistuneesti',
@@ -509,6 +510,10 @@ return [
                     'sort-update-failure'  => 'Järjestyksen päivitys epäonnistui',
                     'sort-update-success'  => 'Järjestys päivitetty onnistuneesti',
                     'update-success'       => 'Attribuuttivaihtoehto päivitettiin onnistuneesti',
+                    'color'                => 'Väri',
+                    'dropdown'             => 'Pudotusvalikko',
+                    'image'                => 'Kuvanäyte',
+                    'text'                 => 'Tekstinäyte',
                 ],
             ],
 
