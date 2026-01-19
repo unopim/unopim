@@ -19,9 +19,7 @@ class RoleController extends Controller
     public function __construct(
         protected RoleRepository $roleRepository,
         protected AdminRepository $adminRepository
-    ) {
-        $this->middleware(['auth', 'admin']); 
-      }
+    ) {}
 
     /**
      * Display a listing of the resource.

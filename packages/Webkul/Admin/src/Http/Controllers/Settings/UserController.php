@@ -241,23 +241,83 @@ class UserController extends Controller
      * @param  int  $id
      * @return array|\Illuminate\Http\RedirectResponse
      */
+    // private function prepareUserData(UserForm $request, $id)
+    // {
+    //     $data = $request->validated();
+
+    //     $user = $this->adminRepository->find($id);
+
+    //     /**
+    //      * Password check.
+    //      */
+    //     if (! $data['password']) {
+    //         unset($data['password']);
+    //     } else {
+    //         $data['password'] = bcrypt($data['password']);
+    //     }
+
+    //     /**
+    //      * Is user with `permission_type` all changed status.
+    //      */
+    //     $data['status'] = isset($data['status']);
+
+    //     $isStatusChangedToInactive = ! $data['status'] && (bool) $user->status;
+
+    //     if (
+    //         $isStatusChangedToInactive
+    //         && (auth()->guard('admin')->user()->id === (int) $id
+    //             && $this->adminRepository->countAdminsWithAllAccessAndActiveStatus() === 1
+    //         )
+    //     ) {
+    //         return $this->cannotChangeRedirectResponse('status');
+    //     }
+
+    //     /**
+    //      * Is user with `permission_type` all role changed.
+    //      */
+    //     $isRoleChanged = $user->role->permission_type === 'all'
+    //         && isset($data['role_id'])
+    //         && (int) $data['role_id'] !== $user->role_id;
+
+    //     if (
+    //         $isRoleChanged
+    //         && $this->adminRepository->countAdminsWithAllAccess() === 1
+    //     ) {
+    //         return $this->cannotChangeRedirectResponse('role');
+    //     }
+
+    //     unset($data['image']);
+
+    //     return $data;
+    // }
+
+
+
     private function prepareUserData(UserForm $request, $id)
     {
         $data = $request->validated();
 
         $user = $this->adminRepository->find($id);
+        $loggedInAdmin = auth()->guard('admin')->user();
 
         /**
-         * Password check.
+         * Only Super Admin (permission_type = all) can change role_id
          */
-        if (! $data['password']) {
-            unset($data['password']);
-        } else {
-            $data['password'] = bcrypt($data['password']);
+        if ($loggedInAdmin->role->permission_type !== 'all') {
+            unset($data['role_id']);
         }
 
         /**
-         * Is user with `permission_type` all changed status.
+         * Password handling
+         */
+        if (! empty($data['password'])) {
+            $data['password'] = bcrypt($data['password']);
+        } else {
+            unset($data['password']);
+        }
+
+        /**
+         * Status handling
          */
         $data['status'] = isset($data['status']);
 
@@ -273,15 +333,16 @@ class UserController extends Controller
         }
 
         /**
-         * Is user with `permission_type` all role changed.
+         * Protect last super admin
          */
-        $isRoleChanged = $user->role->permission_type === 'all'
-            && isset($data['role_id'])
-            && (int) $data['role_id'] !== $user->role_id;
+        $isRoleChanged =
+            isset($data['role_id']) &&
+            (int) $data['role_id'] !== $user->role_id &&
+            $user->role->permission_type === 'all';
 
         if (
-            $isRoleChanged
-            && $this->adminRepository->countAdminsWithAllAccess() === 1
+            $isRoleChanged &&
+            $this->adminRepository->countAdminsWithAllAccess() === 1
         ) {
             return $this->cannotChangeRedirectResponse('role');
         }
@@ -290,6 +351,7 @@ class UserController extends Controller
 
         return $data;
     }
+
 
     /**
      * Cannot change redirect response.
