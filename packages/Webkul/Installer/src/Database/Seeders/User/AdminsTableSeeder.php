@@ -24,6 +24,10 @@ class AdminsTableSeeder extends Seeder
         /** Default locale id to be set to user else 58 id of en_US locale is added */
         $defaultLocaleId = DB::table('locales')->where('code', $defaultLocale)->where('status', 1)->first()?->id ?? 58;
 
+        if (isset($parameters['skip_admin_creation']) && $parameters['skip_admin_creation']) {
+            return;
+        }
+
         DB::table('admins')->insert([
             'id'            => 1,
             'name'          => trans('installer::app.seeders.user.users.name', [], $defaultLocale),

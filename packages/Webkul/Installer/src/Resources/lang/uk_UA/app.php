@@ -98,6 +98,10 @@ return [
     ],
 
     'installer' => [
+        'middleware' => [
+            'already-installed' => 'Додаток вже встановлено.',
+        ],
+
         'index' => [
             'create-administrator' => [
                 'admin'            => 'Адміністратор',
