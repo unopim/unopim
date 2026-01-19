@@ -84,15 +84,17 @@ test('Check the Validate button is visible by filling the value in api key', asy
   await expect(adminPage.getByRole('textbox', { name: 'API Key' })).toBeVisible();
   await adminPage.getByRole('textbox', { name: 'API Key' }).fill(groqinvalidapikey);
   await expect(adminPage.getByRole('button', {name: 'Validate Credentials'})).toBeVisible();
+  await expect(adminPage.getByRole('button', {name: 'Validate Credentials'})).toBeDisabled();
 });
 
 test('Validate the credential by filling randam invalid value', async({adminPage})=>{
   await adminPage.getByRole('link', { name: ' Configuration' }).click();
   await adminPage.getByRole('link', { name: 'Magic AI' }).click();
   await expect(adminPage).toHaveURL(/.*\/admin\/configuration\/general\/magic_ai/);
+  await adminPage.locator('.relative > .w-9').first().click();
   await adminPage.locator('input[name="general[magic_ai][settings][ai_platform]"]')
   .locator('..').locator('.multiselect__tags').click();
-  await adminPage.getByRole('option', { name: 'Openai' }).click();
+  await adminPage.getByRole('option', { name: 'Groq' }).click();
   await expect(adminPage.getByRole('textbox', { name: 'API Key' })).toBeVisible();
   await adminPage.getByRole('textbox', { name: 'API Key' }).fill(groqinvalidapikey);
   await expect(adminPage.getByRole('textbox', { name: 'LLM API Domain' })).toBeVisible();
@@ -189,6 +191,48 @@ test('Assign the locale to default channel', async({adminPage})=>{
   await expect(adminPage.getByText(/Update Channel Successfully/i)).toBeVisible();
 });
 
+test('Verify the models of OpenAI platform', async({adminPage})=>{
+  await adminPage.getByRole('link', { name: ' Configuration' }).click();
+  await adminPage.getByRole('link', { name: 'Magic AI' }).click();
+  await adminPage.locator('input[name="general[magic_ai][settings][ai_platform]"]')
+  .locator('..').locator('.multiselect__tags').click();
+  await adminPage.getByRole('option', { name: 'Openai' }).click();
+  await adminPage.locator('input[name="general[magic_ai][settings][api_model]"]')
+  .locator('..').locator('.multiselect__tags').click();
+  await expect(adminPage.getByRole('option', { name: 'gpt-5.2' }).locator('span').nth(1)).toBeVisible();
+  await expect(adminPage.getByRole('option', { name: 'gpt-5' }).locator('span').nth(1)).toBeVisible();
+  await expect(adminPage.getByRole('option', { name: 'gpt-5-mini' }).locator('span').nth(1)).toBeVisible();
+  await expect(adminPage.getByRole('option', { name: 'gpt-5.1' }).locator('span').nth(1)).toBeVisible();
+  await expect(adminPage.getByRole('option', { name: 'gpt-5-nano' }).locator('span').nth(1)).toBeVisible();
+  await expect(adminPage.getByRole('option', { name: 'gpt-4o' }).locator('span').nth(1)).toBeVisible();
+  await expect(adminPage.getByRole('option', { name: 'gpt-4o-mini' }).locator('span').nth(1)).toBeVisible();
+  await expect(adminPage.getByRole('option', { name: 'gpt-3.5-turbo' }).locator('span').nth(1)).toBeVisible();
+  await expect(adminPage.getByRole('option', { name: 'dall-e-2' }).locator('span').nth(1)).toBeVisible();
+  await expect(adminPage.getByRole('option', { name: 'dall-e-3' }).locator('span').nth(1)).toBeVisible();
+  await expect(adminPage.getByRole('option', { name: 'gpt-image-1.5' }).locator('span').nth(1)).toBeVisible();
+  await expect(adminPage.getByRole('option', { name: 'gpt-image-1' }).locator('span').nth(1)).toBeVisible();
+  await expect(adminPage.getByRole('option', { name: 'gpt-image-1-mini' }).locator('span').nth(1)).toBeVisible();
+});
+
+test('Verify the models of Gemini platform', async({adminPage})=>{
+  await adminPage.getByRole('link', { name: ' Configuration' }).click();
+  await adminPage.getByRole('link', { name: 'Magic AI' }).click();
+  await adminPage.locator('input[name="general[magic_ai][settings][ai_platform]"]')
+  .locator('..').locator('.multiselect__tags').click();
+  await adminPage.getByRole('option', { name: 'Gemini' }).click();
+  await adminPage.locator('input[name="general[magic_ai][settings][api_model]"]')
+  .locator('..').locator('.multiselect__tags').click();
+  await expect(adminPage.getByRole('option', { name: 'gemini-3-pro-preview' }).locator('span').first()).toBeVisible();
+  await expect(adminPage.getByRole('option', { name: 'gemini-3-flash-preview' }).locator('span').first()).toBeVisible();
+  await expect(adminPage.getByRole('option', { name: 'gemini-2.5-pro' }).locator('span').first()).toBeVisible();
+  await expect(adminPage.getByRole('option', { name: 'gemini-2.5-flash' }).locator('span').first()).toBeVisible();
+  await expect(adminPage.getByRole('option', { name: 'gemini-2.0-flash' }).locator('span').first()).toBeVisible();
+  await expect(adminPage.getByRole('option', { name: 'gemini-1.5-flash-latest' }).locator('span').first()).toBeVisible();
+  await expect(adminPage.getByRole('option', { name: 'gemini-1.5-pro' }).locator('span').first()).toBeVisible();
+  await expect(adminPage.getByRole('option', { name: 'gemini-2.5-flash-image' }).locator('span').first()).toBeVisible();
+  await expect(adminPage.getByRole('option', { name: 'gemini-3-pro-image-preview' }).locator('span').first()).toBeVisible();
+});
+
 test('Setup the MagicAI with valid credential(Graq)', async({adminPage})=>{
   await adminPage.getByRole('link', { name: ' Configuration' }).click();
   await adminPage.getByRole('link', { name: 'Magic AI' }).click();
@@ -254,7 +298,7 @@ test('Click on Create prompt button and verify the fields', async ({ adminPage }
   await expect(createNewPromptText).toBeEnabled();
   const fields = [
   adminPage.locator('input[name="title"]'),
-  adminPage.locator('div').filter({ hasText: /^Friendly Assistant$/ }).nth(1),
+  adminPage.locator('div').filter({ hasText: /^Friendly Assistant$/ }),
   adminPage.locator('textarea[name="prompt"]'),
   adminPage.getByRole('button', { name: 'Save Prompt' })
   ];
@@ -277,7 +321,7 @@ test('Check Type field in prompt section should have Product and Category option
   await adminPage.getByRole('link', { name: 'Magic AI' }).click();
   await adminPage.getByRole('link', { name: 'Prompt', exact: true }).click();
   await adminPage.getByRole('button', { name: 'Create Prompt' }).click();
-  await adminPage.locator('div').filter({ hasText: /^Product$/ }).nth(1).click();
+  await adminPage.locator('div').filter({ hasText: /^Product$/ }).click();
   await expect(adminPage.getByRole('option', { name: 'Product' }).locator('span').first()).toBeVisible();
   await expect(adminPage.getByRole('option', { name: 'Category' }).locator('span').first()).toBeVisible();
 });
@@ -379,7 +423,7 @@ test('Create a Prompt with all the field for Category', async({adminPage})=>{
   await adminPage.getByRole('button', { name: 'Create Prompt' }).click();
   await adminPage.locator('input[name="title"]').click();
   await adminPage.locator('input[name="title"]').fill('Create Description Category');
-  await adminPage.locator('div').filter({ hasText: /^Product$/ }).nth(1).click();
+  await adminPage.locator('div').filter({ hasText: /^Product$/ }).click();
   await adminPage.getByRole('option', { name: 'Category' }).locator('span').first().click();
   const toneValue = await adminPage.locator('input[name="tone"] + .multiselect__single').textContent();
   expect(toneValue.trim()).toBe('Friendly Assistant');
@@ -450,21 +494,21 @@ test('Create a Role with MagicAI permission', async({adminPage})=>{
   await expect(adminPage.getByText('Roles Created Successfully')).toBeVisible();
 });
 
-test('create a user with MagicAI permisssion', async({adminPage})=>{
+test('Create a user with MagicAI permisssion', async({adminPage})=>{
   await adminPage.getByRole('link', { name: ' Settings' }).click();
   await adminPage.getByRole('link', { name: 'Users' }).click();
   await adminPage.getByRole('button', { name: 'Create User' }).click();
   await adminPage.getByRole('textbox', { name: 'Name' }).click();
-  await adminPage.getByRole('textbox', { name: 'Name' }).fill('Testing Kumar');
+  await adminPage.getByRole('textbox', { name: 'Name' }).fill('Testing');
   await adminPage.getByRole('textbox', { name: 'email@example.com' }).click();
   await adminPage.getByRole('textbox', { name: 'email@example.com' }).fill('testing@example.com');
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).click();
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).fill('test123');
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).click();
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).fill('test123');
-  await adminPage.locator('div').filter({ hasText: /^UI Locale$/ }).nth(1).click();
+  await adminPage.locator('div').filter({ hasText: /^UI Locale$/ }).click();
   await adminPage.getByRole('option', { name: 'English (United States)' }).locator('span').first().click();
-  await adminPage.locator('div').filter({ hasText: /^Timezone$/ }).nth(1).click();
+  await adminPage.locator('div').filter({ hasText: /^Timezone$/ }).click();
   await adminPage.getByRole('textbox', { name: 'timezone-searchbox' }).fill('kolkata');
   await adminPage.getByRole('option', { name: 'Asia/Kolkata (+05:30)' }).locator('span').first().click();
   await adminPage.locator('div').filter({ hasText: /^Role$/ }).nth(1).click();
@@ -479,7 +523,7 @@ test('Delete the User created with MagicAI permission', async({adminPage})=>{
   await adminPage.getByRole('link', { name: 'Users' }).click();
   await adminPage.getByRole('textbox', {name:'Search'}).fill('testing');
   await adminPage.keyboard.press('Enter');
-  const itemRow = adminPage.locator('div', { hasText: /Testing Kumar/ });
+  const itemRow = adminPage.locator('div', { hasText: /Testing/ });
   await itemRow.locator('span[title="Delete"]').first().click();
   await expect(adminPage.getByText('Are you sure you want to delete?')).toBeVisible();
   await adminPage.getByRole('button', { name: 'Delete' }).click();
