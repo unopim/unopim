@@ -8,8 +8,10 @@ use Illuminate\Support\Facades\Event;
 use Webkul\Admin\DataGrids\Catalog\AttributeDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
+use Webkul\Attribute\Enums\SwatchTypeEnum;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\NotSupportedAttributes;
+use Webkul\Attribute\Rules\SwatchTypes;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Core\Rules\Code;
 use Webkul\Product\Repositories\ProductRepository;
@@ -58,7 +60,7 @@ class AttributeController extends Controller
      */
     public function create()
     {
-        return view('admin::catalog.attributes.create', ['locales' => $this->localeRepository->getActiveLocales()]);
+        return view('admin::catalog.attributes.create', ['locales' => $this->localeRepository->getActiveLocales(), 'swatchTypes' => SwatchTypeEnum::getValues()]);
     }
 
     /**
@@ -69,8 +71,13 @@ class AttributeController extends Controller
     public function store()
     {
         $this->validate(request(), [
-            'code' => ['required', 'not_in:type,attribute_family_id', 'unique:attributes,code', new Code, new NotSupportedAttributes],
-            'type' => 'required',
+            'code'        => ['required', 'not_in:type,attribute_family_id', 'unique:attributes,code', new Code, new NotSupportedAttributes],
+            'type'        => 'required',
+            'swatch_type' => [
+                'required_if:type,select,multiselect',
+                'prohibited_unless:type,select,multiselect',
+                new SwatchTypes,
+            ],
         ]);
 
         $requestData = request()->all();
@@ -107,7 +114,9 @@ class AttributeController extends Controller
 
         $locales = $this->localeRepository->getActiveLocales();
 
-        return view('admin::catalog.attributes.edit', compact('attribute', 'locales'));
+        $swatchTypes = SwatchTypeEnum::getValues();
+
+        return view('admin::catalog.attributes.edit', compact('attribute', 'locales', 'swatchTypes'));
     }
 
     /**
@@ -118,8 +127,13 @@ class AttributeController extends Controller
     public function update(int $id)
     {
         $this->validate(request(), [
-            'code' => ['required', 'unique:attributes,code,'.$id, new Code],
-            'type' => 'required',
+            'code'        => ['required', 'unique:attributes,code,'.$id, new Code],
+            'type'        => 'required',
+            'swatch_type' => [
+                'required_if:type,select,multiselect',
+                'prohibited_unless:type,select,multiselect',
+                new SwatchTypes,
+            ],
         ]);
 
         $requestData = request()->except(['type', 'code', 'value_per_locale', 'value_per_channel', 'is_unique']);
