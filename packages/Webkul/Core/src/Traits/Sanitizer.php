@@ -19,7 +19,6 @@ trait Sanitizer
     public function sanitizeSVG($path, $mimeType)
     {
         if ($this->checkMimeType($mimeType)) {
-
             $sanitizer = new MainSanitizer;
 
             $sanitizer->removeRemoteReferences(true);

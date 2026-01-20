@@ -70,7 +70,6 @@ class DatabaseManager
      */
     public function seeder($data)
     {
-
         $data['parameter'] = [
             'default_locale'      => $data['parameter']['default_locales'],
             'allowed_locales'     => $data['parameter']['allowed_locales'],
