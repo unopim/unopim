@@ -575,8 +575,8 @@ test('Create product and Generate the content from the MagicAI', async({adminPag
   await adminPage.getByRole('option', { name: 'Black' }).locator('span').first().click();
   await adminPage.getByRole('button', { name: 'Magic AI' }).first().click();
   await adminPage.locator('div:nth-child(1) > div > .multiselect > .multiselect__tags').click();
-  await adminPage.getByRole('textbox', { name: 'default_prompt-searchbox' }).fill('Create');
-  await adminPage.getByRole('option', { name: 'Create Description Press' }).locator('span').first().click();
+  await adminPage.getByRole('textbox', { name: 'default_prompt-searchbox' }).fill('brief');
+  await adminPage.getByRole('option', { name: 'Product Brief' }).locator('span').first().click();
   await expect(adminPage.locator('div').filter({ hasText: /^Friendly Assistant$/ }).first()).toBeVisible();
   await adminPage.getByRole('button', { name: 'Generate' }).click();
   await adminPage.waitForTimeout(500);

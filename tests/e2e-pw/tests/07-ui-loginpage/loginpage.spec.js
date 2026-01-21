@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const UNOPIM_URL = 'http://127.0.0.1:8000/admin/login';
+const UNOPIM_URL = 'http://127.0.0.1:8001/admin/login';
 const email = 'admin@example.com';
 const password = 'admin123';
 const invalidEmail = 'admin123@example.com';
