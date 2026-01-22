@@ -79,7 +79,7 @@ class AttributeOptionDataGrid extends DataGrid
     {
         $locales = core()->getAllActiveLocales()->pluck('code');
 
-        $currenctLocaleCode = core()->getCurrentLocale()?->code;
+        $currentLocaleCode = core()->getCurrentLocale()?->code;
 
         $this->addColumn([
             'index'      => 'code',
@@ -93,7 +93,7 @@ class AttributeOptionDataGrid extends DataGrid
         foreach ($locales as $locale) {
             $this->addColumn([
                 'index'      => 'name_'.$locale,
-                'label'      => \Locale::getDisplayName($locale, $currenctLocaleCode),
+                'label'      => \Locale::getDisplayName($locale, $currentLocaleCode),
                 'type'       => 'string',
                 'searchable' => false,
                 'filterable' => false,
