@@ -419,7 +419,7 @@ return [
                 'save-btn'              => 'Sla attribuut op',
                 'select'                => 'Uitkiezen',
                 'select-type'           => 'Selecteer Type kenmerk',
-                'swatch'                => 'Staal',
+                'swatch'                => 'Staal type',
                 'text'                  => 'Tekst',
                 'textarea'              => 'Textarea',
                 'title'                 => 'Attribuut toevoegen',
@@ -487,7 +487,7 @@ return [
                 'save-btn'              => 'Sla attribuut op',
                 'select'                => 'Uitkiezen',
                 'select-type'           => 'Selecteer Type kenmerk',
-                'swatch'                => 'Staal',
+                'swatch'                => 'Staal type',
                 'text'                  => 'Tekst',
                 'textarea'              => 'Textarea',
                 'title'                 => 'Attribuut bewerken',
@@ -502,6 +502,7 @@ return [
                 'usable-in-grid'        => 'Bruikbaar in het rooster',
                 'is-filterable'         => 'Is filterbaar',
                 'ai-translate'          => 'AI Vertaling',
+                'invalid-swatch-type'   => ':attribute is niet toegestaan voor attribuuttype :type met swatchtype :swatch_type.',
 
                 'option' => [
                     'create-success'      => 'Attribuutoptie met succes gemaakt',
@@ -510,6 +511,10 @@ return [
                     'sort-update-failure' => 'Sorteren bijwerken mislukt',
                     'sort-update-success' => 'Sorteervolgorde succesvol bijgewerkt',
                     'update-success'      => 'Attribuutoptie met succes bijgewerkt',
+                    'color'               => 'Kleurstaal',
+                    'dropdown'            => 'Laten vallen',
+                    'image'               => 'Afbeeldingsstaal',
+                    'text'                => 'Tekststaal',
                 ],
             ],
 

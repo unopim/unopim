@@ -7,18 +7,24 @@
     $selectedOptions = json_encode(explode(',', $selectedOptions) ?? []);
 @endphp
 
-<v-ai-model
-    label="@lang($field['title'])"
-    name="{{ $name }}"
-    :value="{{ $selectedOptions }}">
+<v-ai-model label="@lang($field['title'])" name="{{ $name }}" :value="{{ $selectedOptions }}">
 </v-ai-model>
 
 @pushOnce('scripts')
     <script type="text/x-template" id="v-ai-model-template">
         <div class="grid gap-2.5 content-start">
             <div class="flex gap-x-2.5 items-center" v-if="!isValid">
-                <button type="button" class="primary-button" @click="validated"> Validate Credentials </button>
+                <button
+                    type="button"
+                    class="primary-button"
+                    @click="validated"
+                    :disabled="!canValidate"
+                    :class="{ 'opacity-50 cursor-not-allowed': !canValidate }"
+                >
+                    Validate Credentials
+                </button>
             </div>
+
             <div>
                 <!-- Groq -->
                 <x-admin::form.control-group class="mb-4" v-if="aiCredentials.api_platform === 'groq'">
@@ -66,6 +72,7 @@
                         @{{ label }}
                         @php
                             $modelOptions = [
+                                "gpt-5.2",
                                 "gpt-5",
                                 "gpt-5.1",
                                 "gpt-5-mini",
@@ -74,7 +81,10 @@
                                 "gpt-4o-mini", 
                                 "gpt-3.5-turbo", 
                                 "dall-e-2", 
-                                "dall-e-3"
+                                "dall-e-3",
+                                "gpt-image-1.5",
+                                "gpt-image-1",
+                                "gpt-image-1-mini",
                             ];
                             $options = [];
                             foreach($modelOptions as $option) {
@@ -148,11 +158,15 @@
                         @{{ label }}
                         @php
                             $modelOptions = [
+                                "gemini-3-pro-preview",
+                                "gemini-3-flash-preview",
                                 "gemini-2.5-pro",
                                 "gemini-2.5-flash",
                                 "gemini-2.0-flash",
                                 "gemini-1.5-flash-latest",
                                 "gemini-1.5-pro",
+                                "gemini-2.5-flash-image",
+                                "gemini-3-pro-image-preview",
                             ];
                             $options = array_map(fn($option) => ['id' => $option, 'label' => $option], $modelOptions);
                             $optionsInJson = json_encode($options);
@@ -225,6 +239,19 @@
                 });
             },
 
+            computed: {
+                canValidate() {
+                    return (
+                        this.aiCredentials.enabled &&
+                        this.aiCredentials.api_platform &&
+                        this.aiCredentials.api_key &&
+                        this.aiCredentials.api_key.trim() !== '' &&
+                        this.aiCredentials.api_domain
+                    );
+                }
+            },
+
+
             methods: {
                 parseJson(value) {
                     try {
@@ -244,7 +271,6 @@
                         });
                         this.isValid = true;
                     } catch (error) {
-                        console.error("Failed to fetch AI models:", error);
                         this.$emitter.emit('add-flash', {
                             type: 'error',
                             message: error.response.data.message

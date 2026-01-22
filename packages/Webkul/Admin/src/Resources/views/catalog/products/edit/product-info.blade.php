@@ -61,7 +61,12 @@
                 @lang('admin::app.catalog.products.edit.product-info.updated-at')
             </label>
             <div class="w-full py-2.5 px-3 border rounded-md text-sm bg-gray-100 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 focus:border-gray-400 dark:bg-cherry-800 dark:border-gray-600 flex items-center justify-between">
-                <span>{{ $product->updated_at ?? '—' }}</span>
+                <span>
+                    {{ $product->updated_at
+                        ? core()->formatDateWithTimeZone($product->updated_at, 'Y-m-d H:i:s')
+                        : '—'
+                    }}
+                </span>
                 <span class="icon-calendar w-4 h-4 text-gray-400"></span>
             </div>
         </div>
