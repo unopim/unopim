@@ -85,7 +85,7 @@ test.describe('UnoPim Attribute', () => {
     await expect(adminPage.getByRole('button', { name: '' })).toContainText('20');
   });
 
-  test('should perform actions on a category (Edit, Delete)', async ({ adminPage }) => {
+  test('should perform actions on a attribute (Edit, Delete)', async ({ adminPage }) => {
     await adminPage.getByRole('link', { name: ' Catalog' }).click();
     await adminPage.getByRole('link', { name: 'Attributes' }).click();
     const itemRow = adminPage.locator('div', { hasText: 'product_name' });
@@ -97,7 +97,7 @@ test.describe('UnoPim Attribute', () => {
     await expect(adminPage.locator('text=Are you sure you want to delete?')).toBeVisible();
   });
 
-  test('should allow selecting all category with the mass action checkbox', async ({ adminPage }) => {
+  test('should allow selecting all attribute with the mass action checkbox', async ({ adminPage }) => {
     await adminPage.getByRole('link', { name: ' Catalog' }).click();
     await adminPage.getByRole('link', { name: 'Attributes' }).click();
     await adminPage.click('label[for="mass_action_select_all_records"]');
