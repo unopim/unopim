@@ -7,6 +7,7 @@ return [
     'decimal'                      => 'Wartość :attribute musi być poprawna.',
     'phone-number'                 => 'Numer telefonu :attribute musi być poprawny.',
     'slug'                         => 'Slug :attribute musi być poprawny.',
+    'sku'                          => 'SKU :attribute musi być poprawny (dozwolone są tylko znaki alfanumeryczne, myślniki i podkreślenia).',
     'comma-separated-integer'      => 'Pole :attribute musi być liczbą i może zawierać przecinki.',
     'type'                         => 'Typ :attribute musi być poprawny.',
     'validation-type'              => 'Typ walidacji :attribute musi być poprawny.',

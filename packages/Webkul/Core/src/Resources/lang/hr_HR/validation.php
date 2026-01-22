@@ -7,6 +7,7 @@ return [
     'decimal'                      => 'Vrijednost :attribute mora biti važeća.',
     'phone-number'                 => 'Telefon :attribute mora biti važeći broj.',
     'slug'                         => 'Slug :attribute mora biti važeći.',
+    'sku'                          => 'SKU :attribute mora biti važeći (dopušteni su samo alfanumerički znakovi, crtice i podvlake).',
     'comma-separated-integer'      => 'Polje :attribute mora biti numeričko i može sadržavati zareze.',
     'type'                         => 'Vrsta :attribute mora biti važeća.',
     'validation-type'              => 'Vrsta provjere valjanosti :attribute mora biti važeća.',

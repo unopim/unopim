@@ -7,6 +7,7 @@ return [
     'decimal'                      => 'The :attribute must be valid.',
     'phone-number'                 => 'The :attribute must be a valid phone number.',
     'slug'                         => 'The :attribute must be a valid slug.',
+    'sku'                          => 'The :attribute must be a valid SKU (alphanumeric characters, hyphens, and underscores only).',
     'comma-separated-integer'      => 'The :attribute field must be numeric and may contain comma.',
     'type'                         => 'The :attribute must be valid type.',
     'validation-type'              => 'The :attribute must be valid type.',
