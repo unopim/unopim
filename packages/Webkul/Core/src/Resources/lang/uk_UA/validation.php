@@ -7,6 +7,7 @@ return [
     'decimal'                      => 'Значення :attribute має бути правильним.',
     'phone-number'                 => 'Номер телефону :attribute має бути правильним.',
     'slug'                         => 'Slug :attribute має бути правильним.',
+    'sku'                          => 'SKU :attribute має бути дійсним (лише буквено-цифрові символи, дефіси та підкреслення).',
     'comma-separated-integer'      => 'Поле :attribute повинно бути числовим і може містити коми.',
     'type'                         => 'Тип :attribute має бути правильним.',
     'validation-type'              => 'Тип перевірки :attribute має бути правильним.',

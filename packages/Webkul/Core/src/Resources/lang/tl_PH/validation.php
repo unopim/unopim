@@ -7,6 +7,7 @@ return [
     'decimal'                      => 'Ang :attribute ay dapat valid.',
     'phone-number'                 => 'Ang :attribute ay dapat valid na numero ng telepono.',
     'slug'                         => 'Ang :attribute ay dapat valid na slug.',
+    'sku'                          => 'Ang :attribute ay dapat na valid na SKU (mga alphanumeric na character, hyphen, at underscore lang).',
     'comma-separated-integer'      => 'Ang :attribute field ay dapat numerikal at maaaring maglaman ng kuwit.',
     'type'                         => 'Ang :attribute ay dapat valid na uri.',
     'validation-type'              => 'Ang :attribute ay dapat valid na uri.',

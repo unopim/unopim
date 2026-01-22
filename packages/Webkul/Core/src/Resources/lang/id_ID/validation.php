@@ -7,6 +7,7 @@ return [
     'decimal'                      => ':attribute harus valid.',
     'phone-number'                 => ':attribute harus berupa nomor telepon yang valid.',
     'slug'                         => ':attribute harus berupa slug yang valid.',
+    'sku'                          => ':attribute harus berupa SKU yang valid (hanya karakter alfanumerik, tanda hubung, dan garis bawah).',
     'comma-separated-integer'      => 'Kolom :attribute harus berupa angka dan boleh berisi koma.',
     'type'                         => ':attribute harus bertipe valid.',
     'validation-type'              => ':attribute harus bertipe valid.',

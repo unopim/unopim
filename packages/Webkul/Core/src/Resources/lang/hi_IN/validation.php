@@ -7,6 +7,7 @@ return [
     'decimal'                      => ':attribute मान्य होना चाहिए।',
     'phone-number'                 => ':attribute मान्य फ़ोन नंबर होना चाहिए।',
     'slug'                         => ':attribute मान्य स्लग होना चाहिए।',
+    'sku'                          => ':attribute मान्य SKU होना चाहिए (केवल अल्फ़ान्यूमेरिक वर्ण, हाइफ़न और अंडरस्कोर)।',
     'comma-separated-integer'      => ':attribute फ़ील्ड संख्यात्मक होना चाहिए और इसमें अल्पविराम हो सकता है।',
     'type'                         => ':attribute मान्य प्रकार का होना चाहिए।',
     'validation-type'              => ':attribute मान्य प्रकार का होना चाहिए।',

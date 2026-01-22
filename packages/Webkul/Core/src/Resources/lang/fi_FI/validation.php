@@ -7,6 +7,7 @@ return [
     'decimal'                      => ':attribute on oltava kelvollinen.',
     'phone-number'                 => ':attribute on oltava kelvollinen puhelinnumero.',
     'slug'                         => ':attribute on oltava kelvollinen slugi.',
+    'sku'                          => ':attribute on oltava kelvollinen SKU (vain aakkosnumeeriset merkit, yhdysviivat ja alaviivat).',
     'comma-separated-integer'      => ':attribute kenttä on oltava numerinen ja voi sisältää pilkkuja.',
     'type'                         => ':attribute on oltava kelvollinen tyyppi.',
     'validation-type'              => ':attribute on oltava kelvollinen tyyppi.',
