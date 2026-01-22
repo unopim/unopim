@@ -298,7 +298,7 @@ test('Click on Create prompt button and verify the fields', async ({ adminPage }
   await expect(createNewPromptText).toBeEnabled();
   const fields = [
   adminPage.locator('input[name="title"]'),
-  adminPage.locator('div').filter({ hasText: /^Friendly Assistant$/ }),
+  adminPage.locator('div').filter({ hasText: /^Friendly Assistant$/ }).nth(1),
   adminPage.locator('textarea[name="prompt"]'),
   adminPage.getByRole('button', { name: 'Save Prompt' })
   ];
@@ -321,7 +321,7 @@ test('Check Type field in prompt section should have Product and Category option
   await adminPage.getByRole('link', { name: 'Magic AI' }).click();
   await adminPage.getByRole('link', { name: 'Prompt', exact: true }).click();
   await adminPage.getByRole('button', { name: 'Create Prompt' }).click();
-  await adminPage.locator('div').filter({ hasText: /^Product$/ }).click();
+  await adminPage.locator('div').filter({ hasText: /^Product$/ }).nth(1).click();
   await expect(adminPage.getByRole('option', { name: 'Product' }).locator('span').first()).toBeVisible();
   await expect(adminPage.getByRole('option', { name: 'Category' }).locator('span').first()).toBeVisible();
 });
@@ -423,7 +423,7 @@ test('Create a Prompt with all the field for Category', async({adminPage})=>{
   await adminPage.getByRole('button', { name: 'Create Prompt' }).click();
   await adminPage.locator('input[name="title"]').click();
   await adminPage.locator('input[name="title"]').fill('Create Description Category');
-  await adminPage.locator('div').filter({ hasText: /^Product$/ }).click();
+  await adminPage.locator('div').filter({ hasText: /^Product$/ }).nth(1).click();
   await adminPage.getByRole('option', { name: 'Category' }).locator('span').first().click();
   const toneValue = await adminPage.locator('input[name="tone"] + .multiselect__single').textContent();
   expect(toneValue.trim()).toBe('Friendly Assistant');
@@ -506,9 +506,9 @@ test('Create a user with MagicAI permisssion', async({adminPage})=>{
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).fill('test123');
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).click();
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).fill('test123');
-  await adminPage.locator('div').filter({ hasText: /^UI Locale$/ }).click();
+  await adminPage.locator('div').filter({ hasText: /^UI Locale$/ }).nth(1).click();
   await adminPage.getByRole('option', { name: 'English (United States)' }).locator('span').first().click();
-  await adminPage.locator('div').filter({ hasText: /^Timezone$/ }).click();
+  await adminPage.locator('div').filter({ hasText: /^Timezone$/ }).nth(1).click();
   await adminPage.getByRole('textbox', { name: 'timezone-searchbox' }).fill('kolkata');
   await adminPage.getByRole('option', { name: 'Asia/Kolkata (+05:30)' }).locator('span').first().click();
   await adminPage.locator('div').filter({ hasText: /^Role$/ }).nth(1).click();
@@ -575,8 +575,8 @@ test('Create product and Generate the content from the MagicAI', async({adminPag
   await adminPage.getByRole('option', { name: 'Black' }).locator('span').first().click();
   await adminPage.getByRole('button', { name: 'Magic AI' }).first().click();
   await adminPage.locator('div:nth-child(1) > div > .multiselect > .multiselect__tags').click();
-  await adminPage.getByRole('textbox', { name: 'default_prompt-searchbox' }).fill('Create');
-  await adminPage.getByRole('option', { name: 'Create Description Press' }).locator('span').first().click();
+  await adminPage.getByRole('textbox', { name: 'default_prompt-searchbox' }).fill('brief');
+  await adminPage.getByRole('option', { name: 'Product Brief' }).locator('span').first().click();
   await expect(adminPage.locator('div').filter({ hasText: /^Friendly Assistant$/ }).first()).toBeVisible();
   await adminPage.getByRole('button', { name: 'Generate' }).click();
   await adminPage.waitForTimeout(500);
