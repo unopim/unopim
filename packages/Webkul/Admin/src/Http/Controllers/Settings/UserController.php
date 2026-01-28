@@ -256,18 +256,13 @@ class UserController extends Controller
             unset($data['role_id']);
         }
 
-        /**
-         * Password handling
-         */
         if (! empty($data['password'])) {
             $data['password'] = bcrypt($data['password']);
         } else {
             unset($data['password']);
         }
 
-        /**
-         * Status handling
-         */
+        
         $data['status'] = isset($data['status']);
 
         $isStatusChangedToInactive = ! $data['status'] && (bool) $user->status;
@@ -281,9 +276,12 @@ class UserController extends Controller
             return $this->cannotChangeRedirectResponse('status');
         }
 
+<<<<<<< Updated upstream
         /**
          * Protect last super admin
          */
+=======
+>>>>>>> Stashed changes
         $isRoleChanged =
             isset($data['role_id']) &&
             (int) $data['role_id'] !== $user->role_id &&
