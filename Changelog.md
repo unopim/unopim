@@ -2,6 +2,9 @@
 
 ## v1.0.0
 
+### Changed
+- Removed retired LLM models (GPT-4o, GPT-4o mini).
+
 ### Features
 - Added **PostgreSQL Support** for improved cross-database compatibility. Fixes issue: [#45](https://github.com/unopim/unopim/issues/45)
 - Implemented **System Prompt Management** for configuring AI prompt behavior and max token settings.

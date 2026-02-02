@@ -23,8 +23,8 @@ class AIModel
     ];
 
     const DEFAULT_MODELS = [
-        ['id' => 'gpt-4o'],
-        ['id' => 'gpt-4o-mini'],
+        ['id' => 'gpt-5'],
+        ['id' => 'gpt-5.1'],
         ['id' => 'starling'],
         ['id' => 'gpt-3.5-turbo'],
         ['id' => 'mistral:7b'],
