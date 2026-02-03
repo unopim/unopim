@@ -1,9 +1,11 @@
 # v1.0.x
 
-## v1.0.0
+## v1.0.1
 
 ### Changed
 - Removed retired LLM models (GPT-4o, GPT-4o mini).
+
+## v1.0.0
 
 ### Features
 - Added **PostgreSQL Support** for improved cross-database compatibility. Fixes issue: [#45](https://github.com/unopim/unopim/issues/45)
