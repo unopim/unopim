@@ -5,7 +5,7 @@ test('Create role with empty permission field', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: ' Settings' }).click();
   await adminPage.getByRole('link', { name: 'Roles' }).click();
   await adminPage.getByRole('link', { name: 'Create Role' }).click();
-  await adminPage.locator('div').filter({ hasText: /^Custom$/ }).click();
+  await adminPage.getByRole('combobox').locator('div').filter({ hasText: 'Custom' }).click();
   await adminPage.getByRole('option', { name: 'Custom' }).locator('span').first().click();
   await adminPage.getByRole('textbox', { name: 'Name' }).click();
   await adminPage.getByRole('textbox', { name: 'Name' }).fill('Admin');
@@ -19,7 +19,7 @@ test('Create role with empty Name field', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: ' Settings' }).click();
   await adminPage.getByRole('link', { name: 'Roles' }).click();
   await adminPage.getByRole('link', { name: 'Create Role' }).click();
-  await adminPage.locator('div').filter({ hasText: /^Custom$/ }).click();
+  await adminPage.getByRole('combobox').locator('div').filter({ hasText: 'Custom' }).click();
   await adminPage.getByRole('option', { name: 'All' }).locator('span').first().click();
   await adminPage.getByRole('textbox', { name: 'Name' }).click();
   await adminPage.getByRole('textbox', { name: 'Name' }).fill('');
@@ -33,7 +33,7 @@ test('Create role with empty description field', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: ' Settings' }).click();
   await adminPage.getByRole('link', { name: 'Roles' }).click();
   await adminPage.getByRole('link', { name: 'Create Role' }).click();
-  await adminPage.locator('div').filter({ hasText: /^Custom$/ }).click();
+  await adminPage.getByRole('combobox').locator('div').filter({ hasText: 'Custom' }).click();
   await adminPage.getByRole('option', { name: 'All' }).locator('span').first().click();
   await adminPage.getByRole('textbox', { name: 'Name' }).click();
   await adminPage.getByRole('textbox', { name: 'Name' }).fill('Admin');
@@ -47,7 +47,7 @@ test('Create role with all required field empty', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: ' Settings' }).click();
   await adminPage.getByRole('link', { name: 'Roles' }).click();
   await adminPage.getByRole('link', { name: 'Create Role' }).click();
-  await adminPage.locator('div').filter({ hasText: /^Custom$/ }).click();
+  await adminPage.getByRole('combobox').locator('div').filter({ hasText: 'Custom' }).click();
   await adminPage.getByRole('option', { name: 'Custom' }).locator('span').first().click();
   await adminPage.getByRole('textbox', { name: 'Name' }).click();
   await adminPage.getByRole('textbox', { name: 'Name' }).fill('');
@@ -63,7 +63,7 @@ test('Create Administrator role', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: ' Settings' }).click();
   await adminPage.getByRole('link', { name: 'Roles' }).click();
   await adminPage.getByRole('link', { name: 'Create Role' }).click();
-  await adminPage.locator('div').filter({ hasText: /^Custom$/ }).click();
+  await adminPage.getByRole('combobox').locator('div').filter({ hasText: 'Custom' }).click();
   await adminPage.getByRole('option', { name: 'All' }).locator('span').first().click();
   await adminPage.getByRole('textbox', { name: 'Name' }).click();
   await adminPage.getByRole('textbox', { name: 'Name' }).fill('Admin');

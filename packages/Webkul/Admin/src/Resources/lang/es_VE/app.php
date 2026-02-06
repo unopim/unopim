@@ -418,7 +418,7 @@ return [
                 'save-btn'              => 'Guardar Atributo',
                 'select'                => 'Seleccionar',
                 'select-type'           => 'Seleccionar tipo de atributo',
-                'swatch'                => 'Muestra',
+                'swatch'                => 'Muestra tipo',
                 'text'                  => 'Texto',
                 'textarea'              => 'Área de texto',
                 'title'                 => 'Agregar Atributo',
@@ -486,7 +486,7 @@ return [
                 'save-btn'              => 'Guardar Atributo',
                 'select'                => 'Seleccionar',
                 'select-type'           => 'Seleccionar tipo de atributo',
-                'swatch'                => 'Muestra',
+                'swatch'                => 'Muestra tipo',
                 'text'                  => 'Texto',
                 'textarea'              => 'Área de texto',
                 'title'                 => 'Editar Atributo',
@@ -501,6 +501,7 @@ return [
                 'usable-in-grid'        => 'Utilizable en cuadrícula',
                 'is-filterable'         => 'Es filtrable',
                 'ai-translate'          => 'Traducción IA',
+                'invalid-swatch-type'   => ':attribute no está permitido para el tipo de atributo :type con tipo de swatch :swatch_type.',
 
                 'option' => [
                     'create-success'      => 'Attribute Option Created Successfully',
@@ -509,6 +510,10 @@ return [
                     'sort-update-failure' => 'Failed to Update Sort Order',
                     'sort-update-success' => 'Sort Order Updated Successfully',
                     'update-success'      => 'Attribute Option Updated Successfully',
+                    'color'               => 'Muestra de color',
+                    'dropdown'            => 'Desplegable',
+                    'image'               => 'Muestra de imagen',
+                    'text'                => 'Muestra de texto',
                 ],
             ],
 
