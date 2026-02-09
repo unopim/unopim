@@ -5,9 +5,7 @@ test('Create category field with empty Code', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   await adminPage.getByRole('link', { name: 'Category Fields' }).click();
   await adminPage.getByRole('link', { name: 'Create Category Field' }).click();
-  await adminPage.getByRole('textbox', { name: 'Code' }).click();
-  await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
-  await adminPage.locator('div').filter({ hasText: /^Select option$/ }).click();
+  await adminPage.locator('#type').getByRole('combobox').locator('div').filter({ hasText: 'Select option' }).click();
   await adminPage.getByRole('option', { name: 'Text' }).locator('span').first().click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Suggestion');
@@ -52,7 +50,7 @@ test('Create category field', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: 'Create Category Field' }).click();
   await adminPage.getByRole('textbox', { name: 'Code' }).click();
   await adminPage.getByRole('textbox', { name: 'Code' }).fill('test1');
-  await adminPage.locator('div').filter({ hasText: /^Select option$/ }).click();
+  await adminPage.locator('#type').getByRole('combobox').locator('div').filter({ hasText: 'Select option' }).click();
   await adminPage.getByRole('option', { name: 'Text' }).locator('span').first().click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Suggestion');

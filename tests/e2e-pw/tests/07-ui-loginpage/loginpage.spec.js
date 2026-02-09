@@ -1,15 +1,16 @@
 const { test, expect } = require('../../utils/fixtures');
-
+const UNOPIM_URL = 'http://127.0.0.1:8000/admin/login';
 const email = 'admin@example.com';
 const password = 'admin123';
 const invalidEmail = 'admin123@example.com';
 const invalidPassword = 'admintest';
 
+
 test.describe('Login adminPage', () => {
 test('Logout Check', async ({ adminPage }) => {
   await adminPage.click('button.rounded-full');
   await adminPage.getByRole('link', { name: 'Logout' }).click();
-  await expect(adminPage).toHaveURL('http://127.0.0.1:8000/admin/login');
+  await expect(adminPage).toHaveURL(UNOPIM_URL);
 });
 
 test('Error for invalid email and password', async ({ adminPage }) => {

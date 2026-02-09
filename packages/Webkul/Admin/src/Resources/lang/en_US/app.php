@@ -433,7 +433,7 @@ return [
                 'save-btn'              => 'Save Attribute',
                 'select'                => 'Select',
                 'select-type'           => 'Select Attribute Type',
-                'swatch'                => 'Swatch',
+                'swatch'                => 'Swatch Type',
                 'text'                  => 'Text',
                 'textarea'              => 'Textarea',
                 'title'                 => 'Add Attribute',
@@ -448,6 +448,7 @@ return [
                 'usable-in-grid'        => 'Usable in grid',
                 'is-filterable'         => 'Is Filterable',
                 'ai-translate'          => 'AI Translate',
+                'invalid-swatch-type'   => 'The :attribute is not allowed for attribute type :type with swatch type :swatch_type.',
 
                 'option' => [
                     'color'    => 'Color Swatch',
@@ -500,7 +501,7 @@ return [
                 'save-btn'              => 'Save Attribute',
                 'select'                => 'Select',
                 'select-type'           => 'Select Attribute Type',
-                'swatch'                => 'Swatch',
+                'swatch'                => 'Swatch Type',
                 'text'                  => 'Text',
                 'textarea'              => 'Textarea',
                 'title'                 => 'Edit Attribute',
@@ -523,6 +524,10 @@ return [
                     'sort-update-success' => 'Sort Order Updated Successfully',
                     'sort-update-failure' => 'Failed to Update Sort Order',
                     'delete-success'      => 'Attribute Option Deleted Successfully',
+                    'color'               => 'Color Swatch',
+                    'dropdown'            => 'Dropdown',
+                    'image'               => 'Image Swatch',
+                    'text'                => 'Text Swatch',
                 ],
             ],
 

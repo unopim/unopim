@@ -418,7 +418,7 @@ return [
                 'save-btn'              => 'Özniteliği Kaydet',
                 'select'                => 'Seç',
                 'select-type'           => 'Öznitelik Türü Seç',
-                'swatch'                => 'Örnek',
+                'swatch'                => 'Örnek Türü',
                 'text'                  => 'Metin',
                 'textarea'              => 'Metin Alanı',
                 'title'                 => 'Öznitelik Ekle',
@@ -486,7 +486,7 @@ return [
                 'save-btn'              => 'Özniteliği Kaydet',
                 'select'                => 'Seç',
                 'select-type'           => 'Öznitelik Türü Seç',
-                'swatch'                => 'Örnek',
+                'swatch'                => 'Örnek Türü',
                 'text'                  => 'Metin',
                 'textarea'              => 'Metin Alanı',
                 'title'                 => 'Öznitelik Düzenle',
@@ -501,6 +501,7 @@ return [
                 'usable-in-grid'        => 'Izgarada Kullanılabilir',
                 'is-filterable'         => 'Filtrelenebilir',
                 'ai-translate'          => 'AI Çeviri',
+                'invalid-swatch-type'   => ':attribute, :swatch_type swatch tipi ile :type özellik türü için izin verilmemiştir.',
 
                 'option' => [
                     'create-success'      => 'Öznitelik Seçeneği Başarıyla Oluşturuldu',
@@ -509,6 +510,10 @@ return [
                     'sort-update-failure' => 'Sıralama Güncellenemedi',
                     'sort-update-success' => 'Sıralama Başarıyla Güncellendi',
                     'update-success'      => 'Öznitelik Seçeneği Başarıyla Güncellendi',
+                    'color'               => 'Renk Örneği',
+                    'dropdown'            => 'Açılır Menü',
+                    'image'               => 'Resim Örneği',
+                    'text'                => 'Metin Örneği',
                 ],
             ],
 

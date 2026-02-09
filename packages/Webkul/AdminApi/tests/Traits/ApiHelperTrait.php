@@ -9,7 +9,7 @@ use Webkul\User\Models\Admin;
 trait ApiHelperTrait
 {
     /**
-     * Genereate authentication token and return header for the user
+     * Generate authentication token and return header for the user
      */
     public function getAuthenticationHeaders(string $permissionType = 'all', mixed $permissions = null): array
     {

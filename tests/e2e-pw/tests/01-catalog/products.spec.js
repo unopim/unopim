@@ -22,7 +22,7 @@ test('with empty family field', async ({ adminPage }) => {
   await adminPage.locator('input[name="sku"]').fill('acer456');
   await adminPage.getByRole('button', { name: 'Save Product' }).click();
   await adminPage.waitForTimeout(500);
-  await expect(adminPage.locator('div.border-red-500 + p.text-red-600')).toHaveText('The Family field is required');
+  await expect(adminPage.getByText('The Family field is required')).toBeVisible();
 });
 
 test('with empty sku field', async ({ adminPage }) => {
@@ -66,7 +66,7 @@ test('with empty family and sku field', async ({ adminPage }) => {
   await adminPage.getByRole('option', { name: 'Simple' }).locator('span').first().click();
   await adminPage.getByRole('button', { name: 'Save Product' }).click();
   await adminPage.waitForTimeout(500);
-  await expect(adminPage.locator('div.border-red-500 + p.text-red-600')).toHaveText('The Family field is required');
+  await expect(adminPage.getByText('The Family field is required')).toBeVisible();
   await expect(adminPage.locator('input[name="sku"] + p.text-red-600')).toHaveText('The SKU field is required');
 });
 
@@ -214,7 +214,7 @@ test('Create Configurable Product', async ({ adminPage }) => {
   await adminPage.getByRole('button', { name: 'Create Product' }).click();
   await adminPage.locator('div').filter({ hasText: /^Select option$/ }).first().click();
   await adminPage.getByRole('option', { name: 'Configurable' }).locator('span').first().click();
-  await adminPage.locator('div').filter({ hasText: /^Select option$/ }).click();
+  await adminPage.getByRole('textbox', {name: 'attribute_family_id'}).locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option', { name: 'Default' }).locator('span').first().click();
   await adminPage.locator('input[name="sku"]').click();
   await adminPage.locator('input[name="sku"]').fill('realme1245');
@@ -317,8 +317,8 @@ test('check Is Filterable', async ({ adminPage }) => {
   await adminPage.getByRole('textbox', { name: 'Search' }).click();
   await adminPage.getByRole('textbox', { name: 'Search' }).fill('Image');
   await adminPage.keyboard.press('Enter');
-  const itemRow = adminPage.locator('div', { hasText: 'image' });
-  await itemRow.locator('span[title="Edit"]').first().click();
+  const itemRow = adminPage.locator('div', { hasText: 'image' }).nth(1);
+  await itemRow.locator('span[title="Edit"]').nth(1).click();
   await adminPage.getByText('Is Filterable').check();
   await expect(adminPage.getByText('Is Filterable')).toBeChecked();
   await adminPage.getByRole('button', { name: 'Save Attribute' }).click();
