@@ -45,6 +45,10 @@
                 fltColumns: {
                     type: Array,
                     default: () => []
+                },
+                skuUniqueUrl: {
+                    type: String,
+                    default: null,
                 }
             },
 
@@ -70,6 +74,7 @@
                     multipleDrag: null,
                     pasteDiff: null,
                     optionsCache: {},
+                    skuIndex: {},
                 };
             },
 
@@ -85,8 +90,18 @@
                 document.addEventListener("keydown", this.handleKeydown);
             },
 
+            watch: {
+                initialData: {
+                    handler() {
+                        this.initSkuIndex();
+                    },
+                    deep: false,
+                },
+            },
+
             mounted() {
                 document.addEventListener('click', this.handleClickOutside);
+                this.initSkuIndex();
             },
             
             beforeUnmount() {
@@ -95,6 +110,46 @@
             },
 
             methods: {
+                initSkuIndex() {
+                    const index = {};
+                    (this.initialData || []).forEach((row) => {
+                        const sku = row?.values?.common?.sku;
+
+                        if (sku !== undefined && sku !== null) {
+                            index[row.id] = String(sku);
+                        }
+                    });
+
+                    this.skuIndex = index;
+                },
+
+                setSkuForEntity(entityId, sku) {
+                    this.skuIndex = {
+                        ...this.skuIndex,
+                        [entityId]: sku === null || sku === undefined ? null : String(sku),
+                    };
+                },
+
+                isSkuUnique(sku, entityId) {
+                    const normalized = (sku ?? '').toString().trim().toLowerCase();
+
+                    if (! normalized) {
+                        return true;
+                    }
+
+                    return Object.entries(this.skuIndex).every(([id, value]) => {
+                        if (Number(id) === Number(entityId)) {
+                            return true;
+                        }
+
+                        if (value === null || value === undefined) {
+                            return true;
+                        }
+
+                        return value.toString().trim().toLowerCase() !== normalized;
+                    });
+                },
+
                 fetchEntity() {
                     this.loading = true;
                     this.error = null;

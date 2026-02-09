@@ -251,7 +251,19 @@
                     this.isActive = false;
                 },
 
-                updateValue(value) {
+                async updateValue(value) {
+                    const previousValue = this.internalValue;
+                    const component = this.$refs.component;
+
+                    if (component?.validateValue) {
+                        const result = await component.validateValue(value);
+
+                        if (!result?.valid) {
+                            this.internalValue = previousValue;
+                            return;
+                        }
+                    }
+
                     this.internalValue = value;
 
                     this.$emitter.emit('update-spreadsheet-data', {
