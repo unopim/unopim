@@ -1,17 +1,20 @@
 name: Pest Tests
 
-on:
-  push:
-  pull_request:
+on: [push, pull_request]
 
 permissions:
   contents: read
 
 jobs:
   pest_tests:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.operating-systems }}
 
-    name: PHP 8.2 Pest Tests
+    strategy:
+      matrix:
+        operating-systems: [ubuntu-latest]
+        php-versions: ['8.2']
+
+    name: PHP ${{ matrix.php-versions }} test on ${{ matrix.operating-systems }}
 
     services:
       mysql:
@@ -21,59 +24,39 @@ jobs:
           MYSQL_DATABASE: unopim
         ports:
           - 3306
-        options: >-
-          --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
-
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.2
+          php-version: ${{ matrix.php-versions }}
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
+          ini-values: error_reporting=E_ALL
           tools: composer:v2
-          ini-values: |
-            memory_limit=1024M
-            error_reporting=E_ALL
 
-      - name: Install Composer dependencies
-        run: |
-          composer install \
-            --no-interaction \
-            --prefer-dist \
-            --optimize-autoloader
+      - name: Running Composer Install
+        run: composer install
 
-
-      - name: Prepare environment file
+      - name: Setting Environment
         run: |
           cp .env.example .env
-          sed -i "s/^APP_ENV=.*/APP_ENV=testing/" .env
-          sed -i "s/^DB_HOST=.*/DB_HOST=127.0.0.1/" .env
-          sed -i "s/^DB_PORT=.*/DB_PORT=${{ job.services.mysql.ports['3306'] }}/" .env
-          sed -i "s/^DB_DATABASE=.*/DB_DATABASE=unopim/" .env
-          sed -i "s/^DB_USERNAME=.*/DB_USERNAME=root/" .env
-          sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=root/" .env
+          sed -i "s|^\(APP_ENV=\s*\).*$|\1testing|" .env
+          sed -i "s|^\(DB_HOST=\s*\).*$|\1127.0.0.1|" .env
+          sed -i "s|^\(DB_PORT=\s*\).*$|\1${{ job.services.mysql.ports['3306'] }}|" .env
+          sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
+          sed -i "s|^\(DB_USERNAME=\s*\).*$|\1root|" .env
+          sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
+          cat .env
 
-
-      - name: Run UnoPim installer
+      - name: Running UnoPim Installer
         run: php artisan unopim:install --skip-env-check --skip-admin-creation
 
-
-      - name: Run Pest tests
-        env:
-          CI: true
-        run: |
-          vendor/bin/pest \
-            --parallel \
-            --processes=2 \
-            --colors=always
-
+      - name: Running Pest Test
+        run: vendor/bin/pest --parallel --processes=2 --colors=always
 
       - name: Debug memory & kernel logs (on failure)
         if: failure()
