@@ -56,12 +56,4 @@ jobs:
         run: php artisan unopim:install --skip-env-check --skip-admin-creation
 
       - name: Running Pest Test
-        run: vendor/bin/pest --parallel --processes=2 --colors=always
-
-      - name: Debug memory & kernel logs (on failure)
-        if: failure()
-        run: |
-          echo "===== MEMORY ====="
-          free -h
-          echo "===== KERNEL LOG ====="
-          dmesg | tail -n 50 || true
+        run: vendor/bin/pest --colors=always
