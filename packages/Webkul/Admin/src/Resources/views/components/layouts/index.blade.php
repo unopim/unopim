@@ -82,7 +82,6 @@
 
                 <div class="flex-1 max-w-full px-4 pt-3 pb-6 bg-transparent dark:bg-cherry-800 ltr:pl-[286px] rtl:pr-[286px] max-lg:!px-4 transition-all duration-300 group-[.sidebar-collapsed]/container:ltr:pl-[85px] group-[.sidebar-collapsed]/container:rtl:pr-[85px]">
                     <!-- Added dynamic tabs for third level menus  -->
-                    <!-- Todo @suraj-webkul need to optimize below statement. -->
                     @if (! request()->routeIs('admin.configuration.index'))
                         <x-admin::layouts.tabs />
                     @endif

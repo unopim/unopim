@@ -128,7 +128,7 @@ abstract class ApiDataSource
     }
 
     /**
-     * Validates filter criterias and returns the parsed filter parameters.
+     * Validates filter criteria and returns the parsed filter parameters.
      *
      * @param  array  $requestedParams  The request parameters containing the 'filters' key.
      * @return array The parsed filter parameters.
