@@ -138,6 +138,18 @@ class AttributeController extends Controller
 
         $requestData = request()->except(['type', 'code', 'value_per_locale', 'value_per_channel', 'is_unique']);
 
+        foreach ([
+            'is_required',
+            'is_filterable',
+            'enable_wysiwyg',
+            'ai_translate',
+        ] as $field) {
+            $requestData[$field] = filter_var(
+                $requestData[$field] ?? false,
+                FILTER_VALIDATE_BOOLEAN
+            );
+        }
+
         if (empty($requestData['ai_translate'])) {
             $requestData['ai_translate'] = self::AI_TRANSLATE_DISABLED;
         }

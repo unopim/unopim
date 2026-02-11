@@ -1,5 +1,11 @@
 # v1.0.x
 
+## v1.0.1 - 2026-02-11
+
+### Fixes
+
+* Fixed normalize boolean fields to support PostgreSQL compatibility in attribute  [#240](https://github.com/unopim/unopim/issues/240)
+
 ## v1.0.0
 
 ### Features
