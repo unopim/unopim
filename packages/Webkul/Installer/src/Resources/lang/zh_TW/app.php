@@ -97,6 +97,10 @@ return [
         ],
     ],
     'installer' => [
+        'middleware' => [
+            'already-installed' => '應用程式已經安裝。',
+        ],
+
         'index' => [
             'create-administrator' => [
                 'admin'            => '管理員',

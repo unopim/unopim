@@ -98,6 +98,10 @@ return [
     ],
 
     'installer' => [
+        'middleware' => [
+            'already-installed' => 'Ứng dụng đã được cài đặt.',
+        ],
+
         'index' => [
             'create-administrator' => [
                 'admin'            => 'Quản trị viên',
