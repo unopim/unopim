@@ -7,6 +7,7 @@ return [
     'decimal'                      => 'El valor :attribute debe ser válido.',
     'phone-number'                 => 'El número de teléfono :attribute debe ser un número válido.',
     'slug'                         => 'El slug :attribute debe ser válido.',
+    'sku'                          => 'El SKU :attribute debe ser válido (solo caracteres alfanuméricos, guiones y guiones bajos).',
     'comma-separated-integer'      => 'El campo :attribute debe ser numérico y puede contener coma.',
     'type'                         => 'El tipo :attribute debe ser válido.',
     'validation-type'              => 'El tipo de validación :attribute debe ser válido.',

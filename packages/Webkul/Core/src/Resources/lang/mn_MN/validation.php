@@ -7,6 +7,7 @@ return [
     'decimal'                      => ':attribute  хүчинтэй байх ёстой.',
     'phone-number'                 => ':attribute  нь хүчинтэй утасны дугаар байх ёстой.',
     'slug'                         => ':attribute  нь хүчинтэй slug байх ёстой.',
+    'sku'                          => ':attribute  нь хүчинтэй SKU байх ёстой (зөвхөн үсэг, тоо, зураас болон доогуур зураас).',
     'comma-separated-integer'      => ':attribute талбар нь тоон байх ёстой бөгөөд таслал агуулж болно.',
     'type'                         => ':attribute  нь хүчинтэй төрөл байх ёстой.',
     'validation-type'              => ':attribute  нь хүчинтэй төрөл байх ёстой.',

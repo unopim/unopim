@@ -12,7 +12,7 @@ use Webkul\Core\Eloquent\TranslatableModel;
 use Webkul\Core\Rules\BooleanString;
 use Webkul\Core\Rules\Decimal;
 use Webkul\Core\Rules\FileOrImageValidValue;
-use Webkul\Core\Rules\Slug;
+use Webkul\Core\Rules\Sku;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Product\Validator\Rule\AttributeOptionRule;
@@ -170,7 +170,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
         }
 
         if ($this->code === 'sku') {
-            $validations[] = new Slug;
+            $validations[] = new Sku;
         }
 
         return $validations;

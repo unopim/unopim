@@ -7,6 +7,7 @@ return [
     'decimal'                      => 'El :attribute ha de ser vàlid.',
     'phone-number'                 => 'El :attribute ha de ser un número de telèfon vàlid.',
     'slug'                         => 'El :attribute ha de ser un slug vàlid.',
+    'sku'                          => 'El :attribute ha de ser un SKU vàlid (només caràcters alfanumèrics, guions i guions baixos).',
     'comma-separated-integer'      => 'El camp :attribute ha de ser numèric i pot contenir comes.',
     'type'                         => 'El :attribute ha de ser un tipus vàlid.',
     'validation-type'              => 'El :attribute ha de ser un tipus vàlid.',

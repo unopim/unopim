@@ -7,6 +7,7 @@ return [
     'decimal'                      => '值 :attribute 必須有效。',
     'phone-number'                 => '電話號碼 :attribute 必須有效。',
     'slug'                         => 'Slug :attribute 必須有效。',
+    'sku'                          => 'SKU :attribute 必須有效（只能包含字母、數字、連字符和底線）。',
     'comma-separated-integer'      => '字段 :attribute 必須是數字，並可包含逗號。',
     'type'                         => '類型 :attribute 必須有效。',
     'validation-type'              => '驗證類型 :attribute 必須有效。',
