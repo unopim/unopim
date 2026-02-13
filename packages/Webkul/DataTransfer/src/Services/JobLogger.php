@@ -12,7 +12,8 @@ class JobLogger
      */
     public static function make(int|string $jobId, string $level = 'info', string $folderName = 'job-tracker', string $fileName = 'job'): LoggerInterface
     {
-        $path = storage_path("logs/{$folderName}/{$jobId}/{$fileName}.log");
+        $tenantPrefix = static::tenantPrefix();
+        $path = storage_path("logs/{$tenantPrefix}{$folderName}/{$jobId}/{$fileName}.log");
 
         $logger = Log::build([
             'driver' => 'single',
@@ -28,6 +29,18 @@ class JobLogger
      */
     public static function getJobLogPath(string|int $id): string
     {
-        return "logs/job-tracker/{$id}/job.log";
+        $tenantPrefix = static::tenantPrefix();
+
+        return "logs/{$tenantPrefix}job-tracker/{$id}/job.log";
+    }
+
+    /**
+     * Get tenant-specific log folder prefix.
+     */
+    private static function tenantPrefix(): string
+    {
+        $tenantId = core()->getCurrentTenantId();
+
+        return $tenantId ? "tenant-{$tenantId}/" : '';
     }
 }

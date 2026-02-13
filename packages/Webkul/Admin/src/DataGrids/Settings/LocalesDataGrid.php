@@ -25,6 +25,12 @@ class LocalesDataGrid extends DataGrid
     {
         $queryBuilder = DB::table('locales')->addSelect('id', 'code', 'status');
 
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId)) {
+            $queryBuilder->where('locales.tenant_id', $tenantId);
+        }
+
         return $queryBuilder;
     }
 

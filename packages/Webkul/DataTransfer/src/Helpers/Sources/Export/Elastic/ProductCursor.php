@@ -77,8 +77,24 @@ class ProductCursor extends AbstractElasticCursor
      */
     protected static function resolveOptions(array $options): array
     {
-        $prefix = env('ELASTICSEARCH_INDEX_PREFIX') ?: env('APP_NAME');
-        $options['index'] = strtolower("{$prefix}_products");
+        $prefix = config('elasticsearch.prefix') ?: config('app.name');
+
+        $tenantSuffix = '';
+        $tenantId = core()->getCurrentTenantId();
+
+        if ($tenantId) {
+            try {
+                $uuid = \Illuminate\Support\Facades\DB::table('tenants')
+                    ->where('id', $tenantId)
+                    ->value('es_index_uuid');
+
+                $tenantSuffix = $uuid ? "_tenant_{$uuid}" : "_tenant_{$tenantId}";
+            } catch (\Throwable) {
+                $tenantSuffix = "_tenant_{$tenantId}";
+            }
+        }
+
+        $options['index'] = strtolower($prefix.$tenantSuffix.'_products');
         $options['sort'] ??= [];
 
         return $options;

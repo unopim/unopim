@@ -62,6 +62,12 @@ class CategoryFieldDataGrid extends DataGrid
 
         $this->addFilter('name', 'requested_category_field_translation.name');
 
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId)) {
+            $queryBuilder->where('category_fields.tenant_id', $tenantId);
+        }
+
         return $queryBuilder;
     }
 

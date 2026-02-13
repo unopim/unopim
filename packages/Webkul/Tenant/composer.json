@@ -1,0 +1,25 @@
+{
+    "name": "unopim/laravel-tenant",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "UnoPim",
+            "email": "support@webkul.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Webkul\\Tenant\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Webkul\\Tenant\\Providers\\TenantServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "minimum-stability": "dev"
+}

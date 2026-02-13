@@ -10,10 +10,11 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Throwable;
 use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Tenant\Jobs\TenantAwareJob;
 
 class BulkProductCompletenessJob implements ShouldBeUnique, ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, TenantAwareJob;
 
     protected const CHUNK_SIZE = 100;
 
@@ -30,15 +31,19 @@ class BulkProductCompletenessJob implements ShouldBeUnique, ShouldQueue
         protected ?int $familyId = null,
     ) {
         $this->queue = 'system';
+
+        $this->captureTenantContext();
     }
 
     public function uniqueId(): string
     {
+        $prefix = $this->tenantId ? "{$this->tenantId}-" : '';
+
         if (is_null($this->familyId)) {
-            return uniqid('completeness-job-', true);
+            return uniqid("{$prefix}completeness-job-", true);
         }
 
-        return 'completeness-job-'.$this->familyId;
+        return "{$prefix}completeness-job-{$this->familyId}";
     }
 
     public function handle(): void
@@ -79,6 +84,14 @@ class BulkProductCompletenessJob implements ShouldBeUnique, ShouldQueue
 
     protected function dispatchInChunks(array $productIds): void
     {
+        $tenantPackageActive = class_exists(\Webkul\Tenant\Providers\TenantServiceProvider::class);
+
+        if ($tenantPackageActive && is_null($this->tenantId)) {
+            \Illuminate\Support\Facades\Log::warning('BulkProductCompletenessJob: No tenant context, skipping child dispatches');
+
+            return;
+        }
+
         foreach (array_chunk($productIds, self::CHUNK_SIZE) as $chunk) {
             ProductCompletenessJob::dispatch($chunk);
         }

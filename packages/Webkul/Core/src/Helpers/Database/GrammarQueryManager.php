@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Webkul\Core\Contracts\Database\Grammar;
 use Webkul\Core\Helpers\Database\Grammars\MySQLGrammar;
 use Webkul\Core\Helpers\Database\Grammars\PostgresGrammar;
+use Webkul\Core\Helpers\Database\Grammars\SQLiteGrammar;
 
 class GrammarQueryManager
 {
@@ -22,6 +23,8 @@ class GrammarQueryManager
         static::$instances[$driver] = match ($driver) {
             'pgsql' => new PostgresGrammar,
             'mysql' => new MySQLGrammar,
+            'sqlite' => new SQLiteGrammar,
+
             default => throw new \RuntimeException("Unsupported DB driver: {$driver}")
         };
 

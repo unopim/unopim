@@ -35,6 +35,12 @@ class ImportDataGrid extends DataGrid
 
             )->where('type', 'import');
 
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId)) {
+            $queryBuilder->where('job_instances.tenant_id', $tenantId);
+        }
+
         return $queryBuilder;
     }
 

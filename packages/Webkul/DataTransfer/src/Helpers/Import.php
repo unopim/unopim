@@ -20,6 +20,7 @@ use Webkul\DataTransfer\Helpers\Sources\CSV as CSVSource;
 use Webkul\DataTransfer\Helpers\Sources\Excel as ExcelSource;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
+use Webkul\Tenant\Filesystem\TenantStorage;
 
 class Import
 {
@@ -583,7 +584,7 @@ class Import
             default:
                 throw new \InvalidArgumentException("Unsupported file type: $fileType");
         }
-        $errorFilePath = 'imports/'.time().'-error-report.'.$fileType;
+        $errorFilePath = TenantStorage::path('imports/'.time().'-error-report.'.$fileType);
 
         $writer->save(Storage::disk('private')->path($errorFilePath));
 

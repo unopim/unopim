@@ -6,7 +6,7 @@ use Webkul\AdminApi\Http\Controllers\Integrations\ApiKeysController;
 /**
  * Settings routes.
  */
-Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], function () {
+Route::group(['middleware' => ['admin', 'tenant'], 'prefix' => config('app.admin_url')], function () {
     Route::prefix('integrations')->group(function () {
 
         /**

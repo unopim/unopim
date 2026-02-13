@@ -194,9 +194,16 @@ class AttributeController extends Controller
      */
     public function attributeCanBeDeleted(int $id): int
     {
-        return DB::table('product_super_attributes')
-            ->where('attribute_id', $id)
-            ->count();
+        $query = DB::table('product_super_attributes')
+            ->where('attribute_id', $id);
+
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId)) {
+            $query->where('tenant_id', $tenantId);
+        }
+
+        return $query->count();
     }
 
     /**

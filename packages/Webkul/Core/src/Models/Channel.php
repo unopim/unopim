@@ -12,10 +12,11 @@ use Webkul\Core\Database\Factories\ChannelFactory;
 use Webkul\Core\Eloquent\TranslatableModel;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
 class Channel extends TranslatableModel implements ChannelContract, HistoryContract
 {
-    use HasFactory;
+    use BelongsToTenant, HasFactory;
     use HistoryTrait;
 
     protected $table = 'channels';

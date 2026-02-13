@@ -40,6 +40,12 @@ class ApiKeysDataGrid extends DataGrid
             )
             ->where('api.revoked', '=', 0);
 
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId)) {
+            $queryBuilder->where('api.tenant_id', $tenantId);
+        }
+
         $this->addFilter('api_id', 'api.id');
         $this->addFilter('api_name', 'api.name');
         $this->addFilter('api_permission_type', 'api.permission_type');

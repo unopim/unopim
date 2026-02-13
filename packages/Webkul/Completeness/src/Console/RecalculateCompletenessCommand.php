@@ -3,6 +3,7 @@
 namespace Webkul\Completeness\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Webkul\Completeness\Jobs\BulkProductCompletenessJob;
 use Webkul\Completeness\Jobs\ProductCompletenessJob;
 use Webkul\Product\Repositories\ProductRepository;
@@ -11,11 +12,12 @@ class RecalculateCompletenessCommand extends Command
 {
     protected const BATCH_SIZE = 1000;
 
-    protected $signature = 'unopim:completeness:recalculate 
+    protected $signature = 'unopim:completeness:recalculate
                             {--family= : Recalculate for a specific attribute family ID}
                             {--product= : Recalculate for a specific product ID}
                             {--products=* : Recalculate for a list of product IDs. Multiple --products can be provided which will work as a list of IDs like --products=1 --products=2}
-                            {--all : Recalculate for all products}';
+                            {--all : Recalculate for all products}
+                            {--tenant= : Tenant ID to scope recalculation}';
 
     protected $description = 'Recalculate product completeness based on various criteria (product, products list, family, or all).';
 
@@ -26,6 +28,22 @@ class RecalculateCompletenessCommand extends Command
 
     public function handle(): int
     {
+        if (! $this->option('tenant') && class_exists(\Webkul\Tenant\Providers\TenantServiceProvider::class)) {
+            $this->error('Multi-tenant mode detected. You must specify --tenant or run for each tenant individually.');
+
+            return Command::FAILURE;
+        }
+
+        if ($tenantOption = $this->option('tenant')) {
+            $tenant = DB::table('tenants')->where('id', $tenantOption)->first();
+            if (! $tenant || $tenant->status !== 'active') {
+                $this->error('Tenant not found or not active.');
+
+                return Command::FAILURE;
+            }
+            core()->setCurrentTenantId((int) $tenantOption);
+            $this->info("Running in tenant context: {$tenant->name} (ID: {$tenant->id})");
+        }
         if ($productId = $this->option('product')) {
             return $this->handleSingleProduct($productId);
         }

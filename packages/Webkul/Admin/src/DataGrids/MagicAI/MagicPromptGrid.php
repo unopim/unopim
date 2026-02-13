@@ -24,6 +24,12 @@ class MagicPromptGrid extends DataGrid
         $queryBuilder = DB::table('magic_ai_prompts')
             ->select('id', 'prompt', 'title', 'type', 'created_at', 'updated_at');
 
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId)) {
+            $queryBuilder->where('magic_ai_prompts.tenant_id', $tenantId);
+        }
+
         return $queryBuilder;
     }
 

@@ -30,21 +30,20 @@ class ScopeMiddleware
      */
     public function hasPermission($permission)
     {
-        if (
-            auth()->guard('api')->check()
-            && auth()->guard('api')->user()->apiKey->permission_type == 'all'
-        ) {
-            return true;
-        } else {
-            if (
-                ! auth()->guard('api')->check()
-                || ! auth()->guard('api')->user()->apiKey->hasPermission($permission)
-            ) {
-                return false;
-            }
+        if (! auth()->guard('api')->check()) {
+            return false;
         }
 
-        return true;
+        $user = auth()->guard('api')->user();
+
+        if ($user->apiKey->permission_type == 'all') {
+            // Tenant API users with "all" still cannot access platform-reserved permissions (Story 5.5)
+            $guard = app(\Webkul\Tenant\Auth\TenantPermissionGuard::class);
+
+            return $guard->isAllowed($user, $permission);
+        }
+
+        return $user->apiKey->hasPermission($permission);
     }
 
     /**

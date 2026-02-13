@@ -5,11 +5,7 @@ use Webkul\AdminApi\Http\Controllers\API\Settings\ChannelController;
 use Webkul\AdminApi\Http\Controllers\API\Settings\CurrencyController;
 use Webkul\AdminApi\Http\Controllers\API\Settings\LocaleController;
 
-Route::group([
-    'middleware' => [
-        'auth:api',
-    ],
-], function () {
+Route::group([], function () {
     /** Locales API Route Routes */
     Route::controller(LocaleController::class)->prefix('locales')->group(function () {
         Route::get('', 'index')->name('admin.api.locales.index');

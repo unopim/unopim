@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Webkul\Attribute\Contracts\AttributeTranslation as AttributeTranslationContract;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
 class AttributeTranslation extends Model implements AttributeTranslationContract, HistoryContract
 {
+    use BelongsToTenant;
     use HistoryTrait;
 
     /**

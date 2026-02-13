@@ -79,6 +79,13 @@ class Core
     protected $taxCategoriesById = [];
 
     /**
+     * Current Tenant ID.
+     *
+     * @var int|null
+     */
+    protected $currentTenantId;
+
+    /**
      * Stores singleton instances
      *
      * @var array
@@ -114,6 +121,81 @@ class Core
     public function version()
     {
         return static::VERSION;
+    }
+
+    /**
+     * Get the current tenant ID.
+     */
+    public function getCurrentTenantId(): ?int
+    {
+        return $this->currentTenantId;
+    }
+
+    /**
+     * Set the current tenant ID.
+     *
+     * When the tenant context changes, all cached state is cleared
+     * to prevent data leaking between tenants (e.g. in queue workers).
+     */
+    public function setCurrentTenantId(?int $id): void
+    {
+        if ($this->currentTenantId !== $id) {
+            $this->resetTenantCachedState();
+        }
+
+        $this->currentTenantId = $id;
+    }
+
+    /**
+     * Generate a tenant-aware cache key.
+     *
+     * Prefixes the given key with a tenant identifier so that cached
+     * data is never shared across tenants. Falls back to "global" when
+     * no tenant context is active.
+     */
+    public function tenantCacheKey(string $key): string
+    {
+        $tenantId = $this->getCurrentTenantId();
+
+        if ($tenantId) {
+            return "tenant_{$tenantId}_{$key}";
+        }
+
+        return "global_{$key}";
+    }
+
+    /**
+     * Reset all cached state when tenant context changes.
+     *
+     * This prevents stale data from a previous tenant persisting
+     * in the singleton, which is critical for queue workers and
+     * platform operators switching between tenants.
+     */
+    protected function resetTenantCachedState(): void
+    {
+        $this->currentChannel = null;
+        $this->defaultChannel = null;
+        $this->currentCurrency = null;
+        $this->baseCurrency = null;
+        $this->currentLocale = null;
+        $this->guestCustomerGroup = null;
+        $this->exchangeRates = [];
+        $this->taxCategoriesById = [];
+        $this->singletonInstances = [];
+    }
+
+    /**
+     * Get the current tenant model.
+     */
+    public function getCurrentTenant(): ?object
+    {
+        if (! $this->currentTenantId) {
+            return null;
+        }
+
+        return app(\Webkul\Tenant\Contracts\Tenant::class)
+            ->newQuery()
+            ->find($this->currentTenantId);
     }
 
     /**
@@ -177,7 +259,7 @@ class Core
      */
     public function getDefaultChannelCode(): string
     {
-        return $this->getDefaultChannel()?->code;
+        return $this->getDefaultChannel()?->code ?? config('app.channel', 'default');
     }
 
     /**

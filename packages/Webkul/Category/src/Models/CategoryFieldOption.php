@@ -10,10 +10,11 @@ use Webkul\Category\Database\Factories\CategoryFieldOptionFactory;
 use Webkul\Core\Eloquent\TranslatableModel;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
 class CategoryFieldOption extends TranslatableModel implements CategoryFieldOptionProxy, HistoryContract
 {
-    use HasFactory;
+    use BelongsToTenant, HasFactory;
     use HistoryTrait;
 
     /** Tags for History */

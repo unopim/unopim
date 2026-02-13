@@ -20,6 +20,7 @@ uses(Webkul\Installer\Tests\UserCreateCommandTestCase::class)->in('../packages/W
 uses(Webkul\Core\Tests\CoreTestCase::class)->in('../packages/Webkul/ElasticSearch/tests');
 uses(Webkul\Admin\Tests\AdminTestCase::class)->in('../packages/Webkul/DataTransfer/tests');
 uses(Webkul\Completeness\Tests\CompletenessTestCase::class)->in('../packages/Webkul/Completeness/tests');
+uses(Webkul\Tenant\Tests\TenantTestCase::class)->in('../packages/Webkul/Tenant/tests');
 
 /*
 |--------------------------------------------------------------------------

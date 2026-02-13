@@ -99,6 +99,12 @@ class TrackerController extends Controller
     {
         $import = $this->jobTrackRepository->findOrFail($id);
 
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId) && ($import->tenant_id ?? null) !== $tenantId) {
+            abort(403, 'Access denied.');
+        }
+
         return Storage::disk('public')->download($import->file_path);
     }
 
@@ -108,6 +114,12 @@ class TrackerController extends Controller
     public function downloadArchive(int $id)
     {
         $jobTrack = $this->jobTrackRepository->findOrFail($id);
+
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId) && ($jobTrack->tenant_id ?? null) !== $tenantId) {
+            abort(403, 'Access denied.');
+        }
         $zip = new ZipArchive;
         $zipFileName = sprintf('%s-%s.zip', $jobTrack->jobInstance->code, $jobTrack->jobInstance->entity_type);
         if ($zip->open(public_path($zipFileName), ZipArchive::CREATE) === true) {
@@ -140,6 +152,14 @@ class TrackerController extends Controller
      */
     public function downloadLogFile(int $id)
     {
+        $jobTrack = $this->jobTrackRepository->findOrFail($id);
+
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId) && ($jobTrack->tenant_id ?? null) !== $tenantId) {
+            abort(403, 'Access denied.');
+        }
+
         $path = JobLogger::getJobLogPath($id);
 
         $path = storage_path($path);

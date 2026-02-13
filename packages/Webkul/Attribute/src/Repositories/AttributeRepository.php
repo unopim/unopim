@@ -237,6 +237,12 @@ class AttributeRepository extends Repository
                     ->orWhere('attribute_name.name', 'LIKE', '%'.$search.'%');
             });
 
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId)) {
+            $query->where('attributes.tenant_id', $tenantId);
+        }
+
         if ($excludeTypes) {
             $query->whereNotIn('attributes.type', $excludeTypes);
         }

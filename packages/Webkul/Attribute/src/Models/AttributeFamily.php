@@ -11,10 +11,11 @@ use Webkul\Core\Eloquent\TranslatableModel;
 use Webkul\HistoryControl\Contracts\HistoryAuditable;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Product\Models\ProductProxy;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
 class AttributeFamily extends TranslatableModel implements AttributeFamilyContract, HistoryAuditable
 {
-    use HasFactory;
+    use BelongsToTenant, HasFactory;
     use HistoryTrait;
 
     const ALLOWED_VARIANT_OPTION_TYPES = [

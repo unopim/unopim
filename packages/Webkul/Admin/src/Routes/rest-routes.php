@@ -15,7 +15,7 @@ use Webkul\HistoryControl\Http\Controllers\HistoryController;
 /**
  * Extra routes.
  */
-Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], function () {
+Route::group(['middleware' => ['admin', 'tenant'], 'prefix' => config('app.admin_url')], function () {
     /**
      * Dashboard routes.
      */

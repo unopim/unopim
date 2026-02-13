@@ -32,6 +32,13 @@ class ProductCursor extends AbstractCursor
                 $query->where($field, $value);
             }
         }
+
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId)) {
+            $query->where('products.tenant_id', $tenantId);
+        }
+
         try {
             $ids = $query->select('id')
                 ->orderBy('id')

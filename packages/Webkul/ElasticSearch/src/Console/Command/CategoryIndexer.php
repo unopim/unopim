@@ -9,14 +9,19 @@ use Illuminate\Support\Facades\Log;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Webkul\Category\Models\Category;
 use Webkul\Core\Facades\ElasticSearch;
+use Webkul\ElasticSearch\Traits\ResolveTenantIndex;
 
 class CategoryIndexer extends Command
 {
+    use ResolveTenantIndex;
+
     const BATCH_SIZE = 10000;
 
-    protected $signature = 'unopim:category:index';
+    protected $signature = 'unopim:category:index {--tenant= : Tenant ID to scope indexing}';
 
     protected $description = 'Index all categories into Elasticsearch';
+
+    private $indexPrefix;
 
     public function __construct()
     {
@@ -25,14 +30,36 @@ class CategoryIndexer extends Command
 
     public function handle()
     {
+        if (! $this->option('tenant') && class_exists(\Webkul\Tenant\Providers\TenantServiceProvider::class)) {
+            $this->error('Multi-tenant mode detected. You must specify --tenant or run for each tenant individually.');
+
+            return 1;
+        }
+
         if (config('elasticsearch.enabled')) {
-            $indexPrefix = config('elasticsearch.prefix');
+            $this->indexPrefix = config('elasticsearch.prefix');
+
+            if ($tenantOption = $this->option('tenant')) {
+                $tenant = DB::table('tenants')->where('id', $tenantOption)->first();
+                if (! $tenant || $tenant->status !== 'active') {
+                    $this->error('Tenant not found or not active.');
+
+                    return 1;
+                }
+                core()->setCurrentTenantId((int) $tenantOption);
+            }
+
+            $this->initTenantIndex();
 
             $start = microtime(true);
 
-            $categories = DB::table('categories')->get();
+            $query = DB::table('categories');
+            if ($this->option('tenant')) {
+                $query->where('tenant_id', $this->option('tenant'));
+            }
+            $categories = $query->get();
 
-            $categoryIndex = strtolower($indexPrefix.'_categories');
+            $categoryIndex = $this->tenantAwareIndexName('categories');
 
             if ($categories->isNotEmpty()) {
                 $elasticCategory = $this->getCategoryUpdates($categoryIndex, $this);

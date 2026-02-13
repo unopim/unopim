@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Webkul\MagicAI\Contracts\MagicPrompt as MagicPromptContract;
 use Webkul\MagicAI\Database\Factories\MagicPromptFactory;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
 class MagicPrompt extends Model implements MagicPromptContract
 {
-    use HasFactory;
+    use BelongsToTenant, HasFactory;
 
     protected $table = 'magic_ai_prompts';
 

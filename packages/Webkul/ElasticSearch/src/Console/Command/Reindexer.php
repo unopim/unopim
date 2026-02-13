@@ -3,14 +3,20 @@
 namespace Webkul\ElasticSearch\Console\Command;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Webkul\Core\Facades\ElasticSearch;
+use Webkul\ElasticSearch\Traits\ResolveTenantIndex;
 
 class Reindexer extends Command
 {
-    protected $signature = 'unopim:elastic:clear';
+    use ResolveTenantIndex;
+
+    protected $signature = 'unopim:elastic:clear {--tenant= : Tenant ID to scope clearing}';
 
     protected $description = 'Clear all indexes for this project from Elasticsearch.';
+
+    private $indexPrefix;
 
     public function __construct()
     {
@@ -19,15 +25,35 @@ class Reindexer extends Command
 
     public function handle()
     {
+        if (! $this->option('tenant') && class_exists(\Webkul\Tenant\Providers\TenantServiceProvider::class)) {
+            $this->error('Multi-tenant mode detected. You must specify --tenant or run for each tenant individually.');
+
+            return 1;
+        }
+
         if (config('elasticsearch.enabled')) {
-            if ($this->confirm('This action will clear all indexes for this project. Do you want to continue? (y/n) or', false)) {
-                $indexPrefix = config('elasticsearch.prefix');
+            $scope = $this->option('tenant') ? 'tenant '.$this->option('tenant') : 'this project';
+
+            if ($this->confirm("This action will clear all indexes for {$scope}. Do you want to continue? (y/n) or", false)) {
+                $this->indexPrefix = config('elasticsearch.prefix');
+
+                if ($tenantOption = $this->option('tenant')) {
+                    $tenant = DB::table('tenants')->where('id', $tenantOption)->first();
+                    if (! $tenant || $tenant->status !== 'active') {
+                        $this->error('Tenant not found or not active.');
+
+                        return 1;
+                    }
+                    core()->setCurrentTenantId((int) $tenantOption);
+                }
+
+                $this->initTenantIndex();
 
                 $start = microtime(true);
 
-                $productIndex = strtolower($indexPrefix.'_products');
+                $productIndex = $this->tenantAwareIndexName('products');
 
-                $categoryIndex = strtolower($indexPrefix.'_categories');
+                $categoryIndex = $this->tenantAwareIndexName('categories');
 
                 try {
                     ElasticSearch::indices()->delete(['index' => $productIndex]);

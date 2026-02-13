@@ -12,10 +12,11 @@ use Webkul\Core\Rules\Decimal;
 use Webkul\Core\Rules\FileOrImageValidValue;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
 class CategoryField extends TranslatableModel implements CategoryFieldContract, HistoryContract
 {
-    use HasFactory;
+    use BelongsToTenant, HasFactory;
     use HistoryTrait;
 
     const NON_DELETABLE_FIELD_CODE = 'name';

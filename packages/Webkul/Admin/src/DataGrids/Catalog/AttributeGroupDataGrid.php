@@ -39,6 +39,12 @@ class AttributeGroupDataGrid extends DataGrid
 
         $this->addFilter('id', 'attribute_groups.id');
 
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId)) {
+            $queryBuilder->where('attribute_groups.tenant_id', $tenantId);
+        }
+
         return $queryBuilder;
     }
 

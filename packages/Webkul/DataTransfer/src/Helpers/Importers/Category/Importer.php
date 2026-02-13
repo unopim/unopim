@@ -393,7 +393,15 @@ class Importer extends AbstractImporter
      */
     protected function getLocalId($localeCode)
     {
-        return DB::table('locales')->where('code', $localeCode)->first()?->id;
+        $query = DB::table('locales')->where('code', $localeCode);
+
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId)) {
+            $query->where('tenant_id', $tenantId);
+        }
+
+        return $query->first()?->id;
     }
 
     /**

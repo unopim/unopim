@@ -9,15 +9,20 @@ use Illuminate\Support\Facades\Log;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\ElasticSearch\Indexing\Normalizer\ProductNormalizer;
+use Webkul\ElasticSearch\Traits\ResolveTenantIndex;
 use Webkul\Product\Models\Product;
 
 class ProductIndexer extends Command
 {
+    use ResolveTenantIndex;
+
     const BATCH_SIZE = 10000;
 
-    protected $signature = 'unopim:product:index';
+    protected $signature = 'unopim:product:index {--tenant= : Tenant ID to scope indexing}';
 
     protected $description = 'Index all products into Elasticsearch';
+
+    private $indexPrefix;
 
     public function __construct(protected ProductNormalizer $productIndexingNormalizer)
     {
@@ -26,14 +31,36 @@ class ProductIndexer extends Command
 
     public function handle()
     {
+        if (! $this->option('tenant') && class_exists(\Webkul\Tenant\Providers\TenantServiceProvider::class)) {
+            $this->error('Multi-tenant mode detected. You must specify --tenant or run for each tenant individually.');
+
+            return 1;
+        }
+
         if (config('elasticsearch.enabled')) {
-            $indexPrefix = config('elasticsearch.prefix');
+            $this->indexPrefix = config('elasticsearch.prefix');
+
+            if ($tenantOption = $this->option('tenant')) {
+                $tenant = DB::table('tenants')->where('id', $tenantOption)->first();
+                if (! $tenant || $tenant->status !== 'active') {
+                    $this->error('Tenant not found or not active.');
+
+                    return 1;
+                }
+                core()->setCurrentTenantId((int) $tenantOption);
+            }
+
+            $this->initTenantIndex();
 
             $start = microtime(true);
 
-            $productIndex = strtolower($indexPrefix.'_products');
+            $productIndex = $this->tenantAwareIndexName('products');
 
-            $totalProducts = DB::table('products')->count();
+            $query = DB::table('products');
+            if ($this->option('tenant')) {
+                $query->where('tenant_id', $this->option('tenant'));
+            }
+            $totalProducts = $query->count();
 
             if ($totalProducts === 0) {
                 $this->info('No products found in the database. Attempting to reset the index if it exists.');
@@ -77,7 +104,11 @@ class ProductIndexer extends Command
             $failedProductIds = [];
 
             for ($offset = 0; $offset < $totalProducts; $offset += self::BATCH_SIZE) {
-                $products = DB::table('products')->offset($offset)->limit(self::BATCH_SIZE)->get();
+                $batchQuery = DB::table('products');
+                if ($this->option('tenant')) {
+                    $batchQuery->where('tenant_id', $this->option('tenant'));
+                }
+                $products = $batchQuery->offset($offset)->limit(self::BATCH_SIZE)->get();
 
                 $elasticProduct = $this->getProductUpdates($productIndex, $this, $products->pluck('id')->toArray());
 

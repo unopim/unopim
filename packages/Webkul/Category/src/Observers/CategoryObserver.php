@@ -4,6 +4,7 @@ namespace Webkul\Category\Observers;
 
 use Illuminate\Support\Facades\Storage;
 use Webkul\Category\Models\Category;
+use Webkul\Tenant\Filesystem\TenantStorage;
 
 class CategoryObserver
 {
@@ -15,7 +16,7 @@ class CategoryObserver
      */
     public function deleted($category)
     {
-        Storage::deleteDirectory('category/'.$category->id);
+        Storage::deleteDirectory(TenantStorage::path('category/'.$category->id));
     }
 
     /**

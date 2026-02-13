@@ -2,8 +2,8 @@
 
 namespace Webkul\HistoryControl\Repositories;
 
-use OwenIt\Auditing\Models\Audit;
 use Webkul\Core\Eloquent\Repository;
+use Webkul\HistoryControl\Models\Audit;
 
 class AuditRepository extends Repository
 {

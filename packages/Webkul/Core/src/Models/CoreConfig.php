@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Webkul\Core\Contracts\CoreConfig as CoreConfigContract;
 use Webkul\Core\Database\Factories\CoreConfigFactory;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
 class CoreConfig extends Model implements CoreConfigContract
 {
-    use HasFactory;
+    use BelongsToTenant, HasFactory;
 
     /**
      * The attributes that are mass assignable.

@@ -66,6 +66,12 @@ class AttributeCompletenessDataGrid extends DataGrid
         $this->addFilter('name', 'attribute_translations.name');
         $this->addFilter('channel_required', 'channels.code');
 
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId)) {
+            $queryBuilder->where('attributes.tenant_id', $tenantId);
+        }
+
         return $queryBuilder;
     }
 

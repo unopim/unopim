@@ -7,9 +7,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Webkul\Core\Models\Channel;
 use Webkul\Core\Models\Locale;
 use Webkul\Product\Models\ProductProxy;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
 class ProductCompletenessScore extends Model
 {
+    use BelongsToTenant;
+
     protected $table = 'product_completeness';
 
     protected $fillable = [
@@ -18,6 +21,7 @@ class ProductCompletenessScore extends Model
         'locale_id',
         'score',
         'missing_count',
+        'tenant_id',
     ];
 
     /**

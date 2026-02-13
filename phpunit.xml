@@ -44,6 +44,14 @@
         <testsuite name="Completeness Feature Tests">
             <directory suffix="Test.php">./packages/Webkul/Completeness/tests/Feature</directory>
         </testsuite>
+
+        <testsuite name="Tenant Feature Tests">
+            <directory suffix="Test.php">./packages/Webkul/Tenant/tests/Feature</directory>
+        </testsuite>
+
+        <testsuite name="Tenant Unit Tests">
+            <directory suffix="Test.php">./packages/Webkul/Tenant/tests/Unit</directory>
+        </testsuite>
     </testsuites>
 
     <source>

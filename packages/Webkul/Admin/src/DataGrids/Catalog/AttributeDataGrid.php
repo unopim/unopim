@@ -52,6 +52,12 @@ class AttributeDataGrid extends DataGrid
                 )
             );
 
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId)) {
+            $queryBuilder->where('attributes.tenant_id', $tenantId);
+        }
+
         return $queryBuilder;
     }
 

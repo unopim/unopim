@@ -29,6 +29,12 @@ class LogsDataGrid extends DataGrid
             'status'
         );
 
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId)) {
+            $queryBuilder->where('webhook_logs.tenant_id', $tenantId);
+        }
+
         return $queryBuilder;
     }
 

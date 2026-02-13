@@ -373,11 +373,20 @@ abstract class AbstractImporter
     }
 
     /**
-     * Get the queue name for the worker.
+     * Get the queue name for the worker, prefixed with tenant ID for per-tenant routing (FR33).
      */
     protected function getQueue(): ?string
     {
-        return $this->queue;
+        $queue = $this->queue;
+
+        if ($queue) {
+            $tenantId = core()->getCurrentTenantId();
+            if ($tenantId) {
+                $queue = "tenant-{$tenantId}-{$queue}";
+            }
+        }
+
+        return $queue;
     }
 
     /**

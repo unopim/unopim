@@ -56,14 +56,29 @@ class ResultCursorFactory implements CursorFactoryContract
      */
     protected static function resolveOptions(array $options)
     {
-        $indexPrefix = env('ELASTICSEARCH_INDEX_PREFIX') ? env('ELASTICSEARCH_INDEX_PREFIX') : env('APP_NAME');
+        $prefix = config('elasticsearch.prefix') ?: config('app.name');
 
         $options['page'] = $options['pagination']['page'] ?? 1;
         $options['per_page'] = $options['pagination']['per_page'] ?? 10;
         $options['sort'] = $options['sort'] ?? [];
         $options['filters'] = $options['filters'] ?? [];
 
-        $options['index'] = strtolower($indexPrefix.'_products');
+        $tenantSuffix = '';
+        $tenantId = core()->getCurrentTenantId();
+
+        if ($tenantId) {
+            try {
+                $uuid = \Illuminate\Support\Facades\DB::table('tenants')
+                    ->where('id', $tenantId)
+                    ->value('es_index_uuid');
+
+                $tenantSuffix = $uuid ? "_tenant_{$uuid}" : "_tenant_{$tenantId}";
+            } catch (\Throwable) {
+                $tenantSuffix = "_tenant_{$tenantId}";
+            }
+        }
+
+        $options['index'] = strtolower($prefix.$tenantSuffix.'_products');
 
         return $options;
     }

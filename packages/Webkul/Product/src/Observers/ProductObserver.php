@@ -3,6 +3,7 @@
 namespace Webkul\Product\Observers;
 
 use Illuminate\Support\Facades\Storage;
+use Webkul\Tenant\Filesystem\TenantStorage;
 
 class ProductObserver
 {
@@ -14,6 +15,6 @@ class ProductObserver
      */
     public function deleted($product)
     {
-        Storage::deleteDirectory('product/'.$product->id);
+        Storage::deleteDirectory(TenantStorage::path('product/'.$product->id));
     }
 }

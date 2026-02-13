@@ -37,6 +37,12 @@ class AttributeFamilyDataGrid extends DataGrid
 
         $this->addFilter('id', 'attribute_families.id');
 
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId)) {
+            $queryBuilder->where('attribute_families.tenant_id', $tenantId);
+        }
+
         return $queryBuilder;
     }
 

@@ -33,12 +33,18 @@ abstract class AbstractPropertyFilter extends AbstractFilter implements Property
     {
         $table = $this->getSearchTablePath($options);
 
-        return DB::table($table)
+        $query = DB::table($table)
             ->select("$table.id")
             ->whereIn("$table.sku", $skus)
-            ->Where("$table.type", config('product_types.configurable.key'))
-            ->pluck('id')
-            ->toArray();
+            ->where("$table.type", config('product_types.configurable.key'));
+
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId)) {
+            $query->where("$table.tenant_id", $tenantId);
+        }
+
+        return $query->pluck('id')->toArray();
     }
 
     /**

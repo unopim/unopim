@@ -10,11 +10,7 @@ use Webkul\AdminApi\Http\Controllers\API\Catalog\ConfigurableProductController;
 use Webkul\AdminApi\Http\Controllers\API\Catalog\MediaFileController;
 use Webkul\AdminApi\Http\Controllers\API\Catalog\SimpleProductController;
 
-Route::group([
-    'middleware' => [
-        'auth:api',
-    ],
-], function () {
+Route::group([], function () {
     /** Attribute Groups API Routes */
     Route::controller(AttributeGroupController::class)->prefix('attribute-groups')->group(function () {
         Route::get('', 'index')->name('admin.api.attribute_groups.index');

@@ -4,9 +4,12 @@ namespace Webkul\Notification\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Webkul\Notification\Contracts\Notification as NotificationContract;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
 class Notification extends Model implements NotificationContract
 {
+    use BelongsToTenant;
+
     protected $fillable = [
         'type',
         'route',

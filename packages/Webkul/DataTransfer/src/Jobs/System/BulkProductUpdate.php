@@ -15,10 +15,11 @@ use Webkul\DataTransfer\Repositories\JobTrackRepository;
 use Webkul\DataTransfer\Services\JobLogger;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Validator\ProductValuesValidator;
+use Webkul\Tenant\Jobs\TenantAwareJob;
 
 class BulkProductUpdate implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, TenantAwareJob;
 
     /**
      * Repository for managing job instances.
@@ -72,7 +73,9 @@ class BulkProductUpdate implements ShouldQueue
     public function __construct(
         protected array $updateProducts,
         protected $userId
-    ) {}
+    ) {
+        $this->captureTenantContext();
+    }
 
     /**
      * Handle the bulk product update job.

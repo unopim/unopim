@@ -82,7 +82,8 @@
             "Webkul\\AdminApi\\": "packages/Webkul/AdminApi/src",
             "Webkul\\ElasticSearch\\": "packages/Webkul/ElasticSearch/src",
             "Webkul\\Webhook\\": "packages/Webkul/Webhook/src",
-            "Webkul\\Completeness\\": "packages/Webkul/Completeness/src"
+            "Webkul\\Completeness\\": "packages/Webkul/Completeness/src",
+            "Webkul\\Tenant\\": "packages/Webkul/Tenant/src"
         }
     },
     "autoload-dev": {
@@ -94,7 +95,8 @@
             "Webkul\\User\\Tests\\": "packages/Webkul/User/tests",
             "Webkul\\AdminApi\\Tests\\": "packages/Webkul/AdminApi/tests",
             "Webkul\\Installer\\Tests\\": "packages/Webkul/Installer/tests",
-            "Webkul\\Completeness\\Tests\\": "packages/Webkul/Completeness/tests"
+            "Webkul\\Completeness\\Tests\\": "packages/Webkul/Completeness/tests",
+            "Webkul\\Tenant\\Tests\\": "packages/Webkul/Tenant/tests"
         }
     },
     "scripts": {

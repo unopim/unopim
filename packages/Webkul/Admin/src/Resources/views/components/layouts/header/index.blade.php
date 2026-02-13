@@ -30,6 +30,19 @@
 
     </div>
 
+    <!-- Tenant Context Switcher / Badge -->
+    @if (isset($tenantContext))
+        @if ($isPlatformOperator ?? false)
+            <v-tenant-switcher></v-tenant-switcher>
+        @else
+            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-violet-50 dark:bg-cherry-800">
+                <span class="text-xs font-semibold text-violet-700 dark:text-violet-400">
+                    {{ $tenantContext['name'] }}
+                </span>
+            </div>
+        @endif
+    @endif
+
     <div class="flex gap-2.5 items-center">
         <!-- Dark mode Switcher -->
         <v-dark>
@@ -177,6 +190,110 @@
 </x-admin::drawer>
 
 @pushOnce('scripts')
+
+    <!-- Tenant Context Switcher (Platform Operators Only) -->
+    @if ($isPlatformOperator ?? false)
+        <script type="text/x-template" id="v-tenant-switcher-template">
+            <x-admin::dropdown position="bottom-{{ app()->getLocale() === 'ar' ? 'right' : 'left' }}">
+                <x-slot:toggle>
+                    <button
+                        class="flex items-center gap-1.5 px-2.5 py-1 rounded-md cursor-pointer transition-all hover:opacity-80"
+                        :class="currentTenant ? 'bg-violet-50 dark:bg-cherry-800' : 'bg-amber-50 dark:bg-amber-900/30'"
+                    >
+                        <span
+                            class="text-xs font-semibold"
+                            :class="currentTenant ? 'text-violet-700 dark:text-violet-400' : 'text-amber-700 dark:text-amber-400'"
+                            v-text="currentLabel"
+                        ></span>
+                        <span class="icon-sort-down text-xs" :class="currentTenant ? 'text-violet-700 dark:text-violet-400' : 'text-amber-700 dark:text-amber-400'"></span>
+                    </button>
+                </x-slot>
+
+                <x-slot:content class="!p-0 max-h-[300px] overflow-auto journal-scroll">
+                    <div class="grid gap-0.5 p-1">
+                        <!-- Platform (All Tenants) option -->
+                        <div
+                            class="flex items-center gap-2 px-3 py-2 rounded cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800"
+                            :class="{ 'bg-amber-50 dark:bg-amber-900/30': !currentTenant }"
+                            @click="switchTo(null)"
+                        >
+                            <span class="w-2 h-2 rounded-full bg-amber-500" v-if="!currentTenant"></span>
+                            <span class="w-2 h-2 rounded-full" v-else></span>
+                            <span class="text-sm text-gray-800 dark:text-white font-medium">Platform (All Tenants)</span>
+                        </div>
+
+                        <div class="border-t dark:border-gray-800 my-1" v-if="tenants.length"></div>
+
+                        <!-- Individual tenants -->
+                        <div
+                            v-for="tenant in tenants"
+                            :key="tenant.id"
+                            class="flex items-center gap-2 px-3 py-2 rounded cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800"
+                            :class="{ 'bg-violet-50 dark:bg-cherry-800': currentTenant && currentTenant.id === tenant.id }"
+                            @click="switchTo(tenant)"
+                        >
+                            <span class="w-2 h-2 rounded-full bg-violet-500" v-if="currentTenant && currentTenant.id === tenant.id"></span>
+                            <span class="w-2 h-2 rounded-full" v-else></span>
+                            <span class="text-sm text-gray-800 dark:text-white" v-text="tenant.name"></span>
+                        </div>
+
+                        <div class="px-3 py-2 text-xs text-gray-400" v-if="!tenants.length">
+                            No active tenants
+                        </div>
+                    </div>
+                </x-slot>
+            </x-admin::dropdown>
+        </script>
+
+        <script type="module">
+            app.component('v-tenant-switcher', {
+                template: '#v-tenant-switcher-template',
+
+                data() {
+                    return {
+                        currentTenant: @json($tenantContext['id'] ? $tenantContext : null),
+                        tenants: @json($availableTenants ?? []),
+                        switching: false,
+                    };
+                },
+
+                computed: {
+                    currentLabel() {
+                        return this.currentTenant ? this.currentTenant.name : 'Platform';
+                    },
+                },
+
+                methods: {
+                    switchTo(tenant) {
+                        if (this.switching) return;
+
+                        // Don't switch if already selected
+                        if (!tenant && !this.currentTenant) return;
+                        if (tenant && this.currentTenant && tenant.id === this.currentTenant.id) return;
+
+                        this.switching = true;
+
+                        this.$axios.post('{{ route("admin.settings.tenants.switch-context") }}', {
+                            tenant_id: tenant ? tenant.id : null,
+                        })
+                        .then((response) => {
+                            this.currentTenant = tenant;
+                            this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
+
+                            // Reload the page to apply the new tenant context
+                            setTimeout(() => window.location.reload(), 500);
+                        })
+                        .catch((error) => {
+                            this.$emitter.emit('add-flash', { type: 'error', message: error.response?.data?.message || 'Failed to switch context' });
+                        })
+                        .finally(() => {
+                            this.switching = false;
+                        });
+                    },
+                },
+            });
+        </script>
+    @endif
 
     <script type="text/x-template" id="v-notifications-template">
         <x-admin::dropdown position="bottom-right">

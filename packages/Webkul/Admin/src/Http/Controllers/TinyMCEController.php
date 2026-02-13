@@ -4,6 +4,7 @@ namespace Webkul\Admin\Http\Controllers;
 
 use Illuminate\Support\Facades\Storage;
 use Webkul\Core\Filesystem\FileStorer;
+use Webkul\Tenant\Filesystem\TenantStorage;
 
 class TinyMCEController extends Controller
 {
@@ -48,7 +49,7 @@ class TinyMCEController extends Controller
             return [];
         }
 
-        $path = $this->fileStorer->store(file: request()->file('file'), path: $this->storagePath);
+        $path = $this->fileStorer->store(file: request()->file('file'), path: TenantStorage::path($this->storagePath));
 
         return [
             'file'      => $path,

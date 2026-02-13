@@ -375,7 +375,44 @@
                                 <x-admin::form.control-group.error control-name="role_id" />
                             </x-admin::form.control-group>
 
-                            <div class="flex gap-4 mb-4"> 
+                            <!-- Tenant (platform operator only) -->
+                            @if (! auth()->guard('admin')->user()->tenant_id)
+                                <x-admin::form.control-group class="flex-1 w-full">
+                                    <x-admin::form.control-group.label>
+                                        @lang('Tenant')
+                                    </x-admin::form.control-group.label>
+
+                                    @php
+                                        $tenants = json_encode(
+                                            \Webkul\Tenant\Models\Tenant::where('status', 'active')
+                                                ->select('id', 'name')
+                                                ->get()
+                                                ->toArray()
+                                        );
+                                    @endphp
+
+                                    <x-admin::form.control-group.control
+                                        type="select"
+                                        name="tenant_id"
+                                        :multiple="false"
+                                        v-model="data.user.tenant_id"
+                                        :label="trans('Tenant')"
+                                        placeholder="Platform (No Tenant)"
+                                        :options="$tenants"
+                                        track-by="id"
+                                        label-by="name"
+                                    >
+                                    </x-admin::form.control-group.control>
+
+                                    <p class="mt-1 text-xs text-gray-500">
+                                        @lang('Leave empty to create a platform operator.')
+                                    </p>
+
+                                    <x-admin::form.control-group.error control-name="tenant_id" />
+                                </x-admin::form.control-group>
+                            @endif
+
+                            <div class="flex gap-4 mb-4">
                                 <template v-if="currentUserId != data.user.id">
                                     <x-admin::form.control-group class="w-full flex-1 !mb-0">
                                         <x-admin::form.control-group.label>

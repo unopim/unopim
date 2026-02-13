@@ -11,15 +11,17 @@ use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Completeness\Contracts\CompletenessSetting as CompletenessSettingContracts;
 use Webkul\Completeness\Database\Factories\CompletenessSettingFactory;
 use Webkul\Core\Models\Channel;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
 class CompletenessSetting extends Model implements CompletenessSettingContracts
 {
-    use HasFactory;
+    use BelongsToTenant, HasFactory;
 
     protected $fillable = [
         'family_id',
         'attribute_id',
         'channel_id',
+        'tenant_id',
     ];
 
     /**

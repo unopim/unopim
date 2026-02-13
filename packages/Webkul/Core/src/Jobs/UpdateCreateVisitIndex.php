@@ -9,10 +9,12 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
 use Webkul\Core\Repositories\VisitRepository;
+use Webkul\Tenant\Jobs\TenantAwareJob;
 
 class UpdateCreateVisitIndex implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use TenantAwareJob;
 
     /**
      * Create a new job instance.
@@ -24,7 +26,9 @@ class UpdateCreateVisitIndex implements ShouldQueue
     public function __construct(
         protected $model,
         protected $log
-    ) {}
+    ) {
+        $this->captureTenantContext();
+    }
 
     /**
      * Execute the job.

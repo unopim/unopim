@@ -13,10 +13,11 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Symfony\Component\Intl\Currencies;
 use Webkul\Core\Contracts\Currency as CurrencyContract;
 use Webkul\Core\Database\Factories\CurrencyFactory;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
 class Currency extends Model implements AuditableContract, CurrencyContract
 {
-    use Auditable;
+    use BelongsToTenant, Auditable;
     use HasFactory;
 
     /**

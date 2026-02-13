@@ -9,11 +9,12 @@ use Webkul\AdminApi\Contracts\Apikey as ApikeyContract;
 use Webkul\AdminApi\Database\Factories\ApiKeyFactory;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 use Webkul\User\Models\AdminProxy;
 
 class Apikey extends Model implements ApikeyContract, HistoryContract
 {
-    use HasFactory;
+    use BelongsToTenant, HasFactory;
     use HistoryTrait;
 
     /**

@@ -9,10 +9,11 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Webkul\DataTransfer\Helpers\Import as ImportHelper;
+use Webkul\Tenant\Jobs\TenantAwareJob;
 
 class LinkBatch implements ShouldQueue
 {
-    use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels, TenantAwareJob;
 
     /**
      * Create a new job instance.
@@ -23,6 +24,7 @@ class LinkBatch implements ShouldQueue
     public function __construct(protected $importBatch)
     {
         $this->importBatch = $importBatch;
+        $this->captureTenantContext();
     }
 
     /**

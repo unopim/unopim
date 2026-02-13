@@ -33,6 +33,13 @@ class UserDataGrid extends DataGrid
                 'ro.name as role_name'
             );
 
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId)) {
+            $queryBuilder->where('u.tenant_id', $tenantId);
+            $queryBuilder->where('ro.tenant_id', $tenantId);
+        }
+
         $this->addFilter('user_id', 'u.id');
         $this->addFilter('user_name', 'u.name');
         $this->addFilter('role_name', 'ro.name');

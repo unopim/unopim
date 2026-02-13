@@ -17,10 +17,11 @@ use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Product\Validator\Rule\AttributeOptionRule;
 use Webkul\Product\Validator\Rule\Elasticsearch\UniqueAttributeValue;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
 class Attribute extends TranslatableModel implements AttributeContract, HistoryContract
 {
-    use HasFactory;
+    use BelongsToTenant, HasFactory;
     use HistoryTrait;
 
     const TEXT_TYPE = 'text';

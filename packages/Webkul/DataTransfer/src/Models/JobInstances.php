@@ -10,10 +10,11 @@ use Webkul\DataTransfer\Contracts\JobInstances as JobInstancesContract;
 use Webkul\DataTransfer\Database\Factories\JobInstanceFactory;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
 class JobInstances extends Model implements HistoryContract, JobInstancesContract
 {
-    use HasFactory,HistoryTrait;
+    use BelongsToTenant, HasFactory, HistoryTrait;
 
     protected $table = 'job_instances';
 

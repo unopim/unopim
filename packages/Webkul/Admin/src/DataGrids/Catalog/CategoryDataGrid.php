@@ -76,6 +76,12 @@ class CategoryDataGrid extends DataGrid
 
         $this->addFilter('category_name', DB::raw($categoryNameExpr));
 
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId)) {
+            $queryBuilder->where('cat.tenant_id', $tenantId);
+        }
+
         return $queryBuilder;
     }
 
@@ -183,8 +189,23 @@ class CategoryDataGrid extends DataGrid
 
             $indexPrefix = config('elasticsearch.prefix');
 
+            $tenantSuffix = '';
+            $tenantId = core()->getCurrentTenantId();
+
+            if ($tenantId) {
+                try {
+                    $uuid = DB::table('tenants')
+                        ->where('id', $tenantId)
+                        ->value('es_index_uuid');
+
+                    $tenantSuffix = $uuid ? "_tenant_{$uuid}" : "_tenant_{$tenantId}";
+                } catch (\Throwable) {
+                    $tenantSuffix = "_tenant_{$tenantId}";
+                }
+            }
+
             $results = ElasticSearch::search([
-                'index' => strtolower($indexPrefix.'_categories'),
+                'index' => strtolower($indexPrefix.$tenantSuffix.'_categories'),
                 'body'  => [
                     'from'          => ($pagination['page'] * $pagination['per_page']) - $pagination['per_page'],
                     'size'          => $pagination['per_page'],
@@ -365,13 +386,18 @@ class CategoryDataGrid extends DataGrid
 
         $pathConcatExpr = $grammar->concat('tree_view.name', "' / '", $caseNameExpr);
 
+        $tenantId = core()->getCurrentTenantId();
+        $tenantFilter = ! is_null($tenantId)
+            ? " AND {$tablePrefix}categories.tenant_id = ".intval($tenantId)
+            : '';
+
         return "
             WITH RECURSIVE tree_view AS (
                 SELECT id,
                     parent_id,
                     {$caseNameExpr} as name
                 FROM {$tablePrefix}categories
-                WHERE parent_id IS NULL
+                WHERE parent_id IS NULL{$tenantFilter}
                 UNION ALL
                 SELECT parent.id,
                     parent.parent_id,

@@ -8,10 +8,11 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Webkul\DataTransfer\Helpers\Export as ExportHelper;
+use Webkul\Tenant\Jobs\TenantAwareJob;
 
 class UploadFile implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, TenantAwareJob;
 
     /**
      * Create a new job instance.
@@ -29,6 +30,7 @@ class UploadFile implements ShouldQueue
         $this->filePath = $filePath;
         $this->temporaryPath = $temporaryPath;
         $this->filters = $filters;
+        $this->captureTenantContext();
     }
 
     /**

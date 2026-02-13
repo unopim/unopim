@@ -15,6 +15,7 @@ return [
         \Webkul\Attribute\Providers\ModuleServiceProvider::class,
         \Webkul\Category\Providers\ModuleServiceProvider::class,
         \Webkul\Core\Providers\ModuleServiceProvider::class,
+        \Webkul\Tenant\Providers\ModuleServiceProvider::class,
         \Webkul\DataTransfer\Providers\ModuleServiceProvider::class,
         \Webkul\HistoryControl\Providers\ModuleServiceProvider::class,
         \Webkul\Notification\Providers\ModuleServiceProvider::class,

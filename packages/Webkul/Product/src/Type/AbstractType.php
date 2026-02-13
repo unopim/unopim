@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Attribute\Repositories\AttributeRepository;
+use Webkul\Tenant\Filesystem\TenantStorage;
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Core\Filesystem\FileStorer;
 use Webkul\Product\Contracts\Product;
@@ -432,11 +433,11 @@ abstract class AbstractType
     {
         $path = explode('/', $media->path);
 
-        $copiedMedia->path = 'product/'.$product->id.'/'.end($path);
+        $copiedMedia->path = TenantStorage::path('product/'.$product->id.'/'.end($path));
 
         $copiedMedia->save();
 
-        Storage::makeDirectory('product/'.$product->id);
+        Storage::makeDirectory(TenantStorage::path('product/'.$product->id));
 
         Storage::copy($media->path, $copiedMedia->path);
     }

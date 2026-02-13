@@ -203,6 +203,38 @@ abstract class DataGrid
     public function setQueryBuilder($queryBuilder = null): void
     {
         $this->queryBuilder = $queryBuilder ?: $this->prepareQueryBuilder();
+
+        $this->applyTenantScope();
+    }
+
+    /**
+     * Apply tenant scope to the query builder for defense-in-depth isolation.
+     */
+    protected function applyTenantScope(): void
+    {
+        $tenantId = core()->getCurrentTenantId();
+
+        if (is_null($tenantId) || is_null($this->queryBuilder)) {
+            return;
+        }
+
+        $query = $this->queryBuilder instanceof \Illuminate\Database\Eloquent\Builder
+            ? $this->queryBuilder->getQuery()
+            : $this->queryBuilder;
+
+        $from = $query->from;
+
+        if (! is_string($from)) {
+            return;
+        }
+
+        if (preg_match('/\bas\s+(\w+)$/i', $from, $matches)) {
+            $column = $matches[1].'.tenant_id';
+        } else {
+            $column = $from.'.tenant_id';
+        }
+
+        $this->queryBuilder->where($column, $tenantId);
     }
 
     /**
@@ -319,7 +351,15 @@ abstract class DataGrid
             $this->sortColumn = $this->primaryColumn;
         }
 
-        return $this->queryBuilder->orderBy($requestedSort['column'] ?? $this->sortColumn, $requestedSort['order'] ?? $this->sortOrder);
+        $sortColumn = $requestedSort['column'] ?? $this->sortColumn;
+
+        $column = collect($this->columns)->first(fn ($c) => $c->index === $sortColumn);
+
+        if ($column) {
+            $sortColumn = $column->getDatabaseColumnName();
+        }
+
+        return $this->queryBuilder->orderBy($sortColumn, $requestedSort['order'] ?? $this->sortOrder);
     }
 
     /**

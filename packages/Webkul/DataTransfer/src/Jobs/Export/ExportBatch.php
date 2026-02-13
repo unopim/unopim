@@ -10,10 +10,11 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Webkul\DataTransfer\Helpers\Export as ExportHelper;
 use Webkul\DataTransfer\Services\JobLogger;
+use Webkul\Tenant\Jobs\TenantAwareJob;
 
 class ExportBatch implements ShouldQueue
 {
-    use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels, TenantAwareJob;
 
     /**
      * Create a new job instance.
@@ -26,7 +27,9 @@ class ExportBatch implements ShouldQueue
         protected $filePath,
         protected $jobTrackId,
         protected $exportBuffer
-    ) {}
+    ) {
+        $this->captureTenantContext();
+    }
 
     /**
      * Execute the job.

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ImportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Tenant\Filesystem\TenantStorage;
 use Webkul\DataTransfer\Contracts\Validator\JobInstances\JobValidator;
 use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Helpers\Import;
@@ -102,7 +103,7 @@ class ImportController extends Controller
         if (isset($importerConfig[$data['entity_type']]['has_file_options']) && $importerConfig[$data['entity_type']]['has_file_options'] == 'true') {
             $fileData = [
                 'file_path' => request()->file('file')->storeAs(
-                    'imports',
+                    TenantStorage::path('imports'),
                     time().'-'.request()->file('file')->getClientOriginalName(),
                     'private'
                 ),
@@ -193,7 +194,7 @@ class ImportController extends Controller
             Storage::disk('private')->delete($import->file_path);
 
             $data['file_path'] = request()->file('file')->storeAs(
-                'imports',
+                TenantStorage::path('imports'),
                 time().'-'.request()->file('file')->getClientOriginalName(),
                 'private'
             );
@@ -564,6 +565,12 @@ class ImportController extends Controller
     {
         $import = $this->jobInstancesRepository->findOrFail($id);
 
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId) && ($import->tenant_id ?? null) !== $tenantId) {
+            abort(403, 'Access denied.');
+        }
+
         return Storage::disk('private')->download($import->file_path);
     }
 
@@ -573,6 +580,12 @@ class ImportController extends Controller
     public function downloadErrorReport(int $id)
     {
         $import = $this->jobTrackRepository->findOrFail($id);
+
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId) && ($import->tenant_id ?? null) !== $tenantId) {
+            abort(403, 'Access denied.');
+        }
 
         return Storage::disk('private')->download($import->error_file_path);
     }

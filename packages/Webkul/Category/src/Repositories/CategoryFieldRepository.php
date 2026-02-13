@@ -130,6 +130,12 @@ class CategoryFieldRepository extends Repository
                     ->orWhere('requested_category_field_translation.name', 'LIKE', '%'.$search.'%');
             });
 
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId)) {
+            $query->where('category_fields.tenant_id', $tenantId);
+        }
+
         if ($excludeTypes) {
             $query->whereNotIn('category_fields.type', $excludeTypes);
         }

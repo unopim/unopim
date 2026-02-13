@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Webkul\Attribute\Contracts\AttributeOptionTranslation as AttributeOptionTranslationContract;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
 class AttributeOptionTranslation extends Model implements AttributeOptionTranslationContract, HistoryContract
 {
+    use BelongsToTenant;
     use HistoryTrait;
 
     public $timestamps = false;

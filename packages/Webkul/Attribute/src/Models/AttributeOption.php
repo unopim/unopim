@@ -11,10 +11,11 @@ use Webkul\Attribute\Database\Factories\AttributeOptionFactory;
 use Webkul\Core\Eloquent\TranslatableModel;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
 class AttributeOption extends TranslatableModel implements AttributeOptionContract, HistoryContract
 {
-    use HasFactory;
+    use BelongsToTenant, HasFactory;
     use HistoryTrait;
 
     public $timestamps = false;

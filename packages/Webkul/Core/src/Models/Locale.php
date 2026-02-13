@@ -12,11 +12,12 @@ use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Webkul\Core\Contracts\Locale as LocaleContract;
 use Webkul\Core\Database\Factories\LocaleFactory;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 use Webkul\User\Models\AdminProxy;
 
 class Locale extends Model implements AuditableContract, LocaleContract
 {
-    use Auditable;
+    use BelongsToTenant, Auditable;
     use HasFactory;
 
     /**

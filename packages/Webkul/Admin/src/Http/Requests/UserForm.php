@@ -53,6 +53,12 @@ class UserForm extends FormRequest
             'ui_locale_id'          => 'required',
             'role_id'               => 'required',
             'timezone'              => 'required',
+            'tenant_id'             => [
+                // Only platform operators (no tenant_id) may submit this field
+                auth()->guard('admin')->user()?->tenant_id ? 'prohibited' : 'nullable',
+                'integer',
+                'exists:tenants,id',
+            ],
             'image.*'               => [
                 'sometimes',
                 'image',

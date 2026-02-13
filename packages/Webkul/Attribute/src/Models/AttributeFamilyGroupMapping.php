@@ -9,9 +9,11 @@ use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
 use Webkul\HistoryControl\Presenters\AttributeFamilyPresenter;
 use Webkul\HistoryControl\Traits\HistoryTrait;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
 class AttributeFamilyGroupMapping extends Model implements AttributeFamilyGroupMappingContract, HistoryContract, PresentableHistoryInterface
 {
+    use BelongsToTenant;
     use HasFactory;
     use HistoryTrait;
 

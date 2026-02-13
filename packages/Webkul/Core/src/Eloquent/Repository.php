@@ -8,12 +8,34 @@ use Prettus\Repository\Traits\CacheableRepository;
 
 abstract class Repository extends BaseRepository implements CacheableInterface
 {
-    use CacheableRepository;
+    use CacheableRepository {
+        CacheableRepository::getCacheKey as parentGetCacheKey;
+    }
 
     /**
      * @var bool
      */
     protected $cacheEnabled = false;
+
+    /**
+     * Get tenant-aware cache key to prevent cross-tenant cache pollution.
+     *
+     * @return string
+     */
+    public function getCacheKey($method, $args = null)
+    {
+        $key = $this->parentGetCacheKey($method, $args);
+
+        $tenantId = core()->getCurrentTenantId();
+
+        if (is_null($tenantId)) {
+            return $key;
+        }
+
+        $prefix = hash_hmac('sha256', "tenant_{$tenantId}", config('app.key'));
+
+        return $prefix.':'.$key;
+    }
 
     /**
      * @return bool

@@ -8,10 +8,11 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Tenant\Jobs\TenantAwareJob;
 
 class SaveTranslatedDataJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, TenantAwareJob;
 
     protected $productId;
 
@@ -30,6 +31,7 @@ class SaveTranslatedDataJob implements ShouldQueue
         $this->translatedData = $translatedData;
         $this->channel = $channel;
         $this->field = $field;
+        $this->captureTenantContext();
     }
 
     /**

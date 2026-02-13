@@ -9,10 +9,11 @@ use Webkul\Attribute\Database\Factories\AttributeGroupFactory;
 use Webkul\Core\Eloquent\TranslatableModel;
 use Webkul\HistoryControl\Contracts\HistoryAuditable;
 use Webkul\HistoryControl\Traits\HistoryTrait;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
 class AttributeGroup extends TranslatableModel implements AttributeGroupContract, HistoryAuditable
 {
-    use HasFactory;
+    use BelongsToTenant, HasFactory;
     use HistoryTrait;
 
     public $timestamps = false;

@@ -7,10 +7,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\ElasticSearch\Indexing\Normalizer\ProductNormalizer;
+use Webkul\ElasticSearch\Traits\ResolveTenantIndex;
 use Webkul\Product\Models\Product as Products;
 
 class Product
 {
+    use ResolveTenantIndex;
     /**
      * bool flag to manage observer functionality
      */
@@ -52,12 +54,23 @@ class Product
         $this->indexPrefix = config('elasticsearch.prefix');
     }
 
+    /**
+     * Get the tenant-aware product index name.
+     */
+    protected function getIndexName(): string
+    {
+        return $this->tenantAwareIndexName('products');
+    }
+
     public function created(Products $product)
     {
+        $this->initTenantIndex();
+
         if (config('elasticsearch.enabled') && self::$isEnabled) {
             $productArray = $product->toArray();
 
             $productArray['status'] = $productArray['status'] ?? 1;
+            $productArray['tenant_id'] = $product->tenant_id ?? null;
 
             switch (DB::getDriverName()) {
                 case 'pgsql':
@@ -85,13 +98,13 @@ class Product
 
             try {
                 ElasticSearch::index([
-                    'index' => strtolower($this->indexPrefix.'_products'),
+                    'index' => $this->getIndexName(),
                     'id'    => $product->id,
                     'body'  => $productArray,
                 ]);
             } catch (ElasticsearchException $e) {
                 Log::channel('elasticsearch')->error(
-                    'Exception while creating id: '.$product->id.' in '.$this->indexPrefix.'_products index: ',
+                    'Exception while creating id: '.$product->id.' in '.$this->getIndexName().' index: ',
                     ['error' => $e->getMessage()],
                 );
             }
@@ -100,21 +113,24 @@ class Product
 
     public function updated(Products $product)
     {
+        $this->initTenantIndex();
+
         if (config('elasticsearch.enabled') && self::$isEnabled) {
             try {
                 $productArray = $product->toArray();
+                $productArray['tenant_id'] = $product->tenant_id ?? null;
 
                 if (isset($productArray['values'])) {
                     $productArray['values'] = $this->productIndexingNormalizer->normalize($productArray['values']);
                 }
 
                 ElasticSearch::index([
-                    'index' => strtolower($this->indexPrefix.'_products'),
+                    'index' => $this->getIndexName(),
                     'id'    => $product->id,
                     'body'  => $productArray,
                 ]);
             } catch (ElasticsearchException $e) {
-                Log::channel('elasticsearch')->error('Exception while updating id: '.$product->id.' in '.$this->indexPrefix.'_products index: ', [
+                Log::channel('elasticsearch')->error('Exception while updating id: '.$product->id.' in '.$this->getIndexName().' index: ', [
                     'error' => $e->getMessage(),
                 ]);
             }
@@ -123,14 +139,16 @@ class Product
 
     public function deleted(Products $product)
     {
+        $this->initTenantIndex();
+
         if (config('elasticsearch.enabled') && self::$isEnabled) {
             try {
                 ElasticSearch::delete([
-                    'index' => strtolower($this->indexPrefix.'_products'),
+                    'index' => $this->getIndexName(),
                     'id'    => $product->id,
                 ]);
             } catch (ElasticsearchException $e) {
-                Log::channel('elasticsearch')->error('Exception while deleting id: '.$product->id.' from '.$this->indexPrefix.'_products index: ', [
+                Log::channel('elasticsearch')->error('Exception while deleting id: '.$product->id.' from '.$this->getIndexName().' index: ', [
                     'error' => $e->getMessage(),
                 ]);
             }

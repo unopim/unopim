@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Webkul\Completeness\Http\Controllers\CompletenessController;
 use Webkul\Completeness\Http\Controllers\CompletenessSettingsController;
 
-Route::group(['middleware' => ['web', 'admin'], 'prefix' => config('app.admin_url')], function () {
+Route::group(['middleware' => ['web', 'admin', 'tenant'], 'prefix' => config('app.admin_url')], function () {
     Route::controller(CompletenessSettingsController::class)->prefix('completeness-settings')->group(function () {
         Route::get('{family_id}/edit', 'edit')->name('admin.catalog.families.completeness.edit');
 

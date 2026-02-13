@@ -10,6 +10,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Webkul\DataTransfer\Helpers\Import as ImportHelper;
 use Webkul\DataTransfer\Services\JobLogger;
+use Webkul\Tenant\Jobs\TenantAwareJob;
 use Webkul\User\Models\AdminProxy;
 
 class ImportTrackBatch implements ShouldQueue
@@ -19,6 +20,7 @@ class ImportTrackBatch implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+    use TenantAwareJob;
 
     protected $importBatch;
 
@@ -35,6 +37,7 @@ class ImportTrackBatch implements ShouldQueue
     public function __construct($importBatch)
     {
         $this->importBatch = $importBatch;
+        $this->captureTenantContext();
     }
 
     /**

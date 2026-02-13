@@ -8,11 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\User\Contracts\Role as RoleContract;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 use Webkul\User\Database\Factories\RoleFactory;
 
 class Role extends Model implements HistoryContract, RoleContract
 {
-    use HasFactory;
+    use BelongsToTenant, HasFactory;
     use HistoryTrait;
 
     /** Tags for History */
@@ -33,10 +34,12 @@ class Role extends Model implements HistoryContract, RoleContract
      * @var array
      */
     protected $fillable = [
+        'code',
         'name',
         'description',
         'permission_type',
         'permissions',
+        'is_locked',
     ];
 
     /**
@@ -46,7 +49,30 @@ class Role extends Model implements HistoryContract, RoleContract
      */
     protected $casts = [
         'permissions' => 'array',
+        'is_locked'   => 'boolean',
     ];
+
+    /**
+     * Boot method to protect locked roles from modification.
+     */
+    protected static function booted(): void
+    {
+        static::updating(function (Role $role) {
+            if ($role->getOriginal('is_locked') && $role->isDirty('permission_type')) {
+                throw new \RuntimeException('Cannot change permission_type on a locked role.');
+            }
+
+            if ($role->getOriginal('is_locked') && $role->isDirty('is_locked')) {
+                throw new \RuntimeException('Cannot unlock a locked role.');
+            }
+        });
+
+        static::deleting(function (Role $role) {
+            if ($role->is_locked) {
+                throw new \RuntimeException('Cannot delete a locked role.');
+            }
+        });
+    }
 
     /**
      * Get the admins.

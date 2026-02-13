@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Webkul\Attribute\Contracts\AttributeGroupTranslation as AttributeGroupTranslationContract;
 use Webkul\HistoryControl\Contracts\HistoryAuditable;
 use Webkul\HistoryControl\Traits\HistoryTrait;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
 class AttributeGroupTranslation extends Model implements AttributeGroupTranslationContract, HistoryAuditable
 {
+    use BelongsToTenant;
     use HistoryTrait;
 
     public $timestamps = false;

@@ -10,6 +10,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Webkul\DataTransfer\Helpers\Export as ExportHelper;
 use Webkul\DataTransfer\Services\JobLogger;
+use Webkul\Tenant\Jobs\TenantAwareJob;
 
 class ExportTrackBatch implements ShouldQueue
 {
@@ -18,6 +19,7 @@ class ExportTrackBatch implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+    use TenantAwareJob;
 
     protected $exportBatch;
 
@@ -34,6 +36,7 @@ class ExportTrackBatch implements ShouldQueue
     public function __construct($exportBatch)
     {
         $this->exportBatch = $exportBatch;
+        $this->captureTenantContext();
     }
 
     /**

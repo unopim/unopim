@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Webkul\HistoryControl\Contracts\HistoryAuditable;
 use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
 use Webkul\HistoryControl\Traits\HistoryTrait;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 use Webkul\Webhook\Presenters\SettingsPresenter;
 
 class WebhookSetting extends Model implements HistoryAuditable, PresentableHistoryInterface
 {
-    use HistoryTrait;
+    use BelongsToTenant, HistoryTrait;
 
     protected $auditExclude = ['value', 'extras'];
 

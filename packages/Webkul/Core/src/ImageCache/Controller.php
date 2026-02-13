@@ -66,12 +66,21 @@ class Controller extends ImageCacheController
         }
 
         /**
-         * Image manipulation based on callback
+         * Image manipulation based on callback.
+         * A tenant prefix is mixed into the closure so that each tenant
+         * gets its own image-cache entry even when file paths overlap.
          */
         $manager = new ImageManager(Config::get('image'));
 
+        $tenantPrefix = class_exists(\Webkul\Tenant\Cache\TenantCache::class)
+            ? \Webkul\Tenant\Cache\TenantCache::prefix()
+            : '';
+
         try {
-            $content = $manager->cache(function ($image) use ($template, $path) {
+            $content = $manager->cache(function ($image) use ($template, $path, $tenantPrefix) {
+                // Force the tenant prefix into the closure signature so
+                // Intervention hashes a unique cache key per tenant.
+                $image->tenantScope = $tenantPrefix;
                 if ($template instanceof Closure) {
                     /**
                      * Build from closure callback template

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\ImageManager;
 use Webkul\Core\Eloquent\Repository;
+use Webkul\Tenant\Filesystem\TenantStorage;
 
 class ThemeCustomizationRepository extends Repository
 {
@@ -78,7 +79,7 @@ class ThemeCustomizationRepository extends Repository
                 try {
                     $manager = new ImageManager;
 
-                    $path = 'theme/'.$theme->id.'/'.Str::random(40).'.webp';
+                    $path = TenantStorage::path('theme/'.$theme->id.'/'.Str::random(40).'.webp');
 
                     Storage::put($path, $manager->make($image['image'])->encode('webp'));
                 } catch (\Exception $e) {

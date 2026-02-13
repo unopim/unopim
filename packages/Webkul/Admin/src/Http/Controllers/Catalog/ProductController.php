@@ -164,12 +164,14 @@ class ProductController extends Controller
 
         $data = $request->all();
 
+        $data[AbstractType::PRODUCT_VALUES_KEY] = $data[AbstractType::PRODUCT_VALUES_KEY] ?? [];
+
         $product = $this->productRepository->find($id);
 
         foreach (($product?->parent?->super_attributes ?? []) as $attr) {
             $attrCode = $attr->code;
 
-            $configurableValues[$attrCode] = $data['values']['common'][$attrCode];
+            $configurableValues[$attrCode] = $data[AbstractType::PRODUCT_VALUES_KEY]['common'][$attrCode] ?? null;
         }
 
         if (! empty($configurableValues) && $product->parent_id) {

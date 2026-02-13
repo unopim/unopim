@@ -4,9 +4,11 @@ namespace Webkul\DataTransfer\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
 class JobTrackBatch extends Model implements JobTrackBatchContract
 {
+    use BelongsToTenant;
     /**
      * Indicates if the model should be timestamped.
      *

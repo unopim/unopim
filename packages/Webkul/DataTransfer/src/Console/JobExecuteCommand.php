@@ -31,8 +31,8 @@ class JobExecuteCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'unopim:queue:work 
-                            {jobId} 
+    protected $signature = 'unopim:queue:work
+                            {jobId}
                             {userEmailId}
                             {connection? : The name of the queue connection to work}
                             {--queue= : The names of the queue to work}
@@ -41,7 +41,8 @@ class JobExecuteCommand extends Command
                             {--backoff=0 : The number of seconds to wait before retrying a job that encountered an uncaught exception}
                             {--memory=128 : The memory limit in megabytes}
                             {--timeout=60 : The number of seconds a child process can run}
-                            {--tries=1 : Number of times to attempt a job before logging it failed}';
+                            {--tries=1 : Number of times to attempt a job before logging it failed}
+                            {--tenant= : Tenant ID to set context for multi-tenant isolation}';
 
     /**
      * The console command description.
@@ -72,6 +73,16 @@ class JobExecuteCommand extends Command
      */
     public function handle(): int
     {
+        /**
+         * Set tenant context if --tenant option is provided.
+         * This ensures all Eloquent queries with TenantScope are
+         * properly filtered to the specified tenant when running
+         * from CLI where no web session exists.
+         */
+        if ($tenantOption = $this->option('tenant')) {
+            core()->setCurrentTenantId((int) $tenantOption);
+        }
+
         $jobId = $this->argument('jobId');
         $userId = null;
 
@@ -167,6 +178,12 @@ class JobExecuteCommand extends Command
 
         // Generate a queue name based on the job instance code, type, and job track ID
         $queue = $this->option('queue') ?: sprintf('%s-%s-%s', $this->generateQueueCode($jobInstance->code), $jobInstance->type, $jobTrackInstance->id);
+
+        // Prefix queue with tenant ID for per-tenant queue routing (FR33)
+        $tenantId = core()->getCurrentTenantId();
+        if ($tenantId) {
+            $queue = "tenant-{$tenantId}-{$queue}";
+        }
 
         // Dispatch the appropriate job (ExportTrackBatch or ImportTrackBatch) to the generated queue
         if ($jobInstance->type == 'export') {

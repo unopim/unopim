@@ -13,7 +13,7 @@ use Webkul\Admin\Http\Controllers\Settings\UserController;
 /**
  * Settings routes.
  */
-Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], function () {
+Route::group(['middleware' => ['admin', 'tenant'], 'prefix' => config('app.admin_url')], function () {
     Route::prefix('settings')->group(function () {
         /**
          * Channels routes.

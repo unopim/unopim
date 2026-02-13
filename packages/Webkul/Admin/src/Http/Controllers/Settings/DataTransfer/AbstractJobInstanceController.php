@@ -9,6 +9,7 @@ use Webkul\Admin\DataGrids\Settings\DataTransfer\ImportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Repositories\JobInstancesRepository;
+use Webkul\Tenant\Filesystem\TenantStorage;
 
 abstract class AbstractJobInstanceController extends Controller
 {
@@ -84,7 +85,7 @@ abstract class AbstractJobInstanceController extends Controller
             array_merge(
                 [
                     'file_path' => request()->file('file')->storeAs(
-                        'imports',
+                        TenantStorage::path('imports'),
                         time().'-'.request()->file('file')->getClientOriginalName(),
                         'private'
                     ),

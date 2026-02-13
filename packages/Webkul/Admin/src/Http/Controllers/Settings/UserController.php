@@ -59,6 +59,17 @@ class UserController extends Controller
             'timezone',
         ]);
 
+        // Prevent tenant_id tampering: enforce tenant isolation
+        $currentAdmin = auth()->guard('admin')->user();
+
+        if ($currentAdmin->tenant_id) {
+            // Tenant admin: always force their own tenant_id, ignore any submitted value
+            $data['tenant_id'] = $currentAdmin->tenant_id;
+        } elseif ($request->has('tenant_id')) {
+            // Platform operator: can assign users to tenants
+            $data['tenant_id'] = $request->input('tenant_id') ?: null;
+        }
+
         if ($data['password'] ?? null) {
             $data['password'] = bcrypt($data['password']);
 
@@ -244,6 +255,12 @@ class UserController extends Controller
     private function prepareUserData(UserForm $request, $id)
     {
         $data = $request->validated();
+
+        // Prevent tenant_id tampering: only platform operators can set tenant_id
+        if (auth()->guard('admin')->user()->tenant_id) {
+            // Tenant admin: force their own tenant_id, ignore any submitted value
+            $data['tenant_id'] = auth()->guard('admin')->user()->tenant_id;
+        }
 
         $user = $this->adminRepository->find($id);
 

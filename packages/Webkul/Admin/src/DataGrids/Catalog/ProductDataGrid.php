@@ -113,7 +113,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                     END) as attribute_family"
                 ),
                 DB::raw('
-                    COALESCE('.$tablePrefix.'products.values, '.$tablePrefix.'parent_products.values) as raw_values
+                    COALESCE('.$tablePrefix.'products."values", '.$tablePrefix.'parent_products."values") as raw_values
                 '),
                 'products.avg_completeness_score as completeness',
             );

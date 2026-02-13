@@ -16,10 +16,11 @@ use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
 use Webkul\HistoryControl\Presenters\JsonDataPresenter;
 use Webkul\HistoryControl\Traits\HistoryTrait;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
 class Category extends Model implements CategoryContract, HistoryContract, PresentableHistoryInterface
 {
-    use HasFactory, NodeTrait, Visitable;
+    use BelongsToTenant, HasFactory, NodeTrait, Visitable;
     use HistoryTrait;
 
     /**
@@ -32,6 +33,15 @@ class Category extends Model implements CategoryContract, HistoryContract, Prese
     ];
 
     protected $historyTags = ['category'];
+
+    /**
+     * Scope attributes for kalnoy/nestedset.
+     * Ensures each tenant has an independent nested set tree.
+     */
+    protected function getScopeAttributes()
+    {
+        return ['tenant_id'];
+    }
 
     /**
      * Fillable.

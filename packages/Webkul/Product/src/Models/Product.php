@@ -26,10 +26,11 @@ use Webkul\Product\Database\Eloquent\Builder;
 use Webkul\Product\Database\Factories\ProductFactory;
 use Webkul\Product\Presenters\ProductValuesPresenter;
 use Webkul\Product\Type\AbstractType;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
 class Product extends Model implements HistoryAuditable, PresentableHistoryInterface, ProductContract
 {
-    use HasFactory, Visitable;
+    use BelongsToTenant, HasFactory, Visitable;
     use HistoryTrait;
 
     protected $historyTags = ['product'];

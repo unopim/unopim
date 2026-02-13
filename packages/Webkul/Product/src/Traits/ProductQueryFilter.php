@@ -17,6 +17,12 @@ trait ProductQueryFilter
             ->leftJoin('attribute_families as af', 'products.attribute_family_id', '=', 'af.id')
             ->leftJoin('products as parent_products', 'products.parent_id', '=', 'parent_products.id');
 
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId)) {
+            $this->qb->where('products.tenant_id', $tenantId);
+        }
+
         return $this;
     }
 

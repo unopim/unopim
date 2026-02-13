@@ -4,11 +4,12 @@ namespace Webkul\AdminApi\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Laravel\Passport\Client as PassportClient;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 use Webkul\User\Models\AdminProxy;
 
 class Client extends PassportClient
 {
-    use HasUuids;
+    use BelongsToTenant, HasUuids;
 
     public $incrementing = true;
 

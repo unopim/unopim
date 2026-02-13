@@ -7,7 +7,7 @@ use Webkul\Webhook\Http\Controllers\WebhookSettingsController;
 /**
  * Catalog routes.
  */
-Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], function () {
+Route::group(['middleware' => ['admin', 'tenant'], 'prefix' => config('app.admin_url')], function () {
     Route::prefix('webhook')->group(function () {
         Route::controller(WebhookSettingsController::class)->prefix('settings')->group(function () {
             Route::get('', 'index')->name('webhook.settings.index');

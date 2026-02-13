@@ -523,6 +523,12 @@ class ExportController extends Controller
     {
         $export = $this->jobInstancesRepository->findOrFail($id);
 
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId) && ($export->tenant_id ?? null) !== $tenantId) {
+            abort(403, 'Access denied.');
+        }
+
         return Storage::disk('private')->download($export->file_path);
     }
 
@@ -532,6 +538,12 @@ class ExportController extends Controller
     public function downloadErrorReport(int $id)
     {
         $export = $this->jobInstancesRepository->findOrFail($id);
+
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId) && ($export->tenant_id ?? null) !== $tenantId) {
+            abort(403, 'Access denied.');
+        }
 
         return Storage::disk('private')->download($export->error_file_path);
     }

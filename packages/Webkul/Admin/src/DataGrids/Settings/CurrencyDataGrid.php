@@ -30,6 +30,12 @@ class CurrencyDataGrid extends DataGrid
                 'status',
             );
 
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId)) {
+            $queryBuilder->where('currencies.tenant_id', $tenantId);
+        }
+
         return $queryBuilder;
     }
 

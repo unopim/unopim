@@ -4,9 +4,11 @@ namespace Webkul\DataTransfer\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
 class JobTrack extends Model implements JobTrackContract
 {
+    use BelongsToTenant;
     protected $table = 'job_track';
 
     /**

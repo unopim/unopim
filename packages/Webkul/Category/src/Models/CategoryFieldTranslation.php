@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Webkul\Category\Contracts\CategoryFieldTranslation as CategoryFieldTranslationContract;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 
 class CategoryFieldTranslation extends Model implements CategoryFieldTranslationContract, HistoryContract
 {
+    use BelongsToTenant;
     use HistoryTrait;
 
     public $timestamps = false;

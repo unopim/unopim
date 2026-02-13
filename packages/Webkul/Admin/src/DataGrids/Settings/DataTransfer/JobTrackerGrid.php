@@ -49,6 +49,12 @@ class JobTrackerGrid extends DataGrid
         $this->addFilter('job_code', 'job.code');
         $this->addFilter('type', 'job.type');
 
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId)) {
+            $queryBuilder->where('job_track.tenant_id', $tenantId);
+        }
+
         return $queryBuilder;
     }
 

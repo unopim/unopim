@@ -9,6 +9,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Webkul\DataTransfer\Helpers\Import as ImportHelper;
+use Webkul\Tenant\Jobs\TenantAwareJob;
 
 class JobTrackBatch implements ShouldQueue
 {
@@ -17,6 +18,7 @@ class JobTrackBatch implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+    use TenantAwareJob;
 
     /**
      * Create a new job instance.
@@ -27,6 +29,7 @@ class JobTrackBatch implements ShouldQueue
     public function __construct(protected $importBatch)
     {
         $this->importBatch = $importBatch;
+        $this->captureTenantContext();
     }
 
     /**

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Core\Filesystem\FileStorer;
+use Webkul\Tenant\Filesystem\TenantStorage;
 
 class AccountController extends Controller
 {
@@ -77,7 +78,7 @@ class AccountController extends Controller
 
         if (request()->hasFile('image')) {
             $data['image'] = $this->fileStorer->store(
-                path: 'admins'.DIRECTORY_SEPARATOR.$user->id,
+                path: TenantStorage::path('admins'.DIRECTORY_SEPARATOR.$user->id),
                 file: current(request()->file('image'))
             );
         } else {

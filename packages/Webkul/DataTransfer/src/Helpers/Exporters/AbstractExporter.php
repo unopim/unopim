@@ -14,6 +14,7 @@ use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
 use Webkul\DataTransfer\Jobs\Export\File\JSONFileBuffer;
 use Webkul\DataTransfer\Jobs\Export\File\SpoutWriterFactory;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
+use Webkul\Tenant\Filesystem\TenantStorage;
 
 abstract class AbstractExporter
 {
@@ -311,7 +312,7 @@ abstract class AbstractExporter
     public function initializeFileBuffer()
     {
         $fileName = $this->getFileName();
-        $directory = sprintf('exports/%s/%s', $this->export->id, FileBuffer::FOLDER_PREFIX);
+        $directory = TenantStorage::path(sprintf('exports/%s/%s', $this->export->id, FileBuffer::FOLDER_PREFIX));
 
         return $this->exportFileBuffer->initialize(
             $directory,
@@ -365,11 +366,20 @@ abstract class AbstractExporter
     }
 
     /**
-     * Get the queue name for the worker.
+     * Get the queue name for the worker, prefixed with tenant ID for per-tenant routing (FR33).
      */
     protected function getQueue(): ?string
     {
-        return $this->queue;
+        $queue = $this->queue;
+
+        if ($queue) {
+            $tenantId = core()->getCurrentTenantId();
+            if ($tenantId) {
+                $queue = "tenant-{$tenantId}-{$queue}";
+            }
+        }
+
+        return $queue;
     }
 
     /**

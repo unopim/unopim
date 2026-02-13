@@ -13,6 +13,7 @@ use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
 use Webkul\DataTransfer\Jobs\Export\File\SpoutWriterFactory;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
+use Webkul\Tenant\Filesystem\TenantStorage;
 
 class Export
 {
@@ -289,7 +290,7 @@ class Export
         $typeExporter = $this->getTypeExporter();
         $filters = $typeExporter->getFilters();
 
-        $directory = sprintf('exports/%s/%s', $this->export->id, FileBuffer::FOLDER_PREFIX);
+        $directory = TenantStorage::path(sprintf('exports/%s/%s', $this->export->id, FileBuffer::FOLDER_PREFIX));
         $fileName = sprintf(
             '%s-%s.%s',
             $this->export->jobInstance->code,

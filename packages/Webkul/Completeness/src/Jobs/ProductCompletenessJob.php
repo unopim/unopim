@@ -14,10 +14,11 @@ use Webkul\Completeness\Repositories\ProductCompletenessScoreRepository;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Tenant\Jobs\TenantAwareJob;
 
 class ProductCompletenessJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, TenantAwareJob;
 
     protected array $productIds;
 
@@ -44,6 +45,8 @@ class ProductCompletenessJob implements ShouldQueue
         $this->productIds = $productIds;
 
         $this->queue = 'system';
+
+        $this->captureTenantContext();
     }
 
     public function handle(): void
@@ -146,7 +149,15 @@ class ProductCompletenessJob implements ShouldQueue
 
         $averageScore = $averageScore ? round($averageScore / $channelCount) : null;
 
-        DB::table('products')->where('id', $product['id'])->update(['avg_completeness_score' => $averageScore]);
+        $query = DB::table('products')->where('id', $product['id']);
+
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId)) {
+            $query->where('tenant_id', $tenantId);
+        }
+
+        $query->update(['avg_completeness_score' => $averageScore]);
     }
 
     protected function calculateScoresForChannel(

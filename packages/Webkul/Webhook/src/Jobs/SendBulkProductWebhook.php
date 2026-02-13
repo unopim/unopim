@@ -8,12 +8,14 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Auth;
+use Webkul\Tenant\Jobs\TenantAwareJob;
 use Webkul\User\Models\AdminProxy;
 use Webkul\Webhook\Services\WebhookService;
 
 class SendBulkProductWebhook implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use TenantAwareJob;
 
     /**
      * Create a new job instance.
@@ -21,7 +23,10 @@ class SendBulkProductWebhook implements ShouldQueue
      * @param  array<int>  $ids
      * @return void
      */
-    public function __construct(protected array $ids, protected $userId) {}
+    public function __construct(protected array $ids, protected $userId)
+    {
+        $this->captureTenantContext();
+    }
 
     /**
      * Execute the job.

@@ -16,11 +16,12 @@ use Webkul\AdminApi\Models\Apikey;
 use Webkul\Core\Models\LocaleProxy;
 use Webkul\Notification\Models\UserNotification;
 use Webkul\User\Contracts\Admin as AdminContract;
+use Webkul\Tenant\Models\Concerns\BelongsToTenant;
 use Webkul\User\Database\Factories\AdminFactory;
 
 class Admin extends Authenticatable implements AdminContract, AuditableContract
 {
-    use Auditable, HasApiTokens, HasFactory, Notifiable;
+    use BelongsToTenant, Auditable, HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -114,6 +115,13 @@ class Admin extends Authenticatable implements AdminContract, AuditableContract
             $this->role->permission_type == 'custom'
             && ! $this->role->permissions
         ) {
+            return false;
+        }
+
+        // Tenant users cannot access platform-reserved permissions (Story 5.5)
+        $guard = app(\Webkul\Tenant\Auth\TenantPermissionGuard::class);
+
+        if (! $guard->isAllowed($this, $permission)) {
             return false;
         }
 

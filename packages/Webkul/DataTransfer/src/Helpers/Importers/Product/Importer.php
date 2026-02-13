@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Webkul\Tenant\Filesystem\TenantStorage;
 use Intervention\Image\ImageManager;
 use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
@@ -484,7 +485,7 @@ class Importer extends AbstractImporter
     {
         $mediaTypes = ['image', 'file', 'gallery'];
         $mediaAttributes = $this->attributes->whereIn('type', $mediaTypes);
-        $imageDirPath = $this->import->images_directory_path ?? '';
+        $imageDirPath = $this->sanitizeDirectoryPath($this->import->images_directory_path ?? '');
 
         foreach ($mediaAttributes as $attribute) {
             $code = $attribute->code;
@@ -622,7 +623,7 @@ class Importer extends AbstractImporter
          * Remove product images from the storage
          */
         foreach ($idsToDelete as $id) {
-            $imageDirectory = 'product/'.$id;
+            $imageDirectory = TenantStorage::path('product/'.$id);
 
             if (! Storage::exists($imageDirectory)) {
                 continue;
@@ -782,7 +783,7 @@ class Importer extends AbstractImporter
     public function prepareAttributeValues(array $rowData, array &$attributeValues): void
     {
         $familyAttributes = $this->getProductTypeFamilyAttributes($rowData['type'], $rowData[self::ATTRIBUTE_FAMILY_CODE]);
-        $imageDirPath = $this->import->images_directory_path;
+        $imageDirPath = $this->sanitizeDirectoryPath($this->import->images_directory_path ?? '');
 
         foreach ($rowData as $attributeCode => $value) {
             if (is_null($value)) {
@@ -903,7 +904,7 @@ class Importer extends AbstractImporter
         $imageNames = array_map('trim', explode(',', $rowData['images']));
 
         foreach ($imageNames as $key => $image) {
-            $path = 'import/'.$this->import->images_directory_path.'/'.$image;
+            $path = 'import/'.$this->sanitizeDirectoryPath($this->import->images_directory_path ?? '').'/'.$image;
 
             if (! Storage::disk('local')->has($path)) {
                 continue;
@@ -935,7 +936,7 @@ class Importer extends AbstractImporter
 
                 $image = (new ImageManager)->make($file)->encode('webp');
 
-                $imageDirectory = 'product/'.$product['id'];
+                $imageDirectory = TenantStorage::path('product/'.$product['id']);
 
                 $path = $imageDirectory.'/'.Str::random(40).'.webp';
 
@@ -1391,6 +1392,18 @@ class Importer extends AbstractImporter
     }
 
     /**
+     * Sanitize a directory path to prevent path traversal attacks.
+     * Removes directory traversal sequences and leading slashes.
+     */
+    protected function sanitizeDirectoryPath(string $path): string
+    {
+        $path = str_replace(['../', '..\\', '..'], '', $path);
+        $path = ltrim($path, '/\\');
+
+        return $path;
+    }
+
+    /**
      * Is indexing resource required for the import operation
      */
     public function isIndexingRequired(): bool
@@ -1413,9 +1426,28 @@ class Importer extends AbstractImporter
 
         $productIndexingNormalizer = app(ProductNormalizer::class);
 
-        $productIndex = strtolower(config('elasticsearch.prefix').'_products');
+        $prefix = config('elasticsearch.prefix') ?: config('app.name');
+        $tenantSuffix = '';
+        $tenantId = core()->getCurrentTenantId();
+        if ($tenantId) {
+            try {
+                $uuid = DB::table('tenants')->where('id', $tenantId)->value('es_index_uuid');
+                $tenantSuffix = $uuid ? "_tenant_{$uuid}" : "_tenant_{$tenantId}";
+            } catch (\Throwable) {
+                $tenantSuffix = "_tenant_{$tenantId}";
+            }
+        }
+        $productIndex = strtolower($prefix . $tenantSuffix . '_products');
 
-        $products = DB::table('products')->whereIn('sku', Arr::pluck($batch->data, 'sku'))->get();
+        $query = DB::table('products')->whereIn('sku', Arr::pluck($batch->data, 'sku'));
+
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId)) {
+            $query->where('products.tenant_id', $tenantId);
+        }
+
+        $products = $query->get();
 
         $productsToUpdate = [];
 

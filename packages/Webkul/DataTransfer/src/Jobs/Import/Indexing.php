@@ -8,10 +8,11 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Webkul\DataTransfer\Helpers\Import as ImportHelper;
+use Webkul\Tenant\Jobs\TenantAwareJob;
 
 class Indexing implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, TenantAwareJob;
 
     /**
      * Create a new job instance.
@@ -22,6 +23,7 @@ class Indexing implements ShouldQueue
     public function __construct(protected $import)
     {
         $this->import = $import;
+        $this->captureTenantContext();
     }
 
     /**

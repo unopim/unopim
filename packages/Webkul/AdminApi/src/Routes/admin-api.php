@@ -6,6 +6,8 @@ Route::group([
     'prefix'     => 'v1/rest',
     'middleware' => [
         'auth:api',
+        'tenant.token',
+        'tenant.safe-errors',
         'api.scope',
         'accept.json',
         'request.locale',

@@ -13,7 +13,7 @@ class PurgeUnusedImages extends Command
      *
      * @var string
      */
-    protected $signature = 'unopim:images:purge-unused {--dry-run : List unused images without deleting them}';
+    protected $signature = 'unopim:images:purge-unused {--dry-run : List unused images without deleting them} {--tenant= : Tenant ID to scope image purging}';
 
     /**
      * The console command description.
@@ -29,6 +29,25 @@ class PurgeUnusedImages extends Command
      */
     public function handle()
     {
+        if (! $this->option('tenant') && class_exists(\Webkul\Tenant\Providers\TenantServiceProvider::class)) {
+            $this->error('Multi-tenant mode detected. You must specify --tenant or run for each tenant individually.');
+
+            return 1;
+        }
+
+        if ($tenantOption = $this->option('tenant')) {
+            $tenant = DB::table('tenants')->where('id', $tenantOption)->first();
+
+            if (! $tenant || $tenant->status !== 'active') {
+                $this->error('Tenant not found or not active.');
+
+                return 1;
+            }
+
+            core()->setCurrentTenantId((int) $tenantOption);
+            $this->info("Running in tenant context: {$tenant->name} (ID: {$tenant->id})");
+        }
+
         $this->info('Starting purge of unused images...');
 
         $imageAttributes = DB::table('attributes')
@@ -76,7 +95,15 @@ class PurgeUnusedImages extends Command
 
     private function getUsedImagesFromDatabase(array $imageAttributes): array
     {
-        return DB::table('products')
+        $query = DB::table('products');
+
+        $tenantId = core()->getCurrentTenantId();
+
+        if (! is_null($tenantId)) {
+            $query->where('products.tenant_id', $tenantId);
+        }
+
+        return $query
             ->pluck('values')
             ->map(fn ($value) => $this->extractImagesFromProduct(json_decode($value, true), $imageAttributes))
             ->flatten()
