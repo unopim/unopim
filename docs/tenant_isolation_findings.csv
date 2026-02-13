@@ -1,0 +1,72 @@
+Severity,Category,File,Line,Issue,Remediation,Status
+CRITICAL,ElasticSearch,packages/Webkul/ElasticSearch/src/Console/Command/ProductIndexer.php,53-56,Raw DB::table('products') without tenant filter,Add mandatory tenant_id WHERE clause,OPEN
+CRITICAL,ElasticSearch,packages/Webkul/ElasticSearch/src/Console/Command/ProductIndexer.php,101-104,Raw DB::table('products') in batch query,Add mandatory tenant_id WHERE clause,OPEN
+CRITICAL,ElasticSearch,packages/Webkul/ElasticSearch/src/Console/Command/CategoryIndexer.php,50,Raw DB::table('categories') without tenant filter,Add mandatory tenant_id WHERE clause,OPEN
+CRITICAL,ElasticSearch,packages/Webkul/ElasticSearch/src/Console/Command/Reindexer.php,35,Raw DB::table('tenants') query,Use Eloquent Tenant model instead,OPEN
+CRITICAL,ElasticSearch,packages/Webkul/ElasticSearch/src/Traits/ResolveTenantIndex.php,26-28,Raw DB::table('tenants') for UUID lookup,Use Eloquent Tenant::where(),OPEN
+CRITICAL,Installer,packages/Webkul/Installer/src/Console/Commands/Installer.php,433,Admin creation without tenant_id,Add tenant_id to insert data,OPEN
+CRITICAL,Installer,packages/Webkul/Installer/src/Console/Commands/DefaultUser.php,308,Locale lookup without tenant_id,Add WHERE tenant_id clause,OPEN
+CRITICAL,Installer,packages/Webkul/Installer/src/Console/Commands/DefaultUser.php,311-312,Role lookup without tenant_id,Add WHERE tenant_id clause,OPEN
+CRITICAL,Installer,packages/Webkul/Installer/src/Console/Commands/DefaultUser.php,315,Role insert without tenant_id,Add tenant_id to insert data,OPEN
+CRITICAL,Installer,packages/Webkul/Installer/src/Console/Commands/DefaultUser.php,329,Admin creation without tenant_id,Add tenant_id to updateOrInsert,OPEN
+CRITICAL,Core,packages/Webkul/Core/src/Core.php,672,countries() method uses DB::table(),Use Eloquent Country model or verify countries is global,OPEN
+HIGH,Import,packages/Webkul/DataTransfer/src/Helpers/Importers/Product/Importer.php,1419,Product SKU lookup without tenant filter,Add WHERE tenant_id clause,OPEN
+HIGH,Import,packages/Webkul/DataTransfer/src/Helpers/Importers/Category/Importer.php,396,Locale lookup without tenant filter,Add WHERE tenant_id clause,OPEN
+HIGH,Repository,packages/Webkul/Category/src/Repositories/CategoryFieldRepository.php,122,Uniqueness check without tenant scope,Add WHERE tenant_id clause,OPEN
+HIGH,Installer,packages/Webkul/Installer/src/Console/Commands/PurgeUnusedImages.php,34,Attribute query without tenant filter,Add WHERE tenant_id clause,OPEN
+HIGH,Installer,packages/Webkul/Installer/src/Console/Commands/PurgeUnusedImages.php,79,Product query without tenant filter,Add WHERE tenant_id clause,OPEN
+HIGH,Installer,packages/Webkul/Installer/src/Http/Controllers/InstallerController.php,151,Locale query without tenant filter,Add WHERE tenant_id clause,OPEN
+HIGH,Installer,packages/Webkul/Installer/src/Http/Controllers/InstallerController.php,154,Admin creation without tenant_id,Add tenant_id to updateOrInsert,OPEN
+HIGH,TenantAPI,packages/Webkul/Tenant/src/Http/Controllers/API/TenantApiController.php,26,withoutGlobalScopes() for tenant listing,Verify super-admin authorization,REVIEW
+HIGH,TenantAPI,packages/Webkul/Tenant/src/Http/Controllers/API/TenantApiController.php,38,withoutGlobalScopes() for show,Verify super-admin authorization,REVIEW
+HIGH,TenantAPI,packages/Webkul/Tenant/src/Http/Controllers/API/TenantApiController.php,111,withoutGlobalScopes() for destroy,Verify super-admin authorization,REVIEW
+HIGH,TenantAPI,packages/Webkul/Tenant/src/Http/Controllers/API/TenantApiController.php,135,withoutGlobalScopes() for suspend,Verify super-admin authorization,REVIEW
+HIGH,TenantAPI,packages/Webkul/Tenant/src/Http/Controllers/API/TenantApiController.php,151,withoutGlobalScopes() for activate,Verify super-admin authorization,REVIEW
+MEDIUM,Service,packages/Webkul/Tenant/src/Services/TenantPurger.php,31-33,DB::table() for purge operations,Intentional - verify super-admin only,REVIEW
+MEDIUM,Service,packages/Webkul/Tenant/src/Services/TenantPurger.php,76,DB::table() for verification,Intentional - verify super-admin only,REVIEW
+MEDIUM,Service,packages/Webkul/Tenant/src/Services/TenantSeeder.php,30,DB::table('locales')->insertGetId,Verify includes tenant_id,REVIEW
+MEDIUM,Service,packages/Webkul/Tenant/src/Services/TenantSeeder.php,37,DB::table('currencies')->insertGetId,Verify includes tenant_id,REVIEW
+MEDIUM,Service,packages/Webkul/Tenant/src/Services/TenantSeeder.php,45,DB::table('roles')->insertGetId,Verify includes tenant_id,REVIEW
+MEDIUM,Service,packages/Webkul/Tenant/src/Services/TenantSeeder.php,56,DB::table('admins')->insertGetId,Verify includes tenant_id,REVIEW
+MEDIUM,Service,packages/Webkul/Tenant/src/Services/TenantSeeder.php,70,DB::table('categories')->insertGetId,Verify includes tenant_id,REVIEW
+MEDIUM,Service,packages/Webkul/Tenant/src/Services/TenantSeeder.php,86,DB::table('channels')->insertGetId,Verify includes tenant_id,REVIEW
+MEDIUM,Service,packages/Webkul/Tenant/src/Services/TenantSeeder.php,111,DB::table('attribute_families')->insertGetId,Verify includes tenant_id,REVIEW
+MEDIUM,Service,packages/Webkul/Tenant/src/Services/TenantSeeder.php,151,DB::table('oauth_clients')->insertGetId,Verify includes tenant_id,REVIEW
+MEDIUM,Service,packages/Webkul/Tenant/src/Services/TenantSeeder.php,165,DB::table('api_keys')->insertGetId,Verify includes tenant_id,REVIEW
+MEDIUM,Service,packages/Webkul/Tenant/src/Services/TenantDemoSeeder.php,42-46,Multiple DB::table() lookups,Verify all include tenant_id WHERE clause,REVIEW
+MEDIUM,Service,packages/Webkul/Tenant/src/Services/TenantDemoSeeder.php,77,DB::table('categories')->insertGetId,Verify includes tenant_id,REVIEW
+MEDIUM,Service,packages/Webkul/Tenant/src/Services/TenantDemoSeeder.php,142,DB::table('products')->insertGetId,Verify includes tenant_id,REVIEW
+MEDIUM,Service,packages/Webkul/Tenant/src/Services/TenantDemoSeeder.php,166,DB::table('admins')->insertGetId,Verify includes tenant_id,REVIEW
+MEDIUM,Service,packages/Webkul/Tenant/src/Console/Commands/TenantStatusCommand.php,125,DB::table() count for status,Intentional - requires tenant parameter,REVIEW
+MEDIUM,DataGrid,packages/Webkul/Admin/src/DataGrids/Catalog/CategoryDataGrid.php,69-77,DB::raw() for column expressions,Safe - expressions only not table access,LOW
+MEDIUM,DataGrid,packages/Webkul/Admin/src/DataGrids/Catalog/ProductDataGrid.php,107-115,DB::raw() for aggregations,Safe - expressions only not table access,LOW
+MEDIUM,DataGrid,packages/Webkul/Admin/src/DataGrids/Settings/ChannelDataGrid.php,23-52,DB::raw() for translations,Safe - expressions only not table access,LOW
+MEDIUM,DataGrid,packages/Webkul/Admin/src/DataGrids/Catalog/AttributeDataGrid.php,45,DB::raw() for GROUP_CONCAT,Safe - expressions only not table access,LOW
+MEDIUM,DataGrid,packages/Webkul/Admin/src/DataGrids/Catalog/AttributeOptionDataGrid.php,61-74,DB::raw() for option labels,Safe - expressions only not table access,LOW
+MEDIUM,DataGrid,packages/Webkul/AdminApi/src/DataGrids/Integrations/ApiKeysDataGrid.php,27,DB::table('api_keys') join,Verify base query has TenantScope,REVIEW
+MEDIUM,Export,packages/Webkul/DataTransfer/src/Helpers/Export.php,256-258,DB::raw() for JSON aggregation,Safe - expressions only not table access,LOW
+MEDIUM,Export,packages/Webkul/DataTransfer/src/Helpers/Export.php,338-340,DB::raw() for summary stats,Safe - expressions only not table access,LOW
+MEDIUM,Import,packages/Webkul/DataTransfer/src/Helpers/Import.php,419-421,DB::raw() for JSON aggregation,Safe - expressions only not table access,LOW
+MEDIUM,Import,packages/Webkul/DataTransfer/src/Helpers/Import.php,458-460,DB::raw() for summary stats,Safe - expressions only not table access,LOW
+MEDIUM,Completeness,packages/Webkul/Completeness/src/DataGrids/AttributeCompletenessDataGrid.php,49-56,DB::raw() for completeness calc,Safe - expressions only not table access,LOW
+LOW,Seeder,packages/Webkul/Installer/src/Database/Seeders/User/AdminsTableSeeder.php,20-27,DB::table() delete and insert,Safe - runs during installation only,ACCEPTED
+LOW,Seeder,packages/Webkul/Installer/src/Database/Seeders/User/RolesTableSeeder.php,19-25,DB::table() delete and insert,Safe - runs during installation only,ACCEPTED
+LOW,Seeder,packages/Webkul/Installer/src/Database/Seeders/Category/CategoryFieldTableSeeder.php,25-68,DB::table() seeding,Safe - runs during installation only,ACCEPTED
+LOW,Seeder,packages/Webkul/Installer/src/Database/Seeders/Category/CategoryTableSeeder.php,25-29,DB::table() seeding,Safe - runs during installation only,ACCEPTED
+LOW,Seeder,packages/Webkul/Installer/src/Database/Seeders/Attribute/AttributeTableSeeder.php,20-390,DB::table() seeding,Safe - runs during installation only,ACCEPTED
+LOW,Seeder,packages/Webkul/Installer/src/Database/Seeders/Core/LocalesTableSeeder.php,242-255,DB::table() seeding,Safe - runs during installation only,ACCEPTED
+LOW,Seeder,packages/Webkul/Installer/src/Database/Seeders/Core/ChannelTableSeeder.php,19-27,DB::table() seeding,Safe - runs during installation only,ACCEPTED
+LOW,Seeder,packages/Webkul/MagicAI/src/Database/Seeders/MagicAISystemPromptSeeder.php,99,DB::table() insert,Safe - runs during installation only,ACCEPTED
+LOW,Seeder,packages/Webkul/MagicAI/src/Database/Seeders/MagicAiPromptSeeder.php,79,DB::table() insert,Safe - runs during installation only,ACCEPTED
+LOW,Migration,packages/Webkul/Tenant/src/Database/Migrations/2026_02_10_000005_make_sku_tenant_unique.php,19-49,DB::statement() for DDL,Safe - DDL operations only,ACCEPTED
+LOW,Migration,packages/Webkul/Tenant/src/Database/Migrations/2026_02_11_000009_make_code_columns_tenant_unique.php,45-84,DB::statement() for DDL,Safe - DDL operations only,ACCEPTED
+LOW,Migration,packages/Webkul/AdminApi/src/Database/Migrations/2024_07_10_175059_update_id_to_ui_id_oauth_clients.php,27-53,DB::statement() for DDL,Safe - DDL operations only,ACCEPTED
+LOW,Migration,packages/Webkul/HistoryControl/src/Database/Migrations/2024_05_31_133400_create_audits_trigger.php,19,DB::select() for trigger check,Safe - DDL operations only,ACCEPTED
+LOW,Test,packages/Webkul/Tenant/tests/Feature/Http/PassportIntegrationTest.php,98,withoutGlobalScopes() in test,Safe - test setup,ACCEPTED
+LOW,Test,packages/Webkul/Tenant/tests/Feature/Http/TenantControllerTest.php,43,withoutGlobalScopes() in test,Safe - test setup,ACCEPTED
+LOW,Test,packages/Webkul/Tenant/tests/Feature/Eloquent/TenantAwareBuilderTest.php,22,withoutGlobalScope() test,Safe - testing bypass detection,ACCEPTED
+LOW,Test,packages/Webkul/Tenant/tests/Feature/Integration/CrossTenantEdgeCaseTest.php,266,withoutGlobalScopes() in test,Safe - test edge cases,ACCEPTED
+LOW,Test,packages/Webkul/Tenant/tests/Feature/Auth/LockedRolesTest.php,164,withoutGlobalScopes() in test,Safe - test setup,ACCEPTED
+LOW,Helpers,packages/Webkul/Core/src/Helpers/Database/DatabaseSequenceHelper.php,38,DB::statement() for sequence,Safe - PostgreSQL sequence management,ACCEPTED
+LOW,Helpers,packages/Webkul/Installer/src/Helpers/DatabaseManager.php,37,DB::table('admins')->count(),Safe - installer health check,ACCEPTED
+LOW,Repository,packages/Webkul/Product/src/Repositories/ProductRepository.php,234,DB::raw() for COALESCE in JOIN,Safe - JOIN expression only,ACCEPTED

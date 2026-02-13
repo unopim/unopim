@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php:*)",
+      "Bash(composer:*)",
+      "Bash(mysql --version:*)",
+      "Bash(sqlite3:*)",
+      "Bash(claude --version:*)",
+      "Bash(npm update:*)",
+      "Bash(find:*)",
+      "Bash(done)",
+      "Bash(for pkg in Admin AdminApi Attribute Category Completeness Core DataGrid DataTransfer DebugBar ElasticSearch FPC HistoryControl Installer MagicAI Notification Product Theme User Webhook)",
+      "Bash(do if [ -d \"/Users/abdulrahmangamal/VSCodeProjects /Product_Information_Management/unopim/packages/Webkul/$pkg/src/Resources/lang\" ])",
+      "Bash(then echo \"$pkg has lang directory\")",
+      "Bash(fi)",
+      "Bash(./vendor/bin/pest:*)",
+      "Bash(grep:*)",
+      "Read(//Users/abdulrahmangamal/**)",
+      "Bash(du:*)",
+      "Bash(xargs:*)",
+      "Bash(lsof:*)",
+      "Bash(kill:*)",
+      "Bash(curl:*)",
+      "Bash(gh auth:*)",
+      "Bash(git remote add:*)",
+      "Bash(gh repo edit:*)"
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+ID,Severity,Component,File,Line,Gap Description,Impact,Status
+1.1,HIGH,Repository Cache,packages/Webkul/Core/src/Eloquent/Repository.php,25-38,Cache key prefixing works but caching disabled by default. Global key for null tenant.,Cache pollution if enabled. Platform data leakage.,Partial Fix
+2.1,CRITICAL,Full Page Cache,packages/Webkul/FPC/src/Hasher/DefaultHasher.php,13-30,Response cache hasher never includes tenant ID in hash,Tenant A sees Tenant B's cached pages (complete data breach),VULNERABLE
+2.2,CRITICAL,FPC Listeners,packages/Webkul/FPC/src/Listeners/Product.php,29-34,ResponseCache::forget() has no tenant context,Cache invalidation affects wrong tenant. Cross-tenant DoS.,VULNERABLE
+3.1,CRITICAL,Session Storage,config/session.php,60-86,Session files/DB/cookies shared across tenants. No tenant_id scoping.,Session fixation. Data leakage. Subdomain conflicts.,VULNERABLE
+3.2,HIGH,Session Middleware,packages/Webkul/Tenant/src/Http/Middleware/TenantMiddleware.php,151-167,Platform operator tenant context stored in session without expiration,Operator accidentally operates in wrong tenant context,VULNERABLE
+4.1,CRITICAL,Core Singleton,packages/Webkul/Core/src/Core.php,16-103,Core singleton caches tenant-specific state (channels/currency) globally,Queue workers serve stale data across tenants. Memory leaks.,VULNERABLE
+5.1,HIGH,Rate Limiting,app/Providers/RouteServiceProvider.php,27-29,API rate limiter uses user ID or IP only (no tenant_id),Tenant A exhausts limits for Tenant B. Unfair resource distribution.,VULNERABLE
+6.1,HIGH,Image Cache,packages/Webkul/Core/src/ImageCache/Controller.php,74-88,Intervention Image cache uses global cache store,Image data leakage. Tenant A triggers cache of Tenant B images.,VULNERABLE
+7.1,MEDIUM,Config Caching,packages/Webkul/Core/src/Core.php,646-663,php artisan config:cache bypasses tenant-specific DB configs,Production with config:cache serves wrong config to tenants,VULNERABLE
+8.1,MEDIUM,View Cache,Multiple view files,N/A,Blade compiled views shared across tenants,Tenant A sees Tenant B's compiled view content,VULNERABLE
+9.1,LOW,Queue Jobs,packages/Webkul/DataTransfer/src/Jobs/*,Various,Jobs may cache tenant state in Core singleton,Job processing errors across tenants,Partial Fix
+REF,N/A,TenantCache (Correct),packages/Webkul/Tenant/src/Cache/TenantCache.php,1-69,HMAC-prefixed cache keys with tenant isolation,None - this is the CORRECT implementation,SECURE
