@@ -38,7 +38,7 @@ return [
             'index' => [
                 'datagrid' => [
                     'missing-completeness-setting' => 'Sense configuració',
-                    'completeness'                 => 'Completitud',
+                    'completeness'                 => 'Integritat',
                 ],
             ],
 

@@ -181,7 +181,7 @@
                 @endif
             </div>
 
-            @include('admin::catalog.products.edit.more-actions.index')
+            @includeWhen(core()->getConfigData('general.magic_ai.translation.enabled'), 'admin::catalog.products.edit.more-actions.index')
         </div>
 
         {!! view_render_event('unopim.admin.catalog.product.edit.actions.after', ['product' => $product]) !!}

@@ -228,6 +228,7 @@
                     :channel-locales="channelLocales"
                     :locales="allLocales"
                     :fltColumns="fltColumns"
+                    sku-unique-url="{{ route('admin.catalog.products.bulk-edit.check-sku') }}"
                 />
             </table>
         </div>

@@ -189,6 +189,8 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
             Route::post('save', 'handleBulkSave')->name('admin.catalog.products.bulk-edit.save');
 
             Route::post('save-media', 'storeProductMedia')->name('admin.catalog.products.bulk-edit.save-media');
+
+            Route::post('check-sku', 'checkSkuUniqueness')->name('admin.catalog.products.bulk-edit.check-sku');
         });
     });
 });

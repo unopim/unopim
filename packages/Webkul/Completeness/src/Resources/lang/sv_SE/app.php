@@ -38,7 +38,7 @@ return [
             'index' => [
                 'datagrid' => [
                     'missing-completeness-setting' => 'Ingen inställning',
-                    'completeness'                 => 'Fullständig',
+                    'completeness'                 => 'Fullständighet',
                 ],
             ],
 

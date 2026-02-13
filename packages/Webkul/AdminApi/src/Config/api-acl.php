@@ -68,6 +68,11 @@ return [
         'route' => 'admin.api.products.update',
         'sort'  => 2,
     ], [
+        'key'   => 'api.catalog.products.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.products.delete',
+        'sort'  => 3,
+    ], [
         'key'   => 'api.catalog.products',
         'name'  => 'admin::app.acl.products',
         'route' => 'admin.api.configrable_products.index',
@@ -97,6 +102,11 @@ return [
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.api.categories.update',
         'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.categories.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.categories.delete',
+        'sort'  => 3,
     ], [
         'key'   => 'api.catalog.category_fields',
         'name'  => 'admin::app.acl.category_fields',

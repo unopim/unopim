@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
 use Webkul\Admin\Http\Controllers\Controller;
@@ -211,6 +212,36 @@ class ProductBulkEditController extends Controller
             'redirect'     => route('admin.catalog.products.index'),
             'status'       => 'success',
             'redirect_url' => route('admin.catalog.products.index'),
+        ]);
+    }
+
+    /**
+     * Check SKU uniqueness for bulk edit while excluding current product.
+     */
+    public function checkSkuUniqueness(Request $request): JsonResponse
+    {
+        $skuLabel = trans('admin::app.catalog.products.index.create.sku');
+
+        $request->validate(
+            [
+                'sku' => [
+                    'required',
+                    'string',
+                    Rule::unique('products', 'sku')
+                        ->ignore($request->input('entity_id')),
+                ],
+                'entity_id' => 'nullable|integer',
+            ],
+            [
+                'sku.unique' => trans('admin::app.catalog.products.index.create.sku-exists-error', ['sku' => ':input']),
+            ],
+            [
+                'sku' => $skuLabel,
+            ]
+        );
+
+        return response()->json([
+            'unique' => true,
         ]);
     }
 
