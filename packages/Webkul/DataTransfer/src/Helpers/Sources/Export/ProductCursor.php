@@ -28,7 +28,7 @@ class ProductCursor extends AbstractCursor
 
         foreach ($filters as $field => $value) {
             if ($field == 'status' && ! empty($value)) {
-                $value = $value == 'enable' ? 1 : 0;
+                $value = $value == 'enable' ? true : false;
                 $query->where($field, $value);
             }
         }
