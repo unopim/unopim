@@ -219,6 +219,48 @@
                                     @lang('admin::app.catalog.attributes.edit.add-row')
                                 </div>
                             </div>
+                            
+                            <!-- Swatch Changer And Empty Field Section -->
+                            <div
+                                v-if="showSwatch"
+                                class="flex items-center gap-4 max-sm:flex-wrap"  
+                            >
+                                <!-- Input Options -->
+                                <x-admin::form.control-group
+                                    class="mb-2.5 w-full"
+                                >
+                                    <x-admin::form.control-group.label for="swatchType">
+                                        @lang('admin::app.catalog.attributes.create.swatch')
+                                    </x-admin::form.control-group.label>
+
+                                    @php
+                                        $options = [];
+
+                                        foreach($swatchTypes as $type) {
+                                            $options[] = [
+                                                'id'    => $type,
+                                                'label' => trans('admin::app.catalog.attributes.edit.option.' . $type),
+                                            ];
+                                        }
+
+                                        $optionsInJson = json_encode($options);
+                                    @endphp
+                                    <x-admin::form.control-group.control
+                                        type="select"
+                                        id="swatchType"
+                                        name="swatch_type"   
+                                        :options="$optionsInJson"
+                                        v-model="swatchType"
+                                        @change="showSwatch=true"
+                                        track-by="id"
+                                        label-by="label"
+                                        :disabled="(boolean) $attribute->swatch_type"
+                                    >
+                                    </x-admin::form.control-group.control>
+                                        
+                                    <x-admin::form.control-group.error control-name="swatch_type" />
+                                </x-admin::form.control-group>
+                            </div>
 
                             <!-- For Attribute Options If Data Exist -->
                             <div class="overflow-x-auto">
@@ -230,11 +272,19 @@
                                         <template v-if="! isLoading">
                                             <div
                                                 class="row grid grid-rows-1 gap-2.5 items-center px-4 py-2.5 border-b bg-violet-50 dark:border-cherry-800 dark:bg-cherry-900 font-semibold"
-                                                :style="'grid-template-columns: 0.2fr repeat(' + (actions.length ? columns.length + 1 : (columns.length )) + ', 1fr)'"
+                                                :style="'grid-template-columns: 0.2fr repeat(' + (actions.length ? columns.length + (selectedSwatchType == 'color' || selectedSwatchType == 'image' ? 2 : 1 ) : (columns.length )) + ', 1fr)'"
                                             >
                                             <!-- Empty div to manage layout  -->
                                             <div>
                                             </div>
+                                                <!-- Column Headers -->
+                                                 <div v-if="showSwatch && (selectedSwatchType == 'color' || selectedSwatchType == 'image')"
+                                                    class="flex items-center select-none">
+                                                    <p class="text-gray-600 dark:text-gray-300">
+                                                        @lang('admin::app.catalog.attributes.edit.swatch')
+                                                    </p>
+                                                </div>
+
                                                 <div
                                                     class="flex items-center select-none"
                                                     v-for="(column, index) in columns"
@@ -282,7 +332,7 @@
                                             <div
                                                 v-for="(record, index) in records"
                                                 class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
-                                                :style="'grid-template-columns: 0.2fr repeat(' + (actions.length ? columns.length + 1 : (columns.length )) + ', 1fr)'"
+                                                :style="'grid-template-columns: 0.2fr repeat(' + (actions.length ? columns.length + (selectedSwatchType=='color' || selectedSwatchType == 'image' ? 2 : 1 ) : (columns.length )) + ', 1fr)'"
                                                 :draggable="isSortable"
                                                 @dragstart="onDragStart(index)"
                                                 @dragover.prevent
@@ -291,6 +341,26 @@
                                             >
 
                                                 <i class="icon-drag text-2xl transition-all group-hover:text-gray-700 cursor-grab" :class="{ 'invisible': !isSortable }"></i>
+
+                                                <div v-if="showSwatch && (selectedSwatchType == 'color' || selectedSwatchType == 'image')">
+                                                    <!-- Swatch Image -->
+                                                    <div v-if="selectedSwatchType == 'image'">
+                                                        <div>
+                                                                <img
+                                                                    :src="record.swatch_value ? '{{ Storage::url('') }}'+record.swatch_value : '{{ unopim_asset('images/product-placeholders/front.svg') }}'"
+                                                                    class="h-[50px] w-[50px] max-w-[50px] min-w-[50px] max-h-[50px] min-h-[50px] rounded-lg border border-gray-300 shadow-sm object-cover"
+                                                                >
+                                                        </div>
+                                                    </div>
+                                                    <!-- Swatch Color -->
+                                                    <div v-if="selectedSwatchType == 'color'">
+                                                        <div
+                                                            class="h-[25px] w-[25px] rounded-md border border-gray-200 dark:border-gray-800"
+                                                            :style="{ background: record.swatch_value }"
+                                                        >
+                                                        </div>
+                                                    </div>
+                                                </div>
 
                                                 <p 
                                                     v-text="record.code"
@@ -633,6 +703,24 @@
                                     <x-admin::form.control-group.error control-name="swatch_value" />
                                 </x-admin::form.control-group>
 
+                                <!-- Color Input -->
+                                <x-admin::form.control-group
+                                    class="w-2/6"
+                                    v-if="selectedSwatchType == 'color'"
+                                >
+                                    <x-admin::form.control-group.label>
+                                        @lang('admin::app.catalog.attributes.edit.color')
+                                    </x-admin::form.control-group.label>
+
+                                    <x-admin::form.control-group.control
+                                        type="color"
+                                        name="swatch_value"
+                                        :placeholder="trans('admin::app.catalog.attributes.edit.color')"
+                                    />
+
+                                    <x-admin::form.control-group.error control-name="swatch_value[]" />
+                                </x-admin::form.control-group>
+
                                  
                             </div>
 
@@ -714,11 +802,11 @@
 
                 data: function() {
                     return {
-                        showSwatch: {{ in_array($attribute->type, ['select', 'checkbox', 'price', 'multiselect']) ? 'true' : 'false' }},
+                        showSwatch: {{ in_array($attribute->type, ['select', 'multiselect']) ? 'true' : 'false' }},
 
-                        swatchType: "{{ $attribute->swatch_type == '' ? 'dropdown' : $attribute->swatch_type }}",
+                        swatchType: "{{ $attribute->swatch_type == '' ? 'text' : $attribute->swatch_type }}",
 
-                        selectedSwatchType: "{{ $attribute->swatch_type == '' ? 'dropdown' : $attribute->swatch_type }}",
+                        selectedSwatchType: "{{ $attribute->swatch_type == '' ? 'text' : $attribute->swatch_type }}",
 
                         validationType: "{{ $attribute->validation }}",
 
@@ -767,17 +855,40 @@
 
                 methods: {
                     storeOption(params, { resetForm, setValues }) {
-                        const updatedLocales = {};
+                        const formData = new FormData();
 
                         for (const [localeCode, label] of Object.entries(params.locales)) {
-                            updatedLocales[localeCode] = { label };
+                            formData.append(`locales[${localeCode}][label]`, label ?? '');
                         }
 
-                        params.locales = updatedLocales;
+                        for (const key in params) {
+                            if (key !== 'locales' && key !== 'swatch_value') {
+                                formData.append(key, params[key] ?? '');
+                            }
+                        }
 
-                        const request = params.id
-                            ? this.$axios.put(this.optionUpdateRoute.replace('_ID', params.id), params)
-                            : this.$axios.post(this.optionCreateRoute, params);
+                        if (this.selectedSwatchType === 'image') {
+                            const fileInput = this.$refs.editOptionsForm.querySelector('input[name="swatch_value[]"]');
+
+                            if (fileInput && fileInput.files.length > 0) {
+                                formData.append('swatch_value', fileInput.files[0]);
+                            } else if (! this.swatchValue.image?.length) {
+                                formData.append('swatch_value', '');
+                            } else {
+                                formData.append('swatch_value', params.swatch_value ?? '');
+                            }
+                        } else if (this.selectedSwatchType === 'color') {
+                            formData.append('swatch_value', params.swatch_value ?? '');
+                        }
+
+                        let request;
+
+                        if (params.id) {
+                            formData.append('_method', 'PUT');
+                            request = this.$axios.post(this.optionUpdateRoute.replace('_ID', params.id), formData);
+                        } else {
+                            request = this.$axios.post(this.optionCreateRoute, formData);
+                        }
 
                         request.then(response => {
                                 this.$emitter.emit('add-flash', {

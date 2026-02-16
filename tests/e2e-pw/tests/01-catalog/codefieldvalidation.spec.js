@@ -108,7 +108,7 @@ test('check the code field with less than 191 character', async ({ adminPage }) 
   await adminPage.waitForTimeout(300);
   await adminPage.locator('input[name="code"]').fill('Playwrightrectoryexistence');
   await adminPage.waitForTimeout(300);
-  await adminPage.locator('div').filter({ hasText: /^Select option$/ }).click();
+  await adminPage.locator('#type').getByRole('combobox').locator('div').filter({ hasText: 'Select option' }).click();
   await adminPage.getByRole('option', { name: 'Text' }).locator('span').first().click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').type('Playwright1', { delay: 100 });
@@ -121,7 +121,7 @@ test('check the code field with exactly 191 character', async ({ adminPage }) =>
   await adminPage.waitForTimeout(300);
   await adminPage.locator('input[name="code"]').fill('PlaywrightreportfoldernotfoundatthegivenpathEnsuretestsrannwithreporterhtmlandthepathiscorrectbeforeuploadingartifactskshbvsvbdfhvbdfhvbsdhfvbsdhfvbdfshvbsdfhvbfdvbvbfhvuyvuvbyutvbfhvjufdvbsj');
   await adminPage.waitForTimeout(300);
-  await adminPage.locator('div').filter({ hasText: /^Select option$/ }).click();
+  await adminPage.locator('#type').getByRole('combobox').locator('div').filter({ hasText: 'Select option' }).click();
   await adminPage.getByRole('option', { name: 'Text' }).locator('span').first().click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').type('Playwright2', { delay: 100 });
@@ -134,7 +134,7 @@ test('check the code field with more than 191 character', async ({ adminPage }) 
   await adminPage.waitForTimeout(300);
   await adminPage.locator('input[name="code"]').fill('PlaywrightreportfoldernotfoundatthegivenpdfgfgsdkjjfgathEnsuretestsrannwithreporterhtmlandthepathiscorrectbeforeuploadingartifactskshbvsvbdfhvbdfhvbsdhfvbsdhfvbdfshvbsdfhvbfdvbvbfhvuyvuvbyutvbfhvjufdvbsj');
   await adminPage.waitForTimeout(300);
-  await adminPage.locator('div').filter({ hasText: /^Select option$/ }).click();
+  await adminPage.locator('#type').getByRole('combobox').locator('div').filter({ hasText: 'Select option' }).click();
   await adminPage.getByRole('option', { name: 'Text' }).locator('span').first().click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').type('Playwright3', { delay: 100 });
@@ -147,7 +147,7 @@ test('able to enter the number first in code field', async ({ adminPage }) => {
   await adminPage.waitForTimeout(1000);
   await adminPage.locator('input[name="code"]').fill('165sdfvjaef');
   await adminPage.waitForTimeout(1000);
-  await adminPage.locator('div').filter({ hasText: /^Select option$/ }).click();
+  await adminPage.locator('#type').getByRole('combobox').locator('div').filter({ hasText: 'Select option' }).click();
   await adminPage.getByRole('option', { name: 'Text' }).locator('span').first().click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').type('Playwright4', { delay: 100 });

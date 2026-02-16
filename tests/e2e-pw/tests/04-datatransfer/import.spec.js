@@ -7,7 +7,7 @@ test('Create Import with empty Code field', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: 'Create Import' }).click();
   await adminPage.getByRole('textbox', { name: 'Code' }).click();
   await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
-  await adminPage.locator('div').filter({ hasText: /^Categories$/ }).click();
+  await adminPage.locator('#import-type').getByRole('combobox').locator('div').filter({ hasText: 'Categories' }).click();
   await adminPage.getByRole('option', { name: 'Products' }).locator('span').first().click();
   const fileInput = adminPage.locator('input[type="file"][id="36_dropzone-file"]');
   await fileInput.setInputFiles('assets/1k_products.xlsx');
@@ -21,7 +21,7 @@ test('Create Import with empty Type field', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: 'Create Import' }).click();
   await adminPage.getByRole('textbox', { name: 'Code' }).click();
   await adminPage.getByRole('textbox', { name: 'Code' }).fill('product Import');
-  await adminPage.locator('div').filter({ hasText: /^Categories$/ }).click();
+  await adminPage.locator('#import-type').getByRole('combobox').locator('div').filter({ hasText: 'Categories' }).click();
   await adminPage.getByRole('option', { name: 'Categories' }).locator('span').first().click();
   const fileInput = adminPage.locator('input[type="file"][id="36_dropzone-file"]');
   await fileInput.setInputFiles('assets/1k_products.xlsx');
@@ -35,7 +35,7 @@ test('Create Import with empty File field', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: 'Create Import' }).click();
   await adminPage.getByRole('textbox', { name: 'Code' }).click();
   await adminPage.getByRole('textbox', { name: 'Code' }).fill('product Import');
-  await adminPage.locator('div').filter({ hasText: /^Categories$/ }).click();
+  await adminPage.locator('#import-type').getByRole('combobox').locator('div').filter({ hasText: 'Categories' }).click();
   await adminPage.getByRole('option', { name: 'Products' }).locator('span').first().click();
   await adminPage.getByRole('button', { name: 'Save Import' }).click();
   await expect(adminPage.getByText('The File field is required')).toBeVisible();
@@ -47,7 +47,7 @@ test('Create Import with empty Code, Type and File field', async ({ adminPage })
   await adminPage.getByRole('link', { name: 'Create Import' }).click();
   await adminPage.getByRole('textbox', { name: 'Code' }).click();
   await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
-  await adminPage.locator('div').filter({ hasText: /^Categories$/ }).click();
+  await adminPage.locator('#import-type').getByRole('combobox').locator('div').filter({ hasText: 'Categories' }).click();
   await adminPage.getByRole('option', { name: 'Categories' }).locator('span').first().click();
   await adminPage.getByRole('button', { name: 'Save Import' }).click();
   await expect(adminPage.getByText('The Code field is required')).toBeVisible();
@@ -60,11 +60,11 @@ test('Create Import with empty Action field', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: 'Create Import' }).click();
   await adminPage.getByRole('textbox', { name: 'Code' }).click();
   await adminPage.getByRole('textbox', { name: 'Code' }).fill('product Import');
-  await adminPage.locator('div').filter({ hasText: /^Categories$/ }).click();
+  await adminPage.locator('#import-type').getByRole('combobox').locator('div').filter({ hasText: 'Categories' }).click();
   await adminPage.getByRole('option', { name: 'Categories' }).locator('span').first().click();
   const fileInput = adminPage.locator('input[type="file"][id="36_dropzone-file"]');
   await fileInput.setInputFiles('assets/1k_products.xlsx');
-  await adminPage.locator('div').filter({ hasText: /^Create\/Update$/ }).click();
+  await adminPage.locator('#action').getByRole('combobox').locator('div').filter({ hasText: 'Create/Update' }).click();
   await adminPage.getByRole('option', { name: 'Create/Update' }).locator('span').first().click();
   await adminPage.getByRole('button', { name: 'Save Import' }).click();
   await expect(adminPage.getByText('The Action field is required')).toBeVisible();
@@ -76,11 +76,11 @@ test('Create Import with empty Validation Strategy field', async ({ adminPage })
   await adminPage.getByRole('link', { name: 'Create Import' }).click();
   await adminPage.getByRole('textbox', { name: 'Code' }).click();
   await adminPage.getByRole('textbox', { name: 'Code' }).fill('product Import');
-  await adminPage.locator('div').filter({ hasText: /^Categories$/ }).click();
+  await adminPage.locator('#import-type').getByRole('combobox').locator('div').filter({ hasText: 'Categories' }).click();
   await adminPage.getByRole('option', { name: 'Categories' }).locator('span').first().click();
   const fileInput = adminPage.locator('input[type="file"][id="36_dropzone-file"]');
   await fileInput.setInputFiles('assets/1k_products.xlsx');
-  await adminPage.locator('div').filter({ hasText: /^Stop on Errors$/ }).click();
+  await adminPage.locator('#validation_strategy').getByRole('combobox').locator('div').filter({ hasText: 'Stop on Errors' }).click();
   await adminPage.getByText('Stop on Errors').click();
   await adminPage.getByRole('button', { name: 'Save Import' }).click();
   await expect(adminPage.getByText('The Validation Strategy field is required')).toBeVisible();
@@ -92,7 +92,7 @@ test('Create Import with empty Allowed Errors field', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: 'Create Import' }).click();
   await adminPage.getByRole('textbox', { name: 'Code' }).click();
   await adminPage.getByRole('textbox', { name: 'Code' }).fill('product Import');
-  await adminPage.locator('div').filter({ hasText: /^Categories$/ }).click();
+  await adminPage.locator('#import-type').getByRole('combobox').locator('div').filter({ hasText: 'Categories' }).click();
   await adminPage.getByRole('option', { name: 'Categories' }).locator('span').first().click();
   const fileInput = adminPage.locator('input[type="file"][id="36_dropzone-file"]');
   await fileInput.setInputFiles('assets/1k_products.xlsx');
@@ -108,7 +108,7 @@ test('Create Import with empty Field Separator field', async ({ adminPage }) => 
   await adminPage.getByRole('link', { name: 'Create Import' }).click();
   await adminPage.getByRole('textbox', { name: 'Code' }).click();
   await adminPage.getByRole('textbox', { name: 'Code' }).fill('product Import');
-  await adminPage.locator('div').filter({ hasText: /^Categories$/ }).click();
+  await adminPage.locator('#import-type').getByRole('combobox').locator('div').filter({ hasText: 'Categories' }).click();
   await adminPage.getByRole('option', { name: 'Categories' }).locator('span').first().click();
   const fileInput = adminPage.locator('input[type="file"][id="36_dropzone-file"]');
   await fileInput.setInputFiles('assets/1k_products.xlsx');
@@ -124,11 +124,11 @@ test('Create Import with all required field empty', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: 'Create Import' }).click();
   await adminPage.getByRole('textbox', { name: 'Code' }).click();
   await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
-  await adminPage.locator('div').filter({ hasText: /^Categories$/ }).click();
+  await adminPage.locator('#import-type').getByRole('combobox').locator('div').filter({ hasText: 'Categories' }).click();
   await adminPage.getByRole('option', { name: 'Categories' }).locator('span').first().click();
-  await adminPage.locator('div').filter({ hasText: /^Create\/Update$/ }).click();
+  await adminPage.locator('#action').getByRole('combobox').locator('div').filter({ hasText: 'Create/Update' }).click();
   await adminPage.getByRole('option', { name: 'Create/Update' }).locator('span').first().click();
-  await adminPage.locator('div').filter({ hasText: /^Stop on Errors$/ }).click();
+  await adminPage.locator('#validation_strategy').getByRole('combobox').locator('div').filter({ hasText: 'Stop on Errors' }).click();
   await adminPage.getByText('Stop on Errors').click();
   await adminPage.getByRole('textbox', { name: 'Allowed Errors' }).click();
   await adminPage.getByRole('textbox', { name: 'Allowed Errors' }).fill('');
@@ -149,7 +149,7 @@ test('Create Product Import', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: 'Create Import' }).click();
   await adminPage.getByRole('textbox', { name: 'Code' }).click();
   await adminPage.getByRole('textbox', { name: 'Code' }).fill('product Import');
-  await adminPage.locator('div').filter({ hasText: /^Categories$/ }).click();
+  await adminPage.locator('#import-type').getByRole('combobox').locator('div').filter({ hasText: 'Categories' }).click();
   await adminPage.getByRole('option', { name: 'Products' }).locator('span').first().click();
   const fileInput = adminPage.locator('input[type="file"][id="36_dropzone-file"]');
   await fileInput.setInputFiles('assets/1k_products.xlsx');
@@ -166,7 +166,7 @@ test('Create Import with same Code', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: 'Create Import' }).click();
   await adminPage.getByRole('textbox', { name: 'Code' }).click();
   await adminPage.getByRole('textbox', { name: 'Code' }).fill('product Import');
-  await adminPage.locator('div').filter({ hasText: /^Categories$/ }).click();
+  await adminPage.locator('#import-type').getByRole('combobox').locator('div').filter({ hasText: 'Categories' }).click();
   await adminPage.getByRole('option', { name: 'Products' }).locator('span').first().click();
   const fileInput = adminPage.locator('input[type="file"][id="36_dropzone-file"]');
   await fileInput.setInputFiles('assets/1k_products.xlsx');

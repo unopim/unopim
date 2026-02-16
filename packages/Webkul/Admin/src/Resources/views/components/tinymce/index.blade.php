@@ -173,10 +173,12 @@
                     <!-- Modal Footer -->
                     <x-slot:footer>
                         <div class="flex gap-x-2.5 items-center">
-                            <template v-if="! ai.content">
+                            <template v-if="!ai.content">
                                 <button
                                     type="submit"
                                     class="secondary-button"
+                                    :disabled="isLoading"
+                                    :class="{ 'opacity-50 cursor-not-allowed': isLoading }"
                                 >
                                     <!-- Spinner -->
                                     <template v-if="isLoading">
@@ -184,36 +186,36 @@
                                             class="animate-spin h-5 w-5 text-violet-700"
                                             src="{{ unopim_asset('images/spinner.svg') }}"
                                         />
-
                                         @lang('admin::app.components.tinymce.ai-generation.generating')
                                     </template>
 
                                     <template v-else>
                                         <span class="icon-magic text-2xl text-violet-700"></span>
-
                                         @lang('admin::app.components.tinymce.ai-generation.generate')
                                     </template>
                                 </button>
                             </template>
 
                             <template v-else>
-                                <button class="secondary-button">
-                                    <!-- Spinner -->
-                                    <template v-if="isLoading">
-                                        <img
-                                            class="animate-spin h-5 w-5 text-violet-700"
-                                            src="{{ unopim_asset('images/spinner.svg') }}"
-                                        />
+                                <button
+                                class="secondary-button"
+                                :disabled="isLoading"
+                                :class="{ 'opacity-50 cursor-not-allowed': isLoading }"
+                            >
+                                <!-- Spinner -->
+                                <template v-if="isLoading">
+                                    <img
+                                        class="animate-spin h-5 w-5 text-violet-700"
+                                        src="{{ unopim_asset('images/spinner.svg') }}"
+                                    />
+                                    @lang('admin::app.components.media.images.ai-generation.regenerating')
+                                </template>
 
-                                        @lang('admin::app.components.media.images.ai-generation.regenerating')
-                                    </template>
-
-                                    <template v-else>
-                                        <span class="icon-magic text-2xl text-violet-700"></span>
-
-                                        @lang('admin::app.components.media.images.ai-generation.regenerate')
-                                    </template>
-                                </button>
+                                <template v-else>
+                                    <span class="icon-magic text-2xl text-violet-700"></span>
+                                    @lang('admin::app.components.media.images.ai-generation.regenerate')
+                                </template>
+                            </button>
 
                                 <button
                                     type="button"

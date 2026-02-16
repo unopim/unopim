@@ -10,7 +10,7 @@ if [ ! -f "$LOCK_FILE" ]; then
     touch "$LOCK_FILE"
 fi
 
-chown -R 1001:1001 /var/www/html
+chown -R 1001:1001 /var/www/html/storage
 
 # Hand back control to the default entrypoint
 apache2-foreground
