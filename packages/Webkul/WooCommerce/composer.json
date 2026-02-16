@@ -1,0 +1,18 @@
+{
+    "name": "webkul/woocommerce",
+    "description": "WooCommerce adapter for UnoPim Channel Connector",
+    "type": "library",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Webkul\\WooCommerce\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Webkul\\WooCommerce\\Providers\\WooCommerceServiceProvider"
+            ]
+        }
+    }
+}

@@ -1,0 +1,26 @@
+{
+    "name": "webkul/ebay",
+    "description": "An eBay integration package for UnoPim, enabling product data synchronization with eBay Seller Hub.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "UnoPim",
+            "email": "support@webkul.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Webkul\\Ebay\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Webkul\\Ebay\\Providers\\EbayServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "minimum-stability": "dev"
+}

@@ -21,6 +21,21 @@ uses(Webkul\Core\Tests\CoreTestCase::class)->in('../packages/Webkul/ElasticSearc
 uses(Webkul\Admin\Tests\AdminTestCase::class)->in('../packages/Webkul/DataTransfer/tests');
 uses(Webkul\Completeness\Tests\CompletenessTestCase::class)->in('../packages/Webkul/Completeness/tests');
 uses(Webkul\Tenant\Tests\TenantTestCase::class)->in('../packages/Webkul/Tenant/tests');
+uses(Webkul\ChannelConnector\Tests\ChannelConnectorTestCase::class)->in('Feature/ChannelConnector');
+
+/*
+|--------------------------------------------------------------------------
+| Integration Test Tenant Setup
+|--------------------------------------------------------------------------
+|
+| Ensure tenant context is properly set for integration tests
+| that create models directly before loginAsAdmin() is called.
+*/
+beforeAll(function () {
+    if (DB::connection()->getDriverName() === 'sqlite') {
+        DB::statement('PRAGMA foreign_keys = ON;');
+    }
+});
 
 /*
 |--------------------------------------------------------------------------

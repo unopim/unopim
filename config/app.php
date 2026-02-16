@@ -199,6 +199,10 @@ return [
         Webkul\ElasticSearch\Providers\ElasticSearchServiceProvider::class,
         Webkul\Webhook\Providers\WebhookServiceProvider::class,
         Webkul\Completeness\Providers\CompletenessServiceProvider::class,
+        Webkul\Shopify\Providers\ShopifyServiceProvider::class,
+        // Webkul\ChannelConnector\Providers\ChannelConnectorServiceProvider::class,
+        // Webkul\Salla\Providers\SallaServiceProvider::class,
+        // Webkul\EasyOrders\Providers\EasyOrdersServiceProvider::class,
     ])->toArray(),
 
     /*

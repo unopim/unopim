@@ -1,0 +1,26 @@
+{
+    "name": "webkul/noon",
+    "description": "A Noon marketplace integration package for UnoPim, enabling product data synchronization with Noon.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "UnoPim",
+            "email": "support@webkul.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Webkul\\Noon\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Webkul\\Noon\\Providers\\NoonServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "minimum-stability": "dev"
+}

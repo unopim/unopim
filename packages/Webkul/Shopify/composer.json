@@ -1,0 +1,38 @@
+{
+    "name": "unopim/shopify-connector",
+    "description": "A Shopify integration package for Unopim, enabling seamless product data synchronization between Unopim and Shopify.",
+    "type": "library",
+    "license": "MIT",    
+    "authors": [
+        {
+            "name": "UnoPim",
+            "email": "support@webkul.com"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/unopim/unopim-shopify-connector"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Webkul\\Shopify\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Webkul\\Shopify\\Providers\\ShopifyServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@php artisan vendor:publish --tag=config --force",
+            "@php artisan shopify-package:install"
+        ]
+    },
+    "minimum-stability": "dev"    
+}

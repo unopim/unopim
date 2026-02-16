@@ -83,12 +83,22 @@
             "Webkul\\ElasticSearch\\": "packages/Webkul/ElasticSearch/src",
             "Webkul\\Webhook\\": "packages/Webkul/Webhook/src",
             "Webkul\\Completeness\\": "packages/Webkul/Completeness/src",
-            "Webkul\\Tenant\\": "packages/Webkul/Tenant/src"
+            "Webkul\\Tenant\\": "packages/Webkul/Tenant/src",
+            "Webkul\\Shopify\\": "packages/Webkul/Shopify/src",
+            "Webkul\\ChannelConnector\\": "packages/Webkul/ChannelConnector/src",
+            "Webkul\\Salla\\": "packages/Webkul/Salla/src",
+            "Webkul\\EasyOrders\\": "packages/Webkul/EasyOrders/src",
+            "Webkul\\WooCommerce\\": "packages/Webkul/WooCommerce/src",
+            "Webkul\\Magento2\\": "packages/Webkul/Magento2/src",
+            "Webkul\\Amazon\\": "packages/Webkul/Amazon/src",
+            "Webkul\\Ebay\\": "packages/Webkul/Ebay/src",
+            "Webkul\\Noon\\": "packages/Webkul/Noon/src"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/",
+            "Webkul\\ChannelConnector\\Tests\\": "packages/Webkul/ChannelConnector/tests",
             "Webkul\\Admin\\Tests\\": "packages/Webkul/Admin/tests",
             "Webkul\\Core\\Tests\\": "packages/Webkul/Core/tests",
             "Webkul\\DataGrid\\Tests\\": "packages/Webkul/DataGrid/tests",
@@ -96,7 +106,8 @@
             "Webkul\\AdminApi\\Tests\\": "packages/Webkul/AdminApi/tests",
             "Webkul\\Installer\\Tests\\": "packages/Webkul/Installer/tests",
             "Webkul\\Completeness\\Tests\\": "packages/Webkul/Completeness/tests",
-            "Webkul\\Tenant\\Tests\\": "packages/Webkul/Tenant/tests"
+            "Webkul\\Tenant\\Tests\\": "packages/Webkul/Tenant/tests",
+            "Webkul\\Shopify\\Tests\\": "packages/Webkul/Shopify/tests"
         }
     },
     "scripts": {

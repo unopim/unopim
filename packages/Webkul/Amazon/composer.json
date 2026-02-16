@@ -1,0 +1,26 @@
+{
+    "name": "webkul/amazon",
+    "description": "An Amazon SP-API integration package for UnoPim, enabling product data synchronization with Amazon Seller Central.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "UnoPim",
+            "email": "support@webkul.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Webkul\\Amazon\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Webkul\\Amazon\\Providers\\AmazonServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "minimum-stability": "dev"
+}

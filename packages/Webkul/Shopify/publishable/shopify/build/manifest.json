@@ -1,0 +1,11 @@
+{
+  "src/Resources/assets/css/app.css": {
+    "file": "assets/app-da8c4026.css",
+    "isEntry": true,
+    "src": "src/Resources/assets/css/app.css"
+  },
+  "src/Resources/assets/fonts/shopify.woff": {
+    "file": "assets/shopify-2844f63b.woff",
+    "src": "src/Resources/assets/fonts/shopify.woff"
+  }
+}

@@ -106,6 +106,8 @@ class AdminApiServiceProvider extends ServiceProvider
 
         Passport::$passwordGrantEnabled = true;
         Passport::useClientModel(\Webkul\AdminApi\Models\Client::class);
+        Passport::useTokenModel(\Webkul\AdminApi\Models\Token::class);
+        Passport::useRefreshTokenModel(\Webkul\AdminApi\Models\RefreshToken::class);
 
         // Set access token TTL
         Passport::tokensExpireIn(Carbon::now()->addSeconds(config('api.access_token_ttl')));

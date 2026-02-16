@@ -1,0 +1,18 @@
+{
+    "name": "webkul/magento2",
+    "description": "Magento 2 adapter for UnoPim Channel Connector",
+    "type": "library",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Webkul\\Magento2\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Webkul\\Magento2\\Providers\\Magento2ServiceProvider"
+            ]
+        }
+    }
+}
