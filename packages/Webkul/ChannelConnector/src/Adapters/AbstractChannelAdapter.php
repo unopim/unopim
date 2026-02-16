@@ -23,9 +23,18 @@ abstract class AbstractChannelAdapter implements ChannelAdapterContract
 
     protected array $credentials = [];
 
+    protected ?int $connectorId = null;
+
     public function setCredentials(array $credentials): static
     {
         $this->credentials = $credentials;
+
+        return $this;
+    }
+
+    public function setConnectorId(int $connectorId): static
+    {
+        $this->connectorId = $connectorId;
 
         return $this;
     }

@@ -63,9 +63,14 @@ return [
         ],
 
         'channel-types' => [
-            'shopify'      => 'Shopify',
-            'salla'        => 'Salla',
-            'easy_orders'  => 'Easy Orders',
+            'shopify'     => 'Shopify',
+            'salla'       => 'Salla',
+            'easyorders'  => 'Easy Orders',
+            'amazon'      => 'Amazon',
+            'woocommerce' => 'WooCommerce',
+            'ebay'        => 'eBay',
+            'magento2'    => 'Magento 2',
+            'noon'        => 'Noon',
         ],
 
         'fields' => [
@@ -79,7 +84,11 @@ return [
             'status'            => 'Status',
             'conflict-strategy' => 'Default Conflict Strategy',
             'inbound-strategy'  => 'Inbound Webhook Strategy',
-            'access-token-help' => 'Leave blank to keep existing credentials.',
+            'client-id'           => 'Client ID',
+            'client-secret'       => 'Client Secret',
+            'refresh-token'       => 'Refresh Token',
+            'access-token-help'   => 'Leave blank to keep existing credentials.',
+            'select-channel-type' => 'Select a channel type to see the required credentials.',
         ],
 
         'conflict-strategies' => [

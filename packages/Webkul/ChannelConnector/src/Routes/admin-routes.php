@@ -5,6 +5,7 @@ use Webkul\ChannelConnector\Http\Controllers\Admin\ConflictController;
 use Webkul\ChannelConnector\Http\Controllers\Admin\ConnectionTestController;
 use Webkul\ChannelConnector\Http\Controllers\Admin\ConnectorController;
 use Webkul\ChannelConnector\Http\Controllers\Admin\MappingController;
+use Webkul\ChannelConnector\Http\Controllers\Admin\RateLimitController;
 use Webkul\ChannelConnector\Http\Controllers\Admin\SallaOAuthController;
 use Webkul\ChannelConnector\Http\Controllers\Admin\SyncController;
 use Webkul\ChannelConnector\Http\Controllers\Admin\SyncDashboardController;
@@ -57,4 +58,10 @@ Route::group([
     // Webhooks
     Route::get('/{code}/webhooks', [ConnectorController::class, 'webhooks'])->name('admin.channel_connector.webhooks.index');
     Route::post('/{code}/webhooks/manage', [ConnectorController::class, 'manageWebhooks'])->name('admin.channel_connector.webhooks.manage');
+
+    // Rate Limits
+    Route::get('/rate-limits', [RateLimitController::class, 'index'])->name('admin.channel_connector.rate_limits.index');
+    Route::get('/rate-limits/alerts', [RateLimitController::class, 'alerts'])->name('admin.channel_connector.rate_limits.alerts');
+    Route::get('/{code}/rate-limits', [RateLimitController::class, 'show'])->name('admin.channel_connector.rate_limits.show');
+    Route::get('/{code}/rate-limits/history/{period}', [RateLimitController::class, 'history'])->name('admin.channel_connector.rate_limits.history');
 });

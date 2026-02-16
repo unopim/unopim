@@ -3,11 +3,10 @@
 namespace Webkul\Amazon\Adapters;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Webkul\Amazon\Models\AmazonProductMapping;
 use Webkul\ChannelConnector\Adapters\AbstractChannelAdapter;
-use Webkul\ChannelConnector\Models\ProductChannelMapping;
 use Webkul\ChannelConnector\ValueObjects\ConnectionResult;
 use Webkul\ChannelConnector\ValueObjects\RateLimitConfig;
 use Webkul\ChannelConnector\ValueObjects\SyncResult;
@@ -15,39 +14,24 @@ use Webkul\Product\Models\Product;
 
 class AmazonAdapter extends AbstractChannelAdapter
 {
+    protected const API_BASE = 'https://api.amazon.dev/admin/v2';
+
     public function testConnection(array $credentials): ConnectionResult
     {
         try {
-            $marketplaceId = $credentials['marketplace_id'] ?? '';
-            $region = $credentials['region'] ?? 'us-east-1';
+            $accessToken = $credentials['access_token'] ?? '';
 
-            if (empty($credentials['seller_id']) || empty($marketplaceId)) {
+            if (empty($accessToken)) {
                 return new ConnectionResult(
                     success: false,
-                    message: 'Seller ID and Marketplace ID are required.',
-                    errors: ['Missing seller_id or marketplace_id'],
+                    message: 'Access token is required.',
+                    errors: ['Missing access token'],
                 );
             }
-
-            $accessToken = $this->getAccessToken($credentials);
-
-            if (! $accessToken) {
-                return new ConnectionResult(
-                    success: false,
-                    message: 'Failed to obtain access token.',
-                    errors: ['Could not authenticate with Amazon SP-API'],
-                );
-            }
-
-            $baseUrl = $this->getApiBase($region);
 
             $response = Http::withToken($accessToken)
                 ->timeout(30)
-                ->get($baseUrl.'/catalog/2022-04-01/items', [
-                    'identifiersType' => 'SKU',
-                    'identifiers'     => 'test',
-                    'marketplaceIds'  => $marketplaceId,
-                ]);
+                ->get(self::API_BASE.'/products', ['per_page' => 1]);
 
             if ($response->failed()) {
                 return new ConnectionResult(
@@ -63,10 +47,8 @@ class AmazonAdapter extends AbstractChannelAdapter
                 success: true,
                 message: 'Connection verified successfully.',
                 channelInfo: [
-                    'marketplace_id' => $marketplaceId,
-                    'seller_id'      => $credentials['seller_id'],
-                    'region'         => $region,
-                    'item_count'     => $data['numberOfResults'] ?? 0,
+                    'store_name'    => $data['data'][0]['store']['name'] ?? 'Amazon Store',
+                    'product_count' => $data['pagination']['total'] ?? 0,
                 ],
             );
         } catch (\Exception $e) {
@@ -81,54 +63,27 @@ class AmazonAdapter extends AbstractChannelAdapter
     public function syncProduct(Product $product, array $localeMappedData): SyncResult
     {
         try {
-            $sellerId = $this->credentials['seller_id'] ?? '';
-            $marketplaceId = $this->credentials['marketplace_id'] ?? '';
-            $region = $this->credentials['region'] ?? 'us-east-1';
+            $this->ensureValidToken();
 
-            if (empty($sellerId) || empty($marketplaceId)) {
-                return new SyncResult(
-                    success: false,
-                    action: 'failed',
-                    errors: ['Amazon SP-API credentials (seller_id, marketplace_id) are required'],
-                );
-            }
+            $accessToken = $this->credentials['access_token'] ?? '';
 
-            $accessToken = $this->getAccessToken($this->credentials);
-
-            if (! $accessToken) {
-                return new SyncResult(
-                    success: false,
-                    action: 'failed',
-                    errors: ['Failed to obtain Amazon access token'],
-                );
-            }
-
-            $existingMapping = ProductChannelMapping::where('product_id', $product->id)
-                ->whereHas('connector', fn ($q) => $q->where('channel_type', 'amazon'))
+            // Use adapter-specific product mapping table
+            $existingMapping = AmazonProductMapping::where('product_id', $product->id)
+                ->where('connector_id', $this->connectorId)
                 ->first();
 
-            $existingExternalId = $existingMapping->external_id ?? null;
-            $body = $this->buildAmazonBody($localeMappedData);
-            $baseUrl = $this->getApiBase($region);
+            $existingExternalId = $existingMapping?->external_id;
+            $body = $this->buildAmazonProductBody($localeMappedData);
 
-            $common = $localeMappedData['common'] ?? [];
-            $sku = $common['sku'] ?? $product->sku ?? $existingExternalId;
-
-            if (empty($sku)) {
-                return new SyncResult(
-                    success: false,
-                    action: 'failed',
-                    errors: ['SKU is required for Amazon listings'],
-                );
+            if ($existingExternalId) {
+                $response = Http::withToken($accessToken)
+                    ->timeout(30)
+                    ->put(self::API_BASE.'/products/'.$existingExternalId, $body);
+            } else {
+                $response = Http::withToken($accessToken)
+                    ->timeout(30)
+                    ->post(self::API_BASE.'/products', $body);
             }
-
-            $response = Http::withToken($accessToken)
-                ->timeout(30)
-                ->put($baseUrl.'/listings/2021-08-01/items/'.$sellerId.'/'.urlencode($sku), [
-                    'productType'  => $body['productType'] ?? 'PRODUCT',
-                    'requirements' => 'LISTING',
-                    'attributes'   => $body['attributes'] ?? [],
-                ]);
 
             if ($response->failed()) {
                 $errorBody = $response->json();
@@ -137,15 +92,38 @@ class AmazonAdapter extends AbstractChannelAdapter
                     success: false,
                     externalId: $existingExternalId,
                     action: 'failed',
-                    errors: [$errorBody['errors'][0]['message'] ?? 'HTTP '.$response->status()],
+                    errors: [$errorBody['error']['message'] ?? 'HTTP '.$response->status()],
                 );
             }
 
             $data = $response->json();
+            $amazonProductId = (string) ($data['data']['id'] ?? $existingExternalId ?? '');
+
+            // Update or create adapter-specific mapping
+            AmazonProductMapping::updateOrCreate(
+                [
+                    'product_id'   => $product->id,
+                    'connector_id' => $this->connectorId,
+                ],
+                [
+                    'external_id'    => $amazonProductId,
+                    'external_sku'   => $localeMappedData['sku'] ?? null,
+                    'variant_data'   => $localeMappedData['variants'] ?? [],
+                    'sync_status'    => 'synced',
+                    'last_synced_at' => now(),
+                    'error_message'  => null,
+                ]
+            );
+
+            Log::info('[Amazon] Product synced', [
+                'product_id'  => $product->id,
+                'external_id' => $amazonProductId,
+                'action'      => $existingExternalId ? 'updated' : 'created',
+            ]);
 
             return new SyncResult(
                 success: true,
-                externalId: (string) $sku,
+                externalId: $amazonProductId,
                 action: $existingExternalId ? 'updated' : 'created',
             );
         } catch (\Exception $e) {
@@ -153,6 +131,18 @@ class AmazonAdapter extends AbstractChannelAdapter
                 'product_id' => $product->id,
                 'error'      => $e->getMessage(),
             ]);
+
+            // Update mapping with error
+            AmazonProductMapping::updateOrCreate(
+                [
+                    'product_id'   => $product->id,
+                    'connector_id' => $this->connectorId,
+                ],
+                [
+                    'sync_status'   => 'failed',
+                    'error_message' => $e->getMessage(),
+                ]
+            );
 
             return new SyncResult(
                 success: false,
@@ -165,35 +155,26 @@ class AmazonAdapter extends AbstractChannelAdapter
     public function fetchProduct(string $externalId, ?string $locale = null): ?array
     {
         try {
-            $marketplaceId = $this->credentials['marketplace_id'] ?? '';
-            $region = $this->credentials['region'] ?? 'us-east-1';
+            $this->ensureValidToken();
 
-            if (empty($marketplaceId)) {
-                return null;
-            }
-
-            $accessToken = $this->getAccessToken($this->credentials);
-
-            if (! $accessToken) {
-                return null;
-            }
-
-            $baseUrl = $this->getApiBase($region);
-
-            $response = Http::withToken($accessToken)
+            $response = Http::withToken($this->credentials['access_token'] ?? '')
                 ->timeout(30)
-                ->get($baseUrl.'/catalog/2022-04-01/items/'.urlencode($externalId), [
-                    'marketplaceIds' => $marketplaceId,
-                    'includedData'   => 'attributes,summaries',
-                ]);
+                ->get(self::API_BASE.'/products/'.$externalId);
 
             if ($response->failed()) {
                 return null;
             }
 
             $data = $response->json();
+            $product = $data['data'] ?? null;
 
-            return $this->normalizeAmazonProduct($data);
+            if (! $product) {
+                return null;
+            }
+
+            Log::info('[Amazon] Product fetched', ['external_id' => $externalId]);
+
+            return $this->normalizeAmazonProduct($product);
         } catch (\Exception $e) {
             Log::warning('[Amazon] fetchProduct failed', [
                 'external_id' => $externalId,
@@ -207,27 +188,15 @@ class AmazonAdapter extends AbstractChannelAdapter
     public function deleteProduct(string $externalId): bool
     {
         try {
-            $sellerId = $this->credentials['seller_id'] ?? '';
-            $marketplaceId = $this->credentials['marketplace_id'] ?? '';
-            $region = $this->credentials['region'] ?? 'us-east-1';
+            $this->ensureValidToken();
 
-            if (empty($sellerId) || empty($marketplaceId)) {
-                return false;
-            }
-
-            $accessToken = $this->getAccessToken($this->credentials);
-
-            if (! $accessToken) {
-                return false;
-            }
-
-            $baseUrl = $this->getApiBase($region);
-
-            $response = Http::withToken($accessToken)
+            $response = Http::withToken($this->credentials['access_token'] ?? '')
                 ->timeout(30)
-                ->delete($baseUrl.'/listings/2021-08-01/items/'.$sellerId.'/'.urlencode($externalId), [
-                    'marketplaceIds' => $marketplaceId,
-                ]);
+                ->delete(self::API_BASE.'/products/'.$externalId);
+
+            if ($response->successful()) {
+                Log::info('[Amazon] Product deleted', ['external_id' => $externalId]);
+            }
 
             return $response->successful();
         } catch (\Exception $e) {
@@ -243,52 +212,48 @@ class AmazonAdapter extends AbstractChannelAdapter
     public function getChannelFields(?string $locale = null): array
     {
         return [
-            ['code' => 'item_name', 'label' => 'Item Name', 'type' => 'string', 'required' => true, 'is_translatable' => false],
-            ['code' => 'product_description', 'label' => 'Product Description', 'type' => 'text', 'required' => false, 'is_translatable' => false],
-            ['code' => 'bullet_point', 'label' => 'Bullet Point', 'type' => 'text', 'required' => false, 'is_translatable' => false],
-            ['code' => 'brand', 'label' => 'Brand', 'type' => 'string', 'required' => false, 'is_translatable' => false],
-            ['code' => 'manufacturer', 'label' => 'Manufacturer', 'type' => 'string', 'required' => false, 'is_translatable' => false],
+            ['code' => 'name', 'label' => 'Name', 'type' => 'string', 'required' => true, 'is_translatable' => true],
+            ['code' => 'description', 'label' => 'Description', 'type' => 'text', 'required' => false, 'is_translatable' => true],
             ['code' => 'price', 'label' => 'Price', 'type' => 'price', 'required' => true, 'is_translatable' => false],
-            ['code' => 'sku', 'label' => 'SKU', 'type' => 'string', 'required' => true, 'is_translatable' => false],
+            ['code' => 'sale_price', 'label' => 'Sale Price', 'type' => 'price', 'required' => false, 'is_translatable' => false],
+            ['code' => 'sku', 'label' => 'SKU', 'type' => 'string', 'required' => false, 'is_translatable' => false],
+            ['code' => 'quantity', 'label' => 'Quantity', 'type' => 'number', 'required' => false, 'is_translatable' => false],
+            ['code' => 'weight', 'label' => 'Weight', 'type' => 'number', 'required' => false, 'is_translatable' => false],
+            ['code' => 'status', 'label' => 'Status', 'type' => 'select', 'required' => false, 'is_translatable' => false],
+            ['code' => 'images', 'label' => 'Images', 'type' => 'media', 'required' => false, 'is_translatable' => false],
         ];
     }
 
     public function getSupportedLocales(): array
     {
-        return ['en_US', 'ar_AE', 'en_GB', 'de_DE', 'fr_FR', 'es_ES'];
+        return ['ar', 'en'];
     }
 
     public function getSupportedCurrencies(): array
     {
-        return ['USD', 'AED', 'GBP', 'EUR', 'SAR'];
+        return ['SAR', 'USD', 'EUR', 'KWD', 'BHD', 'AED'];
     }
 
     public function registerWebhooks(array $events, string $callbackUrl): bool
     {
         try {
-            $region = $this->credentials['region'] ?? 'us-east-1';
+            $this->ensureValidToken();
 
-            $accessToken = $this->getAccessToken($this->credentials);
-
-            if (! $accessToken) {
-                return false;
-            }
-
-            $baseUrl = $this->getApiBase($region);
+            $accessToken = $this->credentials['access_token'] ?? '';
             $allSuccess = true;
 
-            foreach ($events as $notificationType) {
+            foreach ($events as $event) {
                 $response = Http::withToken($accessToken)
                     ->timeout(30)
-                    ->post($baseUrl.'/notifications/v1/subscriptions/'.$notificationType, [
-                        'payloadVersion' => '1.0',
-                        'destinationId'  => $callbackUrl,
+                    ->post(self::API_BASE.'/webhooks', [
+                        'event' => $event,
+                        'url'   => $callbackUrl,
                     ]);
 
                 if ($response->failed()) {
                     Log::warning('[Amazon] Webhook registration failed', [
-                        'notification_type' => $notificationType,
-                        'status'            => $response->status(),
+                        'event'  => $event,
+                        'status' => $response->status(),
                     ]);
                     $allSuccess = false;
                 }
@@ -304,9 +269,9 @@ class AmazonAdapter extends AbstractChannelAdapter
 
     public function verifyWebhook(Request $request): bool
     {
-        $signature = $request->header('X-Amz-Signature');
+        $signature = $request->header('X-Amazon-Signature');
         $payload = $request->getContent();
-        $secret = $this->credentials['secret_key'] ?? '';
+        $secret = $this->credentials['webhook_secret'] ?? '';
 
         if (empty($signature) || empty($secret)) {
             return false;
@@ -319,194 +284,166 @@ class AmazonAdapter extends AbstractChannelAdapter
 
     public function refreshCredentials(): ?array
     {
-        $accessToken = $this->getAccessToken($this->credentials, forceRefresh: true);
+        $refreshToken = $this->credentials['refresh_token'] ?? '';
 
-        if (! $accessToken) {
+        if (empty($refreshToken)) {
             return null;
         }
 
-        return array_merge($this->credentials, ['cached_access_token' => $accessToken]);
+        try {
+            $response = Http::asForm()->post('https://accounts.amazon.sa/oauth2/token', [
+                'grant_type'    => 'refresh_token',
+                'refresh_token' => $refreshToken,
+                'client_id'     => $this->credentials['client_id'] ?? '',
+                'client_secret' => $this->credentials['client_secret'] ?? '',
+            ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+
+                return [
+                    'access_token'  => $data['access_token'],
+                    'refresh_token' => $data['refresh_token'] ?? $refreshToken,
+                    'expires_at'    => now()->addSeconds($data['expires_in'] ?? 3600)->toIso8601String(),
+                ];
+            }
+        } catch (\Exception $e) {
+            Log::warning('[Amazon] Token refresh failed', [
+                'error'     => $e->getMessage(),
+                'client_id' => $this->credentials['client_id'] ?? 'unknown',
+            ]);
+        }
+
+        return null;
     }
 
     public function getRateLimitConfig(): RateLimitConfig
     {
-        return new RateLimitConfig(requestsPerSecond: 5);
+        return new RateLimitConfig(
+            requestsPerSecond: 10,
+        );
     }
 
-    protected function buildAmazonBody(array $localeMappedData): array
+    protected function ensureValidToken(): void
+    {
+        $expiresAt = $this->credentials['expires_at'] ?? null;
+
+        if ($expiresAt && now()->greaterThan($expiresAt)) {
+            $refreshed = $this->refreshCredentials();
+
+            if ($refreshed) {
+                $this->credentials = array_merge($this->credentials, $refreshed);
+            }
+        }
+    }
+
+    protected function buildAmazonProductBody(array $localeMappedData): array
     {
         $common = $localeMappedData['common'] ?? [];
         $locales = $localeMappedData['locales'] ?? [];
 
-        $attributes = [];
-        $languageTag = 'en_US';
+        $body = [];
 
-        // Determine language tag from available locales
-        foreach (['en_US', 'ar_AE', 'en_GB', 'de_DE', 'fr_FR', 'es_ES'] as $tag) {
-            if (isset($locales[$tag])) {
-                $languageTag = $tag;
+        // Find first matching locale by prefix (supports ar_AE, en_US, etc.)
+        $arData = collect($locales)->first(fn ($v, $k) => str_starts_with($k, 'ar')) ?? [];
+        $enData = collect($locales)->first(fn ($v, $k) => str_starts_with($k, 'en')) ?? [];
 
-                break;
-            }
-        }
-
-        $name = $locales[$languageTag]['item_name']
-            ?? $locales[$languageTag]['name']
-            ?? $common['item_name']
-            ?? $common['name']
-            ?? null;
-
+        // Name: prefer Arabic locale, fallback to common, fallback to English
+        $name = $arData['name'] ?? $common['name'] ?? $enData['name'] ?? null;
         if ($name !== null) {
-            $attributes['item_name'] = [['value' => $name, 'language_tag' => $languageTag]];
+            $body['name'] = $name;
         }
 
-        $description = $locales[$languageTag]['product_description']
-            ?? $locales[$languageTag]['description']
-            ?? $common['product_description']
-            ?? $common['description']
-            ?? null;
-
+        // Description
+        $description = $arData['description'] ?? $common['description'] ?? $enData['description'] ?? null;
         if ($description !== null) {
-            $attributes['product_description'] = [['value' => $description, 'language_tag' => $languageTag]];
+            $body['description'] = $description;
         }
 
-        $bulletPoint = $locales[$languageTag]['bullet_point']
-            ?? $common['bullet_point']
-            ?? null;
-
-        if ($bulletPoint !== null) {
-            $attributes['bullet_point'] = [['value' => $bulletPoint, 'language_tag' => $languageTag]];
-        }
-
-        $brand = $common['brand'] ?? $locales[$languageTag]['brand'] ?? null;
-
-        if ($brand !== null) {
-            $attributes['brand'] = [['value' => $brand]];
-        }
-
-        $manufacturer = $common['manufacturer'] ?? $locales[$languageTag]['manufacturer'] ?? null;
-
-        if ($manufacturer !== null) {
-            $attributes['manufacturer'] = [['value' => $manufacturer]];
-        }
-
+        // Price
         if (isset($common['price'])) {
-            $attributes['purchasable_offer'] = [[
-                'our_price' => [[
-                    'schedule' => [[
-                        'value_with_tax' => (float) $common['price'],
-                    ]],
-                ]],
-            ]];
+            $body['price'] = [
+                'amount'   => (float) $common['price'],
+                'currency' => $this->credentials['currency'] ?? 'SAR',
+            ];
         }
 
-        return [
-            'productType' => 'PRODUCT',
-            'attributes'  => $attributes,
-        ];
+        // Sale price
+        if (isset($common['sale_price'])) {
+            $body['sale_price'] = [
+                'amount'   => (float) $common['sale_price'],
+                'currency' => $this->credentials['currency'] ?? 'SAR',
+            ];
+        }
+
+        // Simple fields
+        if (isset($common['sku'])) {
+            $body['sku'] = $common['sku'];
+        }
+
+        if (isset($common['quantity'])) {
+            $body['quantity'] = (int) $common['quantity'];
+        }
+
+        if (isset($common['weight'])) {
+            $body['weight'] = (float) $common['weight'];
+        }
+
+        // Status mapping
+        if (isset($common['status'])) {
+            $statusMap = [
+                'active'   => 'sale',
+                'draft'    => 'hidden',
+                'archived' => 'out',
+                'sale'     => 'sale',
+                'hidden'   => 'hidden',
+                'out'      => 'out',
+            ];
+            $body['status'] = $statusMap[$common['status']] ?? 'hidden';
+        }
+
+        return $body;
     }
 
     protected function normalizeAmazonProduct(array $product): array
     {
         $common = [];
-        $attributes = $product['attributes'] ?? [];
-        $summaries = $product['summaries'][0] ?? [];
 
-        if (isset($attributes['item_name'][0]['value'])) {
-            $common['item_name'] = $attributes['item_name'][0]['value'];
-        } elseif (isset($summaries['itemName'])) {
-            $common['item_name'] = $summaries['itemName'];
+        if (isset($product['name'])) {
+            $common['name'] = $product['name'];
         }
 
-        if (isset($attributes['product_description'][0]['value'])) {
-            $common['product_description'] = $attributes['product_description'][0]['value'];
+        if (isset($product['description'])) {
+            $common['description'] = $product['description'];
         }
 
-        if (isset($attributes['bullet_point'][0]['value'])) {
-            $common['bullet_point'] = $attributes['bullet_point'][0]['value'];
+        if (isset($product['price']['amount'])) {
+            $common['price'] = $product['price']['amount'];
         }
 
-        if (isset($attributes['brand'][0]['value'])) {
-            $common['brand'] = $attributes['brand'][0]['value'];
-        } elseif (isset($summaries['brand'])) {
-            $common['brand'] = $summaries['brand'];
+        if (isset($product['sale_price']['amount'])) {
+            $common['sale_price'] = $product['sale_price']['amount'];
         }
 
-        if (isset($attributes['manufacturer'][0]['value'])) {
-            $common['manufacturer'] = $attributes['manufacturer'][0]['value'];
-        } elseif (isset($summaries['manufacturer'])) {
-            $common['manufacturer'] = $summaries['manufacturer'];
+        if (isset($product['sku'])) {
+            $common['sku'] = $product['sku'];
         }
 
-        if (isset($product['asin'])) {
-            $common['asin'] = $product['asin'];
+        if (isset($product['quantity'])) {
+            $common['quantity'] = $product['quantity'];
+        }
+
+        if (isset($product['weight'])) {
+            $common['weight'] = $product['weight'];
+        }
+
+        if (isset($product['status'])) {
+            $common['status'] = $product['status'];
         }
 
         return [
             'common'  => $common,
             'locales' => [],
         ];
-    }
-
-    protected function getAccessToken(array $credentials, bool $forceRefresh = false): ?string
-    {
-        $clientId = $credentials['client_id'] ?? '';
-        $clientSecret = $credentials['client_secret'] ?? '';
-        $refreshToken = $credentials['refresh_token'] ?? '';
-
-        if (empty($clientId) || empty($clientSecret) || empty($refreshToken)) {
-            return null;
-        }
-
-        $cacheKey = 'amazon_sp_api_token_'.md5($clientId.$refreshToken);
-
-        if (! $forceRefresh && Cache::has($cacheKey)) {
-            return Cache::get($cacheKey);
-        }
-
-        try {
-            $response = Http::asForm()
-                ->timeout(30)
-                ->post('https://api.amazon.com/auth/o2/token', [
-                    'grant_type'    => 'refresh_token',
-                    'client_id'     => $clientId,
-                    'client_secret' => $clientSecret,
-                    'refresh_token' => $refreshToken,
-                ]);
-
-            if ($response->failed()) {
-                Log::error('[Amazon] Failed to obtain access token', [
-                    'status' => $response->status(),
-                    'body'   => $response->body(),
-                ]);
-
-                return null;
-            }
-
-            $data = $response->json();
-            $accessToken = $data['access_token'] ?? null;
-
-            if ($accessToken) {
-                Cache::put($cacheKey, $accessToken, 3500);
-            }
-
-            return $accessToken;
-        } catch (\Exception $e) {
-            Log::error('[Amazon] Token refresh failed', ['error' => $e->getMessage()]);
-
-            return null;
-        }
-    }
-
-    protected function getApiBase(string $region): string
-    {
-        $regionMap = [
-            'us-east-1'      => 'https://sellingpartnerapi-na.amazon.com',
-            'eu-west-1'      => 'https://sellingpartnerapi-eu.amazon.com',
-            'us-west-2'      => 'https://sellingpartnerapi-fe.amazon.com',
-            'ap-southeast-1' => 'https://sellingpartnerapi-fe.amazon.com',
-        ];
-
-        return $regionMap[$region] ?? 'https://sellingpartnerapi-na.amazon.com';
     }
 }

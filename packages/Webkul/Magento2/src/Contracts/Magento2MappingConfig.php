@@ -1,0 +1,5 @@
+<?php
+
+namespace Webkul\Magento2\Contracts;
+
+interface Magento2MappingConfig {}

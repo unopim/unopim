@@ -30,7 +30,10 @@ class ConnectorRequest extends FormRequest
         $rules = [
             'code'         => ['required', 'string', 'max:255', 'regex:/^[a-z0-9\-_]+$/', $uniqueRule],
             'name'         => ['required', 'string', 'max:255'],
-            'channel_type' => ['required', Rule::in(['shopify', 'salla', 'easy_orders'])],
+            'channel_type' => ['required', Rule::in([
+                'shopify', 'salla', 'easyorders', 'amazon',
+                'woocommerce', 'ebay', 'magento2', 'noon',
+            ])],
             'credentials'  => ['required', 'array'],
             'status'       => ['sometimes', Rule::in(['connected', 'disconnected', 'error'])],
         ];
@@ -38,7 +41,10 @@ class ConnectorRequest extends FormRequest
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
             $rules['code'] = ['sometimes', 'string', 'max:255', 'regex:/^[a-z0-9\-_]+$/'];
             $rules['name'] = ['sometimes', 'string', 'max:255'];
-            $rules['channel_type'] = ['sometimes', Rule::in(['shopify', 'salla', 'easy_orders'])];
+            $rules['channel_type'] = ['sometimes', Rule::in([
+                'shopify', 'salla', 'easyorders', 'amazon',
+                'woocommerce', 'ebay', 'magento2', 'noon',
+            ])];
             $rules['credentials'] = ['sometimes', 'array'];
         }
 

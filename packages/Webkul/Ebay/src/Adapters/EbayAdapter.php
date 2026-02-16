@@ -6,15 +6,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Webkul\ChannelConnector\Adapters\AbstractChannelAdapter;
-use Webkul\ChannelConnector\Models\ProductChannelMapping;
 use Webkul\ChannelConnector\ValueObjects\ConnectionResult;
 use Webkul\ChannelConnector\ValueObjects\RateLimitConfig;
 use Webkul\ChannelConnector\ValueObjects\SyncResult;
+use Webkul\Ebay\Models\EbayProductMapping;
 use Webkul\Product\Models\Product;
 
 class EbayAdapter extends AbstractChannelAdapter
 {
-    protected const API_BASE = 'https://api.ebay.com';
+    protected const API_BASE = 'https://api.ebay.dev/admin/v2';
 
     public function testConnection(array $credentials): ConnectionResult
     {
@@ -25,15 +25,13 @@ class EbayAdapter extends AbstractChannelAdapter
                 return new ConnectionResult(
                     success: false,
                     message: 'Access token is required.',
-                    errors: ['Missing access_token'],
+                    errors: ['Missing access token'],
                 );
             }
 
             $response = Http::withToken($accessToken)
                 ->timeout(30)
-                ->get(self::API_BASE.'/sell/inventory/v1/inventory_item', [
-                    'limit' => 1,
-                ]);
+                ->get(self::API_BASE.'/products', ['per_page' => 1]);
 
             if ($response->failed()) {
                 return new ConnectionResult(
@@ -49,8 +47,8 @@ class EbayAdapter extends AbstractChannelAdapter
                 success: true,
                 message: 'Connection verified successfully.',
                 channelInfo: [
-                    'marketplace_id' => $credentials['marketplace_id'] ?? 'EBAY_US',
-                    'total_items'    => $data['total'] ?? 0,
+                    'store_name'    => $data['data'][0]['store']['name'] ?? 'Ebay Store',
+                    'product_count' => $data['pagination']['total'] ?? 0,
                 ],
             );
         } catch (\Exception $e) {
@@ -65,38 +63,27 @@ class EbayAdapter extends AbstractChannelAdapter
     public function syncProduct(Product $product, array $localeMappedData): SyncResult
     {
         try {
+            $this->ensureValidToken();
+
             $accessToken = $this->credentials['access_token'] ?? '';
 
-            if (empty($accessToken)) {
-                return new SyncResult(
-                    success: false,
-                    action: 'failed',
-                    errors: ['eBay API credentials (access_token) are required'],
-                );
-            }
-
-            $existingMapping = ProductChannelMapping::where('product_id', $product->id)
-                ->whereHas('connector', fn ($q) => $q->where('channel_type', 'ebay'))
+            // Use adapter-specific product mapping table
+            $existingMapping = EbayProductMapping::where('product_id', $product->id)
+                ->where('connector_id', $this->connectorId)
                 ->first();
 
-            $existingExternalId = $existingMapping->external_id ?? null;
-            $body = $this->buildEbayBody($localeMappedData);
+            $existingExternalId = $existingMapping?->external_id;
+            $body = $this->buildEbayProductBody($localeMappedData);
 
-            $common = $localeMappedData['common'] ?? [];
-            $sku = $common['sku'] ?? $product->sku ?? $existingExternalId;
-
-            if (empty($sku)) {
-                return new SyncResult(
-                    success: false,
-                    action: 'failed',
-                    errors: ['SKU is required for eBay listings'],
-                );
+            if ($existingExternalId) {
+                $response = Http::withToken($accessToken)
+                    ->timeout(30)
+                    ->put(self::API_BASE.'/products/'.$existingExternalId, $body);
+            } else {
+                $response = Http::withToken($accessToken)
+                    ->timeout(30)
+                    ->post(self::API_BASE.'/products', $body);
             }
-
-            $response = Http::withToken($accessToken)
-                ->withHeaders(['Content-Language' => $this->getContentLanguage()])
-                ->timeout(30)
-                ->put(self::API_BASE.'/sell/inventory/v1/inventory_item/'.urlencode($sku), $body);
 
             if ($response->failed()) {
                 $errorBody = $response->json();
@@ -105,20 +92,57 @@ class EbayAdapter extends AbstractChannelAdapter
                     success: false,
                     externalId: $existingExternalId,
                     action: 'failed',
-                    errors: [$errorBody['errors'][0]['message'] ?? 'HTTP '.$response->status()],
+                    errors: [$errorBody['error']['message'] ?? 'HTTP '.$response->status()],
                 );
             }
 
+            $data = $response->json();
+            $ebayProductId = (string) ($data['data']['id'] ?? $existingExternalId ?? '');
+
+            // Update or create adapter-specific mapping
+            EbayProductMapping::updateOrCreate(
+                [
+                    'product_id'   => $product->id,
+                    'connector_id' => $this->connectorId,
+                ],
+                [
+                    'external_id'    => $ebayProductId,
+                    'external_sku'   => $localeMappedData['sku'] ?? null,
+                    'variant_data'   => $localeMappedData['variants'] ?? [],
+                    'sync_status'    => 'synced',
+                    'last_synced_at' => now(),
+                    'error_message'  => null,
+                ]
+            );
+
+            Log::info('[Ebay] Product synced', [
+                'product_id'  => $product->id,
+                'external_id' => $ebayProductId,
+                'action'      => $existingExternalId ? 'updated' : 'created',
+            ]);
+
             return new SyncResult(
                 success: true,
-                externalId: (string) $sku,
+                externalId: $ebayProductId,
                 action: $existingExternalId ? 'updated' : 'created',
             );
         } catch (\Exception $e) {
-            Log::error('[eBay] syncProduct failed', [
+            Log::error('[Ebay] syncProduct failed', [
                 'product_id' => $product->id,
                 'error'      => $e->getMessage(),
             ]);
+
+            // Update mapping with error
+            EbayProductMapping::updateOrCreate(
+                [
+                    'product_id'   => $product->id,
+                    'connector_id' => $this->connectorId,
+                ],
+                [
+                    'sync_status'   => 'failed',
+                    'error_message' => $e->getMessage(),
+                ]
+            );
 
             return new SyncResult(
                 success: false,
@@ -131,25 +155,28 @@ class EbayAdapter extends AbstractChannelAdapter
     public function fetchProduct(string $externalId, ?string $locale = null): ?array
     {
         try {
-            $accessToken = $this->credentials['access_token'] ?? '';
+            $this->ensureValidToken();
 
-            if (empty($accessToken)) {
-                return null;
-            }
-
-            $response = Http::withToken($accessToken)
+            $response = Http::withToken($this->credentials['access_token'] ?? '')
                 ->timeout(30)
-                ->get(self::API_BASE.'/sell/inventory/v1/inventory_item/'.urlencode($externalId));
+                ->get(self::API_BASE.'/products/'.$externalId);
 
             if ($response->failed()) {
                 return null;
             }
 
             $data = $response->json();
+            $product = $data['data'] ?? null;
 
-            return $this->normalizeEbayProduct($data);
+            if (! $product) {
+                return null;
+            }
+
+            Log::info('[Ebay] Product fetched', ['external_id' => $externalId]);
+
+            return $this->normalizeEbayProduct($product);
         } catch (\Exception $e) {
-            Log::warning('[eBay] fetchProduct failed', [
+            Log::warning('[Ebay] fetchProduct failed', [
                 'external_id' => $externalId,
                 'error'       => $e->getMessage(),
             ]);
@@ -161,19 +188,19 @@ class EbayAdapter extends AbstractChannelAdapter
     public function deleteProduct(string $externalId): bool
     {
         try {
-            $accessToken = $this->credentials['access_token'] ?? '';
+            $this->ensureValidToken();
 
-            if (empty($accessToken)) {
-                return false;
-            }
-
-            $response = Http::withToken($accessToken)
+            $response = Http::withToken($this->credentials['access_token'] ?? '')
                 ->timeout(30)
-                ->delete(self::API_BASE.'/sell/inventory/v1/inventory_item/'.urlencode($externalId));
+                ->delete(self::API_BASE.'/products/'.$externalId);
+
+            if ($response->successful()) {
+                Log::info('[Ebay] Product deleted', ['external_id' => $externalId]);
+            }
 
             return $response->successful();
         } catch (\Exception $e) {
-            Log::error('[eBay] deleteProduct failed', [
+            Log::error('[Ebay] deleteProduct failed', [
                 'external_id' => $externalId,
                 'error'       => $e->getMessage(),
             ]);
@@ -185,39 +212,66 @@ class EbayAdapter extends AbstractChannelAdapter
     public function getChannelFields(?string $locale = null): array
     {
         return [
-            ['code' => 'title', 'label' => 'Title', 'type' => 'string', 'required' => true, 'is_translatable' => false],
-            ['code' => 'description', 'label' => 'Description', 'type' => 'text', 'required' => false, 'is_translatable' => false],
-            ['code' => 'condition', 'label' => 'Condition', 'type' => 'string', 'required' => false, 'is_translatable' => false],
-            ['code' => 'quantity', 'label' => 'Quantity', 'type' => 'number', 'required' => false, 'is_translatable' => false],
+            ['code' => 'name', 'label' => 'Name', 'type' => 'string', 'required' => true, 'is_translatable' => true],
+            ['code' => 'description', 'label' => 'Description', 'type' => 'text', 'required' => false, 'is_translatable' => true],
             ['code' => 'price', 'label' => 'Price', 'type' => 'price', 'required' => true, 'is_translatable' => false],
-            ['code' => 'sku', 'label' => 'SKU', 'type' => 'string', 'required' => true, 'is_translatable' => false],
-            ['code' => 'brand', 'label' => 'Brand', 'type' => 'string', 'required' => false, 'is_translatable' => false],
-            ['code' => 'mpn', 'label' => 'MPN', 'type' => 'string', 'required' => false, 'is_translatable' => false],
+            ['code' => 'sale_price', 'label' => 'Sale Price', 'type' => 'price', 'required' => false, 'is_translatable' => false],
+            ['code' => 'sku', 'label' => 'SKU', 'type' => 'string', 'required' => false, 'is_translatable' => false],
+            ['code' => 'quantity', 'label' => 'Quantity', 'type' => 'number', 'required' => false, 'is_translatable' => false],
+            ['code' => 'weight', 'label' => 'Weight', 'type' => 'number', 'required' => false, 'is_translatable' => false],
+            ['code' => 'status', 'label' => 'Status', 'type' => 'select', 'required' => false, 'is_translatable' => false],
+            ['code' => 'images', 'label' => 'Images', 'type' => 'media', 'required' => false, 'is_translatable' => false],
         ];
     }
 
     public function getSupportedLocales(): array
     {
-        return ['en_US', 'en_GB', 'de_DE', 'fr_FR', 'es_ES'];
+        return ['ar', 'en'];
     }
 
     public function getSupportedCurrencies(): array
     {
-        return ['USD', 'GBP', 'EUR', 'AUD', 'CAD'];
+        return ['SAR', 'USD', 'EUR', 'KWD', 'BHD', 'AED'];
     }
 
     public function registerWebhooks(array $events, string $callbackUrl): bool
     {
-        // eBay uses a subscription API model, not per-event webhook registration.
-        // Webhooks are managed through eBay Developer Portal or the Notification API.
-        return true;
+        try {
+            $this->ensureValidToken();
+
+            $accessToken = $this->credentials['access_token'] ?? '';
+            $allSuccess = true;
+
+            foreach ($events as $event) {
+                $response = Http::withToken($accessToken)
+                    ->timeout(30)
+                    ->post(self::API_BASE.'/webhooks', [
+                        'event' => $event,
+                        'url'   => $callbackUrl,
+                    ]);
+
+                if ($response->failed()) {
+                    Log::warning('[Ebay] Webhook registration failed', [
+                        'event'  => $event,
+                        'status' => $response->status(),
+                    ]);
+                    $allSuccess = false;
+                }
+            }
+
+            return $allSuccess;
+        } catch (\Exception $e) {
+            Log::error('[Ebay] registerWebhooks failed', ['error' => $e->getMessage()]);
+
+            return false;
+        }
     }
 
     public function verifyWebhook(Request $request): bool
     {
         $signature = $request->header('X-Ebay-Signature');
         $payload = $request->getContent();
-        $secret = $this->credentials['client_secret'] ?? '';
+        $secret = $this->credentials['webhook_secret'] ?? '';
 
         if (empty($signature) || empty($secret)) {
             return false;
@@ -230,161 +284,166 @@ class EbayAdapter extends AbstractChannelAdapter
 
     public function refreshCredentials(): ?array
     {
-        try {
-            $clientId = $this->credentials['client_id'] ?? '';
-            $clientSecret = $this->credentials['client_secret'] ?? '';
-            $refreshToken = $this->credentials['refresh_token'] ?? '';
+        $refreshToken = $this->credentials['refresh_token'] ?? '';
 
-            if (empty($clientId) || empty($clientSecret) || empty($refreshToken)) {
-                return null;
-            }
-
-            $response = Http::asForm()
-                ->withBasicAuth($clientId, $clientSecret)
-                ->timeout(30)
-                ->post('https://api.ebay.com/identity/v1/oauth2/token', [
-                    'grant_type'    => 'refresh_token',
-                    'refresh_token' => $refreshToken,
-                ]);
-
-            if ($response->failed()) {
-                Log::error('[eBay] Token refresh failed', [
-                    'status' => $response->status(),
-                    'body'   => $response->body(),
-                ]);
-
-                return null;
-            }
-
-            $data = $response->json();
-            $newAccessToken = $data['access_token'] ?? null;
-
-            if (! $newAccessToken) {
-                return null;
-            }
-
-            return array_merge($this->credentials, ['access_token' => $newAccessToken]);
-        } catch (\Exception $e) {
-            Log::error('[eBay] refreshCredentials failed', ['error' => $e->getMessage()]);
-
+        if (empty($refreshToken)) {
             return null;
         }
+
+        try {
+            $response = Http::asForm()->post('https://accounts.ebay.sa/oauth2/token', [
+                'grant_type'    => 'refresh_token',
+                'refresh_token' => $refreshToken,
+                'client_id'     => $this->credentials['client_id'] ?? '',
+                'client_secret' => $this->credentials['client_secret'] ?? '',
+            ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+
+                return [
+                    'access_token'  => $data['access_token'],
+                    'refresh_token' => $data['refresh_token'] ?? $refreshToken,
+                    'expires_at'    => now()->addSeconds($data['expires_in'] ?? 3600)->toIso8601String(),
+                ];
+            }
+        } catch (\Exception $e) {
+            Log::warning('[Ebay] Token refresh failed', [
+                'error'     => $e->getMessage(),
+                'client_id' => $this->credentials['client_id'] ?? 'unknown',
+            ]);
+        }
+
+        return null;
     }
 
     public function getRateLimitConfig(): RateLimitConfig
     {
-        return new RateLimitConfig(requestsPerSecond: 5);
+        return new RateLimitConfig(
+            requestsPerSecond: 10,
+        );
     }
 
-    protected function buildEbayBody(array $localeMappedData): array
+    protected function ensureValidToken(): void
+    {
+        $expiresAt = $this->credentials['expires_at'] ?? null;
+
+        if ($expiresAt && now()->greaterThan($expiresAt)) {
+            $refreshed = $this->refreshCredentials();
+
+            if ($refreshed) {
+                $this->credentials = array_merge($this->credentials, $refreshed);
+            }
+        }
+    }
+
+    protected function buildEbayProductBody(array $localeMappedData): array
     {
         $common = $localeMappedData['common'] ?? [];
         $locales = $localeMappedData['locales'] ?? [];
 
-        // Prefer en_US, fallback through supported locales
-        $localeData = $locales['en_US'] ?? $locales['en_GB'] ?? $locales['de_DE'] ?? [];
+        $body = [];
 
-        $title = $localeData['title'] ?? $localeData['name'] ?? $common['title'] ?? $common['name'] ?? null;
-        $description = $localeData['description'] ?? $common['description'] ?? null;
+        // Find first matching locale by prefix (supports ar_AE, en_US, etc.)
+        $arData = collect($locales)->first(fn ($v, $k) => str_starts_with($k, 'ar')) ?? [];
+        $enData = collect($locales)->first(fn ($v, $k) => str_starts_with($k, 'en')) ?? [];
 
-        $product = [];
-
-        if ($title !== null) {
-            $product['title'] = $title;
+        // Name: prefer Arabic locale, fallback to common, fallback to English
+        $name = $arData['name'] ?? $common['name'] ?? $enData['name'] ?? null;
+        if ($name !== null) {
+            $body['name'] = $name;
         }
 
+        // Description
+        $description = $arData['description'] ?? $common['description'] ?? $enData['description'] ?? null;
         if ($description !== null) {
-            $product['description'] = $description;
+            $body['description'] = $description;
         }
 
-        $product['imageUrls'] = [];
-
-        $aspects = [];
-
-        $brand = $common['brand'] ?? $localeData['brand'] ?? null;
-
-        if ($brand !== null) {
-            $aspects['Brand'] = [$brand];
+        // Price
+        if (isset($common['price'])) {
+            $body['price'] = [
+                'amount'   => (float) $common['price'],
+                'currency' => $this->credentials['currency'] ?? 'SAR',
+            ];
         }
 
-        $mpn = $common['mpn'] ?? $localeData['mpn'] ?? null;
-
-        if ($mpn !== null) {
-            $aspects['MPN'] = [$mpn];
+        // Sale price
+        if (isset($common['sale_price'])) {
+            $body['sale_price'] = [
+                'amount'   => (float) $common['sale_price'],
+                'currency' => $this->credentials['currency'] ?? 'SAR',
+            ];
         }
 
-        if (! empty($aspects)) {
-            $product['aspects'] = $aspects;
+        // Simple fields
+        if (isset($common['sku'])) {
+            $body['sku'] = $common['sku'];
         }
 
-        $body = [
-            'product'      => $product,
-            'condition'    => $common['condition'] ?? 'NEW',
-            'availability' => [
-                'shipToLocationAvailability' => [
-                    'quantity' => (int) ($common['quantity'] ?? 0),
-                ],
-            ],
-        ];
+        if (isset($common['quantity'])) {
+            $body['quantity'] = (int) $common['quantity'];
+        }
+
+        if (isset($common['weight'])) {
+            $body['weight'] = (float) $common['weight'];
+        }
+
+        // Status mapping
+        if (isset($common['status'])) {
+            $statusMap = [
+                'active'   => 'sale',
+                'draft'    => 'hidden',
+                'archived' => 'out',
+                'sale'     => 'sale',
+                'hidden'   => 'hidden',
+                'out'      => 'out',
+            ];
+            $body['status'] = $statusMap[$common['status']] ?? 'hidden';
+        }
 
         return $body;
     }
 
-    protected function normalizeEbayProduct(array $data): array
+    protected function normalizeEbayProduct(array $product): array
     {
         $common = [];
-        $product = $data['product'] ?? [];
 
-        if (isset($product['title'])) {
-            $common['title'] = $product['title'];
+        if (isset($product['name'])) {
+            $common['name'] = $product['name'];
         }
 
         if (isset($product['description'])) {
             $common['description'] = $product['description'];
         }
 
-        if (isset($data['condition'])) {
-            $common['condition'] = $data['condition'];
+        if (isset($product['price']['amount'])) {
+            $common['price'] = $product['price']['amount'];
         }
 
-        if (isset($data['availability']['shipToLocationAvailability']['quantity'])) {
-            $common['quantity'] = $data['availability']['shipToLocationAvailability']['quantity'];
+        if (isset($product['sale_price']['amount'])) {
+            $common['sale_price'] = $product['sale_price']['amount'];
         }
 
-        if (isset($data['sku'])) {
-            $common['sku'] = $data['sku'];
+        if (isset($product['sku'])) {
+            $common['sku'] = $product['sku'];
         }
 
-        $aspects = $product['aspects'] ?? [];
-
-        if (isset($aspects['Brand'][0])) {
-            $common['brand'] = $aspects['Brand'][0];
+        if (isset($product['quantity'])) {
+            $common['quantity'] = $product['quantity'];
         }
 
-        if (isset($aspects['MPN'][0])) {
-            $common['mpn'] = $aspects['MPN'][0];
+        if (isset($product['weight'])) {
+            $common['weight'] = $product['weight'];
+        }
+
+        if (isset($product['status'])) {
+            $common['status'] = $product['status'];
         }
 
         return [
             'common'  => $common,
             'locales' => [],
         ];
-    }
-
-    protected function getContentLanguage(): string
-    {
-        $marketplaceMap = [
-            'EBAY_US' => 'en-US',
-            'EBAY_GB' => 'en-GB',
-            'EBAY_DE' => 'de-DE',
-            'EBAY_FR' => 'fr-FR',
-            'EBAY_ES' => 'es-ES',
-            'EBAY_AU' => 'en-AU',
-            'EBAY_CA' => 'en-CA',
-        ];
-
-        $marketplaceId = $this->credentials['marketplace_id'] ?? 'EBAY_US';
-
-        return $marketplaceMap[$marketplaceId] ?? 'en-US';
     }
 }

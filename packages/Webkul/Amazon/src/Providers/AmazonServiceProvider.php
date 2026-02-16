@@ -2,25 +2,54 @@
 
 namespace Webkul\Amazon\Providers;
 
-use Webkul\Amazon\Adapters\AmazonAdapter;
-use Webkul\ChannelConnector\Services\AdapterResolver;
-use Webkul\Core\Providers\CoreModuleServiceProvider;
+use Illuminate\Routing\Router;
+use Illuminate\Support\ServiceProvider;
 
-class AmazonServiceProvider extends CoreModuleServiceProvider
+class AmazonServiceProvider extends ServiceProvider
 {
-    protected $models = [];
-
-    public function boot(): void
+    /**
+     * Bootstrap services.
+     */
+    public function boot(Router $router): void
     {
-        parent::boot();
-
-        $this->registerAdapter();
+        $this->loadRoutesFrom(__DIR__.'/../Routes/amazon-routes.php');
+        $this->loadMigrationsFrom(__DIR__.'/../Database/Migration');
+        $this->loadViewsFrom(__DIR__.'/../Resources/views', 'amazon');
+        $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'amazon');
     }
 
-    protected function registerAdapter(): void
+    /**
+     * Register services.
+     */
+    public function register(): void
     {
-        $this->app->resolving(AdapterResolver::class, function (AdapterResolver $resolver) {
-            $resolver->register('amazon', AmazonAdapter::class);
-        });
+        $this->registerConfig();
+    }
+
+    /**
+     * Register package config.
+     */
+    protected function registerConfig(): void
+    {
+        $this->mergeConfigFrom(
+            dirname(__DIR__).'/Config/menu.php',
+            'menu.admin'
+        );
+        $this->mergeConfigFrom(
+            dirname(__DIR__).'/Config/acl.php',
+            'acl'
+        );
+        $this->mergeConfigFrom(
+            dirname(__DIR__).'/Config/exporters.php',
+            'exporters'
+        );
+        $this->mergeConfigFrom(
+            dirname(__DIR__).'/Config/importers.php',
+            'importers'
+        );
+        $this->mergeConfigFrom(
+            __DIR__.'/../Config/unopim-vite.php',
+            'unopim-vite.viters'
+        );
     }
 }

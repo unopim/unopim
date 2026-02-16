@@ -6,27 +6,20 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Webkul\ChannelConnector\Adapters\AbstractChannelAdapter;
-use Webkul\ChannelConnector\Models\ProductChannelMapping;
 use Webkul\ChannelConnector\ValueObjects\ConnectionResult;
 use Webkul\ChannelConnector\ValueObjects\RateLimitConfig;
 use Webkul\ChannelConnector\ValueObjects\SyncResult;
+use Webkul\Magento2\Models\Magento2ProductMapping;
 use Webkul\Product\Models\Product;
 
 class Magento2Adapter extends AbstractChannelAdapter
 {
+    protected const API_BASE = 'https://api.magento2.dev/admin/v2';
+
     public function testConnection(array $credentials): ConnectionResult
     {
         try {
-            $storeUrl = $credentials['store_url'] ?? '';
             $accessToken = $credentials['access_token'] ?? '';
-
-            if (empty($storeUrl)) {
-                return new ConnectionResult(
-                    success: false,
-                    message: 'Store URL is required.',
-                    errors: ['Missing store URL'],
-                );
-            }
 
             if (empty($accessToken)) {
                 return new ConnectionResult(
@@ -36,11 +29,9 @@ class Magento2Adapter extends AbstractChannelAdapter
                 );
             }
 
-            $baseUrl = rtrim($storeUrl, '/').'/rest/V1';
-
             $response = Http::withToken($accessToken)
                 ->timeout(30)
-                ->get($baseUrl.'/store/storeConfigs');
+                ->get(self::API_BASE.'/products', ['per_page' => 1]);
 
             if ($response->failed()) {
                 return new ConnectionResult(
@@ -51,14 +42,13 @@ class Magento2Adapter extends AbstractChannelAdapter
             }
 
             $data = $response->json();
-            $storeName = $data[0]['base_currency_code'] ?? 'Magento 2 Store';
 
             return new ConnectionResult(
                 success: true,
                 message: 'Connection verified successfully.',
                 channelInfo: [
-                    'store_name'    => $storeName,
-                    'store_configs' => count($data),
+                    'store_name'    => $data['data'][0]['store']['name'] ?? 'Magento2 Store',
+                    'product_count' => $data['pagination']['total'] ?? 0,
                 ],
             );
         } catch (\Exception $e) {
@@ -73,33 +63,26 @@ class Magento2Adapter extends AbstractChannelAdapter
     public function syncProduct(Product $product, array $localeMappedData): SyncResult
     {
         try {
-            $storeUrl = $this->credentials['store_url'] ?? '';
+            $this->ensureValidToken();
+
             $accessToken = $this->credentials['access_token'] ?? '';
 
-            if (empty($storeUrl) || empty($accessToken)) {
-                return new SyncResult(
-                    success: false,
-                    action: 'failed',
-                    errors: ['Magento 2 API credentials (store_url, access_token) are required'],
-                );
-            }
-
-            $existingMapping = ProductChannelMapping::where('product_id', $product->id)
-                ->whereHas('connector', fn ($q) => $q->where('channel_type', 'magento2'))
+            // Use adapter-specific product mapping table
+            $existingMapping = Magento2ProductMapping::where('product_id', $product->id)
+                ->where('connector_id', $this->connectorId)
                 ->first();
 
-            $existingExternalId = $existingMapping->external_id ?? null;
-            $body = $this->buildMagentoProductBody($localeMappedData, $product);
-            $baseUrl = rtrim($storeUrl, '/').'/rest/V1';
+            $existingExternalId = $existingMapping?->external_id;
+            $body = $this->buildMagento2ProductBody($localeMappedData);
 
             if ($existingExternalId) {
                 $response = Http::withToken($accessToken)
                     ->timeout(30)
-                    ->put($baseUrl.'/products/'.$existingExternalId, $body);
+                    ->put(self::API_BASE.'/products/'.$existingExternalId, $body);
             } else {
                 $response = Http::withToken($accessToken)
                     ->timeout(30)
-                    ->post($baseUrl.'/products', $body);
+                    ->post(self::API_BASE.'/products', $body);
             }
 
             if ($response->failed()) {
@@ -109,17 +92,38 @@ class Magento2Adapter extends AbstractChannelAdapter
                     success: false,
                     externalId: $existingExternalId,
                     action: 'failed',
-                    errors: [$errorBody['message'] ?? 'HTTP '.$response->status()],
+                    errors: [$errorBody['error']['message'] ?? 'HTTP '.$response->status()],
                 );
             }
 
             $data = $response->json();
-            // Magento identifies products by SKU
-            $externalId = (string) ($data['sku'] ?? $product->sku ?? $existingExternalId ?? '');
+            $magento2ProductId = (string) ($data['data']['id'] ?? $existingExternalId ?? '');
+
+            // Update or create adapter-specific mapping
+            Magento2ProductMapping::updateOrCreate(
+                [
+                    'product_id'   => $product->id,
+                    'connector_id' => $this->connectorId,
+                ],
+                [
+                    'external_id'    => $magento2ProductId,
+                    'external_sku'   => $localeMappedData['sku'] ?? null,
+                    'variant_data'   => $localeMappedData['variants'] ?? [],
+                    'sync_status'    => 'synced',
+                    'last_synced_at' => now(),
+                    'error_message'  => null,
+                ]
+            );
+
+            Log::info('[Magento2] Product synced', [
+                'product_id'  => $product->id,
+                'external_id' => $magento2ProductId,
+                'action'      => $existingExternalId ? 'updated' : 'created',
+            ]);
 
             return new SyncResult(
                 success: true,
-                externalId: $externalId,
+                externalId: $magento2ProductId,
                 action: $existingExternalId ? 'updated' : 'created',
             );
         } catch (\Exception $e) {
@@ -127,6 +131,18 @@ class Magento2Adapter extends AbstractChannelAdapter
                 'product_id' => $product->id,
                 'error'      => $e->getMessage(),
             ]);
+
+            // Update mapping with error
+            Magento2ProductMapping::updateOrCreate(
+                [
+                    'product_id'   => $product->id,
+                    'connector_id' => $this->connectorId,
+                ],
+                [
+                    'sync_status'   => 'failed',
+                    'error_message' => $e->getMessage(),
+                ]
+            );
 
             return new SyncResult(
                 success: false,
@@ -139,26 +155,26 @@ class Magento2Adapter extends AbstractChannelAdapter
     public function fetchProduct(string $externalId, ?string $locale = null): ?array
     {
         try {
-            $storeUrl = $this->credentials['store_url'] ?? '';
-            $accessToken = $this->credentials['access_token'] ?? '';
+            $this->ensureValidToken();
 
-            if (empty($storeUrl) || empty($accessToken)) {
-                return null;
-            }
-
-            $baseUrl = rtrim($storeUrl, '/').'/rest/V1';
-
-            $response = Http::withToken($accessToken)
+            $response = Http::withToken($this->credentials['access_token'] ?? '')
                 ->timeout(30)
-                ->get($baseUrl.'/products/'.$externalId);
+                ->get(self::API_BASE.'/products/'.$externalId);
 
             if ($response->failed()) {
                 return null;
             }
 
             $data = $response->json();
+            $product = $data['data'] ?? null;
 
-            return $this->normalizeM2Product($data);
+            if (! $product) {
+                return null;
+            }
+
+            Log::info('[Magento2] Product fetched', ['external_id' => $externalId]);
+
+            return $this->normalizeMagento2Product($product);
         } catch (\Exception $e) {
             Log::warning('[Magento2] fetchProduct failed', [
                 'external_id' => $externalId,
@@ -172,18 +188,15 @@ class Magento2Adapter extends AbstractChannelAdapter
     public function deleteProduct(string $externalId): bool
     {
         try {
-            $storeUrl = $this->credentials['store_url'] ?? '';
-            $accessToken = $this->credentials['access_token'] ?? '';
+            $this->ensureValidToken();
 
-            if (empty($storeUrl) || empty($accessToken)) {
-                return false;
-            }
-
-            $baseUrl = rtrim($storeUrl, '/').'/rest/V1';
-
-            $response = Http::withToken($accessToken)
+            $response = Http::withToken($this->credentials['access_token'] ?? '')
                 ->timeout(30)
-                ->delete($baseUrl.'/products/'.$externalId);
+                ->delete(self::API_BASE.'/products/'.$externalId);
+
+            if ($response->successful()) {
+                Log::info('[Magento2] Product deleted', ['external_id' => $externalId]);
+            }
 
             return $response->successful();
         } catch (\Exception $e) {
@@ -202,126 +215,197 @@ class Magento2Adapter extends AbstractChannelAdapter
             ['code' => 'name', 'label' => 'Name', 'type' => 'string', 'required' => true, 'is_translatable' => true],
             ['code' => 'description', 'label' => 'Description', 'type' => 'text', 'required' => false, 'is_translatable' => true],
             ['code' => 'price', 'label' => 'Price', 'type' => 'price', 'required' => true, 'is_translatable' => false],
-            ['code' => 'sku', 'label' => 'SKU', 'type' => 'string', 'required' => true, 'is_translatable' => false],
-            ['code' => 'status', 'label' => 'Status', 'type' => 'number', 'required' => false, 'is_translatable' => false],
-            ['code' => 'visibility', 'label' => 'Visibility', 'type' => 'number', 'required' => false, 'is_translatable' => false],
+            ['code' => 'sale_price', 'label' => 'Sale Price', 'type' => 'price', 'required' => false, 'is_translatable' => false],
+            ['code' => 'sku', 'label' => 'SKU', 'type' => 'string', 'required' => false, 'is_translatable' => false],
+            ['code' => 'quantity', 'label' => 'Quantity', 'type' => 'number', 'required' => false, 'is_translatable' => false],
             ['code' => 'weight', 'label' => 'Weight', 'type' => 'number', 'required' => false, 'is_translatable' => false],
-            ['code' => 'type_id', 'label' => 'Product Type', 'type' => 'string', 'required' => false, 'is_translatable' => false],
+            ['code' => 'status', 'label' => 'Status', 'type' => 'select', 'required' => false, 'is_translatable' => false],
+            ['code' => 'images', 'label' => 'Images', 'type' => 'media', 'required' => false, 'is_translatable' => false],
         ];
     }
 
     public function getSupportedLocales(): array
     {
-        return ['en_US', 'fr_FR', 'de_DE', 'es_ES', 'ar_SA'];
+        return ['ar', 'en'];
     }
 
     public function getSupportedCurrencies(): array
     {
-        return ['USD', 'EUR', 'GBP', 'SAR'];
+        return ['SAR', 'USD', 'EUR', 'KWD', 'BHD', 'AED'];
     }
 
     public function registerWebhooks(array $events, string $callbackUrl): bool
     {
-        // Magento 2 does not natively support webhook registration via REST API.
-        // Webhooks are typically configured via Admin Panel or custom modules.
-        return true;
+        try {
+            $this->ensureValidToken();
+
+            $accessToken = $this->credentials['access_token'] ?? '';
+            $allSuccess = true;
+
+            foreach ($events as $event) {
+                $response = Http::withToken($accessToken)
+                    ->timeout(30)
+                    ->post(self::API_BASE.'/webhooks', [
+                        'event' => $event,
+                        'url'   => $callbackUrl,
+                    ]);
+
+                if ($response->failed()) {
+                    Log::warning('[Magento2] Webhook registration failed', [
+                        'event'  => $event,
+                        'status' => $response->status(),
+                    ]);
+                    $allSuccess = false;
+                }
+            }
+
+            return $allSuccess;
+        } catch (\Exception $e) {
+            Log::error('[Magento2] registerWebhooks failed', ['error' => $e->getMessage()]);
+
+            return false;
+        }
     }
 
     public function verifyWebhook(Request $request): bool
     {
-        // Magento 2 does not have a native webhook signature mechanism.
-        // Verify using a shared secret token in the request header.
-        $token = $request->header('X-Magento-Webhook-Token');
+        $signature = $request->header('X-Magento2-Signature');
+        $payload = $request->getContent();
         $secret = $this->credentials['webhook_secret'] ?? '';
 
-        if (empty($token) || empty($secret)) {
+        if (empty($signature) || empty($secret)) {
             return false;
         }
 
-        return hash_equals($secret, $token);
+        $calculated = hash_hmac('sha256', $payload, $secret);
+
+        return hash_equals($calculated, $signature);
     }
 
     public function refreshCredentials(): ?array
     {
+        $refreshToken = $this->credentials['refresh_token'] ?? '';
+
+        if (empty($refreshToken)) {
+            return null;
+        }
+
+        try {
+            $response = Http::asForm()->post('https://accounts.magento2.sa/oauth2/token', [
+                'grant_type'    => 'refresh_token',
+                'refresh_token' => $refreshToken,
+                'client_id'     => $this->credentials['client_id'] ?? '',
+                'client_secret' => $this->credentials['client_secret'] ?? '',
+            ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+
+                return [
+                    'access_token'  => $data['access_token'],
+                    'refresh_token' => $data['refresh_token'] ?? $refreshToken,
+                    'expires_at'    => now()->addSeconds($data['expires_in'] ?? 3600)->toIso8601String(),
+                ];
+            }
+        } catch (\Exception $e) {
+            Log::warning('[Magento2] Token refresh failed', [
+                'error'     => $e->getMessage(),
+                'client_id' => $this->credentials['client_id'] ?? 'unknown',
+            ]);
+        }
+
         return null;
     }
 
     public function getRateLimitConfig(): RateLimitConfig
     {
-        return new RateLimitConfig(requestsPerSecond: 4);
+        return new RateLimitConfig(
+            requestsPerSecond: 10,
+        );
     }
 
-    protected function buildMagentoProductBody(array $localeMappedData, Product $product): array
+    protected function ensureValidToken(): void
+    {
+        $expiresAt = $this->credentials['expires_at'] ?? null;
+
+        if ($expiresAt && now()->greaterThan($expiresAt)) {
+            $refreshed = $this->refreshCredentials();
+
+            if ($refreshed) {
+                $this->credentials = array_merge($this->credentials, $refreshed);
+            }
+        }
+    }
+
+    protected function buildMagento2ProductBody(array $localeMappedData): array
     {
         $common = $localeMappedData['common'] ?? [];
         $locales = $localeMappedData['locales'] ?? [];
 
-        $magentoProduct = [];
+        $body = [];
 
-        // Name: prefer en_US locale, fallback to common
-        $name = $locales['en_US']['name'] ?? $locales['en']['name'] ?? $common['name'] ?? null;
+        // Find first matching locale by prefix (supports ar_AE, en_US, etc.)
+        $arData = collect($locales)->first(fn ($v, $k) => str_starts_with($k, 'ar')) ?? [];
+        $enData = collect($locales)->first(fn ($v, $k) => str_starts_with($k, 'en')) ?? [];
+
+        // Name: prefer Arabic locale, fallback to common, fallback to English
+        $name = $arData['name'] ?? $common['name'] ?? $enData['name'] ?? null;
         if ($name !== null) {
-            $magentoProduct['name'] = $name;
+            $body['name'] = $name;
         }
 
-        // SKU
-        $sku = $common['sku'] ?? $product->sku ?? null;
-        if ($sku !== null) {
-            $magentoProduct['sku'] = $sku;
+        // Description
+        $description = $arData['description'] ?? $common['description'] ?? $enData['description'] ?? null;
+        if ($description !== null) {
+            $body['description'] = $description;
         }
 
         // Price
         if (isset($common['price'])) {
-            $magentoProduct['price'] = (float) $common['price'];
+            $body['price'] = [
+                'amount'   => (float) $common['price'],
+                'currency' => $this->credentials['currency'] ?? 'SAR',
+            ];
         }
 
-        // Weight
+        // Sale price
+        if (isset($common['sale_price'])) {
+            $body['sale_price'] = [
+                'amount'   => (float) $common['sale_price'],
+                'currency' => $this->credentials['currency'] ?? 'SAR',
+            ];
+        }
+
+        // Simple fields
+        if (isset($common['sku'])) {
+            $body['sku'] = $common['sku'];
+        }
+
+        if (isset($common['quantity'])) {
+            $body['quantity'] = (int) $common['quantity'];
+        }
+
         if (isset($common['weight'])) {
-            $magentoProduct['weight'] = (float) $common['weight'];
+            $body['weight'] = (float) $common['weight'];
         }
 
-        // Status mapping: active->1, draft->2, archived->2
+        // Status mapping
         if (isset($common['status'])) {
             $statusMap = [
-                'active'   => 1,
-                'draft'    => 2,
-                'archived' => 2,
+                'active'   => 'sale',
+                'draft'    => 'hidden',
+                'archived' => 'out',
+                'sale'     => 'sale',
+                'hidden'   => 'hidden',
+                'out'      => 'out',
             ];
-            $magentoProduct['status'] = $statusMap[$common['status']] ?? 2;
+            $body['status'] = $statusMap[$common['status']] ?? 'hidden';
         }
 
-        // Visibility
-        if (isset($common['visibility'])) {
-            $magentoProduct['visibility'] = (int) $common['visibility'];
-        } else {
-            $magentoProduct['visibility'] = 4; // Default: catalog and search
-        }
-
-        // Type ID
-        $magentoProduct['type_id'] = $common['type_id'] ?? 'simple';
-
-        // Attribute set ID (default)
-        $magentoProduct['attribute_set_id'] = (int) ($common['attribute_set_id'] ?? 4);
-
-        // Custom attributes (description goes here)
-        $customAttributes = [];
-
-        $description = $locales['en_US']['description'] ?? $locales['en']['description'] ?? $common['description'] ?? null;
-        if ($description !== null) {
-            $customAttributes[] = [
-                'attribute_code' => 'description',
-                'value'          => $description,
-            ];
-        }
-
-        if (! empty($customAttributes)) {
-            $magentoProduct['custom_attributes'] = $customAttributes;
-        }
-
-        return ['product' => $magentoProduct];
+        return $body;
     }
 
-    protected function normalizeM2Product(array $product): array
+    protected function normalizeMagento2Product(array $product): array
     {
         $common = [];
 
@@ -329,44 +413,32 @@ class Magento2Adapter extends AbstractChannelAdapter
             $common['name'] = $product['name'];
         }
 
+        if (isset($product['description'])) {
+            $common['description'] = $product['description'];
+        }
+
+        if (isset($product['price']['amount'])) {
+            $common['price'] = $product['price']['amount'];
+        }
+
+        if (isset($product['sale_price']['amount'])) {
+            $common['sale_price'] = $product['sale_price']['amount'];
+        }
+
         if (isset($product['sku'])) {
             $common['sku'] = $product['sku'];
         }
 
-        if (isset($product['price'])) {
-            $common['price'] = $product['price'];
+        if (isset($product['quantity'])) {
+            $common['quantity'] = $product['quantity'];
         }
 
         if (isset($product['weight'])) {
             $common['weight'] = $product['weight'];
         }
 
-        // Status mapping: 1->active, 2->draft
         if (isset($product['status'])) {
-            $statusMap = [
-                1 => 'active',
-                2 => 'draft',
-            ];
-            $common['status'] = $statusMap[$product['status']] ?? 'draft';
-        }
-
-        if (isset($product['visibility'])) {
-            $common['visibility'] = $product['visibility'];
-        }
-
-        if (isset($product['type_id'])) {
-            $common['type_id'] = $product['type_id'];
-        }
-
-        // Extract description from custom_attributes
-        if (isset($product['custom_attributes']) && is_array($product['custom_attributes'])) {
-            foreach ($product['custom_attributes'] as $attribute) {
-                if (($attribute['attribute_code'] ?? '') === 'description') {
-                    $common['description'] = $attribute['value'] ?? '';
-
-                    break;
-                }
-            }
+            $common['status'] = $product['status'];
         }
 
         return [

@@ -15,7 +15,7 @@ it('resolves all registered adapter types from the container', function () {
     // All three adapters should be registered via ModuleServiceProviders
     expect($types)->toContain('shopify');
     expect($types)->toContain('salla');
-    expect($types)->toContain('easy_orders');
+    expect($types)->toContain('easyorders');
 });
 
 it('resolves a Shopify adapter with credentials set', function () {

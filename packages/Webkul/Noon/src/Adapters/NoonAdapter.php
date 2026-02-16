@@ -6,35 +6,32 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Webkul\ChannelConnector\Adapters\AbstractChannelAdapter;
-use Webkul\ChannelConnector\Models\ProductChannelMapping;
 use Webkul\ChannelConnector\ValueObjects\ConnectionResult;
 use Webkul\ChannelConnector\ValueObjects\RateLimitConfig;
 use Webkul\ChannelConnector\ValueObjects\SyncResult;
+use Webkul\Noon\Models\NoonProductMapping;
 use Webkul\Product\Models\Product;
 
 class NoonAdapter extends AbstractChannelAdapter
 {
+    protected const API_BASE = 'https://api.noon.dev/admin/v2';
+
     public function testConnection(array $credentials): ConnectionResult
     {
         try {
-            $apiKey = $credentials['api_key'] ?? '';
-            $apiSecret = $credentials['api_secret'] ?? '';
-            $apiBase = $credentials['api_base'] ?? 'https://api.noon.partners/v1';
+            $accessToken = $credentials['access_token'] ?? '';
 
-            if (empty($apiKey) || empty($apiSecret)) {
+            if (empty($accessToken)) {
                 return new ConnectionResult(
                     success: false,
-                    message: 'API key and API secret are required.',
-                    errors: ['Missing api_key or api_secret'],
+                    message: 'Access token is required.',
+                    errors: ['Missing access token'],
                 );
             }
 
-            $response = Http::withHeaders([
-                'X-Api-Key'    => $apiKey,
-                'X-Api-Secret' => $apiSecret,
-            ])
+            $response = Http::withToken($accessToken)
                 ->timeout(30)
-                ->get(rtrim($apiBase, '/').'/products', ['limit' => 1]);
+                ->get(self::API_BASE.'/products', ['per_page' => 1]);
 
             if ($response->failed()) {
                 return new ConnectionResult(
@@ -50,8 +47,8 @@ class NoonAdapter extends AbstractChannelAdapter
                 success: true,
                 message: 'Connection verified successfully.',
                 channelInfo: [
-                    'store_name'    => $data['store_name'] ?? 'Noon Store',
-                    'product_count' => $data['total'] ?? 0,
+                    'store_name'    => $data['data'][0]['store']['name'] ?? 'Noon Store',
+                    'product_count' => $data['pagination']['total'] ?? 0,
                 ],
             );
         } catch (\Exception $e) {
@@ -66,40 +63,26 @@ class NoonAdapter extends AbstractChannelAdapter
     public function syncProduct(Product $product, array $localeMappedData): SyncResult
     {
         try {
-            $apiKey = $this->credentials['api_key'] ?? '';
-            $apiSecret = $this->credentials['api_secret'] ?? '';
-            $apiBase = $this->credentials['api_base'] ?? 'https://api.noon.partners/v1';
+            $this->ensureValidToken();
 
-            if (empty($apiKey) || empty($apiSecret)) {
-                return new SyncResult(
-                    success: false,
-                    action: 'failed',
-                    errors: ['Noon API credentials (api_key, api_secret) are required'],
-                );
-            }
+            $accessToken = $this->credentials['access_token'] ?? '';
 
-            $existingMapping = ProductChannelMapping::where('product_id', $product->id)
-                ->whereHas('connector', fn ($q) => $q->where('channel_type', 'noon'))
+            // Use adapter-specific product mapping table
+            $existingMapping = NoonProductMapping::where('product_id', $product->id)
+                ->where('connector_id', $this->connectorId)
                 ->first();
 
-            $existingExternalId = $existingMapping->external_id ?? null;
-            $body = $this->buildNoonBody($localeMappedData);
-            $baseUrl = rtrim($apiBase, '/');
+            $existingExternalId = $existingMapping?->external_id;
+            $body = $this->buildNoonProductBody($localeMappedData);
 
             if ($existingExternalId) {
-                $response = Http::withHeaders([
-                    'X-Api-Key'    => $apiKey,
-                    'X-Api-Secret' => $apiSecret,
-                ])
+                $response = Http::withToken($accessToken)
                     ->timeout(30)
-                    ->put($baseUrl.'/products/'.$existingExternalId, $body);
+                    ->put(self::API_BASE.'/products/'.$existingExternalId, $body);
             } else {
-                $response = Http::withHeaders([
-                    'X-Api-Key'    => $apiKey,
-                    'X-Api-Secret' => $apiSecret,
-                ])
+                $response = Http::withToken($accessToken)
                     ->timeout(30)
-                    ->post($baseUrl.'/products', $body);
+                    ->post(self::API_BASE.'/products', $body);
             }
 
             if ($response->failed()) {
@@ -109,16 +92,38 @@ class NoonAdapter extends AbstractChannelAdapter
                     success: false,
                     externalId: $existingExternalId,
                     action: 'failed',
-                    errors: [$errorBody['message'] ?? 'HTTP '.$response->status()],
+                    errors: [$errorBody['error']['message'] ?? 'HTTP '.$response->status()],
                 );
             }
 
             $data = $response->json();
-            $externalId = (string) ($data['data']['id'] ?? $data['id'] ?? $existingExternalId ?? '');
+            $noonProductId = (string) ($data['data']['id'] ?? $existingExternalId ?? '');
+
+            // Update or create adapter-specific mapping
+            NoonProductMapping::updateOrCreate(
+                [
+                    'product_id'   => $product->id,
+                    'connector_id' => $this->connectorId,
+                ],
+                [
+                    'external_id'    => $noonProductId,
+                    'external_sku'   => $localeMappedData['sku'] ?? null,
+                    'variant_data'   => $localeMappedData['variants'] ?? [],
+                    'sync_status'    => 'synced',
+                    'last_synced_at' => now(),
+                    'error_message'  => null,
+                ]
+            );
+
+            Log::info('[Noon] Product synced', [
+                'product_id'  => $product->id,
+                'external_id' => $noonProductId,
+                'action'      => $existingExternalId ? 'updated' : 'created',
+            ]);
 
             return new SyncResult(
                 success: true,
-                externalId: $externalId,
+                externalId: $noonProductId,
                 action: $existingExternalId ? 'updated' : 'created',
             );
         } catch (\Exception $e) {
@@ -126,6 +131,18 @@ class NoonAdapter extends AbstractChannelAdapter
                 'product_id' => $product->id,
                 'error'      => $e->getMessage(),
             ]);
+
+            // Update mapping with error
+            NoonProductMapping::updateOrCreate(
+                [
+                    'product_id'   => $product->id,
+                    'connector_id' => $this->connectorId,
+                ],
+                [
+                    'sync_status'   => 'failed',
+                    'error_message' => $e->getMessage(),
+                ]
+            );
 
             return new SyncResult(
                 success: false,
@@ -138,27 +155,24 @@ class NoonAdapter extends AbstractChannelAdapter
     public function fetchProduct(string $externalId, ?string $locale = null): ?array
     {
         try {
-            $apiKey = $this->credentials['api_key'] ?? '';
-            $apiSecret = $this->credentials['api_secret'] ?? '';
-            $apiBase = $this->credentials['api_base'] ?? 'https://api.noon.partners/v1';
+            $this->ensureValidToken();
 
-            if (empty($apiKey) || empty($apiSecret)) {
-                return null;
-            }
-
-            $response = Http::withHeaders([
-                'X-Api-Key'    => $apiKey,
-                'X-Api-Secret' => $apiSecret,
-            ])
+            $response = Http::withToken($this->credentials['access_token'] ?? '')
                 ->timeout(30)
-                ->get(rtrim($apiBase, '/').'/products/'.$externalId);
+                ->get(self::API_BASE.'/products/'.$externalId);
 
             if ($response->failed()) {
                 return null;
             }
 
             $data = $response->json();
-            $product = $data['data'] ?? $data;
+            $product = $data['data'] ?? null;
+
+            if (! $product) {
+                return null;
+            }
+
+            Log::info('[Noon] Product fetched', ['external_id' => $externalId]);
 
             return $this->normalizeNoonProduct($product);
         } catch (\Exception $e) {
@@ -174,20 +188,15 @@ class NoonAdapter extends AbstractChannelAdapter
     public function deleteProduct(string $externalId): bool
     {
         try {
-            $apiKey = $this->credentials['api_key'] ?? '';
-            $apiSecret = $this->credentials['api_secret'] ?? '';
-            $apiBase = $this->credentials['api_base'] ?? 'https://api.noon.partners/v1';
+            $this->ensureValidToken();
 
-            if (empty($apiKey) || empty($apiSecret)) {
-                return false;
-            }
-
-            $response = Http::withHeaders([
-                'X-Api-Key'    => $apiKey,
-                'X-Api-Secret' => $apiSecret,
-            ])
+            $response = Http::withToken($this->credentials['access_token'] ?? '')
                 ->timeout(30)
-                ->delete(rtrim($apiBase, '/').'/products/'.$externalId);
+                ->delete(self::API_BASE.'/products/'.$externalId);
+
+            if ($response->successful()) {
+                Log::info('[Noon] Product deleted', ['external_id' => $externalId]);
+            }
 
             return $response->successful();
         } catch (\Exception $e) {
@@ -206,10 +215,12 @@ class NoonAdapter extends AbstractChannelAdapter
             ['code' => 'name', 'label' => 'Name', 'type' => 'string', 'required' => true, 'is_translatable' => true],
             ['code' => 'description', 'label' => 'Description', 'type' => 'text', 'required' => false, 'is_translatable' => true],
             ['code' => 'price', 'label' => 'Price', 'type' => 'price', 'required' => true, 'is_translatable' => false],
-            ['code' => 'partner_sku', 'label' => 'Partner SKU', 'type' => 'string', 'required' => true, 'is_translatable' => false],
-            ['code' => 'barcode', 'label' => 'Barcode', 'type' => 'string', 'required' => false, 'is_translatable' => false],
-            ['code' => 'brand', 'label' => 'Brand', 'type' => 'string', 'required' => false, 'is_translatable' => false],
-            ['code' => 'category_path', 'label' => 'Category Path', 'type' => 'string', 'required' => false, 'is_translatable' => false],
+            ['code' => 'sale_price', 'label' => 'Sale Price', 'type' => 'price', 'required' => false, 'is_translatable' => false],
+            ['code' => 'sku', 'label' => 'SKU', 'type' => 'string', 'required' => false, 'is_translatable' => false],
+            ['code' => 'quantity', 'label' => 'Quantity', 'type' => 'number', 'required' => false, 'is_translatable' => false],
+            ['code' => 'weight', 'label' => 'Weight', 'type' => 'number', 'required' => false, 'is_translatable' => false],
+            ['code' => 'status', 'label' => 'Status', 'type' => 'select', 'required' => false, 'is_translatable' => false],
+            ['code' => 'images', 'label' => 'Images', 'type' => 'media', 'required' => false, 'is_translatable' => false],
         ];
     }
 
@@ -220,30 +231,21 @@ class NoonAdapter extends AbstractChannelAdapter
 
     public function getSupportedCurrencies(): array
     {
-        return ['AED', 'SAR', 'EGP'];
+        return ['SAR', 'USD', 'EUR', 'KWD', 'BHD', 'AED'];
     }
 
     public function registerWebhooks(array $events, string $callbackUrl): bool
     {
         try {
-            $apiKey = $this->credentials['api_key'] ?? '';
-            $apiSecret = $this->credentials['api_secret'] ?? '';
-            $apiBase = $this->credentials['api_base'] ?? 'https://api.noon.partners/v1';
+            $this->ensureValidToken();
 
-            if (empty($apiKey) || empty($apiSecret)) {
-                return false;
-            }
-
+            $accessToken = $this->credentials['access_token'] ?? '';
             $allSuccess = true;
-            $baseUrl = rtrim($apiBase, '/');
 
             foreach ($events as $event) {
-                $response = Http::withHeaders([
-                    'X-Api-Key'    => $apiKey,
-                    'X-Api-Secret' => $apiSecret,
-                ])
+                $response = Http::withToken($accessToken)
                     ->timeout(30)
-                    ->post($baseUrl.'/webhooks', [
+                    ->post(self::API_BASE.'/webhooks', [
                         'event' => $event,
                         'url'   => $callbackUrl,
                     ]);
@@ -269,7 +271,7 @@ class NoonAdapter extends AbstractChannelAdapter
     {
         $signature = $request->header('X-Noon-Signature');
         $payload = $request->getContent();
-        $secret = $this->credentials['api_secret'] ?? '';
+        $secret = $this->credentials['webhook_secret'] ?? '';
 
         if (empty($signature) || empty($secret)) {
             return false;
@@ -282,51 +284,122 @@ class NoonAdapter extends AbstractChannelAdapter
 
     public function refreshCredentials(): ?array
     {
+        $refreshToken = $this->credentials['refresh_token'] ?? '';
+
+        if (empty($refreshToken)) {
+            return null;
+        }
+
+        try {
+            $response = Http::asForm()->post('https://accounts.noon.sa/oauth2/token', [
+                'grant_type'    => 'refresh_token',
+                'refresh_token' => $refreshToken,
+                'client_id'     => $this->credentials['client_id'] ?? '',
+                'client_secret' => $this->credentials['client_secret'] ?? '',
+            ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+
+                return [
+                    'access_token'  => $data['access_token'],
+                    'refresh_token' => $data['refresh_token'] ?? $refreshToken,
+                    'expires_at'    => now()->addSeconds($data['expires_in'] ?? 3600)->toIso8601String(),
+                ];
+            }
+        } catch (\Exception $e) {
+            Log::warning('[Noon] Token refresh failed', [
+                'error'     => $e->getMessage(),
+                'client_id' => $this->credentials['client_id'] ?? 'unknown',
+            ]);
+        }
+
         return null;
     }
 
     public function getRateLimitConfig(): RateLimitConfig
     {
-        return new RateLimitConfig(requestsPerSecond: 2);
+        return new RateLimitConfig(
+            requestsPerSecond: 10,
+        );
     }
 
-    protected function buildNoonBody(array $localeMappedData): array
+    protected function ensureValidToken(): void
+    {
+        $expiresAt = $this->credentials['expires_at'] ?? null;
+
+        if ($expiresAt && now()->greaterThan($expiresAt)) {
+            $refreshed = $this->refreshCredentials();
+
+            if ($refreshed) {
+                $this->credentials = array_merge($this->credentials, $refreshed);
+            }
+        }
+    }
+
+    protected function buildNoonProductBody(array $localeMappedData): array
     {
         $common = $localeMappedData['common'] ?? [];
         $locales = $localeMappedData['locales'] ?? [];
 
         $body = [];
 
-        // Name: prefer Arabic, fallback to common, fallback to English
-        $name = $locales['ar']['name'] ?? $common['name'] ?? $locales['en']['name'] ?? null;
+        // Find first matching locale by prefix (supports ar_AE, en_US, etc.)
+        $arData = collect($locales)->first(fn ($v, $k) => str_starts_with($k, 'ar')) ?? [];
+        $enData = collect($locales)->first(fn ($v, $k) => str_starts_with($k, 'en')) ?? [];
+
+        // Name: prefer Arabic locale, fallback to common, fallback to English
+        $name = $arData['name'] ?? $common['name'] ?? $enData['name'] ?? null;
         if ($name !== null) {
             $body['name'] = $name;
         }
 
-        // Description: prefer Arabic, fallback to common, fallback to English
-        $description = $locales['ar']['description'] ?? $common['description'] ?? $locales['en']['description'] ?? null;
+        // Description
+        $description = $arData['description'] ?? $common['description'] ?? $enData['description'] ?? null;
         if ($description !== null) {
             $body['description'] = $description;
         }
 
+        // Price
         if (isset($common['price'])) {
-            $body['price'] = (float) $common['price'];
+            $body['price'] = [
+                'amount'   => (float) $common['price'],
+                'currency' => $this->credentials['currency'] ?? 'SAR',
+            ];
         }
 
-        if (isset($common['partner_sku'])) {
-            $body['partner_sku'] = $common['partner_sku'];
+        // Sale price
+        if (isset($common['sale_price'])) {
+            $body['sale_price'] = [
+                'amount'   => (float) $common['sale_price'],
+                'currency' => $this->credentials['currency'] ?? 'SAR',
+            ];
         }
 
-        if (isset($common['barcode'])) {
-            $body['barcode'] = $common['barcode'];
+        // Simple fields
+        if (isset($common['sku'])) {
+            $body['sku'] = $common['sku'];
         }
 
-        if (isset($common['brand'])) {
-            $body['brand'] = $common['brand'];
+        if (isset($common['quantity'])) {
+            $body['quantity'] = (int) $common['quantity'];
         }
 
-        if (isset($common['category_path'])) {
-            $body['category_path'] = $common['category_path'];
+        if (isset($common['weight'])) {
+            $body['weight'] = (float) $common['weight'];
+        }
+
+        // Status mapping
+        if (isset($common['status'])) {
+            $statusMap = [
+                'active'   => 'sale',
+                'draft'    => 'hidden',
+                'archived' => 'out',
+                'sale'     => 'sale',
+                'hidden'   => 'hidden',
+                'out'      => 'out',
+            ];
+            $body['status'] = $statusMap[$common['status']] ?? 'hidden';
         }
 
         return $body;
@@ -344,24 +417,28 @@ class NoonAdapter extends AbstractChannelAdapter
             $common['description'] = $product['description'];
         }
 
-        if (isset($product['price'])) {
-            $common['price'] = $product['price'];
+        if (isset($product['price']['amount'])) {
+            $common['price'] = $product['price']['amount'];
         }
 
-        if (isset($product['partner_sku'])) {
-            $common['partner_sku'] = $product['partner_sku'];
+        if (isset($product['sale_price']['amount'])) {
+            $common['sale_price'] = $product['sale_price']['amount'];
         }
 
-        if (isset($product['barcode'])) {
-            $common['barcode'] = $product['barcode'];
+        if (isset($product['sku'])) {
+            $common['sku'] = $product['sku'];
         }
 
-        if (isset($product['brand'])) {
-            $common['brand'] = $product['brand'];
+        if (isset($product['quantity'])) {
+            $common['quantity'] = $product['quantity'];
         }
 
-        if (isset($product['category_path'])) {
-            $common['category_path'] = $product['category_path'];
+        if (isset($product['weight'])) {
+            $common['weight'] = $product['weight'];
+        }
+
+        if (isset($product['status'])) {
+            $common['status'] = $product['status'];
         }
 
         return [

@@ -58,21 +58,25 @@
                             @lang('channel_connector::app.connectors.fields.status')
                         </x-admin::form.control-group.label>
 
+                        @php
+                            $statusOptions = [
+                                ['id' => 'connected',    'label' => trans('channel_connector::app.connectors.status.connected')],
+                                ['id' => 'disconnected', 'label' => trans('channel_connector::app.connectors.status.disconnected')],
+                                ['id' => 'error',        'label' => trans('channel_connector::app.connectors.status.error')],
+                            ];
+
+                            $statusOptionsJson = json_encode($statusOptions);
+                        @endphp
+
                         <x-admin::form.control-group.control
                             type="select"
                             name="status"
                             :value="old('status', $connector->status)"
-                        >
-                            <option value="connected" {{ $connector->status === 'connected' ? 'selected' : '' }}>
-                                @lang('channel_connector::app.connectors.status.connected')
-                            </option>
-                            <option value="disconnected" {{ $connector->status === 'disconnected' ? 'selected' : '' }}>
-                                @lang('channel_connector::app.connectors.status.disconnected')
-                            </option>
-                            <option value="error" {{ $connector->status === 'error' ? 'selected' : '' }}>
-                                @lang('channel_connector::app.connectors.status.error')
-                            </option>
-                        </x-admin::form.control-group.control>
+                            :label="trans('channel_connector::app.connectors.fields.status')"
+                            :options="$statusOptionsJson"
+                            track-by="id"
+                            label-by="label"
+                        />
                     </x-admin::form.control-group>
 
                     <div class="mb-4 flex items-center gap-2">
@@ -97,22 +101,25 @@
                             $currentConflictStrategy = $connector->settings['conflict_strategy'] ?? 'always_ask';
                         @endphp
 
+                        @php
+                            $conflictStrategies = [
+                                ['id' => 'always_ask',          'label' => trans('channel_connector::app.connectors.conflict-strategies.always_ask')],
+                                ['id' => 'pim_always_wins',     'label' => trans('channel_connector::app.connectors.conflict-strategies.pim_always_wins')],
+                                ['id' => 'channel_always_wins', 'label' => trans('channel_connector::app.connectors.conflict-strategies.channel_always_wins')],
+                            ];
+
+                            $conflictStrategiesJson = json_encode($conflictStrategies);
+                        @endphp
+
                         <x-admin::form.control-group.control
                             type="select"
                             name="settings[conflict_strategy]"
                             :value="old('settings.conflict_strategy', $currentConflictStrategy)"
                             :label="trans('channel_connector::app.connectors.fields.conflict-strategy')"
-                        >
-                            <option value="always_ask" {{ $currentConflictStrategy === 'always_ask' ? 'selected' : '' }}>
-                                @lang('channel_connector::app.connectors.conflict-strategies.always_ask')
-                            </option>
-                            <option value="pim_always_wins" {{ $currentConflictStrategy === 'pim_always_wins' ? 'selected' : '' }}>
-                                @lang('channel_connector::app.connectors.conflict-strategies.pim_always_wins')
-                            </option>
-                            <option value="channel_always_wins" {{ $currentConflictStrategy === 'channel_always_wins' ? 'selected' : '' }}>
-                                @lang('channel_connector::app.connectors.conflict-strategies.channel_always_wins')
-                            </option>
-                        </x-admin::form.control-group.control>
+                            :options="$conflictStrategiesJson"
+                            track-by="id"
+                            label-by="label"
+                        />
 
                         <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
                             @lang('channel_connector::app.connectors.conflict-strategy-help')
@@ -125,21 +132,83 @@
                         @lang('channel_connector::app.connectors.fields.credentials')
                     </p>
 
-                    <x-admin::form.control-group>
-                        <x-admin::form.control-group.label>
-                            @lang('channel_connector::app.connectors.fields.access-token')
-                        </x-admin::form.control-group.label>
+                    @if ($connector->channel_type === 'shopify')
+                        <x-admin::form.control-group>
+                            <x-admin::form.control-group.label>
+                                @lang('channel_connector::app.connectors.fields.shop-url')
+                            </x-admin::form.control-group.label>
 
-                        <x-admin::form.control-group.control
-                            type="password"
-                            name="credentials[access_token]"
-                            placeholder="••••••••"
-                        />
+                            <x-admin::form.control-group.control
+                                type="text"
+                                name="credentials[shop_url]"
+                                placeholder="my-store.myshopify.com"
+                            />
+                        </x-admin::form.control-group>
 
-                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                            @lang('channel_connector::app.connectors.fields.access-token-help')
-                        </p>
-                    </x-admin::form.control-group>
+                        <x-admin::form.control-group>
+                            <x-admin::form.control-group.label>
+                                @lang('channel_connector::app.connectors.fields.access-token')
+                            </x-admin::form.control-group.label>
+
+                            <x-admin::form.control-group.control
+                                type="password"
+                                name="credentials[access_token]"
+                                placeholder="••••••••"
+                            />
+                        </x-admin::form.control-group>
+                    @else
+                        <x-admin::form.control-group>
+                            <x-admin::form.control-group.label>
+                                @lang('channel_connector::app.connectors.fields.access-token')
+                            </x-admin::form.control-group.label>
+
+                            <x-admin::form.control-group.control
+                                type="password"
+                                name="credentials[access_token]"
+                                placeholder="••••••••"
+                            />
+                        </x-admin::form.control-group>
+
+                        <x-admin::form.control-group>
+                            <x-admin::form.control-group.label>
+                                @lang('channel_connector::app.connectors.fields.client-id')
+                            </x-admin::form.control-group.label>
+
+                            <x-admin::form.control-group.control
+                                type="text"
+                                name="credentials[client_id]"
+                                placeholder="••••••••"
+                            />
+                        </x-admin::form.control-group>
+
+                        <x-admin::form.control-group>
+                            <x-admin::form.control-group.label>
+                                @lang('channel_connector::app.connectors.fields.client-secret')
+                            </x-admin::form.control-group.label>
+
+                            <x-admin::form.control-group.control
+                                type="password"
+                                name="credentials[client_secret]"
+                                placeholder="••••••••"
+                            />
+                        </x-admin::form.control-group>
+
+                        <x-admin::form.control-group>
+                            <x-admin::form.control-group.label>
+                                @lang('channel_connector::app.connectors.fields.refresh-token')
+                            </x-admin::form.control-group.label>
+
+                            <x-admin::form.control-group.control
+                                type="password"
+                                name="credentials[refresh_token]"
+                                placeholder="••••••••"
+                            />
+                        </x-admin::form.control-group>
+                    @endif
+
+                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                        @lang('channel_connector::app.connectors.fields.access-token-help')
+                    </p>
                 </div>
 
                 <div class="box-shadow rounded bg-white p-4 dark:bg-gray-900">
@@ -157,22 +226,25 @@
                             $currentEvents = $connector->settings['webhook_events'] ?? [];
                         @endphp
 
+                        @php
+                            $inboundStrategies = [
+                                ['id' => 'auto_update',     'label' => trans('channel_connector::app.connectors.inbound-strategies.auto_update')],
+                                ['id' => 'flag_for_review', 'label' => trans('channel_connector::app.connectors.inbound-strategies.flag_for_review')],
+                                ['id' => 'ignore',          'label' => trans('channel_connector::app.connectors.inbound-strategies.ignore')],
+                            ];
+
+                            $inboundStrategiesJson = json_encode($inboundStrategies);
+                        @endphp
+
                         <x-admin::form.control-group.control
                             type="select"
                             name="settings[inbound_strategy]"
                             :value="old('settings.inbound_strategy', $currentStrategy)"
                             :label="trans('channel_connector::app.connectors.fields.inbound-strategy')"
-                        >
-                            <option value="auto_update" {{ $currentStrategy === 'auto_update' ? 'selected' : '' }}>
-                                @lang('channel_connector::app.connectors.inbound-strategies.auto_update')
-                            </option>
-                            <option value="flag_for_review" {{ $currentStrategy === 'flag_for_review' ? 'selected' : '' }}>
-                                @lang('channel_connector::app.connectors.inbound-strategies.flag_for_review')
-                            </option>
-                            <option value="ignore" {{ $currentStrategy === 'ignore' ? 'selected' : '' }}>
-                                @lang('channel_connector::app.connectors.inbound-strategies.ignore')
-                            </option>
-                        </x-admin::form.control-group.control>
+                            :options="$inboundStrategiesJson"
+                            track-by="id"
+                            label-by="label"
+                        />
 
                         <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
                             @lang('channel_connector::app.webhooks.inbound-strategy-info')

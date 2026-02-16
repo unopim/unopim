@@ -1,0 +1,110 @@
+<?php
+
+namespace Webkul\AdminApi\Tests\Traits;
+
+use Illuminate\Support\Str;
+use Laravel\Passport\ClientRepository;
+use Webkul\AdminApi\Models\Apikey;
+use Webkul\User\Models\Admin;
+
+trait ApiHelperTrait
+{
+    /**
+     * Shared admin and client for all tests in this process
+     */
+    protected static ?array $sharedAuth = null;
+
+    /**
+     * Generate authentication token and return header for the user
+     */
+    public function getAuthenticationHeaders(string $permissionType = 'all', mixed $permissions = null): array
+    {
+        // Use shared credentials if available (avoid race conditions in parallel tests)
+        if (self::$sharedAuth !== null) {
+            $this->accessToken = self::$sharedAuth['access_token'];
+            return self::$sharedAuth['headers'];
+        }
+
+        // Ensure we have a role for testing
+        $role = \DB::table('roles')->first();
+        if (!$role) {
+            $roleId = \DB::table('roles')->insertGetId([
+                'name' => 'Administrator',
+                'permission_type' => 'all',
+                'description' => 'Default administrator role for API testing',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        } else {
+            $roleId = $role->id;
+        }
+
+        // Save current tenant context and disable for OAuth client creation
+        $currentTenantId = null;
+        if (function_exists('core') && method_exists(core(), 'getCurrentTenantId')) {
+            $currentTenantId = core()->getCurrentTenantId();
+            core()->setCurrentTenantId(null);
+        }
+
+        try {
+            $admin = \Webkul\User\Models\Admin::factory()->create([
+                'email' => 'test@testingApi.com',
+                'password' => bcrypt('password'),
+                'role_id' => $roleId,
+            ]);
+
+
+            // Create a mock client object
+            $client = new class($clientId, $clientSecret) {
+                public function __construct($id, $plainSecret)
+                {
+                    $this->id = $id;
+                    $this->plainSecret = $plainSecret;
+                }
+
+                public function getKey()
+                {
+                    return $this->id;
+                }
+            };
+        } finally {
+            // Restore tenant context
+            if ($currentTenantId !== null) {
+                core()->setCurrentTenantId($currentTenantId);
+            }
+        }
+
+        Apikey::factory()->create(['permission_type' => $permissionType, 'admin_id' => $admin->id, 'oauth_client_id' => $client->getKey(), 'permissions' => $permissions]);
+
+        $this->accessToken = $this->postJson('/oauth/token', [
+            'grant_type'    => 'password',
+            'client_id'     => $client->id,
+            'client_secret' => $client->plainSecret,
+            'username'      => 'test@testingApi.com',
+            'password'      => 'password',
+            'scope'         => '',
+        ])->json('access_token');
+
+        // Store shared auth for parallel tests (avoid race conditions)
+        self::$sharedAuth = [
+            'access_token' => $this->accessToken,
+            'headers' => [
+                'Authorization' => 'Bearer '.$this->accessToken,
+                'Accept'        => 'application/json',
+            ],
+        ];
+
+        return [
+            'Authorization' => 'Bearer '.$this->accessToken,
+            'Accept'        => 'application/json',
+        ];
+    }
+
+    /**
+     * Table name to use with assertDatabaseHas
+     */
+    public function getFullTableName($className): string
+    {
+        return app($className)->getTable();
+    }
+}

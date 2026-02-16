@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//tmp/shopify-connector/src/Database/Migration/**)",
+      "Read(//private/tmp/shopify-connector/src/Database/Migration/**)"
+    ]
+  }
+}

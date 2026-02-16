@@ -495,6 +495,6 @@ class ConflictResolver
             }
         }
 
-        $product->update(['values' => $values]);
+        $product->forceFill(['values' => $values])->save();
     }
 }

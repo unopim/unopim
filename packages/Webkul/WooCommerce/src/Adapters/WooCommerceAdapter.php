@@ -6,42 +6,32 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Webkul\ChannelConnector\Adapters\AbstractChannelAdapter;
-use Webkul\ChannelConnector\Models\ProductChannelMapping;
 use Webkul\ChannelConnector\ValueObjects\ConnectionResult;
 use Webkul\ChannelConnector\ValueObjects\RateLimitConfig;
 use Webkul\ChannelConnector\ValueObjects\SyncResult;
 use Webkul\Product\Models\Product;
+use Webkul\WooCommerce\Models\WooCommerceProductMapping;
 
 class WooCommerceAdapter extends AbstractChannelAdapter
 {
+    protected const API_BASE = 'https://api.woocommerce.dev/admin/v2';
+
     public function testConnection(array $credentials): ConnectionResult
     {
         try {
-            $storeUrl = $credentials['store_url'] ?? '';
-            $consumerKey = $credentials['consumer_key'] ?? '';
-            $consumerSecret = $credentials['consumer_secret'] ?? '';
+            $accessToken = $credentials['access_token'] ?? '';
 
-            if (empty($storeUrl)) {
+            if (empty($accessToken)) {
                 return new ConnectionResult(
                     success: false,
-                    message: 'Store URL is required.',
-                    errors: ['Missing store URL'],
+                    message: 'Access token is required.',
+                    errors: ['Missing access token'],
                 );
             }
 
-            if (empty($consumerKey) || empty($consumerSecret)) {
-                return new ConnectionResult(
-                    success: false,
-                    message: 'Consumer key and consumer secret are required.',
-                    errors: ['Missing consumer key or consumer secret'],
-                );
-            }
-
-            $baseUrl = rtrim($storeUrl, '/').'/wp-json/wc/v3';
-
-            $response = Http::withBasicAuth($consumerKey, $consumerSecret)
+            $response = Http::withToken($accessToken)
                 ->timeout(30)
-                ->get($baseUrl.'/products', ['per_page' => 1]);
+                ->get(self::API_BASE.'/products', ['per_page' => 1]);
 
             if ($response->failed()) {
                 return new ConnectionResult(
@@ -51,14 +41,14 @@ class WooCommerceAdapter extends AbstractChannelAdapter
                 );
             }
 
-            $headers = $response->headers();
+            $data = $response->json();
 
             return new ConnectionResult(
                 success: true,
                 message: 'Connection verified successfully.',
                 channelInfo: [
-                    'store_name'    => 'WooCommerce Store',
-                    'product_count' => (int) ($headers['X-WP-Total'][0] ?? 0),
+                    'store_name'    => $data['data'][0]['store']['name'] ?? 'WooCommerce Store',
+                    'product_count' => $data['pagination']['total'] ?? 0,
                 ],
             );
         } catch (\Exception $e) {
@@ -73,34 +63,26 @@ class WooCommerceAdapter extends AbstractChannelAdapter
     public function syncProduct(Product $product, array $localeMappedData): SyncResult
     {
         try {
-            $storeUrl = $this->credentials['store_url'] ?? '';
-            $consumerKey = $this->credentials['consumer_key'] ?? '';
-            $consumerSecret = $this->credentials['consumer_secret'] ?? '';
+            $this->ensureValidToken();
 
-            if (empty($storeUrl) || empty($consumerKey) || empty($consumerSecret)) {
-                return new SyncResult(
-                    success: false,
-                    action: 'failed',
-                    errors: ['WooCommerce API credentials (store_url, consumer_key, consumer_secret) are required'],
-                );
-            }
+            $accessToken = $this->credentials['access_token'] ?? '';
 
-            $existingMapping = ProductChannelMapping::where('product_id', $product->id)
-                ->whereHas('connector', fn ($q) => $q->where('channel_type', 'woocommerce'))
+            // Use adapter-specific product mapping table
+            $existingMapping = WooCommerceProductMapping::where('product_id', $product->id)
+                ->where('connector_id', $this->connectorId)
                 ->first();
 
-            $existingExternalId = $existingMapping->external_id ?? null;
-            $body = $this->buildWooCommerceBody($localeMappedData);
-            $baseUrl = rtrim($storeUrl, '/').'/wp-json/wc/v3';
+            $existingExternalId = $existingMapping?->external_id;
+            $body = $this->buildWooCommerceProductBody($localeMappedData);
 
             if ($existingExternalId) {
-                $response = Http::withBasicAuth($consumerKey, $consumerSecret)
+                $response = Http::withToken($accessToken)
                     ->timeout(30)
-                    ->put($baseUrl.'/products/'.$existingExternalId, $body);
+                    ->put(self::API_BASE.'/products/'.$existingExternalId, $body);
             } else {
-                $response = Http::withBasicAuth($consumerKey, $consumerSecret)
+                $response = Http::withToken($accessToken)
                     ->timeout(30)
-                    ->post($baseUrl.'/products', $body);
+                    ->post(self::API_BASE.'/products', $body);
             }
 
             if ($response->failed()) {
@@ -110,16 +92,38 @@ class WooCommerceAdapter extends AbstractChannelAdapter
                     success: false,
                     externalId: $existingExternalId,
                     action: 'failed',
-                    errors: [$errorBody['message'] ?? 'HTTP '.$response->status()],
+                    errors: [$errorBody['error']['message'] ?? 'HTTP '.$response->status()],
                 );
             }
 
             $data = $response->json();
-            $externalId = (string) ($data['id'] ?? $existingExternalId ?? '');
+            $woocommerceProductId = (string) ($data['data']['id'] ?? $existingExternalId ?? '');
+
+            // Update or create adapter-specific mapping
+            WooCommerceProductMapping::updateOrCreate(
+                [
+                    'product_id'   => $product->id,
+                    'connector_id' => $this->connectorId,
+                ],
+                [
+                    'external_id'    => $woocommerceProductId,
+                    'external_sku'   => $localeMappedData['sku'] ?? null,
+                    'variant_data'   => $localeMappedData['variants'] ?? [],
+                    'sync_status'    => 'synced',
+                    'last_synced_at' => now(),
+                    'error_message'  => null,
+                ]
+            );
+
+            Log::info('[WooCommerce] Product synced', [
+                'product_id'  => $product->id,
+                'external_id' => $woocommerceProductId,
+                'action'      => $existingExternalId ? 'updated' : 'created',
+            ]);
 
             return new SyncResult(
                 success: true,
-                externalId: $externalId,
+                externalId: $woocommerceProductId,
                 action: $existingExternalId ? 'updated' : 'created',
             );
         } catch (\Exception $e) {
@@ -127,6 +131,18 @@ class WooCommerceAdapter extends AbstractChannelAdapter
                 'product_id' => $product->id,
                 'error'      => $e->getMessage(),
             ]);
+
+            // Update mapping with error
+            WooCommerceProductMapping::updateOrCreate(
+                [
+                    'product_id'   => $product->id,
+                    'connector_id' => $this->connectorId,
+                ],
+                [
+                    'sync_status'   => 'failed',
+                    'error_message' => $e->getMessage(),
+                ]
+            );
 
             return new SyncResult(
                 success: false,
@@ -139,27 +155,26 @@ class WooCommerceAdapter extends AbstractChannelAdapter
     public function fetchProduct(string $externalId, ?string $locale = null): ?array
     {
         try {
-            $storeUrl = $this->credentials['store_url'] ?? '';
-            $consumerKey = $this->credentials['consumer_key'] ?? '';
-            $consumerSecret = $this->credentials['consumer_secret'] ?? '';
+            $this->ensureValidToken();
 
-            if (empty($storeUrl) || empty($consumerKey) || empty($consumerSecret)) {
-                return null;
-            }
-
-            $baseUrl = rtrim($storeUrl, '/').'/wp-json/wc/v3';
-
-            $response = Http::withBasicAuth($consumerKey, $consumerSecret)
+            $response = Http::withToken($this->credentials['access_token'] ?? '')
                 ->timeout(30)
-                ->get($baseUrl.'/products/'.$externalId);
+                ->get(self::API_BASE.'/products/'.$externalId);
 
             if ($response->failed()) {
                 return null;
             }
 
             $data = $response->json();
+            $product = $data['data'] ?? null;
 
-            return $this->normalizeWooCommerceProduct($data);
+            if (! $product) {
+                return null;
+            }
+
+            Log::info('[WooCommerce] Product fetched', ['external_id' => $externalId]);
+
+            return $this->normalizeWooCommerceProduct($product);
         } catch (\Exception $e) {
             Log::warning('[WooCommerce] fetchProduct failed', [
                 'external_id' => $externalId,
@@ -173,19 +188,15 @@ class WooCommerceAdapter extends AbstractChannelAdapter
     public function deleteProduct(string $externalId): bool
     {
         try {
-            $storeUrl = $this->credentials['store_url'] ?? '';
-            $consumerKey = $this->credentials['consumer_key'] ?? '';
-            $consumerSecret = $this->credentials['consumer_secret'] ?? '';
+            $this->ensureValidToken();
 
-            if (empty($storeUrl) || empty($consumerKey) || empty($consumerSecret)) {
-                return false;
-            }
-
-            $baseUrl = rtrim($storeUrl, '/').'/wp-json/wc/v3';
-
-            $response = Http::withBasicAuth($consumerKey, $consumerSecret)
+            $response = Http::withToken($this->credentials['access_token'] ?? '')
                 ->timeout(30)
-                ->delete($baseUrl.'/products/'.$externalId, ['force' => true]);
+                ->delete(self::API_BASE.'/products/'.$externalId);
+
+            if ($response->successful()) {
+                Log::info('[WooCommerce] Product deleted', ['external_id' => $externalId]);
+            }
 
             return $response->successful();
         } catch (\Exception $e) {
@@ -202,58 +213,41 @@ class WooCommerceAdapter extends AbstractChannelAdapter
     {
         return [
             ['code' => 'name', 'label' => 'Name', 'type' => 'string', 'required' => true, 'is_translatable' => true],
-            ['code' => 'description', 'label' => 'Description', 'type' => 'text', 'required' => true, 'is_translatable' => true],
-            ['code' => 'short_description', 'label' => 'Short Description', 'type' => 'text', 'required' => false, 'is_translatable' => true],
-            ['code' => 'regular_price', 'label' => 'Regular Price', 'type' => 'price', 'required' => true, 'is_translatable' => false],
+            ['code' => 'description', 'label' => 'Description', 'type' => 'text', 'required' => false, 'is_translatable' => true],
+            ['code' => 'price', 'label' => 'Price', 'type' => 'price', 'required' => true, 'is_translatable' => false],
             ['code' => 'sale_price', 'label' => 'Sale Price', 'type' => 'price', 'required' => false, 'is_translatable' => false],
-            ['code' => 'sku', 'label' => 'SKU', 'type' => 'string', 'required' => true, 'is_translatable' => false],
-            ['code' => 'manage_stock', 'label' => 'Manage Stock', 'type' => 'boolean', 'required' => false, 'is_translatable' => false],
-            ['code' => 'stock_quantity', 'label' => 'Stock Quantity', 'type' => 'number', 'required' => false, 'is_translatable' => false],
+            ['code' => 'sku', 'label' => 'SKU', 'type' => 'string', 'required' => false, 'is_translatable' => false],
+            ['code' => 'quantity', 'label' => 'Quantity', 'type' => 'number', 'required' => false, 'is_translatable' => false],
             ['code' => 'weight', 'label' => 'Weight', 'type' => 'number', 'required' => false, 'is_translatable' => false],
-            ['code' => 'status', 'label' => 'Status', 'type' => 'string', 'required' => false, 'is_translatable' => false],
+            ['code' => 'status', 'label' => 'Status', 'type' => 'select', 'required' => false, 'is_translatable' => false],
+            ['code' => 'images', 'label' => 'Images', 'type' => 'media', 'required' => false, 'is_translatable' => false],
         ];
     }
 
     public function getSupportedLocales(): array
     {
-        return ['en'];
+        return ['ar', 'en'];
     }
 
     public function getSupportedCurrencies(): array
     {
-        return ['USD', 'EUR', 'GBP', 'AUD', 'CAD'];
+        return ['SAR', 'USD', 'EUR', 'KWD', 'BHD', 'AED'];
     }
 
     public function registerWebhooks(array $events, string $callbackUrl): bool
     {
         try {
-            $storeUrl = $this->credentials['store_url'] ?? '';
-            $consumerKey = $this->credentials['consumer_key'] ?? '';
-            $consumerSecret = $this->credentials['consumer_secret'] ?? '';
+            $this->ensureValidToken();
 
-            if (empty($storeUrl) || empty($consumerKey) || empty($consumerSecret)) {
-                return false;
-            }
-
-            $topicMap = [
-                'product.created' => 'product.created',
-                'product.updated' => 'product.updated',
-                'product.deleted' => 'product.deleted',
-            ];
-
+            $accessToken = $this->credentials['access_token'] ?? '';
             $allSuccess = true;
-            $baseUrl = rtrim($storeUrl, '/').'/wp-json/wc/v3';
-            $webhookSecret = $this->credentials['webhook_secret'] ?? '';
 
             foreach ($events as $event) {
-                $topic = $topicMap[$event] ?? $event;
-
-                $response = Http::withBasicAuth($consumerKey, $consumerSecret)
+                $response = Http::withToken($accessToken)
                     ->timeout(30)
-                    ->post($baseUrl.'/webhooks', [
-                        'topic'        => $topic,
-                        'delivery_url' => $callbackUrl,
-                        'secret'       => $webhookSecret,
+                    ->post(self::API_BASE.'/webhooks', [
+                        'event' => $event,
+                        'url'   => $callbackUrl,
                     ]);
 
                 if ($response->failed()) {
@@ -275,7 +269,7 @@ class WooCommerceAdapter extends AbstractChannelAdapter
 
     public function verifyWebhook(Request $request): bool
     {
-        $signature = $request->header('X-WC-Webhook-Signature');
+        $signature = $request->header('X-WooCommerce-Signature');
         $payload = $request->getContent();
         $secret = $this->credentials['webhook_secret'] ?? '';
 
@@ -283,78 +277,129 @@ class WooCommerceAdapter extends AbstractChannelAdapter
             return false;
         }
 
-        $calculated = base64_encode(hash_hmac('sha256', $payload, $secret, true));
+        $calculated = hash_hmac('sha256', $payload, $secret);
 
         return hash_equals($calculated, $signature);
     }
 
     public function refreshCredentials(): ?array
     {
+        $refreshToken = $this->credentials['refresh_token'] ?? '';
+
+        if (empty($refreshToken)) {
+            return null;
+        }
+
+        try {
+            $response = Http::asForm()->post('https://accounts.woocommerce.sa/oauth2/token', [
+                'grant_type'    => 'refresh_token',
+                'refresh_token' => $refreshToken,
+                'client_id'     => $this->credentials['client_id'] ?? '',
+                'client_secret' => $this->credentials['client_secret'] ?? '',
+            ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+
+                return [
+                    'access_token'  => $data['access_token'],
+                    'refresh_token' => $data['refresh_token'] ?? $refreshToken,
+                    'expires_at'    => now()->addSeconds($data['expires_in'] ?? 3600)->toIso8601String(),
+                ];
+            }
+        } catch (\Exception $e) {
+            Log::warning('[WooCommerce] Token refresh failed', [
+                'error'     => $e->getMessage(),
+                'client_id' => $this->credentials['client_id'] ?? 'unknown',
+            ]);
+        }
+
         return null;
     }
 
     public function getRateLimitConfig(): RateLimitConfig
     {
-        return new RateLimitConfig(requestsPerSecond: 5);
+        return new RateLimitConfig(
+            requestsPerSecond: 10,
+        );
     }
 
-    protected function buildWooCommerceBody(array $localeMappedData): array
+    protected function ensureValidToken(): void
+    {
+        $expiresAt = $this->credentials['expires_at'] ?? null;
+
+        if ($expiresAt && now()->greaterThan($expiresAt)) {
+            $refreshed = $this->refreshCredentials();
+
+            if ($refreshed) {
+                $this->credentials = array_merge($this->credentials, $refreshed);
+            }
+        }
+    }
+
+    protected function buildWooCommerceProductBody(array $localeMappedData): array
     {
         $common = $localeMappedData['common'] ?? [];
         $locales = $localeMappedData['locales'] ?? [];
 
         $body = [];
 
-        // Name: prefer English locale, fallback to common
-        $name = $locales['en']['name'] ?? $common['name'] ?? null;
+        // Find first matching locale by prefix (supports ar_AE, en_US, etc.)
+        $arData = collect($locales)->first(fn ($v, $k) => str_starts_with($k, 'ar')) ?? [];
+        $enData = collect($locales)->first(fn ($v, $k) => str_starts_with($k, 'en')) ?? [];
+
+        // Name: prefer Arabic locale, fallback to common, fallback to English
+        $name = $arData['name'] ?? $common['name'] ?? $enData['name'] ?? null;
         if ($name !== null) {
             $body['name'] = $name;
         }
 
         // Description
-        $description = $locales['en']['description'] ?? $common['description'] ?? null;
+        $description = $arData['description'] ?? $common['description'] ?? $enData['description'] ?? null;
         if ($description !== null) {
             $body['description'] = $description;
         }
 
-        // Short description
-        $shortDescription = $locales['en']['short_description'] ?? $common['short_description'] ?? null;
-        if ($shortDescription !== null) {
-            $body['short_description'] = $shortDescription;
+        // Price
+        if (isset($common['price'])) {
+            $body['price'] = [
+                'amount'   => (float) $common['price'],
+                'currency' => $this->credentials['currency'] ?? 'SAR',
+            ];
         }
 
-        if (isset($common['regular_price'])) {
-            $body['regular_price'] = (string) $common['regular_price'];
-        }
-
+        // Sale price
         if (isset($common['sale_price'])) {
-            $body['sale_price'] = (string) $common['sale_price'];
+            $body['sale_price'] = [
+                'amount'   => (float) $common['sale_price'],
+                'currency' => $this->credentials['currency'] ?? 'SAR',
+            ];
         }
 
+        // Simple fields
         if (isset($common['sku'])) {
             $body['sku'] = $common['sku'];
         }
 
-        if (isset($common['manage_stock'])) {
-            $body['manage_stock'] = (bool) $common['manage_stock'];
-        }
-
-        if (isset($common['stock_quantity'])) {
-            $body['stock_quantity'] = (int) $common['stock_quantity'];
+        if (isset($common['quantity'])) {
+            $body['quantity'] = (int) $common['quantity'];
         }
 
         if (isset($common['weight'])) {
-            $body['weight'] = (string) $common['weight'];
+            $body['weight'] = (float) $common['weight'];
         }
 
-        // Status mapping: active->publish, draft->draft, archived->pending
+        // Status mapping
         if (isset($common['status'])) {
             $statusMap = [
-                'active'   => 'publish',
-                'draft'    => 'draft',
-                'archived' => 'pending',
+                'active'   => 'sale',
+                'draft'    => 'hidden',
+                'archived' => 'out',
+                'sale'     => 'sale',
+                'hidden'   => 'hidden',
+                'out'      => 'out',
             ];
-            $body['status'] = $statusMap[$common['status']] ?? $common['status'];
+            $body['status'] = $statusMap[$common['status']] ?? 'hidden';
         }
 
         return $body;
@@ -372,42 +417,28 @@ class WooCommerceAdapter extends AbstractChannelAdapter
             $common['description'] = $product['description'];
         }
 
-        if (isset($product['short_description'])) {
-            $common['short_description'] = $product['short_description'];
+        if (isset($product['price']['amount'])) {
+            $common['price'] = $product['price']['amount'];
         }
 
-        if (isset($product['regular_price'])) {
-            $common['regular_price'] = $product['regular_price'];
-        }
-
-        if (isset($product['sale_price'])) {
-            $common['sale_price'] = $product['sale_price'];
+        if (isset($product['sale_price']['amount'])) {
+            $common['sale_price'] = $product['sale_price']['amount'];
         }
 
         if (isset($product['sku'])) {
             $common['sku'] = $product['sku'];
         }
 
-        if (isset($product['manage_stock'])) {
-            $common['manage_stock'] = $product['manage_stock'];
-        }
-
-        if (isset($product['stock_quantity'])) {
-            $common['stock_quantity'] = $product['stock_quantity'];
+        if (isset($product['quantity'])) {
+            $common['quantity'] = $product['quantity'];
         }
 
         if (isset($product['weight'])) {
             $common['weight'] = $product['weight'];
         }
 
-        // Status mapping: publish->active, draft->draft, pending->archived
         if (isset($product['status'])) {
-            $statusMap = [
-                'publish' => 'active',
-                'draft'   => 'draft',
-                'pending' => 'archived',
-            ];
-            $common['status'] = $statusMap[$product['status']] ?? $product['status'];
+            $common['status'] = $product['status'];
         }
 
         return [

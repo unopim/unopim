@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Webkul\ChannelConnector\ValueObjects\SyncResult;
 use Webkul\Product\Models\Product;
@@ -16,6 +17,7 @@ beforeEach(function () {
         'client_secret' => 'test_client_secret',
         'currency'      => 'SAR',
     ]);
+    $this->adapter->setConnectorId(1);
 });
 
 it('creates a new product on Salla via syncProduct', function () {
@@ -148,4 +150,64 @@ it('handles sync failure gracefully', function () {
 
     expect($result->success)->toBeFalse();
     expect($result->action)->toBe('failed');
+});
+
+// ─── Connection Tests ──────────────────────────────────────────────────
+
+it('tests connection to Salla API', function () {
+    Http::fake([
+        'api.salla.dev/admin/v2/products*' => Http::response([
+            'data'       => [['store' => ['name' => 'My Salla Store']]],
+            'pagination' => ['total' => 200],
+        ], 200),
+    ]);
+
+    $result = $this->adapter->testConnection(['access_token' => 'valid_salla_token']);
+
+    expect($result->success)->toBeTrue();
+    expect($result->message)->toBe('Connection verified successfully.');
+    expect($result->channelInfo['store_name'])->toBe('My Salla Store');
+});
+
+it('fails connection with missing access token', function () {
+    $result = $this->adapter->testConnection([]);
+
+    expect($result->success)->toBeFalse();
+    expect($result->errors)->toContain('Missing access token');
+});
+
+// ─── Webhook Verification Tests ────────────────────────────────────────
+
+it('verifies webhook with valid HMAC signature', function () {
+    $adapter = new SallaAdapter;
+    $adapter->setCredentials(['webhook_secret' => 'salla_webhook_secret']);
+
+    $payload = '{"event":"product.updated"}';
+    $signature = hash_hmac('sha256', $payload, 'salla_webhook_secret');
+
+    $request = Request::create('/webhook', 'POST', [], [], [], [
+        'HTTP_X_SALLA_SIGNATURE' => $signature,
+    ], $payload);
+
+    expect($adapter->verifyWebhook($request))->toBeTrue();
+});
+
+it('rejects webhook with invalid signature', function () {
+    $adapter = new SallaAdapter;
+    $adapter->setCredentials(['webhook_secret' => 'salla_webhook_secret']);
+
+    $request = Request::create('/webhook', 'POST', [], [], [], [
+        'HTTP_X_SALLA_SIGNATURE' => 'wrong_signature',
+    ], '{"event":"product.updated"}');
+
+    expect($adapter->verifyWebhook($request))->toBeFalse();
+});
+
+// ─── Credential Refresh Tests ──────────────────────────────────────────
+
+it('returns null when refresh token is missing', function () {
+    $adapter = new SallaAdapter;
+    $adapter->setCredentials([]);
+
+    expect($adapter->refreshCredentials())->toBeNull();
 });

@@ -6,11 +6,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Webkul\ChannelConnector\Adapters\AbstractChannelAdapter;
-use Webkul\ChannelConnector\Models\ProductChannelMapping;
 use Webkul\ChannelConnector\ValueObjects\ConnectionResult;
 use Webkul\ChannelConnector\ValueObjects\RateLimitConfig;
 use Webkul\ChannelConnector\ValueObjects\SyncResult;
 use Webkul\Product\Models\Product;
+use Webkul\Salla\Models\SallaProductMapping;
 
 class SallaAdapter extends AbstractChannelAdapter
 {
@@ -67,11 +67,12 @@ class SallaAdapter extends AbstractChannelAdapter
 
             $accessToken = $this->credentials['access_token'] ?? '';
 
-            $existingMapping = ProductChannelMapping::where('product_id', $product->id)
-                ->whereHas('connector', fn ($q) => $q->where('channel_type', 'salla'))
+            // Use adapter-specific product mapping table
+            $existingMapping = SallaProductMapping::where('product_id', $product->id)
+                ->where('connector_id', $this->connectorId)
                 ->first();
 
-            $existingExternalId = $existingMapping->external_id ?? null;
+            $existingExternalId = $existingMapping?->external_id;
             $body = $this->buildSallaProductBody($localeMappedData);
 
             if ($existingExternalId) {
@@ -98,6 +99,22 @@ class SallaAdapter extends AbstractChannelAdapter
             $data = $response->json();
             $sallaProductId = (string) ($data['data']['id'] ?? $existingExternalId ?? '');
 
+            // Update or create adapter-specific mapping
+            SallaProductMapping::updateOrCreate(
+                [
+                    'product_id'   => $product->id,
+                    'connector_id' => $this->connectorId,
+                ],
+                [
+                    'external_id'    => $sallaProductId,
+                    'external_sku'   => $localeMappedData['sku'] ?? null,
+                    'variant_data'   => $localeMappedData['variants'] ?? [],
+                    'sync_status'    => 'synced',
+                    'last_synced_at' => now(),
+                    'error_message'  => null,
+                ]
+            );
+
             Log::info('[Salla] Product synced', [
                 'product_id'  => $product->id,
                 'external_id' => $sallaProductId,
@@ -114,6 +131,18 @@ class SallaAdapter extends AbstractChannelAdapter
                 'product_id' => $product->id,
                 'error'      => $e->getMessage(),
             ]);
+
+            // Update mapping with error
+            SallaProductMapping::updateOrCreate(
+                [
+                    'product_id'   => $product->id,
+                    'connector_id' => $this->connectorId,
+                ],
+                [
+                    'sync_status'   => 'failed',
+                    'error_message' => $e->getMessage(),
+                ]
+            );
 
             return new SyncResult(
                 success: false,
