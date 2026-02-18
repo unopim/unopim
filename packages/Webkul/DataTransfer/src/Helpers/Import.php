@@ -601,8 +601,11 @@ class Import
             $importerConfig = config('importers.'.$jobInstance->entity_type);
             $this->typeImporter = app()->make($importerConfig['importer'])
                 ->setImport($this->import)
-                ->setLogger($this->jobLogger)
                 ->setErrorHelper($this->errorHelper);
+
+            if ($this->jobLogger) {
+                $this->typeImporter->setLogger($this->jobLogger);
+            }
         }
 
         return $this->typeImporter;
