@@ -275,14 +275,7 @@ class UserController extends Controller
         ) {
             return $this->cannotChangeRedirectResponse('status');
         }
-
-<<<<<<< Updated upstream
-        /**
-         * Protect last super admin
-         */
-=======
->>>>>>> Stashed changes
-        $isRoleChanged =
+            $isRoleChanged =
             isset($data['role_id']) &&
             (int) $data['role_id'] !== $user->role_id &&
             $user->role->permission_type === 'all';
