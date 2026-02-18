@@ -109,6 +109,10 @@ return [
     ],
 
     'installer' => [
+        'middleware' => [
+            'already-installed' => 'التطبيق مثبت بالفعل.',
+        ],
+        
         'index' => [
             'create-administrator' => [
                 'admin'            => 'مسؤل',

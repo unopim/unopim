@@ -98,6 +98,10 @@ return [
     ],
 
     'installer' => [
+        'middleware' => [
+            'already-installed' => '애플리케이션이 이미 설치되어 있습니다.',
+        ],
+        
         'index' => [
             'create-administrator' => [
                 'admin'            => '관리자',
