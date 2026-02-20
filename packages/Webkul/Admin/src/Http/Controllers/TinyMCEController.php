@@ -2,57 +2,139 @@
 
 namespace Webkul\Admin\Http\Controllers;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Webkul\Core\Filesystem\FileStorer;
 
 class TinyMCEController extends Controller
 {
     /**
      * Storage folder path.
-     *
-     * @var string
      */
-    private $storagePath = 'tinymce';
+    private string $storagePath = 'tinymce';
 
     /**
-     * Return controller instance
+     * Allowed image extensions (Allow-list approach).
      */
+    private array $allowedExtensions = [
+        'jpg',
+        'jpeg',
+        'png',
+        'webp',
+        'gif',
+    ];
+
+    /**
+     * Allowed MIME types.
+     */
+    private array $allowedMimeTypes = [
+        'image/jpeg',
+        'image/png',
+        'image/webp',
+        'image/gif',
+    ];
+
     public function __construct(protected FileStorer $fileStorer) {}
 
     /**
-     * Upload file from tinymce.
-     *
-     * @return void
+     * Upload file from TinyMCE.
      */
-    public function upload()
+    public function upload(Request $request)
     {
-        $media = $this->storeMedia();
+        if (! auth('admin')->check()) {
+            return response()->json([
+                'error' => 'Unauthorized',
+            ], 403);
+        }
 
-        if (! empty($media)) {
+        try {
+            $media = $this->storeMedia($request);
+
             return response()->json([
                 'location' => $media['file_url'],
             ]);
-        }
 
-        return response()->json([]);
+        } catch (\Throwable $e) {
+
+            Log::error('TinyMCE Upload Error', [
+                'message' => $e->getMessage(),
+                'user_id' => auth('admin')->id(),
+                'ip'      => $request->ip(),
+            ]);
+
+            return response()->json([
+                'error' => 'Upload failed',
+            ], 500);
+        }
     }
 
     /**
-     * Store media.
-     *
-     * @return array
+     * Securely store uploaded media.
      */
-    public function storeMedia()
+    private function storeMedia(Request $request): array
     {
-        if (! request()->hasFile('file')) {
-            return [];
+        if (! $request->hasFile('file')) {
+            abort(400, 'No file uploaded');
         }
 
-        $path = $this->fileStorer->store(file: request()->file('file'), path: $this->storagePath);
+        $file = $request->file('file');
+
+        if (! $file->isValid()) {
+            abort(400, 'Invalid file upload');
+        }
+
+        $extension = strtolower($file->getClientOriginalExtension());
+
+        if (! in_array($extension, $this->allowedExtensions)) {
+
+            Log::warning('Blocked file upload (Invalid Extension)', [
+                'user_id'   => auth('admin')->id(),
+                'ip'        => request()->ip(),
+                'extension' => $extension,
+            ]);
+
+            abort(403, 'Invalid file type');
+        }
+
+        $mimeType = $file->getMimeType();
+
+        if (! in_array($mimeType, $this->allowedMimeTypes)) {
+
+            Log::warning('Blocked file upload (Invalid MIME)', [
+                'user_id'  => auth('admin')->id(),
+                'ip'       => request()->ip(),
+                'mimeType' => $mimeType,
+            ]);
+
+            abort(403, 'Invalid file content');
+        }
+
+        if (preg_match('/\.(php|phtml|php5|phar|html|js)$/i', $file->getClientOriginalName())) {
+
+            Log::warning('Blocked file upload (Double Extension Attempt)', [
+                'user_id' => auth('admin')->id(),
+                'ip'      => request()->ip(),
+                'name'    => $file->getClientOriginalName(),
+            ]);
+
+            abort(403, 'Invalid file name');
+        }
+
+        if ($file->getSize() > 5 * 1024 * 1024) {
+            abort(403, 'File size exceeds limit');
+        }
+
+        $filename = Str::uuid()->toString() . '.' . $extension;
+        $path = $file->storeAs(
+            'public/' . $this->storagePath,
+            $filename
+        );
 
         return [
             'file'      => $path,
-            'file_name' => request()->file('file')->getClientOriginalName(),
+            'file_name' => $filename,
             'file_url'  => Storage::url($path),
         ];
     }
