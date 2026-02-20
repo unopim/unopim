@@ -39,7 +39,7 @@ class AccountController extends Controller
         $user = auth()->guard('admin')->user();
 
         $this->validate(request(), [
-            'name'             => 'required',
+            'name'             => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z0-9\s]+$/'],
             'email'            => 'email|unique:admins,email,'.$user->id,
             'password'         => 'nullable|min:6|confirmed',
             'current_password' => 'required|min:6',
