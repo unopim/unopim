@@ -68,7 +68,7 @@ class ExportController extends Controller
         $exporters = array_keys($exporterConfig);
 
         $this->validate(request(), [
-            'code'                => 'required|unique:job_instances,code',
+            'code'                => ['required', 'unique:job_instances,code', 'regex:/^[a-zA-Z0-9_-]+$/'],
             'entity_type'         => 'required|in:'.implode(',', $exporters),
             'filters'             => 'array',
             'field_separator'     => ['required_if:filters.file_format,Csv', new SeparatorTypes],
