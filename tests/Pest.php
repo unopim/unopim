@@ -22,6 +22,8 @@ uses(Webkul\Admin\Tests\AdminTestCase::class)->in('../packages/Webkul/DataTransf
 uses(Webkul\Completeness\Tests\CompletenessTestCase::class)->in('../packages/Webkul/Completeness/tests');
 uses(Webkul\Tenant\Tests\TenantTestCase::class)->in('../packages/Webkul/Tenant/tests');
 uses(Webkul\ChannelConnector\Tests\ChannelConnectorTestCase::class)->in('Feature/ChannelConnector');
+uses(Webkul\Pricing\Tests\PricingTestCase::class)->in('../packages/Webkul/Pricing/tests');
+uses(Webkul\Order\Tests\OrderTestCase::class)->in('../packages/Webkul/Order/tests');
 
 /*
 |--------------------------------------------------------------------------

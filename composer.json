@@ -92,12 +92,15 @@
             "Webkul\\Magento2\\": "packages/Webkul/Magento2/src",
             "Webkul\\Amazon\\": "packages/Webkul/Amazon/src",
             "Webkul\\Ebay\\": "packages/Webkul/Ebay/src",
-            "Webkul\\Noon\\": "packages/Webkul/Noon/src"
+            "Webkul\\Noon\\": "packages/Webkul/Noon/src",
+            "Webkul\\Pricing\\": "packages/Webkul/Pricing/src",
+            "Webkul\\Order\\": "packages/Webkul/Order/src"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/",
+            "Webkul\\Pricing\\Tests\\": "packages/Webkul/Pricing/tests",
             "Webkul\\ChannelConnector\\Tests\\": "packages/Webkul/ChannelConnector/tests",
             "Webkul\\Admin\\Tests\\": "packages/Webkul/Admin/tests",
             "Webkul\\Core\\Tests\\": "packages/Webkul/Core/tests",
@@ -107,7 +110,8 @@
             "Webkul\\Installer\\Tests\\": "packages/Webkul/Installer/tests",
             "Webkul\\Completeness\\Tests\\": "packages/Webkul/Completeness/tests",
             "Webkul\\Tenant\\Tests\\": "packages/Webkul/Tenant/tests",
-            "Webkul\\Shopify\\Tests\\": "packages/Webkul/Shopify/tests"
+            "Webkul\\Shopify\\Tests\\": "packages/Webkul/Shopify/tests",
+            "Webkul\\Order\\Tests\\": "packages/Webkul/Order/tests"
         }
     },
     "scripts": {

@@ -1,0 +1,29 @@
+{
+    "name": "webkul/order",
+    "description": "Unified order management system for ECOM-OS",
+    "license": "OSL-3.0",
+    "authors": [
+        {
+            "name": "Webkul",
+            "email": "support@webkul.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Webkul\\Order\\": "src/",
+            "Webkul\\Order\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Webkul\\Order\\Providers\\OrderServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "minimum-stability": "dev"
+}

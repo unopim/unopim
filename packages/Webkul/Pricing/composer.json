@@ -1,0 +1,26 @@
+{
+    "name": "webkul/pricing",
+    "description": "Intelligent profit-driven pricing system for ECOM-OS",
+    "type": "library",
+    "license": "OSL-3.0",
+    "require": {
+        "php": ">=8.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Webkul\\Pricing\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Webkul\\Pricing\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Webkul\\Pricing\\Providers\\PricingServiceProvider"
+            ]
+        }
+    }
+}

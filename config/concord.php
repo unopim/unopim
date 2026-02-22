@@ -31,5 +31,7 @@ return [
         \Webkul\Magento2\Providers\ModuleServiceProvider::class,
         \Webkul\Noon\Providers\ModuleServiceProvider::class,
         \Webkul\EasyOrders\Providers\ModuleServiceProvider::class,
+        \Webkul\Pricing\Providers\ModuleServiceProvider::class,
+        \Webkul\Order\Providers\ModuleServiceProvider::class,
     ],
 ];

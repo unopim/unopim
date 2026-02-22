@@ -52,6 +52,22 @@
         <testsuite name="Tenant Unit Tests">
             <directory suffix="Test.php">./packages/Webkul/Tenant/tests/Unit</directory>
         </testsuite>
+
+        <testsuite name="Pricing Unit Tests">
+            <directory suffix="Test.php">./packages/Webkul/Pricing/tests/Unit</directory>
+        </testsuite>
+
+        <testsuite name="Pricing Feature Tests">
+            <directory suffix="Test.php">./packages/Webkul/Pricing/tests/Feature</directory>
+        </testsuite>
+
+        <testsuite name="Order Unit Tests">
+            <directory suffix="Test.php">./packages/Webkul/Order/tests/Unit</directory>
+        </testsuite>
+
+        <testsuite name="Order Feature Tests">
+            <directory suffix="Test.php">./packages/Webkul/Order/tests/Feature</directory>
+        </testsuite>
     </testsuites>
 
     <source>
