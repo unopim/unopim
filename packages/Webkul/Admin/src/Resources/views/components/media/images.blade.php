@@ -32,10 +32,14 @@
                         <!-- AI Image Generation -->
                         <label
                             class="grid justify-items-center items-center w-full h-[120px] max-w-[210px] max-h-[120px] border border-dashed dark:border-gray-300 rounded cursor-pointer transition-all hover:border-gray-400 border-gray-300"
+                            :class="{'border-violet-400 bg-violet-50 dark:bg-cherry-800': isDragging}"
                             :style="{'max-width': this.width, 'max-height': this.height}"
                             :for="$.uid + '_imageInput'"
                             v-if="ai.enabled"
                             @click="resetAIModal(); $refs.choiceImageModal.open()"
+                            @dragover.prevent="onDragOver"
+                            @dragleave.prevent="onDragLeave"
+                            @drop.prevent="onDrop"
                         >
                             <div class="flex flex-col items-center">
                                 <span class="icon-image text-2xl"></span>
@@ -49,9 +53,13 @@
                         <!-- Upload Image Button -->
                         <label
                             class="grid justify-items-center items-center w-full h-[120px] max-w-[210px] max-h-[120px] border border-dashed dark:border-gray-300 rounded cursor-pointer transition-all hover:border-gray-400 border-gray-300"
+                            :class="{'border-violet-400 bg-violet-50 dark:bg-cherry-800': isDragging}"
                             :style="{'max-width': this.width, 'max-height': this.height}"
                             :for="$.uid + '_imageInput'"
                             v-else
+                            @dragover.prevent="onDragOver"
+                            @dragleave.prevent="onDragLeave"
+                            @drop.prevent="onDrop"
                         >
                             <div class="flex flex-col items-center">
                                 <span class="icon-image text-2xl"></span>
@@ -543,6 +551,8 @@
 
                     isLoading: false,
 
+                    isDragging: false,
+
                     ai: {
                         enabled: Boolean("{{ core()->getConfigData('general.magic_ai.settings.enabled') && core()->getConfigData('general.magic_ai.image_generation.enabled') }}"),
 
@@ -607,14 +617,20 @@
                     }
                 },
 
-                add() {
+                add(files = null) {
                     let imageInput = this.$refs[this.$.uid + '_imageInput'];
 
-                    if (imageInput.files == undefined) {
+                    let filesToProcess = [];
+
+                    if (files) {
+                        filesToProcess = Array.from(files);
+                    } else if (imageInput.files == undefined) {
                         return;
+                    } else {
+                        filesToProcess = Array.from(imageInput.files);
                     }
 
-                    const validFiles = Array.from(imageInput.files).every(file => file.type.includes('image/'));
+                    const validFiles = filesToProcess.every(file => file.type.includes('image/'));
 
                     if (! validFiles) {
                         this.$emitter.emit('add-flash', {
@@ -625,7 +641,7 @@
                         return;
                     }
 
-                    Array.from(imageInput.files).forEach((file, index) => {
+                    filesToProcess.forEach((file, index) => {
                         this.images.push({
                             id: 'image_' + this.images.length,
                             url: '',
@@ -634,9 +650,27 @@
                         });
                     });
 
+                    if (!files && imageInput) {
+                        imageInput.value = '';
+                    }
+
                     if (this.ai.enabled) {
                         this.$refs.choiceImageModal.close()
                     }
+                },
+
+                onDragOver() {
+                    this.isDragging = true;
+                },
+
+                onDragLeave() {
+                    this.isDragging = false;
+                },
+
+                onDrop(event) {
+                    this.isDragging = false;
+                    const droppedFiles = Array.from(event.dataTransfer.files);
+                    this.add(droppedFiles);
                 },
 
                 remove(image) {

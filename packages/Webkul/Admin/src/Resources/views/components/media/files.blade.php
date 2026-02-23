@@ -27,9 +27,12 @@
 
                 <label
                     class="grid justify-items-center items-center w-full h-[120px] max-w-[210px] max-h-[120px] border border-dashed dark:border-gray-300 rounded cursor-pointer transition-all hover:border-gray-400"
-                    :class="[errors['inputFiles.files[0]'] ? 'border border-red-500' : 'border-gray-300']"
+                    :class="[errors['inputFiles.files[0]'] ? 'border border-red-500' : 'border-gray-300', {'border-violet-400 bg-violet-50 dark:bg-cherry-800': isDragging}]"
                     :for="$.uid + '_fileInput'"
                     v-if="0 == inputFiles.length"
+                    @dragover.prevent="onDragOver"
+                    @dragleave.prevent="onDragLeave"
+                    @drop.prevent="onDrop"
                 >
                     <div class="flex flex-col items-center">
                         <span class="icon-folder text-2xl"></span>
@@ -160,6 +163,7 @@
             data() {
                 return {
                     inputFiles: [],
+                    isDragging: false,
                 }
             },
 
@@ -168,14 +172,20 @@
             },
 
             methods: {
-                add() {
+                add(files = null) {
                     let inputs = this.$refs[this.$.uid + '_fileInput'];
 
-                    if (inputs.files == undefined) {
+                    let filesToProcess = [];
+
+                    if (files) {
+                        filesToProcess = Array.from(files);
+                    } else if (inputs.files == undefined) {
                         return;
+                    } else {
+                        filesToProcess = Array.from(inputs.files);
                     }
 
-                    const validFiles = Array.from(inputs.files).every(file => file.type.includes('application/pdf'));
+                    const validFiles = filesToProcess.every(file => file.type.includes('application/pdf'));
 
                     if (! validFiles) {
                         this.$emitter.emit('add-flash', {
@@ -186,13 +196,31 @@
                         return;
                     }
 
-                    inputs.files.forEach((file, index) => {
+                    filesToProcess.forEach((file, index) => {
                         this.inputFiles.push({
                             id: 'file_' + this.inputFiles.length,
                             url: '',
                             file: file
                         });
                     });
+
+                    if (!files && inputs) {
+                        inputs.value = '';
+                    }
+                },
+
+                onDragOver() {
+                    this.isDragging = true;
+                },
+
+                onDragLeave() {
+                    this.isDragging = false;
+                },
+
+                onDrop(event) {
+                    this.isDragging = false;
+                    const droppedFiles = Array.from(event.dataTransfer.files);
+                    this.add(droppedFiles);
                 },
 
                 remove(file) {
