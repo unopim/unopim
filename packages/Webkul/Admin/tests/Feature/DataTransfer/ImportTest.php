@@ -3,6 +3,7 @@
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Webkul\DataTransfer\Models\JobInstances;
+use Webkul\DataTransfer\Models\JobTrack;
 
 use function Pest\Laravel\delete;
 use function Pest\Laravel\get;
@@ -240,4 +241,55 @@ it('should delete the import job', function () {
         ]);
 
     $this->assertDatabaseMissing($this->getFullTableName(JobInstances::class), ['code' => $importJob->code]);
+});
+
+it('should process a CSV file with 1000+ columns during validation', function () {
+    $this->loginAsAdmin();
+    Storage::fake('private');
+
+    $columnCount = 1100;
+    $headers = ['sku', 'status', 'type', 'attribute_family', 'channel', 'locale', 'parent'];
+    $values = ['product_large', 'true', 'simple', 'default', 'default', 'en_US', ''];
+
+    for ($i = 1; $i <= ($columnCount - 7); $i++) {
+        $headers[] = 'attr_'.$i;
+        $values[] = 'val_'.$i;
+    }
+
+    $content = implode(',', $headers)."\n".implode(',', $values)."\n";
+    $file = UploadedFile::fake()->createWithContent('large_product.csv', $content);
+
+    $importJobData = [
+        'code'                => 'large_import_'.Str::random(5),
+        'entity_type'         => 'products',
+        'field_separator'     => ',',
+        'type'                => 'import',
+        'allowed_errors'      => 10,
+        'file'                => $file,
+        'action'              => 'append',
+        'validation_strategy' => 'skip-erros',
+    ];
+
+    $response = postJson(route('admin.settings.data_transfer.imports.store'), $importJobData);
+    $response->assertStatus(302);
+
+    $importJob = JobInstances::where('code', $importJobData['code'])->first();
+
+    $response = putJson(route('admin.settings.data_transfer.imports.import_now', $importJob->id));
+    $response->assertStatus(302);
+
+    $jobTrack = JobTrack::where('job_instances_id', $importJob->id)->first();
+
+    $response = get(route('admin.settings.data_transfer.imports.validate', $jobTrack->id));
+
+    $response->assertStatus(200);
+    $data = $response->json();
+
+    $this->assertArrayHasKey('is_valid', $data);
+    $this->assertArrayHasKey('import', $data);
+
+    $this->assertGreaterThan(0, $data['import']['errors_count']);
+
+    $errors = json_encode($data['import']['errors']);
+    $this->assertStringContainsString('attr_1093', $errors);
 });
