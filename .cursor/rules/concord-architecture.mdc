@@ -1,0 +1,27 @@
+---
+description: Concord architecture patterns for UnoPim models and repositories
+globs: "packages/Webkul/**/Models/*.php,packages/Webkul/**/Repositories/*.php,packages/Webkul/**/Contracts/*.php"
+alwaysApply: false
+---
+
+# Concord Architecture
+
+## New Models
+
+Every new model requires three parts:
+
+1. **Contract** (interface) in `Contracts/ModelName.php`
+2. **Model** (implementation) in `Models/ModelName.php` implementing the Contract
+3. **Proxy** in `Models/ModelNameProxy.php` extending `ModelProxy`
+
+## Repositories
+
+- Always extend `Webkul\Core\Eloquent\Repository`
+- Return the Contract class from `model()` method
+- Dispatch events in create/update/delete methods
+
+## Service Providers
+
+- Register models in `ModuleServiceProvider` (extends `BaseModuleServiceProvider`)
+- Merge configs (menu, acl, importers, exporters) in `register()`
+- Load routes, migrations, translations, views in `boot()`

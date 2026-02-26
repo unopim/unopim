@@ -1,0 +1,29 @@
+---
+description: Pest testing conventions for UnoPim
+globs: "**/*Test.php,**/tests/**/*.php"
+alwaysApply: false
+---
+
+# Testing Conventions
+
+## Running Tests
+
+```bash
+./vendor/bin/pest                                    # All tests
+./vendor/bin/pest --testsuite="Admin Feature Test"   # Specific suite
+./vendor/bin/pest --filter="test_name"               # Specific test
+```
+
+## Test Structure
+
+- Use `describe()` blocks to group related tests
+- Use `it('can do something')` for test names
+- Use `beforeEach(fn() => $this->loginAsAdmin())` for admin tests
+- Use factories for test data creation
+- Assert database state with `assertDatabaseHas()`/`assertDatabaseMissing()`
+
+## API Tests
+
+- Use `$this->getAuthenticationHeaders()` for OAuth headers
+- Assert JSON structure with `assertJsonStructure()`
+- Test all HTTP status codes (200, 201, 204, 403, 404, 422)
