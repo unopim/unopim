@@ -3,7 +3,6 @@
 namespace Webkul\ElasticSearch\Observers;
 
 use Elastic\Elasticsearch\Exception\ElasticsearchException;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\ElasticSearch\Indexing\Normalizer\ProductNormalizer;
@@ -57,27 +56,7 @@ class Product
         if (config('elasticsearch.enabled') && self::$isEnabled) {
             $productArray = $product->toArray();
 
-            $productArray['status'] = $productArray['status'] ?? 1;
-
-            switch (DB::getDriverName()) {
-                case 'pgsql':
-                    $productArray['status'] = $productArray['status'] == 1 || $productArray['status'] === true;
-
-                    if (isset($productArray['attribute_family']['status'])) {
-                        $productArray['attribute_family']['status'] =
-                            $productArray['attribute_family']['status'] == 1 || $productArray['attribute_family']['status'] === true;
-                    }
-                    break;
-
-                case 'mysql':
-                default:
-                    $productArray['status'] = (int) $productArray['status'];
-
-                    if (isset($productArray['attribute_family']['status'])) {
-                        $productArray['attribute_family']['status'] = (int) $productArray['attribute_family']['status'];
-                    }
-                    break;
-            }
+            $productArray = $this->sanitizeProductArray($productArray);
 
             if (isset($productArray['values'])) {
                 $productArray['values'] = $this->productIndexingNormalizer->normalize($productArray['values']);
@@ -103,6 +82,8 @@ class Product
         if (config('elasticsearch.enabled') && self::$isEnabled) {
             try {
                 $productArray = $product->toArray();
+
+                $productArray = $this->sanitizeProductArray($productArray);
 
                 if (isset($productArray['values'])) {
                     $productArray['values'] = $this->productIndexingNormalizer->normalize($productArray['values']);
@@ -135,5 +116,19 @@ class Product
                 ]);
             }
         }
+    }
+
+    /**
+     * Sanitize product array.
+     */
+    protected function sanitizeProductArray(array $productArray): array
+    {
+        $productArray['status'] = (bool) ($productArray['status'] ?? false);
+
+        if (isset($productArray['attribute_family']['status'])) {
+            $productArray['attribute_family']['status'] = (bool) $productArray['attribute_family']['status'];
+        }
+
+        return $productArray;
     }
 }

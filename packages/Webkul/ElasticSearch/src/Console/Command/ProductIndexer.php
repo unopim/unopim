@@ -117,6 +117,11 @@ class ProductIndexer extends Command
 
                             $product = $product->toArray();
 
+                            $product['status'] = (bool) ($product['status'] ?? false);
+                            if (isset($product['attribute_family']['status'])) {
+                                $product['attribute_family']['status'] = (bool) $product['attribute_family']['status'];
+                            }
+
                             $productsToUpdate['body'][] = [
                                 'index' => [
                                     '_index' => $productIndex,
@@ -300,11 +305,7 @@ class ProductIndexer extends Command
      */
     private function getUnopimProductMapping()
     {
-        $driver = DB::getDriverName();
-
-        $statusMapping = $driver === 'pgsql'
-            ? ['type' => 'boolean']
-            : ['type' => 'long'];
+        $statusMapping = ['type' => 'boolean'];
 
         return [
             'properties' => [
