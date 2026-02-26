@@ -70,7 +70,7 @@ class ImportController extends Controller
         $importers = array_keys($importerConfig);
 
         $this->validate(request(), [
-            'code'                => 'required|unique:job_instances,code',
+            'code'                => ['required', 'unique:job_instances,code', 'regex:/^[a-zA-Z0-9_-]+$/'],
             'entity_type'         => 'required|in:'.implode(',', $importers),
         ], ['file.mimes' => trans('core::validation.file-type')]);
 

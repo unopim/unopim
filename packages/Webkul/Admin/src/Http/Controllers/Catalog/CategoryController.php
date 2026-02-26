@@ -153,6 +153,24 @@ class CategoryController extends Controller
             return redirect()->route('admin.catalog.categories.edit', ['id' => $id]);
         }
 
+        if (! empty($parentId) && $parentId == $id) {
+            session()->flash('error', trans('admin::app.catalog.categories.can-not-update'));
+
+            return redirect()->route('admin.catalog.categories.edit', ['id' => $id]);
+        }
+
+        if (! empty($parentId)) {
+
+            $category = $this->categoryRepository->find($id);
+
+            if ($category && $category->descendants->pluck('id')->contains($parentId)) {
+
+                session()->flash('error', 'You cannot assign a child category as parent.');
+
+                return redirect()->route('admin.catalog.categories.edit', ['id' => $id]);
+            }
+        }
+
         try {
             $this->categoryValidator->validate($categoryRequest->only(['code', 'parent_id', 'additional_data']), $id);
         } catch (ValidationException $e) {
