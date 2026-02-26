@@ -1334,9 +1334,16 @@
             }
         });
     </script>
-    <script type="text/x-template" id="v-file-uploader-template">
+
+   <script type="text/x-template" id="v-file-uploader-template">
         <div :class="[errors.length ? 'flex items-center justify-center w-full border !border-red-600 hover:border-red-600' : 'flex items-center justify-center w-full']">
-            <label :for="$.uid + '_dropzone-file'" class="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-violet-50 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+            <label
+                :for="$.uid + '_dropzone-file'"
+                class="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-violet-50 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                @dragover.prevent="onDragOver"
+                @dragleave.prevent="onDragLeave"
+                @drop.prevent="onDrop"
+                >
                 <div class="flex flex-col items-center justify-center py-6">
                     <template v-if="fieldData.value && (fieldData.value.name || field.value)">
                         <span class="icon-product text-4xl mb-4 mr-4"></span>
@@ -1356,7 +1363,6 @@
                         <p class="text-xs text-gray-500 dark:text-gray-400" v-html="info"></p>
                     </template>
                 </div>
-                            
                 <input
                     :id="$.uid + '_dropzone-file'"
                     type="file"
@@ -1370,7 +1376,6 @@
             </label>
         </div>
     </script>
-    
     <script type="module">
         app.component('v-file-uploader', {
             template: '#v-file-uploader-template',
@@ -1415,16 +1420,52 @@
                         this.$forceUpdate();
                     });
                 },
-                 
                 clearFile(event) {
                     this.fieldData.value = null;
-                    // this.$refs.fileInput.value = null;
                     this.$nextTick(() => {
-                        // Force update to refresh any related UI without reopening the upload dialog
                         this.$forceUpdate();
                     });
                     event.preventDefault();
-                }
+                },
+
+                onDragOver() {
+                    this.isDragging = true;
+                },
+
+                onDragLeave() {
+                    this.isDragging = false;
+                },
+
+                onDrop(event) {
+                    this.isDragging = false;
+
+                    const droppedFiles = Array.from(event.dataTransfer.files);
+                    this.addFiles(droppedFiles);
+                },
+
+                addFiles(files) {
+                    if (!files.length) return;
+
+                    if (this.multiple) {
+                    this.fieldData.value = [
+                        ...(this.fieldData.value || []),
+                        ...files
+                    ];
+                    } else {
+                        this.fieldData.value = files[0] ?? null;
+                    }
+
+                    const dt = new DataTransfer();
+
+                    const fileList = Array.isArray(this.fieldData.value)
+                        ? this.fieldData.value
+                        : [this.fieldData.value];
+
+                    fileList.forEach(file=>file && dt.items.add(file));
+
+                    this.$refs.fileInput.files = dt.files;
+                },
+
             }
         });
     </script>
