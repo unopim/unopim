@@ -196,6 +196,11 @@ class Importer extends AbstractImporter
     protected array $channelLocaleCachedValues = [];
 
     /**
+     * deferred associations
+     */
+    protected array $deferredAssociations = [];
+
+    /**
      * Valid csv columns
      */
     protected array $validColumnNames = [
@@ -665,6 +670,8 @@ class Importer extends AbstractImporter
 
         $this->saveProducts($products);
 
+        $this->saveLinks();
+
         return true;
     }
 
@@ -868,13 +875,13 @@ class Importer extends AbstractImporter
                 $filteredAssociation[] = $value;
             }
 
+            $this->deferredAssociations[$rowData['sku']][$section] = $filteredAssociation;
+
             $associationProducts = $this->productRepository->whereIn('sku', $filteredAssociation)?->pluck('sku')?->toArray();
 
-            if (empty($associationProducts)) {
-                continue;
+            if (! empty($associationProducts)) {
+                $product[AbstractType::PRODUCT_VALUES_KEY][AbstractType::ASSOCIATION_VALUES_KEY][$section] = $associationProducts;
             }
-
-            $product[AbstractType::PRODUCT_VALUES_KEY][AbstractType::ASSOCIATION_VALUES_KEY][$section] = $associationProducts;
         }
     }
 
@@ -1453,5 +1460,43 @@ class Importer extends AbstractImporter
                 }
             }
         }
+    }
+
+    /**
+     * Save links
+     */
+    public function saveLinks(): void
+    {
+        foreach ($this->deferredAssociations as $sku => $associations) {
+            $product = $this->skuStorage->get($sku);
+
+            if (! $product) {
+                continue;
+            }
+
+            $product = $this->productRepository->find($product['id']);
+
+            if (! $product) {
+                continue;
+            }
+
+            $productValues = $product->values;
+
+            foreach ($associations as $section => $values) {
+                $associationProducts = $this->productRepository->whereIn('sku', $values)?->pluck('sku')?->toArray();
+
+                if (empty($associationProducts)) {
+                    continue;
+                }
+
+                $productValues[AbstractType::ASSOCIATION_VALUES_KEY][$section] = $associationProducts;
+            }
+
+            $product->values = $productValues;
+
+            $product->save();
+        }
+
+        $this->deferredAssociations = [];
     }
 }
