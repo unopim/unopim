@@ -84,7 +84,6 @@ class RoleController extends Controller
     public function edit(int $id)
     {
         $role = $this->roleRepository->findOrFail($id);
-
         return view('admin::settings.roles.edit', compact('role'));
     }
 
