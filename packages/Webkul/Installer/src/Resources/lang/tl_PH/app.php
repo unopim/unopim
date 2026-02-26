@@ -98,6 +98,10 @@ return [
     ],
 
     'installer' => [
+        'middleware' => [
+            'already-installed' => 'Naka-install na ang application.',
+        ],
+
         'index' => [
             'create-administrator' => [
                 'admin'            => 'Tagapangasiwa',
