@@ -11,6 +11,159 @@ test('with empty product type field', async ({ adminPage }) => {
   await adminPage.waitForTimeout(500);
   await expect(adminPage.locator('div.border-red-500 + p.text-red-600')).toHaveText('The Type field is required');
 });
+test('create product with simple alphanumeric SKU (ABC123)', async ({ adminPage }) => {
+    await adminPage.getByRole('link', { name: ' Catalog' }).click();
+    await adminPage.getByRole('button', { name: 'Create Product' }).click();
+    await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
+    await adminPage.getByRole('option', { name: 'Simple' }).locator('span').first().click();
+    await adminPage.locator('input[name="family"]').locator('..').locator('.multiselect__placeholder').click();
+    await adminPage.getByRole('option').first().click();
+    const sku = `ABC123_${Date.now()}`;
+    await adminPage.locator('input[name="sku"]').fill(sku);
+    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await adminPage.waitForTimeout(1000);
+    await expect(adminPage.getByText(sku)).toBeVisible();
+  });
+
+  test('create product with letters only SKU', async ({ adminPage }) => {
+    await adminPage.getByRole('link', { name: ' Catalog' }).click();
+    await adminPage.getByRole('button', { name: 'Create Product' }).click();
+    await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
+    await adminPage.getByRole('option', { name: 'Simple' }).locator('span').first().click();
+    await adminPage.locator('input[name="family"]').locator('..').locator('.multiselect__placeholder').click();
+    await adminPage.getByRole('option').first().click();
+    const sku = `ABCDEFG_${Date.now()}`;
+    await adminPage.locator('input[name="sku"]').fill(sku);
+    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await adminPage.waitForTimeout(1000);
+    await expect(adminPage.getByText(sku)).toBeVisible();
+  });
+
+  test('create product with hyphen separator (PROD-001)', async ({ adminPage }) => {
+    await adminPage.getByRole('link', { name: ' Catalog' }).click();
+    await adminPage.getByRole('button', { name: 'Create Product' }).click();
+    await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
+    await adminPage.getByRole('option', { name: 'Simple' }).locator('span').first().click();
+    await adminPage.locator('input[name="family"]').locator('..').locator('.multiselect__placeholder').click();
+    await adminPage.getByRole('option').first().click();
+    const sku = `PROD-001_${Date.now()}`;
+    await adminPage.locator('input[name="sku"]').fill(sku);
+    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await adminPage.waitForTimeout(1000);
+    await expect(adminPage.getByText(sku)).toBeVisible();
+  });
+
+  test('create product with multiple hyphens', async ({ adminPage }) => {
+    await adminPage.getByRole('link', { name: ' Catalog' }).click();
+    await adminPage.getByRole('button', { name: 'Create Product' }).click();
+    await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
+    await adminPage.getByRole('option', { name: 'Simple' }).locator('span').first().click();
+    await adminPage.locator('input[name="family"]').locator('..').locator('.multiselect__placeholder').click();
+    await adminPage.getByRole('option').first().click();
+    const sku = `PROD-CODE-${Date.now()}`;
+    await adminPage.locator('input[name="sku"]').fill(sku);
+    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await adminPage.waitForTimeout(1000);
+    await expect(adminPage.getByText(sku)).toBeVisible();
+  });
+
+  test('create product with underscore separator', async ({ adminPage }) => {
+    await adminPage.getByRole('link', { name: ' Catalog' }).click();
+    await adminPage.getByRole('button', { name: 'Create Product' }).click();
+    await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
+    await adminPage.getByRole('option', { name: 'Simple' }).locator('span').first().click();
+    await adminPage.locator('input[name="family"]').locator('..').locator('.multiselect__placeholder').click();
+    await adminPage.getByRole('option').first().click();
+    const sku = `ITEM_CODE_${Date.now()}`;
+    await adminPage.locator('input[name="sku"]').fill(sku);
+    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await adminPage.waitForTimeout(1000);
+    await expect(adminPage.getByText(sku)).toBeVisible();
+  });
+
+  test('create product with mixed separators', async ({ adminPage }) => {
+    await adminPage.getByRole('link', { name: ' Catalog' }).click();
+    await adminPage.getByRole('button', { name: 'Create Product' }).click();
+    await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
+    await adminPage.getByRole('option', { name: 'Simple' }).locator('span').first().click();
+    await adminPage.locator('input[name="family"]').locator('..').locator('.multiselect__placeholder').click();
+    await adminPage.getByRole('option').first().click();
+    const sku = `SKU-PROD_${Date.now()}`;
+    await adminPage.locator('input[name="sku"]').fill(sku);
+    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await adminPage.waitForTimeout(1000);
+    await expect(adminPage.getByText(sku)).toBeVisible();
+  });
+
+  test('reject SKU starting with hyphen', async ({ adminPage }) => {
+    await adminPage.getByRole('link', { name: ' Catalog' }).click();
+    await adminPage.getByRole('button', { name: 'Create Product' }).click();
+    await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
+    await adminPage.getByRole('option', { name: 'Simple' }).locator('span').first().click();
+    await adminPage.locator('input[name="family"]').locator('..').locator('.multiselect__placeholder').click();
+    await adminPage.getByRole('option').first().click();
+    const sku = `-PROD001_${Date.now()}`;
+    await adminPage.locator('input[name="sku"]').fill(sku);
+    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await adminPage.waitForTimeout(500);
+    await expect(adminPage.getByText(sku)).toHaveCount(0);
+  });
+
+  test('reject SKU starting with underscore', async ({ adminPage }) => {
+    await adminPage.getByRole('link', { name: ' Catalog' }).click();
+    await adminPage.getByRole('button', { name: 'Create Product' }).click();
+    await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
+    await adminPage.getByRole('option', { name: 'Simple' }).locator('span').first().click();
+    await adminPage.locator('input[name="family"]').locator('..').locator('.multiselect__placeholder').click();
+    await adminPage.getByRole('option').first().click();
+    const sku = `_INVALID_${Date.now()}`;
+    await adminPage.locator('input[name="sku"]').fill(sku);
+    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await adminPage.waitForTimeout(500);
+    await expect(adminPage.getByText(sku)).toHaveCount(0);
+  });
+
+  test('reject SKU with consecutive hyphens', async ({ adminPage }) => {
+    await adminPage.getByRole('link', { name: ' Catalog' }).click();
+    await adminPage.getByRole('button', { name: 'Create Product' }).click();
+    await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
+    await adminPage.getByRole('option', { name: 'Simple' }).locator('span').first().click();
+    await adminPage.locator('input[name="family"]').locator('..').locator('.multiselect__placeholder').click();
+    await adminPage.getByRole('option').first().click();
+    const sku = `PROD--${Date.now()}`;
+    await adminPage.locator('input[name="sku"]').fill(sku);
+    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await adminPage.waitForTimeout(500);
+    await expect(adminPage.getByText(sku)).toHaveCount(0);
+  });
+
+  test('reject SKU with special characters', async ({ adminPage }) => {
+    await adminPage.getByRole('link', { name: ' Catalog' }).click();
+    await adminPage.getByRole('button', { name: 'Create Product' }).click();
+    await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
+    await adminPage.getByRole('option', { name: 'Simple' }).locator('span').first().click();
+    await adminPage.locator('input[name="family"]').locator('..').locator('.multiselect__placeholder').click();
+    await adminPage.getByRole('option').first().click();
+    const sku = `PROD@${Date.now()}`;
+    await adminPage.locator('input[name="sku"]').fill(sku);
+    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await adminPage.waitForTimeout(500);
+    await expect(adminPage.getByText(sku)).toHaveCount(0);
+  });
+
+  test('reject SKU with spaces', async ({ adminPage }) => {
+    await adminPage.getByRole('link', { name: ' Catalog' }).click();
+    await adminPage.getByRole('button', { name: 'Create Product' }).click();
+    await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
+    await adminPage.getByRole('option', { name: 'Simple' }).locator('span').first().click();
+    await adminPage.locator('input[name="family"]').locator('..').locator('.multiselect__placeholder').click();
+    await adminPage.getByRole('option').first().click();
+    const sku = `PROD ${Date.now()}`;
+    await adminPage.locator('input[name="sku"]').fill(sku);
+    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await adminPage.waitForTimeout(500);
+    await expect(adminPage.getByText(sku)).toHaveCount(0);
+  });
 
 test('with empty family field', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
@@ -166,8 +319,7 @@ test('should allow selecting all products with the mass action checkbox', async 
   await adminPage.click('label[for="mass_action_select_all_records"]');
   await expect(adminPage.locator('#mass_action_select_all_records')).toBeChecked();
 });
-});
-
+    
 test.describe('UnoPim Update Product Test cases', () => {
 test('Update simple product', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
