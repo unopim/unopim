@@ -1,27 +1,26 @@
 const { test, expect } = require('../../utils/fixtures');
-test.describe('UnoPim  Create Product Test cases', () => {
-test('with empty product type field', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Catalog' }).click();
-  await adminPage.getByRole('button', { name: 'Create Product' }).click();
-  await adminPage.locator('input[name="attribute_family_id"]').locator('..').locator('.multiselect__placeholder').click();
-  await adminPage.getByRole('option', { name: 'Default' }).locator('span').first().click();
-  await adminPage.locator('input[name="sku"]').click();
-  await adminPage.locator('input[name="sku"]').fill('acer456');
-  await adminPage.getByRole('button', { name: 'Save Product' }).click();
-  await adminPage.waitForTimeout(500);
-  await expect(adminPage.locator('div.border-red-500 + p.text-red-600')).toHaveText('The Type field is required');
-});
-test('create product with simple alphanumeric SKU (ABC123)', async ({ adminPage }) => {
+test.describe('UnoPim Create Product Test Cases', () => {
+
+  test('with empty product type field', async ({ adminPage }) => {
+    await adminPage.getByRole('link', { name: ' Catalog' }).click();
+    await adminPage.getByRole('button', { name: 'Create Product' }).click();
+    await adminPage.locator('input[name="attribute_family_id"]').locator('..').locator('.multiselect__placeholder').click();
+    await adminPage.getByRole('option', { name: 'Default' }).first().click();
+    await adminPage.locator('input[name="sku"]').fill(`acer456_${Date.now()}`);
+    await adminPage.getByRole('button', { name: 'Save Product' }).click();
+    await expect(adminPage.locator('div.border-red-500 + p.text-red-600')).toHaveText('The Type field is required');
+  });
+
+  test('create product with simple alphanumeric SKU (ABC123)', async ({ adminPage }) => {
     await adminPage.getByRole('link', { name: ' Catalog' }).click();
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
-    await adminPage.getByRole('option', { name: 'Simple' }).locator('span').first().click();
+    await adminPage.getByRole('option', { name: 'Simple' }).first().click();
     await adminPage.locator('input[name="family"]').locator('..').locator('.multiselect__placeholder').click();
     await adminPage.getByRole('option').first().click();
     const sku = `ABC123_${Date.now()}`;
     await adminPage.locator('input[name="sku"]').fill(sku);
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
-    await adminPage.waitForTimeout(1000);
     await expect(adminPage.getByText(sku)).toBeVisible();
   });
 
@@ -29,13 +28,12 @@ test('create product with simple alphanumeric SKU (ABC123)', async ({ adminPage 
     await adminPage.getByRole('link', { name: ' Catalog' }).click();
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
-    await adminPage.getByRole('option', { name: 'Simple' }).locator('span').first().click();
+    await adminPage.getByRole('option', { name: 'Simple' }).first().click();
     await adminPage.locator('input[name="family"]').locator('..').locator('.multiselect__placeholder').click();
     await adminPage.getByRole('option').first().click();
     const sku = `ABCDEFG_${Date.now()}`;
     await adminPage.locator('input[name="sku"]').fill(sku);
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
-    await adminPage.waitForTimeout(1000);
     await expect(adminPage.getByText(sku)).toBeVisible();
   });
 
@@ -43,13 +41,12 @@ test('create product with simple alphanumeric SKU (ABC123)', async ({ adminPage 
     await adminPage.getByRole('link', { name: ' Catalog' }).click();
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
-    await adminPage.getByRole('option', { name: 'Simple' }).locator('span').first().click();
+    await adminPage.getByRole('option', { name: 'Simple' }).first().click();
     await adminPage.locator('input[name="family"]').locator('..').locator('.multiselect__placeholder').click();
     await adminPage.getByRole('option').first().click();
     const sku = `PROD-001_${Date.now()}`;
     await adminPage.locator('input[name="sku"]').fill(sku);
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
-    await adminPage.waitForTimeout(1000);
     await expect(adminPage.getByText(sku)).toBeVisible();
   });
 
@@ -57,13 +54,12 @@ test('create product with simple alphanumeric SKU (ABC123)', async ({ adminPage 
     await adminPage.getByRole('link', { name: ' Catalog' }).click();
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
-    await adminPage.getByRole('option', { name: 'Simple' }).locator('span').first().click();
+    await adminPage.getByRole('option', { name: 'Simple' }).first().click();
     await adminPage.locator('input[name="family"]').locator('..').locator('.multiselect__placeholder').click();
     await adminPage.getByRole('option').first().click();
     const sku = `PROD-CODE-${Date.now()}`;
     await adminPage.locator('input[name="sku"]').fill(sku);
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
-    await adminPage.waitForTimeout(1000);
     await expect(adminPage.getByText(sku)).toBeVisible();
   });
 
@@ -71,13 +67,12 @@ test('create product with simple alphanumeric SKU (ABC123)', async ({ adminPage 
     await adminPage.getByRole('link', { name: ' Catalog' }).click();
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
-    await adminPage.getByRole('option', { name: 'Simple' }).locator('span').first().click();
+    await adminPage.getByRole('option', { name: 'Simple' }).first().click();
     await adminPage.locator('input[name="family"]').locator('..').locator('.multiselect__placeholder').click();
     await adminPage.getByRole('option').first().click();
     const sku = `ITEM_CODE_${Date.now()}`;
     await adminPage.locator('input[name="sku"]').fill(sku);
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
-    await adminPage.waitForTimeout(1000);
     await expect(adminPage.getByText(sku)).toBeVisible();
   });
 
