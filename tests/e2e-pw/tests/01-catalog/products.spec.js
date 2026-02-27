@@ -498,4 +498,3 @@ test('Add Column to the product data grid and verify', async ({ adminPage }) => 
   await expect(adminPage.locator('div:has-text("Selected Columns") >> text=Parent')).toBeVisible();
   await adminPage.getByRole('button', {name: 'Apply'}).click();    
   });
-});
