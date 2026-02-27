@@ -410,7 +410,6 @@ test('Delete configurable product', async ({ adminPage }) => {
   await adminPage.waitForTimeout(500);
   await expect(adminPage.getByText(/Product deleted successfully/i)).toBeVisible();
 });
-});
 
 test.describe('UnoPim Test cases dynamic column', () => {
 test('Dynamic Column should be clickable', async ({ adminPage }) => {
