@@ -7,6 +7,7 @@ return [
     'decimal'                      => ':attribute는 유효해야 합니다.',
     'phone-number'                 => ':attribute는 유효한 전화번호여야 합니다.',
     'slug'                         => ':attribute는 유효한 슬러그여야 합니다.',
+    'sku'                          => ':attribute는 유효한 SKU여야 합니다(영숫자, 하이픈 및 밑줄만 허용).',
     'comma-separated-integer'      => ':attribute 필드는 숫자여야 하며 콤마를 포함할 수 있습니다.',
     'type'                         => ':attribute는 유효한 유형이어야 합니다.',
     'validation-type'              => ':attribute는 유효한 유형이어야 합니다.',

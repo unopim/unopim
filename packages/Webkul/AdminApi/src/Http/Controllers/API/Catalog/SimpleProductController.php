@@ -76,7 +76,7 @@ class SimpleProductController extends ProductController
             'family'            => ['required', 'string'],
             'additional'        => ['nullable', 'array'],
             'values'            => ['required', 'array'],
-            'values.common.sku' => ['required'],
+            'values.common.sku' => ['required', 'unique:products,sku'],
             'variant'           => ['nullable', 'array'],
         ]);
 

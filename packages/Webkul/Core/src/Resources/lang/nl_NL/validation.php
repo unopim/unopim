@@ -7,6 +7,7 @@ return [
     'decimal'                      => 'Het kenmerk :attribute moet geldig zijn.',
     'phone-number'                 => 'Het kenmerk :attribute moet een geldig telefoonnummer zijn.',
     'slug'                         => 'Het kenmerk :attribute moet een geldige slug zijn.',
+    'sku'                          => 'Het kenmerk :attribute moet een geldige SKU zijn (alleen alfanumerieke tekens, koppeltekens en underscores).',
     'comma-separated-integer'      => 'Het veld :attribute moet numeriek zijn en mag komma\'s bevatten.',
     'type'                         => 'Het kenmerk :attribute moet een geldig type zijn.',
     'validation-type'              => 'Het kenmerk :attribute moet een geldig type zijn.',
