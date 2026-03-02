@@ -10,7 +10,7 @@ use Webkul\Core\ElasticSearch;
 use Webkul\Installer\Database\Seeders\DatabaseSeeder as UnoPimDatabaseSeeder;
 use Webkul\Installer\Events\ComposerEvents;
 
-use function Laravel\Prompts\multiselect;
+use function Laravel\Prompts\multisearch;
 use function Laravel\Prompts\password;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
@@ -438,6 +438,7 @@ class Installer extends Command
                     'password' => $password,
                     'role_id'  => 1,
                     'status'   => 1,
+                    'timezone' => config('app.timezone'),
                 ]
             );
 
@@ -559,23 +560,15 @@ class Installer extends Command
      */
     protected function allowedChoice(string $question, array $choices)
     {
-        $selectedValues = multiselect(
+        $selectedKeys = multisearch(
             label: $question,
-            options: array_values($choices),
+            options: fn (string $value) => strlen($value) > 0
+                ? array_filter($choices, fn ($choice) => stripos($choice, $value) !== false)
+                : $choices,
+            scroll: 10
         );
 
-        $selectedChoices = [];
-
-        foreach ($selectedValues as $selectedValue) {
-            foreach ($choices as $key => $value) {
-                if ($selectedValue === $value) {
-                    $selectedChoices[$key] = $value;
-                    break;
-                }
-            }
-        }
-
-        return $selectedChoices;
+        return array_intersect_key($choices, array_flip($selectedKeys));
     }
 
     /**
