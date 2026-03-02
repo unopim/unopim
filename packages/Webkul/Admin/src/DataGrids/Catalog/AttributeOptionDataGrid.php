@@ -34,38 +34,36 @@ class AttributeOptionDataGrid extends DataGrid
      */
     public function prepareQueryBuilder()
     {
-        $tablePrefix = DB::getTablePrefix();
-
         $this->attributeId ??= request()->id;
 
         $queryBuilder = DB::table('attribute_options')
-            ->leftJoin('attribute_option_translations as attribute_option_label', function ($join) {
-                $join->on('attribute_option_label.attribute_option_id', '=', 'attribute_options.id');
-            })
             ->where('attribute_options.attribute_id', $this->attributeId)
             ->select(
                 'attribute_options.id',
                 'attribute_options.code',
                 'attribute_options.swatch_value',
             )
-            ->groupBy('attribute_options.id')
             ->orderBy('attribute_options.sort_order', 'asc');
 
         $locales = core()->getAllActiveLocales()->pluck('code');
 
         foreach ($locales as $locale) {
-            $labelColumn = $tablePrefix.'attribute_option_label.label';
-            $localeColumn = $tablePrefix.'attribute_option_label.locale';
-            $labelAliasColumn = 'name_'.$locale;
 
-            $queryBuilder->addSelect(DB::raw(
-                "MAX(CASE WHEN {$localeColumn} = '{$locale}' THEN $labelColumn END) as {$labelAliasColumn}"
-            ));
+            $alias = 'translation_' . $locale;
+
+            $queryBuilder->leftJoin(
+                'attribute_option_translations as ' . $alias,
+                function ($join) use ($locale, $alias) {
+                    $join->on($alias . '.attribute_option_id', '=', 'attribute_options.id')
+                        ->where($alias . '.locale', '=', $locale);
+                }
+            );
+
+            $queryBuilder->addSelect($alias . '.label as name_' . $locale);
         }
 
         $this->addFilter('id', 'attribute_options.id');
-
-        $this->addFilter('code', DB::raw("(SELECT GROUP_CONCAT(CONCAT(attribute_options.code, ' ', label)  SEPARATOR ' ') FROM {$tablePrefix}attribute_option_translations WHERE attribute_option_id = {$tablePrefix}attribute_options.id)"));
+        $this->addFilter('code', 'attribute_options.code');
 
         return $queryBuilder;
     }
@@ -78,7 +76,7 @@ class AttributeOptionDataGrid extends DataGrid
     public function prepareColumns()
     {
         $locales = core()->getAllActiveLocales()->pluck('code');
-
+        
         $currentLocaleCode = core()->getCurrentLocale()?->code;
 
         $this->addColumn([
