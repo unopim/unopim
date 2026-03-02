@@ -412,19 +412,48 @@ class Importer extends AbstractImporter
 
     /**
      * Save categories from current batch
+     *
+     * Uses bulk operations for updates where possible, while maintaining
+     * sequential inserts for parent-child relationship integrity (nested-set).
      */
     public function saveCategories(array $categories): void
     {
-        /** single insert/update in the db because of parent  */
+        /** Bulk update existing categories using a single query per chunk */
         if (! empty($categories['update'])) {
             $this->updatedItemsCount += count($categories['update']);
 
+            $updateData = [];
+
             foreach ($categories['update'] as $code => $category) {
                 $this->updateParentCategoryId($category);
-                $this->categoryRepository->update($category, $this->categoryStorage->get($code), withoutFormattingValues: true);
+                $categoryId = $this->categoryStorage->get($code);
+
+                $updateData[] = [
+                    'id'              => $categoryId,
+                    'code'            => $category['code'],
+                    'parent_id'       => $category['parent_id'] ?? null,
+                    'additional_data' => is_array($category['additional_data']) ? json_encode($category['additional_data']) : $category['additional_data'],
+                    'updated_at'      => now(),
+                ];
+            }
+
+            if (! empty($updateData)) {
+                $chunkSize = (int) config('import.bulk_chunk_size', 500);
+
+                foreach (array_chunk($updateData, $chunkSize) as $chunk) {
+                    DB::table('categories')->upsert(
+                        $chunk,
+                        ['id'],
+                        ['code', 'parent_id', 'additional_data', 'updated_at']
+                    );
+                }
             }
         }
 
+        /**
+         * Sequential inserts are required for categories because nested-set
+         * (lft/rgt) values must be calculated in order for parent-child relationships.
+         */
         if (! empty($categories['insert'])) {
             $this->createdItemsCount += count($categories['insert']);
 

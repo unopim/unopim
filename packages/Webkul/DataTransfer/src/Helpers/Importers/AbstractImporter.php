@@ -68,6 +68,11 @@ abstract class AbstractImporter
     public const BATCH_SIZE = 100;
 
     /**
+     * Larger batch size for high-volume imports
+     */
+    public const LARGE_BATCH_SIZE = 1000;
+
+    /**
      * Is linking required
      */
     protected bool $linkingRequired = false;
@@ -275,6 +280,15 @@ abstract class AbstractImporter
     }
 
     /**
+     * Get the effective batch size for this import.
+     * Uses config value if set, otherwise falls back to BATCH_SIZE constant.
+     */
+    protected function getEffectiveBatchSize(): int
+    {
+        return (int) (config('import.batch_size') ?? self::BATCH_SIZE);
+    }
+
+    /**
      * Save validated batches
      */
     protected function saveValidatedBatches(): self
@@ -284,6 +298,8 @@ abstract class AbstractImporter
         $batchRows = [];
 
         $source->rewind();
+
+        $batchSize = $this->getEffectiveBatchSize();
 
         /**
          * Clean previous saved batches
@@ -297,7 +313,7 @@ abstract class AbstractImporter
             || count($batchRows)
         ) {
             if (
-                count($batchRows) == self::BATCH_SIZE
+                count($batchRows) == $batchSize
                 || ! $source->valid()
             ) {
                 $this->importBatchRepository->create([
