@@ -57,7 +57,7 @@ it('should store the newly created admin', function () {
         'status'                => 1,
         'role_id'               => 1,
         'timezone'              => 'Asia/Kolkata',
-        'ui_locale_id'          => 1,
+        'ui_locale_id'          => 2,
         'password_confirmation' => 'admin1234',
     ]);
 
@@ -74,7 +74,7 @@ it('should update the user', function () {
     $admin = Admin::factory()->create([
         'email'        => 'update@example.com',
         'password'     => Hash::make('password'),
-        'ui_locale_id' => 1,
+        'ui_locale_id' => 2,
     ]);
 
     $response = $this->put(route('admin.settings.users.update'), [
@@ -84,7 +84,7 @@ it('should update the user', function () {
         'status'       => 1,
         'role_id'      => 1,
         'timezone'     => 'Asia/Kolkata',
-        'ui_locale_id' => 1,
+        'ui_locale_id' => 2,
         'password'     => '',
     ]);
 
@@ -102,7 +102,7 @@ it('should update the user with image', function () {
     $admin = Admin::factory()->create([
         'email'        => 'update@example.com',
         'password'     => Hash::make('password'),
-        'ui_locale_id' => 1,
+        'ui_locale_id' => 2,
     ]);
 
     Storage::fake();
@@ -114,7 +114,7 @@ it('should update the user with image', function () {
         'status'       => 1,
         'role_id'      => 1,
         'timezone'     => 'Asia/Kolkata',
-        'ui_locale_id' => 1,
+        'ui_locale_id' => 2,
         'password'     => '',
         'image'        => [
             UploadedFile::fake()->image('avatar.jpg'),
@@ -135,7 +135,7 @@ it('should not remove image when user is updated', function () {
     $admin = Admin::factory()->create([
         'email'        => 'update@example.com',
         'password'     => Hash::make('password'),
-        'ui_locale_id' => 1,
+        'ui_locale_id' => 2,
         'image'        => 'user/2/image.jpg',
     ]);
 
@@ -146,7 +146,7 @@ it('should not remove image when user is updated', function () {
         'status'       => 1,
         'role_id'      => 1,
         'timezone'     => 'Asia/Kolkata',
-        'ui_locale_id' => 1,
+        'ui_locale_id' => 2,
         'password'     => '',
         'image'        => 'user/2/image.jpg',
     ]);
@@ -166,7 +166,7 @@ it('should remove image if image is removed', function () {
     $admin = Admin::factory()->create([
         'email'        => 'update@example.com',
         'password'     => Hash::make('password'),
-        'ui_locale_id' => 1,
+        'ui_locale_id' => 2,
         'image'        => 'user/2/image2.jpg',
     ]);
 
@@ -177,7 +177,7 @@ it('should remove image if image is removed', function () {
         'status'       => 1,
         'role_id'      => 1,
         'timezone'     => 'Asia/Kolkata',
-        'ui_locale_id' => 1,
+        'ui_locale_id' => 2,
         'password'     => '',
     ]);
 
@@ -196,7 +196,7 @@ it('should delete the user', function () {
     $admin = Admin::factory()->create([
         'email'        => 'delete@example.com',
         'password'     => Hash::make('password'),
-        'ui_locale_id' => 1,
+        'ui_locale_id' => 2,
     ]);
 
     $response = $this->delete(route('admin.settings.users.delete', ['id' => $admin->id]));
@@ -217,7 +217,7 @@ it('should not store the admin with invalid data', function () {
         'status'                => 1,
         'role_id'               => 1,
         'timezone'              => 'Asia/Kolkata',
-        'ui_locale_id'          => 1,
+        'ui_locale_id'          => 2,
         'password_confirmation' => '1234',
     ]);
 
@@ -233,7 +233,7 @@ it('should not update the admin with invalid data', function () {
     $admin = Admin::factory()->create([
         'email'        => 'update@example.com',
         'password'     => Hash::make('password'),
-        'ui_locale_id' => 1,
+        'ui_locale_id' => 2,
     ]);
 
     $response = $this->put(route('admin.settings.users.update'), [
@@ -243,7 +243,7 @@ it('should not update the admin with invalid data', function () {
         'status'                => 1,
         'role_id'               => 1,
         'timezone'              => 'Asia/Kolkata',
-        'ui_locale_id'          => 1,
+        'ui_locale_id'          => 2,
         'password_confirmation' => 'aa',
     ]);
 
@@ -294,7 +294,7 @@ it('should not update the user with invalid email', function () {
         'password'         => '',
         'image'            => '',
         'timezone'         => 'Asia/Kolkata',
-        'ui_locale_id'     => 1,
+        'ui_locale_id'     => 2,
     ]);
 
     $response->assertStatus(302);
@@ -313,7 +313,7 @@ it('should not update the user without name', function () {
         'password'         => '',
         'image'            => '',
         'timezone'         => 'Asia/Kolkata',
-        'ui_locale_id'     => 1,
+        'ui_locale_id'     => 2,
     ]);
 
     $response->assertStatus(302);
@@ -332,7 +332,7 @@ it('should not update the user without current password', function () {
         'password'         => '',
         'image'            => '',
         'timezone'         => 'Asia/Kolkata',
-        'ui_locale_id'     => 1,
+        'ui_locale_id'     => 2,
     ]);
 
     $response->assertStatus(302);
@@ -370,7 +370,7 @@ it('should not update the user without timezone', function () {
         'password'         => '',
         'image'            => '',
         'timezone'         => '',
-        'ui_locale_id'     => 1,
+        'ui_locale_id'     => 2,
     ]);
 
     $response->assertStatus(302);

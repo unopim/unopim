@@ -36,67 +36,109 @@
             <div class="grid gap-2.5 mt-3.5 p-5 max-xl:flex-wrap box-shadow">
                
                 <div
-                    class="flex place-content-between items-center w-full p-3 bg-orange-50 border border-orange-200 rounded-sm"
+                    class="grid gap-4 w-full p-4 bg-orange-50 border border-orange-200 rounded-sm"
                     v-if="importResource.state == 'pending'"
                 >
                     <p class="flex gap-2 items-center">
-                        <i class="icon-information text-2xl text-orange-600 bg-orange-200 rounded-full dark:!text-orange-600 "></i>
+                        <i class="icon-information text-2xl text-orange-600 bg-orange-200 rounded-full dark:!text-orange-600"></i>
+                        <span class="text-orange-700 font-medium">@lang('admin::app.settings.data-transfer.imports.import.pending-info')</span>
 
-                        @lang('admin::app.settings.data-transfer.imports.import.pending-info')
-                        <svg class="h-5 w-5 text-yellow-500" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true" viewBox="0 0 24 24">
-                            <circle
-                                cx="12"
-                                cy="12"
-                                r="10"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                class="opacity-75"
-                            ></circle>
-                            <path
-                                fill=" "
-                                d="M12 2a10 10 0 100 20 10 10 0 100-20zM12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0z"
-                                
-                            ></path>
-                            <path
-                                fill="currentColor"
-                                d="M12 6a1 1 0 011 1v4h4a1 1 0 110 2h-6a1 1 0 01-1-1V7a1 1 0 011-1z"
-                                
-                            ></path>
-                        </svg>
+                        <!-- Pulsing dots -->
+                        <span class="flex gap-1 ml-1 items-center">
+                            <span class="w-1.5 h-1.5 rounded-full bg-orange-500 animate-bounce" style="animation-delay:0s"></span>
+                            <span class="w-1.5 h-1.5 rounded-full bg-orange-500 animate-bounce" style="animation-delay:.15s"></span>
+                            <span class="w-1.5 h-1.5 rounded-full bg-orange-500 animate-bounce" style="animation-delay:.3s"></span>
+                        </span>
                     </p>
 
+                    <!-- Step pipeline -->
+                    <div class="flex items-center gap-0 w-full max-w-lg">
+                        <!-- Step 1: Queued (active) -->
+                        <div class="flex flex-col items-center">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center bg-orange-500 ring-2 ring-orange-300 ring-offset-1 animate-pulse">
+                                <i class="icon-time text-white text-base"></i>
+                            </div>
+                            <span class="text-xs mt-1 font-semibold text-orange-600">@lang('admin::app.settings.data-transfer.imports.import.pending-step-queue')</span>
+                        </div>
+                        <div class="flex-1 h-0.5 bg-gray-200 mb-4"></div>
+                        <!-- Step 2: Validating (waiting) -->
+                        <div class="flex flex-col items-center">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center bg-gray-200">
+                                <i class="icon-file-check text-gray-400 text-base"></i>
+                            </div>
+                            <span class="text-xs mt-1 text-gray-400">@lang('admin::app.settings.data-transfer.imports.import.pending-step-validate')</span>
+                        </div>
+                        <div class="flex-1 h-0.5 bg-gray-200 mb-4"></div>
+                        <!-- Step 3: Importing (waiting) -->
+                        <div class="flex flex-col items-center">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center bg-gray-200">
+                                <i class="icon-upload text-gray-400 text-base"></i>
+                            </div>
+                            <span class="text-xs mt-1 text-gray-400">@lang('admin::app.settings.data-transfer.imports.import.pending-step-import')</span>
+                        </div>
+                        <div class="flex-1 h-0.5 bg-gray-200 mb-4"></div>
+                        <!-- Step 4: Complete (waiting) -->
+                        <div class="flex flex-col items-center">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center bg-gray-200">
+                                <i class="icon-q-done text-gray-400 text-base"></i>
+                            </div>
+                            <span class="text-xs mt-1 text-gray-400">@lang('admin::app.settings.data-transfer.imports.import.pending-step-complete')</span>
+                        </div>
+                    </div>
                 </div>
-                <!-- Validate CSV File -->
-                 
                 <!-- Pending | Waiting for Queuer listen -->
                 <div
-                    class="flex place-content-between items-center w-full p-3 bg-violet-100 border border-violet-200 rounded-sm"
+                    class="grid gap-4 w-full p-4 bg-violet-50 border border-violet-200 rounded-sm"
                     v-else-if="importResource.state == 'validating'"
                 >
                     <p class="flex gap-2 items-center">
                         <i class="icon-information text-2xl text-violet-700 bg-violet-200 rounded-full"></i>
-                        @lang('admin::app.settings.data-transfer.imports.import.validating-info')
+                        <span class="text-violet-700 font-medium">@lang('admin::app.settings.data-transfer.imports.import.validating-info')</span>
 
                         <!-- Spinner -->
-                        <svg class="animate-spin h-5 w-5 ml-2 text-violet-700" xmlns="http://www.w3.org/2000/svg" fill="none"  aria-hidden="true" viewBox="0 0 24 24">
-                            <circle
-                                class="opacity-25"
-                                cx="12"
-                                cy="12"
-                                r="10"
-                                stroke="currentColor"
-                                stroke-width="4"
-                            >
-                            </circle>
-
-                            <path
-                                class="opacity-75"
-                                fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                            >
-                            </path>
+                        <svg class="animate-spin h-5 w-5 ml-1 text-violet-600" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
                     </p>
+
+                    <!-- Step pipeline -->
+                    <div class="flex items-center gap-0 w-full max-w-lg">
+                        <!-- Step 1: Queued (done) -->
+                        <div class="flex flex-col items-center">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center bg-green-500">
+                                <i class="icon-done text-white text-base"></i>
+                            </div>
+                            <span class="text-xs mt-1 font-semibold text-green-600">@lang('admin::app.settings.data-transfer.imports.import.pending-step-queue')</span>
+                        </div>
+                        <div class="flex-1 h-0.5 bg-violet-400 mb-4"></div>
+                        <!-- Step 2: Validating (active) -->
+                        <div class="flex flex-col items-center">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center bg-violet-600 ring-2 ring-violet-300 ring-offset-1 animate-pulse">
+                                <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            </div>
+                            <span class="text-xs mt-1 font-semibold text-violet-700">@lang('admin::app.settings.data-transfer.imports.import.pending-step-validate')</span>
+                        </div>
+                        <div class="flex-1 h-0.5 bg-gray-200 mb-4"></div>
+                        <!-- Step 3: Importing (waiting) -->
+                        <div class="flex flex-col items-center">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center bg-gray-200">
+                                <i class="icon-upload text-gray-400 text-base"></i>
+                            </div>
+                            <span class="text-xs mt-1 text-gray-400">@lang('admin::app.settings.data-transfer.imports.import.pending-step-import')</span>
+                        </div>
+                        <div class="flex-1 h-0.5 bg-gray-200 mb-4"></div>
+                        <!-- Step 4: Complete (waiting) -->
+                        <div class="flex flex-col items-center">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center bg-gray-200">
+                                <i class="icon-done text-gray-400 text-base"></i>
+                            </div>
+                            <span class="text-xs mt-1 text-gray-400">@lang('admin::app.settings.data-transfer.imports.import.pending-step-complete')</span>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Validation Results -->
@@ -268,13 +310,33 @@
                         ></div>
                     </div>
 
-                    <p class="flex gap-2 items-center">
-                        <span class="text-gray-800 dark:text-gray-300 font-medium">
-                            @lang('admin::app.settings.data-transfer.imports.import.progress')
-                        </span>
+                    <div class="flex justify-between items-start">
+                        <p class="flex gap-2 items-center">
+                            <span class="text-gray-800 dark:text-gray-300 font-medium">
+                                @lang('admin::app.settings.data-transfer.imports.import.progress')
+                            </span>
 
-                        @{{ stats.progress }}%
-                    </p>
+                            @{{ stats.progress }}%
+                        </p>
+
+                        <div class="flex flex-col items-end gap-1" v-if="importResource.started_at">
+                            <p class="flex gap-2 items-center text-sm">
+                                <span class="text-gray-700 dark:text-gray-400 font-medium">
+                                    @lang('admin::app.settings.data-transfer.tracker.running-time')
+                                </span>
+
+                                @{{ formattedElapsed() }}
+                            </p>
+
+                            <p class="flex gap-2 items-center text-sm" v-if="stats.progress > 0 && stats.progress < 100">
+                                <span class="text-gray-700 dark:text-gray-400 font-medium">
+                                    @lang('admin::app.settings.data-transfer.tracker.estimated-remaining')
+                                </span>
+
+                                @{{ formattedETA() }}
+                            </p>
+                        </div>
+                    </div>
 
                     <p class="flex gap-2 items-center">
                         <span class="text-gray-800 dark:text-gray-300 font-medium">
@@ -323,13 +385,33 @@
                         ></div>
                     </div>
 
-                    <p class="flex gap-2 items-center">
-                        <span class="text-gray-800 font-medium">
-                            @lang('admin::app.settings.data-transfer.imports.import.progress')
-                        </span>
+                    <div class="flex justify-between items-start">
+                        <p class="flex gap-2 items-center">
+                            <span class="text-gray-800 font-medium">
+                                @lang('admin::app.settings.data-transfer.imports.import.progress')
+                            </span>
 
-                        @{{ stats.progress }}%
-                    </p>
+                            @{{ stats.progress }}%
+                        </p>
+
+                        <div class="flex flex-col items-end gap-1" v-if="importResource.started_at">
+                            <p class="flex gap-2 items-center text-sm">
+                                <span class="text-gray-700 font-medium">
+                                    @lang('admin::app.settings.data-transfer.tracker.running-time')
+                                </span>
+
+                                @{{ formattedElapsed() }}
+                            </p>
+
+                            <p class="flex gap-2 items-center text-sm" v-if="stats.progress > 0 && stats.progress < 100">
+                                <span class="text-gray-700 font-medium">
+                                    @lang('admin::app.settings.data-transfer.tracker.estimated-remaining')
+                                </span>
+
+                                @{{ formattedETA() }}
+                            </p>
+                        </div>
+                    </div>
 
                     <p class="flex gap-2 items-center">
                         <span class="text-gray-800 font-medium">
@@ -367,13 +449,33 @@
                         ></div>
                     </div>
 
-                    <p class="flex gap-2 items-center">
-                        <span class="text-gray-800 font-medium">
-                            @lang('admin::app.settings.data-transfer.imports.import.progress')
-                        </span>
+                    <div class="flex justify-between items-start">
+                        <p class="flex gap-2 items-center">
+                            <span class="text-gray-800 font-medium">
+                                @lang('admin::app.settings.data-transfer.imports.import.progress')
+                            </span>
 
-                        @{{ stats.progress }}%
-                    </p>
+                            @{{ stats.progress }}%
+                        </p>
+
+                        <div class="flex flex-col items-end gap-1" v-if="importResource.started_at">
+                            <p class="flex gap-2 items-center text-sm">
+                                <span class="text-gray-700 font-medium">
+                                    @lang('admin::app.settings.data-transfer.tracker.running-time')
+                                </span>
+
+                                @{{ formattedElapsed() }}
+                            </p>
+
+                            <p class="flex gap-2 items-center text-sm" v-if="stats.progress > 0 && stats.progress < 100">
+                                <span class="text-gray-700 font-medium">
+                                    @lang('admin::app.settings.data-transfer.tracker.estimated-remaining')
+                                </span>
+
+                                @{{ formattedETA() }}
+                            </p>
+                        </div>
+                    </div>
 
                     <p class="flex gap-2 items-center">
                         <span class="text-gray-800 font-medium">
@@ -399,14 +501,35 @@
                 >
                     <!-- Stats -->
                     <div class="grid gap-2">
-                        <p
-                            class="flex gap-2 items-center mb-2 text-base"
+                        <div
+                            class="flex gap-2 items-center mb-3"
                             v-if="isValid"
                         >
-                            <i class="icon-done h-fit rounded-full bg-green-200 text-2xl text-green-600 dark:!text-green-600"></i>
+                            <i class="icon-done h-fit rounded-full bg-green-200 text-2xl text-green-600 dark:!text-green-600 shrink-0"></i>
 
-                            @lang('admin::app.settings.data-transfer.tracker.info')
-                        </p>
+                            <div class="flex flex-wrap items-center gap-x-1 gap-y-1">
+                                <span class="text-base font-semibold text-gray-800 dark:text-gray-100">
+                                    Job
+                                    <span class="text-green-700 dark:text-green-400">
+                                        @{{ jobInstance.entity_type ? (jobInstance.entity_type.charAt(0).toUpperCase() + jobInstance.entity_type.slice(1)) : '' }}
+                                        /
+                                        @{{ jobInstance.code }}
+                                    </span>
+                                    completed successfully
+                                </span>
+
+                                <span
+                                    v-if="importResource.started_at"
+                                    class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-sm font-bold bg-green-600 text-white"
+                                >
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5"/>
+                                    </svg>
+                                    @{{ totalDuration() }}
+                                </span>
+                            </div>
+                        </div>
 
                         <p 
                             class="flex gap-2 items-center"
@@ -476,6 +599,10 @@
                         summary: @json($summary),
 
                         stats: @json($stats),
+
+                        elapsedSeconds: 0,
+                        clockInterval: null,
+                        workStartedAt: null,
                     };
                 },
 
@@ -486,6 +613,53 @@
                 methods: {
                     toBoolean(value) {
                         return value.toLowerCase() == 1;
+                    },
+
+                    formatDuration(seconds) {
+                        if (seconds < 60) return seconds + 's';
+                        const m = Math.floor(seconds / 60);
+                        const s = seconds % 60;
+                        if (m < 60) return m + 'm ' + (s > 0 ? s + 's' : '');
+                        const h = Math.floor(m / 60);
+                        return h + 'h ' + (m % 60) + 'm';
+                    },
+
+                    formattedElapsed() {
+                        return this.formatDuration(this.elapsedSeconds);
+                    },
+
+                    formattedETA() {
+                        const progress = parseFloat(this.stats.progress);
+                        if (!progress || progress <= 0 || progress >= 100 || !this.workStartedAt) return '—';
+                        const workElapsed = (Date.now() - this.workStartedAt) / 1000;
+                        if (workElapsed < 2) return '—';
+                        const remaining = (workElapsed / progress) * (100 - progress);
+                        return this.formatDuration(Math.floor(remaining));
+                    },
+
+                    totalDuration() {
+                        if (this.importResource.started_at && this.importResource.completed_at) {
+                            const start = new Date(this.importResource.started_at).getTime();
+                            const end = new Date(this.importResource.completed_at).getTime();
+                            return this.formatDuration(Math.floor((end - start) / 1000));
+                        }
+                        return this.formatDuration(this.elapsedSeconds);
+                    },
+
+                    startClock() {
+                        if (this.clockInterval || !this.importResource.started_at) return;
+                        const startTime = new Date(this.importResource.started_at).getTime();
+                        this.elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+                        this.clockInterval = setInterval(() => {
+                            this.elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+                        }, 1000);
+                    },
+
+                    stopClock() {
+                        if (this.clockInterval) {
+                            clearInterval(this.clockInterval);
+                            this.clockInterval = null;
+                        }
                     },
                     
                     validate() {
@@ -571,9 +745,18 @@
                                 this.summary = response.data.summary;
                                 this.jobInstance = response.data.jobInstance;
 
-                                if (this.importResource.state !== 'completed' 
-                                    && (this.importResource.state === 'pending' || this.isValid)
-                                ) {
+                                const activeStates = ['processing', 'processed', 'linking', 'indexing'];
+                                if (activeStates.includes(this.importResource.state)) {
+                                    this.startClock();
+                                    if (parseFloat(this.stats.progress) > 0 && this.workStartedAt === null) {
+                                        this.workStartedAt = Date.now();
+                                    }
+                                } else {
+                                    this.stopClock();
+                                }
+
+                                const pollingStates = ['pending', 'validating', 'processing', 'processed', 'linking', 'indexing'];
+                                if (pollingStates.includes(this.importResource.state)) {
                                     setTimeout(() => {
                                         this.getStats();
                                     }, 1000);

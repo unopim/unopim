@@ -166,54 +166,75 @@
                     </x-admin::form.control-group.label>
                     
                     <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
-                        <div class="flex flex-col">
-                            <!-- Images Directory Path -->
-                            <x-admin::form.control-group class="!mb-0">
-                                <div class="flex items-center space-x-4 gap-2">
-                                    <x-admin::form.control-group.label>
-                                        @lang('admin::app.settings.data-transfer.imports.edit.images-directory')
-                                    </x-admin::form.control-group.label>
+                        <div class="flex flex-col gap-2">
 
-                                    <x-admin::form.control-group.control
-                                        type="text"
-                                        name="images_directory_path"
-                                        :value="old('images_directory_path') ?? $import->images_directory_path"
-                                        :placeholder="trans('admin::app.settings.data-transfer.imports.edit.images-directory')"
-                                        class="flex-1"
-                                    />
+                            <label class="text-sm text-gray-600 dark:text-gray-300 font-medium">
+                                @lang('admin::app.settings.data-transfer.imports.edit.images-directory')
+                            </label>
 
-                                    <span class="text-gray-600 mb-1.5 hover:text-gray-900 text-sm hidden">{{ old('images_directory_path') ?? '/images/product-images' }}</span>
-                                
-                                </div>
+                            <!-- Hidden file input — must live outside overflow-hidden container -->
+                            <input type="file" id="zip-upload-edit" accept=".zip" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;" />
 
-                                <p class="mt-2 text-xs text-gray-600 dark:text-gray-300 ml-12">
-                                    @lang('admin::app.settings.data-transfer.imports.edit.file-info-example')
-                                </p>
-                                        
-                            </x-admin::form.control-group>
+                            <!-- Path input + inline Browse button -->
+                            <div class="flex items-center gap-0 rounded-sm border dark:border-gray-800 overflow-hidden focus-within:border-violet-500 transition-colors">
+                                <span class="px-2.5 py-2 text-xs text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-cherry-800 border-r dark:border-gray-700 shrink-0 select-none">
+                                    storage/app/public/
+                                </span>
 
-                            <!-- Image Zip Upload -->
-                            <x-admin::form.control-group class="mt-3 hidden">
-                                <x-admin::form.control-group.label class="required">
-                                    @lang('admin::app.settings.data-transfer.imports.create.upload_images')
-                                </x-admin::form.control-group.label>
-                                <x-admin::form.control-group.error control-name="upload_images" />
-
-                                <x-admin::form.control-group.control
-                                    type="file"
-                                    name="upload_images"
-                                    :label="trans('admin::app.admin.data-transfer.imports.create.upload_images')"
+                                <input
+                                    type="text"
+                                    id="images-directory-path"
+                                    name="images_directory_path"
+                                    value="{{ old('images_directory_path', $import->images_directory_path) }}"
+                                    placeholder="import-images/my-products"
+                                    class="flex-1 py-2 px-3 text-sm text-gray-700 dark:text-gray-300 dark:bg-cherry-900 outline-none bg-transparent"
                                 />
-                                <!-- Sample images zip link -->
-                                <a
-                                    :href="'{{ route('admin.settings.data_transfer.imports.download_sample_zip') }}/' + $refs['importType']?.value"
-                                    target="_blank"
-                                    id="source-sample-link"
-                                    class="text-sm text-violet-700 dark:text-sky-500 cursor-pointer transition-all hover:underline mt-1"
-                                >
-                                    @lang('admin::app.settings.data-transfer.imports.create.download-sample-zip')
-                                </a> 
-                            </x-admin::form.control-group>
+
+                                <!-- Browse button -->
+                                <input
+                                    type="button"
+                                    id="browse-btn"
+                                    class="secondary-button !rounded-none border-l dark:border-l-gray-700 shrink-0 cursor-pointer"
+                                    value="@lang('admin::app.settings.data-transfer.imports.create.upload_images')"
+                                />
+                            </div>
+
+                            <p class="text-xs text-gray-400 dark:text-gray-500">
+                                @lang('admin::app.settings.data-transfer.imports.edit.file-info-example')
+                            </p>
+
+                            <!-- Uploading indicator -->
+                            <div id="zip-state-uploading" class="hidden flex items-center gap-2 px-3 py-2 rounded-sm bg-gray-50 dark:bg-cherry-800 border dark:border-gray-700 text-sm text-gray-500 dark:text-gray-400">
+                                <svg class="w-4 h-4 shrink-0 text-violet-500 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 0 1 16 0"/>
+                                </svg>
+                                <span>@lang('admin::app.settings.data-transfer.imports.create.zip-uploading')</span>
+                                <span id="zip-uploading-name" class="truncate text-xs text-gray-400"></span>
+                            </div>
+
+                            <!-- Success indicator -->
+                            <div id="zip-state-success" class="hidden flex items-center justify-between gap-2 px-3 py-2 rounded-sm bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
+                                <div class="flex items-center gap-2 min-w-0">
+                                    <span class="icon-product text-xl text-green-600 dark:text-green-400 shrink-0"></span>
+                                    <div class="min-w-0">
+                                        <p id="zip-success-filename" class="text-sm font-medium text-green-700 dark:text-green-400 truncate"></p>
+                                        <p id="zip-success-count" class="text-xs text-green-600 dark:text-green-500"></p>
+                                        <p id="zip-success-path" class="text-xs font-mono text-gray-400 dark:text-gray-500 truncate"></p>
+                                    </div>
+                                </div>
+                                <button
+                                    type="button"
+                                    id="zip-remove-btn"
+                                    class="icon-cancel text-2xl shrink-0 text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
+                                ></button>
+                            </div>
+
+                            <!-- Error indicator -->
+                            <div id="zip-state-error" class="hidden flex items-center gap-2 px-3 py-2 rounded-sm bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-xs text-red-600 dark:text-red-400">
+                                <i class="icon-cancel shrink-0"></i>
+                                <span id="zip-error-msg"></span>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -369,4 +390,82 @@
 
         {!! view_render_event('unopim.admin.settings.data_transfer.imports.create.create_form_controls.after') !!}
     </x-admin::form>
+
+    @push('scripts')
+        <script>
+            (function () {
+                const browseBtn       = document.getElementById('browse-btn');
+                const fileInput       = document.getElementById('zip-upload-edit');
+                const pathInput       = document.getElementById('images-directory-path');
+                const stateUploading  = document.getElementById('zip-state-uploading');
+                const stateSuccess    = document.getElementById('zip-state-success');
+                const stateError      = document.getElementById('zip-state-error');
+                const uploadingName   = document.getElementById('zip-uploading-name');
+                const successFilename = document.getElementById('zip-success-filename');
+                const successCount    = document.getElementById('zip-success-count');
+                const successPath     = document.getElementById('zip-success-path');
+                const removeBtn       = document.getElementById('zip-remove-btn');
+                const errorMsg        = document.getElementById('zip-error-msg');
+
+                if (! fileInput || ! browseBtn) return;
+
+                const originalPath   = pathInput ? pathInput.value : '';
+                const filesExtracted = @json(trans('admin::app.settings.data-transfer.imports.create.zip-files-extracted'));
+                const uploadError    = @json(trans('admin::app.settings.data-transfer.imports.create.zip-upload-error'));
+
+                /* Browse button opens the hidden file input */
+                browseBtn.addEventListener('click', () => fileInput.click());
+
+                function setStatus(state) {
+                    stateUploading.classList.toggle('hidden', state !== 'uploading');
+                    stateSuccess.classList.toggle('hidden', state !== 'success');
+                    stateError.classList.toggle('hidden', state !== 'error');
+                    browseBtn.disabled = (state === 'uploading');
+                }
+
+                function handleFile(file) {
+                    if (! file || ! file.name.toLowerCase().endsWith('.zip')) {
+                        errorMsg.textContent = 'Please select a valid .zip file.';
+                        setStatus('error');
+                        return;
+                    }
+
+                    uploadingName.textContent = file.name;
+                    setStatus('uploading');
+
+                    const formData = new FormData();
+                    formData.append('images_zip', file);
+
+                    axios.post(
+                        '{{ route('admin.settings.data_transfer.imports.upload_images_zip') }}',
+                        formData,
+                        { headers: { 'Content-Type': 'multipart/form-data' } }
+                    ).then((response) => {
+                        const { path, files_count, zip_name } = response.data;
+
+                        pathInput.value = path;
+                        successFilename.textContent = zip_name ?? file.name;
+                        successCount.textContent = (files_count ?? 0) + ' ' + filesExtracted;
+                        successPath.textContent = 'storage/app/public/' + path;
+
+                        setStatus('success');
+                    }).catch((err) => {
+                        errorMsg.textContent = err.response?.data?.message ?? uploadError;
+                        fileInput.value = '';
+                        setStatus('error');
+                    });
+                }
+
+                fileInput.addEventListener('change', () => {
+                    if (fileInput.files[0]) handleFile(fileInput.files[0]);
+                });
+
+                removeBtn.addEventListener('click', () => {
+                    pathInput.value = originalPath;
+                    fileInput.value = '';
+                    setStatus('none');
+                });
+            })();
+        </script>
+    @endpush
 </x-admin::layouts.with-history>

@@ -156,6 +156,8 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
                 Route::get('download-error-report/{id}', 'downloadErrorReport')->name('admin.settings.data_transfer.imports.download_error_report');
 
                 Route::get('download-sample-images-zip/{type?}', 'downloadSampleImagesZip')->name('admin.settings.data_transfer.imports.download_sample_zip');
+
+                Route::post('upload-images-zip', 'uploadImagesZip')->name('admin.settings.data_transfer.imports.upload_images_zip');
             });
 
             /**

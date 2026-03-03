@@ -11,6 +11,7 @@ use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Jobs\Import\Completed as CompletedJob;
 use Webkul\DataTransfer\Jobs\Import\ImportBatch as ImportBatchJob;
 use Webkul\DataTransfer\Jobs\Import\IndexBatch as IndexBatchJob;
+use Webkul\DataTransfer\Jobs\Import\Indexing as IndexingJob;
 use Webkul\DataTransfer\Jobs\Import\LinkBatch as LinkBatchJob;
 use Webkul\DataTransfer\Jobs\Import\Linking as LinkingJob;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository as ImportJobBatchRepository;
@@ -362,7 +363,7 @@ abstract class AbstractImporter
                 }
 
                 if ($this->isIndexingRequired()) {
-                    $typeBatches['import'][] = new IndexBatchJob($batch, $this->import->id);
+                    $typeBatches['index'][] = new IndexBatchJob($batch, $this->import->id);
                 }
             }
         });
@@ -373,6 +374,12 @@ abstract class AbstractImporter
             $chain[] = new LinkingJob($this->import);
 
             $chain[] = Bus::batch($typeBatches['link']);
+        }
+
+        if (! empty($typeBatches['index'])) {
+            $chain[] = new IndexingJob($this->import);
+
+            $chain[] = Bus::batch($typeBatches['index']);
         }
 
         $chain[] = new CompletedJob($this->import, $this->import->id);

@@ -812,7 +812,7 @@ class Importer extends AbstractImporter
     protected function getUniqueScopeKey(Attribute $attribute, array $rowData): string
     {
         if ($attribute->isLocaleAndChannelBasedAttribute()) {
-            return ($rowData['channel'] ?? '') . '.' . ($rowData['locale'] ?? '');
+            return ($rowData['channel'] ?? '').'.'.($rowData['locale'] ?? '');
         }
 
         if ($attribute->isChannelBasedAttribute()) {
@@ -903,7 +903,7 @@ class Importer extends AbstractImporter
          * Validate product attributes using cached Validator instance.
          * Reuses Validator via setData() instead of creating 10K+ instances.
          */
-        $cacheKey = $rowData['type'] . '|' . $rowData[self::ATTRIBUTE_FAMILY_CODE];
+        $cacheKey = $rowData['type'].'|'.$rowData[self::ATTRIBUTE_FAMILY_CODE];
 
         if (! isset($this->cachedValidators[$cacheKey])) {
             $this->cachedValidators[$cacheKey] = Validator::make([], $validationRules);

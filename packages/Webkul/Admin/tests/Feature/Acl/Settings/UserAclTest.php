@@ -34,7 +34,7 @@ it('should create the user if has permission', function () {
         'status'                => 1,
         'role_id'               => 1,
         'timezone'              => 'Asia/Kolkata',
-        'ui_locale_id'          => 1,
+        'ui_locale_id'          => 2,
         'password_confirmation' => 'admin1234',
     ]);
 

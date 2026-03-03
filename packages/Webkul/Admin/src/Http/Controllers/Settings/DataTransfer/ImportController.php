@@ -576,4 +576,46 @@ class ImportController extends Controller
 
         return Storage::disk('private')->download($import->error_file_path);
     }
+
+    /**
+     * Upload a zip of images, extract it into storage/app/public, and return the relative path.
+     */
+    public function uploadImagesZip(): JsonResponse
+    {
+        $this->validate(request(), [
+            'images_zip' => 'required|file|mimes:zip|max:102400',
+        ]);
+
+        $file = request()->file('images_zip');
+
+        // Build a human-readable folder name from the zip filename
+        $baseName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $safeName = preg_replace('/[^a-zA-Z0-9_\-]/', '-', $baseName);
+        $folderName = 'import-images/'.rtrim($safeName, '-').'-'.time();
+
+        $zip = new \ZipArchive;
+
+        if ($zip->open($file->getPathname()) !== true) {
+            return new JsonResponse([
+                'message' => trans('admin::app.settings.data-transfer.imports.invalid-zip'),
+            ], 422);
+        }
+
+        $extractPath = Storage::disk('public')->path($folderName);
+
+        if (! is_dir($extractPath)) {
+            mkdir($extractPath, 0755, true);
+        }
+
+        $zip->extractTo($extractPath);
+        $filesCount = $zip->count();
+        $zip->close();
+
+        return new JsonResponse([
+            'path'        => $folderName,
+            'files_count' => $filesCount,
+            'zip_name'    => $file->getClientOriginalName(),
+            'message'     => trans('admin::app.settings.data-transfer.imports.zip-upload-success'),
+        ]);
+    }
 }

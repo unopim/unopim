@@ -359,6 +359,7 @@ it('should not set enabled to ai_translate field at attribute creation', functio
         ->assertRedirect(route('admin.catalog.attributes.edit', ['id' => Attribute::where('code', 'testAttribute')->first()->id]));
 
     $this->assertDatabaseMissing($this->getFullTableName(Attribute::class), [
+        'code'         => 'testAttribute',
         'ai_translate' => 1,
     ]);
 });
