@@ -53,7 +53,7 @@ class AttributeCompletenessDataGrid extends DataGrid
                         ELSE {$tablePrefix}attribute_translations.name
                     END AS name
                 "),
-                DB::raw(DB::rawQueryGrammar()->groupConcat('channels.code', 'channel_required', 'channels.code', true)),
+                DB::raw(DB::rawQueryGrammar()->groupConcat("{$tablePrefix}channels.code", 'channel_required', "{$tablePrefix}channels.code", true)),
             )
             ->groupBy(
                 'attributes.id',
@@ -64,7 +64,7 @@ class AttributeCompletenessDataGrid extends DataGrid
         $this->addFilter('id', 'attributes.id');
         $this->addFilter('code', 'attributes.code');
         $this->addFilter('name', 'attribute_translations.name');
-        $this->addFilter('channel_required', 'channels.code');
+        $this->addFilter('channel_required', $tablePrefix.'channels.code');
 
         return $queryBuilder;
     }
