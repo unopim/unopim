@@ -58,9 +58,9 @@ class ProductCompletenessJob implements ShouldQueue
             ->findWhereIn('id', $this->productIds)
             ->keyBy('id');
 
-        $scoreRows    = [];
-        $avgScores    = [];
-        $deleteQueue  = [];
+        $scoreRows = [];
+        $avgScores = [];
+        $deleteQueue = [];
 
         foreach ($this->productIds as $id) {
             $product = $products->get($id);
@@ -71,7 +71,7 @@ class ProductCompletenessJob implements ShouldQueue
 
             [$rows, $avg, $deletes] = $this->computeProductCompleteness($product->toArray());
 
-            $scoreRows   = array_merge($scoreRows, $rows);
+            $scoreRows = array_merge($scoreRows, $rows);
             $avgScores[$id] = $avg;
             $deleteQueue = array_merge($deleteQueue, $deletes);
         }
@@ -95,14 +95,15 @@ class ProductCompletenessJob implements ShouldQueue
 
         // Bulk update avg_completeness_score with a single CASE statement
         if (! empty($avgScores)) {
-            $cases  = '';
+            $cases = '';
             $idList = implode(',', array_map('intval', array_keys($avgScores)));
 
             foreach ($avgScores as $pid => $score) {
                 $cases .= ' WHEN '.((int) $pid).' THEN '.($score === null ? 'NULL' : (int) $score);
             }
 
-            DB::statement("UPDATE products SET avg_completeness_score = CASE id {$cases} END WHERE id IN ({$idList})");
+            $prefix = DB::getTablePrefix();
+            DB::statement("UPDATE {$prefix}products SET avg_completeness_score = CASE id {$cases} END WHERE id IN ({$idList})");
         }
     }
 
@@ -150,7 +151,7 @@ class ProductCompletenessJob implements ShouldQueue
      */
     protected function computeProductCompleteness(array $product): array
     {
-        $familyId      = $product['attribute_family_id'] ?? null;
+        $familyId = $product['attribute_family_id'] ?? null;
         $productValues = $product['values'] ?? [];
 
         if (! $familyId) {
@@ -167,13 +168,13 @@ class ProductCompletenessJob implements ShouldQueue
 
         $channelCount = 0;
         $averageScore = 0;
-        $scoreRows    = [];
-        $deleteQueue  = [];
+        $scoreRows = [];
+        $deleteQueue = [];
 
         foreach ($this->channels as $channel) {
-            $channelId   = $channel['id'];
+            $channelId = $channel['id'];
             $channelCode = $channel['code'];
-            $locales     = $channel['locales'] ?? [];
+            $locales = $channel['locales'] ?? [];
 
             if (! isset($settingsByChannel[$channelId]) || empty($locales)) {
                 $deleteQueue[] = [$product['id'], $channelId];
@@ -206,7 +207,7 @@ class ProductCompletenessJob implements ShouldQueue
             );
 
             $averageScore += $channelScore;
-            $scoreRows     = array_merge($scoreRows, $channelRows);
+            $scoreRows = array_merge($scoreRows, $channelRows);
         }
 
         $avgScore = $channelCount ? round($averageScore / $channelCount) : null;
@@ -227,7 +228,7 @@ class ProductCompletenessJob implements ShouldQueue
         array $locales,
         $attributes
     ): array {
-        $localizable    = [];
+        $localizable = [];
         $nonLocalizable = [];
 
         foreach ($attributes as $attribute) {
@@ -238,7 +239,7 @@ class ProductCompletenessJob implements ShouldQueue
             }
         }
 
-        $nonLocalizableTotal  = 0;
+        $nonLocalizableTotal = 0;
         $nonLocalizableFilled = 0;
 
         foreach ($nonLocalizable as $attribute) {
@@ -256,15 +257,15 @@ class ProductCompletenessJob implements ShouldQueue
         }
 
         $averageLocaleScore = 0;
-        $missingCount       = $nonLocalizableTotal - $nonLocalizableFilled;
-        $rows               = [];
+        $missingCount = $nonLocalizableTotal - $nonLocalizableFilled;
+        $rows = [];
 
         foreach ($locales as $locale) {
             $localeCode = $locale['code'];
-            $localeId   = $locale['id'];
+            $localeId = $locale['id'];
 
             $filled = 0;
-            $total  = 0;
+            $total = 0;
 
             foreach ($localizable as $attribute) {
                 $total++;
@@ -280,7 +281,7 @@ class ProductCompletenessJob implements ShouldQueue
                 }
             }
 
-            $total  += $nonLocalizableTotal;
+            $total += $nonLocalizableTotal;
             $filled += $nonLocalizableFilled;
 
             $score = $total > 0 ? round(($filled / $total) * 100) : 0;

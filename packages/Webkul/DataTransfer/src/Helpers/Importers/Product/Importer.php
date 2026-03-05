@@ -246,6 +246,12 @@ class Importer extends AbstractImporter
     protected array $cachedValidators = [];
 
     /**
+     * Static cache shared across all Importer instances in the same worker process.
+     * Eliminates redundant DB queries for attributes/families/channels on every batch job.
+     */
+    protected static ?array $staticInitCache = null;
+
+    /**
      * Valid csv columns
      */
     protected array $validColumnNames = [
@@ -290,28 +296,43 @@ class Importer extends AbstractImporter
      */
     protected function initAttributes(): void
     {
-        $this->attributeFamilies = $this->attributeFamilyRepository->all();
-
         /**
-         * Index attribute families by code for O(1) lookup instead of
-         * Collection->where('code', ...)->first() which is O(n) per call.
+         * Static cache: attributes, families, and channels are loaded once per worker process.
+         * Eliminates 3+ redundant DB queries on every ImportBatch job within the same worker.
          */
+        if (self::$staticInitCache === null) {
+            $channels = $this->channelRepository->all();
+
+            $channelsAndLocales = [];
+            $currencies = [];
+
+            foreach ($channels as $channel) {
+                $channelsAndLocales[$channel->code] = $channel->locales?->pluck('code')?->toArray() ?? [];
+                $currencies = array_unique(array_merge($currencies, $channel->currencies?->pluck('code')?->toArray() ?? []));
+            }
+
+            self::$staticInitCache = [
+                'attributeFamilies'  => $this->attributeFamilyRepository->all(),
+                'attributes'         => $this->attributeRepository->all(),
+                'channelsAndLocales' => $channelsAndLocales,
+                'currencies'         => $currencies,
+            ];
+        }
+
+        $this->attributeFamilies = self::$staticInitCache['attributeFamilies'];
+        $this->attributes = self::$staticInitCache['attributes'];
+        $this->channelsAndLocales = self::$staticInitCache['channelsAndLocales'];
+        $this->currencies = self::$staticInitCache['currencies'];
+
         foreach ($this->attributeFamilies as $family) {
             $this->attributeFamiliesByCode[$family->code] = $family;
         }
 
-        $this->attributes = $this->attributeRepository->all();
-
-        /**
-         * Index all attributes by code for O(1) lookup in prepareConfigurableAttributes, etc.
-         */
         foreach ($this->attributes as $attribute) {
             $this->allAttributesByCode[$attribute->code] = $attribute;
         }
 
-        $this->initializeChannels();
-
-        foreach ($this->attributes as $key => $attribute) {
+        foreach ($this->attributes as $attribute) {
             if ($attribute->type === 'price') {
                 $this->addPriceAttributesColumns($attribute->code);
 
@@ -1437,14 +1458,14 @@ class Importer extends AbstractImporter
      */
     public function prepareAttributeValues(array $rowData, array &$attributeValues): void
     {
-        $type        = $rowData['type'];
-        $familyCode  = $rowData[self::ATTRIBUTE_FAMILY_CODE];
-        $channel     = $rowData['channel'] ?? null;
-        $locale      = $rowData['locale'] ?? null;
+        $type = $rowData['type'];
+        $familyCode = $rowData[self::ATTRIBUTE_FAMILY_CODE];
+        $channel = $rowData['channel'] ?? null;
+        $locale = $rowData['locale'] ?? null;
 
         $familyAttributes = $this->getProductTypeFamilyAttributes($type, $familyCode);
         $attributesByCode = $this->getTypeFamilyAttributesByCode($type, $familyCode, $familyAttributes);
-        $imageDirPath     = $this->import->images_directory_path;
+        $imageDirPath = $this->import->images_directory_path;
 
         /**
          * Precompute scope strings for this type/family once.
@@ -1456,9 +1477,9 @@ class Importer extends AbstractImporter
         if (! isset($this->attributeScopeCache[$type.'|'.$familyCode])) {
             foreach ($attributesByCode as $code => $attr) {
                 $this->attributeScopeCache[$scopePrefix.$code] = match (true) {
-                    (bool) ($attr->value_per_locale && $attr->value_per_channel) => 'channel_locale',
-                    (bool) $attr->value_per_channel                              => 'channel',
-                    (bool) $attr->value_per_locale                               => 'locale',
+                    (bool) ($attr->value_per_locale && $attr->value_per_channel)  => 'channel_locale',
+                    (bool) $attr->value_per_channel                               => 'channel',
+                    (bool) $attr->value_per_locale                                => 'locale',
                     default                                                       => 'common',
                 };
             }
@@ -1854,6 +1875,10 @@ class Importer extends AbstractImporter
      */
     protected function mergeAttributeValues(array $newValues, array $oldValues): array
     {
+        if (empty($oldValues)) {
+            return $newValues;
+        }
+
         if (! empty($oldValues[AbstractType::COMMON_VALUES_KEY])) {
             $newValues[AbstractType::COMMON_VALUES_KEY] = array_filter(
                 array_merge($oldValues[AbstractType::COMMON_VALUES_KEY] ?? [], $newValues[AbstractType::COMMON_VALUES_KEY])

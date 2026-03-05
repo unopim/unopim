@@ -40,6 +40,6 @@ class Completed implements ShouldQueue
             ->flush($this->exportBuffer)
             ->completed();
 
-        Cache::forget('export_init_' . $this->export->id);
+        Cache::forget('export_init_'.$this->export->id);
     }
 }
