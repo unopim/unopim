@@ -11,14 +11,14 @@ return [
     | Larger batch sizes reduce the number of database round-trips and
     | queued jobs, significantly improving throughput for high-volume imports.
     |
-    | Default: 100 (conservative)
+    | Default: 1000
     | Recommended for large imports: 1000-5000
     |
     | Adjust based on available memory and row complexity.
     |
     */
 
-    'batch_size' => (int) env('IMPORT_BATCH_SIZE', 100),
+    'batch_size' => (int) env('IMPORT_BATCH_SIZE', 1000),
 
     /*
     |--------------------------------------------------------------------------

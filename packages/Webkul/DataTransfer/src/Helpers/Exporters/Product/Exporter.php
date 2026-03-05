@@ -2,6 +2,7 @@
 
 namespace Webkul\DataTransfer\Helpers\Exporters\Product;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\AttributeTypes;
@@ -49,18 +50,34 @@ class Exporter extends AbstractExporter
 
     /**
      * Initializes the channels and locales for the export process.
+     * Results are cached per export ID to avoid redundant DB queries across batch jobs.
      *
      * @return void
      */
     public function initilize()
     {
-        $channels = $this->channelRepository->all();
-        foreach ($channels as $channel) {
-            $this->currencies = array_unique(array_merge($this->currencies, $channel->currencies->pluck('code')->toArray()));
-            $this->channelsAndLocales[$channel->code] = $channel->locales->pluck('code')->toArray();
-        }
+        $cacheKey = 'export_init_' . $this->export->id;
 
-        $this->attributes = $this->attributeRepository->all();
+        $data = Cache::remember($cacheKey, now()->addHours(2), function () {
+            $channels = $this->channelRepository->all();
+            $channelsAndLocales = [];
+            $currencies = [];
+
+            foreach ($channels as $channel) {
+                $currencies = array_unique(array_merge($currencies, $channel->currencies->pluck('code')->toArray()));
+                $channelsAndLocales[$channel->code] = $channel->locales->pluck('code')->toArray();
+            }
+
+            return [
+                'channelsAndLocales' => $channelsAndLocales,
+                'currencies'         => $currencies,
+                'attributes'         => $this->attributeRepository->all(),
+            ];
+        });
+
+        $this->channelsAndLocales = $data['channelsAndLocales'];
+        $this->currencies         = $data['currencies'];
+        $this->attributes         = $data['attributes'];
     }
 
     /**
@@ -106,7 +123,10 @@ class Exporter extends AbstractExporter
             $this->source = app(ProductRepository::class);
         }
 
-        return $this->source->whereIn('id', $ids)->get();
+        return $this->source
+            ->with(['super_attributes', 'parent', 'attribute_family'])
+            ->whereIn('id', $ids)
+            ->get();
     }
 
     /**

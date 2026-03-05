@@ -59,6 +59,9 @@ class ImportTrackBatch implements ShouldQueue
 
         $logger->info(trans('data_transfer::app.job.started'));
 
+        // Mark as validating so the tracker UI transitions from "Queued" to "Validating"
+        $importHelper->stateUpdate(ImportHelper::STATE_VALIDATING);
+
         // Validate the import
         $import = $importHelper->validate();
 

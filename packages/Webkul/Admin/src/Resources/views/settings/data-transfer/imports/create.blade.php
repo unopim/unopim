@@ -143,118 +143,24 @@
                             </template>
                         </x-admin::form.control-group>
 
-                        <x-admin::form.control-group.label class="required">
+                        <x-admin::form.control-group.label>
                             @lang('admin::app.settings.data-transfer.imports.create.images')
                         </x-admin::form.control-group.label>
 
                         <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
-                            <div class="flex flex-col gap-3">
-
-                                <!-- Path input row -->
-                                <div>
-                                    <label class="text-sm text-gray-600 dark:text-gray-300 font-medium block mb-1">
-                                        @lang('admin::app.settings.data-transfer.imports.create.images-directory')
-                                    </label>
-
-                                    <div class="flex items-center gap-0 rounded-sm border dark:border-gray-800 overflow-hidden focus-within:border-violet-500 transition-colors">
-                                        <span class="px-2.5 py-2 text-xs text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-cherry-800 border-r dark:border-gray-700 shrink-0 select-none">
-                                            storage/app/public/
-                                        </span>
-                                        <input
-                                            type="text"
-                                            name="images_directory_path"
-                                            v-model="imagesDirectoryPath"
-                                            placeholder="import-images/my-products"
-                                            class="flex-1 py-2 px-3 text-sm text-gray-700 dark:text-gray-300 dark:bg-cherry-900 outline-none bg-transparent"
-                                        />
-                                    </div>
-
-                                    <p class="mt-1.5 text-xs text-gray-400 dark:text-gray-500">
-                                        @lang('admin::app.settings.data-transfer.imports.edit.file-info-example')
-                                    </p>
-                                </div>
-
-                                <!-- ZIP upload zone -->
-                                <div>
-                                    <!-- State: idle -->
-                                    <label
-                                        v-if="!zipUploading && !zipUploadedPath"
-                                        class="flex flex-col items-center justify-center w-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-violet-50 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 transition-colors"
-                                        @dragover.prevent="$event.currentTarget.classList.add('border-violet-500', 'bg-violet-50')"
-                                        @dragleave.prevent="$event.currentTarget.classList.remove('border-violet-500', 'bg-violet-50')"
-                                        @drop.prevent="handleZipDrop($event)"
-                                    >
-                                        <div class="flex flex-col items-center justify-center py-6">
-                                            <span class="icon-export text-gray-500 dark:text-gray-400 text-4xl"></span>
-                                            <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                                                <span class="font-semibold">@lang('admin::app.settings.data-transfer.imports.create.zip-click-upload')</span>
-                                                {{ __('or drag and drop') }}
-                                            </p>
-                                            <p class="text-xs text-gray-500 dark:text-gray-400">ZIP &mdash; max 100 MB</p>
-                                        </div>
-
-                                        <input
-                                            type="file"
-                                            ref="zipFileInput"
-                                            accept=".zip"
-                                            class="hidden"
-                                            @change="uploadImagesZip"
-                                        />
-                                    </label>
-
-                                    <!-- State: uploading -->
-                                    <div
-                                        v-else-if="zipUploading"
-                                        class="flex items-center justify-center w-full border-2 border-gray-300 border-dashed rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600"
-                                    >
-                                        <div class="flex flex-col items-center justify-center py-6">
-                                            <svg class="w-9 h-9 text-violet-500 animate-spin mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 0 1 16 0"/>
-                                            </svg>
-                                            <p class="mb-2 text-sm font-semibold text-gray-500 dark:text-gray-400">@lang('admin::app.settings.data-transfer.imports.create.zip-uploading')</p>
-                                            <p class="text-xs text-gray-400 dark:text-gray-500 truncate max-w-xs">@{{ zipFileName }}</p>
-                                        </div>
-                                    </div>
-
-                                    <!-- State: success -->
-                                    <div
-                                        v-else-if="zipUploadedPath"
-                                        class="flex items-center justify-center w-full border-2 border-gray-300 border-dashed rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600"
-                                    >
-                                        <div class="flex flex-col items-center justify-center py-6 px-4 w-full">
-                                            <span class="icon-product text-4xl mb-4 text-gray-500 dark:text-gray-400"></span>
-
-                                            <div class="flex justify-between items-center w-full text-sm text-gray-500 dark:text-gray-400">
-                                                <div class="min-w-0 flex-1">
-                                                    <p class="text-sm text-gray-500 dark:text-gray-400 truncate">@{{ zipFileName }}</p>
-                                                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
-                                                        @{{ zipFilesCount }} @lang('admin::app.settings.data-transfer.imports.create.zip-files-extracted')
-                                                    </p>
-                                                    <p class="text-xs font-mono text-gray-400 dark:text-gray-500 mt-0.5 truncate">
-                                                        storage/app/public/@{{ zipUploadedPath }}
-                                                    </p>
-                                                </div>
-
-                                                <button
-                                                    type="button"
-                                                    @click="removeZipUpload"
-                                                    class="icon-cancel text-3xl cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 hover:rounded-md ml-2 shrink-0"
-                                                ></button>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Error -->
-                                    <div
-                                        v-if="zipUploadError"
-                                        class="flex items-center gap-2 mt-2 px-3 py-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-sm text-xs text-red-600 dark:text-red-400"
-                                    >
-                                        <i class="icon-cancel shrink-0"></i>
-                                        @{{ zipUploadError }}
-                                    </div>
-                                </div>
-
-                            </div>
+                            <v-edit-zip-uploader
+                                initial-path="{{ old('images_directory_path', '') }}"
+                                upload-url="{{ route('admin.settings.data_transfer.imports.upload_images_zip') }}"
+                                ls-key="unopim_zip_upload_create"
+                                files-extracted-label="@lang('admin::app.settings.data-transfer.imports.create.zip-files-extracted')"
+                                upload-error-label="@lang('admin::app.settings.data-transfer.imports.create.zip-upload-error')"
+                                placeholder="import-images/my-products"
+                                file-info-example="@lang('admin::app.settings.data-transfer.imports.edit.file-info-example')"
+                                upload-btn-label="@lang('admin::app.settings.data-transfer.imports.create.upload_images')"
+                                cancel-btn-label="@lang('admin::app.settings.data-transfer.imports.create.back-btn')"
+                                drop-hint-label="@lang('admin::app.settings.data-transfer.imports.create.zip-drop-hint')"
+                                uploading-label="@lang('admin::app.settings.data-transfer.imports.create.zip-uploading')"
+                            ></v-edit-zip-uploader>
                         </div>
                     </div>
 
@@ -408,12 +314,6 @@
                         enableFileShow: @json($importerConfig[old('entity_type') ?? 'categories']['has_file_options'] ?? false),
                         importerConfig: @json($importerConfig),
                         filterFields: @json($importerConfig['categories']['filters']['fields'] ?? null),
-                        imagesDirectoryPath: "{{ old('images_directory_path', '') }}",
-                        zipUploading: false,
-                        zipUploadError: null,
-                        zipUploadedPath: null,
-                        zipFileName: null,
-                        zipFilesCount: 0,
                     };
                 },
 
@@ -432,72 +332,224 @@
                         }
                     },
 
-                    uploadImagesZip(event) {
-                        const file = event.target.files[0];
+                },
+            })
+        </script>
 
-                        if (! file) {
-                            return;
+        <script type="text/x-template" id="v-edit-zip-uploader-template">
+            <div class="flex flex-col gap-2">
+                <label class="text-sm text-gray-600 dark:text-gray-300 font-medium">
+                    @lang('admin::app.settings.data-transfer.imports.edit.images-directory')
+                </label>
+
+                <div class="flex items-center gap-0 rounded-sm border dark:border-gray-800 overflow-hidden focus-within:border-violet-500 transition-colors">
+                    <span class="px-2.5 py-2 text-xs text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-cherry-800 border-r dark:border-gray-700 shrink-0 select-none">
+                        storage/app/public/
+                    </span>
+                    <input
+                        type="text"
+                        name="images_directory_path"
+                        v-model="currentPath"
+                        :placeholder="placeholder"
+                        class="flex-1 py-2 px-3 text-sm text-gray-700 dark:text-gray-300 dark:bg-cherry-900 outline-none bg-transparent"
+                    />
+                    <button
+                        type="button"
+                        @click="$refs.zipModal.open()"
+                        class="secondary-button !rounded-none border-l dark:border-l-gray-700 shrink-0"
+                    >
+                        @{{ uploadBtnLabel }}
+                    </button>
+                </div>
+
+                <p class="text-xs text-gray-400 dark:text-gray-500">@{{ fileInfoExample }}</p>
+
+                <div
+                    v-if="uploadedPath"
+                    class="flex items-center justify-between gap-2 px-3 py-2 rounded-sm bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800"
+                >
+                    <div class="flex items-center gap-2 min-w-0">
+                        <span class="icon-product text-xl text-green-600 dark:text-green-400 shrink-0"></span>
+                        <div class="min-w-0">
+                            <p class="text-sm font-medium text-green-700 dark:text-green-400 truncate">@{{ uploadedFileName }}</p>
+                            <p class="text-xs text-green-600 dark:text-green-500">@{{ uploadedFilesCount }} @{{ filesExtractedLabel }}</p>
+                            <p class="text-xs font-mono text-gray-400 dark:text-gray-500 truncate">storage/app/public/@{{ uploadedPath }}</p>
+                        </div>
+                    </div>
+                    <button
+                        type="button"
+                        @click="clearUpload"
+                        class="icon-cancel text-2xl shrink-0 text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
+                    ></button>
+                </div>
+
+                <x-admin::modal ref="zipModal">
+                    <x-slot:header>
+                        <p class="text-base font-semibold text-gray-800 dark:text-white">@{{ uploadBtnLabel }}</p>
+                    </x-slot>
+
+                    <x-slot:content>
+                        <div
+                            class="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-8 text-center cursor-pointer hover:border-violet-500 transition-colors"
+                            @click="$refs.zipFileInput.click()"
+                            @dragover.prevent="$event.currentTarget.classList.add('border-violet-500')"
+                            @dragleave.prevent="$event.currentTarget.classList.remove('border-violet-500')"
+                            @drop.prevent="onDrop($event)"
+                        >
+                            <input type="file" ref="zipFileInput" accept=".zip" class="hidden" @change="onFileChange" />
+
+                            <div v-if="!selectedFile">
+                                <span class="icon-upload text-4xl text-gray-300 dark:text-gray-600 mb-2 block"></span>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">@{{ dropHintLabel }}</p>
+                                <p class="text-xs text-gray-400 mt-1">.zip</p>
+                            </div>
+
+                            <div v-else>
+                                <span class="icon-product text-4xl text-violet-500 mb-2 block"></span>
+                                <p class="text-sm font-medium text-gray-700 dark:text-gray-300 truncate max-w-xs mx-auto">@{{ selectedFile.name }}</p>
+                                <p class="text-xs text-gray-400 mt-1">@{{ (selectedFile.size / 1024 / 1024).toFixed(2) }} MB</p>
+                            </div>
+                        </div>
+
+                        <div v-if="modalUploading" class="flex items-center gap-2 mt-4 text-sm text-gray-500 dark:text-gray-400">
+                            <svg class="w-4 h-4 shrink-0 text-violet-500 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 0 1 16 0"/>
+                            </svg>
+                            <span>@{{ uploadingLabel }}</span>
+                        </div>
+
+                        <div
+                            v-if="modalError"
+                            class="flex items-center gap-2 mt-4 px-3 py-2 rounded-sm bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-xs text-red-600 dark:text-red-400"
+                        >
+                            <i class="icon-cancel shrink-0"></i>
+                            <span>@{{ modalError }}</span>
+                        </div>
+                    </x-slot>
+
+                    <x-slot:footer>
+                        <button type="button" @click="$refs.zipModal.close()" class="transparent-button" :disabled="modalUploading">
+                            @{{ cancelBtnLabel }}
+                        </button>
+                        <button
+                            type="button"
+                            @click="doUpload"
+                            class="primary-button"
+                            :disabled="!selectedFile || modalUploading"
+                            :class="{ 'opacity-50 cursor-not-allowed': !selectedFile || modalUploading }"
+                        >
+                            @{{ uploadBtnLabel }}
+                        </button>
+                    </x-slot>
+                </x-admin::modal>
+            </div>
+        </script>
+
+        <script type="module">
+            app.component('v-edit-zip-uploader', {
+                template: '#v-edit-zip-uploader-template',
+
+                props: [
+                    'initialPath',
+                    'uploadUrl',
+                    'lsKey',
+                    'filesExtractedLabel',
+                    'uploadErrorLabel',
+                    'placeholder',
+                    'fileInfoExample',
+                    'uploadBtnLabel',
+                    'cancelBtnLabel',
+                    'dropHintLabel',
+                    'uploadingLabel',
+                ],
+
+                data() {
+                    return {
+                        currentPath:        this.initialPath ?? '',
+                        selectedFile:       null,
+                        modalUploading:     false,
+                        modalError:         null,
+                        uploadedPath:       null,
+                        uploadedFileName:   null,
+                        uploadedFilesCount: 0,
+                    };
+                },
+
+                mounted() {
+                    try {
+                        const saved = JSON.parse(localStorage.getItem(this.lsKey));
+                        if (saved && saved.path && ! this.currentPath) {
+                            this.currentPath        = saved.path;
+                            this.uploadedPath       = saved.path;
+                            this.uploadedFileName   = saved.zip_name ?? '';
+                            this.uploadedFilesCount = saved.files_count ?? 0;
                         }
+                    } catch (e) {}
+                },
 
-                        this.processZipFile(file);
+                methods: {
+                    onFileChange(e) {
+                        const file = e.target.files[0];
+                        if (file) this.selectFile(file);
                     },
 
-                    handleZipDrop(event) {
-                        event.currentTarget.classList.remove('border-violet-500', 'bg-violet-50');
-                        const file = event.dataTransfer.files[0];
-
-                        if (! file || ! file.name.toLowerCase().endsWith('.zip')) {
-                            this.zipUploadError = 'Please select a valid .zip file.';
-                            return;
-                        }
-
-                        this.processZipFile(file);
+                    onDrop(e) {
+                        e.currentTarget.classList.remove('border-violet-500');
+                        const file = e.dataTransfer?.files?.[0];
+                        if (file) this.selectFile(file);
                     },
 
-                    processZipFile(file) {
-                        this.zipUploading = true;
-                        this.zipUploadError = null;
-                        this.zipUploadedPath = null;
-                        this.zipFileName = file.name;
-                        this.zipFilesCount = 0;
+                    selectFile(file) {
+                        if (! file.name.toLowerCase().endsWith('.zip')) {
+                            this.modalError = 'Please select a valid .zip file.';
+                            return;
+                        }
+                        this.selectedFile = file;
+                        this.modalError   = null;
+                    },
+
+                    doUpload() {
+                        if (! this.selectedFile) return;
+                        this.modalUploading = true;
+                        this.modalError     = null;
 
                         const formData = new FormData();
+                        formData.append('images_zip', this.selectedFile);
 
-                        formData.append('images_zip', file);
-
-                        this.$axios.post('{{ route('admin.settings.data_transfer.imports.upload_images_zip') }}', formData, {
+                        this.$axios.post(this.uploadUrl, formData, {
                             headers: { 'Content-Type': 'multipart/form-data' },
-                        })
-                        .then(response => {
-                            this.zipUploading = false;
-                            this.zipUploadedPath = response.data.path;
-                            this.zipFilesCount = response.data.files_count ?? 0;
-                            this.imagesDirectoryPath = response.data.path;
-                        })
-                        .catch(error => {
-                            this.zipUploading = false;
-                            this.zipUploadError = error.response?.data?.message
-                                ?? '{{ trans('admin::app.settings.data-transfer.imports.create.zip-upload-error') }}';
+                        }).then(response => {
+                            const { path, files_count, zip_name } = response.data;
+                            this.currentPath        = path;
+                            this.uploadedPath       = path;
+                            this.uploadedFileName   = zip_name ?? this.selectedFile.name;
+                            this.uploadedFilesCount = files_count ?? 0;
+                            this.modalUploading     = false;
 
-                            if (this.$refs.zipFileInput) {
-                                this.$refs.zipFileInput.value = '';
-                            }
+                            try {
+                                localStorage.setItem(this.lsKey, JSON.stringify({
+                                    path, files_count, zip_name: this.uploadedFileName
+                                }));
+                            } catch (e) {}
+
+                            this.$refs.zipModal.close();
+                            this.selectedFile = null;
+                        }).catch(err => {
+                            this.modalUploading = false;
+                            this.modalError     = err.response?.data?.message ?? this.uploadErrorLabel;
+                            if (this.$refs.zipFileInput) this.$refs.zipFileInput.value = '';
                         });
                     },
 
-                    removeZipUpload() {
-                        this.zipUploadedPath = null;
-                        this.zipFileName = null;
-                        this.zipFilesCount = 0;
-                        this.zipUploadError = null;
-                        this.imagesDirectoryPath = '';
-
-                        if (this.$refs.zipFileInput) {
-                            this.$refs.zipFileInput.value = '';
-                        }
+                    clearUpload() {
+                        this.currentPath        = '';
+                        this.uploadedPath       = null;
+                        this.uploadedFileName   = null;
+                        this.uploadedFilesCount = 0;
+                        try { localStorage.removeItem(this.lsKey); } catch (e) {}
                     },
                 },
-            })
+            });
         </script>
     @endPushOnce
 

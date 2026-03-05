@@ -65,7 +65,7 @@ abstract class AbstractExporter
         self::ERROR_CODE_COLUMNS_NUMBER      => 'data_transfer::app.validation.errors.column-numbers',
     ];
 
-    public const BATCH_SIZE = 100;
+    public const BATCH_SIZE = 1000;
 
     /**
      * Is linking required

@@ -18,7 +18,6 @@ use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeOptionRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Category\Repositories\CategoryRepository;
-use Webkul\Completeness\Jobs\BulkProductCompletenessJob;
 use Webkul\Completeness\Observers\Product as CompletenessProductObserver;
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\Core\Repositories\ChannelRepository;
@@ -231,6 +230,14 @@ class Importer extends AbstractImporter
      * Replaces per-row DB `unique:products,...` validation rules with a single bulk pre-load.
      */
     protected array $existingUniqueDBValues = [];
+
+    /**
+     * Pre-computed scope string per attribute code + type/family key.
+     * Avoids calling Eloquent __get (isLocaleBasedAttribute, etc.) per row,
+     * which is ~54µs per call due to Eloquent magic method overhead.
+     * Keyed as "type|familyCode|attrCode" => 'common'|'locale'|'channel'|'channel_locale'
+     */
+    protected array $attributeScopeCache = [];
 
     /**
      * Cached Validator instances per type/family for reuse via setData().
@@ -733,6 +740,34 @@ class Importer extends AbstractImporter
     }
 
     /**
+     * Pre-load existing products for the import phase (not validation).
+     * Uses a plain DB query (no Eloquent relationships) to load only the
+     * columns needed during import: values and parent_id. This avoids the
+     * N+1 lazy-load issue that ->with(['attribute_family:id,code']) triggers
+     * (1000 individual attribute_family queries instead of 1 batch).
+     */
+    protected function preloadExistingProductsForImport(array $skus): void
+    {
+        $uniqueSkus = array_unique($skus);
+
+        foreach (array_chunk($uniqueSkus, 1000) as $chunk) {
+            $products = DB::table('products')
+                ->select('id', 'sku', 'parent_id', 'values', 'status')
+                ->whereIn('sku', $chunk)
+                ->get();
+
+            foreach ($products as $product) {
+                // Decode values JSON so downstream code can access it as array
+                if (is_string($product->values)) {
+                    $product->values = json_decode($product->values, true) ?? [];
+                }
+
+                $this->existingProductsCache[$product->sku] = $product;
+            }
+        }
+    }
+
+    /**
      * Pre-load all category codes into a lookup set.
      */
     protected function preloadCategoryCodes(): void
@@ -1090,14 +1125,6 @@ class Importer extends AbstractImporter
 
         Event::dispatch('data_transfer.imports.batch.import.after', $batch);
 
-        $ids = [];
-
-        foreach ($this->skuStorage->getItems() as $sku => $item) {
-            $ids[] = $item['id'];
-        }
-
-        BulkProductCompletenessJob::dispatch($ids);
-
         return true;
     }
 
@@ -1162,10 +1189,26 @@ class Importer extends AbstractImporter
         }
 
         try {
+            $batchSkus = Arr::pluck($batch->data, 'sku');
+
             /**
              * Load SKU storage with batch skus
              */
-            $this->skuStorage->load(Arr::pluck($batch->data, 'sku'));
+            $this->skuStorage->load($batchSkus);
+
+            /**
+             * Bulk-load existing products with values + parent_id into cache.
+             * Uses a targeted raw query (no Eloquent relationships) to avoid
+             * the N+1 lazy-load issue that ->with(['attribute_family:id,code'])
+             * triggers (1000 individual lazy-loads instead of 1 batch query).
+             */
+            $this->preloadExistingProductsForImport($batchSkus);
+
+            /**
+             * Pre-load category code cache to prevent N+1 queries in prepareOtherSections.
+             * Without this, each row with categories does: SELECT code FROM categories WHERE code IN (?).
+             */
+            $this->preloadCategoryCodes();
 
             $products = [];
 
@@ -1394,9 +1437,35 @@ class Importer extends AbstractImporter
      */
     public function prepareAttributeValues(array $rowData, array &$attributeValues): void
     {
-        $familyAttributes = $this->getProductTypeFamilyAttributes($rowData['type'], $rowData[self::ATTRIBUTE_FAMILY_CODE]);
-        $attributesByCode = $this->getTypeFamilyAttributesByCode($rowData['type'], $rowData[self::ATTRIBUTE_FAMILY_CODE], $familyAttributes);
-        $imageDirPath = $this->import->images_directory_path;
+        $type        = $rowData['type'];
+        $familyCode  = $rowData[self::ATTRIBUTE_FAMILY_CODE];
+        $channel     = $rowData['channel'] ?? null;
+        $locale      = $rowData['locale'] ?? null;
+
+        $familyAttributes = $this->getProductTypeFamilyAttributes($type, $familyCode);
+        $attributesByCode = $this->getTypeFamilyAttributesByCode($type, $familyCode, $familyAttributes);
+        $imageDirPath     = $this->import->images_directory_path;
+
+        /**
+         * Precompute scope strings for this type/family once.
+         * Bypasses Eloquent __get overhead (~54µs per setProductValue call)
+         * by replacing Eloquent scope-check methods with a plain string lookup.
+         */
+        $scopePrefix = $type.'|'.$familyCode.'|';
+
+        if (! isset($this->attributeScopeCache[$type.'|'.$familyCode])) {
+            foreach ($attributesByCode as $code => $attr) {
+                $this->attributeScopeCache[$scopePrefix.$code] = match (true) {
+                    (bool) ($attr->value_per_locale && $attr->value_per_channel) => 'channel_locale',
+                    (bool) $attr->value_per_channel                              => 'channel',
+                    (bool) $attr->value_per_locale                               => 'locale',
+                    default                                                       => 'common',
+                };
+            }
+
+            // Mark this family as fully computed
+            $this->attributeScopeCache[$type.'|'.$familyCode] = true;
+        }
 
         foreach ($rowData as $attributeCode => $value) {
             if (is_null($value)) {
@@ -1405,9 +1474,6 @@ class Importer extends AbstractImporter
 
             [$attributeCode, $currencyCode] = $this->getAttributeCodeAndCurrency($attributeCode);
 
-            /**
-             * O(1) array key lookup instead of Collection->where('code', ...)->first()
-             */
             $attribute = $attributesByCode[$attributeCode] ?? null;
 
             if (! $attribute) {
@@ -1421,12 +1487,28 @@ class Importer extends AbstractImporter
             $value = $this->fieldProcessor->handleField($attribute, $value, $imageDirPath);
 
             if ($attribute->type === 'price') {
-                $value = $this->formatPriceValueWithCurrency($currencyCode, $value, $attribute->getValueFromProductValues($attributeValues, $rowData['channel'] ?? null, $rowData['locale'] ?? null));
+                $value = $this->formatPriceValueWithCurrency($currencyCode, $value, $attribute->getValueFromProductValues($attributeValues, $channel, $locale));
             }
 
             $value = EscapeFormulaOperators::unescapeValue($value);
 
-            $attribute->setProductValue($value, $attributeValues, $rowData['channel'] ?? null, $rowData['locale'] ?? null);
+            /**
+             * Direct array assignment using precomputed scope — avoids Eloquent __get
+             * overhead in setProductValue (was ~54µs per call due to isLocaleBasedAttribute() etc.)
+             */
+            switch ($this->attributeScopeCache[$scopePrefix.$attributeCode] ?? 'common') {
+                case 'channel_locale':
+                    $attributeValues['channel_locale_specific'][$channel][$locale][$attributeCode] = $value;
+                    break;
+                case 'channel':
+                    $attributeValues['channel_specific'][$channel][$attributeCode] = $value;
+                    break;
+                case 'locale':
+                    $attributeValues['locale_specific'][$locale][$attributeCode] = $value;
+                    break;
+                default:
+                    $attributeValues['common'][$attributeCode] = $value;
+            }
         }
     }
 

@@ -61,11 +61,15 @@ class FieldProcessor
         $paths = is_array($value) ? $value : [$value];
         $validPaths = [];
 
-        foreach ($paths as $path) {
-            $trimmedPath = trim($path);
+        $baseDir = rtrim($imgpath, '/');
 
-            if (StorageFacade::disk('local')->has('public/'.$imgpath.$trimmedPath)) {
-                $validPaths[] = $imgpath.$trimmedPath;
+        foreach ($paths as $path) {
+            $trimmedPath = ltrim(trim($path), '/');
+
+            $fullPath = $baseDir.'/'.$trimmedPath;
+
+            if (StorageFacade::disk('local')->has('public/'.$fullPath)) {
+                $validPaths[] = $fullPath;
             }
         }
 

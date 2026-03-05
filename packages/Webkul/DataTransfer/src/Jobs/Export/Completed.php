@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Cache;
 use Webkul\DataTransfer\Helpers\Export as ExportHelper;
 use Webkul\DataTransfer\Services\JobLogger;
 
@@ -38,5 +39,7 @@ class Completed implements ShouldQueue
             ->setLogger(JobLogger::make($this->jobTrackId))
             ->flush($this->exportBuffer)
             ->completed();
+
+        Cache::forget('export_init_' . $this->export->id);
     }
 }

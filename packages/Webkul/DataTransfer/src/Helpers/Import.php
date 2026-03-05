@@ -29,6 +29,11 @@ class Import
     public const STATE_PENDING = 'pending';
 
     /**
+     * Import state for validation in progress
+     */
+    public const STATE_VALIDATING = 'validating';
+
+    /**
      * Import state for validated import
      */
     public const STATE_VALIDATED = 'validated';

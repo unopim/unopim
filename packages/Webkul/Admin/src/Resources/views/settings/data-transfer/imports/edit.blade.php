@@ -164,78 +164,21 @@
                     <x-admin::form.control-group.label>
                         @lang('admin::app.settings.data-transfer.imports.edit.images')
                     </x-admin::form.control-group.label>
-                    
+
                     <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
-                        <div class="flex flex-col gap-2">
-
-                            <label class="text-sm text-gray-600 dark:text-gray-300 font-medium">
-                                @lang('admin::app.settings.data-transfer.imports.edit.images-directory')
-                            </label>
-
-                            <!-- Hidden file input — must live outside overflow-hidden container -->
-                            <input type="file" id="zip-upload-edit" accept=".zip" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;" />
-
-                            <!-- Path input + inline Browse button -->
-                            <div class="flex items-center gap-0 rounded-sm border dark:border-gray-800 overflow-hidden focus-within:border-violet-500 transition-colors">
-                                <span class="px-2.5 py-2 text-xs text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-cherry-800 border-r dark:border-gray-700 shrink-0 select-none">
-                                    storage/app/public/
-                                </span>
-
-                                <input
-                                    type="text"
-                                    id="images-directory-path"
-                                    name="images_directory_path"
-                                    value="{{ old('images_directory_path', $import->images_directory_path) }}"
-                                    placeholder="import-images/my-products"
-                                    class="flex-1 py-2 px-3 text-sm text-gray-700 dark:text-gray-300 dark:bg-cherry-900 outline-none bg-transparent"
-                                />
-
-                                <!-- Browse button -->
-                                <input
-                                    type="button"
-                                    id="browse-btn"
-                                    class="secondary-button !rounded-none border-l dark:border-l-gray-700 shrink-0 cursor-pointer"
-                                    value="@lang('admin::app.settings.data-transfer.imports.create.upload_images')"
-                                />
-                            </div>
-
-                            <p class="text-xs text-gray-400 dark:text-gray-500">
-                                @lang('admin::app.settings.data-transfer.imports.edit.file-info-example')
-                            </p>
-
-                            <!-- Uploading indicator -->
-                            <div id="zip-state-uploading" class="hidden flex items-center gap-2 px-3 py-2 rounded-sm bg-gray-50 dark:bg-cherry-800 border dark:border-gray-700 text-sm text-gray-500 dark:text-gray-400">
-                                <svg class="w-4 h-4 shrink-0 text-violet-500 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 0 1 16 0"/>
-                                </svg>
-                                <span>@lang('admin::app.settings.data-transfer.imports.create.zip-uploading')</span>
-                                <span id="zip-uploading-name" class="truncate text-xs text-gray-400"></span>
-                            </div>
-
-                            <!-- Success indicator -->
-                            <div id="zip-state-success" class="hidden flex items-center justify-between gap-2 px-3 py-2 rounded-sm bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
-                                <div class="flex items-center gap-2 min-w-0">
-                                    <span class="icon-product text-xl text-green-600 dark:text-green-400 shrink-0"></span>
-                                    <div class="min-w-0">
-                                        <p id="zip-success-filename" class="text-sm font-medium text-green-700 dark:text-green-400 truncate"></p>
-                                        <p id="zip-success-count" class="text-xs text-green-600 dark:text-green-500"></p>
-                                        <p id="zip-success-path" class="text-xs font-mono text-gray-400 dark:text-gray-500 truncate"></p>
-                                    </div>
-                                </div>
-                                <button
-                                    type="button"
-                                    id="zip-remove-btn"
-                                    class="icon-cancel text-2xl shrink-0 text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
-                                ></button>
-                            </div>
-
-                            <!-- Error indicator -->
-                            <div id="zip-state-error" class="hidden flex items-center gap-2 px-3 py-2 rounded-sm bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-xs text-red-600 dark:text-red-400">
-                                <i class="icon-cancel shrink-0"></i>
-                                <span id="zip-error-msg"></span>
-                            </div>
-
-                        </div>
+                        <v-edit-zip-uploader
+                            initial-path="{{ old('images_directory_path', $import->images_directory_path) }}"
+                            upload-url="{{ route('admin.settings.data_transfer.imports.upload_images_zip') }}"
+                            ls-key="unopim_zip_upload_edit_{{ $import->id }}"
+                            files-extracted-label="@lang('admin::app.settings.data-transfer.imports.create.zip-files-extracted')"
+                            upload-error-label="@lang('admin::app.settings.data-transfer.imports.create.zip-upload-error')"
+                            placeholder="import-images/my-products"
+                            file-info-example="@lang('admin::app.settings.data-transfer.imports.edit.file-info-example')"
+                            upload-btn-label="@lang('admin::app.settings.data-transfer.imports.create.upload_images')"
+                            cancel-btn-label="@lang('admin::app.settings.data-transfer.imports.edit.back-btn')"
+                            drop-hint-label="@lang('admin::app.settings.data-transfer.imports.create.zip-drop-hint')"
+                            uploading-label="@lang('admin::app.settings.data-transfer.imports.create.zip-uploading')"
+                        ></v-edit-zip-uploader>
                     </div>
                 </div>
                 @endif
@@ -391,81 +334,263 @@
         {!! view_render_event('unopim.admin.settings.data_transfer.imports.create.create_form_controls.after') !!}
     </x-admin::form>
 
-    @push('scripts')
-        <script>
-            (function () {
-                const browseBtn       = document.getElementById('browse-btn');
-                const fileInput       = document.getElementById('zip-upload-edit');
-                const pathInput       = document.getElementById('images-directory-path');
-                const stateUploading  = document.getElementById('zip-state-uploading');
-                const stateSuccess    = document.getElementById('zip-state-success');
-                const stateError      = document.getElementById('zip-state-error');
-                const uploadingName   = document.getElementById('zip-uploading-name');
-                const successFilename = document.getElementById('zip-success-filename');
-                const successCount    = document.getElementById('zip-success-count');
-                const successPath     = document.getElementById('zip-success-path');
-                const removeBtn       = document.getElementById('zip-remove-btn');
-                const errorMsg        = document.getElementById('zip-error-msg');
+    @pushOnce('scripts')
+        <script type="text/x-template" id="v-edit-zip-uploader-template">
+            <div class="flex flex-col gap-2">
+                <!-- Label -->
+                <label class="text-sm text-gray-600 dark:text-gray-300 font-medium">
+                    @lang('admin::app.settings.data-transfer.imports.edit.images-directory')
+                </label>
 
-                if (! fileInput || ! browseBtn) return;
+                <!-- Path input + Upload button -->
+                <div class="flex items-center gap-0 rounded-sm border dark:border-gray-800 overflow-hidden focus-within:border-violet-500 transition-colors">
+                    <span class="px-2.5 py-2 text-xs text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-cherry-800 border-r dark:border-gray-700 shrink-0 select-none">
+                        storage/app/public/
+                    </span>
 
-                const originalPath   = pathInput ? pathInput.value : '';
-                const filesExtracted = @json(trans('admin::app.settings.data-transfer.imports.create.zip-files-extracted'));
-                const uploadError    = @json(trans('admin::app.settings.data-transfer.imports.create.zip-upload-error'));
+                    <input
+                        type="text"
+                        name="images_directory_path"
+                        v-model="currentPath"
+                        :placeholder="placeholder"
+                        class="flex-1 py-2 px-3 text-sm text-gray-700 dark:text-gray-300 dark:bg-cherry-900 outline-none bg-transparent"
+                    />
 
-                /* Browse button opens the hidden file input */
-                browseBtn.addEventListener('click', () => fileInput.click());
+                    <button
+                        type="button"
+                        @click="$refs.zipModal.open()"
+                        class="secondary-button !rounded-none border-l dark:border-l-gray-700 shrink-0"
+                    >
+                        @{{ uploadBtnLabel }}
+                    </button>
+                </div>
 
-                function setStatus(state) {
-                    stateUploading.classList.toggle('hidden', state !== 'uploading');
-                    stateSuccess.classList.toggle('hidden', state !== 'success');
-                    stateError.classList.toggle('hidden', state !== 'error');
-                    browseBtn.disabled = (state === 'uploading');
-                }
+                <p class="text-xs text-gray-400 dark:text-gray-500">@{{ fileInfoExample }}</p>
 
-                function handleFile(file) {
-                    if (! file || ! file.name.toLowerCase().endsWith('.zip')) {
-                        errorMsg.textContent = 'Please select a valid .zip file.';
-                        setStatus('error');
-                        return;
-                    }
+                <!-- Inline success indicator -->
+                <div
+                    v-if="uploadedPath"
+                    class="flex items-center justify-between gap-2 px-3 py-2 rounded-sm bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800"
+                >
+                    <div class="flex items-center gap-2 min-w-0">
+                        <span class="icon-product text-xl text-green-600 dark:text-green-400 shrink-0"></span>
+                        <div class="min-w-0">
+                            <p class="text-sm font-medium text-green-700 dark:text-green-400 truncate">@{{ uploadedFileName }}</p>
+                            <p class="text-xs text-green-600 dark:text-green-500">@{{ uploadedFilesCount }} @{{ filesExtractedLabel }}</p>
+                            <p class="text-xs font-mono text-gray-400 dark:text-gray-500 truncate">storage/app/public/@{{ uploadedPath }}</p>
+                        </div>
+                    </div>
+                    <button
+                        type="button"
+                        @click="clearUpload"
+                        class="icon-cancel text-2xl shrink-0 text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
+                    ></button>
+                </div>
 
-                    uploadingName.textContent = file.name;
-                    setStatus('uploading');
+                <!-- ZIP upload modal -->
+                <x-admin::modal ref="zipModal">
+                    <x-slot:header>
+                        <p class="text-base font-semibold text-gray-800 dark:text-white">@{{ uploadBtnLabel }}</p>
+                    </x-slot>
 
-                    const formData = new FormData();
-                    formData.append('images_zip', file);
+                    <x-slot:content>
+                        <!-- Dropzone -->
+                        <div
+                            class="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-8 text-center cursor-pointer hover:border-violet-500 transition-colors"
+                            @click="$refs.zipFileInput.click()"
+                            @dragover.prevent="$event.currentTarget.classList.add('border-violet-500')"
+                            @dragleave.prevent="$event.currentTarget.classList.remove('border-violet-500')"
+                            @drop.prevent="onDrop($event)"
+                        >
+                            <input
+                                type="file"
+                                ref="zipFileInput"
+                                accept=".zip"
+                                class="hidden"
+                                @change="onFileChange"
+                            />
 
-                    axios.post(
-                        '{{ route('admin.settings.data_transfer.imports.upload_images_zip') }}',
-                        formData,
-                        { headers: { 'Content-Type': 'multipart/form-data' } }
-                    ).then((response) => {
-                        const { path, files_count, zip_name } = response.data;
+                            <div v-if="!selectedFile">
+                                <span class="icon-upload text-4xl text-gray-300 dark:text-gray-600 mb-2 block"></span>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">@{{ dropHintLabel }}</p>
+                                <p class="text-xs text-gray-400 mt-1">.zip</p>
+                            </div>
 
-                        pathInput.value = path;
-                        successFilename.textContent = zip_name ?? file.name;
-                        successCount.textContent = (files_count ?? 0) + ' ' + filesExtracted;
-                        successPath.textContent = 'storage/app/public/' + path;
+                            <div v-else>
+                                <span class="icon-product text-4xl text-violet-500 mb-2 block"></span>
+                                <p class="text-sm font-medium text-gray-700 dark:text-gray-300 truncate max-w-xs mx-auto">@{{ selectedFile.name }}</p>
+                                <p class="text-xs text-gray-400 mt-1">@{{ (selectedFile.size / 1024 / 1024).toFixed(2) }} MB</p>
+                            </div>
+                        </div>
 
-                        setStatus('success');
-                    }).catch((err) => {
-                        errorMsg.textContent = err.response?.data?.message ?? uploadError;
-                        fileInput.value = '';
-                        setStatus('error');
-                    });
-                }
+                        <!-- Uploading progress -->
+                        <div v-if="modalUploading" class="flex items-center gap-2 mt-4 text-sm text-gray-500 dark:text-gray-400">
+                            <svg class="w-4 h-4 shrink-0 text-violet-500 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 0 1 16 0"/>
+                            </svg>
+                            <span>@{{ uploadingLabel }}</span>
+                        </div>
 
-                fileInput.addEventListener('change', () => {
-                    if (fileInput.files[0]) handleFile(fileInput.files[0]);
-                });
+                        <!-- Error -->
+                        <div
+                            v-if="modalError"
+                            class="flex items-center gap-2 mt-4 px-3 py-2 rounded-sm bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-xs text-red-600 dark:text-red-400"
+                        >
+                            <i class="icon-cancel shrink-0"></i>
+                            <span>@{{ modalError }}</span>
+                        </div>
+                    </x-slot>
 
-                removeBtn.addEventListener('click', () => {
-                    pathInput.value = originalPath;
-                    fileInput.value = '';
-                    setStatus('none');
-                });
-            })();
+                    <x-slot:footer>
+                        <button
+                            type="button"
+                            @click="$refs.zipModal.close()"
+                            class="transparent-button"
+                            :disabled="modalUploading"
+                        >
+                            @{{ cancelBtnLabel }}
+                        </button>
+
+                        <button
+                            type="button"
+                            @click="doUpload"
+                            class="primary-button"
+                            :disabled="!selectedFile || modalUploading"
+                            :class="{ 'opacity-50 cursor-not-allowed': !selectedFile || modalUploading }"
+                        >
+                            @{{ uploadBtnLabel }}
+                        </button>
+                    </x-slot>
+                </x-admin::modal>
+            </div>
         </script>
-    @endpush
+
+        <script type="module">
+            app.component('v-edit-zip-uploader', {
+                template: '#v-edit-zip-uploader-template',
+
+                props: [
+                    'initialPath',
+                    'uploadUrl',
+                    'lsKey',
+                    'filesExtractedLabel',
+                    'uploadErrorLabel',
+                    'placeholder',
+                    'fileInfoExample',
+                    'uploadBtnLabel',
+                    'cancelBtnLabel',
+                    'dropHintLabel',
+                    'uploadingLabel',
+                ],
+
+                data() {
+                    return {
+                        currentPath:        this.initialPath ?? '',
+                        selectedFile:       null,
+                        modalUploading:     false,
+                        modalError:         null,
+                        uploadedPath:       null,
+                        uploadedFileName:   null,
+                        uploadedFilesCount: 0,
+                    };
+                },
+
+                mounted() {
+                    try {
+                        const saved = JSON.parse(localStorage.getItem(this.lsKey));
+
+                        if (saved && saved.path && ! this.currentPath) {
+                            this.currentPath        = saved.path;
+                            this.uploadedPath       = saved.path;
+                            this.uploadedFileName   = saved.zip_name ?? '';
+                            this.uploadedFilesCount = saved.files_count ?? 0;
+                        }
+                    } catch (e) {}
+                },
+
+                methods: {
+                    onFileChange(e) {
+                        const file = e.target.files[0];
+
+                        if (file) {
+                            this.selectFile(file);
+                        }
+                    },
+
+                    onDrop(e) {
+                        e.currentTarget.classList.remove('border-violet-500');
+
+                        const file = e.dataTransfer?.files?.[0];
+
+                        if (file) {
+                            this.selectFile(file);
+                        }
+                    },
+
+                    selectFile(file) {
+                        if (! file.name.toLowerCase().endsWith('.zip')) {
+                            this.modalError = 'Please select a valid .zip file.';
+                            return;
+                        }
+
+                        this.selectedFile = file;
+                        this.modalError   = null;
+                    },
+
+                    doUpload() {
+                        if (! this.selectedFile) {
+                            return;
+                        }
+
+                        this.modalUploading = true;
+                        this.modalError     = null;
+
+                        const formData = new FormData();
+                        formData.append('images_zip', this.selectedFile);
+
+                        this.$axios.post(this.uploadUrl, formData, {
+                            headers: { 'Content-Type': 'multipart/form-data' },
+                        }).then(response => {
+                            const { path, files_count, zip_name } = response.data;
+
+                            this.currentPath        = path;
+                            this.uploadedPath       = path;
+                            this.uploadedFileName   = zip_name ?? this.selectedFile.name;
+                            this.uploadedFilesCount = files_count ?? 0;
+                            this.modalUploading     = false;
+
+                            try {
+                                localStorage.setItem(this.lsKey, JSON.stringify({
+                                    path,
+                                    files_count,
+                                    zip_name: this.uploadedFileName,
+                                }));
+                            } catch (e) {}
+
+                            this.$refs.zipModal.close();
+                            this.selectedFile = null;
+                        }).catch(err => {
+                            this.modalUploading = false;
+                            this.modalError     = err.response?.data?.message ?? this.uploadErrorLabel;
+
+                            if (this.$refs.zipFileInput) {
+                                this.$refs.zipFileInput.value = '';
+                            }
+                        });
+                    },
+
+                    clearUpload() {
+                        this.currentPath        = '';
+                        this.uploadedPath       = null;
+                        this.uploadedFileName   = null;
+                        this.uploadedFilesCount = 0;
+
+                        try {
+                            localStorage.removeItem(this.lsKey);
+                        } catch (e) {}
+                    },
+                },
+            });
+        </script>
+    @endPushOnce
 </x-admin::layouts.with-history>
