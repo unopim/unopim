@@ -1,5 +1,4 @@
 const { test, expect } = require('../../utils/fixtures');
-
 test.describe('Attribute Family', () => {
 test('Create Attribute family with empty code field', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: ' Catalog' }).click();

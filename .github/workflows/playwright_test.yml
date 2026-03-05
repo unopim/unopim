@@ -102,4 +102,3 @@ jobs:
         with:
           name: playwright-report
           path: tests/e2e-pw/playwright-report
-

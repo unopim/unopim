@@ -1,5 +1,4 @@
 const { test, expect } = require('../../utils/fixtures');
-
 test.describe('UnoPim Test cases', () => {
 test('Create Attribute Group with empty Code field', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
