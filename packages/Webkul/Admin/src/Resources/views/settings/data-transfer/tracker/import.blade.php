@@ -929,19 +929,19 @@
                         </div>
                     </div>
 
-                    <!-- Stats grid -->
+                    <!-- Stats grid (use importResource.summary for completed — it's the final aggregated data from the Completed job) -->
                     <div class="grid grid-cols-4 gap-px border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden mb-4">
                         <div class="p-3 bg-white dark:bg-cherry-900">
                             <p class="text-[10px] font-semibold tracking-wider text-gray-400 dark:text-gray-500 uppercase">@lang('admin::app.settings.data-transfer.tracker.records-created')</p>
-                            <p class="text-xl font-bold text-gray-800 dark:text-gray-200 mt-1">@{{ Number(stats.summary?.created || 0).toLocaleString() }}</p>
+                            <p class="text-xl font-bold text-gray-800 dark:text-gray-200 mt-1">@{{ Number(importResource.summary?.created || 0).toLocaleString() }}</p>
                         </div>
                         <div class="p-3 bg-white dark:bg-cherry-900 border-l border-gray-200 dark:border-gray-700">
                             <p class="text-[10px] font-semibold tracking-wider text-gray-400 dark:text-gray-500 uppercase">@lang('admin::app.settings.data-transfer.tracker.records-updated')</p>
-                            <p class="text-xl font-bold text-green-600 dark:text-green-400 mt-1">@{{ Number(stats.summary?.updated || 0).toLocaleString() }}</p>
+                            <p class="text-xl font-bold text-green-600 dark:text-green-400 mt-1">@{{ Number(importResource.summary?.updated || 0).toLocaleString() }}</p>
                         </div>
                         <div class="p-3 bg-white dark:bg-cherry-900 border-l border-gray-200 dark:border-gray-700">
                             <p class="text-[10px] font-semibold tracking-wider text-gray-400 dark:text-gray-500 uppercase">@lang('admin::app.settings.data-transfer.tracker.records-deleted')</p>
-                            <p class="text-xl font-bold text-gray-800 dark:text-gray-200 mt-1">@{{ Number(stats.summary?.deleted || 0).toLocaleString() }}</p>
+                            <p class="text-xl font-bold text-gray-800 dark:text-gray-200 mt-1">@{{ Number(importResource.summary?.deleted || 0).toLocaleString() }}</p>
                         </div>
                         <div class="p-3 bg-white dark:bg-cherry-900 border-l border-gray-200 dark:border-gray-700">
                             <p class="text-[10px] font-semibold tracking-wider text-gray-400 dark:text-gray-500 uppercase">@lang('admin::app.settings.data-transfer.tracker.total-duration')</p>
