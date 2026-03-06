@@ -29,6 +29,11 @@ class Import
     public const STATE_PENDING = 'pending';
 
     /**
+     * Import state for validation in progress
+     */
+    public const STATE_VALIDATING = 'validating';
+
+    /**
      * Import state for validated import
      */
     public const STATE_VALIDATED = 'validated';
@@ -67,6 +72,16 @@ class Import
      * Import state for completed import
      */
     public const STATE_COMPLETED = 'completed';
+
+    /**
+     * Import state for paused import
+     */
+    public const STATE_PAUSED = 'paused';
+
+    /**
+     * Import state for cancelled import
+     */
+    public const STATE_CANCELLED = 'cancelled';
 
     /**
      * Import state for failed import
@@ -185,11 +200,11 @@ class Import
         return $source;
     }
 
-    public function stateUpdate($state = self::STATE_VALIDATED): Import
+    public function stateUpdate($state = self::STATE_VALIDATED, array $additionalData = []): Import
     {
-        $import = $this->jobTrackRepository->update([
+        $import = $this->jobTrackRepository->update(array_merge([
             'state' => $state,
-        ], $this->import->id);
+        ], $additionalData), $this->import->id);
 
         $this->setImport($import);
 
@@ -365,13 +380,18 @@ class Import
     /**
      * Started the import process
      */
-    public function started(): void
+    public function started(bool $preserveStartedAt = false): void
     {
-        $import = $this->jobTrackRepository->update([
-            'state'      => self::STATE_PROCESSING,
-            'started_at' => now(),
-            'summary'    => [],
-        ], $this->import->id);
+        $data = [
+            'state'   => self::STATE_PROCESSING,
+            'summary' => [],
+        ];
+
+        if (! $preserveStartedAt) {
+            $data['started_at'] = now();
+        }
+
+        $import = $this->jobTrackRepository->update($data, $this->import->id);
 
         $this->setImport($import);
 
@@ -404,6 +424,82 @@ class Import
         $this->setImport($import);
 
         Event::dispatch('data_transfer.imports.indexing', $import);
+    }
+
+    /**
+     * Pause the import process
+     */
+    public function pause(): void
+    {
+        $import = $this->jobTrackRepository->update([
+            'state' => self::STATE_PAUSED,
+        ], $this->import->id);
+
+        $this->setImport($import);
+
+        Event::dispatch('data_transfer.imports.paused', $import);
+    }
+
+    /**
+     * Resume a paused import by restoring the processing state
+     * and re-dispatching pending batches.
+     */
+    public function resume(): void
+    {
+        $import = $this->jobTrackRepository->update([
+            'state' => self::STATE_PROCESSING,
+        ], $this->import->id);
+
+        $this->setImport($import);
+
+        if (! $this->jobLogger) {
+            $this->setLogger(\Webkul\DataTransfer\Services\JobLogger::make($this->import->id));
+        }
+
+        $this->jobLogger->info('Import resumed — re-dispatching pending batches.');
+
+        $this->start();
+
+        Event::dispatch('data_transfer.imports.resumed', $import);
+    }
+
+    /**
+     * Cancel the import process
+     */
+    public function cancel(): void
+    {
+        $grammar = DB::rawQueryGrammar();
+
+        $summary = $this->jobTrackBatchRepository
+            ->select(
+                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'created')} as DECIMAL)) AS created"),
+                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'updated')} as DECIMAL)) AS updated"),
+                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'deleted')} as DECIMAL)) AS deleted"),
+            )
+            ->where('job_track_id', $this->import->id)
+            ->groupBy('job_track_id')
+            ->first()
+            ?->toArray();
+
+        $import = $this->jobTrackRepository->update([
+            'state'        => self::STATE_CANCELLED,
+            'summary'      => $summary ?? ['created' => 0, 'updated' => 0, 'deleted' => 0],
+            'completed_at' => now(),
+        ], $this->import->id);
+
+        $this->setImport($import);
+
+        Event::dispatch('data_transfer.imports.cancelled', $import);
+    }
+
+    /**
+     * Check if import is in a state that should stop processing
+     */
+    public function shouldStop(): bool
+    {
+        $this->import->refresh();
+
+        return in_array($this->import->state, [self::STATE_PAUSED, self::STATE_CANCELLED, self::STATE_FAILED]);
     }
 
     /**

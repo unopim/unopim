@@ -157,7 +157,7 @@ test('Create Product Import', async ({ adminPage }) => {
   await expect(adminPage.getByText(/Import created successfully/i)).toBeVisible();
   await expect(adminPage.getByRole('button', { name: 'Import Now' })).toBeVisible();
   await adminPage.getByRole('button', { name: 'Import Now' }).click();
-  await expect(adminPage.getByText('Awaiting Job Processing in')).toBeVisible();
+  await expect(adminPage.getByText('Job queued')).toBeVisible();
 });
 
 test('Create Import with same Code', async ({ adminPage }) => {

@@ -179,10 +179,8 @@ class Exporter extends AbstractExporter
      */
     protected function productCountsByCategory(string $code): int
     {
-        if (! $this->source) {
-            $this->source = app()->make(config('exporters.categories.source'));
-        }
-
-        return $this->source->getProducts($code)->count();
+        return \Webkul\Product\Models\ProductProxy::query()
+            ->whereJsonContains('values->categories', $code)
+            ->count();
     }
 }

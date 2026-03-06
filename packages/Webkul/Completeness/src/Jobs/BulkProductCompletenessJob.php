@@ -29,7 +29,7 @@ class BulkProductCompletenessJob implements ShouldBeUnique, ShouldQueue
         protected array $product = [],
         protected ?int $familyId = null,
     ) {
-        $this->queue = 'system';
+        $this->queue = config('completeness.queue', 'system');
     }
 
     public function uniqueId(): string
@@ -79,8 +79,10 @@ class BulkProductCompletenessJob implements ShouldBeUnique, ShouldQueue
 
     protected function dispatchInChunks(array $productIds): void
     {
+        $queue = config('completeness.queue', 'system');
+
         foreach (array_chunk($productIds, self::CHUNK_SIZE) as $chunk) {
-            ProductCompletenessJob::dispatch($chunk);
+            ProductCompletenessJob::dispatch($chunk)->onQueue($queue);
         }
     }
 }

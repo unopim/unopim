@@ -92,9 +92,44 @@ composer dump-autoload
 
 Check `QUEUE_CONNECTION=sync` is set in test environment.
 
-### Running E2E tests (Playwright)
+### Common Pest Pitfalls (CI Failures)
+
+| Pitfall | Example | Fix |
+|---|---|---|
+| Timezone assumptions | `Carbon::parse($date)->toJson()` gives different results on CI vs local | Always pass explicit timezone: `Carbon::parse($date, 'UTC')` when comparing against UTC-formatted strings |
+| Hardcoded dynamic IDs | Test expects `id="36_dropzone-file"` | Use stable selectors — Vue `$.uid` changes between runs |
+| Environment-dependent values | Test assumes specific locale or config | Use explicit config/locale setup in test `beforeEach` |
+
+### Running E2E Tests (Playwright)
 
 ```bash
 cd tests/e2e-pw
 npx playwright test
 ```
+
+### Keeping Playwright Tests in Sync (CRITICAL)
+
+Playwright tests run in GitHub Actions CI. They cannot easily be run locally, so you MUST manually verify compatibility when changing:
+
+**Translation changes** (`packages/Webkul/Admin/src/Resources/lang/*/app.php`):
+```bash
+# Find Playwright tests that reference the old translation text
+grep -r "OLD TEXT" tests/e2e-pw/
+# Update all matching assertions to use the new text
+```
+
+**UI/form changes** (blade templates, Vue components):
+```bash
+# Find Playwright tests that use selectors from the changed component
+grep -r "selector-or-text" tests/e2e-pw/
+```
+
+**Import/export flow changes**:
+- Check `tests/e2e-pw/tests/04-datatransfer/import.spec.js`
+- Check `tests/e2e-pw/tests/04-datatransfer/export.spec.js`
+
+**Selector best practices for Playwright tests:**
+- Use role-based selectors: `getByRole('button', { name: 'Save' })`
+- Use text-based selectors: `getByText(/success/i)`
+- Use name attributes: `input[type="file"][name="file"]`
+- NEVER use dynamic Vue `$.uid`-based IDs (e.g., `id="36_dropzone-file"`) — these change between page loads

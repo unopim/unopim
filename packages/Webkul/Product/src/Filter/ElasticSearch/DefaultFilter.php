@@ -50,13 +50,20 @@ class DefaultFilter extends AbstractElasticSearchAttributeFilter
                 $this->queryBuilder::where($clause);
                 break;
             case FilterOperators::CONTAINS:
+                /**
+                 * Cap wildcard expansion with rewrite: 'top_terms_1024' to avoid
+                 * exceeding maxClauseCount on high-cardinality keyword fields.
+                 */
                 $clauses = [];
 
                 foreach ((array) $value as $val) {
                     $escapedValue = QueryString::escapeValue($val);
                     $clauses[] = [
                         'wildcard' => [
-                            $attributePath => '*'.$escapedValue.'*',
+                            $attributePath => [
+                                'value'   => '*'.$escapedValue.'*',
+                                'rewrite' => 'top_terms_1024',
+                            ],
                         ],
                     ];
                 }

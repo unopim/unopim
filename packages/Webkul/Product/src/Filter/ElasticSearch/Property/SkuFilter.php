@@ -52,11 +52,30 @@ class SkuFilter extends AbstractPropertyFilter
                 break;
 
             case FilterOperators::CONTAINS:
-                $escapedQuery = preg_replace('/([+\-&|!(){}[\]^"~*?:\\/])/', '\\\$1', $value);
-                $clause = [
-                    'query_string' => [
-                        'default_field'    => $property,
-                        'query'            => '*'.implode('* OR *', $escapedQuery).'*',
+                /**
+                 * Use wildcard with rewrite: 'top_terms_1024' instead of
+                 * query_string with leading wildcards (*value*) to avoid
+                 * exceeding maxClauseCount on high-cardinality keyword fields.
+                 * Value may be a string or an array — handle both cases.
+                 */
+                $clauses = [];
+
+                foreach ((array) $value as $val) {
+                    $escapedValue = QueryString::escapeValue($val);
+                    $clauses[] = [
+                        'wildcard' => [
+                            $property => [
+                                'value'   => '*'.$escapedValue.'*',
+                                'rewrite' => 'top_terms_1024',
+                            ],
+                        ],
+                    ];
+                }
+
+                $clause = count($clauses) === 1 ? $clauses[0] : [
+                    'bool' => [
+                        'should'               => $clauses,
+                        'minimum_should_match' => 1,
                     ],
                 ];
 
