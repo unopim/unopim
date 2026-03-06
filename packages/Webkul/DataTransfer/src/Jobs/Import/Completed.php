@@ -31,12 +31,30 @@ class Completed implements ShouldQueue
      */
     public function handle()
     {
-        app(ImportHelper::class)
+        $logger = JobLogger::make($this->jobTrackId);
+
+        $importHelper = app(ImportHelper::class)
             ->setImport($this->import)
-            ->setLogger(JobLogger::make($this->jobTrackId))
-            ->completed();
+            ->setLogger($logger);
+
+        if ($importHelper->shouldStop()) {
+            $logger->info('Completed job skipped — import was stopped.');
+
+            return;
+        }
+
+        $logger->info('Finalizing import — aggregating summary.');
+
+        $importHelper->completed();
 
         $this->dispatchPostImportCompleteness();
+    }
+
+    public function failed(\Throwable $exception)
+    {
+        JobLogger::make($this->jobTrackId)->error("Completed job failed: {$exception->getMessage()}", [
+            'exception' => $exception->getTraceAsString(),
+        ]);
     }
 
     /**

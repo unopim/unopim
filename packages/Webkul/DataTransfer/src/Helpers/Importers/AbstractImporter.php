@@ -356,19 +356,25 @@ abstract class AbstractImporter
 
         $this->import->batches()->chunk(100, function ($batches) use (&$typeBatches) {
             foreach ($batches as $batch) {
-                $typeBatches['import'][] = new ImportBatchJob($batch, $this->import->id);
-
-                if ($this->isLinkingRequired()) {
-                    $typeBatches['link'][] = new LinkBatchJob($batch);
+                if ($batch->state === Import::STATE_PENDING) {
+                    $typeBatches['import'][] = new ImportBatchJob($batch, $this->import->id);
                 }
 
-                if ($this->isIndexingRequired()) {
+                if ($this->isLinkingRequired() && in_array($batch->state, [Import::STATE_PENDING, Import::STATE_PROCESSED])) {
+                    $typeBatches['link'][] = new LinkBatchJob($batch, $this->import->id);
+                }
+
+                if ($this->isIndexingRequired() && in_array($batch->state, [Import::STATE_PENDING, Import::STATE_PROCESSED, Import::STATE_LINKED])) {
                     $typeBatches['index'][] = new IndexBatchJob($batch, $this->import->id);
                 }
             }
         });
 
-        $chain[] = Bus::batch($typeBatches['import']);
+        $chain = [];
+
+        if (! empty($typeBatches['import'])) {
+            $chain[] = Bus::batch($typeBatches['import']);
+        }
 
         if (! empty($typeBatches['link'])) {
             $chain[] = new LinkingJob($this->import);

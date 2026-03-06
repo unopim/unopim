@@ -499,6 +499,60 @@ class ImportController extends Controller
     }
 
     /**
+     * Pause a running import job
+     */
+    public function pause(int $id): JsonResponse
+    {
+        $jobTrack = $this->jobTrackRepository->findOrFail($id);
+
+        if ($jobTrack->type === 'export') {
+            $this->exportHelper->setExport($jobTrack)->pause();
+        } else {
+            $this->importHelper->setImport($jobTrack)->pause();
+        }
+
+        return new JsonResponse([
+            'message' => trans('admin::app.settings.data-transfer.tracker.paused'),
+        ]);
+    }
+
+    /**
+     * Resume a paused import/export job
+     */
+    public function resume(int $id): JsonResponse
+    {
+        $jobTrack = $this->jobTrackRepository->findOrFail($id);
+
+        if ($jobTrack->type === 'export') {
+            $this->exportHelper->setExport($jobTrack)->resume();
+        } else {
+            $this->importHelper->setImport($jobTrack)->resume();
+        }
+
+        return new JsonResponse([
+            'message' => trans('admin::app.settings.data-transfer.tracker.resumed'),
+        ]);
+    }
+
+    /**
+     * Cancel a running or paused import/export job
+     */
+    public function cancel(int $id): JsonResponse
+    {
+        $jobTrack = $this->jobTrackRepository->findOrFail($id);
+
+        if ($jobTrack->type === 'export') {
+            $this->exportHelper->setExport($jobTrack)->cancel();
+        } else {
+            $this->importHelper->setImport($jobTrack)->cancel();
+        }
+
+        return new JsonResponse([
+            'message' => trans('admin::app.settings.data-transfer.tracker.cancelled'),
+        ]);
+    }
+
+    /**
      * Returns import stats
      */
     public function stats(int $id, $state = Import::STATE_PROCESSED): JsonResponse
@@ -516,8 +570,6 @@ class ImportController extends Controller
             $stats = $this->importHelper->stats($state);
             $jobTrack = $this->importHelper->getImport()->unsetRelations();
         }
-
-        $stats['summary'] = $this->normalizeSummary($stats['summary']);
 
         return new JsonResponse([
             'isValid'     => $isValid,

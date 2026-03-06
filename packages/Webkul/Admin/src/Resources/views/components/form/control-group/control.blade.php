@@ -1336,7 +1336,14 @@
     </script>
     <script type="text/x-template" id="v-file-uploader-template">
         <div :class="[errors.length ? 'flex items-center justify-center w-full border !border-red-600 hover:border-red-600' : 'flex items-center justify-center w-full']">
-            <label :for="$.uid + '_dropzone-file'" class="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-violet-50 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+            <label
+                :for="$.uid + '_dropzone-file'"
+                class="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-violet-50 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 transition-colors"
+                @dragover.prevent="isDragging = true"
+                @dragleave.prevent="isDragging = false"
+                @drop.prevent="onDrop($event)"
+                :class="{ '!border-violet-500 !bg-violet-50 dark:!bg-violet-900/20': isDragging }"
+            >
                 <div class="flex flex-col items-center justify-center py-6">
                     <template v-if="fieldData.value && (fieldData.value.name || field.value)">
                         <span class="icon-product text-4xl mb-4 mr-4"></span>
@@ -1389,6 +1396,7 @@
             data() {
                 return {
                     fieldData: this.field,
+                    isDragging: false,
                 }
             },
             watch: {
@@ -1416,6 +1424,20 @@
                     });
                 },
                  
+                onDrop(event) {
+                    this.isDragging = false;
+
+                    const file = event.dataTransfer.files[0];
+
+                    if (file) {
+                        this.fieldData.value = file;
+
+                        this.$nextTick(() => {
+                            this.$forceUpdate();
+                        });
+                    }
+                },
+
                 clearFile(event) {
                     this.fieldData.value = null;
                     // this.$refs.fileInput.value = null;

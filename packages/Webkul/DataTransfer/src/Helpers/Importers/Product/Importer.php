@@ -400,13 +400,17 @@ class Importer extends AbstractImporter
         $source = $this->getSource();
 
         /**
-         * First pass: collect all SKUs and parent SKUs for bulk loading.
+         * First pass: collect SKUs in chunks to avoid holding all 1M SKUs in memory.
+         * Loads each chunk into SKUStorage and product cache progressively.
          * Also counts total rows for parallel chunk splitting.
          */
-        $allSkus = [];
         $totalSourceRows = 0;
+        $skuChunk = [];
+        $skuChunkSize = 5000;
 
         $source->rewind();
+
+        $this->preloadCategoryCodes();
 
         while ($source->valid()) {
             try {
@@ -417,28 +421,37 @@ class Importer extends AbstractImporter
                 continue;
             }
 
-            $allSkus[] = $rowData['sku'];
+            $skuChunk[] = $rowData['sku'];
 
             if (! empty($rowData['parent'])) {
-                $allSkus[] = $rowData['parent'];
+                $skuChunk[] = $rowData['parent'];
             }
 
             $totalSourceRows++;
+
+            if (count($skuChunk) >= $skuChunkSize) {
+                $uniqueChunk = array_unique($skuChunk);
+                $this->skuStorage->load($uniqueChunk);
+                $this->preloadExistingProducts($uniqueChunk);
+                $skuChunk = [];
+            }
+
             $source->next();
         }
 
         /**
-         * Single bulk load of ALL SKUs — replaces N individual queries.
+         * Load any remaining SKUs from the last partial chunk.
          */
-        if (! empty($allSkus)) {
-            $this->skuStorage->load(array_unique($allSkus));
+        if (! empty($skuChunk)) {
+            $uniqueChunk = array_unique($skuChunk);
+            $this->skuStorage->load($uniqueChunk);
+            $this->preloadExistingProducts($uniqueChunk);
+            unset($skuChunk, $uniqueChunk);
         }
 
         /**
-         * Pre-load all caches for O(1) lookups during validation.
+         * Pre-load unique attribute values for duplicate detection.
          */
-        $this->preloadExistingProducts($allSkus);
-        $this->preloadCategoryCodes();
         $this->preloadExistingUniqueValues();
 
         /**
@@ -453,6 +466,19 @@ class Importer extends AbstractImporter
         } else {
             $this->sequentialValidateRows($source);
         }
+
+        /**
+         * Free validation-only caches before batch creation pass to reduce peak memory.
+         * These are no longer needed once validation is complete.
+         */
+        $this->existingUniqueDBValues = [];
+        $this->cachedUniqueValues = [];
+        $this->channelCachedValues = [];
+        $this->localeCachedValues = [];
+        $this->channelLocaleCachedValues = [];
+        $this->cachedVariantValues = [];
+        $this->cachedValidators = [];
+        $this->existingProductsCache = [];
 
         /**
          * Create batch records for valid rows.
@@ -743,6 +769,16 @@ class Importer extends AbstractImporter
     {
         $uniqueSkus = array_unique($skus);
 
+        /**
+         * Filter out already-cached SKUs to avoid redundant DB queries
+         * when called incrementally (chunked loading during validation).
+         */
+        $uniqueSkus = array_filter($uniqueSkus, fn (string $sku) => ! isset($this->existingProductsCache[$sku]));
+
+        if (empty($uniqueSkus)) {
+            return;
+        }
+
         foreach (array_chunk($uniqueSkus, 1000) as $chunk) {
             /**
              * Select only columns needed for validation. Eager-load attribute_family
@@ -850,16 +886,21 @@ class Importer extends AbstractImporter
      */
     protected function loadUniqueValuesForPath(string $attributeCode, string $scopeKey, string $jsonPath): void
     {
-        $results = DB::table('products')
+        /**
+         * Use chunked queries to avoid loading the entire products table into memory.
+         * For large databases (500K+ products), a single ->get() can exhaust PHP memory.
+         */
+        DB::table('products')
             ->select('id', DB::raw("JSON_UNQUOTE(JSON_EXTRACT(`values`, '{$jsonPath}')) as attr_value"))
             ->whereNotNull(DB::raw("JSON_EXTRACT(`values`, '{$jsonPath}')"))
-            ->get();
-
-        foreach ($results as $row) {
-            if ($row->attr_value !== null && $row->attr_value !== 'null' && $row->attr_value !== '') {
-                $this->existingUniqueDBValues[$attributeCode][$scopeKey][$row->attr_value] = $row->id;
-            }
-        }
+            ->orderBy('id')
+            ->chunk(5000, function ($results) use ($attributeCode, $scopeKey) {
+                foreach ($results as $row) {
+                    if ($row->attr_value !== null && $row->attr_value !== 'null' && $row->attr_value !== '') {
+                        $this->existingUniqueDBValues[$attributeCode][$scopeKey][$row->attr_value] = $row->id;
+                    }
+                }
+            });
     }
 
     /**

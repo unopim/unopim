@@ -345,8 +345,12 @@ abstract class AbstractExporter
 
         $typeBatches = [];
 
-        foreach ($this->export->batches as $batch) {
+        foreach ($this->export->batches()->where('state', 'pending')->get() as $batch) {
             $typeBatches['export'][] = new ExportBatchJob($batch, $filePath, $this->export->id, $this->exportBuffer);
+        }
+
+        if (empty($typeBatches['export'])) {
+            return true;
         }
 
         $chain[] = Bus::batch($typeBatches['export']);
