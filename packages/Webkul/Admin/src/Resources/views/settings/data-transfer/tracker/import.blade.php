@@ -916,7 +916,7 @@
                                 this.summary = response.data.summary;
                                 this.jobInstance = response.data.jobInstance;
 
-                                const activeStates = ['processing', 'processed', 'linking', 'indexing'];
+                                const activeStates = ['validating', 'processing', 'processed', 'linking', 'indexing'];
                                 if (activeStates.includes(this.importResource.state)) {
                                     this.startClock();
                                     if (parseFloat(this.stats.progress) > 0 && this.workStartedAt === null) {
