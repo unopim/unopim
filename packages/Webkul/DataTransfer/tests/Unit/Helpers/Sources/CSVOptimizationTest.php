@@ -76,8 +76,8 @@ describe('Date Formatting Optimization', function () {
         /** Fast string method */
         $fastResult = substr($date, 0, 10).'T'.substr($date, 11).'.000000Z';
 
-        /** Carbon method */
-        $carbonResult = \Illuminate\Support\Carbon::parse($date)->toJson();
+        /** Carbon method – parse as UTC since the fast method assumes UTC (DB dates) */
+        $carbonResult = \Illuminate\Support\Carbon::parse($date, 'UTC')->toJson();
 
         expect($fastResult)->toBe($carbonResult);
     });

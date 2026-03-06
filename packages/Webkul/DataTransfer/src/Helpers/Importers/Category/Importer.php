@@ -169,7 +169,7 @@ class Importer extends AbstractImporter
         if (! isset($this->categoryFields)) {
             $this->cachedCategoryFields = $this->categoryFieldRepository->where('status', 1)->get();
 
-            $this->categoryFields    = $this->cachedCategoryFields->pluck('code')->toArray();
+            $this->categoryFields = $this->cachedCategoryFields->pluck('code')->toArray();
             $this->categoryFieldsByCode = $this->cachedCategoryFields->keyBy('code')->all();
         }
 
@@ -232,7 +232,7 @@ class Importer extends AbstractImporter
             'parent' => [
                 'nullable',
                 'string',
-                function (string $attribute, mixed $value, \Closure $fail) use ($rowData) {
+                function (string $attribute, mixed $value, \Closure $fail) {
                     if (! empty($value)
                         && ! $this->categoryStorage->has($value)
                         && ! in_array($value, $this->categoryCodesInBatch)
@@ -335,7 +335,7 @@ class Importer extends AbstractImporter
          * instead of issuing a DB query per category (O(N)).
          */
         $categoryCodes = Arr::pluck($batch->data, 'code');
-        $parentCodes   = array_values(array_unique(array_filter(Arr::pluck($batch->data, 'parent'))));
+        $parentCodes = array_values(array_unique(array_filter(Arr::pluck($batch->data, 'parent'))));
 
         $this->categoryStorage->load(array_merge($categoryCodes, $parentCodes));
 

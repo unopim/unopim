@@ -60,6 +60,24 @@ EOF
 )"
 ```
 
+## Pre-Push CI Verification (MANDATORY)
+
+Before pushing ANY branch or creating a PR, you MUST verify these pass. GitHub Actions runs Pint, Pest, and Playwright — all three must pass.
+
+```bash
+# 1. Fix and verify PHP code style
+./vendor/bin/pint --dirty
+./vendor/bin/pint --test --dirty
+
+# 2. Run Pest tests for changed packages
+./vendor/bin/pest packages/Webkul/{Package}/tests/
+
+# 3. If translations or UI changed, verify Playwright test compatibility
+grep -r "CHANGED_TEXT" tests/e2e-pw/
+```
+
+See the `unopim-dev-cycle` skill for detailed CI pitfalls and common failure patterns.
+
 ## Contributing Guidelines
 
 See `.github/CONTRIBUTING.md` for full contribution process:

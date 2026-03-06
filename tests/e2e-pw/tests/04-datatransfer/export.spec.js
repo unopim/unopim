@@ -140,7 +140,7 @@ test('Create Category Export (XLS)', async ({ adminPage }) => {
   await expect(adminPage.getByText(/Export created successfully/i)).toBeVisible();
   await expect(adminPage.getByRole('button', { name: 'Export Now' })).toBeVisible();
   await adminPage.getByRole('button', { name: 'Export Now' }).click();
-  await expect(adminPage.getByText('Awaiting Job Processing in')).toBeVisible();
+  await expect(adminPage.getByText('Job queued')).toBeVisible();
 });
 
 test('Delete Category Export (XLS)', async ({ adminPage }) => {

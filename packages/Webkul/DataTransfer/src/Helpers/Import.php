@@ -190,11 +190,11 @@ class Import
         return $source;
     }
 
-    public function stateUpdate($state = self::STATE_VALIDATED): Import
+    public function stateUpdate($state = self::STATE_VALIDATED, array $additionalData = []): Import
     {
-        $import = $this->jobTrackRepository->update([
+        $import = $this->jobTrackRepository->update(array_merge([
             'state' => $state,
-        ], $this->import->id);
+        ], $additionalData), $this->import->id);
 
         $this->setImport($import);
 
@@ -370,13 +370,18 @@ class Import
     /**
      * Started the import process
      */
-    public function started(): void
+    public function started(bool $preserveStartedAt = false): void
     {
-        $import = $this->jobTrackRepository->update([
-            'state'      => self::STATE_PROCESSING,
-            'started_at' => now(),
-            'summary'    => [],
-        ], $this->import->id);
+        $data = [
+            'state'   => self::STATE_PROCESSING,
+            'summary' => [],
+        ];
+
+        if (! $preserveStartedAt) {
+            $data['started_at'] = now();
+        }
+
+        $import = $this->jobTrackRepository->update($data, $this->import->id);
 
         $this->setImport($import);
 
