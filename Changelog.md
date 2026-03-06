@@ -1,5 +1,12 @@
 # v1.0.x
 
+
+## v1.0.1 - 2026-01-13
+
+### Fixes
+
+- Fixed docker compose issue where database getting reset on every restart [#243](https://github.com/unopim/unopim/issues/223)
+
 ## v1.0.0
 
 ### Features
