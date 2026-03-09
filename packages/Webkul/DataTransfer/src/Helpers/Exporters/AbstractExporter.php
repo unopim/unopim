@@ -65,7 +65,7 @@ abstract class AbstractExporter
         self::ERROR_CODE_COLUMNS_NUMBER      => 'data_transfer::app.validation.errors.column-numbers',
     ];
 
-    public const BATCH_SIZE = 100;
+    public const BATCH_SIZE = 1000;
 
     /**
      * Is linking required
@@ -343,13 +343,17 @@ abstract class AbstractExporter
             return true;
         }
 
-        $typeBatches = [];
+        $chain = [];
 
-        foreach ($this->export->batches as $batch) {
-            $typeBatches['export'][] = new ExportBatchJob($batch, $filePath, $this->export->id, $this->exportBuffer);
+        $pendingBatches = $this->export->batches()->where('state', 'pending')->get();
+
+        if ($pendingBatches->isNotEmpty()) {
+            $exportJobs = [];
+            foreach ($pendingBatches as $batch) {
+                $exportJobs[] = new ExportBatchJob($batch, $filePath, $this->export->id, $this->exportBuffer);
+            }
+            $chain[] = Bus::batch($exportJobs);
         }
-
-        $chain[] = Bus::batch($typeBatches['export']);
 
         $chain[] = new CompletedJob($this->export, $this->export->id, $this->exportBuffer);
 

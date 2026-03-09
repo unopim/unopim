@@ -62,6 +62,16 @@ class Export
     public const STATE_COMPLETED = 'completed';
 
     /**
+     * export state for paused export
+     */
+    public const STATE_PAUSED = 'paused';
+
+    /**
+     * export state for cancelled export
+     */
+    public const STATE_CANCELLED = 'cancelled';
+
+    /**
      * export state for failed export
      */
     public const STATE_FAILED = 'failed';
@@ -280,6 +290,80 @@ class Export
         $this->jobLogger->info(trans('data_transfer::app.job.completed'));
     }
 
+    /**
+     * Pause the export process
+     */
+    public function pause(): void
+    {
+        $export = $this->jobTrackRepository->update([
+            'state' => self::STATE_PAUSED,
+        ], $this->export->id);
+
+        $this->setExport($export);
+
+        Event::dispatch('data_transfer.exports.paused', $export);
+    }
+
+    /**
+     * Resume a paused export by restoring state and re-dispatching pending batches.
+     */
+    public function resume(): void
+    {
+        $export = $this->jobTrackRepository->update([
+            'state' => self::STATE_PROCESSING,
+        ], $this->export->id);
+
+        $this->setExport($export);
+
+        if (! $this->jobLogger) {
+            $this->setLogger(\Webkul\DataTransfer\Services\JobLogger::make($this->export->id));
+        }
+
+        $this->jobLogger->info('Export resumed — re-dispatching pending batches.');
+
+        $this->start();
+
+        Event::dispatch('data_transfer.exports.resumed', $export);
+    }
+
+    /**
+     * Cancel the export process
+     */
+    public function cancel(): void
+    {
+        $grammar = DB::rawQueryGrammar();
+
+        $summary = $this->jobTrackBatchRepository
+            ->select(
+                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'processed')} as DECIMAL)) AS processed"),
+                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'created')} as DECIMAL)) AS created"),
+                DB::raw("SUM(CAST({$grammar->jsonExtract('summary', 'skipped')} as DECIMAL)) AS skipped"),
+            )
+            ->where('job_track_id', $this->export->id)
+            ->groupBy('job_track_id')
+            ->first()?->toArray();
+
+        $export = $this->jobTrackRepository->update([
+            'state'        => self::STATE_CANCELLED,
+            'summary'      => $summary ?? [],
+            'completed_at' => now(),
+        ], $this->export->id);
+
+        $this->setExport($export);
+
+        Event::dispatch('data_transfer.exports.cancelled', $export);
+    }
+
+    /**
+     * Check if export is in a state that should stop processing
+     */
+    public function shouldStop(): bool
+    {
+        $this->export->refresh();
+
+        return in_array($this->export->state, [self::STATE_PAUSED, self::STATE_CANCELLED, self::STATE_FAILED]);
+    }
+
     public function flush($exportBuffer)
     {
         if (empty($exportBuffer)) {
@@ -324,8 +408,8 @@ class Export
      */
     public function stats(string $state): array
     {
-        $total = $this->export->batches->count();
-        $completed = $this->export->batches->where('state', $state)->count();
+        $total = $this->export->batches()->count();
+        $completed = $this->export->batches()->where('state', $state)->count();
 
         $progress = $total
             ? round($completed / $total * 100)

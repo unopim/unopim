@@ -33,11 +33,35 @@ class IndexBatch implements ShouldQueue
      */
     public function handle()
     {
-        $typeImported = app(ImportHelper::class)
-            ->setImport($this->importBatch->jobTrack)
-            ->setLogger(JobLogger::make($this->jobTrackId))
-            ->getTypeImporter();
+        $logger = JobLogger::make($this->jobTrackId);
 
-        $typeImported->indexBatch($this->importBatch);
+        $importHelper = app(ImportHelper::class)
+            ->setImport($this->importBatch->jobTrack)
+            ->setLogger($logger);
+
+        if ($importHelper->shouldStop()) {
+            $logger->info("IndexBatch #{$this->importBatch->id} skipped — import was stopped.");
+
+            $this->batch()?->cancel();
+
+            return;
+        }
+
+        $logger->info("IndexBatch #{$this->importBatch->id} started processing.");
+
+        $importHelper->getTypeImporter()->indexBatch($this->importBatch);
+
+        $logger->info("IndexBatch #{$this->importBatch->id} completed.");
+    }
+
+    public function failed(\Throwable $exception)
+    {
+        JobLogger::make($this->jobTrackId)->error("IndexBatch #{$this->importBatch->id} failed: {$exception->getMessage()}", [
+            'batch_id'  => $this->importBatch->id,
+            'exception' => $exception->getTraceAsString(),
+        ]);
+
+        $this->importBatch->state = 'failed';
+        $this->importBatch->save();
     }
 }

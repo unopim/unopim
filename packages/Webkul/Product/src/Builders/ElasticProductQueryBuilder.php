@@ -27,8 +27,8 @@ class ElasticProductQueryBuilder extends ElasticSearchAbstractFilterableQueryBui
         $value,
         array $context
     ) {
-        $locale = $attribute->value_per_locale ? $context['locale'] : null;
-        $channel = $attribute->value_per_channel ? $context['channel'] : null;
+        $locale = $attribute->value_per_locale ? ($context['locale'] ?? null) : null;
+        $channel = $attribute->value_per_channel ? ($context['channel'] ?? null) : null;
 
         $filter->setQueryManager(new ElasticSearchQuery);
 

@@ -1,3 +1,4 @@
+
 const { defineConfig, devices } = require('@playwright/test');
 const path = require('path');
 
@@ -24,4 +25,3 @@ module.exports = defineConfig({
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
   ],
 });
-
