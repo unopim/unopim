@@ -35,6 +35,13 @@
 
 # v1.0.x
 
+## v1.0.2 - 2026-02-13
+
+### Fixes
+
+- Fixed normalize boolean status field while exporting product [#243](https://github.com/unopim/unopim/issues/243)
+
+
 ## v1.0.0
 
 ### Features
