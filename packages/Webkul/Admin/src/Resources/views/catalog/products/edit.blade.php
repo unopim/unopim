@@ -194,7 +194,6 @@
                 @foreach ($product->attribute_family->familyGroups()->orderBy('position')->get() as $group)
                     {!! view_render_event('unopim.admin.catalog.product.edit.form.column_before', ['product' => $product]) !!}
 
-                    <div class="flex flex-col gap-2">
                         @php
                             $customAttributes = $product->getEditableAttributes($group);
 
@@ -203,32 +202,35 @@
                         @endphp
 
                         @if (count($customAttributes))
-                            {!! view_render_event('unopim.admin.catalog.product.edit.form.' . $group->code . '.before', ['product' => $product]) !!}
+                            <div class="flex flex-col gap-2">
 
-                            <div class="relative p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
-                                <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
-                                    {{ $groupLabel }}
-                                </p>
+                                {!! view_render_event('unopim.admin.catalog.product.edit.form.' . $group->code . '.before', ['product' => $product]) !!}
 
-                                <x-admin::products.dynamic-attribute-fields
-                                    :fields="$customAttributes"
-                                    :fieldValues="$product->values"
-                                    :currentLocaleCode="$currentLocale->code"
-                                    :currentChannelCode="$currentChannel->code"
-                                    :channelCurrencies="$currentChannel->currencies"
-                                    :variantFields="$product?->parent ? $product->parent->super_attributes->pluck('code')->toArray() : []"
-                                    :completeness-attributes="$requiredAttributes"
-                                    fieldsWrapper="values"
-                                >
-                                </x-admin::products.dynamic-attribute-fields>
+                                <div class="relative p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
+                                    <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
+                                        {{ $groupLabel }}
+                                    </p>
 
+                                    <x-admin::products.dynamic-attribute-fields
+                                        :fields="$customAttributes"
+                                        :fieldValues="$product->values"
+                                        :currentLocaleCode="$currentLocale->code"
+                                        :currentChannelCode="$currentChannel->code"
+                                        :channelCurrencies="$currentChannel->currencies"
+                                        :variantFields="$product?->parent ? $product->parent->super_attributes->pluck('code')->toArray() : []"
+                                        :completeness-attributes="$requiredAttributes"
+                                        fieldsWrapper="values"
+                                    >
+                                    </x-admin::products.dynamic-attribute-fields>
+
+                                </div>
+
+                                {!! view_render_event('unopim.admin.catalog.product.edit.form.' . $group->code . '.after', ['product' => $product]) !!}
+                                <!-- Product Type View Blade File -->
                             </div>
-
-                            {!! view_render_event('unopim.admin.catalog.product.edit.form.' . $group->code . '.after', ['product' => $product]) !!}
                         @endif
 
-                        <!-- Product Type View Blade File -->
-                    </div>
+                        
 
                     {!! view_render_event('unopim.admin.catalog.product.edit.form.column_after', ['product' => $product]) !!}
                 @endforeach
