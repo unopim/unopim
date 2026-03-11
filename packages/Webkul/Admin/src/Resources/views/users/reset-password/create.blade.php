@@ -73,7 +73,9 @@
                                 ref="password"
                             />
 
-                            <x-admin::form.control-group.error control-name="password" />
+                            <v-error-message name="password" v-slot="{ message }"> 
+                                <p class="mt-1 text-red-600 italic text-[10px]" v-text="message"></p> 
+                            </v-error-message>
                         </x-admin::form.control-group>
 
                         <!-- Confirm Password -->
@@ -92,8 +94,10 @@
                                 :placeholder="trans('admin::app.users.reset-password.confirm-password')"
                                 ref="password"
                             />
-
-                            <x-admin::form.control-group.error control-name="password_confirmation" />
+                            
+                            <v-error-message name="password_confirmation" v-slot="{ message }"> 
+                                <p class="mt-1 text-red-600 italic text-[10px]" v-text="message"></p> 
+                            </v-error-message>
                         </x-admin::form.control-group>
                     </div>
 

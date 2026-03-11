@@ -73,7 +73,10 @@
                             >
                             </span>
 
-                            <x-admin::form.control-group.error control-name="password" />
+                            <v-error-message name="password" v-slot="{ message }"> 
+                                <p class="mt-1 text-red-600 italic text-[10px]" v-text="message"></p> 
+                            </v-error-message>
+
                         </x-admin::form.control-group>
                     </div>
 
