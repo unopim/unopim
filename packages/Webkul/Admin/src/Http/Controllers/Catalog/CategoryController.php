@@ -147,32 +147,49 @@ class CategoryController extends Controller
     {
         Event::dispatch('catalog.category.update.before', $id);
 
-        if (! empty($categoryRequest->input('parent_id')) && $this->isRelatedToChannel($id)) {
+        $parentId = $categoryRequest->input('parent_id');
+
+        if (! empty($parentId) && $this->isRelatedToChannel($id)) {
+            session()->flash('error', trans('admin::app.catalog.categories.can-not-update'));
+
+            return redirect()->route('admin.catalog.categories.edit', ['id' => $id]);
+        }
+
+        if (! empty($parentId) && $parentId == $id) {
             session()->flash('error', trans('admin::app.catalog.categories.can-not-update'));
 
             return redirect()->route('admin.catalog.categories.edit', ['id' => $id]);
         }
 
         try {
-            $this->categoryValidator->validate($categoryRequest->only(['code', 'parent_id', 'additional_data']), $id);
+            $this->categoryValidator->validate(
+                $categoryRequest->only(['code', 'parent_id', 'additional_data']),
+                $id
+            );
         } catch (ValidationException $e) {
             session()->flash('error', trans('admin::app.catalog.categories.update-failure'));
 
             throw $e;
         }
 
-        $category = $this->categoryRepository->update($categoryRequest->only([
-            'locale',
-            'parent_id',
-            core()->getRequestedLocaleCode(),
-            'additional_data',
-        ]), $id);
+        $category = $this->categoryRepository->update(
+            $categoryRequest->only([
+                'locale',
+                'parent_id',
+                core()->getRequestedLocaleCode(),
+                'additional_data',
+            ]),
+            $id
+        );
 
         Event::dispatch('catalog.category.update.after', $category);
 
         session()->flash('success', trans('admin::app.catalog.categories.update-success'));
 
-        return redirect()->route('admin.catalog.categories.edit', ['id' => $id, 'locale' => core()->getRequestedLocaleCode()]);
+        return redirect()->route('admin.catalog.categories.edit', [
+            'id'     => $id,
+            'locale' => core()->getRequestedLocaleCode()
+        ]);
     }
 
     /**
