@@ -109,6 +109,10 @@ return [
     ],
 
     'installer' => [
+        'middleware' => [
+            'already-installed' => 'Sovellus on jo asennettu.',
+        ],
+
         'index' => [
             'create-administrator' => [
                 'admin'            => 'Ylläpitäjä',

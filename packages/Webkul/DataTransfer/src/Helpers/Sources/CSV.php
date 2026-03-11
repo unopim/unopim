@@ -73,7 +73,6 @@ class CSV extends AbstractSource
         }
 
         $detectedSeparator = array_keys($separatorCounts, max($separatorCounts));
-
         return count($detectedSeparator) === 1 ? $detectedSeparator[0] : null;
     }
 
