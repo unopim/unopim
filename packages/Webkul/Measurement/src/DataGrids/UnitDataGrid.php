@@ -120,15 +120,21 @@ class UnitDataGrid extends DataGrid
 
     }
 
+    
+
     public function prepareActions()
     {
-
         $this->addAction([
             'index'  => 'edit',
             'icon'   => 'icon-edit',
             'title'  => 'Edit',
             'method' => 'GET',
             'url'    => function ($row) {
+
+                if ($row->is_standard) {
+                    return null;
+                }
+
                 return route('admin.measurement.families.units.edit', [
                     'familyId' => $this->familyId,
                     'code'     => $row->code,
@@ -142,6 +148,11 @@ class UnitDataGrid extends DataGrid
             'title'  => 'Delete',
             'method' => 'DELETE',
             'url'    => function ($row) {
+
+                if ($row->is_standard) {
+                    return null;
+                }
+
                 return route('admin.measurement.families.units.delete', [
                     'familyId' => $this->familyId,
                     'code'     => $row->code,

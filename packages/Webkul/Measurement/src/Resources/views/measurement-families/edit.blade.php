@@ -203,27 +203,34 @@
 
                         <!-- Actions -->
                         <div class="flex justify-end">
+
                             @if ($hasEditPermission)
-                                <a @click="selectedLocales=1; editModal(record.actions.find(action => action.index === 'edit')?.url)">
+                                <a
+                                v-if="record.actions.find(a => a.index === 'edit' && a.url)"
+                                @click="selectedLocales=1; editModal(record.actions.find(a => a.index === 'edit').url)">
+                                    
                                     <span
-                                        :class="record.actions.find(action => action.index === 'edit')?.icon"
-                                        title="@lang('admin::app.settings.locales.index.datagrid.edit')"
-                                        class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
-                                    >
-                                    </span>
+                                        class="icon-edit cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800"
+                                        title="Edit"
+                                    ></span>
+
                                 </a>
                             @endif
 
+
                             @if ($hasDeletePermission)
-                                <a @click="performAction(record.actions.find(action => action.index === 'delete'))">
+                                <a
+                                v-if="record.actions.find(a => a.index === 'delete' && a.url)"
+                                @click="performAction(record.actions.find(a => a.index === 'delete'))">
+                                    
                                     <span
-                                        :class="record.actions.find(action => action.index === 'delete')?.icon"
-                                        title="@lang('admin::app.settings.locales.index.datagrid.delete')"
-                                        class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
-                                    >
-                                    </span>
+                                        class="icon-delete cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800"
+                                        title="Delete"
+                                    ></span>
+
                                 </a>
                             @endif
+
                         </div>
                     </div>
                 </template>

@@ -90,7 +90,7 @@
                                 </div>
 
                                 @foreach ($locales as $locale)
-                                    <x-admin::form.control-group class="!mb-0">
+                                    <x-admin::form.control-group class="!mb-3">
                                         <x-admin::form.control-group.label>
                                             {{ $locale->name }}
                                         </x-admin::form.control-group.label>

@@ -1,5 +1,5 @@
 @php
-$attributeId = $field->attribute->id ?? $field->id;
+  $attributeId = $field->attribute->id ?? $field->id;
 @endphp
 
 <div class="grid gap-4 [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))]">
