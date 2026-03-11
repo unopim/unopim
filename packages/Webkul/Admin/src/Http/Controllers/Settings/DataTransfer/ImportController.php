@@ -16,9 +16,9 @@ use Webkul\DataTransfer\Repositories\JobTrackRepository;
 
 class ImportController extends Controller
 {
-    const TYPE = 'import';
+    public const TYPE = 'import';
 
-    const IMPORTERS = 'importers';
+    public const IMPORTERS = 'importers';
 
     /**
      * Create a new controller instance.
@@ -30,7 +30,8 @@ class ImportController extends Controller
         protected JobTrackRepository $jobTrackRepository,
         protected Import $importHelper,
         protected Export $exportHelper
-    ) {}
+    ) {
+    }
 
     /**
      * Display a listing of the resource.
@@ -217,11 +218,11 @@ class ImportController extends Controller
     public function destroy($id)
     {
         $import = $this->jobInstancesRepository->findOrFail($id);
-
         try {
-            Storage::disk('private')->delete($import->file_path);
-
-            Storage::disk('private')->delete($import->error_file_path ?? '');
+            if($import?->file_path){
+                Storage::disk('private')->delete($import->file_path);
+                Storage::disk('private')->delete($import->error_file_path ?? '');
+            }
 
             $this->jobInstancesRepository->delete($id);
 
@@ -499,60 +500,6 @@ class ImportController extends Controller
     }
 
     /**
-     * Pause a running import job
-     */
-    public function pause(int $id): JsonResponse
-    {
-        $jobTrack = $this->jobTrackRepository->findOrFail($id);
-
-        if ($jobTrack->type === 'export') {
-            $this->exportHelper->setExport($jobTrack)->pause();
-        } else {
-            $this->importHelper->setImport($jobTrack)->pause();
-        }
-
-        return new JsonResponse([
-            'message' => trans('admin::app.settings.data-transfer.tracker.paused'),
-        ]);
-    }
-
-    /**
-     * Resume a paused import/export job
-     */
-    public function resume(int $id): JsonResponse
-    {
-        $jobTrack = $this->jobTrackRepository->findOrFail($id);
-
-        if ($jobTrack->type === 'export') {
-            $this->exportHelper->setExport($jobTrack)->resume();
-        } else {
-            $this->importHelper->setImport($jobTrack)->resume();
-        }
-
-        return new JsonResponse([
-            'message' => trans('admin::app.settings.data-transfer.tracker.resumed'),
-        ]);
-    }
-
-    /**
-     * Cancel a running or paused import/export job
-     */
-    public function cancel(int $id): JsonResponse
-    {
-        $jobTrack = $this->jobTrackRepository->findOrFail($id);
-
-        if ($jobTrack->type === 'export') {
-            $this->exportHelper->setExport($jobTrack)->cancel();
-        } else {
-            $this->importHelper->setImport($jobTrack)->cancel();
-        }
-
-        return new JsonResponse([
-            'message' => trans('admin::app.settings.data-transfer.tracker.cancelled'),
-        ]);
-    }
-
-    /**
      * Returns import stats
      */
     public function stats(int $id, $state = Import::STATE_PROCESSED): JsonResponse
@@ -570,6 +517,8 @@ class ImportController extends Controller
             $stats = $this->importHelper->stats($state);
             $jobTrack = $this->importHelper->getImport()->unsetRelations();
         }
+
+        $stats['summary'] = $this->normalizeSummary($stats['summary']);
 
         return new JsonResponse([
             'isValid'     => $isValid,
@@ -627,47 +576,5 @@ class ImportController extends Controller
         $import = $this->jobTrackRepository->findOrFail($id);
 
         return Storage::disk('private')->download($import->error_file_path);
-    }
-
-    /**
-     * Upload a zip of images, extract it into storage/app/public, and return the relative path.
-     */
-    public function uploadImagesZip(): JsonResponse
-    {
-        $this->validate(request(), [
-            'images_zip' => 'required|file|mimes:zip|max:102400',
-        ]);
-
-        $file = request()->file('images_zip');
-
-        // Build a human-readable folder name from the zip filename
-        $baseName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-        $safeName = preg_replace('/[^a-zA-Z0-9_\-]/', '-', $baseName);
-        $folderName = 'import-images/'.rtrim($safeName, '-').'-'.time();
-
-        $zip = new \ZipArchive;
-
-        if ($zip->open($file->getPathname()) !== true) {
-            return new JsonResponse([
-                'message' => trans('admin::app.settings.data-transfer.imports.invalid-zip'),
-            ], 422);
-        }
-
-        $extractPath = Storage::disk('public')->path($folderName);
-
-        if (! is_dir($extractPath)) {
-            mkdir($extractPath, 0755, true);
-        }
-
-        $zip->extractTo($extractPath);
-        $filesCount = $zip->count();
-        $zip->close();
-
-        return new JsonResponse([
-            'path'        => $folderName,
-            'files_count' => $filesCount,
-            'zip_name'    => $file->getClientOriginalName(),
-            'message'     => trans('admin::app.settings.data-transfer.imports.zip-upload-success'),
-        ]);
     }
 }
