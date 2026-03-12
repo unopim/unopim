@@ -1,5 +1,4 @@
 const { test, expect } = require('../../utils/fixtures');
-
 test.describe('UnoPim Test cases (Code field validation category)', () => {
 test.beforeEach(async ({adminPage}) => {
   await adminPage.getByRole('link', { name: ' Catalog' }).click();

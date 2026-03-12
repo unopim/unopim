@@ -110,6 +110,9 @@ class JobTrackerGrid extends DataGrid
                     case Import::STATE_PENDING:
                         return '<p class="label-pending">'.trans('admin::app.settings.data-transfer.tracker.index.datagrid.pending').'</p>';
 
+                    case Import::STATE_VALIDATING:
+                        return '<p class="label-processing">'.trans('admin::app.settings.data-transfer.tracker.index.datagrid.validating').'</p>';
+
                     case Import::STATE_VALIDATED:
                         return '<p class="label-active">'.trans('admin::app.settings.data-transfer.tracker.index.datagrid.validated').'</p>';
 
@@ -133,6 +136,12 @@ class JobTrackerGrid extends DataGrid
 
                     case Import::STATE_COMPLETED:
                         return '<p class="label-completed">'.trans('admin::app.settings.data-transfer.tracker.index.datagrid.completed').'</p>';
+
+                    case Import::STATE_PAUSED:
+                        return '<p class="label-pending">'.trans('admin::app.settings.data-transfer.tracker.index.datagrid.paused').'</p>';
+
+                    case Import::STATE_CANCELLED:
+                        return '<p class="label-canceled">'.trans('admin::app.settings.data-transfer.tracker.index.datagrid.cancelled').'</p>';
 
                     case Import::STATE_FAILED:
                         return '<p class="label-info">'.trans('admin::app.settings.data-transfer.tracker.index.datagrid.failed').'</p>';

@@ -7,6 +7,7 @@ return [
     'decimal'                      => ':attribute は有効でなければなりません。',
     'phone-number'                 => ':attribute は有効な電話番号でなければなりません。',
     'slug'                         => ':attribute は有効なスラッグでなければなりません。',
+    'sku'                          => ':attribute は有効なSKUでなければなりません（英数字、ハイフン、アンダースコアのみ）。',
     'comma-separated-integer'      => ':attribute フィールドは数値でなければならず、カンマを含めることができます。',
     'type'                         => ':attribute は有効なタイプでなければなりません。',
     'validation-type'              => ':attribute は有効なタイプでなければなりません。',

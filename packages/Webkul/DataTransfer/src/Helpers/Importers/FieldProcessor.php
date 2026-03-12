@@ -10,6 +10,13 @@ class FieldProcessor
     use HtmlPurifier;
 
     /**
+     * Static cache for filesystem existence checks.
+     * Shared across all rows in the same worker process — avoids redundant
+     * Storage::disk('local')->has() syscalls for the same image paths.
+     */
+    protected static array $pathExistsCache = [];
+
+    /**
      * Processes a field value based on its type.
      *
      * @param  object  $field  The field object.
@@ -61,11 +68,20 @@ class FieldProcessor
         $paths = is_array($value) ? $value : [$value];
         $validPaths = [];
 
-        foreach ($paths as $path) {
-            $trimmedPath = trim($path);
+        $baseDir = rtrim($imgpath, '/');
 
-            if (StorageFacade::disk('local')->has('public/'.$imgpath.$trimmedPath)) {
-                $validPaths[] = $imgpath.$trimmedPath;
+        foreach ($paths as $path) {
+            $trimmedPath = ltrim(trim($path), '/');
+
+            $fullPath = $baseDir.'/'.$trimmedPath;
+            $storagePath = 'public/'.$fullPath;
+
+            if (! array_key_exists($storagePath, self::$pathExistsCache)) {
+                self::$pathExistsCache[$storagePath] = StorageFacade::disk('local')->exists($storagePath);
+            }
+
+            if (self::$pathExistsCache[$storagePath]) {
+                $validPaths[] = $fullPath;
             }
         }
 

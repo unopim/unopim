@@ -7,6 +7,7 @@ return [
     'decimal'                      => 'يجب أن تكون :attribute صالحة.',
     'phone-number'                 => 'يجب أن تكون :attribute رقم هاتف صالح.',
     'slug'                         => 'يجب أن تكون :attribute slug صالحة.',
+    'sku'                          => 'يجب أن يكون :attribute رمز SKU صالحًا (أحرف أبجدية رقمية وشرطات وشرطات سفلية فقط).',
     'comma-separated-integer'      => 'يجب أن يكون حقل :attribute رقميًا وقد يحتوي على فاصلة.',
     'type'                         => 'يجب أن تكون :attribute من النوع الصالح.',
     'validation-type'              => 'يجب أن تكون :attribute من النوع الصالح.',

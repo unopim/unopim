@@ -1,0 +1,36 @@
+---
+description: Code quality and Laravel best practices for UnoPim PHP development
+globs: "**/*.php"
+alwaysApply: true
+---
+
+# Code Quality Rules
+
+## General
+
+- Always use Laravel Pint formatting (run `./vendor/bin/pint` before committing)
+- Use type hints for all method parameters and return types
+- Use PHP 8.1+ features: enums, named arguments, null coalescing
+- Single quotes for strings unless interpolation needed
+- Short array syntax (`[]`) always
+
+## Architecture
+
+- All models must have a Contract interface and Proxy class (Concord pattern)
+- Use Repository pattern — never query models directly in controllers
+- Events must follow `{domain}.{entity}.{action}.{before|after}` naming
+- New packages go under `packages/Webkul/{PackageName}/src/`
+
+## Security
+
+- Always validate user input before processing
+- Use `$fillable` on models, never `$guarded = []`
+- ACL checks required for all admin routes
+- Use parameterized queries (Eloquent handles this)
+
+## Testing
+
+- Write Pest tests for all new functionality
+- Use `describe()` blocks to group related tests
+- Use descriptive `it()` names
+- Always include `beforeEach(fn() => $this->loginAsAdmin())` for admin tests

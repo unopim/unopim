@@ -7,6 +7,7 @@ return [
     'decimal'                      => 'Värdet :attribute måste vara giltigt.',
     'phone-number'                 => 'Telefonnumret :attribute måste vara giltigt.',
     'slug'                         => 'Slug :attribute måste vara giltig.',
+    'sku'                          => 'SKU :attribute måste vara giltig (endast alfanumeriska tecken, bindestreck och understreck).',
     'comma-separated-integer'      => 'Fältet :attribute måste vara numeriskt och kan innehålla komma.',
     'type'                         => 'Typen :attribute måste vara giltig.',
     'validation-type'              => 'Typen :attribute måste vara giltig.',

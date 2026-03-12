@@ -44,12 +44,34 @@ class SkuOrUniversalFilter extends AbstractElasticSearchAttributeFilter
             $attributeType = $attribute->type;
 
             if ($attributeType === 'text' || $attributeType === 'textarea') {
-                $attributePath .= '.keyword';
+                /**
+                 * For text fields, use match_phrase_prefix on the text field
+                 * instead of wildcard on .keyword to avoid exceeding
+                 * maxClauseCount on high-cardinality indexes.
+                 */
+                $clauses[] = [
+                    'match_phrase_prefix' => [
+                        $attributePath => [
+                            'query'          => $escapedValue,
+                            'max_expansions' => 1000,
+                        ],
+                    ],
+                ];
+
+                continue;
             }
 
+            /**
+             * For keyword fields (e.g., sku), use wildcard with
+             * rewrite: 'top_terms_1024' to cap internal clause expansion
+             * and avoid too_many_clauses error on large indexes.
+             */
             $clauses[] = [
                 'wildcard' => [
-                    $attributePath => '*'.$escapedValue.'*',
+                    $attributePath => [
+                        'value'   => '*'.$escapedValue.'*',
+                        'rewrite' => 'top_terms_1024',
+                    ],
                 ],
             ];
         }

@@ -40,12 +40,42 @@ class OptionFilter extends AbstractElasticSearchAttributeFilter
 
         switch ($operator) {
             case FilterOperators::IN:
-                $clause = [
-                    'query_string' => [
-                        'default_field' => $attributePath,
-                        'query'         => $attribute->type == Attribute::SELECT_FIELD_TYPE ? implode(' OR ', $value) : '*'.implode('* OR *', $value).'*',
-                    ],
-                ];
+                if ($attribute->type == Attribute::SELECT_FIELD_TYPE) {
+                    /**
+                     * For select fields, use terms query for exact matching
+                     * which is more efficient than query_string.
+                     */
+                    $clause = [
+                        'terms' => [
+                            $attributePath => $value,
+                        ],
+                    ];
+                } else {
+                    /**
+                     * For multiselect/checkbox, use individual wildcard clauses
+                     * with rewrite capping instead of query_string with leading
+                     * wildcards to avoid exceeding maxClauseCount.
+                     */
+                    $clauses = [];
+
+                    foreach ($value as $val) {
+                        $clauses[] = [
+                            'wildcard' => [
+                                $attributePath => [
+                                    'value'   => '*'.$val.'*',
+                                    'rewrite' => 'top_terms_1024',
+                                ],
+                            ],
+                        ];
+                    }
+
+                    $clause = [
+                        'bool' => [
+                            'should'               => $clauses,
+                            'minimum_should_match' => 1,
+                        ],
+                    ];
+                }
 
                 $this->queryBuilder::where($clause);
                 break;

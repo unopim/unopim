@@ -1,3 +1,38 @@
+# v1.1.x
+
+## v1.1.0
+
+### Features
+- Added **Swatch Types** for select and multiselect attributes with support for color, image, and text swatches, including datagrid preview, product page display, and API endpoints.
+- Added **ZIP Image Upload** support for import jobs, allowing bulk media upload via ZIP files alongside CSV/XLSX.
+- Added **Import/Export Tracker UI** with real-time progress tracking, step pipeline visualization, and job-specific logging.
+- Added **Drag-and-Drop File Upload** support in import job file uploader for CSV, XLSX, and XLS files.
+- Added **Pause, Resume, and Cancel** controls for both import and export jobs during processing.
+
+### Improvements
+- Optimized **Import Pipeline** for high-volume CSV/XLSX processing with configurable batch sizes and bulk chunk sizes.
+- Optimized **Category Export** performance by replacing in-memory product loading with direct count queries, preventing timeout on large catalogs.
+- Added `$tries` and `$timeout` configuration to export batch jobs for improved queue reliability.
+- Updated **Magic AI** with latest OpenAI and Gemini text/image generation models.
+- Improved **Elasticsearch Filters** for SKU, text, and option filters with better array and CONTAINS handling.
+- Improved **Swatch Type** validation with dedicated `ValidSwatchValue` rule and attribute option validation.
+- Added translation strings for all tracker UI elements, removing hardcoded static text.
+
+### Bug Fixes
+- Fixed category export job failing due to loading all products into memory for count queries.
+- Fixed import tracker 500 error caused by incorrect route name.
+- Fixed export step pipeline showing "Importing" instead of "Exporting" labels.
+- Fixed import completed section showing 0 counts for created/updated/deleted records.
+- Fixed `AttributeCompletenessDataGrid` missing table prefix for `channels.code`.
+- Fixed #215 - SKU validation rule incorrectly rejecting underscores.
+- Fixed #215 - UI validation alignment and additional validation messages.
+- Fixed swatch type display issues for product datagrid, multiselect, and select attributes.
+- Fixed Magic AI image generation with DALL-E models and mime-type validation.
+- Fixed product datagrid `updated_at` timezone display.
+- Fixed attribute validation for swatch type fields in translation blocks.
+- Fixed pause/resume for import and export jobs — paused batches are now re-dispatched on resume.
+- Fixed export pause/cancel not stopping running batch jobs (added `shouldStop()` check).
+
 # v1.0.x
 
 ## v1.0.0

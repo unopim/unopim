@@ -11,6 +11,7 @@ use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Jobs\Import\Completed as CompletedJob;
 use Webkul\DataTransfer\Jobs\Import\ImportBatch as ImportBatchJob;
 use Webkul\DataTransfer\Jobs\Import\IndexBatch as IndexBatchJob;
+use Webkul\DataTransfer\Jobs\Import\Indexing as IndexingJob;
 use Webkul\DataTransfer\Jobs\Import\LinkBatch as LinkBatchJob;
 use Webkul\DataTransfer\Jobs\Import\Linking as LinkingJob;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository as ImportJobBatchRepository;
@@ -66,6 +67,11 @@ abstract class AbstractImporter
     ];
 
     public const BATCH_SIZE = 100;
+
+    /**
+     * Larger batch size for high-volume imports
+     */
+    public const LARGE_BATCH_SIZE = 1000;
 
     /**
      * Is linking required
@@ -275,6 +281,15 @@ abstract class AbstractImporter
     }
 
     /**
+     * Get the effective batch size for this import.
+     * Uses config value if set, otherwise falls back to BATCH_SIZE constant.
+     */
+    protected function getEffectiveBatchSize(): int
+    {
+        return (int) (config('import.batch_size') ?? self::BATCH_SIZE);
+    }
+
+    /**
      * Save validated batches
      */
     protected function saveValidatedBatches(): self
@@ -284,6 +299,8 @@ abstract class AbstractImporter
         $batchRows = [];
 
         $source->rewind();
+
+        $batchSize = $this->getEffectiveBatchSize();
 
         /**
          * Clean previous saved batches
@@ -297,7 +314,7 @@ abstract class AbstractImporter
             || count($batchRows)
         ) {
             if (
-                count($batchRows) == self::BATCH_SIZE
+                count($batchRows) == $batchSize
                 || ! $source->valid()
             ) {
                 $this->importBatchRepository->create([
@@ -339,24 +356,36 @@ abstract class AbstractImporter
 
         $this->import->batches()->chunk(100, function ($batches) use (&$typeBatches) {
             foreach ($batches as $batch) {
-                $typeBatches['import'][] = new ImportBatchJob($batch, $this->import->id);
-
-                if ($this->isLinkingRequired()) {
-                    $typeBatches['link'][] = new LinkBatchJob($batch);
+                if ($batch->state === Import::STATE_PENDING) {
+                    $typeBatches['import'][] = new ImportBatchJob($batch, $this->import->id);
                 }
 
-                if ($this->isIndexingRequired()) {
-                    $typeBatches['import'][] = new IndexBatchJob($batch, $this->import->id);
+                if ($this->isLinkingRequired() && in_array($batch->state, [Import::STATE_PENDING, Import::STATE_PROCESSED])) {
+                    $typeBatches['link'][] = new LinkBatchJob($batch, $this->import->id);
+                }
+
+                if ($this->isIndexingRequired() && in_array($batch->state, [Import::STATE_PENDING, Import::STATE_PROCESSED, Import::STATE_LINKED])) {
+                    $typeBatches['index'][] = new IndexBatchJob($batch, $this->import->id);
                 }
             }
         });
 
-        $chain[] = Bus::batch($typeBatches['import']);
+        $chain = [];
+
+        if (! empty($typeBatches['import'])) {
+            $chain[] = Bus::batch($typeBatches['import']);
+        }
 
         if (! empty($typeBatches['link'])) {
             $chain[] = new LinkingJob($this->import);
 
             $chain[] = Bus::batch($typeBatches['link']);
+        }
+
+        if (! empty($typeBatches['index'])) {
+            $chain[] = new IndexingJob($this->import);
+
+            $chain[] = Bus::batch($typeBatches['index']);
         }
 
         $chain[] = new CompletedJob($this->import, $this->import->id);

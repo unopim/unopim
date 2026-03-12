@@ -7,6 +7,7 @@ return [
     'decimal'                      => 'Giá trị :attribute phải hợp lệ.',
     'phone-number'                 => 'Số điện thoại :attribute phải hợp lệ.',
     'slug'                         => 'Slug :attribute phải hợp lệ.',
+    'sku'                          => 'SKU :attribute phải hợp lệ (chỉ bao gồm ký tự chữ và số, dấu gạch ngang và gạch dưới).',
     'comma-separated-integer'      => 'Trường :attribute phải là số và có thể chứa dấu phẩy.',
     'type'                         => 'Loại :attribute phải hợp lệ.',
     'validation-type'              => 'Loại xác thực :attribute phải hợp lệ.',

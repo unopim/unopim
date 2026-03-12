@@ -1,0 +1,28 @@
+---
+description: Git branch, commit, and PR conventions for UnoPim
+globs: ""
+alwaysApply: true
+---
+
+# Git Conventions
+
+## Branch Naming
+
+- `fix/issue-{number}-short-description`
+- `feature/short-description`
+- `refactor/short-description`
+- `test/short-description`
+
+## Commit Messages
+
+- Reference issue: `Fixed #1234 - Short description`
+- Imperative mood for descriptions
+- Keep subject under 72 characters
+- Separate subject from body with blank line
+
+## Pull Requests
+
+- Always follow `.github/PULL_REQUEST_TEMPLATE.md`
+- Include testing instructions
+- Reference issue being fixed
+- Add screenshots for UI changes

@@ -272,31 +272,31 @@ class Installer extends Command
 
             'DB_HOST'       => text(
                 label: 'Please enter the database host',
-                default: env('DB_HOST', '127.0.0.1'),
+                default: env('DB_HOST') ?? '127.0.0.1',
                 required: true
             ),
 
             'DB_PORT'       => text(
                 label: 'Please enter the database port',
-                default: env('DB_PORT', '3306'),
+                default: env('DB_PORT') ?? '3306',
                 required: true
             ),
 
             'DB_DATABASE' => text(
                 label: 'Please enter the database name',
-                default: env('DB_DATABASE', ''),
+                default: env('DB_DATABASE') ?? '',
                 required: true
             ),
 
             'DB_PREFIX' => text(
                 label: 'Please enter the database prefix',
-                default: env('DB_PREFIX', ''),
+                default: env('DB_PREFIX') ?? '',
                 hint: 'or press enter to continue'
             ),
 
             'DB_USERNAME' => text(
                 label: 'Please enter your database username',
-                default: env('DB_USERNAME', ''),
+                default: env('DB_USERNAME') ?? '',
                 required: true
             ),
 
@@ -337,7 +337,7 @@ class Installer extends Command
         $isElasticEnabled = select(
             label: 'Do you want to enable Elasticsearch?',
             options: ['yes', 'no'],
-            default: env('ELASTICSEARCH_ENABLED', 'false')
+            default: env('ELASTICSEARCH_ENABLED') ?? 'false'
         ) === 'yes';
 
         if (! $isElasticEnabled) {
@@ -351,7 +351,7 @@ class Installer extends Command
         $connectionType = select(
             label: 'Please select the Elasticsearch connection',
             options: ['default', 'api', 'cloud'],
-            default: env('ELASTICSEARCH_CONNECTION', 'default') ?: 'default'
+            default: env('ELASTICSEARCH_CONNECTION') ?? 'default'
         );
 
         $this->envUpdate('ELASTICSEARCH_CONNECTION', $connectionType);
@@ -359,19 +359,19 @@ class Installer extends Command
         if ($connectionType === 'cloud') {
             $cloudId = text(
                 label: 'Please enter your Elasticsearch Cloud ID',
-                default: env('ELASTICSEARCH_CLOUD_ID', '')
+                default: env('ELASTICSEARCH_CLOUD_ID') ?? ''
             );
             $this->envUpdate('ELASTICSEARCH_CLOUD_ID', $cloudId);
         } else {
             $host = text(
                 label: 'Please enter the Elasticsearch host',
-                default: env('ELASTICSEARCH_HOST', '127.0.0.1:9200')
+                default: env('ELASTICSEARCH_HOST') ?? '127.0.0.1:9200'
             );
             $this->envUpdate('ELASTICSEARCH_HOST', $host);
 
             $user = text(
                 label: 'Please enter the Elasticsearch user',
-                default: env('ELASTICSEARCH_USER', '')
+                default: env('ELASTICSEARCH_USER') ?? ''
             );
             $this->envUpdate('ELASTICSEARCH_USER', $user);
 
@@ -383,7 +383,7 @@ class Installer extends Command
             if ($connectionType === 'api') {
                 $apiKey = text(
                     label: 'Please enter the Elasticsearch API key',
-                    default: env('ELASTICSEARCH_API_KEY', '')
+                    default: env('ELASTICSEARCH_API_KEY') ?? ''
                 );
                 $this->envUpdate('ELASTICSEARCH_API_KEY', $apiKey);
             }
@@ -391,7 +391,7 @@ class Installer extends Command
 
         $indexPrefix = text(
             label: 'Please enter your Elasticsearch Index Prefix',
-            default: env('ELASTICSEARCH_INDEX_PREFIX', '')
+            default: env('ELASTICSEARCH_INDEX_PREFIX') ?? ''
         );
 
         $this->envUpdate('ELASTICSEARCH_INDEX_PREFIX', $indexPrefix);

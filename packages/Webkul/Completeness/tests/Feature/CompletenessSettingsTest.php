@@ -63,7 +63,7 @@ it('should insert and delete completeness settings on update', function () {
         'channel_id'   => $channel2->id,
     ]);
 
-    Queue::assertPushedOn('system', BulkProductCompletenessJob::class, function ($job) use ($family) {
+    Queue::assertPushed(BulkProductCompletenessJob::class, function ($job) use ($family) {
         return $job->uniqueId() === 'completeness-job-'.$family->id;
     });
 });
@@ -98,7 +98,7 @@ it('should apply channel requirements across multiple attributes on mass update'
         ]);
     }
 
-    Queue::assertPushedOn('system', BulkProductCompletenessJob::class, function ($job) use ($family) {
+    Queue::assertPushed(BulkProductCompletenessJob::class, function ($job) use ($family) {
         return $job->uniqueId() === 'completeness-job-'.$family->id;
     });
 });
@@ -164,7 +164,7 @@ it('should dispatch job when a completeness setting is deleted via update', func
     $this->postJson(route('admin.catalog.families.completeness.update'), $payload)
         ->assertOk();
 
-    Queue::assertPushedOn('system', BulkProductCompletenessJob::class, function ($job) use ($family) {
+    Queue::assertPushed(BulkProductCompletenessJob::class, function ($job) use ($family) {
         return $job->uniqueId() === 'completeness-job-'.$family->id;
     });
 });
@@ -216,7 +216,7 @@ it('should dispatch job when completeness settings are deleted via mass update',
         ]);
     }
 
-    Queue::assertPushedOn('system', BulkProductCompletenessJob::class, function ($job) use ($family) {
+    Queue::assertPushed(BulkProductCompletenessJob::class, function ($job) use ($family) {
         return $job->uniqueId() === 'completeness-job-'.$family->id;
     });
 });

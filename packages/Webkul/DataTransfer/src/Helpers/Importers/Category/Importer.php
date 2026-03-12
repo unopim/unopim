@@ -104,6 +104,12 @@ class Importer extends AbstractImporter
     protected $cachedCategoryFields = [];
 
     /**
+     * Category fields indexed by code for O(1) lookup in prepareCategories().
+     * Populated when getCategoryFields() is first called.
+     */
+    protected array $categoryFieldsByCode = [];
+
+    /**
      * Create a new helper instance.
      *
      * @return void
@@ -164,6 +170,7 @@ class Importer extends AbstractImporter
             $this->cachedCategoryFields = $this->categoryFieldRepository->where('status', 1)->get();
 
             $this->categoryFields = $this->cachedCategoryFields->pluck('code')->toArray();
+            $this->categoryFieldsByCode = $this->cachedCategoryFields->keyBy('code')->all();
         }
 
         return $this->categoryFields;
@@ -215,11 +222,25 @@ class Importer extends AbstractImporter
         }
 
         /**
-         * Validate category attributes
+         * Validate category attributes.
+         * Parent existence is checked against the in-memory categoryStorage (already loaded
+         * with all existing codes via init()) and the current batch's new codes, avoiding
+         * a DB query per row (which costs O(N) queries for large imports).
          */
         $validator = Validator::make($rowData, [
             'code'   => ['string', 'required', new Code],
-            'parent' => 'nullable|string|exists:categories,code',
+            'parent' => [
+                'nullable',
+                'string',
+                function (string $attribute, mixed $value, \Closure $fail) {
+                    if (! empty($value)
+                        && ! $this->categoryStorage->has($value)
+                        && ! in_array($value, $this->categoryCodesInBatch)
+                    ) {
+                        $fail(trans('validation.exists', ['attribute' => $attribute]));
+                    }
+                },
+            ],
             ...$this->categoryFieldValidations,
         ]);
 
@@ -227,10 +248,6 @@ class Importer extends AbstractImporter
             $failedAttributes = $validator->failed();
 
             foreach ($validator->errors()->getMessages() as $attributeCode => $message) {
-                if ($attributeCode === 'parent' && in_array($rowData['parent'], $this->categoryCodesInBatch)) {
-                    continue;
-                }
-
                 $errorCode = array_key_first($failedAttributes[$attributeCode] ?? []);
 
                 $this->skipRow($rowNumber, $errorCode, $attributeCode, current($message));
@@ -313,9 +330,14 @@ class Importer extends AbstractImporter
     protected function saveCategoryData(JobTrackBatchContract $batch): bool
     {
         /**
-         * Load category storage with batch code
+         * Load category storage with batch codes AND parent codes so that
+         * updateParentCategoryId() can resolve parent_id from storage (O(1))
+         * instead of issuing a DB query per category (O(N)).
          */
-        $this->categoryStorage->load(Arr::pluck($batch->data, 'code'));
+        $categoryCodes = Arr::pluck($batch->data, 'code');
+        $parentCodes = array_values(array_unique(array_filter(Arr::pluck($batch->data, 'parent'))));
+
+        $this->categoryStorage->load(array_merge($categoryCodes, $parentCodes));
 
         $categories = [];
 
@@ -361,7 +383,12 @@ class Importer extends AbstractImporter
                 continue;
             }
 
-            $catalogField = $this->categoryFieldRepository->where('code', $field)->first();
+            // Use pre-built code-keyed map instead of a DB query per field per row.
+            $catalogField = $this->categoryFieldsByCode[$field] ?? null;
+
+            if (! $catalogField) {
+                continue;
+            }
 
             $value = $this->fieldProcessor->handleField($catalogField, $value, $imageDirPath);
 
@@ -412,19 +439,48 @@ class Importer extends AbstractImporter
 
     /**
      * Save categories from current batch
+     *
+     * Uses bulk operations for updates where possible, while maintaining
+     * sequential inserts for parent-child relationship integrity (nested-set).
      */
     public function saveCategories(array $categories): void
     {
-        /** single insert/update in the db because of parent  */
+        /** Bulk update existing categories using a single query per chunk */
         if (! empty($categories['update'])) {
             $this->updatedItemsCount += count($categories['update']);
 
+            $updateData = [];
+
             foreach ($categories['update'] as $code => $category) {
                 $this->updateParentCategoryId($category);
-                $this->categoryRepository->update($category, $this->categoryStorage->get($code), withoutFormattingValues: true);
+                $categoryId = $this->categoryStorage->get($code);
+
+                $updateData[] = [
+                    'id'              => $categoryId,
+                    'code'            => $category['code'],
+                    'parent_id'       => $category['parent_id'] ?? null,
+                    'additional_data' => is_array($category['additional_data']) ? json_encode($category['additional_data']) : $category['additional_data'],
+                    'updated_at'      => now(),
+                ];
+            }
+
+            if (! empty($updateData)) {
+                $chunkSize = (int) config('import.bulk_chunk_size', 500);
+
+                foreach (array_chunk($updateData, $chunkSize) as $chunk) {
+                    DB::table('categories')->upsert(
+                        $chunk,
+                        ['id'],
+                        ['code', 'parent_id', 'additional_data', 'updated_at']
+                    );
+                }
             }
         }
 
+        /**
+         * Sequential inserts are required for categories because nested-set
+         * (lft/rgt) values must be calculated in order for parent-child relationships.
+         */
         if (! empty($categories['insert'])) {
             $this->createdItemsCount += count($categories['insert']);
 
@@ -442,7 +498,11 @@ class Importer extends AbstractImporter
     public function updateParentCategoryId(&$category)
     {
         if (! empty($category['parent'])) {
-            $category['parent_id'] = $this->getCategoryId($category['parent']);
+            // Use in-memory storage (pre-loaded with batch + parent codes) instead of
+            // issuing a DB query per category. Falls back to DB only for edge cases where
+            // the parent was not in the batch or found in the initial storage load.
+            $category['parent_id'] = $this->categoryStorage->get($category['parent'])
+                ?? $this->getCategoryId($category['parent']);
         }
 
         unset($category['parent']);

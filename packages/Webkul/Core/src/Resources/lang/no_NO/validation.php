@@ -7,6 +7,7 @@ return [
     'decimal'                      => 'Verdien :attribute må være gyldig.',
     'phone-number'                 => 'Telefonnummer :attribute må være gyldig.',
     'slug'                         => 'Slug :attribute må være gyldig.',
+    'sku'                          => 'SKU :attribute må være gyldig (kun alfanumeriske tegn, bindestreker og understreker).',
     'comma-separated-integer'      => 'Feltet :attribute må være numerisk og kan inneholde kommaer.',
     'type'                         => 'Typen :attribute må være gyldig.',
     'validation-type'              => 'Validationstypen :attribute må være gyldig.',
