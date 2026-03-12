@@ -5,8 +5,8 @@ namespace Webkul\Measurement\Listeners;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Session;
 use Webkul\Attribute\Repositories\AttributeRepository;
-use Webkul\Measurement\Repository\AttributeMeasurementRepository;
 use Webkul\Measurement\Models\MeasurementFamily;
+use Webkul\Measurement\Repository\AttributeMeasurementRepository;
 
 class ValidateAttributeMeasurementBeforeUpdate
 {
@@ -40,7 +40,7 @@ class ValidateAttributeMeasurementBeforeUpdate
         }
 
         $familyExists = MeasurementFamily::where('code', $familyCode)->exists();
-        
+
         if (! $familyExists) {
             Session::flash('error', 'Selected Measurement Family does not exist.');
             throw new HttpResponseException(

@@ -50,6 +50,7 @@ return [
 
     'messages' => [
         'family' => [
+            'created'      => 'Nhóm đo lường đã được tạo thành công.',
             'updated'      => 'Nhóm đo lường đã được cập nhật thành công.',
             'deleted'      => 'Nhóm đo lường đã được xóa thành công.',
             'mass_deleted' => 'Các nhóm đo lường được chọn đã xóa thành công.',

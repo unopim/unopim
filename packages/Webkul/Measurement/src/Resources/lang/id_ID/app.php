@@ -50,6 +50,7 @@ return [
 
     'messages' => [
         'family' => [
+            'created'      => 'Keluarga pengukuran berhasil dibuat.',
             'updated'      => 'Keluarga pengukuran berhasil diperbarui.',
             'deleted'      => 'Keluarga pengukuran berhasil dihapus.',
             'mass_deleted' => 'Keluarga pengukuran yang dipilih berhasil dihapus.',

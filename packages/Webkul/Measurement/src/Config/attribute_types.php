@@ -3,6 +3,6 @@
 return [
     'measurement' => [
         'key'  => 'measurement',
-        'name' => 'measurement::app.attribute.measurement'
+        'name' => 'measurement::app.attribute.measurement',
     ],
 ];

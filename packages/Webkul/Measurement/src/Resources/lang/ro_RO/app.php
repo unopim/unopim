@@ -50,6 +50,7 @@ return [
 
     'messages' => [
         'family' => [
+            'created'      => 'Familia de măsurători a fost creată cu succes.',
             'updated'      => 'Familia de măsurare a fost actualizată cu succes.',
             'deleted'      => 'Familia de măsurare a fost ștearsă cu succes.',
             'mass_deleted' => 'Familiile de măsurare selectate au fost șterse cu succes.',

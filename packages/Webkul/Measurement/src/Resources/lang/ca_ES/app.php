@@ -50,6 +50,7 @@ return [
 
     'messages' => [
         'family' => [
+            'created'      => 'La família de mesura s\'ha creat correctament.',
             'updated'      => 'La família de mesures s’ha actualitzat correctament.',
             'deleted'      => 'La família de mesures s’ha eliminat correctament.',
             'mass_deleted' => 'Les famílies de mesures seleccionades s’han eliminat correctament.',

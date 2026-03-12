@@ -50,6 +50,7 @@ return [
 
     'messages' => [
         'family' => [
+            'created'      => 'La familia de medidas se creó correctamente.',
             'updated'      => 'La familia de medición se ha actualizado correctamente.',
             'deleted'      => 'La familia de medición se ha eliminado correctamente.',
             'mass_deleted' => 'Las familias de medición seleccionadas se han eliminado correctamente.',

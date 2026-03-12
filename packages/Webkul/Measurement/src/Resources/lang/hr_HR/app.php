@@ -50,6 +50,7 @@ return [
 
     'messages' => [
         'family' => [
+            'created'      => 'Obitelj mjernih jedinica uspješno je kreirana.',
             'updated'      => 'Obitelj mjerenja uspješno je ažurirana.',
             'deleted'      => 'Obitelj mjerenja uspješno je obrisana.',
             'mass_deleted' => 'Odabrane obitelji mjerenja uspješno su obrisane.',

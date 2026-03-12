@@ -65,18 +65,13 @@
                         <x-admin::form.control-group.error control-name="name" />
                     </x-admin::form.control-group>
 
-                  
-
-                   
-                        <div class="bg-white dark:bg-cherry-900 box-shadow rounded">
+                        <div class="">
                             <div class="flex justify-between items-center p-1.5">
                                 <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
                                     @lang('measurement::app.measurement.edit.label')
                                 </p>
                             </div>
-
-                            <div class="">
-                                
+ 
                                 @foreach ($locales as $locale)
                                     <x-admin::form.control-group>
                                         <x-admin::form.control-group.label>
@@ -92,9 +87,7 @@
                                     </x-admin::form.control-group>
                                 @endforeach
 
-                            </div>
                         </div>
-
 
                 </div> 
             </div>

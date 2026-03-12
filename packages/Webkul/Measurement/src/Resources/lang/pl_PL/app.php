@@ -50,6 +50,7 @@ return [
 
     'messages' => [
         'family' => [
+            'created'      => 'Rodzina pomiarów została pomyślnie utworzona.',
             'updated'      => 'Rodzina jednostek została pomyślnie zaktualizowana.',
             'deleted'      => 'Rodzina jednostek została pomyślnie usunięta.',
             'mass_deleted' => 'Wybrane rodziny jednostek zostały pomyślnie usunięte.',

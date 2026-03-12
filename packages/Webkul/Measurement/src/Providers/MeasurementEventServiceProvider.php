@@ -32,7 +32,7 @@ class MeasurementEventServiceProvider extends ServiceProvider
 
         Event::listen(
             'catalog.attribute.update.before',
-            \Webkul\Measurement\Listeners\ValidateAttributeMeasurementBeforeUpdate::class . '@handle'
+            \Webkul\Measurement\Listeners\ValidateAttributeMeasurementBeforeUpdate::class.'@handle'
         );
     }
 }

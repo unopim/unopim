@@ -20,7 +20,6 @@ class AttributeController extends Controller
         $this->attributeMeasurementRepository = $attributeMeasurementRepository;
     }
 
-
     public function getAttributeMeasurement($attributeId)
     {
         try {
@@ -34,7 +33,7 @@ class AttributeController extends Controller
             }
 
             $currentLocale = app()->getLocale();
-            $currentLang   = strtok($currentLocale, '_');
+            $currentLang = strtok($currentLocale, '_');
 
             $families = $this->familyRepository->all();
 
@@ -49,7 +48,7 @@ class AttributeController extends Controller
                         if (isset($labels[$currentLocale])) {
                             $label = $labels[$currentLocale];
                         } elseif ($firstLangMatch = collect($labels)
-                            ->first(fn ($_ , $key) => str_starts_with($key, $currentLang))) {
+                            ->first(fn ($_, $key) => str_starts_with($key, $currentLang))) {
                             $label = $firstLangMatch;
                         } else {
                             $label = $u['code'];
@@ -87,6 +86,4 @@ class AttributeController extends Controller
             ], 500);
         }
     }
-
-
 }

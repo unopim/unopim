@@ -50,6 +50,7 @@ return [
 
     'messages' => [
         'family' => [
+            'created'      => 'Ölçüm ailesi başarıyla oluşturuldu.',
             'updated'      => 'Ölçüm ailesi başarıyla güncellendi.',
             'deleted'      => 'Ölçüm ailesi başarıyla silindi.',
             'mass_deleted' => 'Seçilen ölçüm aileleri başarıyla silindi.',

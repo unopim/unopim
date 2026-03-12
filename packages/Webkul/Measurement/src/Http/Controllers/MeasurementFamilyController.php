@@ -2,12 +2,10 @@
 
 namespace Webkul\Measurement\Http\Controllers;
 
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Measurement\DataGrids\MeasurementFamilyDataGrid;
-use Webkul\Measurement\DataGrids\UnitDataGrid;
 use Webkul\Measurement\Repository\MeasurementFamilyRepository;
 
 class MeasurementFamilyController extends Controller
@@ -58,6 +56,11 @@ class MeasurementFamilyController extends Controller
 
         $family = $this->measurementFamilyRepository->create($data);
 
+        session()->flash(
+            'success',
+            trans('measurement::app.messages.family.created')
+        );
+
         return response()->json([
             'data' => [
                 'redirect_url' => route(
@@ -95,12 +98,11 @@ class MeasurementFamilyController extends Controller
         ];
 
         $this->measurementFamilyRepository->update($data, $id);
-        
-            session()->flash(
+
+        session()->flash(
             'success',
             trans('measurement::app.messages.family.updated')
         );
-
 
         return redirect()->back();
     }
@@ -137,5 +139,4 @@ class MeasurementFamilyController extends Controller
 
         return redirect()->back();
     }
-
 }

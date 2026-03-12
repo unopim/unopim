@@ -50,6 +50,7 @@ return [
 
     'messages' => [
         'family' => [
+            'created'      => 'Mittausperhe luotiin onnistuneesti.',
             'updated'      => 'Mittausperhe päivitettiin onnistuneesti.',
             'deleted'      => 'Mittausperhe poistettiin onnistuneesti.',
             'mass_deleted' => 'Valitut mittausperheet poistettiin onnistuneesti.',

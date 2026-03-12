@@ -3,10 +3,8 @@
 namespace Webkul\Measurement\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Core\Repositories\LocaleRepository;
-use Webkul\Measurement\DataGrids\MeasurementFamilyDataGrid;
 use Webkul\Measurement\DataGrids\UnitDataGrid;
 use Webkul\Measurement\Repository\MeasurementFamilyRepository;
 
@@ -16,8 +14,6 @@ class MeasurementUnitsController extends Controller
         protected MeasurementFamilyRepository $measurementFamilyRepository,
         protected LocaleRepository $localeRepository
     ) {}
-
-
 
     public function units($id)
     {
@@ -168,9 +164,9 @@ class MeasurementUnitsController extends Controller
 
         if (! $ids || count($ids) == 0) {
             session()->flash(
-            'error',
-            trans('measurement::app.messages.unit.no_items_selected')
-        );
+                'error',
+                trans('measurement::app.messages.unit.no_items_selected')
+            );
 
             return redirect()->back();
         }

@@ -2,10 +2,8 @@
 
 namespace Webkul\Measurement\Providers;
 
-
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Webkul\Measurement\Providers\MeasurementEventServiceProvider;
 
 class MeasurementServiceProvider extends ServiceProvider
 {

@@ -37,7 +37,7 @@ class MeasurementFamilyDataGrid extends DataGrid
 
         $this->addColumn([
             'index'      => 'labels',
-            'label' => trans('measurement::app.datagrid.labels'),
+            'label'      => trans('measurement::app.datagrid.labels'),
             'type'       => 'string',
             'searchable' => true,
             'sortable'   => true,

@@ -3,65 +3,66 @@
 return [
 
     'attribute' => [
-        'measurement' => 'Mesura',
+        'measurement' => 'Måling',
     ],
 
     'measurement' => [
         'index' => [
-            'create'   => 'Crear família de mesures',
-            'code'     => 'Codi',
-            'standard' => 'Codi de la unitat estàndard',
-            'symbol'   => 'Símbol',
-            'save'     => 'Desar',
+            'create'   => 'Opret målefamilie',
+            'code'     => 'Kode',
+            'standard' => 'Standard enhedskode',
+            'symbol'   => 'Symbol',
+            'save'     => 'Gem',
         ],
 
         'edit' => [
-            'measurement_edit' => 'Editar família de mesures',
-            'back'             => 'Enrere',
-            'save'             => 'Desar',
-            'general'          => 'General',
-            'code'             => 'Codi',
-            'label'            => 'Etiqueta',
-            'units'            => 'Unitats',
-            'create_units'     => 'Crear unitats',
+            'measurement_edit' => 'Rediger målefamilie',
+            'back'             => 'Tilbage',
+            'save'             => 'Gem',
+            'general'          => 'Generelt',
+            'code'             => 'Kode',
+            'label'            => 'Etiket',
+            'units'            => 'Enheder',
+            'create_units'     => 'Opret enheder',
         ],
 
         'unit' => [
-            'edit_unit'   => 'Editar unitat',
-            'create_unit' => 'Crear unitat',
-            'symbol'      => 'Símbol',
-            'save'        => 'Desar',
+            'edit_unit'   => 'Rediger enhed',
+            'create_unit' => 'Opret enhed',
+            'symbol'      => 'Symbol',
+            'save'        => 'Gem',
         ],
     ],
 
     'attribute_type' => [
-        'measurement_families' => 'Famílies de mesures',
-        'measurement_family'   => 'Família de mesures',
-        'measurement_unit'     => 'Unitat de mesura',
+        'measurement_families' => 'Målefamilier',
+        'measurement_family'   => 'Målefamilie',
+        'measurement_unit'     => 'Måleenhed',
     ],
 
     'datagrid' => [
-        'labels'        => 'Etiquetes',
-        'code'          => 'Codi',
-        'standard_unit' => 'Unitat estàndard',
-        'unit_count'    => 'Nombre d’unitats',
-        'is_standard'   => 'Marcar com a unitat estàndard',
+        'labels'        => 'Etiketter',
+        'code'          => 'Kode',
+        'standard_unit' => 'Standardenhed',
+        'unit_count'    => 'Antal enheder',
+        'is_standard'   => 'Marker som standardenhed',
     ],
 
     'messages' => [
         'family' => [
-            'updated'      => 'La família de mesures s’ha actualitzat correctament.',
-            'deleted'      => 'La família de mesures s’ha eliminat correctament.',
-            'mass_deleted' => 'Les famílies de mesures seleccionades s’han eliminat correctament.',
+            'created'      => 'Målefamilien blev oprettet med succes.',
+            'updated'      => 'Målefamilien er blevet opdateret.',
+            'deleted'      => 'Målefamilien er blevet slettet.',
+            'mass_deleted' => 'De valgte målefamilier er blevet slettet.',
         ],
 
         'unit' => [
-            'not_found'         => 'No s’ha trobat la família de mesures.',
-            'already_exists'    => 'El codi de la unitat ja existeix.',
-            'not_foundd'        => 'No s’ha trobat la unitat.',
-            'deleted'           => 'La unitat s’ha eliminat correctament.',
-            'no_items_selected' => 'No s’han seleccionat elements.',
-            'mass_deleted'      => 'Les unitats de mesura seleccionades s’han eliminat correctament.',
+            'not_found'         => 'Målefamilien blev ikke fundet.',
+            'already_exists'    => 'Enhedskoden findes allerede.',
+            'not_foundd'        => 'Enheden blev ikke fundet.',
+            'deleted'           => 'Enheden er blevet slettet.',
+            'no_items_selected' => 'Ingen elementer valgt.',
+            'mass_deleted'      => 'De valgte måleenheder er blevet slettet.',
         ],
     ],
 

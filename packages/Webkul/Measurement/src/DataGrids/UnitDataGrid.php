@@ -120,8 +120,6 @@ class UnitDataGrid extends DataGrid
 
     }
 
-    
-
     public function prepareActions()
     {
         $this->addAction([

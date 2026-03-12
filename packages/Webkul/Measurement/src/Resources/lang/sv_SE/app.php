@@ -50,6 +50,7 @@ return [
 
     'messages' => [
         'family' => [
+            'created'      => 'Mätfamiljen har skapats framgångsrikt.',
             'updated'      => 'Mätningsfamiljen uppdaterades framgångsrikt.',
             'deleted'      => 'Mätningsfamiljen raderades framgångsrikt.',
             'mass_deleted' => 'Valda mätningsfamiljer raderades framgångsrikt.',

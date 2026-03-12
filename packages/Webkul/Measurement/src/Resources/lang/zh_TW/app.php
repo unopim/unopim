@@ -50,6 +50,7 @@ return [
 
     'messages' => [
         'family' => [
+            'created'      => '測量系列已成功建立。',
             'updated'      => '計量單位群組已成功更新。',
             'deleted'      => '計量單位群組已成功刪除。',
             'mass_deleted' => '所選計量單位群組已成功刪除。',

@@ -50,6 +50,7 @@ return [
 
     'messages' => [
         'family' => [
+            'created'      => 'Messfamilie wurde erfolgreich erstellt.',
             'updated'      => 'Die Messfamilie wurde erfolgreich aktualisiert.',
             'deleted'      => 'Die Messfamilie wurde erfolgreich gelöscht.',
             'mass_deleted' => 'Die ausgewählten Messfamilien wurden erfolgreich gelöscht.',

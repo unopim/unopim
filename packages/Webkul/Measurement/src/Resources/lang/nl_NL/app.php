@@ -50,6 +50,7 @@ return [
 
     'messages' => [
         'family' => [
+            'created'      => 'Meetfamilie is succesvol aangemaakt.',
             'updated'      => 'Meetfamilie is succesvol bijgewerkt.',
             'deleted'      => 'Meetfamilie is succesvol verwijderd.',
             'mass_deleted' => 'Geselecteerde meetfamilies zijn succesvol verwijderd.',
