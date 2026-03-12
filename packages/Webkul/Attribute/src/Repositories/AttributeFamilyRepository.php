@@ -185,7 +185,7 @@ class AttributeFamilyRepository extends Repository
             ]);
         }
 
-        Event::dispatch('core.model.proxy.sync.AttributeFamilyGroupMapping', ['old_values' => $oldValue, 'new_values' => $newValue, 'model' => $familyGroupMapping]);
+        Event::dispatch('core.model.proxy.sync.AttributeFamilyGroupMapping', ['old_values' => $oldValue, 'new_values' => $newValue, 'model' => $family]);
 
         return $family;
     }
