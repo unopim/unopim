@@ -1,0 +1,15 @@
+{
+    "name": "webkul/measurement",
+    "autoload": {
+        "psr-4": {
+            "Webkul\\Measurement\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Webkul\\Measurement\\Providers\\MeasurementServiceProvider"
+            ]
+        }
+    }
+}
