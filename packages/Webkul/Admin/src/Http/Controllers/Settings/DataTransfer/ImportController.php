@@ -219,9 +219,13 @@ class ImportController extends Controller
         $import = $this->jobInstancesRepository->findOrFail($id);
 
         try {
-            Storage::disk('private')->delete($import->file_path);
+            if (! empty($import->file_path)) {
+                Storage::disk('private')->delete($import->file_path);
+            }
 
-            Storage::disk('private')->delete($import->error_file_path ?? '');
+            if (! empty($import->error_file_path)) {
+                Storage::disk('private')->delete($import->error_file_path);
+            }
 
             $this->jobInstancesRepository->delete($id);
 
