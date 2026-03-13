@@ -4,7 +4,7 @@ return [
     'components' => [
         'layouts' => [
             'sidebar' => [
-                'completeness' => 'Completeness',
+                'completeness' => 'पूर्णता',
             ],
         ],
     ],
@@ -13,21 +13,21 @@ return [
         'families' => [
             'edit' => [
                 'completeness' => [
-                    'update-success'      => 'Compeleteness updated successfully',
-                    'title'               => 'Completeness',
-                    'configure'           => 'Configure Completeness',
-                    'channel-required'    => 'Required in Channels',
-                    'save-btn'            => 'Save',
-                    'back-btn'            => 'Back',
-                    'mass-update-success' => 'Compeleteness updated successfully',
+                    'update-success'      => 'पूर्णता सफलतापूर्वक अपडेट की गई',
+                    'title'               => 'पूर्णता',
+                    'configure'           => 'पूर्णता कॉन्फ़िगर करें',
+                    'channel-required'    => 'चैनलों में आवश्यक',
+                    'save-btn'            => 'सहेजें',
+                    'back-btn'            => 'वापस जाएँ',
+                    'mass-update-success' => 'पूर्णता सफलतापूर्वक अपडेट की गई',
 
                     'datagrid' => [
-                        'code'             => 'Code',
-                        'name'             => 'Name',
-                        'channel-required' => 'Required in Channels',
+                        'code'             => 'कोड',
+                        'name'             => 'नाम',
+                        'channel-required' => 'चैनलों में आवश्यक',
 
                         'actions' => [
-                            'change-requirement' => 'Change Completeness Requirement',
+                            'change-requirement' => 'पूर्णता आवश्यकता बदलें',
                         ],
                     ],
                 ],
@@ -37,18 +37,18 @@ return [
         'products' => [
             'index' => [
                 'datagrid' => [
-                    'missing-completeness-setting' => 'N/A',
-                    'completeness'                 => 'पूर्ण',
+                    'missing-completeness-setting' => 'उपलब्ध नहीं',
+                    'completeness'                 => 'पूर्णता',
                 ],
             ],
 
             'edit' => [
                 'completeness' => [
-                    'title'    => 'Completeness',
-                    'subtitle' => 'Average completeness',
+                    'title'    => 'पूर्णता',
+                    'subtitle' => 'औसत पूर्णता',
                 ],
 
-                'required-attributes' => 'missing required attributes',
+                'required-attributes' => 'आवश्यक गुण अनुपलब्ध हैं',
             ],
         ],
     ],
@@ -56,13 +56,13 @@ return [
     'dashboard' => [
         'index' => [
             'completeness' => [
-                'calculated-products' => 'Calculated products',
+                'calculated-products' => 'गणना किए गए उत्पाद',
 
                 'suggestion' => [
-                    'low'     => 'Low completeness, add details to improve.',
-                    'medium'  => 'Keep going, continue adding information.',
-                    'high'    => 'Almost complete, just a few details left.',
-                    'perfect' => 'Product information is fully complete.',
+                    'low'     => 'पूर्णता कम है, सुधार के लिए विवरण जोड़ें।',
+                    'medium'  => 'अच्छा काम जारी रखें, और जानकारी जोड़ते रहें।',
+                    'high'    => 'लगभग पूर्ण, केवल कुछ विवरण बाकी हैं।',
+                    'perfect' => 'उत्पाद की जानकारी पूरी तरह पूर्ण है।',
                 ],
             ],
         ],

@@ -314,6 +314,14 @@ class Installer extends Command
             return $this->error('Please enter the database credentials.');
         }
 
+        if (! empty($databaseDetails['DB_PREFIX'])) {
+            $prefix = trim($databaseDetails['DB_PREFIX']);
+            $prefix = preg_replace('/[^a-zA-Z0-9]+/', '_', $prefix);
+            $prefix = trim($prefix, '_');
+            $prefix .= '_';
+            $databaseDetails['DB_PREFIX'] = strtolower($prefix);
+        }
+
         foreach ($databaseDetails as $key => $value) {
             if ($value) {
                 $this->envUpdate($key, $value);
