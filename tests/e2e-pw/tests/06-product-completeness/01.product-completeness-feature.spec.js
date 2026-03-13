@@ -37,7 +37,7 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
     await adminPage.getByRole('link', { name: ' Dashboard' }).click();
     await adminPage.getByRole('link', { name: ' Catalog' }).click();
-    await expect(adminPage.getByRole('paragraph').filter({ hasText: /^Complete$/ })).toBeVisible();
+    await expect(adminPage.getByRole('paragraph').filter({ hasText: /^Completeness$/ })).toBeVisible();
     await expect(adminPage.getByRole('paragraph').filter({ hasText: 'N/A' }).first()).toBeVisible();
 });
     
