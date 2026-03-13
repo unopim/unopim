@@ -34,7 +34,6 @@ class MeasurementFamilyDataGrid extends DataGrid
 
     public function prepareColumns()
     {
-
         $this->addColumn([
             'index'      => 'labels',
             'label'      => trans('measurement::app.datagrid.labels'),

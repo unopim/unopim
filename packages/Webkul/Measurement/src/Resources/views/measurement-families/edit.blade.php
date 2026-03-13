@@ -239,8 +239,6 @@
                     ref="createLocaleForm"
                 >
 
-                  
-
                     <x-admin::modal ref="localeUpdateOrCreateModal">
                         <!-- Modal Header -->
                         <x-slot:header>
@@ -294,9 +292,7 @@
                                                 type="text"
                                                 id="label"
                                                 ::name="`labels[{{ $locale->code }}]`"
-                                                rules="required"
                                                 v-model="locale.labels['{{ $locale->code }}']"
-                                                :label="trans('admin::app.settings.locales.index.create.code')"
                                                 placeholder="Enter Labels"  
                                             />
                                         </x-admin::form.control-group>
@@ -315,12 +311,11 @@
                                     name="symbol"
                                     rules="required"
                                     v-model="locale.symbol"
-                                    :label="trans('admin::app.settings.locales.index.create.code')"
                                     placeholder="Symbol"
                                     
                                 />
 
-                                <x-admin::form.control-group.error control-name="code" />
+                                <x-admin::form.control-group.error control-name="symbol" />
                             </x-admin::form.control-group>
 
                         </x-slot>
@@ -338,7 +333,6 @@
                         </x-slot>
                     </x-admin::modal>
 
-                   
                 </form>
             </x-admin::form>
         </script>

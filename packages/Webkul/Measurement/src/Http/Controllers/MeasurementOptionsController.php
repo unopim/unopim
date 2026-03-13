@@ -77,9 +77,9 @@ class MeasurementOptionsController extends AbstractOptionsController
             }
 
             return (object) [
-                'id'    => $unit['code'],
-                'label' => $label,
-                'code'  => $unit['code'],
+                'id'        => $unit['code'],
+                'label'     => $label,
+                'code'      => $unit['code'],
                 'attribute' => [
                     'swatch_type' => null,
                 ],

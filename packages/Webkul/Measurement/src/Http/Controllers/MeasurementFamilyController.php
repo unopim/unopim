@@ -7,6 +7,7 @@ use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Measurement\DataGrids\MeasurementFamilyDataGrid;
 use Webkul\Measurement\Repository\MeasurementFamilyRepository;
+use Webkul\Measurement\Repository\AttributeMeasurementRepository;
 
 class MeasurementFamilyController extends Controller
 {
@@ -109,13 +110,27 @@ class MeasurementFamilyController extends Controller
 
     public function destroy($id)
     {
+        $family = $this->measurementFamilyRepository->findOrFail($id);
+
+        $attributeMeasurementRepository = app(AttributeMeasurementRepository::class);
+
+        $exists = $attributeMeasurementRepository
+            ->findWhere(['family_code' => $family->code])
+            ->count();
+
+        if ($exists > 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This measurement family is used in attributes, so it cannot be deleted.',
+            ], 400);
+        }
+
         $this->measurementFamilyRepository->delete($id);
 
         return response()->json([
             'success' => true,
             'message' => trans('measurement::app.messages.family.deleted'),
         ]);
-
     }
 
     public function massDelete()
