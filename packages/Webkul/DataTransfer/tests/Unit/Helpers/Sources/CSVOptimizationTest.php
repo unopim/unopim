@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Webkul\DataTransfer\Helpers\Sources\CSV;
 
@@ -77,7 +78,7 @@ describe('Date Formatting Optimization', function () {
         $fastResult = substr($date, 0, 10).'T'.substr($date, 11).'.000000Z';
 
         /** Carbon method – parse as UTC since the fast method assumes UTC (DB dates) */
-        $carbonResult = \Illuminate\Support\Carbon::parse($date, 'UTC')->toJson();
+        $carbonResult = Carbon::parse($date, 'UTC')->toJson();
 
         expect($fastResult)->toBe($carbonResult);
     });

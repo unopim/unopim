@@ -7,7 +7,9 @@ use Illuminate\Support\Facades\Event;
 use Psr\Log\LoggerInterface;
 use Webkul\DataTransfer\Contracts\JobTrack as ImportJobTrackContract;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as ImportJobBatchContract;
+use Webkul\DataTransfer\Helpers\Error;
 use Webkul\DataTransfer\Helpers\Import;
+use Webkul\DataTransfer\Helpers\Source;
 use Webkul\DataTransfer\Jobs\Import\Completed as CompletedJob;
 use Webkul\DataTransfer\Jobs\Import\ImportBatch as ImportBatchJob;
 use Webkul\DataTransfer\Jobs\Import\IndexBatch as IndexBatchJob;
@@ -86,7 +88,7 @@ abstract class AbstractImporter
     /**
      * Error helper instance.
      *
-     * @var \Webkul\DataTransfer\Helpers\Error
+     * @var Error
      */
     protected $errorHelper;
 
@@ -98,7 +100,7 @@ abstract class AbstractImporter
     /**
      * Source instance.
      *
-     * @var \Webkul\DataTransfer\Helpers\Source
+     * @var Source
      */
     protected $source;
 
@@ -184,7 +186,7 @@ abstract class AbstractImporter
     /**
      * Import instance.
      *
-     * @param  \Webkul\DataTransfer\Helpers\Source  $errorHelper
+     * @param  Source  $errorHelper
      */
     public function setSource($source)
     {
@@ -196,7 +198,7 @@ abstract class AbstractImporter
     /**
      * Import instance.
      *
-     * @param  \Webkul\DataTransfer\Helpers\Error  $errorHelper
+     * @param  Error  $errorHelper
      */
     public function setErrorHelper($errorHelper): self
     {
@@ -228,7 +230,7 @@ abstract class AbstractImporter
     /**
      * Import instance.
      *
-     * @return \Webkul\DataTransfer\Helpers\Source
+     * @return Source
      */
     public function getSource()
     {

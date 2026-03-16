@@ -4,10 +4,12 @@ namespace Webkul\Admin\Http\Controllers\Catalog;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
+use Illuminate\View\View;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\BulkEditRequest;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
@@ -46,7 +48,7 @@ class ProductBulkEditController extends Controller
     /**
      * Apply filters for bulk edit and store filtered product & attribute IDs in session.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function filters(BulkEditRequest $bulkEditRequest)
     {
@@ -78,7 +80,7 @@ class ProductBulkEditController extends Controller
     /**
      * Show the bulk edit page with filtered products and attributes.
      *
-     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     * @return View|RedirectResponse
      */
     public function index()
     {
@@ -108,7 +110,7 @@ class ProductBulkEditController extends Controller
     /**
      * Store uploaded product media for a given attribute.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function storeProductMedia()
     {
@@ -168,7 +170,7 @@ class ProductBulkEditController extends Controller
     /**
      * Return a formatted JSON response for validation errors.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     protected function validateErrorResponse(mixed $validator, string $message = 'Validation failed.', int $code = 422)
     {
@@ -184,7 +186,7 @@ class ProductBulkEditController extends Controller
     /**
      * Handle bulk save of product updates via queued job.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function handleBulkSave()
     {
@@ -234,7 +236,7 @@ class ProductBulkEditController extends Controller
     /**
      * Retrieve attributes for bulk edit.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function getAttributes(Request $request)
     {

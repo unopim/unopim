@@ -5,6 +5,7 @@ namespace Webkul\Core\Http\Middleware;
 use Closure;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode as BaseCheckForMaintenanceMode;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Webkul\Installer\Helpers\DatabaseManager;
@@ -14,7 +15,7 @@ class CheckForMaintenanceMode extends BaseCheckForMaintenanceMode
     /**
      * The application implementation.
      *
-     * @var \Illuminate\Contracts\Foundation\Application
+     * @var Application
      */
     protected $app;
 
@@ -61,10 +62,10 @@ class CheckForMaintenanceMode extends BaseCheckForMaintenanceMode
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @return mixed
      *
-     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
+     * @throws HttpException
      */
     public function handle($request, Closure $next)
     {
@@ -105,7 +106,7 @@ class CheckForMaintenanceMode extends BaseCheckForMaintenanceMode
     /**
      * Check for the except routes.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @return bool
      */
     protected function shouldPassThrough($request)

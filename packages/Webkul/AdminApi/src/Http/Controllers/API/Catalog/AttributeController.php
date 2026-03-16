@@ -57,7 +57,7 @@ class AttributeController extends ApiController
     /**
      * Store a newly created resource in storage.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function store()
     {
@@ -111,7 +111,7 @@ class AttributeController extends ApiController
     /**
      * Update the specified resource in storage.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function update(string $code)
     {
@@ -141,7 +141,7 @@ class AttributeController extends ApiController
     /**
      * Display a single result of the resource.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function getOptions(string $code)
     {
@@ -155,7 +155,7 @@ class AttributeController extends ApiController
     /**
      * Store a newly attribute option in storage.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function storeOption(string $attributeCode)
     {
@@ -198,7 +198,7 @@ class AttributeController extends ApiController
     /**
      * Updates an attribute option in the storage.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function updateOption(string $attributeCode)
     {

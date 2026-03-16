@@ -8,6 +8,8 @@ use Psr\Log\LoggerInterface;
 use Webkul\DataTransfer\Buffer\FileBuffer;
 use Webkul\DataTransfer\Contracts\JobTrack as ExportJobTrackContract;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
+use Webkul\DataTransfer\Helpers\Error;
+use Webkul\DataTransfer\Helpers\Source;
 use Webkul\DataTransfer\Jobs\Export\Completed as CompletedJob;
 use Webkul\DataTransfer\Jobs\Export\ExportBatch as ExportBatchJob;
 use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
@@ -80,7 +82,7 @@ abstract class AbstractExporter
     /**
      * Error helper instance.
      *
-     * @var \Webkul\DataTransfer\Helpers\Error
+     * @var Error
      */
     protected $errorHelper;
 
@@ -92,7 +94,7 @@ abstract class AbstractExporter
     /**
      * Source instance.
      *
-     * @var \Webkul\DataTransfer\Helpers\Source
+     * @var Source
      */
     protected $source;
 
@@ -246,7 +248,7 @@ abstract class AbstractExporter
     /**
      * export instance.
      *
-     * @param  \Webkul\DataTransfer\Helpers\Source  $errorHelper
+     * @param  Source  $errorHelper
      */
     public function setSource($source)
     {
@@ -258,7 +260,7 @@ abstract class AbstractExporter
     /**
      * export instance.
      *
-     * @param  \Webkul\DataTransfer\Helpers\Error  $errorHelper
+     * @param  Error  $errorHelper
      */
     public function setErrorHelper($errorHelper): self
     {
@@ -272,7 +274,7 @@ abstract class AbstractExporter
     /**
      * export instance.
      *
-     * @return \Webkul\DataTransfer\Helpers\Source
+     * @return Source
      */
     public function getSource()
     {

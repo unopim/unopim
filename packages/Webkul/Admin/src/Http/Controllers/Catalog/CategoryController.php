@@ -4,9 +4,11 @@ namespace Webkul\Admin\Http\Controllers\Catalog;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Catalog\CategoryDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\CategoryRequest;
@@ -34,7 +36,7 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function index()
     {
@@ -48,7 +50,7 @@ class CategoryController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function create()
     {
@@ -66,7 +68,7 @@ class CategoryController extends Controller
     /**
      * Maps each category in the collection to a new value using the provided callback.
      *
-     * @param  \Illuminate\Support\Collection  $categories  Collection of category objects.
+     * @param  Collection  $categories  Collection of category objects.
      */
     public function transformCategoryTree(Collection $categories): array
     {
@@ -85,7 +87,7 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function store(CategoryRequest $categoryRequest)
     {
@@ -117,7 +119,7 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function edit(int $id)
     {
@@ -141,7 +143,7 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(CategoryRequest $categoryRequest, int $id)
     {
@@ -273,7 +275,7 @@ class CategoryController extends Controller
     /**
      * Get all categories in tree format.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function tree(Request $request)
     {
@@ -328,7 +330,7 @@ class CategoryController extends Controller
     /**
      * Result of search customer.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function search()
     {

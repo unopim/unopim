@@ -3,8 +3,11 @@
 namespace Webkul\Admin\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\Admin\Http\Requests\ConfigurationForm;
 use Webkul\Core\Contracts\Validator\ConfigValidator;
 use Webkul\Core\Repositories\CoreConfigRepository;
@@ -15,7 +18,7 @@ class ConfigurationController extends Controller
     /**
      * Tree instance.
      *
-     * @var \Webkul\Core\Tree
+     * @var Tree
      */
     protected $configTree;
 
@@ -50,7 +53,7 @@ class ConfigurationController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function index()
     {
@@ -76,7 +79,7 @@ class ConfigurationController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function search()
     {
@@ -90,7 +93,7 @@ class ConfigurationController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function store(ConfigurationForm $request)
     {
@@ -125,7 +128,7 @@ class ConfigurationController extends Controller
     /**
      * Download the file for the specified resource.
      *
-     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     * @return StreamedResponse
      */
     public function download()
     {

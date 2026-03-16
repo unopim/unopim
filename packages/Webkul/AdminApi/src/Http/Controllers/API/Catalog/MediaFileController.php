@@ -3,9 +3,11 @@
 namespace Webkul\AdminApi\Http\Controllers\API\Catalog;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Validator;
 use Symfony\Component\HttpFoundation\Response;
 use Webkul\AdminApi\Http\Controllers\API\ApiController;
 use Webkul\Attribute\Repositories\AttributeOptionRepository;
@@ -37,7 +39,7 @@ class MediaFileController extends ApiController
     /**
      * Handles the storage of media files for products.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function storeProductMedia()
     {
@@ -98,7 +100,7 @@ class MediaFileController extends ApiController
     /**
      * Handles the storage of media files for categories.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function storeCategoryMedia()
     {
@@ -119,7 +121,7 @@ class MediaFileController extends ApiController
 
         $validator = $this->categoryMediaValidator->validate($requestData, $categoryId);
 
-        if ($validator instanceof \Illuminate\Validation\Validator && $validator->fails()) {
+        if ($validator instanceof Validator && $validator->fails()) {
             return $this->validateErrorResponse($validator);
         }
 
@@ -151,7 +153,7 @@ class MediaFileController extends ApiController
     /**
      * Handles the storage of media files for swatch attribute.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function storeSwatchMedia()
     {

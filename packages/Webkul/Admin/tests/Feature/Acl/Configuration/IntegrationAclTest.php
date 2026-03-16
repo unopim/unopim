@@ -84,7 +84,7 @@ it('should delete an integration if has permission', function () {
         ->assertOk()
         ->assertDontSeeText('Unauthorized');
 
-    $this->assertDatabaseHas($this->getFullTableName(ApiKey::class), [
+    $this->assertDatabaseHas($this->getFullTableName(Apikey::class), [
         'id'      => $apiKey->id,
         'revoked' => 1,
     ]);

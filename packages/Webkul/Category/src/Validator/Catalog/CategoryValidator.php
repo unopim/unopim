@@ -2,6 +2,7 @@
 
 namespace Webkul\Category\Validator\Catalog;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\Category\Repositories\CategoryRepository;
@@ -177,7 +178,7 @@ class CategoryValidator extends FieldValidator
      * If no requested fields are provided, it fetches all active category fields.
      *
      * @param  array  $requestedFields  An optional array containing the codes of requested category fields.
-     * @return \Illuminate\Support\Collection A collection of category fields.
+     * @return Collection A collection of category fields.
      */
     protected function getCategoryFields($requestedFields = [])
     {

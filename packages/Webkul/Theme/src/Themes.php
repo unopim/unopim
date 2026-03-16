@@ -145,7 +145,7 @@ class Themes
     /**
      * Enable theme.
      *
-     * @return \Webkul\Theme\Theme
+     * @return Theme
      */
     public function set(string $themeName)
     {
@@ -177,7 +177,7 @@ class Themes
     /**
      * Get current theme.
      *
-     * @return \Webkul\Theme\Theme
+     * @return Theme
      */
     public function current()
     {
@@ -197,7 +197,7 @@ class Themes
     /**
      * Find a theme by it's name.
      *
-     * @return \Webkul\Theme\Theme
+     * @return Theme
      */
     public function find(string $themeName)
     {
