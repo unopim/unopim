@@ -2,7 +2,6 @@ name: Playwright Tests
 
 on: [push, pull_request]
 
-
 permissions:
   contents: read
 
@@ -14,7 +13,7 @@ jobs:
     strategy:
       matrix:
         operating-systems: [ubuntu-latest]
-        php-versions: ['8.2']
+        php-versions: ["8.2"]
 
     services:
       mysql:
@@ -31,13 +30,13 @@ jobs:
           --health-retries=5
 
     env:
-      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-      GROQ_INVALID_KEY: ${{ secrets.GROQ_INVALID_KEY }}
-      UNOPIM_URL: ${{ secrets.UNOPIM_URL }}
-      ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
-      ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
-      INVALID_ADMIN_EMAIL: ${{ secrets.INVALID_ADMIN_EMAIL }}
-      INVALID_ADMIN_PASSWORD: ${{ secrets.INVALID_ADMIN_PASSWORD }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY || 'dummy_api_key' }}
+      GROQ_INVALID_KEY: ${{ secrets.GROQ_INVALID_KEY || 'dummy_invalid_key' }}
+      UNOPIM_URL: ${{ secrets.UNOPIM_URL || 'http://127.0.0.1:8000' }}
+      ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME || 'admin@example.com' }}
+      ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD || 'admin123' }}
+      INVALID_ADMIN_EMAIL: ${{ secrets.INVALID_ADMIN_EMAIL || 'invalid@example.com' }}
+      INVALID_ADMIN_PASSWORD: ${{ secrets.INVALID_ADMIN_PASSWORD || 'invalid123' }}
 
     steps:
       - name: Checkout
@@ -78,7 +77,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: "18"
 
       - name: Install Playwright dependencies
         run: |
