@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
 use Webkul\Core\ElasticSearch;
 use Webkul\Installer\Database\Seeders\DatabaseSeeder as UnoPimDatabaseSeeder;
+use Webkul\Installer\Database\Seeders\ProductTableSeeder;
 use Webkul\Installer\Events\ComposerEvents;
 
 use function Laravel\Prompts\multiselect;
@@ -472,9 +473,9 @@ class Installer extends Command
         try {
             $this->warn('Step: Seeding sample products...');
 
-            app(\Webkul\Installer\Database\Seeders\ProductTableSeeder::class)->run([
-                'default_locale'     => core()->getDefaultLocaleCodeFromDefaultChannel(),
-                'allowed_locales'    => [core()->getDefaultLocaleCodeFromDefaultChannel()],
+            app(ProductTableSeeder::class)->run([
+                'default_locale'  => core()->getDefaultLocaleCodeFromDefaultChannel(),
+                'allowed_locales' => [core()->getDefaultLocaleCodeFromDefaultChannel()],
             ]);
 
             $this->info('Sample products seeded successfully.');
