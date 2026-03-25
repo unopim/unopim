@@ -124,15 +124,25 @@
                                         @lang('admin::app.configuration.prompt.create.purpose')
                                     </x-admin::form.control-group.label>
 
-                                    <select
+                                    @php
+                                        $purposeOptions = json_encode([
+                                            ['id' => 'text_generation', 'label' => 'Text Generation'],
+                                            ['id' => 'image_generation', 'label' => 'Image Generation'],
+                                        ]);
+                                    @endphp
+
+                                    <x-admin::form.control-group.control
+                                        type="select"
                                         id="purpose"
                                         name="purpose"
-                                        v-model="purpose"
-                                        class="w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:bg-cherry-800 dark:border-cherry-800 dark:hover:border-gray-400"
-                                    >
-                                        <option value="text_generation">Text Generation</option>
-                                        <option value="image_generation">Image Generation</option>
-                                    </select>
+                                        ::value="purpose"
+                                        :options="$purposeOptions"
+                                        :label="trans('admin::app.configuration.prompt.create.purpose')"
+                                        placeholder="Select purpose"
+                                        track-by="id"
+                                        label-by="label"
+                                        @input="setPurpose"
+                                    />
                                     <x-admin::form.control-group.error control-name="purpose" />
                                 </x-admin::form.control-group>
 
@@ -292,6 +302,14 @@
                 },
 
                 methods: {
+                    setPurpose(value) {
+                        try {
+                            this.purpose = value ? JSON.parse(value).id : 'text_generation';
+                        } catch (error) {
+                            this.purpose = 'text_generation';
+                        }
+                    },
+
                     checkType(value) {
                         let selectedField = JSON.parse(value).id;
                         if (selectedField == 'category') {

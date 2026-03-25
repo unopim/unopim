@@ -1,6 +1,22 @@
 @php
     $platforms = app(\Webkul\MagicAI\Repository\MagicAIPlatformRepository::class)->getActivePlatformOptions();
     $selectedPlatformId = core()->getConfigData('general.magic_ai.settings.ai_platform');
+    $options = [
+        [
+            'id'    => '0',
+            'label' => trans('admin::app.configuration.platform.fields.use-default'),
+        ],
+    ];
+
+    foreach ($platforms as $platform) {
+        $options[] = [
+            'id'    => (string) $platform['id'],
+            'label' => $platform['label'] . ($platform['is_default'] ? ' *' : ''),
+        ];
+    }
+
+    $optionsJson = json_encode($options);
+    $selectedValue = json_encode((string) ($selectedPlatformId ?: 0));
 @endphp
 
 <x-admin::form.control-group>
@@ -8,18 +24,17 @@
         @lang('admin::app.configuration.index.general.magic-ai.settings.ai-platform')
     </x-admin::form.control-group.label>
 
-    <select
+    <x-admin::form.control-group.control
+        type="select"
         id="general_magic_ai_settings_ai_platform"
         name="general[magic_ai][settings][ai_platform]"
-        class="w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:bg-cherry-800 dark:border-cherry-800 dark:hover:border-gray-400"
-    >
-        <option value="0">@lang('admin::app.configuration.platform.fields.use-default')</option>
-        @foreach($platforms as $platform)
-            <option value="{{ $platform['id'] }}" {{ $selectedPlatformId == $platform['id'] ? 'selected' : '' }}>
-                {{ $platform['label'] }}{{ $platform['is_default'] ? ' *' : '' }}
-            </option>
-        @endforeach
-    </select>
+        :options="$optionsJson"
+        :value="$selectedValue"
+        :label="trans('admin::app.configuration.index.general.magic-ai.settings.ai-platform')"
+        :placeholder="trans('admin::app.configuration.platform.fields.use-default')"
+        track-by="id"
+        label-by="label"
+    />
 
     @if(empty($platforms))
         <p class="mt-1 text-xs text-amber-600">
