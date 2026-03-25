@@ -20,10 +20,7 @@
             @if (bouncer()->hasPermission('catalog.products.create'))
                 <a
                     href="{{ route('admin.catalog.products.index') }}"
-                    class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors no-underline"
-                    style="background: #7c3aed; color: white;"
-                    onmouseover="this.style.background='#6d28d9'"
-                    onmouseout="this.style.background='#7c3aed'"
+                    class="primary-button text-xs no-underline"
                 >
                     <span class="icon-add text-sm"></span>
                     @lang('admin::app.dashboard.index.create-product')
@@ -33,7 +30,7 @@
             @if (bouncer()->hasPermission('data_transfer.imports'))
                 <a
                     href="{{ route('admin.settings.data_transfer.imports.index') }}"
-                    class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-cherry-900 text-zinc-700 dark:text-slate-300 text-xs font-semibold rounded-lg border border-zinc-200 dark:border-cherry-700 transition-colors box-shadow no-underline hover:shadow-md"
+                    class="secondary-button text-xs no-underline"
                 >
                     <span class="icon-import text-sm"></span>
                     @lang('admin::app.dashboard.index.import-data')
@@ -43,7 +40,7 @@
             @if (bouncer()->hasPermission('data_transfer.export'))
                 <a
                     href="{{ route('admin.settings.data_transfer.exports.index') }}"
-                    class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-cherry-900 text-zinc-700 dark:text-slate-300 text-xs font-semibold rounded-lg border border-zinc-200 dark:border-cherry-700 transition-colors box-shadow no-underline hover:shadow-md"
+                    class="secondary-button text-xs no-underline"
                 >
                     <span class="icon-export text-sm"></span>
                     @lang('admin::app.dashboard.index.export-data')
