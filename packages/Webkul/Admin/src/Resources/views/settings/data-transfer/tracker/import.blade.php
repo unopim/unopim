@@ -1161,21 +1161,31 @@
                     },
 
                     cancelImport() {
-                        if (! confirm('@lang("admin::app.settings.data-transfer.tracker.cancel-confirm")')) {
-                            return;
-                        }
-                        this.isActionInProgress = true;
-                        this.$axios.post("{{ route('admin.settings.data_transfer.imports.cancel', $import->id) }}")
-                            .then((response) => {
-                                this.$emitter.emit('add-flash', { type: 'warning', message: response.data.message });
-                                this.getStats();
-                            })
-                            .catch(error => {
-                                this.$emitter.emit('add-flash', { type: 'error', message: error.response?.data?.message || 'Failed to cancel import.' });
-                            })
-                            .finally(() => {
-                                this.isActionInProgress = false;
-                            });
+                        this.$emitter.emit('open-confirm-modal', {
+                            title: '@lang("admin::app.settings.data-transfer.tracker.cancel")',
+                            message: '@lang("admin::app.settings.data-transfer.tracker.cancel-confirm")',
+                            options: {
+                                btnDisagree: '@lang("admin::app.settings.data-transfer.tracker.cancel")',
+                                btnAgree: '@lang("admin::app.components.modal.confirm.agree-btn")',
+                                btnAgreeClass: 'danger-button',
+                                btnDisagreeClass: 'transparent-button',
+                            },
+                            agree: () => {
+                                this.isActionInProgress = true;
+
+                                this.$axios.post("{{ route('admin.settings.data_transfer.imports.cancel', $import->id) }}")
+                                    .then((response) => {
+                                        this.$emitter.emit('add-flash', { type: 'warning', message: response.data.message });
+                                        this.getStats();
+                                    })
+                                    .catch(error => {
+                                        this.$emitter.emit('add-flash', { type: 'error', message: error.response?.data?.message || 'Failed to cancel import.' });
+                                    })
+                                    .finally(() => {
+                                        this.isActionInProgress = false;
+                                    });
+                            },
+                        });
                     },
 
                     getStats() {
