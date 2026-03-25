@@ -127,17 +127,28 @@
                                 <x-admin::form.control-group.label class="required">
                                     @lang('admin::app.configuration.platform.fields.provider')
                                 </x-admin::form.control-group.label>
-                                <select
+                                @php
+                                    $providerOptions = collect(\Webkul\MagicAI\Enums\AiProvider::cases())
+                                        ->map(fn ($provider) => [
+                                            'id'    => $provider->value,
+                                            'label' => $provider->label(),
+                                        ])
+                                        ->values();
+                                @endphp
+
+                                <x-admin::form.control-group.control
+                                    type="select"
                                     name="provider"
-                                    v-model="form.provider"
-                                    @change="onProviderChange()"
-                                    class="w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:bg-cherry-800 dark:border-cherry-800 dark:hover:border-gray-400"
+                                    rules="required"
+                                    ::value="form.provider"
+                                    :label="trans('admin::app.configuration.platform.fields.provider')"
+                                    :placeholder="trans('admin::app.configuration.platform.fields.select-provider')"
+                                    :options="json_encode($providerOptions)"
+                                    track-by="id"
+                                    label-by="label"
+                                    @input="onProviderChange($event)"
                                 >
-                                    <option value="">@lang('admin::app.configuration.platform.fields.select-provider')</option>
-                                    @foreach(\Webkul\MagicAI\Enums\AiProvider::cases() as $provider)
-                                        <option value="{{ $provider->value }}">{{ $provider->label() }}</option>
-                                    @endforeach
-                                </select>
+                                </x-admin::form.control-group.control>
                                 <x-admin::form.control-group.error control-name="provider" />
                             </x-admin::form.control-group>
 
@@ -388,7 +399,17 @@
                         this.fetchError = '';
                     },
 
-                    onProviderChange() {
+                    onProviderChange(value = null) {
+                        if (value !== null) {
+                            try {
+                                let selectedProvider = typeof value === 'string' ? JSON.parse(value) : value;
+
+                                this.form.provider = selectedProvider?.id ?? selectedProvider ?? '';
+                            } catch (error) {
+                                this.form.provider = value ?? '';
+                            }
+                        }
+
                         if (!this.isEditing) {
                             this.form.label = this.providerLabels[this.form.provider] || this.form.provider;
                         }
