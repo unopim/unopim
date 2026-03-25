@@ -118,6 +118,8 @@
                     isOpen: this.isActive,
                     isOverflowing: false,
                     modalType: this.type,
+                    resizeObserver: null,
+                    mutationObserver: null,
                     sizeMap: {
                         small: "max-w-[400px]",
                         medium: "max-w-[568px]",
@@ -153,6 +155,8 @@
             },
 
             beforeUnmount() {
+                this.cleanupObservers();
+
                 if (this._onWindowResize) {
                     window.removeEventListener('resize', this._onWindowResize);
                     window.removeEventListener('orientationchange', this._onWindowResize);
@@ -160,6 +164,8 @@
             },
 
             beforeDestroy() {
+                this.cleanupObservers();
+
                 if (this._onWindowResize) {
                     window.removeEventListener('resize', this._onWindowResize);
                     window.removeEventListener('orientationchange', this._onWindowResize);
@@ -181,7 +187,10 @@
                     if (this.isOpen) {
                         this.$nextTick(() => {
                             this.checkOverflow();
+                            this.observeContentChanges();
                         });
+                    } else {
+                        this.cleanupObservers();
                     }
                 },
 
@@ -194,6 +203,7 @@
 
                     this.$nextTick(() => {
                         this.checkOverflow();
+                        this.observeContentChanges();
                     });
                 },
 
@@ -201,6 +211,8 @@
                     this.isOpen = false;
 
                     document.body.style.overflow = 'auto';
+
+                    this.cleanupObservers();
 
                     this.$emit('close', { isActive: this.isOpen });
                 },
@@ -210,6 +222,46 @@
 
                     if (el) {
                         this.isOverflowing = el.scrollHeight > window.innerHeight * 0.96;
+                    }
+                },
+
+                observeContentChanges() {
+                    const el = this.$refs.modalContent;
+
+                    if (! el) {
+                        return;
+                    }
+
+                    this.cleanupObservers();
+
+                    if (window.ResizeObserver) {
+                        this.resizeObserver = new ResizeObserver(() => {
+                            this.checkOverflow();
+                        });
+
+                        this.resizeObserver.observe(el);
+                    }
+
+                    this.mutationObserver = new MutationObserver(() => {
+                        this.checkOverflow();
+                    });
+
+                    this.mutationObserver.observe(el, {
+                        childList: true,
+                        subtree: true,
+                        characterData: true,
+                    });
+                },
+
+                cleanupObservers() {
+                    if (this.resizeObserver) {
+                        this.resizeObserver.disconnect();
+                        this.resizeObserver = null;
+                    }
+
+                    if (this.mutationObserver) {
+                        this.mutationObserver.disconnect();
+                        this.mutationObserver = null;
                     }
                 },
             }
