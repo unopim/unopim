@@ -49,15 +49,17 @@
                 ::options="JSON.stringify(currentOptions)"
                 ::value="selectedValue"
                 ::label="label"
-                placeholder="-- Select Model --"
+                :placeholder="trans('admin::app.configuration.prompt.create.select-model')"
                 track-by="id"
                 label-by="label"
                 @input="handleModelChange"
             />
 
-            <p v-if="loading" class="mt-1 text-xs text-violet-600">Loading models...</p>
+            <p v-if="loading" class="mt-1 text-xs text-violet-600">
+                @lang('admin::app.configuration.prompt.create.loading-models')
+            </p>
             <p v-if="!currentOptions.length && !loading" class="mt-1 text-xs text-gray-400">
-                No models available. Select a platform or configure one in Platforms tab.
+                @lang('admin::app.configuration.prompt.create.no-models-available')
             </p>
         </x-admin::form.control-group>
     </script>

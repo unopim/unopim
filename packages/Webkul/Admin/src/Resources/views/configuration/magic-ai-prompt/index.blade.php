@@ -126,8 +126,8 @@
 
                                     @php
                                         $purposeOptions = json_encode([
-                                            ['id' => 'text_generation', 'label' => 'Text Generation'],
-                                            ['id' => 'image_generation', 'label' => 'Image Generation'],
+                                            ['id' => 'text_generation', 'label' => trans('admin::app.configuration.prompt.create.text-generation')],
+                                            ['id' => 'image_generation', 'label' => trans('admin::app.configuration.prompt.create.image-generation')],
                                         ]);
                                     @endphp
 
@@ -138,7 +138,7 @@
                                         ::value="purpose"
                                         :options="$purposeOptions"
                                         :label="trans('admin::app.configuration.prompt.create.purpose')"
-                                        placeholder="Select purpose"
+                                        :placeholder="trans('admin::app.configuration.prompt.create.select-purpose')"
                                         track-by="id"
                                         label-by="label"
                                         @input="setPurpose"
