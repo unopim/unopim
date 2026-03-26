@@ -293,14 +293,11 @@ test('5.0 - Setup: Create OpenAI platform for chat tests', async ({ adminPage })
   await adminPage.locator('input[name="label"]').fill('OpenAI Chat Test');
   await adminPage.locator('input[name="api_key"]').fill(OPENAI_API_KEY);
 
-  // Wait for models to be fetched
-  await adminPage.waitForResponse(
-    resp => resp.url().includes('models') || resp.url().includes('platform'),
-    { timeout: 15000 }
-  ).catch(() => {});
-
-  // Select first available model
+  // Click outside API key field to trigger model fetch via AJAX
+  await adminPage.locator('input[name="label"]').click();
+  // Wait for model checkboxes to appear
   const modelCheckbox = adminPage.locator('input[type="checkbox"]').first();
+  await modelCheckbox.waitFor({ state: 'visible', timeout: 30000 }).catch(() => {});
   if (await modelCheckbox.isVisible().catch(() => false)) {
     if (!(await modelCheckbox.isChecked())) {
       await modelCheckbox.check();

@@ -40,14 +40,11 @@ test('0.1 - Setup: Create OpenAI platform for config tests', async ({ adminPage 
   await adminPage.locator('input[name="label"]').fill('OpenAI Test Platform');
   await adminPage.locator('input[name="api_key"]').fill(OPENAI_API_KEY);
 
-  // Wait for models to auto-fetch via API response
-  await adminPage.waitForResponse(
-    resp => resp.url().includes('models') || resp.url().includes('platform'),
-    { timeout: 15000 }
-  ).catch(() => {});
-
-  // Select first model checkbox if available
+  // Click outside API key field to trigger model fetch via AJAX
+  await adminPage.locator('input[name="label"]').click();
+  // Wait for model checkboxes to appear
   const modelCheckbox = adminPage.locator('input[type="checkbox"]').first();
+  await modelCheckbox.waitFor({ state: 'visible', timeout: 30000 }).catch(() => {});
   if (await modelCheckbox.isVisible().catch(() => false)) {
     if (!(await modelCheckbox.isChecked())) {
       await modelCheckbox.check();
@@ -563,11 +560,8 @@ test('9.1 - Add Platform with valid OpenAI API key fetches models automatically'
   // Trigger blur to start model fetch
   await adminPage.locator('input[name="label"]').click();
 
-  // Wait for models to be fetched via API
-  await adminPage.waitForResponse(
-    resp => resp.url().includes('models') || resp.url().includes('platform'),
-    { timeout: 15000 }
-  ).catch(() => {});
+  // Wait for model checkboxes to appear after AJAX fetch
+  await adminPage.locator('input[type="checkbox"]').first().waitFor({ state: 'visible', timeout: 30000 }).catch(() => {});
 
   // Models should auto-populate as checkbox options
   const modelCheckboxes = adminPage.locator('input[type="checkbox"]').filter({ hasNot: adminPage.locator('[name="is_default"]') });
@@ -590,11 +584,8 @@ test('9.2 - Fetched model list includes known OpenAI models', async ({ adminPage
   await adminPage.locator('input[name="api_key"]').fill(OPENAI_API_KEY);
   await adminPage.locator('input[name="label"]').click();
 
-  // Wait for models to be fetched via API
-  await adminPage.waitForResponse(
-    resp => resp.url().includes('models') || resp.url().includes('platform'),
-    { timeout: 15000 }
-  ).catch(() => {});
+  // Wait for model checkboxes to appear after AJAX fetch
+  await adminPage.locator('input[type="checkbox"]').first().waitFor({ state: 'visible', timeout: 30000 }).catch(() => {});
 
   // Check that well-known models appear in the list
   await expect(adminPage.locator('#app').getByText('gpt-4o', { exact: true })).toBeVisible();
@@ -615,11 +606,8 @@ test('9.3 - Model search filters the model checkbox list', async ({ adminPage })
   await adminPage.locator('input[name="api_key"]').fill(OPENAI_API_KEY);
   await adminPage.locator('input[name="label"]').click();
 
-  // Wait for models to be fetched via API
-  await adminPage.waitForResponse(
-    resp => resp.url().includes('models') || resp.url().includes('platform'),
-    { timeout: 15000 }
-  ).catch(() => {});
+  // Wait for model checkboxes to appear after AJAX fetch
+  await adminPage.locator('input[type="checkbox"]').first().waitFor({ state: 'visible', timeout: 30000 }).catch(() => {});
 
   // Search for "gpt-image" to filter models
   const searchInput = adminPage.getByPlaceholder('Search models...');
@@ -647,11 +635,8 @@ test('9.4 - Selecting a model adds it as a tag chip', async ({ adminPage }) => {
   await adminPage.locator('input[name="api_key"]').fill(OPENAI_API_KEY);
   await adminPage.locator('input[name="label"]').click();
 
-  // Wait for models to be fetched via API
-  await adminPage.waitForResponse(
-    resp => resp.url().includes('models') || resp.url().includes('platform'),
-    { timeout: 15000 }
-  ).catch(() => {});
+  // Wait for model checkboxes to appear after AJAX fetch
+  await adminPage.locator('input[type="checkbox"]').first().waitFor({ state: 'visible', timeout: 30000 }).catch(() => {});
 
   // Click on gpt-4o checkbox to select it
   const gpt4oCheckbox = adminPage.getByRole('checkbox', { name: 'gpt-4o', exact: true });
@@ -678,11 +663,8 @@ test('9.5 - Removing a model tag chip unchecks it in the list', async ({ adminPa
   await adminPage.locator('input[name="api_key"]').fill(OPENAI_API_KEY);
   await adminPage.locator('input[name="label"]').click();
 
-  // Wait for models to be fetched via API
-  await adminPage.waitForResponse(
-    resp => resp.url().includes('models') || resp.url().includes('platform'),
-    { timeout: 15000 }
-  ).catch(() => {});
+  // Wait for model checkboxes to appear after AJAX fetch
+  await adminPage.locator('input[type="checkbox"]').first().waitFor({ state: 'visible', timeout: 30000 }).catch(() => {});
 
   // Select gpt-4o
   const gpt4oCheckbox = adminPage.getByRole('checkbox', { name: 'gpt-4o', exact: true });
@@ -711,11 +693,8 @@ test('9.6 - Adding a custom model ID via the text input', async ({ adminPage }) 
   await adminPage.locator('input[name="api_key"]').fill(OPENAI_API_KEY);
   await adminPage.locator('input[name="label"]').click();
 
-  // Wait for models to be fetched via API
-  await adminPage.waitForResponse(
-    resp => resp.url().includes('models') || resp.url().includes('platform'),
-    { timeout: 15000 }
-  ).catch(() => {});
+  // Wait for model checkboxes to appear after AJAX fetch
+  await adminPage.locator('input[type="checkbox"]').first().waitFor({ state: 'visible', timeout: 30000 }).catch(() => {});
 
   // Type a custom model ID and click "+ Add"
   await adminPage.getByPlaceholder('Type custom model ID...').fill('my-custom-ft-model');
@@ -789,11 +768,8 @@ test('9.8 - Save platform with valid API key and selected models succeeds', asyn
   await adminPage.locator('input[name="api_key"]').fill(OPENAI_API_KEY);
   await adminPage.locator('input[name="label"]').click();
 
-  // Wait for models to be fetched via API
-  await adminPage.waitForResponse(
-    resp => resp.url().includes('models') || resp.url().includes('platform'),
-    { timeout: 15000 }
-  ).catch(() => {});
+  // Wait for model checkboxes to appear after AJAX fetch
+  await adminPage.locator('input[type="checkbox"]').first().waitFor({ state: 'visible', timeout: 30000 }).catch(() => {});
 
   // Select at least one model
   const gpt4oCheckbox = adminPage.getByRole('checkbox', { name: 'gpt-4o', exact: true });
