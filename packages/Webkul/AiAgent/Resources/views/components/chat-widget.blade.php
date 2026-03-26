@@ -16,7 +16,7 @@
 
 @pushOnce('scripts')
 <script type="text/x-template" id="v-agenting-pim-template">
-    <div>
+    <div class="ap-shell">
         {{-- ── Backdrop (small screens: covers page behind panel) ── --}}
         <transition name="ap-fade">
             <div
@@ -57,40 +57,28 @@
                 </div>
 
                 {{-- Product Context Banner --}}
-                <div v-if="productContext" style="display:flex;align-items:center;gap:8px;padding:6px 16px;background:#f5f3ff;border-bottom:1px solid #e9d5ff;flex-shrink:0;">
-                    <svg width="13" height="13" style="flex-shrink:0;color:#7c3aed;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                    <span style="font-size:11px;color:#5b21b6;font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" v-text="trans.editing + ': ' + (productContext.sku || trans.product + ' #' + productContext.id)"></span>
-                    <button @click="productContext = null" style="color:#8b5cf6;background:none;border:none;cursor:pointer;padding:0;display:flex;align-items:center;">
+                <div v-if="productContext" class="ap-context-banner">
+                    <svg width="13" height="13" class="ap-context-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                    <span class="ap-context-text" v-text="trans.editing + ': ' + (productContext.sku || trans.product + ' #' + productContext.id)"></span>
+                    <button @click="productContext = null" class="ap-context-close">
                         <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                 </div>
 
                 {{-- Tab Bar --}}
-                <div style="display:flex;border-bottom:1px solid #e5e7eb;background:#f9fafb;flex-shrink:0;">
-                    <button @click="activeTab = 'capabilities'"
-                        :style="activeTab === 'capabilities'
-                            ? 'border-bottom:2px solid #7c3aed;color:#7c3aed;font-weight:600;background:#fff;'
-                            : 'color:#6b7280;background:transparent;'"
-                        style="flex:1;padding:8px 12px;font-size:11px;cursor:pointer;border:none;display:flex;align-items:center;justify-content:center;gap:4px;transition:all 0.15s;">
+                <div class="ap-tab-bar">
+                    <button @click="activeTab = 'capabilities'" class="ap-tab-btn" :class="{ 'ap-tab-active': activeTab === 'capabilities' }">
                         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
                         @lang('ai-agent::app.widget.capabilities')
                     </button>
-                    <button @click="activeTab = 'chat'"
-                        :style="activeTab === 'chat'
-                            ? 'border-bottom:2px solid #7c3aed;color:#7c3aed;font-weight:600;background:#fff;'
-                            : 'color:#6b7280;background:transparent;'"
-                        style="flex:1;padding:8px 12px;font-size:11px;cursor:pointer;border:none;display:flex;align-items:center;justify-content:center;gap:4px;transition:all 0.15s;">
+                    <button @click="activeTab = 'chat'" class="ap-tab-btn" :class="{ 'ap-tab-active': activeTab === 'chat' }">
                         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                         @lang('ai-agent::app.widget.chat')
                         <span v-if="messages.filter(m => m.role === 'assistant').length > 0"
                             style="min-width:16px;height:16px;background:#ede9fe;color:#7c3aed;border-radius:9999px;font-size:8px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;padding:0 3px;"
                             v-text="messages.filter(m => m.role === 'assistant').length"></span>
                     </button>
-                    <button @click="activeTab = 'sessions'"
-                        :style="activeTab === 'sessions'
-                            ? 'border-bottom:2px solid #7c3aed;color:#7c3aed;font-weight:600;background:#fff;'
-                            : 'color:#6b7280;background:transparent;'"
-                        style="flex:1;padding:8px 12px;font-size:11px;cursor:pointer;border:none;display:flex;align-items:center;justify-content:center;gap:4px;transition:all 0.15s;">
+                    <button @click="activeTab = 'sessions'" class="ap-tab-btn" :class="{ 'ap-tab-active': activeTab === 'sessions' }">
                         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>
                         @lang('ai-agent::app.widget.sessions')
                         <span v-if="sessions.length > 0"
@@ -108,7 +96,7 @@
                             v-model="capabilitySearch"
                             type="text"
                             :placeholder="trans.searchCapabilities"
-                            style="width:100%;padding:7px 10px 7px 32px;font-size:12px;border:1px solid #e5e7eb;border-radius:8px;outline:none;background:#f9fafb;color:#374151;box-sizing:border-box;"
+                            class="ap-search-input"
                             @focus="$event.target.style.borderColor='#7c3aed'"
                             @blur="$event.target.style.borderColor='#e5e7eb'"
                         />
@@ -133,12 +121,9 @@
                 {{-- Sessions Tab --}}
                 <div v-show="activeTab === 'sessions'" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;">
                     {{-- New session button --}}
-                    <div style="padding:12px 16px;border-bottom:1px solid #e5e7eb;flex-shrink:0;">
+                    <div class="ap-session-new-wrap">
                         <button @click="createNewSession"
-                            style="width:100%;display:flex;align-items:center;justify-content:center;gap:6px;padding:8px;font-size:12px;font-weight:600;color:#7c3aed;background:#f5f3ff;border:1.5px dashed #c4b5fd;border-radius:8px;cursor:pointer;transition:all 0.15s;"
-                            @mouseenter="$event.currentTarget.style.background='#ede9fe'"
-                            @mouseleave="$event.currentTarget.style.background='#f5f3ff'"
-                        >
+                            class="ap-session-new-btn">
                             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
                             <span v-text="trans.newSession"></span>
                         </button>
@@ -148,24 +133,18 @@
                     <div v-if="sessions.length" style="flex:1;overflow-y:auto;padding:8px;">
                         <div v-for="(session, idx) in sessions" :key="session.id"
                             @click="switchToSession(session.id)"
-                            :style="{
-                                background: session.id === activeSessionId ? '#f5f3ff' : '#fff',
-                                borderColor: session.id === activeSessionId ? '#c4b5fd' : '#e5e7eb',
-                            }"
-                            style="display:flex;align-items:center;gap:10px;padding:10px 12px;margin-bottom:6px;border-radius:8px;border:1px solid;cursor:pointer;transition:all 0.15s;"
-                            @mouseenter="session.id !== activeSessionId && ($event.currentTarget.style.background='#fafafa')"
-                            @mouseleave="session.id !== activeSessionId && ($event.currentTarget.style.background='#fff')"
-                        >
+                            class="ap-session-card"
+                            :class="{ 'ap-session-card-active': session.id === activeSessionId }">
                             {{-- Session icon --}}
-                            <div style="width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"
+                            <div class="ap-session-icon"
                                 :style="{ background: session.id === activeSessionId ? '#7c3aed' : '#f3f4f6' }">
                                 <svg width="14" height="14" fill="none" :stroke="session.id === activeSessionId ? '#fff' : '#9ca3af'" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                             </div>
 
                             {{-- Session info --}}
                             <div style="flex:1;min-width:0;">
-                                <p style="font-size:12px;font-weight:600;color:#374151;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" v-text="session.name"></p>
-                                <p style="font-size:10px;color:#9ca3af;margin:2px 0 0;">
+                                <p class="ap-session-title" v-text="session.name"></p>
+                                <p class="ap-session-meta">
                                     <span v-text="session.messageCount + ' ' + trans.messages"></span>
                                     &middot; <span v-text="session.lastActive"></span>
                                 </p>
@@ -178,7 +157,7 @@
                             {{-- Delete button --}}
                             <button v-else @click.stop="deleteSession(session.id)"
                                 :title="trans.deleteSession"
-                                style="padding:4px;color:#9ca3af;background:none;border:none;cursor:pointer;border-radius:4px;display:flex;align-items:center;"
+                                class="ap-session-delete"
                                 @mouseenter="$event.currentTarget.style.color='#ef4444'"
                                 @mouseleave="$event.currentTarget.style.color='#9ca3af'"
                             >
@@ -200,17 +179,17 @@
                 <div v-show="activeTab === 'chat'" style="flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;">
 
                     {{-- Chat sub-header: capability badge + clear --}}
-                    <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 16px;background:#f9fafb;border-bottom:1px solid #e5e7eb;flex-shrink:0;">
+                    <div class="ap-chat-subheader">
                         <div style="display:flex;align-items:center;gap:6px;">
                             <span v-if="activeCapability"
                                 style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:9999px;"
                                 :style="{ background: activeCapability.color + '18', color: activeCapability.color }"
                                 v-text="activeCapability.label"></span>
-                            <span v-else style="font-size:10px;color:#9ca3af;font-weight:500;" v-text="trans.generalChat"></span>
-                            <span v-if="messages.length > 0" style="font-size:10px;color:#9ca3af;">· <span v-text="messages.filter(m => m.role === 'user').length"></span> @lang('ai-agent::app.widget.messages')</span>
+                            <span v-else class="ap-chat-meta" v-text="trans.generalChat"></span>
+                            <span v-if="messages.length > 0" class="ap-chat-meta">· <span v-text="messages.filter(m => m.role === 'user').length"></span> @lang('ai-agent::app.widget.messages')</span>
                         </div>
                         <button v-if="messages.length > 0" @click="clearChat"
-                            style="display:flex;align-items:center;gap:4px;font-size:10px;color:#ef4444;padding:3px 8px;border-radius:6px;border:1px solid #fecaca;background:#fff5f5;cursor:pointer;transition:all 0.15s;"
+                            class="ap-clear-chat-btn"
                             :title="trans.clearChat">
                             <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
                             @lang('ai-agent::app.widget.clear-chat')
@@ -341,7 +320,7 @@
                     </div>
 
                     {{-- Pending files --}}
-                    <div v-if="pendingFiles.length > 0" style="display:flex;flex-wrap:wrap;gap:8px;padding:8px 16px;border-top:1px solid #e5e7eb;background:#f9fafb;flex-shrink:0;">
+                    <div v-if="pendingFiles.length > 0" class="ap-pending-files">
                         <div v-for="(f, idx) in pendingFiles" :key="idx" class="relative group">
                             <img v-if="f.type === 'image'" :src="f.preview" class="w-10 h-10 object-cover rounded-md border border-gray-200 dark:border-cherry-700"/>
                             <div v-else class="flex items-center gap-1 px-2 py-1.5 rounded-md border text-xs bg-violet-50 dark:bg-violet-900/20 border-violet-200 dark:border-violet-800 text-violet-600 dark:text-violet-400">
@@ -353,10 +332,10 @@
                     </div>
 
                     {{-- Input — always-visible bordered box --}}
-                    <div style="border-top:1px solid #e5e7eb;padding:12px;flex-shrink:0;background:#fff;position:relative;z-index:1;">
+                    <div class="ap-input-wrap">
 
                         {{-- Outer bordered container --}}
-                        <div style="border:1.5px solid #d1d5db;border-radius:12px;background:#f9fafb;overflow:hidden;">
+                        <div class="ap-input-box">
 
                             {{-- Textarea --}}
                             <textarea
@@ -364,7 +343,7 @@
                                 v-model="inputText"
                                 @keydown.enter.exact.prevent="send"
                                 rows="3"
-                                style="width:100%;resize:none;font-size:13px;color:#374151;background:transparent;padding:12px 14px 6px;border:none;outline:none;min-height:76px;max-height:160px;line-height:1.55;display:block;box-sizing:border-box;"
+                                class="ap-input-textarea"
                                 :placeholder="inputPlaceholder"
                                 :disabled="isLoading"
                                 @input="autoResize"
@@ -373,16 +352,13 @@
                             ></textarea>
 
                             {{-- Toolbar row: Attach + Platform/Model + Send --}}
-                            <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 8px;border-top:1px solid #f3f4f6;gap:4px;">
+                            <div class="ap-input-toolbar">
 
                                 {{-- Left: attach + platform + model --}}
                                 <div style="display:flex;align-items:center;gap:4px;flex:1;min-width:0;">
                                     <label
                                         :title="fileInputTitle"
-                                        style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#6b7280;padding:4px 8px;border-radius:6px;border:1px solid #e5e7eb;background:#fff;cursor:pointer;transition:background 0.15s;flex-shrink:0;"
-                                        @mouseenter="$event.currentTarget.style.background='#f5f0ff';$event.currentTarget.style.color='#7c3aed';$event.currentTarget.style.borderColor='#c4b5fd';"
-                                        @mouseleave="$event.currentTarget.style.background='#fff';$event.currentTarget.style.color='#6b7280';$event.currentTarget.style.borderColor='#e5e7eb';"
-                                    >
+                                        class="ap-input-chip">
                                         <svg v-if="activeCapability && activeCapability.acceptsSpreadsheet" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
                                         <svg v-else width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
                                         <input type="file" ref="fileInput" class="hidden" :accept="fileAccept" multiple @change="onFileSelect"/>
@@ -392,14 +368,14 @@
                                         <select
                                             v-model="selectedPlatformId"
                                             @change="onPlatformChange"
-                                            style="font-size:10px;color:#6b7280;background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:3px 6px;cursor:pointer;outline:none;max-width:120px;min-width:0;flex-shrink:1;"
+                                            class="ap-input-select"
                                             :title="trans.selectPlatform"
                                         >
                                             <option v-for="p in platforms" :key="p.id" :value="p.id" v-text="p.label"></option>
                                         </select>
                                         <select
                                             v-model="selectedModel"
-                                            style="font-size:10px;color:#6b7280;background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:3px 6px;cursor:pointer;outline:none;max-width:110px;min-width:0;flex-shrink:1;"
+                                            class="ap-input-select"
                                             :title="trans.selectModel"
                                         >
                                             <option v-for="m in availableModels" :key="m" :value="m" v-text="m"></option>
@@ -421,7 +397,7 @@
                             </div>
                         </div>
 
-                        <p style="font-size:10px;color:#9ca3af;text-align:center;margin-top:6px;">@lang('ai-agent::app.widget.enter-to-send') &middot; @lang('ai-agent::app.widget.shift-enter-newline')</p>
+                        <p class="ap-input-footnote">@lang('ai-agent::app.widget.enter-to-send') &middot; @lang('ai-agent::app.widget.shift-enter-newline')</p>
                     </div>
                 </div>
             </div>
@@ -448,6 +424,10 @@
     display: flex; flex-direction: column;
     background: #fff; border-left: 1px solid #e5e7eb;
     width: 420px; max-width: 100vw; z-index: 10000;
+}
+.dark .ap-panel {
+    background: #1f1b2d;
+    border-left-color: #453c5f;
 }
 
 /* Backdrop — hidden on desktop */
@@ -503,6 +483,147 @@
 .dark .ap-action-btn.ap-action-active { color: #a78bfa; }
 .ap-msg-actions { opacity: 0.4; transition: opacity 0.2s; }
 .ap-msg-actions:hover { opacity: 1; }
+
+.ap-context-banner {
+    display:flex; align-items:center; gap:8px; padding:6px 16px;
+    background:#f5f3ff; border-bottom:1px solid #e9d5ff; flex-shrink:0;
+}
+.dark .ap-context-banner { background:#2b223d; border-bottom-color:#5b4a80; }
+.ap-context-icon { flex-shrink:0; color:#7c3aed; }
+.dark .ap-context-icon { color:#c4b5fd; }
+.ap-context-text {
+    font-size:11px; color:#5b21b6; font-weight:500; flex:1;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.dark .ap-context-text { color:#ddd6fe; }
+.ap-context-close {
+    color:#8b5cf6; background:none; border:none; cursor:pointer; padding:0;
+    display:flex; align-items:center;
+}
+.dark .ap-context-close { color:#c4b5fd; }
+
+.ap-tab-bar {
+    display:flex; border-bottom:1px solid #e5e7eb; background:#f9fafb; flex-shrink:0;
+}
+.dark .ap-tab-bar { background:#241f35; border-bottom-color:#453c5f; }
+.ap-tab-btn {
+    flex:1; padding:8px 12px; font-size:11px; cursor:pointer; border:none;
+    display:flex; align-items:center; justify-content:center; gap:4px;
+    transition:all 0.15s; color:#6b7280; background:transparent;
+}
+.dark .ap-tab-btn { color:#b9b4cb; }
+.ap-tab-btn.ap-tab-active {
+    border-bottom:2px solid #7c3aed; color:#7c3aed; font-weight:600; background:#fff;
+}
+.dark .ap-tab-btn.ap-tab-active { background:#1f1b2d; color:#c4b5fd; border-bottom-color:#a78bfa; }
+
+.ap-search-input {
+    width:100%; padding:7px 10px 7px 32px; font-size:12px;
+    border:1px solid #e5e7eb; border-radius:8px; outline:none;
+    background:#f9fafb; color:#374151; box-sizing:border-box;
+}
+.dark .ap-search-input { background:#241f35; border-color:#453c5f; color:#e5e7eb; }
+
+.ap-session-new-wrap { padding:12px 16px; border-bottom:1px solid #e5e7eb; flex-shrink:0; }
+.dark .ap-session-new-wrap { border-bottom-color:#453c5f; }
+.ap-session-new-btn {
+    width:100%; display:flex; align-items:center; justify-content:center; gap:6px;
+    padding:8px; font-size:12px; font-weight:600; color:#7c3aed;
+    background:#f5f3ff; border:1.5px dashed #c4b5fd; border-radius:8px;
+    cursor:pointer; transition:all 0.15s;
+}
+.ap-session-new-btn:hover { background:#ede9fe; }
+.dark .ap-session-new-btn { background:#2b223d; border-color:#6d5c94; color:#c4b5fd; }
+.dark .ap-session-new-btn:hover { background:#34284b; }
+
+.ap-session-card {
+    display:flex; align-items:center; gap:10px; padding:10px 12px; margin-bottom:6px;
+    border-radius:8px; border:1px solid #e5e7eb; cursor:pointer; transition:all 0.15s;
+    background:#fff;
+}
+.dark .ap-session-card { background:#1f1b2d; border-color:#453c5f; }
+.ap-session-card:hover:not(.ap-session-card-active) { background:#fafafa; }
+.dark .ap-session-card:hover:not(.ap-session-card-active) { background:#2a233c; }
+.ap-session-card-active { background:#f5f3ff; border-color:#c4b5fd; }
+.dark .ap-session-card-active { background:#2b223d; border-color:#8b7bb8; }
+.ap-session-icon {
+    width:32px; height:32px; border-radius:8px; display:flex; align-items:center;
+    justify-content:center; flex-shrink:0;
+}
+.ap-session-title {
+    font-size:12px; font-weight:600; color:#374151; margin:0;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.dark .ap-session-title { color:#f3f4f6; }
+.ap-session-meta { font-size:10px; color:#9ca3af; margin:2px 0 0; }
+.dark .ap-session-meta { color:#b9b4cb; }
+.ap-session-delete {
+    padding:4px; color:#9ca3af; background:none; border:none; cursor:pointer;
+    border-radius:4px; display:flex; align-items:center;
+}
+
+.ap-chat-subheader {
+    display:flex; align-items:center; justify-content:space-between; padding:6px 16px;
+    background:#f9fafb; border-bottom:1px solid #e5e7eb; flex-shrink:0;
+}
+.dark .ap-chat-subheader { background:#241f35; border-bottom-color:#453c5f; }
+.ap-chat-meta { font-size:10px; color:#9ca3af; font-weight:500; }
+.dark .ap-chat-meta { color:#b9b4cb; }
+.ap-clear-chat-btn {
+    display:flex; align-items:center; gap:4px; font-size:10px; color:#ef4444;
+    padding:3px 8px; border-radius:6px; border:1px solid #fecaca;
+    background:#fff5f5; cursor:pointer; transition:all 0.15s;
+}
+.dark .ap-clear-chat-btn { background:#3b1f29; border-color:#7f4456; color:#fda4af; }
+.ap-clear-chat-btn:hover { background:#ffe7e7; }
+.dark .ap-clear-chat-btn:hover { background:#4a2733; }
+
+.ap-pending-files {
+    display:flex; flex-wrap:wrap; gap:8px; padding:8px 16px;
+    border-top:1px solid #e5e7eb; background:#f9fafb; flex-shrink:0;
+}
+.dark .ap-pending-files { background:#241f35; border-top-color:#453c5f; }
+
+.ap-input-wrap {
+    border-top:1px solid #e5e7eb; padding:12px; flex-shrink:0; background:#fff;
+    position:relative; z-index:1;
+}
+.dark .ap-input-wrap { background:#1f1b2d; border-top-color:#453c5f; }
+.ap-input-box {
+    border:1.5px solid #d1d5db; border-radius:12px; background:#f9fafb; overflow:hidden;
+}
+.dark .ap-input-box { background:#241f35; border-color:#5b4a80; }
+.ap-input-textarea {
+    width:100%; resize:none; font-size:13px; color:#374151; background:transparent;
+    padding:12px 14px 6px; border:none; outline:none; min-height:76px;
+    max-height:160px; line-height:1.55; display:block; box-sizing:border-box;
+}
+.dark .ap-input-textarea { color:#f3f4f6; }
+.ap-input-textarea::placeholder { color:#9ca3af; }
+.dark .ap-input-textarea::placeholder { color:#9f97b8; }
+.ap-input-toolbar {
+    display:flex; align-items:center; justify-content:space-between; padding:6px 8px;
+    border-top:1px solid #f3f4f6; gap:4px;
+}
+.dark .ap-input-toolbar { border-top-color:#453c5f; }
+.ap-input-chip {
+    display:inline-flex; align-items:center; gap:4px; font-size:11px; color:#6b7280;
+    padding:4px 8px; border-radius:6px; border:1px solid #e5e7eb; background:#fff;
+    cursor:pointer; transition:background 0.15s; flex-shrink:0;
+}
+.ap-input-chip:hover { background:#f5f0ff; color:#7c3aed; border-color:#c4b5fd; }
+.dark .ap-input-chip { background:#1f1b2d; border-color:#5b4a80; color:#d1d5db; }
+.dark .ap-input-chip:hover { background:#34284b; color:#ddd6fe; border-color:#8b7bb8; }
+.ap-input-select {
+    font-size:10px; color:#6b7280; background:#fff; border:1px solid #e5e7eb;
+    border-radius:6px; padding:3px 6px; cursor:pointer; outline:none;
+    max-width:120px; min-width:0; flex-shrink:1;
+}
+.dark .ap-input-select { background:#1f1b2d; border-color:#5b4a80; color:#f3f4f6; }
+.ap-input-select:focus { border-color:#7c3aed; }
+.dark .ap-input-select:focus { border-color:#a78bfa; }
+.ap-input-footnote { font-size:10px; color:#9ca3af; text-align:center; margin-top:6px; }
+.dark .ap-input-footnote { color:#9f97b8; }
 </style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.0/purify.min.js" integrity="sha384-/knAMB4gMqm3mPGf8xMfFjCF0Fw3GMdmF6Bj25kjGp9TzFKGefvtsYzn/7BNEUU" crossorigin="anonymous"></script>
