@@ -33,7 +33,10 @@ class TranslationsChecker extends Command
         {--json : Output results as machine-readable JSON for CI pipelines.}
         {--sort-check : Verify keys follow same ordering as canonical file.}
         {--html-check : Verify HTML tag consistency between translations.}
-        {--strict : Enable all quality checks (placeholder, empty, untranslated, sort, html).}';
+        {--strict : Enable all quality checks (placeholder, empty, untranslated, sort, html).}
+        {--translate : Use AI to translate absent keys instead of copying English values (requires --fix).}
+        {--fix-untranslated : Re-translate keys where locale value is identical to en_US (requires --fix --translate).}
+        {--fallback : When AI translation is unavailable, fall back to copying English values instead of aborting.}';
 
     protected $description = 'Audit translation file integrity across all UnoPim packages (en_US is canonical).';
 
@@ -49,6 +52,56 @@ class TranslationsChecker extends Command
 
     /** Minimum character length to flag as untranslated (skip "ID", "OK", etc.). */
     private const UNTRANSLATED_MIN_LENGTH = 3;
+
+    /** Single-word values and technical terms are often legitimately identical across languages. */
+    private const UNTRANSLATED_SKIP_PATTERNS = [
+        '/^[A-Z][a-z]*$/',                // Single capitalized word (e.g., "Type", "Image", "Simple")
+        '/^[A-Z]+$/',                      // Acronyms (e.g., "SKU", "API", "URL", "CSV")
+        '/^[A-Z][\w]* [A-Z][\w]*$/',      // Two capitalized words (e.g., "Magic AI", "Data Grid")
+        '/^[\w\-.:\/]+$/',                 // Technical tokens without spaces (e.g., "webhook", "app.php")
+        '/^[A-Z][\w\s]*:\s*:[a-z_]+$/',   // Label with placeholder (e.g., "Version : :version")
+        '/^[A-Z]+\s*[\-–]\s*:[a-z_]+$/',  // Acronym with placeholder (e.g., "SKU - :sku")
+        '/^[\d.]+\s*(MB|GB|KB|TB)$/',      // File sizes (e.g., "10 MB")
+        '/^:[\w]+$/',                       // Bare placeholders (e.g., ":name")
+        '/^[\w]+(?:,\s*[\w]+)+$/',          // Comma-separated technical lists (e.g., "png, jpeg, jpg")
+        '/^[A-Z][\w.]*(?:\s+[\dA-Z][\w.]*)*$/', // Product/model names with numbers (e.g., "Llama 2 13B")
+    ];
+
+    /** Map locale codes to human-readable language names for AI translation prompts. */
+    private const LOCALE_NAMES = [
+        'ar_AE' => 'Arabic',
+        'ca_ES' => 'Catalan',
+        'da_DK' => 'Danish',
+        'de_DE' => 'German',
+        'en_AU' => 'English (Australia)',
+        'en_GB' => 'English (United Kingdom)',
+        'en_NZ' => 'English (New Zealand)',
+        'es_ES' => 'Spanish',
+        'es_VE' => 'Spanish (Venezuela)',
+        'fi_FI' => 'Finnish',
+        'fr_FR' => 'French',
+        'hi_IN' => 'Hindi',
+        'hr_HR' => 'Croatian',
+        'id_ID' => 'Indonesian',
+        'it_IT' => 'Italian',
+        'ja_JP' => 'Japanese',
+        'ko_KR' => 'Korean',
+        'mn_MN' => 'Mongolian',
+        'nl_NL' => 'Dutch',
+        'no_NO' => 'Norwegian',
+        'pl_PL' => 'Polish',
+        'pt_BR' => 'Brazilian Portuguese',
+        'pt_PT' => 'Portuguese',
+        'ro_RO' => 'Romanian',
+        'ru_RU' => 'Russian',
+        'sv_SE' => 'Swedish',
+        'tl_PH' => 'Filipino',
+        'tr_TR' => 'Turkish',
+        'uk_UA' => 'Ukrainian',
+        'vi_VN' => 'Vietnamese',
+        'zh_CN' => 'Simplified Chinese',
+        'zh_TW' => 'Traditional Chinese',
+    ];
 
     private const KEY_PATTERNS = [
         '/@lang\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)/',
@@ -91,8 +144,20 @@ class TranslationsChecker extends Command
         $jsonOutput = $this->option('json');
         $strict = $this->option('strict');
 
+        if ($this->option('translate') && ! $this->option('fix')) {
+            $this->error('The --translate flag requires --fix. Usage: --fix --translate');
+
+            return self::FAILURE;
+        }
+
+        if ($this->option('fix-untranslated') && (! $this->option('fix') || ! $this->option('translate'))) {
+            $this->error('The --fix-untranslated flag requires --fix --translate. Usage: --fix --translate --fix-untranslated');
+
+            return self::FAILURE;
+        }
+
         if ($this->option('fix')) {
-            return $this->reconcileLocales($pkg, $locale);
+            return $this->reconcileLocales($pkg, $locale, $this->option('translate'), $this->option('fix-untranslated'));
         }
 
         $checks = $this->resolveActiveChecks($strict);
@@ -429,7 +494,7 @@ class TranslationsChecker extends Command
                 continue;
             }
 
-            if (mb_strlen($cVal) <= self::UNTRANSLATED_MIN_LENGTH || trim($cVal) === '') {
+            if ($this->shouldSkipUntranslatedCheck($cVal)) {
                 continue;
             }
 
@@ -910,14 +975,57 @@ class TranslationsChecker extends Command
 
     // ─── Fix / Reconcile ─────────────────────────────────────────
 
-    private function reconcileLocales(?string $onlyPkg, ?string $onlyLocale): int
+    private function reconcileLocales(?string $onlyPkg, ?string $onlyLocale, bool $translate = false, bool $fixUntranslated = false): int
     {
         $this->newLine();
         $this->info('UnoPim — Locale Reconciliation');
         $this->line('   Canonical source: <fg=cyan>'.self::CANONICAL_LOCALE.'</>');
+
+        $fallback = (bool) $this->option('fallback');
+
+        if ($translate) {
+            if (! function_exists('magic_ai')) {
+                $this->newLine();
+                $this->error('MagicAI package is not installed. AI translation is not available.');
+                $this->line('  Install the MagicAI package or configure an AI platform in <fg=cyan>Admin > Configuration > Magic AI > Platforms</>.');
+
+                if ($fallback) {
+                    $this->warn('--fallback enabled: absent keys will be filled with English values.');
+                    $translate = false;
+                } else {
+                    $this->line('  Use <fg=yellow>--fallback</> to copy English values instead of aborting.');
+
+                    return self::FAILURE;
+                }
+            } else {
+                try {
+                    magic_ai()->useDefault();
+                    $this->line('   AI translation: <fg=green>enabled</>');
+
+                    if ($fixUntranslated) {
+                        $this->line('   Fix untranslated: <fg=green>enabled</> (keys identical to en_US will be re-translated)');
+                    }
+                } catch (Throwable $e) {
+                    $this->newLine();
+                    $this->error('No default AI platform configured.');
+                    $this->line('  Configure a default AI platform in <fg=cyan>Admin > Configuration > Magic AI > Platforms</> to enable AI translation.');
+                    $this->line("  Error: {$e->getMessage()}");
+
+                    if ($fallback) {
+                        $this->warn('--fallback enabled: absent keys will be filled with English values.');
+                        $translate = false;
+                    } else {
+                        $this->line('  Use <fg=yellow>--fallback</> to copy English values instead of aborting.');
+
+                        return self::FAILURE;
+                    }
+                }
+            }
+        }
+
         $this->newLine();
 
-        $stats = ['files' => 0, 'injected' => 0, 'pruned' => 0];
+        $stats = ['files' => 0, 'injected' => 0, 'pruned' => 0, 'translated' => 0, 'retranslated' => 0];
 
         foreach ($this->discoverPackages($onlyPkg) as $dir) {
             $langDir = $this->detectLangDir($dir);
@@ -946,7 +1054,7 @@ class TranslationsChecker extends Command
 
             $this->info('Package: '.basename($dir));
 
-            $canonicalFiles->each(function (string $cFile) use ($canonicalDir, $langDir, $locales, &$stats) {
+            $canonicalFiles->each(function (string $cFile) use ($canonicalDir, $langDir, $locales, $translate, $fixUntranslated, $fallback, &$stats) {
                 $rel = Str::after($cFile, $canonicalDir.'/');
 
                 try {
@@ -959,7 +1067,7 @@ class TranslationsChecker extends Command
 
                 $cFlat = $this->dotKeys($cTree);
 
-                $locales->each(function (string $loc) use ($langDir, $rel, $cTree, $cFlat, &$stats) {
+                $locales->each(function (string $loc) use ($langDir, $rel, $cTree, $cFlat, $translate, $fixUntranslated, $fallback, &$stats) {
                     $target = "{$langDir}/{$loc}/{$rel}";
                     $lTree = [];
 
@@ -974,21 +1082,79 @@ class TranslationsChecker extends Command
                     }
 
                     $lFlat = $this->dotKeys($lTree);
-                    $absent = count(array_diff_key($cFlat, $lFlat));
+                    $absentKeys = array_diff_key($cFlat, $lFlat);
+                    $absent = count($absentKeys);
                     $orphan = count(array_diff_key($lFlat, $cFlat));
 
-                    if ($absent === 0 && $orphan === 0) {
+                    // Detect untranslated keys (locale value identical to en_US)
+                    $untranslatedKeys = [];
+
+                    if ($fixUntranslated) {
+                        $cFlatValues = $this->dotKeysWithValues($cTree);
+                        $lFlatValues = $this->dotKeysWithValues($lTree);
+                        $commonKeys = array_intersect_key($cFlatValues, $lFlatValues);
+
+                        foreach ($commonKeys as $dotKey => $cValue) {
+                            if (
+                                is_string($cValue)
+                                && is_string($lFlatValues[$dotKey])
+                                && $cValue === $lFlatValues[$dotKey]
+                                && ! $this->shouldSkipUntranslatedCheck($cValue)
+                            ) {
+                                $untranslatedKeys[$dotKey] = $cValue;
+                            }
+                        }
+                    }
+
+                    $untranslatedCount = count($untranslatedKeys);
+
+                    if ($absent === 0 && $orphan === 0 && $untranslatedCount === 0) {
                         return;
                     }
 
-                    $merged = $this->overlayOnCanonical($cTree, $lTree);
+                    $translations = [];
+
+                    // Merge absent + untranslated keys into a single AI batch
+                    if ($translate && ($absent > 0 || $untranslatedCount > 0)) {
+                        $keysToTranslate = array_merge($absentKeys, $untranslatedKeys);
+                        $translations = $this->translateBatch($keysToTranslate, $loc, $fallback);
+
+                        if ($translations === false) {
+                            return;
+                        }
+
+                        $stats['translated'] += count($translations);
+                    }
+
+                    $merged = $this->overlayOnCanonical($cTree, $lTree, $translations);
                     $this->persistLangArray($target, $merged);
 
                     $stats['files']++;
                     $stats['injected'] += $absent;
                     $stats['pruned'] += $orphan;
 
-                    $this->line("  <fg=yellow>{$loc}/{$rel}:</> +{$absent} added, -{$orphan} removed");
+                    $translatedCount = count($translations);
+                    $parts = [];
+
+                    if ($absent > 0 || $orphan > 0) {
+                        $parts[] = "+{$absent} added, -{$orphan} removed";
+                    }
+
+                    if ($untranslatedCount > 0) {
+                        $stats['retranslated'] += $untranslatedCount;
+                        $parts[] = "<fg=blue>{$untranslatedCount} untranslated re-translated</>";
+                    }
+
+                    if ($translate && $translatedCount > 0) {
+                        $copiedCount = $absent - min($translatedCount, $absent);
+                        $parts[] = "<fg=green>{$translatedCount} AI-translated</>";
+
+                        if ($copiedCount > 0) {
+                            $parts[] = "<fg=gray>{$copiedCount} copied</>";
+                        }
+                    }
+
+                    $this->line("  <fg=yellow>{$loc}/{$rel}:</> ".implode(', ', $parts));
                 });
             });
 
@@ -997,11 +1163,30 @@ class TranslationsChecker extends Command
 
         $this->line(str_repeat('─', 64));
         $this->line("Reconciled: {$stats['files']} file(s) — +{$stats['injected']} key(s) added, -{$stats['pruned']} key(s) removed");
+
+        if ($translate && $stats['translated'] > 0) {
+            $this->line("AI translated: {$stats['translated']} key(s)");
+        }
+
+        $retranslated = $stats['retranslated'];
+
+        if ($retranslated > 0) {
+            $this->line("Untranslated keys re-translated: {$retranslated} key(s)");
+        }
+
         $this->line(str_repeat('─', 64));
         $this->newLine();
 
-        if ($stats['files'] > 0) {
-            $this->info('Absent keys filled with '.self::CANONICAL_LOCALE.' values.');
+        if ($stats['files'] > 0 || $retranslated > 0) {
+            $method = $translate && $stats['translated'] > 0
+                ? 'AI-translated (with '.self::CANONICAL_LOCALE.' fallback)'
+                : self::CANONICAL_LOCALE.' values';
+            $this->info("Absent keys filled with {$method}.");
+
+            if ($retranslated > 0) {
+                $this->info('Untranslated values (identical to en_US) were re-translated via AI.');
+            }
+
             $this->line('<fg=yellow>Re-run without --fix to confirm the audit passes.</>');
         } else {
             $this->info('Every locale is already reconciled — nothing to do.');
@@ -1012,18 +1197,172 @@ class TranslationsChecker extends Command
         return self::SUCCESS;
     }
 
-    private function overlayOnCanonical(array $canonical, array $locale): array
+    /**
+     * Translate a batch of absent keys using AI.
+     *
+     * @param  array<string, string>  $absentKeys  Dot-notated key => English value pairs
+     * @param  string  $locale  Target locale code (e.g. 'fr_FR')
+     * @param  bool  $fallback  When true, copy English on failure; when false, skip the file entirely
+     * @return array<string, string>|false Translated pairs, empty array (fallback), or false to skip
+     */
+    private function translateBatch(array $absentKeys, string $locale, bool $fallback = false): array|false
+    {
+        $languageName = self::LOCALE_NAMES[$locale] ?? $locale;
+        $total = count($absentKeys);
+
+        $this->line("    <fg=cyan>Translating {$languageName} ({$locale}): {$total} key(s)...</>");
+
+        // Chunk large batches to avoid token limits (max 100 keys per API call)
+        $chunkSize = 100;
+        $allTranslated = [];
+
+        $chunks = array_chunk($absentKeys, $chunkSize, true);
+        $chunkCount = count($chunks);
+
+        foreach ($chunks as $i => $chunk) {
+            if ($chunkCount > 1) {
+                $chunkNum = $i + 1;
+                $this->line("      <fg=gray>Chunk {$chunkNum}/{$chunkCount} (".count($chunk).' keys)...</>');
+            }
+
+            $result = $this->translateChunk($chunk, $locale, $languageName, $fallback);
+
+            if ($result === false) {
+                return false;
+            }
+
+            $allTranslated = array_merge($allTranslated, $result);
+        }
+
+        return $allTranslated;
+    }
+
+    /**
+     * Translate a single chunk of keys via AI.
+     *
+     * @return array<string, string>|false
+     */
+    private function translateChunk(array $keys, string $locale, string $languageName, bool $fallback): array|false
+    {
+        $payload = json_encode($keys, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+
+        $systemPrompt = implode("\n", [
+            "You are a professional translator. Translate Laravel translation values from English to {$languageName} ({$locale}).",
+            'Rules:',
+            '- Preserve all :placeholder tokens (like :name, :count, :attribute) exactly as-is — do NOT translate them.',
+            '- Preserve all surrounding punctuation and formatting: dashes (--), ellipsis (...), brackets, pipes, and wrapper characters.',
+            '  Example: "-- Select Model --" must become "-- Modèle sélectionné --" (keep the -- wrapper).',
+            '  Example: "Loading models..." must keep the trailing "..." in the translation.',
+            '- Translate the COMPLETE value — do NOT truncate, shorten, or omit any part of the sentence.',
+            '- Translate naturally and idiomatically, not word-for-word.',
+            '- Return ONLY a valid JSON object with the exact same keys and translated values.',
+            '- Do not add any explanation, markdown formatting, or code fences.',
+            '- For English variant locales (en_AU, en_GB, en_NZ), use region-appropriate spelling (e.g. "colour" for en_GB).',
+        ]);
+
+        try {
+            $response = magic_ai()
+                ->useDefault()
+                ->setSystemPrompt($systemPrompt)
+                ->setPrompt($payload, 'text')
+                ->setTemperature(0.3)
+                ->setMaxTokens(16384)
+                ->ask();
+
+            $response = $this->extractJsonFromResponse($response);
+            $translated = json_decode($response, true);
+
+            if (! is_array($translated)) {
+                $this->line('    <fg=red>AI returned invalid JSON.</>');
+
+                if ($fallback) {
+                    $this->line('    <fg=yellow>--fallback: copying English values.</>');
+
+                    return [];
+                }
+
+                $this->line('    <fg=red>Skipping file. Use --fallback to copy English values instead.</>');
+
+                return false;
+            }
+
+            return array_intersect_key($translated, $keys);
+        } catch (Throwable $e) {
+            $this->line("    <fg=red>AI translation failed: {$e->getMessage()}</>");
+
+            if ($fallback) {
+                $this->line('    <fg=yellow>--fallback: copying English values.</>');
+
+                return [];
+            }
+
+            $this->line('    <fg=red>Skipping file. Use --fallback to copy English values instead.</>');
+
+            return false;
+        }
+    }
+
+    /**
+     * Extract JSON from AI response that may contain markdown code fences.
+     */
+    /**
+     * Check if a value should be skipped from untranslated detection.
+     *
+     * Single words, acronyms, and technical tokens are often legitimately
+     * identical across languages and should not be flagged as untranslated.
+     */
+    private function shouldSkipUntranslatedCheck(string $value): bool
+    {
+        if (mb_strlen($value) < self::UNTRANSLATED_MIN_LENGTH || trim($value) === '') {
+            return true;
+        }
+
+        foreach (self::UNTRANSLATED_SKIP_PATTERNS as $pattern) {
+            if (preg_match($pattern, $value)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function extractJsonFromResponse(string $response): string
+    {
+        $response = trim($response);
+
+        // Strip markdown code fences if present
+        if (preg_match('/```(?:json)?\s*\n?(.*?)\n?\s*```/s', $response, $matches)) {
+            return trim($matches[1]);
+        }
+
+        return $response;
+    }
+
+    /**
+     * Overlay locale values on canonical structure, with optional AI translations for absent keys.
+     *
+     * @param  array<string, string>  $translations  Dot-notated key => translated value pairs
+     * @param  string  $prefix  Current dot-notation prefix for recursive tracking
+     */
+    private function overlayOnCanonical(array $canonical, array $locale, array $translations = [], string $prefix = ''): array
     {
         $merged = [];
 
         foreach ($canonical as $key => $cVal) {
+            $dotKey = $prefix === '' ? $key : "{$prefix}.{$key}";
+
             if (is_array($cVal)) {
                 $lVal = isset($locale[$key]) && is_array($locale[$key]) ? $locale[$key] : [];
-                $merged[$key] = $this->overlayOnCanonical($cVal, $lVal);
+                $merged[$key] = $this->overlayOnCanonical($cVal, $lVal, $translations, $dotKey);
             } else {
-                $merged[$key] = array_key_exists($key, $locale) && ! is_array($locale[$key])
-                    ? $locale[$key]
-                    : $cVal;
+                if (isset($translations[$dotKey])) {
+                    // AI translation takes priority (covers both absent and untranslated keys)
+                    $merged[$key] = $translations[$dotKey];
+                } elseif (array_key_exists($key, $locale) && ! is_array($locale[$key])) {
+                    $merged[$key] = $locale[$key];
+                } else {
+                    $merged[$key] = $cVal;
+                }
             }
         }
 
