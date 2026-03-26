@@ -289,10 +289,16 @@
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                                             @lang('ai-agent::app.widget.view-product')
                                         </a>
-                                        <a v-if="msg.download_url" :href="msg.download_url" class="inline-flex items-center gap-1.5 text-xs font-semibold text-white px-4 py-2 rounded-lg transition-all hover:shadow-md" style="background:linear-gradient(135deg,#059669,#10b981);">
+                                        <button
+                                            v-if="msg.download_url"
+                                            @click="downloadFile(msg.download_url)"
+                                            type="button"
+                                            class="inline-flex items-center gap-1.5 text-xs font-semibold text-white px-4 py-2 rounded-lg transition-all hover:shadow-md"
+                                            style="background:linear-gradient(135deg,#059669,#10b981);border:none;cursor:pointer;"
+                                        >
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                                             @lang('ai-agent::app.widget.download')
-                                        </a>
+                                        </button>
                                     </div>
 
                                     {{-- Message actions: retry, copy, helpful, not helpful — shown AFTER result card --}}
@@ -720,9 +726,23 @@ app.component('v-agenting-pim', {
     },
 
     watch: {
-        isOpen(val) { this.adjustLayout(val); this.saveState(); },
+        isOpen(val) {
+            this.adjustLayout(val);
+            this.saveState();
+
+            if (val && this.activeTab === 'chat') {
+                this.scrollBottom();
+                this.$nextTick(() => this.$refs.textInput?.focus());
+            }
+        },
         messages: { deep: true, handler() { this.saveState(); } },
-        activeTab() { this.saveState(); },
+        activeTab(val) {
+            this.saveState();
+
+            if (val === 'chat' && this.isOpen) {
+                this.scrollBottom();
+            }
+        },
         activeCapability: { deep: true, handler() { this.saveState(); } },
     },
 
@@ -757,7 +777,7 @@ app.component('v-agenting-pim', {
                 document.body.style.overflowX = '';
             }
         },
-        toggle() { this.isOpen = !this.isOpen; if (this.isOpen) this.$nextTick(() => this.$refs.textInput?.focus()); },
+        toggle() { this.isOpen = !this.isOpen; },
         close() { this.isOpen = false; },
         newSession() {
             // Save current session before creating new one
@@ -1235,7 +1255,65 @@ app.component('v-agenting-pim', {
             return labels[tool] || `Running ${tool.replace(/_/g, ' ')}...`;
         },
 
-        scrollBottom() { this.$nextTick(() => { const el = this.$refs.messagesEl; if (el) el.scrollTop = el.scrollHeight; }); },
+        async downloadFile(url) {
+            if (!url) return;
+
+            try {
+                const response = await fetch(url, {
+                    credentials: 'same-origin',
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Download failed with status ${response.status}`);
+                }
+
+                const blob = await response.blob();
+                const objectUrl = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                const filename = this.getDownloadFilename(url, response);
+
+                link.href = objectUrl;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+
+                window.URL.revokeObjectURL(objectUrl);
+            } catch (error) {
+                window.open(url, '_blank', 'noopener');
+            }
+        },
+
+        getDownloadFilename(url, response) {
+            const disposition = response.headers.get('content-disposition') || '';
+            const utfMatch = disposition.match(/filename\*=UTF-8''([^;]+)/i);
+            const plainMatch = disposition.match(/filename="?([^"]+)"?/i);
+
+            if (utfMatch?.[1]) {
+                return decodeURIComponent(utfMatch[1]);
+            }
+
+            if (plainMatch?.[1]) {
+                return plainMatch[1];
+            }
+
+            const pathname = new URL(url, window.location.origin).pathname;
+            const lastSegment = pathname.split('/').filter(Boolean).pop();
+
+            return lastSegment || 'generated-image';
+        },
+
+        scrollBottom() {
+            this.$nextTick(() => {
+                requestAnimationFrame(() => {
+                    const el = this.$refs.messagesEl;
+
+                    if (el) {
+                        el.scrollTop = el.scrollHeight;
+                    }
+                });
+            });
+        },
         autoResize() { const el = this.$refs.textInput; if (el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 160) + 'px'; } },
         resetTextarea() { this.$nextTick(() => { const el = this.$refs.textInput; if (el) { el.style.height = 'auto'; el.style.height = '72px'; } }); },
 
