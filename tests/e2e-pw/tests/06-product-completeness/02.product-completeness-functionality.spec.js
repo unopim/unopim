@@ -49,9 +49,10 @@ test.describe('Verify the behvaiour of Product Completenss feature', () => {
     const itemRow = adminPage.locator('div', { hasText: 'Default' });
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
-    await adminPage.locator('div').filter({ hasText: /^Code$/ }).locator('label span').click();
-    await adminPage.getByRole('button', { name: 'Select Action ' }).click();
-    await adminPage.getByRole('link', { name: 'Change Completeness' }).click();
+    await adminPage.waitForLoadState('networkidle');
+    await adminPage.click('label[for="mass_action_select_all_records"]');
+    await adminPage.getByRole('button', { name: /Select Action/i }).click();
+    await adminPage.locator('a', { hasText: 'Change Completeness Requirement' }).click();
     await adminPage.locator('.px-4 > .mb-4 > div > .multiselect > .multiselect__tags').click();
     await expect(adminPage.getByRole('option', { name: 'Default' }).first()).toBeVisible();
     await expect(adminPage.getByRole('option', { name: 'channel3' }).first()).toBeVisible();

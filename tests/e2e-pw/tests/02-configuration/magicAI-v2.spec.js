@@ -16,19 +16,11 @@ test('0.1 - Setup: Create OpenAI platform for config tests', async ({ adminPage 
 
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
 
-  // Check if platform already exists
-  await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
-  await expect(adminPage.locator('#app').getByText('Add AI Platform')).toBeVisible();
-
-  const existingOpenAI = adminPage.locator('div').filter({ hasText: /OpenAI/i });
-  if (await existingOpenAI.first().isVisible().catch(() => false)) {
-    await adminPage.locator('.icon-cancel').click();
+  // Check if platform already exists in the datagrid (before opening modal)
+  const existingPlatform = adminPage.locator('span[title="Edit"]');
+  if (await existingPlatform.first().isVisible({ timeout: 3000 }).catch(() => false)) {
     return;
   }
-
-  // Close the initial modal
-  await adminPage.locator('.icon-cancel').click();
-  await expect(adminPage.locator('.icon-cancel')).not.toBeVisible();
 
   // Create the platform
   await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();

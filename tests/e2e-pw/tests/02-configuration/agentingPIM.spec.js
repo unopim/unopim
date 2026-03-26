@@ -267,17 +267,12 @@ test('5.0 - Setup: Create OpenAI platform for chat tests', async ({ adminPage })
   test.setTimeout(60000);
 
   await adminPage.goto('/admin/magic-ai/platform', { waitUntil: 'networkidle' });
-  await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
-  await expect(adminPage.getByText('Add AI Platform')).toBeVisible();
 
-  // Check if a platform already exists
-  const existingPlatform = adminPage.locator('div').filter({ hasText: /OpenAI/i });
-  if (await existingPlatform.first().isVisible().catch(() => false)) {
-    await adminPage.locator('.icon-cancel').click();
+  // Check if platform already exists in the datagrid (before opening modal)
+  const existingPlatform = adminPage.locator('span[title="Edit"]');
+  if (await existingPlatform.first().isVisible({ timeout: 3000 }).catch(() => false)) {
     return;
   }
-  await adminPage.locator('.icon-cancel').click();
-  await expect(adminPage.locator('.icon-cancel')).not.toBeVisible();
 
   // Create platform
   await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
@@ -354,10 +349,10 @@ test('5.3 - AI response shows Retry, Copy, Helpful, Not helpful buttons', async 
 
   await expect(adminPage.getByText(/categor/i).last()).toBeVisible({ timeout: 45000 });
 
-  await expect(adminPage.getByRole('button', { name: 'Retry' })).toBeVisible();
-  await expect(adminPage.getByRole('button', { name: 'Copy' })).toBeVisible();
-  await expect(adminPage.getByRole('button', { name: 'Helpful' })).toBeVisible();
-  await expect(adminPage.getByRole('button', { name: 'Not helpful' })).toBeVisible();
+  await expect(adminPage.getByRole('button', { name: 'Retry' }).last()).toBeVisible();
+  await expect(adminPage.getByRole('button', { name: 'Copy' }).last()).toBeVisible();
+  await expect(adminPage.getByRole('button', { name: 'Helpful', exact: true }).last()).toBeVisible();
+  await expect(adminPage.getByRole('button', { name: 'Not helpful' }).last()).toBeVisible();
 });
 
 test('5.4 - Message counter badge appears after sending', async ({ adminPage }) => {

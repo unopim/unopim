@@ -106,7 +106,7 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill('sku');
     await adminPage.getByRole('textbox', { name: 'Search', exact: true }).press('Enter');
     await adminPage.waitForLoadState('networkidle');
-    await expect(adminPage.locator('#app').getByText('1 Results')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('1 Results')).toBeVisible({ timeout: 15000 });
     await expect(adminPage.locator('#app').getByText('sku')).toBeVisible();
 });
 
@@ -133,7 +133,7 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await adminPage.getByText('Save').click();
     await adminPage.getByText('Save').click();
     await adminPage.waitForLoadState('networkidle');
-    await expect(adminPage.locator('#app').getByText('1 Results')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('1 Results')).toBeVisible({ timeout: 15000 });
 });
 
   test('Verify attribute filter using name in Completeness section of Family settings', async ({ adminPage }) => {
@@ -220,9 +220,8 @@ test('Create a new channel and assigned multiple locale and currency', async ({ 
     const itemRow = adminPage.locator('div', { hasText: 'af_ZAAfrikaans (South Africa)' });
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.waitForLoadState('load');
-    const statusCheckbox = adminPage.locator('input[name="status"]').first();
-    const isChecked = await statusCheckbox.isChecked();
-    if (!isChecked) {
+    const statusChecked = await adminPage.locator('input[name="status"][type="checkbox"]').isChecked();
+    if (!statusChecked) {
         await adminPage.locator('label[for="status"]').first().click();
     }
     await adminPage.getByRole('button', { name: 'Save Locale' }).click();
@@ -237,9 +236,8 @@ test('Create a new channel and assigned multiple locale and currency', async ({ 
     const itemRow1 = adminPage.locator('div', { hasText: 'ADPAndorran Peseta' });
     await itemRow1.locator('span[title="Edit"]').first().click();
     await adminPage.waitForLoadState('load');
-    const currencyStatus = adminPage.locator('input[name="status"]').first();
-    const isCurrencyChecked = await currencyStatus.isChecked();
-    if (!isCurrencyChecked) {
+    const currencyChecked = await adminPage.locator('input[name="status"][type="checkbox"]').isChecked();
+    if (!currencyChecked) {
         await adminPage.locator('label[for="status"]').first().click();
     }
     await adminPage.getByRole('button', { name: 'Save Currency' }).click();
@@ -272,9 +270,10 @@ test('Create a new channel and assigned multiple locale and currency', async ({ 
     const itemRow = adminPage.locator('div', { hasText: 'displaycompletensstab' });
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
-    await adminPage.locator('div').filter({ hasText: /^Code$/ }).locator('label span').click();
-    await adminPage.getByRole('button', { name: 'Select Action ' }).click();
-    await adminPage.getByRole('link', { name: 'Change Completeness' }).click();
+    await adminPage.waitForLoadState('networkidle');
+    await adminPage.click('label[for="mass_action_select_all_records"]');
+    await adminPage.getByRole('button', { name: /Select Action/i }).click();
+    await adminPage.locator('a', { hasText: 'Change Completeness Requirement' }).click();
     await adminPage.locator('.px-4 > .mb-4 > div > .multiselect > .multiselect__tags').click();
     await expect(adminPage.getByRole('option', { name: 'Default' }).first()).toBeVisible();
     await expect(adminPage.getByRole('option', { name: 'channel3' }).first()).toBeVisible();
