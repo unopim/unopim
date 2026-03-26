@@ -214,10 +214,10 @@ test('Create a new channel and assigned multiple locale and currency', async ({ 
     await adminPage.waitForLoadState('networkidle');
     const itemRow = adminPage.locator('div', { hasText: 'af_ZAAfrikaans (South Africa)' });
     await itemRow.locator('span[title="Edit"]').first().click();
-    const statusCheckbox = adminPage.locator('input[name="status"]');
+    const statusCheckbox = adminPage.getByRole('checkbox', { name: /status/i });
     const isChecked = await statusCheckbox.isChecked();
     if (!isChecked) {
-        await adminPage.locator('label[for="status"]').click();
+        await adminPage.locator('label[for="status"]').first().click();
     }
     await adminPage.getByRole('button', { name: 'Save Locale' }).click();
     await expect(adminPage.locator('#app').getByText(/Locale Updated successfully/i)).toBeVisible();
@@ -230,10 +230,10 @@ test('Create a new channel and assigned multiple locale and currency', async ({ 
     await adminPage.waitForLoadState('networkidle');
     const itemRow1 = adminPage.locator('div', { hasText: 'ADPAndorran Peseta' });
     await itemRow1.locator('span[title="Edit"]').first().click();
-    const currencyStatus = adminPage.locator('input[name="status"]');
+    const currencyStatus = adminPage.getByRole('checkbox', { name: /status/i });
     const isCurrencyChecked = await currencyStatus.isChecked();
     if (!isCurrencyChecked) {
-        await adminPage.locator('label[for="status"]').click();
+        await adminPage.locator('label[for="status"]').first().click();
     }
     await adminPage.getByRole('button', { name: 'Save Currency' }).click();
     await expect(adminPage.locator('#app').getByText(/Currency updated successfully/i)).toBeVisible();

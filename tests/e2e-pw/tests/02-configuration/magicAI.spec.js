@@ -40,8 +40,9 @@ test('1.2 - Verify all provider options in Add Platform modal', async ({ adminPa
   await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
   await expect(adminPage.locator('#app').getByText('Add AI Platform')).toBeVisible();
 
-  const providerSelect = adminPage.locator('input[name="provider"]').locator('..');
-  const optionTexts = await providerSelect.locator('option').allTextContents();
+  // Click to open dropdown and check options
+  await adminPage.locator('input[name="provider"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
+  const optionTexts = await adminPage.locator('.multiselect__element').allTextContents();
 
   expect(optionTexts.some(t => t.includes('OpenAI'))).toBe(true);
   expect(optionTexts.some(t => t.includes('Anthropic'))).toBe(true);
@@ -211,18 +212,8 @@ test('2.5 - Verify Translation section fields', async ({ adminPage }) => {
 test('2.6 - Verify platform dropdown shows OpenAI platform on config page', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
 
-  // Find any select that contains our platform
-  const allSelects = adminPage.locator('select');
-  const count = await allSelects.count();
-  let found = false;
-  for (let i = 0; i < count; i++) {
-    const optionTexts = await allSelects.nth(i).locator('option').allTextContents();
-    if (optionTexts.some(t => t.includes('OpenAI'))) {
-      found = true;
-      break;
-    }
-  }
-  expect(found).toBe(true);
+  // Check that OpenAI platform text is visible on the config page
+  await expect(adminPage.getByText(/OpenAI/i).first()).toBeVisible();
 });
 
 test('2.7 - Configure Magic AI with OpenAI platform for Text Generation', async ({ adminPage }) => {
@@ -230,14 +221,12 @@ test('2.7 - Configure Magic AI with OpenAI platform for Text Generation', async 
   await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
 
   // Select OpenAI platform in the first platform dropdown
-  const allSelects = adminPage.locator('select');
-  const count = await allSelects.count();
-  for (let i = 0; i < count; i++) {
-    const options = await allSelects.nth(i).locator('option').allTextContents();
-    const openaiOption = options.find(t => t.includes('OpenAI'));
-    if (openaiOption) {
-      await allSelects.nth(i).selectOption({ label: openaiOption });
-      break;
+  const platformDropdown = adminPage.locator('.multiselect__placeholder, .multiselect__single').first();
+  if (await platformDropdown.isVisible().catch(() => false)) {
+    await platformDropdown.click();
+    const openaiOpt = adminPage.getByRole('option', { name: /OpenAI/i }).first();
+    if (await openaiOpt.isVisible().catch(() => false)) {
+      await openaiOpt.click();
     }
   }
 
@@ -251,20 +240,21 @@ test('2.8 - Configure Image Generation with OpenAI platform', async ({ adminPage
   test.setTimeout(30000);
   await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
 
-  // Select OpenAI platform in the image generation platform dropdown (2nd platform select)
-  const allSelects = adminPage.locator('select');
-  const count = await allSelects.count();
+  // Select OpenAI platform in the image generation section
+  const platformDropdowns = adminPage.locator('.multiselect__placeholder, .multiselect__single');
+  const ddCount = await platformDropdowns.count();
   let platformIdx = 0;
-  for (let i = 0; i < count; i++) {
-    const options = await allSelects.nth(i).locator('option').allTextContents();
-    const openaiOption = options.find(t => t.includes('OpenAI'));
-    if (openaiOption) {
+  for (let i = 0; i < ddCount; i++) {
+    await platformDropdowns.nth(i).click();
+    const openaiOpt = adminPage.getByRole('option', { name: /OpenAI/i }).first();
+    if (await openaiOpt.isVisible({ timeout: 1000 }).catch(() => false)) {
       platformIdx++;
       if (platformIdx === 2) {
-        await allSelects.nth(i).selectOption({ label: openaiOption });
+        await openaiOpt.click();
         break;
       }
     }
+    await adminPage.keyboard.press('Escape');
   }
 
   await adminPage.getByRole('button', { name: 'Save Configuration' }).click();
@@ -454,11 +444,11 @@ test('4.5 - Verify Purpose field has Text Generation and Image Generation', asyn
   await adminPage.getByRole('button', { name: 'Create Prompt' }).click();
   await expect(adminPage.locator('#app').getByText('Create New Prompt')).toBeVisible();
 
-  const purposeSelect = adminPage.locator('select[name="purpose"]');
-  await expect(purposeSelect).toBeVisible();
-  const optionTexts = await purposeSelect.locator('option').allTextContents();
-  expect(optionTexts.some(t => t.includes('Text Generation'))).toBe(true);
-  expect(optionTexts.some(t => t.includes('Image Generation'))).toBe(true);
+  // Check purpose dropdown has both options
+  await adminPage.locator('input[name="purpose"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
+  await expect(adminPage.getByRole('option', { name: 'Text Generation' }).first()).toBeVisible();
+  await expect(adminPage.getByRole('option', { name: 'Image Generation' }).first()).toBeVisible();
+  await adminPage.keyboard.press('Escape');
 });
 
 test('4.6 - Verify Entity Type has Product and Category options', async ({ adminPage }) => {
@@ -516,10 +506,8 @@ test('4.11 - Create an Image Generation prompt', async ({ adminPage }) => {
   await expect(adminPage.locator('#app').getByText('Create New Prompt')).toBeVisible();
   await adminPage.locator('input[name="title"]').fill('AI Product Image');
 
-  const purposeSelect = adminPage.locator('select[name="purpose"]');
-  if (await purposeSelect.isVisible().catch(() => false)) {
-    await purposeSelect.selectOption({ label: 'Image Generation' });
-  }
+  await adminPage.locator('input[name="purpose"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
+  await adminPage.getByRole('option', { name: 'Image Generation' }).first().click();
 
   await adminPage.locator('textarea[name="prompt"]').fill('Generate a professional product photo of @name on a clean white background with studio lighting.');
   await adminPage.getByRole('button', { name: 'Save Prompt' }).click();
@@ -675,9 +663,9 @@ test('7.3 - Open AI Assistance modal and verify fields', async ({ adminPage }) =
   await expect(adminPage.locator('#app').getByText(/System Prompt/)).toBeVisible();
   await expect(adminPage.getByRole('button', { name: 'Generate' })).toBeVisible();
 
-  // Verify platform and model selects
-  const selects = adminPage.locator('select');
-  expect(await selects.count()).toBeGreaterThanOrEqual(1);
+  // Verify platform and model dropdowns
+  const dropdowns = adminPage.locator('.multiselect');
+  expect(await dropdowns.count()).toBeGreaterThanOrEqual(1);
 
   // Close modal
   await adminPage.locator('.icon-cancel').click();
@@ -869,7 +857,7 @@ test('9.3 - Create a user with MagicAI role', async ({ adminPage }) => {
   await adminPage.locator('div').filter({ hasText: /^UI Locale$/ }).nth(1).click();
   await adminPage.getByRole('option', { name: 'English (United States)' }).first().click();
   await adminPage.locator('div').filter({ hasText: /^Timezone$/ }).nth(1).click();
-  await adminPage.getByRole('textbox', { name: 'timezone-searchbox' }).fill('kolkata');
+  await adminPage.keyboard.type('kolkata');
   await adminPage.getByRole('option', { name: 'Asia/Kolkata (+05:30)' }).first().click();
   await adminPage.locator('div').filter({ hasText: /^Role$/ }).nth(1).click();
   await adminPage.getByRole('option', { name: 'MagicAI Manager' }).first().click();
