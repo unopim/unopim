@@ -107,6 +107,24 @@ test('Create Channel', async ({ adminPage }) => {
   await expect(adminPage.locator('#app').getByText(/Channel created successfully/i)).toBeVisible();
 });
 
+test('Create Channel without translations', async ({ adminPage }) => {
+  await adminPage.getByRole('link', { name: ' Settings' }).click();
+  await adminPage.getByRole('link', { name: 'Channels' }).click();
+  await adminPage.getByRole('link', { name: 'Create Channel' }).click();
+  await adminPage.getByRole('textbox', { name: 'Code' }).click();
+  await adminPage.getByRole('textbox', { name: 'Code' }).fill('noTransChannel');
+  await adminPage.locator('#root_category_id').getByRole('combobox').locator('div').filter({ hasText: 'Select Root Category' }).click();
+  await adminPage.getByRole('option', { name: '[root]' }).locator('span').first().click();
+  await adminPage.locator('#locales').getByRole('combobox').locator('div').filter({ hasText: 'Select Locales' }).click();
+  await adminPage.getByRole('option', { name: 'English (United States)' }).locator('span').first().click();
+  await adminPage.locator('body').click();
+  await adminPage.waitForTimeout(300);
+  await adminPage.locator('#currencies').getByRole('combobox').locator('div').filter({ hasText: 'Select currencies' }).click();
+  await adminPage.getByRole('option', { name: 'US Dollar' }).locator('span').first().click();
+  await adminPage.getByRole('button', { name: 'Save Channel' }).click();
+  await expect(adminPage.locator('#app').getByText(/Channel created successfully/i)).toBeVisible();
+});
+
 test('Create Channel with same Code', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: ' Settings' }).click();
   await adminPage.getByRole('link', { name: 'Channels' }).click();
@@ -151,6 +169,15 @@ test('Delete Channel', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: ' Settings' }).click();
   await adminPage.getByRole('link', { name: 'Channels' }).click();
   const itemRow = adminPage.locator('div', { hasText: 'eCommerceMobile' });
+  await itemRow.locator('span[title="Delete"]').first().click();
+  await adminPage.getByRole('button', { name: 'Delete' }).click();
+  await expect(adminPage.locator('#app').getByText(/Channel deleted successfully/i)).toBeVisible();
+});
+
+test('Delete Channel without translations', async ({ adminPage }) => {
+  await adminPage.getByRole('link', { name: ' Settings' }).click();
+  await adminPage.getByRole('link', { name: 'Channels' }).click();
+  const itemRow = adminPage.locator('div', { hasText: 'noTransChannel' });
   await itemRow.locator('span[title="Delete"]').first().click();
   await adminPage.getByRole('button', { name: 'Delete' }).click();
   await expect(adminPage.locator('#app').getByText(/Channel deleted successfully/i)).toBeVisible();
