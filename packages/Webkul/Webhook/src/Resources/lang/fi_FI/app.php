@@ -30,7 +30,6 @@ return [
             'mass-delete' => 'Joukkopoisto',
         ],
     ],
-
     'configuration' => [
         'webhook' => [
             'settings' => [
@@ -43,14 +42,12 @@ return [
                         'label' => 'Aktiivinen Webhook',
                     ],
                     'webhook_url' => [
-                        'label' => 'Webhook URL',
+                        'label' => 'Webhook-URL',
                     ],
                     'success'    => 'Webhook-asetukset tallennettu onnistuneesti',
-                    'title'      => 'Webhook-asetukset',
                     'logs-title' => 'Lokit',
                 ],
             ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

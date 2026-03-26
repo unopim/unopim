@@ -30,7 +30,6 @@ return [
             'mass-delete' => 'Ștergere în masă',
         ],
     ],
-
     'configuration' => [
         'webhook' => [
             'settings' => [
@@ -46,11 +45,9 @@ return [
                         'label' => 'URL Webhook',
                     ],
                     'success'    => 'Setările Webhook au fost salvate cu succes',
-                    'title'      => 'Setări Webhook',
                     'logs-title' => 'Jurnale',
                 ],
             ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

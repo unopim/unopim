@@ -4,7 +4,7 @@ return [
     'seeders' => [
         'attribute' => [
             'attribute-families' => [
-                'default' => 'Default',
+                'default' => 'Standard',
             ],
             'attribute-groups' => [
                 'description'      => 'Beskrivelse',
@@ -94,7 +94,7 @@ return [
                 'name'        => 'Administrator',
             ],
             'users' => [
-                'name' => 'Example',
+                'name' => 'Eksempel',
             ],
         ],
     ],

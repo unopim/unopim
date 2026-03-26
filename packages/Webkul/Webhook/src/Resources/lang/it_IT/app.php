@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhooks',
+                        'name' => 'Webhook',
                     ],
                 ],
             ],
@@ -30,7 +30,6 @@ return [
             'mass-delete' => 'Eliminazione di massa',
         ],
     ],
-
     'configuration' => [
         'webhook' => [
             'settings' => [
@@ -46,11 +45,9 @@ return [
                         'label' => 'URL del Webhook',
                     ],
                     'success'    => 'Impostazioni Webhook salvate con successo',
-                    'title'      => 'Impostazioni Webhook',
                     'logs-title' => 'Registri',
                 ],
             ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

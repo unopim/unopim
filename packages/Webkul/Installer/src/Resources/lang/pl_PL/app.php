@@ -4,7 +4,7 @@ return [
     'seeders' => [
         'attribute' => [
             'attribute-families' => [
-                'default' => 'Default',
+                'default' => 'Domyślny',
             ],
             'attribute-groups' => [
                 'description'      => 'Opis',

@@ -4,7 +4,7 @@ return [
     'seeders' => [
         'attribute' => [
             'attribute-families' => [
-                'default' => 'Default',
+                'default' => 'Implicit',
             ],
             'attribute-groups' => [
                 'description'      => 'Descriere',
@@ -70,7 +70,7 @@ return [
                 'meta-title'       => 'Magazin demo',
                 'meta-keywords'    => 'Cuvinte cheie meta magazin demo',
                 'meta-description' => 'Descriere meta magazin demo',
-                'name'             => 'Default',
+                'name'             => 'Implicit',
             ],
             'currencies' => [
                 'AED' => 'Dirham',

@@ -4,7 +4,7 @@ return [
     'seeders' => [
         'attribute' => [
             'attribute-families' => [
-                'default' => 'Default',
+                'default' => '기본값',
             ],
             'attribute-groups' => [
                 'description'      => '설명',

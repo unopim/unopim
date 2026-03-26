@@ -8,7 +8,6 @@ return [
             ],
         ],
     ],
-
     'catalog' => [
         'families' => [
             'edit' => [
@@ -20,39 +19,33 @@ return [
                     'save-btn'            => 'Зберегти',
                     'back-btn'            => 'Назад',
                     'mass-update-success' => 'Повноту успішно оновлено',
-
-                    'datagrid' => [
+                    'datagrid'            => [
                         'code'             => 'Код',
                         'name'             => 'Назва',
                         'channel-required' => 'Обов\'язково в каналах',
-
-                        'actions' => [
+                        'actions'          => [
                             'change-requirement' => 'Змінити вимогу повноти',
                         ],
                     ],
                 ],
             ],
         ],
-
         'products' => [
             'index' => [
                 'datagrid' => [
-                    'missing-completeness-setting' => 'N/A',
+                    'missing-completeness-setting' => 'Н/А',
                     'completeness'                 => 'Завершено',
                 ],
             ],
-
             'edit' => [
                 'completeness' => [
                     'title'    => 'Повнота',
                     'subtitle' => 'Середня повнота',
                 ],
-
                 'required-attributes' => 'відсутні обов\'язкові атрибути',
             ],
         ],
     ],
-
     'notifications' => [
         'completeness-title'             => 'Обчислення повноти завершено',
         'completeness-calculated'        => 'Повноту розраховано для :count продуктів.',
@@ -63,13 +56,11 @@ return [
         'email-body-family'              => 'Обчислення повноти завершено для :count продуктів у сімействі атрибутів ":family".',
         'email-footer'                   => 'Ви можете переглянути деталі повноти на своїй панелі керування.',
     ],
-
     'dashboard' => [
         'index' => [
             'completeness' => [
                 'calculated-products' => 'Розраховані продукти',
-
-                'suggestion' => [
+                'suggestion'          => [
                     'low'     => 'Низька повнота, додайте деталі для покращення.',
                     'medium'  => 'Продовжуйте, додавайте більше інформації.',
                     'high'    => 'Майже завершено, залишилось лише кілька деталей.',
