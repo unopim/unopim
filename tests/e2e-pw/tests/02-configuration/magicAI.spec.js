@@ -329,7 +329,7 @@ test('3.5 - Verify Create System Prompt modal fields', async ({ adminPage }) => 
 
   await expect(adminPage.locator('#app').getByText('Create New System Prompt')).toBeVisible();
   await expect(adminPage.locator('input[name="title"]')).toBeVisible();
-  await expect(adminPage.locator('#app').getByText('Status')).toBeVisible();
+  await expect(adminPage.locator('#app').getByText('Status').first()).toBeVisible();
   await expect(adminPage.locator('#app').getByText('Max Output Tokens')).toBeVisible();
   await expect(adminPage.locator('#app').getByText('Temperature')).toBeVisible();
   await expect(adminPage.locator('textarea[name="tone"]')).toBeVisible();
@@ -836,9 +836,9 @@ test('9.2 - Create a Role with MagicAI permission', async ({ adminPage }) => {
   await adminPage.waitForLoadState('networkidle');
 
   // Wait for tree view checkboxes to render before clicking
-  await expect(adminPage.locator('label div:text("Dashboard")')).toBeVisible({ timeout: 5000 });
-  await adminPage.locator('label div:text("Dashboard")').click();
-  await adminPage.locator('label div:text("Configuration")').click();
+  await expect(adminPage.locator('label div:text("Dashboard")').first()).toBeVisible({ timeout: 5000 });
+  await adminPage.locator('label div:text("Dashboard")').first().click();
+  await adminPage.locator('label div:text("Configuration")').first().click();
 
   await adminPage.getByRole('textbox', { name: 'Name' }).fill('MagicAI Manager');
   await adminPage.getByRole('textbox', { name: 'Description' }).fill('Role with Magic AI permissions only');

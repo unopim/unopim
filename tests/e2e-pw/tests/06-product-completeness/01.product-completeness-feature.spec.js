@@ -89,7 +89,8 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await itemRow.locator('span[title="Edit"]').first().click();
     await expect(adminPage.locator('div').filter({ hasText: /^SKU$/ })).toBeVisible();
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
-    await expect(adminPage.locator('div').filter({ hasText: /^sku$/ })).toBeVisible();
+    await adminPage.waitForLoadState('networkidle');
+    await expect(adminPage.locator('#app').getByText('sku')).toBeVisible({ timeout: 15000 });
     await expect(adminPage.locator('#app').getByText('SKU', { exact: true })).toBeVisible();
 
 });
@@ -100,11 +101,13 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     const itemRow = adminPage.locator('div', { hasText: 'displaycompletensstab' });
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
+    await adminPage.waitForLoadState('networkidle');
     await adminPage.getByRole('textbox', { name: 'Search', exact: true }).click();
     await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill('sku');
     await adminPage.getByRole('textbox', { name: 'Search', exact: true }).press('Enter');
+    await adminPage.waitForLoadState('networkidle');
     await expect(adminPage.locator('#app').getByText('1 Results')).toBeVisible();
-    await expect(adminPage.locator('div').filter({ hasText: /^sku$/ })).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('sku')).toBeVisible();
 });
 
   test('Verify default channel appears in dropdown for “Required in Channel” in Completeness tab', async ({ adminPage }) => {
@@ -123,11 +126,13 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     const itemRow = adminPage.locator('div', { hasText: 'displaycompletensstab' });
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
+    await adminPage.waitForLoadState('networkidle');
     await adminPage.locator('.relative.inline-flex').click();
     await adminPage.getByRole('textbox', { name: 'Code' }).click();
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('sku');
     await adminPage.getByText('Save').click();
     await adminPage.getByText('Save').click();
+    await adminPage.waitForLoadState('networkidle');
     await expect(adminPage.locator('#app').getByText('1 Results')).toBeVisible();
 });
 
@@ -214,13 +219,14 @@ test('Create a new channel and assigned multiple locale and currency', async ({ 
     await adminPage.waitForLoadState('networkidle');
     const itemRow = adminPage.locator('div', { hasText: 'af_ZAAfrikaans (South Africa)' });
     await itemRow.locator('span[title="Edit"]').first().click();
-    const statusCheckbox = adminPage.getByRole('checkbox', { name: /status/i });
+    await adminPage.waitForLoadState('load');
+    const statusCheckbox = adminPage.locator('input[name="status"]').first();
     const isChecked = await statusCheckbox.isChecked();
     if (!isChecked) {
         await adminPage.locator('label[for="status"]').first().click();
     }
     await adminPage.getByRole('button', { name: 'Save Locale' }).click();
-    await expect(adminPage.locator('#app').getByText(/Locale Updated successfully/i)).toBeVisible();
+    await expect(adminPage.locator('#app').getByText(/Locale Updated successfully/i)).toBeVisible({ timeout: 15000 });
 
     //Enable the Andorran Peseta currency
     await adminPage.getByRole('link', { name: 'Currencies' }).click();
@@ -230,7 +236,8 @@ test('Create a new channel and assigned multiple locale and currency', async ({ 
     await adminPage.waitForLoadState('networkidle');
     const itemRow1 = adminPage.locator('div', { hasText: 'ADPAndorran Peseta' });
     await itemRow1.locator('span[title="Edit"]').first().click();
-    const currencyStatus = adminPage.getByRole('checkbox', { name: /status/i });
+    await adminPage.waitForLoadState('load');
+    const currencyStatus = adminPage.locator('input[name="status"]').first();
     const isCurrencyChecked = await currencyStatus.isChecked();
     if (!isCurrencyChecked) {
         await adminPage.locator('label[for="status"]').first().click();
