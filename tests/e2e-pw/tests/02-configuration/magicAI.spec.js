@@ -331,7 +331,7 @@ test('3.5 - Verify Create System Prompt modal fields', async ({ adminPage }) => 
   await expect(adminPage.locator('input[name="title"]')).toBeVisible();
   await expect(adminPage.locator('#app').getByText('Status').first()).toBeVisible();
   await expect(adminPage.locator('#app').getByText('Max Output Tokens')).toBeVisible();
-  await expect(adminPage.locator('#app').getByText('Temperature')).toBeVisible();
+  await expect(adminPage.locator('#app').getByText('Temperature').first()).toBeVisible();
   await expect(adminPage.locator('textarea[name="tone"]')).toBeVisible();
   await expect(adminPage.getByRole('button', { name: 'Save' })).toBeVisible();
 });
@@ -663,9 +663,8 @@ test('7.3 - Open AI Assistance modal and verify fields', async ({ adminPage }) =
   await expect(adminPage.locator('#app').getByText(/System Prompt/)).toBeVisible();
   await expect(adminPage.getByRole('button', { name: 'Generate' })).toBeVisible();
 
-  // Verify platform and model dropdowns
-  const dropdowns = adminPage.locator('.multiselect');
-  expect(await dropdowns.count()).toBeGreaterThanOrEqual(1);
+  // Verify platform and model dropdowns exist
+  await expect(adminPage.locator('.multiselect').first()).toBeVisible();
 
   // Close modal
   await adminPage.locator('.icon-cancel').click();

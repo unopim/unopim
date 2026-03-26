@@ -118,6 +118,7 @@ jobs:
         run: |
           php artisan unopim:install --skip-env-check --skip-admin-creation
           php artisan migrate:fresh --seed
+          php artisan db:seed --class="Webkul\\Installer\\Database\\Seeders\\ProductTableSeeder"
           php artisan serve --host=0.0.0.0 --port=8000 > /dev/null 2>&1 &
           php artisan queue:work --queue=default,system,completeness > /dev/null 2>&1 &
           echo "Waiting for server..."

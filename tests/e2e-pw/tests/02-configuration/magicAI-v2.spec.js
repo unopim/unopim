@@ -413,7 +413,12 @@ test('7.2 - Add Platform modal has Provider dropdown with all provider options',
   await expect(providerSelect).toBeVisible();
 
   await providerSelect.locator('.multiselect__placeholder, .multiselect__single').first().click();
-  const optionTexts = await adminPage.locator('.multiselect__element').allTextContents();
+  const options = adminPage.locator('.multiselect__option');
+  const count = await options.count();
+  const optionTexts = [];
+  for (let i = 0; i < count; i++) {
+    optionTexts.push(await options.nth(i).textContent());
+  }
   await adminPage.keyboard.press('Escape');
   expect(optionTexts.some(t => t.includes('OpenAI'))).toBe(true);
   expect(optionTexts.some(t => t.includes('Anthropic'))).toBe(true);

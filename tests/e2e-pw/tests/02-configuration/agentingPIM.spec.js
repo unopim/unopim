@@ -329,7 +329,7 @@ test('5.1 - Sending a message shows user message bubble', async ({ adminPage }) 
   await adminPage.getByPlaceholder('Ask me anything about your catalog…').fill('How many products do I have?');
   await adminPage.getByRole('button', { name: 'Send' }).click();
 
-  await expect(adminPage.getByText('How many products do I have?')).toBeVisible();
+  await expect(adminPage.getByText('How many products do I have?').first()).toBeVisible();
 });
 
 test('5.2 - AI responds with a message after sending', async ({ adminPage }) => {
