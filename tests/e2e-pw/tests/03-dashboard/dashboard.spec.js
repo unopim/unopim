@@ -341,6 +341,10 @@ test('7.3 - Product Activity chart shows Updated legend', async ({ adminPage }) 
 });
 
 test('7.4 - Product Activity chart shows all 7 day labels', async ({ adminPage }) => {
+  await adminPage.waitForLoadState('networkidle');
+  const noActivity = adminPage.getByText(/no.*activity|no.*products/i);
+  test.skip(await noActivity.isVisible().catch(() => false), 'No product activity in current environment');
+
   const dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   let foundDays = 0;
 
@@ -355,6 +359,10 @@ test('7.4 - Product Activity chart shows all 7 day labels', async ({ adminPage }
 });
 
 test('7.5 - Product Activity chart shows date numbers for each day', async ({ adminPage }) => {
+  await adminPage.waitForLoadState('networkidle');
+  const noActivity = adminPage.getByText(/no.*activity|no.*products/i);
+  test.skip(await noActivity.isVisible().catch(() => false), 'No product activity in current environment');
+
   // Each day column has a date number beneath the day name
   // Check that at least some date numbers are visible (they're two-digit numbers)
   const dateNumbers = adminPage.locator('p').filter({ hasText: /^\d{1,2}$/ });
@@ -375,6 +383,10 @@ test('7.7 - Product Activity shows "Last 7 days" label', async ({ adminPage }) =
 });
 
 test('7.8 - Product Activity bars show created/updated counts per day', async ({ adminPage }) => {
+  await adminPage.waitForLoadState('networkidle');
+  const noActivity = adminPage.getByText(/no.*activity|no.*products/i);
+  test.skip(await noActivity.isVisible().catch(() => false), 'No product activity in current environment');
+
   // Each bar column shows values like "0 / 0" or "18 / 15"
   const slashSeparators = adminPage.locator('text=/');
   const count = await slashSeparators.count();
@@ -413,6 +425,10 @@ test('8.4 - Completeness shows locale names with progress percentage', async ({ 
 });
 
 test('8.5 - Completeness shows multiple locale entries', async ({ adminPage }) => {
+  await adminPage.waitForLoadState('networkidle');
+  const noProducts = adminPage.getByText('No products yet.');
+  test.skip(await noProducts.isVisible().catch(() => false), 'No products in current environment');
+
   // Each locale should have a percentage display
   const percentages = adminPage.getByText(/\d+%/);
   const count = await percentages.count();

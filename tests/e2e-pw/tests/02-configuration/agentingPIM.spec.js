@@ -282,7 +282,14 @@ test('5.0 - Setup: Create OpenAI platform for chat tests', async ({ adminPage })
   // Create platform
   await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
   await expect(adminPage.getByText('Add AI Platform')).toBeVisible();
-  await adminPage.locator('select[name="provider"]').selectOption({ label: 'OpenAI' });
+  // Select provider - try component select first, fall back to native select
+  const componentSelect = adminPage.locator('input[name="provider"]').locator('..');
+  if (await componentSelect.locator('.multiselect__placeholder').isVisible({ timeout: 2000 }).catch(() => false)) {
+    await componentSelect.locator('.multiselect__placeholder').click();
+    await adminPage.getByRole('option', { name: 'OpenAI' }).first().click();
+  } else {
+    await adminPage.locator('select[name="provider"]').selectOption({ label: 'OpenAI' });
+  }
   await adminPage.locator('input[name="label"]').fill('OpenAI Chat Test');
   await adminPage.locator('input[name="api_key"]').fill(OPENAI_API_KEY);
 

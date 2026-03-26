@@ -15,7 +15,7 @@ test('Create User with empty name field', async ({ adminPage }) => {
   await adminPage.locator('input[name="ui_locale_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option', { name: 'English (United States)' }).click();
   await adminPage.locator('input[name="timezone"]').locator('..').locator('.multiselect__placeholder').click();
-  await adminPage.locator('input[name="timezone"].multiselect__input').fill('new_y');
+  await adminPage.keyboard.type('new_y');
   await adminPage.keyboard.press("Enter");
   await adminPage.locator('input[name="role_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option').first().click();
@@ -39,7 +39,7 @@ test('Create User with empty Email field', async ({ adminPage }) => {
   await adminPage.locator('input[name="ui_locale_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option', { name: 'English (United States)' }).click();
   await adminPage.locator('input[name="timezone"]').locator('..').locator('.multiselect__placeholder').click();
-  await adminPage.locator('input[name="timezone"].multiselect__input').fill('new_y');
+  await adminPage.keyboard.type('new_y');
   await adminPage.keyboard.press("Enter");
   await adminPage.locator('input[name="role_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option').first().click();
@@ -63,7 +63,7 @@ test('Create User with empty password field', async ({ adminPage }) => {
   await adminPage.locator('input[name="ui_locale_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option', { name: 'English (United States)' }).click();
   await adminPage.locator('input[name="timezone"]').locator('..').locator('.multiselect__placeholder').click();
-  await adminPage.locator('input[name="timezone"].multiselect__input').fill('new_y');
+  await adminPage.keyboard.type('new_y');
   await adminPage.keyboard.press("Enter");
   await adminPage.locator('input[name="role_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option').first().click();
@@ -87,7 +87,7 @@ test('Create User with empty confirm password field', async ({ adminPage }) => {
   await adminPage.locator('input[name="ui_locale_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option', { name: 'English (United States)' }).click();
   await adminPage.locator('input[name="timezone"]').locator('..').locator('.multiselect__placeholder').click();
-  await adminPage.locator('input[name="timezone"].multiselect__input').fill('new_y');
+  await adminPage.keyboard.type('new_y');
   await adminPage.keyboard.press("Enter");
   await adminPage.locator('input[name="role_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option').first().click();
@@ -111,7 +111,7 @@ test('Create User with different password in confirm password field', async ({ a
   await adminPage.locator('input[name="ui_locale_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option', { name: 'English (United States)' }).click();
   await adminPage.locator('input[name="timezone"]').locator('..').locator('.multiselect__placeholder').click();
-  await adminPage.locator('input[name="timezone"].multiselect__input').fill('new_y');
+  await adminPage.keyboard.type('new_y');
   await adminPage.keyboard.press("Enter");
   await adminPage.locator('input[name="role_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option').first().click();
@@ -133,7 +133,7 @@ test('Create User with empty UI locale field', async ({ adminPage }) => {
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).click();
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).fill('testing123');
   await adminPage.locator('input[name="timezone"]').locator('..').locator('.multiselect__placeholder').click();
-  await adminPage.locator('input[name="timezone"].multiselect__input').fill('new_y');
+  await adminPage.keyboard.type('new_y');
   await adminPage.keyboard.press("Enter");
   await adminPage.locator('input[name="role_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option').first().click();
@@ -178,7 +178,7 @@ test('Create User with empty Role field', async ({ adminPage }) => {
   await adminPage.locator('input[name="ui_locale_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option', { name: 'English (United States)' }).click();
   await adminPage.locator('input[name="timezone"]').locator('..').locator('.multiselect__placeholder').click();
-  await adminPage.locator('input[name="timezone"].multiselect__input').fill('new_y');
+  await adminPage.keyboard.type('new_y');
   await adminPage.keyboard.press("Enter");
   await adminPage.locator('label[for="status"]').click();
   await adminPage.getByRole('button', { name: 'Save User' }).click();
@@ -200,7 +200,7 @@ test('Create User', async ({ adminPage }) => {
   await adminPage.locator('input[name="ui_locale_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option', { name: 'English (United States)' }).click();
   await adminPage.locator('input[name="timezone"]').locator('..').locator('.multiselect__placeholder').click();
-  await adminPage.locator('input[name="timezone"].multiselect__input').fill('new_y');
+  await adminPage.keyboard.type('new_y');
   await adminPage.keyboard.press("Enter");
   await adminPage.locator('input[name="role_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option').first().click();

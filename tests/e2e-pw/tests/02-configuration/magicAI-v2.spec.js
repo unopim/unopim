@@ -34,7 +34,8 @@ test('0.1 - Setup: Create OpenAI platform for config tests', async ({ adminPage 
   await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
   await expect(adminPage.locator('#app').getByText('Add AI Platform')).toBeVisible();
 
-  await adminPage.locator('select[name="provider"]').selectOption({ label: 'OpenAI' });
+  await adminPage.locator('input[name="provider"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
+  await adminPage.getByRole('option', { name: 'OpenAI' }).first().click()
   await expect(adminPage.locator('input[name="label"]')).toBeVisible();
   await adminPage.locator('input[name="label"]').fill('OpenAI Test Platform');
   await adminPage.locator('input[name="api_key"]').fill(OPENAI_API_KEY);
@@ -426,7 +427,7 @@ test('7.2 - Add Platform modal has Provider dropdown with all provider options',
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
   await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
 
-  const providerSelect = adminPage.locator('select[name="provider"]');
+  const providerSelect = adminPage.locator('input[name="provider"]').locator('..');
   await expect(providerSelect).toBeVisible();
 
   const optionTexts = await providerSelect.locator('option').allTextContents();
@@ -445,7 +446,8 @@ test('7.2 - Add Platform modal has Provider dropdown with all provider options',
 test('7.3 - Selecting OpenAI provider shows Label, API Key, API URL, Models, toggles', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
   await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
-  await adminPage.locator('select[name="provider"]').selectOption({ label: 'OpenAI' });
+  await adminPage.locator('input[name="provider"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
+  await adminPage.getByRole('option', { name: 'OpenAI' }).first().click()
 
   // Label field (pre-filled)
   await expect(adminPage.locator('input[name="label"]')).toBeVisible();
@@ -471,7 +473,8 @@ test('7.3 - Selecting OpenAI provider shows Label, API Key, API URL, Models, tog
 test('7.4 - OpenAI API URL is pre-filled with https://api.openai.com/v1', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
   await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
-  await adminPage.locator('select[name="provider"]').selectOption({ label: 'OpenAI' });
+  await adminPage.locator('input[name="provider"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
+  await adminPage.getByRole('option', { name: 'OpenAI' }).first().click()
 
   const apiUrlInput = adminPage.locator('input[name="api_url"]');
   await expect(apiUrlInput).toHaveValue('https://api.openai.com/v1');
@@ -502,7 +505,8 @@ test('7.7 - Save platform without required fields shows validation errors', asyn
 test('7.8 - Label field auto-fills when provider is selected', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
   await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
-  await adminPage.locator('select[name="provider"]').selectOption({ label: 'Groq' });
+  await adminPage.locator('input[name="provider"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
+  await adminPage.getByRole('option', { name: 'Groq' }).first().click()
 
   const labelInput = adminPage.locator('input[name="label"]');
   await expect(labelInput).toHaveValue('Groq');
@@ -511,7 +515,8 @@ test('7.8 - Label field auto-fills when provider is selected', async ({ adminPag
 test('7.9 - Status toggle is enabled by default when adding a new platform', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
   await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
-  await adminPage.locator('select[name="provider"]').selectOption({ label: 'OpenAI' });
+  await adminPage.locator('input[name="provider"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
+  await adminPage.getByRole('option', { name: 'OpenAI' }).first().click()
 
   // Find the Status checkbox — it should be checked by default
   const statusCheckboxes = adminPage.locator('input[type="checkbox"]');
@@ -561,7 +566,8 @@ test('9.1 - Add Platform with valid OpenAI API key fetches models automatically'
 
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
   await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
-  await adminPage.locator('select[name="provider"]').selectOption({ label: 'OpenAI' });
+  await adminPage.locator('input[name="provider"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
+  await adminPage.getByRole('option', { name: 'OpenAI' }).first().click()
 
   // Fill API key
   await adminPage.locator('input[name="api_key"]').fill(OPENAI_API_KEY);
@@ -589,7 +595,8 @@ test('9.2 - Fetched model list includes known OpenAI models', async ({ adminPage
 
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
   await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
-  await adminPage.locator('select[name="provider"]').selectOption({ label: 'OpenAI' });
+  await adminPage.locator('input[name="provider"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
+  await adminPage.getByRole('option', { name: 'OpenAI' }).first().click()
 
   await adminPage.locator('input[name="api_key"]').fill(OPENAI_API_KEY);
   await adminPage.locator('input[name="label"]').click();
@@ -613,7 +620,8 @@ test('9.3 - Model search filters the model checkbox list', async ({ adminPage })
 
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
   await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
-  await adminPage.locator('select[name="provider"]').selectOption({ label: 'OpenAI' });
+  await adminPage.locator('input[name="provider"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
+  await adminPage.getByRole('option', { name: 'OpenAI' }).first().click()
 
   await adminPage.locator('input[name="api_key"]').fill(OPENAI_API_KEY);
   await adminPage.locator('input[name="label"]').click();
@@ -644,7 +652,8 @@ test('9.4 - Selecting a model adds it as a tag chip', async ({ adminPage }) => {
 
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
   await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
-  await adminPage.locator('select[name="provider"]').selectOption({ label: 'OpenAI' });
+  await adminPage.locator('input[name="provider"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
+  await adminPage.getByRole('option', { name: 'OpenAI' }).first().click()
 
   await adminPage.locator('input[name="api_key"]').fill(OPENAI_API_KEY);
   await adminPage.locator('input[name="label"]').click();
@@ -674,7 +683,8 @@ test('9.5 - Removing a model tag chip unchecks it in the list', async ({ adminPa
 
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
   await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
-  await adminPage.locator('select[name="provider"]').selectOption({ label: 'OpenAI' });
+  await adminPage.locator('input[name="provider"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
+  await adminPage.getByRole('option', { name: 'OpenAI' }).first().click()
 
   await adminPage.locator('input[name="api_key"]').fill(OPENAI_API_KEY);
   await adminPage.locator('input[name="label"]').click();
@@ -706,7 +716,8 @@ test('9.6 - Adding a custom model ID via the text input', async ({ adminPage }) 
 
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
   await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
-  await adminPage.locator('select[name="provider"]').selectOption({ label: 'OpenAI' });
+  await adminPage.locator('input[name="provider"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
+  await adminPage.getByRole('option', { name: 'OpenAI' }).first().click()
 
   await adminPage.locator('input[name="api_key"]').fill(OPENAI_API_KEY);
   await adminPage.locator('input[name="label"]').click();
@@ -748,7 +759,7 @@ test('9.7 - Edit existing platform shows pre-populated fields with fetched model
   await expect(adminPage.locator('#app').getByText('Edit AI Platform')).toBeVisible({ timeout: 5000 });
 
   // Provider should be pre-selected
-  const providerSelect = adminPage.locator('select[name="provider"]');
+  const providerSelect = adminPage.locator('input[name="provider"]').locator('..');
   const selectedValue = await providerSelect.inputValue();
   expect(selectedValue).not.toBe('');
 
@@ -779,7 +790,8 @@ test('9.8 - Save platform with valid API key and selected models succeeds', asyn
 
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
   await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
-  await adminPage.locator('select[name="provider"]').selectOption({ label: 'OpenAI' });
+  await adminPage.locator('input[name="provider"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
+  await adminPage.getByRole('option', { name: 'OpenAI' }).first().click()
 
   // Fill credentials
   const uniqueLabel = 'E2E Test Platform ' + Date.now().toString().slice(-5);
@@ -833,7 +845,8 @@ test('9.9 - Invalid API key shows error when saving platform', async ({ adminPag
 
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
   await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
-  await adminPage.locator('select[name="provider"]').selectOption({ label: 'OpenAI' });
+  await adminPage.locator('input[name="provider"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
+  await adminPage.getByRole('option', { name: 'OpenAI' }).first().click()
 
   await adminPage.locator('input[name="label"]').clear();
   await adminPage.locator('input[name="label"]').fill('Invalid Key Test');

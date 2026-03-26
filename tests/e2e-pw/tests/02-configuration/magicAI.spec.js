@@ -40,7 +40,7 @@ test('1.2 - Verify all provider options in Add Platform modal', async ({ adminPa
   await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
   await expect(adminPage.locator('#app').getByText('Add AI Platform')).toBeVisible();
 
-  const providerSelect = adminPage.locator('select[name="provider"]');
+  const providerSelect = adminPage.locator('input[name="provider"]').locator('..');
   const optionTexts = await providerSelect.locator('option').allTextContents();
 
   expect(optionTexts.some(t => t.includes('OpenAI'))).toBe(true);
@@ -58,7 +58,8 @@ test('1.2 - Verify all provider options in Add Platform modal', async ({ adminPa
 test('1.3 - Verify selecting provider shows Label and API Key fields', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
   await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
-  await adminPage.locator('select[name="provider"]').selectOption({ label: 'OpenAI' });
+  await adminPage.locator('input[name="provider"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
+  await adminPage.getByRole('option', { name: 'OpenAI' }).first().click()
 
   await expect(adminPage.locator('input[name="label"]')).toBeVisible();
   await expect(adminPage.locator('input[name="api_key"]')).toBeVisible();
@@ -74,7 +75,8 @@ test('1.4 - Save platform without required fields shows validation', async ({ ad
 test('1.5 - Test connection with invalid API key', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
   await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
-  await adminPage.locator('select[name="provider"]').selectOption({ label: 'OpenAI' });
+  await adminPage.locator('input[name="provider"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
+  await adminPage.getByRole('option', { name: 'OpenAI' }).first().click()
   await adminPage.locator('input[name="label"]').fill('Invalid Platform');
   await adminPage.locator('input[name="api_key"]').fill('invalid-openai-key-12345');
 
@@ -112,7 +114,8 @@ test('1.6 - Create OpenAI platform with valid credentials', async ({ adminPage }
   await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
   await expect(adminPage.locator('#app').getByText('Add AI Platform')).toBeVisible();
 
-  await adminPage.locator('select[name="provider"]').selectOption({ label: 'OpenAI' });
+  await adminPage.locator('input[name="provider"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
+  await adminPage.getByRole('option', { name: 'OpenAI' }).first().click()
   await expect(adminPage.locator('input[name="label"]')).toBeVisible();
   await adminPage.locator('input[name="label"]').fill('OpenAI Test Platform');
   await adminPage.locator('input[name="api_key"]').fill(OPENAI_API_KEY);
