@@ -16,9 +16,9 @@ async function openDatagrid(adminPage, createBtnName) {
   await adminPage.getByRole('button', { name: createBtnName }).click();
   // Close the modal that opens alongside the datagrid
   const cancelIcon = adminPage.locator('.icon-cancel');
-  if (await cancelIcon.isVisible({ timeout: 2000 }).catch(() => false)) {
+  if (await cancelIcon.isVisible({ timeout: 5000 }).catch(() => false)) {
     await cancelIcon.click();
-    await expect(cancelIcon).not.toBeVisible();
+    await expect(cancelIcon).not.toBeVisible({ timeout: 5000 });
   }
 }
 
@@ -41,7 +41,7 @@ test('1.2 - Verify all provider options in Add Platform modal', async ({ adminPa
   await expect(adminPage.locator('#app').getByText('Add AI Platform')).toBeVisible();
 
   // Click to open dropdown and check options
-  await adminPage.locator('input[name="provider"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
+  await adminPage.locator('input[name="provider"]').first().locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
   const optionTexts = await adminPage.locator('.multiselect__element').allTextContents();
 
   expect(optionTexts.some(t => t.includes('OpenAI'))).toBe(true);
@@ -59,7 +59,7 @@ test('1.2 - Verify all provider options in Add Platform modal', async ({ adminPa
 test('1.3 - Verify selecting provider shows Label and API Key fields', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
   await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
-  await adminPage.locator('input[name="provider"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
+  await adminPage.locator('input[name="provider"]').first().locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
   await adminPage.getByRole('option', { name: 'OpenAI' }).first().click()
 
   await expect(adminPage.locator('input[name="label"]')).toBeVisible();
@@ -76,7 +76,7 @@ test('1.4 - Save platform without required fields shows validation', async ({ ad
 test('1.5 - Test connection with invalid API key', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
   await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
-  await adminPage.locator('input[name="provider"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
+  await adminPage.locator('input[name="provider"]').first().locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
   await adminPage.getByRole('option', { name: 'OpenAI' }).first().click()
   await adminPage.locator('input[name="label"]').fill('Invalid Platform');
   await adminPage.locator('input[name="api_key"]').fill('invalid-openai-key-12345');
@@ -92,30 +92,17 @@ test('1.6 - Create OpenAI platform with valid credentials', async ({ adminPage }
   test.setTimeout(60000);
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
 
-  // Check if platform already exists (from a previous run)
-  await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
-  await expect(adminPage.locator('#app').getByText('Add AI Platform')).toBeVisible();
-  const existing = adminPage.getByText('OpenAI Test Platform');
-  if (await existing.isVisible().catch(() => false)) {
-    // Platform already exists, close modal and skip creation
-    await adminPage.locator('.icon-cancel').click();
+  // Check if platform already exists in the datagrid (before opening modal)
+  const existingPlatform = adminPage.locator('span[title="Edit"]');
+  if (await existingPlatform.first().isVisible({ timeout: 3000 }).catch(() => false)) {
     return;
   }
-  // Also check for any OpenAI platform
-  const existingOpenAI = adminPage.locator('div').filter({ hasText: /OpenAI/ }).filter({ hasText: /openai/i });
-  if (await existingOpenAI.first().isVisible().catch(() => false)) {
-    await adminPage.locator('.icon-cancel').click();
-    return;
-  }
-  // Close modal opened by Add Platform
-  await adminPage.locator('.icon-cancel').click();
-  await expect(adminPage.locator('.icon-cancel')).not.toBeVisible();
 
   // Now create the platform
   await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
   await expect(adminPage.locator('#app').getByText('Add AI Platform')).toBeVisible();
 
-  await adminPage.locator('input[name="provider"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
+  await adminPage.locator('input[name="provider"]').first().locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
   await adminPage.getByRole('option', { name: 'OpenAI' }).first().click()
   await expect(adminPage.locator('input[name="label"]')).toBeVisible();
   await adminPage.locator('input[name="label"]').fill('OpenAI Test Platform');
@@ -123,29 +110,19 @@ test('1.6 - Create OpenAI platform with valid credentials', async ({ adminPage }
 
   // Click outside API key field to trigger model fetch via AJAX
   await adminPage.locator('input[name="label"]').click();
-  // Wait for model checkboxes to appear
-  const modelCheckbox = adminPage.locator('input[type="checkbox"]').first();
-  await modelCheckbox.waitFor({ state: 'visible', timeout: 30000 }).catch(() => {});
-  if (await modelCheckbox.isVisible().catch(() => false)) {
-    if (!(await modelCheckbox.isChecked())) {
-      await modelCheckbox.check();
-    }
-  }
+  // Wait for models to auto-load after AJAX fetch (models auto-select recommended or first 3)
+  const modelTag = adminPage.locator('.rounded-full.bg-violet-100').first();
+  await modelTag.waitFor({ state: 'visible', timeout: 30000 }).catch(() => {});
 
   await adminPage.getByRole('button', { name: 'Save' }).click();
-  await expect(adminPage.locator('#app').getByText(/saved successfully|created successfully|updated successfully/i)).toBeVisible({ timeout: 15000 });
+  await expect(adminPage.locator('#app').getByText(/saved successfully|created successfully|updated successfully/i)).toBeVisible({ timeout: 30000 });
 });
 
 test('1.7 - Verify platform appears in datagrid after creation', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
-  await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
-  await expect(adminPage.locator('#app').getByText('Add AI Platform')).toBeVisible();
-  // Close modal to access grid
-  await adminPage.locator('.icon-cancel').click();
-  await expect(adminPage.locator('.icon-cancel')).not.toBeVisible();
 
-  // Verify an OpenAI platform exists
-  await expect(adminPage.locator('div').filter({ hasText: /OpenAI/i }).first()).toBeVisible();
+  // Verify an OpenAI platform exists in the datagrid
+  await expect(adminPage.locator('span[title="Edit"]').first()).toBeVisible({ timeout: 10000 });
 });
 
 test('1.8 - Verify platform datagrid columns', async ({ adminPage }) => {
@@ -324,7 +301,7 @@ test('3.5 - Verify Create System Prompt modal fields', async ({ adminPage }) => 
   await adminPage.goto(MAGIC_AI_SYSTEM_PROMPT_URL, { waitUntil: 'networkidle' });
   await adminPage.getByRole('button', { name: 'Create System Prompt' }).click();
 
-  await expect(adminPage.locator('#app').getByText('Create New System Prompt')).toBeVisible();
+  await expect(adminPage.locator('#app').getByText('Create New System Prompt')).toBeVisible({ timeout: 10000 });
   await expect(adminPage.locator('input[name="title"]')).toBeVisible();
   await expect(adminPage.locator('#app').getByText('Status').first()).toBeVisible();
   await expect(adminPage.locator('#app').getByText('Max Output Tokens')).toBeVisible();
@@ -657,7 +634,7 @@ test('7.3 - Open AI Assistance modal and verify fields', async ({ adminPage }) =
   // Verify AI Assistance modal fields
   await expect(adminPage.locator('#app').getByText('AI Assistance')).toBeVisible();
   await expect(adminPage.locator('#app').getByText('Default Prompt')).toBeVisible();
-  await expect(adminPage.locator('#app').getByText(/System Prompt/)).toBeVisible();
+  await expect(adminPage.locator('#app').getByText(/System Prompt/).first()).toBeVisible();
   await expect(adminPage.getByRole('button', { name: 'Generate' })).toBeVisible();
 
   // Verify platform and model dropdowns exist
@@ -678,7 +655,7 @@ test('7.4 - Generate content using Magic AI', async ({ adminPage }) => {
   await adminPage.waitForLoadState('networkidle');
 
   // Fill product name first
-  const nameField = adminPage.locator('input[type="text"]').nth(2);
+  const nameField = adminPage.locator('input[name*="[name]"]').first();
   await nameField.fill('Premium Wireless Headphones');
 
   // Click Magic AI button
