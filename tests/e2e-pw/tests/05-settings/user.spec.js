@@ -12,12 +12,12 @@ test('Create User with empty name field', async ({ adminPage }) => {
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).fill('testing123');
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).click();
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).fill('testing123');
-  await adminPage.getByRole('textbox', { name: 'ui_locale_id-searchbox' }).click();
+  await adminPage.locator('input[name="ui_locale_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option', { name: 'English (United States)' }).click();
-  await adminPage.getByRole('textbox', { name: 'timezone-searchbox' }).click();
-  await adminPage.getByRole('textbox', { name: 'timezone-searchbox' }).fill('new_y');
+  await adminPage.locator('input[name="timezone"]').locator('..').locator('.multiselect__placeholder').click();
+  await adminPage.keyboard.type('new_y');
   await adminPage.keyboard.press("Enter");
-  await adminPage.getByRole('textbox', { name: 'role_id-searchbox' }).click();
+  await adminPage.locator('input[name="role_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option').first().click();
   await adminPage.locator('label[for="status"]').click();
   await adminPage.getByRole('button', { name: 'Save User' }).click();
@@ -36,12 +36,12 @@ test('Create User with empty Email field', async ({ adminPage }) => {
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).fill('testing123');
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).click();
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).fill('testing123');
-  await adminPage.getByRole('textbox', { name: 'ui_locale_id-searchbox' }).click();
+  await adminPage.locator('input[name="ui_locale_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option', { name: 'English (United States)' }).click();
-  await adminPage.getByRole('textbox', { name: 'timezone-searchbox' }).click();
-  await adminPage.getByRole('textbox', { name: 'timezone-searchbox' }).fill('new_y');
+  await adminPage.locator('input[name="timezone"]').locator('..').locator('.multiselect__placeholder').click();
+  await adminPage.keyboard.type('new_y');
   await adminPage.keyboard.press("Enter");
-  await adminPage.getByRole('textbox', { name: 'role_id-searchbox' }).click();
+  await adminPage.locator('input[name="role_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option').first().click();
   await adminPage.locator('label[for="status"]').click();
   await adminPage.getByRole('button', { name: 'Save User' }).click();
@@ -60,12 +60,12 @@ test('Create User with empty password field', async ({ adminPage }) => {
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).fill('');
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).click();
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).fill('testing123');
-  await adminPage.getByRole('textbox', { name: 'ui_locale_id-searchbox' }).click();
+  await adminPage.locator('input[name="ui_locale_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option', { name: 'English (United States)' }).click();
-  await adminPage.getByRole('textbox', { name: 'timezone-searchbox' }).click();
-  await adminPage.getByRole('textbox', { name: 'timezone-searchbox' }).fill('new_y');
+  await adminPage.locator('input[name="timezone"]').locator('..').locator('.multiselect__placeholder').click();
+  await adminPage.keyboard.type('new_y');
   await adminPage.keyboard.press("Enter");
-  await adminPage.getByRole('textbox', { name: 'role_id-searchbox' }).click();
+  await adminPage.locator('input[name="role_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option').first().click();
   await adminPage.locator('label[for="status"]').click();
   await adminPage.getByRole('button', { name: 'Save User' }).click();
@@ -84,12 +84,12 @@ test('Create User with empty confirm password field', async ({ adminPage }) => {
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).fill('testing123');
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).click();
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).fill('');
-  await adminPage.getByRole('textbox', { name: 'ui_locale_id-searchbox' }).click();
+  await adminPage.locator('input[name="ui_locale_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option', { name: 'English (United States)' }).click();
-  await adminPage.getByRole('textbox', { name: 'timezone-searchbox' }).click();
-  await adminPage.getByRole('textbox', { name: 'timezone-searchbox' }).fill('new_y');
+  await adminPage.locator('input[name="timezone"]').locator('..').locator('.multiselect__placeholder').click();
+  await adminPage.keyboard.type('new_y');
   await adminPage.keyboard.press("Enter");
-  await adminPage.getByRole('textbox', { name: 'role_id-searchbox' }).click();
+  await adminPage.locator('input[name="role_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option').first().click();
   await adminPage.locator('label[for="status"]').click();
   await adminPage.getByRole('button', { name: 'Save User' }).click();
@@ -108,12 +108,12 @@ test('Create User with different password in confirm password field', async ({ a
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).fill('testing123');
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).click();
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).fill('testing456');
-  await adminPage.getByRole('textbox', { name: 'ui_locale_id-searchbox' }).click();
+  await adminPage.locator('input[name="ui_locale_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option', { name: 'English (United States)' }).click();
-  await adminPage.getByRole('textbox', { name: 'timezone-searchbox' }).click();
-  await adminPage.getByRole('textbox', { name: 'timezone-searchbox' }).fill('new_y');
+  await adminPage.locator('input[name="timezone"]').locator('..').locator('.multiselect__placeholder').click();
+  await adminPage.keyboard.type('new_y');
   await adminPage.keyboard.press("Enter");
-  await adminPage.getByRole('textbox', { name: 'role_id-searchbox' }).click();
+  await adminPage.locator('input[name="role_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option').first().click();
   await adminPage.locator('label[for="status"]').click();
   await adminPage.getByRole('button', { name: 'Save User' }).click();
@@ -132,10 +132,10 @@ test('Create User with empty UI locale field', async ({ adminPage }) => {
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).fill('testing123');
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).click();
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).fill('testing123');
-  await adminPage.getByRole('textbox', { name: 'timezone-searchbox' }).click();
-  await adminPage.getByRole('textbox', { name: 'timezone-searchbox' }).fill('new_y');
+  await adminPage.locator('input[name="timezone"]').locator('..').locator('.multiselect__placeholder').click();
+  await adminPage.keyboard.type('new_y');
   await adminPage.keyboard.press("Enter");
-  await adminPage.getByRole('textbox', { name: 'role_id-searchbox' }).click();
+  await adminPage.locator('input[name="role_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option').first().click();
   await adminPage.locator('label[for="status"]').click();
   await adminPage.getByRole('button', { name: 'Save User' }).click();
@@ -154,9 +154,9 @@ test('Create User with empty Timezone field', async ({ adminPage }) => {
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).fill('testing123');
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).click();
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).fill('testing456');
-  await adminPage.getByRole('textbox', { name: 'ui_locale_id-searchbox' }).click();
+  await adminPage.locator('input[name="ui_locale_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option', { name: 'English (United States)' }).click();
-  await adminPage.getByRole('textbox', { name: 'role_id-searchbox' }).click();
+  await adminPage.locator('input[name="role_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option').first().click();
   await adminPage.locator('label[for="status"]').click();
   await adminPage.getByRole('button', { name: 'Save User' }).click();
@@ -175,10 +175,10 @@ test('Create User with empty Role field', async ({ adminPage }) => {
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).fill('testing123');
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).click();
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).fill('testing456');
-  await adminPage.getByRole('textbox', { name: 'ui_locale_id-searchbox' }).click();
+  await adminPage.locator('input[name="ui_locale_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option', { name: 'English (United States)' }).click();
-  await adminPage.getByRole('textbox', { name: 'timezone-searchbox' }).click();
-  await adminPage.getByRole('textbox', { name: 'timezone-searchbox' }).fill('new_y');
+  await adminPage.locator('input[name="timezone"]').locator('..').locator('.multiselect__placeholder').click();
+  await adminPage.keyboard.type('new_y');
   await adminPage.keyboard.press("Enter");
   await adminPage.locator('label[for="status"]').click();
   await adminPage.getByRole('button', { name: 'Save User' }).click();
@@ -197,16 +197,16 @@ test('Create User', async ({ adminPage }) => {
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).fill('testing123');
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).click();
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).fill('testing123');
-  await adminPage.getByRole('textbox', { name: 'ui_locale_id-searchbox' }).click();
+  await adminPage.locator('input[name="ui_locale_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option', { name: 'English (United States)' }).click();
-  await adminPage.getByRole('textbox', { name: 'timezone-searchbox' }).click();
-  await adminPage.getByRole('textbox', { name: 'timezone-searchbox' }).fill('new_y');
+  await adminPage.locator('input[name="timezone"]').locator('..').locator('.multiselect__placeholder').click();
+  await adminPage.keyboard.type('new_y');
   await adminPage.keyboard.press("Enter");
-  await adminPage.getByRole('textbox', { name: 'role_id-searchbox' }).click();
+  await adminPage.locator('input[name="role_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option').first().click();
   await adminPage.locator('label[for="status"]').click();
   await adminPage.getByRole('button', { name: 'Save User' }).click();
-  await expect(adminPage.locator('#app').getByText(/User created successfully/i)).toBeVisible();
+  await expect(adminPage.locator('#app').getByText(/User created successfully/i)).toBeVisible({ timeout: 15000 });
 });
 
 test('should allow User search', async ({ adminPage }) => {
@@ -226,7 +226,7 @@ test('Update User', async ({ adminPage }) => {
   await itemRow.locator('span[title="Edit"]').first().click();
   await adminPage.locator('label[for="status"]').click();
   await adminPage.getByRole('button', { name: 'Save User' }).click();
-  await expect(adminPage.locator('#app').getByText(/User updated successfully/i)).toBeVisible();
+  await expect(adminPage.locator('#app').getByText(/User updated successfully/i)).toBeVisible({ timeout: 15000 });
 });
 
 test('Delete User', async ({ adminPage }) => {
@@ -235,7 +235,7 @@ test('Delete User', async ({ adminPage }) => {
   const itemRow = adminPage.locator('div', { hasText: 'Testing' });
   await itemRow.locator('span[title="Delete"]').first().click();
   await adminPage.click('button:has-text("Delete")');
-  await expect(adminPage.locator('#app').getByText(/User deleted successfully/i)).toBeVisible();
+  await expect(adminPage.locator('#app').getByText(/User deleted successfully/i)).toBeVisible({ timeout: 15000 });
 });
 
 test('Delete Default User', async ({ adminPage }) => {

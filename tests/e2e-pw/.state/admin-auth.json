@@ -2,17 +2,17 @@
   "cookies": [
     {
       "name": "XSRF-TOKEN",
-      "value": "eyJpdiI6IjN2bXpBMlgzM2dkM0Z2K3U1aklPNkE9PSIsInZhbHVlIjoiODNFdk9HN3Azd3ZBQVcwMVlQYlhBNlVJWk1oWFlHN2huSG1LQjd0TXQrVlV5ZXVHL2J0NG5QSVNWQnBUUk1hSmdETTFjeSszYS80ZGxtLytIc2lWNGFqZ2dZWjBpYzZIM2dRbWt6T1R6QjBHSmVpb1h6bEVqQ0F5VU1qaU03QXoiLCJtYWMiOiI4N2NjZjE0NmE0ZGM2NjdmOWU4YjA1OWU4NTc4NmYyMWMwNDZmMTI5ODIwYWNjYmNmNjc5Yjg1YWYwZjkxNTMyIiwidGFnIjoiIn0%3D",
+      "value": "eyJpdiI6InM1cTk3czRuRlY2ZWZpS2JacFE0cFE9PSIsInZhbHVlIjoiUlFGZlRhNXVvdXhFN0JNaythN2hONzFVSTAwazBqWE5OejFMbUF1TkpVajY5MGttRURjV1BSLzJjd0JPTXIxTG8rYTJQdDBoc0ZsN0pQQ3BSb1J3N3VPS0hjUjZHSFhndHgyWEFkSTNLb3VnbkJGV2NRT3dNNFB0ejg1M3Y5SDYiLCJtYWMiOiJmMDIyMmIwNzkxZjhmMzllNWUxYmFlZGJhYzNkZDFmMTk5MTZjMjg3ODE1NDBlNWU4MmRkNGUwYjJhYjQ2MThhIiwidGFnIjoiIn0%3D",
       "domain": "127.0.0.1",
       "path": "/",
-      "expires": 1774462163.429475,
+      "expires": 1774551090.638096,
       "httpOnly": false,
       "secure": false,
       "sameSite": "Lax"
     },
     {
       "name": "unopim_session",
-      "value": "eyJpdiI6ImxKTDhESXE3NFpCZ3Q4RVlZcTVBd2c9PSIsInZhbHVlIjoiRDlLMlU4S3lKWHc5c0NkQ2IyNU5YY2lGVGIrR0crVmd2UzN1TGp2eDNIa2htZHdWNjJ5L1BNeXhLNlFFNU5kbEZJL1QwcjNiVVFmWDh0SDZYaXRCTWZNUmtpMUJ5NzBNb2JrczhlZXR1ZnV5MmR5UE42bHJBNmkwN2ZJUjNMRjEiLCJtYWMiOiI4OThlZTU1NDNlNmZhMjY5MDVjZDM2OTBhZDM4ZWFjYTM0YzJjZjcxNTU4MmY5NzRlMDU3MjFjYzNkYmYwNTg4IiwidGFnIjoiIn0%3D",
+      "value": "eyJpdiI6IkpiR3NkL0gyN3lXblExbnFlSGdJYUE9PSIsInZhbHVlIjoiOVFHSlhTK1ZKMENJVk9QcG1xOGFlOWZhaklPZnJXbmZVSGZyWnhCR0NhRk9JM2JOay85enRXcVN0Nlhra3NSUnE4YXA1MS8wSTZTOHBFbU9FRGl5YkRmWnVNQVdYYlh4L0RGOVJ3K0ovWUxPanVJanFzQ3hqVm1nbm1Gbmozb2MiLCJtYWMiOiIyYzllOGQ1N2M4ZTU2N2YxNGVhZmVjYmY0NzQ4ODA5ZmYzM2RhOTE2MTdjODM4NDhlMDczNmQ5NmE4MjRjNmIxIiwidGFnIjoiIn0%3D",
       "domain": "127.0.0.1",
       "path": "/",
       "expires": -1,
@@ -21,5 +21,15 @@
       "sameSite": "Lax"
     }
   ],
-  "origins": []
+  "origins": [
+    {
+      "origin": "http://127.0.0.1:8000",
+      "localStorage": [
+        {
+          "name": "phpdebugbar-height",
+          "value": "300"
+        }
+      ]
+    }
+  ]
 }
