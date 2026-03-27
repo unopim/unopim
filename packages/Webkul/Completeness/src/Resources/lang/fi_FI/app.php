@@ -8,7 +8,6 @@ return [
             ],
         ],
     ],
-
     'catalog' => [
         'families' => [
             'edit' => [
@@ -20,39 +19,33 @@ return [
                     'save-btn'            => 'Tallenna',
                     'back-btn'            => 'Takaisin',
                     'mass-update-success' => 'Täydellisyys päivitetty onnistuneesti',
-
-                    'datagrid' => [
+                    'datagrid'            => [
                         'code'             => 'Koodi',
                         'name'             => 'Nimi',
                         'channel-required' => 'Vaaditaan kanavissa',
-
-                        'actions' => [
+                        'actions'          => [
                             'change-requirement' => 'Muuta täydellisyysvaatimusta',
                         ],
                     ],
                 ],
             ],
         ],
-
         'products' => [
             'index' => [
                 'datagrid' => [
-                    'missing-completeness-setting' => 'N/A',
+                    'missing-completeness-setting' => 'Ei saatavilla',
                     'completeness'                 => 'Valmis',
                 ],
             ],
-
             'edit' => [
                 'completeness' => [
                     'title'    => 'Täydellisyys',
                     'subtitle' => 'Keskimääräinen täydellisyys',
                 ],
-
                 'required-attributes' => 'puuttuvat pakolliset attribuutit',
             ],
         ],
     ],
-
     'notifications' => [
         'completeness-title'             => 'Täydellisyyslaskenta valmis',
         'completeness-calculated'        => 'Täydellisyys laskettu :count tuotteelle.',
@@ -63,13 +56,11 @@ return [
         'email-body-family'              => 'Täydellisyyslaskenta on suoritettu :count tuotteelle attribuuttiperheessä ":family".',
         'email-footer'                   => 'Voit tarkastella täydellisyystietoja hallintapaneelissasi.',
     ],
-
     'dashboard' => [
         'index' => [
             'completeness' => [
                 'calculated-products' => 'Lasketut tuotteet',
-
-                'suggestion' => [
+                'suggestion'          => [
                     'low'     => 'Alhainen täydellisyys, lisää tietoja parantaaksesi.',
                     'medium'  => 'Jatka, lisää tietoja edelleen.',
                     'high'    => 'Lähes valmis, vain muutama yksityiskohta puuttuu.',

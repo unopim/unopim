@@ -13,7 +13,7 @@ trait OauthClientGenerator
      */
     public function generateClientIdAndSecretKey(int $user_id, string $name)
     {
-        $providers = array_keys(config('auth.providers'));
+        $provider = config('auth.guards.api.provider', 'admins');
         $provider = $providers[0];
 
         $client = $this->clients->createPasswordGrantClient(

@@ -17,5 +17,5 @@ return [
     'seperator-not-supported'      => 'Chỉ hỗ trợ , hoặc ; hoặc | làm dấu phân cách.',
     'file-type'                    => 'Tệp phải là kiểu csv, xls, xlsx.',
     'file-mime-extension-mismatch' => ':attribute Định dạng tệp và loại MIME không khớp. Định dạng tệp là :extension và loại MIME là :mimeType.',
-    'file-not-exists'              => 'The selected file does not exist :value for the field :attribute.',
+    'file-not-exists'              => 'Tệp đã chọn không tồn tại :value cho trường :attribute.',
 ];

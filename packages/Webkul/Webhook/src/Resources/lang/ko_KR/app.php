@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhooks',
+                        'name' => '웹훅',
                     ],
                 ],
             ],
@@ -18,7 +18,7 @@ return [
     ],
     'acl' => [
         'webhook' => [
-            'index' => 'Webhook',
+            'index' => '웹훅',
         ],
         'settings' => [
             'index'  => '설정',
@@ -30,7 +30,6 @@ return [
             'mass-delete' => '일괄 삭제',
         ],
     ],
-
     'configuration' => [
         'webhook' => [
             'settings' => [
@@ -43,14 +42,12 @@ return [
                         'label' => '활성 Webhook',
                     ],
                     'webhook_url' => [
-                        'label' => 'Webhook URL',
+                        'label' => '웹훅 URL',
                     ],
                     'success'    => 'Webhook 설정이 성공적으로 저장되었습니다',
-                    'title'      => 'Webhook 설정',
                     'logs-title' => '로그',
                 ],
             ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

@@ -8,7 +8,6 @@ return [
             ],
         ],
     ],
-
     'catalog' => [
         'families' => [
             'edit' => [
@@ -20,20 +19,17 @@ return [
                     'save-btn'            => 'Salva',
                     'back-btn'            => 'Indietro',
                     'mass-update-success' => 'Completezza aggiornata con successo',
-
-                    'datagrid' => [
+                    'datagrid'            => [
                         'code'             => 'Codice',
                         'name'             => 'Nome',
                         'channel-required' => 'Richiesto nei canali',
-
-                        'actions' => [
+                        'actions'          => [
                             'change-requirement' => 'Modifica requisito di completezza',
                         ],
                     ],
                 ],
             ],
         ],
-
         'products' => [
             'index' => [
                 'datagrid' => [
@@ -41,18 +37,15 @@ return [
                     'completeness'                 => 'Completo',
                 ],
             ],
-
             'edit' => [
                 'completeness' => [
                     'title'    => 'Completezza',
                     'subtitle' => 'Completezza media',
                 ],
-
                 'required-attributes' => 'attributi obbligatori mancanti',
             ],
         ],
     ],
-
     'notifications' => [
         'completeness-title'             => 'Calcolo completezza terminato',
         'completeness-calculated'        => 'Completezza calcolata per :count prodotti.',
@@ -63,13 +56,11 @@ return [
         'email-body-family'              => 'Il calcolo della completezza è stato completato per :count prodotti nella famiglia di attributi ":family".',
         'email-footer'                   => 'Puoi visualizzare i dettagli della completezza nella tua dashboard.',
     ],
-
     'dashboard' => [
         'index' => [
             'completeness' => [
                 'calculated-products' => 'Prodotti calcolati',
-
-                'suggestion' => [
+                'suggestion'          => [
                     'low'     => 'Completezza bassa, aggiungi dettagli per migliorare.',
                     'medium'  => 'Continua così, aggiungi altre informazioni.',
                     'high'    => 'Quasi completo, mancano solo pochi dettagli.',

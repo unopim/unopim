@@ -479,6 +479,11 @@ class Installer extends Command
             ]);
 
             $this->info('Sample products seeded successfully.');
+
+            if (config('elasticsearch.enabled') == 'true') {
+                $this->warn('Step: Re-indexing products to Elasticsearch...');
+                $this->call('unopim:product:index');
+            }
         } catch (\Exception $e) {
             $this->error("Failed to seed sample products: {$e->getMessage()}");
         }

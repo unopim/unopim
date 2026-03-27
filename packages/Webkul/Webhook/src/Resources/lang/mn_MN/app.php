@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhooks',
+                        'name' => 'Вебхууд',
                     ],
                 ],
             ],
@@ -18,7 +18,7 @@ return [
     ],
     'acl' => [
         'webhook' => [
-            'index' => 'Webhook',
+            'index' => 'Вебхууд',
         ],
         'settings' => [
             'index'  => 'Тохиргоо',
@@ -30,7 +30,6 @@ return [
             'mass-delete' => 'Бөөнөөр устгах',
         ],
     ],
-
     'configuration' => [
         'webhook' => [
             'settings' => [
@@ -43,14 +42,12 @@ return [
                         'label' => 'Идэвхтэй Webhook',
                     ],
                     'webhook_url' => [
-                        'label' => 'Webhook URL',
+                        'label' => 'Вебхуудын URL',
                     ],
                     'success'    => 'Webhook тохиргоо амжилттай хадгалагдлаа',
-                    'title'      => 'Webhook тохиргоо',
                     'logs-title' => 'Логууд',
                 ],
             ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

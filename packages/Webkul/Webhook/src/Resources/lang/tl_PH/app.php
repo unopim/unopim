@@ -30,7 +30,6 @@ return [
             'mass-delete' => 'Maramihang pagbura',
         ],
     ],
-
     'configuration' => [
         'webhook' => [
             'settings' => [
@@ -46,11 +45,9 @@ return [
                         'label' => 'URL ng Webhook',
                     ],
                     'success'    => 'Matagumpay na na-save ang mga setting ng Webhook',
-                    'title'      => 'Mga Setting ng Webhook',
                     'logs-title' => 'Mga Log',
                 ],
             ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

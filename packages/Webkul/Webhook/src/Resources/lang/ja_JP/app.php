@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhooks',
+                        'name' => 'ウェブフック',
                     ],
                 ],
             ],
@@ -18,7 +18,7 @@ return [
     ],
     'acl' => [
         'webhook' => [
-            'index' => 'Webhook',
+            'index' => 'ウェブフック',
         ],
         'settings' => [
             'index'  => '設定',
@@ -30,7 +30,6 @@ return [
             'mass-delete' => '一括削除',
         ],
     ],
-
     'configuration' => [
         'webhook' => [
             'settings' => [
@@ -43,14 +42,12 @@ return [
                         'label' => '有効なWebhook',
                     ],
                     'webhook_url' => [
-                        'label' => 'Webhook URL',
+                        'label' => 'ウェブフック URL',
                     ],
                     'success'    => 'Webhook設定が正常に保存されました',
-                    'title'      => 'Webhook設定',
                     'logs-title' => 'ログ',
                 ],
             ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

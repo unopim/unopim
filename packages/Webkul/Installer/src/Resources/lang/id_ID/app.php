@@ -6,7 +6,6 @@ return [
             'attribute-families' => [
                 'default' => 'Bawaan',
             ],
-
             'attribute-groups' => [
                 'description'      => 'Deskripsi',
                 'general'          => 'Umum',
@@ -14,7 +13,6 @@ return [
                 'price'            => 'Harga',
                 'media'            => 'Media',
             ],
-
             'attributes' => [
                 'brand'                => 'Merek',
                 'color'                => 'Warna',
@@ -45,7 +43,6 @@ return [
                 'weight'               => 'Berat',
                 'width'                => 'Lebar',
             ],
-
             'attribute-options' => [
                 'black'  => 'Hitam',
                 'green'  => 'Hijau',
@@ -58,19 +55,16 @@ return [
                 'yellow' => 'Kuning',
             ],
         ],
-
         'category' => [
             'categories' => [
                 'description' => 'Deskripsi Kategori Utama',
                 'name'        => 'Utama',
             ],
-
             'category_fields' => [
                 'name'        => 'Nama',
                 'description' => 'Deskripsi',
             ],
         ],
-
         'core' => [
             'channels' => [
                 'meta-title'       => 'Toko demo',
@@ -78,7 +72,6 @@ return [
                 'meta-description' => 'Deskripsi meta toko demo',
                 'name'             => 'Bawaan',
             ],
-
             'currencies' => [
                 'AED' => 'Dirham',
                 'AFN' => 'Shekel Israel',
@@ -95,19 +88,16 @@ return [
                 'USD' => 'Dolar AS',
             ],
         ],
-
         'user' => [
             'roles' => [
                 'description' => 'Pengguna dengan peran ini akan memiliki semua akses',
                 'name'        => 'Administrator',
             ],
-
             'users' => [
                 'name' => 'Contoh',
             ],
         ],
     ],
-
     'installer' => [
         'index' => [
             'create-administrator' => [
@@ -119,7 +109,6 @@ return [
                 'password'         => 'Kata Sandi',
                 'title'            => 'Buat Administrator',
             ],
-
             'environment-configuration' => [
                 'allowed-currencies'  => 'Mata Uang yang Diizinkan',
                 'allowed-locales'     => 'Lokal yang Diizinkan',
@@ -157,13 +146,11 @@ return [
                 'usd'                 => 'Dolar AS (USD)',
                 'warning-message'     => 'Perhatian! Pengaturan bahasa sistem bawaan serta mata uang bawaan bersifat permanen dan tidak dapat diubah lagi.',
             ],
-
             'installation-processing' => [
                 'unopim'      => 'Instalasi UnoPim',
                 'unopim-info' => 'Membuat tabel database, ini mungkin memerlukan beberapa saat',
                 'title'       => 'Instalasi',
             ],
-
             'installation-completed' => [
                 'admin-panel'               => 'Panel Admin',
                 'unopim-forums'             => 'Forum UnoPim',
@@ -171,7 +158,6 @@ return [
                 'title-info'                => 'UnoPim berhasil diinstal di sistem Anda.',
                 'title'                     => 'Instalasi Selesai',
             ],
-
             'ready-for-installation' => [
                 'create-databsae-table'   => 'Buat tabel database',
                 'install-info-button'     => 'Klik tombol di bawah untuk',
@@ -181,7 +167,6 @@ return [
                 'start-installation'      => 'Mulai Instalasi',
                 'title'                   => 'Siap untuk Instalasi',
             ],
-
             'start' => [
                 'locale'        => 'Lokal',
                 'main'          => 'Mulai',
@@ -189,9 +174,8 @@ return [
                 'title'         => 'Instalasi UnoPim Anda',
                 'welcome-title' => 'Selamat datang di UnoPim :version',
             ],
-
             'server-requirements' => [
-                'calendar'    => 'Calendar',
+                'calendar'    => 'Kalender',
                 'ctype'       => 'cType',
                 'curl'        => 'cURL',
                 'dom'         => 'dom',
@@ -212,7 +196,6 @@ return [
                 'tokenizer'   => 'tokenizer',
                 'xml'         => 'XML',
             ],
-
             'back'                     => 'Kembali',
             'unopim-info'              => 'Proyek Komunitas oleh',
             'unopim-logo'              => 'Logo UnoPim',

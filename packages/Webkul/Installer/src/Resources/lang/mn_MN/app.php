@@ -6,7 +6,6 @@ return [
             'attribute-families' => [
                 'default' => 'Өгөгдмөл',
             ],
-
             'attribute-groups' => [
                 'description'      => 'Тайлбар',
                 'general'          => 'Ерөнхий',
@@ -14,7 +13,6 @@ return [
                 'price'            => 'Үнэ',
                 'media'            => 'Медиа',
             ],
-
             'attributes' => [
                 'brand'                => 'Брэнд',
                 'color'                => 'Өнгө',
@@ -45,7 +43,6 @@ return [
                 'weight'               => 'Жин',
                 'width'                => 'Өргөн',
             ],
-
             'attribute-options' => [
                 'black'  => 'Хар',
                 'green'  => 'Ногоон',
@@ -58,19 +55,16 @@ return [
                 'yellow' => 'Шар',
             ],
         ],
-
         'category' => [
             'categories' => [
                 'description' => 'Үндсэн ангиллын тайлбар',
                 'name'        => 'Үндсэн',
             ],
-
             'category_fields' => [
                 'name'        => 'Нэр',
                 'description' => 'Тайлбар',
             ],
         ],
-
         'core' => [
             'channels' => [
                 'meta-title'       => 'Туршилтын дэлгүүр',
@@ -78,7 +72,6 @@ return [
                 'meta-description' => 'Туршилтын дэлгүүрийн мета тайлбар',
                 'name'             => 'Өгөгдмөл',
             ],
-
             'currencies' => [
                 'AED' => 'Дирхам',
                 'AFN' => 'Израилийн шекель',
@@ -95,19 +88,16 @@ return [
                 'USD' => 'АНУ-ын доллар',
             ],
         ],
-
         'user' => [
             'roles' => [
                 'description' => 'Энэ үүрэг бүхий хэрэглэгчид бүх хандалттай байна',
                 'name'        => 'Администратор',
             ],
-
             'users' => [
                 'name' => 'Жишээ',
             ],
         ],
     ],
-
     'installer' => [
         'index' => [
             'create-administrator' => [
@@ -119,7 +109,6 @@ return [
                 'password'         => 'Нууц үг',
                 'title'            => 'Администратор үүсгэх',
             ],
-
             'environment-configuration' => [
                 'allowed-currencies'  => 'Зөвшөөрөгдсөн валютууд',
                 'allowed-locales'     => 'Зөвшөөрөгдсөн хэл',
@@ -157,13 +146,11 @@ return [
                 'usd'                 => 'АНУ-ын доллар (USD)',
                 'warning-message'     => 'Анхаар! Таны системийн өгөгдмөл хэлний тохиргоо болон өгөгдмөл валют нь байнгын бөгөөд дахин өөрчлөх боломжгүй.',
             ],
-
             'installation-processing' => [
                 'unopim'      => 'UnoPim суулгалт',
                 'unopim-info' => 'Мэдээллийн сангийн хүснэгтүүдийг үүсгэж байна, энэ нь хэсэг хугацаа шаардаж магадгүй',
                 'title'       => 'Суулгалт',
             ],
-
             'installation-completed' => [
                 'admin-panel'               => 'Админ самбар',
                 'unopim-forums'             => 'UnoPim форум',
@@ -171,7 +158,6 @@ return [
                 'title-info'                => 'UnoPim таны системд амжилттай суулгагдлаа.',
                 'title'                     => 'Суулгалт дууссан',
             ],
-
             'ready-for-installation' => [
                 'create-databsae-table'   => 'Мэдээллийн сангийн хүснэгт үүсгэх',
                 'install-info-button'     => 'Доорх товчийг дарна уу',
@@ -181,7 +167,6 @@ return [
                 'start-installation'      => 'Суулгалтыг эхлүүлэх',
                 'title'                   => 'Суулгалтад бэлэн',
             ],
-
             'start' => [
                 'locale'        => 'Хэл',
                 'main'          => 'Эхлэх',
@@ -189,16 +174,15 @@ return [
                 'title'         => 'Таны UnoPim суулгалт',
                 'welcome-title' => 'UnoPim :version -д тавтай морилно уу',
             ],
-
             'server-requirements' => [
-                'calendar'    => 'Calendar',
+                'calendar'    => 'Календарь',
                 'ctype'       => 'cType',
                 'curl'        => 'cURL',
                 'dom'         => 'dom',
-                'fileinfo'    => 'fileInfo',
-                'filter'      => 'Filter',
+                'fileinfo'    => 'файл мэдээлэл',
+                'filter'      => 'Шүүлт',
                 'gd'          => 'GD',
-                'hash'        => 'Hash',
+                'hash'        => 'Хэш',
                 'intl'        => 'intl',
                 'json'        => 'JSON',
                 'mbstring'    => 'mbstring',
@@ -207,12 +191,11 @@ return [
                 'pdo'         => 'pdo',
                 'php-version' => '8.2 буюу түүнээс дээш',
                 'php'         => 'PHP',
-                'session'     => 'session',
+                'session'     => 'сессия',
                 'title'       => 'Системийн шаардлага',
                 'tokenizer'   => 'tokenizer',
                 'xml'         => 'XML',
             ],
-
             'back'                     => 'Буцах',
             'unopim-info'              => 'Нийгэмлэгийн төсөл',
             'unopim-logo'              => 'UnoPim лого',

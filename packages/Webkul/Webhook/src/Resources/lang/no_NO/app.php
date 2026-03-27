@@ -30,7 +30,6 @@ return [
             'mass-delete' => 'Massesletting',
         ],
     ],
-
     'configuration' => [
         'webhook' => [
             'settings' => [
@@ -43,14 +42,12 @@ return [
                         'label' => 'Aktiv Webhook',
                     ],
                     'webhook_url' => [
-                        'label' => 'Webhook URL',
+                        'label' => 'Webhook-URL',
                     ],
                     'success'    => 'Webhook-innstillinger lagret',
-                    'title'      => 'Webhook-innstillinger',
                     'logs-title' => 'Logger',
                 ],
             ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

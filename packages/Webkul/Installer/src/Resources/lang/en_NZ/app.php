@@ -15,7 +15,7 @@ return [
             ],
             'attributes' => [
                 'brand'                => 'Brand',
-                'color'                => 'Color',
+                'color'                => 'Colour',
                 'cost'                 => 'Cost',
                 'description'          => 'Description',
                 'featured'             => 'Featured',
@@ -76,7 +76,7 @@ return [
                 'AED' => 'Dirham',
                 'AFN' => 'Israeli Shekel',
                 'CNY' => 'Chinese Yuan',
-                'EUR' => 'EURO',
+                'EUR' => 'Euro',
                 'GBP' => 'Pound Sterling',
                 'INR' => 'Indian Rupee',
                 'IRR' => 'Iranian Rial',

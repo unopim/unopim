@@ -4,7 +4,7 @@ return [
     'seeders' => [
         'attribute' => [
             'attribute-families' => [
-                'default' => 'Default',
+                'default' => 'Varsayılan',
             ],
             'attribute-groups' => [
                 'description'      => 'Tanım',
@@ -198,7 +198,7 @@ return [
             ],
             'back'                     => 'Geri',
             'unopim-info'              => 'Topluluk Projesi',
-            'unopim-logo'              => 'UnoPim Logo',
+            'unopim-logo'              => 'UnoPim Logosu',
             'unopim'                   => 'UnoPim',
             'continue'                 => 'Devam Et',
             'installation-description' => 'UnoPim kurulum süreci birkaç adımdan oluşur. Aşağıda özetlenmiştir:',

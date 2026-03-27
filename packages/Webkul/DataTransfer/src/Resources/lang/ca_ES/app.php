@@ -3,8 +3,7 @@
 return [
     'importers' => [
         'products' => [
-            'title' => 'Productes',
-
+            'title'      => 'Productes',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'                        => 'Clau URL: \'%s\' ja ha estat generada per un element amb l\'SKU: \'%s\'.',
@@ -25,10 +24,8 @@ return [
                 ],
             ],
         ],
-
         'categories' => [
-            'title' => 'Categories',
-
+            'title'      => 'Categories',
             'validation' => [
                 'errors' => [
                     'channel-related-category-root' => 'No pots eliminar la categoria arrel associada amb un canal',
@@ -36,11 +33,9 @@ return [
             ],
         ],
     ],
-
     'exporters' => [
         'products' => [
-            'title' => 'Productes',
-
+            'title'      => 'Productes',
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'Clau URL: \'%s\' ja ha estat generada per un element amb l\'SKU: \'%s\'.',
@@ -55,7 +50,6 @@ return [
             'title' => 'Categories',
         ],
     ],
-
     'validation' => [
         'errors' => [
             'column-empty-headers' => 'Les columnes número "%s" tenen cap capçalera buida.',
@@ -67,7 +61,6 @@ return [
             'wrong-quotes'         => 'S\'han utilitzat guions curts en lloc de guions rectes.',
         ],
     ],
-
     'job' => [
         'started'   => 'Inici de l\'execució de la feina',
         'completed' => 'Finalització de l\'execució de la feina',

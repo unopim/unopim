@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhooks',
+                        'name' => 'Webhooki',
                     ],
                 ],
             ],
@@ -30,7 +30,6 @@ return [
             'mass-delete' => 'Usuwanie masowe',
         ],
     ],
-
     'configuration' => [
         'webhook' => [
             'settings' => [
@@ -46,11 +45,9 @@ return [
                         'label' => 'URL Webhooka',
                     ],
                     'success'    => 'Ustawienia Webhooka zostały pomyślnie zapisane',
-                    'title'      => 'Ustawienia Webhooka',
                     'logs-title' => 'Logi',
                 ],
             ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [
