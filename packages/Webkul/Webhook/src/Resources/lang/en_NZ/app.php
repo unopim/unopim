@@ -30,7 +30,6 @@ return [
             'mass-delete' => 'Mass Delete',
         ],
     ],
-
     'configuration' => [
         'webhook' => [
             'settings' => [
@@ -46,11 +45,9 @@ return [
                         'label' => 'Webhook URL',
                     ],
                     'success'    => 'Webhook settings saved successfully',
-                    'title'      => 'Webhook Settings',
                     'logs-title' => 'Logs',
                 ],
             ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

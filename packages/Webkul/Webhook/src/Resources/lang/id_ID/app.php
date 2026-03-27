@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhooks',
+                        'name' => 'Webhook',
                     ],
                 ],
             ],
@@ -30,7 +30,6 @@ return [
             'mass-delete' => 'Hapus massal',
         ],
     ],
-
     'configuration' => [
         'webhook' => [
             'settings' => [
@@ -46,11 +45,9 @@ return [
                         'label' => 'URL Webhook',
                     ],
                     'success'    => 'Pengaturan Webhook berhasil disimpan',
-                    'title'      => 'Pengaturan Webhook',
                     'logs-title' => 'Log',
                 ],
             ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhooks',
+                        'name' => 'वेबहुक्स',
                     ],
                 ],
             ],
@@ -18,7 +18,7 @@ return [
     ],
     'acl' => [
         'webhook' => [
-            'index' => 'Webhook',
+            'index' => 'वेबहुक',
         ],
         'settings' => [
             'index'  => 'सेटिंग्स',
@@ -30,7 +30,6 @@ return [
             'mass-delete' => 'सामूहिक हटाएं',
         ],
     ],
-
     'configuration' => [
         'webhook' => [
             'settings' => [
@@ -43,14 +42,12 @@ return [
                         'label' => 'सक्रिय Webhook',
                     ],
                     'webhook_url' => [
-                        'label' => 'Webhook URL',
+                        'label' => 'वेबहुक URL',
                     ],
                     'success'    => 'Webhook सेटिंग्स सफलतापूर्वक सहेजी गईं',
-                    'title'      => 'Webhook सेटिंग्स',
                     'logs-title' => 'लॉग',
                 ],
             ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

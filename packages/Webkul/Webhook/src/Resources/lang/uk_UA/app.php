@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhooks',
+                        'name' => 'Вебхуки',
                     ],
                 ],
             ],
@@ -18,7 +18,7 @@ return [
     ],
     'acl' => [
         'webhook' => [
-            'index' => 'Webhook',
+            'index' => 'Вебхук',
         ],
         'settings' => [
             'index'  => 'Налаштування',
@@ -30,7 +30,6 @@ return [
             'mass-delete' => 'Масове видалення',
         ],
     ],
-
     'configuration' => [
         'webhook' => [
             'settings' => [
@@ -46,11 +45,9 @@ return [
                         'label' => 'URL Webhook',
                     ],
                     'success'    => 'Налаштування Webhook успішно збережено',
-                    'title'      => 'Налаштування Webhook',
                     'logs-title' => 'Журнали',
                 ],
             ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

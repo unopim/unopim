@@ -8,7 +8,6 @@ return [
             ],
         ],
     ],
-
     'catalog' => [
         'families' => [
             'edit' => [
@@ -20,20 +19,17 @@ return [
                     'save-btn'            => 'Salvare',
                     'back-btn'            => 'Înapoi',
                     'mass-update-success' => 'Completitudine actualizată cu succes',
-
-                    'datagrid' => [
+                    'datagrid'            => [
                         'code'             => 'Cod',
                         'name'             => 'Nume',
                         'channel-required' => 'Necesar în canale',
-
-                        'actions' => [
+                        'actions'          => [
                             'change-requirement' => 'Modificați cerința de completitudine',
                         ],
                     ],
                 ],
             ],
         ],
-
         'products' => [
             'index' => [
                 'datagrid' => [
@@ -41,18 +37,15 @@ return [
                     'completeness'                 => 'Complet',
                 ],
             ],
-
             'edit' => [
                 'completeness' => [
                     'title'    => 'Completitudine',
                     'subtitle' => 'Completitudine medie',
                 ],
-
                 'required-attributes' => 'atribute obligatorii lipsă',
             ],
         ],
     ],
-
     'notifications' => [
         'completeness-title'             => 'Calculul completitudinii finalizat',
         'completeness-calculated'        => 'Completitudine calculată pentru :count produse.',
@@ -63,13 +56,11 @@ return [
         'email-body-family'              => 'Calculul completitudinii a fost finalizat pentru :count produse în familia de atribute ":family".',
         'email-footer'                   => 'Puteți vizualiza detaliile completitudinii pe panoul de control.',
     ],
-
     'dashboard' => [
         'index' => [
             'completeness' => [
                 'calculated-products' => 'Produse calculate',
-
-                'suggestion' => [
+                'suggestion'          => [
                     'low'     => 'Completitudine scăzută, adăugați detalii pentru a îmbunătăți.',
                     'medium'  => 'Continuați, adăugați în continuare informații.',
                     'high'    => 'Aproape complet, mai sunt doar câteva detalii.',

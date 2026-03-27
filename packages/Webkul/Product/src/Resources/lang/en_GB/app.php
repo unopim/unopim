@@ -4,14 +4,12 @@ return [
     'datagrid' => [
         'copy-of-slug'                  => 'copy-of-:value',
         'copy-of'                       => 'Copy of :value',
-        'variant-already-exist-message' => 'Variant with same attribute options already exists.',
+        'variant-already-exist-message' => 'A variant with the same attribute options already exists.',
     ],
-
     'response' => [
-        'product-can-not-be-copied' => 'Products of type :type can not be copied',
+        'product-can-not-be-copied' => 'Products of type :type cannot be copied',
     ],
-
-    'type'     => [
+    'type' => [
         'configurable' => 'Configurable',
         'simple'       => 'Simple',
     ],

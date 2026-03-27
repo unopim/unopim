@@ -30,7 +30,6 @@ return [
             'mass-delete' => 'Eliminació massiva',
         ],
     ],
-
     'configuration' => [
         'webhook' => [
             'settings' => [
@@ -46,11 +45,9 @@ return [
                         'label' => 'URL del Webhook',
                     ],
                     'success'    => 'La configuració del Webhook s\'ha desat correctament',
-                    'title'      => 'Configuració del Webhook',
                     'logs-title' => 'Registres',
                 ],
             ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

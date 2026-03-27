@@ -17,5 +17,5 @@ return [
     'seperator-not-supported'      => '僅支持 , 或 ; 或 | 作为分隔符。',
     'file-type'                    => '文件必須是 csv、xls 或 xlsx 类型。',
     'file-mime-extension-mismatch' => ':attribute 檔案副檔名與 MIME 類型不匹配。檔案副檔名是 :extension，MIME 類型是 :mimeType。',
-    'file-not-exists'              => 'The selected file does not exist :value for the field :attribute.',
+    'file-not-exists'              => '所選的檔案 :value 在欄位 :attribute 中不存在。',
 ];

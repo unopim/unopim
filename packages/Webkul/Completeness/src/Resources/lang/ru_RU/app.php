@@ -8,7 +8,6 @@ return [
             ],
         ],
     ],
-
     'catalog' => [
         'families' => [
             'edit' => [
@@ -20,39 +19,33 @@ return [
                     'save-btn'            => 'Сохранить',
                     'back-btn'            => 'Назад',
                     'mass-update-success' => 'Полнота успешно обновлена',
-
-                    'datagrid' => [
+                    'datagrid'            => [
                         'code'             => 'Код',
                         'name'             => 'Название',
                         'channel-required' => 'Обязательно в каналах',
-
-                        'actions' => [
+                        'actions'          => [
                             'change-requirement' => 'Изменить требование полноты',
                         ],
                     ],
                 ],
             ],
         ],
-
         'products' => [
             'index' => [
                 'datagrid' => [
-                    'missing-completeness-setting' => 'N/A',
+                    'missing-completeness-setting' => 'Н/Д',
                     'completeness'                 => 'Завершено',
                 ],
             ],
-
             'edit' => [
                 'completeness' => [
                     'title'    => 'Полнота',
                     'subtitle' => 'Средняя полнота',
                 ],
-
                 'required-attributes' => 'отсутствующие обязательные атрибуты',
             ],
         ],
     ],
-
     'notifications' => [
         'completeness-title'             => 'Расчёт полноты завершён',
         'completeness-calculated'        => 'Полнота рассчитана для :count продуктов.',
@@ -63,13 +56,11 @@ return [
         'email-body-family'              => 'Расчёт полноты завершён для :count продуктов в семействе атрибутов ":family".',
         'email-footer'                   => 'Вы можете просмотреть детали полноты на своей панели управления.',
     ],
-
     'dashboard' => [
         'index' => [
             'completeness' => [
                 'calculated-products' => 'Рассчитанные продукты',
-
-                'suggestion' => [
+                'suggestion'          => [
                     'low'     => 'Низкая полнота, добавьте детали для улучшения.',
                     'medium'  => 'Продолжайте, добавляйте информацию.',
                     'high'    => 'Почти завершено, осталось лишь несколько деталей.',
