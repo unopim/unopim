@@ -8,7 +8,6 @@ return [
             ],
         ],
     ],
-
     'catalog' => [
         'families' => [
             'edit' => [
@@ -20,20 +19,17 @@ return [
                     'save-btn'            => 'Desar',
                     'back-btn'            => 'Enrere',
                     'mass-update-success' => 'Completesa actualitzada correctament',
-
-                    'datagrid' => [
+                    'datagrid'            => [
                         'code'             => 'Codi',
                         'name'             => 'Nom',
                         'channel-required' => 'Requerit als canals',
-
-                        'actions' => [
+                        'actions'          => [
                             'change-requirement' => 'Canviar requisit de completesa',
                         ],
                     ],
                 ],
             ],
         ],
-
         'products' => [
             'index' => [
                 'datagrid' => [
@@ -41,18 +37,15 @@ return [
                     'completeness'                 => 'Complet',
                 ],
             ],
-
             'edit' => [
                 'completeness' => [
                     'title'    => 'Completesa',
                     'subtitle' => 'Completesa mitjana',
                 ],
-
                 'required-attributes' => 'atributs requerits que falten',
             ],
         ],
     ],
-
     'notifications' => [
         'completeness-title'             => 'Càlcul de completesa finalitzat',
         'completeness-calculated'        => 'Completesa calculada per a :count productes.',
@@ -63,13 +56,11 @@ return [
         'email-body-family'              => 'El càlcul de completesa s\'ha completat per a :count productes a la família d\'atributs ":family".',
         'email-footer'                   => 'Podeu consultar els detalls de completesa al vostre tauler.',
     ],
-
     'dashboard' => [
         'index' => [
             'completeness' => [
                 'calculated-products' => 'Productes calculats',
-
-                'suggestion' => [
+                'suggestion'          => [
                     'low'     => 'Completesa baixa, afegiu detalls per millorar.',
                     'medium'  => 'Continueu, seguiu afegint informació.',
                     'high'    => 'Gairebé complet, només falten uns quants detalls.',

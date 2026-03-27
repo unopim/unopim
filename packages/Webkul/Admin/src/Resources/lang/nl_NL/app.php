@@ -19,7 +19,7 @@ return [
                 'reset-link-sent'        => 'Reset wachtwoordlink verzonden',
                 'email-settings-error'   => 'E -mail kon niet worden verzonden.Controleer uw e -mailconfiguratiegegevens',
                 'sign-in-link'           => 'Terug om aan te melden?',
-                'submit-btn'             => 'Reset',
+                'submit-btn'             => 'Wachtwoord opnieuw instellen',
                 'title'                  => 'Herstel het wachtwoord',
                 'powered-by'             => 'Aangedreven door :unopim,',
                 'open-source-project-by' => 'Een open-source project van :webkul.',
@@ -74,8 +74,7 @@ return [
     ],
     'dashboard' => [
         'invalid-type' => 'Ongeldig dashboardwidgettype.',
-
-        'index' => [
+        'index'        => [
             'title'                => 'Dashboard',
             'user-info'            => 'Snel monitoren, wat \'s count in your PIM',
             'user-name'            => 'Hoi! :user_name',
@@ -109,8 +108,8 @@ return [
             'just-now'             => 'zojuist',
             'data-transfer'        => 'Gegevensoverdracht',
             'no-jobs'              => 'Geen recente import-/exporttaken gevonden.',
-            'job-type-import'      => 'Import',
-            'job-type-export'      => 'Export',
+            'job-type-import'      => 'Importeren',
+            'job-type-export'      => 'Exporteren',
             'job-state-completed'  => 'Voltooid',
             'job-state-failed'     => 'Mislukt',
             'job-state-processing' => 'Verwerking',
@@ -181,7 +180,7 @@ return [
                 'datagrid' => [
                     'active'                 => 'Actief',
                     'attribute-family'       => 'Attribueer familie',
-                    'attribute-family-value' => 'Attribute Family - :attribute_family',
+                    'attribute-family-value' => 'Attributenfamilie - :attribute_family',
                     'category'               => 'Categorie',
                     'copy-of'                => 'Kopie van :value',
                     'copy-of-slug'           => 'copy-of- :value',
@@ -226,7 +225,7 @@ return [
                 'videos' => [
                     'error' => 'De :attribute mag niet groter zijn dan :max kilobytes. Kies een kleiner bestand.',
                     'info'  => 'Maximale videogrootte zou moeten zijn als :size',
-                    'title' => 'Videos',
+                    'title' => 'Video\'s',
                 ],
                 'links' => [
                     'related-products' => [
@@ -482,7 +481,7 @@ return [
                 'usable-in-grid'        => 'Bruikbaar in het rooster',
                 'is-filterable'         => 'Is filterbaar',
                 'ai-translate'          => 'AI Vertaling',
-                'invalid-swatch-type'   => 'The :attribute is not allowed for attribute type :type with swatch type :swatch_type.',
+                'invalid-swatch-type'   => 'De :attribute is niet toegestaan voor attribuuttype :type met swatchtype :swatch_type.',
                 'option'                => [
                     'color'    => 'Kleurstaal',
                     'dropdown' => 'Laten vallen',
@@ -759,7 +758,7 @@ return [
                 'url'                 => 'Url',
                 'use-in-flat'         => 'Creëer in product platte tafel',
                 'validations'         => 'Geldigmaking',
-                'value-per-channel'   => 'Value Per Channel',
+                'value-per-channel'   => 'Waarde Per Kanaal',
                 'value-per-locale'    => 'Waarde per locale',
                 'yes'                 => 'Ja',
                 'status'              => 'Toestand',
@@ -1050,7 +1049,7 @@ return [
         'data-transfer' => [
             'tracker' => [
                 'index' => [
-                    'title'    => 'Job Tracker',
+                    'title'    => 'Taak Tracker',
                     'datagrid' => [
                         'id'                   => 'ID kaart',
                         'job_code'             => 'Functie',
@@ -1156,8 +1155,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Het importproces kon niet worden gestart. Probeer het opnieuw.',
-
-                'create' => [
+                'create'            => [
                     'code'                => 'Code',
                     'action'              => 'Actie',
                     'allowed-errors'      => 'Fouten toegestaan',
@@ -1245,7 +1243,7 @@ return [
                         'updated'               => 'Bijgewerkt',
                         'uploaded-file'         => 'Geüpload bestand',
                         'images_directory_path' => 'Afbeeldingenbestand',
-                        'import'                => 'Import',
+                        'import'                => 'Importeren',
                     ],
                 ],
                 'import' => [
@@ -1263,7 +1261,7 @@ return [
                     'importing-info-sub'      => 'Batches verwerken en records naar de database schrijven.',
                     'indexing-info'           => 'Bronnen -indexering (prijs, elastische zoekopdracht) in uitvoering',
                     'indexing-info-sub'       => 'Zoekindexen en prijscaches opnieuw opbouwen na import. Deze stap wordt automatisch uitgevoerd.',
-                    'indexing-type'           => 'Price + ES',
+                    'indexing-type'           => 'Prijs + ES',
                     'linking-info'            => 'Bronnen die in uitvoering worden gekoppeld',
                     'linking-info-sub'        => 'Gerelateerde bronnen en koppelingen tussen records verbinden.',
                     'pending-info'            => 'In afwachting van taakverwerking in wachtrij',
@@ -1377,7 +1375,7 @@ return [
                         'updated'               => 'Bijgewerkt',
                         'uploaded-file'         => 'Geüpload bestand',
                         'images_directory_path' => 'Afbeeldingenbestand',
-                        'export'                => 'Export',
+                        'export'                => 'Exporteren',
                     ],
                 ],
                 'export' => [
@@ -1450,7 +1448,7 @@ return [
                 'favicon-size'           => 'Beeldresolutie zou moeten zijn als 16 px x 16px',
                 'general'                => 'Algemeen',
                 'hostname'               => 'Hostnaam',
-                'hostname-placeholder'   => 'https://www.example.com (Don\'t add slash in the end.)',
+                'hostname-placeholder'   => 'https://www.example.com (Voeg geen schuine streep aan het einde toe.)',
                 'last-delete-error'      => 'Minstens één kanaal is vereist.',
                 'locales'                => 'Landen',
                 'logo'                   => 'Logo',
@@ -1484,7 +1482,7 @@ return [
                 'favicon-size'           => 'Beeldresolutie zou moeten zijn als 16 px x 16px',
                 'general'                => 'Algemeen',
                 'hostname'               => 'Hostnaam',
-                'hostname-placeholder'   => 'https://www.example.com (Don\'t add slash in the end.)',
+                'hostname-placeholder'   => 'https://www.example.com (Voeg geen schuine streep aan het einde toe.)',
                 'last-delete-error'      => 'Minstens één kanaal is vereist.',
                 'locales'                => 'Landen',
                 'select-locales'         => 'Selecteer locaties',
@@ -1824,7 +1822,7 @@ return [
                 'add-first'          => 'Voeg uw eerste platform toe',
                 'no-default-warning' => 'Er is geen standaardplatform ingesteld. Stel een platform in als standaard om AI-functies in de hele applicatie in te schakelen.',
                 'no-platform-hint'   => 'Nog geen platformen geconfigureerd. Ga naar het tabblad Platformen om uw eerste AI-provider toe te voegen.',
-                'lightning-icon'     => 'Magic AI',
+                'lightning-icon'     => 'Magische AI',
                 'warning-icon'       => 'Waarschuwing',
             ],
             'testing'         => 'Testen',
@@ -1906,7 +1904,7 @@ return [
                 'dashboard'          => 'Dashboard',
                 'data-transfer'      => 'Data overdracht',
                 'groups'             => 'Groepen',
-                'tracker'            => 'Job Tracker',
+                'tracker'            => 'Taak Tracker',
                 'imports'            => 'Importeren',
                 'exports'            => 'Exporteren',
                 'locales'            => 'Landen',
@@ -1929,7 +1927,7 @@ return [
                 'must-select-a-mass-action'        => 'U moet een massa -actie selecteren.',
             ],
             'toolbar' => [
-                'length-of'    => ':length of',
+                'length-of'    => ':length van',
                 'of'           => 'of',
                 'per-page'     => 'Per pagina',
                 'results'      => ':total resultaten',
@@ -2073,7 +2071,7 @@ return [
                     'next'      => 'Volgende',
                     'size'      => 'Maat',
                     'use-cases' => 'Use cases',
-                    'zoom'      => 'Zoom',
+                    'zoom'      => 'Inzoomen',
                 ],
             ],
             'gallery' => [
@@ -2180,13 +2178,13 @@ return [
         'users'                    => 'Gebruikers',
         'category_fields'          => 'Categorievelden',
         'view'                     => 'Weergave',
-        'execute'                  => 'Job Execute',
+        'execute'                  => 'Taak Uitvoeren',
         'history'                  => 'Geschiedenis',
         'restore'                  => 'Herstellen',
         'integrations'             => 'Integratie',
         'api'                      => 'API',
-        'tracker'                  => 'Job Tracker',
-        'exports'                  => 'Exports',
+        'tracker'                  => 'Taak Tracker',
+        'exports'                  => 'Exporteren',
         'mass-update'              => 'Massabijwerking',
         'mass-delete'              => 'Massaverwijdering',
     ],

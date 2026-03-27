@@ -30,7 +30,6 @@ return [
             'mass-delete' => 'Masovno brisanje',
         ],
     ],
-
     'configuration' => [
         'webhook' => [
             'settings' => [
@@ -46,11 +45,9 @@ return [
                         'label' => 'Webhook URL',
                     ],
                     'success'    => 'Postavke Webhooka uspješno spremljene',
-                    'title'      => 'Postavke Webhooka',
                     'logs-title' => 'Zapisi',
                 ],
             ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

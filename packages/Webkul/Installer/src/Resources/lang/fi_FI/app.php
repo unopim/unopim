@@ -198,7 +198,7 @@ return [
             ],
             'back'                     => 'Takaisin',
             'unopim-info'              => 'Yhteisöprojekti',
-            'unopim-logo'              => 'UnoPim Logo',
+            'unopim-logo'              => 'UnoPim-logo',
             'unopim'                   => 'UnoPim',
             'continue'                 => 'Jatka',
             'installation-description' => 'UnoPimin asennus sisältää useita vaiheita. Tässä yleiskatsaus:',

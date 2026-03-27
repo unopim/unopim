@@ -4,7 +4,7 @@ return [
     'seeders' => [
         'attribute' => [
             'attribute-families' => [
-                'default' => 'Default',
+                'default' => '預設',
             ],
             'attribute-groups' => [
                 'description'      => '描述',

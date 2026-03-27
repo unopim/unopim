@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhooks',
+                        'name' => '网络钩子',
                     ],
                 ],
             ],
@@ -18,7 +18,7 @@ return [
     ],
     'acl' => [
         'webhook' => [
-            'index' => 'Webhook',
+            'index' => '网络钩子',
         ],
         'settings' => [
             'index'  => '设置',
@@ -30,7 +30,6 @@ return [
             'mass-delete' => '批量删除',
         ],
     ],
-
     'configuration' => [
         'webhook' => [
             'settings' => [
@@ -43,14 +42,12 @@ return [
                         'label' => '启用 Webhook',
                     ],
                     'webhook_url' => [
-                        'label' => 'Webhook URL',
+                        'label' => '网络钩子 URL',
                     ],
                     'success'    => 'Webhook 设置已成功保存',
-                    'title'      => 'Webhook 设置',
                     'logs-title' => '日志',
                 ],
             ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

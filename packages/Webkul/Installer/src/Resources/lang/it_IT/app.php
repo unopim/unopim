@@ -4,7 +4,7 @@ return [
     'seeders' => [
         'attribute' => [
             'attribute-families' => [
-                'default' => 'Default',
+                'default' => 'Predefinito',
             ],
             'attribute-groups' => [
                 'description'      => 'Descrizione',
@@ -168,7 +168,7 @@ return [
                 'title'                   => 'Pronto per l\'Installazione',
             ],
             'start' => [
-                'locale'        => 'Locale',
+                'locale'        => 'Lingua',
                 'main'          => 'Inizio',
                 'select-locale' => 'Seleziona Locale',
                 'title'         => 'Installazione UnoPim',

@@ -8,7 +8,6 @@ return [
             ],
         ],
     ],
-
     'catalog' => [
         'families' => [
             'edit' => [
@@ -20,39 +19,33 @@ return [
                     'save-btn'            => 'Kaydet',
                     'back-btn'            => 'Geri',
                     'mass-update-success' => 'Tamlık başarıyla güncellendi',
-
-                    'datagrid' => [
+                    'datagrid'            => [
                         'code'             => 'Kod',
                         'name'             => 'Ad',
                         'channel-required' => 'Kanallarda zorunlu',
-
-                        'actions' => [
+                        'actions'          => [
                             'change-requirement' => 'Tamlık gereksinimini değiştir',
                         ],
                     ],
                 ],
             ],
         ],
-
         'products' => [
             'index' => [
                 'datagrid' => [
-                    'missing-completeness-setting' => 'N/A',
+                    'missing-completeness-setting' => 'Geçersiz',
                     'completeness'                 => 'Tamamlandı',
                 ],
             ],
-
             'edit' => [
                 'completeness' => [
                     'title'    => 'Tamlık',
                     'subtitle' => 'Ortalama tamlık',
                 ],
-
                 'required-attributes' => 'eksik zorunlu öznitelikler',
             ],
         ],
     ],
-
     'notifications' => [
         'completeness-title'             => 'Tamlık hesaplaması tamamlandı',
         'completeness-calculated'        => ':count ürün için tamlık hesaplandı.',
@@ -63,13 +56,11 @@ return [
         'email-body-family'              => '":family" öznitelik ailesindeki :count ürün için tamlık hesaplaması tamamlandı.',
         'email-footer'                   => 'Tamlık ayrıntılarını kontrol panelinizde görüntüleyebilirsiniz.',
     ],
-
     'dashboard' => [
         'index' => [
             'completeness' => [
                 'calculated-products' => 'Hesaplanan ürünler',
-
-                'suggestion' => [
+                'suggestion'          => [
                     'low'     => 'Düşük tamlık, iyileştirmek için ayrıntı ekleyin.',
                     'medium'  => 'Devam edin, bilgi eklemeye devam edin.',
                     'high'    => 'Neredeyse tamamlandı, sadece birkaç ayrıntı kaldı.',

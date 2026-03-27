@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhooks',
+                        'name' => '網路鉤子',
                     ],
                 ],
             ],
@@ -18,7 +18,7 @@ return [
     ],
     'acl' => [
         'webhook' => [
-            'index' => 'Webhook',
+            'index' => '網路鉤子',
         ],
         'settings' => [
             'index'  => '設定',
@@ -30,7 +30,6 @@ return [
             'mass-delete' => '批次刪除',
         ],
     ],
-
     'configuration' => [
         'webhook' => [
             'settings' => [
@@ -43,14 +42,12 @@ return [
                         'label' => '啟用 Webhook',
                     ],
                     'webhook_url' => [
-                        'label' => 'Webhook URL',
+                        'label' => '網路鉤子 URL',
                     ],
                     'success'    => 'Webhook 設定已成功儲存',
-                    'title'      => 'Webhook 設定',
                     'logs-title' => '日誌',
                 ],
             ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

@@ -8,7 +8,6 @@ return [
             ],
         ],
     ],
-
     'catalog' => [
         'families' => [
             'edit' => [
@@ -20,39 +19,33 @@ return [
                     'save-btn'            => 'Lagre',
                     'back-btn'            => 'Tilbake',
                     'mass-update-success' => 'Fullstendighet oppdatert',
-
-                    'datagrid' => [
+                    'datagrid'            => [
                         'code'             => 'Kode',
                         'name'             => 'Navn',
                         'channel-required' => 'Påkrevd i kanaler',
-
-                        'actions' => [
+                        'actions'          => [
                             'change-requirement' => 'Endre fullstendighetskrav',
                         ],
                     ],
                 ],
             ],
         ],
-
         'products' => [
             'index' => [
                 'datagrid' => [
-                    'missing-completeness-setting' => 'N/A',
+                    'missing-completeness-setting' => 'Ikke tilgjengelig',
                     'completeness'                 => 'Fullstendig',
                 ],
             ],
-
             'edit' => [
                 'completeness' => [
                     'title'    => 'Fullstendighet',
                     'subtitle' => 'Gjennomsnittlig fullstendighet',
                 ],
-
                 'required-attributes' => 'manglende påkrevde attributter',
             ],
         ],
     ],
-
     'notifications' => [
         'completeness-title'             => 'Fullstendighetsberegning fullført',
         'completeness-calculated'        => 'Fullstendighet beregnet for :count produkter.',
@@ -63,13 +56,11 @@ return [
         'email-body-family'              => 'Fullstendighetsberegningen er fullført for :count produkter i attributtfamilien ":family".',
         'email-footer'                   => 'Du kan se fullstendighetsdetaljene på dashbordet ditt.',
     ],
-
     'dashboard' => [
         'index' => [
             'completeness' => [
                 'calculated-products' => 'Beregnede produkter',
-
-                'suggestion' => [
+                'suggestion'          => [
                     'low'     => 'Lav fullstendighet, legg til detaljer for å forbedre.',
                     'medium'  => 'Fortsett, fortsett å legge til informasjon.',
                     'high'    => 'Nesten fullstendig, bare noen få detaljer gjenstår.',

@@ -76,7 +76,7 @@ return [
                 'AED' => 'Dirham',
                 'AFN' => 'Israelischer Schekel',
                 'CNY' => 'Chinesischer Yuan',
-                'EUR' => 'EURO',
+                'EUR' => 'Euro',
                 'GBP' => 'Pfund Sterling',
                 'INR' => 'Indische Rupie',
                 'IRR' => 'Iranischer Rial',

@@ -8,7 +8,6 @@ return [
             ],
         ],
     ],
-
     'catalog' => [
         'families' => [
             'edit' => [
@@ -20,39 +19,33 @@ return [
                     'save-btn'            => 'Lưu',
                     'back-btn'            => 'Quay lại',
                     'mass-update-success' => 'Mức độ hoàn thiện đã được cập nhật thành công',
-
-                    'datagrid' => [
+                    'datagrid'            => [
                         'code'             => 'Mã',
                         'name'             => 'Tên',
                         'channel-required' => 'Bắt buộc trong kênh',
-
-                        'actions' => [
+                        'actions'          => [
                             'change-requirement' => 'Thay đổi yêu cầu hoàn thiện',
                         ],
                     ],
                 ],
             ],
         ],
-
         'products' => [
             'index' => [
                 'datagrid' => [
-                    'missing-completeness-setting' => 'N/A',
+                    'missing-completeness-setting' => 'Không có',
                     'completeness'                 => 'Hoàn thành',
                 ],
             ],
-
             'edit' => [
                 'completeness' => [
                     'title'    => 'Mức độ hoàn thiện',
                     'subtitle' => 'Mức độ hoàn thiện trung bình',
                 ],
-
                 'required-attributes' => 'thiếu các thuộc tính bắt buộc',
             ],
         ],
     ],
-
     'notifications' => [
         'completeness-title'             => 'Tính toán mức độ hoàn thiện đã hoàn tất',
         'completeness-calculated'        => 'Mức độ hoàn thiện đã được tính cho :count sản phẩm.',
@@ -63,13 +56,11 @@ return [
         'email-body-family'              => 'Việc tính toán mức độ hoàn thiện đã hoàn tất cho :count sản phẩm trong nhóm thuộc tính ":family".',
         'email-footer'                   => 'Bạn có thể xem chi tiết mức độ hoàn thiện trên bảng điều khiển của mình.',
     ],
-
     'dashboard' => [
         'index' => [
             'completeness' => [
                 'calculated-products' => 'Sản phẩm đã tính toán',
-
-                'suggestion' => [
+                'suggestion'          => [
                     'low'     => 'Mức độ hoàn thiện thấp, hãy thêm chi tiết để cải thiện.',
                     'medium'  => 'Tiếp tục, hãy tiếp tục bổ sung thông tin.',
                     'high'    => 'Gần hoàn thành, chỉ còn một vài chi tiết.',

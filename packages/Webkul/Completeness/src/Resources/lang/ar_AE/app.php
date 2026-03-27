@@ -8,7 +8,6 @@ return [
             ],
         ],
     ],
-
     'catalog' => [
         'families' => [
             'edit' => [
@@ -20,39 +19,33 @@ return [
                     'save-btn'            => 'حفظ',
                     'back-btn'            => 'رجوع',
                     'mass-update-success' => 'تم تحديث الاكتمال بنجاح',
-
-                    'datagrid' => [
+                    'datagrid'            => [
                         'code'             => 'الرمز',
                         'name'             => 'الاسم',
                         'channel-required' => 'مطلوب في القنوات',
-
-                        'actions' => [
+                        'actions'          => [
                             'change-requirement' => 'تغيير متطلبات الاكتمال',
                         ],
                     ],
                 ],
             ],
         ],
-
         'products' => [
             'index' => [
                 'datagrid' => [
-                    'missing-completeness-setting' => 'N/A',
+                    'missing-completeness-setting' => 'غير متوفر',
                     'completeness'                 => 'مكتمل',
                 ],
             ],
-
             'edit' => [
                 'completeness' => [
                     'title'    => 'الاكتمال',
                     'subtitle' => 'متوسط الاكتمال',
                 ],
-
                 'required-attributes' => 'سمات مطلوبة مفقودة',
             ],
         ],
     ],
-
     'notifications' => [
         'completeness-title'             => 'اكتمل حساب الاكتمال',
         'completeness-calculated'        => 'تم حساب الاكتمال لـ :count منتج.',
@@ -63,13 +56,11 @@ return [
         'email-body-family'              => 'تم إكمال حساب الاكتمال لـ :count منتج في عائلة السمات ":family".',
         'email-footer'                   => 'يمكنك عرض تفاصيل الاكتمال على لوحة التحكم الخاصة بك.',
     ],
-
     'dashboard' => [
         'index' => [
             'completeness' => [
                 'calculated-products' => 'المنتجات المحسوبة',
-
-                'suggestion' => [
+                'suggestion'          => [
                     'low'     => 'اكتمال منخفض، أضف تفاصيل للتحسين.',
                     'medium'  => 'استمر، واصل إضافة المعلومات.',
                     'high'    => 'شبه مكتمل، بقيت بعض التفاصيل.',
