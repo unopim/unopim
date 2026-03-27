@@ -36,9 +36,27 @@ class ChannelRepository extends Repository
         $data = $this->removeEmptyTranslations($data, $model);
 
         foreach (core()->getAllActiveLocales() as $locale) {
+            $localeCode = $locale->code;
+
             foreach ($model->translatedAttributes as $attribute) {
                 if (isset($data[$attribute])) {
-                    $data[$locale->code][$attribute] = $data[$attribute];
+                    $data[$localeCode][$attribute] = $data[$attribute];
+                }
+            }
+
+            if (isset($data[$localeCode])) {
+                $allEmpty = true;
+
+                foreach ($model->translatedAttributes as $field) {
+                    if (! empty($data[$localeCode][$field])) {
+                        $allEmpty = false;
+
+                        break;
+                    }
+                }
+
+                if ($allEmpty) {
+                    unset($data[$localeCode]);
                 }
             }
         }

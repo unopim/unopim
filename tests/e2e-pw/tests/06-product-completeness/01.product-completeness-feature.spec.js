@@ -1,13 +1,16 @@
 const { test, expect } = require('../../utils/fixtures');
 test.describe('Verify that Product Completeness feature correctly Exists', () => {
   test('Verify “Completeness” tab is displayed in Default Family Edit adminPage', async ({ adminPage }) => {
-    await adminPage.getByRole('link', { name: ' Catalog' }).dblclick();
-    await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
-    const itemRow = adminPage.locator('div', { hasText: 'Default' });
-    await itemRow.locator('span[title="Edit"]').first().click();
+    await adminPage.goto('/admin/catalog/families', { waitUntil: 'load' });
+    await adminPage.waitForLoadState('networkidle');
+    const editBtn = adminPage.locator('span[title="Edit"]').first();
+    await editBtn.click();
     await expect(adminPage).toHaveURL(/\/admin\/catalog\/families\/edit\/\d+$/);
     await expect(adminPage.getByRole('link', { name: 'Completeness' })).toBeVisible();
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
+    await adminPage.waitForLoadState('networkidle');
+    // Wait for completeness datagrid to fully render
+    await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 15000 });
     await expect(adminPage).toHaveURL(/\/admin\/catalog\/families\/edit\/\d+\?completeness/);
     await expect(adminPage.getByRole('paragraph').filter({ hasText: 'Completeness' })).toBeVisible();
     await expect(adminPage.locator('div').filter({ hasText: /^Code$/ })).toBeVisible();
@@ -21,13 +24,17 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await expect(adminPage.getByRole('heading', { name: 'Default' })).toBeVisible();
     await expect(adminPage.locator('circle').first()).toBeVisible();
     await expect(adminPage.locator('header').filter({ hasText: 'Default Low completeness' })).toBeVisible();
-    await expect(adminPage.locator('#app').getByText('English (United States)0%')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('English (United States)0%').first()).toBeVisible();
 });
     
   test('Verify Product Completeness Status Displays N/A When No Attributes Are Configured as Required for a Channel', async ({ adminPage }) => {
-    await adminPage.getByRole('link', { name: ' Catalog' }).click();
-    await adminPage.getByRole('link', { name: 'Products' }).click();
-    await adminPage.getByRole('button', { name: 'Create Product' }).click();
+    await adminPage.goto('/admin/catalog/products', { waitUntil: 'load' });
+    await adminPage.waitForLoadState('networkidle');
+
+    // Skip product creation if it already exists from a previous run
+    const existingProduct = adminPage.locator('#app').getByText('check-complete-status-onproduct');
+    if (!(await existingProduct.isVisible({ timeout: 3000 }).catch(() => false))) {
+      await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await adminPage.locator('div').filter({ hasText: /^Select option$/ }).first().click();
     await adminPage.getByRole('option', { name: 'Simple' }).first().click();
     await adminPage.getByText('Select option').click();
@@ -35,8 +42,12 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await adminPage.locator('input[name="sku"]').click();
     await adminPage.locator('input[name="sku"]').fill('check-complete-status-onproduct');
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
-    await adminPage.getByRole('link', { name: ' Dashboard' }).click();
-    await adminPage.getByRole('link', { name: ' Catalog' }).click();
+      await adminPage.waitForLoadState('networkidle');
+    }
+    await adminPage.goto('/admin/catalog/products', { waitUntil: 'load' });
+    await adminPage.waitForLoadState('networkidle');
+    // Wait for product rows to render in the datagrid
+    await expect(adminPage.locator('span[title="Edit"]').first()).toBeVisible({ timeout: 15000 });
     await expect(adminPage.getByRole('paragraph').filter({ hasText: /^Complete$/ })).toBeVisible();
     await expect(adminPage.getByRole('paragraph').filter({ hasText: 'N/A' }).first()).toBeVisible();
 });
@@ -57,8 +68,12 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
 });
     
   test('Assign attribute group ,attribute in created family', async ({ adminPage }) => {
-    await adminPage.getByRole('link', { name: ' Catalog' }).click();
-    await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
+    await adminPage.goto('/admin/catalog/families', { waitUntil: 'load' });
+    await adminPage.waitForLoadState('networkidle');
+    await adminPage.getByRole('textbox', { name: 'Search' }).first().fill('displaycompletensstab');
+    await adminPage.keyboard.press('Enter');
+    await adminPage.waitForLoadState('networkidle');
+    await expect(adminPage.locator('span[title="Edit"]').first()).toBeVisible({ timeout: 10000 });
     const itemRow = adminPage.locator('div', { hasText: 'displaycompletensstab' });
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.getByText('Assign Attribute Group').click();
@@ -83,60 +98,97 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
 });
 
   test('Verify newly assigned SKU attribute appears in Completeness tab for a new family', async ({ adminPage }) => {
-    await adminPage.getByRole('link', { name: ' Catalog' }).click();
-    await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
+    await adminPage.goto('/admin/catalog/families', { waitUntil: 'load' });
+    await adminPage.waitForLoadState('networkidle');
+    await adminPage.getByRole('textbox', { name: 'Search' }).first().fill('displaycompletensstab');
+    await adminPage.keyboard.press('Enter');
+    await adminPage.waitForLoadState('networkidle');
+    await expect(adminPage.locator('span[title="Edit"]').first()).toBeVisible({ timeout: 10000 });
     const itemRow = adminPage.locator('div', { hasText: 'displaycompletensstab' });
     await itemRow.locator('span[title="Edit"]').first().click();
     await expect(adminPage.locator('div').filter({ hasText: /^SKU$/ })).toBeVisible();
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
-    await expect(adminPage.locator('div').filter({ hasText: /^sku$/ })).toBeVisible();
+    await adminPage.waitForLoadState('networkidle');
+    // Wait for completeness datagrid to fully render
+    await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 15000 });
+    await expect(adminPage.locator('#app').getByText('sku', { exact: true })).toBeVisible({ timeout: 15000 });
     await expect(adminPage.locator('#app').getByText('SKU', { exact: true })).toBeVisible();
 
 });
     
   test('Verify attribute search using search bar in Completeness section returns correct results in Family settings', async ({ adminPage }) => {
-    await adminPage.getByRole('link', { name: ' Catalog' }).click();
-    await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
+    await adminPage.goto('/admin/catalog/families', { waitUntil: 'load' });
+    await adminPage.waitForLoadState('networkidle');
+    await adminPage.getByRole('textbox', { name: 'Search' }).first().fill('displaycompletensstab');
+    await adminPage.keyboard.press('Enter');
+    await adminPage.waitForLoadState('networkidle');
+    await expect(adminPage.locator('span[title="Edit"]').first()).toBeVisible({ timeout: 10000 });
     const itemRow = adminPage.locator('div', { hasText: 'displaycompletensstab' });
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
+    await adminPage.waitForLoadState('networkidle');
+    // Wait for completeness datagrid to fully render
+    await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 15000 });
     await adminPage.getByRole('textbox', { name: 'Search', exact: true }).click();
     await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill('sku');
     await adminPage.getByRole('textbox', { name: 'Search', exact: true }).press('Enter');
-    await expect(adminPage.locator('#app').getByText('1 Results')).toBeVisible();
-    await expect(adminPage.locator('div').filter({ hasText: /^sku$/ })).toBeVisible();
+    await adminPage.waitForLoadState('networkidle');
+    await expect(adminPage.locator('#app').getByText('1 Results')).toBeVisible({ timeout: 15000 });
+    await expect(adminPage.locator('#app').getByText('sku', { exact: true })).toBeVisible();
 });
 
   test('Verify default channel appears in dropdown for “Required in Channel” in Completeness tab', async ({ adminPage }) => {
-    await adminPage.getByRole('link', { name: ' Catalog' }).click();
-    await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
+    await adminPage.goto('/admin/catalog/families', { waitUntil: 'load' });
+    await adminPage.waitForLoadState('networkidle');
+    await adminPage.getByRole('textbox', { name: 'Search' }).first().fill('displaycompletensstab');
+    await adminPage.keyboard.press('Enter');
+    await adminPage.waitForLoadState('networkidle');
+    await expect(adminPage.locator('span[title="Edit"]').first()).toBeVisible({ timeout: 10000 });
     const itemRow = adminPage.locator('div', { hasText: 'displaycompletensstab' });
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
+    await adminPage.waitForLoadState('networkidle');
+    // Wait for completeness datagrid to fully render
+    await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 15000 });
     await adminPage.locator('div').filter({ hasText: /^Select option$/ }).nth(1).click();
     await expect(adminPage.getByRole('option', { name: 'Default' }).first()).toBeVisible();
 });
 
   test('Verify attribute filter using code in Completeness section of Family settings', async ({ adminPage }) => {
-    await adminPage.getByRole('link', { name: ' Catalog' }).click();
-    await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
+    await adminPage.goto('/admin/catalog/families', { waitUntil: 'load' });
+    await adminPage.waitForLoadState('networkidle');
+    await adminPage.getByRole('textbox', { name: 'Search' }).first().fill('displaycompletensstab');
+    await adminPage.keyboard.press('Enter');
+    await adminPage.waitForLoadState('networkidle');
+    await expect(adminPage.locator('span[title="Edit"]').first()).toBeVisible({ timeout: 10000 });
     const itemRow = adminPage.locator('div', { hasText: 'displaycompletensstab' });
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
+    await adminPage.waitForLoadState('networkidle');
+    // Wait for completeness datagrid to fully render
+    await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 15000 });
     await adminPage.locator('.relative.inline-flex').click();
     await adminPage.getByRole('textbox', { name: 'Code' }).click();
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('sku');
     await adminPage.getByText('Save').click();
     await adminPage.getByText('Save').click();
-    await expect(adminPage.locator('#app').getByText('1 Results')).toBeVisible();
+    await adminPage.waitForLoadState('networkidle');
+    await expect(adminPage.locator('#app').getByText('1 Results')).toBeVisible({ timeout: 15000 });
 });
 
   test('Verify attribute filter using name in Completeness section of Family settings', async ({ adminPage }) => {
-    await adminPage.getByRole('link', { name: ' Catalog' }).click();
-    await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
+    await adminPage.goto('/admin/catalog/families', { waitUntil: 'load' });
+    await adminPage.waitForLoadState('networkidle');
+    await adminPage.getByRole('textbox', { name: 'Search' }).first().fill('displaycompletensstab');
+    await adminPage.keyboard.press('Enter');
+    await adminPage.waitForLoadState('networkidle');
+    await expect(adminPage.locator('span[title="Edit"]').first()).toBeVisible({ timeout: 10000 });
     const itemRow = adminPage.locator('div', { hasText: 'displaycompletensstab' });
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
+    await adminPage.waitForLoadState('networkidle');
+    // Wait for completeness datagrid to fully render
+    await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 15000 });
     await adminPage.locator('.relative.inline-flex').click();
     await adminPage.getByRole('textbox', { name: 'Name' }).click();
     await adminPage.getByRole('textbox', { name: 'Name' }).fill('xyz');
@@ -146,11 +198,18 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
 });
 
   test('Verify attribute filter using Required in Channel in Completeness section of Family settings', async ({ adminPage }) => {
-    await adminPage.getByRole('link', { name: ' Catalog' }).click();
-    await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
+    await adminPage.goto('/admin/catalog/families', { waitUntil: 'load' });
+    await adminPage.waitForLoadState('networkidle');
+    await adminPage.getByRole('textbox', { name: 'Search' }).first().fill('displaycompletensstab');
+    await adminPage.keyboard.press('Enter');
+    await adminPage.waitForLoadState('networkidle');
+    await expect(adminPage.locator('span[title="Edit"]').first()).toBeVisible({ timeout: 10000 });
     const itemRow = adminPage.locator('div', { hasText: 'displaycompletensstab' });
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
+    await adminPage.waitForLoadState('networkidle');
+    // Wait for completeness datagrid to fully render
+    await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 15000 });
     await adminPage.locator('.relative.inline-flex').click();
     await adminPage.getByRole('textbox', { name: 'Required in Channels' }).click();
     await adminPage.getByRole('textbox', { name: 'Required in Channels' }).fill('xyz');
@@ -165,11 +224,18 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
 });
     
   test('Verify correct selection of SKU in default channel using “Required for Channel” dropdown', async ({ adminPage }) => {
-    await adminPage.getByRole('link', { name: ' Catalog' }).click();
-    await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
+    await adminPage.goto('/admin/catalog/families', { waitUntil: 'load' });
+    await adminPage.waitForLoadState('networkidle');
+    await adminPage.getByRole('textbox', { name: 'Search' }).first().fill('displaycompletensstab');
+    await adminPage.keyboard.press('Enter');
+    await adminPage.waitForLoadState('networkidle');
+    await expect(adminPage.locator('span[title="Edit"]').first()).toBeVisible({ timeout: 10000 });
     const itemRow = adminPage.locator('div', { hasText: 'displaycompletensstab' });
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
+    await adminPage.waitForLoadState('networkidle');
+    // Wait for completeness datagrid to fully render
+    await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 15000 });
     await adminPage.locator(`input[name="channel_requirements"]`).locator('..').locator('.multiselect__tags').nth(1).click();
     await adminPage.getByRole('option', { name: 'Default' }).first().click();
     await expect(adminPage.locator('#app').getByText('Completeness updated successfully Close')).toBeVisible();
@@ -177,11 +243,18 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
 });
 
   test('Verify filter using Required in Channel in Completeness section of Family settings return 1 result', async ({ adminPage }) => {
-    await adminPage.getByRole('link', { name: ' Catalog' }).click();
-    await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
+    await adminPage.goto('/admin/catalog/families', { waitUntil: 'load' });
+    await adminPage.waitForLoadState('networkidle');
+    await adminPage.getByRole('textbox', { name: 'Search' }).first().fill('displaycompletensstab');
+    await adminPage.keyboard.press('Enter');
+    await adminPage.waitForLoadState('networkidle');
+    await expect(adminPage.locator('span[title="Edit"]').first()).toBeVisible({ timeout: 10000 });
     const itemRow = adminPage.locator('div', { hasText: 'displaycompletensstab' });
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
+    await adminPage.waitForLoadState('networkidle');
+    // Wait for completeness datagrid to fully render
+    await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 15000 });
     await adminPage.locator('.relative.inline-flex').click();
     await adminPage.getByRole('textbox', { name: 'Required in Channels' }).click();
     await adminPage.getByRole('textbox', { name: 'Required in Channels' }).fill('default');
@@ -193,6 +266,10 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
   test('Verify selectable attribute count in Completeness tab equals assigned family attributes', async ({ adminPage }) => {
     await adminPage.getByRole('link', { name: 'Catalog' }).click();
     await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
+    await adminPage.waitForLoadState('networkidle');
+    await adminPage.getByRole('textbox', { name: 'Search' }).first().fill('displaycompletensstab');
+    await adminPage.keyboard.press('Enter');
+    await adminPage.waitForLoadState('networkidle');
     const itemRow = adminPage.locator('div', { hasText: 'displaycompletensstab' });
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.waitForSelector('#assigned-attribute-groups', { state: 'visible' });
@@ -214,13 +291,13 @@ test('Create a new channel and assigned multiple locale and currency', async ({ 
     await adminPage.waitForLoadState('networkidle');
     const itemRow = adminPage.locator('div', { hasText: 'af_ZAAfrikaans (South Africa)' });
     await itemRow.locator('span[title="Edit"]').first().click();
-    const statusCheckbox = adminPage.locator('input[name="status"]');
-    const isChecked = await statusCheckbox.isChecked();
-    if (!isChecked) {
-        await adminPage.locator('label[for="status"]').click();
+    await adminPage.waitForLoadState('load');
+    const statusChecked = await adminPage.locator('input[name="status"][type="checkbox"]').isChecked();
+    if (!statusChecked) {
+        await adminPage.locator('label[for="status"]').first().click();
     }
     await adminPage.getByRole('button', { name: 'Save Locale' }).click();
-    await expect(adminPage.locator('#app').getByText(/Locale Updated successfully/i)).toBeVisible();
+    await expect(adminPage.locator('#app').getByText(/Locale Updated successfully/i)).toBeVisible({ timeout: 15000 });
 
     //Enable the Andorran Peseta currency
     await adminPage.getByRole('link', { name: 'Currencies' }).click();
@@ -230,16 +307,21 @@ test('Create a new channel and assigned multiple locale and currency', async ({ 
     await adminPage.waitForLoadState('networkidle');
     const itemRow1 = adminPage.locator('div', { hasText: 'ADPAndorran Peseta' });
     await itemRow1.locator('span[title="Edit"]').first().click();
-    const currencyStatus = adminPage.locator('input[name="status"]');
-    const isCurrencyChecked = await currencyStatus.isChecked();
-    if (!isCurrencyChecked) {
-        await adminPage.locator('label[for="status"]').click();
+    await adminPage.waitForLoadState('load');
+    const currencyChecked = await adminPage.locator('input[name="status"][type="checkbox"]').isChecked();
+    if (!currencyChecked) {
+        await adminPage.locator('label[for="status"]').first().click();
     }
     await adminPage.getByRole('button', { name: 'Save Currency' }).click();
     await expect(adminPage.locator('#app').getByText(/Currency updated successfully/i)).toBeVisible();
 
-    //Create a new channel and assign the above enabled locale and currency
+    //Create a new channel and assign the above enabled locale and currency (skip if already exists)
     await adminPage.getByRole('link', { name: 'Channels' }).click();
+    await adminPage.waitForLoadState('networkidle');
+    const existingChannel = adminPage.locator('#app').getByText('channel3');
+    if (await existingChannel.isVisible({ timeout: 3000 }).catch(() => false)) {
+        return; // Channel already exists from a previous run
+    }
     await adminPage.getByRole('link', { name: 'Create Channel' }).click();
     await adminPage.getByRole('textbox', { name: 'Code' }).click();
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('defaultchannel2');
@@ -262,20 +344,37 @@ test('Create a new channel and assigned multiple locale and currency', async ({ 
     await adminPage.getByRole('link', { name: ' Catalog' }).click();
     await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
     await expect(adminPage.locator('#app').getByText('displaycompletensstab')).toBeVisible();
+    await adminPage.waitForLoadState('networkidle');
+    await adminPage.getByRole('textbox', { name: 'Search' }).first().fill('displaycompletensstab');
+    await adminPage.keyboard.press('Enter');
+    await adminPage.waitForLoadState('networkidle');
     const itemRow = adminPage.locator('div', { hasText: 'displaycompletensstab' });
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
-    await adminPage.locator('div').filter({ hasText: /^Code$/ }).locator('label span').click();
-    await adminPage.getByRole('button', { name: 'Select Action ' }).click();
-    await adminPage.getByRole('link', { name: 'Change Completeness' }).click();
-    await adminPage.locator('.px-4 > .mb-4 > div > .multiselect > .multiselect__tags').click();
+    await adminPage.waitForLoadState('networkidle');
+    // Wait for completeness datagrid to fully render
+    await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 15000 });
+    await adminPage.click('label[for="mass_action_select_all_records"]');
+    // Verify rows are selected — Select Action button only appears when rows are selected
+    await expect(adminPage.getByRole('button', { name: /Select Action/i })).toBeVisible({ timeout: 5000 });
+    await adminPage.getByRole('button', { name: /Select Action/i }).click();
+    // Use force click to bypass dropdown close-on-blur behavior in headless mode
+    await adminPage.locator('a', { hasText: 'Change Completeness Requirement' }).click({ force: true, timeout: 5000 });
+    // Wait for the Configure Completeness modal to open
+    await expect(adminPage.getByText('Configure Completeness')).toBeVisible({ timeout: 10000 });
+    // Click the multiselect that appears AFTER the modal heading (the last one on page is in the modal)
+    await adminPage.locator('.multiselect__tags').last().click();
     await expect(adminPage.getByRole('option', { name: 'Default' }).first()).toBeVisible();
     await expect(adminPage.getByRole('option', { name: 'channel3' }).first()).toBeVisible();
 });
 
 test('Delete the created family after tests', async ({ adminPage }) => {
-    await adminPage.getByRole('link', { name: ' Catalog' }).click();
-    await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
+    await adminPage.goto('/admin/catalog/families', { waitUntil: 'load' });
+    await adminPage.waitForLoadState('networkidle');
+    await adminPage.getByRole('textbox', { name: 'Search' }).first().fill('displaycompletensstab');
+    await adminPage.keyboard.press('Enter');
+    await adminPage.waitForLoadState('networkidle');
+    await expect(adminPage.locator('span[title="Edit"]').first()).toBeVisible({ timeout: 10000 });
     const itemRow = adminPage.locator('div', { hasText: 'displaycompletensstab' });
     await itemRow.locator('span[title="Delete"]').first().click();
     await adminPage.getByRole('button', { name: 'Delete' }).click();

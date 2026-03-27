@@ -2,10 +2,13 @@
 
 use Webkul\Admin\Tests\AdminTestCase;
 use Webkul\AdminApi\Tests\ApiTestCase;
+use Webkul\Attribute\Tests\AttributeTestCase;
+use Webkul\Category\Tests\CategoryTestCase;
 use Webkul\Completeness\Tests\CompletenessTestCase;
 use Webkul\Core\Tests\CoreTestCase;
 use Webkul\DataGrid\Tests\DataGridTestCase;
 use Webkul\Installer\Tests\UserCreateCommandTestCase;
+use Webkul\Product\Tests\ProductTestCase;
 use Webkul\User\Tests\UserTestCase;
 
 ini_set('memory_limit', '1024M');
@@ -30,6 +33,9 @@ uses(UserCreateCommandTestCase::class)->in('../packages/Webkul/Installer/tests')
 uses(CoreTestCase::class)->in('../packages/Webkul/ElasticSearch/tests');
 uses(AdminTestCase::class)->in('../packages/Webkul/DataTransfer/tests');
 uses(CompletenessTestCase::class)->in('../packages/Webkul/Completeness/tests');
+uses(ProductTestCase::class)->in('../packages/Webkul/Product/tests');
+uses(AttributeTestCase::class)->in('../packages/Webkul/Attribute/tests');
+uses(CategoryTestCase::class)->in('../packages/Webkul/Category/tests');
 
 /*
 |--------------------------------------------------------------------------

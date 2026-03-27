@@ -2,13 +2,18 @@
 
 namespace Webkul\DataTransfer\Models;
 
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
+use Webkul\DataTransfer\Database\Factories\JobTrackFactory;
 
 class JobTrack extends Model implements JobTrackContract
 {
+    use HasFactory;
+
     protected $table = 'job_track';
 
     /**
@@ -77,5 +82,13 @@ class JobTrack extends Model implements JobTrackContract
     public function jobInstance()
     {
         return $this->belongsTo(JobInstancesProxy::modelClass(), 'job_instances_id', 'id');
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory(): Factory
+    {
+        return JobTrackFactory::new();
     }
 }
