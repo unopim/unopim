@@ -14,15 +14,8 @@ env:
 
 jobs:
   playwright_tests:
-    name: Playwright E2E | Shard ${{ matrix.shard-index }} of ${{ matrix.shard-total }}
+    name: Playwright E2E
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
-
-    strategy:
-      fail-fast: false
-      matrix:
-        shard-index: [1, 2, 3, 4]
-        shard-total: [4]
 
     services:
       mysql:
@@ -118,6 +111,7 @@ jobs:
         run: |
           php artisan unopim:install --skip-env-check --skip-admin-creation
           php artisan migrate:fresh --seed
+          php artisan db:seed --class="Webkul\\Installer\\Database\\Seeders\\ProductTableSeeder"
           php artisan serve --host=0.0.0.0 --port=8000 > /dev/null 2>&1 &
           php artisan queue:work --queue=default,system,completeness > /dev/null 2>&1 &
           echo "Waiting for server..."
@@ -126,13 +120,13 @@ jobs:
       - name: Run Playwright tests
         run: |
           cd tests/e2e-pw
-          npx playwright test --reporter=list --shard=${{ matrix.shard-index }}/${{ matrix.shard-total }}
+          npx playwright test --reporter=list
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v5
         with:
-          name: playwright-report-shard-${{ matrix.shard-index }}-${{ github.run_id }}
+          name: playwright-report-${{ github.run_id }}
           path: |
             tests/e2e-pw/playwright-report
             tests/e2e-pw/test-results
