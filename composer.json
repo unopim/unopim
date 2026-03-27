@@ -94,7 +94,11 @@
             "Webkul\\User\\Tests\\": "packages/Webkul/User/tests",
             "Webkul\\AdminApi\\Tests\\": "packages/Webkul/AdminApi/tests",
             "Webkul\\Installer\\Tests\\": "packages/Webkul/Installer/tests",
-            "Webkul\\Completeness\\Tests\\": "packages/Webkul/Completeness/tests"
+            "Webkul\\Completeness\\Tests\\": "packages/Webkul/Completeness/tests",
+            "Webkul\\Category\\Tests\\": "packages/Webkul/Category/tests",
+            "Webkul\\Product\\Tests\\": "packages/Webkul/Product/tests",
+            "Webkul\\Attribute\\Tests\\": "packages/Webkul/Attribute/tests",
+            "Webkul\\DataTransfer\\Tests\\": "packages/Webkul/DataTransfer/tests"
         }
     },
     "scripts": {

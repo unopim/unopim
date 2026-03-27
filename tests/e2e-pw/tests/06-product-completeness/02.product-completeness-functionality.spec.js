@@ -49,10 +49,16 @@ test.describe('Verify the behvaiour of Product Completenss feature', () => {
     const itemRow = adminPage.locator('div', { hasText: 'Default' });
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
-    await adminPage.locator('div').filter({ hasText: /^Code$/ }).locator('label span').click();
-    await adminPage.getByRole('button', { name: 'Select Action ' }).click();
-    await adminPage.getByRole('link', { name: 'Change Completeness' }).click();
-    await adminPage.locator('.px-4 > .mb-4 > div > .multiselect > .multiselect__tags').click();
+    await adminPage.waitForLoadState('networkidle');
+    await adminPage.click('label[for="mass_action_select_all_records"]');
+    // Verify rows are selected — Select Action button only appears when rows are selected
+    await expect(adminPage.getByRole('button', { name: /Select Action/i })).toBeVisible({ timeout: 5000 });
+    await adminPage.getByRole('button', { name: /Select Action/i }).click();
+    // Use force click to bypass dropdown close-on-blur behavior in headless mode
+    await adminPage.locator('a', { hasText: 'Change Completeness Requirement' }).click({ force: true, timeout: 5000 });
+    // Wait for the Configure Completeness modal to open
+    await expect(adminPage.getByText('Configure Completeness')).toBeVisible({ timeout: 10000 });
+    await adminPage.locator('.multiselect__tags').last().click();
     await expect(adminPage.getByRole('option', { name: 'Default' }).first()).toBeVisible();
     await expect(adminPage.getByRole('option', { name: 'channel3' }).first()).toBeVisible();
 });
@@ -70,9 +76,14 @@ test.describe('Verify the behvaiour of Product Completenss feature', () => {
     await adminPage.getByText('50', { exact: true }).click();
     await adminPage.click('label[for="mass_action_select_all_records"]');
     await expect(adminPage.locator('#mass_action_select_all_records')).toBeChecked();
+    // Verify rows are selected — Select Action button only appears when rows are selected
+    await expect(adminPage.getByRole('button', { name: /Select Action/i })).toBeVisible({ timeout: 5000 });
     await adminPage.getByRole('button', { name: /Select Action/i }).click();
-    await adminPage.locator('a', { hasText: 'Change Completeness Requirement' }).click();
-    await adminPage.locator('.px-4 > .mb-4 > div > .multiselect > .multiselect__tags').click();
+    // Use force click to bypass dropdown close-on-blur behavior in headless mode
+    await adminPage.locator('a', { hasText: 'Change Completeness Requirement' }).click({ force: true, timeout: 5000 });
+    // Wait for the Configure Completeness modal to open
+    await expect(adminPage.getByText('Configure Completeness')).toBeVisible({ timeout: 10000 });
+    await adminPage.locator('.multiselect__tags').last().click();
     await adminPage.getByRole('option', { name: 'Default' }).first().click();
     await adminPage.getByRole('button', { name: 'Save' }).click();
     await expect(adminPage.locator('#app').getByText('Completeness updated successfully Close')).toBeVisible();

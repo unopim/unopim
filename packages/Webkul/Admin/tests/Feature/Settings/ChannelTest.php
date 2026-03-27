@@ -73,6 +73,31 @@ it('should create the Channel', function () {
     ]);
 });
 
+it('should create the Channel without translations', function () {
+    $this->loginAsAdmin();
+    $demoChannel = Channel::factory()->create();
+
+    $data = [
+        'code'             => 'NoTransChannel',
+        'root_category_id' => $demoChannel->root_category_id,
+        'locales'          => implode(',', $demoChannel->locales->pluck('id')->toArray()),
+        'currencies'       => implode(',', $demoChannel->currencies->pluck('id')->toArray()),
+    ];
+
+    foreach (core()->getAllActiveLocales() as $locale) {
+        $data[$locale->code] = ['name' => ''];
+    }
+
+    $response = postJson(route('admin.settings.channels.store'), $data);
+
+    $response->assertStatus(302);
+    $response->assertSessionHas('success');
+
+    $this->assertDatabaseHas($this->getFullTableName(Channel::class), [
+        'code' => 'NoTransChannel',
+    ]);
+});
+
 it('should update the Channel', function () {
     $this->loginAsAdmin();
 
