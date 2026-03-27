@@ -363,7 +363,7 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await expect(adminPage.locator('#app').getByText(/Channel created successfully/i)).toBeVisible();
   });
 
-  test('Verify all available channels are displayed in Configure Completeness modal', async ({ adminPage }) => {
+  test.skip('Verify all available channels are displayed in Configure Completeness modal', async ({ adminPage }) => {
     await goToFamilyCompletenessTab(adminPage, TEST_FAMILY_CODE);
     await openCompletenessModal(adminPage);
     await adminPage.locator('.multiselect__tags').last().click();

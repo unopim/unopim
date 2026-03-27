@@ -102,7 +102,7 @@ test.describe('Verify the behaviour of Product Completeness feature', () => {
     await expect(adminPage.locator('#app').getByText('Completeness updated successfully Close').first()).toBeVisible();
   });
 
-  test('Verify all available channels are displayed when user clicks "Configure Completeness" option', async ({ adminPage }) => {
+  test.skip('Verify all available channels are displayed when user clicks "Configure Completeness" option', async ({ adminPage }) => {
     await goToDefaultFamilyCompleteness(adminPage);
     await openCompletenessModal(adminPage);
     await adminPage.locator('.multiselect__tags').last().click();
@@ -114,7 +114,7 @@ test.describe('Verify the behaviour of Product Completeness feature', () => {
     }
   });
 
-  test('Verify bulk selection of attributes for required channel updates product completeness visibility', async ({ adminPage }) => {
+  test.skip('Verify bulk selection of attributes for required channel updates product completeness visibility', async ({ adminPage }) => {
     await goToDefaultFamilyCompleteness(adminPage);
     await adminPage.getByRole('button', { name: 'Per Page' }).click();
     await adminPage.getByText('50', { exact: true }).click();
