@@ -30,7 +30,6 @@ return [
             'mass-delete' => 'Massaal verwijderen',
         ],
     ],
-
     'configuration' => [
         'webhook' => [
             'settings' => [
@@ -43,14 +42,12 @@ return [
                         'label' => 'Actieve Webhook',
                     ],
                     'webhook_url' => [
-                        'label' => 'Webhook URL',
+                        'label' => 'Webhook-URL',
                     ],
                     'success'    => 'Webhook-instellingen succesvol opgeslagen',
-                    'title'      => 'Webhook-instellingen',
                     'logs-title' => 'Logboeken',
                 ],
             ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

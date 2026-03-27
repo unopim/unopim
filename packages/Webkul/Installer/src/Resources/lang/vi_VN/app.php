@@ -4,7 +4,7 @@ return [
     'seeders' => [
         'attribute' => [
             'attribute-families' => [
-                'default' => 'Default',
+                'default' => 'Mặc định',
             ],
             'attribute-groups' => [
                 'description'      => 'Mô tả',

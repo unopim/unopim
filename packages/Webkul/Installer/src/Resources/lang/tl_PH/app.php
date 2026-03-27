@@ -198,7 +198,7 @@ return [
             ],
             'back'                     => 'Bumalik',
             'unopim-info'              => 'Proyektong Komunidad',
-            'unopim-logo'              => 'UnoPim Logo',
+            'unopim-logo'              => 'Logo ng UnoPim',
             'unopim'                   => 'UnoPim',
             'continue'                 => 'Magpatuloy',
             'installation-description' => 'Ang pag-install ng UnoPim ay binubuo ng ilang mga hakbang. Narito ang isang pangkalahatang-ideya:',

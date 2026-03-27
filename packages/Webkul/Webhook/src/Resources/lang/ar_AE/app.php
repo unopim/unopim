@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhooks',
+                        'name' => 'الويب هوك',
                     ],
                 ],
             ],
@@ -18,7 +18,7 @@ return [
     ],
     'acl' => [
         'webhook' => [
-            'index' => 'Webhook',
+            'index' => 'ويب هوك',
         ],
         'settings' => [
             'index'  => 'الإعدادات',
@@ -30,7 +30,6 @@ return [
             'mass-delete' => 'حذف جماعي',
         ],
     ],
-
     'configuration' => [
         'webhook' => [
             'settings' => [
@@ -46,11 +45,9 @@ return [
                         'label' => 'رابط Webhook',
                     ],
                     'success'    => 'تم حفظ إعدادات Webhook بنجاح',
-                    'title'      => 'إعدادات Webhook',
                     'logs-title' => 'السجلات',
                 ],
             ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

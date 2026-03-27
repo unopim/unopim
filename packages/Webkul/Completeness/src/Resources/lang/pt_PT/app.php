@@ -8,7 +8,6 @@ return [
             ],
         ],
     ],
-
     'catalog' => [
         'families' => [
             'edit' => [
@@ -20,20 +19,17 @@ return [
                     'save-btn'            => 'Guardar',
                     'back-btn'            => 'Voltar',
                     'mass-update-success' => 'Completude atualizada com sucesso',
-
-                    'datagrid' => [
+                    'datagrid'            => [
                         'code'             => 'Código',
                         'name'             => 'Nome',
                         'channel-required' => 'Obrigatório nos canais',
-
-                        'actions' => [
+                        'actions'          => [
                             'change-requirement' => 'Alterar requisito de completude',
                         ],
                     ],
                 ],
             ],
         ],
-
         'products' => [
             'index' => [
                 'datagrid' => [
@@ -41,18 +37,15 @@ return [
                     'completeness'                 => 'Completo',
                 ],
             ],
-
             'edit' => [
                 'completeness' => [
                     'title'    => 'Completude',
                     'subtitle' => 'Completude média',
                 ],
-
                 'required-attributes' => 'atributos obrigatórios em falta',
             ],
         ],
     ],
-
     'notifications' => [
         'completeness-title'             => 'Cálculo de completude concluído',
         'completeness-calculated'        => 'Completude calculada para :count produtos.',
@@ -63,13 +56,11 @@ return [
         'email-body-family'              => 'O cálculo de completude foi concluído para :count produtos na família de atributos ":family".',
         'email-footer'                   => 'Pode consultar os detalhes de completude no seu painel de controlo.',
     ],
-
     'dashboard' => [
         'index' => [
             'completeness' => [
                 'calculated-products' => 'Produtos calculados',
-
-                'suggestion' => [
+                'suggestion'          => [
                     'low'     => 'Completude baixa, adicione detalhes para melhorar.',
                     'medium'  => 'Continue, prossiga com a adição de informações.',
                     'high'    => 'Quase completo, faltam apenas alguns detalhes.',

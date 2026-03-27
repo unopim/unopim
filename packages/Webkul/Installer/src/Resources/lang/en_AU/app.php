@@ -15,7 +15,7 @@ return [
             ],
             'attributes' => [
                 'brand'                => 'Brand',
-                'color'                => 'Color',
+                'color'                => 'Colour',
                 'cost'                 => 'Cost',
                 'description'          => 'Description',
                 'featured'             => 'Featured',
@@ -67,16 +67,16 @@ return [
         ],
         'core' => [
             'channels' => [
-                'meta-title'       => 'Demo store',
-                'meta-keywords'    => 'Demo store meta keyword',
-                'meta-description' => 'Demo store meta description',
+                'meta-title'       => 'Demo Store',
+                'meta-keywords'    => 'Demo Store Meta Keyword',
+                'meta-description' => 'Demo Store Meta Description',
                 'name'             => 'Default',
             ],
             'currencies' => [
                 'AED' => 'Dirham',
                 'AFN' => 'Israeli Shekel',
                 'CNY' => 'Chinese Yuan',
-                'EUR' => 'EURO',
+                'EUR' => 'Euro',
                 'GBP' => 'Pound Sterling',
                 'INR' => 'Indian Rupee',
                 'IRR' => 'Iranian Rial',
