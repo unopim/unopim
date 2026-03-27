@@ -65,8 +65,6 @@ class ApiClientCommand extends Passport
 
         $provider = config('auth.guards.api.provider', 'admins');
 
-        $provider = $providers[0];
-
         $client = $clients->createPasswordGrantClient(
             $user->id, $name, 'http://localhost', $provider
         );
