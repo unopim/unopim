@@ -8,7 +8,6 @@ return [
             ],
         ],
     ],
-
     'catalog' => [
         'families' => [
             'edit' => [
@@ -20,20 +19,17 @@ return [
                     'save-btn'            => 'Spremi',
                     'back-btn'            => 'Natrag',
                     'mass-update-success' => 'Potpunost uspješno ažurirana',
-
-                    'datagrid' => [
+                    'datagrid'            => [
                         'code'             => 'Šifra',
                         'name'             => 'Naziv',
                         'channel-required' => 'Potrebno u kanalima',
-
-                        'actions' => [
+                        'actions'          => [
                             'change-requirement' => 'Promijeni zahtjev potpunosti',
                         ],
                     ],
                 ],
             ],
         ],
-
         'products' => [
             'index' => [
                 'datagrid' => [
@@ -41,18 +37,15 @@ return [
                     'completeness'                 => 'Potpuno',
                 ],
             ],
-
             'edit' => [
                 'completeness' => [
                     'title'    => 'Potpunost',
                     'subtitle' => 'Prosječna potpunost',
                 ],
-
                 'required-attributes' => 'nedostajući obavezni atributi',
             ],
         ],
     ],
-
     'notifications' => [
         'completeness-title'             => 'Izračun potpunosti završen',
         'completeness-calculated'        => 'Potpunost izračunata za :count proizvoda.',
@@ -63,13 +56,11 @@ return [
         'email-body-family'              => 'Izračun potpunosti je završen za :count proizvoda u obitelji atributa ":family".',
         'email-footer'                   => 'Detalje potpunosti možete pregledati na svojoj nadzornoj ploči.',
     ],
-
     'dashboard' => [
         'index' => [
             'completeness' => [
                 'calculated-products' => 'Izračunati proizvodi',
-
-                'suggestion' => [
+                'suggestion'          => [
                     'low'     => 'Niska potpunost, dodajte detalje za poboljšanje.',
                     'medium'  => 'Nastavite, dodajte još informacija.',
                     'high'    => 'Gotovo potpuno, preostalo je samo nekoliko detalja.',

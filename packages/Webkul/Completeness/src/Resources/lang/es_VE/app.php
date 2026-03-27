@@ -8,7 +8,6 @@ return [
             ],
         ],
     ],
-
     'catalog' => [
         'families' => [
             'edit' => [
@@ -20,20 +19,17 @@ return [
                     'save-btn'            => 'Guardar',
                     'back-btn'            => 'Volver',
                     'mass-update-success' => 'Completitud actualizada exitosamente',
-
-                    'datagrid' => [
+                    'datagrid'            => [
                         'code'             => 'Código',
                         'name'             => 'Nombre',
                         'channel-required' => 'Requerido en canales',
-
-                        'actions' => [
+                        'actions'          => [
                             'change-requirement' => 'Cambiar requisito de completitud',
                         ],
                     ],
                 ],
             ],
         ],
-
         'products' => [
             'index' => [
                 'datagrid' => [
@@ -41,18 +37,15 @@ return [
                     'completeness'                 => 'Completo',
                 ],
             ],
-
             'edit' => [
                 'completeness' => [
                     'title'    => 'Completitud',
                     'subtitle' => 'Completitud promedio',
                 ],
-
                 'required-attributes' => 'atributos requeridos faltantes',
             ],
         ],
     ],
-
     'notifications' => [
         'completeness-title'             => 'Cálculo de completitud finalizado',
         'completeness-calculated'        => 'Completitud calculada para :count productos.',
@@ -63,13 +56,11 @@ return [
         'email-body-family'              => 'El cálculo de completitud se ha completado para :count productos en la familia de atributos ":family".',
         'email-footer'                   => 'Puede ver los detalles de completitud en su panel de control.',
     ],
-
     'dashboard' => [
         'index' => [
             'completeness' => [
                 'calculated-products' => 'Productos calculados',
-
-                'suggestion' => [
+                'suggestion'          => [
                     'low'     => 'Completitud baja, agregue detalles para mejorar.',
                     'medium'  => 'Siga adelante, continúe agregando información.',
                     'high'    => 'Casi completo, solo faltan unos pocos detalles.',

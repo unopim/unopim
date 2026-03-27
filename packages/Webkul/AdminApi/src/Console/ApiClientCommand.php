@@ -63,7 +63,7 @@ class ApiClientCommand extends Passport
             config('app.name').' Password Grant Client'
         );
 
-        $providers = array_keys(config('auth.providers'));
+        $provider = config('auth.guards.api.provider', 'admins');
 
         $provider = $providers[0];
 

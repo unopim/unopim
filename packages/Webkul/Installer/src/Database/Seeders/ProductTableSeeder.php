@@ -28,13 +28,87 @@ class ProductTableSeeder extends Seeder
         }
 
         try {
+
             DB::transaction(function () use ($products): void {
+
                 DB::table('products')->delete();
+
                 DB::table('products')->insert($products);
+
+                $skus = array_column($products, 'sku');
+
+                $insertedProducts = DB::table('products')
+                    ->select('id', 'sku', 'type')
+                    ->whereIn('sku', $skus)
+                    ->get()
+                    ->keyBy('sku');
+
+                $defaultFamilyId = (int) (
+                    DB::table('attribute_families')
+                        ->where('code', 'default')
+                        ->value('id') ?? 1
+                );
+
+                $sizeAttributeId = DB::table('attributes')
+                    ->join(
+                        'attribute_group_mappings',
+                        'attributes.id',
+                        '=',
+                        'attribute_group_mappings.attribute_id'
+                    )
+                    ->join(
+                        'attribute_family_group_mappings',
+                        'attribute_group_mappings.attribute_family_group_id',
+                        '=',
+                        'attribute_family_group_mappings.id'
+                    )
+                    ->where('attribute_family_group_mappings.attribute_family_id', $defaultFamilyId)
+                    ->where('attributes.code', 'size')
+                    ->whereIn('attributes.type', ['select'])
+                    ->where('attributes.value_per_locale', 0)
+                    ->where('attributes.value_per_channel', 0)
+                    ->value('attributes.id');
+
+                if (! $sizeAttributeId) {
+                    $this->command?->warn(
+                        'Attribute code "size" not found/eligible in family "default". Pivot rows not inserted.'
+                    );
+
+                    return;
+                }
+
+                $pivotRows = [];
+
+                foreach ($products as $row) {
+
+                    if (($row['type'] ?? 'simple') !== 'configurable') {
+                        continue;
+                    }
+
+                    $sku = $row['sku'];
+
+                    $product = $insertedProducts->get($sku);
+
+                    if (! $product) {
+                        continue;
+                    }
+
+                    $pivotRows[] = [
+                        'product_id'   => (int) $product->id,
+                        'attribute_id' => (int) $sizeAttributeId,
+                    ];
+                }
+
+                if (! empty($pivotRows)) {
+                    DB::table('product_super_attributes')->insertOrIgnore($pivotRows);
+                }
+
             });
 
             $this->command?->info('Products imported successfully.');
+
         } catch (Throwable $e) {
+
             $this->command?->error('Failed to insert products: '.$e->getMessage());
 
             return;
@@ -54,7 +128,12 @@ class ProductTableSeeder extends Seeder
         }
 
         try {
-            $data = json_decode(File::get($jsonPath), true, 512, JSON_THROW_ON_ERROR);
+            $data = json_decode(
+                File::get($jsonPath),
+                true,
+                512,
+                JSON_THROW_ON_ERROR
+            );
         } catch (JsonException $e) {
             $this->command?->error('Failed to parse products.json: '.$e->getMessage());
 
@@ -71,11 +150,16 @@ class ProductTableSeeder extends Seeder
         $products = [];
 
         foreach ($data['products'] as $product) {
+
             try {
+
                 $values = $product['values'];
 
                 if (isset($values['common']['image'])) {
-                    $storedImagePath = $this->storeProductImage($values['common']['image']);
+
+                    $storedImagePath = $this->storeProductImage(
+                        $values['common']['image']
+                    );
 
                     if ($storedImagePath !== null) {
                         $values['common']['image'] = $storedImagePath;
@@ -94,10 +178,22 @@ class ProductTableSeeder extends Seeder
                     'created_at'          => $now,
                     'updated_at'          => $now,
                 ];
+
             } catch (JsonException $e) {
-                $this->command?->error('Failed to encode values for product: '.($product['sku'] ?? 'unknown').' - '.$e->getMessage());
+
+                $this->command?->error(
+                    'Failed to encode values for product: '
+                    .($product['sku'] ?? 'unknown')
+                    .' - '.$e->getMessage()
+                );
+
             } catch (Throwable $e) {
-                $this->command?->error('Failed to process product: '.($product['sku'] ?? 'unknown').' - '.$e->getMessage());
+
+                $this->command?->error(
+                    'Failed to process product: '
+                    .($product['sku'] ?? 'unknown')
+                    .' - '.$e->getMessage()
+                );
             }
         }
 

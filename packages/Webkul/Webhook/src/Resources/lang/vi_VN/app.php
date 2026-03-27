@@ -30,7 +30,6 @@ return [
             'mass-delete' => 'Xóa hàng loạt',
         ],
     ],
-
     'configuration' => [
         'webhook' => [
             'settings' => [
@@ -46,11 +45,9 @@ return [
                         'label' => 'URL Webhook',
                     ],
                     'success'    => 'Cài đặt Webhook đã được lưu thành công',
-                    'title'      => 'Cài đặt Webhook',
                     'logs-title' => 'Nhật ký',
                 ],
             ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

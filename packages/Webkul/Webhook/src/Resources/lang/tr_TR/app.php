@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhooks',
+                        'name' => 'Webhook\'lar',
                     ],
                 ],
             ],
@@ -30,7 +30,6 @@ return [
             'mass-delete' => 'Toplu silme',
         ],
     ],
-
     'configuration' => [
         'webhook' => [
             'settings' => [
@@ -46,11 +45,9 @@ return [
                         'label' => 'Webhook URL',
                     ],
                     'success'    => 'Webhook ayarları başarıyla kaydedildi',
-                    'title'      => 'Webhook Ayarları',
                     'logs-title' => 'Günlükler',
                 ],
             ],
-
             'logs' => [
                 'index' => [
                     'datagrid' => [

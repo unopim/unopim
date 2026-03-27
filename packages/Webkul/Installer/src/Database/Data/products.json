@@ -1,2527 +1,627 @@
 {
   "products": [
     {
-      "sku": "nike-air-max-270-cfg",
-      "type": "configurable",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "nike-air-max-270-cfg",
-          "brand": "Nike",
-          "size": "L",
-          "image": "products/nike-air-max-270-cfg.jpg",
-          "url_key": "nike-air-max-270"
-        },
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "85",
-              "INR": 7055
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "Nike Air Max 270",
-              "price": {
-                "USD": "150",
-                "INR": 12450
-              },
-              "meta_title": "Nike Air Max 270 – Men's Running & Lifestyle Shoes",
-              "description": "<p>The Nike Air Max 270 features Nike's biggest heel Air unit yet for a super-soft ride that feels as impossible as it looks. The design draws inspiration from Air Max icons, with an exaggerated tongue, large external heel Air unit, and bold lines.</p>",
-              "meta_keywords": "Nike Air Max 270|Nike sneakers|Air Max shoes|running shoes",
-              "meta_description": "Shop the Nike Air Max 270 for men. Features the biggest heel Air unit yet for a super-soft, stylish ride.",
-              "short_description": "<p>Nike Air Max 270 with the biggest heel Air unit yet. Lightweight mesh upper with foam midsole for all-day comfort.</p>"
-            },
-            "hi_IN": {
-              "name": "नाइकी एयर मैक्स 270",
-              "price": {
-                "USD": 150.0,
-                "INR": 12450
-              },
-              "short_description": "<p>नाइकी एयर मैक्स 270 – सबसे बड़ी हील एयर यूनिट के साथ। हल्का मेश अपर और फोम मिडसोल सारे दिन आराम देता है।</p>",
-              "description": "<p>नाइकी एयर मैक्स 270 में नाइकी की अब तक की सबसे बड़ी हील एयर यूनिट है, जो एक अविश्वसनीय रूप से मुलायम राइड देती है। यह डिज़ाइन एयर मैक्स आइकन्स से प्रेरित है, जिसमें एक्सेग्रेटेड टंग, बड़ी एक्सटर्नल हील एयर यूनिट और बोल्ड लाइनें हैं।</p>",
-              "meta_title": "नाइकी एयर मैक्स 270 – पुरुषों के रनिंग और लाइफस्टाइल जूते",
-              "meta_keywords": "नाइकी एयर मैक्स 270|नाइकी स्नीकर्स|एयर मैक्स जूते|रनिंग जूते",
-              "meta_description": "नाइकी एयर मैक्स 270 खरीदें। अब तक की सबसे बड़ी हील एयर यूनिट के साथ सुपर-सॉफ्ट राइड का अनुभव करें।"
-            },
-            "fr_FR": {
-              "name": "Nike Air Max 270",
-              "price": {
-                "USD": 150.0,
-                "INR": 12450
-              },
-              "short_description": "<p>Nike Air Max 270 avec la plus grande unité Air au talon. Tige en mesh légère et semelle en mousse pour un confort toute la journée.</p>",
-              "description": "<p>La Nike Air Max 270 dispose de la plus grande unité Air au talon de Nike pour une conduite ultra-douce. Le design s'inspire des icônes Air Max, avec une languette exagérée, une grande unité Air externe au talon et des lignes audacieuses.</p>",
-              "meta_title": "Nike Air Max 270 – Chaussures de course et lifestyle pour hommes",
-              "meta_keywords": "Nike Air Max 270|baskets Nike|chaussures Air Max|chaussures de course",
-              "meta_description": "Achetez la Nike Air Max 270 pour hommes. La plus grande unité Air au talon pour une conduite ultra-douce et stylée."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "adidas-ultraboost-22-cfg",
-      "type": "configurable",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "adidas-ultraboost-22-cfg",
-          "brand": "Adidas",
-          "size": "L",
-          "image": "products/product-1.jpg",
-          "url_key": "adidas-ultraboost-22"
-        },
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "105",
-              "INR": 8715
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "Adidas Ultraboost 22",
-              "price": {
-                "USD": "190",
-                "INR": 15770
-              },
-              "meta_title": "Adidas Ultraboost 22 Running Shoes – Men's & Women's",
-              "description": "<p>The Adidas Ultraboost 22 is built for runners who demand the best. Features a Primeknit+ upper that adapts to your foot's natural movement and responsive BOOST midsole that returns energy with every stride.</p>",
-              "meta_keywords": "Adidas Ultraboost 22|Ultraboost running shoes|Adidas BOOST",
-              "meta_description": "Experience ultimate energy return with the Adidas Ultraboost 22. Primeknit+ upper and BOOST midsole for every run.",
-              "short_description": "<p>Adidas Ultraboost 22 with Primeknit+ upper and energy-returning BOOST midsole. Made with recycled materials.</p>"
-            },
-            "hi_IN": {
-              "name": "एडिडास अल्ट्राबूस्ट 22",
-              "price": {
-                "USD": 190.0,
-                "INR": 15770
-              },
-              "short_description": "<p>एडिडास अल्ट्राबूस्ट 22 – प्राइमनिट+ अपर और ऊर्जा-वापस करने वाले BOOST मिडसोल के साथ। रीसाइकिल्ड मैटेरियल से बना।</p>",
-              "description": "<p>एडिडास अल्ट्राबूस्ट 22 उन धावकों के लिए बनाया गया है जो सर्वश्रेष्ठ चाहते हैं। इसमें प्राइमनिट+ अपर है जो पैर की प्राकृतिक गति के साथ ढलता है और रिस्पॉन्सिव BOOST मिडसोल हर कदम पर ऊर्जा लौटाता है।</p>",
-              "meta_title": "एडिडास अल्ट्राबूस्ट 22 रनिंग जूते – पुरुष और महिला",
-              "meta_keywords": "एडिडास अल्ट्राबूस्ट 22|अल्ट्राबूस्ट रनिंग जूते|एडिडास BOOST",
-              "meta_description": "एडिडास अल्ट्राबूस्ट 22 के साथ ऊर्जा की वापसी का अनुभव करें। हर रन के लिए प्राइमनिट+ अपर और BOOST मिडसोल।"
-            },
-            "fr_FR": {
-              "name": "Adidas Ultraboost 22",
-              "price": {
-                "USD": 190.0,
-                "INR": 15770
-              },
-              "short_description": "<p>Adidas Ultraboost 22 avec tige Primeknit+ et semelle BOOST à restitution d'énergie. Fabriqué avec des matériaux recyclés.</p>",
-              "description": "<p>L'Adidas Ultraboost 22 est conçu pour les coureurs qui exigent le meilleur. Doté d'une tige Primeknit+ qui s'adapte au mouvement naturel de votre pied et d'une semelle intermédiaire BOOST réactive qui restitue l'énergie à chaque foulée.</p>",
-              "meta_title": "Adidas Ultraboost 22 Chaussures de course – Hommes et Femmes",
-              "meta_keywords": "Adidas Ultraboost 22|chaussures de course Ultraboost|Adidas BOOST",
-              "meta_description": "Découvrez le retour d'énergie ultime avec l'Adidas Ultraboost 22. Tige Primeknit+ et semelle BOOST pour chaque course."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "levi-501-jeans-cfg",
-      "type": "configurable",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "levi-501-jeans-cfg",
-          "brand": "Levi's",
-          "size": "L",
-          "image": "products/product-2.jpg",
-          "url_key": "levis-501-original-jeans"
-        },
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "35",
-              "INR": 2905
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "Levi's 501 Original Fit Jeans",
-              "price": {
-                "USD": "69.50",
-                "INR": 5768
-              },
-              "meta_title": "Levi's 501 Original Fit Jeans – Men's Straight Leg Denim",
-              "description": "<p>The Levi's 501 Original Fit Jeans are the original blue jean, a symbol of American style. Straight fit with button fly, these jeans are made from durable 100% cotton denim and only get better with wear.</p>",
-              "meta_keywords": "Levi's 501 jeans|straight leg jeans|button fly jeans|denim",
-              "meta_description": "Shop Levi's 501 Original Fit Jeans, the iconic straight-leg denim with button fly in a range of washes.",
-              "short_description": "<p>Levi's iconic 501 Original Fit Jeans. Straight leg, button fly, 100% cotton denim. The original and the best.</p>"
-            },
-            "hi_IN": {
-              "name": "लेवीस 501 ओरिजिनल फिट जींस",
-              "price": {
-                "USD": 69.5,
-                "INR": 5768
-              },
-              "short_description": "<p>लेवी'स की आइकॉनिक 501 ओरिजिनल फिट जींस। स्ट्रेट लेग, बटन फ्लाई, 100% कॉटन डेनिम।</p>",
-              "description": "<p>लेवी'स 501 ओरिजिनल फिट जींस असली ब्लू जीन है, जो अमेरिकी शैली का प्रतीक है। बटन फ्लाई के साथ स्ट्रेट फिट, ये जींस मजबूत 100% कॉटन डेनिम से बनी है और पहनने के साथ और बेहतर होती जाती है।</p>",
-              "meta_title": "लेवी'स 501 ओरिजिनल फिट जींस – पुरुषों की स्ट्रेट लेग डेनिम",
-              "meta_keywords": "लेवी'स 501 जींस|स्ट्रेट लेग जींस|बटन फ्लाई जींस|डेनिम",
-              "meta_description": "लेवी'स 501 ओरिजिनल फिट जींस खरीदें – बटन फ्लाई के साथ आइकॉनिक स्ट्रेट-लेग डेनिम।"
-            },
-            "fr_FR": {
-              "name": "Jean Levi's 501 Original Fit",
-              "price": {
-                "USD": 69.5,
-                "INR": 5768
-              },
-              "short_description": "<p>L'emblématique jean Levi's 501 Original Fit. Jambe droite, braguette boutons, denim 100% coton.</p>",
-              "description": "<p>Le jean Levi's 501 Original Fit est le jean bleu originel, symbole du style américain. Coupe droite avec braguette à boutons, ce jean est fabriqué en denim 100% coton durable et s'améliore avec le temps.</p>",
-              "meta_title": "Jean Levi's 501 Original Fit – Denim jambe droite pour hommes",
-              "meta_keywords": "jean Levi's 501|jean jambe droite|jean braguette boutons|denim",
-              "meta_description": "Achetez le jean Levi's 501 Original Fit, l'emblématique denim jambe droite avec braguette à boutons."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "apple-airpods-pro-2",
+      "sku": "boat-rockerz-550-bluetooth",
       "type": "simple",
       "attribute_family_id": 1,
       "values": {
         "common": {
-          "sku": "apple-airpods-pro-2",
-          "brand": "Apple",
-          "image": "products/product-3.jpg",
-          "color": "White",
-          "width": "2.7",
-          "height": "1.5",
-          "length": "3.7",
-          "weight": "0.12",
-          "url_key": "apple-airpods-pro-2",
-          "product_number": "MTJV3LL/A"
-        },
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "140",
-              "INR": 11620
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "Apple AirPods Pro (2nd Generation)",
-              "price": {
-                "USD": "249",
-                "INR": 20667
-              },
-              "meta_title": "Apple AirPods Pro 2nd Generation – Active Noise Cancellation",
-              "description": "<p>The Apple AirPods Pro (2nd Generation) deliver up to 2x more Active Noise Cancellation than the previous generation. Features Adaptive Transparency, Personalized Spatial Audio with dynamic head tracking, and a new H2 chip for smarter, faster wireless audio.</p>",
-              "meta_keywords": "Apple AirPods Pro|AirPods Pro 2|noise cancelling earbuds|Apple earphones",
-              "meta_description": "Buy Apple AirPods Pro 2nd Generation. Features 2x ANC, Adaptive Transparency, and Personalized Spatial Audio.",
-              "short_description": "<p>Apple AirPods Pro 2nd Gen with 2x Active Noise Cancellation, Adaptive Transparency, and Personalized Spatial Audio. Up to 6 hours listening time.</p>"
-            },
-            "hi_IN": {
-              "name": "एप्पल एयरपॉड्स प्रो (दूसरी पीढ़ी)",
-              "price": {
-                "USD": 249.0,
-                "INR": 20667
-              },
-              "short_description": "<p>एप्पल एयरपॉड्स प्रो 2nd जेन – 2x एक्टिव नॉइज़ कैंसलेशन, एडेप्टिव ट्रांसपेरेंसी और 6 घंटे की सुनने की क्षमता।</p>",
-              "description": "<p>एप्पल एयरपॉड्स प्रो (दूसरी पीढ़ी) पिछली पीढ़ी की तुलना में 2 गुना अधिक एक्टिव नॉइज़ कैंसलेशन प्रदान करते हैं। एडेप्टिव ट्रांसपेरेंसी, डायनेमिक हेड ट्रैकिंग के साथ पर्सनलाइज़्ड स्पेशियल ऑडियो और नया H2 चिप शामिल है।</p>",
-              "meta_title": "एप्पल एयरपॉड्स प्रो 2nd जेनरेशन – एक्टिव नॉइज़ कैंसलेशन",
-              "meta_keywords": "एप्पल एयरपॉड्स प्रो|एयरपॉड्स प्रो 2|नॉइज़ कैंसलिंग ईयरबड्स|एप्पल ईयरफोन",
-              "meta_description": "एप्पल एयरपॉड्स प्रो 2nd जेनरेशन खरीदें – 2x ANC, एडेप्टिव ट्रांसपेरेंसी और पर्सनलाइज़्ड स्पेशियल ऑडियो।"
-            },
-            "fr_FR": {
-              "name": "Apple AirPods Pro (2ème génération)",
-              "price": {
-                "USD": 249.0,
-                "INR": 20667
-              },
-              "short_description": "<p>Apple AirPods Pro 2ème gén avec réduction de bruit 2x, Transparence adaptative et Audio spatial. Jusqu'à 6h d'écoute.</p>",
-              "description": "<p>Les Apple AirPods Pro (2ème génération) offrent jusqu'à 2x plus de réduction active du bruit que la génération précédente. Dotés de la Transparence adaptative, de l'Audio spatial personnalisé avec suivi de tête dynamique et d'une nouvelle puce H2.</p>",
-              "meta_title": "Apple AirPods Pro 2ème génération – Réduction de bruit active",
-              "meta_keywords": "Apple AirPods Pro|AirPods Pro 2|écouteurs anti-bruit|écouteurs Apple",
-              "meta_description": "Achetez les Apple AirPods Pro 2ème génération. Réduction de bruit 2x, Transparence adaptative et Audio spatial."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "samsung-galaxy-s24-ultra",
-      "type": "simple",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "samsung-galaxy-s24-ultra",
-          "brand": "Samsung",
-          "image": "products/product-4.jpg",
-          "url_key": "samsung-galaxy-s24-ultra"
-        },
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "780",
-              "INR": 64740
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "Samsung Galaxy S24 Ultra",
-              "price": {
-                "USD": "1299",
-                "INR": 107817
-              },
-              "meta_title": "Samsung Galaxy S24 Ultra – 200MP Camera, S Pen, AI Features",
-              "description": "<p>The Samsung Galaxy S24 Ultra is the ultimate Galaxy experience. Features a built-in S Pen, 200MP camera system, Snapdragon 8 Gen 3 processor, and a stunning 6.8-inch Dynamic AMOLED 2X display with ProVisual Engine for lifelike AI-enhanced photos.</p>",
-              "meta_keywords": "Samsung Galaxy S24 Ultra|Samsung flagship phone|S24 Ultra 200MP",
-              "meta_description": "Experience the Samsung Galaxy S24 Ultra with 200MP camera, S Pen, and Galaxy AI. The ultimate Android smartphone.",
-              "short_description": "<p>Samsung Galaxy S24 Ultra with 200MP camera, built-in S Pen, Snapdragon 8 Gen 3, and 6.8\" Dynamic AMOLED 2X display.</p>"
-            },
-            "hi_IN": {
-              "name": "सैमसंग गैलेक्सी S24 अल्ट्रा",
-              "price": {
-                "USD": 1299.0,
-                "INR": 107817
-              },
-              "short_description": "<p>सैमसंग गैलेक्सी S24 अल्ट्रा – 200MP कैमरा, बिल्ट-इन S पेन, स्नैपड्रैगन 8 Gen 3 और 6.8\" डायनेमिक AMOLED 2X डिस्प्ले।</p>",
-              "description": "<p>सैमसंग गैलेक्सी S24 अल्ट्रा अंतिम गैलेक्सी अनुभव है। बिल्ट-इन S पेन, 200MP कैमरा सिस्टम, स्नैपड्रैगन 8 Gen 3 प्रोसेसर और प्रोविज़ुअल इंजन के साथ 6.8 इंच डायनेमिक AMOLED 2X डिस्प्ले।</p>",
-              "meta_title": "सैमसंग गैलेक्सी S24 अल्ट्रा – 200MP कैमरा, S पेन, AI फीचर्स",
-              "meta_keywords": "सैमसंग गैलेक्सी S24 अल्ट्रा|सैमसंग फ्लैगशिप फोन|S24 अल्ट्रा 200MP",
-              "meta_description": "सैमसंग गैलेक्सी S24 अल्ट्रा का अनुभव करें – 200MP कैमरा, S पेन और Galaxy AI के साथ।"
-            },
-            "fr_FR": {
-              "name": "Samsung Galaxy S24 Ultra",
-              "price": {
-                "USD": 1299.0,
-                "INR": 107817
-              },
-              "short_description": "<p>Samsung Galaxy S24 Ultra avec caméra 200MP, S Pen intégré, Snapdragon 8 Gen 3 et écran Dynamic AMOLED 2X 6,8\".</p>",
-              "description": "<p>Le Samsung Galaxy S24 Ultra est l'expérience Galaxy ultime. Doté d'un S Pen intégré, d'un système de caméra 200MP, d'un processeur Snapdragon 8 Gen 3 et d'un superbe écran Dynamic AMOLED 2X de 6,8 pouces avec ProVisual Engine.</p>",
-              "meta_title": "Samsung Galaxy S24 Ultra – Caméra 200MP, S Pen, fonctionnalités IA",
-              "meta_keywords": "Samsung Galaxy S24 Ultra|téléphone phare Samsung|S24 Ultra 200MP",
-              "meta_description": "Découvrez le Samsung Galaxy S24 Ultra avec caméra 200MP, S Pen et Galaxy AI. Le smartphone Android ultime."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "sony-wh1000xm5",
-      "type": "simple",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "sony-wh1000xm5",
-          "brand": "Sony",
-          "image": "products/product-5.jpg",
+          "sku": "boat-rockerz-550-bluetooth",
+          "image": "products/Product-1.jpeg",
           "color": "Black",
-          "width": "7.8",
-          "height": "3.2",
-          "length": "10.5",
-          "weight": "0.55",
-          "url_key": "sony-wh1000xm5",
-          "product_number": "WH1000XM5/B"
-        },
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "195",
-              "INR": 16185
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "Sony WH-1000XM5 Wireless Headphones",
-              "price": {
-                "USD": "349.99",
-                "INR": 29049
-              },
-              "meta_title": "Sony WH-1000XM5 Wireless Noise Cancelling Headphones",
-              "description": "<p>The Sony WH-1000XM5 are Sony's best noise-cancelling headphones yet. Eight microphones and two processors provide industry-leading noise cancellation. Enjoy 30 hours of battery life, crystal-clear hands-free calling, and a new foldable design for easy portability.</p>",
-              "meta_keywords": "Sony WH-1000XM5|noise cancelling headphones|Sony over-ear headphones|wireless headphones",
-              "meta_description": "Shop Sony WH-1000XM5 headphones with industry-leading noise cancellation and 30 hours of battery life.",
-              "short_description": "<p>Sony WH-1000XM5 with industry-leading noise cancellation, 30-hour battery, and crystal-clear hands-free calling.</p>"
-            },
-            "hi_IN": {
-              "name": "सोनी WH-1000XM5 वायरलेस हेडफोन",
-              "price": {
-                "USD": 349.99,
-                "INR": 29049
-              },
-              "short_description": "<p>सोनी WH-1000XM5 – इंडस्ट्री-लीडिंग नॉइज़ कैंसलेशन, 30 घंटे की बैटरी और क्रिस्टल-क्लियर हैंड्स-फ्री कॉलिंग।</p>",
-              "description": "<p>सोनी WH-1000XM5 अब तक के सोनी के सबसे अच्छे नॉइज़-कैंसलिंग हेडफोन हैं। आठ माइक्रोफोन और दो प्रोसेसर इंडस्ट्री-लीडिंग नॉइज़ कैंसलेशन प्रदान करते हैं। 30 घंटे की बैटरी लाइफ और क्रिस्टल-क्लियर हैंड्स-फ्री कॉलिंग।</p>",
-              "meta_title": "सोनी WH-1000XM5 वायरलेस नॉइज़ कैंसलिंग हेडफोन",
-              "meta_keywords": "सोनी WH-1000XM5|नॉइज़ कैंसलिंग हेडफोन|सोनी ओवर-ईयर हेडफोन|वायरलेस हेडफोन",
-              "meta_description": "सोनी WH-1000XM5 हेडफोन खरीदें – इंडस्ट्री-लीडिंग नॉइज़ कैंसलेशन और 30 घंटे की बैटरी लाइफ।"
-            },
-            "fr_FR": {
-              "name": "Sony WH-1000XM5 Casque sans fil",
-              "price": {
-                "USD": 349.99,
-                "INR": 29049
-              },
-              "short_description": "<p>Sony WH-1000XM5 avec réduction de bruit de pointe, 30h d'autonomie et appels mains libres ultra-nets.</p>",
-              "description": "<p>Le Sony WH-1000XM5 est le meilleur casque anti-bruit de Sony. Huit microphones et deux processeurs offrent une réduction de bruit de pointe. Profitez de 30 heures d'autonomie, d'appels mains libres ultra-nets et d'un design pliable pratique.</p>",
-              "meta_title": "Sony WH-1000XM5 Casque sans fil à réduction de bruit",
-              "meta_keywords": "Sony WH-1000XM5|casque anti-bruit|casque circum-auriculaire Sony|casque sans fil",
-              "meta_description": "Achetez le casque Sony WH-1000XM5 avec réduction de bruit de pointe et 30 heures d'autonomie."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "apple-watch-series-9-cfg",
-      "type": "configurable",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "apple-watch-series-9-cfg",
-          "brand": "Apple",
-          "image": "products/product-6.jpg",
-          "url_key": "apple-watch-series-9"
-        },
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "230",
-              "INR": 19090
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "Apple Watch Series 9",
-              "price": {
-                "USD": "399",
-                "INR": 33117
-              },
-              "meta_title": "Apple Watch Series 9 – GPS, Health Tracking, Always-On Display",
-              "description": "<p>Apple Watch Series 9 features the new S9 SiP chip, making it the most capable Apple Watch yet. With the new double tap gesture, an always-on Retina display, and advanced health sensors including blood oxygen and ECG, it's your ultimate health and fitness companion.</p>",
-              "meta_keywords": "Apple Watch Series 9|Apple smartwatch|Apple Watch GPS|health tracking watch",
-              "meta_description": "Buy Apple Watch Series 9 with the new S9 chip, double tap gesture, and advanced health monitoring features.",
-              "short_description": "<p>Apple Watch Series 9 with S9 chip, double tap gesture, always-on Retina display, and advanced health tracking.</p>"
-            },
-            "hi_IN": {
-              "name": "एप्पल वॉच सीरीज़ 9",
-              "price": {
-                "USD": 399.0,
-                "INR": 33117
-              },
-              "short_description": "<p>एप्पल वॉच सीरीज़ 9 – S9 चिप, डबल टैप जेस्चर, ऑलवेज़-ऑन रेटिना डिस्प्ले और एडवांस्ड हेल्थ ट्रैकिंग।</p>",
-              "description": "<p>एप्पल वॉच सीरीज़ 9 में नया S9 SiP चिप है जो इसे अब तक की सबसे सक्षम एप्पल वॉच बनाता है। नया डबल टैप जेस्चर, ऑलवेज़-ऑन रेटिना डिस्प्ले और ब्लड ऑक्सीजन तथा ECG सहित उन्नत हेल्थ सेंसर शामिल हैं।</p>",
-              "meta_title": "एप्पल वॉच सीरीज़ 9 – GPS, हेल्थ ट्रैकिंग, ऑलवेज़-ऑन डिस्प्ले",
-              "meta_keywords": "एप्पल वॉच सीरीज़ 9|एप्पल स्मार्टवॉच|एप्पल वॉच GPS|हेल्थ ट्रैकिंग वॉच",
-              "meta_description": "एप्पल वॉच सीरीज़ 9 खरीदें – नया S9 चिप, डबल टैप जेस्चर और उन्नत हेल्थ मॉनिटरिंग।"
-            },
-            "fr_FR": {
-              "name": "Apple Watch Series 9",
-              "price": {
-                "USD": 399.0,
-                "INR": 33117
-              },
-              "short_description": "<p>Apple Watch Series 9 avec chip S9, geste double tape, écran Retina Always-On et suivi santé avancé.</p>",
-              "description": "<p>L'Apple Watch Series 9 intègre le nouveau chip S9 SiP, la rendant la plus performante des Apple Watch. Avec le nouveau geste double tape, un écran Retina Always-On et des capteurs de santé avancés incluant l'oxygène sanguin et l'ECG.</p>",
-              "meta_title": "Apple Watch Series 9 – GPS, suivi santé, écran Always-On",
-              "meta_keywords": "Apple Watch Series 9|montre connectée Apple|Apple Watch GPS|montre suivi santé",
-              "meta_description": "Achetez l'Apple Watch Series 9 avec le nouveau chip S9, le geste double tape et le suivi santé avancé."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "yeti-rambler-30oz",
-      "type": "simple",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "yeti-rambler-30oz",
-          "brand": "YETI",
-          "image": "products/product-7.jpg",
-          "url_key": "yeti-rambler-30oz"
+          "url_key": "boat-rockerz-550-bluetooth-headphones",
+          "product_number": "ROCKERZ-550-BLK"
         },
         "channel_specific": {
           "default": {
             "cost": {
               "USD": "18",
-              "INR": 1494
+              "INR": 1499
             }
           }
         },
         "channel_locale_specific": {
           "default": {
             "en_US": {
-              "name": "YETI Rambler 30 oz Travel Mug",
+              "name": "boAt Rockerz 550 Bluetooth Wireless Headphone",
               "price": {
-                "USD": "38",
-                "INR": 3154
+                "USD": "27",
+                "INR": 2249
               },
-              "meta_title": "YETI Rambler 30 oz Travel Mug – Vacuum Insulated Stainless Steel",
-              "description": "<p>The YETI Rambler 30 oz Travel Mug is built for the long haul. Double-wall vacuum insulation keeps drinks hot or cold for hours. The stronghold lid snaps closed to prevent spills and a magnetic closure keeps it sealed tight. Dishwasher safe and made from 18/8 stainless steel.</p>",
-              "meta_keywords": "YETI Rambler 30 oz|YETI travel mug|insulated travel mug|stainless steel mug",
-              "meta_description": "Keep drinks hot or cold for hours with the YETI Rambler 30 oz Travel Mug. Durable, dishwasher-safe, and leak-resistant.",
-              "short_description": "<p>YETI Rambler 30 oz Travel Mug with vacuum insulation, magnetic stronghold lid, and 18/8 stainless steel construction.</p>"
+              "meta_title": "boAt Rockerz 550 Wireless Headphone – 20H Battery, 40mm Drivers",
+              "description": "<p>The boAt Rockerz 550 is a powerful over-ear Bluetooth headphone built for bass lovers. Featuring 40mm dynamic drivers with boAt Signature Sound, it delivers deep punchy bass and crisp highs. The foldable design and padded ear cushions ensure all-day comfort, while the built-in mic lets you take calls hands-free. Enjoy up to 20 hours of playback on a single charge. Compatible with Alexa voice assistant for seamless smart control.</p>",
+              "meta_keywords": "boAt Rockerz 550|wireless headphone India|boAt headphone|Bluetooth over-ear headphone",
+              "meta_description": "Shop boAt Rockerz 550 Wireless Headphone with 20H battery, 40mm drivers, and boAt Signature Sound. Best headphone under 2500.",
+              "short_description": "<p>boAt Rockerz 550 Bluetooth headphone with 40mm drivers, 20H battery life, foldable design, built-in mic, and Alexa support.</p>"
             },
             "hi_IN": {
-              "name": "YETI रैम्बलर 30 oz ट्रैवल मग",
+              "name": "boAt Rockerz 550 ब्लूटूथ वायरलेस हेडफोन",
               "price": {
-                "USD": 38.0,
-                "INR": 3154
+                "USD": 27.0,
+                "INR": 2249
               },
-              "short_description": "<p>YETI रैम्बलर 30 oz – वैक्यूम इंसुलेशन, मैग्नेटिक स्ट्रांगहोल्ड लिड और 18/8 स्टेनलेस स्टील।</p>",
-              "description": "<p>YETI रैम्बलर 30 oz ट्रैवल मग लंबे समय के लिए बनाया गया है। डबल-वॉल वैक्यूम इंसुलेशन पेय को घंटों गर्म या ठंडा रखता है। स्ट्रांगहोल्ड लिड स्पिल्स रोकता है और मैग्नेटिक क्लोज़र इसे सील रखता है।</p>",
-              "meta_title": "YETI रैम्बलर 30 oz ट्रैवल मग – वैक्यूम इंसुलेटेड स्टेनलेस स्टील",
-              "meta_keywords": "YETI रैम्बलर 30 oz|YETI ट्रैवल मग|इंसुलेटेड ट्रैवल मग|स्टेनलेस स्टील मग",
-              "meta_description": "YETI रैम्बलर 30 oz ट्रैवल मग से पेय को घंटों गर्म या ठंडा रखें। टिकाऊ और डिशवॉशर-सेफ।"
+              "short_description": "<p>boAt Rockerz 550 – 40mm डायनेमिक ड्राइवर, 20 घंटे की बैटरी, फोल्डेबल डिज़ाइन, बिल्ट-इन माइक और Alexa सपोर्ट।</p>",
+              "description": "<p>boAt Rockerz 550 बास प्रेमियों के लिए बना एक शक्तिशाली ओवर-ईयर ब्लूटूथ हेडफोन है। 40mm डायनेमिक ड्राइवर के साथ boAt सिग्नेचर साउंड गहरे बास और क्रिस्प हाई देता है। फोल्डेबल डिज़ाइन और पैडेड ईयर कुशन पूरे दिन आराम सुनिश्चित करते हैं। एक चार्ज पर 20 घंटे की प्लेबैक। Alexa वॉयस असिस्टेंट के साथ कम्पेटिबल।</p>",
+              "meta_title": "boAt Rockerz 550 वायरलेस हेडफोन – 20H बैटरी, 40mm ड्राइवर",
+              "meta_keywords": "boAt Rockerz 550|वायरलेस हेडफोन इंडिया|boAt हेडफोन|ब्लूटूथ ओवर-ईयर हेडफोन",
+              "meta_description": "boAt Rockerz 550 वायरलेस हेडफोन खरीदें – 20H बैटरी, 40mm ड्राइवर और boAt सिग्नेचर साउंड। 2500 से कम में बेस्ट हेडफोन।"
             },
             "fr_FR": {
-              "name": "YETI Rambler Mug de voyage 30 oz",
+              "name": "boAt Rockerz 550 Casque Bluetooth sans fil",
               "price": {
-                "USD": 38.0,
-                "INR": 3154
+                "USD": 27.0,
+                "INR": 2249
               },
-              "short_description": "<p>YETI Rambler 30 oz avec isolation sous vide, couvercle magnétique Stronghold et acier inoxydable 18/8.</p>",
-              "description": "<p>Le YETI Rambler 30 oz est conçu pour durer. L'isolation sous vide double paroi maintient les boissons chaudes ou froides pendant des heures. Le couvercle Stronghold se ferme pour éviter les déversements et la fermeture magnétique assure l'étanchéité.</p>",
-              "meta_title": "YETI Rambler Mug de voyage 30 oz – Acier inoxydable sous vide",
-              "meta_keywords": "YETI Rambler 30 oz|mug de voyage YETI|mug isotherme|mug en acier inoxydable",
-              "meta_description": "Gardez vos boissons chaudes ou froides pendant des heures avec le YETI Rambler 30 oz. Robuste et lavable au lave-vaisselle."
+              "short_description": "<p>boAt Rockerz 550 avec haut-parleurs 40mm, 20h d'autonomie, design pliable, micro intégré et support Alexa.</p>",
+              "description": "<p>Le boAt Rockerz 550 est un casque Bluetooth over-ear puissant conçu pour les amateurs de basses. Avec des haut-parleurs dynamiques de 40mm et le boAt Signature Sound, il offre des basses profondes et des aigus nets. Design pliable et coussinets rembourrés pour un confort toute la journée. Jusqu'à 20h d'autonomie. Compatible Alexa.</p>",
+              "meta_title": "boAt Rockerz 550 Casque sans fil – 20H autonomie, haut-parleurs 40mm",
+              "meta_keywords": "boAt Rockerz 550|casque sans fil Inde|casque boAt|casque Bluetooth over-ear",
+              "meta_description": "Achetez le casque boAt Rockerz 550 avec 20H d'autonomie, haut-parleurs 40mm et boAt Signature Sound."
             }
           }
         }
       }
     },
     {
-      "sku": "instant-pot-duo-7in1",
+      "sku": "noise-colorfit-pro4-smartwatch",
       "type": "simple",
       "attribute_family_id": 1,
       "values": {
         "common": {
-          "sku": "instant-pot-duo-7in1",
-          "brand": "Instant Pot",
-          "image": "products/product-8.jpg",
-          "url_key": "instant-pot-duo-7in1"
+          "sku": "noise-colorfit-pro4-smartwatch",
+          "image": "products/Product-2.jpeg",
+          "url_key": "noise-colorfit-pro4-smartwatch",
+          "product_number": "NCF-PRO4-BLK"
         },
         "channel_specific": {
           "default": {
             "cost": {
-              "USD": "52",
-              "INR": 4316
+              "USD": "22",
+              "INR": 1800
             }
           }
         },
         "channel_locale_specific": {
           "default": {
             "en_US": {
-              "name": "Instant Pot Duo 7-in-1 Electric Pressure Cooker",
+              "name": "Noise ColorFit Pro 4 Smart Watch",
               "price": {
-                "USD": "99.95",
-                "INR": 8296
+                "USD": "36",
+                "INR": 2999
               },
-              "meta_title": "Instant Pot Duo 7-in-1 Electric Pressure Cooker 6 Qt",
-              "description": "<p>The Instant Pot Duo 7-in-1 is a pressure cooker, slow cooker, rice cooker, steamer, sauté pan, yogurt maker, and food warmer all in one. With 13 built-in smart programs, it cooks up to 70% faster than traditional methods. Includes a stainless steel inner pot and easy-seal lid.</p>",
-              "meta_keywords": "Instant Pot Duo|electric pressure cooker|multi-cooker|Instant Pot 6 quart",
-              "meta_description": "Cook faster with the Instant Pot Duo 7-in-1. Pressure cooker, slow cooker, rice cooker, and more in one device.",
-              "short_description": "<p>Instant Pot Duo 7-in-1 Electric Pressure Cooker with 13 smart programs. Cooks up to 70% faster. 6-quart capacity.</p>"
+              "meta_title": "Noise ColorFit Pro 4 Smartwatch – 1.72\" Display, Bluetooth Calling, SpO2",
+              "description": "<p>The Noise ColorFit Pro 4 is a feature-packed smartwatch built for the modern Indian lifestyle. The large 1.72-inch TFT display with 500 nits brightness is easily visible even in direct sunlight. It features Bluetooth calling, SpO2 monitoring, heart rate tracking, stress monitoring, and over 100 sports modes. With 7 days of battery life and IP68 water resistance, it keeps up with your active life. Compatible with both Android and iOS.</p>",
+              "meta_keywords": "Noise ColorFit Pro 4|smartwatch India|Noise smartwatch|Bluetooth calling watch",
+              "meta_description": "Buy Noise ColorFit Pro 4 Smartwatch with Bluetooth calling, 1.72\" display, SpO2, and 7-day battery. Best smartwatch under 3000.",
+              "short_description": "<p>Noise ColorFit Pro 4 with 1.72\" TFT display, Bluetooth calling, SpO2, HR tracking, 100+ sports modes, and 7-day battery. IP68 rated.</p>"
             },
             "hi_IN": {
-              "name": "इंस्टेंट पॉट डुओ 7-इन-1 इलेक्ट्रिक प्रेशर कुकर",
+              "name": "Noise ColorFit Pro 4 स्मार्टवॉच",
               "price": {
-                "USD": 99.95,
-                "INR": 8296
+                "USD": 36.0,
+                "INR": 2999
               },
-              "short_description": "<p>इंस्टेंट पॉट डुओ 7-इन-1 – 13 स्मार्ट प्रोग्राम के साथ 70% तेज पकाता है। 6 क्वार्ट क्षमता।</p>",
-              "description": "<p>इंस्टेंट पॉट डुओ 7-इन-1 एक प्रेशर कुकर, स्लो कुकर, राइस कुकर, स्टीमर, सॉटे पैन, योगर्ट मेकर और फूड वार्मर एक में है। 13 बिल्ट-इन स्मार्ट प्रोग्राम के साथ यह पारंपरिक तरीकों की तुलना में 70% तेज पकाता है।</p>",
-              "meta_title": "इंस्टेंट पॉट डुओ 7-इन-1 इलेक्ट्रिक प्रेशर कुकर 6 Qt",
-              "meta_keywords": "इंस्टेंट पॉट डुओ|इलेक्ट्रिक प्रेशर कुकर|मल्टी-कुकर|इंस्टेंट पॉट 6 क्वार्ट",
-              "meta_description": "इंस्टेंट पॉट डुओ 7-इन-1 से तेज पकाएं – प्रेशर कुकर, स्लो कुकर, राइस कुकर और बहुत कुछ एक डिवाइस में।"
+              "short_description": "<p>Noise ColorFit Pro 4 – 1.72\" TFT डिस्प्ले, ब्लूटूथ कॉलिंग, SpO2, HR ट्रैकिंग, 100+ स्पोर्ट्स मोड और 7 दिन बैटरी। IP68 रेटेड।</p>",
+              "description": "<p>Noise ColorFit Pro 4 एक फीचर-पैक्ड स्मार्टवॉच है जो आधुनिक भारतीय जीवनशैली के लिए बनाई गई है। 500 निट्स ब्राइटनेस के साथ बड़ा 1.72 इंच TFT डिस्प्ले सीधी धूप में भी आसानी से दिखता है। ब्लूटूथ कॉलिंग, SpO2 मॉनिटरिंग, हार्ट रेट ट्रैकिंग और 100 से अधिक स्पोर्ट्स मोड। 7 दिन की बैटरी लाइफ और IP68 वाटर रेसिस्टेंस।</p>",
+              "meta_title": "Noise ColorFit Pro 4 स्मार्टवॉच – 1.72\" डिस्प्ले, ब्लूटूथ कॉलिंग, SpO2",
+              "meta_keywords": "Noise ColorFit Pro 4|स्मार्टवॉच इंडिया|Noise स्मार्टवॉच|ब्लूटूथ कॉलिंग वॉच",
+              "meta_description": "Noise ColorFit Pro 4 स्मार्टवॉच खरीदें – ब्लूटूथ कॉलिंग, 1.72\" डिस्प्ले और 7 दिन बैटरी। 3000 से कम में बेस्ट स्मार्टवॉच।"
             },
             "fr_FR": {
-              "name": "Instant Pot Duo Cuiseur sous pression électrique 7-en-1",
+              "name": "Noise ColorFit Pro 4 Montre connectée",
               "price": {
-                "USD": 99.95,
-                "INR": 8296
+                "USD": 36.0,
+                "INR": 2999
               },
-              "short_description": "<p>Instant Pot Duo 7-en-1 avec 13 programmes intelligents. Cuit jusqu'à 70% plus vite. Capacité 6 quarts.</p>",
-              "description": "<p>L'Instant Pot Duo 7-en-1 est à la fois autocuiseur, mijoteuse, cuiseur à riz, cuiseur vapeur, poêle à sauté, yaourtière et chauffe-plats. Avec 13 programmes intelligents intégrés, il cuit jusqu'à 70% plus vite que les méthodes traditionnelles.</p>",
-              "meta_title": "Instant Pot Duo 7-en-1 Cuiseur sous pression électrique 6 Qt",
-              "meta_keywords": "Instant Pot Duo|cuiseur sous pression électrique|multicuiseur|Instant Pot 6 quarts",
-              "meta_description": "Cuisinez plus vite avec l'Instant Pot Duo 7-en-1. Autocuiseur, mijoteuse, cuiseur à riz et plus en un seul appareil."
+              "short_description": "<p>Noise ColorFit Pro 4 avec écran TFT 1,72\", appels Bluetooth, SpO2, suivi FC, 100+ modes sport et 7 jours d'autonomie. IP68.</p>",
+              "description": "<p>La Noise ColorFit Pro 4 est une smartwatch polyvalente conçue pour le mode de vie indien moderne. Le grand écran TFT de 1,72 pouces à 500 nits est lisible même en plein soleil. Elle intègre les appels Bluetooth, le suivi SpO2, la fréquence cardiaque, le stress et plus de 100 modes sportifs. 7 jours d'autonomie et résistance IP68.</p>",
+              "meta_title": "Noise ColorFit Pro 4 Montre connectée – Écran 1,72\", appels Bluetooth, SpO2",
+              "meta_keywords": "Noise ColorFit Pro 4|montre connectée Inde|Noise smartwatch|montre appels Bluetooth",
+              "meta_description": "Achetez la Noise ColorFit Pro 4 avec appels Bluetooth, écran 1,72\" et 7 jours d'autonomie."
             }
           }
         }
       }
     },
     {
-      "sku": "dyson-v15-detect",
+      "sku": "prestige-iris-750w-mixer-grinder",
       "type": "simple",
       "attribute_family_id": 1,
       "values": {
         "common": {
-          "sku": "dyson-v15-detect",
-          "brand": "Dyson",
-          "image": "products/product-9.jpg",
-          "color": "Yellow",
-          "width": "10",
-          "height": "10.2",
-          "length": "50.6",
-          "weight": "6.8",
-          "url_key": "dyson-v15-detect",
-          "product_number": "394151-01"
+          "sku": "prestige-iris-750w-mixer-grinder",
+          "image": "products/Product-3.jpeg",
+          "color": "White",
+          "url_key": "prestige-iris-750w-mixer-grinder",
+          "product_number": "PRI-750-WB"
         },
         "channel_specific": {
           "default": {
             "cost": {
-              "USD": "420",
-              "INR": 34860
+              "USD": "28",
+              "INR": 2300
             }
           }
         },
         "channel_locale_specific": {
           "default": {
             "en_US": {
-              "name": "Dyson V15 Detect Cordless Vacuum",
+              "name": "Prestige Iris 750 Watt Mixer Grinder with 3 Jars",
               "price": {
-                "USD": "749.99",
-                "INR": 62249
+                "USD": "46",
+                "INR": 3795
               },
-              "meta_title": "Dyson V15 Detect Cordless Vacuum – Laser Dust Detection",
-              "description": "<p>The Dyson V15 Detect uses a precisely angled laser to reveal microscopic dust invisible to the naked eye. The intelligent piezo sensor automatically counts and sizes dust particles, dynamically adapting suction. Engineered to deep-clean all floor types with up to 60 minutes of fade-free power.</p>",
-              "meta_keywords": "Dyson V15 Detect|cordless vacuum|Dyson vacuum|laser dust detection vacuum",
-              "meta_description": "Shop Dyson V15 Detect cordless vacuum with laser detection and intelligent suction. Up to 60 min fade-free power.",
-              "short_description": "<p>Dyson V15 Detect with laser dust detection, intelligent suction optimization, and up to 60 minutes of fade-free power.</p>"
+              "meta_title": "Prestige Iris 750W Mixer Grinder – 3 Jars, Stainless Steel Blades, 5-Year Warranty",
+              "description": "<p>The Prestige Iris 750 Watt Mixer Grinder is a kitchen essential trusted by Indian households. Powered by a heavy-duty 750W motor with 3 speed settings and a pulse function, it effortlessly grinds spices, makes chutneys, blends smoothies, and prepares batters. Includes a 1.5L liquidizing jar, 0.9L multipurpose jar, and 0.4L dry grinding jar — all with stainless steel blades. The ergonomic handles, easy-clean design, and Prestige's 5-year motor warranty make it a reliable daily companion.</p>",
+              "meta_keywords": "Prestige Iris mixer grinder|750W mixer grinder|mixer grinder India|Prestige mixer",
+              "meta_description": "Buy Prestige Iris 750W Mixer Grinder with 3 stainless steel jars and 5-year motor warranty. Perfect for every Indian kitchen.",
+              "short_description": "<p>Prestige Iris 750W Mixer Grinder with 3 jars (1.5L, 0.9L, 0.4L), stainless steel blades, 3 speeds, pulse function, and 5-year motor warranty.</p>"
             },
             "hi_IN": {
-              "name": "डायसन V15 डिटेक्ट कॉर्डलेस वैक्यूम",
+              "name": "प्रेस्टिज आइरिस 750 वाट मिक्सर ग्राइंडर 3 जार के साथ",
               "price": {
-                "USD": 749.99,
-                "INR": 62249
+                "USD": 46.0,
+                "INR": 3795
               },
-              "short_description": "<p>डायसन V15 डिटेक्ट – लेज़र डस्ट डिटेक्शन, इंटेलिजेंट सक्शन ऑप्टिमाइज़ेशन और 60 मिनट की फेड-फ्री पावर।</p>",
-              "description": "<p>डायसन V15 डिटेक्ट नग्न आंखों से अदृश्य सूक्ष्म धूल को प्रकट करने के लिए एक सटीक लेज़र का उपयोग करता है। इंटेलिजेंट पीज़ो सेंसर स्वचालित रूप से धूल के कणों को गिनता और आकार देता है। 60 मिनट तक की फेड-फ्री पावर।</p>",
-              "meta_title": "डायसन V15 डिटेक्ट कॉर्डलेस वैक्यूम – लेज़र डस्ट डिटेक्शन",
-              "meta_keywords": "डायसन V15 डिटेक्ट|कॉर्डलेस वैक्यूम|डायसन वैक्यूम|लेज़र डस्ट डिटेक्शन वैक्यूम",
-              "meta_description": "डायसन V15 डिटेक्ट कॉर्डलेस वैक्यूम खरीदें – लेज़र डिटेक्शन और इंटेलिजेंट सक्शन के साथ।"
+              "short_description": "<p>प्रेस्टिज आइरिस 750W मिक्सर ग्राइंडर – 3 जार (1.5L, 0.9L, 0.4L), स्टेनलेस स्टील ब्लेड, 3 स्पीड, पल्स फंक्शन और 5 साल की मोटर वारंटी।</p>",
+              "description": "<p>प्रेस्टिज आइरिस 750 वाट मिक्सर ग्राइंडर भारतीय घरों का एक भरोसेमंद किचन साथी है। 3 स्पीड सेटिंग और पल्स फंक्शन के साथ 750W हेवी-ड्यूटी मोटर मसाले पीसने, चटनी बनाने, स्मूदी ब्लेंड करने और बैटर तैयार करने में आसान है। 1.5L लिक्विडाइज़िंग जार, 0.9L मल्टीपर्पज़ जार और 0.4L ड्राई ग्राइंडिंग जार शामिल। प्रेस्टिज की 5 साल की मोटर वारंटी के साथ।</p>",
+              "meta_title": "प्रेस्टिज आइरिस 750W मिक्सर ग्राइंडर – 3 जार, स्टेनलेस स्टील ब्लेड, 5 साल वारंटी",
+              "meta_keywords": "प्रेस्टिज आइरिस मिक्सर ग्राइंडर|750W मिक्सर ग्राइंडर|मिक्सर ग्राइंडर इंडिया|प्रेस्टिज मिक्सर",
+              "meta_description": "प्रेस्टिज आइरिस 750W मिक्सर ग्राइंडर खरीदें – 3 स्टेनलेस स्टील जार और 5 साल की मोटर वारंटी। हर भारतीय रसोई के लिए परफेक्ट।"
             },
             "fr_FR": {
-              "name": "Aspirateur sans fil Dyson V15 Detect",
+              "name": "Mixeur Broyeur Prestige Iris 750 W avec 3 bols",
               "price": {
-                "USD": 749.99,
-                "INR": 62249
+                "USD": 46.0,
+                "INR": 3795
               },
-              "short_description": "<p>Dyson V15 Detect avec détection laser, optimisation intelligente de l'aspiration et 60 minutes de puissance continue.</p>",
-              "description": "<p>Le Dyson V15 Detect utilise un laser précisément incliné pour révéler la poussière microscopique invisible à l'œil nu. Le capteur piézo intelligent compte et classe les particules de poussière automatiquement. Conçu pour nettoyer en profondeur tous les types de sols jusqu'à 60 minutes.</p>",
-              "meta_title": "Aspirateur sans fil Dyson V15 Detect – Détection laser de poussière",
-              "meta_keywords": "Dyson V15 Detect|aspirateur sans fil|aspirateur Dyson|aspirateur détection laser",
-              "meta_description": "Achetez l'aspirateur Dyson V15 Detect avec détection laser et aspiration intelligente. Jusqu'à 60 min de puissance."
+              "short_description": "<p>Prestige Iris 750W avec 3 bols (1,5L, 0,9L, 0,4L), lames inox, 3 vitesses, fonction pulse et garantie moteur 5 ans.</p>",
+              "description": "<p>Le mixeur broyeur Prestige Iris 750 W est un incontournable de la cuisine indienne. Le moteur robuste de 750W avec 3 vitesses et la fonction pulse broie les épices, prépare les chutneys, mixe les smoothies et les pâtes sans effort. Livré avec 3 bols en acier inoxydable de 1,5L, 0,9L et 0,4L. Garantie moteur 5 ans Prestige.</p>",
+              "meta_title": "Prestige Iris 750W Mixeur Broyeur – 3 bols inox, garantie 5 ans",
+              "meta_keywords": "Prestige Iris mixeur broyeur|mixeur 750W Inde|mixeur broyeur Inde|Prestige mixeur",
+              "meta_description": "Achetez le mixeur Prestige Iris 750W avec 3 bols inox et garantie moteur 5 ans. Idéal pour toute cuisine indienne."
             }
           }
         }
       }
     },
     {
-      "sku": "theragun-pro-gen5",
+      "sku": "boat-airdopes-141-tws",
       "type": "simple",
       "attribute_family_id": 1,
       "values": {
         "common": {
-          "sku": "theragun-pro-gen5",
-          "brand": "Therabody",
-          "image": "products/product-10.jpg",
+          "sku": "boat-airdopes-141-tws",
+          "image": "products/Product-4.jpeg",
           "color": "Black",
-          "width": "2.6",
-          "height": "6.5",
-          "length": "11.8",
-          "weight": "2.9",
-          "url_key": "theragun-pro-gen5",
-          "product_number": "G5PRO"
+          "url_key": "boat-airdopes-141-tws-earbuds",
+          "product_number": "AIRDOPES-141-BLK"
         },
         "channel_specific": {
           "default": {
             "cost": {
-              "USD": "330",
-              "INR": 27390
+              "USD": "8",
+              "INR": 699
             }
           }
         },
         "channel_locale_specific": {
           "default": {
             "en_US": {
-              "name": "Theragun PRO (5th Generation)",
+              "name": "boAt Airdopes 141 TWS Bluetooth Earbuds",
               "price": {
-                "USD": "599",
-                "INR": 49717
+                "USD": "15",
+                "INR": 1299
               },
-              "meta_title": "Theragun PRO 5th Gen Percussive Therapy Device – Deep Muscle Treatment",
-              "description": "<p>The Theragun PRO 5th Generation is the gold standard in percussive therapy. Features a proprietary brushless motor, QuietForce Technology for near-silent operation, and a 16mm amplitude for deeper muscle treatment. Includes six attachments and up to 300 minutes of battery life across two swappable batteries.</p>",
-              "meta_keywords": "Theragun PRO|percussive therapy device|massage gun|muscle recovery",
-              "meta_description": "Experience professional-grade muscle recovery with Theragun PRO Gen 5. Quiet, powerful, and effective deep tissue relief.",
-              "short_description": "<p>Theragun PRO Gen 5 with 16mm amplitude, QuietForce Technology, OLED screen, and 300-min battery life across two batteries.</p>"
+              "meta_title": "boAt Airdopes 141 TWS Earbuds – 42H Playtime, ENx Technology, IPX4",
+              "description": "<p>The boAt Airdopes 141 are India's #1 selling truly wireless earbuds, delivering an immersive audio experience at an unbeatable price. The 8mm drivers with boAt Signature Sound produce rich, clear audio for music, calls, and gaming. ENx technology ensures voice clarity during calls by reducing background noise. With a total playtime of 42 hours (6H earbuds + 36H case) and IPX4 water resistance, these earbuds are ready for any situation. ASAP Charge gives 75 minutes of playback with just 10 minutes of charging.</p>",
+              "meta_keywords": "boAt Airdopes 141|TWS earbuds India|best earbuds under 1500|boAt earbuds",
+              "meta_description": "Buy boAt Airdopes 141 TWS Earbuds with 42H total playtime, ENx technology, and ASAP Charge. Best earbuds under ₹1500 in India.",
+              "short_description": "<p>boAt Airdopes 141 TWS with 8mm drivers, 42H total playtime, ENx call tech, ASAP Charge (10 min = 75 min), and IPX4 rating.</p>"
             },
             "hi_IN": {
-              "name": "थेरागन PRO (5वीं पीढ़ी)",
+              "name": "boAt Airdopes 141 TWS ब्लूटूथ इयरबड्स",
               "price": {
-                "USD": 599.0,
-                "INR": 49717
+                "USD": 15.0,
+                "INR": 1299
               },
-              "short_description": "<p>थेरागन PRO Gen 5 – 16mm एम्प्लीट्यूड, क्वाइटफोर्स टेक्नोलॉजी, OLED स्क्रीन और दो बैटरी से 300 मिनट।</p>",
-              "description": "<p>थेरागन PRO 5वीं पीढ़ी पर्कसिव थेरेपी में गोल्ड स्टैंडर्ड है। प्रोप्रायटरी ब्रशलेस मोटर, क्वाइटफोर्स टेक्नोलॉजी और 16mm एम्प्लीट्यूड के साथ गहरे मांसपेशी उपचार के लिए। छह अटैचमेंट और दो बैटरी से 300 मिनट की बैटरी लाइफ।</p>",
-              "meta_title": "थेरागन PRO 5th Gen पर्कसिव थेरेपी डिवाइस – डीप मसल ट्रीटमेंट",
-              "meta_keywords": "थेरागन PRO|पर्कसिव थेरेपी डिवाइस|मसाज गन|मसल रिकवरी",
-              "meta_description": "थेरागन PRO Gen 5 से प्रोफेशनल-ग्रेड मसल रिकवरी का अनुभव करें। शांत, शक्तिशाली और प्रभावी।"
+              "short_description": "<p>boAt Airdopes 141 – 8mm ड्राइवर, 42H कुल प्लेटाइम, ENx कॉल टेक्नोलॉजी, ASAP चार्ज और IPX4 रेटिंग।</p>",
+              "description": "<p>boAt Airdopes 141 भारत के #1 बेस्टसेलिंग ट्रूली वायरलेस इयरबड्स हैं। 8mm ड्राइवर के साथ boAt सिग्नेचर साउंड म्यूजिक, कॉल और गेमिंग के लिए रिच ऑडियो देता है। ENx टेक्नोलॉजी बैकग्राउंड नॉइज़ कम करके कॉल क्लैरिटी सुनिश्चित करती है। कुल 42 घंटे प्लेटाइम (6H इयरबड्स + 36H केस) और IPX4 वाटर रेसिस्टेंस। ASAP चार्ज से 10 मिनट में 75 मिनट की प्लेबैक।</p>",
+              "meta_title": "boAt Airdopes 141 TWS इयरबड्स – 42H प्लेटाइम, ENx टेक्नोलॉजी, IPX4",
+              "meta_keywords": "boAt Airdopes 141|TWS इयरबड्स इंडिया|1500 से कम बेस्ट इयरबड्स|boAt इयरबड्स",
+              "meta_description": "boAt Airdopes 141 TWS इयरबड्स खरीदें – 42H प्लेटाइम, ENx टेक्नोलॉजी और ASAP चार्ज। ₹1500 से कम में बेस्ट इयरबड्स।"
             },
             "fr_FR": {
-              "name": "Theragun PRO (5ème génération)",
+              "name": "boAt Airdopes 141 Écouteurs TWS Bluetooth",
               "price": {
-                "USD": 599.0,
-                "INR": 49717
+                "USD": 15.0,
+                "INR": 1299
               },
-              "short_description": "<p>Theragun PRO Gen 5 avec amplitude 16mm, QuietForce, écran OLED et 300 min d'autonomie sur deux batteries.</p>",
-              "description": "<p>Le Theragun PRO 5ème génération est la référence en thérapie percussive. Moteur brushless propriétaire, technologie QuietForce pour un fonctionnement quasi-silencieux et amplitude de 16mm pour un traitement musculaire profond. Comprend six accessoires et jusqu'à 300 minutes d'autonomie.</p>",
-              "meta_title": "Theragun PRO 5ème gén Appareil de thérapie percussive – Traitement musculaire profond",
-              "meta_keywords": "Theragun PRO|appareil de thérapie percussive|pistolet de massage|récupération musculaire",
-              "meta_description": "Découvrez la récupération musculaire professionnelle avec le Theragun PRO Gen 5. Silencieux, puissant et efficace."
+              "short_description": "<p>boAt Airdopes 141 avec haut-parleurs 8mm, 42H d'autonomie totale, technologie ENx, ASAP Charge et IPX4.</p>",
+              "description": "<p>Les boAt Airdopes 141 sont les écouteurs sans fil les plus vendus en Inde. Les haut-parleurs 8mm avec boAt Signature Sound produisent un audio riche pour la musique, les appels et le gaming. La technologie ENx réduit les bruits de fond. Autonomie totale de 42h (6H + 36H étui) et résistance IPX4. ASAP Charge : 10 min = 75 min de lecture.</p>",
+              "meta_title": "boAt Airdopes 141 Écouteurs TWS – 42H autonomie, ENx, ASAP Charge",
+              "meta_keywords": "boAt Airdopes 141|écouteurs TWS Inde|meilleurs écouteurs moins de 1500|boAt écouteurs",
+              "meta_description": "Achetez les boAt Airdopes 141 avec 42H d'autonomie, technologie ENx et ASAP Charge."
             }
           }
         }
       }
     },
     {
-      "sku": "patagonia-nano-puff-cfg",
-      "type": "configurable",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "patagonia-nano-puff-cfg",
-          "brand": "Patagonia",
-          "size": "L",
-          "image": "products/product-1.jpg",
-          "url_key": "patagonia-nano-puff"
-        },
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "145",
-              "INR": 12035
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "Patagonia Nano Puff Jacket",
-              "price": {
-                "USD": "279",
-                "INR": 23157
-              },
-              "meta_title": "Patagonia Nano Puff Jacket – Lightweight Packable Insulation",
-              "description": "<p>The Patagonia Nano Puff Jacket uses 60-g PrimaLoft Gold Insulation Eco to provide incredible warmth-to-weight ratio. The jacket is windproof, water-resistant, and compresses into its own chest pocket. Made with 100% recycled fabrics and insulation for a more sustainable choice.</p>",
-              "meta_keywords": "Patagonia Nano Puff|insulated jacket|packable jacket|Patagonia outerwear",
-              "meta_description": "Stay warm and light with the Patagonia Nano Puff Jacket. PrimaLoft Gold insulation, windproof, and made with recycled fabrics.",
-              "short_description": "<p>Patagonia Nano Puff Jacket with PrimaLoft Gold insulation. Windproof, water-resistant, and packable. Made with recycled materials.</p>"
-            },
-            "hi_IN": {
-              "name": "पेटागोनिया नैनो पफ जैकेट",
-              "price": {
-                "USD": 279.0,
-                "INR": 23157
-              },
-              "short_description": "<p>पेटागोनिया नैनो पफ जैकेट – प्राइमालॉफ्ट गोल्ड इंसुलेशन, विंडप्रूफ, वाटर-रेसिस्टेंट और पैकेबल।</p>",
-              "description": "<p>पेटागोनिया नैनो पफ जैकेट में 60g प्राइमालॉफ्ट गोल्ड इंसुलेशन इको है जो अविश्वसनीय गर्माहट-से-वजन अनुपात प्रदान करता है। विंडप्रूफ, वाटर-रेसिस्टेंट और अपनी छाती की जेब में सिकुड़ जाती है। 100% रीसाइकिल्ड फैब्रिक से बनी।</p>",
-              "meta_title": "पेटागोनिया नैनो पफ जैकेट – हल्का पैकेबल इंसुलेशन",
-              "meta_keywords": "पेटागोनिया नैनो पफ|इंसुलेटेड जैकेट|पैकेबल जैकेट|पेटागोनिया आउटरवियर",
-              "meta_description": "पेटागोनिया नैनो पफ जैकेट के साथ गर्म और हल्के रहें। प्राइमालॉफ्ट गोल्ड इंसुलेशन और रीसाइकिल्ड फैब्रिक।"
-            },
-            "fr_FR": {
-              "name": "Veste Patagonia Nano Puff",
-              "price": {
-                "USD": 279.0,
-                "INR": 23157
-              },
-              "short_description": "<p>Veste Patagonia Nano Puff avec isolation PrimaLoft Gold. Coupe-vent, résistante à l'eau et compressible. Matériaux recyclés.</p>",
-              "description": "<p>La veste Patagonia Nano Puff utilise l'isolation PrimaLoft Gold 60g pour un rapport chaleur/poids exceptionnel. Coupe-vent, résistante à l'eau et se compresse dans sa propre poche poitrine. Fabriquée avec 100% de tissus et d'isolation recyclés.</p>",
-              "meta_title": "Veste Patagonia Nano Puff – Isolation légère et compressible",
-              "meta_keywords": "Patagonia Nano Puff|veste isolée|veste compressible|vêtements Patagonia",
-              "meta_description": "Restez chaud et léger avec la veste Patagonia Nano Puff. Isolation PrimaLoft Gold, coupe-vent et matériaux recyclés."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "kindle-paperwhite-2023",
+      "sku": "milton-thermosteel-flip-lid-750ml",
       "type": "simple",
       "attribute_family_id": 1,
       "values": {
         "common": {
-          "sku": "kindle-paperwhite-2023",
-          "brand": "Amazon",
-          "image": "products/product-10.jpg",
-          "color": "Black",
-          "width": "4.9",
-          "height": "0.3",
-          "length": "6.9",
-          "weight": "0.52",
-          "url_key": "kindle-paperwhite-2023",
-          "product_number": "B09TMZKQR3"
+          "sku": "milton-thermosteel-flip-lid-750ml",
+          "image": "products/Product-5.jpeg",
+          "color": "Silver",
+          "url_key": "milton-thermosteel-flip-lid-750ml",
+          "product_number": "MLT-FLIP-750-SLV"
         },
         "channel_specific": {
           "default": {
             "cost": {
-              "USD": "72",
-              "INR": 5976
+              "USD": "9",
+              "INR": 720
             }
           }
         },
         "channel_locale_specific": {
           "default": {
             "en_US": {
-              "name": "Amazon Kindle Paperwhite (2023)",
+              "name": "Milton Thermosteel Flip Lid Flask 750 ml",
               "price": {
-                "USD": "139.99",
-                "INR": 11619
+                "USD": "15",
+                "INR": 1249
               },
-              "meta_title": "Amazon Kindle Paperwhite 2023 – 6.8\" Display, Adjustable Warm Light",
-              "description": "<p>The latest Kindle Paperwhite features a 6.8-inch glare-free display with adjustable warm light to shift screen shade from white to amber. Waterproof design, 3 months of battery life on a single charge, and up to 32 GB of storage. Includes 3 months of Kindle Unlimited with purchase.</p>",
-              "meta_keywords": "Kindle Paperwhite 2023|Amazon Kindle|e-reader|waterproof Kindle",
-              "meta_description": "Shop the Amazon Kindle Paperwhite with 6.8\" glare-free display and adjustable warm light. Waterproof with 3-month battery.",
-              "short_description": "<p>Kindle Paperwhite 2023 with 6.8\" glare-free display, adjustable warm light, waterproof design, and 3-month battery life.</p>"
+              "meta_title": "Milton Thermosteel Flip Lid Flask 750ml – 24H Cold, 12H Hot, Food Grade Steel",
+              "description": "<p>The Milton Thermosteel Flip Lid Flask 750ml is a trusted Indian household companion for hot chai or cold nimbu pani on the go. Crafted from premium food-grade 18/8 stainless steel with double-wall vacuum insulation, it keeps beverages hot for up to 12 hours and cold for up to 24 hours. The easy flip-lid opens with one hand and the leak-proof design ensures zero spills in your bag. Certified food-safe with no plastic contact with beverage. BPA-free and rustproof for long-lasting use.</p>",
+              "meta_keywords": "Milton Thermosteel flask|insulated water bottle India|Milton flip lid bottle|stainless steel flask",
+              "meta_description": "Shop Milton Thermosteel Flip Lid Flask 750ml. Keeps hot 12H and cold 24H. Food-grade stainless steel, leak-proof, BPA-free.",
+              "short_description": "<p>Milton Thermosteel Flip Lid Flask 750ml with double-wall vacuum insulation, hot 12H, cold 24H, leak-proof flip lid, and food-grade 18/8 steel.</p>"
             },
             "hi_IN": {
-              "name": "अमेज़न किंडल पेपरव्हाइट (2023)",
+              "name": "मिल्टन थर्मोस्टील फ्लिप लिड फ्लास्क 750 ml",
               "price": {
-                "USD": 139.99,
-                "INR": 11619
+                "USD": 15.0,
+                "INR": 1249
               },
-              "short_description": "<p>किंडल पेपरव्हाइट 2023 – 6.8\" ग्लेयर-फ्री डिस्प्ले, एडजस्टेबल वार्म लाइट, वाटरप्रूफ और 3 महीने की बैटरी।</p>",
-              "description": "<p>नए किंडल पेपरव्हाइट में 6.8 इंच का ग्लेयर-फ्री डिस्प्ले है जिसमें एडजस्टेबल वार्म लाइट है जो स्क्रीन को सफेद से अंबर में बदलती है। वाटरप्रूफ डिज़ाइन, एकल चार्ज पर 3 महीने की बैटरी लाइफ और 32 GB तक स्टोरेज।</p>",
-              "meta_title": "अमेज़न किंडल पेपरव्हाइट 2023 – 6.8\" डिस्प्ले, एडजस्टेबल वार्म लाइट",
-              "meta_keywords": "किंडल पेपरव्हाइट 2023|अमेज़न किंडल|ई-रीडर|वाटरप्रूफ किंडल",
-              "meta_description": "अमेज़न किंडल पेपरव्हाइट खरीदें – 6.8\" ग्लेयर-फ्री डिस्प्ले, एडजस्टेबल वार्म लाइट और वाटरप्रूफ।"
+              "short_description": "<p>मिल्टन थर्मोस्टील फ्लिप लिड 750ml – डबल-वॉल वैक्यूम इंसुलेशन, 12H गर्म, 24H ठंडा, लीक-प्रूफ और फूड-ग्रेड 18/8 स्टील।</p>",
+              "description": "<p>मिल्टन थर्मोस्टील फ्लिप लिड फ्लास्क 750ml चलते-फिरते गर्म चाय या ठंडे नींबू पानी के लिए एक भरोसेमंद भारतीय घरेलू साथी है। प्रीमियम फूड-ग्रेड 18/8 स्टेनलेस स्टील से बना, डबल-वॉल वैक्यूम इंसुलेशन के साथ यह पेय को 12 घंटे तक गर्म और 24 घंटे तक ठंडा रखता है। वन-हैंड फ्लिप-लिड और लीक-प्रूफ डिज़ाइन। BPA-फ्री और रस्टप्रूफ।</p>",
+              "meta_title": "मिल्टन थर्मोस्टील फ्लिप लिड फ्लास्क 750ml – 24H ठंडा, 12H गर्म, फूड ग्रेड स्टील",
+              "meta_keywords": "मिल्टन थर्मोस्टील फ्लास्क|इंसुलेटेड बॉटल इंडिया|मिल्टन फ्लिप लिड बॉटल|स्टेनलेस स्टील फ्लास्क",
+              "meta_description": "मिल्टन थर्मोस्टील फ्लिप लिड फ्लास्क 750ml खरीदें। 12H गर्म और 24H ठंडा। फूड-ग्रेड स्टेनलेस स्टील और लीक-प्रूफ।"
             },
             "fr_FR": {
-              "name": "Amazon Kindle Paperwhite (2023)",
+              "name": "Thermos Milton Thermosteel Flip Lid 750 ml",
               "price": {
-                "USD": 139.99,
-                "INR": 11619
+                "USD": 15.0,
+                "INR": 1249
               },
-              "short_description": "<p>Kindle Paperwhite 2023 avec écran antireflet 6,8\", lumière chaude réglable, design étanche et 3 mois d'autonomie.</p>",
-              "description": "<p>Le dernier Kindle Paperwhite dispose d'un écran antireflet de 6,8 pouces avec lumière chaude réglable pour passer de blanc à ambre. Design étanche, 3 mois d'autonomie et jusqu'à 32 Go de stockage. Comprend 3 mois de Kindle Unlimited.</p>",
-              "meta_title": "Amazon Kindle Paperwhite 2023 – Écran 6,8\", lumière chaude réglable",
-              "meta_keywords": "Kindle Paperwhite 2023|Amazon Kindle|liseuse|Kindle étanche",
-              "meta_description": "Achetez le Amazon Kindle Paperwhite avec écran antireflet 6,8\" et lumière chaude réglable. Étanche avec 3 mois d'autonomie."
+              "short_description": "<p>Milton Thermosteel 750ml avec isolation double paroi, chaud 12H, froid 24H, couvercle flip étanche et acier inox 18/8.</p>",
+              "description": "<p>La gourde Milton Thermosteel Flip Lid 750ml est le compagnon idéal pour le thé chaud ou l'eau froide en déplacement. Fabriquée en acier inoxydable 18/8 certifié alimentaire avec isolation sous vide double paroi, elle maintient les boissons chaudes 12h et froides 24h. Couvercle flip d'une main, design étanche, sans BPA et anti-rouille.</p>",
+              "meta_title": "Milton Thermosteel Flip Lid 750ml – Chaud 12H, Froid 24H, Acier alimentaire",
+              "meta_keywords": "Milton Thermosteel gourde|gourde isotherme Inde|Milton flip lid|gourde acier inoxydable",
+              "meta_description": "Achetez la gourde Milton Thermosteel 750ml. Chaud 12H, froid 24H. Acier alimentaire, étanche, sans BPA."
             }
           }
         }
       }
     },
     {
-      "sku": "hydroflask-32oz-cfg",
-      "type": "configurable",
+      "sku": "wildcraft-hatchback-30l-backpack",
+      "type": "simple",
       "attribute_family_id": 1,
       "values": {
         "common": {
-          "sku": "hydroflask-32oz-cfg",
-          "brand": "Hydro Flask",
-          "image": "products/product-2.jpg",
-          "url_key": "hydroflask-32oz"
+          "sku": "wildcraft-hatchback-30l-backpack",
+          "image": "products/Product-6.jpeg",
+          "color": "Blue",
+          "url_key": "wildcraft-hatchback-30l-backpack",
+          "product_number": "WC-HB30-NVY"
         },
         "channel_specific": {
           "default": {
             "cost": {
-              "USD": "20",
-              "INR": 1660
+              "USD": "18",
+              "INR": 1499
             }
           }
         },
         "channel_locale_specific": {
           "default": {
             "en_US": {
-              "name": "Hydro Flask 32 oz Wide Mouth Water Bottle",
+              "name": "Wildcraft Hatchback 30L Laptop Backpack",
               "price": {
-                "USD": "44.95",
-                "INR": 3731
+                "USD": "31",
+                "INR": 2595
               },
-              "meta_title": "Hydro Flask 32 oz Wide Mouth Water Bottle – Insulated Stainless Steel",
-              "description": "<p>The Hydro Flask 32 oz Wide Mouth bottle features TempShield double-wall vacuum insulation to keep beverages cold for up to 24 hours and hot for up to 12 hours. Made from pro-grade 18/8 stainless steel, BPA-free, and compatible with most Hydro Flask lids and accessories.</p>",
-              "meta_keywords": "Hydro Flask 32 oz|insulated water bottle|stainless steel bottle|Hydro Flask Wide Mouth",
-              "meta_description": "Stay hydrated with Hydro Flask 32 oz Wide Mouth. TempShield keeps drinks cold 24 hrs or hot 12 hrs.",
-              "short_description": "<p>Hydro Flask 32 oz Wide Mouth with TempShield insulation. Keeps cold 24 hrs, hot 12 hrs. BPA-free stainless steel.</p>"
+              "meta_title": "Wildcraft Hatchback 30L Laptop Backpack – Raincover, 15.6\" Laptop Sleeve",
+              "description": "<p>The Wildcraft Hatchback 30L Laptop Backpack is built for students, daily commuters, and weekend travellers across India. It features a dedicated padded sleeve for 15.6-inch laptops, a front organiser pocket, and a quick-access top pocket. The breathable air-mesh back panel and padded shoulder straps ensure all-day comfort even on long commutes. An in-built rain cover protects your belongings during sudden Indian monsoon showers. Made from water-resistant 600D polyester for long-lasting everyday use.</p>",
+              "meta_keywords": "Wildcraft backpack|30L laptop backpack India|Wildcraft Hatchback|college backpack India",
+              "meta_description": "Buy Wildcraft Hatchback 30L Laptop Backpack with rain cover, 15.6\" laptop sleeve, and breathable back panel. Perfect for college and travel.",
+              "short_description": "<p>Wildcraft Hatchback 30L with 15.6\" laptop sleeve, rain cover, air-mesh back panel, organiser pocket, and water-resistant 600D polyester.</p>"
             },
             "hi_IN": {
-              "name": "हाइड्रो फ्लास्क 32 oz वाइड माउथ वॉटर बॉटल",
+              "name": "Wildcraft हैचबैक 30L लैपटॉप बैकपैक",
               "price": {
-                "USD": 44.95,
-                "INR": 3731
+                "USD": 31.0,
+                "INR": 2595
               },
-              "short_description": "<p>हाइड्रो फ्लास्क 32 oz – TempShield इंसुलेशन, 24 घंटे ठंडा, 12 घंटे गर्म। BPA-फ्री स्टेनलेस स्टील।</p>",
-              "description": "<p>हाइड्रो फ्लास्क 32 oz में TempShield डबल-वॉल वैक्यूम इंसुलेशन है जो पेय को 24 घंटे तक ठंडा और 12 घंटे तक गर्म रखता है। प्रो-ग्रेड 18/8 स्टेनलेस स्टील से बना, BPA-फ्री।</p>",
-              "meta_title": "हाइड्रो फ्लास्क 32 oz वाइड माउथ वॉटर बॉटल – इंसुलेटेड स्टेनलेस स्टील",
-              "meta_keywords": "हाइड्रो फ्लास्क 32 oz|इंसुलेटेड वॉटर बॉटल|स्टेनलेस स्टील बॉटल|हाइड्रो फ्लास्क वाइड माउथ",
-              "meta_description": "हाइड्रो फ्लास्क 32 oz वाइड माउथ से हाइड्रेटेड रहें। TempShield 24 घंटे ठंडा या 12 घंटे गर्म रखता है।"
+              "short_description": "<p>Wildcraft हैचबैक 30L – 15.6\" लैपटॉप स्लीव, रेनकवर, एयर-मेश बैक पैनल, ऑर्गनाइज़र पॉकेट और वाटर-रेसिस्टेंट 600D पॉलिएस्टर।</p>",
+              "description": "<p>Wildcraft हैचबैक 30L लैपटॉप बैकपैक भारत भर के छात्रों, डेली कम्यूटर्स और वीकेंड ट्रैवलर्स के लिए बनाया गया है। 15.6 इंच लैपटॉप के लिए डेडिकेटेड पैडेड स्लीव, फ्रंट ऑर्गनाइज़र पॉकेट और क्विक-एक्सेस टॉप पॉकेट। ब्रीदेबल एयर-मेश बैक पैनल और पैडेड शोल्डर स्ट्रैप्स। इन-बिल्ट रेन कवर मानसून की बारिश में सामान की रक्षा करता है।</p>",
+              "meta_title": "Wildcraft हैचबैक 30L लैपटॉप बैकपैक – रेनकवर, 15.6\" लैपटॉप स्लीव",
+              "meta_keywords": "Wildcraft बैकपैक|30L लैपटॉप बैकपैक इंडिया|Wildcraft हैचबैक|कॉलेज बैकपैक इंडिया",
+              "meta_description": "Wildcraft हैचबैक 30L लैपटॉप बैकपैक खरीदें – रेन कवर और 15.6\" लैपटॉप स्लीव के साथ। कॉलेज और ट्रैवल के लिए परफेक्ट।"
             },
             "fr_FR": {
-              "name": "Hydro Flask Bouteille d'eau 32 oz à large ouverture",
+              "name": "Sac à dos ordinateur Wildcraft Hatchback 30L",
               "price": {
-                "USD": 44.95,
-                "INR": 3731
+                "USD": 31.0,
+                "INR": 2595
               },
-              "short_description": "<p>Hydro Flask 32 oz à large ouverture avec isolation TempShield. Froid 24h, chaud 12h. Acier inoxydable sans BPA.</p>",
-              "description": "<p>La bouteille Hydro Flask 32 oz dispose de l'isolation sous vide double paroi TempShield pour garder les boissons froides jusqu'à 24h et chaudes jusqu'à 12h. Fabriquée en acier inoxydable 18/8 de qualité professionnelle, sans BPA.</p>",
-              "meta_title": "Hydro Flask Bouteille 32 oz à large ouverture – Acier inoxydable isotherme",
-              "meta_keywords": "Hydro Flask 32 oz|bouteille d'eau isotherme|bouteille en acier inoxydable|Hydro Flask large ouverture",
-              "meta_description": "Restez hydraté avec la Hydro Flask 32 oz. TempShield garde les boissons froides 24h ou chaudes 12h."
+              "short_description": "<p>Wildcraft Hatchback 30L avec poche laptop 15,6\", couvre-pluie, dos en mesh aéré, poche organiseur et polyester 600D.</p>",
+              "description": "<p>Le sac à dos Wildcraft Hatchback 30L est conçu pour les étudiants, navetteurs et voyageurs en Inde. Il dispose d'un compartiment rembourré pour les laptops 15,6 pouces, d'une poche organiseur frontale et d'une poche d'accès rapide. Le dos en mesh respirant et les bretelles rembourrées assurent le confort toute la journée. Couvre-pluie intégré pour les moussons. Polyester 600D résistant à l'eau.</p>",
+              "meta_title": "Wildcraft Hatchback 30L Sac à dos ordinateur – Couvre-pluie, poche laptop 15,6\"",
+              "meta_keywords": "sac à dos Wildcraft|sac à dos 30L ordinateur Inde|Wildcraft Hatchback|sac à dos collège Inde",
+              "meta_description": "Achetez le sac à dos Wildcraft Hatchback 30L avec couvre-pluie et poche laptop 15,6\". Idéal pour les études et les voyages."
             }
           }
         }
       }
     },
     {
-      "sku": "allbirds-tree-runners-cfg",
+      "sku": "nike-air-force-1-07-cfg",
       "type": "configurable",
       "attribute_family_id": 1,
+      "super_attributes": [
+        "size"
+      ],
       "values": {
         "common": {
-          "sku": "allbirds-tree-runners-cfg",
-          "brand": "Allbirds",
-          "size": "L",
-          "image": "products/product-3.jpg",
-          "url_key": "allbirds-tree-runners"
+          "sku": "nike-air-force-1-07-cfg",
+          "size": "9",
+          "image": "products/Product-7.jpeg",
+          "url_key": "nike-air-force-1-07"
         },
         "channel_specific": {
           "default": {
             "cost": {
               "USD": "48",
-              "INR": 3984
+              "INR": 3999
             }
           }
         },
         "channel_locale_specific": {
           "default": {
             "en_US": {
-              "name": "Allbirds Tree Runners",
+              "name": "Nike Air Force 1 '07 Sneakers",
               "price": {
-                "USD": "98",
-                "INR": 8134
+                "USD": "90",
+                "INR": 7495
               },
-              "meta_title": "Allbirds Tree Runners – Sustainable Eucalyptus Sneakers",
-              "description": "<p>Allbirds Tree Runners are made from a blend of TENCEL Lyocell, a sustainably sourced material derived from eucalyptus trees. Incredibly soft, breathable, and lightweight, they feature a cushioned foam insole and natural rubber outsole. Machine washable for easy care.</p>",
-              "meta_keywords": "Allbirds Tree Runners|sustainable sneakers|eco-friendly shoes|Allbirds shoes",
-              "meta_description": "Shop Allbirds Tree Runners. Made from sustainable eucalyptus fiber – soft, breathable, and machine washable.",
-              "short_description": "<p>Allbirds Tree Runners made from sustainable eucalyptus fiber. Soft, breathable, machine washable, and naturally odor-resistant.</p>"
+              "meta_title": "Nike Air Force 1 '07 Sneakers – Classic Basketball Icon, Air Sole",
+              "description": "<p>The Nike Air Force 1 '07 is the shoe that started it all. First designed for the hardwood in 1982, the AF1 is a timeless basketball icon that has transcended sport to become a street style staple loved across India and the world. The premium leather upper with perforations provides breathability, while the encapsulated Air sole unit offers superior cushioning for all-day comfort. The pivot circle on the rubber outsole ensures multi-directional traction whether you are on or off the court.</p>",
+              "meta_keywords": "Nike Air Force 1|AF1 sneakers India|Nike shoes|classic Nike sneakers",
+              "meta_description": "Buy Nike Air Force 1 '07 Sneakers in India. Classic leather upper, encapsulated Air sole, and iconic pivot circle outsole.",
+              "short_description": "<p>Nike Air Force 1 '07 with premium leather upper, encapsulated Air cushioning, pivot circle rubber outsole, and iconic low-top silhouette.</p>"
             },
             "hi_IN": {
-              "name": "ऑलबर्ड्स ट्री रनर्स",
+              "name": "Nike Air Force 1 '07 स्नीकर्स",
               "price": {
-                "USD": 98.0,
-                "INR": 8134
+                "USD": 90.0,
+                "INR": 7495
               },
-              "short_description": "<p>ऑलबर्ड्स ट्री रनर्स – सस्टेनेबल यूकेलिप्टस फाइबर, मुलायम, सांस लेने योग्य और मशीन वॉशेबल।</p>",
-              "description": "<p>ऑलबर्ड्स ट्री रनर्स TENCEL Lyocell के मिश्रण से बने हैं, जो यूकेलिप्टस पेड़ों से प्राप्त एक टिकाऊ सामग्री है। अविश्वसनीय रूप से मुलायम, सांस लेने योग्य और हल्के। मशीन वॉशेबल।</p>",
-              "meta_title": "ऑलबर्ड्स ट्री रनर्स – सस्टेनेबल यूकेलिप्टस स्नीकर्स",
-              "meta_keywords": "ऑलबर्ड्स ट्री रनर्स|सस्टेनेबल स्नीकर्स|इको-फ्रेंडली जूते|ऑलबर्ड्स जूते",
-              "meta_description": "ऑलबर्ड्स ट्री रनर्स खरीदें – सस्टेनेबल यूकेलिप्टस फाइबर से बने, मुलायम और मशीन वॉशेबल।"
+              "short_description": "<p>Nike Air Force 1 '07 – प्रीमियम लेदर अपर, एनकैप्सुलेटेड Air कुशनिंग, पिवट सर्कल रबर आउटसोल और आइकॉनिक लो-टॉप सिल्हूट।</p>",
+              "description": "<p>Nike Air Force 1 '07 वह जूता है जिसने सब कुछ शुरू किया। 1982 में बास्केटबॉल कोर्ट के लिए पहली बार डिज़ाइन किया गया, AF1 एक कालातीत आइकन है जो स्ट्रीट स्टाइल स्टेपल बन गया है। परफोरेशन के साथ प्रीमियम लेदर अपर ब्रीदेबिलिटी देता है जबकि एनकैप्सुलेटेड Air सोल यूनिट बेहतरीन कुशनिंग प्रदान करती है। रबर आउटसोल पर पिवट सर्कल मल्टी-डायरेक्शनल ट्रैक्शन सुनिश्चित करता है।</p>",
+              "meta_title": "Nike Air Force 1 '07 स्नीकर्स – क्लासिक बास्केटबॉल आइकन, Air सोल",
+              "meta_keywords": "Nike Air Force 1|AF1 स्नीकर्स इंडिया|Nike जूते|क्लासिक Nike स्नीकर्स",
+              "meta_description": "Nike Air Force 1 '07 स्नीकर्स भारत में खरीदें। क्लासिक लेदर अपर, एनकैप्सुलेटेड Air सोल और आइकॉनिक पिवट सर्कल आउटसोल।"
             },
             "fr_FR": {
-              "name": "Allbirds Tree Runners",
+              "name": "Baskets Nike Air Force 1 '07",
               "price": {
-                "USD": 98.0,
-                "INR": 8134
+                "USD": 90.0,
+                "INR": 7495
               },
-              "short_description": "<p>Allbirds Tree Runners en fibre d'eucalyptus durable. Douces, respirantes, lavables en machine et naturellement anti-odeurs.</p>",
-              "description": "<p>Les Allbirds Tree Runners sont fabriquées à partir d'un mélange de TENCEL Lyocell, un matériau durable dérivé des eucalyptus. Incroyablement douces, respirantes et légères, avec une semelle intérieure en mousse et une semelle extérieure en caoutchouc naturel. Lavables en machine.</p>",
-              "meta_title": "Allbirds Tree Runners – Baskets durables en fibre d'eucalyptus",
-              "meta_keywords": "Allbirds Tree Runners|baskets durables|chaussures éco-responsables|chaussures Allbirds",
-              "meta_description": "Achetez les Allbirds Tree Runners en fibre d'eucalyptus durable. Douces, respirantes et lavables en machine."
+              "short_description": "<p>Nike Air Force 1 '07 avec tige cuir premium, amorti Air encapsulé, semelle à pivot circulaire et silhouette low-top iconique.</p>",
+              "description": "<p>La Nike Air Force 1 '07 est la chaussure qui a tout lancé. Conçue pour le parquet en 1982, l'AF1 est une icône intemporelle du basketball devenue un incontournable du style urbain. La tige en cuir premium perforé offre de la respirabilité, tandis que l'unité Air encapsulée procure un amorti supérieur. La semelle à pivot circulaire assure une traction multidirectionnelle.</p>",
+              "meta_title": "Baskets Nike Air Force 1 '07 – Icône basketball classique, semelle Air",
+              "meta_keywords": "Nike Air Force 1|baskets AF1 Inde|chaussures Nike|baskets Nike classiques",
+              "meta_description": "Achetez les baskets Nike Air Force 1 '07. Tige cuir classique, amorti Air encapsulé et semelle à pivot iconique."
             }
           }
         }
       }
     },
     {
-      "sku": "lodge-cast-iron-skillet-12",
-      "type": "simple",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "lodge-cast-iron-skillet-12",
-          "brand": "Lodge",
-          "image": "products/product-4.jpg",
-          "url_key": "lodge-cast-iron-skillet-12"
-        },
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "22",
-              "INR": 1826
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "Lodge 12-Inch Cast Iron Skillet",
-              "price": {
-                "USD": "49.90",
-                "INR": 4142
-              },
-              "meta_title": "Lodge 12-Inch Pre-Seasoned Cast Iron Skillet",
-              "description": "<p>The Lodge 12-Inch Cast Iron Skillet is seasoned with 100% natural vegetable oil and ready to use straight out of the box. Unparalleled heat retention and even heating make it perfect for searing, sautéing, baking, broiling, braising, and frying. Compatible with all cooking surfaces including induction.</p>",
-              "meta_keywords": "Lodge cast iron skillet|12 inch cast iron pan|pre-seasoned skillet|Lodge cookware",
-              "meta_description": "Cook like a pro with Lodge 12\" Cast Iron Skillet. Pre-seasoned, compatible with all cooktops including induction.",
-              "short_description": "<p>Lodge 12\" Cast Iron Skillet, pre-seasoned and ready to use. Perfect for searing, baking, and more. Works on all surfaces including induction.</p>"
-            },
-            "hi_IN": {
-              "name": "लॉज 12-इंच कास्ट आयरन स्किलेट",
-              "price": {
-                "USD": 49.9,
-                "INR": 4142
-              },
-              "short_description": "<p>लॉज 12\" कास्ट आयरन स्किलेट – प्री-सीज़न्ड और उपयोग के लिए तैयार। सीयरिंग, बेकिंग और इंडक्शन के लिए परफेक्ट।</p>",
-              "description": "<p>लॉज 12-इंच कास्ट आयरन स्किलेट 100% नेचुरल वेजिटेबल ऑयल से सीज़न किया गया है और बॉक्स से सीधे उपयोग के लिए तैयार है। बेजोड़ हीट रिटेंशन और समान हीटिंग इसे सीयरिंग, सॉटेइंग, बेकिंग और फ्राइंग के लिए परफेक्ट बनाती है।</p>",
-              "meta_title": "लॉज 12-इंच प्री-सीज़न्ड कास्ट आयरन स्किलेट",
-              "meta_keywords": "लॉज कास्ट आयरन स्किलेट|12 इंच कास्ट आयरन पैन|प्री-सीज़न्ड स्किलेट|लॉज कुकवेयर",
-              "meta_description": "लॉज 12\" कास्ट आयरन स्किलेट से प्रो की तरह पकाएं। प्री-सीज़न्ड और इंडक्शन सहित सभी कूकटॉप के साथ कम्पेटिबल।"
-            },
-            "fr_FR": {
-              "name": "Poêle en fonte Lodge 12 pouces",
-              "price": {
-                "USD": 49.9,
-                "INR": 4142
-              },
-              "short_description": "<p>Poêle en fonte Lodge 12\", pré-assaisonnée et prête à l'emploi. Parfaite pour saisir, cuire et toutes surfaces dont l'induction.</p>",
-              "description": "<p>La poêle en fonte Lodge 12 pouces est assaisonnée avec 100% d'huile végétale naturelle et prête à l'emploi. La rétention et la diffusion de chaleur incomparables en font la poêle idéale pour saisir, sauter, cuire et frire. Compatible avec toutes les surfaces de cuisson dont l'induction.</p>",
-              "meta_title": "Poêle en fonte pré-assaisonnée Lodge 12 pouces",
-              "meta_keywords": "poêle en fonte Lodge|poêle en fonte 12 pouces|poêle pré-assaisonnée|ustensiles Lodge",
-              "meta_description": "Cuisinez comme un pro avec la poêle en fonte Lodge 12\". Pré-assaisonnée et compatible induction."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "north-face-borealis-backpack",
-      "type": "simple",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "north-face-borealis-backpack",
-          "brand": "The North Face",
-          "image": "products/product-1.jpg",
-          "url_key": "north-face-borealis-backpack"
-        },
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "50",
-              "INR": 4150
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "The North Face Borealis Backpack",
-              "price": {
-                "USD": "99",
-                "INR": 8217
-              },
-              "meta_title": "The North Face Borealis Backpack – 28L, Laptop Sleeve",
-              "description": "<p>The North Face Borealis Backpack features a laptop sleeve compatible with most 15-inch laptops, a fleece-lined sunglass pocket, and multiple organization pockets. The FlexVent suspension system provides comfortable support for all-day carry, and the padded back panel improves ventilation.</p>",
-              "meta_keywords": "North Face Borealis backpack|28L backpack|laptop backpack|school backpack",
-              "meta_description": "Shop The North Face Borealis 28L Backpack with laptop sleeve and FlexVent suspension for all-day comfort.",
-              "short_description": "<p>North Face Borealis Backpack with 15\" laptop sleeve, FlexVent suspension, and fleece-lined sunglass pocket. 28L capacity.</p>"
-            },
-            "hi_IN": {
-              "name": "द नॉर्थ फेस बोरेलिस बैकपैक",
-              "price": {
-                "USD": 99.0,
-                "INR": 8217
-              },
-              "short_description": "<p>नॉर्थ फेस बोरेलिस – 15\" लैपटॉप स्लीव, FlexVent सस्पेंशन और फ्लीस-लाइन्ड सनग्लास पॉकेट। 28L क्षमता।</p>",
-              "description": "<p>द नॉर्थ फेस बोरेलिस बैकपैक में 15-इंच लैपटॉप के साथ कम्पेटिबल लैपटॉप स्लीव, फ्लीस-लाइन्ड सनग्लास पॉकेट और कई ऑर्गेनाइज़ेशन पॉकेट हैं। FlexVent सस्पेंशन सिस्टम सारे दिन आरामदायक सपोर्ट प्रदान करता है।</p>",
-              "meta_title": "द नॉर्थ फेस बोरेलिस बैकपैक – 28L, लैपटॉप स्लीव",
-              "meta_keywords": "नॉर्थ फेस बोरेलिस बैकपैक|28L बैकपैक|लैपटॉप बैकपैक|स्कूल बैकपैक",
-              "meta_description": "द नॉर्थ फेस बोरेलिस 28L बैकपैक – लैपटॉप स्लीव और FlexVent सस्पेंशन के साथ।"
-            },
-            "fr_FR": {
-              "name": "Sac à dos The North Face Borealis",
-              "price": {
-                "USD": 99.0,
-                "INR": 8217
-              },
-              "short_description": "<p>Sac à dos North Face Borealis avec compartiment 15\", suspension FlexVent et poche lunettes en polaire. Capacité 28L.</p>",
-              "description": "<p>Le sac à dos The North Face Borealis dispose d'un compartiment ordinateur compatible avec la plupart des laptops 15 pouces, d'une poche à lunettes doublée en polaire et de plusieurs poches d'organisation. Le système de suspension FlexVent offre un soutien confortable toute la journée.</p>",
-              "meta_title": "Sac à dos The North Face Borealis – 28L, compartiment ordinateur",
-              "meta_keywords": "sac à dos North Face Borealis|sac à dos 28L|sac à dos ordinateur|sac à dos scolaire",
-              "meta_description": "Achetez le sac à dos The North Face Borealis 28L avec compartiment ordinateur et suspension FlexVent."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "anker-powercore-26800",
-      "type": "simple",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "anker-powercore-26800",
-          "brand": "Anker",
-          "image": "products/product-5.jpg",
-          "color": "Black",
-          "width": "3.1",
-          "height": "0.9",
-          "length": "6.5",
-          "weight": "1.1",
-          "url_key": "anker-powercore-26800",
-          "product_number": "A1277011"
-        },
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "32",
-              "INR": 2656
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "Anker PowerCore 26800 Portable Charger",
-              "price": {
-                "USD": "65.99",
-                "INR": 5477
-              },
-              "meta_title": "Anker PowerCore 26800 Portable Charger – High Capacity Power Bank",
-              "description": "<p>The Anker PowerCore 26800 delivers massive 26,800mAh capacity to charge an iPhone 15 nearly 7 times or a Samsung Galaxy S23 nearly 5 times. Features three USB-A output ports for charging multiple devices simultaneously and two Micro USB input ports for faster recharging.</p>",
-              "meta_keywords": "Anker PowerCore 26800|power bank|portable charger|high capacity battery pack",
-              "meta_description": "Charge devices on the go with Anker PowerCore 26800. Massive 26,800mAh with 3 USB-A ports for simultaneous charging.",
-              "short_description": "<p>Anker PowerCore 26800mAh portable charger with three USB-A ports. Charges iPhone 15 nearly 7 times. Travel-friendly with airline-approved capacity.</p>"
-            },
-            "hi_IN": {
-              "name": "एंकर पावरकोर 26800 पोर्टेबल चार्जर",
-              "price": {
-                "USD": 65.99,
-                "INR": 5477
-              },
-              "short_description": "<p>एंकर पावरकोर 26800mAh – तीन USB-A पोर्ट। iPhone 15 को लगभग 7 बार चार्ज करता है। एयरलाइन-अप्रूव्ड।</p>",
-              "description": "<p>एंकर पावरकोर 26800 में विशाल 26,800mAh क्षमता है जो iPhone 15 को लगभग 7 बार या Samsung Galaxy S23 को लगभग 5 बार चार्ज कर सकती है। एक साथ कई डिवाइस चार्ज करने के लिए तीन USB-A आउटपुट पोर्ट हैं।</p>",
-              "meta_title": "एंकर पावरकोर 26800 पोर्टेबल चार्जर – हाई कैपेसिटी पावर बैंक",
-              "meta_keywords": "एंकर पावरकोर 26800|पावर बैंक|पोर्टेबल चार्जर|हाई कैपेसिटी बैटरी पैक",
-              "meta_description": "एंकर पावरकोर 26800 से चलते-फिरते डिवाइस चार्ज करें। 26,800mAh और 3 USB-A पोर्ट।"
-            },
-            "fr_FR": {
-              "name": "Chargeur portable Anker PowerCore 26800",
-              "price": {
-                "USD": 65.99,
-                "INR": 5477
-              },
-              "short_description": "<p>Anker PowerCore 26 800mAh avec trois ports USB-A. Charge un iPhone 15 près de 7 fois. Approuvé en cabine.</p>",
-              "description": "<p>L'Anker PowerCore 26800 offre une capacité massive de 26 800mAh pour charger un iPhone 15 près de 7 fois ou un Samsung Galaxy S23 près de 5 fois. Dispose de trois ports USB-A pour charger plusieurs appareils simultanément.</p>",
-              "meta_title": "Chargeur portable Anker PowerCore 26800 – Batterie externe haute capacité",
-              "meta_keywords": "Anker PowerCore 26800|batterie externe|chargeur portable|batterie haute capacité",
-              "meta_description": "Chargez vos appareils en déplacement avec l'Anker PowerCore 26800. 26 800mAh et 3 ports USB-A."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "vitamix-5200-blender",
-      "type": "simple",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "vitamix-5200-blender",
-          "brand": "Vitamix",
-          "image": "products/product-9.jpg",
-          "color": "Black",
-          "width": "7.25",
-          "height": "20.5",
-          "length": "8.75",
-          "weight": "10.6",
-          "url_key": "vitamix-5200-blender",
-          "product_number": "1372"
-        },
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "250",
-              "INR": 20750
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "Vitamix 5200 Blender",
-              "price": {
-                "USD": "449.95",
-                "INR": 37346
-              },
-              "meta_title": "Vitamix 5200 Blender – Variable Speed, Self-Cleaning",
-              "description": "<p>The Vitamix 5200 Blender features a 2.0 HP motor that can reach 240 mph blade tip speed to pulverize the toughest ingredients. Variable speed control lets you fine-tune texture for any recipe. Self-cleaning in 30 to 60 seconds with dish soap and warm water. Hardened stainless-steel blades.</p>",
-              "meta_keywords": "Vitamix 5200|professional blender|Vitamix blender|high-performance blender",
-              "meta_description": "Blend anything with the Vitamix 5200. 2.0 HP motor and variable speed control for perfect results every time.",
-              "short_description": "<p>Vitamix 5200 with 2.0 HP motor, variable speed control, self-cleaning capability, and hardened stainless-steel blades.</p>"
-            },
-            "hi_IN": {
-              "name": "विटामिक्स 5200 ब्लेंडर",
-              "price": {
-                "USD": 449.95,
-                "INR": 37346
-              },
-              "short_description": "<p>विटामिक्स 5200 – 2.0 HP मोटर, वेरिएबल स्पीड कंट्रोल, सेल्फ-क्लीनिंग और हार्डन्ड स्टेनलेस-स्टील ब्लेड।</p>",
-              "description": "<p>विटामिक्स 5200 ब्लेंडर में 2.0 HP मोटर है जो 240 mph ब्लेड टिप स्पीड तक पहुंच सकती है। वेरिएबल स्पीड कंट्रोल आपको किसी भी रेसिपी के लिए टेक्सचर को फाइन-ट्यून करने देता है। 30-60 सेकंड में सेल्फ-क्लीनिंग।</p>",
-              "meta_title": "विटामिक्स 5200 ब्लेंडर – वेरिएबल स्पीड, सेल्फ-क्लीनिंग",
-              "meta_keywords": "विटामिक्स 5200|प्रोफेशनल ब्लेंडर|विटामिक्स ब्लेंडर|हाई-परफॉर्मेंस ब्लेंडर",
-              "meta_description": "विटामिक्स 5200 से कुछ भी ब्लेंड करें। 2.0 HP मोटर और वेरिएबल स्पीड कंट्रोल।"
-            },
-            "fr_FR": {
-              "name": "Blender Vitamix 5200",
-              "price": {
-                "USD": 449.95,
-                "INR": 37346
-              },
-              "short_description": "<p>Vitamix 5200 avec moteur 2,0 CV, contrôle de vitesse variable, autonettoyage et lames en acier inoxydable trempé.</p>",
-              "description": "<p>Le blender Vitamix 5200 dispose d'un moteur de 2,0 CV pouvant atteindre 240 mph en vitesse de pointe des lames. Le contrôle de vitesse variable permet d'ajuster la texture pour chaque recette. Autonettoyant en 30 à 60 secondes avec du savon et de l'eau chaude.</p>",
-              "meta_title": "Blender Vitamix 5200 – Vitesse variable, autonettoyant",
-              "meta_keywords": "Vitamix 5200|blender professionnel|blender Vitamix|blender haute performance",
-              "meta_description": "Mixez tout avec le Vitamix 5200. Moteur 2,0 CV et contrôle de vitesse variable pour des résultats parfaits."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "peloton-bike-plus",
-      "type": "simple",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "peloton-bike-plus",
-          "brand": "Peloton",
-          "image": "products/product-1.jpg",
-          "color": "Black",
-          "width": "22",
-          "height": "59",
-          "length": "59",
-          "weight": "135",
-          "url_key": "peloton-bike-plus",
-          "product_number": "PL-01-V202001"
-        },
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "1400",
-              "INR": 116200
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "Peloton Bike+",
-              "price": {
-                "USD": "2495",
-                "INR": 207085
-              },
-              "meta_title": "Peloton Bike+ – Auto-Following Resistance, Rotating Touchscreen",
-              "description": "<p>The Peloton Bike+ features an auto-following resistance that adjusts to instructor cues, a 23.8-inch HD rotating touchscreen for off-bike workouts, Apple GymKit integration, and a rear-facing camera for group workouts. Access thousands of live and on-demand cycling, strength, yoga, and stretching classes.</p>",
-              "meta_keywords": "Peloton Bike Plus|exercise bike|indoor cycling bike|Peloton",
-              "meta_description": "Train smarter with the Peloton Bike+. Auto-following resistance, 23.8\" rotating screen, and thousands of live classes.",
-              "short_description": "<p>Peloton Bike+ with auto-following resistance, 23.8\" rotating touchscreen, Apple GymKit integration, and access to 10,000+ classes.</p>"
-            },
-            "hi_IN": {
-              "name": "पेलोटन बाइक+",
-              "price": {
-                "USD": 2495.0,
-                "INR": 207085
-              },
-              "short_description": "<p>पेलोटन बाइक+ – ऑटो-फॉलोइंग रेसिस्टेंस, 23.8\" रोटेटिंग टचस्क्रीन, Apple GymKit और 10,000+ क्लासेज़।</p>",
-              "description": "<p>पेलोटन बाइक+ में ऑटो-फॉलोइंग रेसिस्टेंस है जो इंस्ट्रक्टर क्यूज़ के अनुसार एडजस्ट होती है। 23.8 इंच HD रोटेटिंग टचस्क्रीन, Apple GymKit इंटीग्रेशन और ग्रुप वर्कआउट के लिए रियर-फेसिंग कैमरा। हजारों लाइव और ऑन-डिमांड क्लासेज़ का एक्सेस।</p>",
-              "meta_title": "पेलोटन बाइक+ – ऑटो-फॉलोइंग रेसिस्टेंस, रोटेटिंग टचस्क्रीन",
-              "meta_keywords": "पेलोटन बाइक प्लस|एक्सरसाइज़ बाइक|इनडोर साइक्लिंग बाइक|पेलोटन",
-              "meta_description": "पेलोटन बाइक+ से स्मार्ट ट्रेनिंग करें। ऑटो-फॉलोइंग रेसिस्टेंस, 23.8\" रोटेटिंग स्क्रीन और हजारों लाइव क्लासेज़।"
-            },
-            "fr_FR": {
-              "name": "Peloton Bike+",
-              "price": {
-                "USD": 2495.0,
-                "INR": 207085
-              },
-              "short_description": "<p>Peloton Bike+ avec résistance auto-adaptative, écran rotatif 23,8\", Apple GymKit et accès à plus de 10 000 cours.</p>",
-              "description": "<p>Le Peloton Bike+ dispose d'une résistance auto-adaptative qui s'ajuste aux indications de l'instructeur, d'un écran HD rotatif de 23,8 pouces pour les entraînements hors vélo, d'une intégration Apple GymKit et d'une caméra frontale. Accédez à des milliers de cours en direct et à la demande.</p>",
-              "meta_title": "Peloton Bike+ – Résistance auto-adaptative, écran tactile rotatif",
-              "meta_keywords": "Peloton Bike Plus|vélo d'appartement|vélo cardio intérieur|Peloton",
-              "meta_description": "Entraînez-vous plus intelligemment avec le Peloton Bike+. Résistance auto-adaptative, écran rotatif 23,8\" et milliers de cours."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "bose-soundlink-flex",
-      "type": "simple",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "bose-soundlink-flex",
-          "brand": "Bose",
-          "image": "products/product-3.jpg",
-          "color": "Black",
-          "width": "3.6",
-          "height": "3.6",
-          "length": "7.9",
-          "weight": "0.64",
-          "url_key": "bose-soundlink-flex",
-          "product_number": "865983-0100"
-        },
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "78",
-              "INR": 6474
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "Bose SoundLink Flex Bluetooth Speaker",
-              "price": {
-                "USD": "149",
-                "INR": 12367
-              },
-              "meta_title": "Bose SoundLink Flex Bluetooth Speaker – Waterproof, Portable",
-              "description": "<p>The Bose SoundLink Flex delivers surprisingly lifelike sound for its compact size. Designed to be positioned upright or on its side, it uses PositionIQ technology to automatically detect its orientation and optimize audio performance. Waterproof, dustproof, and corrosion-resistant, it floats if dropped in water.</p>",
-              "meta_keywords": "Bose SoundLink Flex|portable bluetooth speaker|waterproof speaker|Bose outdoor speaker",
-              "meta_description": "Shop Bose SoundLink Flex. Waterproof, dustproof, and delivers lifelike sound anywhere. 12-hour battery life.",
-              "short_description": "<p>Bose SoundLink Flex with PositionIQ technology, 12-hour battery, waterproof/dustproof design, and surprisingly lifelike portable sound.</p>"
-            },
-            "hi_IN": {
-              "name": "बोस साउंडलिंक फ्लेक्स ब्लूटूथ स्पीकर",
-              "price": {
-                "USD": 149.0,
-                "INR": 12367
-              },
-              "short_description": "<p>बोस साउंडलिंक फ्लेक्स – PositionIQ टेक्नोलॉजी, 12 घंटे की बैटरी, वाटरप्रूफ/डस्टप्रूफ डिज़ाइन।</p>",
-              "description": "<p>बोस साउंडलिंक फ्लेक्स अपने कॉम्पैक्ट आकार के लिए आश्चर्यजनक रूप से जीवंत ध्वनि देता है। PositionIQ टेक्नोलॉजी स्वचालित रूप से ओरिएंटेशन का पता लगाती है और ऑडियो ऑप्टिमाइज़ करती है। वाटरप्रूफ, डस्टप्रूफ और पानी में गिरने पर तैरता है।</p>",
-              "meta_title": "बोस साउंडलिंक फ्लेक्स ब्लूटूथ स्पीकर – वाटरप्रूफ, पोर्टेबल",
-              "meta_keywords": "बोस साउंडलिंक फ्लेक्स|पोर्टेबल ब्लूटूथ स्पीकर|वाटरप्रूफ स्पीकर|बोस आउटडोर स्पीकर",
-              "meta_description": "बोस साउंडलिंक फ्लेक्स खरीदें। वाटरप्रूफ, डस्टप्रूफ और कहीं भी जीवंत ध्वनि। 12 घंटे की बैटरी।"
-            },
-            "fr_FR": {
-              "name": "Enceinte Bluetooth Bose SoundLink Flex",
-              "price": {
-                "USD": 149.0,
-                "INR": 12367
-              },
-              "short_description": "<p>Bose SoundLink Flex avec PositionIQ, 12h d'autonomie, design étanche/anti-poussière et son portable vivant.</p>",
-              "description": "<p>La Bose SoundLink Flex produit un son étonnamment vivant pour sa taille compacte. La technologie PositionIQ détecte automatiquement son orientation et optimise la performance audio. Étanche, résistante à la poussière et flotte si elle tombe à l'eau.</p>",
-              "meta_title": "Enceinte Bluetooth Bose SoundLink Flex – Étanche, portable",
-              "meta_keywords": "Bose SoundLink Flex|enceinte Bluetooth portable|enceinte étanche|enceinte extérieure Bose",
-              "meta_description": "Achetez la Bose SoundLink Flex. Étanche, résistante à la poussière et son vivant partout. 12h d'autonomie."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "brooks-ghost-15-cfg",
+      "sku": "puma-virat-kohli-evoknit-tshirt-cfg",
       "type": "configurable",
       "attribute_family_id": 1,
+      "super_attributes": [
+        "size"
+      ],
       "values": {
         "common": {
-          "sku": "brooks-ghost-15-cfg",
-          "brand": "Brooks",
-          "size": "L",
-          "image": "products/product-6.jpg",
-          "url_key": "brooks-ghost-15"
+          "sku": "puma-virat-kohli-evoknit-tshirt-cfg",
+          "size": "M",
+          "image": "products/Product-8.jpeg",
+          "url_key": "puma-one8-evoknit-polo-tshirt"
         },
         "channel_specific": {
           "default": {
             "cost": {
-              "USD": "65",
-              "INR": 5395
+              "USD": "12",
+              "INR": 999
             }
           }
         },
         "channel_locale_specific": {
           "default": {
             "en_US": {
-              "name": "Brooks Ghost 15 Running Shoes",
+              "name": "PUMA One8 Evoknit Polo T-Shirt",
               "price": {
-                "USD": "130",
-                "INR": 10790
+                "USD": "25",
+                "INR": 2099
               },
-              "meta_title": "Brooks Ghost 15 Running Shoes – Neutral, Cushioned Daily Trainer",
-              "description": "<p>The Brooks Ghost 15 is a versatile daily trainer built for neutral runners seeking a smooth, cushioned ride. Updated DNA LOFT v2 cushioning provides a plush yet responsive feel underfoot. The 3D Fit Print upper adapts to the shape of your foot for a secure, comfortable fit on any terrain.</p>",
-              "meta_keywords": "Brooks Ghost 15|running shoes|neutral running shoes|Brooks running",
-              "meta_description": "Run comfortably every day with the Brooks Ghost 15. DNA LOFT v2 cushioning and 3D Fit Print for a perfect fit.",
-              "short_description": "<p>Brooks Ghost 15 with DNA LOFT v2 cushioning and 3D Fit Print upper. Smooth, plush daily trainer for neutral runners.</p>"
+              "meta_title": "PUMA One8 Evoknit Polo T-Shirt – Virat Kohli Collection, Moisture-Wicking",
+              "description": "<p>The PUMA One8 Evoknit Polo T-Shirt is part of the exclusive PUMA x Virat Kohli collection, designed for athletes and style-conscious individuals alike. Crafted with PUMA's innovative Evoknit fabric technology, the seamless knit construction moves with your body for unrestricted performance. The moisture-wicking DRYCELL fabric pulls sweat away from the skin, keeping you dry and comfortable during workouts or casual outings. The classic polo collar adds a refined touch to a performance-ready silhouette.</p>",
+              "meta_keywords": "PUMA One8 t-shirt|Virat Kohli PUMA|PUMA polo India|sports t-shirt India",
+              "meta_description": "Shop PUMA One8 Evoknit Polo from Virat Kohli's collection. Seamless knit, DRYCELL moisture-wicking fabric for sport and style.",
+              "short_description": "<p>PUMA One8 Evoknit Polo T-Shirt with seamless Evoknit fabric, DRYCELL moisture-wicking technology, and polo collar from Virat Kohli's collection.</p>"
             },
             "hi_IN": {
-              "name": "ब्रुक्स घोस्ट 15 रनिंग जूते",
+              "name": "PUMA One8 Evoknit पोलो T-शर्ट",
               "price": {
-                "USD": 130.0,
-                "INR": 10790
+                "USD": 25.0,
+                "INR": 2099
               },
-              "short_description": "<p>ब्रुक्स घोस्ट 15 – DNA LOFT v2 कुशनिंग और 3D फिट प्रिंट अपर। न्यूट्रल रनर्स के लिए स्मूद डेली ट्रेनर।</p>",
-              "description": "<p>ब्रुक्स घोस्ट 15 न्यूट्रल रनर्स के लिए एक बहुमुखी डेली ट्रेनर है। अपडेटेड DNA LOFT v2 कुशनिंग आरामदायक लेकिन रिस्पॉन्सिव फील देती है। 3D फिट प्रिंट अपर पैर के आकार के अनुसार ढलता है।</p>",
-              "meta_title": "ब्रुक्स घोस्ट 15 रनिंग जूते – न्यूट्रल, कुशन्ड डेली ट्रेनर",
-              "meta_keywords": "ब्रुक्स घोस्ट 15|रनिंग जूते|न्यूट्रल रनिंग जूते|ब्रुक्स रनिंग",
-              "meta_description": "ब्रुक्स घोस्ट 15 के साथ हर दिन आराम से दौड़ें। DNA LOFT v2 कुशनिंग और 3D फिट प्रिंट।"
+              "short_description": "<p>PUMA One8 Evoknit पोलो – सीमलेस Evoknit फैब्रिक, DRYCELL मॉइस्चर-विकिंग टेक्नोलॉजी और पोलो कॉलर। विराट कोहली कलेक्शन।</p>",
+              "description": "<p>PUMA One8 Evoknit पोलो T-शर्ट एक्सक्लूसिव PUMA x विराट कोहली कलेक्शन का हिस्सा है। PUMA की इनोवेटिव Evoknit फैब्रिक टेक्नोलॉजी के साथ सीमलेस निट कंस्ट्रक्शन असीमित परफॉर्मेंस के लिए आपके शरीर के साथ चलता है। DRYCELL फैब्रिक पसीने को त्वचा से दूर खींचता है। क्लासिक पोलो कॉलर परफॉर्मेंस-रेडी सिल्हूट में रिफाइन्ड टच जोड़ता है।</p>",
+              "meta_title": "PUMA One8 Evoknit पोलो T-शर्ट – विराट कोहली कलेक्शन, मॉइस्चर-विकिंग",
+              "meta_keywords": "PUMA One8 T-शर्ट|विराट कोहली PUMA|PUMA पोलो इंडिया|स्पोर्ट्स T-शर्ट इंडिया",
+              "meta_description": "PUMA One8 Evoknit पोलो खरीदें – विराट कोहली कलेक्शन से। सीमलेस निट और DRYCELL मॉइस्चर-विकिंग फैब्रिक।"
             },
             "fr_FR": {
-              "name": "Brooks Ghost 15 Chaussures de course",
+              "name": "Polo PUMA One8 Evoknit",
               "price": {
-                "USD": 130.0,
-                "INR": 10790
+                "USD": 25.0,
+                "INR": 2099
               },
-              "short_description": "<p>Brooks Ghost 15 avec amorti DNA LOFT v2 et tige 3D Fit Print. Entraîneur quotidien fluide et moelleux pour coureurs neutres.</p>",
-              "description": "<p>La Brooks Ghost 15 est une chaussure d'entraînement polyvalente pour les coureurs neutres. L'amorti DNA LOFT v2 mis à jour offre une sensation moelleuse et réactive. La tige 3D Fit Print s'adapte à la forme de votre pied pour un ajustement parfait.</p>",
-              "meta_title": "Brooks Ghost 15 Chaussures de course – Entraîneur quotidien neutre et amorti",
-              "meta_keywords": "Brooks Ghost 15|chaussures de course|chaussures running neutres|Brooks running",
-              "meta_description": "Courez confortablement chaque jour avec la Brooks Ghost 15. Amorti DNA LOFT v2 et 3D Fit Print pour l'ajustement parfait."
+              "short_description": "<p>Polo PUMA One8 Evoknit avec tricot sans couture, tissu DRYCELL évacuation d'humidité et col polo. Collection Virat Kohli.</p>",
+              "description": "<p>Le polo PUMA One8 Evoknit fait partie de la collection exclusive PUMA x Virat Kohli, conçue pour les athlètes et les amateurs de style. La construction en tricot sans couture Evoknit suit les mouvements du corps. Le tissu DRYCELL évacue la transpiration pour vous garder au sec lors de l'entraînement ou en ville. Le col polo classique apporte une touche soignée.</p>",
+              "meta_title": "Polo PUMA One8 Evoknit – Collection Virat Kohli, évacuation d'humidité",
+              "meta_keywords": "PUMA One8 t-shirt|Virat Kohli PUMA|polo PUMA Inde|t-shirt sport Inde",
+              "meta_description": "Achetez le polo PUMA One8 Evoknit de la collection Virat Kohli. Tricot sans couture et tissu DRYCELL pour le sport et le style."
             }
           }
         }
       }
     },
     {
-      "sku": "rawlings-heart-of-hide-glove",
-      "type": "simple",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "rawlings-heart-of-hide-glove",
-          "brand": "Rawlings",
-          "image": "products/product-7.jpg",
-          "url_key": "rawlings-heart-of-hide-glove"
-        },
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "110",
-              "INR": 9130
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "Rawlings Heart of the Hide Baseball Glove 11.5\"",
-              "price": {
-                "USD": "219.99",
-                "INR": 18259
-              },
-              "meta_title": "Rawlings Heart of the Hide 11.5\" Baseball Glove – Pro-H Web",
-              "description": "<p>The Rawlings Heart of the Hide Baseball Glove is crafted from the top 5% of steer hides for superior durability and feel. Features a Pro-H Web and open back design preferred by infielders. Hand-crafted in Tennessee by Rawlings' most skilled craftsmen with over 50 years of glove-making expertise.</p>",
-              "meta_keywords": "Rawlings Heart of the Hide|baseball glove|infield glove|leather baseball glove",
-              "meta_description": "Shop Rawlings Heart of the Hide 11.5\" Baseball Glove. Top-grade leather, Pro-H Web, and expert craftsmanship.",
-              "short_description": "<p>Rawlings Heart of the Hide 11.5\" infielder glove. Top 5% steer hide leather, Pro-H Web, crafted by expert craftsmen.</p>"
-            },
-            "hi_IN": {
-              "name": "रॉलिंग्स हार्ट ऑफ द हाइड बेसबॉल ग्लव 11.5\"",
-              "price": {
-                "USD": 219.99,
-                "INR": 18259
-              },
-              "short_description": "<p>रॉलिंग्स हार्ट ऑफ द हाइड 11.5\" – टॉप 5% स्टीयर हाइड लेदर, प्रो-H वेब, विशेषज्ञ कारीगरी।</p>",
-              "description": "<p>रॉलिंग्स हार्ट ऑफ द हाइड बेसबॉल ग्लव बेहतरीन टिकाऊपन के लिए टॉप 5% स्टीयर हाइड से तैयार किया गया है। प्रो-H वेब और ओपन बैक डिज़ाइन। 50+ वर्षों के ग्लव-मेकिंग विशेषज्ञता के साथ टेनेसी में हस्त-निर्मित।</p>",
-              "meta_title": "रॉलिंग्स हार्ट ऑफ द हाइड 11.5\" बेसबॉल ग्लव – प्रो-H वेब",
-              "meta_keywords": "रॉलिंग्स हार्ट ऑफ द हाइड|बेसबॉल ग्लव|इनफील्ड ग्लव|लेदर बेसबॉल ग्लव",
-              "meta_description": "रॉलिंग्स हार्ट ऑफ द हाइड 11.5\" बेसबॉल ग्लव खरीदें – टॉप-ग्रेड लेदर और प्रो-H वेब।"
-            },
-            "fr_FR": {
-              "name": "Gant de baseball Rawlings Heart of the Hide 11,5\"",
-              "price": {
-                "USD": 219.99,
-                "INR": 18259
-              },
-              "short_description": "<p>Rawlings Heart of the Hide 11,5\" pour champ intérieur. Cuir top 5%, Pro-H Web, artisanat expert.</p>",
-              "description": "<p>Le gant de baseball Rawlings Heart of the Hide est fabriqué à partir des 5% meilleurs cuirs bovins pour une durabilité et un toucher supérieurs. Design Pro-H Web et dos ouvert préféré des joueurs de champ intérieur. Artisanat expert au Tennessee.</p>",
-              "meta_title": "Gant de baseball Rawlings Heart of the Hide 11,5\" – Pro-H Web",
-              "meta_keywords": "Rawlings Heart of the Hide|gant de baseball|gant champ intérieur|gant en cuir",
-              "meta_description": "Achetez le gant de baseball Rawlings Heart of the Hide 11,5\". Cuir haut de gamme, Pro-H Web et artisanat expert."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "osprey-atmos-65-ag",
-      "type": "simple",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "osprey-atmos-65-ag",
-          "brand": "Osprey",
-          "image": "products/product-8.jpg",
-          "url_key": "osprey-atmos-65-ag"
-        },
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "138",
-              "INR": 11454
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "Osprey Atmos AG 65 Backpack",
-              "price": {
-                "USD": "270",
-                "INR": 22410
-              },
-              "meta_title": "Osprey Atmos AG 65 Backpack – Anti-Gravity Suspension, 65L",
-              "description": "<p>The Osprey Atmos AG 65 features the Anti-Gravity (AG) suspension system, which provides unrivaled comfort and load transfer. The integrated mesh back panel and suspended harness moves with your body on the trail. Includes dual side pockets, sleeping bag compartment, and integrated rain cover. Designed for serious multi-day hikes.</p>",
-              "meta_keywords": "Osprey Atmos AG 65|hiking backpack|65L backpack|Osprey backpacking",
-              "meta_description": "Tackle multi-day hikes with the Osprey Atmos AG 65. Anti-Gravity suspension and 65L capacity with integrated rain cover.",
-              "short_description": "<p>Osprey Atmos AG 65 with Anti-Gravity suspension, 65L capacity, integrated rain cover, and sleeping bag compartment. For multi-day backpacking.</p>"
-            },
-            "hi_IN": {
-              "name": "ऑस्प्रे एटमॉस AG 65 बैकपैक",
-              "price": {
-                "USD": 270.0,
-                "INR": 22410
-              },
-              "short_description": "<p>ऑस्प्रे एटमॉस AG 65 – एंटी-ग्रेविटी सस्पेंशन, 65L क्षमता, इंटीग्रेटेड रेन कवर और स्लीपिंग बैग कम्पार्टमेंट।</p>",
-              "description": "<p>ऑस्प्रे एटमॉस AG 65 में एंटी-ग्रेविटी (AG) सस्पेंशन सिस्टम है जो बेजोड़ आराम और लोड ट्रांसफर प्रदान करता है। इंटीग्रेटेड मेश बैक पैनल और हार्नेस। डुअल साइड पॉकेट, स्लीपिंग बैग कम्पार्टमेंट और इंटीग्रेटेड रेन कवर।</p>",
-              "meta_title": "ऑस्प्रे एटमॉस AG 65 बैकपैक – एंटी-ग्रेविटी सस्पेंशन, 65L",
-              "meta_keywords": "ऑस्प्रे एटमॉस AG 65|हाइकिंग बैकपैक|65L बैकपैक|ऑस्प्रे बैकपैकिंग",
-              "meta_description": "ऑस्प्रे एटमॉस AG 65 के साथ मल्टी-डे हाइक करें। एंटी-ग्रेविटी सस्पेंशन और 65L क्षमता।"
-            },
-            "fr_FR": {
-              "name": "Sac à dos Osprey Atmos AG 65",
-              "price": {
-                "USD": 270.0,
-                "INR": 22410
-              },
-              "short_description": "<p>Osprey Atmos AG 65 avec suspension Anti-Gravité, 65L, housse de pluie et compartiment sac de couchage.</p>",
-              "description": "<p>L'Osprey Atmos AG 65 dispose du système de suspension Anti-Gravité (AG) pour un confort et un transfert de charge incomparables. Le panneau dorsal en mesh intégré épouse les mouvements de votre corps. Comprend des poches latérales, un compartiment sac de couchage et une housse de pluie intégrée.</p>",
-              "meta_title": "Sac à dos Osprey Atmos AG 65 – Suspension Anti-Gravité, 65L",
-              "meta_keywords": "Osprey Atmos AG 65|sac à dos randonnée|sac à dos 65L|sac à dos Osprey",
-              "meta_description": "Affrontez les randonnées multi-jours avec l'Osprey Atmos AG 65. Suspension Anti-Gravité et 65L avec housse de pluie."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "fitbit-charge-6",
-      "type": "simple",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "fitbit-charge-6",
-          "brand": "Fitbit",
-          "image": "products/product-10.jpg",
-          "color": "Black",
-          "width": "0.9",
-          "height": "0.4",
-          "length": "1.4",
-          "weight": "0.07",
-          "url_key": "fitbit-charge-6",
-          "product_number": "FB424BKBK"
-        },
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "85",
-              "INR": 7055
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "Fitbit Charge 6 Fitness Tracker",
-              "price": {
-                "USD": "159.95",
-                "INR": 13276
-              },
-              "meta_title": "Fitbit Charge 6 Fitness Tracker – Built-in GPS, ECG, Google Integration",
-              "description": "<p>The Fitbit Charge 6 features built-in GPS, continuous heart rate tracking, ECG app, SpO2 monitoring, and skin temperature tracking. It integrates with Google Maps, YouTube Music, and Google Wallet. Includes 7-day battery life, Active Zone Minutes, sleep tracking, and stress management tools.</p>",
-              "meta_keywords": "Fitbit Charge 6|fitness tracker|Fitbit GPS tracker|heart rate monitor",
-              "meta_description": "Track fitness and health with Fitbit Charge 6. Built-in GPS, ECG app, and Google integration on your wrist.",
-              "short_description": "<p>Fitbit Charge 6 with built-in GPS, ECG app, SpO2, 7-day battery, Google Maps, YouTube Music, and Google Wallet integration.</p>"
-            },
-            "hi_IN": {
-              "name": "फिटबिट चार्ज 6 फिटनेस ट्रैकर",
-              "price": {
-                "USD": 159.95,
-                "INR": 13276
-              },
-              "short_description": "<p>फिटबिट चार्ज 6 – बिल्ट-इन GPS, ECG ऐप, SpO2, 7 दिन की बैटरी, Google Maps और Google Wallet।</p>",
-              "description": "<p>फिटबिट चार्ज 6 में बिल्ट-इन GPS, कंटीन्यूअस हार्ट रेट ट्रैकिंग, ECG ऐप, SpO2 मॉनिटरिंग और स्किन टेम्परेचर ट्रैकिंग है। Google Maps, YouTube Music और Google Wallet के साथ इंटीग्रेट होता है। 7 दिन की बैटरी लाइफ।</p>",
-              "meta_title": "फिटबिट चार्ज 6 फिटनेस ट्रैकर – बिल्ट-इन GPS, ECG, Google इंटीग्रेशन",
-              "meta_keywords": "फिटबिट चार्ज 6|फिटनेस ट्रैकर|फिटबिट GPS ट्रैकर|हार्ट रेट मॉनिटर",
-              "meta_description": "फिटबिट चार्ज 6 से फिटनेस ट्रैक करें। बिल्ट-इन GPS, ECG ऐप और Google इंटीग्रेशन।"
-            },
-            "fr_FR": {
-              "name": "Fitbit Charge 6 Tracker de fitness",
-              "price": {
-                "USD": 159.95,
-                "INR": 13276
-              },
-              "short_description": "<p>Fitbit Charge 6 avec GPS intégré, app ECG, SpO2, 7 jours d'autonomie, Google Maps et Google Wallet.</p>",
-              "description": "<p>Le Fitbit Charge 6 dispose d'un GPS intégré, d'un suivi de fréquence cardiaque continu, d'une app ECG, d'une surveillance SpO2 et d'un suivi de la température cutanée. S'intègre à Google Maps, YouTube Music et Google Wallet. Autonomie de 7 jours.</p>",
-              "meta_title": "Fitbit Charge 6 Tracker de fitness – GPS intégré, ECG, intégration Google",
-              "meta_keywords": "Fitbit Charge 6|tracker de fitness|tracker GPS Fitbit|moniteur de fréquence cardiaque",
-              "meta_description": "Suivez votre forme avec le Fitbit Charge 6. GPS intégré, app ECG et intégration Google au poignet."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "coleman-sundome-tent-4p",
-      "type": "simple",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "coleman-sundome-tent-4p",
-          "brand": "Coleman",
-          "image": "products/product-2.jpg",
-          "url_key": "coleman-sundome-tent-4p"
-        },
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "42",
-              "INR": 3486
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "Coleman Sundome 4-Person Tent",
-              "price": {
-                "USD": "89.99",
-                "INR": 7469
-              },
-              "meta_title": "Coleman Sundome 4-Person Tent – WeatherTec, Easy Setup",
-              "description": "<p>The Coleman Sundome 4-Person Tent is easy to set up in just 10 minutes with color-coded poles and continuous pole sleeves. Features WeatherTec Technology with patented welded floors and inverted seams to keep rain out. Provides room for two queen airbeds and includes a rainfly for added weather protection.</p>",
-              "meta_keywords": "Coleman Sundome tent|4-person tent|family camping tent|Coleman camping",
-              "meta_description": "Camp in comfort with Coleman Sundome 4-Person Tent. WeatherTec protection and 10-minute setup.",
-              "short_description": "<p>Coleman Sundome 4-Person Tent with WeatherTec Technology, 10-minute setup, and room for two queen airbeds. Includes rainfly.</p>"
-            },
-            "hi_IN": {
-              "name": "कोलमैन सनडोम 4-पर्सन टेंट",
-              "price": {
-                "USD": 89.99,
-                "INR": 7469
-              },
-              "short_description": "<p>कोलमैन सनडोम 4-पर्सन टेंट – WeatherTec टेक्नोलॉजी, 10 मिनट सेटअप और दो क्वीन एयरबेड के लिए जगह।</p>",
-              "description": "<p>कोलमैन सनडोम 4-पर्सन टेंट को कलर-कोडेड पोल्स से मात्र 10 मिनट में लगाया जा सकता है। WeatherTec टेक्नोलॉजी के साथ पेटेंटेड वेल्डेड फ्लोर और इनवर्टेड सीम्स बारिश को बाहर रखते हैं। दो क्वीन एयरबेड के लिए जगह।</p>",
-              "meta_title": "कोलमैन सनडोम 4-पर्सन टेंट – WeatherTec, आसान सेटअप",
-              "meta_keywords": "कोलमैन सनडोम टेंट|4-पर्सन टेंट|फैमिली कैंपिंग टेंट|कोलमैन कैंपिंग",
-              "meta_description": "कोलमैन सनडोम 4-पर्सन टेंट के साथ आराम से कैंप करें। WeatherTec सुरक्षा और 10 मिनट सेटअप।"
-            },
-            "fr_FR": {
-              "name": "Tente Coleman Sundome 4 personnes",
-              "price": {
-                "USD": 89.99,
-                "INR": 7469
-              },
-              "short_description": "<p>Tente Coleman Sundome 4 personnes avec WeatherTec, montage 10 min et espace pour deux matelas queen. Auvent inclus.</p>",
-              "description": "<p>La tente Coleman Sundome 4 personnes se monte facilement en 10 minutes grâce aux arceaux à code couleur. La technologie WeatherTec avec sol soudé et coutures inversées empêche la pluie d'entrer. Comprend deux espaces pour matelas pneumatiques queen et un auvent de pluie.</p>",
-              "meta_title": "Tente Coleman Sundome 4 personnes – WeatherTec, montage facile",
-              "meta_keywords": "tente Coleman Sundome|tente 4 personnes|tente camping familiale|camping Coleman",
-              "meta_description": "Campez confortablement avec la tente Coleman Sundome 4 personnes. Protection WeatherTec et montage en 10 minutes."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "weber-spirit-e310-grill",
-      "type": "simple",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "weber-spirit-e310-grill",
-          "brand": "Weber",
-          "image": "products/product-4.jpg",
-          "color": "Black",
-          "width": "26",
-          "height": "45",
-          "length": "57",
-          "weight": "115",
-          "url_key": "weber-spirit-e310-grill",
-          "product_number": "46110001"
-        },
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "330",
-              "INR": 27390
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "Weber Spirit E-310 Gas Grill",
-              "price": {
-                "USD": "599",
-                "INR": 49717
-              },
-              "meta_title": "Weber Spirit E-310 Gas Grill – 3 Burners, 529 Sq In",
-              "description": "<p>The Weber Spirit E-310 Gas Grill features three burners with 30,000 BTU-per-hour input, 529 sq in of total cooking area, and porcelain-enamel cast-iron cooking grates for even heating and easy cleaning. The GS4 grilling system includes a high-performance ignition and infinity ignition for a reliable start every time.</p>",
-              "meta_keywords": "Weber Spirit E-310|gas grill|3-burner grill|Weber BBQ",
-              "meta_description": "Grill like a pro with Weber Spirit E-310. 3 burners, 529 sq in cooking area, and reliable GS4 ignition system.",
-              "short_description": "<p>Weber Spirit E-310 with 3 burners, 529 sq in cooking area, GS4 grilling system, and porcelain-enamel grates. Natural gas available.</p>"
-            },
-            "hi_IN": {
-              "name": "वेबर स्पिरिट E-310 गैस ग्रिल",
-              "price": {
-                "USD": 599.0,
-                "INR": 49717
-              },
-              "short_description": "<p>वेबर स्पिरिट E-310 – 3 बर्नर, 529 वर्ग इंच कुकिंग एरिया, GS4 ग्रिलिंग सिस्टम और पोर्सिलेन-इनेमल ग्रेट्स।</p>",
-              "description": "<p>वेबर स्पिरिट E-310 गैस ग्रिल में 30,000 BTU-प्रति-घंटे इनपुट के साथ तीन बर्नर, 529 वर्ग इंच कुल कुकिंग एरिया और पोर्सिलेन-इनेमल कास्ट-आयरन कुकिंग ग्रेट्स हैं। GS4 ग्रिलिंग सिस्टम में हाई-परफॉर्मेंस इग्निशन शामिल है।</p>",
-              "meta_title": "वेबर स्पिरिट E-310 गैस ग्रिल – 3 बर्नर, 529 वर्ग इंच",
-              "meta_keywords": "वेबर स्पिरिट E-310|गैस ग्रिल|3-बर्नर ग्रिल|वेबर BBQ",
-              "meta_description": "वेबर स्पिरिट E-310 से प्रो की तरह ग्रिल करें। 3 बर्नर, 529 वर्ग इंच और GS4 इग्निशन सिस्टम।"
-            },
-            "fr_FR": {
-              "name": "Barbecue à gaz Weber Spirit E-310",
-              "price": {
-                "USD": 599.0,
-                "INR": 49717
-              },
-              "short_description": "<p>Weber Spirit E-310 avec 3 brûleurs, 529 po² de surface, système GS4 et grilles en fonte émaillée.</p>",
-              "description": "<p>Le barbecue à gaz Weber Spirit E-310 dispose de trois brûleurs avec 30 000 BTU/heure, d'une surface de cuisson totale de 529 po² et de grilles en fonte émaillée pour une chauffe uniforme. Le système de cuisson GS4 inclut une allumage haute performance fiable.</p>",
-              "meta_title": "Barbecue à gaz Weber Spirit E-310 – 3 brûleurs, 529 po²",
-              "meta_keywords": "Weber Spirit E-310|barbecue à gaz|grill 3 brûleurs|BBQ Weber",
-              "meta_description": "Grillez comme un pro avec le Weber Spirit E-310. 3 brûleurs, 529 po² et système d'allumage GS4."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "champion-powerplus-hoodie-cfg",
+      "sku": "adidas-tiro-23-track-pant-cfg",
       "type": "configurable",
       "attribute_family_id": 1,
+      "super_attributes": [
+        "size"
+      ],
       "values": {
         "common": {
-          "sku": "champion-powerplus-hoodie-cfg",
-          "brand": "Champion",
-          "size": "L",
-          "image": "products/product-9.jpg",
-          "url_key": "champion-powerblend-hoodie"
+          "sku": "adidas-tiro-23-track-pant-cfg",
+          "size": "M",
+          "image": "products/Product-9.jpeg",
+          "url_key": "adidas-tiro-23-track-pants"
         },
         "channel_specific": {
           "default": {
             "cost": {
-              "USD": "20",
-              "INR": 1660
+              "USD": "17",
+              "INR": 1399
             }
           }
         },
         "channel_locale_specific": {
           "default": {
             "en_US": {
-              "name": "Champion Powerblend Pullover Hoodie",
+              "name": "Adidas Tiro 23 League Training Pants",
               "price": {
-                "USD": "45",
-                "INR": 3735
+                "USD": "34",
+                "INR": 2799
               },
-              "meta_title": "Champion Powerblend Pullover Hoodie – Cotton-Rich, Shrink Resistant",
-              "description": "<p>The Champion Powerblend Pullover Hoodie features a cotton-rich Powerblend fabric that resists shrinking and pilling through repeated washes. The reduced-bulk kangaroo pocket and ribbed cuffs and hem provide a clean, athletic silhouette. Available in a wide range of colors and sizes for the whole family.</p>",
-              "meta_keywords": "Champion hoodie|Powerblend hoodie|Champion sweatshirt|pullover hoodie",
-              "meta_description": "Shop Champion Powerblend Pullover Hoodie. Shrink and pill resistant, comfortable, and available in many colors.",
-              "short_description": "<p>Champion Powerblend Pullover Hoodie with shrink-resistant fabric, kangaroo pocket, and ribbed cuffs. Classic athletic style.</p>"
+              "meta_title": "Adidas Tiro 23 League Training Pants – AEROREADY, Tapered Fit",
+              "description": "<p>The Adidas Tiro 23 League Training Pants are a football training essential that has earned a cult following among Indian athletes and streetwear enthusiasts alike. Engineered with AEROREADY moisture-absorbing fabric that keeps you dry and confident through intense training sessions. The tapered leg and zip ankles allow you to pull them on and off over cleats with ease. Side pockets offer secure storage for small essentials. Made with recycled materials as part of adidas's commitment to sustainability.</p>",
+              "meta_keywords": "Adidas Tiro 23 track pants|Adidas training pants India|Adidas Tiro pants|football training pants",
+              "meta_description": "Buy Adidas Tiro 23 League Training Pants with AEROREADY moisture management and tapered fit. Iconic football-inspired style.",
+              "short_description": "<p>Adidas Tiro 23 League Training Pants with AEROREADY fabric, tapered fit, zip ankles, side pockets, and recycled materials.</p>"
             },
             "hi_IN": {
-              "name": "चैंपियन पावरब्लेंड पुलओवर हूडी",
+              "name": "Adidas Tiro 23 लीग ट्रेनिंग पैंट्स",
               "price": {
-                "USD": 45.0,
-                "INR": 3735
+                "USD": 34.0,
+                "INR": 2799
               },
-              "short_description": "<p>चैंपियन पावरब्लेंड पुलओवर हूडी – श्रिंक-रेसिस्टेंट फैब्रिक, कंगारू पॉकेट और रिब्ड कफ।</p>",
-              "description": "<p>चैंपियन पावरब्लेंड पुलओवर हूडी में कॉटन-रिच पावरब्लेंड फैब्रिक है जो बार-बार धोने पर भी सिकुड़ता और पिलिंग नहीं होता। रिड्यूस्ड-बल्क कंगारू पॉकेट और रिब्ड कफ एंड हेम।</p>",
-              "meta_title": "चैंपियन पावरब्लेंड पुलओवर हूडी – कॉटन-रिच, श्रिंक रेसिस्टेंट",
-              "meta_keywords": "चैंपियन हूडी|पावरब्लेंड हूडी|चैंपियन स्वेटशर्ट|पुलओवर हूडी",
-              "meta_description": "चैंपियन पावरब्लेंड पुलओवर हूडी खरीदें। श्रिंक और पिल रेसिस्टेंट, आरामदायक और कई रंगों में।"
+              "short_description": "<p>Adidas Tiro 23 लीग ट्रेनिंग पैंट्स – AEROREADY फैब्रिक, टेपर्ड फिट, ज़िप एंकल्स, साइड पॉकेट और रीसाइकिल्ड मैटेरियल।</p>",
+              "description": "<p>Adidas Tiro 23 लीग ट्रेनिंग पैंट्स एक फुटबॉल ट्रेनिंग एसेंशियल है जिसने भारतीय एथलीट और स्ट्रीटवियर एंथुज़ियास्ट दोनों के बीच पंथ अनुसरण अर्जित किया है। AEROREADY मॉइस्चर-एब्जॉर्बिंग फैब्रिक आपको इंटेंस ट्रेनिंग सेशन के दौरान सूखा और आत्मविश्वासी रखता है। टेपर्ड लेग और ज़िप एंकल्स क्लीट्स के ऊपर पहनना और उतारना आसान बनाते हैं। रीसाइकिल्ड मैटेरियल से बना।</p>",
+              "meta_title": "Adidas Tiro 23 लीग ट्रेनिंग पैंट्स – AEROREADY, टेपर्ड फिट",
+              "meta_keywords": "Adidas Tiro 23 ट्रैक पैंट्स|Adidas ट्रेनिंग पैंट्स इंडिया|Adidas Tiro पैंट्स|फुटबॉल ट्रेनिंग पैंट्स",
+              "meta_description": "Adidas Tiro 23 लीग ट्रेनिंग पैंट्स खरीदें – AEROREADY मॉइस्चर मैनेजमेंट और टेपर्ड फिट के साथ।"
             },
             "fr_FR": {
-              "name": "Sweat à capuche Champion Powerblend",
+              "name": "Pantalon d'entraînement Adidas Tiro 23 League",
               "price": {
-                "USD": 45.0,
-                "INR": 3735
+                "USD": 34.0,
+                "INR": 2799
               },
-              "short_description": "<p>Sweat Champion Powerblend avec tissu anti-rétrécissement, poche kangourou et poignets côtelés. Style athlétique classique.</p>",
-              "description": "<p>Le sweat à capuche Champion Powerblend est fabriqué dans un tissu Powerblend riche en coton qui résiste au rétrécissement et au bouloché après de nombreux lavages. La poche kangourou réduite et les poignets et bas côtes nervurés offrent une silhouette athlétique propre.</p>",
-              "meta_title": "Sweat à capuche Champion Powerblend – Riche en coton, résistant au rétrécissement",
-              "meta_keywords": "sweat Champion|hoodie Powerblend|sweat Champion|sweat à capuche",
-              "meta_description": "Achetez le sweat Champion Powerblend. Résistant au rétrécissement et au bouloché, confortable et disponible en nombreuses couleurs."
+              "short_description": "<p>Adidas Tiro 23 avec tissu AEROREADY, coupe fuselée, chevilles zippées, poches latérales et matériaux recyclés.</p>",
+              "description": "<p>Le pantalon Adidas Tiro 23 League est un essentiel de l'entraînement football plébiscité par les athlètes et les amateurs de streetwear en Inde. Le tissu AEROREADY absorbe l'humidité pour vous garder au sec lors des séances intenses. La coupe fuselée et les chevilles zippées facilitent l'enfilage par-dessus les crampons. Fabriqué avec des matériaux recyclés.</p>",
+              "meta_title": "Pantalon Adidas Tiro 23 League – AEROREADY, Coupe fuselée",
+              "meta_keywords": "Adidas Tiro 23 pantalon|pantalon training Adidas Inde|pantalon Tiro Adidas|pantalon football training",
+              "meta_description": "Achetez le pantalon Adidas Tiro 23 League avec tissu AEROREADY et coupe fuselée. Style football iconique."
             }
           }
         }
       }
     },
     {
-      "sku": "cuisinart-14cup-food-processor",
-      "type": "simple",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "cuisinart-14cup-food-processor",
-          "brand": "Cuisinart",
-          "image": "products/product-5.jpg",
-          "url_key": "cuisinart-14cup-food-processor"
-        },
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "98",
-              "INR": 8134
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "Cuisinart 14-Cup Food Processor",
-              "price": {
-                "USD": "199",
-                "INR": 16517
-              },
-              "meta_title": "Cuisinart 14-Cup Food Processor – 720W, SealTight System",
-              "description": "<p>The Cuisinart 14-Cup Food Processor features a 720-watt motor and extra-large feed tube to handle whole fruits and vegetables. Includes a stainless steel chopping blade, reversible shredding disc, slicing disc, and dough blade. The SealTight advantage system provides leak-resistant processing.</p>",
-              "meta_keywords": "Cuisinart food processor|14-cup food processor|Cuisinart 14 cup|kitchen food processor",
-              "meta_description": "Prep meals faster with Cuisinart 14-Cup Food Processor. 720W motor and 4 attachments for any task.",
-              "short_description": "<p>Cuisinart 14-Cup Food Processor with 720W motor, 4 blades/discs, SealTight system, and extra-large feed tube.</p>"
-            },
-            "hi_IN": {
-              "name": "कुइज़िनार्ट 14-कप फूड प्रोसेसर",
-              "price": {
-                "USD": 199.0,
-                "INR": 16517
-              },
-              "short_description": "<p>कुइज़िनार्ट 14-कप फूड प्रोसेसर – 720W मोटर, 4 ब्लेड/डिस्क, SealTight सिस्टम और एक्स्ट्रा-लार्ज फीड ट्यूब।</p>",
-              "description": "<p>कुइज़िनार्ट 14-कप फूड प्रोसेसर में 720-वाट मोटर और एक्स्ट्रा-लार्ज फीड ट्यूब है। इसमें स्टेनलेस स्टील चॉपिंग ब्लेड, रिवर्सिबल श्रेडिंग डिस्क, स्लाइसिंग डिस्क और डो ब्लेड शामिल हैं। SealTight एडवांटेज सिस्टम लीक-रेसिस्टेंट प्रोसेसिंग प्रदान करता है।</p>",
-              "meta_title": "कुइज़िनार्ट 14-कप फूड प्रोसेसर – 720W, SealTight सिस्टम",
-              "meta_keywords": "कुइज़िनार्ट फूड प्रोसेसर|14-कप फूड प्रोसेसर|कुइज़िनार्ट 14 कप|किचन फूड प्रोसेसर",
-              "meta_description": "कुइज़िनार्ट 14-कप फूड प्रोसेसर से मील प्रेप तेज करें। 720W मोटर और 4 अटैचमेंट।"
-            },
-            "fr_FR": {
-              "name": "Robot de cuisine Cuisinart 14 tasses",
-              "price": {
-                "USD": 199.0,
-                "INR": 16517
-              },
-              "short_description": "<p>Robot Cuisinart 14 tasses avec moteur 720W, 4 lames/disques, système SealTight et grand tube d'alimentation.</p>",
-              "description": "<p>Le robot de cuisine Cuisinart 14 tasses dispose d'un moteur de 720 watts et d'un grand tube d'alimentation pour traiter fruits et légumes entiers. Comprend une lame en acier inoxydable, un disque éminceur réversible, un disque trancheur et une lame pétrisseur. Système SealTight résistant aux fuites.</p>",
-              "meta_title": "Robot de cuisine Cuisinart 14 tasses – 720W, système SealTight",
-              "meta_keywords": "robot Cuisinart|robot de cuisine 14 tasses|Cuisinart 14 tasses|robot cuiseur",
-              "meta_description": "Préparez vos repas plus vite avec le robot Cuisinart 14 tasses. Moteur 720W et 4 accessoires pour toutes les tâches."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "under-armour-heatgear-tshirt-cfg",
+      "sku": "woodland-waterproof-trekking-shoe-cfg",
       "type": "configurable",
       "attribute_family_id": 1,
+      "super_attributes": [
+        "size"
+      ],
       "values": {
         "common": {
-          "sku": "under-armour-heatgear-tshirt-cfg",
-          "brand": "Under Armour",
-          "size": "L",
-          "image": "products/product-4.jpg",
-          "url_key": "under-armour-heatgear-tshirt"
+          "sku": "woodland-waterproof-trekking-shoe-cfg",
+          "size": "8",
+          "image": "products/Product-10.jpeg",
+          "url_key": "woodland-waterproof-trekking-shoes"
         },
         "channel_specific": {
           "default": {
             "cost": {
-              "USD": "13",
-              "INR": 1079
+              "USD": "38",
+              "INR": 3199
             }
           }
         },
         "channel_locale_specific": {
           "default": {
             "en_US": {
-              "name": "Under Armour HeatGear Compression T-Shirt",
+              "name": "Woodland Waterproof High-Ankle Trekking Shoes",
               "price": {
-                "USD": "29.99",
-                "INR": 2489
+                "USD": "72",
+                "INR": 5995
               },
-              "meta_title": "Under Armour HeatGear Compression T-Shirt – Moisture-Wicking",
-              "description": "<p>Under Armour HeatGear Compression T-Shirt features a second-skin fit designed to keep you cool, dry, and light. Moisture transport system wicks sweat away from the body, and 4-way stretch construction moves better in every direction. Anti-odor technology prevents the growth of odor-causing microbes.</p>",
-              "meta_keywords": "Under Armour HeatGear T-shirt|compression shirt|moisture wicking shirt|UA HeatGear",
-              "meta_description": "Stay cool and dry with Under Armour HeatGear Compression T-Shirt. Moisture-wicking, 4-way stretch, and anti-odor.",
-              "short_description": "<p>Under Armour HeatGear Compression T-Shirt with moisture-wicking fabric, 4-way stretch, anti-odor technology, and second-skin fit.</p>"
+              "meta_title": "Woodland Waterproof High-Ankle Trekking Shoes – Genuine Leather, Anti-Skid Sole",
+              "description": "<p>Woodland Waterproof High-Ankle Trekking Shoes are built for the rugged terrains of the Himalayas, Western Ghats, and beyond. Crafted from genuine full-grain leather with a waterproof membrane lining, they shield your feet from rain, streams, and damp trails without sacrificing breathability. The high-ankle collar provides crucial ankle support on uneven terrain while the thick anti-skid rubber outsole delivers reliable grip on both wet and dry surfaces. Padded collar and tongue cushion the foot for extended comfort during long treks and hikes.</p>",
+              "meta_keywords": "Woodland trekking shoes|waterproof hiking shoes India|Woodland shoes|high ankle trekking boots",
+              "meta_description": "Buy Woodland Waterproof High-Ankle Trekking Shoes. Genuine leather, waterproof membrane, anti-skid sole for Himalayan treks.",
+              "short_description": "<p>Woodland Waterproof High-Ankle Trekking Shoes with genuine full-grain leather, waterproof membrane, anti-skid rubber sole, and padded ankle collar.</p>"
             },
             "hi_IN": {
-              "name": "अंडर आर्मर HeatGear कम्प्रेशन T-शर्ट",
+              "name": "Woodland वाटरप्रूफ हाई-एंकल ट्रेकिंग शूज़",
               "price": {
-                "USD": 29.99,
-                "INR": 2489
+                "USD": 72.0,
+                "INR": 5995
               },
-              "short_description": "<p>अंडर आर्मर HeatGear कम्प्रेशन T-शर्ट – मॉइस्चर-विकिंग, 4-वे स्ट्रेच, एंटी-ओडर और सेकंड-स्किन फिट।</p>",
-              "description": "<p>अंडर आर्मर HeatGear कम्प्रेशन T-शर्ट में सेकंड-स्किन फिट है जो आपको ठंडा, सूखा और हल्का रखने के लिए डिज़ाइन की गई है। मॉइस्चर ट्रांसपोर्ट सिस्टम पसीना दूर करता है और 4-वे स्ट्रेच हर दिशा में बेहतर मूवमेंट देता है।</p>",
-              "meta_title": "अंडर आर्मर HeatGear कम्प्रेशन T-शर्ट – मॉइस्चर-विकिंग",
-              "meta_keywords": "अंडर आर्मर HeatGear T-शर्ट|कम्प्रेशन शर्ट|मॉइस्चर विकिंग शर्ट|UA HeatGear",
-              "meta_description": "अंडर आर्मर HeatGear कम्प्रेशन T-शर्ट से ठंडे और सूखे रहें। मॉइस्चर-विकिंग, 4-वे स्ट्रेच और एंटी-ओडर।"
+              "short_description": "<p>Woodland वाटरप्रूफ हाई-एंकल ट्रेकिंग शूज़ – असली फुल-ग्रेन लेदर, वाटरप्रूफ मेम्ब्रेन, एंटी-स्किड रबर सोल और पैडेड एंकल कॉलर।</p>",
+              "description": "<p>Woodland वाटरप्रूफ हाई-एंकल ट्रेकिंग शूज़ हिमालय, पश्चिमी घाट और उससे आगे के कठिन इलाकों के लिए बनाए गए हैं। असली फुल-ग्रेन लेदर और वाटरप्रूफ मेम्ब्रेन लाइनिंग बारिश, नालों और नम रास्तों से पैरों की रक्षा करती है। हाई-एंकल कॉलर असमान इलाके पर एंकल सपोर्ट देता है जबकि मोटा एंटी-स्किड रबर आउटसोल गीली और सूखी दोनों सतहों पर विश्वसनीय ग्रिप देता है।</p>",
+              "meta_title": "Woodland वाटरप्रूफ हाई-एंकल ट्रेकिंग शूज़ – असली लेदर, एंटी-स्किड सोल",
+              "meta_keywords": "Woodland ट्रेकिंग शूज़|वाटरप्रूफ हाइकिंग शूज़ इंडिया|Woodland जूते|हाई एंकल ट्रेकिंग बूट्स",
+              "meta_description": "Woodland वाटरप्रूफ हाई-एंकल ट्रेकिंग शूज़ खरीदें। असली लेदर, वाटरप्रूफ मेम्ब्रेन और एंटी-स्किड सोल।"
             },
             "fr_FR": {
-              "name": "T-shirt de compression Under Armour HeatGear",
+              "name": "Chaussures de trekking Woodland imperméables montantes",
               "price": {
-                "USD": 29.99,
-                "INR": 2489
+                "USD": 72.0,
+                "INR": 5995
               },
-              "short_description": "<p>T-shirt Under Armour HeatGear avec tissu respirant, 4 voies extensibles, technologie anti-odeurs et ajustement seconde peau.</p>",
-              "description": "<p>Le t-shirt Under Armour HeatGear offre un ajustement seconde peau pour rester frais, sec et léger. Le système d'évacuation de l'humidité élimine la transpiration et la construction 4 voies extensible assure la liberté de mouvement dans toutes les directions.</p>",
-              "meta_title": "T-shirt de compression Under Armour HeatGear – Évacuation de l'humidité",
-              "meta_keywords": "t-shirt Under Armour HeatGear|t-shirt de compression|t-shirt respirant|UA HeatGear",
-              "meta_description": "Restez frais et sec avec le t-shirt Under Armour HeatGear. Évacuation, 4 voies extensibles et anti-odeurs."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "stanley-adventure-quencher-40oz",
-      "type": "simple",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "stanley-adventure-quencher-40oz",
-          "brand": "Stanley",
-          "image": "products/product-1.jpg",
-          "weight": "30",
-          "url_key": "stanley-adventure-quencher-40oz"
-        },
-        "categories": [
-          "root"
-        ],
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "20",
-              "INR": 1660
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "Stanley Quencher H2.0 FlowState Tumbler 40 oz",
-              "price": {
-                "USD": "45",
-                "INR": 3735
-              },
-              "meta_title": "Stanley Quencher H2.0 FlowState Tumbler 40 oz – Vacuum Insulated",
-              "description": "<p>The Stanley Quencher H2.0 FlowState Tumbler features an advanced FlowState lid with three positions including a straw opening, drinking opening, and full-cover top. The double-wall vacuum insulation keeps beverages cold for up to 2 days with ice. Fits most car cup holders and is dishwasher safe.</p>",
-              "meta_keywords": "Stanley Quencher 40 oz|Stanley tumbler|FlowState tumbler|Stanley cup",
-              "meta_description": "Shop Stanley Quencher H2.0 40 oz FlowState Tumbler. Keeps drinks cold 2 days and fits most car cup holders.",
-              "short_description": "<p>Stanley Quencher H2.0 40 oz with FlowState lid, double-wall vacuum insulation, and fits most car cup holders. Dishwasher safe.</p>"
-            },
-            "hi_IN": {
-              "name": "स्टेनली Quencher H2.0 FlowState टम्बलर 40 oz",
-              "price": {
-                "USD": 45.0,
-                "INR": 3735
-              },
-              "short_description": "<p>स्टेनली Quencher H2.0 40 oz – FlowState लिड, डबल-वॉल वैक्यूम इंसुलेशन और कार कप होल्डर में फिट।</p>",
-              "description": "<p>स्टेनली Quencher H2.0 FlowState टम्बलर में एडवांस्ड FlowState लिड है जिसमें तीन पोजिशन हैं – स्ट्रॉ ओपनिंग, ड्रिंकिंग ओपनिंग और फुल-कवर टॉप। डबल-वॉल वैक्यूम इंसुलेशन पेय को 2 दिन तक ठंडा रखता है।</p>",
-              "meta_title": "स्टेनली Quencher H2.0 FlowState टम्बलर 40 oz – वैक्यूम इंसुलेटेड",
-              "meta_keywords": "स्टेनली Quencher 40 oz|स्टेनली टम्बलर|FlowState टम्बलर|स्टेनली कप",
-              "meta_description": "स्टेनली Quencher H2.0 40 oz FlowState टम्बलर खरीदें। 2 दिन ठंडा रखता है और अधिकतर कार कप होल्डर में फिट होता है।"
-            },
-            "fr_FR": {
-              "name": "Stanley Quencher H2.0 FlowState Tumbler 40 oz",
-              "price": {
-                "USD": 45.0,
-                "INR": 3735
-              },
-              "short_description": "<p>Stanley Quencher H2.0 40 oz avec couvercle FlowState, isolation sous vide et compatible porte-gobelet. Lavable au lave-vaisselle.</p>",
-              "description": "<p>Le Stanley Quencher H2.0 FlowState dispose d'un couvercle FlowState avancé avec trois positions : ouverture pour paille, ouverture pour boire et dessus intégral. L'isolation sous vide double paroi garde les boissons froides jusqu'à 2 jours avec de la glace.</p>",
-              "meta_title": "Stanley Quencher H2.0 FlowState Tumbler 40 oz – Isolation sous vide",
-              "meta_keywords": "Stanley Quencher 40 oz|tumbler Stanley|tumbler FlowState|tasse Stanley",
-              "meta_description": "Achetez le Stanley Quencher H2.0 40 oz FlowState. Garde les boissons froides 2 jours et s'adapte à la plupart des porte-gobelets."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "garmin-forerunner-255",
-      "type": "simple",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "garmin-forerunner-255",
-          "brand": "Garmin",
-          "image": "products/product-10.jpg",
-          "url_key": "garmin-forerunner-255"
-        },
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "185",
-              "INR": 15355
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "Garmin Forerunner 255 GPS Running Watch",
-              "price": {
-                "USD": "349.99",
-                "INR": 29049
-              },
-              "meta_title": "Garmin Forerunner 255 GPS Running Watch – 14-Day Battery, Advanced Metrics",
-              "description": "<p>The Garmin Forerunner 255 includes advanced running dynamics, race predictor, and daily suggested workouts to help you improve. The Multi-Band GPS delivers precise location tracking. It also tracks sleep, stress, and recovery with up to 14 days of battery life in smartwatch mode.</p>",
-              "meta_keywords": "Garmin Forerunner 255|GPS running watch|Garmin running watch|smartwatch GPS",
-              "meta_description": "Train smarter with Garmin Forerunner 255. Multi-Band GPS, 14-day battery, and advanced running metrics.",
-              "short_description": "<p>Garmin Forerunner 255 with Multi-Band GPS, 14-day battery, advanced running dynamics, race predictor, and recovery tracking.</p>"
-            },
-            "hi_IN": {
-              "name": "गार्मिन फोरेरनर 255 GPS रनिंग वॉच",
-              "price": {
-                "USD": 349.99,
-                "INR": 29049
-              },
-              "short_description": "<p>गार्मिन फोरेरनर 255 – मल्टी-बैंड GPS, 14 दिन बैटरी, एडवांस्ड रनिंग डायनेमिक्स और रिकवरी ट्रैकिंग।</p>",
-              "description": "<p>गार्मिन फोरेरनर 255 में एडवांस्ड रनिंग डायनेमिक्स, रेस प्रेडिक्टर और डेली सजेस्टेड वर्कआउट शामिल हैं। मल्टी-बैंड GPS सटीक लोकेशन ट्रैकिंग देता है। स्मार्टवॉच मोड में 14 दिन की बैटरी लाइफ।</p>",
-              "meta_title": "गार्मिन फोरेरनर 255 GPS रनिंग वॉच – 14 दिन बैटरी, एडवांस्ड मेट्रिक्स",
-              "meta_keywords": "गार्मिन फोरेरनर 255|GPS रनिंग वॉच|गार्मिन रनिंग वॉच|स्मार्टवॉच GPS",
-              "meta_description": "गार्मिन फोरेरनर 255 से स्मार्ट ट्रेनिंग करें। मल्टी-बैंड GPS, 14 दिन की बैटरी और एडवांस्ड रनिंग मेट्रिक्स।"
-            },
-            "fr_FR": {
-              "name": "Garmin Forerunner 255 Montre GPS de course",
-              "price": {
-                "USD": 349.99,
-                "INR": 29049
-              },
-              "short_description": "<p>Garmin Forerunner 255 avec GPS multi-bandes, 14 jours d'autonomie, dynamiques de course avancées et suivi de récupération.</p>",
-              "description": "<p>La Garmin Forerunner 255 inclut des dynamiques de course avancées, un prédicteur de course et des entraînements quotidiens suggérés. Le GPS multi-bandes offre un suivi précis. Suit le sommeil, le stress et la récupération avec jusqu'à 14 jours d'autonomie.</p>",
-              "meta_title": "Garmin Forerunner 255 Montre GPS – Autonomie 14 jours, métriques avancés",
-              "meta_keywords": "Garmin Forerunner 255|montre GPS de course|montre running Garmin|montre connectée GPS",
-              "meta_description": "Entraînez-vous plus intelligemment avec la Garmin Forerunner 255. GPS multi-bandes, 14 jours et métriques avancés."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "nikon-z50-mirrorless-kit",
-      "type": "simple",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "nikon-z50-mirrorless-kit",
-          "brand": "Nikon",
-          "image": "products/product-5.jpg",
-          "color": "Black",
-          "width": "2.8",
-          "height": "3.4",
-          "length": "4.9",
-          "weight": "1.66",
-          "url_key": "nikon-z50-mirrorless-kit",
-          "product_number": "VOA050K001"
-        },
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "560",
-              "INR": 46480
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "Nikon Z50 Mirrorless Camera with 16-50mm Lens",
-              "price": {
-                "USD": "996.95",
-                "INR": 82747
-              },
-              "meta_title": "Nikon Z50 Mirrorless Camera Kit – 20.9MP, 4K UHD, 16-50mm Lens",
-              "description": "<p>The Nikon Z50 is a compact mirrorless camera featuring a 20.9MP APS-C sensor, in-body image stabilization, and 4K UHD video recording. The kit includes the NIKKOR Z DX 16-50mm f/3.5-6.3 VR lens for versatile everyday shooting. Features a 11 fps burst rate and tilting touchscreen for flexible shooting angles.</p>",
-              "meta_keywords": "Nikon Z50|mirrorless camera|Nikon Z50 kit|APS-C mirrorless camera",
-              "meta_description": "Capture stunning photos and 4K video with the Nikon Z50 Mirrorless Camera Kit. Compact, powerful, and versatile.",
-              "short_description": "<p>Nikon Z50 kit with 20.9MP sensor, 4K UHD video, 16-50mm VR lens, 11 fps burst, and tilting touchscreen. Compact and powerful.</p>"
-            },
-            "hi_IN": {
-              "name": "निकॉन Z50 मिररलेस कैमरा 16-50mm लेंस के साथ",
-              "price": {
-                "USD": 996.95,
-                "INR": 82747
-              },
-              "short_description": "<p>निकॉन Z50 किट – 20.9MP सेंसर, 4K UHD, 16-50mm VR लेंस, 11 fps बर्स्ट और टिल्टिंग टचस्क्रीन।</p>",
-              "description": "<p>निकॉन Z50 एक कॉम्पैक्ट मिररलेस कैमरा है जिसमें 20.9MP APS-C सेंसर, इन-बॉडी इमेज स्टेबिलाइज़ेशन और 4K UHD वीडियो रिकॉर्डिंग है। किट में NIKKOR Z DX 16-50mm VR लेंस शामिल है। 11 fps बर्स्ट रेट और टिल्टिंग टचस्क्रीन।</p>",
-              "meta_title": "निकॉन Z50 मिररलेस कैमरा किट – 20.9MP, 4K UHD, 16-50mm लेंस",
-              "meta_keywords": "निकॉन Z50|मिररलेस कैमरा|निकॉन Z50 किट|APS-C मिररलेस कैमरा",
-              "meta_description": "निकॉन Z50 मिररलेस कैमरा किट से शानदार फोटो और 4K वीडियो कैप्चर करें। कॉम्पैक्ट और शक्तिशाली।"
-            },
-            "fr_FR": {
-              "name": "Appareil photo sans miroir Nikon Z50 avec objectif 16-50mm",
-              "price": {
-                "USD": 996.95,
-                "INR": 82747
-              },
-              "short_description": "<p>Kit Nikon Z50 avec capteur 20,9 MP, vidéo 4K UHD, objectif VR 16-50mm, rafale 11 i/s et écran tactile inclinable.</p>",
-              "description": "<p>Le Nikon Z50 est un appareil photo sans miroir compact avec un capteur APS-C 20,9 MP, une stabilisation intégrée et un enregistrement vidéo 4K UHD. Le kit inclut l'objectif NIKKOR Z DX 16-50mm f/3,5-6,3 VR. Rafale 11 i/s et écran tactile inclinable.</p>",
-              "meta_title": "Kit Nikon Z50 sans miroir – 20,9 MP, 4K UHD, objectif 16-50mm",
-              "meta_keywords": "Nikon Z50|appareil photo sans miroir|kit Nikon Z50|APS-C sans miroir",
-              "meta_description": "Capturez des photos et vidéos 4K avec le kit Nikon Z50. Compact, puissant et polyvalent."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "owala-freesip-24oz-cfg",
-      "type": "configurable",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "owala-freesip-24oz-cfg",
-          "brand": "Owala",
-          "image": "products/product-2.jpg",
-          "url_key": "owala-freesip-24oz"
-        },
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "15",
-              "INR": 1245
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "Owala FreeSip Insulated Water Bottle 24 oz",
-              "price": {
-                "USD": "34.99",
-                "INR": 2904
-              },
-              "meta_title": "Owala FreeSip Insulated Water Bottle 24 oz – Sip or Swig",
-              "description": "<p>The Owala FreeSip Insulated Water Bottle features a patented FreeSip spout designed for sipping upright through the built-in straw or tilting back to swig. Triple-layer insulation keeps drinks cold for up to 24 hours. The leak-proof lid locks for easy transport and the wide mouth opening makes cleaning and adding ice easy.</p>",
-              "meta_keywords": "Owala FreeSip|insulated water bottle|Owala water bottle|24 oz water bottle",
-              "meta_description": "Sip or swig with Owala FreeSip 24 oz. Triple-layer insulation keeps drinks cold 24 hours.",
-              "short_description": "<p>Owala FreeSip 24 oz with patented FreeSip spout, triple-layer insulation (cold 24 hrs), leak-proof lid, and wide mouth for easy cleaning.</p>"
-            },
-            "hi_IN": {
-              "name": "ओवाला FreeSip इंसुलेटेड वॉटर बॉटल 24 oz",
-              "price": {
-                "USD": 34.99,
-                "INR": 2904
-              },
-              "short_description": "<p>ओवाला FreeSip 24 oz – पेटेंटेड FreeSip स्पाउट, ट्रिपल-लेयर इंसुलेशन, लीक-प्रूफ लिड और वाइड माउथ।</p>",
-              "description": "<p>ओवाला FreeSip इंसुलेटेड वॉटर बॉटल में पेटेंटेड FreeSip स्पाउट है जो बिल्ट-इन स्ट्रॉ से सीधे सिप करने या झुककर स्विग करने के लिए डिज़ाइन किया गया है। ट्रिपल-लेयर इंसुलेशन 24 घंटे तक ठंडा रखता है।</p>",
-              "meta_title": "ओवाला FreeSip इंसुलेटेड वॉटर बॉटल 24 oz – सिप या स्विग",
-              "meta_keywords": "ओवाला FreeSip|इंसुलेटेड वॉटर बॉटल|ओवाला वॉटर बॉटल|24 oz वॉटर बॉटल",
-              "meta_description": "ओवाला FreeSip 24 oz से सिप या स्विग करें। ट्रिपल-लेयर इंसुलेशन 24 घंटे ठंडा रखता है।"
-            },
-            "fr_FR": {
-              "name": "Bouteille d'eau isolée Owala FreeSip 24 oz",
-              "price": {
-                "USD": 34.99,
-                "INR": 2904
-              },
-              "short_description": "<p>Owala FreeSip 24 oz avec bec breveté, isolation triple couche (froid 24h), couvercle étanche et large ouverture.</p>",
-              "description": "<p>La bouteille Owala FreeSip dispose d'un bec breveté conçu pour siroter droit à travers la paille intégrée ou incliner pour boire. L'isolation triple couche garde les boissons froides jusqu'à 24h. Le couvercle étanche se verrouille pour le transport.</p>",
-              "meta_title": "Bouteille d'eau isolée Owala FreeSip 24 oz – Siroter ou boire",
-              "meta_keywords": "Owala FreeSip|bouteille d'eau isotherme|bouteille Owala|bouteille 24 oz",
-              "meta_description": "Sirotez ou buvez avec l'Owala FreeSip 24 oz. Isolation triple couche garde les boissons froides 24h."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "hoka-clifton-9-cfg",
-      "type": "configurable",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "hoka-clifton-9-cfg",
-          "brand": "HOKA",
-          "size": "L",
-          "image": "products/product-4.jpg",
-          "url_key": "hoka-clifton-9"
-        },
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "72",
-              "INR": 5976
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "HOKA Clifton 9 Running Shoes",
-              "price": {
-                "USD": "145",
-                "INR": 12035
-              },
-              "meta_title": "HOKA Clifton 9 Running Shoes – Max Cushion Daily Trainer",
-              "description": "<p>The HOKA Clifton 9 is HOKA's iconic everyday trainer, updated with a new engineered mesh upper for added breathability and a streamlined look. The full-compression EVA midsole delivers cushioning that feels like running on clouds. Early-stage meta-rocker geometry promotes a smooth, efficient heel-to-toe transition.</p>",
-              "meta_keywords": "HOKA Clifton 9|HOKA running shoes|max cushion running shoes|HOKA ONE ONE",
-              "meta_description": "Run in cloud-like comfort with HOKA Clifton 9. Max cushioning, breathable mesh, and smooth meta-rocker geometry.",
-              "short_description": "<p>HOKA Clifton 9 with full-compression EVA midsole, engineered mesh upper, and early-stage meta-rocker for a smooth ride.</p>"
-            },
-            "hi_IN": {
-              "name": "HOKA क्लिफ्टन 9 रनिंग जूते",
-              "price": {
-                "USD": 145.0,
-                "INR": 12035
-              },
-              "short_description": "<p>HOKA क्लिफ्टन 9 – फुल-कम्प्रेशन EVA मिडसोल, इंजीनियर्ड मेश अपर और स्मूद राइड के लिए मेटा-रॉकर।</p>",
-              "description": "<p>HOKA क्लिफ्टन 9 HOKA का आइकॉनिक एवरीडे ट्रेनर है, जो नए इंजीनियर्ड मेश अपर के साथ अपडेट किया गया है। फुल-कम्प्रेशन EVA मिडसोल बादलों पर दौड़ने जैसी कुशनिंग देता है। अर्ली-स्टेज मेटा-रॉकर जियोमेट्री स्मूद हील-टू-टो ट्रांजिशन को बढ़ावा देती है।</p>",
-              "meta_title": "HOKA क्लिफ्टन 9 रनिंग जूते – मैक्स कुशन डेली ट्रेनर",
-              "meta_keywords": "HOKA क्लिफ्टन 9|HOKA रनिंग जूते|मैक्स कुशन रनिंग जूते|HOKA ONE ONE",
-              "meta_description": "HOKA क्लिफ्टन 9 के साथ क्लाउड-लाइक आराम से दौड़ें। मैक्स कुशनिंग और मेटा-रॉकर जियोमेट्री।"
-            },
-            "fr_FR": {
-              "name": "HOKA Clifton 9 Chaussures de course",
-              "price": {
-                "USD": 145.0,
-                "INR": 12035
-              },
-              "short_description": "<p>HOKA Clifton 9 avec semelle EVA pleine compression, tige en mesh et méta-rocker pour une foulée fluide.</p>",
-              "description": "<p>La HOKA Clifton 9 est l'entraîneur quotidien iconique de HOKA, mis à jour avec une nouvelle tige en mesh respirant. La semelle intermédiaire EVA pleine compression offre un amorti comme courir sur des nuages. La géométrie méta-rocker en début de course favorise une transition talon-avant-pied fluide.</p>",
-              "meta_title": "HOKA Clifton 9 Chaussures de course – Entraîneur quotidien max amorti",
-              "meta_keywords": "HOKA Clifton 9|chaussures HOKA|chaussures running max amorti|HOKA ONE ONE",
-              "meta_description": "Courez dans un confort nuageux avec la HOKA Clifton 9. Amorti maximal, mesh respirant et méta-rocker fluide."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "roomba-j7plus",
-      "type": "simple",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "roomba-j7plus",
-          "brand": "iRobot",
-          "image": "products/product-1.jpg",
-          "url_key": "roomba-j7plus"
-        },
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "340",
-              "INR": 28220
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "iRobot Roomba j7+ Robot Vacuum",
-              "price": {
-                "USD": "599.99",
-                "INR": 49799
-              },
-              "meta_title": "iRobot Roomba j7+ Robot Vacuum – Self-Emptying, PrecisionVision",
-              "description": "<p>The iRobot Roomba j7+ uses PrecisionVision Navigation to identify and avoid obstacles like cords and pet waste. The Clean Base Automatic Dirt Disposal empties itself for up to 60 days. Smart Mapping learns your home for targeted cleaning and the iRobot OS optimizes cleaning routes automatically.</p>",
-              "meta_keywords": "iRobot Roomba j7+|robot vacuum|self-emptying robot vacuum|Roomba",
-              "meta_description": "Clean hands-free with iRobot Roomba j7+. Avoids pet waste, self-empties for 60 days, and learns your home.",
-              "short_description": "<p>iRobot Roomba j7+ with PrecisionVision Navigation, auto-empty base (60 days), Smart Mapping, and pet waste avoidance.</p>"
-            },
-            "hi_IN": {
-              "name": "iRobot रूम्बा j7+ रोबोट वैक्यूम",
-              "price": {
-                "USD": 599.99,
-                "INR": 49799
-              },
-              "short_description": "<p>iRobot रूम्बा j7+ – PrecisionVision नेविगेशन, ऑटो-एम्प्टी बेस (60 दिन), स्मार्ट मैपिंग और पेट वेस्ट अवॉइडेंस।</p>",
-              "description": "<p>iRobot रूम्बा j7+ PrecisionVision नेविगेशन का उपयोग करके कॉर्ड और पेट वेस्ट जैसी बाधाओं की पहचान और बचाव करता है। क्लीन बेस ऑटोमेटिक डर्ट डिस्पोजल 60 दिनों तक खुद खाली होता है। स्मार्ट मैपिंग आपके घर को सीखती है।</p>",
-              "meta_title": "iRobot रूम्बा j7+ रोबोट वैक्यूम – सेल्फ-एम्प्टीइंग, PrecisionVision",
-              "meta_keywords": "iRobot रूम्बा j7+|रोबोट वैक्यूम|सेल्फ-एम्प्टीइंग रोबोट वैक्यूम|रूम्बा",
-              "meta_description": "iRobot रूम्बा j7+ से हैंड्स-फ्री सफाई करें। पेट वेस्ट से बचता है, 60 दिनों तक खुद खाली होता है।"
-            },
-            "fr_FR": {
-              "name": "iRobot Roomba j7+ Aspirateur robot",
-              "price": {
-                "USD": 599.99,
-                "INR": 49799
-              },
-              "short_description": "<p>iRobot Roomba j7+ avec PrecisionVision, base auto-vidante (60 jours), Smart Mapping et détection des déjections.</p>",
-              "description": "<p>L'iRobot Roomba j7+ utilise la navigation PrecisionVision pour identifier et éviter les obstacles comme les câbles et les déjections d'animaux. La base Clean Base se vide automatiquement pendant 60 jours. Le Smart Mapping apprend votre maison pour un nettoyage ciblé.</p>",
-              "meta_title": "iRobot Roomba j7+ Aspirateur robot – Auto-vidage, PrecisionVision",
-              "meta_keywords": "iRobot Roomba j7+|aspirateur robot|aspirateur auto-vidant|Roomba",
-              "meta_description": "Nettoyez sans effort avec l'iRobot Roomba j7+. Évite les déjections, se vide 60 jours et apprend votre maison."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "black-decker-handheld-vacuum",
-      "type": "simple",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "black-decker-handheld-vacuum",
-          "brand": "BLACK+DECKER",
-          "image": "products/product-3.jpg",
-          "url_key": "black-decker-handheld-vacuum"
-        },
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "22",
-              "INR": 1826
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "BLACK+DECKER Dustbuster Handheld Vacuum",
-              "price": {
-                "USD": "49.99",
-                "INR": 4149
-              },
-              "meta_title": "BLACK+DECKER Dustbuster Handheld Vacuum – 16V, Cyclonic Suction",
-              "description": "<p>The BLACK+DECKER Dustbuster Handheld Vacuum delivers powerful cyclonic suction for effortless cleaning. The translucent, bagless dirt bowl is easy to empty and the wide-mouth nozzle quickly scoops up large debris. The flip-up brush cleans stairs, upholstery, and other surfaces with ease. Includes a charging base.</p>",
-              "meta_keywords": "BLACK+DECKER Dustbuster|handheld vacuum|cordless handheld vacuum|small vacuum cleaner",
-              "meta_description": "Clean quickly with BLACK+DECKER Dustbuster. Powerful cyclonic suction and bagless for easy emptying.",
-              "short_description": "<p>BLACK+DECKER Dustbuster with cyclonic suction, translucent dirt bowl, flip-up brush, and charging base. 16V lithium battery.</p>"
-            },
-            "hi_IN": {
-              "name": "BLACK+DECKER डस्टबस्टर हैंडहेल्ड वैक्यूम",
-              "price": {
-                "USD": 49.99,
-                "INR": 4149
-              },
-              "short_description": "<p>BLACK+DECKER डस्टबस्टर – साइक्लोनिक सक्शन, ट्रांसल्यूसेंट डर्ट बाउल, फ्लिप-अप ब्रश और चार्जिंग बेस।</p>",
-              "description": "<p>BLACK+DECKER डस्टबस्टर हैंडहेल्ड वैक्यूम आसान सफाई के लिए शक्तिशाली साइक्लोनिक सक्शन देता है। ट्रांसल्यूसेंट बैगलेस डर्ट बाउल खाली करना आसान है और वाइड-माउथ नोज़ल बड़े मलबे को जल्दी उठाता है। फ्लिप-अप ब्रश सीढ़ियों और असबाब की सफाई करता है।</p>",
-              "meta_title": "BLACK+DECKER डस्टबस्टर हैंडहेल्ड वैक्यूम – 16V, साइक्लोनिक सक्शन",
-              "meta_keywords": "BLACK+DECKER डस्टबस्टर|हैंडहेल्ड वैक्यूम|कॉर्डलेस हैंडहेल्ड वैक्यूम|छोटा वैक्यूम क्लीनर",
-              "meta_description": "BLACK+DECKER डस्टबस्टर से जल्दी सफाई करें। शक्तिशाली साइक्लोनिक सक्शन और आसानी से खाली होने वाला बैगलेस।"
-            },
-            "fr_FR": {
-              "name": "BLACK+DECKER Dustbuster Aspirateur à main",
-              "price": {
-                "USD": 49.99,
-                "INR": 4149
-              },
-              "short_description": "<p>BLACK+DECKER Dustbuster avec aspiration cyclonique, bac transparent, brosse relevable et base de charge. Batterie lithium 16V.</p>",
-              "description": "<p>L'aspirateur à main BLACK+DECKER Dustbuster offre une puissante aspiration cyclonique pour un nettoyage sans effort. Le bac à poussière transparent sans sac est facile à vider et l'embout large ramasse rapidement les gros débris. La brosse relevable nettoie les escaliers et les tissus.</p>",
-              "meta_title": "BLACK+DECKER Dustbuster Aspirateur à main – 16V, aspiration cyclonique",
-              "meta_keywords": "BLACK+DECKER Dustbuster|aspirateur à main|aspirateur portatif sans fil|petit aspirateur",
-              "meta_description": "Nettoyez rapidement avec le BLACK+DECKER Dustbuster. Aspiration cyclonique puissante et bac sans sac."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "new-balance-990v6-cfg",
-      "type": "configurable",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "new-balance-990v6-cfg",
-          "brand": "New Balance",
-          "size": "L",
-          "image": "products/product-7.jpg",
-          "url_key": "new-balance-990v6"
-        },
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "95",
-              "INR": 7885
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "New Balance 990v6 Made in USA",
-              "price": {
-                "USD": "184.99",
-                "INR": 15354
-              },
-              "meta_title": "New Balance 990v6 Made in USA – ENCAP Midsole, Premium Materials",
-              "description": "<p>The New Balance 990v6 is crafted in the USA with premium materials, building on over 40 years of 990 heritage. Features a ENCAP midsole with blown rubber outsole for superior cushioning and stability. The pigskin and mesh upper provides durability and breathability for all-day wear.</p>",
-              "meta_keywords": "New Balance 990v6|NB 990 Made in USA|990v6 sneakers|premium sneakers",
-              "meta_description": "Own a piece of American craftsmanship with New Balance 990v6. Made in USA with 40+ years of 990 heritage.",
-              "short_description": "<p>New Balance 990v6 Made in USA with ENCAP midsole, premium pigskin/mesh upper, and legendary 990 comfort. Classic and timeless.</p>"
-            },
-            "hi_IN": {
-              "name": "न्यू बैलेंस 990v6 मेड इन USA",
-              "price": {
-                "USD": 184.99,
-                "INR": 15354
-              },
-              "short_description": "<p>न्यू बैलेंस 990v6 मेड इन USA – ENCAP मिडसोल, प्रीमियम पिगस्किन/मेश अपर और लीजेंडरी 990 आराम।</p>",
-              "description": "<p>न्यू बैलेंस 990v6 USA में प्रीमियम मैटेरियल के साथ तैयार किया गया है, जो 40+ वर्षों की 990 विरासत पर आधारित है। ENCAP मिडसोल और ब्लोन रबर आउटसोल बेहतरीन कुशनिंग और स्टेबिलिटी देता है। पिगस्किन और मेश अपर।</p>",
-              "meta_title": "न्यू बैलेंस 990v6 मेड इन USA – ENCAP मिडसोल, प्रीमियम मैटेरियल",
-              "meta_keywords": "न्यू बैलेंस 990v6|NB 990 मेड इन USA|990v6 स्नीकर्स|प्रीमियम स्नीकर्स",
-              "meta_description": "न्यू बैलेंस 990v6 के साथ अमेरिकी शिल्पकारी को अपनाएं। USA में बना, 40+ वर्षों की 990 विरासत के साथ।"
-            },
-            "fr_FR": {
-              "name": "New Balance 990v6 Made in USA",
-              "price": {
-                "USD": 184.99,
-                "INR": 15354
-              },
-              "short_description": "<p>New Balance 990v6 Made in USA avec semelle ENCAP, tige peau de porc/mesh premium et confort légendaire 990.</p>",
-              "description": "<p>La New Balance 990v6 est fabriquée aux États-Unis avec des matériaux premium, s'appuyant sur plus de 40 ans d'héritage 990. La semelle ENCAP avec semelle extérieure en caoutchouc soufflé offre amorti et stabilité supérieurs. La tige en peau de porc et mesh allie durabilité et respirabilité.</p>",
-              "meta_title": "New Balance 990v6 Made in USA – Semelle ENCAP, matériaux premium",
-              "meta_keywords": "New Balance 990v6|NB 990 Made in USA|baskets 990v6|baskets premium",
-              "meta_description": "Possédez un savoir-faire américain avec la New Balance 990v6. Made in USA avec 40+ ans d'héritage 990."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "keurig-k-elite-coffee-maker",
-      "type": "simple",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "keurig-k-elite-coffee-maker",
-          "brand": "Keurig",
-          "image": "products/product-6.jpg",
-          "url_key": "keurig-k-elite-coffee-maker"
-        },
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "82",
-              "INR": 6806
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "Keurig K-Elite Single Serve Coffee Maker",
-              "price": {
-                "USD": "169.99",
-                "INR": 14109
-              },
-              "meta_title": "Keurig K-Elite Single Serve Coffee Maker – 5 Brew Sizes, Iced Coffee",
-              "description": "<p>The Keurig K-Elite brews coffee, tea, cocoa, and more from K-Cup pods in minutes. Features five brew sizes from 4 to 12 oz, a strong brew button for a bolder cup, and an iced coffee setting. The large 75 oz removable reservoir holds enough water for multiple cups before refilling. Auto-off feature for energy savings.</p>",
-              "meta_keywords": "Keurig K-Elite|single serve coffee maker|Keurig coffee machine|K-Cup coffee maker",
-              "meta_description": "Brew the perfect cup with Keurig K-Elite. 5 brew sizes, strong and iced coffee settings, and 75 oz reservoir.",
-              "short_description": "<p>Keurig K-Elite with 5 brew sizes, Strong brew and Iced coffee settings, 75 oz reservoir, and auto-off. Works with all K-Cup pods.</p>"
-            },
-            "hi_IN": {
-              "name": "केयूरिग K-Elite सिंगल सर्व कॉफी मेकर",
-              "price": {
-                "USD": 169.99,
-                "INR": 14109
-              },
-              "short_description": "<p>केयूरिग K-Elite – 5 ब्रू साइज़, स्ट्रॉन्ग ब्रू और आइस्ड कॉफी सेटिंग, 75 oz रिज़र्वोयर और ऑटो-ऑफ।</p>",
-              "description": "<p>केयूरिग K-Elite K-Cup पॉड्स से मिनटों में कॉफी, चाय, कोकोआ और बहुत कुछ बनाता है। 4 से 12 oz तक पांच ब्रू साइज़, स्ट्रॉन्ग ब्रू बटन और आइस्ड कॉफी सेटिंग। 75 oz रिमूवेबल रिज़र्वोयर। ऑटो-ऑफ फीचर।</p>",
-              "meta_title": "केयूरिग K-Elite सिंगल सर्व कॉफी मेकर – 5 ब्रू साइज़, आइस्ड कॉफी",
-              "meta_keywords": "केयूरिग K-Elite|सिंगल सर्व कॉफी मेकर|केयूरिग कॉफी मशीन|K-Cup कॉफी मेकर",
-              "meta_description": "केयूरिग K-Elite से परफेक्ट कप बनाएं। 5 ब्रू साइज़, स्ट्रॉन्ग और आइस्ड कॉफी सेटिंग और 75 oz रिज़र्वोयर।"
-            },
-            "fr_FR": {
-              "name": "Machine à café individuelle Keurig K-Elite",
-              "price": {
-                "USD": 169.99,
-                "INR": 14109
-              },
-              "short_description": "<p>Keurig K-Elite avec 5 tailles, infusion forte et glacée, réservoir 75 oz et arrêt automatique. Compatible toutes capsules K-Cup.</p>",
-              "description": "<p>Le Keurig K-Elite prépare café, thé, cacao et plus depuis des capsules K-Cup en quelques minutes. Cinq tailles de 4 à 12 oz, un bouton Infusion forte et un mode café glacé. Le grand réservoir amovible de 75 oz et la fonction arrêt automatique pour économiser l'énergie.</p>",
-              "meta_title": "Machine à café Keurig K-Elite – 5 tailles, café glacé",
-              "meta_keywords": "Keurig K-Elite|machine à café individuelle|cafetière Keurig|machine K-Cup",
-              "meta_description": "Préparez la tasse parfaite avec le Keurig K-Elite. 5 tailles, infusion forte et glacée, réservoir 75 oz."
-            }
-          }
-        }
-      }
-    },
-    {
-      "sku": "patagonia-better-sweater-cfg",
-      "type": "configurable",
-      "attribute_family_id": 1,
-      "values": {
-        "common": {
-          "sku": "patagonia-better-sweater-cfg",
-          "brand": "Patagonia",
-          "size": "L",
-          "image": "products/product-1.jpg",
-          "url_key": "patagonia-better-sweater"
-        },
-        "channel_specific": {
-          "default": {
-            "cost": {
-              "USD": "72",
-              "INR": 5976
-            }
-          }
-        },
-        "channel_locale_specific": {
-          "default": {
-            "en_US": {
-              "name": "Patagonia Better Sweater Fleece Jacket",
-              "price": {
-                "USD": "149",
-                "INR": 12367
-              },
-              "meta_title": "Patagonia Better Sweater Fleece Jacket – 100% Recycled Polyester",
-              "description": "<p>The Patagonia Better Sweater Fleece Jacket is made from 100% recycled polyester fleece with a sweater-knit face and a cozy, plush interior. The full-zip design features a stand-up collar and front pockets. Classic styling makes it appropriate for casual and semi-formal settings alike.</p>",
-              "meta_keywords": "Patagonia Better Sweater|fleece jacket|Patagonia fleece|recycled fleece jacket",
-              "meta_description": "Stay warm sustainably with Patagonia Better Sweater. 100% recycled polyester with classic sweater styling.",
-              "short_description": "<p>Patagonia Better Sweater Fleece Jacket made from 100% recycled polyester. Full-zip, stand-up collar, and sweater-knit face.</p>"
-            },
-            "hi_IN": {
-              "name": "पेटागोनिया बेटर स्वेटर फ्लीस जैकेट",
-              "price": {
-                "USD": 149.0,
-                "INR": 12367
-              },
-              "short_description": "<p>पेटागोनिया बेटर स्वेटर फ्लीस जैकेट – 100% रीसाइकिल्ड पॉलिएस्टर, फुल-ज़िप, स्टैंड-अप कॉलर और स्वेटर-निट फेस।</p>",
-              "description": "<p>पेटागोनिया बेटर स्वेटर फ्लीस जैकेट 100% रीसाइकिल्ड पॉलिएस्टर फ्लीस से बनी है जिसमें स्वेटर-निट फेस और आरामदायक प्लश इंटीरियर है। फुल-ज़िप डिज़ाइन में स्टैंड-अप कॉलर और फ्रंट पॉकेट हैं। क्लासिक स्टाइलिंग।</p>",
-              "meta_title": "पेटागोनिया बेटर स्वेटर फ्लीस जैकेट – 100% रीसाइकिल्ड पॉलिएस्टर",
-              "meta_keywords": "पेटागोनिया बेटर स्वेटर|फ्लीस जैकेट|पेटागोनिया फ्लीस|रीसाइकिल्ड फ्लीस जैकेट",
-              "meta_description": "पेटागोनिया बेटर स्वेटर से सस्टेनेबल तरीके से गर्म रहें। 100% रीसाइकिल्ड पॉलिएस्टर और क्लासिक स्वेटर स्टाइलिंग।"
-            },
-            "fr_FR": {
-              "name": "Veste polaire Patagonia Better Sweater",
-              "price": {
-                "USD": 149.0,
-                "INR": 12367
-              },
-              "short_description": "<p>Veste polaire Patagonia Better Sweater en 100% polyester recyclé. Full-zip, col montant et face tricotée façon pull.</p>",
-              "description": "<p>La veste polaire Patagonia Better Sweater est fabriquée en polaire 100% polyester recyclé avec une face tricotée façon pull et un intérieur douillet et moelleux. Le design full-zip présente un col montant et des poches frontales. Style classique adapté à toutes les occasions.</p>",
-              "meta_title": "Veste polaire Patagonia Better Sweater – 100% polyester recyclé",
-              "meta_keywords": "Patagonia Better Sweater|veste polaire|polaire Patagonia|veste polaire recyclée",
-              "meta_description": "Restez chaud durablement avec le Patagonia Better Sweater. 100% polyester recyclé et style pull classique."
+              "short_description": "<p>Woodland chaussures montantes imperméables avec cuir pleine fleur, membrane waterproof, semelle anti-dérapante et col cheville rembourré.</p>",
+              "description": "<p>Les chaussures Woodland imperméables montantes sont conçues pour les terrains accidentés de l'Himalaya et des Ghats. En cuir pleine fleur véritable avec membrane imperméable, elles protègent les pieds de la pluie et des ruisseaux. Le col haut apporte un soutien de cheville crucial sur terrain inégal, tandis que l'épaisse semelle en caoutchouc anti-dérapante garantit de l'adhérence sur surfaces humides et sèches.</p>",
+              "meta_title": "Woodland Chaussures Trekking Imperméables Montantes – Cuir véritable, semelle anti-dérapante",
+              "meta_keywords": "chaussures trekking Woodland|chaussures randonnée imperméables Inde|chaussures Woodland|bottes trekking montantes",
+              "meta_description": "Achetez les chaussures Woodland imperméables montantes. Cuir véritable, membrane waterproof et semelle anti-dérapante pour les treks himalayens."
             }
           }
         }
