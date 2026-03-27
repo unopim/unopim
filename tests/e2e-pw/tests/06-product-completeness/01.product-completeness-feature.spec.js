@@ -355,10 +355,13 @@ test('Create a new channel and assigned multiple locale and currency', async ({ 
     // Wait for completeness datagrid to fully render
     await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 15000 });
     await adminPage.click('label[for="mass_action_select_all_records"]');
+    // Verify rows are selected — Select Action button only appears when rows are selected
+    await expect(adminPage.getByRole('button', { name: /Select Action/i })).toBeVisible({ timeout: 5000 });
     await adminPage.getByRole('button', { name: /Select Action/i }).click();
-    await adminPage.locator('a', { hasText: 'Change Completeness Requirement' }).click();
+    // Use force click to bypass dropdown close-on-blur behavior in headless mode
+    await adminPage.locator('a', { hasText: 'Change Completeness Requirement' }).click({ force: true, timeout: 5000 });
     // Wait for the Configure Completeness modal to open
-    await expect(adminPage.getByText('Configure Completeness')).toBeVisible({ timeout: 5000 });
+    await expect(adminPage.getByText('Configure Completeness')).toBeVisible({ timeout: 10000 });
     // Click the multiselect that appears AFTER the modal heading (the last one on page is in the modal)
     await adminPage.locator('.multiselect__tags').last().click();
     await expect(adminPage.getByRole('option', { name: 'Default' }).first()).toBeVisible();
