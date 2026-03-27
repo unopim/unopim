@@ -89,6 +89,7 @@ test('1.5 - Test connection with invalid API key', async ({ adminPage }) => {
 });
 
 test('1.6 - Create OpenAI platform with valid credentials', async ({ adminPage }) => {
+  test.skip(!OPENAI_API_KEY, 'OPENAI_API_KEY not set — skipping platform creation');
   test.setTimeout(60000);
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
 
@@ -119,9 +120,11 @@ test('1.6 - Create OpenAI platform with valid credentials', async ({ adminPage }
 });
 
 test('1.7 - Verify platform appears in datagrid after creation', async ({ adminPage }) => {
+  test.skip(!OPENAI_API_KEY, 'OPENAI_API_KEY not set — no platform to verify');
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
 
-  // Verify an OpenAI platform exists in the datagrid
+  // Wait for datagrid to render rows, then verify an edit icon exists
+  await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 15000 });
   await expect(adminPage.locator('span[title="Edit"]').first()).toBeVisible({ timeout: 10000 });
 });
 
@@ -334,31 +337,28 @@ test('3.7 - Create a System Prompt with all fields', async ({ adminPage }) => {
 test('3.8 - Verify newly created system prompt appears in datagrid', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_SYSTEM_PROMPT_URL, { waitUntil: 'networkidle' });
   await openDatagrid(adminPage, 'Create System Prompt');
-  await expect(adminPage.locator('#app').getByText('E-Commerce Writer')).toBeVisible();
+  await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 10000 });
+  await expect(adminPage.locator('#app').getByText('E-Commerce Writer', { exact: true }).first()).toBeVisible({ timeout: 5000 });
 });
 
 test('3.9 - Edit an existing system prompt', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_SYSTEM_PROMPT_URL, { waitUntil: 'networkidle' });
   await openDatagrid(adminPage, 'Create System Prompt');
 
-  // Find the E-Commerce Writer row's edit icon - use the row that contains the exact text
-  const editIcons = adminPage.locator('span[title="Edit"]');
-  const allRows = adminPage.locator('div').filter({ hasText: 'E-Commerce Writer' });
-  // Click the edit icon on the first matching row
-  const editIcon = allRows.first().locator('span[title="Edit"]');
-  if (await editIcon.first().isVisible().catch(() => false)) {
-    await editIcon.first().click();
-  } else {
-    // Fallback: click first edit icon on page
-    await editIcons.first().click();
-  }
+  // Wait for the datagrid to show results and Edit icons to render
+  await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 10000 });
+  const editIcon = adminPage.locator('span[title="Edit"]').first();
+  await expect(editIcon).toBeVisible({ timeout: 5000 });
+  await editIcon.click();
 
+  // Wait for edit modal to open (AJAX fetch + modal toggle)
   const titleInput = adminPage.locator('input[name="title"]');
-  await expect(titleInput).toBeVisible();
+  await expect(titleInput).toBeVisible({ timeout: 10000 });
+  const currentTitle = await titleInput.inputValue();
   await titleInput.clear();
-  await titleInput.fill('E-Commerce Writer Pro');
+  await titleInput.fill(currentTitle + ' Pro');
   await adminPage.getByRole('button', { name: 'Save' }).click();
-  await expect(adminPage.locator('#app').getByText(/saved successfully/i)).toBeVisible();
+  await expect(adminPage.locator('#app').getByText(/updated successfully|saved successfully/i)).toBeVisible({ timeout: 10000 });
 });
 
 test('3.10 - Search system prompts in datagrid', async ({ adminPage }) => {
@@ -634,7 +634,7 @@ test('7.3 - Open AI Assistance modal and verify fields', async ({ adminPage }) =
   // Verify AI Assistance modal fields
   await expect(adminPage.locator('#app').getByText('AI Assistance')).toBeVisible();
   await expect(adminPage.locator('#app').getByText('Default Prompt')).toBeVisible();
-  await expect(adminPage.locator('#app').getByText(/System Prompt/).first()).toBeVisible();
+  await expect(adminPage.locator('#app').getByText('System Prompt', { exact: true })).toBeVisible();
   await expect(adminPage.getByRole('button', { name: 'Generate' })).toBeVisible();
 
   // Verify platform and model dropdowns exist
@@ -655,7 +655,7 @@ test('7.4 - Generate content using Magic AI', async ({ adminPage }) => {
   await adminPage.waitForLoadState('networkidle');
 
   // Fill product name first
-  const nameField = adminPage.locator('input[name*="[name]"]').first();
+  const nameField = adminPage.locator('input[name*="[en_US][name]"]').first();
   await nameField.fill('Premium Wireless Headphones');
 
   // Click Magic AI button

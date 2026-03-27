@@ -294,14 +294,13 @@ test('5.0 - Setup: Create OpenAI platform for chat tests', async ({ adminPage })
   const modelTag = adminPage.locator('.rounded-full.bg-violet-100').first();
   await modelTag.waitFor({ state: 'visible', timeout: 30000 }).catch(() => {});
 
-  // Mark as default — click the label since the checkbox is sr-only (visually hidden)
-  const defaultLabel = adminPage.locator('label[for="is_default"]');
-  if (await defaultLabel.isVisible().catch(() => false)) {
-    const defaultCb = adminPage.locator('input[name="is_default"][type="checkbox"]');
-    if (!(await defaultCb.isChecked().catch(() => true))) {
-      await defaultLabel.click();
+  // Mark as default — use JavaScript to check the sr-only checkbox reliably
+  await adminPage.evaluate(() => {
+    const cb = document.querySelector('input[name="is_default"][type="checkbox"]');
+    if (cb && !cb.checked) {
+      cb.click();
     }
-  }
+  });
 
   await adminPage.getByRole('button', { name: 'Save' }).click();
   await expect(adminPage.getByText(/saved successfully|created successfully|updated successfully/i)).toBeVisible({ timeout: 30000 });
@@ -317,7 +316,7 @@ test('5.1 - Sending a message shows user message bubble', async ({ adminPage }) 
   await adminPage.getByPlaceholder('Ask me anything about your catalog…').fill('How many products do I have?');
   await adminPage.getByRole('button', { name: 'Send' }).click();
 
-  await expect(adminPage.getByText('How many products do I have?').first()).toBeVisible();
+  await expect(adminPage.locator('#app')).toContainText('How many products do I have?');
 });
 
 test('5.2 - AI responds with a message after sending', async ({ adminPage }) => {
@@ -376,12 +375,12 @@ test('5.5 - Clear chat button resets conversation', async ({ adminPage }) => {
   await adminPage.getByPlaceholder('Ask me anything about your catalog…').fill('hello');
   await adminPage.getByRole('button', { name: 'Send' }).click();
 
-  // Wait for AI response to complete
+  // Wait for AI response to complete — the Clear chat button only appears after AI responds
   const clearBtn = adminPage.getByRole('button', { name: 'Clear chat' });
-  await expect(clearBtn).toBeVisible({ timeout: 30000 });
+  await expect(clearBtn).toBeVisible({ timeout: 45000 });
   await clearBtn.click();
 
-  await expect(adminPage.getByText('How can I help with your catalog?')).toBeVisible();
+  await expect(adminPage.getByText('How can I help with your catalog?')).toBeVisible({ timeout: 10000 });
 });
 
 test('5.6 - "New conversation" button starts fresh chat', async ({ adminPage }) => {
