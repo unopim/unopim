@@ -56,7 +56,7 @@ class ImportProducts implements PimTool
                 string $mode = 'create_or_update',
                 ?string $family_code = null,
             ) use ($context): string {
-                if ($denied = $this->denyUnlessAllowed($context, 'catalog.products.create')) {
+                if ($denied = $this->denyImportExecution($context, $mode)) {
                     return $denied;
                 }
 
@@ -163,6 +163,20 @@ class ImportProducts implements PimTool
 
                             if (! $existingProduct && $mode === 'update_only') {
                                 $skipped++;
+
+                                continue;
+                            }
+
+                            if ($existingProduct && ! $context->hasPermission('catalog.products.edit')) {
+                                $skipped++;
+                                $errors[] = 'Row '.($i + 2)." (SKU: {$sku}): Permission denied: you do not have 'catalog.products.edit' access.";
+
+                                continue;
+                            }
+
+                            if (! $existingProduct && ! $context->hasPermission('catalog.products.create')) {
+                                $skipped++;
+                                $errors[] = 'Row '.($i + 2)." (SKU: {$sku}): Permission denied: you do not have 'catalog.products.create' access.";
 
                                 continue;
                             }
@@ -613,5 +627,34 @@ class ImportProducts implements PimTool
         }
 
         return DB::table('attribute_families')->value('id');
+    }
+
+    /**
+     * Ensure the current user can execute AI imports for the requested mode.
+     */
+    protected function denyImportExecution(ChatContext $context, string $mode): ?string
+    {
+        if ($denied = $this->denyUnlessAllowed($context, 'data_transfer.imports.execute')) {
+            return $denied;
+        }
+
+        $canCreate = $context->hasPermission('catalog.products.create');
+        $canEdit = $context->hasPermission('catalog.products.edit');
+
+        return match ($mode) {
+            'create_only' => $canCreate ? null : $this->formatPermissionDenied('catalog.products.create'),
+            'update_only' => $canEdit ? null : $this->formatPermissionDenied('catalog.products.edit'),
+            default       => ($canCreate || $canEdit) ? null : $this->formatPermissionDenied('catalog.products.create or catalog.products.edit'),
+        };
+    }
+
+    /**
+     * Build a consistent permission denied response for tool execution.
+     */
+    protected function formatPermissionDenied(string $permission): string
+    {
+        return json_encode([
+            'error' => "Permission denied: you do not have '{$permission}' access. Contact your administrator.",
+        ]);
     }
 }
