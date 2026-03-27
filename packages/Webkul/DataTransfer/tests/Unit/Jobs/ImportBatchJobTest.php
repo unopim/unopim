@@ -72,6 +72,23 @@ describe('ImportBatch Job', function () {
         expect($batch->state)->toBe('failed');
     });
 
+    it('sets the parent job track state to failed when a batch job fails', function () {
+        $jobTrack = JobTrack::factory()->create(['state' => 'processing']);
+        $batch = JobTrackBatch::factory()->create([
+            'job_track_id' => $jobTrack->id,
+            'state'        => 'pending',
+        ]);
+
+        $job = new ImportBatch($batch, $jobTrack->id);
+
+        $exception = new RuntimeException('Import batch failed');
+        $job->failed($exception);
+
+        $jobTrack->refresh();
+
+        expect($jobTrack->state)->toBe('failed');
+    });
+
     it('uses the Batchable trait', function () {
         $traits = class_uses_recursive(ImportBatch::class);
 

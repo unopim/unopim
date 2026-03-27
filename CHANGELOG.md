@@ -1,5 +1,25 @@
 # v2.0.x
 
+## v2.0.0
+
+### Features
+- Added **AI Translation Command** (`php artisan unopim:translate`) — bulk translate product attribute values across all configured locales using AI providers.
+
+### Improvements
+- Enhanced **German (de_DE) translations** with improved accuracy and coverage across all admin UI strings.
+- Improved **E2E test suite** — rewrote completeness, MagicAI, dashboard, and user specs for reliability in CI; removed test sharding for deterministic runs.
+- Improved **channel delete flow** in E2E tests to be fully self-contained with proper cleanup.
+
+### Bug Fixes
+- Fixed **OAuth client generation** using incorrect API guard provider, causing "Unauthenticated" responses on valid API requests.
+- Fixed **channel creation 500 error** when no translations were provided during channel setup.
+- Fixed **family code label** missing `required` class indicator in the attribute family edit form.
+- Fixed **JSON data handling** and **Elasticsearch indexing** issues causing corrupted search results.
+- Fixed **completeness DataGrid** double table prefix bug (`wk_wk_`) in query builder.
+- Fixed **completeness mass action modal** click reliability in headless browser environments.
+
+---
+
 ## v2.0.0-beta.1
 
 ### Framework Upgrade

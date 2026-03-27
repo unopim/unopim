@@ -20,6 +20,7 @@ use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Completeness\Observers\Product as CompletenessProductObserver;
 use Webkul\Core\Facades\ElasticSearch;
+use Webkul\Core\Helpers\Database\GrammarQueryManager;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Rules\Sku;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
@@ -886,13 +887,18 @@ class Importer extends AbstractImporter
      */
     protected function loadUniqueValuesForPath(string $attributeCode, string $scopeKey, string $jsonPath): void
     {
+        // Convert "$.common.url_key" → ['common', 'url_key'] for cross-DB grammar
+        $pathSegments = explode('.', ltrim($jsonPath, '$.'));
+        $grammar = GrammarQueryManager::getGrammar();
+        $jsonExpr = $grammar->jsonExtract('values', ...$pathSegments);
+
         /**
          * Use chunked queries to avoid loading the entire products table into memory.
          * For large databases (500K+ products), a single ->get() can exhaust PHP memory.
          */
         DB::table('products')
-            ->select('id', DB::raw("JSON_UNQUOTE(JSON_EXTRACT(`values`, '{$jsonPath}')) as attr_value"))
-            ->whereNotNull(DB::raw("JSON_EXTRACT(`values`, '{$jsonPath}')"))
+            ->select('id', DB::raw("{$jsonExpr} as attr_value"))
+            ->whereNotNull(DB::raw($jsonExpr))
             ->orderBy('id')
             ->chunk(5000, function ($results) use ($attributeCode, $scopeKey) {
                 foreach ($results as $row) {

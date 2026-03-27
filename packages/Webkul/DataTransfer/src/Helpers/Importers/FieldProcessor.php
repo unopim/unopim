@@ -24,7 +24,7 @@ class FieldProcessor
      * @param  string  $path  The path to the media files.
      * @return mixed The processed value of the field.
      */
-    public function handleField($field, mixed $value, string $path)
+    public function handleField($field, mixed $value, ?string $path)
     {
         if (empty($value)) {
             return;
@@ -32,14 +32,18 @@ class FieldProcessor
 
         switch ($field->type) {
             case 'gallery':
-                $value = $this->handleMediaField($value, $path);
+                if ($path !== null) {
+                    $value = $this->handleMediaField($value, $path);
+                }
 
                 break;
             case 'image':
             case 'file':
-                $value = $this->handleMediaField($value, $path);
-                if (is_array($value)) {
-                    $value = implode(',', $value);
+                if ($path !== null) {
+                    $value = $this->handleMediaField($value, $path);
+                    if (is_array($value)) {
+                        $value = implode(',', $value);
+                    }
                 }
 
                 break;

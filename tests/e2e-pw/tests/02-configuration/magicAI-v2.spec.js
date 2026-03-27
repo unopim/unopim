@@ -4,7 +4,7 @@ const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 const MAGIC_AI_CONFIG_URL = '/admin/configuration/general/magic_ai';
 const MAGIC_AI_PLATFORM_URL = '/admin/magic-ai/platform';
 
-test.describe('UnoPim Magic AI v2.0.0-beta.1 Configuration', () => {
+test.describe('UnoPim Magic AI v2.0.0 Configuration', () => {
 
 // ═════════════════════════════════════════════════
 // SETUP: Create OpenAI platform for tests that need it
@@ -58,7 +58,7 @@ test('1.2 - Magic AI config page has Save Configuration button', async ({ adminP
   await expect(saveBtn).toBeEnabled();
 });
 
-test('1.3 - Config page shows all four v2.0.0-beta.1 sections', async ({ adminPage }) => {
+test('1.3 - Config page shows all four v2.0.0 sections', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
 
   await expect(adminPage.locator('#app').getByText('Agentic PIM', { exact: true })).toBeVisible();

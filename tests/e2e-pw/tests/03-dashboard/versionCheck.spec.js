@@ -31,7 +31,7 @@ test('1.3 - Profile dropdown shows version string in format "Version : vX.X.X"',
   expect(versionText).toMatch(/Version\s*:\s*v\d+\.\d+\.\d+/);
 });
 
-test('1.4 - Version displays v2.0.0-beta.1', async ({ adminPage }) => {
+test('1.4 - Version displays v2.0.0', async ({ adminPage }) => {
   const profileBtn = adminPage.locator('header').getByRole('button').last();
   await profileBtn.click();
 

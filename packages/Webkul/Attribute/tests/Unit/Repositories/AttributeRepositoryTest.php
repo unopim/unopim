@@ -159,6 +159,29 @@ describe('AttributeRepository - update', function () {
         expect($updatedCount)->toBe($existingCount + 1);
     });
 
+    it('casts null boolean fields to false so PostgreSQL NOT NULL constraints are satisfied', function () {
+        $attribute = Attribute::factory()->create([
+            'code'        => 'repo_pgsql_bool_test',
+            'type'        => 'boolean',
+            'is_required' => true,
+        ]);
+
+        // Simulate unchecked checkboxes: browser sends null/empty for unchecked fields
+        $updated = $this->attributeRepository->update([
+            'code'           => 'repo_pgsql_bool_test',
+            'type'           => 'boolean',
+            'is_required'    => null,
+            'enable_wysiwyg' => null,
+            'is_filterable'  => null,
+        ], $attribute->id);
+
+        $updated->refresh();
+
+        expect($updated->is_required)->toBeFalsy()
+            ->and($updated->enable_wysiwyg)->toBeFalsy()
+            ->and($updated->is_filterable)->toBeFalsy();
+    });
+
     it('deletes options from a select attribute', function () {
         $attribute = Attribute::factory()->create([
             'code' => 'repo_delete_opts',

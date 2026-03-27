@@ -110,6 +110,14 @@ class AttributeRepository extends Repository
             unset($data['is_unique']);
         }
 
+        // Cast boolean fields to 0/1 — unchecked checkboxes send null/empty
+        // which violates PostgreSQL NOT NULL constraints.
+        foreach (['is_required', 'is_unique', 'enable_wysiwyg', 'is_filterable', 'ai_translate'] as $boolField) {
+            if (array_key_exists($boolField, $data)) {
+                $data[$boolField] = (int) (bool) $data[$boolField];
+            }
+        }
+
         return $data;
     }
 
