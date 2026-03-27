@@ -13,6 +13,10 @@ return [
         'agents'                => 'الوكلاء',
         'dashboard'             => 'لوحة التحكم',
         'approvals'             => 'الموافقات',
+        'platform'              => 'المنصة',
+        'create'                => 'يخلق',
+        'edit'                  => 'يحرر',
+        'delete'                => 'يمسح',
     ],
 
     'menu' => [

@@ -16,7 +16,7 @@ test.describe("UnoPim Magic AI ACL Test Cases", () => {
             .first();
         await expect(magicAILayer).toBeVisible();
 
-        const platformsText = adminPage.getByText("Platforms").first();
+        const platformsText = adminPage.getByText("Platform").first();
         if (!(await platformsText.isVisible())) {
             // Find any expand icon associated with Magic AI and click it
             const expander = adminPage
@@ -32,7 +32,7 @@ test.describe("UnoPim Magic AI ACL Test Cases", () => {
             await adminPage.waitForTimeout(1000);
         }
 
-        await expect(adminPage.getByText("Platforms").first()).toBeAttached({
+        await expect(adminPage.getByText("Platform").first()).toBeAttached({
             timeout: 10000,
         });
     });

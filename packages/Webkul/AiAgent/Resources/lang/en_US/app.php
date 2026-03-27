@@ -5,7 +5,6 @@ return [
     'acl' => [
         'ai-agent'              => 'Magic AI',
         'general'               => 'General',
-        'platform'              => 'Platforms',
         'prompt'                => 'Prompt',
         'system-prompt'         => 'System Prompt',
         'execute'               => 'Execute',
@@ -14,6 +13,7 @@ return [
         'agents'                => 'Agents',
         'dashboard'             => 'Dashboard',
         'approvals'             => 'Approvals',
+        'platform'              => 'Platform',
         'create'                => 'Create',
         'edit'                  => 'Edit',
         'delete'                => 'Delete',

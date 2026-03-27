@@ -13,6 +13,10 @@ return [
         'agents'                => 'Agenter',
         'dashboard'             => 'Dashbord',
         'approvals'             => 'Godkjenninger',
+        'platform'              => 'Plattform',
+        'create'                => 'Opprette',
+        'edit'                  => 'Rediger',
+        'delete'                => 'Slett',
     ],
 
     'menu' => [
