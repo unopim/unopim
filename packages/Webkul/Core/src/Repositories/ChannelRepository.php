@@ -33,6 +33,8 @@ class ChannelRepository extends Repository
             }
         }
 
+        $data = $this->removeEmptyTranslations($data, $model);
+
         foreach (core()->getAllActiveLocales() as $locale) {
             $localeCode = $locale->code;
 
@@ -83,27 +85,7 @@ class ChannelRepository extends Repository
     {
         $model = $this->getModel();
 
-        foreach (core()->getAllActiveLocales() as $locale) {
-            $localeCode = $locale->code;
-
-            if (! isset($data[$localeCode])) {
-                continue;
-            }
-
-            $allEmpty = true;
-
-            foreach ($model->translatedAttributes as $field) {
-                if (! empty($data[$localeCode][$field])) {
-                    $allEmpty = false;
-
-                    break;
-                }
-            }
-
-            if ($allEmpty) {
-                unset($data[$localeCode]);
-            }
-        }
+        $data = $this->removeEmptyTranslations($data, $model);
 
         $channel = parent::update($data, $id, $attribute);
 
@@ -126,6 +108,38 @@ class ChannelRepository extends Repository
         Event::dispatch('core.model.proxy.sync.currencies', ['old_values' => $oldCurrencies, 'new_values' => $newCurrencies, 'model' => $channel]);
 
         return $channel;
+    }
+
+    /**
+     * Remove locale translation payloads when every translated attribute is empty.
+     */
+    protected function removeEmptyTranslations(array $data, $model): array
+    {
+        foreach (core()->getAllActiveLocales() as $locale) {
+            $localeCode = $locale->code;
+
+            if (! isset($data[$localeCode]) || ! is_array($data[$localeCode])) {
+                continue;
+            }
+
+            $allEmpty = true;
+
+            foreach ($model->translatedAttributes as $field) {
+                $value = $data[$localeCode][$field] ?? null;
+
+                if ($value !== null && $value !== '') {
+                    $allEmpty = false;
+
+                    break;
+                }
+            }
+
+            if ($allEmpty) {
+                unset($data[$localeCode]);
+            }
+        }
+
+        return $data;
     }
 
     /**

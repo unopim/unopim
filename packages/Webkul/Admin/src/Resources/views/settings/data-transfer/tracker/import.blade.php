@@ -1024,7 +1024,19 @@
 
                 methods: {
                     toBoolean(value) {
-                        return value.toLowerCase() == 1;
+                        if (typeof value === 'boolean') {
+                            return value;
+                        }
+
+                        if (typeof value === 'number') {
+                            return value === 1;
+                        }
+
+                        if (value === null || value === undefined) {
+                            return false;
+                        }
+
+                        return ['1', 'true', 'yes', 'on'].includes(String(value).toLowerCase());
                     },
 
                     formatDuration(seconds) {

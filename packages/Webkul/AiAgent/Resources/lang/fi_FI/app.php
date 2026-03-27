@@ -13,6 +13,10 @@ return [
         'agents'                => 'Agentit',
         'dashboard'             => 'Kojelauta',
         'approvals'             => 'Hyväksynnät',
+        'platform'              => 'Alusta',
+        'create'                => 'Luo',
+        'edit'                  => 'Muokkaa',
+        'delete'                => 'Poista',
     ],
 
     'menu' => [

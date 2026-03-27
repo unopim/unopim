@@ -13,6 +13,10 @@ return [
         'agents'                => 'Tác nhân',
         'dashboard'             => 'Bảng điều khiển',
         'approvals'             => 'Phê duyệt',
+        'platform'              => 'Nền tảng',
+        'create'                => 'Tạo',
+        'edit'                  => 'Chỉnh sửa',
+        'delete'                => 'Xóa',
     ],
 
     'menu' => [
