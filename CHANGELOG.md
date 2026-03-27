@@ -3,20 +3,25 @@
 ## v2.0.0
 
 ### Features
-- Added **AI Translation Command** (`php artisan unopim:translate`) — bulk translate product attribute values across all configured locales using AI providers.
+- Added **AI-Powered Translation Command** — `php artisan unopim:translations:check --translate` uses MagicAI to bulk-translate missing locale keys via AI instead of copying English values. Includes `--fix-untranslated` to re-translate keys identical to `en_US`, smart skip patterns for technical terms and acronyms, and batched API calls (max 100 keys per chunk).
+- Auto-translated **~18,000 previously untranslated keys** across all 32 non-English locales in 7 packages (Admin, Completeness, Core, DataTransfer, Installer, Product, Webhook).
 
 ### Improvements
-- Enhanced **German (de_DE) translations** with improved accuracy and coverage across all admin UI strings.
-- Improved **E2E test suite** — rewrote completeness, MagicAI, dashboard, and user specs for reliability in CI; removed test sharding for deterministic runs.
-- Improved **channel delete flow** in E2E tests to be fully self-contained with proper cleanup.
+- Enhanced **German (de_DE) translations** — fixed incorrect "Kolonne" (convoys) to "Spalten" (columns) in DataGrid manage-columns title and improved overall accuracy.
+- Added **Elasticsearch auto-reindex after seeding** — installer now runs `unopim:product:index` automatically when ElasticSearch is enabled, ensuring seeded products are immediately searchable.
+- Added **configurable product super attributes** in seeder — `ProductTableSeeder` now creates `product_super_attributes` pivot rows linking configurable products to the `size` attribute.
+- Added **DataTransfer model factories** — `JobTrack::factory()` and `JobTrackBatch::factory()` with default states (`completed`, `processed`, `failed`, `export`) for Pest test usage.
+- Improved **import job failure handling** — all four import job classes (`Completed`, `ImportBatch`, `IndexBatch`, `LinkBatch`) now properly mark the parent `JobTrack` as failed when their `failed()` method is called, preventing inconsistent job states.
+- Added **boolean-to-integer casting** for attribute checkbox fields (`is_required`, `is_unique`, `enable_wysiwyg`, `is_filterable`, `ai_translate`) to prevent PostgreSQL NOT NULL constraint violations when unchecked.
+- Improved **cross-database JSON grammar** in product importer — replaced MySQL-specific `JSON_UNQUOTE(JSON_EXTRACT(...))` with `GrammarQueryManager::getGrammar()->jsonExtract()` for PostgreSQL compatibility.
+- Improved **media field null safety** in `FieldProcessor` — `handleField()` parameter changed from `string $path` to `?string $path` with null check before `handleMediaField()`.
 
 ### Bug Fixes
-- Fixed **OAuth client generation** using incorrect API guard provider, causing "Unauthenticated" responses on valid API requests.
-- Fixed **channel creation 500 error** when no translations were provided during channel setup.
-- Fixed **family code label** missing `required` class indicator in the attribute family edit form.
-- Fixed **JSON data handling** and **Elasticsearch indexing** issues causing corrupted search results.
-- Fixed **completeness DataGrid** double table prefix bug (`wk_wk_`) in query builder.
-- Fixed **completeness mass action modal** click reliability in headless browser environments.
+- Fixed **API returning "Unauthenticated"** despite valid requests — `array_keys(config('auth.providers'))[0]` returned `'users'` instead of `'admins'` because Laravel merges the default auth config. Changed to explicit `config('auth.guards.api.provider', 'admins')` in both `ApiClientCommand` and `OauthClientGenerator`.
+- Fixed **channel creation 500 error** when no translations were provided — `ChannelRepository::create()` now strips empty translation data before saving, preventing NOT NULL constraint violations on `channel_translations.name`.
+- Fixed **family code label** missing `required` class indicator on both create and edit attribute family pages.
+- Fixed **JSON data handling and Elasticsearch indexing** issues causing corrupted search results after product seeding.
+- Fixed **completeness DataGrid** double table prefix bug — `channel_required` filter used `$tablePrefix.'channels.code'` which caused `wk_wk_` prefix when the database already applies the prefix.
 
 ---
 

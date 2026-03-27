@@ -604,7 +604,13 @@
             methods: {
                 parseOptions() {
                     try {
-                        return this.options ? JSON.parse(this.options) : [];
+                        if (Array.isArray(this.options)) {
+                            return this.options;
+                        }
+
+                        const parsed = this.options ? JSON.parse(this.options) : [];
+
+                        return Array.isArray(parsed) ? parsed : [];
                     } catch (error) {
                         console.error('Error parsing options JSON:', error);
                         return [];
@@ -729,7 +735,13 @@
             methods: {
                 parseOptions() {
                     try {
-                        return this.options ? JSON.parse(this.options) : [];
+                        if (Array.isArray(this.options)) {
+                            return this.options;
+                        }
+
+                        const parsed = this.options ? JSON.parse(this.options) : [];
+
+                        return Array.isArray(parsed) ? parsed : [];
                     } catch (error) {
                         console.error('Error parsing options JSON:', error);
                         return [];
@@ -979,7 +991,13 @@
 
                 parseOptions() {
                     try {
-                        return this.options ? JSON.parse(this.options) : [];
+                        if (Array.isArray(this.options)) {
+                            return this.options;
+                        }
+
+                        const parsed = this.options ? JSON.parse(this.options) : [];
+
+                        return Array.isArray(parsed) ? parsed : [];
                     } catch (error) {
                         console.error('Error parsing options JSON:', error);
                         return [];
