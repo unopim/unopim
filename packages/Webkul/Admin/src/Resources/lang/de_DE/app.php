@@ -1948,7 +1948,7 @@ return [
                     'title' => 'Suchen',
                 ],
                 'manage-columns' => [
-                    'title' => 'Kolonne',
+                    'title' => 'Spalten',
                 ],
                 'pagination' => [
                     'first-page'    => 'Erste Seite',
