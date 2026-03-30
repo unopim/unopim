@@ -1,7 +1,5 @@
 <?php
 
-use HTMLPurifier;
-use HTMLPurifier_Config;
 use Intervention\Image\ImageManager;
 use Webkul\Core\Core;
 
