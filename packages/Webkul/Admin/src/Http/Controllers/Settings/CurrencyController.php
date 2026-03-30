@@ -25,7 +25,7 @@ class CurrencyController extends Controller
      *
      * @return View
      */
-    public function index()
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             return app(CurrencyDataGrid::class)->toJson();
@@ -87,7 +87,7 @@ class CurrencyController extends Controller
                 'errors' => [
                     'status' => trans('admin::app.settings.currencies.index.can-not-disable-error'),
                 ],
-            ], 422);
+            ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $this->currencyRepository->update(request()->only([
@@ -111,13 +111,13 @@ class CurrencyController extends Controller
         if ($currency->count() == 1) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.currencies.index.last-delete-error'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         if ($currency->isCurrencyBeingUsed()) {
             return response()->json([
                 'message' => trans('admin::app.settings.currencies.index.can-not-delete-error'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         try {
@@ -125,14 +125,14 @@ class CurrencyController extends Controller
 
             return new JsonResponse([
                 'message' => trans('admin::app.settings.currencies.index.delete-success'),
-            ], 200);
+            ], JsonResponse::HTTP_OK);
         } catch (\Exception $e) {
             report($e);
         }
 
         return new JsonResponse([
             'message' => trans('admin::app.settings.currencies.index.delete-failed'),
-        ], 500);
+        ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     /**

@@ -4,7 +4,6 @@ namespace Webkul\Admin\Http\Controllers\Settings;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -35,7 +34,7 @@ class UserController extends Controller
      *
      * @return View
      */
-    public function index()
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             return app(UserDataGrid::class)->toJson();
@@ -165,13 +164,13 @@ class UserController extends Controller
         if ($this->adminRepository->count() == 1) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.users.last-delete-error'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         if ($id == auth('admin')->user()->id) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.users.current-user-delete-error'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         try {
@@ -183,22 +182,22 @@ class UserController extends Controller
 
             return new JsonResponse([
                 'message' => trans('admin::app.settings.users.delete-success'),
-            ], 200);
+            ], JsonResponse::HTTP_OK);
         } catch (\Exception $e) {
+            report($e);
         }
 
         return new JsonResponse([
             'message' => trans('admin::app.settings.users.delete-failed'),
-        ], 500);
+        ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     /**
      * Show the form for confirming the user password.
      *
      * @param  int  $id
-     * @return View
      */
-    public function confirm($id)
+    public function confirm($id): View
     {
         $user = $this->adminRepository->findOrFail($id);
 
@@ -234,7 +233,7 @@ class UserController extends Controller
         } else {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.users.incorrect-password'),
-            ], 404);
+            ], JsonResponse::HTTP_NOT_FOUND);
         }
     }
 

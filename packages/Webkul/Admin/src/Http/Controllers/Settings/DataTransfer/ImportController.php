@@ -3,7 +3,7 @@
 namespace Webkul\Admin\Http\Controllers\Settings\DataTransfer;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -39,7 +39,7 @@ class ImportController extends Controller
      *
      * @return View
      */
-    public function index()
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             return app(ImportDataGrid::class)->toJson();
@@ -50,10 +50,8 @@ class ImportController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return View
      */
-    public function create()
+    public function create(): View
     {
         $importerConfig = config(self::IMPORTERS);
 
@@ -62,10 +60,8 @@ class ImportController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return Response
      */
-    public function store()
+    public function store(): RedirectResponse
     {
         $importerConfig = config(self::IMPORTERS);
 
@@ -128,10 +124,8 @@ class ImportController extends Controller
 
     /**
      * Show the form for editing a new resource.
-     *
-     * @return View
      */
-    public function edit(int $id)
+    public function edit(int $id): View
     {
         $importerConfig = config(self::IMPORTERS);
 
@@ -142,10 +136,8 @@ class ImportController extends Controller
 
     /**
      * Update a resource in storage.
-     *
-     * @return Response
      */
-    public function update(int $id)
+    public function update(int $id): RedirectResponse
     {
         $importerConfig = config(self::IMPORTERS);
 
@@ -214,9 +206,8 @@ class ImportController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy($id): JsonResponse
     {
         $import = $this->jobInstancesRepository->findOrFail($id);
 
@@ -231,19 +222,18 @@ class ImportController extends Controller
                 'message' => trans('admin::app.settings.data-transfer.imports.delete-success'),
             ]);
         } catch (\Exception $e) {
+            report($e);
         }
 
         return response()->json([
             'message' => trans('admin::app.settings.data-transfer.imports.delete-failed'),
-        ], 500);
+        ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return View
      */
-    public function importView(int $id)
+    public function importView(int $id): View
     {
         if (! bouncer()->hasPermission('data_transfer.imports')) {
             abort(401, 'This action is unauthorized');
@@ -259,7 +249,7 @@ class ImportController extends Controller
     /**
      * importNow function dispatch the job asynchronously
      */
-    public function importNow(int $id)
+    public function importNow(int $id): RedirectResponse
     {
         $jobTrackInstance = null;
 
@@ -333,7 +323,7 @@ class ImportController extends Controller
         if (! $import->processed_rows_count) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.imports.nothing-to-import'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         $this->importHelper->setImport($import);
@@ -341,7 +331,7 @@ class ImportController extends Controller
         if (! $this->importHelper->isValid()) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.imports.not-valid'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         /**
@@ -365,7 +355,7 @@ class ImportController extends Controller
             } catch (\Exception $e) {
                 return new JsonResponse([
                     'message' => $e->getMessage(),
-                ], 400);
+                ], JsonResponse::HTTP_BAD_REQUEST);
             }
         } else {
             if ($this->importHelper->isLinkingRequired()) {
@@ -393,7 +383,7 @@ class ImportController extends Controller
         if (! $import->processed_rows_count) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.imports.nothing-to-import'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         $this->importHelper->setImport($import);
@@ -401,7 +391,7 @@ class ImportController extends Controller
         if (! $this->importHelper->isValid()) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.imports.not-valid'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         /**
@@ -428,7 +418,7 @@ class ImportController extends Controller
             } catch (\Exception $e) {
                 return new JsonResponse([
                     'message' => $e->getMessage(),
-                ], 400);
+                ], JsonResponse::HTTP_BAD_REQUEST);
             }
         } else {
             if ($this->importHelper->isIndexingRequired()) {
@@ -454,7 +444,7 @@ class ImportController extends Controller
         if (! $import->processed_rows_count) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.imports.nothing-to-import'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         $this->importHelper->setImport($import);
@@ -462,7 +452,7 @@ class ImportController extends Controller
         if (! $this->importHelper->isValid()) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.imports.not-valid'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         /**
@@ -489,7 +479,7 @@ class ImportController extends Controller
             } catch (\Exception $e) {
                 return new JsonResponse([
                     'message' => $e->getMessage(),
-                ], 400);
+                ], JsonResponse::HTTP_BAD_REQUEST);
             }
         } else {
             /**
@@ -656,7 +646,7 @@ class ImportController extends Controller
         if ($zip->open($file->getPathname()) !== true) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.imports.invalid-zip'),
-            ], 422);
+            ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $extractPath = Storage::disk('public')->path($folderName);

@@ -52,10 +52,8 @@ class ConfigurationController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return View
      */
-    public function index()
+    public function index(): View|RedirectResponse
     {
         $groups = Arr::get(
             $this->configTree->items,
@@ -78,10 +76,8 @@ class ConfigurationController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return JsonResponse
      */
-    public function search()
+    public function search(): JsonResponse
     {
         $results = $this->coreConfigRepository->search($this->configTree->items, request()->query('query'));
 
@@ -92,10 +88,8 @@ class ConfigurationController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return RedirectResponse
      */
-    public function store(ConfigurationForm $request)
+    public function store(ConfigurationForm $request): RedirectResponse
     {
         try {
             $data = $request->all();
@@ -127,10 +121,8 @@ class ConfigurationController extends Controller
 
     /**
      * Download the file for the specified resource.
-     *
-     * @return StreamedResponse
      */
-    public function download()
+    public function download(): StreamedResponse
     {
         $path = request()->route()->parameters()['path'];
 
