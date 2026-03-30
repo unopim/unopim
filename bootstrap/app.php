@@ -8,6 +8,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Exceptions\PostTooLargeException;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Webkul\Core\Http\Middleware\CheckForMaintenanceMode;
+use Webkul\Core\Http\Middleware\NoCacheMiddleware;
 use Webkul\Core\Http\Middleware\SecureHeaders;
 use Webkul\Installer\Http\Middleware\CanInstall;
 
@@ -25,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->trimStrings(except: ['current_password', 'password', 'password_confirmation']);
         $middleware->append([
             SecureHeaders::class,
+            NoCacheMiddleware::class,
             CheckForMaintenanceMode::class,
             CanInstall::class,
         ]);
@@ -47,18 +49,20 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (PostTooLargeException $e, $request) {
-            if ($request->ajax()) {
+            $errorCode = $e->getStatusCode() ?? 413;
+
+            if ($request->wantsJson() || $request->ajax()) {
                 return response()->json([
                     'message'   => trans('admin::app.errors.413.title'),
-                    'errorCode' => $e->getStatusCode() ?? 413,
-                ], $e->getStatusCode() ?? 413);
+                    'errorCode' => $errorCode,
+                ], $errorCode);
             }
 
-            return response()->view('admin::errors.index', ['errorCode' => $e->getStatusCode() ?? 413]);
+            return response()->view('admin::errors.index', ['errorCode' => $errorCode]);
         });
 
         $exceptions->render(function (InvalidFileException $e, $request) {
-            if ($request->ajax()) {
+            if ($request->wantsJson() || $request->ajax()) {
                 return response()->json([
                     'message' => $e->getMessage(),
                 ], 500);
