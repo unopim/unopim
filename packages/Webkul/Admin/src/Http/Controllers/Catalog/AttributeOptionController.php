@@ -3,9 +3,7 @@
 namespace Webkul\Admin\Http\Controllers\Catalog;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Event;
-use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Catalog\AttributeOptionDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\AttributeOptionForm;
@@ -27,31 +25,27 @@ class AttributeOptionController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return View
      */
-    public function index(int $id)
+    public function index(int $id): JsonResponse
     {
         return app(AttributeOptionDataGrid::class)->setAttributeId($id)->toJson();
     }
 
     /**
      * Store a newly created option.
-     *
-     * @return Response
      */
     public function store(int $attributeId, AttributeOptionForm $request): JsonResponse
     {
-        $requestData = $request->get('locales');
+        $requestData = $request->input('locales');
 
         $requestData['attribute_id'] = $attributeId;
 
-        $requestData['code'] = $request->get('code');
+        $requestData['code'] = $request->input('code');
 
         $attribute = $this->attributeRepository->find($attributeId);
 
         if (in_array($attribute->swatch_type, SwatchTypeEnum::getValues(), true)) {
-            $swatchValue = $request->file('swatch_value') ?? $request->get('swatch_value');
+            $swatchValue = $request->file('swatch_value') ?? $request->input('swatch_value');
 
             if ($attribute->swatch_type === 'color' && blank($swatchValue)) {
                 $swatchValue = '#000000';

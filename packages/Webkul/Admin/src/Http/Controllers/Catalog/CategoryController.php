@@ -3,8 +3,8 @@
 namespace Webkul\Admin\Http\Controllers\Catalog;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\ValidationException;
@@ -38,7 +38,7 @@ class CategoryController extends Controller
      *
      * @return View
      */
-    public function index()
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             return app(CategoryDataGrid::class)->toJson();
@@ -49,10 +49,8 @@ class CategoryController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return View
      */
-    public function create()
+    public function create(): View
     {
         $categories = $this->categoryRepository->getRootCategories();
 
@@ -86,10 +84,8 @@ class CategoryController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return Response
      */
-    public function store(CategoryRequest $categoryRequest)
+    public function store(CategoryRequest $categoryRequest): RedirectResponse
     {
         Event::dispatch('catalog.category.create.before');
 
@@ -118,10 +114,8 @@ class CategoryController extends Controller
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @return View
      */
-    public function edit(int $id)
+    public function edit(int $id): View
     {
         $category = $this->categoryRepository->findOrFail($id);
 
@@ -142,10 +136,8 @@ class CategoryController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
-     * @return Response
      */
-    public function update(CategoryRequest $categoryRequest, int $id)
+    public function update(CategoryRequest $categoryRequest, int $id): RedirectResponse
     {
         Event::dispatch('catalog.category.update.before', $id);
 
@@ -228,7 +220,7 @@ class CategoryController extends Controller
             if ($this->isRelatedToChannel($category->id)) {
                 $suppressFlash = false;
 
-                return new JsonResponse(['message' => trans('admin::app.catalog.categories.delete-category-root')], 400);
+                return new JsonResponse(['message' => trans('admin::app.catalog.categories.delete-category-root')], JsonResponse::HTTP_BAD_REQUEST);
             }
 
             try {
@@ -244,7 +236,7 @@ class CategoryController extends Controller
 
                 return new JsonResponse([
                     'message' => trans('admin::app.catalog.categories.delete-failed'),
-                ], 500);
+                ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
             }
         }
 
@@ -274,10 +266,8 @@ class CategoryController extends Controller
 
     /**
      * Get all categories in tree format.
-     *
-     * @return JsonResponse
      */
-    public function tree(Request $request)
+    public function tree(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'locale'     => 'required|string',
@@ -316,9 +306,9 @@ class CategoryController extends Controller
      */
     public function children(): JsonResponse
     {
-        $id = (int) request()->get('id');
+        $id = (int) request()->input('id');
 
-        $categoryId = request()->get('category') ?? 0;
+        $categoryId = request()->input('category') ?? 0;
 
         $this->categoryRepository->findOrFail($id);
 
@@ -329,10 +319,8 @@ class CategoryController extends Controller
 
     /**
      * Result of search customer.
-     *
-     * @return JsonResponse
      */
-    public function search()
+    public function search(): JsonResponse
     {
         $results = [];
 
