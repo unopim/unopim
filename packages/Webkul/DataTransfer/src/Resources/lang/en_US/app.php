@@ -54,6 +54,18 @@ return [
         'categories' => [
             'title' => 'Categories',
         ],
+
+        'attributes' => [
+            'title' => 'Attributes',
+        ],
+
+        'attribute-groups' => [
+            'title' => 'Attribute Groups',
+        ],
+
+        'attribute-families' => [
+            'title' => 'Attribute Families',
+        ],
     ],
 
     'validation' => [

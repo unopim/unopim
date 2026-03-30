@@ -86,4 +86,115 @@ return [
             ],
         ],
     ],
+
+    'attributes' => [
+        'title'       => 'data_transfer::app.exporters.attributes.title',
+        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\Attribute\Exporter',
+        'source'      => 'Webkul\Attribute\Repositories\AttributeRepository',
+        'sample_path' => 'data-transfer/samples/attributes.csv',
+        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\AttributeJobValidator',
+        'filters'     => [
+            'fields' => [
+                [
+                    'name'       => 'file_format',
+                    'title'      => 'File Format',
+                    'type'       => 'select',
+                    'required'   => true,
+                    'validation' => 'required',
+                    'options'    => [
+                        [
+                            'value' => 'Csv',
+                            'label' => 'CSV',
+                        ], [
+                            'value' => 'Xls',
+                            'label' => 'XLS',
+                        ], [
+                            'value' => 'Xlsx',
+                            'label' => 'XLSX',
+                        ],
+                    ],
+                ],
+                [
+                    'name'     => 'with_media',
+                    'title'    => 'With Media',
+                    'required' => false,
+                    'type'     => 'boolean',
+                ],
+            ],
+        ],
+    ],
+
+    'attribute-groups' => [
+        'title'       => 'data_transfer::app.exporters.attribute-groups.title',
+        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\AttributeGroup\Exporter',
+        'source'      => 'Webkul\Attribute\Repositories\AttributeGroupRepository',
+        'sample_path' => 'data-transfer/samples/attribute-groups.csv',
+        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\AttributeGroupJobValidator',
+        'filters'     => [
+            'fields' => [
+                [
+                    'name'       => 'file_format',
+                    'title'      => 'File Format',
+                    'type'       => 'select',
+                    'required'   => true,
+                    'validation' => 'required',
+                    'options'    => [
+                        [
+                            'value' => 'Csv',
+                            'label' => 'CSV',
+                        ], [
+                            'value' => 'Xls',
+                            'label' => 'XLS',
+                        ], [
+                            'value' => 'Xlsx',
+                            'label' => 'XLSX',
+                        ],
+                    ],
+                ],
+                [
+                    'name'     => 'with_media',
+                    'title'    => 'With Media',
+                    'required' => false,
+                    'type'     => 'boolean',
+                ],
+            ],
+        ],
+    ],
+
+    'attribute-families' => [
+        'title'       => 'data_transfer::app.exporters.attribute-families.title',
+        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\AttributeFamily\Exporter',
+        'source'      => 'Webkul\Attribute\Repositories\AttributeFamilyRepository',
+        'sample_path' => 'data-transfer/samples/attribute-families.csv',
+        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\AttributeFamilyJobValidator',
+        'filters'     => [
+            'fields' => [
+                [
+                    'name'       => 'file_format',
+                    'title'      => 'File Format',
+                    'type'       => 'select',
+                    'required'   => true,
+                    'validation' => 'required',
+                    'options'    => [
+                        [
+                            'value' => 'Csv',
+                            'label' => 'CSV',
+                        ], [
+                            'value' => 'Xls',
+                            'label' => 'XLS',
+                        ], [
+                            'value' => 'Xlsx',
+                            'label' => 'XLSX',
+                        ],
+                    ],
+                ],
+                [
+                    'name'     => 'with_media',
+                    'title'    => 'With Media',
+                    'required' => false,
+                    'type'     => 'boolean',
+                ],
+            ],
+        ],
+    ],
 ];
