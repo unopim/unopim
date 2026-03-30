@@ -1,20 +1,21 @@
 {
   "src/Resources/assets/css/app.css": {
-    "file": "assets/app-8c97817e.css",
-    "isEntry": true,
-    "src": "src/Resources/assets/css/app.css"
+    "file": "assets/app-DsP7ajyL.css",
+    "src": "src/Resources/assets/css/app.css",
+    "isEntry": true
   },
   "src/Resources/assets/fonts/unopim-installer.woff": {
-    "file": "assets/unopim-installer-974e4842.woff",
+    "file": "assets/unopim-installer-CR1_oTt2.woff",
     "src": "src/Resources/assets/fonts/unopim-installer.woff"
   },
   "src/Resources/assets/images/installer/spinner.svg": {
-    "file": "assets/spinner-75cc5358.svg",
+    "file": "assets/spinner-DWDyD8Tr.svg",
     "src": "src/Resources/assets/images/installer/spinner.svg"
   },
   "src/Resources/assets/js/app.js": {
-    "file": "assets/app-ed7bf5bc.js",
-    "isEntry": true,
-    "src": "src/Resources/assets/js/app.js"
+    "file": "assets/app-Bk5HRroT.js",
+    "name": "app",
+    "src": "src/Resources/assets/js/app.js",
+    "isEntry": true
   }
 }
