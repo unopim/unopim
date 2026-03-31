@@ -112,7 +112,8 @@ class ProductCompletenessJob implements ShouldQueue
             }
 
             $prefix = DB::getTablePrefix();
-            DB::statement("UPDATE {$prefix}products SET avg_completeness_score = CASE id {$cases} END WHERE id IN ({$idList})");
+            $castType = DB::getDriverName() === 'pgsql' ? 'INTEGER' : 'SIGNED';
+            DB::statement("UPDATE {$prefix}products SET avg_completeness_score = CAST(CASE id {$cases} END AS {$castType}) WHERE id IN ({$idList})");
         }
     }
 
