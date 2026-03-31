@@ -13,6 +13,10 @@ return [
         'agents'                => 'Agen',
         'dashboard'             => 'Dasbor',
         'approvals'             => 'Persetujuan',
+        'platform'              => 'Platform',
+        'create'                => 'Membuat',
+        'edit'                  => 'Edit',
+        'delete'                => 'Menghapus',
     ],
 
     'menu' => [

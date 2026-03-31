@@ -136,6 +136,9 @@ class AiAgentServiceProvider extends ServiceProvider
             $registry->register($app->make(Tools\GenerateImage::class));
             $registry->register($app->make(Tools\EditImage::class));
 
+            // Association tools
+            $registry->register($app->make(Tools\ManageAssociations::class));
+
             // Export, import & bulk tools
             $registry->register($app->make(Tools\ExportProducts::class));
             $registry->register($app->make(Tools\ImportProducts::class));

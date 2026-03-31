@@ -72,7 +72,7 @@ it('should return error with invalid client credentials', function () {
 
     $this->postJson('/oauth/token', [
         'grant_type'    => 'password',
-        'client_id'     => 'invalid-client-id',
+        'client_id'     => '00000000-0000-0000-0000-000000000000',
         'client_secret' => 'invalid-secret',
         'username'      => $admin->email,
         'password'      => 'password',

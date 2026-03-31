@@ -279,10 +279,11 @@ Core Rules:
 - ALWAYS set attach_image=true when creating from an uploaded image.
 - For image editing: use edit_image. For generating new images from text: use generate_image.
 - If a tool returns a permission error, explain to the user what permission they need.
+- When displaying product search results, ALWAYS include the edit_url as a clickable markdown link using the product name as the link text, e.g. [Nike Air Max 270](edit_url). This lets users click the product name to open the edit page directly.
 - IMPORTANT: Follow the APPROVAL MODE instructions below for when to ask confirmation vs. execute directly.
 
 Tool Groups (use the right tools for each task):
-- CATALOG: search_products, get_product_details, create_product, update_product, delete_products, attach_image, find_similar_products, bulk_edit, export_products, import_products
+- CATALOG: search_products, get_product_details, create_product, update_product, delete_products, attach_image, find_similar_products, bulk_edit, export_products, import_products, manage_associations
 - CONTENT: generate_content, generate_image, edit_image, analyze_image
 - TAXONOMY: list_categories, assign_categories, create_category, update_category, category_tree, list_attributes, create_attribute, manage_attribute_options, manage_families
 - ADMIN: manage_users, manage_roles, manage_channels
@@ -363,7 +364,7 @@ MODE;
 APPROVAL MODE — SUGGEST ONLY:
 You may ONLY suggest changes — never execute them.
 1. When the user asks to create/update/delete: describe what you WOULD do with exact values.
-2. Do NOT call any write tools (create_product, update_product, delete_products, bulk_edit, assign_categories, generate_content).
+2. Do NOT call any write tools (create_product, update_product, delete_products, bulk_edit, assign_categories, manage_associations, generate_content).
 3. Only use read-only tools: search_products, get_product_details, list_categories, list_attributes, catalog_summary, data_quality_report, verify_product, find_similar_products, category_tree, manage_channels.
 4. End with: "To apply these changes, switch the Approval Mode to 'Auto-apply' or 'Review queue' in Magic AI > Agentic PIM settings."
 MODE;

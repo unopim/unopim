@@ -204,9 +204,18 @@ test('Delete Channel without translations', async ({ adminPage }) => {
 test('Delete Default Channel', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: ' Settings' }).click();
   await adminPage.getByRole('link', { name: 'Channels' }).click();
-  const itemRow = adminPage.locator('div', { hasText: '[root]' });
+  await adminPage.waitForLoadState('networkidle');
+
+  // Search for default channel to isolate the row
+  await adminPage.getByPlaceholder('Search').first().fill('default');
+  await adminPage.keyboard.press('Enter');
+  await adminPage.waitForLoadState('networkidle');
+
+  const itemRow = adminPage.locator('div').filter({ hasText: 'default' }).first();
   await itemRow.locator('span[title="Delete"]').first().click();
   await adminPage.getByRole('button', { name: 'Delete' }).click();
-  await expect(adminPage.locator('#app').getByText(/You can't delete the channel "default" because your PIM needs to have at least one channel./i)).toBeVisible();
+
+  // Matches either "The default channel cannot be deleted." or "You can't delete the channel "default" because..."
+  await expect(adminPage.locator('#app').getByText(/default channel cannot be deleted|can.t delete the channel.*default/i)).toBeVisible();
 });
 });

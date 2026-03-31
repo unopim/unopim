@@ -13,6 +13,10 @@ return [
         'agents'                => 'Agentes',
         'dashboard'             => 'Painel',
         'approvals'             => 'Aprovações',
+        'platform'              => 'Plataforma',
+        'create'                => 'Criar',
+        'edit'                  => 'Editar',
+        'delete'                => 'Excluir',
     ],
 
     'menu' => [

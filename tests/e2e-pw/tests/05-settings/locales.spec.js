@@ -60,9 +60,10 @@ test('Update Locale ', async ({ adminPage }) => {
 test('Delete Enable Locale', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: ' Settings' }).click();
   await adminPage.getByRole('link', { name: 'Locales' }).click();
-  const itemRow = adminPage.locator('div', { hasText: 'Enabled' });
+  await adminPage.waitForLoadState('networkidle');
+  const itemRow = adminPage.locator('div').filter({ hasText: 'en_US' }).first();
   await itemRow.locator('span[title="Delete"]').first().click();
   await adminPage.getByRole('button', { name: 'Delete' }).click();
-  await expect(adminPage.locator('#app').getByText(/You cannot delete a locale linked to a channel or user/i)).toBeVisible();
+  await expect(adminPage.locator('#app').getByText(/cannot delete a locale linked to a channel or user/i)).toBeVisible();
 });
 });

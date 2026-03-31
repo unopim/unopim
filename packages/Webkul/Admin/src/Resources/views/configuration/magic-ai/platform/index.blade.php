@@ -271,7 +271,7 @@
                                             placeholder="@lang('admin::app.configuration.platform.fields.custom-model-placeholder')"
                                             class="flex-1 py-1.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 dark:bg-cherry-800 dark:border-cherry-800"
                                         />
-                                        <button type="button" @click="addCustomModel()" class="px-3 py-1.5 text-sm border rounded-md hover:bg-violet-50 dark:border-cherry-800 dark:hover:bg-cherry-800">
+                                        <button type="button" @click="addCustomModel()" class="secondary-button">
                                             + @lang('admin::app.configuration.platform.fields.add')
                                         </button>
                                     </div>

@@ -2,7 +2,9 @@
 
 namespace Webkul\AiAgent\Chat\Tools;
 
+use Illuminate\Http\File;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Prism\Prism\Tool;
@@ -10,6 +12,11 @@ use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 use Webkul\AiAgent\Services\ProductWriterService;
+use Webkul\DataTransfer\Helpers\Import as ImportHelper;
+use Webkul\DataTransfer\Repositories\JobInstancesRepository;
+use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
+use Webkul\DataTransfer\Repositories\JobTrackRepository;
+use Webkul\DataTransfer\Services\JobLogger;
 
 /**
  * Import/update products from an uploaded CSV or XLSX file.
@@ -26,8 +33,16 @@ class ImportProducts implements PimTool
      */
     protected const MAX_ROWS = 200;
 
+    /**
+     * Detected CSV delimiter for the current import.
+     */
+    protected string $detectedDelimiter = ',';
+
     public function __construct(
         protected ProductWriterService $writerService,
+        protected JobInstancesRepository $jobInstancesRepository,
+        protected JobTrackRepository $jobTrackRepository,
+        protected JobTrackBatchRepository $jobTrackBatchRepository,
     ) {}
 
     public function register(ChatContext $context): Tool
@@ -41,7 +56,7 @@ class ImportProducts implements PimTool
                 string $mode = 'create_or_update',
                 ?string $family_code = null,
             ) use ($context): string {
-                if ($denied = $this->denyUnlessAllowed($context, 'catalog.products.create')) {
+                if ($denied = $this->denyImportExecution($context, $mode)) {
                     return $denied;
                 }
 
@@ -50,12 +65,14 @@ class ImportProducts implements PimTool
                 }
 
                 $filePath = $context->uploadedFilePaths[0];
+                $originalFileName = basename($filePath);
 
                 if (! file_exists($filePath)) {
                     return json_encode(['error' => trans('ai-agent::app.common.invalid-file-path')]);
                 }
 
                 $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+                $this->detectedDelimiter = ',';
 
                 $rows = match ($ext) {
                     'csv'         => $this->parseCsv($filePath),
@@ -89,6 +106,18 @@ class ImportProducts implements PimTool
                     return json_encode(['error' => "Attribute family '{$family_code}' not found."]);
                 }
 
+                $storedFilePath = $this->storeImportFile($filePath, $originalFileName);
+                $jobInstance = $this->createJobInstance(
+                    $storedFilePath,
+                    $mode,
+                    $family_code,
+                    $context,
+                );
+                $jobTrack = $this->createJobTrack($jobInstance);
+                $logger = JobLogger::make($jobTrack->id);
+
+                $logger->info('AI import request received.');
+
                 $familyAttrs = $this->writerService->getFamilyAttributesPublic($familyId);
                 $currencies = DB::table('currencies')->where('status', 1)->pluck('code')->toArray() ?: ['USD'];
                 $repo = app('Webkul\Product\Repositories\ProductRepository');
@@ -99,69 +128,236 @@ class ImportProducts implements PimTool
                 $errors = [];
                 $processedRows = 0;
 
-                foreach ($rows as $i => $row) {
-                    if ($processedRows >= self::MAX_ROWS) {
-                        break;
-                    }
+                try {
+                    $this->markTrackAsProcessing($jobTrack->id);
 
-                    $processedRows++;
+                    foreach ($rows as $i => $row) {
+                        if ($processedRows >= self::MAX_ROWS) {
+                            break;
+                        }
 
-                    // Re-key with lowercase headers
-                    $normalizedRow = [];
-                    foreach ($row as $key => $value) {
-                        $normalizedRow[strtolower(trim((string) $key))] = $value;
-                    }
+                        $processedRows++;
 
-                    $sku = trim((string) ($normalizedRow['sku'] ?? ''));
+                        // Re-key with lowercase headers
+                        $normalizedRow = [];
+                        foreach ($row as $key => $value) {
+                            $normalizedRow[strtolower(trim((string) $key))] = $value;
+                        }
 
-                    if (empty($sku)) {
-                        $skipped++;
+                        $sku = trim((string) ($normalizedRow['sku'] ?? ''));
 
-                        continue;
-                    }
-
-                    try {
-                        $existingProduct = DB::table('products')->where('sku', $sku)->first();
-
-                        if ($existingProduct && $mode === 'create_only') {
+                        if (empty($sku)) {
                             $skipped++;
 
                             continue;
                         }
 
-                        if (! $existingProduct && $mode === 'update_only') {
-                            $skipped++;
+                        try {
+                            $existingProduct = DB::table('products')->where('sku', $sku)->first();
 
-                            continue;
-                        }
+                            if ($existingProduct && $mode === 'create_only') {
+                                $skipped++;
 
-                        if ($existingProduct) {
-                            $this->updateProduct($existingProduct, $normalizedRow, $familyAttrs, $currencies, $context, $repo);
-                            $updated++;
-                        } else {
-                            $this->createProduct($sku, $normalizedRow, $familyId, $familyAttrs, $currencies, $context, $repo);
-                            $created++;
+                                continue;
+                            }
+
+                            if (! $existingProduct && $mode === 'update_only') {
+                                $skipped++;
+
+                                continue;
+                            }
+
+                            if ($existingProduct && ! $context->hasPermission('catalog.products.edit')) {
+                                $skipped++;
+                                $errors[] = 'Row '.($i + 2)." (SKU: {$sku}): Permission denied: you do not have 'catalog.products.edit' access.";
+
+                                continue;
+                            }
+
+                            if (! $existingProduct && ! $context->hasPermission('catalog.products.create')) {
+                                $skipped++;
+                                $errors[] = 'Row '.($i + 2)." (SKU: {$sku}): Permission denied: you do not have 'catalog.products.create' access.";
+
+                                continue;
+                            }
+
+                            if ($existingProduct) {
+                                $this->updateProduct($existingProduct, $normalizedRow, $familyAttrs, $currencies, $context, $repo);
+                                $updated++;
+                            } else {
+                                $this->createProduct($sku, $normalizedRow, $familyId, $familyAttrs, $currencies, $context, $repo);
+                                $created++;
+                            }
+                        } catch (\Throwable $e) {
+                            $errors[] = 'Row '.($i + 2)." (SKU: {$sku}): {$e->getMessage()}";
                         }
-                    } catch (\Throwable $e) {
-                        $errors[] = 'Row '.($i + 2)." (SKU: {$sku}): {$e->getMessage()}";
                     }
+
+                    $result = [
+                        'total_rows' => count($rows),
+                        'processed'  => $processedRows,
+                        'created'    => $created,
+                        'updated'    => $updated,
+                        'skipped'    => $skipped,
+                        'errors'     => empty($errors) ? null : array_slice($errors, 0, 10),
+                        'tracker_id' => $jobTrack->id,
+                    ];
+
+                    if ($processedRows < count($rows)) {
+                        $result['warning'] = 'Only the first '.self::MAX_ROWS.' rows were processed. Remaining rows were skipped.';
+                    }
+
+                    $this->markTrackAsCompleted(
+                        $jobTrack->id,
+                        $processedRows,
+                        $created,
+                        $updated,
+                        $errors,
+                        $logger
+                    );
+
+                    return json_encode(['result' => $result]);
+                } catch (\Throwable $exception) {
+                    $this->markTrackAsFailed($jobTrack->id, $exception->getMessage(), $logger);
+
+                    report($exception);
+
+                    return json_encode([
+                        'error' => 'Failed to import products. Please try again.',
+                    ]);
                 }
-
-                $result = [
-                    'total_rows' => count($rows),
-                    'processed'  => $processedRows,
-                    'created'    => $created,
-                    'updated'    => $updated,
-                    'skipped'    => $skipped,
-                    'errors'     => empty($errors) ? null : array_slice($errors, 0, 10),
-                ];
-
-                if ($processedRows < count($rows)) {
-                    $result['warning'] = 'Only the first '.self::MAX_ROWS.' rows were processed. Remaining rows were skipped.';
-                }
-
-                return json_encode(['result' => $result]);
             });
+    }
+
+    /**
+     * Store the uploaded import file on the private disk for history/tracker access.
+     */
+    protected function storeImportFile(string $filePath, string $originalFileName): string
+    {
+        return Storage::disk('private')->putFileAs(
+            'imports',
+            new File($filePath),
+            time().'-'.$originalFileName
+        );
+    }
+
+    /**
+     * Create a job instance so the AI import appears in import history.
+     */
+    protected function createJobInstance(
+        string $storedFilePath,
+        string $mode,
+        ?string $familyCode,
+        ChatContext $context,
+    ): mixed {
+        return $this->jobInstancesRepository->create([
+            'code'                => 'ai-agent-import-'.Str::lower(Str::random(10)),
+            'entity_type'         => 'products',
+            'type'                => 'import',
+            'action'              => ImportHelper::ACTION_APPEND,
+            'validation_strategy' => ImportHelper::VALIDATION_STRATEGY_SKIP_ERRORS,
+            'allowed_errors'      => 0,
+            'field_separator'     => $this->detectedDelimiter,
+            'file_path'           => $storedFilePath,
+            'filters'             => [
+                'mode'        => $mode,
+                'family_code' => $familyCode,
+                'channel'     => $context->channel,
+                'locale'      => $context->locale,
+            ],
+        ]);
+    }
+
+    /**
+     * Create the tracker row for the AI-driven import.
+     */
+    protected function createJobTrack(mixed $jobInstance): mixed
+    {
+        return $this->jobTrackRepository->create([
+            'action'                => $jobInstance->action,
+            'validation_strategy'   => $jobInstance->validation_strategy,
+            'type'                  => 'import',
+            'state'                 => ImportHelper::STATE_PENDING,
+            'allowed_errors'        => $jobInstance->allowed_errors,
+            'field_separator'       => $jobInstance->field_separator,
+            'file_path'             => $jobInstance->file_path,
+            'images_directory_path' => $jobInstance->images_directory_path,
+            'meta'                  => $jobInstance->toJson(),
+            'job_instances_id'      => $jobInstance->id,
+            'user_id'               => auth()->guard('admin')->id(),
+            'created_at'            => now(),
+            'updated_at'            => now(),
+        ]);
+    }
+
+    /**
+     * Mark the tracker row as actively processing.
+     */
+    protected function markTrackAsProcessing(int $jobTrackId): void
+    {
+        $this->jobTrackRepository->update([
+            'state'      => ImportHelper::STATE_PROCESSING,
+            'started_at' => now(),
+            'summary'    => [],
+        ], $jobTrackId);
+    }
+
+    /**
+     * Mark the tracker and its single batch as completed.
+     */
+    protected function markTrackAsCompleted(
+        int $jobTrackId,
+        int $processedRows,
+        int $created,
+        int $updated,
+        array $errors,
+        $logger
+    ): void {
+        $summary = [
+            'created' => $created,
+            'updated' => $updated,
+            'deleted' => 0,
+        ];
+
+        $this->jobTrackBatchRepository->create([
+            'state'        => ImportHelper::STATE_PROCESSED,
+            'data'         => ['processed_rows' => $processedRows],
+            'summary'      => $summary,
+            'job_track_id' => $jobTrackId,
+        ]);
+
+        $this->jobTrackRepository->update([
+            'state'                => ImportHelper::STATE_COMPLETED,
+            'processed_rows_count' => $processedRows,
+            'invalid_rows_count'   => count($errors),
+            'errors_count'         => count($errors),
+            'errors'               => empty($errors) ? null : array_slice($errors, 0, 10),
+            'summary'              => $summary,
+            'completed_at'         => now(),
+        ], $jobTrackId);
+
+        $logger->info(sprintf(
+            'AI import completed successfully. Processed: %d, created: %d, updated: %d, errors: %d.',
+            $processedRows,
+            $created,
+            $updated,
+            count($errors)
+        ));
+    }
+
+    /**
+     * Mark the tracker row as failed.
+     */
+    protected function markTrackAsFailed(int $jobTrackId, string $message, $logger): void
+    {
+        $this->jobTrackRepository->update([
+            'state'        => ImportHelper::STATE_FAILED,
+            'errors_count' => 1,
+            'errors'       => [$message],
+            'completed_at' => now(),
+        ], $jobTrackId);
+
+        $logger->error($message);
     }
 
     /**
@@ -197,6 +393,8 @@ class ImportProducts implements PimTool
         } elseif ($tabCount > $commaCount) {
             $delimiter = "\t";
         }
+
+        $this->detectedDelimiter = $delimiter;
 
         $headers = fgetcsv($handle, 0, $delimiter);
 
@@ -240,6 +438,7 @@ class ImportProducts implements PimTool
         }
 
         try {
+            $this->detectedDelimiter = ',';
             $spreadsheet = IOFactory::load($filePath);
             $worksheet = $spreadsheet->getActiveSheet();
             $data = $worksheet->toArray();
@@ -428,5 +627,34 @@ class ImportProducts implements PimTool
         }
 
         return DB::table('attribute_families')->value('id');
+    }
+
+    /**
+     * Ensure the current user can execute AI imports for the requested mode.
+     */
+    protected function denyImportExecution(ChatContext $context, string $mode): ?string
+    {
+        if ($denied = $this->denyUnlessAllowed($context, 'data_transfer.imports.execute')) {
+            return $denied;
+        }
+
+        $canCreate = $context->hasPermission('catalog.products.create');
+        $canEdit = $context->hasPermission('catalog.products.edit');
+
+        return match ($mode) {
+            'create_only' => $canCreate ? null : $this->formatPermissionDenied('catalog.products.create'),
+            'update_only' => $canEdit ? null : $this->formatPermissionDenied('catalog.products.edit'),
+            default       => ($canCreate || $canEdit) ? null : $this->formatPermissionDenied('catalog.products.create or catalog.products.edit'),
+        };
+    }
+
+    /**
+     * Build a consistent permission denied response for tool execution.
+     */
+    protected function formatPermissionDenied(string $permission): string
+    {
+        return json_encode([
+            'error' => "Permission denied: you do not have '{$permission}' access. Contact your administrator.",
+        ]);
     }
 }

@@ -56,7 +56,9 @@ class SearchProducts implements PimTool
 
                 $products = $qb->orderByDesc('p.id')->limit($candidateLimit)->get();
 
-                $results = $products->map(function ($p) {
+                $editBaseUrl = route('admin.catalog.products.edit', ['id' => '__ID__']);
+
+                $results = $products->map(function ($p) use ($editBaseUrl) {
                     return [
                         'id'              => $p->id,
                         'sku'             => $p->sku,
@@ -64,6 +66,7 @@ class SearchProducts implements PimTool
                         'type'            => $p->type,
                         'status'          => $p->status ? 'active' : 'inactive',
                         'family'          => $p->family_code,
+                        'edit_url'        => str_replace('__ID__', (string) $p->id, $editBaseUrl),
                         'relevance_score' => null,
                     ];
                 });

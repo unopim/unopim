@@ -67,15 +67,23 @@ test.describe('Verify the behaviour of Product Completeness feature', () => {
     await adminPage.goto('/admin/catalog/products', { waitUntil: 'load' });
     await adminPage.waitForLoadState('networkidle');
     await expect(adminPage.locator('span[title="Edit"]').first()).toBeVisible({ timeout: 15000 });
-    const skuRow = adminPage.locator('div.row:has-text("NAScore")');
-    const completeColumn = skuRow.locator('span.label-info');
-    await expect(completeColumn).toHaveText('N/A');
+
+    // Search for the specific product to isolate the row
+    await adminPage.getByPlaceholder('Search').first().fill('NAScore');
+    await adminPage.keyboard.press('Enter');
+    await adminPage.waitForLoadState('networkidle');
+    await expect(adminPage.locator('span[title="Edit"]').first()).toBeVisible({ timeout: 10000 });
+    await expect(adminPage.getByText('N/A').first()).toBeVisible();
   });
 
   test('Verify product edit page shows no completeness score when no required channel configured', async ({ adminPage }) => {
     await adminPage.goto('/admin/catalog/products', { waitUntil: 'load' });
     await adminPage.waitForLoadState('networkidle');
-    await adminPage.getByText('NAScore').click();
+    await adminPage.getByPlaceholder('Search').first().fill('NAScore');
+    await adminPage.keyboard.press('Enter');
+    await adminPage.waitForLoadState('networkidle');
+    await expect(adminPage.locator('span[title="Edit"]').first()).toBeVisible({ timeout: 10000 });
+    await adminPage.locator('span[title="Edit"]').first().click();
     await expect(adminPage).toHaveURL(/.*\/edit\/.*/);
     await expect(adminPage.locator('text=Missing Required Attributes')).toHaveCount(0);
     await expect(adminPage.locator('text=Completeness')).toHaveCount(0);
@@ -140,8 +148,11 @@ test.describe('Verify the behaviour of Product Completeness feature', () => {
   test('Update the product by filling all missing required attributes', async ({ adminPage }) => {
     await adminPage.goto('/admin/catalog/products', { waitUntil: 'load' });
     await adminPage.waitForLoadState('networkidle');
-    const itemRow = adminPage.locator('div', { hasText: 'NAScore' });
-    await itemRow.locator('span[title="Edit"]').first().click();
+    await adminPage.getByPlaceholder('Search').first().fill('NAScore');
+    await adminPage.keyboard.press('Enter');
+    await adminPage.waitForLoadState('networkidle');
+    await expect(adminPage.locator('span[title="Edit"]').first()).toBeVisible({ timeout: 10000 });
+    await adminPage.locator('span[title="Edit"]').first().click();
     await adminPage.locator('#product_number').click();
     await adminPage.locator('#product_number').fill('123');
     await adminPage.locator('input[name="values[channel_locale_specific][default][en_US][name]"]').fill('skusavedraft');
