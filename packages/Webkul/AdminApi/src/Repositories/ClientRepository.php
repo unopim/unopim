@@ -20,7 +20,7 @@ class ClientRepository extends BaseClientRepository
 
         $client = $client->where($client->getKeyName(), $id)->first();
         if (request()->has('username')) {
-            $username = request()->get('username');
+            $username = request()->input('username');
             $user = $client?->admins()->where('email', $username)->get()->first();
 
             if (! $user) {

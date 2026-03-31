@@ -35,7 +35,7 @@ class DashboardController extends Controller
      *
      * @return View|JsonResponse
      */
-    public function index()
+    public function index(): View
     {
         return view('admin::dashboard.index')->with([
 
@@ -44,15 +44,13 @@ class DashboardController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return JsonResponse
      */
-    public function stats()
+    public function stats(): JsonResponse
     {
         $type = request()->query('type');
 
         if (! isset($this->typeFunctions[$type])) {
-            return response()->json(['message' => trans('admin::app.dashboard.invalid-type')], 400);
+            return response()->json(['message' => trans('admin::app.dashboard.invalid-type')], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         $stats = $this->dashboardHelper->{$this->typeFunctions[$type]}();

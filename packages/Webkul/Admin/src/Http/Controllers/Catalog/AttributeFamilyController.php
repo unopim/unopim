@@ -3,7 +3,7 @@
 namespace Webkul\Admin\Http\Controllers\Catalog;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Event;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Catalog\AttributeFamilyDataGrid;
@@ -34,7 +34,7 @@ class AttributeFamilyController extends Controller
      *
      * @return View
      */
-    public function index()
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             return app(AttributeFamilyDataGrid::class)->toJson();
@@ -45,10 +45,8 @@ class AttributeFamilyController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return View
      */
-    public function create()
+    public function create(): View
     {
         $normalizedData = $this->normalize();
 
@@ -99,10 +97,8 @@ class AttributeFamilyController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return Response
      */
-    public function store()
+    public function store(): RedirectResponse
     {
         $this->validate(request(), [
             'code' => ['required', 'unique:attribute_families,code', new Code],
@@ -122,10 +118,8 @@ class AttributeFamilyController extends Controller
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @return View
      */
-    public function edit(int $id)
+    public function edit(int $id): View
     {
         $attributeFamily = $this->attributeFamilyRepository->findOrFail($id);
 
@@ -151,10 +145,8 @@ class AttributeFamilyController extends Controller
 
     /**
      * Show the form for copy the specified resource.
-     *
-     * @return View
      */
-    public function copy(int $id)
+    public function copy(int $id): View
     {
         $attributeFamily = $this->attributeFamilyRepository->findOrFail($id, ['*']);
         $normalizedData = $this->normalize($attributeFamily);
@@ -164,10 +156,8 @@ class AttributeFamilyController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
-     * @return Response
      */
-    public function update(int $id)
+    public function update(int $id): RedirectResponse
     {
         $this->validate(request(), [
             'code' => ['required', 'unique:attribute_families,code,'.$id, new Code],
@@ -196,7 +186,7 @@ class AttributeFamilyController extends Controller
         if ($attributeFamily->products()->count()) {
             return new JsonResponse([
                 'message' => trans('admin::app.catalog.families.attribute-product-error'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         try {
@@ -215,7 +205,7 @@ class AttributeFamilyController extends Controller
 
         return new JsonResponse([
             'message' => trans('admin::app.catalog.families.delete-failed', ['name' => 'admin::app.catalog.families.family']),
-        ], 500);
+        ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     /**

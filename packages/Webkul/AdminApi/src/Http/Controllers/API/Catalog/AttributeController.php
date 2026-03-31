@@ -56,10 +56,8 @@ class AttributeController extends ApiController
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return JsonResponse
      */
-    public function store()
+    public function store(): JsonResponse
     {
         $requestData = request()->all();
         $rules = [
@@ -110,10 +108,8 @@ class AttributeController extends ApiController
 
     /**
      * Update the specified resource in storage.
-     *
-     * @return JsonResponse
      */
-    public function update(string $code)
+    public function update(string $code): JsonResponse
     {
         $attribute = $this->attributeRepository->findOneByField('code', $code);
         if (! $attribute) {
@@ -140,10 +136,8 @@ class AttributeController extends ApiController
 
     /**
      * Display a single result of the resource.
-     *
-     * @return JsonResponse
      */
-    public function getOptions(string $code)
+    public function getOptions(string $code): JsonResponse
     {
         try {
             return response()->json(app(AttributeDataSource::class)->getOptionsByAttributeCode($code));
@@ -154,10 +148,8 @@ class AttributeController extends ApiController
 
     /**
      * Store a newly attribute option in storage.
-     *
-     * @return JsonResponse
      */
-    public function storeOption(string $attributeCode)
+    public function storeOption(string $attributeCode): JsonResponse
     {
         $attribute = $this->attributeRepository->findOneByField('code', $attributeCode);
         if (! $attribute) {
@@ -197,10 +189,8 @@ class AttributeController extends ApiController
 
     /**
      * Updates an attribute option in the storage.
-     *
-     * @return JsonResponse
      */
-    public function updateOption(string $attributeCode)
+    public function updateOption(string $attributeCode): JsonResponse
     {
         $attribute = $this->attributeRepository->findOneByField('code', $attributeCode);
         if (! $attribute) {

@@ -3,7 +3,7 @@
 namespace Webkul\Admin\Http\Controllers\Settings;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Event;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Settings\ChannelDataGrid;
@@ -26,7 +26,7 @@ class ChannelController extends Controller
      *
      * @return View
      */
-    public function index()
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             return app(ChannelDataGrid::class)->toJson();
@@ -37,20 +37,16 @@ class ChannelController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return View
      */
-    public function create()
+    public function create(): View
     {
         return view('admin::settings.channels.create');
     }
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return Response
      */
-    public function store()
+    public function store(): RedirectResponse
     {
         $locales = core()->getAllActiveLocales();
 
@@ -82,10 +78,8 @@ class ChannelController extends Controller
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @return View
      */
-    public function edit(int $id)
+    public function edit(int $id): View
     {
         $channel = $this->channelRepository->with(['locales', 'currencies'])->findOrFail($id);
 
@@ -94,10 +88,8 @@ class ChannelController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
-     * @return Response
      */
-    public function update(int $id)
+    public function update(int $id): RedirectResponse
     {
         $locales = core()->getAllActiveLocales();
 
@@ -136,14 +128,14 @@ class ChannelController extends Controller
         if ($channel->count() <= 1) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.channels.index.can-not-delete-error', ['channel' => $channel->code]),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         if ($channel->code == config('app.channel')) {
             return new JsonResponse([
                 'message'    => trans('admin::app.settings.channels.index.last-delete-error'),
                 'message'    => trans('admin::app.settings.channels.index.last-delete-error'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         try {
@@ -155,11 +147,11 @@ class ChannelController extends Controller
 
             return new JsonResponse([
                 'message' => trans('admin::app.settings.channels.index.delete-success'),
-            ], 200);
+            ], JsonResponse::HTTP_OK);
         } catch (\Exception $e) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.channels.index.delete-failed'),
-            ], 500);
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 

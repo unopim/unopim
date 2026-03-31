@@ -3,7 +3,7 @@
 namespace Webkul\Admin\Http\Controllers\Catalog;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\View\View;
@@ -46,7 +46,7 @@ class AttributeController extends Controller
      *
      * @return View
      */
-    public function index()
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             return app(AttributeDataGrid::class)->toJson();
@@ -57,20 +57,16 @@ class AttributeController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return View
      */
-    public function create()
+    public function create(): View
     {
         return view('admin::catalog.attributes.create', ['locales' => $this->localeRepository->getActiveLocales(), 'swatchTypes' => SwatchTypeEnum::getValues()]);
     }
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return Response
      */
-    public function store()
+    public function store(): RedirectResponse
     {
         $this->validate(request(), [
             'code'        => ['required', 'not_in:type,attribute_family_id', 'unique:attributes,code', new Code, new NotSupportedAttributes],
@@ -107,10 +103,8 @@ class AttributeController extends Controller
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @return View
      */
-    public function edit(int $id)
+    public function edit(int $id): View
     {
         $attribute = $this->attributeRepository->findOrFail($id);
 
@@ -123,10 +117,8 @@ class AttributeController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
-     * @return Response
      */
-    public function update(int $id)
+    public function update(int $id): RedirectResponse
     {
         $this->validate(request(), [
             'code'        => ['required', 'unique:attributes,code,'.$id, new Code],
@@ -237,10 +229,8 @@ class AttributeController extends Controller
 
     /**
      * Get super attributes of product.
-     *
-     * @return JsonResponse
      */
-    public function productSuperAttributes(int $id)
+    public function productSuperAttributes(int $id): JsonResponse
     {
         $product = $this->productRepository->findOrFail($id);
 

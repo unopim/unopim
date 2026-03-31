@@ -87,7 +87,7 @@ class Configurable extends AbstractType
      */
     public function updateDefaultVariantId()
     {
-        if (! $defaultVariantId = request()->get('default_variant_id')) {
+        if (! $defaultVariantId = request()->input('default_variant_id')) {
             return;
         }
 

@@ -100,7 +100,7 @@ class ProductController extends ApiController
         return $product;
     }
 
-    public function sanitizeData($product, $attributes)
+    public function sanitizeData($product, $attributes): ?array
     {
         foreach ($attributes as $attribute) {
             if ($attribute->value_per_channel && $attribute->value_per_locale) {
@@ -142,7 +142,7 @@ class ProductController extends ApiController
     /**
      * Partial Updates the simple product.
      */
-    public function patchProduct(Product $product, array $data)
+    public function patchProduct(Product $product, array $data): Product
     {
         foreach (['additional', 'status'] as $key) {
             if (isset($data[$key])) {

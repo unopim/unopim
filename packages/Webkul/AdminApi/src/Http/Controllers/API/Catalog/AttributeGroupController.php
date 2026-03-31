@@ -47,7 +47,7 @@ class AttributeGroupController extends ApiController
      *
      * @return \Illuminate\Http\Response
      */
-    public function store()
+    public function store(): JsonResponse
     {
         $validator = $this->codeRequireWithUniqueValidator('attribute_groups');
 
@@ -77,7 +77,7 @@ class AttributeGroupController extends ApiController
      *
      * @return \Illuminate\Http\Response
      */
-    public function update(string $code)
+    public function update(string $code): JsonResponse
     {
         $requestData = request()->only([
             'labels',

@@ -6,6 +6,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 use Prism\Prism\Facades\Prism;
 use Webkul\Admin\DataGrids\MagicAI\MagicAIPlatformDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
@@ -18,7 +19,7 @@ class MagicAIPlatformController extends Controller
         protected MagicAIPlatformRepository $platformRepository,
     ) {}
 
-    public function index()
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             return app(MagicAIPlatformDataGrid::class)->toJson();
@@ -140,7 +141,7 @@ class MagicAIPlatformController extends Controller
                 if ($otherCount <= 1) {
                     return new JsonResponse([
                         'message' => trans('admin::app.configuration.platform.message.cannot-delete-default'),
-                    ], 400);
+                    ], JsonResponse::HTTP_BAD_REQUEST);
                 }
             }
 
@@ -154,7 +155,7 @@ class MagicAIPlatformController extends Controller
 
             return new JsonResponse([
                 'message' => trans('admin::app.configuration.platform.message.delete-fail'),
-            ], 500);
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -207,7 +208,7 @@ class MagicAIPlatformController extends Controller
             return new JsonResponse([
                 'success' => false,
                 'message' => trans('admin::app.configuration.platform.message.test-fail').': '.$e->getMessage(),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
     }
 
@@ -236,7 +237,7 @@ class MagicAIPlatformController extends Controller
         } catch (\Exception $e) {
             return new JsonResponse([
                 'message' => trans('admin::app.configuration.platform.message.fetch-models-fail').': '.$e->getMessage(),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
     }
 

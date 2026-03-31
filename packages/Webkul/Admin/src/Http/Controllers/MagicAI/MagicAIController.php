@@ -4,6 +4,7 @@ namespace Webkul\Admin\Http\Controllers\MagicAI;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
+use Illuminate\View\View;
 use Webkul\Admin\DataGrids\MagicAI\MagicPromptGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Attribute\Repositories\AttributeRepository;
@@ -56,7 +57,7 @@ class MagicAIController extends Controller
         } catch (\Exception $e) {
             return new JsonResponse([
                 'message' => trans('admin::app.catalog.products.index.magic-ai-validate-error'),
-            ], 500);
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -73,7 +74,7 @@ class MagicAIController extends Controller
         } catch (\Exception $e) {
             return new JsonResponse([
                 'message' => trans('admin::app.catalog.products.index.magic-ai-validate-error'),
-            ], 500);
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -191,7 +192,7 @@ class MagicAIController extends Controller
 
             return new JsonResponse([
                 'message' => $message,
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
     }
 
@@ -228,11 +229,11 @@ class MagicAIController extends Controller
         } catch (\Exception $e) {
             return new JsonResponse([
                 'message' => $e->getMessage(),
-            ], 500);
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
-    public function defaultPrompt()
+    public function defaultPrompt(): JsonResponse
     {
         $type = request()->input('entity_type', 'product');
         $purpose = request()->input('purpose', 'text_generation');
@@ -256,7 +257,7 @@ class MagicAIController extends Controller
         ]);
     }
 
-    public function index()
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             return app(MagicPromptGrid::class)->toJson();
@@ -330,11 +331,11 @@ class MagicAIController extends Controller
 
             return new JsonResponse([
                 'message' => trans('admin::app.configuration.prompt.message.delete-fail'),
-            ], 500);
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
-    public function isTranslatable()
+    public function isTranslatable(): JsonResponse
     {
         $productId = request()->resource_id;
         $product = $this->productRepository->find($productId);
@@ -383,7 +384,7 @@ class MagicAIController extends Controller
         ]);
     }
 
-    public function saveTranslatedData()
+    public function saveTranslatedData(): JsonResponse
     {
         $id = request()->resource_id;
         $translatedData = json_decode(request()->translatedData, true);
@@ -395,7 +396,7 @@ class MagicAIController extends Controller
         return response()->json(['message' => trans('admin::app.catalog.products.edit.translate.tranlated-job-processed')]);
     }
 
-    public function isAllAttributeTranslatable()
+    public function isAllAttributeTranslatable(): array
     {
         $productId = request()->resource_id;
         $product = $this->productRepository->find($productId);
@@ -424,7 +425,7 @@ class MagicAIController extends Controller
         return $result;
     }
 
-    public function translateAllAttribute()
+    public function translateAllAttribute(): JsonResponse
     {
         $attributes = $this->isAllAttributeTranslatable();
 
@@ -475,7 +476,7 @@ class MagicAIController extends Controller
         return new JsonResponse($responseData);
     }
 
-    public function saveAllTranslatedAttributes()
+    public function saveAllTranslatedAttributes(): JsonResponse
     {
         $productId = request()->resource_id;
         $translatedValues = json_decode(request()->translatedData, true);

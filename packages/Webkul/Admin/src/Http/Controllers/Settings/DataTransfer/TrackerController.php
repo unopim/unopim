@@ -2,6 +2,7 @@
 
 namespace Webkul\Admin\Http\Controllers\Settings\DataTransfer;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\JobTrackerGrid;
@@ -32,7 +33,7 @@ class TrackerController extends Controller
      *
      * @return View
      */
-    public function index()
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             return app(JobTrackerGrid::class)->toJson();
@@ -43,10 +44,8 @@ class TrackerController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return View
      */
-    public function view($batchId = null)
+    public function view($batchId = null): View
     {
         if (! bouncer()->hasPermission('data_transfer.job_tracker')) {
             abort(401, 'This action is unauthorized');
