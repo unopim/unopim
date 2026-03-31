@@ -348,7 +348,7 @@
                                 <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                                 <span class="max-w-[80px] truncate font-medium" v-text="f.name"></span>
                             </div>
-                            <button @click="removeFile(idx)" class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full text-[10px] hidden group-hover:flex items-center justify-center shadow-sm">&times;</button>
+                            <button @click="removeFile(idx)" class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 hover:bg-red-600 text-white rounded-full text-xs flex items-center justify-center shadow-sm transition-colors" title="Remove">&times;</button>
                         </div>
                     </div>
 
@@ -717,6 +717,15 @@ app.component('v-agenting-pim', {
         if (!this.activeSessionId) {
             this.activeSessionId = this.generateSessionId();
         }
+
+        // Delegate clicks on internal admin links to navigate in the same tab
+        this.$el.addEventListener('click', (e) => {
+            const link = e.target.closest('a[data-internal-link]');
+            if (link) {
+                e.preventDefault();
+                window.location.href = link.getAttribute('href');
+            }
+        });
     },
 
     watch: {
@@ -801,13 +810,14 @@ app.component('v-agenting-pim', {
                 : this.trans.sessionDefaultName;
 
             // Limit stored messages to prevent excessive localStorage usage.
-            const recentMessages = this.messages.slice(-50);
+            const recentMessages = this.messages.filter(m => !m.isRedirect).slice(-50);
             const sessionMessages = recentMessages.map(m => ({
                 role: m.role,
                 content: m.content || '',
                 result: m.result || null,
                 product_url: m.product_url || null,
                 download_url: m.download_url || null,
+                _confirmed: m._confirmed || false,
             }));
 
             const existingIdx = this.sessions.findIndex(s => s.id === this.activeSessionId);
@@ -965,7 +975,7 @@ app.component('v-agenting-pim', {
                 return false;
             }
 
-            const mutatingCapabilities = ['assign_categories', 'update_products', 'generate_variants'];
+            const mutatingCapabilities = ['assign_categories', 'update_products', 'generate_variants', 'manage_associations'];
 
             if (!mutatingCapabilities.includes(this.activeCapability.key)) {
                 return false;
@@ -1055,9 +1065,9 @@ app.component('v-agenting-pim', {
                     this.saveState();
                     setTimeout(() => { window.location.href = data.product_url; }, 1500);
                 } else if (this.shouldAutoRefreshAfterAction(data)) {
-                    this.messages.push({ role: 'assistant', content: 'Refreshing page to show latest changes...', isRedirect: true });
                     this.saveState();
-                    setTimeout(() => { window.location.reload(); }, 1200);
+                    this.streamingStatus = 'Refreshing page to show latest changes...';
+                    setTimeout(() => { window.location.reload(); }, 1500);
                 }
             } catch (err) {
                 if (files.length > 0 && this.pendingFiles.length === 0) this.pendingFiles = files;
@@ -1144,23 +1154,35 @@ app.component('v-agenting-pim', {
                 this.saveState();
                 setTimeout(() => { window.location.href = resultData.product_url; }, 1500);
             } else if (this.shouldAutoRefreshAfterAction(resultData)) {
-                this.messages.push({ role: 'assistant', content: 'Refreshing page to show latest changes...', isRedirect: true });
                 this.saveState();
-                setTimeout(() => { window.location.reload(); }, 1200);
+                this.streamingStatus = 'Refreshing page to show latest changes...';
+                setTimeout(() => { window.location.reload(); }, 1500);
             }
         },
 
         copyMessage(idx) {
             const text = this.messages[idx]?.content || '';
-            navigator.clipboard.writeText(text).then(() => {
-                // Use Vue.set-style reactivity by replacing the message object
+            const onSuccess = () => {
                 this.messages[idx] = { ...this.messages[idx], _copied: true };
                 setTimeout(() => {
                     if (this.messages[idx]) {
                         this.messages[idx] = { ...this.messages[idx], _copied: false };
                     }
                 }, 2000);
-            }).catch(() => {});
+            };
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(onSuccess).catch(() => {});
+            } else {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.cssText = 'position:fixed;left:-9999px;opacity:0';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                onSuccess();
+            }
         },
 
         retryFrom(idx) {
@@ -1241,8 +1263,8 @@ app.component('v-agenting-pim', {
 
         renderContent(msg, idx) {
             let text = msg.content || '';
-            // If confirmation buttons are shown, strip the confirmation prompt text
-            if (this.needsConfirmation(msg, idx)) {
+            // Strip the confirmation prompt text when buttons are shown OR after user has confirmed
+            if (this.needsConfirmation(msg, idx) || msg._confirmed) {
                 text = text.replace(/\n*(?:shall i proceed|do you want me to proceed|should i (?:go ahead|proceed|create|update|delete|continue)|confirm.*(?:yes|no)|proceed)\s*[\?\.]?\s*\(?\s*(?:yes\s*[\/\\|]\s*no)?\s*\)?\s*$/i, '').trimEnd();
             }
             return text;
@@ -1254,7 +1276,12 @@ app.component('v-agenting-pim', {
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                 .replace(/\*(.*?)\*/g, '<em>$1</em>')
                 .replace(/`([^`]+)`/g, '<code class="bg-gray-100 dark:bg-cherry-800 px-1 py-0.5 rounded text-xs font-mono text-violet-700 dark:text-violet-400">$1</code>')
-                .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-violet-600 underline hover:no-underline" target="_blank">$1</a>')
+                .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, url) => {
+                    const isInternal = url.includes('/admin/');
+                    return isInternal
+                        ? `<a href="${url}" data-internal-link class="text-violet-600 underline hover:no-underline">${label}</a>`
+                        : `<a href="${url}" class="text-violet-600 underline hover:no-underline" target="_blank">${label}</a>`;
+                })
                 .replace(/^### (.+)$/gm, '<p class="font-semibold text-sm mt-2 mb-1">$1</p>')
                 .replace(/^## (.+)$/gm, '<p class="font-bold text-sm mt-2 mb-1">$1</p>')
                 .replace(/^# (.+)$/gm, '<p class="font-bold text-base mt-2 mb-1">$1</p>')
@@ -1268,6 +1295,7 @@ app.component('v-agenting-pim', {
                 return DOMPurify.sanitize(html, {
                     ALLOWED_TAGS: ['strong', 'em', 'code', 'a', 'p', 'br', 'span', 'ul', 'ol', 'li', 'table', 'thead', 'tbody', 'tr', 'th', 'td'],
                     ALLOWED_ATTR: ['href', 'target', 'class', 'style'],
+                    ADD_ATTR: ['data-internal-link'],
                 });
             }
             return html;
@@ -1292,7 +1320,7 @@ app.component('v-agenting-pim', {
                     selectedPlatformId: this.selectedPlatformId,
                     selectedModel: this.selectedModel,
                     activeSessionId: this.activeSessionId,
-                    messages: this.messages.map(m => ({ role: m.role, content: m.content, result: m.result || null, product_url: m.product_url || null, download_url: m.download_url || null })),
+                    messages: this.messages.filter(m => !m.isRedirect).map(m => ({ role: m.role, content: m.content, result: m.result || null, product_url: m.product_url || null, download_url: m.download_url || null, _confirmed: m._confirmed || false })),
                 }));
 
                 // Auto-save current session to localStorage
@@ -1318,7 +1346,7 @@ app.component('v-agenting-pim', {
                     }
                 }
                 if (s.activeSessionId) this.activeSessionId = s.activeSessionId;
-                if (Array.isArray(s.messages) && s.messages.length > 0) this.messages = s.messages;
+                if (Array.isArray(s.messages) && s.messages.length > 0) this.messages = s.messages.filter(m => !m.isRedirect);
                 if (s.isOpen) {
                     // Disable the Vue panel slide-in transition and #app margin animation on page load.
                     // Both noTransition and isOpen must change in the SAME synchronous tick so

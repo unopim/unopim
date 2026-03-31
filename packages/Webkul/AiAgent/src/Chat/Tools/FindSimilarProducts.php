@@ -65,9 +65,11 @@ class FindSimilarProducts implements PimTool
                     return json_encode(['error' => 'Either query or sku is required.']);
                 }
 
+                $prefix = DB::getTablePrefix();
+
                 $qb = DB::table('products as p')
                     ->leftJoin('attribute_families as af', 'af.id', '=', 'p.attribute_family_id')
-                    ->select('p.id', 'p.sku', 'p.type', 'p.status', 'p.values', 'af.code as family_code')
+                    ->select('p.id', 'p.sku', 'p.type', 'p.status', DB::raw("`{$prefix}p`.`values`"), 'af.code as family_code')
                     ->orderByDesc('p.id')
                     ->limit($poolLimit);
 
@@ -81,19 +83,22 @@ class FindSimilarProducts implements PimTool
                     return json_encode(['total' => 0, 'products' => []]);
                 }
 
-                $rows = $products->map(function ($p) use ($context) {
+                $editBaseUrl = route('admin.catalog.products.edit', ['id' => '__ID__']);
+
+                $rows = $products->map(function ($p) use ($context, $editBaseUrl) {
                     $values = json_decode($p->values, true) ?? [];
                     $name = $values['channel_locale_specific'][$context->channel][$context->locale]['name']
                         ?? $values['common']['url_key']
                         ?? '(unnamed)';
 
                     return [
-                        'id'     => $p->id,
-                        'sku'    => $p->sku,
-                        'name'   => $name,
-                        'type'   => $p->type,
-                        'status' => $p->status ? 'active' : 'inactive',
-                        'family' => $p->family_code,
+                        'id'       => $p->id,
+                        'sku'      => $p->sku,
+                        'name'     => $name,
+                        'type'     => $p->type,
+                        'status'   => $p->status ? 'active' : 'inactive',
+                        'family'   => $p->family_code,
+                        'edit_url' => str_replace('__ID__', (string) $p->id, $editBaseUrl),
                     ];
                 })->values();
 

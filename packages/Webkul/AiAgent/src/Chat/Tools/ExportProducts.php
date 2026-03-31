@@ -25,8 +25,10 @@ class ExportProducts implements PimTool
                     return $denied;
                 }
 
+                $prefix = DB::getTablePrefix();
+
                 $qb = DB::table('products as p')
-                    ->select('p.id', 'p.sku', 'p.type', 'p.status', 'p.values');
+                    ->select('p.id', 'p.sku', 'p.type', 'p.status', DB::raw("`{$prefix}p`.`values`"));
 
                 if ($skus) {
                     $skuList = array_map('trim', explode(',', $skus));
