@@ -14,7 +14,7 @@ env:
 
 jobs:
   playwright_tests:
-    name: Playwright E2E
+    name: Playwright E2E | Shard ${{ matrix.shard-index }}/${{ matrix.shard-total }}
     runs-on: ubuntu-24.04
 
     strategy:
@@ -22,8 +22,6 @@ jobs:
       matrix:
         shard-index: [1, 2, 3, 4]
         shard-total: [4]
-
-    name: Playwright E2E | Shard ${{ matrix.shard-index }} of ${{ matrix.shard-total }}
 
     services:
       mysql:
