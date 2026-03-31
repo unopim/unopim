@@ -14,7 +14,6 @@ use Webkul\DataTransfer\Helpers\Export as ExportHelper;
 use Webkul\DataTransfer\Repositories\JobInstancesRepository;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
-use Webkul\DataTransfer\Services\JobLogger;
 
 class ExportProducts implements PimTool
 {
