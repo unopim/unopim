@@ -1,8 +1,9 @@
 const { test, expect } = require('../../utils/fixtures');
-test.describe('UnoPim Test cases', () => {
+const { navigateTo } = require('../../utils/helpers');
+
+test.describe.serial('UnoPim Test cases', () => {
 test('Delete Locale', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Locales' }).click();
+  await navigateTo(adminPage, 'locales');
   await adminPage.getByRole('textbox', { name: 'Search by code' }).click();
   await adminPage.getByRole('textbox', { name: 'Search by code' }).type('af_ZA');
   await adminPage.keyboard.press('Enter');
@@ -14,8 +15,7 @@ test('Delete Locale', async ({ adminPage }) => {
 });
 
 test('Create locale with empty Code field', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Locales' }).click();
+  await navigateTo(adminPage, 'locales');
   await adminPage.getByRole('button', { name: 'Create Locale' }).click();
   await adminPage.getByRole('textbox', { name: 'Code', exact: true }).fill('');
   await adminPage.locator('label[for="status"]').click();
@@ -24,8 +24,7 @@ test('Create locale with empty Code field', async ({ adminPage }) => {
 });
 
 test('Create locale with existing Code value', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Locales' }).click();
+  await navigateTo(adminPage, 'locales');
   await adminPage.getByRole('button', { name: 'Create Locale' }).click();
   await adminPage.getByRole('textbox', { name: 'Code', exact: true }).fill('en_US');
   await adminPage.locator('label[for="status"]').click();
@@ -34,8 +33,7 @@ test('Create locale with existing Code value', async ({ adminPage }) => {
 });
 
 test('Create locale', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Locales' }).click();
+  await navigateTo(adminPage, 'locales');
   await adminPage.getByRole('button', { name: 'Create Locale' }).click();
   await adminPage.getByRole('textbox', { name: 'Code', exact: true }).fill('af_ZA');
   await adminPage.locator('label[for="status"]').click();
@@ -44,8 +42,7 @@ test('Create locale', async ({ adminPage }) => {
 });
 
 test('Update Locale ', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Locales' }).click();
+  await navigateTo(adminPage, 'locales');
   await adminPage.getByRole('textbox', { name: 'Search by code' }).click();
   await adminPage.getByRole('textbox', { name: 'Search by code' }).type('af_ZA');
   await adminPage.keyboard.press('Enter');
@@ -58,8 +55,7 @@ test('Update Locale ', async ({ adminPage }) => {
 });
 
 test('Delete Enable Locale', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Locales' }).click();
+  await navigateTo(adminPage, 'locales');
   await adminPage.waitForLoadState('networkidle');
   const itemRow = adminPage.locator('div').filter({ hasText: 'en_US' }).first();
   await itemRow.locator('span[title="Delete"]').first().click();

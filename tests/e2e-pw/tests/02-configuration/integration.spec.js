@@ -1,9 +1,13 @@
 const { test, expect } = require('../../utils/fixtures');
+const { navigateTo, generateUid } = require('../../utils/helpers');
 
-test.describe('UnoPim Test cases', () => {
+const uid = generateUid();
+const INTEGRATION_NAME = `Integration ${uid}`;
+const UPDATED_NAME = `Integration Updated ${uid}`;
+
+test.describe.serial('UnoPim Test cases', () => {
 test('Create Integration with empty Name field', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Integrations' }).click();
+  await navigateTo(adminPage, 'integrations');
   await adminPage.getByRole('link', { name: 'Create' }).click();
   await adminPage.waitForLoadState('load');
   await adminPage.getByRole('textbox', { name: 'Name' }).click();
@@ -15,19 +19,17 @@ test('Create Integration with empty Name field', async ({ adminPage }) => {
 });
 
 test('Create Integration field with empty Assign User field', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Integrations' }).click();
+  await navigateTo(adminPage, 'integrations');
   await adminPage.getByRole('link', { name: 'Create' }).click();
   await adminPage.waitForLoadState('load');
   await adminPage.getByRole('textbox', { name: 'Name' }).click();
-  await adminPage.getByRole('textbox', { name: 'Name' }).fill('Admin User');
+  await adminPage.getByRole('textbox', { name: 'Name' }).fill(INTEGRATION_NAME);
   await adminPage.getByRole('button', { name: 'Save' }).click();
   await expect(adminPage.locator('#app').getByText('The Assign User field is required')).toBeVisible();
 });
 
 test('Create Integration field with empty Name and Assign User field', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Integrations' }).click();
+  await navigateTo(adminPage, 'integrations');
   await adminPage.getByRole('link', { name: 'Create' }).click();
   await adminPage.waitForLoadState('load');
   await adminPage.getByRole('textbox', { name: 'Name' }).click();
@@ -38,12 +40,11 @@ test('Create Integration field with empty Name and Assign User field', async ({ 
 });
 
 test('Create Integration field', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Integrations' }).click();
+  await navigateTo(adminPage, 'integrations');
   await adminPage.getByRole('link', { name: 'Create' }).click();
   await adminPage.waitForLoadState('load');
   await adminPage.getByRole('textbox', { name: 'Name' }).click();
-  await adminPage.getByRole('textbox', { name: 'Name' }).fill('Admin User');
+  await adminPage.getByRole('textbox', { name: 'Name' }).fill(INTEGRATION_NAME);
   await adminPage.locator('input[name="admin_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option').first().click();
   await adminPage.getByRole('button', { name: 'Save' }).click();
@@ -51,25 +52,22 @@ test('Create Integration field', async ({ adminPage }) => {
 });
 
 test('should allow Integration search', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Integrations' }).click();
+  await navigateTo(adminPage, 'integrations');
   await adminPage.getByRole('textbox', { name: 'Search' }).click();
-  await adminPage.getByRole('textbox', { name: 'Search' }).type('Admin');
+  await adminPage.getByRole('textbox', { name: 'Search' }).type(INTEGRATION_NAME);
   await adminPage.keyboard.press('Enter');
   await adminPage.waitForLoadState('networkidle');
-  await expect(adminPage.locator('#app').locator('text=Admin User')).toBeVisible();
+  await expect(adminPage.locator('#app').locator(`text=${INTEGRATION_NAME}`)).toBeVisible();
 });
 
 test('should open the filter menu when clicked', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Integrations' }).click();
+  await navigateTo(adminPage, 'integrations');
   await adminPage.getByText('Filter', { exact: true }).click();
   await expect(adminPage.getByText('Apply Filters')).toBeVisible();
 });
 
 test('should allow setting items per adminPage', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Integrations' }).click();
+  await navigateTo(adminPage, 'integrations');
   const perPageBtn = adminPage.getByRole('button', { name: 'Per Page' });
   await perPageBtn.click();
   await adminPage.getByText('20', { exact: true }).click();
@@ -77,9 +75,8 @@ test('should allow setting items per adminPage', async ({ adminPage }) => {
 });
 
 test('should perform actions on a Integration (Edit, Delete)', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Integrations' }).click();
-  const itemRow = adminPage.locator('div', { hasText: 'Admin User' });
+  await navigateTo(adminPage, 'integrations');
+  const itemRow = adminPage.locator('div', { hasText: INTEGRATION_NAME });
   await itemRow.locator('span[title="Edit"]').first().click();
   await expect(adminPage).toHaveURL(/\/admin\/integrations\/api-keys\/edit/);
   await adminPage.goBack();
@@ -89,9 +86,8 @@ test('should perform actions on a Integration (Edit, Delete)', async ({ adminPag
 });
 
 test('Generate API key', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Integrations' }).click();
-  const itemRow = adminPage.locator('div', { hasText: 'Admin User' });
+  await navigateTo(adminPage, 'integrations');
+  const itemRow = adminPage.locator('div', { hasText: INTEGRATION_NAME });
   await itemRow.locator('span[title="Edit"]').first().click();
   await adminPage.waitForLoadState('load');
   await adminPage.getByRole('button', { name: 'Generate' }).click();
@@ -103,9 +99,8 @@ test('Generate API key', async ({ adminPage }) => {
 });
 
 test('Regenerate API key', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Integrations' }).click();
-  const itemRow = adminPage.locator('div', { hasText: 'Admin User' });
+  await navigateTo(adminPage, 'integrations');
+  const itemRow = adminPage.locator('div', { hasText: INTEGRATION_NAME });
   await itemRow.locator('span[title="Edit"]').first().click();
   await adminPage.waitForLoadState('load');
   await adminPage.getByRole('button', { name: 'Re-Generate Secret Key' }).click();
@@ -117,21 +112,19 @@ test('Regenerate API key', async ({ adminPage }) => {
 });
 
 test('Update Integration', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Integrations' }).click();
-  const itemRow = adminPage.locator('div', { hasText: 'Admin User' });
+  await navigateTo(adminPage, 'integrations');
+  const itemRow = adminPage.locator('div', { hasText: INTEGRATION_NAME });
   await itemRow.locator('span[title="Edit"]').first().click();
   await adminPage.waitForLoadState('load');
   await adminPage.getByRole('textbox', { name: 'Name' }).click();
-  await adminPage.getByRole('textbox', { name: 'Name' }).fill('Admin Testing');
+  await adminPage.getByRole('textbox', { name: 'Name' }).fill(UPDATED_NAME);
   await adminPage.getByRole('button', { name: 'Save' }).click();
   await expect(adminPage.locator('#app').getByText(/API Integration is updated successfully/i)).toBeVisible({ timeout: 15000 });
 });
 
 test('Delete Integration', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Integrations' }).click();
-  const itemRow = adminPage.locator('div', { hasText: 'Admin Testing' });
+  await navigateTo(adminPage, 'integrations');
+  const itemRow = adminPage.locator('div', { hasText: UPDATED_NAME });
   await itemRow.locator('span[title="Delete"]').first().click();
   await adminPage.getByRole('button', { name: 'Delete' }).click();
   await expect(adminPage.locator('#app').getByText(/API Integration is deleted successfully/i)).toBeVisible({ timeout: 15000 });

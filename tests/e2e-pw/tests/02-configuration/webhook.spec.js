@@ -1,34 +1,31 @@
 const { test, expect } = require('../../utils/fixtures');
+const { navigateTo } = require('../../utils/helpers');
+
 test.describe('UnoPim Webhook test cases', () => {
 test('Check the webhook option after installtion', async({adminPage})=>{
-  await expect(adminPage.getByRole('link', { name: ' Configuration' })).toBeVisible();
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await expect(adminPage.getByRole('link', { name: 'Webhook' })).toBeVisible();
+  await navigateTo(adminPage, 'webhook');
+  await expect(adminPage).toHaveURL(/.*\/admin\/webhook\/settings/);
 });
 
 test('Check that webhook is clickable', async({adminPage})=>{
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Webhook' }).click();
+  await navigateTo(adminPage, 'webhook');
   await expect(adminPage.getByRole('link', {name:'Webhook'})).toBeVisible();
   await expect(adminPage.getByRole('link', {name:'Webhook'})).toBeEnabled();
 });
 
 test('Check the url of the webhook page', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Webhook' }).click();
+  await navigateTo(adminPage, 'webhook');
   await expect(adminPage).toHaveURL(/.*\/admin\/webhook\/settings/);
 });
 
 test('Check the page after clicking webhook', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Webhook' }).click();
+  await navigateTo(adminPage, 'webhook');
   await expect(adminPage).toHaveURL(/.*\/admin\/webhook\/settings/);
-  await expect(adminPage.locator('#app').getByText('Webhook Settings')).toBeVisible();              
+  await expect(adminPage.locator('#app').getByText('Webhook Settings', { exact: true })).toBeVisible();
 });
 
 test('Check the fields in the webhook page', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Webhook' }).click();
+  await navigateTo(adminPage, 'webhook');
   await expect(adminPage.locator('label[for="webhook_active"]')).toBeVisible();
   await expect(adminPage.locator('label[for="webhook_active"]')).toBeEnabled();
   const webhookUrlField = adminPage.locator('input[name="webhook_url"]');
@@ -39,15 +36,13 @@ test('Check the fields in the webhook page', async ({ adminPage }) => {
 });
 
 test('Check saving webhook settings with empty field', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Webhook' }).click();
+  await navigateTo(adminPage, 'webhook');
   await adminPage.getByRole('button', { name: 'Save' }).click();
   await expect(adminPage.locator('#app').getByText('The Webhook URL field is required')).toBeVisible();
 });
 
 test('Check by saving webhook URL with invalid random string', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Webhook' }).click();
+  await navigateTo(adminPage, 'webhook');
   const webhookUrlField = adminPage.locator('input[name="webhook_url"]');
   await webhookUrlField.fill('invalid-url');
   await adminPage.getByRole('button', { name: 'Save' }).click();
@@ -55,8 +50,7 @@ test('Check by saving webhook URL with invalid random string', async ({ adminPag
 });
 
 test('Check by saving webhook URL with valid URL', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Webhook' }).click();
+  await navigateTo(adminPage, 'webhook');
   const webhookUrlField = adminPage.locator('input[name="webhook_url"]');
   await webhookUrlField.fill('https://example.com/webhook');
   await adminPage.getByRole('button', { name: 'Save' }).click();
@@ -64,8 +58,7 @@ test('Check by saving webhook URL with valid URL', async ({ adminPage }) => {
 });
 
 test('Check toggling the webhook active checkbox', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Webhook' }).click();
+  await navigateTo(adminPage, 'webhook');
   const webhookActiveCheckbox = adminPage.locator('label[for="webhook_active"]');
   const isCheckedBefore = await webhookActiveCheckbox.isChecked();
   await webhookActiveCheckbox.click();
@@ -74,8 +67,7 @@ test('Check toggling the webhook active checkbox', async ({ adminPage }) => {
 });
 
 test('Check that webhook settings persist after saving', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Webhook' }).click();
+  await navigateTo(adminPage, 'webhook');
   const webhookUrlField = adminPage.locator('input[name="webhook_url"]');
   const webhookActiveCheckbox = adminPage.locator('label[for="webhook_active"]');
   const urlToSet = 'https://example.com/webhook';
@@ -91,24 +83,21 @@ test('Check that webhook settings persist after saving', async ({ adminPage }) =
 });
 
 test('Check the log section in webhook page is visible and clickable', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Webhook' }).click();
+  await navigateTo(adminPage, 'webhook');
   const logSection = adminPage.getByRole('link', { name: 'Logs' });
   await expect(logSection).toBeVisible();
   await expect(logSection).toBeEnabled();
-});   
+});
 
 test('Check the URL of the log section in webhook page', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Webhook' }).click();
+  await navigateTo(adminPage, 'webhook');
   const logSection = adminPage.getByRole('link', { name: 'Logs' });
   await logSection.click();
   await expect(adminPage).toHaveURL(/admin\/webhook\/settings.*logs/);
 });
 
 test('Check the content of the log section in webhook page', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Webhook' }).click();
+  await navigateTo(adminPage, 'webhook');
   const logSection = adminPage.getByRole('link', { name: 'Logs' });
   await logSection.click();
   await expect(adminPage.locator('#app').getByText('Webhook Logs')).toBeVisible();
@@ -116,8 +105,7 @@ test('Check the content of the log section in webhook page', async ({ adminPage 
 });
 
 test('Check the presence of columns in the log section of webhook page', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Webhook' }).click();
+  await navigateTo(adminPage, 'webhook');
   const logSection = adminPage.getByRole('link', { name: 'Logs' });
   await logSection.click();
   await expect(adminPage.locator('#app').getByText('ID')).toBeVisible();
@@ -129,8 +117,7 @@ test('Check the presence of columns in the log section of webhook page', async (
 });
 
 test('Check the webhook log filtering options', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Webhook' }).click();
+  await navigateTo(adminPage, 'webhook');
   const logSection = adminPage.getByRole('link', { name: 'Logs' });
   await logSection.click();
   await adminPage.getByText('Filter', { exact: true }).click();
@@ -142,8 +129,7 @@ test('Check the webhook log filtering options', async ({ adminPage }) => {
 });
 
 test('Check the search bar in the webhook log section', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Webhook' }).click();
+  await navigateTo(adminPage, 'webhook');
   const logSection = adminPage.getByRole('link', { name: 'Logs' });
   await logSection.click();
   const searchBar = adminPage.getByRole('textbox', { name: 'Search' });
@@ -152,24 +138,21 @@ test('Check the search bar in the webhook log section', async ({ adminPage }) =>
 });
 
 test('Check the history section on the webhook page', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Webhook' }).click();
+  await navigateTo(adminPage, 'webhook');
   const historySection = adminPage.getByRole('link', { name: 'History' });
   await expect(historySection).toBeVisible();
   await expect(historySection).toBeEnabled();
 });
 
 test('Check the URL of the history section in webhook page', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Webhook' }).click();
+  await navigateTo(adminPage, 'webhook');
   const historySection = adminPage.getByRole('link', { name: 'History' });
   await historySection.click();
   await expect(adminPage).toHaveURL(/admin\/webhook\/settings.*history/);
 });
 
 test('Check the column of the history section in webhook page', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Webhook' }).click();
+  await navigateTo(adminPage, 'webhook');
   const historySection = adminPage.getByRole('link', { name: 'History' });
   await historySection.click();
   await expect(adminPage.locator('#app').getByText('Date / Time')).toBeVisible();

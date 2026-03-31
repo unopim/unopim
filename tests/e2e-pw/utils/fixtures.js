@@ -10,9 +10,8 @@ exports.test = base.test.extend({
     const context = await browser.newContext({ storageState: STORAGE_STATE });
     const page = await context.newPage();
 
-    // Automatically navigate to admin dashboard
-    await page.goto('/admin/dashboard');
-    await page.waitForLoadState('load');
+    // Navigate to dashboard to validate session and warm up the app
+    await page.goto('/admin/dashboard', { waitUntil: 'domcontentloaded', timeout: 30000 });
 
     // Pass to test
     await use(page);
@@ -20,7 +19,12 @@ exports.test = base.test.extend({
     // Cleanup
     await page.close();
     await context.close();
-  }
+  },
+
+  /** Unique identifier for test data isolation in parallel execution */
+  uid: async ({}, use) => {
+    await use(Date.now().toString(36) + Math.random().toString(36).slice(2, 6));
+  },
 });
 
 exports.expect = base.expect;

@@ -1,4 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
+const { navigateTo } = require('../../utils/helpers');
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 
@@ -143,8 +144,7 @@ test('1.8 - Verify platform datagrid columns', async ({ adminPage }) => {
 // ═════════════════════════════════════════════════
 
 test('2.1 - Verify Magic AI is visible in sidebar', async ({ adminPage }) => {
-  await expect(adminPage.getByRole('link', { name: ' Configuration' })).toBeVisible();
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
+  await navigateTo(adminPage, 'configuration');
   await expect(adminPage.getByRole('link', { name: 'Magic AI' })).toBeVisible();
 });
 
@@ -497,9 +497,7 @@ test('4.12 - Search prompts in datagrid', async ({ adminPage }) => {
 // ═════════════════════════════════════════════════
 
 test('5.1 - Enable Hindi locale for translation testing', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Locales' }).click();
-  await adminPage.waitForLoadState('networkidle');
+  await navigateTo(adminPage, 'locales');
   await adminPage.getByRole('textbox', { name: 'Search by code' }).fill('hi');
   await adminPage.keyboard.press('Enter');
   await adminPage.waitForLoadState('networkidle');
@@ -513,9 +511,7 @@ test('5.1 - Enable Hindi locale for translation testing', async ({ adminPage }) 
 
 test('5.2 - Assign Hindi locale to default channel', async ({ adminPage }) => {
   test.setTimeout(30000);
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Channels' }).click();
-  await adminPage.waitForLoadState('networkidle');
+  await navigateTo(adminPage, 'channels');
 
   const defaultRow = adminPage.locator('div').filter({ hasText: /defaultDefault/ });
   await defaultRow.locator('span[title="Edit"]').first().click();
@@ -542,9 +538,7 @@ test('5.2 - Assign Hindi locale to default channel', async ({ adminPage }) => {
 // ═════════════════════════════════════════════════
 
 test('6.1 - Enable AI Translate on description attribute', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: /Catalog/ }).click();
-  await adminPage.getByRole('link', { name: 'Attributes' }).click();
-  await adminPage.waitForLoadState('networkidle');
+  await navigateTo(adminPage, 'attributes');
   await adminPage.locator('input[type="text"]').first().fill('description');
   await adminPage.keyboard.press('Enter');
   await adminPage.waitForLoadState('networkidle');
@@ -560,9 +554,7 @@ test('6.1 - Enable AI Translate on description attribute', async ({ adminPage })
 });
 
 test('6.2 - Enable AI Translate on short_description attribute', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: /Catalog/ }).click();
-  await adminPage.getByRole('link', { name: 'Attributes' }).click();
-  await adminPage.waitForLoadState('networkidle');
+  await navigateTo(adminPage, 'attributes');
   await adminPage.locator('input[type="text"]').first().fill('short_desc');
   await adminPage.keyboard.press('Enter');
   await adminPage.waitForLoadState('networkidle');
@@ -582,7 +574,7 @@ test('6.2 - Enable AI Translate on short_description attribute', async ({ adminP
 // ═════════════════════════════════════════════════
 
 test('7.1 - Create a product for Magic AI testing', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Catalog' }).click();
+  await navigateTo(adminPage, 'products');
   await adminPage.getByRole('button', { name: 'Create Product' }).click();
   await expect(adminPage.locator('input[name="sku"]')).toBeVisible();
 
@@ -596,8 +588,7 @@ test('7.1 - Create a product for Magic AI testing', async ({ adminPage }) => {
 });
 
 test('7.2 - Verify Magic AI button exists in product WYSIWYG toolbar', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Catalog' }).click();
-  await adminPage.waitForLoadState('networkidle');
+  await navigateTo(adminPage, 'products');
 
   const itemRow = adminPage.locator('div', { hasText: 'magicai-test-prod-2' });
   await itemRow.locator('span[title="Edit"]').first().click();
@@ -613,8 +604,7 @@ test('7.2 - Verify Magic AI button exists in product WYSIWYG toolbar', async ({ 
 test('7.3 - Open AI Assistance modal and verify fields', async ({ adminPage }) => {
   test.skip(!OPENAI_API_KEY, 'OPENAI_API_KEY not set — Magic AI button requires configured platform');
   test.setTimeout(60000);
-  await adminPage.getByRole('link', { name: ' Catalog' }).click();
-  await adminPage.waitForLoadState('networkidle');
+  await navigateTo(adminPage, 'products');
 
   const itemRow = adminPage.locator('div', { hasText: 'magicai-test-prod-2' });
   await itemRow.locator('span[title="Edit"]').first().click();
@@ -642,8 +632,7 @@ test('7.3 - Open AI Assistance modal and verify fields', async ({ adminPage }) =
 // and uses fragile locators (multiselect searchbox resolves to tax_category input in CI).
 
 test('7.5 - Verify More Actions menu exists on product edit page', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Catalog' }).click();
-  await adminPage.waitForLoadState('networkidle');
+  await navigateTo(adminPage, 'products');
 
   const itemRow = adminPage.locator('div', { hasText: 'magicai-test-prod-2' });
   await itemRow.locator('span[title="Edit"]').first().click();
@@ -663,8 +652,7 @@ test('7.5 - Verify More Actions menu exists on product edit page', async ({ admi
 
 test('7.6 - Verify Translate Step 1 fields', async ({ adminPage }) => {
   test.setTimeout(30000);
-  await adminPage.getByRole('link', { name: ' Catalog' }).click();
-  await adminPage.waitForLoadState('networkidle');
+  await navigateTo(adminPage, 'products');
 
   const itemRow = adminPage.locator('div', { hasText: 'magicai-test-prod-2' });
   await itemRow.locator('span[title="Edit"]').first().click();
@@ -732,8 +720,7 @@ test('8.2 - Verify Magic AI button on category description WYSIWYG', async ({ ad
 // ═════════════════════════════════════════════════
 
 test('9.1 - Verify Magic AI permission tree under Configuration in Roles', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Roles' }).click();
+  await navigateTo(adminPage, 'roles');
   await adminPage.getByRole('link', { name: 'Create Role' }).click();
   await adminPage.waitForLoadState('networkidle');
 
@@ -749,8 +736,7 @@ test('9.1 - Verify Magic AI permission tree under Configuration in Roles', async
 });
 
 test('9.2 - Create a Role with MagicAI permission', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Roles' }).click();
+  await navigateTo(adminPage, 'roles');
   await adminPage.getByRole('link', { name: 'Create Role' }).click();
   await adminPage.waitForLoadState('networkidle');
 
@@ -766,8 +752,7 @@ test('9.2 - Create a Role with MagicAI permission', async ({ adminPage }) => {
 });
 
 test('9.3 - Create a user with MagicAI role', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Users' }).click();
+  await navigateTo(adminPage, 'users');
   await adminPage.getByRole('button', { name: 'Create User' }).click();
   await adminPage.getByRole('textbox', { name: 'Name' }).fill('MagicAI Tester');
   await adminPage.getByRole('textbox', { name: 'email@example.com' }).fill('magicai-tester@example.com');
@@ -786,9 +771,7 @@ test('9.3 - Create a user with MagicAI role', async ({ adminPage }) => {
 });
 
 test('9.4 - Delete the MagicAI test user', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Users' }).click();
-  await adminPage.waitForLoadState('networkidle');
+  await navigateTo(adminPage, 'users');
   await adminPage.locator('input[type="text"]').first().fill('magicai-tester');
   await adminPage.keyboard.press('Enter');
   await adminPage.waitForLoadState('networkidle');
@@ -800,9 +783,7 @@ test('9.4 - Delete the MagicAI test user', async ({ adminPage }) => {
 });
 
 test('9.5 - Delete the MagicAI Manager role', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Roles' }).click();
-  await adminPage.waitForLoadState('networkidle');
+  await navigateTo(adminPage, 'roles');
   await adminPage.locator('input[type="text"]').first().fill('MagicAI Manager');
   await adminPage.keyboard.press('Enter');
   await adminPage.waitForLoadState('networkidle');

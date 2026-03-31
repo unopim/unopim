@@ -1,8 +1,11 @@
 const { test, expect } = require('../../utils/fixtures');
-test.describe('Attribute Family', () => {
+const { navigateTo, generateUid } = require('../../utils/helpers');
+
+const uid = generateUid();
+
+test.describe.serial('Attribute Family', () => {
 test('Create Attribute family with empty code field', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Catalog' }).click();
-  await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
+  await navigateTo(adminPage, 'attributeFamilies');
   await adminPage.getByRole('link', { name: 'Create Attribute Family' }).click();
   await adminPage.getByRole('textbox', { name: 'Enter Code' }).click();
   await adminPage.getByRole('textbox', { name: 'Enter Code' }).fill('');
@@ -13,11 +16,10 @@ test('Create Attribute family with empty code field', async ({ adminPage }) => {
 });
 
 test('Create Attribute family', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Catalog' }).click();
-  await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
+  await navigateTo(adminPage, 'attributeFamilies');
   await adminPage.getByRole('link', { name: 'Create Attribute Family' }).click();
   await adminPage.getByRole('textbox', { name: 'Enter Code' }).click();
-  await adminPage.getByRole('textbox', { name: 'Enter Code' }).fill('header');
+  await adminPage.getByRole('textbox', { name: 'Enter Code' }).fill(`header_${uid}`);
   await adminPage.locator('input[name="en_US\\[name\\]"]').click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Header');
   await adminPage.getByRole('button', { name: 'Save Attribute Family' }).click();
@@ -25,24 +27,22 @@ test('Create Attribute family', async ({ adminPage }) => {
 });
 
 test('should allow attribute family search', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Catalog' }).click();
-  await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
+  await navigateTo(adminPage, 'attributeFamilies');
   await adminPage.getByRole('textbox', { name: 'Search' }).click();
-  await adminPage.getByRole('textbox', { name: 'Search' }).type('header');
+  await adminPage.getByRole('textbox', { name: 'Search' }).fill(`header_${uid}`);
   await adminPage.keyboard.press('Enter');
-  await expect(adminPage.locator('text=headerHeader', {exact:true})).toBeVisible();
+  await adminPage.waitForLoadState('networkidle');
+  await expect(adminPage.locator('#app').getByText(`header_${uid}`)).toBeVisible();
 });
 
 test('should open the filter menu when clicked', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Catalog' }).click();
-  await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
+  await navigateTo(adminPage, 'attributeFamilies');
   await adminPage.getByText('Filter', { exact: true }).click();
   await expect(adminPage.locator('#app').getByText('Apply Filters')).toBeVisible();
 });
 
 test('should allow setting items per adminPage', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Catalog' }).click();
-  await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
+  await navigateTo(adminPage, 'attributeFamilies');
   const perPageBtn = adminPage.getByRole('button', { name: 'Per Page' });
   await perPageBtn.click();
   await adminPage.getByText('20', { exact: true }).click();
@@ -50,9 +50,8 @@ test('should allow setting items per adminPage', async ({ adminPage }) => {
 });
 
 test('should perform actions on a attribute family (Edit, Copy, Delete)', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Catalog' }).click();
-  await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
-  const itemRow = adminPage.locator('div', { hasText: 'header' });
+  await navigateTo(adminPage, 'attributeFamilies');
+  const itemRow = adminPage.locator('div', { hasText: `header_${uid}` });
   await itemRow.locator('span[title="Edit"]').first().click();
   await expect(adminPage).toHaveURL(/\/admin\/catalog\/families\/edit/);
   await adminPage.goBack();
@@ -66,9 +65,9 @@ test('should perform actions on a attribute family (Edit, Copy, Delete)', async 
 });
 
 test('Edit Attribute Family', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Catalog' }).click();
-  await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
-  await adminPage.getByText('headerHeader').getByTitle('Edit').click();
+  await navigateTo(adminPage, 'attributeFamilies');
+  const itemRow = adminPage.locator('div', { hasText: `header_${uid}` });
+  await itemRow.locator('span[title="Edit"]').first().click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Footer');
   await adminPage.locator('.secondary-button', { hasText: 'Assign Attribute Group' }).click();
@@ -91,9 +90,9 @@ test('Edit Attribute Family', async ({ adminPage }) => {
 });
 
 test('Delete Attribute Family', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Catalog' }).click();
-  await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
-  await adminPage.getByText('headerFooter').getByTitle('Delete').click();
+  await navigateTo(adminPage, 'attributeFamilies');
+  const itemRow = adminPage.locator('div', { hasText: `header_${uid}` });
+  await itemRow.locator('span[title="Delete"]').first().click();
   await adminPage.getByRole('button', { name: 'Delete' }).click();
   await expect(adminPage.locator('#app').getByText(/Family deleted successfully/i)).toBeVisible();
 });

@@ -1,8 +1,9 @@
 const { test, expect } = require('../../utils/fixtures');
-test.describe('UnoPim Test cases', () => {
+const { navigateTo } = require('../../utils/helpers');
+
+test.describe.serial('UnoPim Test cases', () => {
 test('Create Currency with empty Code field', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Currencies' }).click();
+  await navigateTo(adminPage, 'currencies');
   await adminPage.getByRole('button', { name: 'Create Currency' }).click();
   await adminPage.getByRole('textbox', { name: 'Code', exact: true }).click();
   await adminPage.getByRole('textbox', { name: 'Code', exact: true }).fill('');
@@ -16,8 +17,7 @@ test('Create Currency with empty Code field', async ({ adminPage }) => {
 });
 
 test('Create Currency with Code less than 3 character', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Currencies' }).click();
+  await navigateTo(adminPage, 'currencies');
   await adminPage.getByRole('button', { name: 'Create Currency' }).click();
   await adminPage.getByRole('textbox', { name: 'Code', exact: true }).click();
   await adminPage.getByRole('textbox', { name: 'Code', exact: true }).fill('gh');
@@ -31,8 +31,7 @@ test('Create Currency with Code less than 3 character', async ({ adminPage }) =>
 });
 
 test('Create Currency with Code more than 3 character', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Currencies' }).click();
+  await navigateTo(adminPage, 'currencies');
   await adminPage.getByRole('button', { name: 'Create Currency' }).click();
   await adminPage.getByRole('textbox', { name: 'Code', exact: true }).click();
   await adminPage.getByRole('textbox', { name: 'Code', exact: true }).fill('ghdn');
@@ -46,8 +45,7 @@ test('Create Currency with Code more than 3 character', async ({ adminPage }) =>
 });
 
 test('Create Currency ', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Currencies' }).click();
+  await navigateTo(adminPage, 'currencies');
   await adminPage.getByRole('button', { name: 'Create Currency' }).click();
   await adminPage.getByRole('textbox', { name: 'Code', exact: true }).click();
   await adminPage.getByRole('textbox', { name: 'Code', exact: true }).fill('VND');
@@ -61,8 +59,7 @@ test('Create Currency ', async ({ adminPage }) => {
 });
 
 test('should allow Currency search', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Currencies' }).click();
+  await navigateTo(adminPage, 'currencies');
   await adminPage.getByRole('textbox', { name: 'Search by code or id' }).click();
   await adminPage.getByRole('textbox', { name: 'Search by code or id' }).type('VN');
   await adminPage.keyboard.press('Enter');
@@ -70,8 +67,7 @@ test('should allow Currency search', async ({ adminPage }) => {
 });
 
 test('Update Currency ', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Currencies' }).click();
+  await navigateTo(adminPage, 'currencies');
   await adminPage.getByRole('textbox', { name: 'Search by code or id' }).click();
   await adminPage.getByRole('textbox', { name: 'Search by code or id' }).type('vnd');
   await adminPage.keyboard.press('Enter');
@@ -85,8 +81,7 @@ test('Update Currency ', async ({ adminPage }) => {
 });
 
 test('Delete Currency ', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Currencies' }).click();
+  await navigateTo(adminPage, 'currencies');
   await adminPage.getByRole('textbox', { name: 'Search by code or id' }).click();
   await adminPage.getByRole('textbox', { name: 'Search by code or id' }).type('vnd');
   await adminPage.keyboard.press('Enter');
@@ -97,12 +92,10 @@ test('Delete Currency ', async ({ adminPage }) => {
 });
 
 test('Delete Enable Currency ', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Currencies' }).click();
+  await navigateTo(adminPage, 'currencies');
   const itemRow = adminPage.locator('div', { hasText: 'Enabled' });
   await itemRow.locator('span[title="Delete"]').first().click();
   await adminPage.getByRole('button', { name: 'Delete' }).click();
   await expect(adminPage.locator('#app').getByText(/You cannot delete a currency linked to a channel/i)).toBeVisible();
 });
 });
-

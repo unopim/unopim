@@ -1,14 +1,14 @@
 const { test, expect } = require('../../utils/fixtures');
+const { navigateTo } = require('../../utils/helpers');
 
-test.describe('UnoPim Category', () => {
+test.describe.serial('UnoPim Category', () => {
   const uniqueId    = Date.now();
   const catCode     = `cat_${uniqueId}`;
   const catName     = `Television_${uniqueId}`;
   let   updatedName = `LG Television_${uniqueId}`;
 
   test('Create Categories with empty Code field', async ({ adminPage }) => {
-    await adminPage.getByRole('link', { name: ' Catalog' }).click();
-    await adminPage.getByRole('link', { name: 'Categories' }).click();
+    await navigateTo(adminPage, 'categories');
     await adminPage.getByRole('link', { name: 'Create Category' }).click();
     await adminPage.waitForLoadState('load');
     await adminPage.locator('#name').click();
@@ -18,8 +18,7 @@ test.describe('UnoPim Category', () => {
   });
 
   test('Create Categories with empty Name field', async ({ adminPage }) => {
-    await adminPage.getByRole('link', { name: ' Catalog' }).click();
-    await adminPage.getByRole('link', { name: 'Categories' }).click();
+    await navigateTo(adminPage, 'categories');
     await adminPage.getByRole('link', { name: 'Create Category' }).click();
     await adminPage.waitForLoadState('load');
     await adminPage.locator('input[name="code"]').click();
@@ -31,8 +30,7 @@ test.describe('UnoPim Category', () => {
   });
 
   test('Create Categories with empty Code and Name field', async ({ adminPage }) => {
-    await adminPage.getByRole('link', { name: ' Catalog' }).click();
-    await adminPage.getByRole('link', { name: 'Categories' }).click();
+    await navigateTo(adminPage, 'categories');
     await adminPage.getByRole('link', { name: 'Create Category' }).click();
     await adminPage.waitForLoadState('load');
     await adminPage.locator('input[name="code"]').click();
@@ -45,8 +43,7 @@ test.describe('UnoPim Category', () => {
   });
 
   test('Create Categories with all field', async ({ adminPage }) => {
-    await adminPage.getByRole('link', { name: ' Catalog' }).click();
-    await adminPage.getByRole('link', { name: 'Categories' }).click();
+    await navigateTo(adminPage, 'categories');
     await adminPage.getByRole('link', { name: 'Create Category' }).click();
     await adminPage.waitForLoadState('load');
     await adminPage.locator('input[name="code"]').click();
@@ -58,8 +55,7 @@ test.describe('UnoPim Category', () => {
   });
 
   test('should allow category search', async ({ adminPage }) => {
-    await adminPage.getByRole('link', { name: ' Catalog' }).click();
-    await adminPage.getByRole('link', { name: 'Categories' }).click();
+    await navigateTo(adminPage, 'categories');
     await adminPage.getByRole('textbox', { name: 'Search' }).click();
     await adminPage.getByRole('textbox', { name: 'Search' }).fill(catCode);
     await adminPage.keyboard.press('Enter');
@@ -68,15 +64,13 @@ test.describe('UnoPim Category', () => {
   });
 
   test('should open the filter menu when clicked', async ({ adminPage }) => {
-    await adminPage.getByRole('link', { name: ' Catalog' }).click();
-    await adminPage.getByRole('link', { name: 'Categories' }).click();
+    await navigateTo(adminPage, 'categories');
     await adminPage.getByText('Filter', { exact: true }).click();
     await expect(adminPage.locator('#app').getByText('Apply Filters')).toBeVisible();
   });
 
   test('should allow setting items per adminPage', async ({ adminPage }) => {
-    await adminPage.getByRole('link', { name: ' Catalog' }).click();
-    await adminPage.getByRole('link', { name: 'Categories' }).click();
+    await navigateTo(adminPage, 'categories');
     const perPageBtn = adminPage.getByRole('button', { name: 'Per Page' });
     await perPageBtn.click();
     await adminPage.getByText('20', { exact: true }).click();
@@ -84,8 +78,7 @@ test.describe('UnoPim Category', () => {
   });
 
   test('should perform actions on a category (Edit, Delete)', async ({ adminPage }) => {
-    await adminPage.getByRole('link', { name: ' Catalog' }).click();
-    await adminPage.getByRole('link', { name: 'Categories' }).click();
+    await navigateTo(adminPage, 'categories');
     const itemRow = adminPage.locator('div', { hasText: 'root' });
     await itemRow.locator('span[title="Edit"]').first().click();
     await expect(adminPage).toHaveURL(/\/admin\/catalog\/categories\/edit/);
@@ -96,15 +89,13 @@ test.describe('UnoPim Category', () => {
   });
 
   test('should allow selecting all category with the mass action checkbox', async ({ adminPage }) => {
-    await adminPage.getByRole('link', { name: ' Catalog' }).click();
-    await adminPage.getByRole('link', { name: 'Categories' }).click();
+    await navigateTo(adminPage, 'categories');
     await adminPage.click('label[for="mass_action_select_all_records"]');
     await expect(adminPage.locator('#mass_action_select_all_records')).toBeChecked();
   });
 
   test('Update Categories', async ({ adminPage }) => {
-    await adminPage.getByRole('link', { name: ' Catalog' }).click();
-    await adminPage.getByRole('link', { name: 'Categories' }).click();
+    await navigateTo(adminPage, 'categories');
     await adminPage.getByRole('textbox', { name: 'Search' }).click();
     await adminPage.getByRole('textbox', { name: 'Search' }).fill(catCode);
     await adminPage.keyboard.press('Enter');
@@ -120,8 +111,7 @@ test.describe('UnoPim Category', () => {
   });
 
   test('Delete Category', async ({ adminPage }) => {
-    await adminPage.getByRole('link', { name: ' Catalog' }).click();
-    await adminPage.getByRole('link', { name: 'Categories' }).click();
+    await navigateTo(adminPage, 'categories');
     await adminPage.getByRole('textbox', { name: 'Search' }).click();
     await adminPage.getByRole('textbox', { name: 'Search' }).fill(catCode);
     await adminPage.keyboard.press('Enter');
@@ -133,9 +123,7 @@ test.describe('UnoPim Category', () => {
   });
 
   test('Delete Root Category', async ({ adminPage }) => {
-    await adminPage.getByRole('link', { name: ' Catalog' }).click();
-    await adminPage.getByRole('link', { name: 'Categories' }).click();
-    await adminPage.waitForLoadState('networkidle');
+    await navigateTo(adminPage, 'categories');
     const itemRow = adminPage.locator('div', { hasText: /\[root\]/ });
     await itemRow.locator('span[title="Delete"]').first().click();
     await adminPage.getByRole('button', { name: 'Delete' }).click();

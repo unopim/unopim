@@ -1,13 +1,16 @@
 const { test, expect } = require('../../utils/fixtures');
-test.describe('UnoPim Test cases', () => {
+const { navigateTo, generateUid } = require('../../utils/helpers');
+
+const uid = generateUid();
+
+test.describe.serial('UnoPim Test cases', () => {
 test('Create User with empty name field', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Users' }).click();
+  await navigateTo(adminPage, 'users');
   await adminPage.getByRole('button', { name: 'Create User' }).click();
   await adminPage.getByRole('textbox', { name: 'Name' }).click();
   await adminPage.getByRole('textbox', { name: 'Name' }).fill('');
   await adminPage.getByRole('textbox', { name: 'email@example.com' }).click();
-  await adminPage.getByRole('textbox', { name: 'email@example.com' }).fill('testing@example.com');
+  await adminPage.getByRole('textbox', { name: 'email@example.com' }).fill(`${uid}@example.com`);
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).click();
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).fill('testing123');
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).click();
@@ -16,6 +19,7 @@ test('Create User with empty name field', async ({ adminPage }) => {
   await adminPage.getByRole('option', { name: 'English (United States)' }).click();
   await adminPage.locator('input[name="timezone"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.keyboard.type('new_y');
+  await adminPage.getByRole('option', { name: /New_York/ }).first().waitFor({ state: 'visible', timeout: 5000 });
   await adminPage.keyboard.press("Enter");
   await adminPage.locator('input[name="role_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option').first().click();
@@ -25,11 +29,10 @@ test('Create User with empty name field', async ({ adminPage }) => {
 });
 
 test('Create User with empty Email field', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Users' }).click();
+  await navigateTo(adminPage, 'users');
   await adminPage.getByRole('button', { name: 'Create User' }).click();
   await adminPage.getByRole('textbox', { name: 'Name' }).click();
-  await adminPage.getByRole('textbox', { name: 'Name' }).fill('Testing');
+  await adminPage.getByRole('textbox', { name: 'Name' }).fill(`${uid} Testing`);
   await adminPage.getByRole('textbox', { name: 'email@example.com' }).click();
   await adminPage.getByRole('textbox', { name: 'email@example.com' }).fill('');
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).click();
@@ -40,6 +43,7 @@ test('Create User with empty Email field', async ({ adminPage }) => {
   await adminPage.getByRole('option', { name: 'English (United States)' }).click();
   await adminPage.locator('input[name="timezone"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.keyboard.type('new_y');
+  await adminPage.getByRole('option', { name: /New_York/ }).first().waitFor({ state: 'visible', timeout: 5000 });
   await adminPage.keyboard.press("Enter");
   await adminPage.locator('input[name="role_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option').first().click();
@@ -49,13 +53,12 @@ test('Create User with empty Email field', async ({ adminPage }) => {
 });
 
 test('Create User with empty password field', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Users' }).click();
+  await navigateTo(adminPage, 'users');
   await adminPage.getByRole('button', { name: 'Create User' }).click();
   await adminPage.getByRole('textbox', { name: 'Name' }).click();
-  await adminPage.getByRole('textbox', { name: 'Name' }).fill('Testing');
+  await adminPage.getByRole('textbox', { name: 'Name' }).fill(`${uid} Testing`);
   await adminPage.getByRole('textbox', { name: 'email@example.com' }).click();
-  await adminPage.getByRole('textbox', { name: 'email@example.com' }).fill('testing@example.com');
+  await adminPage.getByRole('textbox', { name: 'email@example.com' }).fill(`${uid}@example.com`);
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).click();
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).fill('');
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).click();
@@ -64,6 +67,7 @@ test('Create User with empty password field', async ({ adminPage }) => {
   await adminPage.getByRole('option', { name: 'English (United States)' }).click();
   await adminPage.locator('input[name="timezone"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.keyboard.type('new_y');
+  await adminPage.getByRole('option', { name: /New_York/ }).first().waitFor({ state: 'visible', timeout: 5000 });
   await adminPage.keyboard.press("Enter");
   await adminPage.locator('input[name="role_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option').first().click();
@@ -73,13 +77,12 @@ test('Create User with empty password field', async ({ adminPage }) => {
 });
 
 test('Create User with empty confirm password field', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Users' }).click();
+  await navigateTo(adminPage, 'users');
   await adminPage.getByRole('button', { name: 'Create User' }).click();
   await adminPage.getByRole('textbox', { name: 'Name' }).click();
-  await adminPage.getByRole('textbox', { name: 'Name' }).fill('Testing');
+  await adminPage.getByRole('textbox', { name: 'Name' }).fill(`${uid} Testing`);
   await adminPage.getByRole('textbox', { name: 'email@example.com' }).click();
-  await adminPage.getByRole('textbox', { name: 'email@example.com' }).fill('testing@example.com');
+  await adminPage.getByRole('textbox', { name: 'email@example.com' }).fill(`${uid}@example.com`);
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).click();
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).fill('testing123');
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).click();
@@ -88,6 +91,7 @@ test('Create User with empty confirm password field', async ({ adminPage }) => {
   await adminPage.getByRole('option', { name: 'English (United States)' }).click();
   await adminPage.locator('input[name="timezone"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.keyboard.type('new_y');
+  await adminPage.getByRole('option', { name: /New_York/ }).first().waitFor({ state: 'visible', timeout: 5000 });
   await adminPage.keyboard.press("Enter");
   await adminPage.locator('input[name="role_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option').first().click();
@@ -97,13 +101,12 @@ test('Create User with empty confirm password field', async ({ adminPage }) => {
 });
 
 test('Create User with different password in confirm password field', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Users' }).click();
+  await navigateTo(adminPage, 'users');
   await adminPage.getByRole('button', { name: 'Create User' }).click();
   await adminPage.getByRole('textbox', { name: 'Name' }).click();
-  await adminPage.getByRole('textbox', { name: 'Name' }).fill('Testing');
+  await adminPage.getByRole('textbox', { name: 'Name' }).fill(`${uid} Testing`);
   await adminPage.getByRole('textbox', { name: 'email@example.com' }).click();
-  await adminPage.getByRole('textbox', { name: 'email@example.com' }).fill('testing@example.com');
+  await adminPage.getByRole('textbox', { name: 'email@example.com' }).fill(`${uid}@example.com`);
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).click();
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).fill('testing123');
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).click();
@@ -112,6 +115,7 @@ test('Create User with different password in confirm password field', async ({ a
   await adminPage.getByRole('option', { name: 'English (United States)' }).click();
   await adminPage.locator('input[name="timezone"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.keyboard.type('new_y');
+  await adminPage.getByRole('option', { name: /New_York/ }).first().waitFor({ state: 'visible', timeout: 5000 });
   await adminPage.keyboard.press("Enter");
   await adminPage.locator('input[name="role_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option').first().click();
@@ -121,19 +125,19 @@ test('Create User with different password in confirm password field', async ({ a
 });
 
 test('Create User with empty UI locale field', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Users' }).click();
+  await navigateTo(adminPage, 'users');
   await adminPage.getByRole('button', { name: 'Create User' }).click();
   await adminPage.getByRole('textbox', { name: 'Name' }).click();
-  await adminPage.getByRole('textbox', { name: 'Name' }).fill('Testing');
+  await adminPage.getByRole('textbox', { name: 'Name' }).fill(`${uid} Testing`);
   await adminPage.getByRole('textbox', { name: 'email@example.com' }).click();
-  await adminPage.getByRole('textbox', { name: 'email@example.com' }).fill('testing@example.com');
+  await adminPage.getByRole('textbox', { name: 'email@example.com' }).fill(`${uid}@example.com`);
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).click();
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).fill('testing123');
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).click();
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).fill('testing123');
   await adminPage.locator('input[name="timezone"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.keyboard.type('new_y');
+  await adminPage.getByRole('option', { name: /New_York/ }).first().waitFor({ state: 'visible', timeout: 5000 });
   await adminPage.keyboard.press("Enter");
   await adminPage.locator('input[name="role_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option').first().click();
@@ -143,13 +147,12 @@ test('Create User with empty UI locale field', async ({ adminPage }) => {
 });
 
 test('Create User with empty Timezone field', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Users' }).click();
+  await navigateTo(adminPage, 'users');
   await adminPage.getByRole('button', { name: 'Create User' }).click();
   await adminPage.getByRole('textbox', { name: 'Name' }).click();
-  await adminPage.getByRole('textbox', { name: 'Name' }).fill('Testing');
+  await adminPage.getByRole('textbox', { name: 'Name' }).fill(`${uid} Testing`);
   await adminPage.getByRole('textbox', { name: 'email@example.com' }).click();
-  await adminPage.getByRole('textbox', { name: 'email@example.com' }).fill('testing@example.com');
+  await adminPage.getByRole('textbox', { name: 'email@example.com' }).fill(`${uid}@example.com`);
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).click();
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).fill('testing123');
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).click();
@@ -164,13 +167,12 @@ test('Create User with empty Timezone field', async ({ adminPage }) => {
 });
 
 test('Create User with empty Role field', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Users' }).click();
+  await navigateTo(adminPage, 'users');
   await adminPage.getByRole('button', { name: 'Create User' }).click();
   await adminPage.getByRole('textbox', { name: 'Name' }).click();
-  await adminPage.getByRole('textbox', { name: 'Name' }).fill('Testing');
+  await adminPage.getByRole('textbox', { name: 'Name' }).fill(`${uid} Testing`);
   await adminPage.getByRole('textbox', { name: 'email@example.com' }).click();
-  await adminPage.getByRole('textbox', { name: 'email@example.com' }).fill('testing@example.com');
+  await adminPage.getByRole('textbox', { name: 'email@example.com' }).fill(`${uid}@example.com`);
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).click();
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).fill('testing123');
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).click();
@@ -179,6 +181,7 @@ test('Create User with empty Role field', async ({ adminPage }) => {
   await adminPage.getByRole('option', { name: 'English (United States)' }).click();
   await adminPage.locator('input[name="timezone"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.keyboard.type('new_y');
+  await adminPage.getByRole('option', { name: /New_York/ }).first().waitFor({ state: 'visible', timeout: 5000 });
   await adminPage.keyboard.press("Enter");
   await adminPage.locator('label[for="status"]').click();
   await adminPage.getByRole('button', { name: 'Save User' }).click();
@@ -186,13 +189,12 @@ test('Create User with empty Role field', async ({ adminPage }) => {
 });
 
 test('Create User', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Users' }).click();
+  await navigateTo(adminPage, 'users');
   await adminPage.getByRole('button', { name: 'Create User' }).click();
   await adminPage.getByRole('textbox', { name: 'Name' }).click();
-  await adminPage.getByRole('textbox', { name: 'Name' }).fill('Testing');
+  await adminPage.getByRole('textbox', { name: 'Name' }).fill(`${uid} Testing`);
   await adminPage.getByRole('textbox', { name: 'email@example.com' }).click();
-  await adminPage.getByRole('textbox', { name: 'email@example.com' }).fill('testing@example.com');
+  await adminPage.getByRole('textbox', { name: 'email@example.com' }).fill(`${uid}@example.com`);
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).click();
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).fill('testing123');
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).click();
@@ -201,7 +203,10 @@ test('Create User', async ({ adminPage }) => {
   await adminPage.getByRole('option', { name: 'English (United States)' }).click();
   await adminPage.locator('input[name="timezone"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.keyboard.type('new_y');
+  await adminPage.getByRole('option', { name: /New_York/ }).first().waitFor({ state: 'visible', timeout: 5000 });
   await adminPage.keyboard.press("Enter");
+  await adminPage.locator('body').click();
+  await adminPage.locator('input[name="role_id"]').locator('..').locator('.multiselect__placeholder').waitFor({ state: 'visible', timeout: 5000 });
   await adminPage.locator('input[name="role_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option').first().click();
   await adminPage.locator('label[for="status"]').click();
@@ -210,19 +215,17 @@ test('Create User', async ({ adminPage }) => {
 });
 
 test('should allow User search', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Users' }).click();
+  await navigateTo(adminPage, 'users');
   await adminPage.getByRole('textbox', { name: 'Search' }).click();
-  await adminPage.getByRole('textbox', { name: 'Search' }).type('testing@example');
+  await adminPage.getByRole('textbox', { name: 'Search' }).type(`${uid}@example`);
   await adminPage.keyboard.press('Enter');
   await adminPage.waitForLoadState('networkidle');
-  await expect(adminPage.locator('#app').locator('text=testing@example.com')).toBeVisible();
+  await expect(adminPage.locator('#app').locator(`text=${uid}@example.com`)).toBeVisible();
 });
 
 test('Update User', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Users' }).click();
-  const itemRow = adminPage.locator('div', { hasText: 'Testing' });
+  await navigateTo(adminPage, 'users');
+  const itemRow = adminPage.locator('div', { hasText: `${uid} Testing` });
   await itemRow.locator('span[title="Edit"]').first().click();
   await adminPage.locator('label[for="status"]').click();
   await adminPage.getByRole('button', { name: 'Save User' }).click();
@@ -230,17 +233,15 @@ test('Update User', async ({ adminPage }) => {
 });
 
 test('Delete User', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Users' }).click();
-  const itemRow = adminPage.locator('div', { hasText: 'Testing' });
+  await navigateTo(adminPage, 'users');
+  const itemRow = adminPage.locator('div', { hasText: `${uid} Testing` });
   await itemRow.locator('span[title="Delete"]').first().click();
   await adminPage.click('button:has-text("Delete")');
   await expect(adminPage.locator('#app').getByText(/User deleted successfully/i)).toBeVisible({ timeout: 15000 });
 });
 
 test('Delete Default User', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Settings' }).click();
-  await adminPage.getByRole('link', { name: 'Users' }).click();
+  await navigateTo(adminPage, 'users');
   const itemRow = adminPage.locator('#app').locator('div', { hasText: 'admin@example.com' });
   await itemRow.locator('span[title="Delete"]').first().click();
   await adminPage.click('button:has-text("Delete")');

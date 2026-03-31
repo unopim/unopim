@@ -1,4 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
+const { navigateTo } = require('../../utils/helpers');
 
 /**
  * Helper: Navigate to the completeness tab for a family by code.
@@ -69,7 +70,7 @@ async function deleteFamilyByCode(adminPage, familyCode) {
 const TEST_FAMILY_CODE = 'displaycompletensstab';
 const TEST_FAMILY_NAME = 'displaytab';
 
-test.describe('Verify that Product Completeness feature correctly Exists', () => {
+test.describe.serial('Verify that Product Completeness feature correctly Exists', () => {
 
   // ── CLEANUP FIRST — delete leftover test family from any previous run ──
 
@@ -97,8 +98,7 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
   });
 
   test('Verify Product Completeness Status Display on Dashboard for All Products Channel-wise', async ({ adminPage }) => {
-    await adminPage.getByRole('link', { name: ' Dashboard' }).click();
-    await expect(adminPage.getByRole('link', { name: ' Dashboard' })).toBeVisible();
+    await navigateTo(adminPage, 'dashboard');
     // Completeness widget only appears when required attributes are configured
     const completenessSection = adminPage.locator('header').filter({ hasText: /Default.*completeness/i });
     const hasCompleteness = await completenessSection.isVisible({ timeout: 5000 }).catch(() => false);
@@ -323,9 +323,7 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
 
   test('Create a new channel with multiple locales and currencies', async ({ adminPage }) => {
     // Enable the fr_FR locale (only if not already enabled)
-    await adminPage.getByRole('link', { name: ' Settings' }).click();
-    await adminPage.getByRole('link', { name: 'Locales' }).click();
-    await adminPage.waitForLoadState('networkidle');
+    await navigateTo(adminPage, 'locales');
     await adminPage.getByPlaceholder('Search by code').first().fill('fr_FR');
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
@@ -341,8 +339,7 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await expect(adminPage.locator('#app').getByText(/Locale.*updated successfully/i)).toBeVisible({ timeout: 15000 });
 
     // Enable the EUR currency
-    await adminPage.getByRole('link', { name: 'Currencies' }).click();
-    await adminPage.waitForLoadState('networkidle');
+    await navigateTo(adminPage, 'currencies');
     await adminPage.getByPlaceholder('Search by code or id').first().fill('EUR');
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
@@ -358,8 +355,7 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await expect(adminPage.locator('#app').getByText(/Currency updated successfully/i)).toBeVisible();
 
     // Create channel3 (skip if already exists)
-    await adminPage.getByRole('link', { name: 'Channels' }).click();
-    await adminPage.waitForLoadState('networkidle');
+    await navigateTo(adminPage, 'channels');
     const existingChannel = adminPage.locator('#app').getByText('channel3');
     if (await existingChannel.isVisible({ timeout: 3000 }).catch(() => false)) {
       return;

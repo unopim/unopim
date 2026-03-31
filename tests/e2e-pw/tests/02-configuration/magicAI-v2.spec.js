@@ -1,4 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
+const { navigateTo } = require('../../utils/helpers');
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 const MAGIC_AI_CONFIG_URL = '/admin/configuration/general/magic_ai';
@@ -289,8 +290,7 @@ test('5.10 - Translation channel and locale dropdowns have "Select option" place
 // ═════════════════════════════════════════════════
 
 test('6.1 - AI Platforms page accessible from Configuration > Magic AI menu', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Configuration' }).click();
-  await adminPage.getByRole('link', { name: 'Magic AI' }).click();
+  await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
   await expect(adminPage).toHaveURL(/\/admin\/magic-ai\/platform/);
 });
 

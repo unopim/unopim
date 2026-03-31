@@ -1,8 +1,10 @@
 const { test, expect } = require('../../utils/fixtures');
+const { navigateTo } = require('../../utils/helpers');
+
 test.describe('UnoPim Create Product Test Cases', () => {
 
 test('with empty product type field', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
+await navigateTo(adminPage, 'products');
 await adminPage.getByRole('button', { name: 'Create Product' }).click();
 await adminPage.locator('input[name="attribute_family_id"]').locator('..').locator('.multiselect__placeholder').click();
 await adminPage.getByRole('option', { name: 'Default' }).first().click();
@@ -12,7 +14,7 @@ await expect(adminPage.locator('div.border-red-500 + p.text-red-600')).toHaveTex
 });
 
 test('create product with simple alphanumeric SKU (ABC123)', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
+await navigateTo(adminPage, 'products');
 await adminPage.getByRole('button', { name: 'Create Product' }).click();
 await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
 await adminPage.getByRole('option', { name: 'Simple' }).first().click();
@@ -25,7 +27,7 @@ await expect(adminPage.locator('#app').getByText(sku)).toBeVisible();
 });
 
 test('create product with letters only SKU', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
+await navigateTo(adminPage, 'products');
 await adminPage.getByRole('button', { name: 'Create Product' }).click();
 await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
 await adminPage.getByRole('option', { name: 'Simple' }).first().click();
@@ -38,7 +40,7 @@ await expect(adminPage.locator('#app').getByText(sku)).toBeVisible();
 });
 
 test('create product with hyphen separator (PROD-001)', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
+await navigateTo(adminPage, 'products');
 await adminPage.getByRole('button', { name: 'Create Product' }).click();
 await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
 await adminPage.getByRole('option', { name: 'Simple' }).first().click();
@@ -51,7 +53,7 @@ await expect(adminPage.locator('#app').getByText(sku)).toBeVisible();
 });
 
 test('create product with multiple hyphens', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
+await navigateTo(adminPage, 'products');
 await adminPage.getByRole('button', { name: 'Create Product' }).click();
 await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
 await adminPage.getByRole('option', { name: 'Simple' }).first().click();
@@ -64,7 +66,7 @@ await expect(adminPage.locator('#app').getByText(sku)).toBeVisible();
 });
 
 test('create product with underscore separator', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
+await navigateTo(adminPage, 'products');
 await adminPage.getByRole('button', { name: 'Create Product' }).click();
 await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
 await adminPage.getByRole('option', { name: 'Simple' }).first().click();
@@ -77,7 +79,7 @@ await expect(adminPage.locator('#app').getByText(sku)).toBeVisible();
 });
 
 test('create product with mixed separators', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
+await navigateTo(adminPage, 'products');
 await adminPage.getByRole('button', { name: 'Create Product' }).click();
 await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
 await adminPage.getByRole('option', { name: 'Simple' }).first().click();
@@ -90,7 +92,7 @@ await expect(adminPage.locator('#app').getByText(sku)).toBeVisible();
 });
 
 test('reject SKU starting with hyphen', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
+await navigateTo(adminPage, 'products');
 await adminPage.getByRole('button', { name: 'Create Product' }).click();
 await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
 await adminPage.getByRole('option', { name: 'Simple' }).first().click();
@@ -103,7 +105,7 @@ await expect(adminPage.locator('#app').getByText(sku)).toHaveCount(0);
 });
 
 test('reject SKU starting with underscore', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
+await navigateTo(adminPage, 'products');
 await adminPage.getByRole('button', { name: 'Create Product' }).click();
 await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
 await adminPage.getByRole('option', { name: 'Simple' }).first().click();
@@ -116,7 +118,7 @@ await expect(adminPage.locator('#app').getByText(sku)).toHaveCount(0);
 });
 
 test('reject SKU with consecutive hyphens', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
+await navigateTo(adminPage, 'products');
 await adminPage.getByRole('button', { name: 'Create Product' }).click();
 await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
 await adminPage.getByRole('option', { name: 'Simple' }).first().click();
@@ -129,7 +131,7 @@ await expect(adminPage.locator('#app').getByText(sku)).toHaveCount(0);
 });
 
 test('reject SKU with special characters', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
+await navigateTo(adminPage, 'products');
 await adminPage.getByRole('button', { name: 'Create Product' }).click();
 await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
 await adminPage.getByRole('option', { name: 'Simple' }).first().click();
@@ -142,7 +144,7 @@ await expect(adminPage.locator('#app').getByText(sku)).toHaveCount(0);
 });
 
 test('reject SKU with spaces', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
+await navigateTo(adminPage, 'products');
 await adminPage.getByRole('button', { name: 'Create Product' }).click();
 await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
 await adminPage.getByRole('option', { name: 'Simple' }).first().click();
@@ -155,8 +157,7 @@ await expect(adminPage.locator('#app').getByText(sku)).toHaveCount(0);
 });
 
 test('with empty family field', async ({ adminPage }) => {
-await adminPage.goto('/admin/catalog/products');
-await adminPage.waitForLoadState('load');
+await navigateTo(adminPage, 'products');
 await adminPage.getByRole('button', { name: 'Create Product' }).click();
 await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
 await adminPage.getByRole('option', { name: 'Simple' }).first().click();
@@ -167,7 +168,7 @@ await expect(adminPage.locator('#app').getByText('The Family field is required')
 });
 
 test('with empty sku field', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
+await navigateTo(adminPage, 'products');
 await adminPage.getByRole('button', { name: 'Create Product' }).click();
 await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
 await adminPage.getByRole('option', { name: 'Simple' }).first().click();
@@ -178,7 +179,7 @@ await expect(adminPage.locator('input[name="sku"] + p.text-red-600')).toHaveText
 });
 
 test('with empty product type and family field', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
+await navigateTo(adminPage, 'products');
 await adminPage.getByRole('button', { name: 'Create Product' }).click();
 await adminPage.locator('input[name="sku"]').click();
 await adminPage.locator('input[name="sku"]').fill('acer456');
@@ -188,7 +189,7 @@ await expect(adminPage.locator('#app').getByText('The Family field is required')
 });
 
 test('with empty product type and sku field', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
+await navigateTo(adminPage, 'products');
 await adminPage.getByRole('button', { name: 'Create Product' }).click();
 await adminPage.locator('input[name="attribute_family_id"]').locator('..').locator('.multiselect__placeholder').click();
 await adminPage.getByRole('option', { name: 'Default' }).first().click();
@@ -198,7 +199,7 @@ await expect(adminPage.locator('input[name="sku"] + p.text-red-600')).toHaveText
 });
 
 test('with empty family and sku field', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
+await navigateTo(adminPage, 'products');
 await adminPage.getByRole('button', { name: 'Create Product' }).click();
 await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
 await adminPage.getByRole('option', { name: 'Simple' }).first().click();
@@ -208,7 +209,7 @@ await expect(adminPage.locator('input[name="sku"] + p.text-red-600')).toHaveText
 });
 
 test('with all field empty', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
+await navigateTo(adminPage, 'products');
 await adminPage.getByRole('button', { name: 'Create Product' }).click();
 await adminPage.getByRole('button', { name: 'Save Product' }).click();
 await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
@@ -218,8 +219,7 @@ await expect(adminPage.locator('input[name="sku"] + p.text-red-600')).toHaveText
 
 test('Create Simple Product with all input', async ({ adminPage }) => {
 // Clean up acer456 from previous runs via mass delete
-await adminPage.goto('/admin/catalog/products');
-await adminPage.waitForLoadState('load');
+await navigateTo(adminPage, 'products');
 await adminPage.getByRole('textbox', { name: 'Search' }).fill('acer456');
 await adminPage.keyboard.press('Enter');
 await adminPage.waitForLoadState('networkidle');
@@ -243,7 +243,7 @@ await expect(adminPage.locator('#app').getByText(/Product created successfully/i
 });
 
 test('Create Simple Product with same SKU', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
+await navigateTo(adminPage, 'products');
 await adminPage.getByRole('button', { name: 'Create Product' }).click();
 await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
 await adminPage.getByRole('option', { name: 'Simple' }).first().click();
@@ -256,8 +256,7 @@ await expect(adminPage.locator('input[name="sku"] + p.text-red-600')).toHaveText
 });
 
 test('should allow product search', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
-await adminPage.getByRole('link', { name: 'Products' }).click();
+await navigateTo(adminPage, 'products');
 await adminPage.getByRole('textbox', { name: 'Search' }).click();
 await adminPage.getByRole('textbox', { name: 'Search' }).type('acer');
 await adminPage.keyboard.press('Enter');
@@ -266,15 +265,13 @@ await expect(adminPage.locator('text=acer456', {exact:true})).toBeVisible();
 });
 
 test('should open the filter menu when clicked', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
-await adminPage.getByRole('link', { name: 'Products' }).click();
+await navigateTo(adminPage, 'products');
 await adminPage.getByText('Filter', { exact: true }).click();
 await expect(adminPage.locator('#app').getByText('Apply Filters')).toBeVisible();
 });
 
 test('should allow setting items per adminPage', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
-await adminPage.getByRole('link', { name: 'Products' }).click();
+await navigateTo(adminPage, 'products');
 const perPageButton = adminPage.locator('button:has(.icon-chevron-down)').first();
 await perPageButton.click();
 await adminPage.getByText('20', { exact: true }).click();
@@ -282,15 +279,13 @@ await expect(perPageButton).toContainText('20');
 });
 
 test('should allow quick export', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
-await adminPage.getByRole('link', { name: 'Products' }).click();
+await navigateTo(adminPage, 'products');
 await adminPage.getByRole('button', { name: 'Quick Export' }).click();
 await expect(adminPage.locator('#app').getByText('Download')).toBeVisible();
 });
 
 test('should perform actions on a product (Edit, Copy, Delete)', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
-await adminPage.getByRole('link', { name: 'Products' }).click();
+await navigateTo(adminPage, 'products');
 const itemRow = adminPage.locator('div', { hasText: 'acer456' });
 await itemRow.locator('span[title="Edit"]').first().click();
 await expect(adminPage).toHaveURL(/\/admin\/catalog\/products\/edit/);
@@ -311,8 +306,7 @@ await expect(adminPage.locator('text=Are you sure you want to delete?')).toBeVis
 });
 
 test('should allow selecting all products with the mass action checkbox', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
-await adminPage.getByRole('link', { name: 'Products' }).click();
+await navigateTo(adminPage, 'products');
 await adminPage.click('label[for="mass_action_select_all_records"]');
 await expect(adminPage.locator('#mass_action_select_all_records')).toBeChecked();
 });
@@ -320,7 +314,7 @@ await expect(adminPage.locator('#mass_action_select_all_records')).toBeChecked()
 
 test.describe('UnoPim Update Product Test cases', () => {
 test('Update simple product', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
+await navigateTo(adminPage, 'products');
 const itemRow = adminPage.locator('div', { hasText: 'acer456' });
 await itemRow.locator('span[title="Edit"]').first().click();
 await adminPage.waitForLoadState('load');
@@ -346,7 +340,7 @@ await expect(adminPage.locator('#app').getByText(/Product updated successfully/i
 });
 
 test('Delete simple product', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
+await navigateTo(adminPage, 'products');
 const itemRow = await adminPage.locator('div', { hasText: 'acer456' });
 await itemRow.locator('span[title="Delete"]').first().click();
 await adminPage.getByRole('button', { name: 'Delete' }).click();
@@ -354,7 +348,7 @@ await expect(adminPage.locator('#app').getByText(/Product deleted successfully/i
 });
 
 test('Create Configurable Product', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
+await navigateTo(adminPage, 'products');
 await adminPage.getByRole('button', { name: 'Create Product' }).click();
 await adminPage.locator('div').filter({ hasText: /^Select option$/ }).first().click();
 await adminPage.getByRole('option', { name: 'Configurable' }).first().click();
@@ -369,7 +363,7 @@ await expect(adminPage.locator('#app').getByText(/Product created successfully/i
 });
 
 test('Update Configurable Product', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
+await navigateTo(adminPage, 'products');
 const itemRow = await adminPage.locator('div', { hasText: 'realme1245' });
 await itemRow.locator('span[title="Edit"]').first().click();
 await adminPage.waitForLoadState('load');
@@ -394,7 +388,7 @@ await expect(adminPage.locator('#app').getByText(/Product updated successfully/i
 });
 
 test('Delete configurable product', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
+await navigateTo(adminPage, 'products');
 const itemRow = await adminPage.locator('div', { hasText: 'realme1245' });
 await itemRow.locator('span[title="Delete"]').first().click();
 await adminPage.click('button:has-text("Delete")');
@@ -404,24 +398,21 @@ await expect(adminPage.locator('#app').getByText(/Product deleted successfully/i
 
 test.describe('UnoPim Test cases dynamic column', () => {
 test('Dynamic Column should be clickable', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
-await adminPage.getByRole('link', { name: 'Products' }).click();
+await navigateTo(adminPage, 'products');
 await expect(adminPage.locator('#app').getByText(/Columns/)).toBeVisible();
 await adminPage.getByText('Columns', { exact: true }).click();
 await expect(adminPage.locator('#app').getByText('Manage columns')).toBeVisible();
 });
 
 test('Dynamic Column search bar should be visible and clickable', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
-await adminPage.getByRole('link', { name: 'Products' }).click();
+await navigateTo(adminPage, 'products');
 await adminPage.getByText('Columns', { exact: true }).click();
 await adminPage.locator('form').filter({ hasText: 'Columns Manage columns' }).getByPlaceholder('Search').click();
 await expect(adminPage.locator('form').filter({ hasText: 'Columns Manage columns' }).getByPlaceholder('Search')).toBeEnabled();
 });
 
 test('Dynamic Column search the default fields', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
-await adminPage.getByRole('link', { name: 'Products' }).click();
+await navigateTo(adminPage, 'products');
 await adminPage.getByText('Columns', { exact: true }).click();
 await adminPage.locator('form').filter({ hasText: 'Columns Manage columns' }).getByPlaceholder('Search').click();
 await adminPage.locator('form').filter({ hasText: 'Columns Manage columns' }).getByPlaceholder('Search').fill('parent');
@@ -430,8 +421,7 @@ await expect(adminPage.locator('form').filter({ hasText: 'Columns Manage columns
 });
 
 test('Attributes should be visible', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
-await adminPage.getByRole('link', { name: 'Products' }).click();
+await navigateTo(adminPage, 'products');
 await adminPage.getByText('Columns', { exact: true }).click();
 await expect(adminPage.locator('#app').getByText('Manage columns')).toBeVisible();
 await expect(adminPage.locator('#app').getByText('Available Columns')).toBeVisible();
@@ -442,13 +432,11 @@ await expect(adminPage.locator('form').filter({ hasText: 'Columns Manage columns
 });
 
 test('check Is Filterable', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
-await adminPage.getByRole('link', { name: 'Products' }).click();
+await navigateTo(adminPage, 'products');
 await adminPage.getByText('Filter', { exact: true }).click();
 await expect(adminPage.locator('#app').getByText('Apply Filters')).toBeVisible();
 // Navigate directly to attributes instead of closing drawer
-await adminPage.goto('/admin/catalog/attributes');
-await adminPage.waitForLoadState('load');
+await navigateTo(adminPage, 'attributes');
 await adminPage.getByRole('textbox', { name: 'Search' }).click();
 await adminPage.getByRole('textbox', { name: 'Search' }).fill('Image');
 await adminPage.keyboard.press('Enter');
@@ -470,8 +458,7 @@ await expect(filterDrawer.getByText('Image')).toBeVisible();
 });
 
 test('Add Column to the product data grid and verify', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
-await adminPage.getByRole('link', { name: 'Products' }).click();
+await navigateTo(adminPage, 'products');
 await adminPage.getByText('Columns', { exact: true }).click();
 const dragHandle = await adminPage.locator('div:has(span:text("Parent")) >> i.icon-drag').first();
 const dropTarget = await adminPage.locator('div:has-text("Selected Columns")').first(); // Adjust selector as needed

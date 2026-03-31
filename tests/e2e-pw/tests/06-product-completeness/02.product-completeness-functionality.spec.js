@@ -44,7 +44,7 @@ async function openCompletenessModal(adminPage) {
   await expect(adminPage.getByText('Configure Completeness')).toBeVisible({ timeout: 10000 });
 }
 
-test.describe('Verify the behaviour of Product Completeness feature', () => {
+test.describe.serial('Verify the behaviour of Product Completeness feature', () => {
 
   test('Verify product grid shows N/A for completeness when no required channel configured', async ({ adminPage }) => {
     await adminPage.goto('/admin/catalog/products', { waitUntil: 'load' });
