@@ -10,6 +10,27 @@ return [
         'sort'  => 10,
     ],
     [
+        'key'    => 'ai-agent.platform',
+        'name'   => 'ai-agent::app.acl.platform',
+        'route'  => 'admin.magic_ai.platform.index',
+        'sort'   => 1,
+    ], [
+        'key'    => 'ai-agent.platform.create',
+        'name'   => 'ai-agent::app.acl.create',
+        'route'  => 'admin.magic_ai.platform.store',
+        'sort'   => 1,
+    ], [
+        'key'    => 'ai-agent.platform.edit',
+        'name'   => 'ai-agent::app.acl.edit',
+        'route'  => 'admin.magic_ai.platform.edit',
+        'sort'   => 2,
+    ], [
+        'key'    => 'ai-agent.platform.delete',
+        'name'   => 'ai-agent::app.acl.delete',
+        'route'  => 'admin.magic_ai.platform.delete',
+        'sort'   => 3,
+    ],
+    [
         'key'    => 'ai-agent.general',
         'name'   => 'ai-agent::app.acl.general',
         'route'  => 'admin.configuration.edit',

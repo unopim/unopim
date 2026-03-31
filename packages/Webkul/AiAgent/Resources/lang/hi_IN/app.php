@@ -13,6 +13,10 @@ return [
         'agents'                => 'एजेंट',
         'dashboard'             => 'डैशबोर्ड',
         'approvals'             => 'अनुमोदन',
+        'platform'              => 'प्लेटफ़ॉर्म',
+        'create'                => 'बनाएं',
+        'edit'                  => 'संपादन करना',
+        'delete'                => 'मिटाना',
     ],
 
     'menu' => [

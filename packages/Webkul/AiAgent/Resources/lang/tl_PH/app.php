@@ -13,6 +13,10 @@ return [
         'agents'                => 'Mga Ahente',
         'dashboard'             => 'Dashboard',
         'approvals'             => 'Mga Pag-apruba',
+        'platform'              => 'Plataporma',
+        'create'                => 'Lumikha',
+        'edit'                  => 'I-edit',
+        'delete'                => 'Tanggalin',
     ],
 
     'menu' => [

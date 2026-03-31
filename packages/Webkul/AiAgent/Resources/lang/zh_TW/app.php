@@ -13,6 +13,10 @@ return [
         'agents'                => '代理',
         'dashboard'             => '儀表板',
         'approvals'             => '審核',
+        'platform'              => '平台',
+        'create'                => '創建',
+        'edit'                  => '編輯',
+        'delete'                => '刪除',
     ],
 
     'menu' => [

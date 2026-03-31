@@ -13,6 +13,10 @@ return [
         'agents'                => 'Ajanlar',
         'dashboard'             => 'Gösterge Paneli',
         'approvals'             => 'Onaylar',
+        'platform'              => 'Platform',
+        'create'                => 'Oluştur',
+        'edit'                  => 'Düzenle',
+        'delete'                => 'Sil',
     ],
 
     'menu' => [
