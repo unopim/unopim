@@ -24,6 +24,7 @@ class LocaleDataSource extends ApiDataSource
     public function prepareApiQueryBuilder()
     {
         $this->addFilter('status', ['=']);
+        $this->addFilter('code', ['=', 'IN', 'NOT IN']);
 
         return $this->localeRepository->queryBuilder();
     }

@@ -6,6 +6,7 @@ use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Core\Eloquent\Repository;
@@ -82,6 +83,10 @@ class AttributeRepository extends Repository
         if (in_array($attribute->type, ['select', 'multiselect', 'checkbox']) && isset($data['options'])) {
             foreach ($data['options'] as $optionId => $optionInputs) {
                 if ($optionInputs['isNew'] == 'true') {
+                    if (empty($optionInputs['code'])) {
+                        $optionInputs['code'] = 'option_'.strtolower(Str::random(8));
+                    }
+
                     $this->attributeOptionRepository->create(array_merge([
                         'attribute_id' => $attribute->id,
                     ], $optionInputs));

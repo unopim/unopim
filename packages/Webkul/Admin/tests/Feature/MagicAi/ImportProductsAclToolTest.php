@@ -91,7 +91,7 @@ it('skips existing products during mixed AI import when the user lacks edit perm
         ->and(data_get($result, 'result.skipped'))->toBe(1)
         ->and(data_get($result, 'result.errors.0'))->toContain('catalog.products.edit');
 
-    expect(Product::query()->where('sku', 'AI-EXISTING-100')->value('status'))->toBe(0)
+    expect((int) Product::query()->where('sku', 'AI-EXISTING-100')->value('status'))->toBe(0)
         ->and(Product::query()->where('sku', 'AI-NEW-101')->exists())->toBeTrue();
 });
 
