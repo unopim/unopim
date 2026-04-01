@@ -11,7 +11,6 @@ return [
             'powered-by'             => 'Alimentat de :unopim,',
             'open-source-project-by' => 'Un proiect open-source realizat de :webkul.',
         ],
-
         'forget-password' => [
             'create' => [
                 'email'                  => 'E-mail înregistrat',
@@ -26,7 +25,6 @@ return [
                 'open-source-project-by' => 'Un proiect open-source realizat de :webkul.',
             ],
         ],
-
         'reset-password' => [
             'back-link-title'        => 'Înapoi la Conectare?',
             'confirm-password'       => 'Confirmați parola',
@@ -38,7 +36,6 @@ return [
             'open-source-project-by' => 'Un proiect open-source realizat de :webkul.',
         ],
     ],
-
     'notifications' => [
         'description-text' => 'Listă de toate notificările',
         'marked-success'   => 'Notificare marcată ca citită',
@@ -55,7 +52,6 @@ return [
             'processing' => 'În procesare',
         ],
     ],
-
     'account' => [
         'edit' => [
             'back-btn'          => 'Înapoi',
@@ -76,25 +72,89 @@ return [
             'user-timezone'     => 'Fus orar',
         ],
     ],
-
     'dashboard' => [
-        'index' => [
-            'title'            => 'Tabloul de bord',
-            'user-info'        => 'Monitorizare rapidă a ceea ce contează în PIM-ul tău',
-            'user-name'        => 'Salut! :user_name',
-            'catalog-details'  => 'Catalog',
-            'total-families'   => 'Total familii',
-            'total-attributes' => 'Total Atribute',
-            'total-groups'     => 'Total Grupe',
-            'total-categories' => 'Total Categorii',
-            'total-products'   => 'Total Produse',
-            'settings-details' => 'Structură Catalog',
-            'total-locales'    => 'Total Localizări',
-            'total-currencies' => 'Total Monede',
-            'total-channels'   => 'Total Canale',
+        'invalid-type' => 'Tip de widget al panoului de control invalid.',
+        'index'        => [
+            'title'                => 'Tabloul de bord',
+            'user-info'            => 'Monitorizare rapidă a ceea ce contează în PIM-ul tău',
+            'user-name'            => 'Salut! :user_name',
+            'catalog-details'      => 'Catalog',
+            'total-families'       => 'Total familii',
+            'total-attributes'     => 'Total Atribute',
+            'total-groups'         => 'Total Grupe',
+            'total-categories'     => 'Total Categorii',
+            'total-products'       => 'Total Produse',
+            'settings-details'     => 'Structură Catalog',
+            'total-locales'        => 'Total Localizări',
+            'total-currencies'     => 'Total Monede',
+            'total-channels'       => 'Total Canale',
+            'completeness'         => 'Completitudine',
+            'active'               => 'Activ',
+            'inactive'             => 'Inactiv',
+            'simple'               => 'Simplu',
+            'configurable'         => 'Configurabil',
+            'product-stats'        => 'Statistici Produse',
+            'product-type-dist'    => 'Distribuția Tipurilor de Produse',
+            'products-by-status'   => 'Produse după Statut',
+            'products-over-time'   => 'Activitatea Produselor (Ultimele 7 Zile)',
+            'legend-created'       => 'Creat',
+            'legend-updated'       => 'Actualizat',
+            'recent-activity'      => 'Activitate Recentă',
+            'no-activity'          => 'Nu s-a găsit activitate recentă.',
+            'updated'              => 'actualizat',
+            'created'              => 'creat',
+            'deleted'              => 'șters',
+            'ago'                  => 'în urmă',
+            'just-now'             => 'chiar acum',
+            'data-transfer'        => 'Transfer de Date',
+            'no-jobs'              => 'Nu s-au găsit lucrări recente de import/export.',
+            'job-type-import'      => 'Import',
+            'job-type-export'      => 'Export',
+            'job-state-completed'  => 'Finalizat',
+            'job-state-failed'     => 'Eșuat',
+            'job-state-processing' => 'În Procesare',
+            'job-state-pending'    => 'În Așteptare',
+            'job-state-validated'  => 'Validat',
+            'rows-processed'       => 'Rânduri Procesate',
+            'errors'               => 'Erori',
+            'quick-links'          => 'Linkuri Rapide',
+            'create-product'       => 'Creează Produs',
+            'import-data'          => 'Importă Date',
+            'export-data'          => 'Exportă Date',
+            'manage-attributes'    => 'Gestionează Atribute',
+            'view-all-activity'    => 'Vezi Tot',
+            'view-all-jobs'        => 'Vezi Toate Lucrările',
+            'new-this-week'        => 'Nou în Săptămâna Aceasta',
+            'with-variants'        => 'Cu Variante',
+            'avg-completeness'     => 'Completitudine Medie',
+            'enriched'             => 'Îmbogățit',
+            'analytics-section'    => 'Analitice',
+            'operations-section'   => 'Operațiuni',
+            'needs-attention'      => 'Necesită Atenție',
+            'unenriched-products'  => 'Produse Neîmbogățite',
+            'failed-jobs-24h'      => 'Lucrări Eșuate (24h)',
+            'low-completeness'     => 'Completitudine Scăzută',
+            'all-good'             => 'Totul arată bine!',
+            'channel-readiness'    => 'Pregătirea Canalului',
+            'ready-to-publish'     => 'gata de publicat',
+            'of'                   => 'of',
+            'products-ready'       => 'produse gata',
+            'no-readiness-data'    => 'Nu sunt disponibile date de completitudine încă.',
+            'entity-types'         => [
+                'product'          => 'Produs',
+                'category'         => 'Categorie',
+                'attribute'        => 'Atribut',
+                'attribute-family' => 'Familie',
+                'attribute-group'  => 'Grup',
+                'category-field'   => 'Câmp categorie',
+                'channel'          => 'Canal',
+                'role'             => 'Rol',
+                'job-instance'     => 'Sarcină',
+                'webhook'          => 'Webhook',
+                'api-key'          => 'Cheie API',
+            ],
         ],
     ],
-
     'catalog' => [
         'products' => [
             'index' => [
@@ -104,8 +164,7 @@ return [
                 'magic-ai-error'            => 'Verificați credențialele Magic AI și asigurați-vă că modelul corect este selectat.',
                 'magic-ai-validate-error'   => 'Vă rugăm să verificați acreditările Magic AI.',
                 'magic-ai-validate-success' => 'Acreditările Magic AI au fost validate cu succes.',
-
-                'create' => [
+                'create'                    => [
                     'back-btn'                          => 'Înapoi',
                     'configurable-attributes'           => 'Atribute configurabile',
                     'create-btn'                        => 'Creează produs',
@@ -118,7 +177,6 @@ return [
                     'not-config-super-attributes-error' => 'Super atributul ":super_attributes" nu a fost găsit',
                     'sku-exists-error'                  => 'SKU-ul ":sku" este deja utilizat',
                 ],
-
                 'datagrid' => [
                     'active'                 => 'Activ',
                     'attribute-family'       => 'Familie atribut',
@@ -143,54 +201,48 @@ return [
                     'qty-value'              => ':qty în stoc',
                     'sku'                    => 'SKU',
                     'sku-value'              => 'SKU - :sku',
-                    'status'                 => 'Status',
+                    'status'                 => 'Stare',
                     'type'                   => 'Tip',
                     'update-status'          => 'Actualizează statusul',
                     'parent'                 => 'Părinte',
                     'parent-identifier'      => 'Părinte: :sku',
+                    'created-at'             => 'Creat la',
+                    'updated-at'             => 'Actualizat la',
                 ],
             ],
-
             'edit' => [
-                'preview'  => 'Previzualizează',
-                'remove'   => 'Elimină',
-                'save-btn' => 'Salvează produs',
-                'title'    => 'Editează produs',
-
+                'preview'    => 'Previzualizează',
+                'remove'     => 'Elimină',
+                'save-btn'   => 'Salvează produs',
+                'title'      => 'Editează produs',
                 'categories' => [
                     'title' => 'Categorii',
                 ],
-
                 'images' => [
                     'info'  => 'Imaginile trebuie să aibă o rezoluție de 560px X 609px',
                     'title' => 'Imagini',
                 ],
-
                 'videos' => [
                     'error' => ':attribute nu poate fi mai mare de :max kilobytes. Selectați un fișier mai mic.',
                     'info'  => 'Dimensiunea maximă a videoclipului este :size',
                     'title' => 'Videoclipuri',
                 ],
-
                 'links' => [
                     'related-products' => [
                         'empty-info' => 'Adăugați produse conexe.',
                         'info'       => 'Pe lângă produsul afișat, vor fi afișate și produsele conexe.',
                         'title'      => 'Produse conexe',
                     ],
-
                     'up-sells' => [
                         'empty-info' => 'Adăugați produse de vânzare suplimentară.',
                         'info'       => 'Clienții vor vedea produse premium sau alternative de calitate superioară față de produsul afișat.',
                         'title'      => 'Produse de vânzare suplimentară',
                     ],
-
                     'cross-sells' => [
                         'empty-info' => 'Adăugați produse de vânzare încrucișată.',
                         'info'       => 'Pe lângă produsul din coș, clienții vor vedea și alte produse pe care le-ar putea cumpăra.',
                         'title'      => 'Produse de vânzare încrucișată',
                     ],
-
                     'add-btn'           => 'Adaugă',
                     'delete'            => 'Șterge',
                     'empty-info'        => 'Adăugați produse :type deodată.',
@@ -199,7 +251,6 @@ return [
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Produse',
                 ],
-
                 'types' => [
                     'configurable' => [
                         'add-btn'                            => 'Adaugă variație',
@@ -213,18 +264,16 @@ return [
                         'sku'                                => 'SKU - :sku',
                         'title'                              => 'Variație',
                         'variant-exists'                     => 'Această variație sau SKU există deja.',
-                        'variant-attribute-option-not-found' => 'Opțiune atribut variație nu găsită',
-                        'supper-attribute-not-found'         => 'Super atribut nu găsit',
-                        'variant-given-exists'               => 'Această variație există deja',
-
-                        'create' => [
+                        'variant-attribute-option-not-found' => 'Opțiune atribut variație nu găsită :attributes',
+                        'supper-attribute-not-found'         => 'Super atribut nu găsit :attribute',
+                        'variant-given-exists'               => 'Această variație există deja :variants',
+                        'create'                             => [
                             'description'            => 'Descriere',
                             'name'                   => 'Nume',
                             'save-btn'               => 'Adaugă',
                             'title'                  => 'Adaugă variație',
                             'variant-already-exists' => 'Această variație există deja.',
                         ],
-
                         'edit' => [
                             'disabled'        => 'Dezactivat',
                             'edit-info'       => 'Pentru a actualiza informațiile detaliate ale produsului, accesați pagina',
@@ -236,11 +285,10 @@ return [
                             'quantities'      => 'Cantități',
                             'save-btn'        => 'Salvează',
                             'sku'             => 'SKU',
-                            'status'          => 'Status',
+                            'status'          => 'Stare',
                             'title'           => 'Produs',
                             'weight'          => 'Greutate',
                         ],
-
                         'mass-edit' => [
                             'add-images'          => 'Adăugați imagini',
                             'apply-to-all-btn'    => 'Aplică pentru toți',
@@ -260,30 +308,38 @@ return [
                             'remove-variants'     => 'Șterge variații',
                             'select-action'       => 'Selectează acțiunea',
                             'select-variants'     => 'Selectează variațiile',
-                            'status'              => 'Status',
+                            'status'              => 'Stare',
                             'variant-name'        => 'Nume variație',
                             'variant-sku'         => 'SKU variație',
                             'weight'              => 'Greutate',
                         ],
                     ],
                 ],
-
                 'translate' => [
-                    'translate-btn'            => 'Traduce',
-                    'title'                    => 'Traduce',
-                    'source-channel'           => 'Canal sursă',
-                    'locale'                   => 'Setări regionale sursă',
-                    'translated-content'       => 'Conținut tradus',
-                    'translating'              => 'Se traduce',
-                    'apply'                    => 'Aplică',
-                    'cancel'                   => 'Anulează',
-                    'target-locales'           => 'Setări regionale țintă',
-                    'target-channel'           => 'Canal țintă',
-                    'attributes'               => 'Atribute',
-                    'source-content'           => 'Conținut sursă',
-                    'tranlated-job-processed'  => 'Sarcina de stocare a conținutului tradus a fost procesată.',
+                    'translate-btn'               => 'Traduce',
+                    'title'                       => 'Traduce',
+                    'source-channel'              => 'Canal sursă',
+                    'locale'                      => 'Setări regionale sursă',
+                    'translated-content'          => 'Conținut tradus',
+                    'translating'                 => 'Se traduce',
+                    'apply'                       => 'Aplică',
+                    'back'                        => 'Înapoi',
+                    'cancel'                      => 'Anulează',
+                    'target-locales'              => 'Setări regionale țintă',
+                    'target-channel'              => 'Canal țintă',
+                    'attributes'                  => 'Atribute',
+                    'tranlated-job-processed'     => 'Sarcina de stocare a conținutului tradus a fost procesată.',
+                    'step'                        => 'Pas',
+                    'select-source'               => 'Selectați sursa',
+                    'select-target'               => 'Selectați ținta',
+                    'first-step-title'            => 'Pasul 1: Selectați canalul sursă, limba și atributele',
+                    'first-step-title-attributes' => 'Pasul 1: Selectați canalul sursă și limba',
+                    'source-content'              => 'Conținut sursă',
+                    'second-step-title'           => 'Pasul 2: Selectați canalul țintă și limbile',
+                    'target-content'              => 'Conținut țintă',
+                    'next'                        => 'Următorul',
+                    'empty-translation-data'      => 'Datele pentru traducere nu sunt disponibile pe baza canalului sursă și a localizării',
                 ],
-
                 'product-info' => [
                     'title'        => 'Informații Produs',
                     'status'       => 'Stare',
@@ -293,6 +349,7 @@ return [
                     'created-at'   => 'Data Creării',
                     'product-type' => 'Tip Produs',
                 ],
+                'more-actions' => 'Mai multe acțiuni',
             ],
             'bulk-edit' => [
                 'validation' => [
@@ -305,27 +362,22 @@ return [
                     'select-attribute-or-family' => 'Vă rugăm să selectați cel puțin un atribut sau o familie de atribute.',
                     'failed'                     => 'Validarea a eșuat.',
                 ],
-
-                'modal'                      => [
+                'modal' => [
                     'title'            => 'Atribute pentru editare în masă',
                     'btn-cancel'       => 'Anulează',
                     'btn-proceed'      => 'Continuă',
                     'attribute-family' => 'Selectați familia de atribute',
                 ],
-
                 'index' => [
-                    'no-product'    => 'Nu au fost selectate produse pentru editare în masă.',
+                    'no-product' => 'Nu au fost selectate produse pentru editare în masă.',
                 ],
-
                 'filter' => [
-                    'many-product'      => 'Au fost selectate prea multe produse.',
-                    'redirect-message'  => 'Redirecționare către vizualizarea de editare în masă.',
+                    'many-product'     => 'Au fost selectate prea multe produse.',
+                    'redirect-message' => 'Redirecționare către vizualizarea de editare în masă.',
                 ],
-
                 'handle-save' => [
-                    'edit-success'  => 'Editarea în masă a reușit.',
+                    'edit-success' => 'Editarea în masă a reușit.',
                 ],
-
                 'id'              => 'ID',
                 'no-changes'      => 'Nicio modificare de salvat.',
                 'success'         => 'Sarcină executată cu succes.',
@@ -335,9 +387,8 @@ return [
                 'img-preview'     => 'Previzualizare imagine',
                 'no-image'        => 'Nicio imagine',
                 'img-fail'        => 'Încărcarea imaginii a eșuat',
-                'no-opton'        => 'Nicio opțiune',
+                'no-option'       => 'Fără opțiuni',
             ],
-
             'create-success'          => 'Produs creat cu succes',
             'delete-failed'           => 'Ștergerea produsului a eșuat',
             'delete-success'          => 'Produsul a fost șters cu succes',
@@ -351,30 +402,28 @@ return [
             'upload-success'          => 'Fișierul produsului a fost încărcat cu succes.',
             'update-failure'          => 'Produsul nu a putut fi actualizat.',
         ],
-
         'attributes' => [
             'index' => [
                 'create-btn' => 'Creează atribut',
                 'title'      => 'Atribute',
-
-                'datagrid' => [
-                    'channel-based'       => 'Pe bază de canal',
-                    'code'                => 'Cod',
-                    'created-at'          => 'Creat la',
-                    'delete'              => 'Șterge',
-                    'edit'                => 'Editează',
-                    'id'                  => 'ID',
-                    'locale-based'        => 'Pe bază de localitate',
-                    'mass-delete-success' => 'Atributele selectate au fost șterse cu succes',
-                    'name'                => 'Nume',
-                    'required'            => 'Necesar',
-                    'type'                => 'Tip',
-                    'unique'              => 'Unic',
-                    'delete-failed'       => 'Nu s-a putut șterge acest atribut.',
-                    'mass-delete-failed'  => 'Nu s-au putut șterge atributele selectate.',
+                'datagrid'   => [
+                    'channel-based'            => 'Pe bază de canal',
+                    'code'                     => 'Cod',
+                    'created-at'               => 'Creat la',
+                    'delete'                   => 'Șterge',
+                    'edit'                     => 'Editează',
+                    'id'                       => 'ID',
+                    'locale-based'             => 'Pe bază de localitate',
+                    'mass-delete-success'      => 'Atributele selectate au fost șterse cu succes',
+                    'name'                     => 'Nume',
+                    'required'                 => 'Necesar',
+                    'type'                     => 'Tip',
+                    'unique'                   => 'Unic',
+                    'delete-failed'            => 'Nu s-a putut șterge acest atribut.',
+                    'mass-delete-failed'       => 'Nu s-au putut șterge atributele selectate.',
+                    'delete-attribute-failure' => 'Acest atribut nu poate fi eliminat deoarece este utilizat pentru produse configurabile',
                 ],
             ],
-
             'create' => [
                 'add-attribute-options' => 'Adaugă opțiuni atribut',
                 'add-option'            => 'Adaugă opțiune',
@@ -397,13 +446,12 @@ return [
                 'enable-wysiwyg'        => 'Activează editor WYSIWYG',
                 'file'                  => 'Fișier',
                 'general'               => 'General',
-                'image'                 => 'Imagine',
                 'gallery'               => 'Galerie',
+                'image'                 => 'Imagine',
                 'input-options'         => 'Opțiuni de intrare',
                 'input-validation'      => 'Validare intrare',
                 'is-comparable'         => 'Acest atribut este comparabil',
                 'is-configurable'       => 'Utilizat pentru a crea produse configurabile',
-                'is-filterable'         => 'Poate fi folosit în filtre',
                 'is-required'           => 'Necesar',
                 'is-unique'             => 'Unic',
                 'is-visible-on-front'   => 'Vizibil în detaliile produsului (front-end)',
@@ -433,8 +481,8 @@ return [
                 'usable-in-grid'        => 'Utilizabil în grilă',
                 'is-filterable'         => 'Este filtrabil',
                 'ai-translate'          => 'Traducere IA',
-
-                'option' => [
+                'invalid-swatch-type'   => 'Atributul :attribute nu este permis pentru tipul de atribut :type cu tipul de eșantion :swatch_type.',
+                'option'                => [
                     'color'    => 'Eșantion de culoare',
                     'dropdown' => 'Meniu derulant',
                     'image'    => 'Eșantion imagine',
@@ -442,7 +490,6 @@ return [
                     'text'     => 'Eșantion text',
                 ],
             ],
-
             'edit' => [
                 'add-attribute-options' => 'Adaugă opțiuni atribut',
                 'add-option'            => 'Adaugă opțiune',
@@ -466,12 +513,10 @@ return [
                 'file'                  => 'Fișier',
                 'general'               => 'General',
                 'image'                 => 'Imagine',
-                'gallery'               => 'Galerie',
                 'input-options'         => 'Opțiuni de intrare',
                 'input-validation'      => 'Validare intrare',
                 'is-comparable'         => 'Acest atribut este comparabil',
                 'is-configurable'       => 'Utilizat pentru a crea produse configurabile',
-                'is-filterable'         => 'Poate fi folosit în filtre',
                 'is-required'           => 'Necesar',
                 'is-unique'             => 'Unic',
                 'is-visible-on-front'   => 'Vizibil în detaliile produsului (front-end)',
@@ -501,22 +546,19 @@ return [
                 'usable-in-grid'        => 'Utilizabil în grilă',
                 'is-filterable'         => 'Este filtrabil',
                 'ai-translate'          => 'Traducere IA',
-                'invalid-swatch-type'   => ':attribute nu este permis pentru tipul de atribut :type cu tipul swatch :swatch_type.',
-
-                'option' => [
-                    'create-success'      => 'Opțiunea atributului a fost creată cu succes',
-                    'delete-success'      => 'Opțiunea atributului a fost ștearsă cu succes',
+                'option'                => [
                     'save-btn'            => 'Salvează opțiune',
-                    'sort-update-failure' => 'Actualizarea ordinii de sortare a eșuat',
-                    'sort-update-success' => 'Ordinea de sortare a fost actualizată cu succes',
+                    'create-success'      => 'Opțiunea atributului a fost creată cu succes',
                     'update-success'      => 'Opțiunea atributului a fost actualizată cu succes',
+                    'sort-update-success' => 'Ordinea de sortare a fost actualizată cu succes',
+                    'sort-update-failure' => 'Actualizarea ordinii de sortare a eșuat',
+                    'delete-success'      => 'Opțiunea atributului a fost ștearsă cu succes',
                     'color'               => 'Eșantion de culoare',
                     'dropdown'            => 'Meniu derulant',
                     'image'               => 'Eșantion imagine',
                     'text'                => 'Eșantion text',
                 ],
             ],
-
             'create-success'    => 'Atribut creat',
             'delete-failed'     => 'Ștergerea atributului a eșuat',
             'delete-success'    => 'Atribut șters',
@@ -524,19 +566,16 @@ return [
             'user-define-error' => 'Nu se poate șterge atributul de sistem',
             'not-found'         => 'Atributul cu codul ":code" nu a fost găsit',
         ],
-
         'attribute-options' => [
             'create-success'       => 'Opțiunea atributului a fost creată cu succes',
             'update-success'       => 'Opțiunea atributului a fost actualizată cu succes',
             'usable-in-grid-error' => 'Doar 4 atribute pot fi marcate ca utilizabile în grilă.',
         ],
-
         'attribute-groups' => [
             'index' => [
                 'create-btn' => 'Creează grup de atribute',
                 'title'      => 'Grupuri de atribute',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'code'                => 'Cod',
                     'delete'              => 'Șterge',
                     'mass-delete-success' => 'Grupurile de atribute selectate au fost șterse',
@@ -548,7 +587,6 @@ return [
                     'update-status'       => 'Actualizează statusul',
                 ],
             ],
-
             'create' => [
                 'title'    => 'Adaugă grup de atribute',
                 'save-btn' => 'Salvează grup de atribute',
@@ -557,7 +595,6 @@ return [
                 'code'     => 'Cod',
                 'label'    => 'Etichetă',
             ],
-
             'edit' => [
                 'title'    => 'Editează grup de atribute',
                 'back-btn' => 'Înapoi',
@@ -566,7 +603,6 @@ return [
                 'code'     => 'Cod',
                 'label'    => 'Etichetă',
             ],
-
             'create-success'        => 'Grupul de atribute a fost creat cu succes',
             'delete-failed'         => 'Ștergerea grupului de atribute a eșuat',
             'delete-success'        => 'Grupul de atribute a fost șters cu succes',
@@ -575,29 +611,26 @@ return [
             'attribute-group-error' => 'Grupul este folosit în familii.',
             'not-found'             => 'Grupul de atribute cu codul ":code" nu a fost găsit',
         ],
-
         'categories' => [
             'index' => [
-                'add-btn' => 'Creează categorie',
-                'title'   => 'Categorii',
-
+                'add-btn'  => 'Creează categorie',
+                'title'    => 'Categorii',
                 'datagrid' => [
                     'active'         => 'Activ',
                     'code'           => 'Cod',
                     'delete'         => 'Șterge',
-                    'delete-success' => 'Resursele selectate au fost șterse',
+                    'delete-success' => 'Resursele selectate au fost șterse :resource',
                     'edit'           => 'Editează',
                     'id'             => 'ID',
                     'inactive'       => 'Inactiv',
                     'name'           => 'Nume vizibil',
+                    'category-name'  => 'Nume',
                     'no-of-products' => 'Număr de produse',
                     'position'       => 'Poziție',
-                    'category-name'  => 'Nume',
                     'status'         => 'Vizibil în meniu',
                     'update-status'  => 'Actualizează statusul',
                 ],
             ],
-
             'create' => [
                 'back-btn'            => 'Înapoi',
                 'code'                => 'Cod',
@@ -618,7 +651,6 @@ return [
                 'right-section'       => 'Secțiune de configurare',
                 'left-section'        => 'Secțiune generală',
             ],
-
             'edit' => [
                 'back-btn'               => 'Înapoi',
                 'code'                   => 'Cod',
@@ -637,7 +669,6 @@ return [
                 'right-section'          => 'Secțiune de configurare',
                 'left-section'           => 'Secțiune generală',
             ],
-
             'category'             => 'Categorie',
             'create-success'       => 'Categorie creată cu succes.',
             'delete-category-root' => 'Nu poți șterge categoria rădăcină asociată unui canal.',
@@ -652,14 +683,12 @@ return [
             'create-failure'       => 'Categoria nu a putut fi creată.',
             'update-failure'       => 'Categoria nu a putut fi actualizată.',
         ],
-
         'category_fields' => [
             'index' => [
                 'create-btn' => 'Creează câmp de categorie',
                 'add-btn'    => 'Creează câmp de categorie',
                 'title'      => 'Câmpuri de categorie',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'channel-based'       => 'Pe canal',
                     'code'                => 'Cod',
                     'created-at'          => 'Creat la',
@@ -684,7 +713,6 @@ return [
                     'mass-delete-failed'  => 'Câmpurile de categorie selectate nu pot fi șterse.',
                 ],
             ],
-
             'create' => [
                 'add-field-options'   => 'Adaugă opțiuni câmp de categorie',
                 'add-option'          => 'Adaugă opțiune',
@@ -739,8 +767,7 @@ return [
                 'set-section-right'   => 'Secțiunea de configurație',
                 'settings'            => 'Setări',
                 'same-code-error'     => 'Codul opțiunii trebuie să fie unic.',
-
-                'option' => [
+                'option'              => [
                     'dropdown' => 'Lista derulantă',
                     'save-btn' => 'Salvează opțiune',
                     'color'    => 'Eșantion de culoare',
@@ -748,7 +775,6 @@ return [
                     'text'     => 'Eșantion de text',
                 ],
             ],
-
             'edit' => [
                 'add-field-options'   => 'Adaugă opțiuni câmp de categorie',
                 'add-option'          => 'Adaugă opțiune',
@@ -804,8 +830,7 @@ return [
                 'set-section-right'   => 'Secțiunea de configurație',
                 'settings'            => 'Setări',
                 'same-code-error'     => 'Codul opțiunii trebuie să fie unic.',
-
-                'option' => [
+                'option'              => [
                     'dropdown' => 'Lista derulantă',
                     'save-btn' => 'Salvează opțiune',
                     'color'    => 'Eșantion de culoare',
@@ -813,7 +838,6 @@ return [
                     'text'     => 'Eșantion de text',
                 ],
             ],
-
             'create-success'    => 'Câmp de categorie creat cu succes',
             'delete-failed'     => 'Ștergere câmp de categorie eșuată',
             'delete-success'    => 'Câmp de categorie șters cu succes',
@@ -821,17 +845,14 @@ return [
             'user-define-error' => 'Nu se poate șterge câmpul de categorie sistem',
             'not-found'         => 'Câmp de categorie cu codul ":code" nu a fost găsit',
         ],
-
         'category-fields-options' => [
             'create-success' => 'Opțiune câmp categorie creată',
             'update-success' => 'Opțiune câmp categorie actualizată',
         ],
-
         'families' => [
             'index' => [
-                'add'   => 'Creează familie de atribute',
-                'title' => 'Familii',
-
+                'add'      => 'Creează familie de atribute',
+                'title'    => 'Familii',
                 'datagrid' => [
                     'code'           => 'Cod',
                     'delete'         => 'Șterge',
@@ -846,7 +867,6 @@ return [
                     'update-success' => 'Elementele selectate :resource au fost actualizate',
                 ],
             ],
-
             'create' => [
                 'assign-group-btn'                 => 'Atribuie grup de atribute',
                 'assign-group-title'               => 'Atribuie grup de atribute',
@@ -877,7 +897,6 @@ return [
                 'unassigned-attribute-groups'      => 'Grupuri de atribute neatribuite',
                 'assign-first-attribute-group'     => 'Atribuie un grup familiei.',
             ],
-
             'edit' => [
                 'assign-group-btn'                 => 'Atribuie grup de atribute',
                 'assign-group-title'               => 'Atribuie grup de atribute',
@@ -911,7 +930,6 @@ return [
                 'variant-options-label'            => 'Opțiuni de configurare',
                 'select-variant'                   => 'Selectează atribute',
             ],
-
             'attribute-family'               => 'Familia atributelor',
             'attribute-product-error'        => 'Familia este folosită în produse.',
             'create-success'                 => 'Familia a fost creată cu succes.',
@@ -924,7 +942,6 @@ return [
             'not-found'                      => 'Familia de atribute cu codul ":code" nu a fost găsită.',
             'can-not-update-variant-options' => 'Nu se pot actualiza opțiunile de configurare deoarece această familie are deja variante de produse.',
         ],
-
         'history' => [
             'index' => [
                 'datagrid' => [
@@ -935,7 +952,6 @@ return [
             ],
         ],
     ],
-
     'settings' => [
         'locales' => [
             'index' => [
@@ -944,8 +960,7 @@ return [
                 'title'                 => 'Localități',
                 'can-not-delete-error'  => 'Nu puteți șterge o localitate legată de un canal sau utilizator',
                 'can-not-disable-error' => 'Nu puteți dezactiva o localitate legată de un canal sau utilizator',
-
-                'datagrid' => [
+                'datagrid'              => [
                     'actions'     => 'Acțiuni',
                     'code'        => 'Cod',
                     'delete'      => 'Șterge',
@@ -956,14 +971,12 @@ return [
                     'name'        => 'Nume de Afișare',
                     'rtl'         => 'RTL',
                     'mass-update' => 'Actualizează Status',
-
-                    'status' => [
-                        'title'    => 'Status',
+                    'status'      => [
+                        'title'    => 'Stare',
                         'active'   => 'Activează',
                         'inactive' => 'Dezactivează',
                     ],
                 ],
-
                 'create' => [
                     'code'             => 'Cod',
                     'direction'        => 'Direcție',
@@ -972,13 +985,11 @@ return [
                     'save-btn'         => 'Salvează Localitate',
                     'select-direction' => 'Selectează Direcție',
                     'title'            => 'Creare Localitate',
-                    'status'           => 'Status',
+                    'status'           => 'Stare',
                 ],
-
                 'edit' => [
                     'title' => 'Editează Localitate',
                 ],
-
                 'create-success'    => 'Localitate creată cu succes.',
                 'delete-failed'     => 'Ștergerea localității a eșuat.',
                 'delete-success'    => 'Localitate ștearsă cu succes.',
@@ -987,7 +998,6 @@ return [
                 'update-success'    => 'Localitate actualizată cu succes.',
             ],
         ],
-
         'currencies' => [
             'index' => [
                 'create-btn'            => 'Creare Monedă',
@@ -995,8 +1005,7 @@ return [
                 'title'                 => 'Monede',
                 'can-not-delete-error'  => 'Nu puteți șterge o monedă legată de un canal',
                 'can-not-disable-error' => 'Nu puteți dezactiva o monedă legată de un canal',
-
-                'datagrid' => [
+                'datagrid'              => [
                     'actions'        => 'Acțiuni',
                     'code'           => 'Cod',
                     'delete'         => 'Șterge',
@@ -1006,16 +1015,14 @@ return [
                     'name'           => 'Nume de Afișare',
                     'no-resource'    => 'Resursa furnizată nu este suficientă pentru acțiune',
                     'partial-action' => 'Unele acțiuni nu au fost realizate din cauza restricțiilor sistemului pe :resource',
-                    'update-success' => 'Resursele selectate au fost actualizate cu succes.',
+                    'update-success' => 'Selectate :resource au fost actualizate cu succes',
                     'mass-update'    => 'Actualizează Status',
-
-                    'status' => [
-                        'title'    => 'Status',
+                    'status'         => [
+                        'title'    => 'Stare',
                         'active'   => 'Activează',
                         'inactive' => 'Dezactivează',
                     ],
                 ],
-
                 'create' => [
                     'code'           => 'Cod',
                     'create-btn'     => 'Creare Monedă',
@@ -1026,13 +1033,11 @@ return [
                     'save-btn'       => 'Salvează Monedă',
                     'symbol'         => 'Simbol',
                     'title'          => 'Creare Monedă Nouă',
-                    'status'         => 'Status',
+                    'status'         => 'Stare',
                 ],
-
                 'edit' => [
                     'title' => 'Editează Monedă',
                 ],
-
                 'create-success'    => 'Monedă creată cu succes.',
                 'delete-failed'     => 'Ștergerea monedei a eșuat.',
                 'delete-success'    => 'Monedă ștearsă cu succes.',
@@ -1041,7 +1046,6 @@ return [
                 'cannot-delete'     => 'Moneda nu poate fi ștearsă.',
             ],
         ],
-
         'data-transfer' => [
             'tracker' => [
                 'index' => [
@@ -1059,28 +1063,28 @@ return [
                         'user'                 => 'Utilizator',
                         'created_at'           => 'Creat la',
                         'updated_at'           => 'Actualizat la',
-
-                        'pending'    => 'În așteptare',
-                        'validated'  => 'Validat',
-                        'processing' => 'Procesare',
-                        'processed'  => 'Procesat',
-                        'linking'    => 'Conectare',
-                        'linked'     => 'Conectat',
-
-                        'indexing'  => 'Indexare',
-                        'indexed'   => 'Indexat',
-                        'completed' => 'Finalizat',
-                        'failed'    => 'Eșuat',
+                        'pending'              => 'În așteptare',
+                        'validating'           => 'Validare',
+                        'validated'            => 'Validat',
+                        'processing'           => 'Procesare',
+                        'processed'            => 'Procesat',
+                        'linking'              => 'Conectare',
+                        'linked'               => 'Conectat',
+                        'indexing'             => 'Indexare',
+                        'indexed'              => 'Indexat',
+                        'completed'            => 'Finalizat',
+                        'paused'               => 'Suspendat',
+                        'cancelled'            => 'Anulat',
+                        'failed'               => 'Eșuat',
                     ],
                 ],
-
                 'import' => [
                     'back-btn'                => 'Înapoi',
                     'completed-batches'       => 'Total Loturi Finalizate:',
                     'download-error-report'   => 'Descarcă Raport Complet',
                     'edit-btn'                => 'Editare',
                     'imported-info'           => 'Felicitări! Importul a fost realizat cu succes.',
-                    'importing-info'          => 'Export în desfășurare',
+                    'exporting-info'          => 'Export în curs',
                     'indexing-info'           => 'Indexare Resurse (Prețuri, Elasticsearch) în desfășurare',
                     'linking-info'            => 'Conectare Resurse în desfășurare',
                     'progress'                => 'Progres:',
@@ -1098,7 +1102,6 @@ return [
                     'validation-failed-info'  => 'Importul este invalid. Vă rugăm să corectați erorile și să încercați din nou.',
                     'validation-success-info' => 'Importul este valid. Faceți clic pe "Export" pentru a începe procesul de import.',
                 ],
-
                 'summary' => [
                     'total-batches' => 'Total Loturi:',
                     'created'       => 'Total Înregistrări Create:',
@@ -1109,148 +1112,192 @@ return [
                     'updated'       => 'Total Înregistrări Actualizate:',
                     'skipped'       => 'Total Înregistrări Omitate:',
                 ],
-
-                'info'              => 'Felicitări! Sarcina a fost executată cu succes.',
-                'create-success'    => 'Export creat cu succes.',
-                'delete-failed'     => 'Ștergerea exportului a eșuat.',
-                'delete-success'    => 'Export șters cu succes.',
-                'not-valid'         => 'Export invalid',
-                'nothing-to-import' => 'Nu există resurse de importat.',
-                'setup-queue-error' => 'Vă rugăm să schimbați driverul de coadă la "database" sau "redis" pentru a începe procesul de import.',
-                'update-success'    => 'Export actualizat cu succes.',
-                'failed-info'       => 'Sarcina a eșuat. Vă rugăm să corectați erorile și să încercați din nou.',
-                'download-log-file' => 'Descarcă Jurnal',
+                'info'                  => 'Felicitări! Sarcina a fost executată cu succes.',
+                'running-time'          => 'Timp de execuție',
+                'estimated-remaining'   => 'Timp estimat rămas',
+                'total-duration'        => 'Durată totală',
+                'status'                => 'Stare',
+                'waiting'               => 'În așteptare',
+                'total-records'         => 'Total înregistrări',
+                'job-id'                => 'ID sarcină',
+                'records-created'       => 'Înregistrări create',
+                'records-updated'       => 'Înregistrări actualizate',
+                'records-deleted'       => 'Înregistrări șterse',
+                'run-again'             => 'Rulează din nou',
+                'completed-success'     => 'sarcina finalizată cu succes',
+                'completed-info-sub'    => 'Toate înregistrările au fost procesate și indexate. Catalogul dvs. este actualizat.',
+                'create-success'        => 'Export creat cu succes.',
+                'delete-failed'         => 'Ștergerea exportului a eșuat.',
+                'delete-success'        => 'Export șters cu succes.',
+                'not-valid'             => 'Export invalid',
+                'nothing-to-import'     => 'Nu există resurse de importat.',
+                'setup-queue-error'     => 'Vă rugăm să schimbați driverul de coadă la "database" sau "redis" pentru a începe procesul de import.',
+                'update-success'        => 'Export actualizat cu succes.',
+                'failed-info'           => 'Sarcina a eșuat. Vă rugăm să corectați erorile și să încercați din nou.',
+                'download-log-file'     => 'Descarcă Jurnal',
+                'pause'                 => 'Pauză',
+                'resume'                => 'Reluare',
+                'cancel'                => 'Anulare',
+                'paused'                => 'Importul a fost suspendat.',
+                'resumed'               => 'Importul a fost reluat.',
+                'cancelled'             => 'Importul a fost anulat.',
+                'paused-info'           => 'Importul este suspendat. Loturile rămase sunt în așteptare.',
+                'paused-info-export'    => 'Exportul este suspendat. Loturile rămase sunt în așteptare.',
+                'cancelled-info'        => 'Importul a fost anulat. Rezultatele parțiale sunt afișate mai jos.',
+                'cancelled-info-export' => 'Exportul a fost anulat. Rezultatele parțiale sunt afișate mai jos.',
+                'cancel-confirm'        => 'Sunteți sigur că doriți să anulați această sarcină? Această acțiune nu poate fi anulată.',
+                'live'                  => 'În direct',
+                'import-progress'       => 'Progres import',
+                'export-progress'       => 'Progres export',
+                'linking-progress'      => 'Progres asociere',
+                'indexing-progress'     => 'Progres indexare',
+                'job-label'             => 'Sarcină',
             ],
-
-            'import' => [
-                'create' => [
+            'imports' => [
+                'import-start-fail' => 'Procesul de import nu a putut fi pornit. Vă rugăm să încercați din nou.',
+                'create'            => [
                     'code'                => 'Cod',
                     'action'              => 'Acțiune',
-                    'allowed-errors'      => 'Erori permise',
+                    'allowed-errors'      => 'Erori Permise',
                     'allowed-file-types'  => 'Tipuri de fișiere permise (CSV, XLSX, XLS)',
                     'back-btn'            => 'Înapoi',
                     'create-update'       => 'Creare/Actualizare',
                     'delete'              => 'Șterge',
                     'media'               => 'Fișier / Imagini',
                     'images'              => 'Imagini',
-                    'download-sample'     => 'Descarcă fișierul de probă :resource CSV',
-                    'field-separator'     => 'Separator câmpuri',
+                    'download-sample'     => 'Descarcă CSV Exemplu :resource',
+                    'field-separator'     => 'Separator de Câmp',
                     'separator-info'      => 'Utilizați doar pentru fișiere CSV',
-                    'file-info-example'   => 'Plasați imaginile în storage/app/public/. Dacă imaginile sunt în storage/app/public/import-images, adăugați import-images/ în cale și utilizați doar numele fișierului în fișierul de import.',
-                    'file-info'           => 'Utilizați calea relativă pentru /project-root/storage/app/import, de exemplu product-images, import-images.',
+                    'file-info-example'   => 'Plasați imaginile în storage/app/public/. Pentru imaginile din storage/app/public/import-images, includeți import-images/ în cale și folosiți doar numele fișierului în fișierul de import.',
+                    'file-info'           => 'Folosiți calea relativă către /project-root/storage/app/import, de exemplu, product-images, import-images.',
                     'file'                => 'Fișier',
                     'general'             => 'General',
-                    'upload_images'       => 'Încarcă imagini pentru a seta calea',
-                    'download-sample-zip' => 'Descarcă fișierele de probă în format ZIP',
+                    'upload_images'       => 'Încărcați Imagini în Calea Setată',
+                    'download-sample-zip' => 'Descarcă ZIP cu Imagini Exemplu',
+                    'zip-uploading'       => 'Se încarcă și se extrage ZIP...',
+                    'zip-upload-success'  => 'ZIP încărcat și extras cu succes.',
+                    'zip-upload-error'    => 'Încărcarea ZIP a eșuat. Vă rugăm să încercați din nou.',
+                    'invalid-zip'         => 'Fișierul încărcat nu este o arhivă ZIP validă.',
+                    'zip-upload-or'       => 'sau încărcați un ZIP cu imagini',
+                    'zip-click-upload'    => 'Faceți clic pentru a încărca un ZIP cu imagini',
+                    'zip-files-extracted' => 'fișiere extrase',
+                    'zip-drop-hint'       => 'Click sau trageți și plasați un fișier ZIP aici',
                     'images-directory'    => 'Cale',
-                    'process-in-queue'    => 'În procesare în coadă',
+                    'process-in-queue'    => 'Procesează în Coada',
                     'results'             => 'Rezultate',
-                    'save-btn'            => 'Salvează importul',
+                    'save-btn'            => 'Salvează Importul',
                     'settings'            => 'Setări',
-                    'skip-errors'         => 'Sari peste erori',
-                    'stop-on-errors'      => 'Oprește la erori',
-                    'title'               => 'Creează import',
+                    'skip-errors'         => 'Sari Peste Erori',
+                    'stop-on-errors'      => 'Oprește la Erori',
+                    'title'               => 'Creare Import',
                     'type'                => 'Tip',
-                    'validation-strategy' => 'Strategie de validare',
+                    'validation-strategy' => 'Strategia de Validare',
                 ],
-
                 'edit' => [
                     'images'              => 'Imagini',
                     'action'              => 'Acțiune',
-                    'allowed-errors'      => 'Erori permise',
+                    'allowed-errors'      => 'Erori Permise',
                     'allowed-file-types'  => 'Tipuri de fișiere permise (CSV, XLSX, XLS)',
                     'back-btn'            => 'Înapoi',
                     'create-update'       => 'Creare/Actualizare',
                     'delete'              => 'Șterge',
-                    'download-sample'     => 'Descarcă probă',
-                    'field-separator'     => 'Separator câmpuri',
+                    'download-sample'     => 'Descarcă Exemplu',
+                    'field-separator'     => 'Separator de Câmp',
                     'separator-info'      => 'Utilizați doar pentru fișiere CSV',
-                    'file-info-example'   => 'Plasați imaginile în storage/app/public/. Dacă imaginile sunt în storage/app/public/import-images, adăugați import-images/ în cale și utilizați doar numele fișierului în fișierul de import.',
-                    'file-info'           => 'Utilizați calea relativă pentru /project-root/storage/app/import, de exemplu product-images, import-images.',
+                    'file-info-example'   => 'Plasați imaginile în storage/app/public/. Pentru imaginile din storage/app/public/import-images, includeți import-images/ în cale și folosiți doar numele fișierului în fișierul de import.',
+                    'file-info'           => 'Folosiți calea relativă către /project-root/storage/app/import, de exemplu, product-images, import-images.',
                     'file'                => 'Fișier',
                     'general'             => 'General',
                     'images-directory'    => 'Cale',
-                    'process-in-queue'    => 'În procesare în coadă',
+                    'process-in-queue'    => 'Procesează în Coada',
                     'results'             => 'Rezultate',
-                    'save-btn'            => 'Salvează importul',
+                    'save-btn'            => 'Salvează Importul',
                     'settings'            => 'Setări',
-                    'skip-errors'         => 'Sari peste erori',
-                    'stop-on-errors'      => 'Oprește la erori',
-                    'title'               => 'Editează import',
+                    'skip-errors'         => 'Sari Peste Erori',
+                    'stop-on-errors'      => 'Oprește la Erori',
+                    'title'               => 'Editează Import',
                     'type'                => 'Tip',
-                    'validation-strategy' => 'Strategie de validare',
+                    'validation-strategy' => 'Strategia de Validare',
                 ],
-
                 'batch' => [
                     'title' => 'Import adăugat în coadă',
                 ],
-
                 'index' => [
-                    'button-title' => 'Creează import',
+                    'button-title' => 'Creare Import',
                     'title'        => 'Importuri',
-
-                    'datagrid' => [
+                    'datagrid'     => [
                         'actions'               => 'Acțiuni',
-                        'completed-at'          => 'Finalizat la',
+                        'completed-at'          => 'Finalizat La',
                         'created'               => 'Creat',
                         'delete'                => 'Șterge',
                         'deleted'               => 'Șters',
                         'edit'                  => 'Editează',
-                        'error-file'            => 'Fișier de eroare',
+                        'error-file'            => 'Fișier de Erori',
                         'id'                    => 'ID',
                         'code'                  => 'Cod',
                         'type'                  => 'Tip',
                         'action'                => 'Acțiune',
-                        'started-at'            => 'Început la',
+                        'started-at'            => 'Început La',
                         'state'                 => 'Stare',
                         'summary'               => 'Sumar',
                         'updated'               => 'Actualizat',
-                        'uploaded-file'         => 'Fișier încărcat',
-                        'images_directory_path' => 'Cale imagini',
+                        'uploaded-file'         => 'Fișier Încărcat',
+                        'images_directory_path' => 'Fișier Imagini',
                         'import'                => 'Import',
                     ],
                 ],
-
                 'import' => [
+                    'action'                  => 'Mod Acțiune',
                     'back-btn'                => 'Înapoi',
-                    'completed-batches'       => 'Lote finalizate total:',
-                    'download-error-report'   => 'Descarcă raport complet',
+                    'completed-batches'       => 'Total Batches Finalizate:',
+                    'download-error-report'   => 'Descarcă Raport Complet',
                     'edit-btn'                => 'Editează',
-                    'imported-info'           => 'Felicitări! Importul tău a fost realizat cu succes.',
-                    'importing-info'          => 'Import în curs',
                     'exporting-info'          => 'Export în curs',
-                    'indexing-info'           => 'Indexarea resurselor (prețuri, Elastic Search) în curs',
-                    'linking-info'            => 'Conectarea resurselor în curs',
-                    'progress'                => 'Progres:',
-                    'pending-info'            => 'Așteaptă procesare în coadă',
-                    'title'                   => 'Import',
-                    'total-batches'           => 'Lote totale:',
-                    'total-created'           => 'Înregistrări create total:',
-                    'total-deleted'           => 'Înregistrări șterse total:',
-                    'total-errors'            => 'Erori totale:',
-                    'total-invalid-rows'      => 'Linii invalide totale:',
-                    'total-rows-processed'    => 'Linii procesate totale:',
-                    'total-updated'           => 'Înregistrări actualizate total:',
-                    'validate-info'           => 'Apasă pentru a valida datele și a verifica importul.',
-                    'validate'                => 'Validează',
-                    'file_path'               => 'Cale fișier',
-                    'import-now'              => 'Importă acum',
-                    'action'                  => 'Mod acțiune',
+                    'exporting-info-sub'      => 'Se generează fișierul de export și se scriu înregistrările. Vă rugăm așteptați.',
+                    'file_path'               => 'Calea Fișierului',
+                    'imported-info'           => 'Felicitări! Importul dumneavoastră a fost un succes.',
+                    'import-now'              => 'Importă Acum',
+                    'importing-info'          => 'Import în Proces',
+                    'importing-info-sub'      => 'Se procesează loturile și se scriu înregistrările în baza de date.',
+                    'indexing-info'           => 'Indexarea Resurselor (Preț, Elastic Search) În Curs',
+                    'indexing-info-sub'       => 'Se reconstruiesc indexurile de căutare și cache-urile de prețuri după import. Acest pas se execută automat.',
+                    'indexing-type'           => 'Preț + ES',
+                    'linking-info'            => 'Legarea Resurselor În Curs',
+                    'linking-info-sub'        => 'Se asociază resursele conexe și asocierile între înregistrări.',
+                    'pending-info'            => 'Job în coadă — așteptând să înceapă lucrătorul...',
+                    'pending-info-sub'        => 'Sarcina dvs. a fost adăugată în coada de procesare. Un worker o va prelua în curând.',
+                    'pending-step-complete'   => 'Finalizat',
+                    'pending-step-export'     => 'Exportare',
+                    'pending-step-import'     => 'Se importă',
+                    'pending-step-queue'      => 'În coadă',
+                    'pending-step-validate'   => 'Validare',
                     'profile'                 => 'Profil import',
-                    'validating-info'         => 'Datele au început să fie citite și validate',
-                    'validation-failed-info'  => 'Importul tău este invalid. Te rugăm să corectezi erorile și să încerci din nou.',
-                    'validation-success-info' => 'Importul tău este valid. Apasă „Importă” pentru a începe procesul de import.',
+                    'progress'                => 'Progres:',
+                    'title'                   => 'Import',
+                    'total-batches'           => 'Total loturi:',
+                    'total-created'           => 'Total înregistrări create:',
+                    'total-deleted'           => 'Total înregistrări șterse:',
+                    'total-errors'            => 'Total erori:',
+                    'total-invalid-rows'      => 'Total rânduri invalide:',
+                    'total-rows-processed'    => 'Total rânduri procesate:',
+                    'total-updated'           => 'Total înregistrări actualizate:',
+                    'validate'                => 'Validează',
+                    'validate-info'           => 'Click pe Validează Date pentru a verifica importul.',
+                    'validating-info'         => 'Citirea fișierului și validarea datelor...',
+                    'validating-info-sub'     => 'Se verifică integritatea schemei, mapările câmpurilor și tipurile de date înainte de începerea importului.',
+                    'validation-failed-info'  => 'Importul dvs. este invalid. Corectați erorile următoare și încercați din nou.',
+                    'validation-success-info' => 'Importul dumneavoastră este valid. Începem importul automat...',
                 ],
-
-                'create-success'    => 'Import creat cu succes.',
-                'delete-failed'     => 'Ștergerea importului a eșuat.',
-                'delete-success'    => 'Import șters cu succes.',
-                'not-valid'         => 'Import invalid',
-                'nothing-to-import' => 'Nu sunt resurse de importat.',
-                'setup-queue-error' => 'Te rugăm să schimbi driverul cozii la „database” sau „redis” pentru a începe procesul de import.',
-                'update-success'    => 'Import actualizat cu succes.',
+                'create-success'     => 'Import creat cu succes.',
+                'delete-failed'      => 'Ștergerea importului a eșuat neașteptat.',
+                'delete-success'     => 'Import șters cu succes.',
+                'invalid-zip'        => 'Fișierul încărcat nu este o arhivă ZIP validă.',
+                'not-valid'          => 'Importul este invalid',
+                'nothing-to-import'  => 'Nu există resurse de importat.',
+                'setup-queue-error'  => 'Vă rugăm să schimbați driverul cozii la "database" sau "redis" pentru a începe procesul de import.',
+                'update-success'     => 'Import actualizat cu succes.',
+                'zip-upload-success' => 'ZIP încărcat și extras cu succes.',
             ],
-
             'exports' => [
                 'create' => [
                     'code'                => 'Cod',
@@ -1281,7 +1328,6 @@ return [
                     'type'                => 'Tip',
                     'validation-strategy' => 'Strategia de Validare',
                 ],
-
                 'edit' => [
                     'action'              => 'Acțiune',
                     'allowed-errors'      => 'Erori Permise',
@@ -1305,16 +1351,13 @@ return [
                     'type'                => 'Tip',
                     'validation-strategy' => 'Strategia de Validare',
                 ],
-
                 'batch' => [
                     'title' => 'Export adăugat în coadă',
                 ],
-
                 'index' => [
                     'button-title' => 'Creează Export',
                     'title'        => 'Exporturi',
-
-                    'datagrid' => [
+                    'datagrid'     => [
                         'actions'               => 'Acțiuni',
                         'completed-at'          => 'Finalizat la',
                         'created'               => 'Creat',
@@ -1335,7 +1378,6 @@ return [
                         'export'                => 'Exportă',
                     ],
                 ],
-
                 'export' => [
                     'back-btn'                => 'Înapoi',
                     'completed-batches'       => 'Total Lote Finalizate:',
@@ -1365,7 +1407,6 @@ return [
                     'file-format'             => 'Format Fișier',
                     'with-media'              => 'Cu Media',
                 ],
-
                 'create-success'    => 'Exportul a fost creat cu succes.',
                 'delete-failed'     => 'Ștergerea exportului a eșuat neașteptat.',
                 'delete-success'    => 'Exportul a fost șters cu succes.',
@@ -1375,7 +1416,6 @@ return [
                 'update-success'    => 'Exportul a fost actualizat cu succes.',
             ],
         ],
-
         'channels' => [
             'index' => [
                 'create-btn'           => 'Creează Canal',
@@ -1394,7 +1434,6 @@ return [
                     'root-category' => 'Categorie rădăcină',
                 ],
             ],
-
             'create' => [
                 'allowed-ips'            => 'IP-uri permise',
                 'cancel'                 => 'Înapoi',
@@ -1425,11 +1464,10 @@ return [
                 'seo-keywords'           => 'Cuvinte cheie Meta',
                 'seo-title'              => 'Titlu Meta',
                 'settings'               => 'Setări',
-                'status'                 => 'Status',
+                'status'                 => 'Stare',
                 'theme'                  => 'Temă',
                 'title'                  => 'Creează Canal',
             ],
-
             'edit' => [
                 'allowed-ips'            => 'IP-uri permise',
                 'back-btn'               => 'Înapoi',
@@ -1460,20 +1498,18 @@ return [
                 'seo-description'        => 'Descriere Meta',
                 'seo-keywords'           => 'Cuvinte cheie Meta',
                 'seo-title'              => 'Titlu Meta',
-                'status'                 => 'Status',
+                'status'                 => 'Stare',
                 'name-translations'      => 'Traduceri Nume',
                 'theme'                  => 'Temă',
                 'title'                  => 'Editează Canal',
                 'update-success'         => 'Canal actualizat cu succes',
             ],
         ],
-
         'users' => [
             'index' => [
-                'admin' => 'Administrator',
-                'title' => 'Utilizatori',
-                'user'  => 'Utilizator',
-
+                'admin'  => 'Administrator',
+                'title'  => 'Utilizatori',
+                'user'   => 'Utilizator',
                 'create' => [
                     'confirm-password'  => 'Confirmați Parola',
                     'email'             => 'E-mail',
@@ -1481,13 +1517,12 @@ return [
                     'password'          => 'Parolă',
                     'role'              => 'Rol',
                     'save-btn'          => 'Salvează Utilizator',
-                    'status'            => 'Status',
+                    'status'            => 'Stare',
                     'title'             => 'Creează Utilizator',
                     'upload-image-info' => 'Încarcă imaginea de profil (110px X 110px)',
                     'user-timezone'     => 'Fus orar',
                     'select'            => 'Selectează',
                 ],
-
                 'datagrid' => [
                     'actions'  => 'Acțiuni',
                     'active'   => 'Activ',
@@ -1498,15 +1533,13 @@ return [
                     'inactive' => 'Inactiv',
                     'name'     => 'Nume',
                     'role'     => 'Rol',
-                    'status'   => 'Status',
+                    'status'   => 'Stare',
                     'image'    => 'Imagine',
                 ],
-
                 'edit' => [
                     'title' => 'Editează Utilizator',
                 ],
             ],
-
             'edit' => [
                 'back-btn'         => 'Înapoi',
                 'confirm-password' => 'Confirmați Parola',
@@ -1516,10 +1549,9 @@ return [
                 'password'         => 'Parolă',
                 'role'             => 'Rol',
                 'save-btn'         => 'Salvează Utilizator',
-                'status'           => 'Status',
+                'status'           => 'Stare',
                 'title'            => 'Editează Utilizator',
             ],
-
             'activate-warning'          => 'Contul dvs. nu a fost încă activat. Contactați administratorul.',
             'cannot-change'             => 'Utilizatorul nu poate fi modificat',
             'create-success'            => 'Utilizatorul a fost creat cu succes.',
@@ -1532,13 +1564,11 @@ return [
             'update-success'            => 'Utilizatorul a fost actualizat cu succes.',
             'current-user-delete-error' => 'Nu se poate șterge utilizatorul conectat.',
         ],
-
         'roles' => [
             'index' => [
                 'create-btn' => 'Creează Rol',
                 'title'      => 'Roluri',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'delete'          => 'Șterge',
                     'edit'            => 'Editează',
                     'id'              => 'ID',
@@ -1546,7 +1576,6 @@ return [
                     'permission-type' => 'Tip Permisiune',
                 ],
             ],
-
             'create' => [
                 'access-control' => 'Control Acces',
                 'all'            => 'Toate',
@@ -1559,7 +1588,6 @@ return [
                 'save-btn'       => 'Salvează Rol',
                 'title'          => 'Creează Rol',
             ],
-
             'edit' => [
                 'access-control' => 'Control Acces',
                 'all'            => 'Toate',
@@ -1572,7 +1600,6 @@ return [
                 'save-btn'       => 'Salvează Rol',
                 'title'          => 'Editează Rol',
             ],
-
             'being-used'        => 'Rolul este deja folosit de un utilizator administrator',
             'being-used-by'     => 'Rolul este deja folosit de utilizatorul :name',
             'create-success'    => 'Rolul a fost creat cu succes',
@@ -1582,160 +1609,6 @@ return [
             'update-success'    => 'Rolul a fost actualizat cu succes',
         ],
     ],
-
-    'acl' => [
-        'addresses'                => 'Adrese',
-        'attribute-families'       => 'Familii de Atribute',
-        'attribute-groups'         => 'Grupuri de Atribute',
-        'attributes'               => 'Atribute',
-        'cancel'                   => 'Anulare',
-        'catalog'                  => 'Catalog',
-        'categories'               => 'Categorii',
-        'channels'                 => 'Canale',
-        'configure'                => 'Configurare',
-        'configuration'            => 'Configurare',
-        'copy'                     => 'Copiere',
-        'create'                   => 'Creează',
-        'currencies'               => 'Monede',
-        'dashboard'                => 'Tablou de Bord',
-        'data-transfer'            => 'Transfer de Date',
-        'delete'                   => 'Ștergere',
-        'edit'                     => 'Editare',
-        'email-templates'          => 'Șabloane de E-mail',
-        'events'                   => 'Evenimente',
-        'groups'                   => 'Grupuri',
-        'import'                   => 'Importare',
-        'imports'                  => 'Importuri',
-        'invoices'                 => 'Facturi',
-        'locales'                  => 'Locale',
-        'magic-ai'                 => 'Magic AI',
-        'marketing'                => 'Marketing',
-        'newsletter-subscriptions' => 'Abonamente la Newsletter',
-        'note'                     => 'Notă',
-        'orders'                   => 'Comenzi',
-        'products'                 => 'Produse',
-        'promotions'               => 'Promoții',
-        'refunds'                  => 'Rambursări',
-        'reporting'                => 'Raportare',
-        'reviews'                  => 'Recenzii',
-        'roles'                    => 'Roluri',
-        'sales'                    => 'Vânzări',
-        'search-seo'               => 'Cautare & SEO',
-        'search-synonyms'          => 'Sinonime căutare',
-        'search-terms'             => 'Termeni căutare',
-        'settings'                 => 'Setări',
-        'shipments'                => 'Expediții',
-        'sitemaps'                 => 'Hartă site',
-        'subscribers'              => 'Abonați',
-        'tax-categories'           => 'Categorii de impozite',
-        'tax-rates'                => 'Rata impozitelor',
-        'taxes'                    => 'Impozite',
-        'themes'                   => 'Teme',
-        'integration'              => 'Integrare',
-        'url-rewrites'             => 'Rescriere URL',
-        'users'                    => 'Utilizatori',
-        'category_fields'          => 'Câmpuri categorie',
-        'view'                     => 'Vizualizare',
-        'execute'                  => 'Executare',
-        'history'                  => 'Istoric',
-        'restore'                  => 'Restaurare',
-        'integrations'             => 'Integrații',
-        'api'                      => 'API',
-        'tracker'                  => 'Urmărire sarcini',
-        'imports'                  => 'Importuri',
-        'exports'                  => 'Exporturi',
-        'mass-update'              => 'Actualizare în masă',
-        'mass-delete'              => 'Ștergere în masă',
-    ],
-
-    'errors' => [
-        'dashboard' => 'Tablou de Bord',
-        'go-back'   => 'Înapoi',
-        'support'   => 'Dacă problema persistă, contactați-ne la <a href=":link" class=":class">:email</a> pentru asistență.',
-
-        '404' => [
-            'description' => 'Oops! Pagina pe care o cauți este în vacanță. Se pare că nu am reușit să găsim ceea ce cauți.',
-            'title'       => '404 Pagina nu a fost găsită',
-        ],
-
-        '401' => [
-            'description' => 'Oops! Pare că nu ai permisiunea de a accesa această pagină. Se pare că îți lipsesc acreditările necesare.',
-            'title'       => '401 Neautorizat',
-            'message'     => 'Autentificarea a eșuat din cauza acreditărilor nevalide sau a tokenului expirat.',
-        ],
-
-        '403' => [
-            'description' => 'Oops! Această pagină este interzisă. Se pare că nu ai permisiunea de a vizualiza acest conținut.',
-            'title'       => '403 Interzis',
-        ],
-
-        '413' => [
-            'description' => 'Oops! Pare că încerci să încarci un fișier prea mare. Dacă dorești să faci acest lucru, actualizează configurația PHP.',
-            'title'       => '413 Conținut prea mare',
-        ],
-
-        '419' => [
-            'description' => 'Oops! Sesia ta a expirat. Te rugăm să reînnoiești pagina și să te loghezi din nou pentru a continua.',
-            'title'       => '419 Sesiunea a expirat',
-        ],
-
-        '500' => [
-            'description' => 'Oops! Ceva nu a mers bine. Se pare că avem probleme în încărcarea paginii pe care o cauți.',
-            'title'       => '500 Eroare internă a serverului',
-        ],
-
-        '503' => [
-            'description' => 'Oops! Pare că suntem temporar indisponibili pentru întreținere. Verifică din nou peste puțin timp.',
-            'title'       => '503 Serviciul nu este disponibil',
-        ],
-    ],
-
-    'export' => [
-        'csv'                  => 'CSV',
-        'download'             => 'Descarcă',
-        'export'               => 'Export rapid',
-        'no-records'           => 'Nimic de exportat',
-        'xls'                  => 'XLS',
-        'xlsx'                 => 'XLSX',
-        'with-media'           => 'Cu media',
-        'export-success'       => 'Export realizat cu succes!',
-        'error'                => 'Ceva n-a mers bine!',
-        'product-not-selected' => 'Nu au fost selectate produse pentru export rapid',
-    ],
-
-    'validations' => [
-        'slug-being-used' => 'Acest slug este utilizat în categorii sau produse.',
-        'slug-reserved'   => 'Acest slug este rezervat.',
-        'invalid-locale'  => 'Locale invalide :locales',
-    ],
-
-    'footer' => [
-        'copy-right' => 'Powered by <a href="https://unopim.com/" target="_blank">UnoPim</a>, Un proiect comunitar de la <a href="https://webkul.com/" target="_blank">Webkul</a>',
-    ],
-
-    'emails' => [
-        'dear'   => 'Dear :admin_name',
-        'thanks' => 'If you need any kind of help please contact us at <a href=":link" style=":style">:email</a>.<br/>Thanks!',
-
-        'admin' => [
-            'forgot-password' => [
-                'description'    => 'You are receiving this email because we received a password reset request for your account.',
-                'greeting'       => 'Forgot Password!',
-                'reset-password' => 'Reset Password',
-                'subject'        => 'Reset Password Email',
-            ],
-        ],
-    ],
-
-    'common' => [
-        'yes'     => 'Da',
-        'no'      => 'Nu',
-        'true'    => 'Adevărat',
-        'false'   => 'Fals',
-        'enable'  => 'Activat',
-        'disable' => 'Dezactivat',
-    ],
-
     'configuration' => [
         'index' => [
             'delete'          => 'Șterge',
@@ -1744,50 +1617,69 @@ return [
             'save-message'    => 'Configurația salvată cu succes',
             'search'          => 'Caută',
             'title'           => 'Configurație',
-
-            'general' => [
-                'info'  => '',
-                'title' => 'General',
-
+            'general'         => [
+                'info'    => '',
+                'title'   => 'General',
                 'general' => [
                     'info'  => '',
                     'title' => 'General',
                 ],
-
                 'magic-ai' => [
-                    'info'  => 'Setează opțiunile Magic AI.',
-                    'title' => 'Magic AI',
-
+                    'info'     => 'Setează opțiunile Magic AI.',
+                    'title'    => 'Magic AI',
                     'settings' => [
-                        'api-key'        => 'Cheie API',
-                        'enabled'        => 'Activat',
-                        'llm-api-domain' => 'Domeniul API LLM',
-                        'organization'   => 'ID Organizație',
-                        'title'          => 'Setări Generale',
-                        'title-info'     => 'Îmbunătățește-ți experiența cu Magic AI introducând cheia API unică și specificând organizația corespunzătoare pentru integrare fără probleme. Preia controlul asupra credentialelor OpenAI și ajustează setările conform nevoilor tale specifice.',
+                        'enabled'     => 'Activat',
+                        'ai-platform' => 'Platformă implicită',
+                        'ai-model'    => 'Model implicit',
+                        'title'       => 'Setări Generale',
+                        'title-info'  => 'Îmbunătățește-ți experiența cu Magic AI introducând cheia API unică și specificând organizația corespunzătoare pentru integrare fără probleme. Preia controlul asupra credentialelor OpenAI și ajustează setările conform nevoilor tale specifice.',
                     ],
-
-                    'translation'   => [
-                        'title'                  => 'Traducere',
-                        'enabled'                => 'Activat',
-                        'title-info'             => 'Această funcție va activa Magic AI pentru traducerea textului, permițându-vă să convertiți textul dintr-o limbă în alta cu ușurință.',
-                        'global-source-channel'  => 'Canal Sursă',
-                        'global-source-locale'   => 'Localizare Sursă',
-                        'translation-model'      => 'Model de Traducere',
-                        'replace-existing-value' => 'Înlocuiește Valoarea Existenta',
-                        'target-channel'         => 'Canal Țintă',
-                        'target-locales'         => 'Localizări Țintă',
+                    'image-generation' => [
+                        'enabled'     => 'Activat',
+                        'ai-platform' => 'Platformă implicită',
+                        'ai-model'    => 'Model implicit',
+                        'title'       => 'Generare imagini',
+                        'title-info'  => 'Configurează platforma și modelul AI implicit pentru generarea imaginilor produselor. Numai platformele care suportă generarea de imagini (OpenAI, Gemini, xAI) sunt listate.',
+                    ],
+                    'translation' => [
+                        'title'                       => 'Traducere',
+                        'enabled'                     => 'Activat',
+                        'title-info'                  => 'Această funcție va activa Magic AI pentru traducerea textului, permițându-vă să convertiți textul dintr-o limbă în alta cu ușurință.',
+                        'ai-platform'                 => 'Platformă implicită',
+                        'global-source-channel'       => 'Canal Sursă',
+                        'global-source-locale'        => 'Localizare Sursă',
+                        'translation-model'           => 'Model de Traducere',
+                        'replace-existing-value'      => 'Înlocuiește Valoarea Existenta',
+                        'target-channel'              => 'Canal Țintă',
+                        'target-locales'              => 'Localizări Țintă',
+                        'replace-existing-value-info' => 'Înlocuiți valoarea existentă dacă aceasta există deja.',
+                    ],
+                    'agentic-pim' => [
+                        'title'                     => 'PIM Agentic',
+                        'title-info'                => 'Configurați chatul agentului AI, fluxurile de lucru de îmbogățire autonomă și monitorizarea calității. Aceste funcții permit gestionarea conversațională a produselor și întreținerea proactivă a catalogului.',
+                        'enabled'                   => 'Activare chat agent AI',
+                        'enabled-info'              => 'Activați widgetul de chat AI flotant pentru gestionarea conversațională a produselor cu peste 27 de acțiuni de instrumente.',
+                        'max-steps'                 => 'Pași max. agent pe tură',
+                        'max-steps-info'            => 'Numărul maxim de iterații ale apelurilor de instrumente pe care agentul AI le poate efectua pe mesaj de utilizator. Valori mai mari permit operații cu mai mulți pași mai complexe.',
+                        'daily-token-budget'        => 'Buget zilnic de tokenuri',
+                        'daily-token-budget-info'   => 'Tokenuri AI maxime (intrare + ieșire) care pot fi consumate pe zi pentru toți utilizatorii. Setați la 0 pentru nelimitat. Ajută la controlul costurilor API.',
+                        'auto-enrichment'           => 'Îmbogățire automată la crearea produsului',
+                        'auto-enrichment-info'      => 'Generați automat descrieri, categorii și conținut SEO lipsă când sunt create sau importate produse noi.',
+                        'quality-monitor'           => 'Monitor calitate catalog',
+                        'quality-monitor-info'      => 'Rulați scanări programate pentru a detecta produse incomplete, traduceri lipsă, intrări duplicate și anomalii de prețuri.',
+                        'confidence-threshold'      => 'Prag de încredere',
+                        'confidence-threshold-info' => 'Scor minim de încredere (0-1) pentru ca modificările generate de AI să fie aplicate automat. Sub acest prag, modificările sunt puse în coadă pentru revizuire umană.',
+                        'approval-mode'             => 'Mod de aprobare a modificărilor',
+                        'approval-mode-info'        => 'Controlează modul în care agentul AI gestionează operațiunile de scriere. "Confirmă și aplică": agentul propune valori în chat, așteaptă confirmarea, apoi execută. "Confirmare strictă": la fel, dar verifică și după fiecare modificare. "Doar sugerează": descrie modificările, dar nu execută niciodată (doar citire).',
                     ],
                 ],
             ],
         ],
-
         'integrations' => [
             'index' => [
                 'create-btn' => 'Creează',
                 'title'      => 'Integrări',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'delete'          => 'Șterge',
                     'edit'            => 'Editare',
                     'id'              => 'ID',
@@ -1797,7 +1689,6 @@ return [
                     'permission-type' => 'Tipul permisiunii',
                 ],
             ],
-
             'create' => [
                 'access-control' => 'Controlul Accesului',
                 'all'            => 'Toate',
@@ -1810,7 +1701,6 @@ return [
                 'save-btn'       => 'Salvează',
                 'title'          => 'Nouă Integrare',
             ],
-
             'edit' => [
                 'access-control' => 'Controlul Accesului',
                 'all'            => 'Toate',
@@ -1828,7 +1718,6 @@ return [
                 'save-btn'       => 'Salvează',
                 'title'          => 'Editare Integrare',
             ],
-
             'being-used'                     => 'Integrarea API este deja utilizată de utilizatorul Admin',
             'create-success'                 => 'Integrarea API a fost creată cu succes',
             'delete-failed'                  => 'Integrarea API nu a fost ștearsă',
@@ -1839,40 +1728,155 @@ return [
             're-generate-secret-key-success' => 'Cheia API secretă a fost regenerată cu succes',
             'client-not-found'               => 'Clientul nu a fost găsit',
         ],
-
         'prompt' => [
             'datagrid' => [
-                'id'            => 'ID',
-                'title'         => 'Titlu',
-                'prompt'        => 'Prompt',
-                'type'          => 'Tip',
-                'created-at'    => 'Creat la',
-                'updated-at'    => 'Actualizat la',
-                'actions'       => 'Acțiuni',
-                'edit'          => 'Editează',
-                'delete'        => 'Șterge',
-                'product'       => 'Produs',
-                'category'      => 'Categorie',
+                'id'               => 'ID',
+                'title'            => 'Titlu',
+                'prompt'           => 'Prompt',
+                'type'             => 'Tip',
+                'purpose'          => 'Scop',
+                'text-generation'  => 'Generare text',
+                'image-generation' => 'Generare imagini',
+                'translation'      => 'Traducere',
+                'created-at'       => 'Creat la',
+                'updated-at'       => 'Actualizat la',
+                'actions'          => 'Acțiuni',
+                'edit'             => 'Editează',
+                'delete'           => 'Șterge',
+                'product'          => 'Produs',
+                'category'         => 'Categorie',
             ],
             'create' => [
-                'title'         => 'Prompt',
-                'create-btn'    => 'Creează Prompt',
-                'edit-title'    => 'Editează Prompt',
-                'create-title'  => 'Creează un Nou Prompt',
-                'label-title'   => 'Titlu',
-                'type'          => 'Tip',
-                'prompt'        => 'Prompt',
-                'save-btn'      => 'Salvează Prompt',
+                'title'               => 'Prompt',
+                'create-btn'          => 'Creează Prompt',
+                'edit-title'          => 'Editează Prompt',
+                'create-title'        => 'Creează un Nou Prompt',
+                'label-title'         => 'Titlu',
+                'purpose'             => 'Scop',
+                'text-generation'     => 'Generare text',
+                'image-generation'    => 'Generare imagini',
+                'select-purpose'      => 'Selectați scopul',
+                'select-model'        => '-- Selectați modelul --',
+                'loading-models'      => 'Se încarcă modelele...',
+                'no-models-available' => 'Nu sunt modele disponibile. Selectați o platformă sau configurați una în fila Platforme.',
+                'type'                => 'Tip',
+                'prompt'              => 'Prompt',
+                'save-btn'            => 'Salvează Prompt',
             ],
             'message' => [
-                'save-success'      => 'Promptul a fost salvat cu succes.',
-                'update-success'    => 'Promptul a fost actualizat cu succes.',
-                'delete-success'    => 'Promptul a fost șters cu succes.',
-                'delete-fail'       => 'Ștergerea promptului a eșuat.',
+                'save-success'   => 'Promptul a fost salvat cu succes.',
+                'update-success' => 'Promptul a fost actualizat cu succes.',
+                'delete-success' => 'Promptul a fost șters cu succes.',
+                'delete-fail'    => 'Ștergerea promptului a eșuat.',
+            ],
+        ],
+        'system-prompt' => [
+            'datagrid' => [
+                'id'          => 'ID',
+                'title'       => 'Titlu',
+                'tone'        => 'Ton',
+                'max-tokens'  => 'Tokeni maximi',
+                'temperature' => 'Temperatură',
+                'status'      => 'Stare',
+                'created-at'  => 'Creat la',
+                'updated-at'  => 'Actualizat la',
+                'actions'     => 'Acțiuni',
+                'save'        => 'Salvează',
+                'edit'        => 'Editează',
+                'delete'      => 'șterge',
+            ],
+            'create' => [
+                'title'        => 'Prompt de sistem',
+                'create-btn'   => 'Creează prompt de sistem',
+                'edit-title'   => 'Editează prompt de sistem',
+                'create-title' => 'Creează un nou prompt de sistem',
+                'label-title'  => 'Titlu',
+                'max-tokens'   => 'Tokeni de ieșire maximi',
+                'temperature'  => 'Temperatură',
+                'type'         => 'Tip',
+                'prompt'       => 'Prompt',
+                'save-btn'     => 'Salvează prompt',
+                'prompt-tone'  => 'Tonul promptului',
+            ],
+            'message' => [
+                'save-success'   => 'Promptul de sistem a fost salvat cu succes.',
+                'update-success' => 'Promptul de sistem a fost actualizat cu succes.',
+                'delete-success' => 'Promptul de sistem a fost șters cu succes.',
+                'delete-fail'    => 'Ștergerea promptului de sistem a eșuat.',
+            ],
+        ],
+        'platform' => [
+            'title'           => 'Platforme AI',
+            'create-btn'      => 'Adaugă platformă',
+            'create-title'    => 'Adaugă platformă AI',
+            'edit-title'      => 'Editează platformă AI',
+            'save-btn'        => 'Salvează',
+            'saving'          => 'Se salvează',
+            'test-connection' => 'Testează conexiunea',
+            'setup'           => [
+                'title'              => 'Începeți cu Magic AI',
+                'description'        => 'Conectați furnizorul dvs. de AI pentru a debloca generarea de conținut, crearea de imagini și traducerea bazată pe AI. Adăugați prima platformă pentru a începe.',
+                'step-1'             => 'Alegeți un furnizor',
+                'step-2'             => 'Introduceți cheia dvs. API',
+                'step-3'             => 'Selectați modele și salvați',
+                'add-first'          => 'Adăugați prima dvs. platformă',
+                'no-default-warning' => 'Nu este setată nicio platformă implicită. Setați o platformă ca implicită pentru a activa funcțiile AI în toată aplicația.',
+                'no-platform-hint'   => 'Nicio platformă nu este configurată încă. Mergeți la fila Platforme pentru a adăuga primul dvs. furnizor AI.',
+                'lightning-icon'     => 'Magic AI',
+                'warning-icon'       => 'Avertisment',
+            ],
+            'testing'         => 'Testare',
+            'fetch-models'    => 'Preluare modele',
+            'fetching-models' => 'Se preia',
+            'set-default'     => 'Setează ca implicit',
+            'datagrid'        => [
+                'label'      => 'Etichetă',
+                'provider'   => 'Furnizor',
+                'models'     => 'Modele',
+                'default'    => 'Implicit',
+                'status'     => 'Stare',
+                'created-at' => 'Creat la',
+                'edit'       => 'Editează',
+                'delete'     => 'Șterge',
+            ],
+            'fields' => [
+                'label'                    => 'Etichetă',
+                'provider'                 => 'Furnizor',
+                'select-provider'          => '-- Selectați furnizorul --',
+                'api-url'                  => 'URL API',
+                'api-url-hint'             => 'Pre-completat cu punctul de acces implicit. Editați doar dacă utilizați un proxy sau o implementare personalizată.',
+                'api-key'                  => 'Cheie API',
+                'models'                   => 'Modele',
+                'custom-model-placeholder' => 'Introduceți un ID de model personalizat...',
+                'add'                      => 'Adaugă',
+                'enter-key-to-fetch'       => 'Introduceți cheia dvs. API mai sus pentru a prelua automat modelele disponibile.',
+                'search-models'            => 'Căutare modele...',
+                'no-models-match'          => 'Niciun model nu corespunde căutării dvs.',
+                'azure-deployment'         => 'Nume implementare',
+                'azure-api-version'        => 'Versiune API',
+                'is-default'               => 'Setează ca implicit',
+                'status'                   => 'Stare',
+                'use-default'              => '-- Folosește platforma implicită --',
+                'use-default-hint'         => 'Lăsați gol pentru a utiliza platforma marcată ca implicită. Platformele marcate cu * sunt implicite.',
+                'no-image-platform'        => 'Nicio platformă compatibilă cu imagini nu este configurată. Adăugați mai întâi o platformă OpenAI, Gemini sau xAI.',
+                'image-platform-hint'      => 'Sunt afișate doar platformele care suportă generarea de imagini (OpenAI, Gemini, xAI).',
+                'remove-model'             => 'Elimină modelul :model',
+                'invalid-model-name'       => 'Nume de model invalid. Folosiți doar litere, cifre, cratime, puncte, două puncte și bare oblice (ex. gpt-4o, claude-3-sonnet).',
+            ],
+            'message' => [
+                'save-success'          => 'Platforma a fost salvată cu succes.',
+                'update-success'        => 'Platforma a fost actualizată cu succes.',
+                'delete-success'        => 'Platforma a fost ștearsă cu succes.',
+                'delete-fail'           => 'Ștergerea platformei a eșuat.',
+                'cannot-delete-default' => 'Nu se poate șterge singura platformă implicită.',
+                'set-default-success'   => 'Platforma a fost setată ca implicită cu succes.',
+                'test-success'          => 'Conexiunea a fost verificată cu succes!',
+                'test-fail'             => 'Testul conexiunii a eșuat',
+                'fetch-models-fail'     => 'Modelele nu au putut fi obținute',
+                'invalid-model-names'   => 'Nume de model invalide: :names. Numele de model trebuie să înceapă cu o literă sau un număr și să conțină doar litere, cifre, cratime, puncte, două puncte și bare oblice.',
             ],
         ],
     ],
-
     'components' => [
         'layouts' => [
             'header' => [
@@ -1883,7 +1887,6 @@ return [
                 'notifications' => 'Notificări',
                 'visit-shop'    => 'Vizitează Magazinul',
             ],
-
             'sidebar' => [
                 'attribute-families' => 'Familii de Atribute',
                 'attribute-groups'   => 'Grupuri de Atribute',
@@ -1917,45 +1920,44 @@ return [
                 'general-tab'        => 'Configurare',
             ],
         ],
-
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => 'Nu au fost selectate înregistrări.',
                 'must-select-a-mass-action-option' => 'Trebuie să selectați o opțiune de acțiune în masă.',
                 'must-select-a-mass-action'        => 'Trebuie să selectați o acțiune în masă.',
             ],
-
             'toolbar' => [
-                'length-of' => ':length de',
-                'of'        => 'din',
-                'per-page'  => 'Pe Pagina',
-                'results'   => ':total Rezultate',
-                'selected'  => ':total Selectate',
-
+                'length-of'    => ':length de',
+                'of'           => 'din',
+                'per-page'     => 'Pe Pagina',
+                'results'      => ':total Rezultate',
+                'selected'     => ':total Selectate',
                 'mass-actions' => [
                     'submit'        => 'Trimiteți',
                     'select-option' => 'Selectați Opțiunea',
                     'select-action' => 'Selectați Acțiunea',
                 ],
-
                 'filter' => [
                     'title' => 'Filtru',
                 ],
-
                 'search_by' => [
                     'code'       => 'Căutare după cod',
                     'code_or_id' => 'Căutare după cod sau ID',
                 ],
-
                 'search' => [
                     'title' => 'Căutare',
                 ],
-
                 'manage-columns' => [
                     'title' => 'coloanele',
                 ],
+                'pagination' => [
+                    'first-page'    => 'Prima pagină',
+                    'previous-page' => 'Pagina anterioară',
+                    'next-page'     => 'Pagina următoare',
+                    'last-page'     => 'Ultima pagină',
+                    'page-number'   => 'Numărul paginii',
+                ],
             ],
-
             'filters' => [
                 'select'   => 'Selectați',
                 'title'    => 'Aplicare Filtre',
@@ -1966,17 +1968,14 @@ return [
                         'no-results'        => 'Niciun rezultat găsit...',
                     ],
                 ],
-
                 'custom-filters' => [
                     'clear-all' => 'Ștergeți Tot',
                     'title'     => 'Filtre Personalizate',
                 ],
-
                 'boolean-options' => [
                     'false' => 'Fals',
                     'true'  => 'Verdadeiro',
                 ],
-
                 'date-options' => [
                     'last-month'        => 'Ultima lună',
                     'last-six-months'   => 'Ultimele 6 luni',
@@ -1988,12 +1987,10 @@ return [
                     'yesterday'         => 'Ieri',
                 ],
             ],
-
             'table' => [
                 'actions'              => 'Acțiuni',
                 'no-records-available' => 'Nu există înregistrări disponibile.',
             ],
-
             'manage-columns' => [
                 'title'             => 'Gestionați coloanele',
                 'available-columns' => 'Coloane disponibile',
@@ -2001,7 +1998,6 @@ return [
                 'apply-btn'         => 'Aplicați',
             ],
         ],
-
         'modal' => [
             'confirm' => [
                 'agree-btn'    => 'Sunt de acord',
@@ -2009,14 +2005,12 @@ return [
                 'message'      => 'Ești sigur că dorești să efectuezi această acțiune?',
                 'title'        => 'Ești sigur?',
             ],
-
             'delete' => [
                 'agree-btn'    => 'Ștergere',
                 'disagree-btn' => 'Anulare',
                 'message'      => 'Ești sigur că dorești să ștergi?',
                 'title'        => 'Confirmare Ștergere',
             ],
-
             'history' => [
                 'title'           => 'Previzualizare Istoric',
                 'subtitle'        => 'Revizuiește rapid actualizările și modificările tale.',
@@ -2030,7 +2024,6 @@ return [
                 'no-history'      => 'Istoric nu a fost găsit',
             ],
         ],
-
         'products' => [
             'search' => [
                 'add-btn'       => 'Adaugă Produs Selectat',
@@ -2042,7 +2035,6 @@ return [
                 'title'         => 'Selectați Produse',
             ],
         ],
-
         'media' => [
             'images' => [
                 'add-image-btn'      => 'Adaugă Imagine',
@@ -2054,8 +2046,7 @@ return [
                 'allowed-types'      => 'png, jpeg, jpg',
                 'not-allowed-error'  => 'Doar fișiere imagini (.jpeg, .jpg, .png, ..) sunt permise.',
                 'upload-media-btn'   => 'Încarcă media',
-
-                'ai-generation' => [
+                'ai-generation'      => [
                     '1024x1024'        => '1024x1024',
                     '1024x1792'        => '1024x1792',
                     '1792x1024'        => '1792x1024',
@@ -2075,7 +2066,6 @@ return [
                     'standard'         => 'Standard',
                     'title'            => 'Generare Imagini AI',
                 ],
-
                 'placeholders' => [
                     'front'     => 'Față',
                     'next'      => 'Următorul',
@@ -2084,23 +2074,22 @@ return [
                     'zoom'      => 'Zoom',
                 ],
             ],
-
+            'gallery' => [
+                'not-allowed-error' => 'Sunt permise doar fișiere imagine și video. (.mp4, .jpg ..)',
+            ],
             'videos' => [
                 'add-video-btn'     => 'Adaugă Video',
                 'allowed-types'     => 'mp4, webm, mkv',
                 'not-allowed-error' => 'Doar fișiere video (.mp4, .mov, .ogg ..) sunt permise.',
             ],
-
             'files' => [
                 'add-file-btn'      => 'Adaugă Fișier',
                 'allowed-types'     => 'pdf',
                 'not-allowed-error' => 'Doar fișiere PDF sunt permise.',
             ],
         ],
-
         'tinymce' => [
-            'ai-btn-tile' => 'Magic AI',
-
+            'ai-btn-tile'   => 'Magic AI',
             'ai-generation' => [
                 'apply'                  => 'Aplică',
                 'generate'               => 'Generează',
@@ -2109,7 +2098,14 @@ return [
                 'generating'             => 'Generare...',
                 'prompt'                 => 'Prompt',
                 'title'                  => 'Asistență AI',
+                'platform'               => 'Platformă',
                 'model'                  => 'Model',
+                'rich-preview'           => 'Previzualizare formatată',
+                'system-prompt'          => 'Prompt de sistem',
+                'select-system-prompt'   => 'Selectați promptul de sistem',
+                'tone-instructions'      => 'Ton / Instrucțiuni',
+                'max-tokens'             => 'Tokeni maximi',
+                'temperature'            => 'Temperatură',
                 'gpt-3-5-turbo'          => 'OpenAI gpt-3.5-turbo',
                 'llama2'                 => 'Llama 2',
                 'mistral'                => 'Mistral',
@@ -2126,7 +2122,147 @@ return [
             ],
         ],
     ],
-
+    'acl' => [
+        'addresses'                => 'Adrese',
+        'attribute-families'       => 'Familii de Atribute',
+        'attribute-groups'         => 'Grupuri de Atribute',
+        'attributes'               => 'Atribute',
+        'cancel'                   => 'Anulare',
+        'catalog'                  => 'Catalog',
+        'categories'               => 'Categorii',
+        'channels'                 => 'Canale',
+        'configure'                => 'Configurare',
+        'configuration'            => 'Configurare',
+        'copy'                     => 'Copiere',
+        'create'                   => 'Creează',
+        'currencies'               => 'Monede',
+        'dashboard'                => 'Tablou de Bord',
+        'data-transfer'            => 'Transfer de Date',
+        'delete'                   => 'Ștergere',
+        'edit'                     => 'Editare',
+        'email-templates'          => 'Șabloane de E-mail',
+        'events'                   => 'Evenimente',
+        'groups'                   => 'Grupuri',
+        'import'                   => 'Importare',
+        'imports'                  => 'Importuri',
+        'invoices'                 => 'Facturi',
+        'locales'                  => 'Locale',
+        'magic-ai'                 => 'Magic AI',
+        'magic-ai-general'         => 'General',
+        'magic-ai-prompt'          => 'Prompt',
+        'magic-ai-system-prompt'   => 'Prompt de sistem',
+        'marketing'                => 'Marketing',
+        'newsletter-subscriptions' => 'Abonamente la Newsletter',
+        'note'                     => 'Notă',
+        'orders'                   => 'Comenzi',
+        'products'                 => 'Produse',
+        'promotions'               => 'Promoții',
+        'refunds'                  => 'Rambursări',
+        'reporting'                => 'Raportare',
+        'reviews'                  => 'Recenzii',
+        'roles'                    => 'Roluri',
+        'sales'                    => 'Vânzări',
+        'search-seo'               => 'Cautare & SEO',
+        'search-synonyms'          => 'Sinonime căutare',
+        'search-terms'             => 'Termeni căutare',
+        'settings'                 => 'Setări',
+        'shipments'                => 'Expediții',
+        'sitemaps'                 => 'Hartă site',
+        'subscribers'              => 'Abonați',
+        'tax-categories'           => 'Categorii de impozite',
+        'tax-rates'                => 'Rata impozitelor',
+        'taxes'                    => 'Impozite',
+        'themes'                   => 'Teme',
+        'integration'              => 'Integrare',
+        'url-rewrites'             => 'Rescriere URL',
+        'users'                    => 'Utilizatori',
+        'category_fields'          => 'Câmpuri categorie',
+        'view'                     => 'Vizualizare',
+        'execute'                  => 'Executare',
+        'history'                  => 'Istoric',
+        'restore'                  => 'Restaurare',
+        'integrations'             => 'Integrații',
+        'api'                      => 'API',
+        'tracker'                  => 'Urmărire sarcini',
+        'exports'                  => 'Exporturi',
+        'mass-update'              => 'Actualizare în masă',
+        'mass-delete'              => 'Ștergere în masă',
+    ],
+    'errors' => [
+        'dashboard' => 'Tablou de Bord',
+        'go-back'   => 'Înapoi',
+        'support'   => 'Dacă problema persistă, contactați-ne la <a href=":link" class=":class">:email</a> pentru asistență.',
+        '404'       => [
+            'description' => 'Oops! Pagina pe care o cauți este în vacanță. Se pare că nu am reușit să găsim ceea ce cauți.',
+            'title'       => '404 Pagina nu a fost găsită',
+        ],
+        '401' => [
+            'description' => 'Oops! Pare că nu ai permisiunea de a accesa această pagină. Se pare că îți lipsesc acreditările necesare.',
+            'title'       => '401 Neautorizat',
+            'message'     => 'Autentificarea a eșuat din cauza acreditărilor nevalide sau a tokenului expirat.',
+        ],
+        '403' => [
+            'description' => 'Oops! Această pagină este interzisă. Se pare că nu ai permisiunea de a vizualiza acest conținut.',
+            'title'       => '403 Interzis',
+        ],
+        '413' => [
+            'description' => 'Oops! Pare că încerci să încarci un fișier prea mare. Dacă dorești să faci acest lucru, actualizează configurația PHP.',
+            'title'       => '413 Conținut prea mare',
+        ],
+        '419' => [
+            'description' => 'Oops! Sesia ta a expirat. Te rugăm să reînnoiești pagina și să te loghezi din nou pentru a continua.',
+            'title'       => '419 Sesiunea a expirat',
+        ],
+        '500' => [
+            'description' => 'Oops! Ceva nu a mers bine. Se pare că avem probleme în încărcarea paginii pe care o cauți.',
+            'title'       => '500 Eroare internă a serverului',
+        ],
+        '503' => [
+            'description' => 'Oops! Pare că suntem temporar indisponibili pentru întreținere. Verifică din nou peste puțin timp.',
+            'title'       => '503 Serviciul nu este disponibil',
+        ],
+    ],
+    'export' => [
+        'csv'                  => 'CSV',
+        'download'             => 'Descarcă',
+        'export'               => 'Export rapid',
+        'no-records'           => 'Nimic de exportat',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'Cu media',
+        'export-success'       => 'Export realizat cu succes!',
+        'error'                => 'Ceva n-a mers bine!',
+        'product-not-selected' => 'Nu au fost selectate produse pentru export rapid',
+    ],
+    'validations' => [
+        'slug-being-used' => 'Acest slug este utilizat în categorii sau produse.',
+        'slug-reserved'   => 'Acest slug este rezervat.',
+        'invalid-locale'  => 'Locale invalide :locales',
+    ],
+    'footer' => [
+        'copy-right' => 'Powered by <a href="https://unopim.com/" target="_blank">UnoPim</a>, Un proiect comunitar de la <a href="https://webkul.com/" target="_blank">Webkul</a>',
+    ],
+    'emails' => [
+        'dear'   => 'Dragă :admin_name',
+        'thanks' => 'Dacă ai nevoie de orice fel de ajutor, te rugăm să ne contactezi la <a href=":link" style=":style">:email</a>.<br/>Mulțumim!',
+        'admin'  => [
+            'forgot-password' => [
+                'description'    => 'Primești acest email deoarece am primit o solicitare de resetare a parolei pentru contul tău.',
+                'greeting'       => 'Parolă uitată!',
+                'reset-password' => 'Resetează parola',
+                'subject'        => 'Email de resetare a parolei',
+            ],
+        ],
+    ],
+    'common' => [
+        'yes'            => 'Da',
+        'no'             => 'Nu',
+        'true'           => 'Adevărat',
+        'false'          => 'Fals',
+        'enable'         => 'Activat',
+        'disable'        => 'Dezactivat',
+        'no-match-found' => 'Nu s-a găsit nicio potrivire!',
+    ],
     'default-prompt' => [
         'detailed' => [
             'title'  => 'Descriere detaliată a produsului',

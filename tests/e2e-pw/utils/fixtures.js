@@ -12,7 +12,7 @@ exports.test = base.test.extend({
 
     // Automatically navigate to admin dashboard
     await page.goto('/admin/dashboard');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     // Pass to test
     await use(page);

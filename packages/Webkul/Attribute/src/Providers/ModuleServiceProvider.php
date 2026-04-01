@@ -2,19 +2,28 @@
 
 namespace Webkul\Attribute\Providers;
 
+use Webkul\Attribute\Models\Attribute;
+use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\Attribute\Models\AttributeFamilyGroupMapping;
+use Webkul\Attribute\Models\AttributeFamilyTranslation;
+use Webkul\Attribute\Models\AttributeGroup;
+use Webkul\Attribute\Models\AttributeGroupTranslation;
+use Webkul\Attribute\Models\AttributeOption;
+use Webkul\Attribute\Models\AttributeOptionTranslation;
+use Webkul\Attribute\Models\AttributeTranslation;
 use Webkul\Core\Providers\CoreModuleServiceProvider;
 
 class ModuleServiceProvider extends CoreModuleServiceProvider
 {
     protected $models = [
-        \Webkul\Attribute\Models\Attribute::class,
-        \Webkul\Attribute\Models\AttributeFamily::class,
-        \Webkul\Attribute\Models\AttributeGroup::class,
-        \Webkul\Attribute\Models\AttributeOption::class,
-        \Webkul\Attribute\Models\AttributeOptionTranslation::class,
-        \Webkul\Attribute\Models\AttributeTranslation::class,
-        \Webkul\Attribute\Models\AttributeGroupTranslation::class,
-        \Webkul\Attribute\Models\AttributeFamilyTranslation::class,
-        \Webkul\Attribute\Models\AttributeFamilyGroupMapping::class,
+        Attribute::class,
+        AttributeFamily::class,
+        AttributeGroup::class,
+        AttributeOption::class,
+        AttributeOptionTranslation::class,
+        AttributeTranslation::class,
+        AttributeGroupTranslation::class,
+        AttributeFamilyTranslation::class,
+        AttributeFamilyGroupMapping::class,
     ];
 }

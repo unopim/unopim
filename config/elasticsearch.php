@@ -7,8 +7,9 @@ return [
      */
     'connection' => env('ELASTICSEARCH_CONNECTION', 'default') ?: 'default',
 
-    'enabled'    => env('ELASTICSEARCH_ENABLED', false) == 'true' ? true : false,
-    'prefix'     => env('ELASTICSEARCH_INDEX_PREFIX', env('APP_NAME')) ?: config('app.name'),
+    'enabled'       => env('ELASTICSEARCH_ENABLED', false) == 'true' ? true : false,
+    'prefix'        => env('ELASTICSEARCH_INDEX_PREFIX', env('APP_NAME')) ?: config('app.name'),
+    'debug_payload' => env('ELASTICSEARCH_DEBUG_PAYLOAD', false) == 'true' ? true : false,
 
     /**
      * These are the available connections parameters that you can use to connect

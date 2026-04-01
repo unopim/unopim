@@ -2,6 +2,7 @@
 
 use Illuminate\Testing\Fluent\AssertableJson;
 use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\Core\Facades\ElasticSearch;
 use Webkul\Product\Models\Product;
 
 it('should return the product index page', function () {
@@ -24,7 +25,18 @@ it('should return validation errors for certain fields when creating', function 
 it('should return the product datagrid', function () {
     $this->loginAsAdmin();
 
-    Product::factory()->create();
+    $product = Product::factory()->create();
+
+    if (config('elasticsearch.enabled')) {
+        try {
+            $indexPrefix = config('elasticsearch.prefix');
+            $productIndex = strtolower($indexPrefix.'_products');
+
+            ElasticSearch::indices()->refresh(['index' => $productIndex]);
+        } catch (Exception $e) {
+            // ES not available, skip refresh
+        }
+    }
 
     $response = $this->withHeaders([
         'X-Requested-With' => 'XMLHttpRequest',

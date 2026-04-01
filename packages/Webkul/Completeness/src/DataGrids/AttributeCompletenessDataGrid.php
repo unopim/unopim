@@ -2,6 +2,7 @@
 
 namespace Webkul\Completeness\DataGrids;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Webkul\DataGrid\DataGrid;
 
@@ -19,7 +20,7 @@ class AttributeCompletenessDataGrid extends DataGrid
     /**
      * Prepare query builder.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return Builder
      */
     public function prepareQueryBuilder()
     {
@@ -53,7 +54,7 @@ class AttributeCompletenessDataGrid extends DataGrid
                         ELSE {$tablePrefix}attribute_translations.name
                     END AS name
                 "),
-                DB::raw(DB::rawQueryGrammar()->groupConcat('channels.code', 'channel_required', 'channels.code', true)),
+                DB::raw(DB::rawQueryGrammar()->groupConcat("{$tablePrefix}channels.code", 'channel_required', "{$tablePrefix}channels.code", true)),
             )
             ->groupBy(
                 'attributes.id',

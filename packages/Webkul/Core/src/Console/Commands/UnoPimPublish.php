@@ -3,6 +3,8 @@
 namespace Webkul\Core\Console\Commands;
 
 use Illuminate\Console\Command;
+use Webkul\Core\Providers\CoreServiceProvider;
+use Webkul\Product\Providers\ProductServiceProvider;
 
 class UnoPimPublish extends Command
 {
@@ -31,11 +33,11 @@ class UnoPimPublish extends Command
          */
         [
             'name'     => 'Core',
-            'provider' => \Webkul\Core\Providers\CoreServiceProvider::class,
+            'provider' => CoreServiceProvider::class,
         ],
         [
             'name'     => 'Product',
-            'provider' => \Webkul\Product\Providers\ProductServiceProvider::class,
+            'provider' => ProductServiceProvider::class,
         ],
     ];
 

@@ -67,16 +67,18 @@ it('should update with given data', function () {
     $this->loginAsAdmin();
     $prompt = MagicPrompt::factory()->create();
     $data = [
-        'id'     => $prompt->id,
-        'title'  => 'hello prompt',
-        'prompt' => 'update to @color and @name',
-        'type'   => 'product',
-        'tone'   => $prompt->tone,
+        'id'      => $prompt->id,
+        'title'   => 'hello prompt',
+        'prompt'  => 'update to @color and @name',
+        'type'    => 'product',
+        'purpose' => 'text_generation',
+        'tone'    => $prompt->tone,
     ];
 
-    $this->put(route('admin.magic_ai.prompt.update'), $data)
+    $this->putJson(route('admin.magic_ai.prompt.update'), $data)
         ->assertStatus(200)
         ->assertJsonFragment(['message' => trans('admin::app.configuration.prompt.message.update-success')]);
+    unset($data['id']);
     $this->assertDatabaseHas($this->getFullTableName(MagicPrompt::class), $data);
 });
 

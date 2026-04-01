@@ -2,6 +2,8 @@
 
 namespace Webkul\Webhook\DataGrids;
 
+use Carbon\Carbon;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Webkul\DataGrid\DataGrid;
 
@@ -17,7 +19,7 @@ class LogsDataGrid extends DataGrid
     /**
      * Prepare query builder.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return Builder
      */
     public function prepareQueryBuilder()
     {
@@ -59,7 +61,7 @@ class LogsDataGrid extends DataGrid
                 $timezone = auth('admin')->user()->timezone ?? config('app.timezone');
 
                 try {
-                    $display = \Carbon\Carbon::parse($row->created_at)->setTimezone($timezone)->toDateTimeString();
+                    $display = Carbon::parse($row->created_at)->setTimezone($timezone)->toDateTimeString();
                 } catch (\Exception $e) {
                     $display = $row->created_at;
                 }

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('locale');
             $table->text('name')->nullable();
 
-            $table->unique(['attribute_group_id', 'locale']);
+            $table->unique(['attribute_group_id', 'locale'], 'attr_grp_translations_grp_id_locale_unique');
             $table->foreign('attribute_group_id')->references('id')->on('attribute_groups')->onDelete('cascade');
         });
     }

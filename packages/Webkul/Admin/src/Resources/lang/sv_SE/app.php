@@ -11,7 +11,6 @@ return [
             'powered-by'             => 'Drivs av :unopim,',
             'open-source-project-by' => 'Ett open-source-projekt av :webkul.',
         ],
-
         'forget-password' => [
             'create' => [
                 'email'                  => 'Registrerad e-post',
@@ -26,7 +25,6 @@ return [
                 'open-source-project-by' => 'Ett open-source-projekt av :webkul.',
             ],
         ],
-
         'reset-password' => [
             'back-link-title'        => 'Tillbaka till inloggning?',
             'confirm-password'       => 'Bekräfta lösenord',
@@ -38,7 +36,6 @@ return [
             'open-source-project-by' => 'Ett open-source-projekt av :webkul.',
         ],
     ],
-
     'notifications' => [
         'description-text' => 'Lista över alla meddelanden',
         'marked-success'   => 'Meddelande markerat som läst',
@@ -55,7 +52,6 @@ return [
             'processing' => 'Bearbetning',
         ],
     ],
-
     'account' => [
         'edit' => [
             'back-btn'          => 'Tillbaka',
@@ -76,25 +72,89 @@ return [
             'user-timezone'     => 'Tidszon',
         ],
     ],
-
     'dashboard' => [
-        'index' => [
-            'title'            => 'Instrumentbräda',
-            'user-info'        => 'Snabbövervakning, vad är viktat i ditt PIM',
-            'user-name'        => 'Hej! :user_name',
-            'catalog-details'  => 'Katalog',
-            'total-families'   => 'Totala familjer',
-            'total-attributes' => 'Totala attribut',
-            'total-groups'     => 'Totala grupper',
-            'total-categories' => 'Totala kategorier',
-            'total-products'   => 'Totala produkter',
-            'settings-details' => 'Katalogstruktur',
-            'total-locales'    => 'Totala lokaler',
-            'total-currencies' => 'Totala valutor',
-            'total-channels'   => 'Totala kanaler',
+        'invalid-type' => 'Ogiltig instrumentpanelswidgettyp.',
+        'index'        => [
+            'title'                => 'Instrumentbräda',
+            'user-info'            => 'Snabbövervakning, vad är viktat i ditt PIM',
+            'user-name'            => 'Hej! :user_name',
+            'catalog-details'      => 'Katalog',
+            'total-families'       => 'Totala familjer',
+            'total-attributes'     => 'Totala attribut',
+            'total-groups'         => 'Totala grupper',
+            'total-categories'     => 'Totala kategorier',
+            'total-products'       => 'Totala produkter',
+            'settings-details'     => 'Katalogstruktur',
+            'total-locales'        => 'Totala lokaler',
+            'total-currencies'     => 'Totala valutor',
+            'total-channels'       => 'Totala kanaler',
+            'completeness'         => 'Fullständighet',
+            'active'               => 'Aktiv',
+            'inactive'             => 'Inaktiv',
+            'simple'               => 'Enkel',
+            'configurable'         => 'Konfigurerbar',
+            'product-stats'        => 'Produktstatistik',
+            'product-type-dist'    => 'Produkttypfördelning',
+            'products-by-status'   => 'Produkter efter status',
+            'products-over-time'   => 'Produktaktivitet (Senaste 7 dagarna)',
+            'legend-created'       => 'Skapad',
+            'legend-updated'       => 'Uppdaterad',
+            'recent-activity'      => 'Senaste aktivitet',
+            'no-activity'          => 'Ingen senaste aktivitet hittades.',
+            'updated'              => 'uppdaterad',
+            'created'              => 'skapad',
+            'deleted'              => 'borttagen',
+            'ago'                  => 'sedan',
+            'just-now'             => 'nyss',
+            'data-transfer'        => 'Datatransfer',
+            'no-jobs'              => 'Inga senaste import/export jobb hittades.',
+            'job-type-import'      => 'Importera',
+            'job-type-export'      => 'Exportera',
+            'job-state-completed'  => 'Avslutad',
+            'job-state-failed'     => 'Misslyckad',
+            'job-state-processing' => 'Bearbetar',
+            'job-state-pending'    => 'Väntande',
+            'job-state-validated'  => 'Validerad',
+            'rows-processed'       => 'Bearbetade rader',
+            'errors'               => 'Fel',
+            'quick-links'          => 'Snabblänkar',
+            'create-product'       => 'Skapa produkt',
+            'import-data'          => 'Importera data',
+            'export-data'          => 'Exportera data',
+            'manage-attributes'    => 'Hantera attribut',
+            'view-all-activity'    => 'Visa allt',
+            'view-all-jobs'        => 'Visa alla jobb',
+            'new-this-week'        => 'Ny den här veckan',
+            'with-variants'        => 'Med varianter',
+            'avg-completeness'     => 'Genomsnittlig fullständighet',
+            'enriched'             => 'Berikad',
+            'analytics-section'    => 'Analys',
+            'operations-section'   => 'Operationer',
+            'needs-attention'      => 'Behöver uppmärksamhet',
+            'unenriched-products'  => 'Obehandlade produkter',
+            'failed-jobs-24h'      => 'Misslyckade jobb (24h)',
+            'low-completeness'     => 'Låg fullständighet',
+            'all-good'             => 'Allt ser bra ut!',
+            'channel-readiness'    => 'Kanalberedskap',
+            'ready-to-publish'     => 'redo att publicera',
+            'of'                   => 'of',
+            'products-ready'       => 'produkter redo',
+            'no-readiness-data'    => 'Ingen fullständighetsdata tillgänglig ännu.',
+            'entity-types'         => [
+                'product'          => 'Produkt',
+                'category'         => 'Kategori',
+                'attribute'        => 'Attribut',
+                'attribute-family' => 'Familj',
+                'attribute-group'  => 'Grupp',
+                'category-field'   => 'Kategorifält',
+                'channel'          => 'Kanal',
+                'role'             => 'Roll',
+                'job-instance'     => 'Jobb',
+                'webhook'          => 'Webhook',
+                'api-key'          => 'API-nyckel',
+            ],
         ],
     ],
-
     'catalog' => [
         'products' => [
             'index' => [
@@ -104,8 +164,7 @@ return [
                 'magic-ai-error'            => 'Kontrollera Magic AI-uppgifterna och se till att rätt modell är vald.',
                 'magic-ai-validate-error'   => 'Vänligen kontrollera Magic AI-referenserna.',
                 'magic-ai-validate-success' => 'Magic AI-referenserna validerades framgångsrikt.',
-
-                'create' => [
+                'create'                    => [
                     'back-btn'                          => 'Tillbaka',
                     'configurable-attributes'           => 'Konfigurerbara attribut',
                     'create-btn'                        => 'Skapa produkt',
@@ -118,7 +177,6 @@ return [
                     'not-config-super-attributes-error' => 'Superattributet ":super_attributes" hittades inte',
                     'sku-exists-error'                  => 'SKU ":sku" används redan',
                 ],
-
                 'datagrid' => [
                     'active'                 => 'Aktiv',
                     'attribute-family'       => 'Attributfamilj',
@@ -148,49 +206,43 @@ return [
                     'update-status'          => 'Uppdatera status',
                     'parent'                 => 'Förälder',
                     'parent-identifier'      => 'Förälder: :sku',
+                    'created-at'             => 'Skapad',
+                    'updated-at'             => 'Uppdaterad',
                 ],
             ],
-
             'edit' => [
-                'preview'  => 'Förhandsgranska',
-                'remove'   => 'Ta bort',
-                'save-btn' => 'Spara produkt',
-                'title'    => 'Redigera produkt',
-
+                'preview'    => 'Förhandsgranska',
+                'remove'     => 'Ta bort',
+                'save-btn'   => 'Spara produkt',
+                'title'      => 'Redigera produkt',
                 'categories' => [
                     'title' => 'Kategorier',
                 ],
-
                 'images' => [
                     'info'  => 'Bilder måste ha upplösningen 560px X 609px',
                     'title' => 'Bilder',
                 ],
-
                 'videos' => [
                     'error' => ':attribute får inte vara större än :max kilobytes. Välj en mindre fil.',
                     'info'  => 'Maximal videostorlek är :size',
                     'title' => 'Videor',
                 ],
-
                 'links' => [
                     'related-products' => [
                         'empty-info' => 'Lägg till relaterade produkter.',
                         'info'       => 'Förutom den visade produkten kommer även relaterade produkter att visas.',
                         'title'      => 'Relaterade produkter',
                     ],
-
                     'up-sells' => [
                         'empty-info' => 'Lägg till uppsäljningsprodukter.',
                         'info'       => 'Kunderna kommer att se premiumprodukter eller högre kvalitet än den visade produkten.',
                         'title'      => 'Upp-säljprodukter',
                     ],
-
                     'cross-sells' => [
                         'empty-info' => 'Lägg till korsförsäljningsprodukter.',
                         'info'       => 'Förutom varan i kundvagnen kommer kunder att se andra produkter de kan köpa.',
                         'title'      => 'Korsförsäljningsprodukter',
                     ],
-
                     'add-btn'           => 'Lägg till',
                     'delete'            => 'Radera',
                     'empty-info'        => 'Lägg till produkter :type åt gången.',
@@ -199,7 +251,6 @@ return [
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Produkter',
                 ],
-
                 'types' => [
                     'configurable' => [
                         'add-btn'                            => 'Lägg till variation',
@@ -213,18 +264,16 @@ return [
                         'sku'                                => 'SKU - :sku',
                         'title'                              => 'Variation',
                         'variant-exists'                     => 'Denna variation eller SKU finns redan.',
-                        'variant-attribute-option-not-found' => 'Variationens attributalternativ hittades inte',
-                        'supper-attribute-not-found'         => 'Superattribut hittades inte',
-                        'variant-given-exists'               => 'Denna variation finns redan',
-
-                        'create' => [
+                        'variant-attribute-option-not-found' => 'Variationens attributalternativ hittades inte :attributes',
+                        'supper-attribute-not-found'         => 'Superattribut hittades inte :attribute',
+                        'variant-given-exists'               => 'Denna variation finns redan :variants',
+                        'create'                             => [
                             'description'            => 'Beskrivning',
                             'name'                   => 'Namn',
                             'save-btn'               => 'Lägg till',
                             'title'                  => 'Lägg till variation',
                             'variant-already-exists' => 'Denna variation finns redan.',
                         ],
-
                         'edit' => [
                             'disabled'        => 'Inaktiverad',
                             'edit-info'       => 'För att uppdatera produktinformation, gå till sidan',
@@ -240,7 +289,6 @@ return [
                             'title'           => 'Produkt',
                             'weight'          => 'Vikt',
                         ],
-
                         'mass-edit' => [
                             'add-images'          => 'Lägg till bilder',
                             'apply-to-all-btn'    => 'Tillämpa för alla',
@@ -267,23 +315,31 @@ return [
                         ],
                     ],
                 ],
-
                 'translate' => [
-                    'translate-btn'            => 'Översätt',
-                    'title'                    => 'Översätt',
-                    'source-channel'           => 'Källkanal',
-                    'locale'                   => 'Källspråk',
-                    'translated-content'       => 'Översatt innehåll',
-                    'translating'              => 'Översätter',
-                    'apply'                    => 'Tillämpa',
-                    'cancel'                   => 'Avbryt',
-                    'target-locales'           => 'Målspråk',
-                    'target-channel'           => 'Målkanal',
-                    'attributes'               => 'Attribut',
-                    'source-content'           => 'Källinnehåll',
-                    'tranlated-job-processed'  => 'Uppgiften att spara översatt innehåll har bearbetats.',
+                    'translate-btn'               => 'Översätt',
+                    'title'                       => 'Översätt',
+                    'source-channel'              => 'Källkanal',
+                    'locale'                      => 'Källspråk',
+                    'translated-content'          => 'Översatt innehåll',
+                    'translating'                 => 'Översätter',
+                    'apply'                       => 'Tillämpa',
+                    'back'                        => 'Tillbaka',
+                    'cancel'                      => 'Avbryt',
+                    'target-locales'              => 'Målspråk',
+                    'target-channel'              => 'Målkanal',
+                    'attributes'                  => 'Attribut',
+                    'tranlated-job-processed'     => 'Uppgiften att spara översatt innehåll har bearbetats.',
+                    'step'                        => 'Steg',
+                    'select-source'               => 'Välj källa',
+                    'select-target'               => 'Välj mål',
+                    'first-step-title'            => 'Steg 1: Välj källkanal, språk och attribut',
+                    'first-step-title-attributes' => 'Steg 1: Välj källkanal och språk',
+                    'source-content'              => 'Källinnehåll',
+                    'second-step-title'           => 'Steg 2: Välj målkanal och språk',
+                    'target-content'              => 'Målinnehåll',
+                    'next'                        => 'Nästa',
+                    'empty-translation-data'      => 'Data är inte tillgänglig för översättning baserat på källkanal och språk',
                 ],
-
                 'product-info' => [
                     'title'        => 'Produktinformation',
                     'status'       => 'Status',
@@ -293,6 +349,7 @@ return [
                     'created-at'   => 'Skapad datum',
                     'product-type' => 'Produkttyp',
                 ],
+                'more-actions' => 'Fler åtgärder',
             ],
             'bulk-edit' => [
                 'validation' => [
@@ -303,22 +360,23 @@ return [
                     'regex'                      => 'Värdet matchar inte det krävs mönstret.',
                     'invalid-pattern'            => 'Ogiltigt anpassat mönster angivet.',
                     'select-attribute-or-family' => 'Välj minst ett attribut eller en attributfamilj.',
-                    'failed'                     => 'Valideringen misslyckades.', ],
-                'modal'                      => [
+                    'failed'                     => 'Valideringen misslyckades.',
+                ],
+                'modal' => [
                     'title'            => 'Attribut för massredigering',
                     'btn-cancel'       => 'Avbryt',
                     'btn-proceed'      => 'Fortsätt',
                     'attribute-family' => 'Välj attributfamilj',
                 ],
                 'index' => [
-                    'no-product'    => 'Inga produkter valda för massredigering.',
+                    'no-product' => 'Inga produkter valda för massredigering.',
                 ],
                 'filter' => [
-                    'many-product'      => 'För många produkter har valts.',
-                    'redirect-message'  => 'Omdirigerar till vyn för massredigering.',
+                    'many-product'     => 'För många produkter har valts.',
+                    'redirect-message' => 'Omdirigerar till vyn för massredigering.',
                 ],
                 'handle-save' => [
-                    'edit-success'  => 'Massredigeringen lyckades.',
+                    'edit-success' => 'Massredigeringen lyckades.',
                 ],
                 'id'              => 'ID',
                 'no-changes'      => 'Inga ändringar att spara.',
@@ -329,9 +387,8 @@ return [
                 'img-preview'     => 'Bildförhandsvisning',
                 'no-image'        => 'Ingen bild',
                 'img-fail'        => 'Misslyckades med att ladda upp bilden',
-                'no-opton'        => 'Inga alternativ',
+                'no-option'       => 'Inga alternativ',
             ],
-
             'create-success'          => 'Produkten skapades framgångsrikt',
             'delete-failed'           => 'Fel vid radering av produkt',
             'delete-success'          => 'Produkten raderades framgångsrikt',
@@ -345,30 +402,28 @@ return [
             'upload-success'          => 'Produktfilen laddades upp framgångsrikt.',
             'update-failure'          => 'Produkten kunde inte uppdateras.',
         ],
-
         'attributes' => [
             'index' => [
                 'create-btn' => 'Skapa attribut',
                 'title'      => 'Attribut',
-
-                'datagrid' => [
-                    'channel-based'       => 'Kanalbaserat',
-                    'code'                => 'Kod',
-                    'created-at'          => 'Skapad vid',
-                    'delete'              => 'Ta bort',
-                    'edit'                => 'Redigera',
-                    'id'                  => 'ID',
-                    'locale-based'        => 'Språkbaserat',
-                    'mass-delete-success' => 'Valda attribut har tagits bort',
-                    'name'                => 'Namn',
-                    'required'            => 'Obligatorisk',
-                    'type'                => 'Typ',
-                    'unique'              => 'Unik',
-                    'delete-failed'       => 'Det gick inte att ta bort detta attribut.',
-                    'mass-delete-failed'  => 'Det gick inte att ta bort de valda attributen.',
+                'datagrid'   => [
+                    'channel-based'            => 'Kanalbaserat',
+                    'code'                     => 'Kod',
+                    'created-at'               => 'Skapad vid',
+                    'delete'                   => 'Ta bort',
+                    'edit'                     => 'Redigera',
+                    'id'                       => 'ID',
+                    'locale-based'             => 'Språkbaserat',
+                    'mass-delete-success'      => 'Valda attribut har tagits bort',
+                    'name'                     => 'Namn',
+                    'required'                 => 'Obligatorisk',
+                    'type'                     => 'Typ',
+                    'unique'                   => 'Unik',
+                    'delete-failed'            => 'Det gick inte att ta bort detta attribut.',
+                    'mass-delete-failed'       => 'Det gick inte att ta bort de valda attributen.',
+                    'delete-attribute-failure' => 'Detta attribut kan inte tas bort eftersom det används för konfigurerbara produkter',
                 ],
             ],
-
             'create' => [
                 'add-attribute-options' => 'Lägg till attributalternativ',
                 'add-option'            => 'Lägg till alternativ',
@@ -391,13 +446,12 @@ return [
                 'enable-wysiwyg'        => 'Aktivera WYSIWYG-redigerare',
                 'file'                  => 'Fil',
                 'general'               => 'Allmänt',
-                'image'                 => 'Bild',
                 'gallery'               => 'Galleri',
+                'image'                 => 'Bild',
                 'input-options'         => 'Inmatningsalternativ',
                 'input-validation'      => 'Inmatningsvalidering',
                 'is-comparable'         => 'Detta attribut är jämförbart',
                 'is-configurable'       => 'Används för att skapa konfigurerbara produkter',
-                'is-filterable'         => 'Kan användas i filter',
                 'is-required'           => 'Obligatorisk',
                 'is-unique'             => 'Unik',
                 'is-visible-on-front'   => 'Synlig på produktens detaljsida (frontend)',
@@ -427,8 +481,8 @@ return [
                 'usable-in-grid'        => 'Kan användas i rutnät',
                 'is-filterable'         => 'Är filtrerbar',
                 'ai-translate'          => 'AI Översättning',
-
-                'option' => [
+                'invalid-swatch-type'   => 'Attributet :attribute är inte tillåtet för attributtyp :type med swatchtyp :swatch_type.',
+                'option'                => [
                     'color'    => 'Färgväljare',
                     'dropdown' => 'Rullgardinsmeny',
                     'image'    => 'Bildprov',
@@ -436,7 +490,6 @@ return [
                     'text'     => 'Textprov',
                 ],
             ],
-
             'edit' => [
                 'add-attribute-options' => 'Lägg till attributalternativ',
                 'add-option'            => 'Lägg till alternativ',
@@ -460,12 +513,10 @@ return [
                 'file'                  => 'Fil',
                 'general'               => 'Allmänt',
                 'image'                 => 'Bild',
-                'gallery'               => 'Galleri',
                 'input-options'         => 'Inmatningsalternativ',
                 'input-validation'      => 'Inmatningsvalidering',
                 'is-comparable'         => 'Detta attribut är jämförbart',
                 'is-configurable'       => 'Används för att skapa konfigurerbara produkter',
-                'is-filterable'         => 'Kan användas i filter',
                 'is-required'           => 'Obligatorisk',
                 'is-unique'             => 'Unik',
                 'is-visible-on-front'   => 'Synlig på produktens detaljsida (frontend)',
@@ -495,22 +546,19 @@ return [
                 'usable-in-grid'        => 'Kan användas i rutnät',
                 'is-filterable'         => 'Är filtrerbar',
                 'ai-translate'          => 'AI Översättning',
-                'invalid-swatch-type'   => ':attribute är inte tillåten för attributtyp :type med swatch-typ :swatch_type.',
-
-                'option' => [
-                    'create-success'        => 'Attributalternativ skapades',
-                    'delete-success'        => 'Attributalternativ raderades',
-                    'save-btn'              => 'Spara alternativ',
-                    'sort-update-failure'   => 'Det gick inte att uppdatera sorteringsordningen',
-                    'sort-update-success'   => 'Sorteringsordningen uppdaterades',
-                    'update-success'        => 'Attributalternativ uppdaterades',
-                    'color'                 => 'Färgväljare',
-                    'dropdown'              => 'Rullgardinsmeny',
-                    'image'                 => 'Bildprov',
-                    'text'                  => 'Textprov',
+                'option'                => [
+                    'save-btn'            => 'Spara alternativ',
+                    'create-success'      => 'Attributalternativ skapades',
+                    'update-success'      => 'Attributalternativ uppdaterades',
+                    'sort-update-success' => 'Sorteringsordningen uppdaterades',
+                    'sort-update-failure' => 'Det gick inte att uppdatera sorteringsordningen',
+                    'delete-success'      => 'Attributalternativ raderades',
+                    'color'               => 'Färgväljare',
+                    'dropdown'            => 'Rullgardinsmeny',
+                    'image'               => 'Bildprov',
+                    'text'                => 'Textprov',
                 ],
             ],
-
             'create-success'    => 'Attribut skapad',
             'delete-failed'     => 'Det gick inte att ta bort attributet',
             'delete-success'    => 'Attribut borttaget',
@@ -518,19 +566,16 @@ return [
             'user-define-error' => 'Det går inte att ta bort systemattribut',
             'not-found'         => 'Attributet med koden ":code" hittades inte',
         ],
-
         'attribute-options' => [
             'create-success'       => 'Attributalternativ skapades',
             'update-success'       => 'Attributalternativ uppdaterades',
             'usable-in-grid-error' => 'Endast 4 attribut kan markeras som användbara i rutan.',
         ],
-
         'attribute-groups' => [
             'index' => [
                 'create-btn' => 'Skapa attributgrupp',
                 'title'      => 'Attributgrupper',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'code'                => 'Kod',
                     'delete'              => 'Radera',
                     'mass-delete-success' => 'Valda attributgrupper har raderats',
@@ -542,7 +587,6 @@ return [
                     'update-status'       => 'Uppdatera status',
                 ],
             ],
-
             'create' => [
                 'title'    => 'Lägg till attributgrupp',
                 'save-btn' => 'Spara attributgrupp',
@@ -551,7 +595,6 @@ return [
                 'code'     => 'Kod',
                 'label'    => 'Etikett',
             ],
-
             'edit' => [
                 'title'    => 'Redigera attributgrupp',
                 'back-btn' => 'Tillbaka',
@@ -560,7 +603,6 @@ return [
                 'code'     => 'Kod',
                 'label'    => 'Etikett',
             ],
-
             'create-success'        => 'Attributgrupp skapad',
             'delete-failed'         => 'Misslyckades med att ta bort attributgrupp',
             'delete-success'        => 'Attributgrupp borttagen',
@@ -569,29 +611,26 @@ return [
             'attribute-group-error' => 'Gruppen används i familjer.',
             'not-found'             => 'Attributgrupp med kod ":code" hittades inte',
         ],
-
         'categories' => [
             'index' => [
-                'add-btn' => 'Skapa kategori',
-                'title'   => 'Kategorier',
-
+                'add-btn'  => 'Skapa kategori',
+                'title'    => 'Kategorier',
                 'datagrid' => [
                     'active'         => 'Aktiv',
                     'code'           => 'Kod',
                     'delete'         => 'Radera',
-                    'delete-success' => 'Valda resurser har raderats',
+                    'delete-success' => 'Valda resurser har raderats :resource',
                     'edit'           => 'Redigera',
                     'id'             => 'ID',
                     'inactive'       => 'Inaktiv',
                     'name'           => 'Visningsnamn',
+                    'category-name'  => 'اسم',
                     'no-of-products' => 'Antal produkter',
                     'position'       => 'Position',
-                    'category-name'  => 'اسم',
                     'status'         => 'Synlig i menyn',
                     'update-status'  => 'Uppdatera status',
                 ],
             ],
-
             'create' => [
                 'back-btn'            => 'Tillbaka',
                 'code'                => 'Kod',
@@ -612,7 +651,6 @@ return [
                 'right-section'       => 'Inställningar',
                 'left-section'        => 'Allmänt',
             ],
-
             'edit' => [
                 'back-btn'               => 'Tillbaka',
                 'code'                   => 'Kod',
@@ -631,7 +669,6 @@ return [
                 'right-section'          => 'Inställningar',
                 'left-section'           => 'Allmänt',
             ],
-
             'category'             => 'Kategori',
             'create-success'       => 'Kategori skapad',
             'delete-category-root' => 'Du kan inte ta bort rotkategorin som är kopplad till en kanal.',
@@ -646,14 +683,12 @@ return [
             'create-failure'       => 'Kategorin kunde inte skapas.',
             'update-failure'       => 'Kategorin kunde inte uppdateras.',
         ],
-
         'category_fields' => [
             'index' => [
                 'create-btn' => 'Skapa Kategori Fält',
                 'add-btn'    => 'Skapa Kategori Fält',
                 'title'      => 'Kategori Fält',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'channel-based'       => 'Kanalbaserat',
                     'code'                => 'Kod',
                     'created-at'          => 'Skapad',
@@ -678,7 +713,6 @@ return [
                     'mass-delete-failed'  => 'De valda kategori fälten kan inte raderas.',
                 ],
             ],
-
             'create' => [
                 'add-field-options'   => 'Lägg till alternativ till kategori fält',
                 'add-option'          => 'Lägg till alternativ',
@@ -697,7 +731,7 @@ return [
                 'datetime'            => 'Datum och tid',
                 'decimal'             => 'Decimal',
                 'default-value'       => 'Standardvärde',
-                'email'               => 'Email',
+                'email'               => 'E-post',
                 'enable-wysiwyg'      => 'Aktivera WYSIWYG editor',
                 'file'                => 'Fil',
                 'general'             => 'Allmänt',
@@ -733,8 +767,7 @@ return [
                 'set-section-right'   => 'Konfigurations sektion',
                 'settings'            => 'Inställningar',
                 'same-code-error'     => 'Alternativkod måste vara unik.',
-
-                'option' => [
+                'option'              => [
                     'dropdown' => 'Rullgardinslista',
                     'save-btn' => 'Spara alternativ',
                     'color'    => 'Färgmönster',
@@ -742,7 +775,6 @@ return [
                     'text'     => 'Textmönster',
                 ],
             ],
-
             'edit' => [
                 'add-field-options'   => 'Lägg till alternativ till kategori fält',
                 'add-option'          => 'Lägg till alternativ',
@@ -761,7 +793,7 @@ return [
                 'datetime'            => 'Datum och tid',
                 'decimal'             => 'Decimal',
                 'default-value'       => 'Standardvärde',
-                'email'               => 'Email',
+                'email'               => 'E-post',
                 'enable-wysiwyg'      => 'Aktivera WYSIWYG editor',
                 'file'                => 'Fil',
                 'general'             => 'Allmänt',
@@ -798,8 +830,7 @@ return [
                 'set-section-right'   => 'Konfigurations sektion',
                 'settings'            => 'Inställningar',
                 'same-code-error'     => 'Alternativkod måste vara unik.',
-
-                'option' => [
+                'option'              => [
                     'dropdown' => 'Rullgardinslista',
                     'save-btn' => 'Spara alternativ',
                     'color'    => 'Färgmönster',
@@ -807,7 +838,6 @@ return [
                     'text'     => 'Textmönster',
                 ],
             ],
-
             'create-success'    => 'Kategori fält skapades framgångsrikt',
             'delete-failed'     => 'Det gick inte att radera kategori fält',
             'delete-success'    => 'Kategori fält raderades framgångsrikt',
@@ -815,17 +845,14 @@ return [
             'user-define-error' => 'Det går inte att radera systemdefinierade fält',
             'not-found'         => 'Kategori fält med kod ":code" kunde inte hittas',
         ],
-
         'category-fields-options' => [
             'create-success' => 'Kategoriens fältalternativ skapades',
             'update-success' => 'Kategoriens fältalternativ uppdaterades',
         ],
-
         'families' => [
             'index' => [
-                'add'   => 'Skapa attributgrupp',
-                'title' => 'Familjer',
-
+                'add'      => 'Skapa attributgrupp',
+                'title'    => 'Familjer',
                 'datagrid' => [
                     'code'           => 'Kod',
                     'delete'         => 'Ta bort',
@@ -840,7 +867,6 @@ return [
                     'update-success' => 'Den valda resursen :resource har uppdaterats',
                 ],
             ],
-
             'create' => [
                 'assign-group-btn'                 => 'Tilldela attributgrupp',
                 'assign-group-title'               => 'Tilldela attributgrupp',
@@ -871,7 +897,6 @@ return [
                 'unassigned-attribute-groups'      => 'Ockuperade attributgrupper',
                 'assign-first-attribute-group'     => 'Tilldela en grupp till familjen.',
             ],
-
             'edit' => [
                 'assign-group-btn'                 => 'Tilldela attributgrupp',
                 'assign-group-title'               => 'Tilldela attributgrupp',
@@ -905,7 +930,6 @@ return [
                 'variant-options-label'            => 'Konfigurationsalternativ',
                 'select-variant'                   => 'Välj attribut',
             ],
-
             'attribute-family'               => 'Attributfamilj',
             'attribute-product-error'        => 'Familjen används i produkter.',
             'create-success'                 => 'Familjen skapades framgångsrikt.',
@@ -918,7 +942,6 @@ return [
             'not-found'                      => 'Attributfamilj med kod ":code" hittades inte.',
             'can-not-update-variant-options' => 'Kan inte uppdatera konfigurationsalternativ eftersom denna familj redan har produktvarianter.',
         ],
-
         'history' => [
             'index' => [
                 'datagrid' => [
@@ -929,7 +952,6 @@ return [
             ],
         ],
     ],
-
     'settings' => [
         'locales' => [
             'index' => [
@@ -938,8 +960,7 @@ return [
                 'title'                 => 'Lokaliteter',
                 'can-not-delete-error'  => 'Du kan inte radera en lokalitet kopplad till en kanal eller användare',
                 'can-not-disable-error' => 'Du kan inte inaktivera en lokalitet kopplad till en kanal eller användare',
-
-                'datagrid' => [
+                'datagrid'              => [
                     'actions'     => 'Åtgärder',
                     'code'        => 'Kod',
                     'delete'      => 'Radera',
@@ -950,14 +971,12 @@ return [
                     'name'        => 'Visningsnamn',
                     'rtl'         => 'RTL',
                     'mass-update' => 'Uppdatera Status',
-
-                    'status' => [
+                    'status'      => [
                         'title'    => 'Status',
                         'active'   => 'Aktivera',
                         'inactive' => 'Inaktivera',
                     ],
                 ],
-
                 'create' => [
                     'code'             => 'Kod',
                     'direction'        => 'Riktning',
@@ -968,11 +987,9 @@ return [
                     'title'            => 'Skapa Lokalitet',
                     'status'           => 'Status',
                 ],
-
                 'edit' => [
                     'title' => 'Redigera Lokalitet',
                 ],
-
                 'create-success'    => 'Lokalitet skapad framgångsrikt.',
                 'delete-failed'     => 'Fel vid radering av lokalitet.',
                 'delete-success'    => 'Lokalitet raderad framgångsrikt.',
@@ -981,7 +998,6 @@ return [
                 'update-success'    => 'Lokalitet uppdaterad framgångsrikt.',
             ],
         ],
-
         'currencies' => [
             'index' => [
                 'create-btn'            => 'Skapa Valuta',
@@ -989,8 +1005,7 @@ return [
                 'title'                 => 'Valutor',
                 'can-not-delete-error'  => 'Du kan inte radera en valuta kopplad till en kanal',
                 'can-not-disable-error' => 'Du kan inte inaktivera en valuta kopplad till en kanal',
-
-                'datagrid' => [
+                'datagrid'              => [
                     'actions'        => 'Åtgärder',
                     'code'           => 'Kod',
                     'delete'         => 'Radera',
@@ -1002,14 +1017,12 @@ return [
                     'partial-action' => 'Vissa åtgärder har inte genomförts på grund av systembegränsningar på :resource',
                     'update-success' => 'Valt :resource uppdaterades framgångsrikt.',
                     'mass-update'    => 'Uppdatera Status',
-
-                    'status' => [
+                    'status'         => [
                         'title'    => 'Status',
                         'active'   => 'Aktivera',
                         'inactive' => 'Inaktivera',
                     ],
                 ],
-
                 'create' => [
                     'code'           => 'Kod',
                     'create-btn'     => 'Skapa Valuta',
@@ -1022,11 +1035,9 @@ return [
                     'title'          => 'Skapa Ny Valuta',
                     'status'         => 'Status',
                 ],
-
                 'edit' => [
                     'title' => 'Redigera Valuta',
                 ],
-
                 'create-success'    => 'Valuta skapad framgångsrikt.',
                 'delete-failed'     => 'Fel vid radering av valuta.',
                 'delete-success'    => 'Valuta raderad framgångsrikt.',
@@ -1035,7 +1046,6 @@ return [
                 'cannot-delete'     => 'Valuta kan inte raderas.',
             ],
         ],
-
         'data-transfer' => [
             'tracker' => [
                 'index' => [
@@ -1053,32 +1063,32 @@ return [
                         'user'                 => 'Användare',
                         'created_at'           => 'Skapad',
                         'updated_at'           => 'Uppdaterad',
-
-                        'pending'    => 'Väntar',
-                        'validated'  => 'Validerad',
-                        'processing' => 'Bearbetar',
-                        'processed'  => 'Bearbetad',
-                        'linking'    => 'Länkar',
-                        'linked'     => 'Länkad',
-
-                        'indexing'  => 'Indexerar',
-                        'indexed'   => 'Indexerad',
-                        'completed' => 'Slutförd',
-                        'failed'    => 'Misslyckades',
+                        'pending'              => 'Väntar',
+                        'validating'           => 'Validerar',
+                        'validated'            => 'Validerad',
+                        'processing'           => 'Bearbetar',
+                        'processed'            => 'Bearbetad',
+                        'linking'              => 'Länkar',
+                        'linked'               => 'Länkad',
+                        'indexing'             => 'Indexerar',
+                        'indexed'              => 'Indexerad',
+                        'completed'            => 'Slutförd',
+                        'paused'               => 'Pausad',
+                        'cancelled'            => 'Avbruten',
+                        'failed'               => 'Misslyckades',
                     ],
                 ],
-
                 'import' => [
                     'back-btn'                => 'Tillbaka',
                     'completed-batches'       => 'Totalt Slutförda Omgångar:',
                     'download-error-report'   => 'Ladda ner Fullständig Rapport',
                     'edit-btn'                => 'Redigera',
                     'imported-info'           => 'Grattis! Din import lyckades.',
-                    'importing-info'          => 'Export pågår',
+                    'exporting-info'          => 'Export pågår',
                     'indexing-info'           => 'Indexering av Resurser (Priser, Elasticsearch) pågår',
                     'linking-info'            => 'Länkar Resurser pågår',
                     'progress'                => 'Framsteg:',
-                    'title'                   => 'Export',
+                    'title'                   => 'Exportera',
                     'total-batches'           => 'Totalt Omgångar:',
                     'created'                 => 'Totalt Skapade Poster:',
                     'total-deleted'           => 'Totalt Raderade Poster:',
@@ -1092,7 +1102,6 @@ return [
                     'validation-failed-info'  => 'Din import är ogiltig. Korrigera följande fel och försök igen.',
                     'validation-success-info' => 'Din import är giltig. Klicka på Exportera för att starta importprocessen.',
                 ],
-
                 'summary' => [
                     'total-batches' => 'Totalt Omgångar:',
                     'created'       => 'Totalt Skapade Poster:',
@@ -1103,148 +1112,192 @@ return [
                     'updated'       => 'Totalt Uppdaterade Poster:',
                     'skipped'       => 'Totalt Ignorerade Poster:',
                 ],
-
-                'info'              => 'Grattis! Ditt jobb kördes framgångsrikt.',
-                'create-success'    => 'Export skapades framgångsrikt.',
-                'delete-failed'     => 'Exporten misslyckades att radera.',
-                'delete-success'    => 'Export raderades framgångsrikt.',
-                'not-valid'         => 'Export är ogiltig',
-                'nothing-to-import' => 'Det finns inga resurser att importera.',
-                'setup-queue-error' => 'Ändra din ködrivrutin till "databas" eller "redis" för att starta importprocessen.',
-                'update-success'    => 'Export uppdaterades framgångsrikt.',
-                'failed-info'       => 'Jobbet misslyckades. Korrigera följande fel och försök igen.',
-                'download-log-file' => 'Ladda ner Loggfil',
+                'info'                  => 'Grattis! Ditt jobb kördes framgångsrikt.',
+                'running-time'          => 'Körtid',
+                'estimated-remaining'   => 'Uppskattad återstående',
+                'total-duration'        => 'Total varaktighet',
+                'status'                => 'Status',
+                'waiting'               => 'Väntar',
+                'total-records'         => 'Totalt antal poster',
+                'job-id'                => 'Jobb-ID',
+                'records-created'       => 'Skapade poster',
+                'records-updated'       => 'Uppdaterade poster',
+                'records-deleted'       => 'Raderade poster',
+                'run-again'             => 'Kör igen',
+                'completed-success'     => 'Jobb slutfört framgångsrikt',
+                'completed-info-sub'    => 'Alla poster har bearbetats och indexerats. Din katalog är uppdaterad.',
+                'create-success'        => 'Export skapades framgångsrikt.',
+                'delete-failed'         => 'Exporten misslyckades att radera.',
+                'delete-success'        => 'Export raderades framgångsrikt.',
+                'not-valid'             => 'Export är ogiltig',
+                'nothing-to-import'     => 'Det finns inga resurser att importera.',
+                'setup-queue-error'     => 'Ändra din ködrivrutin till "databas" eller "redis" för att starta importprocessen.',
+                'update-success'        => 'Export uppdaterades framgångsrikt.',
+                'failed-info'           => 'Jobbet misslyckades. Korrigera följande fel och försök igen.',
+                'download-log-file'     => 'Ladda ner Loggfil',
+                'pause'                 => 'Paus',
+                'resume'                => 'Återuppta',
+                'cancel'                => 'Avbryt',
+                'paused'                => 'Importen har pausats.',
+                'resumed'               => 'Importen har återupptagits.',
+                'cancelled'             => 'Importen har avbrutits.',
+                'paused-info'           => 'Importen är pausad. Återstående batcher är parkerade.',
+                'paused-info-export'    => 'Exporten är pausad. Återstående batcher är parkerade.',
+                'cancelled-info'        => 'Importen avbröts. Delvisa resultat visas nedan.',
+                'cancelled-info-export' => 'Exporten avbröts. Delvisa resultat visas nedan.',
+                'cancel-confirm'        => 'Är du säker på att du vill avbryta detta jobb? Denna åtgärd kan inte ångras.',
+                'live'                  => 'Live',
+                'import-progress'       => 'Importförlopp',
+                'export-progress'       => 'Exportförlopp',
+                'linking-progress'      => 'Länkningsförlopp',
+                'indexing-progress'     => 'Indexeringsförlopp',
+                'job-label'             => 'Jobb',
             ],
-
-            'import' => [
-                'create' => [
+            'imports' => [
+                'import-start-fail' => 'Importprocessen kunde inte startas. Försök igen.',
+                'create'            => [
                     'code'                => 'Kod',
                     'action'              => 'Åtgärd',
-                    'allowed-errors'      => 'Tillåtna fel',
+                    'allowed-errors'      => 'Tillåtna Fel',
                     'allowed-file-types'  => 'Tillåtna filtyper (CSV, XLSX, XLS)',
                     'back-btn'            => 'Tillbaka',
-                    'create-update'       => 'Skapa/uppdatera',
+                    'create-update'       => 'Skapa/Uppdatera',
                     'delete'              => 'Radera',
                     'media'               => 'Fil / Bilder',
                     'images'              => 'Bilder',
-                    'download-sample'     => 'Ladda ner exempel :resource CSV',
+                    'download-sample'     => 'Ladda ner :resource Exempel CSV',
                     'field-separator'     => 'Fältseparator',
-                    'separator-info'      => 'Använd endast för CSV-filer',
-                    'file-info-example'   => 'Placera bilder i storage/app/public/. Om bilder finns i storage/app/public/import-images, inkludera import-images/ i sökvägen och använd endast filnamnet i importfilen.',
-                    'file-info'           => 'Använd relativ sökväg till /project-root/storage/app/import, t.ex. product-images, import-images.',
+                    'separator-info'      => 'Används bara för CSV-filer',
+                    'file-info-example'   => 'Placera bilder i storage/app/public/. För bilder i storage/app/public/import-images, inkludera import-images/ i sökvägen och använd endast filnamnet i importfilen.',
+                    'file-info'           => 'Använd relativ sökväg till /project-root/storage/app/import, t.ex. produktbilder, import-images.',
                     'file'                => 'Fil',
-                    'general'             => 'Allmänt',
-                    'upload_images'       => 'Ladda upp bilder för att ange sökväg',
-                    'download-sample-zip' => 'Ladda ner exempelbilder som ZIP',
+                    'general'             => 'Allmän',
+                    'upload_images'       => 'Ladda upp bilder till angiven sökväg',
+                    'download-sample-zip' => 'Ladda ner Exempelbilder ZIP',
+                    'zip-uploading'       => 'Laddar upp och extraherar ZIP...',
+                    'zip-upload-success'  => 'ZIP uppladdad och extraherad framgångsrikt.',
+                    'zip-upload-error'    => 'Uppladdning av ZIP misslyckades. Vänligen försök igen.',
+                    'invalid-zip'         => 'Den uppladdade filen är inte ett giltigt ZIP-arkiv.',
+                    'zip-upload-or'       => 'eller ladda upp en ZIP med bilder',
+                    'zip-click-upload'    => 'Klicka för att ladda upp en ZIP med bilder',
+                    'zip-files-extracted' => 'filer extraherade',
+                    'zip-drop-hint'       => 'Klicka eller dra & släpp en ZIP-fil här',
                     'images-directory'    => 'Sökväg',
-                    'process-in-queue'    => 'Bearbetning i kö',
+                    'process-in-queue'    => 'Bearbeta i kö',
                     'results'             => 'Resultat',
-                    'save-btn'            => 'Spara import',
+                    'save-btn'            => 'Spara Import',
                     'settings'            => 'Inställningar',
-                    'skip-errors'         => 'Hoppa över fel',
-                    'stop-on-errors'      => 'Stoppa vid fel',
-                    'title'               => 'Skapa import',
+                    'skip-errors'         => 'Hoppa över Fel',
+                    'stop-on-errors'      => 'Stoppa vid Fel',
+                    'title'               => 'Skapa Import',
                     'type'                => 'Typ',
                     'validation-strategy' => 'Valideringsstrategi',
                 ],
-
                 'edit' => [
                     'images'              => 'Bilder',
                     'action'              => 'Åtgärd',
-                    'allowed-errors'      => 'Tillåtna fel',
+                    'allowed-errors'      => 'Tillåtna Fel',
                     'allowed-file-types'  => 'Tillåtna filtyper (CSV, XLSX, XLS)',
                     'back-btn'            => 'Tillbaka',
-                    'create-update'       => 'Skapa/uppdatera',
+                    'create-update'       => 'Skapa/Uppdatera',
                     'delete'              => 'Radera',
-                    'download-sample'     => 'Ladda ner exempel',
+                    'download-sample'     => 'Ladda ner Exempel',
                     'field-separator'     => 'Fältseparator',
-                    'separator-info'      => 'Använd endast för CSV-filer',
-                    'file-info-example'   => 'Placera bilder i storage/app/public/. Om bilder finns i storage/app/public/import-images, inkludera import-images/ i sökvägen och använd endast filnamnet i importfilen.',
-                    'file-info'           => 'Använd relativ sökväg till /project-root/storage/app/import, t.ex. product-images, import-images.',
+                    'separator-info'      => 'Används bara för CSV-filer',
+                    'file-info-example'   => 'Placera bilder i storage/app/public/. För bilder i storage/app/public/import-images, inkludera import-images/ i sökvägen och använd endast filnamnet i importfilen.',
+                    'file-info'           => 'Använd relativ sökväg till /project-root/storage/app/import, t.ex. produktbilder, import-images.',
                     'file'                => 'Fil',
-                    'general'             => 'Allmänt',
+                    'general'             => 'Allmän',
                     'images-directory'    => 'Sökväg',
-                    'process-in-queue'    => 'Bearbetning i kö',
+                    'process-in-queue'    => 'Bearbeta i kö',
                     'results'             => 'Resultat',
-                    'save-btn'            => 'Spara import',
+                    'save-btn'            => 'Spara Import',
                     'settings'            => 'Inställningar',
-                    'skip-errors'         => 'Hoppa över fel',
-                    'stop-on-errors'      => 'Stoppa vid fel',
-                    'title'               => 'Redigera import',
+                    'skip-errors'         => 'Hoppa över Fel',
+                    'stop-on-errors'      => 'Stoppa vid Fel',
+                    'title'               => 'Redigera Import',
                     'type'                => 'Typ',
                     'validation-strategy' => 'Valideringsstrategi',
                 ],
-
                 'batch' => [
-                    'title' => 'Import tillagd i kö',
+                    'title' => 'Import tillagd i kön',
                 ],
-
                 'index' => [
-                    'button-title' => 'Skapa import',
+                    'button-title' => 'Skapa Import',
                     'title'        => 'Importer',
-
-                    'datagrid' => [
+                    'datagrid'     => [
                         'actions'               => 'Åtgärder',
-                        'completed-at'          => 'Slutfört vid',
+                        'completed-at'          => 'Slutförd Vid',
                         'created'               => 'Skapad',
                         'delete'                => 'Radera',
                         'deleted'               => 'Raderad',
                         'edit'                  => 'Redigera',
-                        'error-file'            => 'Felfil',
+                        'error-file'            => 'Fel Fil',
                         'id'                    => 'ID',
                         'code'                  => 'Kod',
                         'type'                  => 'Typ',
                         'action'                => 'Åtgärd',
-                        'started-at'            => 'Startad vid',
-                        'state'                 => 'Status',
+                        'started-at'            => 'Startad Vid',
+                        'state'                 => 'Tillstånd',
                         'summary'               => 'Sammanfattning',
                         'updated'               => 'Uppdaterad',
-                        'uploaded-file'         => 'Uppladdad fil',
-                        'images_directory_path' => 'Bildsökväg',
-                        'import'                => 'Import',
+                        'uploaded-file'         => 'Uppladdad Fil',
+                        'images_directory_path' => 'Bilder Fil',
+                        'import'                => 'Importera',
                     ],
                 ],
-
                 'import' => [
+                    'action'                  => 'Åtgärdsläge',
                     'back-btn'                => 'Tillbaka',
-                    'completed-batches'       => 'Slutförda satser totalt:',
-                    'download-error-report'   => 'Ladda ner fullständig rapport',
+                    'completed-batches'       => 'Totalt Slutförda Batchar:',
+                    'download-error-report'   => 'Ladda ner Fullständig Rapport',
                     'edit-btn'                => 'Redigera',
-                    'imported-info'           => 'Grattis! Din import har slutförts.',
-                    'importing-info'          => 'Import pågår',
                     'exporting-info'          => 'Export pågår',
-                    'indexing-info'           => 'Indexering av resurser (priser, Elastic Search) pågår',
-                    'linking-info'            => 'Länkning av resurser pågår',
-                    'progress'                => 'Progress:',
-                    'pending-info'            => 'Väntar på köbehandling',
-                    'title'                   => 'Import',
-                    'total-batches'           => 'Totalt antal satser:',
+                    'exporting-info-sub'      => 'Genererar exportfil och skriver poster. Vänligen vänta.',
+                    'file_path'               => 'Fil Sökväg',
+                    'imported-info'           => 'Grattis! Din import var framgångsrik.',
+                    'import-now'              => 'Importera Nu',
+                    'importing-info'          => 'Import pågår',
+                    'importing-info-sub'      => 'Bearbetar batcher och skriver poster till databasen.',
+                    'indexing-info'           => 'Resurser Indexering (Pris, Elastic Search) Pågår',
+                    'indexing-info-sub'       => 'Bygger om sökindex och priscacheminnen efter import. Detta steg körs automatiskt.',
+                    'indexing-type'           => 'Pris + ES',
+                    'linking-info'            => 'Resurser Länkning Pågår',
+                    'linking-info-sub'        => 'Länkar relaterade resurser och associationer mellan poster.',
+                    'pending-info'            => 'Jobb i kö — väntar på att arbetaren ska starta...',
+                    'pending-info-sub'        => 'Ditt jobb har lagts till i bearbetningskön. En arbetare kommer att ta hand om det inom kort.',
+                    'pending-step-complete'   => 'Slutförd',
+                    'pending-step-export'     => 'Exporterar',
+                    'pending-step-import'     => 'Importerar',
+                    'pending-step-queue'      => 'I kö',
+                    'pending-step-validate'   => 'Validerar',
+                    'profile'                 => 'Importprofil',
+                    'progress'                => 'Framsteg:',
+                    'title'                   => 'Importera',
+                    'total-batches'           => 'Totalt antal batcher:',
                     'total-created'           => 'Totalt skapade poster:',
                     'total-deleted'           => 'Totalt raderade poster:',
-                    'total-errors'            => 'Totala fel:',
-                    'total-invalid-rows'      => 'Totala ogiltiga rader:',
+                    'total-errors'            => 'Totalt antal fel:',
+                    'total-invalid-rows'      => 'Totalt ogiltiga rader:',
                     'total-rows-processed'    => 'Totalt bearbetade rader:',
                     'total-updated'           => 'Totalt uppdaterade poster:',
-                    'validate-info'           => 'Klicka för att validera och kontrollera importen.',
                     'validate'                => 'Validera',
-                    'file_path'               => 'Filens sökväg',
-                    'import-now'              => 'Importera nu',
-                    'action'                  => 'Åtgärdsmetod',
-                    'profile'                 => 'Importprofil',
-                    'validating-info'         => 'Data börjar läsas och valideras',
-                    'validation-failed-info'  => 'Din import är ogiltig. Vänligen åtgärda felen och försök igen.',
-                    'validation-success-info' => 'Din import är giltig. Klicka på „Importera” för att starta importprocessen.',
+                    'validate-info'           => 'Klicka på Validera Data för att kontrollera din import.',
+                    'validating-info'         => 'Läser fil och validerar data...',
+                    'validating-info-sub'     => 'Kontrollerar schemaintegritet, fältmappningar och datatyper innan importen börjar.',
+                    'validation-failed-info'  => 'Din import är ogiltig. Vänligen åtgärda följande fel och försök igen.',
+                    'validation-success-info' => 'Din import är giltig. Startar import automatiskt...',
                 ],
-
-                'create-success'    => 'Import skapad framgångsrikt.',
-                'delete-failed'     => 'Radering av import misslyckades.',
-                'delete-success'    => 'Import raderad framgångsrikt.',
-                'not-valid'         => 'Ogiltig import',
-                'nothing-to-import' => 'Inga resurser att importera.',
-                'setup-queue-error' => 'Vänligen ändra ködrivrutinen till „database” eller „redis” för att påbörja importprocessen.',
-                'update-success'    => 'Import uppdaterad framgångsrikt.',
+                'create-success'     => 'Import skapad framgångsrikt.',
+                'delete-failed'      => 'Import radering misslyckades oväntat.',
+                'delete-success'     => 'Importen raderades framgångsrikt.',
+                'invalid-zip'        => 'Den uppladdade filen är inte ett giltigt ZIP-arkiv.',
+                'not-valid'          => 'Importen är ogiltig',
+                'nothing-to-import'  => 'Det finns inga resurser att importera.',
+                'setup-queue-error'  => 'Vänligen ändra din ködrivrutin till "databas" eller "redis" för att starta importprocessen.',
+                'update-success'     => 'Importen uppdaterades framgångsrikt.',
+                'zip-upload-success' => 'ZIP uppladdad och extraherad framgångsrikt.',
             ],
-
             'exports' => [
                 'create' => [
                     'code'                => 'Kod',
@@ -1275,7 +1328,6 @@ return [
                     'type'                => 'Typ',
                     'validation-strategy' => 'Valideringsstrategi',
                 ],
-
                 'edit' => [
                     'action'              => 'Åtgärd',
                     'allowed-errors'      => 'Tillåtna Fel',
@@ -1299,16 +1351,13 @@ return [
                     'type'                => 'Typ',
                     'validation-strategy' => 'Valideringsstrategi',
                 ],
-
                 'batch' => [
                     'title' => 'Export har lagts till i kön',
                 ],
-
                 'index' => [
                     'button-title' => 'Skapa Export',
                     'title'        => 'Exporter',
-
-                    'datagrid' => [
+                    'datagrid'     => [
                         'actions'               => 'Åtgärder',
                         'completed-at'          => 'Slutförd vid',
                         'created'               => 'Skapad',
@@ -1326,10 +1375,9 @@ return [
                         'updated'               => 'Uppdaterad',
                         'uploaded-file'         => 'Uppladdad Fil',
                         'images_directory_path' => 'Väg till Bildfil',
-                        'export'                => 'Export',
+                        'export'                => 'Exportera',
                     ],
                 ],
-
                 'export' => [
                     'back-btn'                => 'Tillbaka',
                     'completed-batches'       => 'Totalt Slutförda Batchar:',
@@ -1342,7 +1390,7 @@ return [
                     'indexing-info'           => 'Indexering av resurser (pris, Elastic Search) pågår',
                     'linking-info'            => 'Länkning av resurser pågår',
                     'progress'                => 'Framsteg:',
-                    'title'                   => 'Export',
+                    'title'                   => 'Exportera',
                     'total-batches'           => 'Totalt Batchar:',
                     'total-created'           => 'Totalt Skapade Registreringar:',
                     'total-deleted'           => 'Totalt Raderade Registreringar:',
@@ -1359,7 +1407,6 @@ return [
                     'file-format'             => 'Filformat',
                     'with-media'              => 'Med Media',
                 ],
-
                 'create-success'    => 'Export skapad med framgång.',
                 'delete-failed'     => 'Radering av export misslyckades oväntat.',
                 'delete-success'    => 'Export raderad med framgång.',
@@ -1369,7 +1416,6 @@ return [
                 'update-success'    => 'Export uppdaterad med framgång.',
             ],
         ],
-
         'channels' => [
             'index' => [
                 'create-btn'           => 'Skapa kanal',
@@ -1388,7 +1434,6 @@ return [
                     'root-category' => 'Rotkategori',
                 ],
             ],
-
             'create' => [
                 'allowed-ips'            => 'Tillåtna IP-adresser',
                 'cancel'                 => 'Tillbaka',
@@ -1423,7 +1468,6 @@ return [
                 'theme'                  => 'Tema',
                 'title'                  => 'Skapa kanal',
             ],
-
             'edit' => [
                 'allowed-ips'            => 'Tillåtna IP-adresser',
                 'back-btn'               => 'Tillbaka',
@@ -1461,13 +1505,11 @@ return [
                 'update-success'         => 'Kanal uppdaterad framgångsrikt',
             ],
         ],
-
         'users' => [
             'index' => [
-                'admin' => 'Administratör',
-                'title' => 'Användare',
-                'user'  => 'Användare',
-
+                'admin'  => 'Administratör',
+                'title'  => 'Användare',
+                'user'   => 'Användare',
                 'create' => [
                     'confirm-password'  => 'Bekräfta Lösenord',
                     'email'             => 'E-post',
@@ -1481,7 +1523,6 @@ return [
                     'user-timezone'     => 'Tidszon',
                     'select'            => 'Välj',
                 ],
-
                 'datagrid' => [
                     'actions'  => 'Åtgärder',
                     'active'   => 'Aktiv',
@@ -1495,12 +1536,10 @@ return [
                     'status'   => 'Status',
                     'image'    => 'Bild',
                 ],
-
                 'edit' => [
                     'title' => 'Redigera Användare',
                 ],
             ],
-
             'edit' => [
                 'back-btn'         => 'Tillbaka',
                 'confirm-password' => 'Bekräfta Lösenord',
@@ -1513,7 +1552,6 @@ return [
                 'status'           => 'Status',
                 'title'            => 'Redigera Användare',
             ],
-
             'activate-warning'          => 'Ditt konto har ännu inte aktiverats, vänligen kontakta administratören.',
             'cannot-change'             => 'Användaren kan inte ändras',
             'create-success'            => 'Användare skapades framgångsrikt.',
@@ -1526,13 +1564,11 @@ return [
             'update-success'            => 'Användare uppdaterad framgångsrikt.',
             'current-user-delete-error' => 'Den inloggade användaren kan inte tas bort.',
         ],
-
         'roles' => [
             'index' => [
                 'create-btn' => 'Skapa Roll',
                 'title'      => 'Roller',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'delete'          => 'Ta bort',
                     'edit'            => 'Redigera',
                     'id'              => 'ID',
@@ -1540,7 +1576,6 @@ return [
                     'permission-type' => 'Behörighetstyp',
                 ],
             ],
-
             'create' => [
                 'access-control' => 'Åtkomstkontroll',
                 'all'            => 'Alla',
@@ -1553,7 +1588,6 @@ return [
                 'save-btn'       => 'Spara Roll',
                 'title'          => 'Skapa Roll',
             ],
-
             'edit' => [
                 'access-control' => 'Åtkomstkontroll',
                 'all'            => 'Alla',
@@ -1566,7 +1600,6 @@ return [
                 'save-btn'       => 'Spara Roll',
                 'title'          => 'Redigera Roll',
             ],
-
             'being-used'        => 'Rollen används redan av en administratör',
             'being-used-by'     => 'Rollen används redan av :name',
             'create-success'    => 'Rollen skapades framgångsrikt',
@@ -1576,7 +1609,519 @@ return [
             'update-success'    => 'Rollen uppdaterades framgångsrikt',
         ],
     ],
-
+    'configuration' => [
+        'index' => [
+            'delete'          => 'Radera',
+            'no-result-found' => 'Inget resultat hittades',
+            'save-btn'        => 'Spara Konfiguration',
+            'save-message'    => 'Konfigurationen sparades framgångsrikt',
+            'search'          => 'Sök',
+            'title'           => 'Konfiguration',
+            'general'         => [
+                'info'    => '',
+                'title'   => 'Allmänt',
+                'general' => [
+                    'info'  => '',
+                    'title' => 'Allmänt',
+                ],
+                'magic-ai' => [
+                    'info'     => 'Ställ in Magic AI alternativ.',
+                    'title'    => 'Magisk AI',
+                    'settings' => [
+                        'enabled'     => 'Aktiverad',
+                        'ai-platform' => 'Standardplattform',
+                        'ai-model'    => 'Standardmodell',
+                        'title'       => 'Allmänna inställningar',
+                        'title-info'  => 'Förbättra din upplevelse med Magic AI genom att ange din exklusiva API-nyckel och indikera den relevanta organisationen för smidig integration. Ta kontroll över dina OpenAI-uppgifter och anpassa inställningarna enligt dina specifika behov.',
+                    ],
+                    'image-generation' => [
+                        'enabled'     => 'Aktiverad',
+                        'ai-platform' => 'Standardplattform',
+                        'ai-model'    => 'Standardmodell',
+                        'title'       => 'Bildgenerering',
+                        'title-info'  => 'Konfigurera den standard AI-plattform och modell för att generera produktbilder. Endast plattformar som stöder bildgenerering (OpenAI, Gemini, xAI) listas.',
+                    ],
+                    'translation' => [
+                        'title'                       => 'Översättning',
+                        'enabled'                     => 'Aktiverad',
+                        'title-info'                  => 'Denna funktion aktiverar Magic AI för att översätta text, vilket gör det möjligt att smidigt konvertera text från ett språk till ett annat.',
+                        'ai-platform'                 => 'Standardplattform',
+                        'global-source-channel'       => 'Källkanal',
+                        'global-source-locale'        => 'Källspråk',
+                        'translation-model'           => 'Översättningsmodell',
+                        'replace-existing-value'      => 'Ersätt befintligt värde',
+                        'target-channel'              => 'Målkanal',
+                        'target-locales'              => 'Målspråk',
+                        'replace-existing-value-info' => 'Ersätt det befintliga värdet om det redan finns.',
+                    ],
+                    'agentic-pim' => [
+                        'title'                     => 'Agentisk PIM',
+                        'title-info'                => 'Konfigurera AI-agentchatt, autonoma berikningsarbetsflöden och kvalitetsövervakning. Dessa funktioner möjliggör konversationsbaserad produkthantering och proaktivt katalogunderhåll.',
+                        'enabled'                   => 'Aktivera AI-agentchatt',
+                        'enabled-info'              => 'Aktivera den flytande AI-chattwidgeten för konversationsbaserad produkthantering med över 27 verktygsåtgärder.',
+                        'max-steps'                 => 'Max agentsteg per tur',
+                        'max-steps-info'            => 'Maximalt antal verktygsanropsiterationer som AI-agenten kan utföra per användarmeddelande. Högre värden tillåter mer komplexa flerstegsoperationer.',
+                        'daily-token-budget'        => 'Daglig tokenbudget',
+                        'daily-token-budget-info'   => 'Maximala AI-tokens (indata + utdata) som kan förbrukas per dag över alla användare. Ställ in på 0 för obegränsat. Hjälper till att kontrollera API-kostnader.',
+                        'auto-enrichment'           => 'Auto-berikning vid produktskapande',
+                        'auto-enrichment-info'      => 'Generera automatiskt saknade beskrivningar, kategorier och SEO-innehåll när nya produkter skapas eller importeras.',
+                        'quality-monitor'           => 'Katalogkvalitetsmonitor',
+                        'quality-monitor-info'      => 'Kör schemalagda skanningar för att upptäcka ofullständiga produkter, saknade översättningar, dubbletter och prisavvikelser.',
+                        'confidence-threshold'      => 'Förtroendetröskel',
+                        'confidence-threshold-info' => 'Minsta förtroendepoäng (0-1) för att AI-genererade ändringar ska tillämpas automatiskt. Under denna tröskel köas ändringar för mänsklig granskning.',
+                        'approval-mode'             => 'Ändringsgodkännandeläge',
+                        'approval-mode-info'        => 'Styr hur AI-agenten hanterar skrivoperationer. "Bekräfta och tillämpa": agenten föreslår värden i chatten, väntar på bekräftelse och utför sedan. "Strikt bekräftelse": samma sak men verifierar också efter varje ändring. "Endast föreslå": beskriver ändringar men utför aldrig (skrivskyddad).',
+                    ],
+                ],
+            ],
+        ],
+        'integrations' => [
+            'index' => [
+                'create-btn' => 'Skapa',
+                'title'      => 'Integrationer',
+                'datagrid'   => [
+                    'delete'          => 'Radera',
+                    'edit'            => 'Redigera',
+                    'id'              => 'ID',
+                    'name'            => 'Namn',
+                    'user'            => 'Användare',
+                    'client-id'       => 'Klient-ID',
+                    'permission-type' => 'Tillståndstyp',
+                ],
+            ],
+            'create' => [
+                'access-control' => 'Åtkomstkontroll',
+                'all'            => 'Alla',
+                'back-btn'       => 'Tillbaka',
+                'custom'         => 'Egen',
+                'assign-user'    => 'Tilldela Användare',
+                'general'        => 'Allmänt',
+                'name'           => 'Namn',
+                'permissions'    => 'Tillstånd',
+                'save-btn'       => 'Spara',
+                'title'          => 'Ny Integration',
+            ],
+            'edit' => [
+                'access-control' => 'Åtkomstkontroll',
+                'all'            => 'Alla',
+                'back-btn'       => 'Tillbaka',
+                'custom'         => 'Egen',
+                'assign-user'    => 'Tilldela Användare',
+                'general'        => 'Allmänt',
+                'name'           => 'Namn',
+                'credentials'    => 'Kredentialer',
+                'client-id'      => 'Klient-ID',
+                'secret-key'     => 'Sekret Nyckel',
+                'generate-btn'   => 'Generera',
+                're-secret-btn'  => 'Generera Om Sekret Nyckel',
+                'permissions'    => 'Tillstånd',
+                'save-btn'       => 'Spara',
+                'title'          => 'Redigera Integration',
+            ],
+            'being-used'                     => 'API-integration används redan av Admin-användaren',
+            'create-success'                 => 'API-integration skapades framgångsrikt',
+            'delete-failed'                  => 'API-integration kunde inte raderas',
+            'delete-success'                 => 'API-integration raderades framgångsrikt',
+            'last-delete-error'              => 'Sista API-integration kan inte raderas',
+            'update-success'                 => 'API-integration uppdaterades framgångsrikt',
+            'generate-key-success'           => 'API-nyckel genererades framgångsrikt',
+            're-generate-secret-key-success' => 'API-sekret-nyckel genererades om framgångsrikt',
+            'client-not-found'               => 'Klient hittades inte',
+        ],
+        'prompt' => [
+            'datagrid' => [
+                'id'               => 'ID',
+                'title'            => 'Titel',
+                'prompt'           => 'Uppmaning',
+                'type'             => 'Typ',
+                'purpose'          => 'Syfte',
+                'text-generation'  => 'Textgenerering',
+                'image-generation' => 'Bildgenerering',
+                'translation'      => 'Översättning',
+                'created-at'       => 'Skapad',
+                'updated-at'       => 'Uppdaterad',
+                'actions'          => 'Åtgärder',
+                'edit'             => 'Redigera',
+                'delete'           => 'Radera',
+                'product'          => 'Produkt',
+                'category'         => 'Kategori',
+            ],
+            'create' => [
+                'title'               => 'Uppmaning',
+                'create-btn'          => 'Skapa Uppmaning',
+                'edit-title'          => 'Redigera Uppmaning',
+                'create-title'        => 'Skapa Ny Uppmaning',
+                'label-title'         => 'Titel',
+                'purpose'             => 'Syfte',
+                'text-generation'     => 'Textgenerering',
+                'image-generation'    => 'Bildgenerering',
+                'select-purpose'      => 'Välj syfte',
+                'select-model'        => '-- Välj modell --',
+                'loading-models'      => 'Laddar modeller...',
+                'no-models-available' => 'Inga modeller tillgängliga. Välj en plattform eller konfigurera en under fliken Plattformar.',
+                'type'                => 'Typ',
+                'prompt'              => 'Uppmaning',
+                'save-btn'            => 'Spara Uppmaning',
+            ],
+            'message' => [
+                'save-success'   => 'Uppmaningen sparades framgångsrikt.',
+                'update-success' => 'Uppmaningen uppdaterades framgångsrikt.',
+                'delete-success' => 'Uppmaningen raderades framgångsrikt.',
+                'delete-fail'    => 'Misslyckades med att radera uppmaningen.',
+            ],
+        ],
+        'system-prompt' => [
+            'datagrid' => [
+                'id'          => 'ID',
+                'title'       => 'Titel',
+                'tone'        => 'Ton',
+                'max-tokens'  => 'Max tokens',
+                'temperature' => 'Temperatur',
+                'status'      => 'Status',
+                'created-at'  => 'Skapad',
+                'updated-at'  => 'Uppdaterad',
+                'actions'     => 'Åtgärder',
+                'save'        => 'Spara',
+                'edit'        => 'Redigera',
+                'delete'      => 'radera',
+            ],
+            'create' => [
+                'title'        => 'Systemprompt',
+                'create-btn'   => 'Skapa systemprompt',
+                'edit-title'   => 'Redigera systemprompt',
+                'create-title' => 'Skapa ny systemprompt',
+                'label-title'  => 'Titel',
+                'max-tokens'   => 'Max utdata-tokens',
+                'temperature'  => 'Temperatur',
+                'type'         => 'Typ',
+                'prompt'       => 'Prompt',
+                'save-btn'     => 'Spara prompt',
+                'prompt-tone'  => 'Promptton',
+            ],
+            'message' => [
+                'save-success'   => 'Systemprompt sparad framgångsrikt.',
+                'update-success' => 'Systemprompt uppdaterad framgångsrikt.',
+                'delete-success' => 'Systemprompt raderad framgångsrikt.',
+                'delete-fail'    => 'Radering av systemprompt misslyckades.',
+            ],
+        ],
+        'platform' => [
+            'title'           => 'AI-plattformar',
+            'create-btn'      => 'Lägg till plattform',
+            'create-title'    => 'Lägg till AI-plattform',
+            'edit-title'      => 'Redigera AI-plattform',
+            'save-btn'        => 'Spara',
+            'saving'          => 'Sparar',
+            'test-connection' => 'Testa anslutning',
+            'setup'           => [
+                'title'              => 'Kom igång med Magic AI',
+                'description'        => 'Anslut din AI-leverantör för att låsa upp innehållsgenerering, bildskapande och översättning med AI. Lägg till din första plattform för att börja.',
+                'step-1'             => 'Välj en leverantör',
+                'step-2'             => 'Ange din API-nyckel',
+                'step-3'             => 'Välj modeller och spara',
+                'add-first'          => 'Lägg till din första plattform',
+                'no-default-warning' => 'Ingen standardplattform är angiven. Vänligen ange en plattform som standard för att aktivera AI-funktioner i hela applikationen.',
+                'no-platform-hint'   => 'Inga plattformar konfigurerade ännu. Gå till fliken Plattformar för att lägga till din första AI-leverantör.',
+                'lightning-icon'     => 'Magisk AI',
+                'warning-icon'       => 'Varning',
+            ],
+            'testing'         => 'Testar',
+            'fetch-models'    => 'Hämta modeller',
+            'fetching-models' => 'Hämtar',
+            'set-default'     => 'Ange som standard',
+            'datagrid'        => [
+                'label'      => 'Etikett',
+                'provider'   => 'Leverantör',
+                'models'     => 'Modeller',
+                'default'    => 'Standard',
+                'status'     => 'Status',
+                'created-at' => 'Skapad',
+                'edit'       => 'Redigera',
+                'delete'     => 'Radera',
+            ],
+            'fields' => [
+                'label'                    => 'Etikett',
+                'provider'                 => 'Leverantör',
+                'select-provider'          => '-- Välj leverantör --',
+                'api-url'                  => 'API-URL',
+                'api-url-hint'             => 'Ifylld med standardändpunkten. Redigera bara om du använder en proxy eller anpassad distribution.',
+                'api-key'                  => 'API-nyckel',
+                'models'                   => 'Modeller',
+                'custom-model-placeholder' => 'Ange anpassat modell-ID...',
+                'add'                      => 'Lägg till',
+                'enter-key-to-fetch'       => 'Ange din API-nyckel ovan för att automatiskt hämta tillgängliga modeller.',
+                'search-models'            => 'Sök modeller...',
+                'no-models-match'          => 'Inga modeller matchar din sökning.',
+                'azure-deployment'         => 'Distributionsnamn',
+                'azure-api-version'        => 'API-version',
+                'is-default'               => 'Ange som standard',
+                'status'                   => 'Status',
+                'use-default'              => '-- Använd standardplattform --',
+                'use-default-hint'         => 'Lämna tomt för att använda plattformen markerad som standard. Plattformar markerade med * är standard.',
+                'no-image-platform'        => 'Ingen bildkompatibel plattform konfigurerad. Lägg till en OpenAI-, Gemini- eller xAI-plattform först.',
+                'image-platform-hint'      => 'Endast plattformar som stöder bildgenerering visas (OpenAI, Gemini, xAI).',
+                'remove-model'             => 'Ta bort modell :model',
+                'invalid-model-name'       => 'Ogiltigt modellnamn. Använd endast bokstäver, siffror, bindestreck, punkter, kolon och snedstreck (t.ex. gpt-4o, claude-3-sonnet).',
+            ],
+            'message' => [
+                'save-success'          => 'Plattform sparad framgångsrikt.',
+                'update-success'        => 'Plattform uppdaterad framgångsrikt.',
+                'delete-success'        => 'Plattform raderad framgångsrikt.',
+                'delete-fail'           => 'Radering av plattform misslyckades.',
+                'cannot-delete-default' => 'Kan inte radera den enda standardplattformen.',
+                'set-default-success'   => 'Plattform angiven som standard framgångsrikt.',
+                'test-success'          => 'Anslutning verifierad framgångsrikt!',
+                'test-fail'             => 'Anslutningstest misslyckades',
+                'fetch-models-fail'     => 'Kunde inte hämta modeller',
+                'invalid-model-names'   => 'Ogiltiga modellnamn: :names. Modellnamn måste börja med en bokstav eller siffra och får bara innehålla bokstäver, siffror, bindestreck, punkter, kolon och snedstreck.',
+            ],
+        ],
+    ],
+    'components' => [
+        'layouts' => [
+            'header' => [
+                'account-title' => 'Konto',
+                'app-version'   => 'Version : :version',
+                'logout'        => 'Logga ut',
+                'my-account'    => 'Mitt Konto',
+                'notifications' => 'Meddelanden',
+                'visit-shop'    => 'Besök Butik',
+            ],
+            'sidebar' => [
+                'attribute-families' => 'Attributfamiljer',
+                'attribute-groups'   => 'Attributgrupper',
+                'attributes'         => 'Attribut',
+                'history'            => 'Historik',
+                'edit-section'       => 'Data',
+                'general'            => 'Allmänt',
+                'catalog'            => 'Katalog',
+                'categories'         => 'Kategorier',
+                'category_fields'    => 'Kategorifält',
+                'channels'           => 'Kanaler',
+                'collapse'           => 'Kollapsa',
+                'configure'          => 'Konfiguration',
+                'currencies'         => 'Valutor',
+                'dashboard'          => 'Instrumentpanel',
+                'data-transfer'      => 'Dataöverföring',
+                'groups'             => 'Grupper',
+                'tracker'            => 'Jobb Tracker',
+                'imports'            => 'Importer',
+                'exports'            => 'Exporter',
+                'locales'            => 'Lokaliseringsinställningar',
+                'magic-ai'           => 'Magisk AI',
+                'mode'               => 'Mörkt Läge',
+                'products'           => 'Produkter',
+                'roles'              => 'Roller',
+                'settings'           => 'Inställningar',
+                'themes'             => 'Teman',
+                'users'              => 'Användare',
+                'integrations'       => 'Integrationer',
+                'prompt'             => 'Prompt',
+                'general-tab'        => 'Konfiguration',
+            ],
+        ],
+        'datagrid' => [
+            'index' => [
+                'no-records-selected'              => 'Inga poster har valts.',
+                'must-select-a-mass-action-option' => 'Du måste välja ett massaktionsval.',
+                'must-select-a-mass-action'        => 'Du måste välja en massaktion.',
+            ],
+            'toolbar' => [
+                'length-of'    => ':length av',
+                'of'           => 'av',
+                'per-page'     => 'Per Sida',
+                'results'      => ':total Resultat',
+                'selected'     => ':total Valda',
+                'mass-actions' => [
+                    'submit'        => 'Skicka',
+                    'select-option' => 'Välj Alternativ',
+                    'select-action' => 'Välj Aktion',
+                ],
+                'filter' => [
+                    'title' => 'Filter',
+                ],
+                'search_by' => [
+                    'code'       => 'Sök efter kod',
+                    'code_or_id' => 'Sök efter kod eller ID',
+                ],
+                'search' => [
+                    'title' => 'Sök',
+                ],
+                'manage-columns' => [
+                    'title' => 'kolumner',
+                ],
+                'pagination' => [
+                    'first-page'    => 'Första sidan',
+                    'previous-page' => 'Föregående sida',
+                    'next-page'     => 'Nästa sida',
+                    'last-page'     => 'Sista sidan',
+                    'page-number'   => 'Sidnummer',
+                ],
+            ],
+            'filters' => [
+                'select'   => 'Välj',
+                'title'    => 'Använd Filter',
+                'save'     => 'Spara',
+                'dropdown' => [
+                    'searchable' => [
+                        'atleast-two-chars' => 'Skriv minst 2 tecken...',
+                        'no-results'        => 'Inga resultat funna...',
+                    ],
+                ],
+                'custom-filters' => [
+                    'clear-all' => 'Rensa Alla',
+                    'title'     => 'Anpassade Filter',
+                ],
+                'boolean-options' => [
+                    'false' => 'Falskt',
+                    'true'  => 'Sann',
+                ],
+                'date-options' => [
+                    'last-month'        => 'Sista Månaden',
+                    'last-six-months'   => 'Sista 6 Månaderna',
+                    'last-three-months' => 'Sista 3 Månaderna',
+                    'this-month'        => 'Denna Månaden',
+                    'this-week'         => 'Denna Vecka',
+                    'this-year'         => 'Detta Året',
+                    'today'             => 'Idag',
+                    'yesterday'         => 'Igår',
+                ],
+            ],
+            'table' => [
+                'actions'              => 'Åtgärder',
+                'no-records-available' => 'Inga poster tillgängliga.',
+            ],
+            'manage-columns' => [
+                'title'             => 'Hantera kolumner',
+                'available-columns' => 'Tillgängliga kolumner',
+                'selected-columns'  => 'Valda kolumner',
+                'apply-btn'         => 'Tillämpas',
+            ],
+        ],
+        'modal' => [
+            'confirm' => [
+                'agree-btn'    => 'Håller med',
+                'disagree-btn' => 'Oenig',
+                'message'      => 'Är du säker på att du vill utföra denna åtgärd?',
+                'title'        => 'Är du säker?',
+            ],
+            'delete' => [
+                'agree-btn'    => 'Radera',
+                'disagree-btn' => 'Avbryt',
+                'message'      => 'Är du säker på att du vill radera?',
+                'title'        => 'Bekräfta Radering',
+            ],
+            'history' => [
+                'title'           => 'Historik Förhandsgranskning',
+                'subtitle'        => 'Granska snabbt dina uppdateringar och ändringar.',
+                'close-btn'       => 'Stäng',
+                'version-label'   => 'Version',
+                'date-time-label' => 'Datum/Tid',
+                'user-label'      => 'Användare',
+                'name-label'      => 'Nyckel',
+                'old-value-label' => 'Gammal Värde',
+                'new-value-label' => 'Ny Värde',
+                'no-history'      => 'Ingen historik funnen',
+            ],
+        ],
+        'products' => [
+            'search' => [
+                'add-btn'       => 'Lägg Till Vald Produkt',
+                'empty-info'    => 'Inga produkter tillgängliga för sökterm.',
+                'empty-title'   => 'Inga produkter funna',
+                'product-image' => 'Produktbild',
+                'qty'           => ':qty Tillgängliga',
+                'sku'           => 'SKU - :sku',
+                'title'         => 'Välj Produkter',
+            ],
+        ],
+        'media' => [
+            'images' => [
+                'add-image-btn'      => 'Lägg Till Bild',
+                'generate-with-ai'   => 'Generera med AI',
+                'upload-from-device' => 'Ladda upp från enhet',
+                'cancel'             => 'Avbryt',
+                'ai-add-image-btn'   => 'Magisk AI',
+                'ai-btn-info'        => 'Generera Bild',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Endast bildfiler (.jpeg, .jpg, .png, ..) är tillåtna.',
+                'upload-media-btn'   => 'Ladda upp media',
+                'ai-generation'      => [
+                    '1024x1024'        => '1024x1024',
+                    '1024x1792'        => '1024x1792',
+                    '1792x1024'        => '1792x1024',
+                    'apply'            => 'Använd',
+                    'dall-e-2'         => 'Dall.E 2',
+                    'dall-e-3'         => 'Dall.E 3',
+                    'generate'         => 'Generera',
+                    'generating'       => 'Genererar...',
+                    'hd'               => 'HD',
+                    'model'            => 'Modell',
+                    'number-of-images' => 'Antal Bilder',
+                    'prompt'           => 'Prompt',
+                    'quality'          => 'Kvalitet',
+                    'regenerate'       => 'Regenerera',
+                    'regenerating'     => 'Regenererar...',
+                    'size'             => 'Storlek',
+                    'standard'         => 'Standard',
+                    'title'            => 'AI Bildgenerering',
+                ],
+                'placeholders' => [
+                    'front'     => 'Fram',
+                    'next'      => 'Nästa',
+                    'size'      => 'Storlek',
+                    'use-cases' => 'Användningsområden',
+                    'zoom'      => 'Zooma',
+                ],
+            ],
+            'gallery' => [
+                'not-allowed-error' => 'Endast bild- och videofiler är tillåtna. (.mp4, .jpg ..)',
+            ],
+            'videos' => [
+                'add-video-btn'     => 'Lägg Till Video',
+                'allowed-types'     => 'mp4, webm, mkv',
+                'not-allowed-error' => 'Endast videofiler (.mp4, .mov, .ogg ..) är tillåtna.',
+            ],
+            'files' => [
+                'add-file-btn'      => 'Lägg Till Fil',
+                'allowed-types'     => 'pdf',
+                'not-allowed-error' => 'Endast PDF-filer är tillåtna',
+            ],
+        ],
+        'tinymce' => [
+            'ai-btn-tile'   => 'Magisk AI',
+            'ai-generation' => [
+                'apply'                  => 'Använd',
+                'generate'               => 'Generera',
+                'generated-content'      => 'Genererat Innehåll',
+                'generated-content-info' => 'AI-genererat innehåll kan vara vilseledande. Vänligen granska det genererade innehållet innan du använder det.',
+                'generating'             => 'Genererar...',
+                'prompt'                 => 'Prompt',
+                'title'                  => 'AI Assistans',
+                'platform'               => 'Plattform',
+                'model'                  => 'Modell',
+                'rich-preview'           => 'Rik förhandsgranskning',
+                'system-prompt'          => 'Systemprompt',
+                'select-system-prompt'   => 'Välj systemprompt',
+                'tone-instructions'      => 'Ton / Instruktioner',
+                'max-tokens'             => 'Max tokens',
+                'temperature'            => 'Temperatur',
+                'gpt-3-5-turbo'          => 'OpenAI gpt-3.5-turbo',
+                'llama2'                 => 'Llama 2',
+                'mistral'                => 'Mistral',
+                'dolphin-phi'            => 'Delfin Phi',
+                'phi'                    => 'Phi-2',
+                'starling-lm'            => 'Starling',
+                'llama2-uncensored'      => 'Llama 2 Uncensurerad',
+                'llama2:13b'             => 'Llama 2 13B',
+                'llama2:70b'             => 'Llama 2 70B',
+                'orca-mini'              => 'Orca Mini',
+                'vicuna'                 => 'Vicuna',
+                'llava'                  => 'LLaVA',
+                'default-prompt'         => 'Standardprompt',
+            ],
+        ],
+    ],
     'acl' => [
         'addresses'                => 'Adresser',
         'attribute-families'       => 'Attributfamiljer',
@@ -1603,6 +2148,9 @@ return [
         'invoices'                 => 'Fakturor',
         'locales'                  => 'Lokaler',
         'magic-ai'                 => 'Magisk AI',
+        'magic-ai-general'         => 'Allmänt',
+        'magic-ai-prompt'          => 'Prompt',
+        'magic-ai-system-prompt'   => 'Systemprompt',
         'marketing'                => 'Marknadsföring',
         'newsletter-subscriptions' => 'Nyhetsbrevsprenumerationer',
         'note'                     => 'Anteckning',
@@ -1619,7 +2167,7 @@ return [
         'search-terms'             => 'Söktermer',
         'settings'                 => 'Inställningar',
         'shipments'                => 'Frakt',
-        'sitemaps'                 => 'Sitemaps',
+        'sitemaps'                 => 'Sitemap',
         'subscribers'              => 'Prenumeranter',
         'tax-categories'           => 'Skattekategorier',
         'tax-rates'                => 'Skattesatser',
@@ -1636,54 +2184,44 @@ return [
         'integrations'             => 'Integrationer',
         'api'                      => 'API',
         'tracker'                  => 'Uppgiftsspårning',
-        'imports'                  => 'Importer',
         'exports'                  => 'Exporter',
         'mass-update'              => 'Massuppdatering',
         'mass-delete'              => 'Massradering',
     ],
-
     'errors' => [
         'dashboard' => 'Instrumentpanel',
         'go-back'   => 'Tillbaka',
         'support'   => 'Om problemet kvarstår, vänligen kontakta oss via <a href=":link" class=":class">:email</a> för hjälp.',
-
-        '404' => [
+        '404'       => [
             'description' => 'Oops! Sidan du söker är på semester. Det verkar som att vi inte kan hitta vad du söker.',
             'title'       => '404 Sidan inte hittad',
         ],
-
         '401' => [
             'description' => 'Oops! Det verkar som att du inte har rätt behörigheter för att komma åt denna sida. Det verkar som att du saknar de nödvändiga behörigheterna.',
             'title'       => '401 Otillåten',
             'message'     => 'Autentiseringen misslyckades på grund av ogiltiga behörigheter eller utgången token.',
         ],
-
         '403' => [
             'description' => 'Oops! Denna sida är begränsad. Det verkar som att du inte har behörighet att se detta innehåll.',
             'title'       => '403 Förbjuden',
         ],
-
         '413' => [
             'description' => 'Oops! Det verkar som att du försöker ladda upp en för stor fil. Om du vill ladda upp den, vänligen uppdatera PHP-konfigurationen.',
             'title'       => '413 Innehåll för stort',
         ],
-
         '419' => [
             'description' => 'Oops! Din session har löpt ut. Vänligen uppdatera sidan och logga in igen för att fortsätta.',
             'title'       => '419 Sessionen har löpt ut',
         ],
-
         '500' => [
             'description' => 'Oops! Något gick fel. Det verkar som att vi har problem med att ladda den sida du söker.',
             'title'       => '500 Intern serverfel',
         ],
-
         '503' => [
             'description' => 'Oops! Det verkar som att vi är tillfälligt otillgängliga för underhåll. Kontrollera igen snart.',
             'title'       => '503 Tjänsten inte tillgänglig',
         ],
     ],
-
     'export' => [
         'csv'                  => 'CSV',
         'download'             => 'Ladda ner',
@@ -1696,431 +2234,35 @@ return [
         'error'                => 'Något gick fel!',
         'product-not-selected' => 'Inga produkter valda för snabbexport',
     ],
-
     'validations' => [
         'slug-being-used' => 'Denna slug används i antingen kategorier eller produkter.',
         'slug-reserved'   => 'Denna slug är reserverad.',
         'invalid-locale'  => 'Ogiltiga lokaler :locales',
     ],
-
     'footer' => [
         'copy-right' => 'Driftad av <a href="https://unopim.com/" target="_blank">UnoPim</a>, Ett community-projekt från <a href="https://webkul.com/" target="_blank">Webkul</a>',
     ],
-
     'emails' => [
-        'dear'   => 'Dear :admin_name',
-        'thanks' => 'If you need any kind of help please contact us at <a href=":link" style=":style">:email</a>.<br/>Thanks!',
-
-        'admin' => [
+        'dear'   => 'Kära :admin_name',
+        'thanks' => 'Om du behöver någon form av hjälp, vänligen kontakta oss på <a href=":link" style=":style">:email</a>.<br/>Tack!',
+        'admin'  => [
             'forgot-password' => [
-                'description'    => 'You are receiving this email because we received a password reset request for your account.',
-                'greeting'       => 'Forgot Password!',
-                'reset-password' => 'Reset Password',
-                'subject'        => 'Reset Password Email',
+                'description'    => 'Du får detta e-postmeddelande eftersom vi mottog en begäran om att återställa lösenordet för ditt konto.',
+                'greeting'       => 'Glömt Lösenord!',
+                'reset-password' => 'Återställ Lösenord',
+                'subject'        => 'Återställ Lösenord E-post',
             ],
         ],
     ],
-
     'common' => [
-        'yes'     => 'Ja',
-        'no'      => 'Nej',
-        'true'    => 'Sann',
-        'false'   => 'Falsk',
-        'enable'  => 'Aktiverad',
-        'disable' => 'Inaktiverad',
+        'yes'            => 'Ja',
+        'no'             => 'Nej',
+        'true'           => 'Sann',
+        'false'          => 'Falsk',
+        'enable'         => 'Aktiverad',
+        'disable'        => 'Inaktiverad',
+        'no-match-found' => 'Ingen matchning hittades!',
     ],
-
-    'configuration' => [
-        'index' => [
-            'delete'          => 'Radera',
-            'no-result-found' => 'Inget resultat hittades',
-            'save-btn'        => 'Spara Konfiguration',
-            'save-message'    => 'Konfigurationen sparades framgångsrikt',
-            'search'          => 'Sök',
-            'title'           => 'Konfiguration',
-
-            'general' => [
-                'info'  => '',
-                'title' => 'Allmänt',
-
-                'general' => [
-                    'info'  => '',
-                    'title' => 'Allmänt',
-                ],
-
-                'magic-ai' => [
-                    'info'  => 'Ställ in Magic AI alternativ.',
-                    'title' => 'Magic AI',
-
-                    'settings' => [
-                        'api-key'        => 'API-nyckel',
-                        'enabled'        => 'Aktiverad',
-                        'llm-api-domain' => 'LLM API-domän',
-                        'organization'   => 'Organisations-ID',
-                        'title'          => 'Allmänna inställningar',
-                        'title-info'     => 'Förbättra din upplevelse med Magic AI genom att ange din exklusiva API-nyckel och indikera den relevanta organisationen för smidig integration. Ta kontroll över dina OpenAI-uppgifter och anpassa inställningarna enligt dina specifika behov.',
-                    ],
-
-                    'translation'   => [
-                        'title'                  => 'Översättning',
-                        'enabled'                => 'Aktiverad',
-                        'title-info'             => 'Denna funktion aktiverar Magic AI för att översätta text, vilket gör det möjligt att smidigt konvertera text från ett språk till ett annat.',
-                        'global-source-channel'  => 'Källkanal',
-                        'global-source-locale'   => 'Källspråk',
-                        'translation-model'      => 'Översättningsmodell',
-                        'replace-existing-value' => 'Ersätt befintligt värde',
-                        'target-channel'         => 'Målkanal',
-                        'target-locales'         => 'Målspråk',
-                    ],
-                ],
-            ],
-        ],
-
-        'integrations' => [
-            'index' => [
-                'create-btn' => 'Skapa',
-                'title'      => 'Integrationer',
-
-                'datagrid' => [
-                    'delete'          => 'Radera',
-                    'edit'            => 'Redigera',
-                    'id'              => 'ID',
-                    'name'            => 'Namn',
-                    'user'            => 'Användare',
-                    'client-id'       => 'Klient-ID',
-                    'permission-type' => 'Tillståndstyp',
-                ],
-            ],
-
-            'create' => [
-                'access-control' => 'Åtkomstkontroll',
-                'all'            => 'Alla',
-                'back-btn'       => 'Tillbaka',
-                'custom'         => 'Egen',
-                'assign-user'    => 'Tilldela Användare',
-                'general'        => 'Allmänt',
-                'name'           => 'Namn',
-                'permissions'    => 'Tillstånd',
-                'save-btn'       => 'Spara',
-                'title'          => 'Ny Integration',
-            ],
-
-            'edit' => [
-                'access-control' => 'Åtkomstkontroll',
-                'all'            => 'Alla',
-                'back-btn'       => 'Tillbaka',
-                'custom'         => 'Egen',
-                'assign-user'    => 'Tilldela Användare',
-                'general'        => 'Allmänt',
-                'name'           => 'Namn',
-                'credentials'    => 'Kredentialer',
-                'client-id'      => 'Klient-ID',
-                'secret-key'     => 'Sekret Nyckel',
-                'generate-btn'   => 'Generera',
-                're-secret-btn'  => 'Generera Om Sekret Nyckel',
-                'permissions'    => 'Tillstånd',
-                'save-btn'       => 'Spara',
-                'title'          => 'Redigera Integration',
-            ],
-
-            'being-used'                     => 'API-integration används redan av Admin-användaren',
-            'create-success'                 => 'API-integration skapades framgångsrikt',
-            'delete-failed'                  => 'API-integration kunde inte raderas',
-            'delete-success'                 => 'API-integration raderades framgångsrikt',
-            'last-delete-error'              => 'Sista API-integration kan inte raderas',
-            'update-success'                 => 'API-integration uppdaterades framgångsrikt',
-            'generate-key-success'           => 'API-nyckel genererades framgångsrikt',
-            're-generate-secret-key-success' => 'API-sekret-nyckel genererades om framgångsrikt',
-            'client-not-found'               => 'Klient hittades inte',
-        ],
-
-        'prompt' => [
-            'datagrid' => [
-                'id'            => 'ID',
-                'title'         => 'Titel',
-                'prompt'        => 'Uppmaning',
-                'type'          => 'Typ',
-                'created-at'    => 'Skapad',
-                'updated-at'    => 'Uppdaterad',
-                'actions'       => 'Åtgärder',
-                'edit'          => 'Redigera',
-                'delete'        => 'Radera',
-                'product'       => 'Produkt',
-                'category'      => 'Kategori',
-            ],
-            'create' => [
-                'title'         => 'Uppmaning',
-                'create-btn'    => 'Skapa Uppmaning',
-                'edit-title'    => 'Redigera Uppmaning',
-                'create-title'  => 'Skapa Ny Uppmaning',
-                'label-title'   => 'Titel',
-                'type'          => 'Typ',
-                'prompt'        => 'Uppmaning',
-                'save-btn'      => 'Spara Uppmaning',
-            ],
-            'message' => [
-                'save-success'      => 'Uppmaningen sparades framgångsrikt.',
-                'update-success'    => 'Uppmaningen uppdaterades framgångsrikt.',
-                'delete-success'    => 'Uppmaningen raderades framgångsrikt.',
-                'delete-fail'       => 'Misslyckades med att radera uppmaningen.',
-            ],
-        ],
-    ],
-
-    'components' => [
-        'layouts' => [
-            'header' => [
-                'account-title' => 'Konto',
-                'app-version'   => 'Version : :version',
-                'logout'        => 'Logga ut',
-                'my-account'    => 'Mitt Konto',
-                'notifications' => 'Meddelanden',
-                'visit-shop'    => 'Besök Butik',
-            ],
-
-            'sidebar' => [
-                'attribute-families' => 'Attributfamiljer',
-                'attribute-groups'   => 'Attributgrupper',
-                'attributes'         => 'Attribut',
-                'history'            => 'Historik',
-                'edit-section'       => 'Data',
-                'general'            => 'Allmänt',
-                'catalog'            => 'Katalog',
-                'categories'         => 'Kategorier',
-                'category_fields'    => 'Kategorifält',
-                'channels'           => 'Kanaler',
-                'collapse'           => 'Kollapsa',
-                'configure'          => 'Konfiguration',
-                'currencies'         => 'Valutor',
-                'dashboard'          => 'Instrumentpanel',
-                'data-transfer'      => 'Dataöverföring',
-                'groups'             => 'Grupper',
-                'tracker'            => 'Jobb Tracker',
-                'imports'            => 'Importer',
-                'exports'            => 'Exporter',
-                'locales'            => 'Lokaliseringsinställningar',
-                'magic-ai'           => 'Magic AI',
-                'mode'               => 'Mörkt Läge',
-                'products'           => 'Produkter',
-                'roles'              => 'Roller',
-                'settings'           => 'Inställningar',
-                'themes'             => 'Teman',
-                'users'              => 'Användare',
-                'integrations'       => 'Integrationer',
-                'prompt'             => 'Prompt',
-                'general-tab'        => 'Konfiguration',
-            ],
-        ],
-
-        'datagrid' => [
-            'index' => [
-                'no-records-selected'              => 'Inga poster har valts.',
-                'must-select-a-mass-action-option' => 'Du måste välja ett massaktionsval.',
-                'must-select-a-mass-action'        => 'Du måste välja en massaktion.',
-            ],
-
-            'toolbar' => [
-                'length-of' => ':length av',
-                'of'        => 'av',
-                'per-page'  => 'Per Sida',
-                'results'   => ':total Resultat',
-                'selected'  => ':total Valda',
-
-                'mass-actions' => [
-                    'submit'        => 'Skicka',
-                    'select-option' => 'Välj Alternativ',
-                    'select-action' => 'Välj Aktion',
-                ],
-
-                'filter' => [
-                    'title' => 'Filter',
-                ],
-
-                'search_by' => [
-                    'code'       => 'Sök efter kod',
-                    'code_or_id' => 'Sök efter kod eller ID',
-                ],
-
-                'search' => [
-                    'title' => 'Sök',
-                ],
-
-                'manage-columns' => [
-                    'title' => 'kolumner',
-                ],
-            ],
-
-            'filters' => [
-                'select'   => 'Välj',
-                'title'    => 'Använd Filter',
-                'save'     => 'Spara',
-                'dropdown' => [
-                    'searchable' => [
-                        'atleast-two-chars' => 'Skriv minst 2 tecken...',
-                        'no-results'        => 'Inga resultat funna...',
-                    ],
-                ],
-
-                'custom-filters' => [
-                    'clear-all' => 'Rensa Alla',
-                    'title'     => 'Anpassade Filter',
-                ],
-
-                'boolean-options' => [
-                    'false' => 'Falskt',
-                    'true'  => 'Sann',
-                ],
-
-                'date-options' => [
-                    'last-month'        => 'Sista Månaden',
-                    'last-six-months'   => 'Sista 6 Månaderna',
-                    'last-three-months' => 'Sista 3 Månaderna',
-                    'this-month'        => 'Denna Månaden',
-                    'this-week'         => 'Denna Vecka',
-                    'this-year'         => 'Detta Året',
-                    'today'             => 'Idag',
-                    'yesterday'         => 'Igår',
-                ],
-            ],
-
-            'table' => [
-                'actions'              => 'Åtgärder',
-                'no-records-available' => 'Inga poster tillgängliga.',
-            ],
-
-            'manage-columns' => [
-                'title'             => 'Hantera kolumner',
-                'available-columns' => 'Tillgängliga kolumner',
-                'selected-columns'  => 'Valda kolumner',
-                'apply-btn'         => 'Tillämpas',
-            ],
-        ],
-
-        'modal' => [
-            'confirm' => [
-                'agree-btn'    => 'Håller med',
-                'disagree-btn' => 'Oenig',
-                'message'      => 'Är du säker på att du vill utföra denna åtgärd?',
-                'title'        => 'Är du säker?',
-            ],
-
-            'delete' => [
-                'agree-btn'    => 'Radera',
-                'disagree-btn' => 'Avbryt',
-                'message'      => 'Är du säker på att du vill radera?',
-                'title'        => 'Bekräfta Radering',
-            ],
-
-            'history' => [
-                'title'           => 'Historik Förhandsgranskning',
-                'subtitle'        => 'Granska snabbt dina uppdateringar och ändringar.',
-                'close-btn'       => 'Stäng',
-                'version-label'   => 'Version',
-                'date-time-label' => 'Datum/Tid',
-                'user-label'      => 'Användare',
-                'name-label'      => 'Nyckel',
-                'old-value-label' => 'Gammal Värde',
-                'new-value-label' => 'Ny Värde',
-                'no-history'      => 'Ingen historik funnen',
-            ],
-        ],
-
-        'products' => [
-            'search' => [
-                'add-btn'       => 'Lägg Till Vald Produkt',
-                'empty-info'    => 'Inga produkter tillgängliga för sökterm.',
-                'empty-title'   => 'Inga produkter funna',
-                'product-image' => 'Produktbild',
-                'qty'           => ':qty Tillgängliga',
-                'sku'           => 'SKU - :sku',
-                'title'         => 'Välj Produkter',
-            ],
-        ],
-
-        'media' => [
-            'images' => [
-                'add-image-btn'      => 'Lägg Till Bild',
-                'generate-with-ai'   => 'Generera med AI',
-                'upload-from-device' => 'Ladda upp från enhet',
-                'cancel'             => 'Avbryt',
-                'ai-add-image-btn'   => 'Magic AI',
-                'ai-btn-info'        => 'Generera Bild',
-                'allowed-types'      => 'png, jpeg, jpg',
-                'not-allowed-error'  => 'Endast bildfiler (.jpeg, .jpg, .png, ..) är tillåtna.',
-                'upload-media-btn'   => 'Ladda upp media',
-
-                'ai-generation' => [
-                    '1024x1024'        => '1024x1024',
-                    '1024x1792'        => '1024x1792',
-                    '1792x1024'        => '1792x1024',
-                    'apply'            => 'Använd',
-                    'dall-e-2'         => 'Dall.E 2',
-                    'dall-e-3'         => 'Dall.E 3',
-                    'generate'         => 'Generera',
-                    'generating'       => 'Genererar...',
-                    'hd'               => 'HD',
-                    'model'            => 'Modell',
-                    'number-of-images' => 'Antal Bilder',
-                    'prompt'           => 'Prompt',
-                    'quality'          => 'Kvalitet',
-                    'regenerate'       => 'Regenerera',
-                    'regenerating'     => 'Regenererar...',
-                    'size'             => 'Storlek',
-                    'standard'         => 'Standard',
-                    'title'            => 'AI Bildgenerering',
-                ],
-
-                'placeholders' => [
-                    'front'     => 'Fram',
-                    'next'      => 'Nästa',
-                    'size'      => 'Storlek',
-                    'use-cases' => 'Användningsområden',
-                    'zoom'      => 'Zooma',
-                ],
-            ],
-
-            'videos' => [
-                'add-video-btn'     => 'Lägg Till Video',
-                'allowed-types'     => 'mp4, webm, mkv',
-                'not-allowed-error' => 'Endast videofiler (.mp4, .mov, .ogg ..) är tillåtna.',
-            ],
-
-            'files' => [
-                'add-file-btn'      => 'Lägg Till Fil',
-                'allowed-types'     => 'pdf',
-                'not-allowed-error' => 'Endast PDF-filer är tillåtna',
-            ],
-        ],
-
-        'tinymce' => [
-            'ai-btn-tile' => 'Magic AI',
-
-            'ai-generation' => [
-                'apply'                  => 'Använd',
-                'generate'               => 'Generera',
-                'generated-content'      => 'Genererat Innehåll',
-                'generated-content-info' => 'AI-genererat innehåll kan vara vilseledande. Vänligen granska det genererade innehållet innan du använder det.',
-                'generating'             => 'Genererar...',
-                'prompt'                 => 'Prompt',
-                'title'                  => 'AI Assistans',
-                'model'                  => 'Modell',
-                'gpt-3-5-turbo'          => 'OpenAI gpt-3.5-turbo',
-                'llama2'                 => 'Llama 2',
-                'mistral'                => 'Mistral',
-                'dolphin-phi'            => 'Dolphin Phi',
-                'phi'                    => 'Phi-2',
-                'starling-lm'            => 'Starling',
-                'llama2-uncensored'      => 'Llama 2 Uncensurerad',
-                'llama2:13b'             => 'Llama 2 13B',
-                'llama2:70b'             => 'Llama 2 70B',
-                'orca-mini'              => 'Orca Mini',
-                'vicuna'                 => 'Vicuna',
-                'llava'                  => 'LLaVA',
-                'default-prompt'         => 'Standardprompt',
-            ],
-        ],
-    ],
-
     'default-prompt' => [
         'detailed' => [
             'title'  => 'Detaljerad produktbeskrivning',

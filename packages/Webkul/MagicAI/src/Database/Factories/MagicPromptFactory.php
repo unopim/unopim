@@ -3,6 +3,7 @@
 namespace Webkul\MagicAI\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Webkul\MagicAI\Models\MagicAISystemPrompt;
 use Webkul\MagicAI\Models\MagicPrompt;
 
 class MagicPromptFactory extends Factory
@@ -12,11 +13,12 @@ class MagicPromptFactory extends Factory
     public function definition()
     {
         return [
-            'title'  => $this->faker->sentence,
-            'prompt' => $this->faker->paragraph,
-            'type'   => $this->faker->randomElement(['product', 'category']),
-            'tone'   => \Webkul\MagicAI\Models\MagicAISystemPrompt::inRandomOrder()->value('id')
-                     ?? \Webkul\MagicAI\Models\MagicAISystemPrompt::factory()->create()->id,
+            'title'   => $this->faker->sentence,
+            'prompt'  => $this->faker->paragraph,
+            'type'    => $this->faker->randomElement(['product', 'category']),
+            'purpose' => $this->faker->randomElement(['text_generation', 'image_generation']),
+            'tone'    => MagicAISystemPrompt::inRandomOrder()->value('id')
+                      ?? MagicAISystemPrompt::factory()->create()->id,
         ];
     }
 }

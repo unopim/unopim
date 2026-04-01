@@ -60,7 +60,7 @@ class FileStorer
         }
 
         if ($file instanceof File) {
-            return $file->getName();
+            return $file->getFilename();
         }
 
         return Str::random(40);

@@ -2,7 +2,7 @@
 
 return [
     'path-hint' => [
-        'template' => 'Template',
+        'template' => 'Modello',
         'parents'  => 'Genitori',
     ],
 ];

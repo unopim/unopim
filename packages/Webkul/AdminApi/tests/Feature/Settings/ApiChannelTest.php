@@ -57,3 +57,33 @@ it('should return the message when code does not exists', function () {
             'error',
         ]);
 });
+
+it('should return validation error for unsupported channel filter field', function () {
+    $filters = [
+        'code' => [
+            [
+                'operator' => 'LIKE',
+                'value'    => 'default',
+            ],
+        ],
+    ];
+
+    $this->withHeaders($this->headers)->json('GET', route('admin.api.channels.index', ['filters' => json_encode($filters)]))
+        ->assertBadRequest()
+        ->assertJsonStructure([
+            'error',
+        ]);
+});
+
+it('should return all channels with pagination parameters', function () {
+    $this->withHeaders($this->headers)->json('GET', route('admin.api.channels.index', ['limit' => 100, 'page' => 1]))
+        ->assertOK()
+        ->assertJsonStructure([
+            'data',
+            'current_page',
+            'last_page',
+            'total',
+            'links',
+        ])
+        ->assertJsonFragment(['current_page' => 1]);
+});

@@ -20,49 +20,55 @@
                 
                 <!-- Total Attributes -->
                 <v-entity-count-display
-                    img-src="{{ unopim_asset('images/icon-attribute.svg')}}" 
-                    img-title="@lang('admin::app.dashboard.index.total-attributes')" 
-                    label="@lang('admin::app.dashboard.index.total-attributes')" 
+                    img-src="{{ unopim_asset('images/icon-attribute.svg')}}"
+                    img-title="@lang('admin::app.dashboard.index.total-attributes')"
+                    label="@lang('admin::app.dashboard.index.total-attributes')"
+                    link-url="{{ route('admin.catalog.attributes.index') }}"
                     :total-count="report.statistics.totalAttributes">
                 </v-entity-count-display>
 
                 <!-- Total Groups -->
                 <v-entity-count-display
-                    img-src="{{ unopim_asset('images/icon-groups.svg')}}" 
-                    img-title="@lang('admin::app.dashboard.index.total-groups')" 
-                    label="@lang('admin::app.dashboard.index.total-groups')" 
+                    img-src="{{ unopim_asset('images/icon-groups.svg')}}"
+                    img-title="@lang('admin::app.dashboard.index.total-groups')"
+                    label="@lang('admin::app.dashboard.index.total-groups')"
+                    link-url="{{ route('admin.catalog.attribute.groups.index') }}"
                     :total-count="report.statistics.totalAttributeGroups">
                 </v-entity-count-display>
 
                 <!-- Total Attribute Families -->
                 <v-entity-count-display
-                    img-src="{{ unopim_asset('images/icon-families.svg')}}" 
-                    img-title="@lang('admin::app.dashboard.index.total-families')" 
-                    label="@lang('admin::app.dashboard.index.total-families')" 
+                    img-src="{{ unopim_asset('images/icon-families.svg')}}"
+                    img-title="@lang('admin::app.dashboard.index.total-families')"
+                    label="@lang('admin::app.dashboard.index.total-families')"
+                    link-url="{{ route('admin.catalog.families.index') }}"
                     :total-count="report.statistics.totalAttributeFamilies">
                 </v-entity-count-display>
 
                 <!-- Total Locales -->
                 <v-entity-count-display
-                    img-src="{{ unopim_asset('images/icon-locale.svg')}}" 
-                    img-title="@lang('admin::app.dashboard.index.total-locales')" 
-                    label="@lang('admin::app.dashboard.index.total-locales')" 
+                    img-src="{{ unopim_asset('images/icon-locale.svg')}}"
+                    img-title="@lang('admin::app.dashboard.index.total-locales')"
+                    label="@lang('admin::app.dashboard.index.total-locales')"
+                    link-url="{{ route('admin.settings.locales.index') }}"
                     :total-count="report.statistics.totalLocales">
                 </v-entity-count-display>
 
                 <!-- Total Currencies -->
                 <v-entity-count-display
-                    img-src="{{ unopim_asset('images/icon-products.svg')}}" 
-                    img-title="@lang('admin::app.dashboard.index.total-currencies')" 
-                    label="@lang('admin::app.dashboard.index.total-currencies')" 
+                    img-src="{{ unopim_asset('images/icon-products.svg')}}"
+                    img-title="@lang('admin::app.dashboard.index.total-currencies')"
+                    label="@lang('admin::app.dashboard.index.total-currencies')"
+                    link-url="{{ route('admin.settings.currencies.index') }}"
                     :total-count="report.statistics.totalCurrencies">
                 </v-entity-count-display>
 
                 <!-- Total Channels -->
                 <v-entity-count-display
-                    img-src="{{ unopim_asset('images/icon-channel.svg')}}" 
-                    img-title="@lang('admin::app.dashboard.index.total-channels')" 
-                    label="@lang('admin::app.dashboard.index.total-channels')" 
+                    img-src="{{ unopim_asset('images/icon-channel.svg')}}"
+                    img-title="@lang('admin::app.dashboard.index.total-channels')"
+                    label="@lang('admin::app.dashboard.index.total-channels')"
+                    link-url="{{ route('admin.settings.channels.index') }}"
                     :total-count="report.statistics.totalChannels">
                 </v-entity-count-display>
             </div>
