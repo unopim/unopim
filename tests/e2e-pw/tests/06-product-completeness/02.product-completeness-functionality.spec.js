@@ -26,8 +26,16 @@ test.describe('Verify the behaviour of Product Completeness feature', () => {
     const editBtn = adminPage.locator('span[title="Edit"]').first();
     const hasProducts = await editBtn.isVisible({ timeout: 5000 }).catch(() => false);
     if (!hasProducts) {
-      test.skip(true, 'No products in environment to check completeness column');
-      return;
+      // Create a product so we can test completeness column
+      await adminPage.getByRole('button', { name: 'Create Product' }).click();
+      await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').click();
+      await adminPage.getByRole('option', { name: 'Simple' }).first().click();
+      await adminPage.locator('input[name="attribute_family_id"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').click();
+      await adminPage.getByRole('option', { name: 'Default' }).first().click();
+      await adminPage.locator('input[name="sku"]').fill(`completeness_na_${Date.now()}`);
+      await adminPage.getByRole('button', { name: 'Save Product' }).click();
+      await adminPage.waitForURL(/\/admin\/catalog\/products/, { timeout: 20000 });
+      await adminPage.goto('/admin/catalog/products', { waitUntil: 'networkidle', timeout: 60000 });
     }
 
     // Check for the Complete column and N/A value
@@ -43,11 +51,21 @@ test.describe('Verify the behaviour of Product Completeness feature', () => {
     const editBtn = adminPage.locator('span[title="Edit"]').first();
     const hasProducts = await editBtn.isVisible({ timeout: 5000 }).catch(() => false);
     if (!hasProducts) {
-      test.skip(true, 'No products in environment to check completeness');
-      return;
+      // Create a product so we can test completeness on edit page
+      await adminPage.getByRole('button', { name: 'Create Product' }).click();
+      await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').click();
+      await adminPage.getByRole('option', { name: 'Simple' }).first().click();
+      await adminPage.locator('input[name="attribute_family_id"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').click();
+      await adminPage.getByRole('option', { name: 'Default' }).first().click();
+      await adminPage.locator('input[name="sku"]').fill(`completeness_edit_${Date.now()}`);
+      await adminPage.getByRole('button', { name: 'Save Product' }).click();
+      await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { timeout: 20000 });
+    } else {
+      await editBtn.click();
     }
 
-    await editBtn.click();
+    // Now on edit page — verify
+    await adminPage.waitForLoadState('networkidle');
     await expect(adminPage).toHaveURL(/.*\/edit\/.*/);
     await expect(adminPage.locator('text=Missing Required Attributes')).toHaveCount(0);
     await expect(adminPage.locator('text=Completeness')).toHaveCount(0);

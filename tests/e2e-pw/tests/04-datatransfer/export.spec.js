@@ -100,14 +100,20 @@ test.describe('UnoPim Export Jobs', () => {
 
   test('Create Export with duplicate Code shows validation error', async ({ adminPage }) => {
     const uid = generateUid();
-    const code = `dup-exp-${uid}`;
+    const code = `dup_exp_${uid}`;
 
     // Create the first export
     await createExport(adminPage, code, 'CSV', true);
 
-    // Try to create another with the same code
-    await createExport(adminPage, code, 'CSV', true);
-    await expect(adminPage.locator('#app').getByText('The Code has already been taken.')).toBeVisible();
+    // Try to create another with the same code — don't use createExport helper
+    // because we expect a validation error, not success
+    await navigateTo(adminPage, 'exports');
+    await adminPage.getByRole('link', { name: 'Create Export' }).click();
+    await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
+    await adminPage.locator('input[name="filters[file_format]"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').click();
+    await adminPage.getByRole('option', { name: 'CSV' }).locator('span').first().click();
+    await adminPage.getByRole('button', { name: 'Save Export' }).click();
+    await expect(adminPage.locator('#app').getByText(/Code has already been taken|already exists/i)).toBeVisible({ timeout: 20000 });
 
     // Cleanup
     await deleteExport(adminPage, code);
