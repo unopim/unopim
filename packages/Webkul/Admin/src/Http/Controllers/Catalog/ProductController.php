@@ -3,9 +3,11 @@
 namespace Webkul\Admin\Http\Controllers\Catalog;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
@@ -14,7 +16,7 @@ use Webkul\Admin\Http\Requests\ProductForm;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Core\Repositories\ChannelRepository;
-use Webkul\Core\Rules\Slug;
+use Webkul\Core\Rules\Sku;
 use Webkul\Product\Helpers\ProductType;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Type\AbstractType;
@@ -43,9 +45,9 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
-    public function index()
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             return app(ProductDataGrid::class)->toJson();
@@ -56,21 +58,19 @@ class ProductController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function store()
+    public function store(): JsonResponse
     {
         if (request()->has('super_attributes')) {
             request()->merge([
-                'super_attributes' => json_decode(request()->get('super_attributes'), true),
+                'super_attributes' => json_decode(request()->input('super_attributes'), true),
             ]);
         }
 
         $this->validate(request(), [
             'type'                => 'required',
             'attribute_family_id' => 'required',
-            'sku'                 => ['required', 'unique:products,sku', new Slug],
+            'sku'                 => ['required', 'unique:products,sku', new Sku],
             'super_attributes'    => 'array|min:1',
         ]);
 
@@ -130,10 +130,8 @@ class ProductController extends Controller
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @return \Illuminate\View\View
      */
-    public function edit(int $id)
+    public function edit(int $id): View
     {
         $product = $this->productRepository->findOrFail($id);
 
@@ -153,10 +151,8 @@ class ProductController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function update(ProductForm $request, int $id)
+    public function update(ProductForm $request, int $id): RedirectResponse
     {
         Event::dispatch('catalog.product.update.before', $id);
 
@@ -223,17 +219,15 @@ class ProductController extends Controller
 
     /**
      * Copy a given Product.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function copy(int $id)
+    public function copy(int $id): JsonResponse
     {
         try {
             $product = $this->productRepository->copy($id);
         } catch (\Exception $e) {
             return new JsonResponse([
                 'message' => $e->getMessage(),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         session()->flash('success', trans('admin::app.catalog.products.product-copied'));
@@ -264,7 +258,7 @@ class ProductController extends Controller
 
         return new JsonResponse([
             'message' => trans('admin::app.catalog.products.delete-failed'),
-        ], 500);
+        ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -293,7 +287,7 @@ class ProductController extends Controller
         } catch (\Exception $e) {
             return new JsonResponse([
                 'message' => $e->getMessage(),
-            ], 500);
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -316,15 +310,13 @@ class ProductController extends Controller
 
         return new JsonResponse([
             'message' => trans('admin::app.catalog.products.index.datagrid.mass-update-success'),
-        ], 200);
+        ], JsonResponse::HTTP_OK);
     }
 
     /**
      * To be manually invoked when data is seeded into products.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function sync()
+    public function sync(): RedirectResponse
     {
         Event::dispatch('products.datagrid.sync', true);
 
@@ -333,10 +325,8 @@ class ProductController extends Controller
 
     /**
      * Result of search product.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function search()
+    public function search(): JsonResponse
     {
         $results = [];
 
@@ -365,7 +355,7 @@ class ProductController extends Controller
      */
     public function checkVariantUniqueness(): JsonResponse
     {
-        $variantAttributes = request()->get('variantAttributes');
+        $variantAttributes = request()->input('variantAttributes');
 
         $data = request()->except('variantAttributes');
 

@@ -94,7 +94,7 @@ test('Goes to Roles Page under Settings', async ({ adminPage }) => {
 test('Goes to Magic AI Page under Configuration', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: ' Configuration' }).click();
   await adminPage.getByRole('link', { name: 'Magic AI' }).click();
-  await expect(adminPage).toHaveURL(/\/admin\/configuration\/general\/magic_ai/);
+  await expect(adminPage).toHaveURL(/\/admin\/magic-ai\/platform/);
 });
 
 test('Goes to Integrations Page under Configuration', async ({ adminPage }) => {

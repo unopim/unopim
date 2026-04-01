@@ -11,7 +11,6 @@ return [
             'powered-by'             => 'Aangedreven door :unopim,',
             'open-source-project-by' => 'Een open-source project van :webkul.',
         ],
-
         'forget-password' => [
             'create' => [
                 'email'                  => 'geregistreerde email',
@@ -20,13 +19,12 @@ return [
                 'reset-link-sent'        => 'Reset wachtwoordlink verzonden',
                 'email-settings-error'   => 'E -mail kon niet worden verzonden.Controleer uw e -mailconfiguratiegegevens',
                 'sign-in-link'           => 'Terug om aan te melden?',
-                'submit-btn'             => 'Reset',
+                'submit-btn'             => 'Wachtwoord opnieuw instellen',
                 'title'                  => 'Herstel het wachtwoord',
                 'powered-by'             => 'Aangedreven door :unopim,',
                 'open-source-project-by' => 'Een open-source project van :webkul.',
             ],
         ],
-
         'reset-password' => [
             'back-link-title'        => 'Terug om aan te melden?',
             'confirm-password'       => 'bevestig wachtwoord',
@@ -38,7 +36,6 @@ return [
             'open-source-project-by' => 'Een open-source project van :webkul.',
         ],
     ],
-
     'notifications' => [
         'description-text' => 'Maak een lijst van alle meldingen',
         'marked-success'   => 'Melding met succes gemarkeerd',
@@ -55,7 +52,6 @@ return [
             'processing' => 'Verwerken',
         ],
     ],
-
     'account' => [
         'edit' => [
             'back-btn'          => 'Rug',
@@ -76,25 +72,89 @@ return [
             'user-timezone'     => 'Tijdzone',
         ],
     ],
-
     'dashboard' => [
-        'index' => [
-            'title'            => 'Dashboard',
-            'user-info'        => 'Snel monitoren, wat \'s count in your PIM',
-            'user-name'        => 'Hoi! :user_naam',
-            'catalog-details'  => 'Catalogus',
-            'total-families'   => 'Totaal gezinnen',
-            'total-attributes' => 'Totale attributen',
-            'total-groups'     => 'Totaal aantal groepen',
-            'total-categories' => 'Totaal aantal categorieën',
-            'total-products'   => 'Totale producten',
-            'settings-details' => 'Catalogusstructuur',
-            'total-locales'    => 'Totaal aantal locaties',
-            'total-currencies' => 'Totale valuta',
-            'total-channels'   => 'Totale kanalen',
+        'invalid-type' => 'Ongeldig dashboardwidgettype.',
+        'index'        => [
+            'title'                => 'Dashboard',
+            'user-info'            => 'Snel monitoren, wat \'s count in your PIM',
+            'user-name'            => 'Hoi! :user_name',
+            'catalog-details'      => 'Catalogus',
+            'total-families'       => 'Totaal gezinnen',
+            'total-attributes'     => 'Totale attributen',
+            'total-groups'         => 'Totaal aantal groepen',
+            'total-categories'     => 'Totaal aantal categorieën',
+            'total-products'       => 'Totale producten',
+            'settings-details'     => 'Catalogusstructuur',
+            'total-locales'        => 'Totaal aantal locaties',
+            'total-currencies'     => 'Totale valuta',
+            'total-channels'       => 'Totale kanalen',
+            'completeness'         => 'Volledigheid',
+            'active'               => 'Actief',
+            'inactive'             => 'Inactief',
+            'simple'               => 'Eenvoudig',
+            'configurable'         => 'Configureerbaar',
+            'product-stats'        => 'Productstatistieken',
+            'product-type-dist'    => 'Producttype-verdeling',
+            'products-by-status'   => 'Producten per status',
+            'products-over-time'   => 'Productactiviteit (Laatste 7 dagen)',
+            'legend-created'       => 'Aangemaakt',
+            'legend-updated'       => 'Bijgewerkt',
+            'recent-activity'      => 'Recente activiteit',
+            'no-activity'          => 'Geen recente activiteit gevonden.',
+            'updated'              => 'bijgewerkt',
+            'created'              => 'aangemaakt',
+            'deleted'              => 'verwijderd',
+            'ago'                  => 'geleden',
+            'just-now'             => 'zojuist',
+            'data-transfer'        => 'Gegevensoverdracht',
+            'no-jobs'              => 'Geen recente import-/exporttaken gevonden.',
+            'job-type-import'      => 'Importeren',
+            'job-type-export'      => 'Exporteren',
+            'job-state-completed'  => 'Voltooid',
+            'job-state-failed'     => 'Mislukt',
+            'job-state-processing' => 'Verwerking',
+            'job-state-pending'    => 'Wachtend',
+            'job-state-validated'  => 'Gevalideerd',
+            'rows-processed'       => 'Rijen verwerkt',
+            'errors'               => 'Fouten',
+            'quick-links'          => 'Snelkoppelingen',
+            'create-product'       => 'Product aanmaken',
+            'import-data'          => 'Gegevens importeren',
+            'export-data'          => 'Gegevens exporteren',
+            'manage-attributes'    => 'Attributen beheren',
+            'view-all-activity'    => 'Alles bekijken',
+            'view-all-jobs'        => 'Alle taken bekijken',
+            'new-this-week'        => 'Nieuw deze week',
+            'with-variants'        => 'Met varianten',
+            'avg-completeness'     => 'Gem. volledigheid',
+            'enriched'             => 'Verrijkt',
+            'analytics-section'    => 'Analyses',
+            'operations-section'   => 'Operaties',
+            'needs-attention'      => 'Aandacht nodig',
+            'unenriched-products'  => 'Niet-verrijkte producten',
+            'failed-jobs-24h'      => 'Mislukte taken (24u)',
+            'low-completeness'     => 'Lage volledigheid',
+            'all-good'             => 'Alles ziet er goed uit!',
+            'channel-readiness'    => 'Kanaalgereedheid',
+            'ready-to-publish'     => 'klaar om te publiceren',
+            'of'                   => 'van',
+            'products-ready'       => 'producten gereed',
+            'no-readiness-data'    => 'Nog geen volledigheidsgegevens beschikbaar.',
+            'entity-types'         => [
+                'product'          => 'Product',
+                'category'         => 'Categorie',
+                'attribute'        => 'Attribuut',
+                'attribute-family' => 'Familie',
+                'attribute-group'  => 'Groep',
+                'category-field'   => 'Categorieveld',
+                'channel'          => 'Kanaal',
+                'role'             => 'Rol',
+                'job-instance'     => 'Taak',
+                'webhook'          => 'Webhook',
+                'api-key'          => 'API-sleutel',
+            ],
         ],
     ],
-
     'catalog' => [
         'products' => [
             'index' => [
@@ -104,8 +164,7 @@ return [
                 'magic-ai-error'            => 'Controleer de Magic AI-referenties en zorg ervoor dat het juiste model is geselecteerd.',
                 'magic-ai-validate-error'   => 'Controleer de Magic AI-referenties.',
                 'magic-ai-validate-success' => 'Magic AI-referenties succesvol gevalideerd.',
-
-                'create' => [
+                'create'                    => [
                     'back-btn'                          => 'Rug',
                     'configurable-attributes'           => 'Configureerbare attributen',
                     'create-btn'                        => 'Creëer product',
@@ -118,11 +177,10 @@ return [
                     'not-config-super-attributes-error' => 'Deze superkenmerken met waarde ":super_attributes" kon niet worden gevonden',
                     'sku-exists-error'                  => 'De SKU met waarde ":sku" bestaat al',
                 ],
-
                 'datagrid' => [
                     'active'                 => 'Actief',
                     'attribute-family'       => 'Attribueer familie',
-                    'attribute-family-value' => 'Attribute Family - :attribute_family',
+                    'attribute-family-value' => 'Attributenfamilie - :attribute_family',
                     'category'               => 'Categorie',
                     'copy-of'                => 'Kopie van :value',
                     'copy-of-slug'           => 'copy-of- :value',
@@ -148,49 +206,43 @@ return [
                     'update-status'          => 'Update status',
                     'parent'                 => 'Ouder',
                     'parent-identifier'      => 'Ouder : :sku',
+                    'created-at'             => 'Aangemaakt op',
+                    'updated-at'             => 'Bijgewerkt op',
                 ],
             ],
-
             'edit' => [
-                'preview'  => 'Voorbeeld',
-                'remove'   => 'Verwijderen',
-                'save-btn' => 'Bewaar product',
-                'title'    => 'Product bewerken',
-
+                'preview'    => 'Voorbeeld',
+                'remove'     => 'Verwijderen',
+                'save-btn'   => 'Bewaar product',
+                'title'      => 'Product bewerken',
                 'categories' => [
                     'title' => 'Categorieën',
                 ],
-
                 'images' => [
                     'info'  => 'Beeldresolutie moet zijn als 560px x 609px',
                     'title' => 'Afbeeldingen',
                 ],
-
                 'videos' => [
                     'error' => 'De :attribute mag niet groter zijn dan :max kilobytes. Kies een kleiner bestand.',
                     'info'  => 'Maximale videogrootte zou moeten zijn als :size',
-                    'title' => 'Videos',
+                    'title' => 'Video\'s',
                 ],
-
                 'links' => [
                     'related-products' => [
                         'empty-info' => 'Voeg gerelateerde associatieproducten toe.',
                         'info'       => 'Naast het product dat de klant bekijkt, worden ze gepresenteerd met gerelateerde producten.',
                         'title'      => 'gerelateerde producten',
                     ],
-
                     'up-sells' => [
                         'empty-info' => 'Telopplek Association -producten op.',
                         'info'       => 'De klant krijgt een up-sell-producten, die dient als een premium of hogere kwaliteit alternatief voor het product dat ze momenteel bekijken.',
                         'title'      => 'Sell-sell-producten',
                     ],
-
                     'cross-sells' => [
                         'empty-info' => 'Voeg Cross Sell Association -producten toe.',
                         'info'       => 'Grenzend aan het winkelwagentje, u \'ll find these \"impulse-buy\" products positioned as cross-sells to complement the items already added to your cart.',
                         'title'      => 'Cross-Sell-producten',
                     ],
-
                     'add-btn'           => 'Toevoegen',
                     'delete'            => 'Verwijderen',
                     'empty-info'        => 'Toevoegen :type producten terecht.',
@@ -199,7 +251,6 @@ return [
                     'sku'               => 'Ski - :sku',
                     'title'             => 'Verenigingen',
                 ],
-
                 'types' => [
                     'configurable' => [
                         'add-btn'                            => 'Variant toevoegen',
@@ -216,15 +267,13 @@ return [
                         'variant-attribute-option-not-found' => 'Variant kenmerk of optie met waarde ":attributes" niet gevonden',
                         'supper-attribute-not-found'         => 'Avondmaal attribuut met waarde ":attribute" niet gevonden',
                         'variant-given-exists'               => 'Deze variant met waarde ":variants" bestaat al',
-
-                        'create' => [
+                        'create'                             => [
                             'description'            => 'Beschrijving',
                             'name'                   => 'Naam',
                             'save-btn'               => 'Toevoegen',
                             'title'                  => 'Variant toevoegen',
                             'variant-already-exists' => 'Deze variant bestaat al',
                         ],
-
                         'edit' => [
                             'disabled'        => 'Gehandicapt',
                             'edit-info'       => 'Als u productinformatie in detail wilt bijwerken, ga dan naar de',
@@ -240,7 +289,6 @@ return [
                             'title'           => 'Product',
                             'weight'          => 'Gewicht',
                         ],
-
                         'mass-edit' => [
                             'add-images'          => 'Afbeeldingen toevoegen',
                             'apply-to-all-btn'    => 'Van toepassing zijn op iedereen',
@@ -267,23 +315,31 @@ return [
                         ],
                     ],
                 ],
-
                 'translate' => [
-                    'translate-btn'            => 'Vertalen',
-                    'title'                    => 'Vertalen',
-                    'source-channel'           => 'Bronkanaal',
-                    'locale'                   => 'Bronlocatie',
-                    'translated-content'       => 'Vertaald inhoud',
-                    'translating'              => 'Vertalen',
-                    'apply'                    => 'Toepassen',
-                    'cancel'                   => 'Annuleren',
-                    'target-locales'           => 'Doellocaties',
-                    'target-channel'           => 'Doelkanaal',
-                    'attributes'               => 'Kenmerken',
-                    'source-content'           => 'Broninhoud',
-                    'tranlated-job-processed'  => 'De taak voor het opslaan van vertaalde inhoud is verwerkt.',
+                    'translate-btn'               => 'Vertalen',
+                    'title'                       => 'Vertalen',
+                    'source-channel'              => 'Bronkanaal',
+                    'locale'                      => 'Bronlocatie',
+                    'translated-content'          => 'Vertaald inhoud',
+                    'translating'                 => 'Vertalen',
+                    'apply'                       => 'Toepassen',
+                    'back'                        => 'Terug',
+                    'cancel'                      => 'Annuleren',
+                    'target-locales'              => 'Doellocaties',
+                    'target-channel'              => 'Doelkanaal',
+                    'attributes'                  => 'Kenmerken',
+                    'tranlated-job-processed'     => 'De taak voor het opslaan van vertaalde inhoud is verwerkt.',
+                    'step'                        => 'Stap',
+                    'select-source'               => 'Selecteer bron',
+                    'select-target'               => 'Selecteer doel',
+                    'first-step-title'            => 'Stap 1: Selecteer bronkanaal, taal en attributen',
+                    'first-step-title-attributes' => 'Stap 1: Selecteer bronkanaal en taal',
+                    'source-content'              => 'Broninhoud',
+                    'second-step-title'           => 'Stap 2: Selecteer doelkanaal en talen',
+                    'target-content'              => 'Doelinhoud',
+                    'next'                        => 'Volgende',
+                    'empty-translation-data'      => 'Gegevens zijn niet beschikbaar voor vertaling op basis van bronkanaal en taal',
                 ],
-
                 'product-info' => [
                     'title'        => 'Productinformatie',
                     'status'       => 'Status',
@@ -293,6 +349,7 @@ return [
                     'created-at'   => 'Aanmaakdatum',
                     'product-type' => 'Producttype',
                 ],
+                'more-actions' => 'Meer acties',
             ],
             'bulk-edit' => [
                 'validation' => [
@@ -305,27 +362,22 @@ return [
                     'select-attribute-or-family' => 'Selecteer ten minste één attribuut of een attribuutfamilie.',
                     'failed'                     => 'Validatie mislukt.',
                 ],
-
-                'modal'                      => [
+                'modal' => [
                     'title'            => 'Attributen voor bulkbewerking',
                     'btn-cancel'       => 'Annuleren',
                     'btn-proceed'      => 'Doorgaan',
                     'attribute-family' => 'Attribuutfamilie selecteren',
                 ],
-
                 'index' => [
-                    'no-product'    => 'Geen producten geselecteerd voor bulkbewerking.',
+                    'no-product' => 'Geen producten geselecteerd voor bulkbewerking.',
                 ],
-
                 'filter' => [
-                    'many-product'      => 'Te veel producten geselecteerd.',
-                    'redirect-message'  => 'Doorverwijzen naar bulkbewerkingsweergave.',
+                    'many-product'     => 'Te veel producten geselecteerd.',
+                    'redirect-message' => 'Doorverwijzen naar bulkbewerkingsweergave.',
                 ],
-
                 'handle-save' => [
-                    'edit-success'  => 'Bulkbewerking succesvol uitgevoerd.',
+                    'edit-success' => 'Bulkbewerking succesvol uitgevoerd.',
                 ],
-
                 'id'              => 'ID',
                 'no-changes'      => 'Geen wijzigingen om op te slaan.',
                 'success'         => 'Taak succesvol uitgevoerd.',
@@ -335,9 +387,8 @@ return [
                 'img-preview'     => 'Afbeeldingvoorbeeld',
                 'no-image'        => 'Geen Afbeelding',
                 'img-fail'        => 'Uploaden van afbeelding mislukt',
-                'no-opton'        => 'Geen opties',
+                'no-option'       => 'Geen opties',
             ],
-
             'create-success'          => 'Product met succes gemaakt',
             'delete-failed'           => 'Product verwijderd mislukt',
             'delete-success'          => 'Product met succes verwijderd',
@@ -351,13 +402,11 @@ return [
             'upload-success'          => 'Productbestand met succes geüpload.',
             'update-failure'          => 'Product kon niet worden bijgewerkt.',
         ],
-
         'attributes' => [
             'index' => [
                 'create-btn' => 'Attribuut maken',
                 'title'      => 'Attributen',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'channel-based'            => 'Kanaalgebaseerd',
                     'code'                     => 'Code',
                     'created-at'               => 'Gemaakt bij',
@@ -375,7 +424,6 @@ return [
                     'delete-attribute-failure' => 'Deze eigenschap kan niet worden verwijderd omdat deze in gebruik is voor configureerbare producten.',
                 ],
             ],
-
             'create' => [
                 'add-attribute-options' => 'Attribuutopties toevoegen',
                 'add-option'            => 'Optie toevoegen',
@@ -398,13 +446,12 @@ return [
                 'enable-wysiwyg'        => 'Schakel Wysiwyg -editor in',
                 'file'                  => 'Bestand',
                 'general'               => 'Algemeen',
-                'image'                 => 'Afbeelding',
                 'gallery'               => 'Galerij',
+                'image'                 => 'Afbeelding',
                 'input-options'         => 'Invoeropties',
                 'input-validation'      => 'Invoervalidatie',
                 'is-comparable'         => 'Attribuut is vergelijkbaar',
                 'is-configurable'       => 'Gebruik om het configureerbaar product te maken',
-                'is-filterable'         => 'Gebruik in gelaagde navigatie',
                 'is-required'           => 'Is benodigd',
                 'is-unique'             => 'Is uniek',
                 'is-visible-on-front'   => 'Zichtbaar op de pagina met productweergave aan de voorkant',
@@ -434,8 +481,8 @@ return [
                 'usable-in-grid'        => 'Bruikbaar in het rooster',
                 'is-filterable'         => 'Is filterbaar',
                 'ai-translate'          => 'AI Vertaling',
-
-                'option' => [
+                'invalid-swatch-type'   => 'De :attribute is niet toegestaan voor attribuuttype :type met swatchtype :swatch_type.',
+                'option'                => [
                     'color'    => 'Kleurstaal',
                     'dropdown' => 'Laten vallen',
                     'image'    => 'Afbeeldingsstaal',
@@ -443,7 +490,6 @@ return [
                     'text'     => 'Tekststaal',
                 ],
             ],
-
             'edit' => [
                 'add-attribute-options' => 'Attribuutopties toevoegen',
                 'add-option'            => 'Optie toevoegen',
@@ -467,12 +513,10 @@ return [
                 'file'                  => 'Bestand',
                 'general'               => 'Algemeen',
                 'image'                 => 'Afbeelding',
-                'gallery'               => 'Galerij',
                 'input-options'         => 'Invoeropties',
                 'input-validation'      => 'Invoervalidatie',
                 'is-comparable'         => 'Attribuut is vergelijkbaar',
                 'is-configurable'       => 'Gebruik om het configureerbaar product te maken',
-                'is-filterable'         => 'Gebruik in gelaagde navigatie',
                 'is-required'           => 'Is benodigd',
                 'is-unique'             => 'Is uniek',
                 'is-visible-on-front'   => 'Zichtbaar op de pagina met productweergave aan de voorkant',
@@ -502,22 +546,19 @@ return [
                 'usable-in-grid'        => 'Bruikbaar in het rooster',
                 'is-filterable'         => 'Is filterbaar',
                 'ai-translate'          => 'AI Vertaling',
-                'invalid-swatch-type'   => ':attribute is niet toegestaan voor attribuuttype :type met swatchtype :swatch_type.',
-
-                'option' => [
-                    'create-success'      => 'Attribuutoptie met succes gemaakt',
-                    'delete-success'      => 'Attribuutoptie met succes verwijderd',
+                'option'                => [
                     'save-btn'            => 'Optie opslaan',
-                    'sort-update-failure' => 'Sorteren bijwerken mislukt',
-                    'sort-update-success' => 'Sorteervolgorde succesvol bijgewerkt',
+                    'create-success'      => 'Attribuutoptie met succes gemaakt',
                     'update-success'      => 'Attribuutoptie met succes bijgewerkt',
+                    'sort-update-success' => 'Sorteervolgorde succesvol bijgewerkt',
+                    'sort-update-failure' => 'Sorteren bijwerken mislukt',
+                    'delete-success'      => 'Attribuutoptie met succes verwijderd',
                     'color'               => 'Kleurstaal',
                     'dropdown'            => 'Laten vallen',
                     'image'               => 'Afbeeldingsstaal',
                     'text'                => 'Tekststaal',
                 ],
             ],
-
             'create-success'    => 'Attribuut met succes gemaakt',
             'delete-failed'     => 'Attribuut verwijderd mislukt',
             'delete-success'    => 'Kenmerk met succes verwijderd',
@@ -525,19 +566,16 @@ return [
             'user-define-error' => 'Kan het systeem niet verwijderen',
             'not-found'         => 'Kenmerk met code ":code" kon niet worden gevonden',
         ],
-
         'attribute-options' => [
             'create-success'       => 'Attribuutoptie met succes gemaakt',
             'update-success'       => 'Attribuutoptie met succes bijgewerkt',
             'usable-in-grid-error' => 'Slechts 4 attributen kunnen bruikbaar zijn in het raster ingeschakeld.',
         ],
-
         'attribute-groups' => [
             'index' => [
                 'create-btn' => 'Attribuutgroep maken',
                 'title'      => 'Attribuutgroepen',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'code'                => 'Code',
                     'delete'              => 'Verwijderen',
                     'mass-delete-success' => 'Geselecteerde kenmerkgroep met succes verwijderd',
@@ -549,7 +587,6 @@ return [
                     'update-status'       => 'Update status',
                 ],
             ],
-
             'create' => [
                 'title'    => 'Attribuutgroep toevoegen',
                 'save-btn' => 'Sla attribuutgroep op',
@@ -558,7 +595,6 @@ return [
                 'code'     => 'Code',
                 'label'    => 'Etiket',
             ],
-
             'edit' => [
                 'title'    => 'Attribuutgroep bewerken',
                 'back-btn' => 'Rug',
@@ -567,7 +603,6 @@ return [
                 'code'     => 'Code',
                 'label'    => 'Etiket',
             ],
-
             'create-success'        => 'Attribute Group met succes gemaakt',
             'delete-failed'         => 'Attribuutgroep verwijderd mislukt',
             'delete-success'        => 'Attribuutgroep met succes verwijderd',
@@ -576,12 +611,10 @@ return [
             'attribute-group-error' => 'Groep wordt gebruikt in gezinnen.',
             'not-found'             => 'Attribuutgroep met code ":code" kon niet worden gevonden',
         ],
-
         'categories' => [
             'index' => [
-                'add-btn' => 'Categorie maken',
-                'title'   => 'Categorieën',
-
+                'add-btn'  => 'Categorie maken',
+                'title'    => 'Categorieën',
                 'datagrid' => [
                     'active'         => 'Actief',
                     'code'           => 'Code',
@@ -591,14 +624,13 @@ return [
                     'id'             => 'ID kaart',
                     'inactive'       => 'Inactief',
                     'name'           => 'Weergavenaam',
+                    'category-name'  => 'Naam',
                     'no-of-products' => 'Aantal producten',
                     'position'       => 'Positie',
                     'status'         => 'Zichtbaar in menu',
-                    'category-name'  => 'Naam',
                     'update-status'  => 'Update status',
                 ],
             ],
-
             'create' => [
                 'back-btn'            => 'Rug',
                 'code'                => 'Code',
@@ -619,7 +651,6 @@ return [
                 'right-section'       => 'Configuratiegedeelte',
                 'left-section'        => 'Algemene sectie',
             ],
-
             'edit' => [
                 'back-btn'               => 'Rug',
                 'code'                   => 'Code',
@@ -638,7 +669,6 @@ return [
                 'right-section'          => 'Configuratiegedeelte',
                 'left-section'           => 'Algemene sectie',
             ],
-
             'category'             => 'Categorie',
             'create-success'       => 'Categorie met succes gemaakt.',
             'delete-category-root' => 'U kunt de rootcategorie die is gekoppeld aan een kanaal niet verwijderen.',
@@ -653,14 +683,12 @@ return [
             'create-failure'       => 'Categorie kon niet worden aangemaakt.',
             'update-failure'       => 'Categorie kon niet worden bijgewerkt.',
         ],
-
         'category_fields' => [
             'index' => [
                 'create-btn' => 'CREAGE CODATIEVE MAAKT',
                 'add-btn'    => 'CREAGE CODATIEVE MAAKT',
                 'title'      => 'Categorievelden',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'channel-based'       => 'Kanaalgebaseerd',
                     'code'                => 'Code',
                     'created-at'          => 'Gemaakt bij',
@@ -685,7 +713,6 @@ return [
                     'mass-delete-failed'  => 'Geselecteerde categorievelden kunnen niet worden verwijderd.',
                 ],
             ],
-
             'create' => [
                 'add-field-options'   => 'Veldopties voor categorie toevoegen',
                 'add-option'          => 'Optie toevoegen',
@@ -731,7 +758,7 @@ return [
                 'url'                 => 'Url',
                 'use-in-flat'         => 'Creëer in product platte tafel',
                 'validations'         => 'Geldigmaking',
-                'value-per-channel'   => 'Value Per Channel',
+                'value-per-channel'   => 'Waarde Per Kanaal',
                 'value-per-locale'    => 'Waarde per locale',
                 'yes'                 => 'Ja',
                 'status'              => 'Toestand',
@@ -740,8 +767,7 @@ return [
                 'set-section-right'   => 'Configuratiegedeelte',
                 'settings'            => 'Instellingen',
                 'same-code-error'     => 'De optiecode moet uniek zijn.',
-
-                'option' => [
+                'option'              => [
                     'dropdown' => 'Laten vallen',
                     'save-btn' => 'Optie opslaan',
                     'color'    => 'Kleurstaal',
@@ -749,7 +775,6 @@ return [
                     'text'     => 'Tekststaal',
                 ],
             ],
-
             'edit' => [
                 'add-field-options'   => 'Veldopties voor categorie toevoegen',
                 'add-option'          => 'Optie toevoegen',
@@ -805,8 +830,7 @@ return [
                 'set-section-right'   => 'Configuratiegedeelte',
                 'settings'            => 'Instellingen',
                 'same-code-error'     => 'De optiecode moet uniek zijn.',
-
-                'option' => [
+                'option'              => [
                     'dropdown' => 'Laten vallen',
                     'save-btn' => 'Optie opslaan',
                     'color'    => 'Kleurstaal',
@@ -814,7 +838,6 @@ return [
                     'text'     => 'Tekststaal',
                 ],
             ],
-
             'create-success'    => 'Categorieveld met succes gemaakt',
             'delete-failed'     => 'Categorie veld verwijderd mislukt',
             'delete-success'    => 'Categorie veld met succes verwijderd',
@@ -822,17 +845,14 @@ return [
             'user-define-error' => 'Kan het veld systeemcategorie niet verwijderen',
             'not-found'         => 'Categorie -veld met code ":code" kon niet worden gevonden',
         ],
-
         'category-fields-options' => [
             'create-success' => 'Categorie -veldoptie met succes gemaakt',
             'update-success' => 'Categorie veldoptie met succes bijgewerkt',
         ],
-
         'families' => [
             'index' => [
-                'add'   => 'Creëer attribuutfamilie',
-                'title' => 'Gezinnen',
-
+                'add'      => 'Creëer attribuutfamilie',
+                'title'    => 'Gezinnen',
                 'datagrid' => [
                     'code'           => 'Code',
                     'delete'         => 'Verwijderen',
@@ -847,11 +867,9 @@ return [
                     'update-success' => 'Geselecteerd :resource is succesvol bijgewerkt',
                 ],
             ],
-
             'create' => [
                 'assign-group-btn'                 => 'Attribuutgroep toewijzen',
                 'assign-group-title'               => 'Attribuutgroep toewijzen',
-                'assign-group-btn'                 => 'Attribuutgroep toewijzen',
                 'back-btn'                         => 'Rug',
                 'code'                             => 'Code',
                 'label'                            => 'Etiket',
@@ -879,11 +897,9 @@ return [
                 'unassigned-attribute-groups'      => 'Niet -toegewezen kenmerkgroepen',
                 'assign-first-attribute-group'     => 'Wijs de groep toe aan de familie.',
             ],
-
             'edit' => [
                 'assign-group-btn'                 => 'Attribuutgroep toewijzen',
                 'assign-group-title'               => 'Attribuutgroep toewijzen',
-                'assign-group-btn'                 => 'Attribuutgroep toewijzen',
                 'back-btn'                         => 'Rug',
                 'code'                             => 'Code',
                 'label'                            => 'Etiket',
@@ -914,7 +930,6 @@ return [
                 'variant-options-label'            => 'Configureerbare opties',
                 'select-variant'                   => 'Selecteer attributen',
             ],
-
             'attribute-family'               => 'Attribueer familie',
             'attribute-product-error'        => 'Familie wordt gebruikt in producten.',
             'create-success'                 => 'Familie is met succes gecreëerd.',
@@ -924,10 +939,9 @@ return [
             'last-delete-error'              => 'Ten minste één familie is vereist.',
             'update-success'                 => 'Familie heeft succesvol bijgewerkt.',
             'user-define-error'              => 'Kan geen systeem voor het kenmerken van het systeem verwijderen',
-            'not-found'                      => 'Attributen Family with Code ":Code" kon niet worden gevonden',
+            'not-found'                      => 'Attributen Family with Code ":code" kon niet worden gevonden',
             'can-not-update-variant-options' => 'Kan configureerbare opties niet bijwerken, omdat deze familie al variantproducten heeft.',
         ],
-
         'history' => [
             'index' => [
                 'datagrid' => [
@@ -938,7 +952,6 @@ return [
             ],
         ],
     ],
-
     'settings' => [
         'locales' => [
             'index' => [
@@ -947,8 +960,7 @@ return [
                 'title'                 => 'Landen',
                 'can-not-delete-error'  => 'U kunt een locale niet verwijderen die is gekoppeld aan een kanaal of gebruiker',
                 'can-not-disable-error' => 'U kunt een locatie niet uitschakelen die is gekoppeld aan een kanaal of gebruiker',
-
-                'datagrid' => [
+                'datagrid'              => [
                     'actions'     => 'Acties',
                     'code'        => 'Code',
                     'delete'      => 'Verwijderen',
@@ -959,14 +971,12 @@ return [
                     'name'        => 'Weergavenaam',
                     'rtl'         => 'RTL',
                     'mass-update' => 'Update status',
-
-                    'status' => [
+                    'status'      => [
                         'title'    => 'Toestand',
                         'active'   => 'Inschakelen',
                         'inactive' => 'Uitzetten',
                     ],
                 ],
-
                 'create' => [
                     'code'             => 'Code',
                     'direction'        => 'Richting',
@@ -977,11 +987,9 @@ return [
                     'title'            => 'Maak een locale',
                     'status'           => 'Toestand',
                 ],
-
                 'edit' => [
                     'title' => 'Locale bewerken',
                 ],
-
                 'create-success'    => 'Locale met succes gemaakt.',
                 'delete-failed'     => 'Locale verwijdering is mislukt',
                 'delete-success'    => 'Locale met succes verwijderd.',
@@ -990,7 +998,6 @@ return [
                 'update-success'    => 'Locale bijgewerkt met succes.',
             ],
         ],
-
         'currencies' => [
             'index' => [
                 'create-btn'            => 'Creëer valuta',
@@ -998,8 +1005,7 @@ return [
                 'title'                 => 'Valuta',
                 'can-not-delete-error'  => 'U kunt een valuta niet verwijderen die aan een kanaal is gekoppeld',
                 'can-not-disable-error' => 'U kunt een valuta niet uitschakelen die aan een kanaal is gekoppeld',
-
-                'datagrid' => [
+                'datagrid'              => [
                     'actions'        => 'Acties',
                     'code'           => 'Code',
                     'delete'         => 'Verwijderen',
@@ -1011,14 +1017,12 @@ return [
                     'partial-action' => 'Sommige acties werden niet uitgevoerd vanwege beperkte systeembeperkingen op :resource',
                     'update-success' => 'Geselecteerd :resource is succesvol bijgewerkt',
                     'mass-update'    => 'Update status',
-
-                    'status' => [
+                    'status'         => [
                         'title'    => 'Toestand',
                         'active'   => 'Inschakelen',
                         'inactive' => 'Uitzetten',
                     ],
                 ],
-
                 'create' => [
                     'code'           => 'Code',
                     'create-btn'     => 'Creëer valuta',
@@ -1031,11 +1035,9 @@ return [
                     'title'          => 'Creëer nieuwe valuta',
                     'status'         => 'Toestand',
                 ],
-
                 'edit' => [
                     'title' => 'Valuta bewerken',
                 ],
-
                 'create-success'    => 'Valuta met succes gecreëerd.',
                 'delete-failed'     => 'Valuta verwijderd mislukt',
                 'delete-success'    => 'Valuta met succes verwijderd.',
@@ -1044,11 +1046,10 @@ return [
                 'cannot-delete'     => 'Valuta kan niet worden verwijderd.',
             ],
         ],
-
         'data-transfer' => [
             'tracker' => [
                 'index' => [
-                    'title'    => 'Job Tracker',
+                    'title'    => 'Taak Tracker',
                     'datagrid' => [
                         'id'                   => 'ID kaart',
                         'job_code'             => 'Functie',
@@ -1062,34 +1063,34 @@ return [
                         'user'                 => 'Gebruiker',
                         'created_at'           => 'Gemaakt bij',
                         'updated_at'           => 'Bijgewerkt op',
-
-                        'pending'    => 'In behandeling',
-                        'validated'  => 'Gevalideerd',
-                        'processing' => 'Verwerken',
-                        'processed'  => 'Verwerkt',
-                        'linking'    => 'Koppeling',
-                        'linked'     => 'Gekoppeld',
-
-                        'indexing'  => 'Indexering',
-                        'indexed'   => 'Geïndexeerd',
-                        'completed' => 'Voltooid',
-                        'failed'    => 'Mislukt',
+                        'pending'              => 'In behandeling',
+                        'validating'           => 'Valideren',
+                        'validated'            => 'Gevalideerd',
+                        'processing'           => 'Verwerken',
+                        'processed'            => 'Verwerkt',
+                        'linking'              => 'Koppeling',
+                        'linked'               => 'Gekoppeld',
+                        'indexing'             => 'Indexering',
+                        'indexed'              => 'Geïndexeerd',
+                        'completed'            => 'Voltooid',
+                        'paused'               => 'Gepauzeerd',
+                        'cancelled'            => 'Geannuleerd',
+                        'failed'               => 'Mislukt',
                     ],
                 ],
-
                 'import' => [
                     'back-btn'                => 'Rug',
                     'completed-batches'       => 'Totale batches voltooid:',
                     'download-error-report'   => 'Download het volledige rapport',
                     'edit-btn'                => 'Bewerking',
                     'imported-info'           => 'Gefeliciteerd!Uw import was succesvol.',
-                    'importing-info'          => 'Exporteren in proces',
+                    'exporting-info'          => 'Export wordt verwerkt',
                     'indexing-info'           => 'Bronnen -indexering (prijs, elastische zoekopdracht) in uitvoering',
                     'linking-info'            => 'Bronnen die in uitvoering worden gekoppeld',
                     'progress'                => 'Voortgang:',
                     'title'                   => 'Exporteren',
                     'total-batches'           => 'Totale batches:',
-                    'total-created'           => 'Totaal aantal gecreëerde records:',
+                    'created'                 => 'Totaal aangemaakte records:',
                     'total-deleted'           => 'Totale records verwijderd:',
                     'total-errors'            => 'Totale fouten:',
                     'total-invalid-rows'      => 'Totaal ongeldige rijen:',
@@ -1101,23 +1102,64 @@ return [
                     'validation-failed-info'  => 'Uw import is ongeldig.Los de volgende fouten op en probeer het opnieuw.',
                     'validation-success-info' => 'Uw import is geldig.Klik op Exporteren om het importproces te starten.',
                 ],
-
-                'create-success'    => 'Export met succes gecreëerd.',
-                'delete-failed'     => 'Exporteren mislukt onverwacht.',
-                'delete-success'    => 'Export met succes verwijderd.',
-                'not-valid'         => 'Export is ongeldig',
-                'nothing-to-import' => 'Er zijn geen middelen om te importeren.',
-                'setup-queue-error' => 'Wijzig uw wachtrijstuurprogramma in "database" of "redis" om het importproces te starten.',
-                'update-success'    => 'Exporteren met succes bijgewerkt.',
-                'failed-info'       => 'Taak is mislukt. Los de volgende fouten op en probeer het opnieuw.',
-                'download-log-file' => 'Logboek downloaden',
+                'summary' => [
+                    'total-batches' => 'Totaal batches:',
+                    'created'       => 'Totaal aangemaakte records:',
+                    'deleted'       => 'Totaal verwijderde records:',
+                    'errors'        => 'Totaal fouten:',
+                    'invalid-rows'  => 'Totaal ongeldige rijen:',
+                    'processed'     => 'Totaal verwerkte rijen:',
+                    'updated'       => 'Totaal bijgewerkte records:',
+                    'skipped'       => 'Totaal overgeslagen records:',
+                ],
+                'info'                  => 'Gefeliciteerd! Uw taak is succesvol uitgevoerd.',
+                'running-time'          => 'Looptijd',
+                'estimated-remaining'   => 'Geschatte resterende tijd',
+                'total-duration'        => 'Totale duur',
+                'status'                => 'Status',
+                'waiting'               => 'Wachtend',
+                'total-records'         => 'Totaal records',
+                'job-id'                => 'Taak-ID',
+                'records-created'       => 'Aangemaakte records',
+                'records-updated'       => 'Bijgewerkte records',
+                'records-deleted'       => 'Verwijderde records',
+                'run-again'             => 'Opnieuw uitvoeren',
+                'completed-success'     => 'Taak succesvol voltooid',
+                'completed-info-sub'    => 'Alle records zijn verwerkt en geïndexeerd. Uw catalogus is up-to-date.',
+                'create-success'        => 'Export met succes gecreëerd.',
+                'delete-failed'         => 'Exporteren mislukt onverwacht.',
+                'delete-success'        => 'Export met succes verwijderd.',
+                'not-valid'             => 'Export is ongeldig',
+                'nothing-to-import'     => 'Er zijn geen middelen om te importeren.',
+                'setup-queue-error'     => 'Wijzig uw wachtrijstuurprogramma in "database" of "redis" om het importproces te starten.',
+                'update-success'        => 'Exporteren met succes bijgewerkt.',
+                'failed-info'           => 'Taak is mislukt. Los de volgende fouten op en probeer het opnieuw.',
+                'download-log-file'     => 'Logboek downloaden',
+                'pause'                 => 'Pauzeren',
+                'resume'                => 'Hervatten',
+                'cancel'                => 'Annuleren',
+                'paused'                => 'De import is gepauzeerd.',
+                'resumed'               => 'De import is hervat.',
+                'cancelled'             => 'De import is geannuleerd.',
+                'paused-info'           => 'De import is gepauzeerd. Resterende batches staan in de wacht.',
+                'paused-info-export'    => 'De export is gepauzeerd. Resterende batches staan in de wacht.',
+                'cancelled-info'        => 'De import is geannuleerd. Gedeeltelijke resultaten worden hieronder weergegeven.',
+                'cancelled-info-export' => 'De export is geannuleerd. Gedeeltelijke resultaten worden hieronder weergegeven.',
+                'cancel-confirm'        => 'Weet u zeker dat u deze taak wilt annuleren? Deze actie kan niet ongedaan worden gemaakt.',
+                'live'                  => 'Live',
+                'import-progress'       => 'Importvoortgang',
+                'export-progress'       => 'Exportvoortgang',
+                'linking-progress'      => 'Koppelingsvoortgang',
+                'indexing-progress'     => 'Indexeringsvoortgang',
+                'job-label'             => 'Taak',
             ],
-
             'imports' => [
-                'create' => [
+                'import-start-fail' => 'Het importproces kon niet worden gestart. Probeer het opnieuw.',
+                'create'            => [
                     'code'                => 'Code',
                     'action'              => 'Actie',
                     'allowed-errors'      => 'Fouten toegestaan',
+                    'allowed-file-types'  => 'Toegestane bestandstypen (CSV, XLSX, XLS)',
                     'back-btn'            => 'Rug',
                     'create-update'       => 'Maak/update',
                     'delete'              => 'Verwijderen',
@@ -1125,12 +1167,21 @@ return [
                     'images'              => 'Afbeeldingen',
                     'download-sample'     => 'Download :resource voorbeeld CSV',
                     'field-separator'     => 'Veldafscheider',
+                    'separator-info'      => 'Alleen gebruiken voor CSV-bestanden',
                     'file-info-example'   => 'In het geval van productafbeeldingen moeten bestanden bijvoorbeeld worden geplaatst in/project-root/opslag/app/import/product-images map.',
                     'file-info'           => 'Gebruik het relatieve pad naar/project-root/opslag/app/import, b.v.Productafbeeldingen, import-beeld.',
                     'file'                => 'Bestand',
                     'general'             => 'Algemeen',
                     'upload_images'       => 'Upload afbeeldingen om het pad in te stellen',
                     'download-sample-zip' => 'Download voorbeeldafbeeldingen Zip',
+                    'zip-uploading'       => 'ZIP uploaden en uitpakken...',
+                    'zip-upload-success'  => 'ZIP succesvol geüpload en uitgepakt.',
+                    'zip-upload-error'    => 'Uploaden van ZIP mislukt. Probeer het opnieuw.',
+                    'invalid-zip'         => 'Het geüploade bestand is geen geldig ZIP-archief.',
+                    'zip-upload-or'       => 'of upload een ZIP met afbeeldingen',
+                    'zip-click-upload'    => 'Klik om een ZIP met afbeeldingen te uploaden',
+                    'zip-files-extracted' => 'bestanden uitgepakt',
+                    'zip-drop-hint'       => 'Klik of sleep en laat een ZIP-bestand hier vallen',
                     'images-directory'    => 'Pad',
                     'process-in-queue'    => 'Proces in wachtrij',
                     'results'             => 'Resultaat',
@@ -1142,16 +1193,17 @@ return [
                     'type'                => 'Type',
                     'validation-strategy' => 'Validatiestrategie',
                 ],
-
                 'edit' => [
                     'images'              => 'Afbeeldingen',
                     'action'              => 'Actie',
                     'allowed-errors'      => 'Fouten toegestaan',
+                    'allowed-file-types'  => 'Toegestane bestandstypen (CSV, XLSX, XLS)',
                     'back-btn'            => 'Rug',
                     'create-update'       => 'Maak/update',
                     'delete'              => 'Verwijderen',
                     'download-sample'     => 'Download voorbeeld',
                     'field-separator'     => 'Veldafscheider',
+                    'separator-info'      => 'Alleen gebruiken voor CSV-bestanden',
                     'file-info-example'   => 'In het geval van productafbeeldingen moeten bestanden bijvoorbeeld worden geplaatst in/project-root/opslag/app/import/product-images map.',
                     'file-info'           => 'Gebruik het relatieve pad naar/project-root/opslag/app/import, b.v.Productafbeeldingen, import-beeld.',
                     'file'                => 'Bestand',
@@ -1167,16 +1219,13 @@ return [
                     'type'                => 'Type',
                     'validation-strategy' => 'Validatiestrategie',
                 ],
-
                 'batch' => [
                     'title' => 'Import toegevoegd in de wachtrij',
                 ],
-
                 'index' => [
                     'button-title' => 'Import maken',
                     'title'        => 'Importeren',
-
-                    'datagrid' => [
+                    'datagrid'     => [
                         'actions'               => 'Acties',
                         'completed-at'          => 'Voltooid op',
                         'created'               => 'Gecreëerd',
@@ -1194,20 +1243,36 @@ return [
                         'updated'               => 'Bijgewerkt',
                         'uploaded-file'         => 'Geüpload bestand',
                         'images_directory_path' => 'Afbeeldingenbestand',
+                        'import'                => 'Importeren',
                     ],
                 ],
-
                 'import' => [
+                    'action'                  => 'Actiemodus',
                     'back-btn'                => 'Rug',
                     'completed-batches'       => 'Totale batches voltooid:',
                     'download-error-report'   => 'Download het volledige rapport',
                     'edit-btn'                => 'Bewerking',
+                    'exporting-info'          => 'Export wordt verwerkt',
+                    'exporting-info-sub'      => 'Exportbestand genereren en records schrijven. Even geduld.',
+                    'file_path'               => 'Bestandspad',
                     'imported-info'           => 'Gefeliciteerd!Uw import was succesvol.',
+                    'import-now'              => 'Nu importeren',
                     'importing-info'          => 'Importeren in proces',
+                    'importing-info-sub'      => 'Batches verwerken en records naar de database schrijven.',
                     'indexing-info'           => 'Bronnen -indexering (prijs, elastische zoekopdracht) in uitvoering',
+                    'indexing-info-sub'       => 'Zoekindexen en prijscaches opnieuw opbouwen na import. Deze stap wordt automatisch uitgevoerd.',
+                    'indexing-type'           => 'Prijs + ES',
                     'linking-info'            => 'Bronnen die in uitvoering worden gekoppeld',
-                    'progress'                => 'Voortgang:',
+                    'linking-info-sub'        => 'Gerelateerde bronnen en koppelingen tussen records verbinden.',
                     'pending-info'            => 'In afwachting van taakverwerking in wachtrij',
+                    'pending-info-sub'        => 'Uw taak is toegevoegd aan de verwerkingswachtrij. Een worker zal deze binnenkort oppakken.',
+                    'pending-step-complete'   => 'Voltooid',
+                    'pending-step-export'     => 'Exporteren',
+                    'pending-step-import'     => 'Importeren',
+                    'pending-step-queue'      => 'In wachtrij',
+                    'pending-step-validate'   => 'Valideren',
+                    'profile'                 => 'Importprofiel',
+                    'progress'                => 'Voortgang:',
                     'title'                   => 'Importeren',
                     'total-batches'           => 'Totale batches:',
                     'total-created'           => 'Totaal aantal gecreëerde records:',
@@ -1216,25 +1281,23 @@ return [
                     'total-invalid-rows'      => 'Totaal ongeldige rijen:',
                     'total-rows-processed'    => 'Totale rijen verwerkt:',
                     'total-updated'           => 'Totale records bijgewerkt:',
-                    'validate-info'           => 'Klik op Gegevens valideren om uw import te controleren.',
                     'validate'                => 'Bevestigen',
-                    'file_path'               => 'Bestandspad',
-                    'import-now'              => 'Nu importeren',
-                    'action'                  => 'Actiemodus',
+                    'validate-info'           => 'Klik op Gegevens valideren om uw import te controleren.',
                     'validating-info'         => 'De gegevens begonnen met lezen en valideren',
+                    'validating-info-sub'     => 'Schema-integriteit, veldtoewijzingen en datatypes controleren voordat de import begint.',
                     'validation-failed-info'  => 'Uw import is ongeldig.Los de volgende fouten op en probeer het opnieuw.',
-                    'validation-success-info' => 'Uw import is geldig.Klik op Importeren om het importproces te starten.',
+                    'validation-success-info' => 'Uw import is geldig. Import wordt automatisch gestart...',
                 ],
-
-                'create-success'    => 'Import met succes gemaakt.',
-                'delete-failed'     => 'Import verwijderen mislukte onverwacht.',
-                'delete-success'    => 'Importeren met succes verwijderd.',
-                'not-valid'         => 'Import is ongeldig',
-                'nothing-to-import' => 'Er zijn geen middelen om te importeren.',
-                'setup-queue-error' => 'Wijzig uw wachtrijstuurprogramma in "database" of "redis" om het importproces te starten.',
-                'update-success'    => 'Succesvol bijgewerkt bijgewerkt.',
+                'create-success'     => 'Import met succes gemaakt.',
+                'delete-failed'      => 'Import verwijderen mislukte onverwacht.',
+                'delete-success'     => 'Importeren met succes verwijderd.',
+                'invalid-zip'        => 'Het geüploade bestand is geen geldig ZIP-archief.',
+                'not-valid'          => 'Import is ongeldig',
+                'nothing-to-import'  => 'Er zijn geen middelen om te importeren.',
+                'setup-queue-error'  => 'Wijzig uw wachtrijstuurprogramma in "database" of "redis" om het importproces te starten.',
+                'update-success'     => 'Succesvol bijgewerkt bijgewerkt.',
+                'zip-upload-success' => 'ZIP succesvol geüpload en uitgepakt.',
             ],
-
             'exports' => [
                 'create' => [
                     'code'                => 'Code',
@@ -1258,13 +1321,13 @@ return [
                     'results'             => 'Resultaat',
                     'save-btn'            => 'Bewaar export',
                     'settings'            => 'Instellingen',
+                    'filters'             => 'Filters',
                     'skip-errors'         => 'Sla fouten over',
                     'stop-on-errors'      => 'Stop bij fouten',
                     'title'               => 'Creëer export',
                     'type'                => 'Type',
                     'validation-strategy' => 'Validatiestrategie',
                 ],
-
                 'edit' => [
                     'action'              => 'Actie',
                     'allowed-errors'      => 'Fouten toegestaan',
@@ -1288,16 +1351,13 @@ return [
                     'type'                => 'Type',
                     'validation-strategy' => 'Validatiestrategie',
                 ],
-
                 'batch' => [
                     'title' => 'Exporteren toegevoegd in de wachtrij',
                 ],
-
                 'index' => [
                     'button-title' => 'Creëer export',
                     'title'        => 'Exporteren',
-
-                    'datagrid' => [
+                    'datagrid'     => [
                         'actions'               => 'Acties',
                         'completed-at'          => 'Voltooid op',
                         'created'               => 'Gecreëerd',
@@ -1315,13 +1375,14 @@ return [
                         'updated'               => 'Bijgewerkt',
                         'uploaded-file'         => 'Geüpload bestand',
                         'images_directory_path' => 'Afbeeldingenbestand',
+                        'export'                => 'Exporteren',
                     ],
                 ],
-
                 'export' => [
                     'back-btn'                => 'Rug',
                     'completed-batches'       => 'Totale batches voltooid:',
                     'download-error-report'   => 'Download het volledige rapport',
+                    'download-created-file'   => 'Geëxporteerde bestanden downloaden',
                     'edit-btn'                => 'Bewerking',
                     'exported-info'           => 'Gefeliciteerd!Uw export was succesvol.',
                     'exporting-info'          => 'Exporteren in proces',
@@ -1342,9 +1403,10 @@ return [
                     'validating-info'         => 'De gegevens begonnen met lezen en valideren',
                     'validation-failed-info'  => 'Uw export is ongeldig.Los de volgende fouten op en probeer het opnieuw.',
                     'validation-success-info' => 'Uw export is geldig.Klik op Exporteren om het exportproces te starten.',
-                    'action'                  => 'Actiemodus',
+                    'profile'                 => 'Exportprofiel',
+                    'file-format'             => 'Bestandsformaat',
+                    'with-media'              => 'Met media',
                 ],
-
                 'create-success'    => 'Export met succes gecreëerd.',
                 'delete-failed'     => 'Exporteren mislukt onverwacht.',
                 'delete-success'    => 'Export met succes verwijderd.',
@@ -1354,7 +1416,6 @@ return [
                 'update-success'    => 'Exporteren met succes bijgewerkt.',
             ],
         ],
-
         'channels' => [
             'index' => [
                 'create-btn'           => 'Maak kanaal',
@@ -1373,7 +1434,6 @@ return [
                     'root-category' => 'Rootcategorie',
                 ],
             ],
-
             'create' => [
                 'allowed-ips'            => 'Toegestaan ​​IP\'s',
                 'cancel'                 => 'Rug',
@@ -1388,7 +1448,7 @@ return [
                 'favicon-size'           => 'Beeldresolutie zou moeten zijn als 16 px x 16px',
                 'general'                => 'Algemeen',
                 'hostname'               => 'Hostnaam',
-                'hostname-placeholder'   => 'https://www.example.com (Don\'t add slash in the end.)',
+                'hostname-placeholder'   => 'https://www.example.com (Voeg geen schuine streep aan het einde toe.)',
                 'last-delete-error'      => 'Minstens één kanaal is vereist.',
                 'locales'                => 'Landen',
                 'logo'                   => 'Logo',
@@ -1408,7 +1468,6 @@ return [
                 'theme'                  => 'Thema',
                 'title'                  => 'Maak kanaal',
             ],
-
             'edit' => [
                 'allowed-ips'            => 'Toegestaan ​​IP\'s',
                 'back-btn'               => 'Rug',
@@ -1423,7 +1482,7 @@ return [
                 'favicon-size'           => 'Beeldresolutie zou moeten zijn als 16 px x 16px',
                 'general'                => 'Algemeen',
                 'hostname'               => 'Hostnaam',
-                'hostname-placeholder'   => 'https://www.example.com (Don\'t add slash in the end.)',
+                'hostname-placeholder'   => 'https://www.example.com (Voeg geen schuine streep aan het einde toe.)',
                 'last-delete-error'      => 'Minstens één kanaal is vereist.',
                 'locales'                => 'Landen',
                 'select-locales'         => 'Selecteer locaties',
@@ -1446,13 +1505,11 @@ return [
                 'update-success'         => 'Update kanaal succesvol bijwerken',
             ],
         ],
-
         'users' => [
             'index' => [
-                'admin' => 'beheerder',
-                'title' => 'Gebruikers',
-                'user'  => 'Gebruiker',
-
+                'admin'  => 'beheerder',
+                'title'  => 'Gebruikers',
+                'user'   => 'Gebruiker',
                 'create' => [
                     'confirm-password'  => 'bevestig wachtwoord',
                     'email'             => 'E -mail',
@@ -1466,7 +1523,6 @@ return [
                     'user-timezone'     => 'Tijdzone',
                     'select'            => 'Uitkiezen',
                 ],
-
                 'datagrid' => [
                     'actions'  => 'Acties',
                     'active'   => 'Actief',
@@ -1480,12 +1536,10 @@ return [
                     'status'   => 'Toestand',
                     'image'    => 'Afbeelding',
                 ],
-
                 'edit' => [
                     'title' => 'bewerk gebruiker',
                 ],
             ],
-
             'edit' => [
                 'back-btn'         => 'Rug',
                 'confirm-password' => 'bevestig wachtwoord',
@@ -1498,7 +1552,6 @@ return [
                 'status'           => 'Toestand',
                 'title'            => 'bewerk gebruiker',
             ],
-
             'activate-warning'          => 'Uw account moet nog worden geactiveerd, neem contact op met de beheerder.',
             'cannot-change'             => 'Gebruiker kan niet worden gewijzigd',
             'create-success'            => 'Gebruiker met succes gemaakt.',
@@ -1511,13 +1564,11 @@ return [
             'update-success'            => 'Gebruiker met succes bijgewerkt.',
             'current-user-delete-error' => 'De ingelogde gebruiker kan niet worden verwijderd.',
         ],
-
         'roles' => [
             'index' => [
                 'create-btn' => 'Een rol creëren',
                 'title'      => 'Rollen',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'delete'          => 'Verwijderen',
                     'edit'            => 'Bewerking',
                     'id'              => 'ID kaart',
@@ -1525,7 +1576,6 @@ return [
                     'permission-type' => 'Toestemmingstype',
                 ],
             ],
-
             'create' => [
                 'access-control' => 'Toegangscontrole',
                 'all'            => 'Alle',
@@ -1538,7 +1588,6 @@ return [
                 'save-btn'       => 'Rol bewaren',
                 'title'          => 'Een rol creëren',
             ],
-
             'edit' => [
                 'access-control' => 'Toegangscontrole',
                 'all'            => 'Alle',
@@ -1551,7 +1600,6 @@ return [
                 'save-btn'       => 'Rol bewaren',
                 'title'          => 'Rol bewerken',
             ],
-
             'being-used'        => 'De rol wordt al gebruikt bij admin -gebruiker',
             'being-used-by'     => 'De rol wordt al gebruikt door :name',
             'create-success'    => 'Rollen met succes gecreëerd',
@@ -1561,490 +1609,77 @@ return [
             'update-success'    => 'Rollen worden succesvol bijgewerkt',
         ],
     ],
-
-    'reporting' => [
-        'view' => [
-            'day'           => 'Dag',
-            'end-date'      => 'Einddatum',
-            'export-csv'    => 'Exporteer CSV',
-            'export-xls'    => 'Exporteer XLS',
-            'month'         => 'Maand',
-            'not-available' => 'Geen records beschikbaar.',
-            'start-date'    => 'Begin datum',
-            'year'          => 'Jaar',
-        ],
-
-        'empty' => [
-            'info'  => 'Geen gegevens beschikbaar voor geselecteerd interval',
-            'title' => 'Geen gegevens beschikbaar',
-        ],
-    ],
-
     'configuration' => [
         'index' => [
-            'back-btn'                     => 'Rug',
-            'delete'                       => 'Verwijderen',
-            'enable-at-least-one-payment'  => 'Schakel ten minste één betaalmethode in.',
-            'enable-at-least-one-shipping' => 'Schakel ten minste één verzendmethode in.',
-            'no-result-found'              => 'geen resultaat gevonden',
-            'save-btn'                     => 'Configuratie opslaan',
-            'save-message'                 => 'Configuratie met succes opgeslagen',
-            'search'                       => 'Zoekopdracht',
-            'title'                        => 'Configuratie',
-
-            'general' => [
-                'info'  => '',
-                'title' => 'Algemeen',
-
+            'delete'          => 'Verwijderen',
+            'no-result-found' => 'geen resultaat gevonden',
+            'save-btn'        => 'Configuratie opslaan',
+            'save-message'    => 'Configuratie met succes opgeslagen',
+            'search'          => 'Zoekopdracht',
+            'title'           => 'Configuratie',
+            'general'         => [
+                'info'    => '',
+                'title'   => 'Algemeen',
                 'general' => [
                     'info'  => '',
                     'title' => 'Algemeen',
                 ],
-
-                'content' => [
-                    'info'  => 'Stel vergelijkbare opties in, wissellijstopties, afbeeldingenzoekopties, voettekst, schakelvoettekst en aangepaste scripts.',
-                    'title' => 'Inhoud',
-
-                    'settings' => [
-                        'compare-options'     => 'Vergelijk opties',
-                        'image-search-option' => 'Afbeelding zoeken optie',
-                        'title'               => 'Instellingen',
-                        'title-info'          => 'Instellingen verwijzen naar configureerbare keuzes die bepalen hoe een systeem, applicatie of apparaat zich gedraagt, afgestemd op gebruikersvoorkeuren en -vereisten.',
-                        'wishlist-options'    => 'Wensopties',
-                    ],
-
-                    'custom-scripts' => [
-                        'custom-css'        => 'Aangepaste CSS',
-                        'custom-javascript' => 'Aangepast JavaScript',
-                        'title'             => 'Aangepaste scripts',
-                        'title-info'        => 'Aangepaste scripts zijn gepersonaliseerde stukjes code die zijn gemaakt om specifieke functies of functies toe te voegen aan software, waardoor de mogelijkheden uniek worden verbeterd.',
-                    ],
-                ],
-
-                'design' => [
-                    'info'  => 'Stel logo en favicon -pictogram in.',
-                    'title' => 'Ontwerp',
-
-                    'admin-logo' => [
-                        'favicon'    => 'Favicon',
-                        'logo-image' => 'Logo afbeelding',
-                        'title'      => 'Adminlogo',
-                        'title-info' => 'Admin -logo is het onderscheidende beeld of embleem dat de beheerinterface van een systeem of website vertegenwoordigt, vaak aanpasbaar.',
-                    ],
-                ],
-
                 'magic-ai' => [
-                    'info'  => 'Stel magische AI ​​-opties in.',
-                    'title' => 'Magie die je hebt',
-
+                    'info'     => 'Stel magische AI ​​-opties in.',
+                    'title'    => 'Magie die je hebt',
                     'settings' => [
-                        'api-key'        => 'API sleutel',
-                        'enabled'        => 'Ingeschakeld',
-                        'llm-api-domain' => 'LLM API -domein',
-                        'organization'   => 'Organisatie -ID',
-                        'title'          => 'Algemene instellingen',
-                        'title-info'     => 'Verbeter uw ervaring met de Magic AI -functie door uw exclusieve API -sleutel in te voeren en de relevante organisatie aan te geven voor moeiteloze integratie.Grijp de opdracht over uw openai -referenties en pas de instellingen aan op basis van uw specifieke behoeften.',
+                        'enabled'     => 'Ingeschakeld',
+                        'ai-platform' => 'Standaardplatform',
+                        'ai-model'    => 'Standaardmodel',
+                        'title'       => 'Algemene instellingen',
+                        'title-info'  => 'Verbeter uw ervaring met de Magic AI -functie door uw exclusieve API -sleutel in te voeren en de relevante organisatie aan te geven voor moeiteloze integratie.Grijp de opdracht over uw openai -referenties en pas de instellingen aan op basis van uw specifieke behoeften.',
                     ],
-
-                    'content-generation' => [
-                        'category-description-prompt'      => 'Categorie Beschrijving Prompt',
-                        'cms-page-content-prompt'          => 'CMS -pagina -inhoud prompt',
-                        'enabled'                          => 'Ingeschakeld',
-                        'product-description-prompt'       => 'Productbeschrijving prompt',
-                        'product-short-description-prompt' => 'Product korte beschrijving prompt',
-                        'title'                            => 'Inhoudsgeneratie',
-                        'title-info'                       => 'Deze functie maakt de Magic AI voor elke Wysiwyg -editor mogelijk, waar u inhoud wilt verwerken met AI. <br/> <br/> Ga naar een editor om inhoud te genereren.',
-                    ],
-
                     'image-generation' => [
-                        'enabled'    => 'Ingeschakeld',
-                        'title'      => 'Beeldgeneratie',
-                        'title-info' => 'Deze functie maakt de Magic AI mogelijk voor elke upload van afbeeldingen, waarbij u afbeeldingen wilt genereren met Dall-E. <br/> <br/> Wanneer u ingeschakeld, gaat u naar een afbeelding upload om afbeelding te genereren.',
+                        'enabled'     => 'Ingeschakeld',
+                        'ai-platform' => 'Standaardplatform',
+                        'ai-model'    => 'Standaardmodel',
+                        'title'       => 'Beeldgeneratie',
+                        'title-info'  => 'Deze functie maakt de Magic AI mogelijk voor elke upload van afbeeldingen, waarbij u afbeeldingen wilt genereren met Dall-E. <br/> <br/> Wanneer u ingeschakeld, gaat u naar een afbeelding upload om afbeelding te genereren.',
                     ],
-
-                    'translation'   => [
-                        'title'                  => 'Vertaling',
-                        'enabled'                => 'Ingeschakeld',
-                        'title-info'             => 'Met deze functie wordt Magic AI ingeschakeld voor het vertalen van tekst, zodat u tekst moeiteloos van de ene taal naar de andere kunt converteren.',
-                        'global-source-channel'  => 'Bronkanaal',
-                        'global-source-locale'   => 'Bronlocatie',
-                        'translation-model'      => 'Vertaalmodel',
-                        'replace-existing-value' => 'Bestaande waarde vervangen',
-                        'target-channel'         => 'Doelkanaal',
-                        'target-locales'         => 'Doellocaties',
+                    'translation' => [
+                        'title'                       => 'Vertaling',
+                        'enabled'                     => 'Ingeschakeld',
+                        'title-info'                  => 'Met deze functie wordt Magic AI ingeschakeld voor het vertalen van tekst, zodat u tekst moeiteloos van de ene taal naar de andere kunt converteren.',
+                        'ai-platform'                 => 'Standaardplatform',
+                        'global-source-channel'       => 'Bronkanaal',
+                        'global-source-locale'        => 'Bronlocatie',
+                        'translation-model'           => 'Vertaalmodel',
+                        'replace-existing-value'      => 'Bestaande waarde vervangen',
+                        'target-channel'              => 'Doelkanaal',
+                        'target-locales'              => 'Doellocaties',
+                        'replace-existing-value-info' => 'Vervang de bestaande waarde als deze al bestaat.',
                     ],
-
-                    'review-translation' => [
-                        'dolphin-phi'       => 'Dolfijn phi',
-                        'enabled'           => 'Ingeschakeld',
-                        'gpt-3-5-turbo'     => 'Openai GPT-3.5-Turbo',
-                        'llama2'            => 'LLAMA 2',
-                        'llama2-uncensored' => 'Lama 2 ongecensureerd',
-                        'llama2:13b'        => 'Llama 2 13B',
-                        'llama2:70b'        => 'Llama 2 70B',
-                        'llava'             => 'De lava',
-                        'mistral'           => 'Mistral',
-                        'model'             => 'Model',
-                        'orca-mini'         => 'Orka mini',
-                        'phi'               => 'PHI-2',
-                        'starling-lm'       => 'Spreeuw',
-                        'title'             => 'Beoordeel vertaling',
-                        'title-info'        => 'Geef de optie voor de klant of bezoeker om klantrecensie in het Engels te vertalen. <br/> <br/> Wanneer u inschakelt, gaat u naar beoordelen en vindt u de knop \'vertalen naar het Engels\' als u anders beoordeelt dan Engels.',
-                        'vicuna'            => 'Vicuna',
-                    ],
-
-                    'checkout-message' => [
-                        'dolphin-phi'       => 'Dolfijn phi',
-                        'enabled'           => 'Ingeschakeld',
-                        'gpt-3-5-turbo'     => 'Openai GPT-3.5-Turbo',
-                        'llama2'            => 'LLAMA 2',
-                        'llama2-uncensored' => 'Lama 2 ongecensureerd',
-                        'llama2:13b'        => 'Llama 2 13B',
-                        'llama2:70b'        => 'Llama 2 70B',
-                        'llava'             => 'De lava',
-                        'mistral'           => 'Mistral',
-                        'model'             => 'Model',
-                        'orca-mini'         => 'Orka mini',
-                        'phi'               => 'PHI-2',
-                        'prompt'            => 'Snel',
-                        'starling-lm'       => 'Spreeuw',
-                        'title'             => 'Gepersonaliseerd kassa -bericht',
-                        'title-info'        => 'Maak een gepersonaliseerde kassa voor klanten op de bedankpagina, het afstemmen van de inhoud om te resoneren met individuele voorkeuren en de algehele ervaring na de aankoop te verbeteren.',
-                        'vicuna'            => 'Vicuna',
-                    ],
-                ],
-            ],
-
-            'catalog' => [
-                'info'     => 'Catalogus',
-                'title'    => 'Catalogus',
-                'products' => [
-                    'info'  => 'Stel de kassa in de gast in, PAGINA BEWERKING PAGINA, KARTEN BEKIJKEN PAGINA, WINKEL VOOR, REVIEUW EN SOCIETE SOCIALE DELEN.',
-                    'title' => 'Producten',
-
-                    'guest-checkout' => [
-                        'allow-guest-checkout'      => 'Sta gasten uit',
-                        'allow-guest-checkout-hint' => 'Hint:indien ingeschakeld, kan deze optie specifiek voor elk product worden geconfigureerd.',
-                        'title'                     => 'Gastkijker',
-                        'title-info'                => 'Met gastcheck kunnen klanten producten kopen zonder een account te maken, waardoor het aankoopproces wordt gestroomlijnd voor gemak en snellere transacties.',
-                    ],
-
-                    'product-view-page' => [
-                        'allow-no-of-related-products'  => 'Toegestaan ​​aantal gerelateerde producten',
-                        'allow-no-of-up-sells-products' => 'Toegestaan ​​aantal up-sell-producten',
-                        'title'                         => 'Productweergave pagina -configuratie',
-                        'title-info'                    => 'Productweergavepagina -configuratie houdt in dat het aanpassen van de lay -out en elementen op een product \'s display page, enhancing user experience and information presentation.',
-                    ],
-
-                    'cart-view-page' => [
-                        'allow-no-of-cross-sells-products' => 'Aantal aantal cross-sell-producten toegestaan',
-                        'title'                            => 'Karweergave pagina Configuratie',
-                        'title-info'                       => 'Karweergave Paginaconfiguratie omvat het regelen van items, details en opties op de pagina met winkelwagentje, het verbeteren van de interactie van de gebruiker en de aankoopstroom.',
-                    ],
-
-                    'storefront' => [
-                        'buy-now-button-display' => 'Sta klanten in staat om rechtstreeks producten te kopen',
-                        'cheapest-first'         => 'Goedkoopste eerste',
-                        'comma-separated'        => 'Kommagescheiden',
-                        'database'               => 'Database',
-                        'default-list-mode'      => 'Standaardlijstmodus',
-                        'elastic'                => 'Elastische zoekopdracht',
-                        'expensive-first'        => 'Duur eerst',
-                        'from-a-z'               => 'Van A-Z',
-                        'from-z-a'               => 'Van Z-A',
-                        'grid'                   => 'Rooster',
-                        'latest-first'           => 'Nieuwste eerst',
-                        'list'                   => 'Lijst',
-                        'oldest-first'           => 'Oudste eerst',
-                        'products-per-page'      => 'Producten per pagina',
-                        'search-mode'            => 'Zoekmodus',
-                        'sort-by'                => 'Sorteer op',
-                        'title'                  => 'Winkel',
-                        'title-info'             => 'StoreFront is de klantgerichte interface van een online winkel, die producten, categorieën en navigatie presenteert voor een naadloze winkelervaring.',
-                    ],
-
-                    'small-image' => [
-                        'height'     => 'Hoogte',
-                        'title'      => 'Kleine afbeelding',
-                        'title-info' => 'StoreFront is de klantgerichte interface van een online winkel, die producten, categorieën en navigatie presenteert voor een naadloze winkelervaring.',
-                        'width'      => 'Breedte',
-                    ],
-
-                    'medium-image' => [
-                        'height'     => 'Hoogte',
-                        'title'      => 'Gemiddeld beeld',
-                        'title-info' => 'Gemiddeld beeld verwijst naar een beeld van een matige grootte die een balans biedt tussen details en schermruimte, die vaak wordt gebruikt voor visuals.',
-                        'width'      => 'Breedte',
-                    ],
-
-                    'large-image' => [
-                        'height'     => 'Hoogte',
-                        'title'      => 'Groot beeld',
-                        'title-info' => 'Grote afbeelding vertegenwoordigt een beeld met een hoge resolutie die verbeterde details en visuele impact biedt, vaak gebruikt voor het presenteren van producten of afbeeldingen.',
-                        'width'      => 'Breedte',
-                    ],
-
-                    'review' => [
-                        'allow-guest-review' => 'Gastrecensie toestaan',
-                        'title'              => 'Beoordeling',
-                        'title-info'         => 'Evaluatie of beoordeling van iets, vaak met meningen en feedback.',
-                    ],
-
-                    'attribute' => [
-                        'file-upload-size'  => 'Toegestane bestandsuploadgrootte (in KB)',
-                        'image-upload-size' => 'Toegestane afbeelding upload maat (in KB)',
-                        'title'             => 'Attribuut',
-                        'title-info'        => 'Karakteristiek of eigenschap die een object definieert en zijn gedrag, uiterlijk of functie beïnvloedt.',
-                    ],
-
-                    'social-share' => [
-                        'enable-share-email'     => 'Share in e -mail inschakelen?',
-                        'enable-share-facebook'  => 'Schakel delen in Facebook?',
-                        'enable-share-linkedin'  => 'Share in LinkedIn inschakelen?',
-                        'enable-share-pinterest' => 'Inschakelen in Pinterest?',
-                        'enable-share-twitter'   => 'Schakel delen in Twitter?',
-                        'enable-share-whatsapp'  => 'Schakel deel in wat \'s App?',
-                        'enable-social-share'    => 'Sociaal deel inschakelen?',
-                        'share'                  => 'Deel',
-                        'share-message'          => 'Deel bericht',
-                        'title'                  => 'Sociaal aandeel',
-                        'title-info'             => 'Dingen delen van een website met vrienden op sociale mediaplatforms zoals Facebook, Twitter of Instagram.',
-                    ],
-                ],
-
-                'rich-snippets' => [
-                    'info'  => 'Stel producten en categorieën in.',
-                    'title' => 'Rijke fragmenten',
-
-                    'products' => [
-                        'enable'          => 'Inschakelen',
-                        'show-categories' => 'Categorieën tonen',
-                        'show-images'     => 'Toon afbeeldingen',
-                        'show-offers'     => 'Show -aanbiedingen',
-                        'show-ratings'    => 'Toon beoordelingen',
-                        'show-reviews'    => 'Toon beoordelingen',
-                        'show-sku'        => 'Toon Sku',
-                        'show-weight'     => 'Tonen',
-                        'title'           => 'Producten',
-                        'title-info'      => 'Items die beschikbaar zijn voor aankoop of gebruik, aangeboden door een bedrijf of verkoper.',
-                    ],
-
-                    'categories' => [
-                        'enable'                  => 'Inschakelen',
-                        'show-search-input-field' => 'Toon zoekopdracht inputveld',
-                        'title'                   => 'Categorieën',
-                        'title-info'              => '"Categorieën" verwijzen naar groepen of classificaties die vergelijkbare producten of items samen helpen organiseren en groeperen voor eenvoudiger browsen en navigatie.',
-                    ],
-                ],
-            ],
-
-            'customer' => [
-                'info'  => 'Klant',
-                'title' => 'Klant',
-
-                'address' => [
-                    'info'  => 'Stel land, staat, zip en lijnen in een straatadres.',
-                    'title' => 'Adres',
-
-                    'requirements' => [
-                        'city'       => 'Stad',
-                        'country'    => 'Land',
-                        'state'      => 'Staat',
-                        'title'      => 'Vereisten',
-                        'title-info' => 'Vereisten zijn de voorwaarden, functies of specificaties die nodig zijn om iets te vervullen, te bereiken of met succes te bereiken.',
-                        'zip'        => 'Ritssluiting',
-                    ],
-
-                    'information' => [
-                        'street-lines' => 'Lijnen in een straatadres',
-                        'title'        => 'Informatie',
-                        'title-info'   => '"Lijnen in een straatadres" verwijzen naar afzonderlijke segmenten van een adres, vaak gescheiden door komma\'s, die locatie -informatie bieden zoals huisnummer, straat, stad en meer.',
-                    ],
-                ],
-
-                'captcha' => [
-                    'info'  => 'Stel de site -sleutel, geheime sleutel en status in.',
-                    'title' => 'Captcha',
-
-                    'credentials' => [
-                        'secret-key' => 'Geheime sleutel',
-                        'site-key'   => 'Site Key',
-                        'status'     => 'Toestand',
-                        'title'      => 'Referenties',
-                        'title-info' => '"Sitemap:Website Layout -kaart voor zoekmachines. Secret -sleutel:beveiligde code voor gegevenscodering, authenticatie of API -toegangsbescherming."',
-                    ],
-
-                    'validations' => [
-                        'captcha'  => 'Er is iets fout gegaan!Probeer het opnieuw.',
-                        'required' => 'Selecteer Captcha',
-                    ],
-                ],
-
-                'settings' => [
-                    'settings-info' => 'Stel nieuwsbriefabonnement in, e -mailverificatie en sociale inloggen.',
-                    'title'         => 'Instellingen',
-
-                    'newsletter' => [
-                        'subscription' => 'Nieuwsbrief abonnement toestaan',
-                        'title'        => 'Nieuwsbrief abonnement',
-                        'title-info'   => '"Nieuwsbriefinformatie" bevat updates, aanbiedingen of inhoud die regelmatig wordt gedeeld via e -mails met abonnees, waardoor ze geïnformeerd en betrokken houden.',
-                    ],
-
-                    'email' => [
-                        'email-verification' => 'Sta e -mailverificatie toe',
-                        'title'              => 'email verificatie',
-                        'title-info'         => '"E -mailverificatie" bevestigt de authenticiteit van een e -mailadres, vaak door een bevestigingslink te verzenden, de betrouwbaarheid van de accountbeveiliging en communicatie te verbeteren.',
-                    ],
-
-                    'social-login' => [
-                        'enable-facebook'   => 'Schakel Facebook in',
-                        'enable-github'     => 'Schakel GitHub in',
-                        'enable-google'     => 'Schakel Google in',
-                        'enable-linkedin'   => 'Schakel LinkedIn in',
-                        'enable-twitter'    => 'Schakel Twitter in',
-                        'social-login'      => 'Sociale login',
-                        'social-login-info' => '"Social Login" stelt gebruikers in staat om toegang te krijgen tot websites met behulp van hun sociale media -accounts, die registratie en inlogprocessen voor gemak stroomlijnen.',
-                    ],
-                ],
-            ],
-
-            'email' => [
-                'info'  => 'E -mail',
-                'title' => 'E -mail',
-
-                'email-settings' => [
-                    'admin-email'           => 'Admin -e -mail',
-                    'admin-email-tip'       => 'Het e -mailadres van de admin voor dit kanaal om e -mails te ontvangen',
-                    'admin-name'            => 'Beheerdernaam',
-                    'admin-name-tip'        => 'Deze naam wordt weergegeven in alle admin -e -mails',
-                    'admin-page-limit'      => 'Standaarditems per pagina (admin)',
-                    'email-sender-name'     => 'E -mailafzendernaam',
-                    'email-sender-name-tip' => 'Deze naam wordt weergegeven in de inbox van de klanten',
-                    'info'                  => 'Stel de naam van de e -mailafzender in, winkel -e -mailadres, beheerdernaam en admin -e -mailadres.',
-                    'shop-email-from'       => 'Koop e -mailadres',
-                    'shop-email-from-tip'   => 'Het e -mailadres van dit kanaal om e -mails naar uw klanten te verzenden',
-                    'title'                 => 'Email instellingen',
-                ],
-
-                'notifications' => [
-                    'info'      => '"Kennisgeving" is een bericht of waarschuwing dat gebruikers informeert over gebeurtenissen, updates of acties, het verbeteren van gebruikersbetrokkenheid en bewustzijn.',
-                    'new-admin' => 'Stuur een e-mail van de bevestiging naar de admin',
-                    'title'     => 'Meldingen',
-                ],
-            ],
-
-            'sales' => [
-                'info'  => 'verkoop',
-                'title' => 'verkoop',
-
-                'shipping' => [
-                    'info'  => 'Stel verzendinformatie in.',
-                    'title' => 'Verzenden',
-
-                    'origin' => [
-                        'bank-details'   => 'Bankgegevens',
-                        'city'           => 'Stad',
-                        'contact-number' => 'Contact nummer',
-                        'country'        => 'Land',
-                        'state'          => 'Staat',
-                        'store-name'     => 'Winkel naam',
-                        'street-address' => 'Adres',
-                        'title'          => 'Oorsprong',
-                        'title-info'     => 'Verzending Origin verwijst naar de locatie waar goederen of producten afkomstig zijn voordat ze naar hun bestemming worden getransporteerd.',
-                        'vat-number'     => 'Btw-nummer',
-                        'zip'            => 'Ritssluiting',
-                    ],
-                ],
-
-                'shipping-methods' => [
-                    'info'  => 'Informatie voor verzendmethoden Stel verzendmethoden in',
-                    'title' => 'Verzendmethoden',
-
-                    'free-shipping' => [
-                        'description' => 'Beschrijving',
-                        'page-title'  => 'Geen verzendkosten',
-                        'status'      => 'Toestand',
-                        'title'       => 'Titel',
-                        'title-info'  => '"Gratis verzending" verwijst naar een verzendmethode waar de verzendkosten worden afgezien, en de verkoper dekt de verzendkosten voor het leveren van goederen aan de koper.',
-                    ],
-
-                    'flat-rate-shipping' => [
-                        'description' => 'Beschrijving',
-                        'page-title'  => 'Vlakke verzending',
-                        'rate'        => 'Tarief',
-                        'status'      => 'Toestand',
-                        'title'       => 'Titel',
-                        'title-info'  => 'Vlakke verzending is een verzendmethode waarbij een vaste vergoeding in rekening wordt gebracht voor verzending, ongeacht het gewicht, de grootte of de afstand van het pakket.Dit vereenvoudigt de verzendkosten en kan voordelig zijn voor zowel kopers als verkopers.',
-                        'type'        => 'Type',
-                    ],
-                ],
-
-                'invoice-settings' => [
-                    'info'  => 'Stel het factuurnummer in, betalingsvoorwaarden, factuurslipontwerp en factuurherinneringen.',
-                    'title' => 'Factuurinstellingen',
-
-                    'invoice-number' => [
-                        'generator'  => 'Factuurnummergenerator',
-                        'length'     => 'Factuurnummerlengte',
-                        'prefix'     => 'Factuurnummer voorvoegsel',
-                        'suffix'     => 'Factuurnummer achtervoegsel',
-                        'title'      => 'Factuurnummerinstellingen',
-                        'title-info' => 'Configuratie van regels of parameters voor het genereren en toewijzen van unieke identificatienummers aan facturen voor organisatorische en trackingdoeleinden.',
-                    ],
-
-                    'payment-terms' => [
-                        'due-duration'      => 'De nodige duur',
-                        'due-duration-day'  => ':due-duration Day',
-                        'due-duration-days' => ':due-duration Days',
-                        'title'             => 'Betaalvoorwaarden',
-                        'title-info'        => 'Akkoord tot voorwaarden die dicteren wanneer en hoe betaling voor goederen of diensten door de koper aan de verkoper moet worden gedaan.',
-                    ],
-
-                    'invoice-slip-design' => [
-                        'logo'       => 'Logo',
-                        'title'      => 'Factuur slipontwerp',
-                        'title-info' => 'Visuele lay -out en opmaak van een factuurslip, inclusief bedrijfsbranding, specificisatie, prijzen en betalingsgegevens voor professionele presentatie.',
-                    ],
-
-                    'invoice-reminders' => [
-                        'interval-between-reminders' => 'Interval tussen herinneringen',
-                        'maximum-limit-of-reminders' => 'Maximale limiet van herinneringen',
-                        'title'                      => 'Factuurherinneringen',
-                        'title-info'                 => 'Geautomatiseerde meldingen of communicatie die naar klanten is verzonden om hen te herinneren aan aankomende of achterstallige betalingen voor facturen.',
-                    ],
-                ],
-            ],
-
-            'taxes' => [
-                'title' => 'Belastingen',
-
-                'catalog' => [
-                    'title'      => 'Catalogus',
-                    'title-info' => 'Stel prijzen en standaardlocaties in',
-
-                    'pricing' => [
-                        'title'         => 'Prijzen',
-                        'title-info'    => 'Details over de kosten van goederen of diensten, inclusief basisprijs, kortingen, belastingen en extra kosten. Informatie',
-                        'tax-inclusive' => 'Belasting inclusief',
-                    ],
-
-                    'default-location-calculation' => [
-                        'default-country'   => 'Standaardland',
-                        'default-post-code' => 'Standaard postcode',
-                        'default-state'     => 'Standaardstatus',
-                        'title'             => 'Standaard locatieberekening',
-                        'title-info'        => 'Geautomatiseerde bepaling van een standaard of initiële locatie op basis van vooraf gedefinieerde factoren of instellingen.',
+                    'agentic-pim' => [
+                        'title'                     => 'Agentisch PIM',
+                        'title-info'                => 'Configureer de AI-agent chat, autonome verrijkingsworkflows en kwaliteitsmonitoring. Deze functies maken conversationeel productbeheer en proactief catalogusonderhoud mogelijk.',
+                        'enabled'                   => 'AI-agent chat inschakelen',
+                        'enabled-info'              => 'Schakel de zwevende AI-chatwidget in voor conversationeel productbeheer met meer dan 27 toolacties.',
+                        'max-steps'                 => 'Max. agentstappen per beurt',
+                        'max-steps-info'            => 'Maximaal aantal tool-aanroep-iteraties dat de AI-agent per gebruikersbericht kan uitvoeren. Hogere waarden maken complexere meerstapsoperaties mogelijk.',
+                        'daily-token-budget'        => 'Dagelijks tokenbudget',
+                        'daily-token-budget-info'   => 'Maximale AI-tokens (invoer + uitvoer) die per dag door alle gebruikers kunnen worden verbruikt. Stel in op 0 voor onbeperkt. Helpt bij het beheersen van API-kosten.',
+                        'auto-enrichment'           => 'Auto-verrijking bij productaanmaak',
+                        'auto-enrichment-info'      => 'Genereer automatisch ontbrekende beschrijvingen, categorieën en SEO-inhoud wanneer nieuwe producten worden aangemaakt of geïmporteerd.',
+                        'quality-monitor'           => 'Cataloguskwaliteitsmonitor',
+                        'quality-monitor-info'      => 'Voer geplande scans uit om onvolledige producten, ontbrekende vertalingen, dubbele vermeldingen en prijsafwijkingen te detecteren.',
+                        'confidence-threshold'      => 'Vertrouwensdrempel',
+                        'confidence-threshold-info' => 'Minimale vertrouwensscore (0-1) waarmee door AI gegenereerde wijzigingen automatisch worden toegepast. Onder deze drempel worden wijzigingen in de wachtrij geplaatst voor menselijke beoordeling.',
+                        'approval-mode'             => 'Wijzigingsgoedkeuringsmodus',
+                        'approval-mode-info'        => 'Bepaalt hoe de AI-agent schrijfbewerkingen afhandelt. "Bevestigen en toepassen": agent stelt waarden voor in de chat, wacht op bevestiging en voert vervolgens uit. "Strikte bevestiging": hetzelfde maar verifieert ook na elke wijziging. "Alleen suggereren": beschrijft wijzigingen maar voert nooit uit (alleen-lezen).',
                     ],
                 ],
             ],
         ],
-
         'integrations' => [
             'index' => [
                 'create-btn' => 'Creëren',
                 'title'      => 'Integratie',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'delete'          => 'Verwijderen',
                     'edit'            => 'Bewerking',
                     'id'              => 'ID kaart',
@@ -2054,7 +1689,6 @@ return [
                     'permission-type' => 'Toestemmingstype',
                 ],
             ],
-
             'create' => [
                 'access-control' => 'Toegangscontrole',
                 'all'            => 'Alle',
@@ -2067,7 +1701,6 @@ return [
                 'save-btn'       => 'Redden',
                 'title'          => 'Nieuwe integratie',
             ],
-
             'edit' => [
                 'access-control' => 'Toegangscontrole',
                 'all'            => 'Alle',
@@ -2085,7 +1718,6 @@ return [
                 'save-btn'       => 'Redden',
                 'title'          => 'Integratie bewerken',
             ],
-
             'being-used'                     => 'API -integratie wordt al gebruikt in admin -gebruiker',
             'create-success'                 => 'API -integratie met succes gecreëerd',
             'delete-failed'                  => 'API -integratie is verwijderd mislukt',
@@ -2096,40 +1728,155 @@ return [
             're-generate-secret-key-success' => 'API Secret Key wordt met succes geregenereerd',
             'client-not-found'               => 'Klant niet gevonden',
         ],
-
         'prompt' => [
             'datagrid' => [
-                'id'            => 'ID',
-                'title'         => 'Titel',
-                'prompt'        => 'Prompt',
-                'type'          => 'Type',
-                'created-at'    => 'Aangemaakt op',
-                'updated-at'    => 'Bijgewerkt op',
-                'actions'       => 'Acties',
-                'edit'          => 'Bewerken',
-                'delete'        => 'Verwijderen',
-                'product'       => 'Product',
-                'category'      => 'Categorie',
+                'id'               => 'ID',
+                'title'            => 'Titel',
+                'prompt'           => 'Prompt',
+                'type'             => 'Type',
+                'purpose'          => 'Doel',
+                'text-generation'  => 'Tekstgeneratie',
+                'image-generation' => 'Beeldgeneratie',
+                'translation'      => 'Vertaling',
+                'created-at'       => 'Aangemaakt op',
+                'updated-at'       => 'Bijgewerkt op',
+                'actions'          => 'Acties',
+                'edit'             => 'Bewerken',
+                'delete'           => 'Verwijderen',
+                'product'          => 'Product',
+                'category'         => 'Categorie',
             ],
             'create' => [
-                'title'         => 'Prompt',
-                'create-btn'    => 'Prompt maken',
-                'edit-title'    => 'Prompt bewerken',
-                'create-title'  => 'Nieuwe prompt maken',
-                'label-title'   => 'Titel',
-                'type'          => 'Type',
-                'prompt'        => 'Prompt',
-                'save-btn'      => 'Prompt opslaan',
+                'title'               => 'Prompt',
+                'create-btn'          => 'Prompt maken',
+                'edit-title'          => 'Prompt bewerken',
+                'create-title'        => 'Nieuwe prompt maken',
+                'label-title'         => 'Titel',
+                'purpose'             => 'Doel',
+                'text-generation'     => 'Tekstgeneratie',
+                'image-generation'    => 'Afbeeldingsgeneratie',
+                'select-purpose'      => 'Selecteer doel',
+                'select-model'        => '-- Selecteer model --',
+                'loading-models'      => 'Modellen laden...',
+                'no-models-available' => 'Geen modellen beschikbaar. Selecteer een platform of configureer er een in het tabblad Platforms.',
+                'type'                => 'Type',
+                'prompt'              => 'Prompt',
+                'save-btn'            => 'Prompt opslaan',
             ],
             'message' => [
-                'save-success'      => 'Prompt succesvol opgeslagen.',
-                'update-success'    => 'Prompt succesvol bijgewerkt.',
-                'delete-success'    => 'Prompt succesvol verwijderd.',
-                'delete-fail'       => 'Prompt verwijderen mislukt.',
+                'save-success'   => 'Prompt succesvol opgeslagen.',
+                'update-success' => 'Prompt succesvol bijgewerkt.',
+                'delete-success' => 'Prompt succesvol verwijderd.',
+                'delete-fail'    => 'Prompt verwijderen mislukt.',
+            ],
+        ],
+        'system-prompt' => [
+            'datagrid' => [
+                'id'          => 'ID',
+                'title'       => 'Titel',
+                'tone'        => 'Toon',
+                'max-tokens'  => 'Max tokens',
+                'temperature' => 'Temperatuur',
+                'status'      => 'Status',
+                'created-at'  => 'Aangemaakt op',
+                'updated-at'  => 'Bijgewerkt op',
+                'actions'     => 'Acties',
+                'save'        => 'Opslaan',
+                'edit'        => 'Bewerken',
+                'delete'      => 'verwijderen',
+            ],
+            'create' => [
+                'title'        => 'Systeemprompt',
+                'create-btn'   => 'Systeemprompt aanmaken',
+                'edit-title'   => 'Systeemprompt bewerken',
+                'create-title' => 'Nieuwe systeemprompt aanmaken',
+                'label-title'  => 'Titel',
+                'max-tokens'   => 'Max uitvoer-tokens',
+                'temperature'  => 'Temperatuur',
+                'type'         => 'Type',
+                'prompt'       => 'Prompt',
+                'save-btn'     => 'Prompt opslaan',
+                'prompt-tone'  => 'Prompttoon',
+            ],
+            'message' => [
+                'save-success'   => 'Systeemprompt succesvol opgeslagen.',
+                'update-success' => 'Systeemprompt succesvol bijgewerkt.',
+                'delete-success' => 'Systeemprompt succesvol verwijderd.',
+                'delete-fail'    => 'Verwijdering van systeemprompt mislukt.',
+            ],
+        ],
+        'platform' => [
+            'title'           => 'AI Platforms',
+            'create-btn'      => 'Platform toevoegen',
+            'create-title'    => 'AI-platform toevoegen',
+            'edit-title'      => 'AI-platform bewerken',
+            'save-btn'        => 'Opslaan',
+            'saving'          => 'Opslaan',
+            'test-connection' => 'Verbinding testen',
+            'setup'           => [
+                'title'              => 'Aan de slag met Magic AI',
+                'description'        => 'Verbind uw AI-provider om inhoudsgeneratie, beeldcreatie en vertaling mogelijk te maken met AI. Voeg uw eerste platform toe om te beginnen.',
+                'step-1'             => 'Kies een provider',
+                'step-2'             => 'Voer uw API-sleutel in',
+                'step-3'             => 'Selecteer modellen en sla op',
+                'add-first'          => 'Voeg uw eerste platform toe',
+                'no-default-warning' => 'Er is geen standaardplatform ingesteld. Stel een platform in als standaard om AI-functies in de hele applicatie in te schakelen.',
+                'no-platform-hint'   => 'Nog geen platformen geconfigureerd. Ga naar het tabblad Platformen om uw eerste AI-provider toe te voegen.',
+                'lightning-icon'     => 'Magische AI',
+                'warning-icon'       => 'Waarschuwing',
+            ],
+            'testing'         => 'Testen',
+            'fetch-models'    => 'Modellen ophalen',
+            'fetching-models' => 'Ophalen',
+            'set-default'     => 'Instellen als standaard',
+            'datagrid'        => [
+                'label'      => 'Label',
+                'provider'   => 'Provider',
+                'models'     => 'Modellen',
+                'default'    => 'Standaard',
+                'status'     => 'Status',
+                'created-at' => 'Aangemaakt op',
+                'edit'       => 'Bewerken',
+                'delete'     => 'Verwijderen',
+            ],
+            'fields' => [
+                'label'                    => 'Label',
+                'provider'                 => 'Provider',
+                'select-provider'          => '-- Selecteer provider --',
+                'api-url'                  => 'API URL',
+                'api-url-hint'             => 'Vooraf ingevuld met het standaard eindpunt. Bewerk alleen bij gebruik van een proxy of aangepaste implementatie.',
+                'api-key'                  => 'API-sleutel',
+                'models'                   => 'Modellen',
+                'custom-model-placeholder' => 'Voer aangepast model-ID in...',
+                'add'                      => 'Toevoegen',
+                'enter-key-to-fetch'       => 'Voer uw API-sleutel hierboven in om automatisch beschikbare modellen op te halen.',
+                'search-models'            => 'Modellen zoeken...',
+                'no-models-match'          => 'Geen modellen komen overeen met uw zoekopdracht.',
+                'azure-deployment'         => 'Implementatienaam',
+                'azure-api-version'        => 'API-versie',
+                'is-default'               => 'Instellen als standaard',
+                'status'                   => 'Status',
+                'use-default'              => '-- Standaardplatform gebruiken --',
+                'use-default-hint'         => 'Laat leeg om het platform te gebruiken dat als standaard is gemarkeerd. Platformen gemarkeerd met * zijn standaard.',
+                'no-image-platform'        => 'Geen beeldcompatibel platform geconfigureerd. Voeg eerst een OpenAI-, Gemini- of xAI-platform toe.',
+                'image-platform-hint'      => 'Alleen platformen die beeldgeneratie ondersteunen worden weergegeven (OpenAI, Gemini, xAI).',
+                'remove-model'             => 'Model :model verwijderen',
+                'invalid-model-name'       => 'Ongeldige modelnaam. Gebruik alleen letters, cijfers, koppeltekens, punten, dubbele punten en schuine strepen (bijv. gpt-4o, claude-3-sonnet).',
+            ],
+            'message' => [
+                'save-success'          => 'Platform succesvol opgeslagen.',
+                'update-success'        => 'Platform succesvol bijgewerkt.',
+                'delete-success'        => 'Platform succesvol verwijderd.',
+                'delete-fail'           => 'Verwijdering van platform mislukt.',
+                'cannot-delete-default' => 'Kan het enige standaardplatform niet verwijderen.',
+                'set-default-success'   => 'Platform succesvol als standaard ingesteld.',
+                'test-success'          => 'Verbinding succesvol geverifieerd!',
+                'test-fail'             => 'Verbindingstest mislukt',
+                'fetch-models-fail'     => 'Modellen konden niet worden opgehaald',
+                'invalid-model-names'   => 'Ongeldige modelnamen: :names. Modelnamen moeten beginnen met een letter of cijfer en mogen alleen letters, cijfers, koppeltekens, punten, dubbele punten en schuine strepen bevatten.',
             ],
         ],
     ],
-
     'components' => [
         'layouts' => [
             'header' => [
@@ -2139,124 +1886,78 @@ return [
                 'my-account'    => 'Mijn rekening',
                 'notifications' => 'Meldingen',
                 'visit-shop'    => 'Bezoek de winkel',
-
-                'mega-search' => [
-                    'categories'                      => 'Categorieën',
-                    'customers'                       => 'Klanten',
-                    'explore-all-categories'          => 'Verken alle categorieën',
-                    'explore-all-customers'           => 'Verken alle klanten',
-                    'explore-all-matching-categories' => 'Verken alle categorieën die overeenkomen met ":query" (:count)',
-                    'explore-all-matching-customers'  => 'Verken alle klanten die overeenkomen met ":query" (:count)',
-                    'explore-all-matching-orders'     => 'Verken alle bestellingen die overeenkomen met ":query" (:count)',
-                    'explore-all-matching-products'   => 'Verken alle producten die ":query" overeenkomen (:count)',
-                    'explore-all-orders'              => 'Verken alle bestellingen',
-                    'explore-all-products'            => 'Verken alle producten',
-                    'orders'                          => 'Bevelen',
-                    'products'                        => 'Producten',
-                    'sku'                             => 'Ski: :sku',
-                    'title'                           => 'Mega zoeken',
-                ],
             ],
-
             'sidebar' => [
-                'attribute-families'       => 'Teken families toe',
-                'attribute-groups'         => 'Attribuutgroepen',
-                'attributes'               => 'Attributen',
-                'history'                  => 'Geschiedenis',
-                'edit-section'             => 'Gegevens',
-                'general'                  => 'Algemeen',
-                'campaigns'                => 'Campagnes',
-                'catalog'                  => 'Catalogus',
-                'categories'               => 'Categorieën',
-                'category_fields'          => 'Categorievelden',
-                'channels'                 => 'Kanalen',
-                'cms'                      => 'Cms',
-                'collapse'                 => 'Instorten',
-                'communications'           => 'Communicatie',
-                'configure'                => 'Configuratie',
-                'currencies'               => 'Valuta',
-                'customers'                => 'Klanten',
-                'dashboard'                => 'Dashboard',
-                'data-transfer'            => 'Data overdracht',
-                'discount'                 => 'Korting',
-                'email-templates'          => 'E -mailsjablonen',
-                'events'                   => 'Evenementen',
-                'exchange-rates'           => 'Wisselkoersen',
-                'groups'                   => 'Groepen',
-                'tracker'                  => 'Job Tracker',
-                'imports'                  => 'Importeren',
-                'exports'                  => 'Exporteren',
-                'invoices'                 => 'Facturen',
-                'locales'                  => 'Landen',
-                'magic-ai'                 => 'Magie die je hebt',
-                'marketing'                => 'Marketing',
-                'mode'                     => 'Donkere modus',
-                'newsletter-subscriptions' => 'Nieuwsbrief Abonnementen',
-                'orders'                   => 'Bevelen',
-                'products'                 => 'Producten',
-                'promotions'               => 'Promoties',
-                'refunds'                  => 'Terugbetalingen',
-                'reporting'                => 'Rapportage',
-                'reviews'                  => 'Recensies',
-                'roles'                    => 'Rollen',
-                'sales'                    => 'verkoop',
-                'search-seo'               => 'Zoeken & seo',
-                'search-synonyms'          => 'Zoek synoniemen',
-                'search-terms'             => 'Zoektermen',
-                'settings'                 => 'Instellingen',
-                'shipments'                => 'Zendingen',
-                'sitemaps'                 => 'Sitemaps',
-                'tax-categories'           => 'Belastingcategorieën',
-                'tax-rates'                => 'BELASTINGTARIEVEN',
-                'taxes'                    => 'Belastingen',
-                'themes'                   => 'Thema\'s',
-                'transactions'             => 'Transacties',
-                'url-rewrites'             => 'URL -herschrijvingen',
-                'users'                    => 'Gebruikers',
-                'integrations'             => 'Integratie',
-                'prompt'                   => 'Prompt',
-                'general-tab'              => 'Configuratie',
+                'attribute-families' => 'Teken families toe',
+                'attribute-groups'   => 'Attribuutgroepen',
+                'attributes'         => 'Attributen',
+                'history'            => 'Geschiedenis',
+                'edit-section'       => 'Gegevens',
+                'general'            => 'Algemeen',
+                'catalog'            => 'Catalogus',
+                'categories'         => 'Categorieën',
+                'category_fields'    => 'Categorievelden',
+                'channels'           => 'Kanalen',
+                'collapse'           => 'Instorten',
+                'configure'          => 'Configuratie',
+                'currencies'         => 'Valuta',
+                'dashboard'          => 'Dashboard',
+                'data-transfer'      => 'Data overdracht',
+                'groups'             => 'Groepen',
+                'tracker'            => 'Taak Tracker',
+                'imports'            => 'Importeren',
+                'exports'            => 'Exporteren',
+                'locales'            => 'Landen',
+                'magic-ai'           => 'Magie die je hebt',
+                'mode'               => 'Donkere modus',
+                'products'           => 'Producten',
+                'roles'              => 'Rollen',
+                'settings'           => 'Instellingen',
+                'themes'             => 'Thema\'s',
+                'users'              => 'Gebruikers',
+                'integrations'       => 'Integratie',
+                'prompt'             => 'Prompt',
+                'general-tab'        => 'Configuratie',
             ],
         ],
-
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => 'Er zijn geen records geselecteerd.',
                 'must-select-a-mass-action-option' => 'U moet een massa -actie selecteren \'s option.',
                 'must-select-a-mass-action'        => 'U moet een massa -actie selecteren.',
             ],
-
             'toolbar' => [
-                'length-of' => ':length of',
-                'van'       => 'van',
-                'per-page'  => 'Per pagina',
-                'results'   => ':Totale resultaten',
-                'selected'  => ':Totaal geselecteerd',
-
+                'length-of'    => ':length van',
+                'of'           => 'of',
+                'per-page'     => 'Per pagina',
+                'results'      => ':total resultaten',
+                'selected'     => ':total geselecteerd',
                 'mass-actions' => [
                     'submit'        => 'Indienen',
                     'select-option' => 'Selecteer optie',
                     'select-action' => 'Selecteer actie',
                 ],
-
                 'filter' => [
                     'title' => 'Filter',
                 ],
-
                 'search_by' => [
                     'code'       => 'Zoeken op code',
                     'code_or_id' => 'Zoek op code of ID',
                 ],
-
                 'search' => [
                     'title' => 'Zoekopdracht',
                 ],
-
                 'manage-columns' => [
                     'title' => 'Kolommen',
                 ],
+                'pagination' => [
+                    'first-page'    => 'Eerste pagina',
+                    'previous-page' => 'Vorige pagina',
+                    'next-page'     => 'Volgende pagina',
+                    'last-page'     => 'Laatste pagina',
+                    'page-number'   => 'Paginanummer',
+                ],
             ],
-
             'filters' => [
                 'select'   => 'Uitkiezen',
                 'title'    => 'Breng filters aan',
@@ -2267,17 +1968,14 @@ return [
                         'no-results'        => 'Geen resultaat gevonden...',
                     ],
                 ],
-
                 'custom-filters' => [
                     'clear-all' => 'Wis alles',
                     'title'     => 'Aangepaste filters',
                 ],
-
                 'boolean-options' => [
                     'false' => 'Vals',
                     'true'  => 'WAAR',
                 ],
-
                 'date-options' => [
                     'last-month'        => 'Vorige maand',
                     'last-six-months'   => 'Laatste 6 maanden',
@@ -2289,12 +1987,10 @@ return [
                     'yesterday'         => 'Gisteren',
                 ],
             ],
-
             'table' => [
                 'actions'              => 'Acties',
                 'no-records-available' => 'Geen records beschikbaar.',
             ],
-
             'manage-columns' => [
                 'title'             => 'Kolommen beheren',
                 'available-columns' => 'Beschikbare kolommen',
@@ -2302,7 +1998,6 @@ return [
                 'apply-btn'         => 'Toepassen',
             ],
         ],
-
         'modal' => [
             'confirm' => [
                 'agree-btn'    => 'Mee eens zijn',
@@ -2310,14 +2005,12 @@ return [
                 'message'      => 'Weet je zeker dat je deze actie wilt uitvoeren?',
                 'title'        => 'Weet je het zeker?',
             ],
-
             'delete' => [
                 'agree-btn'    => 'Verwijderen',
                 'disagree-btn' => 'Annuleren',
                 'message'      => 'Weet je zeker dat je wilt verwijderen?',
                 'title'        => 'Bevestig verwijdering',
             ],
-
             'history' => [
                 'title'           => 'Geschiedenis preview',
                 'subtitle'        => 'Bekijk snel uw updates en wijzigingen.',
@@ -2331,7 +2024,6 @@ return [
                 'no-history'      => 'Geen geschiedenis gevonden',
             ],
         ],
-
         'products' => [
             'search' => [
                 'add-btn'       => 'Voeg geselecteerd product toe',
@@ -2343,7 +2035,6 @@ return [
                 'title'         => 'Selecteer producten',
             ],
         ],
-
         'media' => [
             'images' => [
                 'add-image-btn'      => 'Voeg afbeelding toe',
@@ -2355,8 +2046,7 @@ return [
                 'allowed-types'      => 'PNG, JPEG, JPG',
                 'not-allowed-error'  => 'Alleen afbeeldingenbestanden (.JPEG, .JPG, .png, ..) zijn toegestaan.',
                 'upload-media-btn'   => 'Media uploaden',
-
-                'ai-generation' => [
+                'ai-generation'      => [
                     '1024x1024'        => '1024x1024',
                     '1024x1792'        => '1024x1792',
                     '1792x1024'        => '1792x1024',
@@ -2376,32 +2066,30 @@ return [
                     'standard'         => 'Standaard',
                     'title'            => 'AI -beeldgeneratie',
                 ],
-
                 'placeholders' => [
                     'front'     => 'Voorkant',
                     'next'      => 'Volgende',
                     'size'      => 'Maat',
                     'use-cases' => 'Use cases',
-                    'zoom'      => 'Zoom',
+                    'zoom'      => 'Inzoomen',
                 ],
             ],
-
+            'gallery' => [
+                'not-allowed-error' => 'Alleen beeld- en videobestanden zijn toegestaan. (.mp4, .jpg ..)',
+            ],
             'videos' => [
                 'add-video-btn'     => 'Voeg video toe',
                 'allowed-types'     => 'MP4, WebM, MKV',
                 'not-allowed-error' => 'Alleen videobestanden (.mp4, .mov, .ogg ..) zijn toegestaan.',
             ],
-
             'files' => [
                 'add-file-btn'      => 'Bestand toevoegen',
                 'allowed-types'     => 'PDF',
                 'not-allowed-error' => 'Alleen PDF -bestanden zijn toegestaan',
             ],
         ],
-
         'tinymce' => [
-            'ai-btn-tile' => 'Magie die je hebt',
-
+            'ai-btn-tile'   => 'Magie die je hebt',
             'ai-generation' => [
                 'apply'                  => 'Toepassen',
                 'generate'               => 'Genereren',
@@ -2410,7 +2098,14 @@ return [
                 'generating'             => 'Genereren ...',
                 'prompt'                 => 'Snel',
                 'title'                  => 'AI -hulp',
+                'platform'               => 'Platform',
                 'model'                  => 'Model',
+                'rich-preview'           => 'Uitgebreide voorvertoning',
+                'system-prompt'          => 'Systeemprompt',
+                'select-system-prompt'   => 'Selecteer systeemprompt',
+                'tone-instructions'      => 'Toon / Instructies',
+                'max-tokens'             => 'Max tokens',
+                'temperature'            => 'Temperatuur',
                 'gpt-3-5-turbo'          => 'Openai GPT-3.5-Turbo',
                 'llama2'                 => 'LLAMA 2',
                 'mistral'                => 'Mistral',
@@ -2427,27 +2122,20 @@ return [
             ],
         ],
     ],
-
     'acl' => [
         'addresses'                => 'Adressen',
         'attribute-families'       => 'Teken families toe',
         'attribute-groups'         => 'Attribuutgroepen',
         'attributes'               => 'Attributen',
-        'campaigns'                => 'Campagnes',
         'cancel'                   => 'Annuleren',
-        'cart-rules'               => 'Cart -regels',
-        'catalog-rules'            => 'Catalogusregels',
         'catalog'                  => 'Catalogus',
         'categories'               => 'Categorieën',
         'channels'                 => 'Kanalen',
-        'cms'                      => 'Cms',
-        'communications'           => 'Communicatie',
         'configure'                => 'Configureren',
         'configuration'            => 'Configuratie',
         'copy'                     => 'Kopiëren',
         'create'                   => 'Creëren',
         'currencies'               => 'Valuta',
-        'customers'                => 'Klanten',
         'dashboard'                => 'Dashboard',
         'data-transfer'            => 'Data overdracht',
         'delete'                   => 'Verwijderen',
@@ -2460,6 +2148,9 @@ return [
         'invoices'                 => 'Facturen',
         'locales'                  => 'Landen',
         'magic-ai'                 => 'Magie die je hebt',
+        'magic-ai-general'         => 'Algemeen',
+        'magic-ai-prompt'          => 'Prompt',
+        'magic-ai-system-prompt'   => 'Systeemprompt',
         'marketing'                => 'Marketing',
         'newsletter-subscriptions' => 'Nieuwsbrief Abonnementen',
         'note'                     => 'Opmerking',
@@ -2487,56 +2178,50 @@ return [
         'users'                    => 'Gebruikers',
         'category_fields'          => 'Categorievelden',
         'view'                     => 'Weergave',
+        'execute'                  => 'Taak Uitvoeren',
         'history'                  => 'Geschiedenis',
         'restore'                  => 'Herstellen',
         'integrations'             => 'Integratie',
         'api'                      => 'API',
+        'tracker'                  => 'Taak Tracker',
+        'exports'                  => 'Exporteren',
         'mass-update'              => 'Massabijwerking',
         'mass-delete'              => 'Massaverwijdering',
     ],
-
     'errors' => [
         'dashboard' => 'Dashboard',
         'go-back'   => 'Ga terug',
         'support'   => 'Als het probleem aanhoudt, neem dan contact met ons op op <a href=":link" class=":class">:email</a> for assistance.',
-
-        '404' => [
+        '404'       => [
             'description' => 'Oeps!De pagina u \'re looking for is on vacation. It seems we couldn\'t find what you were searching for.',
             'title'       => '404 pagina niet gevonden',
         ],
-
         '401' => [
             'description' => 'Oeps!Lijkt op jou\'re not allowed to access this page. It seems you\'re missing the necessary credentials.',
             'title'       => '401 ongeautoriseerd',
             'message'     => 'Authenticatie is mislukt vanwege ongeldige referenties of verlopen token.',
         ],
-
         '403' => [
             'description' => 'Oeps!Deze pagina is verboden.Het lijkt erop dat je geen\'t have the required permissions to view this content.',
             'title'       => '403 verboden',
         ],
-
         '413' => [
             'description' => 'Oeps!Het lijkt erop dat u een bestand probeert te uploaden dat te groot is.Als u hetzelfde wilt uploaden, werkt u de PHP -configuratie dienovereenkomstig bij.',
             'title'       => '413 inhoud te groot',
         ],
-
         '419' => [
             'description' => 'Oeps!Uw sessie is verlopen.Vernieuw de pagina en log opnieuw in om door te gaan.',
             'title'       => '419 sessie is verlopen',
         ],
-
         '500' => [
             'description' => 'Oeps!Er is iets fout gegaan.Het lijkt erop dat we \'re having trouble loading the page you\'re looking for.',
             'title'       => '500 Interne server fout',
         ],
-
         '503' => [
             'description' => 'Oeps!Het lijkt erop dat we \'re temporarily down for maintenance. Please check back in a bit.',
             'title'       => '503 Service niet beschikbaar',
         ],
     ],
-
     'export' => [
         'csv'                  => 'CSV',
         'download'             => 'Downloaden',
@@ -2549,22 +2234,18 @@ return [
         'error'                => 'Er is iets misgegaan!',
         'product-not-selected' => 'Geen producten geselecteerd voor snelle export',
     ],
-
     'validations' => [
         'slug-being-used' => 'Deze slak wenst in categorieën of producten.',
         'slug-reserved'   => 'Deze slak is gereserveerd.',
         'invalid-locale'  => 'Ongeldige locaties:locales',
     ],
-
     'footer' => [
         'copy-right' => 'Aangedreven door <a href="https://unopim.com/" target="_blank">UnoPim</a>, A Community Project by <a href="https://webkul.com/" target="_blank">Webkul</a>',
     ],
-
     'emails' => [
         'dear'   => 'Beste:admin_name',
         'thanks' => 'Als u hulp nodig hebt, neem dan contact met ons op via <a href=":link" style=":style">:email</a>.<br/>Bedankt!',
-
-        'admin' => [
+        'admin'  => [
             'forgot-password' => [
                 'description'    => 'U ontvangt deze e -mail omdat we een wachtwoordresetverzoek voor uw account hebben ontvangen.',
                 'greeting'       => 'Wachtwoord vergeten!',
@@ -2573,16 +2254,15 @@ return [
             ],
         ],
     ],
-
     'common' => [
-        'yes'     => 'Ja',
-        'no'      => 'Nee',
-        'true'    => 'WAAR',
-        'false'   => 'Vals',
-        'enable'  => 'Ingeschakeld',
-        'disable' => 'Gehandicapt',
+        'yes'            => 'Ja',
+        'no'             => 'Nee',
+        'true'           => 'WAAR',
+        'false'          => 'Vals',
+        'enable'         => 'Ingeschakeld',
+        'disable'        => 'Gehandicapt',
+        'no-match-found' => 'Geen resultaat gevonden!',
     ],
-
     'default-prompt' => [
         'detailed' => [
             'title'  => 'Gedetailleerde productbeschrijving',

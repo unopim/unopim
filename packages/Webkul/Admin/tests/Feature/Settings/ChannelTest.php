@@ -73,6 +73,31 @@ it('should create the Channel', function () {
     ]);
 });
 
+it('should create the Channel without translations', function () {
+    $this->loginAsAdmin();
+    $demoChannel = Channel::factory()->create();
+
+    $data = [
+        'code'             => 'NoTransChannel',
+        'root_category_id' => $demoChannel->root_category_id,
+        'locales'          => implode(',', $demoChannel->locales->pluck('id')->toArray()),
+        'currencies'       => implode(',', $demoChannel->currencies->pluck('id')->toArray()),
+    ];
+
+    foreach (core()->getAllActiveLocales() as $locale) {
+        $data[$locale->code] = ['name' => ''];
+    }
+
+    $response = postJson(route('admin.settings.channels.store'), $data);
+
+    $response->assertStatus(302);
+    $response->assertSessionHas('success');
+
+    $this->assertDatabaseHas($this->getFullTableName(Channel::class), [
+        'code' => 'NoTransChannel',
+    ]);
+});
+
 it('should update the Channel', function () {
     $this->loginAsAdmin();
 
@@ -213,6 +238,43 @@ it('should not delete the default channel', function () {
 
     $this->assertDatabaseHas($this->getFullTableName(Channel::class), [
         'code' => 'default',
+    ]);
+});
+
+it('should update channel when adding a new locale without providing translation name', function () {
+    $this->loginAsAdmin();
+
+    $category = Category::factory()->create(['parent_id' => null]);
+
+    $existingLocale = Locale::where('code', 'en_US')->first()
+        ?? Locale::factory()->create(['code' => 'en_US', 'status' => 1]);
+
+    $newLocale = Locale::factory()->create(['status' => 1]);
+
+    $demoChannel = Channel::factory()->create([
+        'root_category_id' => $category->id,
+    ]);
+
+    $demoChannel->locales()->sync([$existingLocale->id]);
+
+    $currency = $demoChannel->currencies->first()
+        ?? Currency::factory()->create();
+
+    $response = putJson(route('admin.settings.channels.update', ['id' => $demoChannel->id]), [
+        'id'               => $demoChannel->id,
+        'code'             => $demoChannel->code,
+        'root_category_id' => $demoChannel->root_category_id,
+        'en_US'            => ['name' => 'Test Channel'],
+        'locales'          => implode(',', [$existingLocale->id, $newLocale->id]),
+        'currencies'       => $currency->id,
+    ]);
+
+    $response->assertStatus(302);
+    $response->assertSessionHas('success');
+
+    $this->assertDatabaseHas('channel_locales', [
+        'channel_id' => $demoChannel->id,
+        'locale_id'  => $newLocale->id,
     ]);
 });
 

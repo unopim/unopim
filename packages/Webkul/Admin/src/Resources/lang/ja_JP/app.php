@@ -11,7 +11,6 @@ return [
             'powered-by'             => ':unopim によって提供,',
             'open-source-project-by' => ':webkul によるオープンソースプロジェクトです。',
         ],
-
         'forget-password' => [
             'create' => [
                 'email'                  => '登録済みのメール',
@@ -26,7 +25,6 @@ return [
                 'open-source-project-by' => ':webkul によるオープンソースプロジェクトです。',
             ],
         ],
-
         'reset-password' => [
             'back-link-title'        => 'サインインに戻りますか?',
             'confirm-password'       => 'パスワードの確認',
@@ -38,7 +36,6 @@ return [
             'open-source-project-by' => ':webkul によるオープンソースプロジェクトです。',
         ],
     ],
-
     'notifications' => [
         'description-text' => 'すべての通知を一覧表示',
         'marked-success'   => '通知が正常にマークされました',
@@ -55,7 +52,6 @@ return [
             'processing' => '処理中',
         ],
     ],
-
     'account' => [
         'edit' => [
             'back-btn'          => '戻る',
@@ -76,25 +72,89 @@ return [
             'user-timezone'     => 'タイムゾーン',
         ],
     ],
-
     'dashboard' => [
-        'index' => [
-            'title'            => 'ダッシュボード',
-            'user-info'        => 'PIM で何がカウントされているかをすばやく監視',
-            'user-name'        => 'こんにちは! :user_name',
-            'catalog-details'  => 'カタログ',
-            'total-families'   => 'ファミリーの合計',
-            'total-attributes' => '属性の合計',
-            'total-groups'     => 'グループの合計',
-            'total-categories' => 'カテゴリの合計',
-            'total-products'   => '製品の合計',
-            'settings-details' => 'カタログ構造',
-            'total-locales'    => 'ロケールの合計',
-            'total-currencies' => '通貨の合計',
-            'total-channels'   => 'チャネルの合計',
+        'invalid-type' => '無効なダッシュボードウィジェットタイプです。',
+        'index'        => [
+            'title'                => 'ダッシュボード',
+            'user-info'            => 'PIM で何がカウントされているかをすばやく監視',
+            'user-name'            => 'こんにちは! :user_name',
+            'catalog-details'      => 'カタログ',
+            'total-families'       => 'ファミリーの合計',
+            'total-attributes'     => '属性の合計',
+            'total-groups'         => 'グループの合計',
+            'total-categories'     => 'カテゴリの合計',
+            'total-products'       => '製品の合計',
+            'settings-details'     => 'カタログ構造',
+            'total-locales'        => 'ロケールの合計',
+            'total-currencies'     => '通貨の合計',
+            'total-channels'       => 'チャネルの合計',
+            'completeness'         => '完全性',
+            'active'               => '有効',
+            'inactive'             => '無効',
+            'simple'               => 'シンプル',
+            'configurable'         => 'コンフィギュラブル',
+            'product-stats'        => '製品統計',
+            'product-type-dist'    => '製品タイプ分布',
+            'products-by-status'   => 'ステータス別製品',
+            'products-over-time'   => '製品アクティビティ（過去7日間）',
+            'legend-created'       => '作成',
+            'legend-updated'       => '更新',
+            'recent-activity'      => '最近のアクティビティ',
+            'no-activity'          => '最近のアクティビティが見つかりません。',
+            'updated'              => '更新',
+            'created'              => '作成',
+            'deleted'              => '削除',
+            'ago'                  => '前',
+            'just-now'             => 'たった今',
+            'data-transfer'        => 'データ転送',
+            'no-jobs'              => '最近のインポート/エクスポートジョブが見つかりません。',
+            'job-type-import'      => 'インポート',
+            'job-type-export'      => 'エクスポート',
+            'job-state-completed'  => '完了',
+            'job-state-failed'     => '失敗',
+            'job-state-processing' => '処理中',
+            'job-state-pending'    => '保留中',
+            'job-state-validated'  => '検証済み',
+            'rows-processed'       => '処理行数',
+            'errors'               => 'エラー',
+            'quick-links'          => 'クイックリンク',
+            'create-product'       => '製品を作成',
+            'import-data'          => 'データのインポート',
+            'export-data'          => 'データのエクスポート',
+            'manage-attributes'    => '属性の管理',
+            'view-all-activity'    => 'すべて表示',
+            'view-all-jobs'        => 'すべてのジョブを表示',
+            'new-this-week'        => '今週の新規',
+            'with-variants'        => 'バリアント付き',
+            'avg-completeness'     => '平均完全性',
+            'enriched'             => 'エンリッチ済み',
+            'analytics-section'    => '分析',
+            'operations-section'   => 'オペレーション',
+            'needs-attention'      => '注意が必要',
+            'unenriched-products'  => '未エンリッチ製品',
+            'failed-jobs-24h'      => '失敗ジョブ（24h）',
+            'low-completeness'     => '低い完全性',
+            'all-good'             => 'すべて順調です！',
+            'channel-readiness'    => 'チャネル準備状況',
+            'ready-to-publish'     => '公開準備完了',
+            'of'                   => '/',
+            'products-ready'       => '製品準備完了',
+            'no-readiness-data'    => '完全性データはまだありません。',
+            'entity-types'         => [
+                'product'          => '製品',
+                'category'         => 'カテゴリ',
+                'attribute'        => '属性',
+                'attribute-family' => 'ファミリー',
+                'attribute-group'  => 'グループ',
+                'category-field'   => 'カテゴリフィールド',
+                'channel'          => 'チャネル',
+                'role'             => '役割',
+                'job-instance'     => 'ジョブ',
+                'webhook'          => 'ウェブフック',
+                'api-key'          => 'APIキー',
+            ],
         ],
     ],
-
     'catalog' => [
         'products' => [
             'index' => [
@@ -104,8 +164,7 @@ return [
                 'magic-ai-error'            => 'Magic AI の資格情報を確認し、正しいモデルが選択されていることを確認してください。',
                 'magic-ai-validate-error'   => 'Magic AIの認証情報を確認してください。',
                 'magic-ai-validate-success' => 'Magic AIの認証情報が正常に検証されました。',
-
-                'create' => [
+                'create'                    => [
                     'back-btn'                          => '戻る',
                     'configurable-attributes'           => '設定可能な属性',
                     'create-btn'                        => '製品の作成',
@@ -118,7 +177,6 @@ return [
                     'not-config-super-attributes-error' => '値「:super_attributes」を持つこのスーパー属性が見つかりませんでした',
                     'sku-exists-error'                  => '値「:sku」を持つ SKU はすでに存在します',
                 ],
-
                 'datagrid' => [
                     'active'                 => '有効',
                     'attribute-family'       => '属性ファミリー',
@@ -148,58 +206,51 @@ return [
                     'update-status'          => '更新ステータス',
                     'parent'                 => '親',
                     'parent-identifier'      => '親: :sku',
+                    'created-at'             => '作成日時',
+                    'updated-at'             => '更新日時',
                 ],
             ],
-
             'edit' => [
-                'preview'  => 'プレビュー',
-                'remove'   => '削除',
-                'save-btn' => '商品を保存',
-                'title'    => '商品を編集',
-
+                'preview'    => 'プレビュー',
+                'remove'     => '削除',
+                'save-btn'   => '商品を保存',
+                'title'      => '商品を編集',
                 'categories' => [
                     'title' => 'カテゴリー',
                 ],
-
                 'images' => [
                     'info'  => '画像の解像度は 560 x 609 ピクセル程度にしてください',
                     'title' => '画像',
                 ],
-
                 'videos' => [
                     'error' => ':attribute は :max キロバイトより大きくできません。より小さいファイルを選択してください。',
                     'info'  => '最大ビデオ サイズは :size のようになります',
                     'title' => 'ビデオ',
                 ],
-
                 'links' => [
                     'related-products' => [
                         'empty-info' => '関連する関連製品を追加します。',
                         'info'       => '顧客が閲覧している製品に加えて、関連製品も表示されます。',
                         'title'      => '関連製品',
                     ],
-
                     'up-sells' => [
                         'empty-info' => 'アップセル関連製品を追加します。',
                         'info'       => '顧客には、現在閲覧している製品のプレミアムまたはより高品質の代替品として機能するアップセル製品が提示されます。',
                         'title'      => 'アップセル製品',
                     ],
-
                     'cross-sells' => [
                         'empty-info' => 'クロスセル関連製品を追加します。',
                         'info'       => 'ショッピング カートの隣には、すでにカートに追加されているアイテムを補完するクロスセルとして配置されたこれらの「衝動買い」製品があります。',
                         'title'      => 'クロスセル製品',
                     ],
-
                     'add-btn'           => '追加',
                     'delete'            => '削除',
-                    'empty-info'        => '追加するには、製品を入力します。',
+                    'empty-info'        => ':type 追加するには、製品を入力します。',
                     'empty-title'       => '製品の追加',
                     'image-placeholder' => '製品画像',
                     'sku'               => 'SKU - :sku',
                     'title'             => '関連付け',
                 ],
-
                 'types' => [
                     'configurable' => [
                         'add-btn'                            => 'バリアントを追加',
@@ -216,15 +267,13 @@ return [
                         'variant-attribute-option-not-found' => '値 ":attributes" のバリアント属性またはオプションが見つかりません',
                         'supper-attribute-not-found'         => '値 ":attribute" のスーパー属性が見つかりません',
                         'variant-given-exists'               => '値 ":variants" のこのバリアントは既に存在します',
-
-                        'create' => [
+                        'create'                             => [
                             'description'            => '説明',
                             'name'                   => '名前',
                             'save-btn'               => '追加',
                             'title'                  => 'バリアントを追加',
                             'variant-already-exists' => 'このバリアントは既に存在します',
                         ],
-
                         'edit' => [
                             'disabled'        => '無効',
                             'edit-info'       => '商品情報を詳細に更新したい場合は、',
@@ -240,7 +289,6 @@ return [
                             'title'           => '商品',
                             'weight'          => '重量',
                         ],
-
                         'mass-edit' => [
                             'add-images'          => '画像を追加',
                             'apply-to-all-btn'    => 'すべてに適用',
@@ -267,23 +315,31 @@ return [
                         ],
                     ],
                 ],
-
                 'translate' => [
-                    'translate-btn'            => '翻訳',
-                    'title'                    => '翻訳',
-                    'source-channel'           => 'ソースチャンネル',
-                    'locale'                   => 'ソースロケール',
-                    'translated-content'       => '翻訳されたコンテンツ',
-                    'translating'              => '翻訳中',
-                    'apply'                    => '適用',
-                    'cancel'                   => 'キャンセル',
-                    'target-locales'           => 'ターゲットロケール',
-                    'target-channel'           => 'ターゲットチャンネル',
-                    'attributes'               => '属性',
-                    'source-content'           => 'ソースコンテンツ',
-                    'tranlated-job-processed'  => '翻訳されたコンテンツ保存タスクが処理されました。',
+                    'translate-btn'               => '翻訳',
+                    'title'                       => '翻訳',
+                    'source-channel'              => 'ソースチャンネル',
+                    'locale'                      => 'ソースロケール',
+                    'translated-content'          => '翻訳されたコンテンツ',
+                    'translating'                 => '翻訳中',
+                    'apply'                       => '適用',
+                    'back'                        => '戻る',
+                    'cancel'                      => 'キャンセル',
+                    'target-locales'              => 'ターゲットロケール',
+                    'target-channel'              => 'ターゲットチャンネル',
+                    'attributes'                  => '属性',
+                    'tranlated-job-processed'     => '翻訳されたコンテンツ保存タスクが処理されました。',
+                    'step'                        => 'ステップ',
+                    'select-source'               => 'ソースを選択',
+                    'select-target'               => 'ターゲットを選択',
+                    'first-step-title'            => 'ステップ1: ソースチャネル、言語、属性を選択',
+                    'first-step-title-attributes' => 'ステップ1: ソースチャネルと言語を選択',
+                    'source-content'              => 'ソースコンテンツ',
+                    'second-step-title'           => 'ステップ2: ターゲットチャネルと言語を選択',
+                    'target-content'              => 'ターゲットコンテンツ',
+                    'next'                        => '次へ',
+                    'empty-translation-data'      => 'ソースチャネルとロケールに基づく翻訳データがありません',
                 ],
-
                 'product-info' => [
                     'title'        => '製品情報',
                     'status'       => 'ステータス',
@@ -293,6 +349,7 @@ return [
                     'created-at'   => '作成日',
                     'product-type' => '製品タイプ',
                 ],
+                'more-actions' => 'その他の操作',
             ],
             'bulk-edit' => [
                 'validation' => [
@@ -305,27 +362,22 @@ return [
                     'select-attribute-or-family' => '少なくとも1つの属性または属性ファミリーを選択してください。',
                     'failed'                     => '検証に失敗しました。',
                 ],
-
-                'modal'                      => [
+                'modal' => [
                     'title'            => '一括編集用の属性',
                     'btn-cancel'       => 'キャンセル',
                     'btn-proceed'      => '続行',
                     'attribute-family' => '属性ファミリーを選択',
                 ],
-
                 'index' => [
-                    'no-product'    => '一括編集する製品が選択されていません。',
+                    'no-product' => '一括編集する製品が選択されていません。',
                 ],
-
                 'filter' => [
-                    'many-product'      => '選択された製品が多すぎます。',
-                    'redirect-message'  => '一括編集画面にリダイレクトしています。',
+                    'many-product'     => '選択された製品が多すぎます。',
+                    'redirect-message' => '一括編集画面にリダイレクトしています。',
                 ],
-
                 'handle-save' => [
-                    'edit-success'  => '一括編集に成功しました。',
+                    'edit-success' => '一括編集に成功しました。',
                 ],
-
                 'id'              => 'ID',
                 'no-changes'      => '保存する変更はありません。',
                 'success'         => 'ジョブが正常に実行されました。',
@@ -335,9 +387,8 @@ return [
                 'img-preview'     => '画像プレビュー',
                 'no-image'        => '画像なし',
                 'img-fail'        => '画像のアップロードに失敗しました',
-                'no-opton'        => 'オプションがありません',
+                'no-option'       => 'オプションなし',
             ],
-
             'create-success'          => '製品が正常に作成されました',
             'delete-failed'           => '製品の削除に失敗しました',
             'delete-success'          => '製品の削除に成功しました',
@@ -351,13 +402,11 @@ return [
             'upload-success'          => '製品ファイルが正常にアップロードされました。',
             'update-failure'          => '商品は更新できませんでした。',
         ],
-
         'attributes' => [
             'index' => [
                 'create-btn' => '属性の作成',
                 'title'      => '属性',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'channel-based'            => 'チャネル ベース',
                     'code'                     => 'コード',
                     'created-at'               => '作成日時',
@@ -375,7 +424,6 @@ return [
                     'delete-attribute-failure' => 'この属性は設定可能な製品で使用されているため、削除できません。',
                 ],
             ],
-
             'create' => [
                 'add-attribute-options' => '属性オプションの追加',
                 'add-option'            => 'オプションの追加',
@@ -398,12 +446,12 @@ return [
                 'enable-wysiwyg'        => 'Wysiwyg エディターを有効にする',
                 'file'                  => 'ファイル',
                 'general'               => '一般',
+                'gallery'               => 'ギャラリー',
                 'image'                 => '画像',
                 'input-options'         => '入力オプション',
                 'input-validation'      => '入力検証',
                 'is-comparable'         => '属性は比較可能です',
                 'is-configurable'       => '構成可能な製品を作成するために使用',
-                'is-filterable'         => '階層化ナビゲーションで使用',
                 'is-required'           => '必須',
                 'is-unique'             => '一意',
                 'is-visible-on-front'   => 'フロントエンドの製品表示ページに表示される',
@@ -433,8 +481,8 @@ return [
                 'usable-in-grid'        => 'グリッドで使用可能',
                 'is-filterable'         => 'フィルタリング可能',
                 'ai-translate'          => 'AI翻訳',
-
-                'option' => [
+                'invalid-swatch-type'   => ':attribute は、スウォッチタイプ :swatch_type の属性タイプ :type には許可されていません。',
+                'option'                => [
                     'color'    => 'カラー スウォッチ',
                     'dropdown' => 'ドロップダウン',
                     'image'    => '画像スウォッチ',
@@ -442,7 +490,6 @@ return [
                     'text'     => 'テキスト スウォッチ',
                 ],
             ],
-
             'edit' => [
                 'add-attribute-options' => '属性オプションの追加',
                 'add-option'            => 'オプションの追加',
@@ -470,7 +517,6 @@ return [
                 'input-validation'      => '入力検証',
                 'is-comparable'         => '属性は比較可能です',
                 'is-configurable'       => '構成可能な製品を作成するために使用',
-                'is-filterable'         => '階層化ナビゲーションで使用',
                 'is-required'           => '必須',
                 'is-unique'             => '一意',
                 'is-visible-on-front'   => 'フロントエンドの製品表示ページに表示されます',
@@ -498,23 +544,21 @@ return [
                 'yes'                   => 'はい',
                 'same-code-error'       => 'オプション コードは一意である必要があります。',
                 'usable-in-grid'        => 'グリッドで使用可能',
+                'is-filterable'         => '階層化ナビゲーションで使用',
                 'ai-translate'          => 'AI翻訳',
-                'invalid-swatch-type'   => ':attribute は属性タイプ :type でスウォッチタイプ :swatch_type に対して許可されていません。',
-
-                'option' => [
-                    'create-success'      => '属性オプションが正常に作成されました',
-                    'delete-success'      => '属性オプションが正常に削除されました',
+                'option'                => [
                     'save-btn'            => '保存オプション',
-                    'sort-update-failure' => '並び順の更新に失敗しました',
-                    'sort-update-success' => '並び順が正常に更新されました',
+                    'create-success'      => '属性オプションが正常に作成されました',
                     'update-success'      => '属性オプションが正常に更新されました',
+                    'sort-update-success' => '並び順が正常に更新されました',
+                    'sort-update-failure' => '並び順の更新に失敗しました',
+                    'delete-success'      => '属性オプションが正常に削除されました',
                     'color'               => 'カラー スウォッチ',
                     'dropdown'            => 'ドロップダウン',
                     'image'               => '画像スウォッチ',
                     'text'                => 'テキスト スウォッチ',
                 ],
             ],
-
             'create-success'    => '属性が正常に作成されました',
             'delete-failed'     => '属性の削除に失敗しました',
             'delete-success'    => '属性が正常に削除されました',
@@ -522,19 +566,16 @@ return [
             'user-define-error' => 'システム属性を削除できません',
             'not-found'         => 'コード ":code" の属性が見つかりませんでした',
         ],
-
         'attribute-options' => [
             'create-success'       => '属性オプションが正常に作成されました',
             'update-success'       => '属性オプションが正常に更新されました',
             'usable-in-grid-error' => 'グリッドを有効にすると、4 つの属性のみ使用可能になります。',
         ],
-
         'attribute-groups' => [
             'index' => [
                 'create-btn' => '属性グループの作成',
                 'title'      => '属性グループ',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'code'                => 'コード',
                     'delete'              => '削除',
                     'mass-delete-success' => '選択した属性グループが正常に削除されました',
@@ -546,7 +587,6 @@ return [
                     'update-status'       => 'ステータスの更新',
                 ],
             ],
-
             'create' => [
                 'title'    => '属性グループの追加',
                 'save-btn' => '属性グループの保存',
@@ -555,7 +595,6 @@ return [
                 'code'     => 'コード',
                 'label'    => 'ラベル',
             ],
-
             'edit' => [
                 'title'    => '属性グループの編集',
                 'back-btn' => '戻る',
@@ -564,7 +603,6 @@ return [
                 'code'     => 'コード',
                 'label'    => 'ラベル',
             ],
-
             'create-success'        => '属性グループが正常に作成されました',
             'delete-failed'         => '属性グループの削除に失敗しました',
             'delete-success'        => '属性グループが正常に削除されました',
@@ -573,29 +611,26 @@ return [
             'attribute-group-error' => 'グループはファミリで使用されています。',
             'not-found'             => 'コード ":code" の属性グループが見つかりませんでした',
         ],
-
         'categories' => [
             'index' => [
-                'add-btn' => 'カテゴリを作成',
-                'title'   => 'カテゴリ',
-
+                'add-btn'  => 'カテゴリを作成',
+                'title'    => 'カテゴリ',
                 'datagrid' => [
                     'active'         => 'アクティブ',
                     'code'           => 'コード',
                     'delete'         => '削除',
-                    'delete-success' => '選択: リソースが正常に削除されました',
+                    'delete-success' => '選択: リソースが正常に削除されました :resource',
                     'edit'           => '編集',
                     'id'             => 'ID',
                     'inactive'       => '非アクティブ',
                     'name'           => '表示名',
+                    'category-name'  => '名前',
                     'no-of-products' => '製品数',
                     'position'       => '位置',
-                    'category-name'  => '名前',
                     'status'         => 'メニューに表示',
                     'update-status'  => 'ステータスの更新',
                 ],
             ],
-
             'create' => [
                 'back-btn'            => '戻る',
                 'code'                => 'コード',
@@ -616,7 +651,6 @@ return [
                 'right-section'       => '設定セクション',
                 'left-section'        => '一般セクション',
             ],
-
             'edit' => [
                 'back-btn'               => '戻る',
                 'code'                   => 'コード',
@@ -635,7 +669,6 @@ return [
                 'right-section'          => '設定セクション',
                 'left-section'           => '一般セクション',
             ],
-
             'category'             => 'カテゴリ',
             'create-success'       => 'カテゴリが正常に作成されました。',
             'delete-category-root' => 'チャンネルに関連付けられているルート カテゴリは削除できません。',
@@ -650,14 +683,12 @@ return [
             'create-failure'       => 'カテゴリーを作成できませんでした。',
             'update-failure'       => 'カテゴリーは更新できませんでした。',
         ],
-
         'category_fields' => [
             'index' => [
                 'create-btn' => 'カテゴリ フィールドの作成',
                 'add-btn'    => 'カテゴリ フィールドの作成',
                 'title'      => 'カテゴリ フィールド',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'channel-based'       => 'チャネル ベース',
                     'code'                => 'コード',
                     'created-at'          => '作成日時',
@@ -682,7 +713,6 @@ return [
                     'mass-delete-failed'  => '選択されたカテゴリ フィールドは削除できません。',
                 ],
             ],
-
             'create' => [
                 'add-field-options'   => 'カテゴリ フィールド オプションの追加',
                 'add-option'          => 'オプションの追加',
@@ -737,8 +767,7 @@ return [
                 'set-section-right'   => '構成セクション',
                 'settings'            => '設定',
                 'same-code-error'     => 'オプション コードは一意である必要があります。',
-
-                'option' => [
+                'option'              => [
                     'dropdown' => 'ドロップダウン',
                     'save-btn' => '保存オプション',
                     'color'    => 'カラー見本',
@@ -746,7 +775,6 @@ return [
                     'text'     => 'テキスト見本',
                 ],
             ],
-
             'edit' => [
                 'add-field-options'   => 'カテゴリ フィールド オプションの追加',
                 'add-option'          => 'オプションの追加',
@@ -802,8 +830,7 @@ return [
                 'set-section-right'   => '構成セクション',
                 'settings'            => '設定',
                 'same-code-error'     => 'オプション コードは一意である必要があります。',
-
-                'option' => [
+                'option'              => [
                     'dropdown' => 'ドロップダウン',
                     'save-btn' => '保存オプション',
                     'color'    => 'カラー見本',
@@ -811,7 +838,6 @@ return [
                     'text'     => 'テキスト見本',
                 ],
             ],
-
             'create-success'    => 'カテゴリ フィールドが正常に作成されました',
             'delete-failed'     => 'カテゴリ フィールドの削除に失敗しました',
             'delete-success'    => 'カテゴリ フィールドが正常に削除されました',
@@ -819,17 +845,14 @@ return [
             'user-define-error' => 'システム カテゴリ フィールドを削除できません',
             'not-found'         => 'コード ":code" のカテゴリ フィールドが見つかりませんでした',
         ],
-
         'category-fields-options' => [
             'create-success' => 'カテゴリ フィールド オプションが正常に作成されました',
             'update-success' => 'カテゴリ フィールド オプションが正常に更新されました',
         ],
-
         'families' => [
             'index' => [
-                'add'   => '属性ファミリの作成',
-                'title' => 'ファミリ',
-
+                'add'      => '属性ファミリの作成',
+                'title'    => 'ファミリ',
                 'datagrid' => [
                     'code'           => 'コード',
                     'delete'         => '削除',
@@ -844,11 +867,9 @@ return [
                     'update-success' => '選択された :resource は正常に更新されました',
                 ],
             ],
-
             'create' => [
                 'assign-group-btn'                 => '属性グループの割り当て',
                 'assign-group-title'               => '属性グループの割り当て',
-                'assign-group-btn'                 => '属性グループの割り当て',
                 'back-btn'                         => '戻る',
                 'code'                             => 'コード',
                 'label'                            => 'ラベル',
@@ -876,11 +897,9 @@ return [
                 'unassigned-attribute-groups'      => '未割り当ての属性グループ',
                 'assign-first-attribute-group'     => 'グループをファミリに割り当てます。',
             ],
-
             'edit' => [
                 'assign-group-btn'                 => '属性グループの割り当て',
                 'assign-group-title'               => '属性グループの割り当て',
-                'assign-group-btn'                 => '属性グループの割り当て',
                 'back-btn'                         => '戻る',
                 'code'                             => 'コード',
                 'label'                            => 'ラベル',
@@ -911,7 +930,6 @@ return [
                 'variant-options-label'            => '構成可能なオプション',
                 'select-variant'                   => '属性を選択',
             ],
-
             'attribute-family'               => '属性ファミリ',
             'attribute-product-error'        => 'ファミリは製品で使用されています。',
             'create-success'                 => 'ファミリは正常に作成されました。',
@@ -924,7 +942,6 @@ return [
             'not-found'                      => 'コード ":code" の属性ファミリが見つかりませんでした',
             'can-not-update-variant-options' => 'このファミリにはすでにバリアント製品があるため、構成可能なオプションを更新できません。',
         ],
-
         'history' => [
             'index' => [
                 'datagrid' => [
@@ -935,7 +952,6 @@ return [
             ],
         ],
     ],
-
     'settings' => [
         'locales' => [
             'index' => [
@@ -944,8 +960,7 @@ return [
                 'title'                 => 'ロケール',
                 'can-not-delete-error'  => 'チャンネルまたはユーザーにリンクされたロケールは削除できません',
                 'can-not-disable-error' => 'チャンネルまたはユーザーにリンクされたロケールを無効にすることはできません',
-
-                'datagrid' => [
+                'datagrid'              => [
                     'actions'     => 'アクション',
                     'code'        => 'コード',
                     'delete'      => '削除',
@@ -956,14 +971,12 @@ return [
                     'name'        => '表示名',
                     'rtl'         => 'RTL',
                     'mass-update' => 'ステータスの更新',
-
-                    'status' => [
+                    'status'      => [
                         'title'    => 'ステータス',
                         'active'   => '有効にする',
                         'inactive' => '無効にする',
                     ],
                 ],
-
                 'create' => [
                     'code'             => 'コード',
                     'direction'        => '方向',
@@ -974,11 +987,9 @@ return [
                     'title'            => 'ロケールを作成',
                     'status'           => 'ステータス',
                 ],
-
                 'edit' => [
                     'title' => 'ロケールを編集',
                 ],
-
                 'create-success'    => 'ロケールが正常に作成されました。',
                 'delete-failed'     => 'ロケールの削除に失敗しました',
                 'delete-success'    => 'ロケールが正常に削除されました。',
@@ -987,7 +998,6 @@ return [
                 'update-success'    => 'ロケールが正常に更新されました。',
             ],
         ],
-
         'currencies' => [
             'index' => [
                 'create-btn'            => '通貨の作成',
@@ -995,8 +1005,7 @@ return [
                 'title'                 => '通貨',
                 'can-not-delete-error'  => 'チャネルにリンクされた通貨は削除できません',
                 'can-not-disable-error' => 'チャネルにリンクされた通貨を無効にすることはできません',
-
-                'datagrid' => [
+                'datagrid'              => [
                     'actions'        => 'アクション',
                     'code'           => 'コード',
                     'delete'         => '削除',
@@ -1008,14 +1017,12 @@ return [
                     'partial-action' => ':resource のシステム制約により、一部のアクションは実行されませんでした',
                     'update-success' => '選択された :resource は正常に更新されました',
                     'mass-update'    => '更新ステータス',
-
-                    'status' => [
+                    'status'         => [
                         'title'    => 'ステータス',
                         'active'   => '有効にする',
                         'inactive' => '無効にする',
                     ],
                 ],
-
                 'create' => [
                     'code'           => 'コード',
                     'create-btn'     => '通貨の作成',
@@ -1028,11 +1035,9 @@ return [
                     'title'          => '新しい通貨の作成',
                     'status'         => 'ステータス',
                 ],
-
                 'edit' => [
                     'title' => '通貨を編集',
                 ],
-
                 'create-success'    => '通貨が正常に作成されました。',
                 'delete-failed'     => '通貨の削除に失敗しました',
                 'delete-success'    => '通貨が正常に削除されました。',
@@ -1041,7 +1046,6 @@ return [
                 'cannot-delete'     => '通貨を削除できません。',
             ],
         ],
-
         'data-transfer' => [
             'tracker' => [
                 'index' => [
@@ -1059,28 +1063,28 @@ return [
                         'user'                 => 'ユーザー',
                         'created_at'           => '作成時刻',
                         'updated_at'           => '更新時刻',
-
-                        'pending'    => '保留中',
-                        'validated'  => '検証済み',
-                        'processing' => '処理中',
-                        'processed'  => '処理済み',
-                        'linking'    => 'リンク中',
-                        'linked'     => 'リンク済み',
-
-                        'indexing'  => 'インデックス作成中',
-                        'indexed'   => 'インデックス作成済み',
-                        'completed' => '完了',
-                        'failed'    => '失敗',
+                        'pending'              => '保留中',
+                        'validating'           => '検証中',
+                        'validated'            => '検証済み',
+                        'processing'           => '処理中',
+                        'processed'            => '処理済み',
+                        'linking'              => 'リンク中',
+                        'linked'               => 'リンク済み',
+                        'indexing'             => 'インデックス作成中',
+                        'indexed'              => 'インデックス作成済み',
+                        'completed'            => '完了',
+                        'paused'               => '一時停止中',
+                        'cancelled'            => 'キャンセル済み',
+                        'failed'               => '失敗',
                     ],
                 ],
-
                 'import' => [
                     'back-btn'                => '戻る',
                     'completed-batches'       => '完了したバッチの合計数:',
                     'download-error-report'   => '完全なレポートをダウンロード',
                     'edit-btn'                => '編集',
                     'imported-info'           => 'おめでとうございます。インポートは成功しました。',
-                    'importing-info'          => 'エクスポート中',
+                    'exporting-info'          => 'エクスポート処理中',
                     'indexing-info'           => 'リソースのインデックス作成 (価格、Elastic Search) 進行中',
                     'linking-info'            => 'リソースのリンク作成中',
                     'progress'                => '進行状況:',
@@ -1098,7 +1102,6 @@ return [
                     'validation-failed-info'  => 'インポートは無効です。次のエラーを修正して再試行してください。',
                     'validation-success-info' => 'インポートは有効です。[エクスポート] をクリックしてインポート プロセスを開始します。',
                 ],
-
                 'summary' => [
                     'total-batches' => 'バッチの合計:',
                     'created'       => '作成されたレコードの合計:',
@@ -1109,21 +1112,50 @@ return [
                     'updated'       => '更新されたレコードの合計:',
                     'skipped'       => 'スキップされたレコードの合計:',
                 ],
-
-                'info'              => 'おめでとうございます! ジョブは正常に実行されました。',
-                'create-success'    => 'エクスポートが正常に作成されました。',
-                'delete-failed'     => 'エクスポートの削除が予期せず失敗しました。',
-                'delete-success'    => 'エクスポートが正常に削除されました。',
-                'not-valid'         => 'エクスポートが無効です',
-                'nothing-to-import' => 'インポートするリソースがありません。',
-                'setup-queue-error' => 'インポート プロセスを開始するには、キュー ドライバーを「database」または「redis」に変更してください。',
-                'update-success'    => 'エクスポートが正常に更新されました。',
-                'failed-info'       => 'ジョブが失敗しました。次のエラーを修正して再試行してください。',
-                'download-log-file' => 'ダウンロードログ',
+                'info'                  => 'おめでとうございます! ジョブは正常に実行されました。',
+                'running-time'          => '実行時間',
+                'estimated-remaining'   => '残り予想時間',
+                'total-duration'        => '合計所要時間',
+                'status'                => 'ステータス',
+                'waiting'               => '待機中',
+                'total-records'         => 'レコード合計',
+                'job-id'                => 'ジョブ ID',
+                'records-created'       => '作成レコード',
+                'records-updated'       => '更新レコード',
+                'records-deleted'       => '削除レコード',
+                'run-again'             => '再実行',
+                'completed-success'     => 'ジョブが正常に完了しました',
+                'completed-info-sub'    => 'すべてのレコードが処理・インデックス済みです。カタログは最新です。',
+                'create-success'        => 'エクスポートが正常に作成されました。',
+                'delete-failed'         => 'エクスポートの削除が予期せず失敗しました。',
+                'delete-success'        => 'エクスポートが正常に削除されました。',
+                'not-valid'             => 'エクスポートが無効です',
+                'nothing-to-import'     => 'インポートするリソースがありません。',
+                'setup-queue-error'     => 'インポート プロセスを開始するには、キュー ドライバーを「database」または「redis」に変更してください。',
+                'update-success'        => 'エクスポートが正常に更新されました。',
+                'failed-info'           => 'ジョブが失敗しました。次のエラーを修正して再試行してください。',
+                'download-log-file'     => 'ダウンロードログ',
+                'pause'                 => '一時停止',
+                'resume'                => '再開',
+                'cancel'                => 'キャンセル',
+                'paused'                => 'インポートが一時停止されました。',
+                'resumed'               => 'インポートが再開されました。',
+                'cancelled'             => 'インポートがキャンセルされました。',
+                'paused-info'           => 'インポートが一時停止中です。残りのバッチは保留中です。',
+                'paused-info-export'    => 'エクスポートが一時停止中です。残りのバッチは保留中です。',
+                'cancelled-info'        => 'インポートがキャンセルされました。一部の結果を以下に表示します。',
+                'cancelled-info-export' => 'エクスポートがキャンセルされました。一部の結果を以下に表示します。',
+                'cancel-confirm'        => 'このジョブをキャンセルしてもよろしいですか？この操作は取り消せません。',
+                'live'                  => 'ライブ',
+                'import-progress'       => 'インポート進捗',
+                'export-progress'       => 'エクスポート進捗',
+                'linking-progress'      => 'リンク進捗',
+                'indexing-progress'     => 'インデックス進捗',
+                'job-label'             => 'ジョブ',
             ],
-
             'imports' => [
-                'create' => [
+                'import-start-fail' => 'インポート処理を開始できませんでした。もう一度お試しください。',
+                'create'            => [
                     'code'                => 'コード',
                     'action'              => 'アクション',
                     'allowed-errors'      => '許容されるエラー',
@@ -1142,6 +1174,14 @@ return [
                     'general'             => '全般',
                     'upload_images'       => 'パスを設定するために画像をアップロード',
                     'download-sample-zip' => 'サンプル画像 ZIP をダウンロード',
+                    'zip-uploading'       => 'ZIP のアップロードと展開中...',
+                    'zip-upload-success'  => 'ZIP のアップロードと展開が完了しました。',
+                    'zip-upload-error'    => 'ZIP のアップロードに失敗しました。もう一度お試しください。',
+                    'invalid-zip'         => 'アップロードされたファイルは有効な ZIP アーカイブではありません。',
+                    'zip-upload-or'       => 'または画像の ZIP をアップロード',
+                    'zip-click-upload'    => 'クリックして画像の ZIP をアップロード',
+                    'zip-files-extracted' => 'ファイルが展開されました',
+                    'zip-drop-hint'       => 'クリックするかZIPファイルをここにドラッグ＆ドロップ',
                     'images-directory'    => 'パス',
                     'process-in-queue'    => 'キュー内の処理',
                     'results'             => '結果',
@@ -1153,7 +1193,6 @@ return [
                     'type'                => 'タイプ',
                     'validation-strategy' => '検証戦略',
                 ],
-
                 'edit' => [
                     'images'              => '画像',
                     'action'              => 'アクション',
@@ -1180,16 +1219,13 @@ return [
                     'type'                => 'タイプ',
                     'validation-strategy' => '検証戦略',
                 ],
-
                 'batch' => [
                     'title' => 'インポートがキューに追加されました',
                 ],
-
                 'index' => [
                     'button-title' => 'インポートの作成',
                     'title'        => 'インポート',
-
-                    'datagrid' => [
+                    'datagrid'     => [
                         'actions'               => 'アクション',
                         'completed-at'          => '完了日時',
                         'created'               => '作成日時',
@@ -1210,19 +1246,33 @@ return [
                         'import'                => 'インポート',
                     ],
                 ],
-
                 'import' => [
+                    'action'                  => 'アクション モード',
                     'back-btn'                => '戻る',
                     'completed-batches'       => '完了したバッチの合計数:',
                     'download-error-report'   => '完全なレポートをダウンロード',
                     'edit-btn'                => '編集',
-                    'imported-info'           => 'おめでとうございます。インポートは成功しました。',
-                    'importing-info'          => 'インポート中',
                     'exporting-info'          => 'エクスポート中',
+                    'exporting-info-sub'      => 'エクスポートファイルを生成しレコードを書き込んでいます。お待ちください。',
+                    'file_path'               => 'ファイル パス',
+                    'imported-info'           => 'おめでとうございます。インポートは成功しました。',
+                    'import-now'              => '今すぐインポート',
+                    'importing-info'          => 'インポート中',
+                    'importing-info-sub'      => 'バッチを処理しデータベースにレコードを書き込んでいます。',
                     'indexing-info'           => 'リソースのインデックス作成 (価格、Elastic Search) 進行中',
+                    'indexing-info-sub'       => 'インポート後に検索インデックスと価格キャッシュを再構築しています。このステップは自動的に実行されます。',
+                    'indexing-type'           => '価格 + ES',
                     'linking-info'            => 'リソースのリンク作成中',
-                    'progress'                => '進行状況:',
+                    'linking-info-sub'        => '関連リソースとレコード間の関連付けをリンクしています。',
                     'pending-info'            => 'キューでジョブ処理を待機中',
+                    'pending-info-sub'        => 'ジョブが処理キューに追加されました。まもなくワーカーが処理を開始します。',
+                    'pending-step-complete'   => '完了',
+                    'pending-step-export'     => 'エクスポート中',
+                    'pending-step-import'     => 'インポート中',
+                    'pending-step-queue'      => 'キュー待ち',
+                    'pending-step-validate'   => '検証中',
+                    'profile'                 => 'インポート プロファイル',
+                    'progress'                => '進行状況:',
                     'title'                   => 'インポート',
                     'total-batches'           => 'バッチの合計数:',
                     'total-created'           => '作成されたレコードの合計数:',
@@ -1231,26 +1281,23 @@ return [
                     'total-invalid-rows'      => '無効な行の合計数:',
                     'total-rows-processed'    => '処理された行の合計数:',
                     'total-updated'           => '更新されたレコードの合計数:',
-                    'validate-info'           => 'インポートを確認するには、[データの検証] をクリックします。',
                     'validate'                => '検証',
-                    'file_path'               => 'ファイル パス',
-                    'import-now'              => '今すぐインポート',
-                    'action'                  => 'アクション モード',
-                    'profile'                 => 'インポート プロファイル',
+                    'validate-info'           => 'インポートを確認するには、[データの検証] をクリックします。',
                     'validating-info'         => 'データの読み取りと検証を開始しました',
+                    'validating-info-sub'     => 'インポート開始前にスキーマの整合性、フィールドマッピング、データ型を確認しています。',
                     'validation-failed-info'  => 'インポートは無効です。次のエラーを修正して、もう一度お試しください。',
-                    'validation-success-info' => 'インポートは有効です。[インポート] をクリックしてインポート プロセスを開始します。',
+                    'validation-success-info' => 'インポートは有効です。自動的にインポートを開始しています...',
                 ],
-
-                'create-success'    => 'インポートが正常に作成されました。',
-                'delete-failed'     => 'インポートの削除が予期せず失敗しました。',
-                'delete-success'    => 'インポートが正常に削除されました。',
-                'not-valid'         => 'インポートが無効です',
-                'nothing-to-import' => 'インポートするリソースがありません。',
-                'setup-queue-error' => 'インポート プロセスを開始するには、キュー ドライバーを「database」または「redis」に変更してください。',
-                'update-success'    => 'インポートが正常に更新されました。',
+                'create-success'     => 'インポートが正常に作成されました。',
+                'delete-failed'      => 'インポートの削除が予期せず失敗しました。',
+                'delete-success'     => 'インポートが正常に削除されました。',
+                'invalid-zip'        => 'アップロードされたファイルは有効な ZIP アーカイブではありません。',
+                'not-valid'          => 'インポートが無効です',
+                'nothing-to-import'  => 'インポートするリソースがありません。',
+                'setup-queue-error'  => 'インポート プロセスを開始するには、キュー ドライバーを「database」または「redis」に変更してください。',
+                'update-success'     => 'インポートが正常に更新されました。',
+                'zip-upload-success' => 'ZIP のアップロードと展開が完了しました。',
             ],
-
             'exports' => [
                 'create' => [
                     'code'                => 'コード',
@@ -1281,7 +1328,6 @@ return [
                     'type'                => 'タイプ',
                     'validation-strategy' => '検証戦略',
                 ],
-
                 'edit' => [
                     'action'              => 'アクション',
                     'allowed-errors'      => '許容されるエラー',
@@ -1305,16 +1351,13 @@ return [
                     'type'                => 'タイプ',
                     'validation-strategy' => '検証戦略',
                 ],
-
                 'batch' => [
                     'title' => 'エクスポートがキューに追加されました',
                 ],
-
                 'index' => [
                     'button-title' => 'エクスポートの作成',
                     'title'        => 'エクスポート',
-
-                    'datagrid' => [
+                    'datagrid'     => [
                         'actions'               => 'アクション',
                         'completed-at'          => '完了日時',
                         'created'               => '作成日時',
@@ -1335,7 +1378,6 @@ return [
                         'export'                => 'エクスポート',
                     ],
                 ],
-
                 'export' => [
                     'back-btn'                => '戻る',
                     'completed-batches'       => '完了したバッチの合計数:',
@@ -1365,7 +1407,6 @@ return [
                     'file-format'             => 'ファイル形式',
                     'with-media'              => 'メディア付き',
                 ],
-
                 'create-success'    => 'エクスポートが正常に作成されました。',
                 'delete-failed'     => 'エクスポートの削除が予期せず失敗しました。',
                 'delete-success'    => 'エクスポートが正常に削除されました。',
@@ -1375,7 +1416,6 @@ return [
                 'update-success'    => 'エクスポートが正常に更新されました。',
             ],
         ],
-
         'channels' => [
             'index' => [
                 'create-btn'           => 'チャネルの作成',
@@ -1394,7 +1434,6 @@ return [
                     'root-category' => 'ルート カテゴリ',
                 ],
             ],
-
             'create' => [
                 'allowed-ips'            => '許可された IP',
                 'cancel'                 => '戻る',
@@ -1429,7 +1468,6 @@ return [
                 'theme'                  => 'テーマ',
                 'title'                  => 'チャンネルを作成',
             ],
-
             'edit' => [
                 'allowed-ips'            => '許可された IP',
                 'back-btn'               => '戻る',
@@ -1467,13 +1505,11 @@ return [
                 'update-success'         => 'チャンネルの更新に成功しました',
             ],
         ],
-
         'users' => [
             'index' => [
-                'admin' => '管理者',
-                'title' => 'ユーザー',
-                'user'  => 'ユーザー',
-
+                'admin'  => '管理者',
+                'title'  => 'ユーザー',
+                'user'   => 'ユーザー',
                 'create' => [
                     'confirm-password'  => 'パスワードの確認',
                     'email'             => 'メール',
@@ -1487,7 +1523,6 @@ return [
                     'user-timezone'     => 'タイムゾーン',
                     'select'            => '選択',
                 ],
-
                 'datagrid' => [
                     'actions'  => 'アクション',
                     'active'   => 'アクティブ',
@@ -1501,12 +1536,10 @@ return [
                     'status'   => 'ステータス',
                     'image'    => '画像',
                 ],
-
                 'edit' => [
                     'title' => 'ユーザーを編集',
                 ],
             ],
-
             'edit' => [
                 'back-btn'         => '戻る',
                 'confirm-password' => 'パスワードの確認',
@@ -1519,7 +1552,6 @@ return [
                 'status'           => 'ステータス',
                 'title'            => 'ユーザーの編集',
             ],
-
             'activate-warning'          => 'アカウントはまだ有効化されていません。管理者にお問い合わせください。',
             'cannot-change'             => 'ユーザーを変更できません',
             'create-success'            => 'ユーザーの作成に成功しました。',
@@ -1532,13 +1564,11 @@ return [
             'update-success'            => 'ユーザーの更新に成功しました。',
             'current-user-delete-error' => 'ログインユーザーは削除できません',
         ],
-
         'roles' => [
             'index' => [
                 'create-btn' => 'ロールの作成',
                 'title'      => 'ロール',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'delete'          => '削除',
                     'edit'            => '編集',
                     'id'              => 'ID',
@@ -1546,7 +1576,6 @@ return [
                     'permission-type' => '権限タイプ',
                 ],
             ],
-
             'create' => [
                 'access-control' => 'アクセス制御',
                 'all'            => 'すべて',
@@ -1559,7 +1588,6 @@ return [
                 'save-btn'       => 'ロールの保存',
                 'title'          => 'ロールの作成',
             ],
-
             'edit' => [
                 'access-control' => 'アクセス制御',
                 'all'            => 'すべて',
@@ -1572,7 +1600,6 @@ return [
                 'save-btn'       => '役割を保存',
                 'title'          => '役割を編集',
             ],
-
             'being-used'        => 'ロールは管理者ユーザーで既に使用されています',
             'being-used-by'     => 'ロールは :name ユーザーによって既に使用されています',
             'create-success'    => 'ロールが正常に作成されました',
@@ -1582,7 +1609,6 @@ return [
             'update-success'    => 'ロールが正常に更新されました',
         ],
     ],
-
     'configuration' => [
         'index' => [
             'delete'          => '削除',
@@ -1591,56 +1617,69 @@ return [
             'save-message'    => '設定が正常に保存されました',
             'search'          => '検索',
             'title'           => '設定',
-
-            'general' => [
-                'info'  => '',
-                'title' => '一般的な',
-
+            'general'         => [
+                'info'    => '',
+                'title'   => '一般的な',
                 'general' => [
                     'info'  => '',
                     'title' => '一般的な',
                 ],
-
                 'magic-ai' => [
-                    'info'  => 'Magic AI オプションを設定します。',
-                    'title' => '魔法のAI',
-
+                    'info'     => 'Magic AI オプションを設定します。',
+                    'title'    => '魔法のAI',
                     'settings' => [
-                        'api-key'        => 'API キー',
-                        'enabled'        => '有効',
-                        'llm-api-domain' => 'LLM API ドメイン',
-                        'organization'   => '組織 ID',
-                        'title'          => '一般設定',
-                        'title-info'     => '専用の API キーを入力し、関連する組織を指定して簡単に統合することで、Magic AI 機能のエクスペリエンスが向上します。OpenAI 資格情報を制御して、特定のニーズに応じて設定をカスタマイズします。',
+                        'enabled'     => '有効',
+                        'ai-platform' => 'デフォルトプラットフォーム',
+                        'ai-model'    => 'デフォルトモデル',
+                        'title'       => '一般設定',
+                        'title-info'  => '専用の API キーを入力し、関連する組織を指定して簡単に統合することで、Magic AI 機能のエクスペリエンスが向上します。OpenAI 資格情報を制御して、特定のニーズに応じて設定をカスタマイズします。',
                     ],
-
                     'image-generation' => [
-                        'enabled'    => '有効',
-                        'title'      => '画像生成',
-                        'title-info' => 'この機能は、DALL-E を使用して画像を生成するすべての画像アップロードで Magic AI を有効にします。<br/><br/>有効にすると、任意の画像アップロードに移動して画像を生成します。',
+                        'enabled'     => '有効',
+                        'ai-platform' => 'デフォルトプラットフォーム',
+                        'ai-model'    => 'デフォルトモデル',
+                        'title'       => '画像生成',
+                        'title-info'  => 'この機能は、DALL-E を使用して画像を生成するすべての画像アップロードで Magic AI を有効にします。<br/><br/>有効にすると、任意の画像アップロードに移動して画像を生成します。',
                     ],
-
-                    'translation'   => [
-                        'title'                  => '翻訳',
-                        'enabled'                => '有効',
-                        'title-info'             => 'この機能を有効にすると、Magic AIを使用してテキストを翻訳し、テキストをシームレスに別の言語に変換できます。',
-                        'global-source-channel'  => 'ソースチャンネル',
-                        'global-source-locale'   => 'ソースロケール',
-                        'translation-model'      => '翻訳モデル',
-                        'replace-existing-value' => '既存の値を置き換える',
-                        'target-channel'         => 'ターゲットチャンネル',
-                        'target-locales'         => 'ターゲットロケール',
+                    'translation' => [
+                        'title'                       => '翻訳',
+                        'enabled'                     => '有効',
+                        'title-info'                  => 'この機能を有効にすると、Magic AIを使用してテキストを翻訳し、テキストをシームレスに別の言語に変換できます。',
+                        'ai-platform'                 => 'デフォルトプラットフォーム',
+                        'global-source-channel'       => 'ソースチャンネル',
+                        'global-source-locale'        => 'ソースロケール',
+                        'translation-model'           => '翻訳モデル',
+                        'replace-existing-value'      => '既存の値を置き換える',
+                        'target-channel'              => 'ターゲットチャンネル',
+                        'target-locales'              => 'ターゲットロケール',
+                        'replace-existing-value-info' => '既存の値がある場合は置き換えます。',
+                    ],
+                    'agentic-pim' => [
+                        'title'                     => 'エージェンティックPIM',
+                        'title-info'                => 'AIエージェントチャット、自律的なエンリッチメントワークフロー、品質モニタリングを設定します。これらの機能により、会話型の製品管理とプロアクティブなカタログメンテナンスが可能になります。',
+                        'enabled'                   => 'AIエージェントチャットを有効にする',
+                        'enabled-info'              => '27以上のツールアクションを持つ会話型製品管理のためのフローティングAIチャットウィジェットを有効にします。',
+                        'max-steps'                 => 'ターンあたりの最大エージェントステップ数',
+                        'max-steps-info'            => 'ユーザーメッセージごとにAIエージェントが実行できるツールコール反復の最大数。値が高いほど、より複雑なマルチステップ操作が可能になります。',
+                        'daily-token-budget'        => '日次トークン予算',
+                        'daily-token-budget-info'   => 'すべてのユーザーにわたって1日あたりに消費できるAIトークン（入力+出力）の最大値。無制限にするには0に設定します。APIコストの管理に役立ちます。',
+                        'auto-enrichment'           => '製品作成時の自動エンリッチメント',
+                        'auto-enrichment-info'      => '新しい製品が作成またはインポートされたときに、不足している説明、カテゴリ、SEOコンテンツを自動的に生成します。',
+                        'quality-monitor'           => 'カタログ品質モニター',
+                        'quality-monitor-info'      => '不完全な製品、不足している翻訳、重複エントリ、価格異常を検出するためのスケジュールスキャンを実行します。',
+                        'confidence-threshold'      => '信頼度しきい値',
+                        'confidence-threshold-info' => 'AI生成の変更が自動的に適用されるための最小信頼度スコア（0〜1）。このしきい値以下の変更は、人間のレビューのためにキューに入れられます。',
+                        'approval-mode'             => '変更承認モード',
+                        'approval-mode-info'        => 'AIエージェントが書き込み操作をどのように処理するかを制御します。「確認して適用」：エージェントがチャットで値を提案し、確認を待ってから実行します。「厳格な確認」：同じですが、各変更後にも検証します。「提案のみ」：変更を説明しますが、実行しません（読み取り専用）。',
                     ],
                 ],
             ],
         ],
-
         'integrations' => [
             'index' => [
                 'create-btn' => '作成',
                 'title'      => '統合',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'delete'          => '削除',
                     'edit'            => '編集',
                     'id'              => 'ID',
@@ -1650,7 +1689,6 @@ return [
                     'permission-type' => '権限タイプ',
                 ],
             ],
-
             'create' => [
                 'access-control' => 'アクセス制御',
                 'all'            => 'すべて',
@@ -1663,7 +1701,6 @@ return [
                 'save-btn'       => '保存',
                 'title'          => '新しい統合',
             ],
-
             'edit' => [
                 'access-control' => 'アクセス制御',
                 'all'            => 'すべて',
@@ -1681,7 +1718,6 @@ return [
                 'save-btn'       => '保存',
                 'title'          => '統合の編集',
             ],
-
             'being-used'                     => 'API 統合は管理ユーザーで既に使用されています',
             'create-success'                 => 'API 統合が正常に作成されました',
             'delete-failed'                  => 'API 統合の削除に失敗しました',
@@ -1692,40 +1728,155 @@ return [
             're-generate-secret-key-success' => 'API シークレット キーが正常に再生成されました',
             'client-not-found'               => 'クライアントが見つかりません',
         ],
-
         'prompt' => [
             'datagrid' => [
-                'id'            => 'ID',
-                'title'         => 'タイトル',
-                'prompt'        => 'プロンプト',
-                'type'          => 'タイプ',
-                'created-at'    => '作成日時',
-                'updated-at'    => '更新日時',
-                'actions'       => '操作',
-                'edit'          => '編集',
-                'delete'        => '削除',
-                'product'       => '製品',
-                'category'      => 'カテゴリ',
+                'id'               => 'ID',
+                'title'            => 'タイトル',
+                'prompt'           => 'プロンプト',
+                'type'             => 'タイプ',
+                'purpose'          => '用途',
+                'text-generation'  => 'テキスト生成',
+                'image-generation' => '画像生成',
+                'translation'      => '翻訳',
+                'created-at'       => '作成日時',
+                'updated-at'       => '更新日時',
+                'actions'          => '操作',
+                'edit'             => '編集',
+                'delete'           => '削除',
+                'product'          => '製品',
+                'category'         => 'カテゴリ',
             ],
             'create' => [
-                'title'         => 'プロンプト',
-                'create-btn'    => 'プロンプトを作成',
-                'edit-title'    => 'プロンプトを編集',
-                'create-title'  => '新しいプロンプトを作成',
-                'label-title'   => 'タイトル',
-                'type'          => 'タイプ',
-                'prompt'        => 'プロンプト',
-                'save-btn'      => 'プロンプトを保存',
+                'title'               => 'プロンプト',
+                'create-btn'          => 'プロンプトを作成',
+                'edit-title'          => 'プロンプトを編集',
+                'create-title'        => '新しいプロンプトを作成',
+                'label-title'         => 'タイトル',
+                'purpose'             => '用途',
+                'text-generation'     => 'テキスト生成',
+                'image-generation'    => '画像生成',
+                'select-purpose'      => '目的を選択',
+                'select-model'        => '-- モデルを選択 --',
+                'loading-models'      => 'モデルを読み込み中...',
+                'no-models-available' => '利用可能なモデルがありません。プラットフォームを選択するか、プラットフォームタブで設定してください。',
+                'type'                => 'タイプ',
+                'prompt'              => 'プロンプト',
+                'save-btn'            => 'プロンプトを保存',
             ],
             'message' => [
-                'save-success'      => 'プロンプトが正常に保存されました。',
-                'update-success'    => 'プロンプトが正常に更新されました。',
-                'delete-success'    => 'プロンプトが正常に削除されました。',
-                'delete-fail'       => 'プロンプトの削除に失敗しました。',
+                'save-success'   => 'プロンプトが正常に保存されました。',
+                'update-success' => 'プロンプトが正常に更新されました。',
+                'delete-success' => 'プロンプトが正常に削除されました。',
+                'delete-fail'    => 'プロンプトの削除に失敗しました。',
+            ],
+        ],
+        'system-prompt' => [
+            'datagrid' => [
+                'id'          => 'ID',
+                'title'       => 'タイトル',
+                'tone'        => 'トーン',
+                'max-tokens'  => '最大トークン数',
+                'temperature' => '温度',
+                'status'      => 'ステータス',
+                'created-at'  => '作成日時',
+                'updated-at'  => '更新日時',
+                'actions'     => '操作',
+                'save'        => '保存',
+                'edit'        => '編集',
+                'delete'      => '削除',
+            ],
+            'create' => [
+                'title'        => 'システムプロンプト',
+                'create-btn'   => 'システムプロンプトを作成',
+                'edit-title'   => 'システムプロンプトを編集',
+                'create-title' => '新しいシステムプロンプトを作成',
+                'label-title'  => 'タイトル',
+                'max-tokens'   => '最大出力トークン数',
+                'temperature'  => '温度',
+                'type'         => 'タイプ',
+                'prompt'       => 'プロンプト',
+                'save-btn'     => 'プロンプトを保存',
+                'prompt-tone'  => 'プロンプトトーン',
+            ],
+            'message' => [
+                'save-success'   => 'システムプロンプトが正常に保存されました。',
+                'update-success' => 'システムプロンプトが正常に更新されました。',
+                'delete-success' => 'システムプロンプトが正常に削除されました。',
+                'delete-fail'    => 'システムプロンプトの削除に失敗しました。',
+            ],
+        ],
+        'platform' => [
+            'title'           => 'AIプラットフォーム',
+            'create-btn'      => 'プラットフォームを追加',
+            'create-title'    => 'AI プラットフォームを追加',
+            'edit-title'      => 'AI プラットフォームを編集',
+            'save-btn'        => '保存',
+            'saving'          => '保存中',
+            'test-connection' => '接続テスト',
+            'setup'           => [
+                'title'              => 'Magic AI を始めましょう',
+                'description'        => 'AI プロバイダーを接続して、AI によるコンテンツ生成、画像作成、翻訳を利用しましょう。最初のプラットフォームを追加して始めてください。',
+                'step-1'             => 'プロバイダーを選択',
+                'step-2'             => 'API キーを入力',
+                'step-3'             => 'モデルを選択して保存',
+                'add-first'          => '最初のプラットフォームを追加',
+                'no-default-warning' => 'デフォルトプラットフォームが設定されていません。アプリケーション全体で AI 機能を有効にするには、1つのプラットフォームをデフォルトに設定してください。',
+                'no-platform-hint'   => 'まだプラットフォームが設定されていません。プラットフォームタブから最初の AI プロバイダーを追加してください。',
+                'lightning-icon'     => 'マジック AI',
+                'warning-icon'       => '警告',
+            ],
+            'testing'         => 'テスト中',
+            'fetch-models'    => 'モデルを取得',
+            'fetching-models' => '取得中',
+            'set-default'     => 'デフォルトに設定',
+            'datagrid'        => [
+                'label'      => 'ラベル',
+                'provider'   => 'プロバイダー',
+                'models'     => 'モデル',
+                'default'    => 'デフォルト',
+                'status'     => 'ステータス',
+                'created-at' => '作成日時',
+                'edit'       => '編集',
+                'delete'     => '削除',
+            ],
+            'fields' => [
+                'label'                    => 'ラベル',
+                'provider'                 => 'プロバイダー',
+                'select-provider'          => '-- プロバイダーを選択 --',
+                'api-url'                  => 'API URL',
+                'api-url-hint'             => 'デフォルトのエンドポイントが入力済みです。プロキシまたはカスタムデプロイを使用する場合のみ編集してください。',
+                'api-key'                  => 'API キー',
+                'models'                   => 'モデル',
+                'custom-model-placeholder' => 'カスタムモデル ID を入力...',
+                'add'                      => '追加',
+                'enter-key-to-fetch'       => '上記に API キーを入力すると、利用可能なモデルが自動的に取得されます。',
+                'search-models'            => 'モデルを検索...',
+                'no-models-match'          => '検索に一致するモデルがありません。',
+                'azure-deployment'         => 'デプロイ名',
+                'azure-api-version'        => 'API バージョン',
+                'is-default'               => 'デフォルトに設定',
+                'status'                   => 'ステータス',
+                'use-default'              => '-- デフォルトプラットフォームを使用 --',
+                'use-default-hint'         => '空のままにするとデフォルトのプラットフォームが使用されます。* が付いたプラットフォームがデフォルトです。',
+                'no-image-platform'        => '画像対応プラットフォームが設定されていません。まず OpenAI、Gemini、または xAI プラットフォームを追加してください。',
+                'image-platform-hint'      => '画像生成をサポートするプラットフォームのみ表示されます (OpenAI, Gemini, xAI)。',
+                'remove-model'             => 'モデル :model を削除',
+                'invalid-model-name'       => '無効なモデル名です。英数字、ハイフン、ドット、コロン、スラッシュのみ使用できます（例：gpt-4o、claude-3-sonnet）。',
+            ],
+            'message' => [
+                'save-success'          => 'プラットフォームが正常に保存されました。',
+                'update-success'        => 'プラットフォームが正常に更新されました。',
+                'delete-success'        => 'プラットフォームが正常に削除されました。',
+                'delete-fail'           => 'プラットフォームの削除に失敗しました。',
+                'cannot-delete-default' => '唯一のデフォルトプラットフォームは削除できません。',
+                'set-default-success'   => 'プラットフォームがデフォルトに設定されました。',
+                'test-success'          => '接続が正常に確認されました！',
+                'test-fail'             => '接続テストに失敗しました',
+                'fetch-models-fail'     => 'モデルを取得できませんでした',
+                'invalid-model-names'   => '無効なモデル名: :names。モデル名は英数字で始まり、英数字、ハイフン、ドット、コロン、スラッシュのみ使用できます。',
             ],
         ],
     ],
-
     'components' => [
         'layouts' => [
             'header' => [
@@ -1736,7 +1887,6 @@ return [
                 'notifications' => '通知',
                 'visit-shop'    => 'ショップを訪問',
             ],
-
             'sidebar' => [
                 'attribute-families' => '属性ファミリー',
                 'attribute-groups'   => '属性グループ',
@@ -1758,7 +1908,7 @@ return [
                 'imports'            => 'インポート',
                 'exports'            => 'エクスポート',
                 'locales'            => 'ロケール',
-                'magic-ai'           => 'Magic AI',
+                'magic-ai'           => 'マジックAI',
                 'mode'               => 'ダーク モード',
                 'products'           => '製品',
                 'roles'              => 'ロール',
@@ -1770,45 +1920,44 @@ return [
                 'general-tab'        => '設定',
             ],
         ],
-
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => 'レコードが選択されていません。',
                 'must-select-a-mass-action-option' => '一括アクションのオプションを選択する必要があります。',
                 'must-select-a-mass-action'        => '一括アクションを選択する必要があります。',
             ],
-
             'toolbar' => [
-                'length-of' => ':length の',
-                'of'        => 'の',
-                'per-page'  => '/ページ',
-                'results'   => ':total 結果',
-                'selected'  => ':total 選択済み',
-
+                'length-of'    => ':length の',
+                'of'           => 'の',
+                'per-page'     => '/ページ',
+                'results'      => ':total 結果',
+                'selected'     => ':total 選択済み',
                 'mass-actions' => [
                     'submit'        => '送信',
                     'select-option' => 'オプションを選択',
                     'select-action' => 'アクションを選択',
                 ],
-
                 'filter' => [
                     'title' => 'フィルター',
                 ],
-
                 'search_by' => [
                     'code'       => 'コードで検索',
                     'code_or_id' => 'コードまたはIDで検索',
                 ],
-
                 'search' => [
                     'title' => '検索',
                 ],
-
                 'manage-columns' => [
                     'title' => 'カラム',
                 ],
+                'pagination' => [
+                    'first-page'    => '最初のページ',
+                    'previous-page' => '前のページ',
+                    'next-page'     => '次のページ',
+                    'last-page'     => '最後のページ',
+                    'page-number'   => 'ページ番号',
+                ],
             ],
-
             'filters' => [
                 'select'   => '選択',
                 'title'    => 'フィルターを適用',
@@ -1819,17 +1968,14 @@ return [
                         'no-results'        => '結果が見つかりません...',
                     ],
                 ],
-
                 'custom-filters' => [
                     'clear-all' => 'すべてクリア',
                     'title'     => 'カスタムフィルター',
                 ],
-
                 'boolean-options' => [
                     'false' => '間違い',
                     'true'  => '間違い',
                 ],
-
                 'date-options' => [
                     'last-month'        => '先月',
                     'last-six-months'   => '過去 6 か月',
@@ -1841,12 +1987,10 @@ return [
                     'yesterday'         => '昨日',
                 ],
             ],
-
             'table' => [
                 'actions'              => 'アクション',
                 'no-records-available' => '利用可能なレコードはありません。',
             ],
-
             'manage-columns' => [
                 'title'             => '列の管理',
                 'available-columns' => '利用可能な列',
@@ -1854,7 +1998,6 @@ return [
                 'apply-btn'         => '適用',
             ],
         ],
-
         'modal' => [
             'confirm' => [
                 'agree-btn'    => '同意する',
@@ -1862,14 +2005,12 @@ return [
                 'message'      => 'この操作を実行してもよろしいですか?',
                 'title'        => 'よろしいですか?',
             ],
-
             'delete' => [
                 'agree-btn'    => '削除',
                 'disagree-btn' => 'キャンセル',
                 'message'      => '本当に削除しますか?',
                 'title'        => '削除の確認',
             ],
-
             'history' => [
                 'title'           => '履歴のプレビュー',
                 'subtitle'        => '更新内容や変更内容をすばやく確認できます。',
@@ -1883,32 +2024,29 @@ return [
                 'no-history'      => '履歴が見つかりません',
             ],
         ],
-
         'products' => [
             'search' => [
                 'add-btn'       => '選択した製品を追加',
                 'empty-info'    => '検索語に該当する製品はありません。',
                 'empty-title'   => '製品が見つかりません',
                 'product-image' => '製品画像',
-                'qty'           => ': 在庫あり',
+                'qty'           => ':qty 在庫あり',
                 'sku'           => 'SKU - :sku',
                 'title'         => '製品を選択',
             ],
         ],
-
         'media' => [
             'images' => [
                 'add-image-btn'      => '画像を追加',
                 'generate-with-ai'   => 'AIで生成',
                 'upload-from-device' => 'デバイスからアップロード',
                 'cancel'             => 'キャンセル',
-                'ai-add-image-btn'   => 'Magic AI',
+                'ai-add-image-btn'   => 'マジックAI',
                 'ai-btn-info'        => '画像の生成',
                 'allowed-types'      => 'png、jpeg、jpg',
                 'not-allowed-error'  => '画像ファイル (.jpeg、.jpg、.png、..) のみが許可されます。',
                 'upload-media-btn'   => 'メディアをアップロード',
-
-                'ai-generation' => [
+                'ai-generation'      => [
                     '1024x1024'        => '1024x1024',
                     '1024x1792'        => '1024x1792',
                     '1792x1024'        => '1792x1024',
@@ -1928,7 +2066,6 @@ return [
                     'standard'         => '標準',
                     'title'            => 'AI 画像生成',
                 ],
-
                 'placeholders' => [
                     'front'     => '前面',
                     'next'      => '次へ',
@@ -1937,23 +2074,22 @@ return [
                     'zoom'      => 'ズーム',
                 ],
             ],
-
+            'gallery' => [
+                'not-allowed-error' => '画像と動画ファイルのみ許可されています。(.mp4, .jpg ..)',
+            ],
             'videos' => [
                 'add-video-btn'     => 'ビデオを追加',
                 'allowed-types'     => 'mp4、webm、mkv',
                 'not-allowed-error' => 'ビデオ ファイル (.mp4、.mov、.ogg など) のみが許可されます。',
             ],
-
             'files' => [
                 'add-file-btn'      => 'ファイルを追加',
                 'allowed-types'     => 'pdf',
                 'not-allowed-error' => 'pdf ファイルのみ許可されます',
             ],
         ],
-
         'tinymce' => [
-            'ai-btn-tile' => '魔法のAI',
-
+            'ai-btn-tile'   => '魔法のAI',
             'ai-generation' => [
                 'apply'                  => '適用',
                 'generate'               => '生成',
@@ -1962,7 +2098,14 @@ return [
                 'generating'             => '生成中...',
                 'prompt'                 => 'プロンプト',
                 'title'                  => 'AI アシスタンス',
+                'platform'               => 'プラットフォーム',
                 'model'                  => 'モデル',
+                'rich-preview'           => 'リッチプレビュー',
+                'system-prompt'          => 'システムプロンプト',
+                'select-system-prompt'   => 'システムプロンプトを選択',
+                'tone-instructions'      => 'トーン / 指示',
+                'max-tokens'             => '最大トークン数',
+                'temperature'            => '温度',
                 'gpt-3-5-turbo'          => 'OpenAI gpt-3.5-turbo',
                 'llama2'                 => 'ラマ 2',
                 'mistral'                => 'ミストラル',
@@ -1979,7 +2122,6 @@ return [
             ],
         ],
     ],
-
     'acl' => [
         'addresses'                => '住所',
         'attribute-families'       => '属性ファミリー',
@@ -2005,7 +2147,10 @@ return [
         'imports'                  => 'インポート',
         'invoices'                 => '請求書',
         'locales'                  => 'ロケール',
-        'magic-ai'                 => 'Magic AI',
+        'magic-ai'                 => 'マジックAI',
+        'magic-ai-general'         => '一般',
+        'magic-ai-prompt'          => 'プロンプト',
+        'magic-ai-system-prompt'   => 'システムプロンプト',
         'marketing'                => 'マーケティング',
         'newsletter-subscriptions' => 'ニュースレターの購読',
         'note'                     => 'メモ',
@@ -2039,54 +2184,44 @@ return [
         'integrations'             => '統合',
         'api'                      => 'API',
         'tracker'                  => 'ジョブ トラッカー',
-        'imports'                  => 'インポート',
         'exports'                  => 'エクスポート',
         'mass-update'              => '一括更新',
         'mass-delete'              => '一括削除',
     ],
-
     'errors' => [
         'dashboard' => 'ダッシュボード',
         'go-back'   => '戻る',
         'support'   => '問題が解決しない場合は、<a href=":link" class=":class">:email</a> までお問い合わせください。',
-
-        '404' => [
+        '404'       => [
             'description' => 'おっと！お探しのページは現在休止中です。お探しのものが見つからなかったようです。',
             'title'       => '404 ページが見つかりません',
         ],
-
         '401' => [
             'description' => 'おっと！このページへのアクセスは許可されていないようです。必要な認証情報が不足しているようです。',
             'title'       => '401 権限がありません',
             'message'     => '認証情報が無効であるかトークンの有効期限が切れているため、認証に失敗しました。',
         ],
-
         '403' => [
             'description' => '申し訳ありません。このページは立ち入り禁止です。このコンテンツを表示するために必要な権限がないようです。',
             'title'       => '403 禁止',
         ],
-
         '413' => [
             'description' => 'おっと！大きすぎるファイルをアップロードしようとしているようです。同じファイルをアップロードする場合は、それに応じて PHP 設定を更新してください。',
             'title'       => '413 コンテンツが大きすぎます',
         ],
-
         '419' => [
             'description' => '申し訳ありません。セッションが期限切れです。続行するには、ページを更新して再度ログインしてください。',
             'title'       => '419 セッションが期限切れです',
         ],
-
         '500' => [
             'description' => '申し訳ありません。問題が発生しました。探しているページを読み込む際に問題が発生しているようです。',
             'title'       => '500 内部サーバー エラー',
         ],
-
         '503' => [
             'description' => '申し訳ありません。メンテナンスのため一時的にダウンしているようです。しばらくしてからもう一度ご確認ください。',
             'title'       => '503 サービスは利用できません',
         ],
     ],
-
     'export' => [
         'csv'                  => 'CSV',
         'download'             => 'ダウンロード',
@@ -2099,22 +2234,18 @@ return [
         'error'                => '問題が発生しました！',
         'product-not-selected' => 'クイックエクスポート用に商品が選択されていません',
     ],
-
     'validations' => [
         'slug-being-used' => 'このスラッグはカテゴリまたは製品で使用されています。',
         'slug-reserved'   => 'このスラッグは予約されています。',
         'invalid-locale'  => '無効なロケール:locales',
     ],
-
     'footer' => [
         'copy-right' => '<a href="https://unopim.com/" target="_blank">UnoPim</a> によって提供、<a href="https://webkul.com/" target="_blank">Webkul</a> によるコミュニティ プロジェクト',
     ],
-
     'emails' => [
         'dear'   => ':admin_name 様',
         'thanks' => 'ご不明な点がございましたら、<a href=":link" style=":style">:email</a> までご連絡ください。<br/>よろしくお願いいたします。',
-
-        'admin' => [
+        'admin'  => [
             'forgot-password' => [
                 'description'    => 'このメールは、お客様のアカウントのパスワード リセット リクエストを受け取ったためお送りしています。',
                 'greeting'       => 'パスワードを忘れました!',
@@ -2123,16 +2254,15 @@ return [
             ],
         ],
     ],
-
     'common' => [
-        'yes'     => 'はい',
-        'no'      => 'いいえ',
-        'true'    => '正しい',
-        'false'   => '間違い',
-        'enable'  => '有効',
-        'disable' => '無効',
+        'yes'            => 'はい',
+        'no'             => 'いいえ',
+        'true'           => '正しい',
+        'false'          => '間違い',
+        'enable'         => '有効',
+        'disable'        => '無効',
+        'no-match-found' => '一致するものが見つかりません！',
     ],
-
     'default-prompt' => [
         'detailed' => [
             'title'  => '製品詳細説明',

@@ -40,7 +40,7 @@ class ProductNormalizer
             $attributeValues[AbstractType::COMMON_VALUES_KEY] = $this->normalizeAttributeKey($attributeValues[AbstractType::COMMON_VALUES_KEY]);
         }
 
-        return $attributeValues;
+        return $this->sanitizeArrayKeys($attributeValues);
     }
 
     /**
@@ -58,20 +58,68 @@ class ProductNormalizer
      */
     public function normalizeAttributeKey(array $attributeValues): array
     {
-        $attributes = $this->attributeService->findByCodes(array_keys($attributeValues));
+        $attributeValues = $this->sanitizeArrayKeys($attributeValues);
+
+        $attributeCodes = array_values(array_filter(
+            array_keys($attributeValues),
+            fn ($code) => is_string($code) && trim($code) !== ''
+        ));
+
+        $attributes = ! empty($attributeCodes)
+            ? $this->attributeService->findByCodes($attributeCodes)
+            : [];
 
         foreach ($attributeValues as $key => $value) {
+            if (! is_string($key) || trim($key) === '') {
+                continue;
+            }
+
             $attribute = $attributes[$key] ?? null;
 
             if (! $attribute) {
                 continue;
             }
 
-            $attributeValues[$key.'-'.$attribute['type']] = $value;
+            $attributeCode = trim((string) ($attribute['code'] ?? ''));
+            $attributeType = trim((string) ($attribute['type'] ?? ''));
+
+            if ($attributeCode === '' || $attributeType === '') {
+                continue;
+            }
+
+            $attributeValues[$attributeCode.'-'.$attributeType] = $value;
 
             unset($attributeValues[$key]);
         }
 
-        return $attributeValues;
+        return $this->sanitizeArrayKeys($attributeValues);
+    }
+
+    /**
+     * Recursively removes empty-string keys from arrays.
+     */
+    private function sanitizeArrayKeys(array $data): array
+    {
+        $sanitized = [];
+
+        foreach ($data as $key => $value) {
+            $resolvedKey = $key;
+
+            if (is_string($key)) {
+                $resolvedKey = trim($key);
+
+                if ($resolvedKey === '') {
+                    continue;
+                }
+            }
+
+            if (is_array($value)) {
+                $value = $this->sanitizeArrayKeys($value);
+            }
+
+            $sanitized[$resolvedKey] = $value;
+        }
+
+        return $sanitized;
     }
 }

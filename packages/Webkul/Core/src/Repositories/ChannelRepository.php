@@ -2,8 +2,10 @@
 
 namespace Webkul\Core\Repositories;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
+use Webkul\Core\Contracts\Channel;
 use Webkul\Core\Eloquent\Repository;
 
 class ChannelRepository extends Repository
@@ -19,7 +21,7 @@ class ChannelRepository extends Repository
     /**
      * Create.
      *
-     * @return \Webkul\Core\Contracts\Channel
+     * @return Channel
      */
     public function create(array $data)
     {
@@ -31,10 +33,30 @@ class ChannelRepository extends Repository
             }
         }
 
+        $data = $this->removeEmptyTranslations($data, $model);
+
         foreach (core()->getAllActiveLocales() as $locale) {
+            $localeCode = $locale->code;
+
             foreach ($model->translatedAttributes as $attribute) {
                 if (isset($data[$attribute])) {
-                    $data[$locale->code][$attribute] = $data[$attribute];
+                    $data[$localeCode][$attribute] = $data[$attribute];
+                }
+            }
+
+            if (isset($data[$localeCode])) {
+                $allEmpty = true;
+
+                foreach ($model->translatedAttributes as $field) {
+                    if (! empty($data[$localeCode][$field])) {
+                        $allEmpty = false;
+
+                        break;
+                    }
+                }
+
+                if ($allEmpty) {
+                    unset($data[$localeCode]);
                 }
             }
         }
@@ -57,10 +79,14 @@ class ChannelRepository extends Repository
      *
      * @param  int  $id
      * @param  string  $attribute
-     * @return \Webkul\Core\Contracts\Channel
+     * @return Channel
      */
     public function update(array $data, $id, $attribute = 'id')
     {
+        $model = $this->getModel();
+
+        $data = $this->removeEmptyTranslations($data, $model);
+
         $channel = parent::update($data, $id, $attribute);
 
         // Sync the Channel Locales
@@ -85,9 +111,41 @@ class ChannelRepository extends Repository
     }
 
     /**
+     * Remove locale translation payloads when every translated attribute is empty.
+     */
+    protected function removeEmptyTranslations(array $data, $model): array
+    {
+        foreach (core()->getAllActiveLocales() as $locale) {
+            $localeCode = $locale->code;
+
+            if (! isset($data[$localeCode]) || ! is_array($data[$localeCode])) {
+                continue;
+            }
+
+            $allEmpty = true;
+
+            foreach ($model->translatedAttributes as $field) {
+                $value = $data[$localeCode][$field] ?? null;
+
+                if ($value !== null && $value !== '') {
+                    $allEmpty = false;
+
+                    break;
+                }
+            }
+
+            if ($allEmpty) {
+                unset($data[$localeCode]);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
      * This function returns a query builder instance for further manipulation of the channel model.
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function queryBuilder()
     {

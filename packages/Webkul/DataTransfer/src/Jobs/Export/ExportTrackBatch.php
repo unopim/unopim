@@ -71,7 +71,9 @@ class ExportTrackBatch implements ShouldQueue
                 $this->exportBatch->errors = [$e->getMessage()];
                 $this->exportBatch->save();
 
-                \Log::error('Export process failed: '.$e->getMessage());
+                $logger->error("Export process failed: {$e->getMessage()}", [
+                    'exception' => $e->getTraceAsString(),
+                ]);
 
                 return;
             }
@@ -85,5 +87,18 @@ class ExportTrackBatch implements ShouldQueue
         };
         // Gather stats
         $stats = $exportHelper->stats($state);
+    }
+
+    public function failed(\Throwable $exception)
+    {
+        $logger = JobLogger::make($this->exportBatch->id);
+
+        $logger->error("ExportTrackBatch failed: {$exception->getMessage()}", [
+            'exception' => $exception->getTraceAsString(),
+        ]);
+
+        $this->exportBatch->state = ExportHelper::STATE_FAILED;
+        $this->exportBatch->errors = [$exception->getMessage()];
+        $this->exportBatch->save();
     }
 }

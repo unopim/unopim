@@ -6,15 +6,13 @@ return [
             'attribute-families' => [
                 'default' => 'Défaut',
             ],
-
             'attribute-groups' => [
                 'description'      => 'Description',
                 'general'          => 'Général',
                 'meta-description' => 'Méta-description',
                 'price'            => 'Prix',
-                'media'            => 'Média',
+                'media'            => 'Médias',
             ],
-
             'attributes' => [
                 'brand'                => 'Marque',
                 'color'                => 'Couleur',
@@ -45,7 +43,6 @@ return [
                 'weight'               => 'Poids',
                 'width'                => 'Largeur',
             ],
-
             'attribute-options' => [
                 'black'  => 'Noir',
                 'green'  => 'Vert',
@@ -58,19 +55,16 @@ return [
                 'yellow' => 'Jaune',
             ],
         ],
-
         'category' => [
             'categories' => [
                 'description' => 'Description de la catégorie racine',
                 'name'        => 'Racine',
             ],
-
             'category_fields' => [
                 'name'        => 'Nom',
                 'description' => 'Description',
             ],
         ],
-
         'core' => [
             'channels' => [
                 'meta-title'       => 'Boutique de démonstration',
@@ -78,7 +72,6 @@ return [
                 'meta-description' => 'Méta description de la boutique de démonstration',
                 'name'             => 'Défaut',
             ],
-
             'currencies' => [
                 'AED' => 'Dirham',
                 'AFN' => 'Shekel israélien',
@@ -95,19 +88,16 @@ return [
                 'USD' => 'Dollar américain',
             ],
         ],
-
         'user' => [
             'roles' => [
                 'description' => 'Les utilisateurs de ce rôle auront tous les accès',
                 'name'        => 'Administrateur',
             ],
-
             'users' => [
                 'name' => 'Exemple',
             ],
         ],
     ],
-
     'installer' => [
         'index' => [
             'create-administrator' => [
@@ -119,7 +109,6 @@ return [
                 'password'         => 'Mot de passe',
                 'title'            => 'Créer un administrateur',
             ],
-
             'environment-configuration' => [
                 'allowed-currencies'  => 'Devises autorisées',
                 'allowed-locales'     => 'Paramètres régionaux autorisés',
@@ -155,15 +144,13 @@ return [
                 'turkish-lira'        => 'Lire turque (TRY)',
                 'ukrainian-hryvnia'   => 'Hryvnia ukrainienne (UAH)',
                 'usd'                 => 'Dollar américain (USD)',
-                'warning-message'     => 'Méfiez-vous! Les paramètres de vos langues système par défaut as well as the default currency are permanent and cannot be changed ever again.',
+                'warning-message'     => 'Méfiez-vous ! Les paramètres de vos langues système par défaut ainsi que la devise par défaut sont permanents et ne pourront jamais être modifiés.',
             ],
-
             'installation-processing' => [
                 'unopim'      => 'Installation d\'UnoPim',
                 'unopim-info' => 'Création des tables de la base de données, cela peut prendre quelques instants',
                 'title'       => 'Installation',
             ],
-
             'installation-completed' => [
                 'admin-panel'               => 'Panneau d\'administration',
                 'unopim-forums'             => 'Forum UnoPim',
@@ -171,7 +158,6 @@ return [
                 'title-info'                => 'UnoPim est installé avec succès sur votre système.',
                 'title'                     => 'Installation terminée',
             ],
-
             'ready-for-installation' => [
                 'create-databsae-table'   => 'Créer la table de base de données',
                 'install-info-button'     => 'Cliquez sur le bouton ci-dessous pour',
@@ -181,7 +167,6 @@ return [
                 'start-installation'      => 'Démarrer l\'installation',
                 'title'                   => 'Prêt pour l\'installation',
             ],
-
             'start' => [
                 'locale'        => 'Lieu',
                 'main'          => 'Commencer',
@@ -189,7 +174,6 @@ return [
                 'title'         => 'Votre installation UnoPim',
                 'welcome-title' => 'Bienvenue sur UnoPim :version',
             ],
-
             'server-requirements' => [
                 'calendar'    => 'Calendrier',
                 'ctype'       => 'cType',
@@ -212,7 +196,6 @@ return [
                 'tokenizer'   => 'tokeniseur',
                 'xml'         => 'XML',
             ],
-
             'back'                     => 'Dos',
             'unopim-info'              => 'un projet communautaire par',
             'unopim-logo'              => 'Logo UnoPim',

@@ -2,16 +2,21 @@
 
 namespace Webkul\Category\Providers;
 
+use Webkul\Category\Models\Category;
+use Webkul\Category\Models\CategoryField;
+use Webkul\Category\Models\CategoryFieldOption;
+use Webkul\Category\Models\CategoryFieldOptionTranslation;
+use Webkul\Category\Models\CategoryFieldTranslation;
 use Webkul\Core\Providers\CoreModuleServiceProvider;
 
 class ModuleServiceProvider extends CoreModuleServiceProvider
 {
     protected $models = [
-        \Webkul\Category\Models\Category::class,
-        \Webkul\Category\Models\CategoryField::class,
-        \Webkul\Category\Models\CategoryFieldOption::class,
-        \Webkul\Category\Models\CategoryFieldOptionTranslation::class,
-        \Webkul\Category\Models\CategoryFieldTranslation::class,
+        Category::class,
+        CategoryField::class,
+        CategoryFieldOption::class,
+        CategoryFieldOptionTranslation::class,
+        CategoryFieldTranslation::class,
 
     ];
 }

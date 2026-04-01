@@ -2,7 +2,9 @@
 
 namespace Webkul\Admin\Http\Controllers\Settings\DataTransfer;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\JobTrackerGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\DataTransfer\Helpers\Export;
@@ -29,9 +31,9 @@ class TrackerController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
-    public function index()
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             return app(JobTrackerGrid::class)->toJson();
@@ -42,10 +44,8 @@ class TrackerController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
      */
-    public function view($batchId = null)
+    public function view($batchId = null): View
     {
         if (! bouncer()->hasPermission('data_transfer.job_tracker')) {
             abort(401, 'This action is unauthorized');
@@ -56,12 +56,14 @@ class TrackerController extends Controller
         $summary = $this->normalizeSummary($import->summary);
         $import['data'] = json_decode($import->data, true);
 
+        $batchState = $this->mapJobStateToBatchState($import->state);
+
         if ($jobInstance['type'] == 'export') {
             $isValid = $this->exportHelper->setExport($import)->isValid();
-            $stats = $this->exportHelper->stats($import->state);
+            $stats = $this->exportHelper->stats($batchState);
         } else {
             $isValid = $this->importHelper->setImport($import)->isValid();
-            $stats = $this->importHelper->stats($import->state);
+            $stats = $this->importHelper->stats($batchState);
         }
 
         return view('admin::settings.data-transfer.tracker.import', compact(
@@ -71,6 +73,20 @@ class TrackerController extends Controller
             'jobInstance',
             'summary',
         ));
+    }
+
+    /**
+     * Map job track state to the corresponding batch state for stats queries.
+     */
+    private function mapJobStateToBatchState(string $jobState): string
+    {
+        return match ($jobState) {
+            'processing', 'processed' => 'processed',
+            'linking', 'linked'       => 'linked',
+            'indexing', 'indexed'      => 'indexed',
+            'completed'                => 'processed',
+            default                    => $jobState,
+        };
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace Webkul\AdminApi\DataGrids\Integrations;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Webkul\AdminApi\Traits\OauthClientGenerator;
 use Webkul\DataGrid\DataGrid;
@@ -20,7 +21,7 @@ class ApiKeysDataGrid extends DataGrid
     /**
      * Prepare query builder.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return Builder
      */
     public function prepareQueryBuilder()
     {

@@ -3,7 +3,7 @@
 namespace Webkul\Admin\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Webkul\Core\Rules\Slug;
+use Webkul\Core\Rules\Sku;
 use Webkul\Product\Repositories\ProductRepository;
 
 class ProductForm extends FormRequest
@@ -45,7 +45,7 @@ class ProductForm extends FormRequest
 
         $this->rules = $product->getTypeInstance()->getTypeValidationRules();
 
-        $this->rules['sku'] = ['required', 'unique:products,sku,'.$this->id, new Slug];
+        $this->rules['sku'] = ['required', 'unique:products,sku,'.$this->id, new Sku];
         $this->rules['status'] = ['boolean'];
 
         return $this->rules;

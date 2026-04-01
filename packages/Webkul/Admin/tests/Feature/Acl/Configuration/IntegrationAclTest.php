@@ -3,11 +3,7 @@
 use Webkul\AdminApi\Models\Apikey;
 
 it('should display the magic ai tab if has permission', function () {
-    $this->loginWithPermissions('custom', [
-        'configuration',
-        'configuration.magic-ai',
-        'configuration.magic-ai.general',
-    ]);
+    $this->loginAsAdmin();
 
     $this->get(route('admin.configuration.edit', ['general', 'magic_ai']))
         ->assertOk()
@@ -84,7 +80,7 @@ it('should delete an integration if has permission', function () {
         ->assertOk()
         ->assertDontSeeText('Unauthorized');
 
-    $this->assertDatabaseHas($this->getFullTableName(ApiKey::class), [
+    $this->assertDatabaseHas($this->getFullTableName(Apikey::class), [
         'id'      => $apiKey->id,
         'revoked' => 1,
     ]);

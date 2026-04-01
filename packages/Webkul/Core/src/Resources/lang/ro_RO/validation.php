@@ -7,6 +7,7 @@ return [
     'decimal'                      => 'Valoarea :attribute trebuie să fie validă.',
     'phone-number'                 => 'Numărul de telefon :attribute trebuie să fie valid.',
     'slug'                         => 'Slug-ul :attribute trebuie să fie valid.',
+    'sku'                          => 'SKU-ul :attribute trebuie să fie valid (doar caractere alfanumerice, cratime și liniuțe de subliniere).',
     'comma-separated-integer'      => 'Câmpul :attribute trebuie să fie numeric și poate conține virgulă.',
     'type'                         => 'Tipul :attribute trebuie să fie valid.',
     'validation-type'              => 'Tipul validării :attribute trebuie să fie valid.',

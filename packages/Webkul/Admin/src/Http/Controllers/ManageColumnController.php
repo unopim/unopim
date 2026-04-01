@@ -61,13 +61,13 @@ class ManageColumnController extends SelectOptionsController
     /**
      * get available columns
      */
-    public function availableColumns()
+    public function availableColumns(): JsonResponse
     {
-        $entityName = request()->get('entityName');
-        $source = request()->get('source', 'product');
-        $page = request()->get('page');
-        $limit = request()->get('limit', self::DEFAULT_PER_PAGE);
-        $query = request()->get('query') ?? '';
+        $entityName = request()->input('entityName');
+        $source = request()->input('source', 'product');
+        $page = request()->input('page');
+        $limit = request()->input('limit', self::DEFAULT_PER_PAGE);
+        $query = request()->input('query') ?? '';
         $queryParams = request()->except(['page', 'query', 'entityName']);
 
         $options = $this->getOptionsByParams($entityName, $page, $query, $queryParams, $limit);

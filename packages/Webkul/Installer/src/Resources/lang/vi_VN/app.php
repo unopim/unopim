@@ -3,8 +3,10 @@
 return [
     'seeders' => [
         'attribute' => [
-            'attribute-families' => 'Các gia đình thuộc tính',
-            'attribute-groups'   => [
+            'attribute-families' => [
+                'default' => 'Mặc định',
+            ],
+            'attribute-groups' => [
                 'description'      => 'Mô tả',
                 'general'          => 'Chung',
                 'meta-description' => 'Mô tả meta',
@@ -96,7 +98,6 @@ return [
             ],
         ],
     ],
-
     'installer' => [
         'index' => [
             'create-administrator' => [
@@ -108,7 +109,6 @@ return [
                 'password'         => 'Mật khẩu',
                 'title'            => 'Tạo quản trị viên',
             ],
-
             'environment-configuration' => [
                 'allowed-currencies'  => 'Đồng tiền được phép',
                 'allowed-locales'     => 'Các địa phương được phép',
@@ -146,13 +146,11 @@ return [
                 'usd'                 => 'Đô la Mỹ (USD)',
                 'warning-message'     => 'Cảnh báo! Cấu hình này sẽ không thể thay đổi sau này.',
             ],
-
             'installation-processing' => [
                 'unopim'      => 'Cài đặt UnoPim',
                 'unopim-info' => 'Đang tạo các bảng cơ sở dữ liệu, điều này có thể mất vài phút.',
                 'title'       => 'Quá trình cài đặt',
             ],
-
             'installation-completed' => [
                 'admin-panel'               => 'Bảng điều khiển quản trị',
                 'unopim-forums'             => 'Diễn đàn UnoPim',
@@ -160,7 +158,6 @@ return [
                 'title-info'                => 'UnoPim đã được cài đặt thành công.',
                 'title'                     => 'Cài đặt hoàn tất',
             ],
-
             'ready-for-installation' => [
                 'create-databsae-table'   => 'Tạo bảng cơ sở dữ liệu',
                 'install-info-button'     => 'Nhấn nút bên dưới để bắt đầu',
@@ -170,7 +167,6 @@ return [
                 'start-installation'      => 'Bắt đầu cài đặt',
                 'title'                   => 'Sẵn sàng cho cài đặt',
             ],
-
             'start' => [
                 'locale'        => 'Ngôn ngữ',
                 'main'          => 'Trang chủ',
@@ -178,7 +174,6 @@ return [
                 'title'         => 'Cài đặt UnoPim',
                 'welcome-title' => 'Chào mừng bạn đến với UnoPim :version',
             ],
-
             'server-requirements' => [
                 'calendar'    => 'Lịch',
                 'ctype'       => 'cType',
@@ -201,7 +196,6 @@ return [
                 'tokenizer'   => 'Bộ phân tách từ',
                 'xml'         => 'XML',
             ],
-
             'back'                     => 'Trở lại',
             'unopim-info'              => 'Dự án cộng đồng',
             'unopim-logo'              => 'Logo UnoPim',

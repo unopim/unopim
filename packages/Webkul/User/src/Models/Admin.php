@@ -85,7 +85,7 @@ class Admin extends Authenticatable implements AdminContract, AuditableContract
     /**
      * Get the role that owns the admin.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function role()
     {
@@ -95,7 +95,7 @@ class Admin extends Authenticatable implements AdminContract, AuditableContract
     /**
      * Get the api integration that owns the admin.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function apiKey()
     {

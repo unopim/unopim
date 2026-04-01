@@ -3,8 +3,10 @@
 return [
     'seeders' => [
         'attribute' => [
-            'attribute-families' => 'Pamantayan',
-            'attribute-groups'   => [
+            'attribute-families' => [
+                'default' => 'Default',
+            ],
+            'attribute-groups' => [
                 'description'      => 'Paglalarawan',
                 'general'          => 'Pangkalahatan',
                 'meta-description' => 'Meta Paglalarawan',
@@ -96,7 +98,6 @@ return [
             ],
         ],
     ],
-
     'installer' => [
         'index' => [
             'create-administrator' => [
@@ -108,7 +109,6 @@ return [
                 'password'         => 'Password',
                 'title'            => 'Lumikha ng Tagapangasiwa',
             ],
-
             'environment-configuration' => [
                 'allowed-currencies'  => 'Mga Pinahihintulutang Pera',
                 'allowed-locales'     => 'Mga Pinahihintulutang Lokalisasyon',
@@ -146,13 +146,11 @@ return [
                 'usd'                 => 'Dollars ng Amerika (USD)',
                 'warning-message'     => 'Babala! Hindi na ito mababago pa - Karaniwang Pera at Karaniwang Lokalisasyon.',
             ],
-
             'installation-processing' => [
                 'unopim'      => 'Pag-install ng UnoPim',
                 'unopim-info' => 'Ang paglikha ng mga talahanayan sa database ay maaaring tumagal ng ilang minuto.',
                 'title'       => 'Proseso ng Pag-install',
             ],
-
             'installation-completed' => [
                 'admin-panel'               => 'Panel ng Administrador',
                 'unopim-forums'             => 'Mga Forum ng UnoPim',
@@ -160,7 +158,6 @@ return [
                 'title-info'                => 'Ang UnoPim ay matagumpay na na-install.',
                 'title'                     => 'Pag-install Nakumpleto',
             ],
-
             'ready-for-installation' => [
                 'create-databsae-table'   => 'Lumikha ng Talahanayan sa Database',
                 'install-info-button'     => 'I-click ang pindutang ito upang magsimula',
@@ -170,7 +167,6 @@ return [
                 'start-installation'      => 'Simulan ang Pag-install',
                 'title'                   => 'Handa para sa Pag-install',
             ],
-
             'start' => [
                 'locale'        => 'Lokalisasyon',
                 'main'          => 'Pangunahin',
@@ -178,7 +174,6 @@ return [
                 'title'         => 'Pag-install ng UnoPim',
                 'welcome-title' => 'Maligayang pagdating sa UnoPim :version',
             ],
-
             'server-requirements' => [
                 'calendar'    => 'Kalendaryo',
                 'ctype'       => 'cType',
@@ -201,10 +196,9 @@ return [
                 'tokenizer'   => 'Tokenizer',
                 'xml'         => 'XML',
             ],
-
             'back'                     => 'Bumalik',
             'unopim-info'              => 'Proyektong Komunidad',
-            'unopim-logo'              => 'UnoPim Logo',
+            'unopim-logo'              => 'Logo ng UnoPim',
             'unopim'                   => 'UnoPim',
             'continue'                 => 'Magpatuloy',
             'installation-description' => 'Ang pag-install ng UnoPim ay binubuo ng ilang mga hakbang. Narito ang isang pangkalahatang-ideya:',

@@ -75,7 +75,7 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
 
     public function familyGroups()
     {
-        return $this->belongsToMany(AttributeGroupProxy::class::modelClass(), 'attribute_family_group_mappings');
+        return $this->belongsToMany(AttributeGroupProxy::modelClass(), 'attribute_family_group_mappings');
     }
 
     /**

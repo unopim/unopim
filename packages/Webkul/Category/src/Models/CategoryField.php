@@ -140,6 +140,8 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
 
         if ($this->is_required) {
             $validations[] = 'required';
+        } else {
+            $validations[] = 'nullable';
         }
 
         if ($this->validation) {
@@ -183,6 +185,8 @@ class CategoryField extends TranslatableModel implements CategoryFieldContract, 
 
         if ($this->is_required) {
             $validations[] = 'required';
+        } else {
+            $validations[] = 'nullable';
         }
 
         if ($this->type === 'file') {

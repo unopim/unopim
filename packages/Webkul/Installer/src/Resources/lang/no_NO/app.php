@@ -3,8 +3,10 @@
 return [
     'seeders' => [
         'attribute' => [
-            'attribute-families' => 'Standard',
-            'attribute-groups'   => [
+            'attribute-families' => [
+                'default' => 'Standard',
+            ],
+            'attribute-groups' => [
                 'description'      => 'Beskrivelse',
                 'general'          => 'Generell',
                 'meta-description' => 'Meta beskrivelse',
@@ -92,11 +94,10 @@ return [
                 'name'        => 'Administrator',
             ],
             'users' => [
-                'name' => 'Example',
+                'name' => 'Eksempel',
             ],
         ],
     ],
-
     'installer' => [
         'index' => [
             'create-administrator' => [
@@ -108,7 +109,6 @@ return [
                 'password'         => 'Passord',
                 'title'            => 'Opprett Administrator',
             ],
-
             'environment-configuration' => [
                 'allowed-currencies'  => 'Tillatte valutaer',
                 'allowed-locales'     => 'Tillatte lokale innstillinger',
@@ -146,13 +146,11 @@ return [
                 'usd'                 => 'Amerikansk Dollar (USD)',
                 'warning-message'     => 'Advarsel! Standard lokalitet og valuta kan ikke endres senere.',
             ],
-
             'installation-processing' => [
                 'unopim'      => 'Installerer UnoPim',
                 'unopim-info' => 'Oppretter databasetabeller, dette kan ta litt tid',
                 'title'       => 'Installerer',
             ],
-
             'installation-completed' => [
                 'admin-panel'               => 'Administratorpanel',
                 'unopim-forums'             => 'UnoPim-forum',
@@ -160,7 +158,6 @@ return [
                 'title-info'                => 'UnoPim ble installert vellykket.',
                 'title'                     => 'Installasjonen fullført',
             ],
-
             'ready-for-installation' => [
                 'create-databsae-table'   => 'Opprett databasen tabeller',
                 'install-info-button'     => 'Klikk på knappen nedenfor for å starte',
@@ -170,7 +167,6 @@ return [
                 'start-installation'      => 'Start installasjonen',
                 'title'                   => 'Klar for installasjon',
             ],
-
             'start' => [
                 'locale'        => 'Lokalisering',
                 'main'          => 'Start',
@@ -178,7 +174,6 @@ return [
                 'title'         => 'Installer UnoPim',
                 'welcome-title' => 'Velkommen til UnoPim :version',
             ],
-
             'server-requirements' => [
                 'calendar'    => 'Kalender',
                 'ctype'       => 'cType',
@@ -201,7 +196,6 @@ return [
                 'tokenizer'   => 'Tokenizer',
                 'xml'         => 'XML',
             ],
-
             'back'                     => 'Tilbake',
             'unopim-info'              => 'Fellesskapsprosjekt',
             'unopim-logo'              => 'UnoPim-logo',

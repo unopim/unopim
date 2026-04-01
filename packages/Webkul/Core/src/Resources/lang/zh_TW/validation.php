@@ -7,6 +7,7 @@ return [
     'decimal'                      => '值 :attribute 必須有效。',
     'phone-number'                 => '電話號碼 :attribute 必須有效。',
     'slug'                         => 'Slug :attribute 必須有效。',
+    'sku'                          => 'SKU :attribute 必須有效（只能包含字母、數字、連字符和底線）。',
     'comma-separated-integer'      => '字段 :attribute 必須是數字，並可包含逗號。',
     'type'                         => '類型 :attribute 必須有效。',
     'validation-type'              => '驗證類型 :attribute 必須有效。',
@@ -15,5 +16,6 @@ return [
     'not-supported'                => '字段 :attribute 不支持以下值 (:unsupported)。',
     'seperator-not-supported'      => '僅支持 , 或 ; 或 | 作为分隔符。',
     'file-type'                    => '文件必須是 csv、xls 或 xlsx 类型。',
-    'file-mime-extension-mismatch' => '檔案副檔名與 MIME 類型不匹配。檔案副檔名是 :extension，MIME 類型是 :mimeType。',
+    'file-mime-extension-mismatch' => ':attribute 檔案副檔名與 MIME 類型不匹配。檔案副檔名是 :extension，MIME 類型是 :mimeType。',
+    'file-not-exists'              => '所選的檔案 :value 在欄位 :attribute 中不存在。',
 ];

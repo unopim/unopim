@@ -2,6 +2,7 @@
 
 namespace Webkul\Admin\Http\Controllers;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Crypt;
 
 class DataGridController extends Controller
@@ -9,7 +10,7 @@ class DataGridController extends Controller
     /**
      * Look up.
      */
-    public function lookUp()
+    public function lookUp(): Collection
     {
         /**
          * Validation for parameters.

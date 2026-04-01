@@ -3,10 +3,11 @@
 namespace Webkul\HistoryControl\Providers;
 
 use Webkul\Core\Providers\CoreModuleServiceProvider;
+use Webkul\HistoryControl\Models\History;
 
 class ModuleServiceProvider extends CoreModuleServiceProvider
 {
     protected $models = [
-        \Webkul\HistoryControl\Models\History::class,
+        History::class,
     ];
 }

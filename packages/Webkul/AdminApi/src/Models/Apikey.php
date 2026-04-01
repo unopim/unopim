@@ -5,6 +5,7 @@ namespace Webkul\AdminApi\Models;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Webkul\AdminApi\Contracts\Apikey as ApikeyContract;
 use Webkul\AdminApi\Database\Factories\ApiKeyFactory;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
@@ -65,7 +66,7 @@ class Apikey extends Model implements ApikeyContract, HistoryContract
     /**
      * Get the admins.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function admins()
     {
@@ -75,7 +76,7 @@ class Apikey extends Model implements ApikeyContract, HistoryContract
     /**
      * Get the oauthClients.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function oauthClients()
     {

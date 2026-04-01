@@ -4,6 +4,7 @@ namespace Webkul\Admin\Http\Controllers\MagicAI;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
+use Illuminate\View\View;
 use Webkul\Admin\DataGrids\MagicAI\MagicAISystemPromptGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\MagicAI\Repository\MagicAISystemPromptRepository;
@@ -16,7 +17,7 @@ class MagicAISystemPromptController extends Controller
         protected Prompt $promptService,
     ) {}
 
-    public function index()
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             return app(MagicAISystemPromptGrid::class)->toJson();
@@ -101,7 +102,7 @@ class MagicAISystemPromptController extends Controller
 
             return new JsonResponse([
                 'message' => trans('admin::app.configuration.system-prompt.message.delete-fail'),
-            ], 500);
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }

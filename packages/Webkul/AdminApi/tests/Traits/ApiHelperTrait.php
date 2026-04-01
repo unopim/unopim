@@ -2,6 +2,7 @@
 
 namespace Webkul\AdminApi\Tests\Traits;
 
+use Illuminate\Routing\Middleware\ThrottleRequests;
 use Laravel\Passport\ClientRepository;
 use Webkul\AdminApi\Models\Apikey;
 use Webkul\User\Models\Admin;
@@ -13,7 +14,9 @@ trait ApiHelperTrait
      */
     public function getAuthenticationHeaders(string $permissionType = 'all', mixed $permissions = null): array
     {
-        $admin = Admin::factory()->create(['email' => 'test@testingApi.com', 'password' => bcrypt('password')]);
+        $this->withoutMiddleware(ThrottleRequests::class);
+
+        $admin = Admin::factory()->create(['password' => bcrypt('password')]);
 
         $clientRepo = new ClientRepository;
 
@@ -21,13 +24,18 @@ trait ApiHelperTrait
             $admin->id, 'Client for Testing the api', env('APP_URL'), 'admins'
         );
 
-        Apikey::factory()->create(['permission_type' => $permissionType, 'admin_id' => $admin->id, 'oauth_client_id' => $client->getKey(), 'permissions' => $permissions]);
+        Apikey::factory()->create([
+            'permission_type' => $permissionType,
+            'admin_id'        => $admin->id,
+            'oauth_client_id' => $client->getKey(),
+            'permissions'     => $permissions,
+        ]);
 
         $this->accessToken = $this->postJson('/oauth/token', [
             'grant_type'    => 'password',
             'client_id'     => $client->id,
             'client_secret' => $client->plainSecret,
-            'username'      => 'test@testingApi.com',
+            'username'      => $admin->email,
             'password'      => 'password',
             'scope'         => '',
         ])->json('access_token');

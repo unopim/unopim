@@ -10,7 +10,7 @@ return [
                     'invalid-attribute-family'                 => 'Ugyldig værdi for attributfamilie kolonne (attributfamilien eksisterer ikke?)',
                     'invalid-type'                             => 'Produkttypen er ugyldig eller ikke understøttet',
                     'sku-not-found'                            => 'Produkt med angivet SKU ikke fundet',
-                    'super-attribute-not-found'                => 'Konfigurerbart attribut med kode: \'%s\' ikke fundet eller tilhører ikke attributfamilie: \'%s\'',
+                    'super-attribute-not-found'                => 'Konfigurerbart attribut med kode: \'%s\' ikke fundet eller tilhører ikke attributfamilie: \'%s\' :code :familyCode',
                     'configurable-attributes-not-found'        => 'Konfigurerbare attributter kræves for at oprette produktmodel',
                     'configurable-attributes-wrong-type'       => 'Kun valg af typen attributter, som ikke er lokation eller kanalbaserede, er tilladt som konfigurerbare attributter for en konfigurerbar produkt',
                     'variant-configurable-attribute-not-found' => 'Variant konfigurerbart attribut: :code er nødvendigt for at oprette',
