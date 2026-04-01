@@ -30,27 +30,32 @@ async function fillUserForm(adminPage, {
   }
 
   if (selectLocale) {
-    await adminPage.locator('input[name="ui_locale_id"]').locator('..').locator('.multiselect__placeholder').click();
-    await adminPage.getByRole('option', { name: 'English (United States)' }).click();
+    const localeMultiselect = adminPage.locator('.multiselect').filter({ has: adminPage.locator('input[name="ui_locale_id"]') });
+    await localeMultiselect.locator('.multiselect__tags').click();
+    await adminPage.waitForTimeout(300);
+    const localeOption = adminPage.getByRole('option', { name: 'English (United States)' }).first();
+    await localeOption.waitFor({ state: 'visible', timeout: 10000 });
+    await localeOption.click();
   }
 
   if (selectTimezone) {
-    // Click the timezone multiselect wrapper to open it and focus the search input
-    const tzWrapper = adminPage.locator('.multiselect').filter({ has: adminPage.locator('input[name="timezone"]') });
-    await tzWrapper.click();
-    // The multiselect focuses its internal search input; type into it
-    const tzInput = tzWrapper.locator('input[type="text"]').first();
-    await tzInput.fill('America/New_York');
+    const tzMultiselect = adminPage.locator('.multiselect').filter({ has: adminPage.locator('input[name="timezone"]') });
+    await tzMultiselect.locator('.multiselect__tags').click();
+    await adminPage.waitForTimeout(300);
+    await adminPage.keyboard.type('America/New_York');
+    await adminPage.waitForTimeout(500);
     const tzOption = adminPage.getByRole('option', { name: /New_York/ }).first();
-    await tzOption.waitFor({ state: 'visible', timeout: 5000 });
+    await tzOption.waitFor({ state: 'visible', timeout: 10000 });
     await tzOption.click();
   }
 
   if (selectRole) {
-    await adminPage.locator('input[name="role_id"]').locator('..').locator('.multiselect__placeholder').waitFor({ state: 'visible', timeout: 5000 });
-    await adminPage.locator('input[name="role_id"]').locator('..').locator('.multiselect__placeholder').click();
-    await adminPage.getByRole('option').first().click();
-    // Close the dropdown by clicking elsewhere
+    const roleMultiselect = adminPage.locator('.multiselect').filter({ has: adminPage.locator('input[name="role_id"]') });
+    await roleMultiselect.locator('.multiselect__tags').click();
+    await adminPage.waitForTimeout(300);
+    const roleOption = adminPage.getByRole('option').first();
+    await roleOption.waitFor({ state: 'visible', timeout: 10000 });
+    await roleOption.click();
     await adminPage.locator('body').click();
   }
 
@@ -66,6 +71,10 @@ async function createUser(adminPage, name, email) {
   await adminPage.goto('/admin/settings/users', { waitUntil: 'networkidle', timeout: 60000 });
   await adminPage.getByRole('button', { name: 'Create User' }).waitFor({ state: 'visible', timeout: 30000 });
   await adminPage.getByRole('button', { name: 'Create User' }).click();
+
+  // Wait for the modal form to be fully rendered
+  await adminPage.getByRole('textbox', { name: 'Name' }).waitFor({ state: 'visible', timeout: 15000 });
+
   await fillUserForm(adminPage, {
     name,
     email,
