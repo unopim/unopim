@@ -3,6 +3,7 @@
 namespace Webkul\AdminApi\ApiDataSource\Catalog;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Query\Builder;
 use Webkul\AdminApi\ApiDataSource;
 use Webkul\Attribute\Repositories\AttributeRepository;
 
@@ -18,7 +19,7 @@ class AttributeDataSource extends ApiDataSource
     /**
      * Prepares the query builder for API requests.
      *
-     * @return \Illuminate\Database\Query\Builder The query builder for the attribute repository.
+     * @return Builder The query builder for the attribute repository.
      */
     public function prepareApiQueryBuilder()
     {

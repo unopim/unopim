@@ -3,8 +3,10 @@
 namespace Webkul\Admin\Http\Controllers\Settings\DataTransfer;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ImportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\DataTransfer\Helpers\Import;
@@ -27,9 +29,9 @@ abstract class AbstractJobInstanceController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
-    public function index()
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             return app(ImportDataGrid::class)->toJson();
@@ -40,20 +42,16 @@ abstract class AbstractJobInstanceController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
      */
-    public function create()
+    public function create(): View
     {
         return view('admin::settings.data-transfer.imports.create');
     }
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function store()
+    public function store(): RedirectResponse
     {
         $importers = array_keys(config('importers'));
 
@@ -103,10 +101,8 @@ abstract class AbstractJobInstanceController extends Controller
 
     /**
      * Show the form for editing a new resource.
-     *
-     * @return \Illuminate\View\View
      */
-    public function edit(int $id)
+    public function edit(int $id): View
     {
         $import = $this->jobInstancesRepository->findOrFail($id);
 
@@ -115,10 +111,8 @@ abstract class AbstractJobInstanceController extends Controller
 
     /**
      * Update a resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function update(int $id)
+    public function update(int $id): RedirectResponse
     {
         $importers = array_keys(config('importers'));
 
@@ -186,9 +180,8 @@ abstract class AbstractJobInstanceController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy($id)
+    public function destroy($id): JsonResponse
     {
         $import = $this->jobInstancesRepository->findOrFail($id);
 
@@ -207,15 +200,13 @@ abstract class AbstractJobInstanceController extends Controller
 
         return response()->json([
             'message' => trans('admin::app.settings.data-transfer.imports.delete-failed'),
-        ], 500);
+        ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
      */
-    public function import(int $id)
+    public function import(int $id): View
     {
         $import = $this->jobInstancesRepository->findOrFail($id);
 
@@ -274,7 +265,7 @@ abstract class AbstractJobInstanceController extends Controller
         if (! $import->processed_rows_count) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.imports.nothing-to-import'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         $this->importHelper->setImport($import);
@@ -282,7 +273,7 @@ abstract class AbstractJobInstanceController extends Controller
         if (! $this->importHelper->isValid()) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.imports.not-valid'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         /**
@@ -306,7 +297,7 @@ abstract class AbstractJobInstanceController extends Controller
             } catch (\Exception $e) {
                 return new JsonResponse([
                     'message' => $e->getMessage(),
-                ], 400);
+                ], JsonResponse::HTTP_BAD_REQUEST);
             }
         } else {
             if ($this->importHelper->isLinkingRequired()) {
@@ -334,7 +325,7 @@ abstract class AbstractJobInstanceController extends Controller
         if (! $import->processed_rows_count) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.imports.nothing-to-import'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         $this->importHelper->setImport($import);
@@ -342,7 +333,7 @@ abstract class AbstractJobInstanceController extends Controller
         if (! $this->importHelper->isValid()) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.imports.not-valid'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         /**
@@ -369,7 +360,7 @@ abstract class AbstractJobInstanceController extends Controller
             } catch (\Exception $e) {
                 return new JsonResponse([
                     'message' => $e->getMessage(),
-                ], 400);
+                ], JsonResponse::HTTP_BAD_REQUEST);
             }
         } else {
             if ($this->importHelper->isIndexingRequired()) {
@@ -395,7 +386,7 @@ abstract class AbstractJobInstanceController extends Controller
         if (! $import->processed_rows_count) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.imports.nothing-to-import'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         $this->importHelper->setImport($import);
@@ -403,7 +394,7 @@ abstract class AbstractJobInstanceController extends Controller
         if (! $this->importHelper->isValid()) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.imports.not-valid'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         /**
@@ -430,7 +421,7 @@ abstract class AbstractJobInstanceController extends Controller
             } catch (\Exception $e) {
                 return new JsonResponse([
                     'message' => $e->getMessage(),
-                ], 400);
+                ], JsonResponse::HTTP_BAD_REQUEST);
             }
         } else {
             /**

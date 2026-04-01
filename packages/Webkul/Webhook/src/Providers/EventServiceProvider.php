@@ -4,6 +4,8 @@ namespace Webkul\Webhook\Providers;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Webkul\Webhook\Listeners\ImportBatch;
+use Webkul\Webhook\Listeners\Product;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -14,12 +16,12 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Event::listen('catalog.product.update.after', 'Webkul\Webhook\Listeners\Product@afterUpdate');
+        Event::listen('catalog.product.update.after', [Product::class, 'afterUpdate']);
 
-        Event::listen('catalog.product.create.after', 'Webkul\Webhook\Listeners\Product@afterCreate');
+        Event::listen('catalog.product.create.after', [Product::class, 'afterCreate']);
 
-        Event::listen('data_transfer.imports.batch.product.save.after', 'Webkul\Webhook\Listeners\Product@afterBulkUpdate');
+        Event::listen('data_transfer.imports.batch.product.save.after', [Product::class, 'afterBulkUpdate']);
 
-        Event::listen('data_transfer.imports.batch.import.before', 'Webkul\Webhook\Listeners\ImportBatch');
+        Event::listen('data_transfer.imports.batch.import.before', ImportBatch::class);
     }
 }

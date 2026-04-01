@@ -20,6 +20,7 @@ use Webkul\DataTransfer\Helpers\Sources\CSV as CSVSource;
 use Webkul\DataTransfer\Helpers\Sources\Excel as ExcelSource;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
+use Webkul\DataTransfer\Services\JobLogger;
 
 class Import
 {
@@ -116,7 +117,7 @@ class Import
     /**
      * Error helper instance.
      *
-     * @var \Webkul\DataTransfer\Helpers\Error
+     * @var Error
      */
     protected $typeImporter;
 
@@ -175,7 +176,7 @@ class Import
     /**
      * Returns error helper instance.
      *
-     * @return \Webkul\DataTransfer\Helpers\Error
+     * @return Error
      */
     public function getErrorHelper()
     {
@@ -453,7 +454,7 @@ class Import
         $this->setImport($import);
 
         if (! $this->jobLogger) {
-            $this->setLogger(\Webkul\DataTransfer\Services\JobLogger::make($this->import->id));
+            $this->setLogger(JobLogger::make($this->import->id));
         }
 
         $this->jobLogger->info('Import resumed — re-dispatching pending batches.');

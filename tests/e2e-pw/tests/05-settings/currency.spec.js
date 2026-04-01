@@ -12,7 +12,7 @@ test('Create Currency with empty Code field', async ({ adminPage }) => {
   await adminPage.fill('input[type="number"][name="decimal"]', '2');
   await adminPage.locator('label[for="status"]').click();
   await adminPage.getByRole('button', { name: 'Save Currency' }).click();
-  await expect(adminPage.getByText(/The Code field is required/i)).toBeVisible();
+  await expect(adminPage.locator('#app').getByText(/The Code field is required/i)).toBeVisible();
 });
 
 test('Create Currency with Code less than 3 character', async ({ adminPage }) => {
@@ -27,7 +27,7 @@ test('Create Currency with Code less than 3 character', async ({ adminPage }) =>
   await adminPage.fill('input[type="number"][name="decimal"]', '2');
   await adminPage.locator('label[for="status"]').click();
   await adminPage.getByRole('button', { name: 'Save Currency' }).click();
-  await expect(adminPage.getByText(/The code must be at least 3 characters./i)).toBeVisible();
+  await expect(adminPage.locator('#app').getByText(/The code must be at least 3 characters./i)).toBeVisible();
 });
 
 test('Create Currency with Code more than 3 character', async ({ adminPage }) => {
@@ -42,7 +42,7 @@ test('Create Currency with Code more than 3 character', async ({ adminPage }) =>
   await adminPage.fill('input[type="number"][name="decimal"]', '2');
   await adminPage.locator('label[for="status"]').click();
   await adminPage.getByRole('button', { name: 'Save Currency' }).click();
-  await expect(adminPage.getByText(/The code may not be greater than 3 characters./i)).toBeVisible();
+  await expect(adminPage.locator('#app').getByText(/The code may not be greater than 3 characters./i)).toBeVisible();
 });
 
 test('Create Currency ', async ({ adminPage }) => {
@@ -57,7 +57,7 @@ test('Create Currency ', async ({ adminPage }) => {
   await adminPage.fill('input[type="number"][name="decimal"]', '2');
   await adminPage.locator('label[for="status"]').click();
   await adminPage.getByRole('button', { name: 'Save Currency' }).click();
-  await expect(adminPage.getByText(/Currency created successfully/i)).toBeVisible();
+  await expect(adminPage.locator('#app').getByText(/Currency created successfully/i)).toBeVisible();
 });
 
 test('should allow Currency search', async ({ adminPage }) => {
@@ -81,7 +81,7 @@ test('Update Currency ', async ({ adminPage }) => {
   await adminPage.fill('input[type="number"][name="decimal"]', '2');
   await adminPage.locator('label[for="status"]').click();
   await adminPage.getByRole('button', { name: 'Save Currency' }).click();
-  await expect(adminPage.getByText(/Currency updated successfully/i)).toBeVisible();
+  await expect(adminPage.locator('#app').getByText(/Currency updated successfully/i)).toBeVisible();
 });
 
 test('Delete Currency ', async ({ adminPage }) => {
@@ -93,7 +93,7 @@ test('Delete Currency ', async ({ adminPage }) => {
   const itemRow = adminPage.locator('div', { hasText: 'VNDVietnamese Dong' });
   await itemRow.locator('span[title="Delete"]').first().click();
   await adminPage.getByRole('button', { name: 'Delete' }).click();
-  await expect(adminPage.getByText(/Currency deleted successfully/i)).toBeVisible();
+  await expect(adminPage.locator('#app').getByText(/Currency deleted successfully/i)).toBeVisible();
 });
 
 test('Delete Enable Currency ', async ({ adminPage }) => {
@@ -102,7 +102,7 @@ test('Delete Enable Currency ', async ({ adminPage }) => {
   const itemRow = adminPage.locator('div', { hasText: 'Enabled' });
   await itemRow.locator('span[title="Delete"]').first().click();
   await adminPage.getByRole('button', { name: 'Delete' }).click();
-  await expect(adminPage.getByText(/You cannot delete a currency linked to a channel/i)).toBeVisible();
+  await expect(adminPage.locator('#app').getByText(/You cannot delete a currency linked to a channel/i)).toBeVisible();
 });
 });
 

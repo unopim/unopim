@@ -3,7 +3,9 @@
 namespace Webkul\Admin\Http\Controllers\Settings;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Event;
+use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Settings\RolesDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\User\Repositories\AdminRepository;
@@ -24,9 +26,9 @@ class RoleController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
-    public function index()
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             return app(RolesDataGrid::class)->toJson();
@@ -37,20 +39,16 @@ class RoleController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
      */
-    public function create()
+    public function create(): View
     {
         return view('admin::settings.roles.create');
     }
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function store()
+    public function store(): RedirectResponse
     {
         $this->validate(request(), [
             'name'            => 'required',
@@ -78,10 +76,8 @@ class RoleController extends Controller
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @return \Illuminate\View\View
      */
-    public function edit(int $id)
+    public function edit(int $id): View
     {
         $role = $this->roleRepository->findOrFail($id);
 
@@ -90,10 +86,8 @@ class RoleController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function update(int $id)
+    public function update(int $id): View|RedirectResponse
     {
         $this->validate(request(), [
             'name'            => 'required',
@@ -146,7 +140,7 @@ class RoleController extends Controller
 
             return new JsonResponse(['message' => trans('admin::app.settings.roles.being-used-by', [
                 'name'   => $name,
-            ])], 400);
+            ])], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         if ($this->roleRepository->count() == 1) {
@@ -154,7 +148,7 @@ class RoleController extends Controller
                 'message' => trans(
                     'admin::app.settings.roles.last-delete-error'
                 ),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         try {
@@ -172,6 +166,6 @@ class RoleController extends Controller
             'message' => trans(
                 'admin::app.settings.roles.delete-failed'
             ),
-        ], 500);
+        ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
     }
 }

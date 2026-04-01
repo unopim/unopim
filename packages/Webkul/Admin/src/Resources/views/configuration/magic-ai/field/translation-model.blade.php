@@ -4,133 +4,126 @@
     $nameKey = $item['key'] . '.' . $field['name'];
     $name = $coreConfigRepository->getNameField($nameKey);
     $value = core()->getConfigData($nameKey);
+
+    $platformId = core()->getConfigData('general.magic_ai.translation.ai_platform');
+    $platform = null;
+
+    if ($platformId) {
+        $platform = app(\Webkul\MagicAI\Repository\MagicAIPlatformRepository::class)->find($platformId);
+    }
+
+    if (!$platform) {
+        $platform = app(\Webkul\MagicAI\Repository\MagicAIPlatformRepository::class)->getDefault();
+    }
+
+    $modelOptions = [];
+    if ($platform) {
+        foreach ($platform->model_list as $model) {
+            if ($model) {
+                $modelOptions[] = ['id' => $model, 'label' => $model];
+            }
+        }
+    }
 @endphp
 
-<v-translation-model
+<v-section-model
     label="@lang($field['title'])"
     name="{{ $name }}"
-    :value='@json($value)'>
-</v-translation-model>
+    :value='@json($value)'
+    :initial-options='@json($modelOptions)'
+    platform-select-id="general_magic_ai_translation_ai_platform"
+>
+</v-section-model>
 
 @pushOnce('scripts')
-    <script type="text/x-template" id="v-translation-model-template">
-        <div class="grid gap-2.5 content-start">
-            <div>
-                <x-admin::form.control-group class="last:!mb-0" v-if="! modelOptions">
-                    <x-admin::form.control-group.label ::class="isTranslationEnabled ? 'required' : ''">
-                        @{{ label }}
-                    </x-admin::form.control-group.label>
-                    @php
-                        $models = core()->getConfigData('general.magic_ai.settings.api_model');
-                        $models = explode(',', $models);
-                        $options = [];
+    <script type="text/x-template" id="v-section-model-template">
+        <x-admin::form.control-group class="last:!mb-0">
+            <x-admin::form.control-group.label>
+                @{{ label }}
+            </x-admin::form.control-group.label>
 
-                        foreach ($models as $model) {
-                            $options[] = [
-                                'id'    => $model,
-                                'label' => $model,
-                            ];
-                        }
-                    @endphp
-                    <x-admin::form.control-group.control
-                        type="select"
-                        ::id="name"
-                        ::name="name"
-                        ref="translationModelRef"
-                        ::rules="{ 'required': isTranslationEnabled }"
-                        ::label="label"
-                        :options="json_encode($options)"
-                        ::value="value"
-                        v-model="selectedValue"
-                        track-by="id"
-                        label-by="label"
-                    />
-                    <x-admin::form.control-group.error ::control-name="label" />
-                </x-admin::form.control-group>
+            <x-admin::form.control-group.control
+                type="select"
+                ::id="name"
+                ::name="name"
+                ::options="JSON.stringify(currentOptions)"
+                ::value="selectedValue"
+                ::label="label"
+                :placeholder="trans('admin::app.configuration.prompt.create.select-model')"
+                track-by="id"
+                label-by="label"
+                @input="handleModelChange"
+            />
 
-                <x-admin::form.control-group class="mb-4" v-if="modelOptions">
-                    <x-admin::form.control-group.label ::class="isTranslationEnabled ? 'required' : ''">
-                        @{{ label }}
-                    </x-admin::form.control-group.label>
-
-                    <x-admin::form.control-group.control
-                        type="select"
-                        ::id="name"
-                        ::name="name"
-                        ref="translationModelRef"
-                        ::rules="{ 'required': isTranslationEnabled }"
-                        ::label="label"
-                        ::value="value"
-                        ::options="modelOptions"
-                        v-model="selectedModelOption"
-                        ::key="componentKey"
-                        track-by="id"
-                        label-by="label"
-                    />
-                    <x-admin::form.control-group.error ::control-name="name" />
-                </x-admin::form.control-group>
-            </div>
-        </div>
+            <p v-if="loading" class="mt-1 text-xs text-violet-600">
+                @lang('admin::app.configuration.prompt.create.loading-models')
+            </p>
+            <p v-if="!currentOptions.length && !loading" class="mt-1 text-xs text-gray-400">
+                @lang('admin::app.configuration.prompt.create.no-models-available')
+            </p>
+        </x-admin::form.control-group>
     </script>
+
     <script type="module">
-        app.component('v-translation-model', {
-            template: '#v-translation-model-template',
-            props: [
-                'label',
-                'name',
-                'validations',
-                'value',
-            ],
-            data: function() {
+        app.component('v-section-model', {
+            template: '#v-section-model-template',
+            props: ['label', 'name', 'value', 'initialOptions', 'platformSelectId', 'modelType'],
+            data() {
                 return {
-                    modelOptions: null,
                     selectedValue: this.value,
-                    selectedModelOption: null,
-                    componentKey: 0,
-                    isTranslationEnabled: Boolean('{{ core()->getConfigData("general.magic_ai.translation.enabled") == 1 }}')
+                    currentOptions: this.initialOptions || [],
+                    loading: false,
                 };
             },
 
             mounted() {
-                this.$emitter.on('model_value_change', (data) => {
-                    this.selectedValue = null;
-                    if (!Array.isArray(data)) {
-                        let options = JSON.parse(data);
-                        options = options.filter(option => option.id != 'dall-e-2' && option.id != 'dall-e-3' && option.id != 'gpt-image-1.5' && option.id != 'gpt-image-1' && option.id != 'gpt-image-1-mini' && option.id != 'gemini-2.5-flash-image'&& option.id != 'gemini-3-pro-image-preview');
-                        this.modelOptions = options;
-                        this.selectedModelOption = options[0]?.id || null;
-                        this.componentKey++;
-                    } else {
-                        this.modelOptions = [];
-                        this.$refs['translationModelRef'].selectedValue = null;
+                this.translationPlatformHandler = (event) => {
+                    try {
+                        const selected = event.detail ? JSON.parse(event.detail) : null;
+                        this.loadModelsForPlatform(selected?.id || '');
+                    } catch (error) {
+                        this.loadModelsForPlatform('');
                     }
-                });
+                };
 
-                this.$emitter.on('config-value-changed', (data) => {
-                    if (data.fieldName == 'general[magic_ai][translation][enabled]') {
-                        this.isTranslationEnabled = parseInt(data.value || 0) === 1;
-                    }
+                document.addEventListener('magic-ai-translation-platform-changed', this.translationPlatformHandler);
+            },
 
-                    if (data.fieldName === "general[magic_ai][settings][ai_platform]") {
-                        this.$refs['translationModelRef'].selectedValue = null;
-                    }
-                });
+            beforeUnmount() {
+                if (this.translationPlatformHandler) {
+                    document.removeEventListener('magic-ai-translation-platform-changed', this.translationPlatformHandler);
+                }
             },
 
             methods: {
-                parseJson(value) {
+                handleModelChange(value) {
                     try {
-                        return JSON.parse(value);
-                    } catch (e) {
-                        return null;
+                        this.selectedValue = value ? JSON.parse(value).id : '';
+                    } catch (error) {
+                        this.selectedValue = '';
                     }
                 },
-                emitChangeEvent(value) {
-                    this.$emitter.emit('config-value-changed', {
-                        value: value
-                    });
+
+                loadModelsForPlatform(platformId) {
+                    this.loading = true;
+
+                    let params = {};
+                    if (platformId) {
+                        params.platform_id = platformId;
+                    }
+                    if (this.modelType) {
+                        params.type = this.modelType;
+                    }
+
+                    this.$axios.get("{{ route('admin.magic_ai.model') }}", { params })
+                        .then((response) => {
+                            this.loading = false;
+                            this.currentOptions = response.data.models || [];
+                            this.selectedValue = this.currentOptions[0]?.id || '';
+                        })
+                        .catch(() => { this.loading = false; this.currentOptions = []; });
                 },
-            }
+            },
         });
     </script>
 @endPushOnce

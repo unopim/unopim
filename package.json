@@ -6,8 +6,8 @@
     },
     "devDependencies": {
         "axios": "^1.6.4",
-        "laravel-vite-plugin": "^0.7.2",
-        "vite": "^4.0.0"
+        "laravel-vite-plugin": "^1.2.0",
+        "vite": "^6.3.0"
     },
     "dependencies": {
         "vue-multiselect": "^3.0.0"

@@ -1,5 +1,16 @@
 <?php
 
+use Webkul\Admin\Tests\AdminTestCase;
+use Webkul\AdminApi\Tests\ApiTestCase;
+use Webkul\Attribute\Tests\AttributeTestCase;
+use Webkul\Category\Tests\CategoryTestCase;
+use Webkul\Completeness\Tests\CompletenessTestCase;
+use Webkul\Core\Tests\CoreTestCase;
+use Webkul\DataGrid\Tests\DataGridTestCase;
+use Webkul\Installer\Tests\UserCreateCommandTestCase;
+use Webkul\Product\Tests\ProductTestCase;
+use Webkul\User\Tests\UserTestCase;
+
 ini_set('memory_limit', '1024M');
 
 /*
@@ -13,15 +24,18 @@ ini_set('memory_limit', '1024M');
 |
 */
 
-uses(Webkul\Core\Tests\CoreTestCase::class)->in('../packages/Webkul/Core/tests');
-uses(Webkul\Admin\Tests\AdminTestCase::class)->in('../packages/Webkul/Admin/tests');
-uses(Webkul\AdminApi\Tests\ApiTestCase::class)->in('../packages/Webkul/AdminApi/tests');
-uses(Webkul\User\Tests\UserTestCase::class)->in('../packages/Webkul/User/tests');
-uses(Webkul\DataGrid\Tests\DataGridTestCase::class)->in('../packages/Webkul/DataGrid/tests');
-uses(Webkul\Installer\Tests\UserCreateCommandTestCase::class)->in('../packages/Webkul/Installer/tests');
-uses(Webkul\Core\Tests\CoreTestCase::class)->in('../packages/Webkul/ElasticSearch/tests');
-uses(Webkul\Admin\Tests\AdminTestCase::class)->in('../packages/Webkul/DataTransfer/tests');
-uses(Webkul\Completeness\Tests\CompletenessTestCase::class)->in('../packages/Webkul/Completeness/tests');
+uses(CoreTestCase::class)->in('../packages/Webkul/Core/tests');
+uses(AdminTestCase::class)->in('../packages/Webkul/Admin/tests');
+uses(ApiTestCase::class)->in('../packages/Webkul/AdminApi/tests');
+uses(UserTestCase::class)->in('../packages/Webkul/User/tests');
+uses(DataGridTestCase::class)->in('../packages/Webkul/DataGrid/tests');
+uses(UserCreateCommandTestCase::class)->in('../packages/Webkul/Installer/tests');
+uses(CoreTestCase::class)->in('../packages/Webkul/ElasticSearch/tests');
+uses(AdminTestCase::class)->in('../packages/Webkul/DataTransfer/tests');
+uses(CompletenessTestCase::class)->in('../packages/Webkul/Completeness/tests');
+uses(ProductTestCase::class)->in('../packages/Webkul/Product/tests');
+uses(AttributeTestCase::class)->in('../packages/Webkul/Attribute/tests');
+uses(CategoryTestCase::class)->in('../packages/Webkul/Category/tests');
 
 /*
 |--------------------------------------------------------------------------

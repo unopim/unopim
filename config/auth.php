@@ -1,5 +1,7 @@
 <?php
 
+use Webkul\User\Models\Admin;
+
 return [
     'defaults' => [
         'guard'     => 'admin',
@@ -21,7 +23,7 @@ return [
     'providers' => [
         'admins' => [
             'driver' => 'eloquent',
-            'model'  => Webkul\User\Models\Admin::class,
+            'model'  => Admin::class,
         ],
     ],
 
@@ -33,4 +35,17 @@ return [
             'throttle' => 60,
         ],
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Password Confirmation Timeout
+    |--------------------------------------------------------------------------
+    |
+    | Here you may define the amount of seconds before a password confirmation
+    | window expires and the user is prompted to re-enter their password via
+    | the confirmation screen. By default, the timeout lasts for 3 hours.
+    |
+    */
+
+    'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 ];

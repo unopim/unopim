@@ -280,11 +280,11 @@ class WebhookService
         $changeTime = $latestChanges->updated_at;
         $productTime = $product->updated_at;
 
-        if ($productTime->diffInMinutes(now()) > 60) {
+        if (abs($productTime->diffInMinutes(now())) > 60) {
             return [];
         }
 
-        if ($changeTime->diffInSeconds($productTime) > 2) {
+        if (abs($changeTime->diffInSeconds($productTime)) > 2) {
             return [];
         }
 

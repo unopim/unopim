@@ -89,6 +89,7 @@ class ProductIndexer extends Command
                     }
 
                     $productsToUpdate = [];
+                    $payloadByProductId = [];
 
                     foreach ($products as $productDB) {
                         $product = new Product;
@@ -117,6 +118,8 @@ class ProductIndexer extends Command
 
                             $product = $product->toArray();
 
+                            $product = $this->sanitizeDocumentKeys($product);
+
                             $productsToUpdate['body'][] = [
                                 'index' => [
                                     '_index' => $productIndex,
@@ -125,6 +128,8 @@ class ProductIndexer extends Command
                             ];
 
                             $productsToUpdate['body'][] = $product;
+
+                            $payloadByProductId[$productId] = $product;
                         }
 
                         $progressBar->advance();
@@ -141,6 +146,19 @@ class ProductIndexer extends Command
                                     Log::channel('elasticsearch')->error('Error while indexing product id: '.$result['index']['_id'].' in '.$productIndex.' index: ', [
                                         'error' => $result['index']['error'],
                                     ]);
+
+                                    if (config('elasticsearch.debug_payload', false)) {
+                                        $failedProductId = (int) $result['index']['_id'];
+                                        $failedPayload = $payloadByProductId[$failedProductId] ?? null;
+
+                                        Log::channel('elasticsearch')->error('Failed product payload debug: ', [
+                                            'product_id'      => $failedProductId,
+                                            'empty_key_paths' => is_array($failedPayload)
+                                                ? $this->findEmptyFieldPaths($failedPayload)
+                                                : [],
+                                            'payload' => $failedPayload,
+                                        ]);
+                                    }
                                 }
                             }
                         }
@@ -507,5 +525,58 @@ class ProductIndexer extends Command
                 ],
             ],
         ];
+    }
+
+    /**
+     * Recursively removes empty-string keys from a product document payload.
+     */
+    private function sanitizeDocumentKeys(array $data): array
+    {
+        $sanitized = [];
+
+        foreach ($data as $key => $value) {
+            $resolvedKey = $key;
+
+            if (is_string($key)) {
+                $resolvedKey = trim($key);
+
+                if ($resolvedKey === '') {
+                    continue;
+                }
+            }
+
+            if (is_array($value)) {
+                $value = $this->sanitizeDocumentKeys($value);
+            }
+
+            $sanitized[$resolvedKey] = $value;
+        }
+
+        return $sanitized;
+    }
+
+    /**
+     * Finds all payload paths that contain empty-string keys.
+     *
+     * @return array<int, string>
+     */
+    private function findEmptyFieldPaths(array $data, string $path = '$'): array
+    {
+        $paths = [];
+
+        foreach ($data as $key => $value) {
+            $keyString = is_string($key) ? $key : (string) $key;
+            $currentPath = $path.'.'.($keyString === '' ? '<empty>' : $keyString);
+
+            if (is_string($key) && trim($key) === '') {
+                $paths[] = $currentPath;
+            }
+
+            if (is_array($value)) {
+                $paths = array_merge($paths, $this->findEmptyFieldPaths($value, $currentPath));
+            }
+        }
+
+        return $paths;
     }
 }

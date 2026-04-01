@@ -2,6 +2,29 @@
 
 use Webkul\DataTransfer\Helpers\Importers\FieldProcessor;
 
+it('should not throw when path is null for non-media field types', function () {
+    $fieldProcessor = new FieldProcessor;
+
+    $field = (object) [
+        'type'           => 'textarea',
+        'enable_wysiwyg' => 0,
+    ];
+
+    $result = $fieldProcessor->handleField($field, 'some text', null);
+
+    expect($result)->toBe('some text');
+});
+
+it('should return value as-is for media fields when path is null', function () {
+    $fieldProcessor = new FieldProcessor;
+
+    $field = (object) ['type' => 'image'];
+
+    $result = $fieldProcessor->handleField($field, 'image.jpg', null);
+
+    expect($result)->toBe('image.jpg');
+});
+
 it('should sanitize textarea content when WYSIWYG is enabled', function () {
     $fieldProcessor = new FieldProcessor;
 

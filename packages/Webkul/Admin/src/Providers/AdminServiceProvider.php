@@ -2,20 +2,18 @@
 
 namespace Webkul\Admin\Providers;
 
-use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Webkul\Admin\Console\Commands\RefreshDashboardCacheCommand;
 use Webkul\Core\Tree;
 
 class AdminServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap services.
-     *
-     * @return void
      */
-    public function boot(Router $router)
+    public function boot(): void
     {
         Route::middleware('web')->group(__DIR__.'/../Routes/web.php');
 
@@ -30,6 +28,12 @@ class AdminServiceProvider extends ServiceProvider
         $this->registerACL();
 
         $this->app->register(EventServiceProvider::class);
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                RefreshDashboardCacheCommand::class,
+            ]);
+        }
     }
 
     /**

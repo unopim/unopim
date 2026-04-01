@@ -54,10 +54,8 @@ class CategoryFieldController extends ApiController
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function store()
+    public function store(): JsonResponse
     {
         $requestData = request()->all();
 
@@ -108,10 +106,8 @@ class CategoryFieldController extends ApiController
 
     /**
      * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(string $code)
+    public function update(string $code): JsonResponse
     {
         $categoryField = $this->categoryFieldRepository->findOneByField('code', $code);
         if (! $categoryField) {
@@ -159,10 +155,8 @@ class CategoryFieldController extends ApiController
 
     /**
      * Display a single result of the resource.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function getOptions($code)
+    public function getOptions($code): JsonResponse
     {
         try {
             return response()->json(app(CategoryFieldDataSource::class)->getOptionsByFieldCode($code));
@@ -173,10 +167,8 @@ class CategoryFieldController extends ApiController
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function storeOption(string $fieldCode)
+    public function storeOption(string $fieldCode): JsonResponse
     {
         $categoryField = $this->categoryFieldRepository->findOneByField('code', $fieldCode);
         if (! $categoryField) {
@@ -218,10 +210,8 @@ class CategoryFieldController extends ApiController
 
     /**
      * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function updateOption(string $fieldCode)
+    public function updateOption(string $fieldCode): JsonResponse
     {
         $categoryField = $this->categoryFieldRepository->findOneByField('code', $fieldCode);
         if (! $categoryField) {

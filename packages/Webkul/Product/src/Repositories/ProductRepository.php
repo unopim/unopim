@@ -4,6 +4,7 @@ namespace Webkul\Product\Repositories;
 
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Core\Eloquent\Repository;
@@ -34,7 +35,7 @@ class ProductRepository extends Repository
     /**
      * Create product.
      *
-     * @return \Webkul\Product\Contracts\Product
+     * @return Product
      */
     public function create(array $data)
     {
@@ -50,7 +51,7 @@ class ProductRepository extends Repository
      *
      * @param  int  $id
      * @param  string  $attribute
-     * @return \Webkul\Product\Contracts\Product
+     * @return Product
      */
     public function update(array $data, $id, $attribute = 'id')
     {
@@ -99,7 +100,7 @@ class ProductRepository extends Repository
      * Copy product.
      *
      * @param  int  $id
-     * @return \Webkul\Product\Contracts\Product
+     * @return Product
      */
     public function copy($id)
     {
@@ -154,7 +155,7 @@ class ProductRepository extends Repository
      * Retrieve product from slug without throwing an exception.
      *
      * @param  string  $slug
-     * @return \Webkul\Product\Contracts\Product
+     * @return Product
      */
     public function findBySlug($slug)
     {
@@ -165,7 +166,7 @@ class ProductRepository extends Repository
      * Retrieve product from slug.
      *
      * @param  string  $slug
-     * @return \Webkul\Product\Contracts\Product
+     * @return Product
      */
     public function findBySlugOrFail($slug)
     {
@@ -187,7 +188,7 @@ class ProductRepository extends Repository
      * good request parameter with an array type as an argument. Make a clean pull request for
      * this to have track record.
      *
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
     public function getAll()
     {
@@ -197,7 +198,7 @@ class ProductRepository extends Repository
     /**
      * Search product from database.
      *
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
     public function searchFromDatabase()
     {
@@ -270,8 +271,8 @@ class ProductRepository extends Repository
     /**
      * Returns product's super attribute with options.
      *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return \Illuminate\Support\Collection
+     * @param  Product  $product
+     * @return Collection
      */
     public function getSuperAttributes($product)
     {

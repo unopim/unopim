@@ -1,0 +1,169 @@
+name: Pest Tests (PostgreSQL)
+
+on: [push, pull_request]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  pest-pgsql:
+    runs-on: ubuntu-24.04
+    name: Pest Tests (PostgreSQL)
+    continue-on-error: true
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: unopim
+          POSTGRES_PASSWORD: unopim
+          POSTGRES_DB: unopim
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U unopim"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=3
+          --tmpfs /var/lib/postgresql/data:rw,noexec,nosuid,size=600m
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_pgsql, tokenizer, zip
+          ini-values: error_reporting=E_ALL
+          tools: composer:v2
+          coverage: none
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v5
+        with:
+          path: |
+            vendor
+            ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-progress
+
+      - name: Setting Environment
+        run: |
+          cp .env.example .env
+          sed -i "s|^\(APP_ENV=\s*\).*$|\1testing|" .env
+          sed -i "s|^\(DB_CONNECTION=\s*\).*$|\1pgsql|" .env
+          sed -i "s|^\(DB_HOST=\s*\).*$|\1127.0.0.1|" .env
+          sed -i "s|^\(DB_PORT=\s*\).*$|\15432|" .env
+          sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
+          sed -i "s|^\(DB_USERNAME=\s*\).*$|\1unopim|" .env
+          sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1unopim|" .env
+
+      - name: Running UnoPim Installer
+        run: php artisan unopim:install --skip-env-check --skip-admin-creation
+
+      - name: Running Pest Tests
+        run: vendor/bin/pest --colors=always --parallel --processes=4
+
+  pest-pgsql-elasticsearch:
+    runs-on: ubuntu-24.04
+    name: Pest Tests (PostgreSQL + Elasticsearch)
+    continue-on-error: true
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: unopim
+          POSTGRES_PASSWORD: unopim
+          POSTGRES_DB: unopim
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U unopim"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=3
+          --tmpfs /var/lib/postgresql/data:rw,noexec,nosuid,size=600m
+
+      elasticsearch:
+        image: elasticsearch:8.17.0
+        env:
+          discovery.type: single-node
+          xpack.security.enabled: 'false'
+          ES_JAVA_OPTS: '-Xms256m -Xmx256m'
+        ports:
+          - 9200:9200
+        options: >-
+          --health-cmd="curl -s http://localhost:9200/_cluster/health || exit 1"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_pgsql, tokenizer, zip
+          ini-values: error_reporting=E_ALL
+          tools: composer:v2
+          coverage: none
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v5
+        with:
+          path: |
+            vendor
+            ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-progress
+
+      - name: Setting Environment
+        run: |
+          cp .env.example .env
+          sed -i "s|^\(APP_ENV=\s*\).*$|\1testing|" .env
+          sed -i "s|^\(DB_CONNECTION=\s*\).*$|\1pgsql|" .env
+          sed -i "s|^\(DB_HOST=\s*\).*$|\1127.0.0.1|" .env
+          sed -i "s|^\(DB_PORT=\s*\).*$|\15432|" .env
+          sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
+          sed -i "s|^\(DB_USERNAME=\s*\).*$|\1unopim|" .env
+          sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1unopim|" .env
+
+      - name: Running UnoPim Installer
+        run: php artisan unopim:install --skip-env-check --skip-admin-creation
+
+      - name: Enable Elasticsearch and build indexes
+        run: |
+          sed -i "s|^\(ELASTICSEARCH_ENABLED=\s*\).*$|\1true|" .env
+          sed -i "s|^\(ELASTICSEARCH_HOST=\s*\).*$|\1http://127.0.0.1:9200|" .env
+          sed -i "s|^\(ELASTICSEARCH_INDEX_PREFIX=\s*\).*$|\1unopim_test|" .env
+          php artisan config:clear
+          curl -s http://127.0.0.1:9200/_cluster/health | python3 -m json.tool
+          php artisan unopim:product:index
+          php artisan unopim:category:index
+
+      - name: Running Pest Tests
+        run: vendor/bin/pest --colors=always --parallel --processes=4

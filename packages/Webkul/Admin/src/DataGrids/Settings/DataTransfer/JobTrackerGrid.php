@@ -2,6 +2,7 @@
 
 namespace Webkul\Admin\DataGrids\Settings\DataTransfer;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Webkul\DataGrid\DataGrid;
 use Webkul\DataTransfer\Helpers\Import;
@@ -21,7 +22,7 @@ class JobTrackerGrid extends DataGrid
     /**
      * Prepare query builder.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return Builder
      */
     public function prepareQueryBuilder()
     {
