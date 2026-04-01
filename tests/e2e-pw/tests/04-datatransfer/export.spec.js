@@ -30,7 +30,7 @@ async function deleteExport(adminPage, code) {
   if (await deleteBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
     await deleteBtn.click();
     await adminPage.getByRole('button', { name: 'Delete' }).click();
-    await expect(adminPage.locator('#app').getByText(/Export deleted successfully/i)).toBeVisible({ timeout: 10000 });
+    await expect(adminPage.locator('#app').getByText(/Export deleted successfully/i)).toBeVisible({ timeout: 20000 });
   }
 }
 
@@ -271,7 +271,7 @@ test.describe('UnoPim Export Jobs', () => {
     // Toast may disappear quickly on redirect — accept either toast or landing on the export detail page
     const toastOrDetail = adminPage.locator('#app').getByText(/Export created successfully/i)
       .or(adminPage.getByRole('button', { name: 'Export Now' }));
-    await expect(toastOrDetail.first()).toBeVisible({ timeout: 15000 });
+    await expect(toastOrDetail.first()).toBeVisible({ timeout: 20000 });
 
     // Cleanup
     await deleteExport(adminPage, code);

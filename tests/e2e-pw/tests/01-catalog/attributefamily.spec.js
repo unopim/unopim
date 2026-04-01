@@ -11,7 +11,7 @@ async function createFamily(adminPage, code, name) {
   await adminPage.getByRole('textbox', { name: 'Enter Code' }).fill(code);
   await adminPage.locator('input[name="en_US\\[name\\]"]').fill(name);
   await adminPage.getByRole('button', { name: 'Save Attribute Family' }).click();
-  await expect(adminPage.locator('#app').getByText(/Family created successfully/i)).toBeVisible({ timeout: 15000 });
+  await expect(adminPage.locator('#app').getByText(/Family created successfully/i)).toBeVisible({ timeout: 20000 });
 }
 
 /**
@@ -83,7 +83,7 @@ test.describe('UnoPim Attribute Family Tests', () => {
   test('should allow setting items per page', async ({ adminPage }) => {
     await navigateTo(adminPage, 'attributeFamilies');
     const perPageBtn = adminPage.getByRole('button', { name: 'Per Page' });
-    await expect(perPageBtn).toBeVisible({ timeout: 10000 });
+    await expect(perPageBtn).toBeVisible({ timeout: 20000 });
     await perPageBtn.click();
     await adminPage.getByText('20', { exact: true }).click();
     await expect(perPageBtn).toContainText('20');

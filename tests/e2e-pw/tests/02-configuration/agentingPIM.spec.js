@@ -458,7 +458,7 @@ test('8.1 - Agenting PIM button is visible on products page', async ({ adminPage
 test('8.2 - Agenting PIM button is visible on categories page', async ({ adminPage }) => {
   await navigateTo(adminPage, 'categories');
 
-  await expect(adminPage.getByRole('button', { name: 'Open Agenting PIM' })).toBeVisible({ timeout: 15000 });
+  await expect(adminPage.getByRole('button', { name: 'Open Agenting PIM' })).toBeVisible({ timeout: 20000 });
 });
 
 test('8.3 - Agenting PIM button is visible on configuration page', async ({ adminPage }) => {

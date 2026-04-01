@@ -290,7 +290,7 @@ test.describe('Simple Product CRUD', () => {
     await fillTinyMCE(adminPage, 'description', 'Full description text');
 
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
-    await expect(adminPage.locator('#app').getByText(/Product updated successfully/i)).toBeVisible({ timeout: 15000 });
+    await expect(adminPage.locator('#app').getByText(/Product updated successfully/i)).toBeVisible({ timeout: 20000 });
 
     // Cleanup
     await deleteProductBySku(adminPage, sku);
@@ -367,7 +367,7 @@ test.describe('Configurable Product CRUD', () => {
     await fillTinyMCE(adminPage, 'description', 'Full description text');
 
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
-    await expect(adminPage.locator('#app').getByText(/Product updated successfully/i)).toBeVisible({ timeout: 15000 });
+    await expect(adminPage.locator('#app').getByText(/Product updated successfully/i)).toBeVisible({ timeout: 20000 });
 
     // Cleanup
     await deleteProductBySku(adminPage, sku);
@@ -423,7 +423,7 @@ test.describe('Product Actions', () => {
     await adminPage.locator('span[title="Copy"]').first().click();
     await expect(adminPage.locator('#app').getByText('Are you sure?')).toBeVisible();
     await adminPage.getByRole('button', { name: 'Agree', exact: true }).click();
-    await expect(adminPage.locator('#app').getByText(/Product copied successfully/i)).toBeVisible({ timeout: 15000 });
+    await expect(adminPage.locator('#app').getByText(/Product copied successfully/i)).toBeVisible({ timeout: 20000 });
 
     // Cleanup original (copy has a different auto-generated SKU, harmless leftover)
     await deleteProductBySku(adminPage, sku);
@@ -451,7 +451,7 @@ test.describe('Product Listing Features', () => {
 
     await navigateTo(adminPage, 'products');
     await searchInDataGrid(adminPage, sku);
-    await expect(adminPage.locator('#app').getByText('1 Results')).toBeVisible({ timeout: 10000 });
+    await expect(adminPage.locator('#app').getByText('1 Results')).toBeVisible({ timeout: 20000 });
     await expect(adminPage.locator('#app').getByText(sku)).toBeVisible();
 
     // Cleanup

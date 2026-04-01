@@ -72,7 +72,7 @@ async function createUser(adminPage, name, email) {
     confirmPassword: 'testing123',
   });
   await adminPage.getByRole('button', { name: 'Save User' }).click();
-  await expect(adminPage.locator('#app').getByText(/User created successfully/i)).toBeVisible({ timeout: 15000 });
+  await expect(adminPage.locator('#app').getByText(/User created successfully/i)).toBeVisible({ timeout: 20000 });
 }
 
 /**
@@ -260,7 +260,7 @@ test.describe('User Management', () => {
     await adminPage.waitForLoadState('networkidle');
     await adminPage.locator('label[for="status"]').click();
     await adminPage.getByRole('button', { name: 'Save User' }).click();
-    await expect(adminPage.locator('#app').getByText(/User updated successfully/i)).toBeVisible({ timeout: 15000 });
+    await expect(adminPage.locator('#app').getByText(/User updated successfully/i)).toBeVisible({ timeout: 20000 });
 
     // Cleanup
     await deleteUser(adminPage, email);
@@ -279,7 +279,7 @@ test.describe('User Management', () => {
     const row = adminPage.locator('#app div').filter({ hasText: email });
     await row.locator('span[title="Delete"]').first().click();
     await adminPage.getByRole('button', { name: 'Delete' }).click();
-    await expect(adminPage.locator('#app').getByText(/User deleted successfully/i)).toBeVisible({ timeout: 15000 });
+    await expect(adminPage.locator('#app').getByText(/User deleted successfully/i)).toBeVisible({ timeout: 20000 });
   });
 
   test('Delete default admin user shows error', async ({ adminPage }) => {

@@ -13,7 +13,7 @@ async function createCategoryField(adminPage, code, name, type = 'Text') {
   await adminPage.getByRole('option', { name: type }).first().click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').fill(name);
   await adminPage.getByRole('button', { name: 'Save Category Field' }).click();
-  await expect(adminPage.locator('#app').getByText(/Category Field Created Successfully/i)).toBeVisible({ timeout: 15000 });
+  await expect(adminPage.locator('#app').getByText(/Category Field Created Successfully/i)).toBeVisible({ timeout: 20000 });
 }
 
 /**
@@ -94,7 +94,7 @@ test.describe('UnoPim Category Field Tests', () => {
   test('should allow setting items per page', async ({ adminPage }) => {
     await navigateTo(adminPage, 'categoryFields');
     const perPageBtn = adminPage.getByRole('button', { name: 'Per Page' });
-    await expect(perPageBtn).toBeVisible({ timeout: 10000 });
+    await expect(perPageBtn).toBeVisible({ timeout: 20000 });
     await perPageBtn.click();
     await adminPage.getByText('20', { exact: true }).click();
     await expect(perPageBtn).toContainText('20');

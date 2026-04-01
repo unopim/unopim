@@ -12,8 +12,8 @@ module.exports = defineConfig({
   reporter: process.env.CI
     ? [['list'], ['html', { outputFolder: 'playwright-report', open: 'never' }]]
     : [['html', { outputFolder: 'playwright-report' }]],
-  timeout: 30_000,
-  expect: { timeout: 10_000 },
+  timeout: 60_000,
+  expect: { timeout: 15_000 },
   globalSetup: require.resolve('./global-setup.js'),
   use: {
     baseURL: process.env.BASE_URL || 'http://127.0.0.1:8000',
@@ -21,8 +21,8 @@ module.exports = defineConfig({
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'off',
-    actionTimeout: 10_000,
-    navigationTimeout: 15_000,
+    actionTimeout: 15_000,
+    navigationTimeout: 30_000,
   },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },

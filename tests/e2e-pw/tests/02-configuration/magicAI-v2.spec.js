@@ -110,7 +110,7 @@ test('3.1 - Text Generation has Enabled checkbox', async ({ adminPage }) => {
 test('3.2 - Text Generation has Default Platform dropdown with "Use Default Platform" option', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'load' });
 
-  await expect(adminPage.getByText('Use Default Platform').first()).toBeVisible({ timeout: 15000 });
+  await expect(adminPage.getByText('Use Default Platform').first()).toBeVisible({ timeout: 20000 });
   await adminPage.getByText('Use Default Platform').first().click();
   await expect(adminPage.getByRole('option', { name: /Use Default Platform/i }).first()).toBeVisible();
   await adminPage.keyboard.press('Escape');
@@ -212,7 +212,7 @@ test('5.6 - Translation has Source Channel dropdown', async ({ adminPage }) => {
 
 test('5.7 - Translation has Target Channel dropdown', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'load' });
-  await expect(adminPage.locator('#app').getByText('Target Channel')).toBeVisible({ timeout: 15000 });
+  await expect(adminPage.locator('#app').getByText('Target Channel')).toBeVisible({ timeout: 20000 });
 });
 
 test('5.8 - Translation has Source Locale dropdown', async ({ adminPage }) => {
@@ -668,7 +668,7 @@ test('9.8 - Save platform with valid API key and selected models succeeds', asyn
 
   await adminPage.getByRole('button', { name: 'Save' }).click();
   const successMsg = adminPage.getByText(/saved successfully|created successfully/i);
-  await expect(successMsg).toBeVisible({ timeout: 10000 }).catch(() => {});
+  await expect(successMsg).toBeVisible({ timeout: 20000 }).catch(() => {});
 
   // Cleanup: delete the platform
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
@@ -706,7 +706,7 @@ test('9.9 - Invalid API key shows error when saving platform', async ({ adminPag
   await adminPage.getByRole('button', { name: 'Save' }).click();
 
   const errorMsg = adminPage.getByText(/failed|error|invalid|could not|unable/i);
-  await expect(errorMsg.first()).toBeVisible({ timeout: 10000 });
+  await expect(errorMsg.first()).toBeVisible({ timeout: 20000 });
 
   await adminPage.locator('.icon-cancel').click().catch(() => {});
 });

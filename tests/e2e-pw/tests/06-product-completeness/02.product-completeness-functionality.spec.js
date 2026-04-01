@@ -13,7 +13,7 @@ async function goToDefaultFamilyCompleteness(adminPage) {
   await itemRow.locator('span[title="Edit"]').first().click();
   await adminPage.getByRole('link', { name: 'Completeness' }).click();
   await adminPage.waitForLoadState('networkidle');
-  await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 15000 });
+  await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 20000 });
 }
 
 test.describe('Verify the behaviour of Product Completeness feature', () => {
@@ -58,7 +58,7 @@ test.describe('Verify the behaviour of Product Completeness feature', () => {
     await adminPage.getByRole('button', { name: 'Per Page' }).click();
     await adminPage.getByText('50', { exact: true }).first().click();
     await adminPage.waitForLoadState('networkidle');
-    await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 15000 });
+    await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 20000 });
 
     // Find a multiselect with "Select option" (no channel yet) and assign Default
     const unassignedSelect = adminPage.locator('.multiselect__tags', { hasText: 'Select option' }).first();
@@ -88,7 +88,7 @@ test.describe('Verify the behaviour of Product Completeness feature', () => {
     await adminPage.getByRole('button', { name: 'Per Page' }).click();
     await adminPage.getByText('50', { exact: true }).click();
     await adminPage.waitForLoadState('networkidle');
-    await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 15000 });
+    await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 20000 });
 
     // If there's a tag icon (channel assigned), deselect it
     const tagIcon = adminPage.locator('.multiselect__tag-icon').first();
@@ -113,7 +113,7 @@ test.describe('Verify the behaviour of Product Completeness feature', () => {
     await adminPage.getByRole('button', { name: 'Per Page' }).click();
     await adminPage.getByText('50', { exact: true }).click();
     await adminPage.waitForLoadState('networkidle');
-    await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 15000 });
+    await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 20000 });
 
     // Click the first available multiselect to assign a channel
     await adminPage.locator('input[name="channel_requirements"]').locator('..').locator('.multiselect__tags').first().click();

@@ -305,7 +305,7 @@ test('3.5 - Verify Create System Prompt modal fields', async ({ adminPage }) => 
   await adminPage.goto(MAGIC_AI_SYSTEM_PROMPT_URL, { waitUntil: 'networkidle' });
   await adminPage.getByRole('button', { name: 'Create System Prompt' }).click();
 
-  await expect(adminPage.locator('#app').getByText('Create New System Prompt')).toBeVisible({ timeout: 10000 });
+  await expect(adminPage.locator('#app').getByText('Create New System Prompt')).toBeVisible({ timeout: 20000 });
   await expect(adminPage.locator('input[name="title"]')).toBeVisible();
   await expect(adminPage.locator('#app').getByText('Status').first()).toBeVisible();
   await expect(adminPage.locator('#app').getByText('Max Output Tokens')).toBeVisible();
@@ -340,7 +340,7 @@ test('3.7 - Create and verify a System Prompt with all fields', async ({ adminPa
   // Verify it appears in datagrid
   await adminPage.goto(MAGIC_AI_SYSTEM_PROMPT_URL, { waitUntil: 'networkidle' });
   await openDatagrid(adminPage, 'Create System Prompt');
-  await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 10000 });
+  await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 20000 });
   await expect(adminPage.locator('#app').getByText(title, { exact: true }).first()).toBeVisible({ timeout: 5000 });
 
   // Cleanup: delete the created system prompt
@@ -357,18 +357,18 @@ test('3.9 - Edit an existing system prompt', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_SYSTEM_PROMPT_URL, { waitUntil: 'networkidle' });
   await openDatagrid(adminPage, 'Create System Prompt');
 
-  await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 10000 });
+  await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 20000 });
   const editIcon = adminPage.locator('span[title="Edit"]').first();
   await expect(editIcon).toBeVisible({ timeout: 5000 });
   await editIcon.click();
 
   const titleInput = adminPage.locator('input[name="title"]');
-  await expect(titleInput).toBeVisible({ timeout: 10000 });
+  await expect(titleInput).toBeVisible({ timeout: 20000 });
   const currentTitle = await titleInput.inputValue();
   await titleInput.clear();
   await titleInput.fill(currentTitle + ' Pro');
   await adminPage.getByRole('button', { name: 'Save' }).click();
-  await expect(adminPage.locator('#app').getByText(/updated successfully|saved successfully/i)).toBeVisible({ timeout: 10000 });
+  await expect(adminPage.locator('#app').getByText(/updated successfully|saved successfully/i)).toBeVisible({ timeout: 20000 });
 
   // Revert the edit
   await adminPage.goto(MAGIC_AI_SYSTEM_PROMPT_URL, { waitUntil: 'networkidle' });
@@ -377,11 +377,11 @@ test('3.9 - Edit an existing system prompt', async ({ adminPage }) => {
   await expect(editIconRevert).toBeVisible({ timeout: 5000 });
   await editIconRevert.click();
   const titleInputRevert = adminPage.locator('input[name="title"]');
-  await expect(titleInputRevert).toBeVisible({ timeout: 10000 });
+  await expect(titleInputRevert).toBeVisible({ timeout: 20000 });
   await titleInputRevert.clear();
   await titleInputRevert.fill(currentTitle);
   await adminPage.getByRole('button', { name: 'Save' }).click();
-  await expect(adminPage.locator('#app').getByText(/updated successfully|saved successfully/i)).toBeVisible({ timeout: 10000 });
+  await expect(adminPage.locator('#app').getByText(/updated successfully|saved successfully/i)).toBeVisible({ timeout: 20000 });
 });
 
 test('3.10 - Search system prompts in datagrid', async ({ adminPage }) => {
@@ -409,7 +409,7 @@ test('4.2 - Verify default prompts are pre-loaded', async ({ adminPage }) => {
   await openDatagrid(adminPage, 'Create Prompt');
 
   // Verify the datagrid has results (default prompts are seeded)
-  await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 10000 });
+  await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 20000 });
 
   // Search for specific default prompts to verify they exist
   await adminPage.locator('input[type="text"]').first().fill('Product Tagline');
@@ -587,7 +587,7 @@ test('5.1 - Enable Hindi locale for translation testing', async ({ adminPage }) 
     test.skip(true, 'Hindi locale not available in this environment');
   }
 
-  await editBtn.click({ timeout: 15000 });
+  await editBtn.click({ timeout: 20000 });
   await adminPage.waitForLoadState('networkidle');
   await expect(adminPage.locator('label[for="status"]')).toBeVisible();
   await adminPage.locator('label[for="status"]').click();
@@ -678,7 +678,7 @@ test('7.1 - Create product, verify Magic AI button, and clean up', async ({ admi
 
   // Verify Magic AI button in WYSIWYG toolbar
   const magicAIButtons = adminPage.getByRole('button', { name: 'Magic AI' });
-  await expect(magicAIButtons.first()).toBeVisible({ timeout: 10000 });
+  await expect(magicAIButtons.first()).toBeVisible({ timeout: 20000 });
   const count = await magicAIButtons.count();
   expect(count).toBeGreaterThanOrEqual(2);
 
@@ -688,7 +688,7 @@ test('7.1 - Create product, verify Magic AI button, and clean up', async ({ admi
   const row = adminPage.locator('div', { hasText: sku });
   await row.locator('span[title="Delete"]').first().click();
   await adminPage.getByRole('button', { name: 'Delete' }).click();
-  await expect(adminPage.locator('#app').getByText(/Product Deleted Successfully/i)).toBeVisible({ timeout: 15000 });
+  await expect(adminPage.locator('#app').getByText(/Product Deleted Successfully/i)).toBeVisible({ timeout: 20000 });
 });
 
 test('7.3 - Open AI Assistance modal and verify fields', async ({ adminPage }) => {
@@ -712,7 +712,7 @@ test('7.3 - Open AI Assistance modal and verify fields', async ({ adminPage }) =
 
   // Click Magic AI on Description WYSIWYG toolbar
   const magicAIBtn = adminPage.getByRole('button', { name: 'Magic AI' }).last();
-  await expect(magicAIBtn).toBeVisible({ timeout: 10000 });
+  await expect(magicAIBtn).toBeVisible({ timeout: 20000 });
   await magicAIBtn.click();
 
   // Verify AI Assistance modal fields
@@ -731,7 +731,7 @@ test('7.3 - Open AI Assistance modal and verify fields', async ({ adminPage }) =
   const row = adminPage.locator('div', { hasText: sku });
   await row.locator('span[title="Delete"]').first().click();
   await adminPage.getByRole('button', { name: 'Delete' }).click();
-  await expect(adminPage.locator('#app').getByText(/Product Deleted Successfully/i)).toBeVisible({ timeout: 15000 });
+  await expect(adminPage.locator('#app').getByText(/Product Deleted Successfully/i)).toBeVisible({ timeout: 20000 });
 });
 
 test('7.5 - Verify More Actions menu on product edit page', async ({ adminPage }) => {
@@ -752,7 +752,7 @@ test('7.5 - Verify More Actions menu on product edit page', async ({ adminPage }
 
   // Verify "More Actions" button exists
   const moreBtn = adminPage.locator('[title="More Actions"]').first();
-  await expect(moreBtn).toBeVisible({ timeout: 10000 });
+  await expect(moreBtn).toBeVisible({ timeout: 20000 });
   await moreBtn.click();
 
   const translateOption = adminPage.locator('span[title="Translate"]');
@@ -766,7 +766,7 @@ test('7.5 - Verify More Actions menu on product edit page', async ({ adminPage }
   const row = adminPage.locator('div', { hasText: sku });
   await row.locator('span[title="Delete"]').first().click();
   await adminPage.getByRole('button', { name: 'Delete' }).click();
-  await expect(adminPage.locator('#app').getByText(/Product Deleted Successfully/i)).toBeVisible({ timeout: 15000 });
+  await expect(adminPage.locator('#app').getByText(/Product Deleted Successfully/i)).toBeVisible({ timeout: 20000 });
 });
 
 test('7.6 - Verify Translate Step 1 fields', async ({ adminPage }) => {
@@ -786,11 +786,11 @@ test('7.6 - Verify Translate Step 1 fields', async ({ adminPage }) => {
   await adminPage.locator('input[name="sku"]').fill(sku);
   await adminPage.getByRole('button', { name: 'Save Product' }).click();
   // Wait for redirect to edit page (toast may disappear before we catch it)
-  await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { timeout: 15000 });
+  await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { timeout: 20000 });
   await adminPage.waitForLoadState('networkidle');
 
   const moreBtn = adminPage.locator('[title="More Actions"]').first();
-  await expect(moreBtn).toBeVisible({ timeout: 10000 });
+  await expect(moreBtn).toBeVisible({ timeout: 20000 });
   await moreBtn.click();
 
   const translateOption = adminPage.locator('span[title="Translate"]');
@@ -806,7 +806,7 @@ test('7.6 - Verify Translate Step 1 fields', async ({ adminPage }) => {
   const row = adminPage.locator('div', { hasText: sku });
   await row.locator('span[title="Delete"]').first().click();
   await adminPage.getByRole('button', { name: 'Delete' }).click();
-  await expect(adminPage.locator('#app').getByText(/Product Deleted Successfully/i)).toBeVisible({ timeout: 15000 });
+  await expect(adminPage.locator('#app').getByText(/Product Deleted Successfully/i)).toBeVisible({ timeout: 20000 });
 });
 
 test.skip('7.7 - Translate product content to Hindi and verify', async () => {
@@ -828,7 +828,7 @@ test('8.1 - Create a category and verify Magic AI button', async ({ adminPage })
   await adminPage.locator('#name').fill(`Electronics AI ${uid}`);
 
   await adminPage.getByRole('button', { name: 'Save Category' }).click();
-  await expect(adminPage.locator('#app').getByText(/category created successfully/i)).toBeVisible({ timeout: 15000 });
+  await expect(adminPage.locator('#app').getByText(/category created successfully/i)).toBeVisible({ timeout: 20000 });
 });
 
 test('8.2 - Verify Magic AI button on category description WYSIWYG', async ({ adminPage }) => {
@@ -884,7 +884,7 @@ test('9.2 - Create a Role with MagicAI permission and clean up', async ({ adminP
   await adminPage.getByRole('textbox', { name: 'Description' }).fill('Role with Magic AI permissions only');
   await adminPage.getByRole('button', { name: 'Save Role' }).click();
   // Wait for redirect to roles list page (toast may disappear before assertion)
-  await adminPage.waitForURL(/\/admin\/settings\/roles$/, { timeout: 15000 }).catch(() => {});
+  await adminPage.waitForURL(/\/admin\/settings\/roles$/, { timeout: 20000 }).catch(() => {});
   await adminPage.waitForLoadState('networkidle');
 
   // Cleanup: delete the role

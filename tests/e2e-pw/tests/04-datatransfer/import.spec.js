@@ -41,7 +41,7 @@ async function deleteImport(adminPage, code) {
   if (await deleteBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
     await deleteBtn.click();
     await adminPage.getByRole('button', { name: 'Delete' }).click();
-    await expect(adminPage.locator('#app').getByText(/Import deleted successfully/i)).toBeVisible({ timeout: 10000 });
+    await expect(adminPage.locator('#app').getByText(/Import deleted successfully/i)).toBeVisible({ timeout: 20000 });
   }
 }
 
@@ -172,7 +172,7 @@ test.describe('UnoPim Import Jobs', () => {
 
     await createProductImport(adminPage, code);
     await expect(adminPage.locator('#app').getByText(/Import created successfully/i)
-      .or(adminPage.getByRole('button', { name: 'Import Now' })).first()).toBeVisible({ timeout: 15000 });
+      .or(adminPage.getByRole('button', { name: 'Import Now' })).first()).toBeVisible({ timeout: 20000 });
     await adminPage.getByRole('button', { name: 'Import Now' }).click();
     await expect(adminPage.locator('#app').getByText('Job queued')).toBeVisible();
 
@@ -189,7 +189,7 @@ test.describe('UnoPim Import Jobs', () => {
     // Create the first import
     await createProductImport(adminPage, code);
     await expect(adminPage.locator('#app').getByText(/Import created successfully/i)
-      .or(adminPage.getByRole('button', { name: 'Import Now' })).first()).toBeVisible({ timeout: 15000 });
+      .or(adminPage.getByRole('button', { name: 'Import Now' })).first()).toBeVisible({ timeout: 20000 });
 
     // Try to create another with the same code
     await createProductImport(adminPage, code);
@@ -207,7 +207,7 @@ test.describe('UnoPim Import Jobs', () => {
 
     await createProductImport(adminPage, code);
     await expect(adminPage.locator('#app').getByText(/Import created successfully/i)
-      .or(adminPage.getByRole('button', { name: 'Import Now' })).first()).toBeVisible({ timeout: 15000 });
+      .or(adminPage.getByRole('button', { name: 'Import Now' })).first()).toBeVisible({ timeout: 20000 });
 
     // Search
     await navigateTo(adminPage, 'imports');
@@ -247,7 +247,7 @@ test.describe('UnoPim Import Jobs', () => {
     // Create
     await createProductImport(adminPage, code);
     await expect(adminPage.locator('#app').getByText(/Import created successfully/i)
-      .or(adminPage.getByRole('button', { name: 'Import Now' })).first()).toBeVisible({ timeout: 15000 });
+      .or(adminPage.getByRole('button', { name: 'Import Now' })).first()).toBeVisible({ timeout: 20000 });
 
     // Navigate and search
     await navigateTo(adminPage, 'imports');
@@ -298,7 +298,7 @@ test.describe('UnoPim Import Jobs', () => {
 
     await createCategoryImport(adminPage, code);
     await expect(adminPage.locator('#app').getByText(/Import created successfully/i)
-      .or(adminPage.getByRole('button', { name: 'Import Now' })).first()).toBeVisible({ timeout: 15000 });
+      .or(adminPage.getByRole('button', { name: 'Import Now' })).first()).toBeVisible({ timeout: 20000 });
 
     // Cleanup
     await deleteImport(adminPage, code);

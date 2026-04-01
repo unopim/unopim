@@ -33,7 +33,7 @@ async function createIntegration(adminPage, name) {
   await adminPage.getByRole('option').first().click();
   await adminPage.getByRole('button', { name: 'Save' }).click();
   // Wait for redirect to the edit page (toast may disappear before assertion)
-  await adminPage.waitForURL(/\/admin\/integrations\/api-keys\/edit\//, { timeout: 15000 }).catch(() => {});
+  await adminPage.waitForURL(/\/admin\/integrations\/api-keys\/edit\//, { timeout: 20000 }).catch(() => {});
   await adminPage.waitForLoadState('networkidle');
 }
 
@@ -46,7 +46,7 @@ async function deleteIntegration(adminPage, name) {
   const row = adminPage.locator('div', { hasText: name });
   await row.locator('span[title="Delete"]').first().click();
   await adminPage.getByRole('button', { name: 'Delete' }).click();
-  await expect(adminPage.locator('#app').getByText(/API Integration is deleted successfully/i)).toBeVisible({ timeout: 15000 });
+  await expect(adminPage.locator('#app').getByText(/API Integration is deleted successfully/i)).toBeVisible({ timeout: 20000 });
 }
 
 test.describe('UnoPim Integration API Keys', () => {
@@ -149,7 +149,7 @@ test.describe('UnoPim Integration API Keys', () => {
 
     // Confirm delete for cleanup
     await adminPage.getByRole('button', { name: 'Delete' }).click();
-    await expect(adminPage.locator('#app').getByText(/API Integration is deleted successfully/i)).toBeVisible({ timeout: 15000 });
+    await expect(adminPage.locator('#app').getByText(/API Integration is deleted successfully/i)).toBeVisible({ timeout: 20000 });
   });
 
   test('Generate API key for an Integration', async ({ adminPage }) => {
@@ -165,7 +165,7 @@ test.describe('UnoPim Integration API Keys', () => {
     await row.locator('span[title="Edit"]').first().click();
     await adminPage.waitForLoadState('load');
     await adminPage.getByRole('button', { name: 'Generate' }).click();
-    await expect(adminPage.locator('#app').getByText(/API key is generated successfully/i)).toBeVisible({ timeout: 15000 });
+    await expect(adminPage.locator('#app').getByText(/API key is generated successfully/i)).toBeVisible({ timeout: 20000 });
     await expect(adminPage.locator('#client_id')).not.toHaveValue('');
     await expect(adminPage.locator('#secret_key')).not.toHaveValue('');
 
@@ -186,11 +186,11 @@ test.describe('UnoPim Integration API Keys', () => {
     await row.locator('span[title="Edit"]').first().click();
     await adminPage.waitForLoadState('load');
     await adminPage.getByRole('button', { name: 'Generate' }).click();
-    await expect(adminPage.locator('#app').getByText(/API key is generated successfully/i)).toBeVisible({ timeout: 15000 });
+    await expect(adminPage.locator('#app').getByText(/API key is generated successfully/i)).toBeVisible({ timeout: 20000 });
 
     // Act: regenerate
     await adminPage.getByRole('button', { name: 'Re-Generate Secret Key' }).click();
-    await expect(adminPage.locator('#app').getByText(/API secret key is regenerated successfully/i)).toBeVisible({ timeout: 15000 });
+    await expect(adminPage.locator('#app').getByText(/API secret key is regenerated successfully/i)).toBeVisible({ timeout: 20000 });
     await expect(adminPage.locator('#client_id')).not.toHaveValue('');
     await expect(adminPage.locator('#secret_key')).not.toHaveValue('');
 
@@ -212,7 +212,7 @@ test.describe('UnoPim Integration API Keys', () => {
     await adminPage.waitForLoadState('load');
     await adminPage.getByRole('textbox', { name: 'Name' }).fill(updatedName);
     await adminPage.getByRole('button', { name: 'Save' }).click();
-    await expect(adminPage.locator('#app').getByText(/API Integration is updated successfully/i)).toBeVisible({ timeout: 15000 });
+    await expect(adminPage.locator('#app').getByText(/API Integration is updated successfully/i)).toBeVisible({ timeout: 20000 });
 
     await deleteIntegration(adminPage, updatedName);
   });

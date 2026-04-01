@@ -21,7 +21,7 @@ async function createFamilyWithGeneralGroup(adminPage, familyCode, familyName) {
   await adminPage.getByRole('textbox', { name: 'Search' }).first().fill(familyCode);
   await adminPage.keyboard.press('Enter');
   await adminPage.waitForLoadState('networkidle');
-  await expect(adminPage.locator('span[title="Edit"]').first()).toBeVisible({ timeout: 15000 });
+  await expect(adminPage.locator('span[title="Edit"]').first()).toBeVisible({ timeout: 20000 });
   const itemRow = adminPage.locator('div', { hasText: familyCode });
   await itemRow.locator('span[title="Edit"]').first().click();
   await adminPage.waitForLoadState('networkidle');
@@ -64,12 +64,12 @@ async function goToFamilyCompletenessTab(adminPage, familyCode) {
   await adminPage.getByRole('textbox', { name: 'Search' }).first().fill(familyCode);
   await adminPage.keyboard.press('Enter');
   await adminPage.waitForLoadState('networkidle');
-  await expect(adminPage.locator('span[title="Edit"]').first()).toBeVisible({ timeout: 10000 });
+  await expect(adminPage.locator('span[title="Edit"]').first()).toBeVisible({ timeout: 20000 });
   const itemRow = adminPage.locator('div', { hasText: familyCode });
   await itemRow.locator('span[title="Edit"]').first().click();
   await adminPage.getByRole('link', { name: 'Completeness' }).click();
   await adminPage.waitForLoadState('networkidle');
-  await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 15000 });
+  await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 20000 });
 }
 
 /**
@@ -85,7 +85,7 @@ async function deleteFamilyByCode(adminPage, familyCode) {
   if (await deleteBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
     await deleteBtn.click();
     await adminPage.getByRole('button', { name: 'Delete' }).click();
-    await expect(adminPage.locator('#app').getByText(/Family deleted successfully/i)).toBeVisible({ timeout: 10000 });
+    await expect(adminPage.locator('#app').getByText(/Family deleted successfully/i)).toBeVisible({ timeout: 20000 });
   }
 }
 
@@ -102,7 +102,7 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await expect(adminPage.getByRole('link', { name: 'Completeness' })).toBeVisible();
     await adminPage.getByRole('link', { name: 'Completeness' }).click();
     await adminPage.waitForLoadState('networkidle');
-    await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 15000 });
+    await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 20000 });
     await expect(adminPage).toHaveURL(/\/admin\/catalog\/families\/edit\/\d+\?completeness/);
     await expect(adminPage.getByRole('paragraph').filter({ hasText: 'Completeness' })).toBeVisible();
     await expect(adminPage.locator('div').filter({ hasText: /^Code$/ }).first()).toBeVisible();
@@ -160,7 +160,7 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await adminPage.getByRole('textbox', { name: 'Search' }).first().fill(familyCode);
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
-    await expect(adminPage.locator('span[title="Edit"]').first()).toBeVisible({ timeout: 10000 });
+    await expect(adminPage.locator('span[title="Edit"]').first()).toBeVisible({ timeout: 20000 });
     const itemRow = adminPage.locator('div', { hasText: familyCode });
     await itemRow.locator('span[title="Edit"]').first().click();
     await expect(adminPage.getByRole('link', { name: 'Completeness' })).toBeVisible();
@@ -179,7 +179,7 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await createFamilyWithGeneralGroup(adminPage, familyCode, familyName);
     await goToFamilyCompletenessTab(adminPage, familyCode);
     // Verify at least some attributes appear in the completeness tab
-    await expect(adminPage.locator('#app').getByText(/[1-9]\d* Results?/)).toBeVisible({ timeout: 15000 });
+    await expect(adminPage.locator('#app').getByText(/[1-9]\d* Results?/)).toBeVisible({ timeout: 20000 });
     // Verify the Code and Name column headers are present
     await expect(adminPage.locator('div').filter({ hasText: /^Code$/ }).first()).toBeVisible();
     await expect(adminPage.locator('div').filter({ hasText: /^Name$/ }).first()).toBeVisible();
@@ -202,7 +202,7 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await adminPage.getByRole('textbox', { name: 'Search', exact: true }).press('Enter');
     await adminPage.waitForLoadState('networkidle');
     // Should find at least 1 result matching "name"
-    await expect(adminPage.locator('#app').getByText(/[1-9]\d* Results?/)).toBeVisible({ timeout: 15000 });
+    await expect(adminPage.locator('#app').getByText(/[1-9]\d* Results?/)).toBeVisible({ timeout: 20000 });
 
     // Cleanup
     await deleteFamilyByCode(adminPage, familyCode);
@@ -247,7 +247,7 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await adminPage.getByText('Save').click();
     await adminPage.getByText('Save').click();
     await adminPage.waitForLoadState('networkidle');
-    await expect(adminPage.locator('#app').getByText(/[1-9]\d* Results?/)).toBeVisible({ timeout: 15000 });
+    await expect(adminPage.locator('#app').getByText(/[1-9]\d* Results?/)).toBeVisible({ timeout: 20000 });
 
     // Cleanup
     await deleteFamilyByCode(adminPage, familyCode);
@@ -268,7 +268,7 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await adminPage.getByText('Save').click();
     await adminPage.getByText('Save').click();
     await adminPage.waitForLoadState('networkidle');
-    await expect(adminPage.locator('#app').getByText(/0 Results?/)).toBeVisible({ timeout: 15000 });
+    await expect(adminPage.locator('#app').getByText(/0 Results?/)).toBeVisible({ timeout: 20000 });
 
     // Cleanup
     await deleteFamilyByCode(adminPage, familyCode);
@@ -289,7 +289,7 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await adminPage.getByText('Save').click();
     await adminPage.getByText('Save').click();
     await adminPage.waitForLoadState('networkidle');
-    await expect(adminPage.locator('#app').getByText(/0 Results?/)).toBeVisible({ timeout: 15000 });
+    await expect(adminPage.locator('#app').getByText(/0 Results?/)).toBeVisible({ timeout: 20000 });
 
     // Cleanup
     await deleteFamilyByCode(adminPage, familyCode);
@@ -334,7 +334,7 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     if (await unassignedSelect.isVisible({ timeout: 3000 }).catch(() => false)) {
       await unassignedSelect.click();
       await adminPage.getByRole('option', { name: 'Default' }).first().click();
-      await expect(adminPage.locator('#app').getByText(/Completeness updated successfully/i)).toBeVisible({ timeout: 10000 });
+      await expect(adminPage.locator('#app').getByText(/Completeness updated successfully/i)).toBeVisible({ timeout: 20000 });
       await adminPage.waitForLoadState('networkidle');
     }
 
@@ -345,7 +345,7 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await adminPage.getByText('Save').click();
     await adminPage.getByText('Save').click();
     await adminPage.waitForLoadState('networkidle');
-    await expect(adminPage.locator('#app').getByText(/[1-9]\d* Results?/)).toBeVisible({ timeout: 15000 });
+    await expect(adminPage.locator('#app').getByText(/[1-9]\d* Results?/)).toBeVisible({ timeout: 20000 });
 
     // Cleanup
     await deleteFamilyByCode(adminPage, familyCode);

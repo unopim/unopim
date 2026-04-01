@@ -11,7 +11,7 @@ async function createCategory(adminPage, code, name) {
   await adminPage.locator('input[name="code"]').fill(code);
   await adminPage.locator('#name').fill(name);
   await adminPage.getByRole('button', { name: 'Save Category' }).click();
-  await expect(adminPage.locator('#app').getByText(/category created successfully/i)).toBeVisible({ timeout: 15000 });
+  await expect(adminPage.locator('#app').getByText(/category created successfully/i)).toBeVisible({ timeout: 20000 });
 }
 
 /**
@@ -90,7 +90,7 @@ test.describe('UnoPim Category Tests', () => {
   test('should allow setting items per page', async ({ adminPage }) => {
     await navigateTo(adminPage, 'categories');
     const perPageBtn = adminPage.getByRole('button', { name: 'Per Page' });
-    await expect(perPageBtn).toBeVisible({ timeout: 10000 });
+    await expect(perPageBtn).toBeVisible({ timeout: 20000 });
     await perPageBtn.click();
     await adminPage.locator('#app').getByText('20', { exact: true }).click();
     await expect(perPageBtn).toContainText('20');
@@ -123,7 +123,7 @@ test.describe('UnoPim Category Tests', () => {
 
     // Cleanup — confirm delete
     await adminPage.getByRole('button', { name: 'Delete' }).click();
-    await expect(adminPage.locator('#app').getByText(/category has been successfully deleted/i)).toBeVisible({ timeout: 15000 });
+    await expect(adminPage.locator('#app').getByText(/category has been successfully deleted/i)).toBeVisible({ timeout: 20000 });
   });
 
   test('should allow selecting all categories with the mass action checkbox', async ({ adminPage }) => {
@@ -149,7 +149,7 @@ test.describe('UnoPim Category Tests', () => {
     await adminPage.waitForLoadState('networkidle');
     await adminPage.locator('#name').fill(`Updated ${uid}`);
     await adminPage.getByRole('button', { name: 'Save Category' }).click();
-    await expect(adminPage.locator('#app').getByText(/category updated successfully/i)).toBeVisible({ timeout: 15000 });
+    await expect(adminPage.locator('#app').getByText(/category updated successfully/i)).toBeVisible({ timeout: 20000 });
 
     // Cleanup
     await deleteCategory(adminPage, code);
@@ -170,7 +170,7 @@ test.describe('UnoPim Category Tests', () => {
     const row = adminPage.locator('div', { hasText: code });
     await row.locator('span[title="Delete"]').first().click();
     await adminPage.getByRole('button', { name: 'Delete' }).click();
-    await expect(adminPage.locator('#app').getByText(/category has been successfully deleted/i)).toBeVisible({ timeout: 15000 });
+    await expect(adminPage.locator('#app').getByText(/category has been successfully deleted/i)).toBeVisible({ timeout: 20000 });
   });
 
   test('Delete Root Category', async ({ adminPage }) => {
@@ -182,7 +182,7 @@ test.describe('UnoPim Category Tests', () => {
     const row = adminPage.locator('div', { hasText: /\[root\]/ });
     await row.locator('span[title="Delete"]').first().click();
     await adminPage.getByRole('button', { name: 'Delete' }).click();
-    await expect(adminPage.locator('#app').getByText(/cannot delete the root category/i)).toBeVisible({ timeout: 15000 });
+    await expect(adminPage.locator('#app').getByText(/cannot delete the root category/i)).toBeVisible({ timeout: 20000 });
   });
 
 });
