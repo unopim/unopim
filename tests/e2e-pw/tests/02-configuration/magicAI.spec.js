@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, searchInDataGrid } = require('../../utils/helpers');
+const { navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 
@@ -632,8 +632,7 @@ test('6.1 - Enable AI Translate on description attribute', async ({ adminPage })
 
   await expect(adminPage.locator('#app').getByText('AI Translate')).toBeVisible();
   await adminPage.locator('label', { hasText: 'AI Translate' }).click();
-  await adminPage.getByRole('button', { name: 'Save Attribute' }).click();
-  await expect(adminPage.locator('#app').getByText(/Attribute Updated Successfully/i)).toBeVisible();
+  await clickSaveAndExpect(adminPage, 'Save Attribute', /Attribute Updated Successfully/i);
 });
 
 test('6.2 - Enable AI Translate on short_description attribute', async ({ adminPage }) => {
@@ -648,8 +647,7 @@ test('6.2 - Enable AI Translate on short_description attribute', async ({ adminP
 
   await expect(adminPage.locator('#app').getByText('AI Translate')).toBeVisible();
   await adminPage.locator('label', { hasText: 'AI Translate' }).click();
-  await adminPage.getByRole('button', { name: 'Save Attribute' }).click();
-  await expect(adminPage.locator('#app').getByText(/Attribute Updated Successfully/i)).toBeVisible();
+  await clickSaveAndExpect(adminPage, 'Save Attribute', /Attribute Updated Successfully/i);
 });
 
 // ═════════════════════════════════════════════════
