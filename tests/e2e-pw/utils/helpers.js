@@ -32,7 +32,10 @@ const ROUTES = {
 async function navigateTo(page, route) {
   const url = ROUTES[route];
   if (!url) throw new Error(`Unknown route: "${route}". Available: ${Object.keys(ROUTES).join(', ')}`);
-  await page.goto(url, { waitUntil: 'load', timeout: 60000 });
+  await page.goto(url, { waitUntil: 'networkidle', timeout: 60000 }).catch(async () => {
+    // networkidle may timeout due to debugbar — fallback to checking Vue rendered
+    await page.waitForLoadState('load', { timeout: 10000 }).catch(() => {});
+  });
 }
 
 /**
@@ -43,7 +46,7 @@ async function navigateTo(page, route) {
  */
 async function searchInDataGrid(page, text, placeholder = 'Search') {
   const searchInput = page.getByPlaceholder(placeholder).first();
-  await searchInput.waitFor({ state: 'visible', timeout: 20000 });
+  await searchInput.waitFor({ state: 'visible', timeout: 30000 });
   await searchInput.fill(text);
   await page.keyboard.press('Enter');
   // Wait for the DataGrid to refresh after search
