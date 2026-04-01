@@ -233,15 +233,10 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await deleteFamilyByCode(adminPage, familyCode);
   });
 
-  // ── Custom family: Filter by Code ──
+  // ── Default family: Filter by Code ──
 
   test('Verify attribute filter using Code in Completeness section', async ({ adminPage }) => {
-    const uid = generateUid();
-    const familyCode = `filtfam${uid}`;
-    const familyName = `FiltFamily ${uid}`;
-
-    await createFamilyWithGeneralGroup(adminPage, familyCode, familyName);
-    await goToFamilyCompletenessTab(adminPage, familyCode);
+    await goToFamilyCompletenessTab(adminPage, 'default');
     await adminPage.locator('.relative.inline-flex').click();
     await adminPage.getByRole('textbox', { name: 'Code' }).click();
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('name');
@@ -249,20 +244,12 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await adminPage.getByText('Save').click();
     await adminPage.waitForLoadState('networkidle');
     await expect(adminPage.locator('#app').getByText(/[1-9]\d* Results?/)).toBeVisible({ timeout: 20000 });
-
-    // Cleanup
-    await deleteFamilyByCode(adminPage, familyCode);
   });
 
-  // ── Custom family: Filter by Name ──
+  // ── Default family: Filter by Name ──
 
   test('Verify attribute filter using Name in Completeness section', async ({ adminPage }) => {
-    const uid = generateUid();
-    const familyCode = `namfam${uid}`;
-    const familyName = `NamFamily ${uid}`;
-
-    await createFamilyWithGeneralGroup(adminPage, familyCode, familyName);
-    await goToFamilyCompletenessTab(adminPage, familyCode);
+    await goToFamilyCompletenessTab(adminPage, 'default');
     await adminPage.locator('.relative.inline-flex').click();
     await adminPage.getByRole('textbox', { name: 'Name' }).click();
     await adminPage.getByRole('textbox', { name: 'Name' }).fill('xyz');
@@ -270,20 +257,12 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await adminPage.getByText('Save').click();
     await adminPage.waitForLoadState('networkidle');
     await expect(adminPage.locator('#app').getByText(/0 Results?/)).toBeVisible({ timeout: 20000 });
-
-    // Cleanup
-    await deleteFamilyByCode(adminPage, familyCode);
   });
 
-  // ── Custom family: Filter by Required in Channels (non-existent) ──
+  // ── Default family: Filter by Required in Channels (non-existent) ──
 
   test('Verify attribute filter using Required in Channels returns 0 results for non-existent channel', async ({ adminPage }) => {
-    const uid = generateUid();
-    const familyCode = `rcfam${uid}`;
-    const familyName = `RCFamily ${uid}`;
-
-    await createFamilyWithGeneralGroup(adminPage, familyCode, familyName);
-    await goToFamilyCompletenessTab(adminPage, familyCode);
+    await goToFamilyCompletenessTab(adminPage, 'default');
     await adminPage.locator('.relative.inline-flex').click();
     await adminPage.getByRole('textbox', { name: 'Required in Channels' }).click();
     await adminPage.getByRole('textbox', { name: 'Required in Channels' }).fill('xyz');
@@ -291,20 +270,12 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await adminPage.getByText('Save').click();
     await adminPage.waitForLoadState('networkidle');
     await expect(adminPage.locator('#app').getByText(/0 Results?/)).toBeVisible({ timeout: 20000 });
-
-    // Cleanup
-    await deleteFamilyByCode(adminPage, familyCode);
   });
 
-  // ── Custom family: Channel assignment toggle ──
+  // ── Default family: Channel assignment toggle ──
 
   test('Verify channel assignment can be toggled for an attribute', async ({ adminPage }) => {
-    const uid = generateUid();
-    const familyCode = `togfam${uid}`;
-    const familyName = `TogFamily ${uid}`;
-
-    await createFamilyWithGeneralGroup(adminPage, familyCode, familyName);
-    await goToFamilyCompletenessTab(adminPage, familyCode);
+    await goToFamilyCompletenessTab(adminPage, 'default');
 
     // Remove an existing channel tag if present, or assign one if not
     const existingTag = adminPage.locator('.multiselect__tag-icon').first();
@@ -315,20 +286,12 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
       await adminPage.getByRole('option', { name: 'Default' }).first().click();
     }
     await expect(adminPage.locator('#app').getByText('Completeness updated successfully Close')).toBeVisible();
-
-    // Cleanup
-    await deleteFamilyByCode(adminPage, familyCode);
   });
 
-  // ── Custom family: Filter by Required in Channels after assignment ──
+  // ── Default family: Filter by Required in Channels after assignment ──
 
   test('Verify filter using Required in Channels returns results after channel assignment', async ({ adminPage }) => {
-    const uid = generateUid();
-    const familyCode = `rcafam${uid}`;
-    const familyName = `RCAFamily ${uid}`;
-
-    await createFamilyWithGeneralGroup(adminPage, familyCode, familyName);
-    await goToFamilyCompletenessTab(adminPage, familyCode);
+    await goToFamilyCompletenessTab(adminPage, 'default');
 
     // Assign Default channel to an attribute
     const unassignedSelect = adminPage.locator('.multiselect__tags', { hasText: 'Select option' }).first();
@@ -347,35 +310,23 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await adminPage.getByText('Save').click();
     await adminPage.waitForLoadState('networkidle');
     await expect(adminPage.locator('#app').getByText(/[1-9]\d* Results?/)).toBeVisible({ timeout: 20000 });
-
-    // Cleanup
-    await deleteFamilyByCode(adminPage, familyCode);
   });
 
-  // ── Custom family: Selectable attribute count ──
+  // ── Default family: Selectable attribute count ──
 
   test('Verify selectable attribute count in Completeness tab equals assigned family attributes', async ({ adminPage }) => {
-    const uid = generateUid();
-    const familyCode = `cntfam${uid}`;
-    const familyName = `CntFamily ${uid}`;
-
-    await createFamilyWithGeneralGroup(adminPage, familyCode, familyName);
-
     await adminPage.goto('/admin/catalog/families', { waitUntil: 'load' });
     await adminPage.waitForLoadState('networkidle');
-    await adminPage.getByRole('textbox', { name: 'Search' }).first().fill(familyCode);
+    await adminPage.getByRole('textbox', { name: 'Search' }).first().fill('default');
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
-    const itemRow = adminPage.locator('div', { hasText: familyCode });
+    const itemRow = adminPage.locator('div', { hasText: 'default' });
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.waitForSelector('#assigned-attribute-groups', { state: 'visible' });
     await adminPage.waitForLoadState('networkidle');
     const assignedCount = await adminPage
       .locator('#assigned-attribute-groups .ltr\\:ml-11 [data-draggable="true"]').count();
     expect(assignedCount).toBeGreaterThan(0);
-
-    // Cleanup
-    await deleteFamilyByCode(adminPage, familyCode);
   });
 
   // ── Skipped: Configure Completeness modal test ──
