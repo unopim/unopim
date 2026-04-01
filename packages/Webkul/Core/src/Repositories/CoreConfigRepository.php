@@ -6,6 +6,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Webkul\Core\Contracts\CoreConfig;
 use Webkul\Core\Eloquent\Repository;
 use Webkul\Core\Traits\CoreConfigField;
 
@@ -24,7 +25,7 @@ class CoreConfigRepository extends Repository
     /**
      * Create.
      *
-     * @return \Webkul\Core\Contracts\CoreConfig
+     * @return CoreConfig
      */
     public function create(array $data)
     {
@@ -44,6 +45,15 @@ class CoreConfigRepository extends Repository
 
             foreach ($recursiveData as $fieldName => $value) {
                 $field = core()->getConfigField($fieldName);
+
+                // For null values, use the field's default_value if available, otherwise skip
+                if (is_null($value)) {
+                    if (isset($field['default_value']) && $field['default_value'] !== '') {
+                        $value = $field['default_value'];
+                    } else {
+                        continue;
+                    }
+                }
 
                 if ($field['type'] === 'password' && preg_match('/^\*+$/', $value)) {
                     $original = core()->getConfigData($fieldName);

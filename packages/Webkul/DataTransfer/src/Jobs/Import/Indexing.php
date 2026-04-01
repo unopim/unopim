@@ -8,6 +8,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Webkul\DataTransfer\Helpers\Import as ImportHelper;
+use Webkul\DataTransfer\Services\JobLogger;
 
 class Indexing implements ShouldQueue
 {
@@ -31,8 +32,20 @@ class Indexing implements ShouldQueue
      */
     public function handle()
     {
+        $logger = JobLogger::make($this->import->id);
+
+        $logger->info('Indexing stage started.');
+
         app(ImportHelper::class)
             ->setImport($this->import)
+            ->setLogger($logger)
             ->indexing();
+    }
+
+    public function failed(\Throwable $exception)
+    {
+        JobLogger::make($this->import->id)->error("Indexing stage failed: {$exception->getMessage()}", [
+            'exception' => $exception->getTraceAsString(),
+        ]);
     }
 }

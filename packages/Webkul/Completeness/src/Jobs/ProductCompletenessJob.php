@@ -37,6 +37,8 @@ class ProductCompletenessJob implements ShouldQueue
 
     protected array $completenessSettings = [];
 
+    protected array $attributeCache = [];
+
     public $tries = 3;
 
     public function __construct(array $productIds)
@@ -51,12 +53,67 @@ class ProductCompletenessJob implements ShouldQueue
         $this->resolveDependencies();
         $this->loadStaticData();
 
-        foreach ($this->productIds as $id) {
-            $product = $this->productRepository->find($id);
+        // Batch load all products in one query instead of find() per product
+        $products = $this->productRepository
+            ->findWhereIn('id', $this->productIds)
+            ->keyBy('id');
 
-            if ($product) {
-                $this->processProductCompleteness($product->toArray());
+        if (app()->environment('testing')) {
+            \Log::debug('CompletenessJob', [
+                'productIds'    => $this->productIds,
+                'productsFound' => $products->keys()->toArray(),
+                'channelCount'  => count($this->channels),
+                'channels'      => collect($this->channels)->map(fn ($c) => ['id' => $c['id'], 'code' => $c['code'], 'locales' => count($c['locales'])])->toArray(),
+            ]);
+        }
+
+        $scoreRows = [];
+        $avgScores = [];
+        $deleteQueue = [];
+
+        foreach ($this->productIds as $id) {
+            $product = $products->get($id);
+
+            if (! $product) {
+                continue;
             }
+
+            [$rows, $avg, $deletes] = $this->computeProductCompleteness($product->toArray());
+
+            $scoreRows = array_merge($scoreRows, $rows);
+            $avgScores[$id] = $avg;
+            $deleteQueue = array_merge($deleteQueue, $deletes);
+        }
+
+        // Bulk delete orphan channel completeness rows
+        foreach ($deleteQueue as [$productId, $channelId]) {
+            DB::table('product_completeness')
+                ->where('product_id', $productId)
+                ->where('channel_id', $channelId)
+                ->delete();
+        }
+
+        // Bulk upsert all completeness scores in one query
+        if (! empty($scoreRows)) {
+            DB::table('product_completeness')->upsert(
+                $scoreRows,
+                ['product_id', 'channel_id', 'locale_id'],
+                ['score', 'missing_count']
+            );
+        }
+
+        // Bulk update avg_completeness_score with a single CASE statement
+        if (! empty($avgScores)) {
+            $cases = '';
+            $idList = implode(',', array_map('intval', array_keys($avgScores)));
+
+            foreach ($avgScores as $pid => $score) {
+                $cases .= ' WHEN '.((int) $pid).' THEN '.($score === null ? 'NULL' : (int) $score);
+            }
+
+            $prefix = DB::getTablePrefix();
+            $castType = DB::getDriverName() === 'pgsql' ? 'INTEGER' : 'SIGNED';
+            DB::statement("UPDATE {$prefix}products SET avg_completeness_score = CAST(CASE id {$cases} END AS {$castType}) WHERE id IN ({$idList})");
         }
     }
 
@@ -73,6 +130,7 @@ class ProductCompletenessJob implements ShouldQueue
     protected function loadStaticData(): void
     {
         $this->channels = $this->channelRepository
+            ->skipCache()
             ->with([
                 'locales' => function ($query) {
                     $query->select('locales.id', 'locales.code')->where('status', 1)->orderBy('code');
@@ -94,13 +152,21 @@ class ProductCompletenessJob implements ShouldQueue
             ->toArray();
     }
 
-    protected function processProductCompleteness(array $product): void
+    /**
+     * Compute completeness data for a product without writing to the DB.
+     *
+     * Returns [$scoreRows, $avgScore, $deleteQueue]:
+     *   - $scoreRows:   rows ready for bulk upsert into product_completeness
+     *   - $avgScore:    value to write to products.avg_completeness_score
+     *   - $deleteQueue: [[productId, channelId], ...] orphan rows to delete
+     */
+    protected function computeProductCompleteness(array $product): array
     {
         $familyId = $product['attribute_family_id'] ?? null;
         $productValues = $product['values'] ?? [];
 
         if (! $familyId) {
-            return;
+            return [[], null, []];
         }
 
         if (! isset($this->completenessSettings[$familyId])) {
@@ -112,8 +178,9 @@ class ProductCompletenessJob implements ShouldQueue
         $settingsByChannel = $this->completenessSettings[$familyId];
 
         $channelCount = 0;
-
         $averageScore = 0;
+        $scoreRows = [];
+        $deleteQueue = [];
 
         foreach ($this->channels as $channel) {
             $channelId = $channel['id'];
@@ -121,10 +188,7 @@ class ProductCompletenessJob implements ShouldQueue
             $locales = $channel['locales'] ?? [];
 
             if (! isset($settingsByChannel[$channelId]) || empty($locales)) {
-                // Remove existing completeness result for this channel and product if any exists
-                $this->completenessResultsRepository
-                    ->where(['product_id' => $product['id'], 'channel_id' => $channelId])
-                    ->delete();
+                $deleteQueue[] = [$product['id'], $channelId];
 
                 continue;
             }
@@ -132,9 +196,19 @@ class ProductCompletenessJob implements ShouldQueue
             $channelCount++;
 
             $attributeIds = collect($settingsByChannel[$channelId])->pluck('attribute_id')->all();
-            $attributes = $this->attributeRepository->findWhereIn('id', $attributeIds)->keyBy('id');
 
-            $averageScore += $this->calculateScoresForChannel(
+            // Cache attribute lookups to avoid repeated queries for the same attribute set
+            $cacheKey = implode(',', $attributeIds);
+
+            if (! isset($this->attributeCache[$cacheKey])) {
+                $this->attributeCache[$cacheKey] = $this->attributeRepository
+                    ->findWhereIn('id', $attributeIds)
+                    ->keyBy('id');
+            }
+
+            $attributes = $this->attributeCache[$cacheKey];
+
+            [$channelScore, $channelRows] = $this->collectScoresForChannel(
                 $product,
                 $productValues,
                 $channelId,
@@ -142,21 +216,29 @@ class ProductCompletenessJob implements ShouldQueue
                 $locales,
                 $attributes
             );
+
+            $averageScore += $channelScore;
+            $scoreRows = array_merge($scoreRows, $channelRows);
         }
 
-        $averageScore = $averageScore ? round($averageScore / $channelCount) : null;
+        $avgScore = $channelCount ? round($averageScore / $channelCount) : null;
 
-        DB::table('products')->where('id', $product['id'])->update(['avg_completeness_score' => $averageScore]);
+        return [$scoreRows, $avgScore, $deleteQueue];
     }
 
-    protected function calculateScoresForChannel(
+    /**
+     * Collect completeness score rows for a channel without writing to the DB.
+     *
+     * Returns [$channelScore, $rows] where $rows are ready for bulk upsert.
+     */
+    protected function collectScoresForChannel(
         array $product,
         array $productValues,
         int $channelId,
         string $channelCode,
         array $locales,
         $attributes
-    ): int {
+    ): array {
         $localizable = [];
         $nonLocalizable = [];
 
@@ -186,10 +268,10 @@ class ProductCompletenessJob implements ShouldQueue
         }
 
         $averageLocaleScore = 0;
-
         $missingCount = $nonLocalizableTotal - $nonLocalizableFilled;
+        $rows = [];
 
-        foreach ($locales as $index => $locale) {
+        foreach ($locales as $locale) {
             $localeCode = $locale['code'];
             $localeId = $locale['id'];
 
@@ -215,18 +297,17 @@ class ProductCompletenessJob implements ShouldQueue
 
             $score = $total > 0 ? round(($filled / $total) * 100) : 0;
 
-            $this->completenessResultsRepository->updateOrCreate([
-                'product_id' => $product['id'],
-                'channel_id' => $channelId,
-                'locale_id'  => $localeId,
-            ], [
+            $rows[] = [
+                'product_id'    => $product['id'],
+                'channel_id'    => $channelId,
+                'locale_id'     => $localeId,
                 'score'         => $score,
                 'missing_count' => $missingCount + (($total - $nonLocalizableTotal) - ($filled - $nonLocalizableFilled)),
-            ]);
+            ];
 
             $averageLocaleScore += $score;
         }
 
-        return round($averageLocaleScore / count($locales));
+        return [round($averageLocaleScore / count($locales)), $rows];
     }
 }

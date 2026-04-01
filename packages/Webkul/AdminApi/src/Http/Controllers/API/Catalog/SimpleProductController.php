@@ -54,7 +54,7 @@ class SimpleProductController extends ProductController
                 'success' => true,
                 'message' => trans('admin::app.catalog.products.delete-success'),
                 'sku'     => $product['sku'],
-            ], 200);
+            ], JsonResponse::HTTP_OK);
 
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
@@ -63,10 +63,8 @@ class SimpleProductController extends ProductController
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function store()
+    public function store(): JsonResponse
     {
         $validator = Validator::make(request()->all(), [
             'status'            => ['nullable', 'boolean'],
@@ -76,7 +74,7 @@ class SimpleProductController extends ProductController
             'family'            => ['required', 'string'],
             'additional'        => ['nullable', 'array'],
             'values'            => ['required', 'array'],
-            'values.common.sku' => ['required'],
+            'values.common.sku' => ['required', 'unique:products,sku'],
             'variant'           => ['nullable', 'array'],
         ]);
 
@@ -137,10 +135,8 @@ class SimpleProductController extends ProductController
 
     /**
      * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(string $sku)
+    public function update(string $sku): JsonResponse
     {
         $validator = Validator::make(request()->all(), [
             'status'            => ['nullable', 'boolean'],
@@ -194,10 +190,8 @@ class SimpleProductController extends ProductController
 
     /**
      * Partial Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function partialUpdate(string $sku)
+    public function partialUpdate(string $sku): JsonResponse
     {
         $validator = Validator::make(request()->all(), [
             'status'     => ['nullable', 'boolean'],

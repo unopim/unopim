@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('locale');
             $table->text('name')->nullable();
 
-            $table->unique(['attribute_family_id', 'locale']);
+            $table->unique(['attribute_family_id', 'locale'], 'af_trans_id_locale_unique');
             $table->foreign('attribute_family_id')->references('id')->on('attribute_families')->onDelete('cascade');
         });
     }

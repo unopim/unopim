@@ -7,6 +7,7 @@ return [
     'decimal'                      => 'L\'attributo :attribute deve essere valido.',
     'phone-number'                 => 'L\'attributo :attribute deve essere un numero di telefono valido.',
     'slug'                         => 'L\'attributo :attribute deve essere un slug valido.',
+    'sku'                          => 'L\'attributo :attribute deve essere uno SKU valido (solo caratteri alfanumerici, trattini e underscore).',
     'comma-separated-integer'      => 'Il campo :attribute deve essere numerico e può contenere virgole.',
     'type'                         => 'L\'attributo :attribute deve essere un tipo valido.',
     'validation-type'              => 'L\'attributo :attribute deve essere un tipo valido.',
@@ -15,5 +16,6 @@ return [
     'not-supported'                => 'L\'attributo :attribute non supporta i seguenti valori (:unsupported).',
     'seperator-not-supported'      => 'Solo , o ; o | è supportato come separatore.',
     'file-type'                    => 'Il file deve essere di tipo csv,xls,xlsx.',
-    'file-mime-extension-mismatch' => 'L\'estensione del file e il tipo MIME non corrispondono. L\'estensione del file è :extension e il tipo MIME è :mimeType.',
+    'file-mime-extension-mismatch' => ':attribute L\'estensione del file e il tipo MIME non corrispondono. L\'estensione del file è :extension e il tipo MIME è :mimeType.',
+    'file-not-exists'              => 'Il file selezionato non esiste :value per il campo :attribute.',
 ];

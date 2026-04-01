@@ -2,6 +2,7 @@
 
 namespace Webkul\Admin\DataGrids\MagicAI;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Webkul\DataGrid\DataGrid;
 
@@ -17,12 +18,12 @@ class MagicPromptGrid extends DataGrid
     /**
      * Prepare query builder.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return Builder
      */
     public function prepareQueryBuilder()
     {
         $queryBuilder = DB::table('magic_ai_prompts')
-            ->select('id', 'prompt', 'title', 'type', 'created_at', 'updated_at');
+            ->select('id', 'prompt', 'title', 'type', 'purpose', 'created_at', 'updated_at');
 
         return $queryBuilder;
     }
@@ -74,6 +75,29 @@ class MagicPromptGrid extends DataGrid
                     ],
                 ],
             ],
+        ]);
+
+        $this->addColumn([
+            'index'      => 'purpose',
+            'label'      => trans('admin::app.configuration.prompt.datagrid.purpose'),
+            'type'       => 'string',
+            'searchable' => false,
+            'sortable'   => true,
+            'filterable' => true,
+            'options'    => [
+                'type'   => 'basic',
+                'params' => [
+                    'options' => [
+                        ['label' => trans('admin::app.configuration.prompt.datagrid.text-generation'), 'value' => 'text_generation'],
+                        ['label' => trans('admin::app.configuration.prompt.datagrid.image-generation'), 'value' => 'image_generation'],
+                    ],
+                ],
+            ],
+            'closure' => fn ($row) => match ($row->purpose) {
+                'text_generation'  => trans('admin::app.configuration.prompt.datagrid.text-generation'),
+                'image_generation' => trans('admin::app.configuration.prompt.datagrid.image-generation'),
+                default            => $row->purpose,
+            },
         ]);
 
         $this->addColumn([

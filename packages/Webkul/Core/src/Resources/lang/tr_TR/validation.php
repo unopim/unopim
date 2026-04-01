@@ -7,6 +7,7 @@ return [
     'decimal'                      => 'Değer :attribute geçerli olmalıdır.',
     'phone-number'                 => 'Telefon numarası :attribute geçerli olmalıdır.',
     'slug'                         => 'Slug :attribute geçerli olmalıdır.',
+    'sku'                          => 'SKU :attribute geçerli olmalıdır (yalnızca alfasayısal karakterler, tireler ve alt çizgiler).',
     'comma-separated-integer'      => 'Adres :attribute alanı sayısal olmalı ve virgül içerebilir.',
     'type'                         => 'Adres :attribute geçerli bir tür olmalıdır.',
     'validation-type'              => 'Adres :attribute geçerli bir tür olmalıdır.',

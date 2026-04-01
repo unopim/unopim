@@ -6,7 +6,6 @@ return [
             'attribute-families' => [
                 'default' => 'Standard',
             ],
-
             'attribute-groups' => [
                 'description'      => 'Beskrivelse',
                 'general'          => 'Generel',
@@ -14,7 +13,6 @@ return [
                 'price'            => 'Pris',
                 'media'            => 'Medier',
             ],
-
             'attributes' => [
                 'brand'                => 'Mærke',
                 'color'                => 'Farve',
@@ -45,7 +43,6 @@ return [
                 'weight'               => 'Vægt',
                 'width'                => 'Bredde',
             ],
-
             'attribute-options' => [
                 'black'  => 'Sort',
                 'green'  => 'Grøn',
@@ -58,19 +55,16 @@ return [
                 'yellow' => 'Gul',
             ],
         ],
-
         'category' => [
             'categories' => [
                 'description' => 'Rod Kategori Beskrivelse',
                 'name'        => 'Rod',
             ],
-
             'category_fields' => [
                 'name'        => 'Navn',
                 'description' => 'Beskrivelse',
             ],
         ],
-
         'core' => [
             'channels' => [
                 'meta-title'       => 'Demo butik',
@@ -78,7 +72,6 @@ return [
                 'meta-description' => 'Demo butik meta beskrivelse',
                 'name'             => 'Standard',
             ],
-
             'currencies' => [
                 'AED' => 'Dirham',
                 'AFN' => 'Israelsk Shekel',
@@ -95,19 +88,16 @@ return [
                 'USD' => 'US Dollar',
             ],
         ],
-
         'user' => [
             'roles' => [
                 'description' => 'Denne rollebrugere vil have alle adgang',
                 'name'        => 'Administrator',
             ],
-
             'users' => [
                 'name' => 'Eksempel',
             ],
         ],
     ],
-
     'installer' => [
         'index' => [
             'create-administrator' => [
@@ -119,7 +109,6 @@ return [
                 'password'         => 'Adgangskode',
                 'title'            => 'Opret administrator',
             ],
-
             'environment-configuration' => [
                 'allowed-currencies'  => 'Tilladte valutaer',
                 'allowed-locales'     => 'Tilladte sprog',
@@ -157,13 +146,11 @@ return [
                 'usd'                 => 'Amerikansk dollar (USD)',
                 'warning-message'     => 'Advarsel! Indstillingerne for standardsprog og -valuta er permanente og kan ikke ændres igen.',
             ],
-
             'installation-processing' => [
                 'unopim'      => 'UnoPim Installation',
                 'unopim-info' => 'Opretter databasetabeller, dette kan tage et øjeblik',
                 'title'       => 'Installation',
             ],
-
             'installation-completed' => [
                 'admin-panel'               => 'Administratorpanel',
                 'unopim-forums'             => 'UnoPim Forum',
@@ -171,7 +158,6 @@ return [
                 'title-info'                => 'UnoPim er blevet installeret korrekt på dit system.',
                 'title'                     => 'Installation fuldført',
             ],
-
             'ready-for-installation' => [
                 'create-databsae-table'   => 'Opret databasetabeller',
                 'install-info-button'     => 'Klik på knappen nedenfor for at',
@@ -181,7 +167,6 @@ return [
                 'start-installation'      => 'Start installation',
                 'title'                   => 'Klar til installation',
             ],
-
             'start' => [
                 'locale'        => 'Sprog',
                 'main'          => 'Start',
@@ -189,7 +174,6 @@ return [
                 'title'         => 'Din UnoPim installation',
                 'welcome-title' => 'Velkommen til UnoPim :version',
             ],
-
             'server-requirements' => [
                 'calendar'    => 'Kalender',
                 'ctype'       => 'cType',
@@ -212,7 +196,6 @@ return [
                 'tokenizer'   => 'Tokenizer',
                 'xml'         => 'XML',
             ],
-
             'back'                     => 'Tilbage',
             'unopim-info'              => 'Et fællesskabsprojekt af',
             'unopim-logo'              => 'UnoPim Logo',

@@ -15,6 +15,10 @@ class ExportBatch implements ShouldQueue
 {
     use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public $tries = 3;
+
+    public $timeout = 600;
+
     /**
      * Create a new job instance.
      *
@@ -35,12 +39,37 @@ class ExportBatch implements ShouldQueue
      */
     public function handle()
     {
-        $typeExported = app(ExportHelper::class)
-            ->setExport($this->exportBatch->jobTrack)
-            ->setLogger(JobLogger::make($this->jobTrackId))
-            ->setExportBuffer($this->exportBuffer)
-            ->getTypeExporter();
+        $logger = JobLogger::make($this->jobTrackId);
 
-        $typeExported->exportBatch($this->exportBatch, $this->filePath);
+        $exportHelper = app(ExportHelper::class)
+            ->setExport($this->exportBatch->jobTrack)
+            ->setLogger($logger)
+            ->setExportBuffer($this->exportBuffer);
+
+        if ($exportHelper->shouldStop()) {
+            $logger->info("ExportBatch #{$this->exportBatch->id} skipped — export was stopped.");
+
+            $this->batch()?->cancel();
+
+            return;
+        }
+
+        $logger->info("ExportBatch #{$this->exportBatch->id} started processing.");
+
+        $exportHelper->getTypeExporter()
+            ->exportBatch($this->exportBatch, $this->filePath);
+
+        $logger->info("ExportBatch #{$this->exportBatch->id} completed.");
+    }
+
+    public function failed(\Throwable $exception)
+    {
+        JobLogger::make($this->jobTrackId)->error("ExportBatch #{$this->exportBatch->id} failed: {$exception->getMessage()}", [
+            'batch_id'  => $this->exportBatch->id,
+            'exception' => $exception->getTraceAsString(),
+        ]);
+
+        $this->exportBatch->state = 'failed';
+        $this->exportBatch->save();
     }
 }

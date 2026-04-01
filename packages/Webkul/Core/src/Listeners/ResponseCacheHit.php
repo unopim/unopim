@@ -8,7 +8,7 @@ use Webkul\Core\Jobs\UpdateCreateVisitableIndex;
 class ResponseCacheHit
 {
     /**
-     * @param  \Spatie\ResponseCache\Events\ResponseCacheHit  $request
+     * @param  ResponseCacheHitEvent  $request
      * @return void
      */
     public function handle(ResponseCacheHitEvent $event)

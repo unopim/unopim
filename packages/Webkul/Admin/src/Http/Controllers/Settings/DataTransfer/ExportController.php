@@ -3,9 +3,11 @@
 namespace Webkul\Admin\Http\Controllers\Settings\DataTransfer;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ExportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\DataTransfer\Contracts\Validator\JobInstances\JobValidator;
@@ -33,9 +35,9 @@ class ExportController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
-    public function index()
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             return app(ExportDataGrid::class)->toJson();
@@ -46,10 +48,8 @@ class ExportController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
      */
-    public function create()
+    public function create(): View
     {
         $exporterConfig = config('exporters');
 
@@ -58,10 +58,8 @@ class ExportController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function store()
+    public function store(): RedirectResponse
     {
         $exporterConfig = config('exporters');
 
@@ -113,10 +111,8 @@ class ExportController extends Controller
 
     /**
      * Show the form for editing a new resource.
-     *
-     * @return \Illuminate\View\View
      */
-    public function edit(int $id)
+    public function edit(int $id): View
     {
         $exporterConfig = config('exporters');
 
@@ -127,10 +123,8 @@ class ExportController extends Controller
 
     /**
      * Update a resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function update(int $id)
+    public function update(int $id): RedirectResponse
     {
         $exporterConfig = config('exporters');
 
@@ -196,9 +190,8 @@ class ExportController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy($id)
+    public function destroy($id): JsonResponse
     {
         $export = $this->jobInstancesRepository->findOrFail($id);
 
@@ -226,15 +219,13 @@ class ExportController extends Controller
 
         return response()->json([
             'message' => trans('admin::app.settings.data-transfer.exports.delete-failed'),
-        ], 500);
+        ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
      */
-    public function exportView(int $id)
+    public function exportView(int $id): View
     {
         if (! bouncer()->hasPermission('data_transfer.export')) {
             abort(401, 'This action is unauthorized');
@@ -250,7 +241,7 @@ class ExportController extends Controller
     /**
      * exportNow function dispatch the job asynchronously
      */
-    public function exportNow(int $id)
+    public function exportNow(int $id): RedirectResponse
     {
         try {
             // Retrieve the export instance or fail with a 404
@@ -318,7 +309,7 @@ class ExportController extends Controller
         if (! $export->processed_rows_count) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.exports.nothing-to-export'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         $this->jobHelper->setExport($export);
@@ -326,7 +317,7 @@ class ExportController extends Controller
         if (! $this->jobHelper->isValid()) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.exports.not-valid'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         /**
@@ -350,7 +341,7 @@ class ExportController extends Controller
             } catch (\Exception $e) {
                 return new JsonResponse([
                     'message' => $e->getMessage(),
-                ], 400);
+                ], JsonResponse::HTTP_BAD_REQUEST);
             }
         } else {
             if ($this->jobHelper->isLinkingRequired()) {
@@ -378,7 +369,7 @@ class ExportController extends Controller
         if (! $export->processed_rows_count) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.exports.nothing-to-export'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         $this->jobHelper->setExport($export);
@@ -386,7 +377,7 @@ class ExportController extends Controller
         if (! $this->jobHelper->isValid()) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.exports.not-valid'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         /**
@@ -413,7 +404,7 @@ class ExportController extends Controller
             } catch (\Exception $e) {
                 return new JsonResponse([
                     'message' => $e->getMessage(),
-                ], 400);
+                ], JsonResponse::HTTP_BAD_REQUEST);
             }
         } else {
             if ($this->jobHelper->isIndexingRequired()) {
@@ -439,7 +430,7 @@ class ExportController extends Controller
         if (! $export->processed_rows_count) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.exports.nothing-to-export'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         $this->jobHelper->setExport($export);
@@ -447,7 +438,7 @@ class ExportController extends Controller
         if (! $this->jobHelper->isValid()) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.exports.not-valid'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         /**
@@ -474,7 +465,7 @@ class ExportController extends Controller
             } catch (\Exception $e) {
                 return new JsonResponse([
                     'message' => $e->getMessage(),
-                ], 400);
+                ], JsonResponse::HTTP_BAD_REQUEST);
             }
         } else {
             /**

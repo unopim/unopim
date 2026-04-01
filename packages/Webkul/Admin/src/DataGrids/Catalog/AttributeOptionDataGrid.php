@@ -2,6 +2,7 @@
 
 namespace Webkul\Admin\DataGrids\Catalog;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Webkul\DataGrid\DataGrid;
 
@@ -30,7 +31,7 @@ class AttributeOptionDataGrid extends DataGrid
     /**
      * Prepare query builder.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return Builder
      */
     public function prepareQueryBuilder()
     {
@@ -65,7 +66,7 @@ class AttributeOptionDataGrid extends DataGrid
 
         $this->addFilter('id', 'attribute_options.id');
 
-        $this->addFilter('code', DB::raw("(SELECT GROUP_CONCAT(CONCAT(attribute_options.code, ' ', label)  SEPARATOR ' ') FROM {$tablePrefix}attribute_option_translations WHERE attribute_option_id = {$tablePrefix}attribute_options.id)"));
+        $this->addFilter('code', DB::raw("(SELECT GROUP_CONCAT(CONCAT({$tablePrefix}attribute_options.code, ' ', label)  SEPARATOR ' ') FROM {$tablePrefix}attribute_option_translations WHERE attribute_option_id = {$tablePrefix}attribute_options.id)"));
 
         return $queryBuilder;
     }

@@ -3,8 +3,10 @@
 return [
     'seeders' => [
         'attribute' => [
-            'attribute-families' => 'Сім’ї атрибутів',
-            'attribute-groups'   => [
+            'attribute-families' => [
+                'default' => 'За замовчуванням',
+            ],
+            'attribute-groups' => [
                 'description'      => 'Опис',
                 'general'          => 'Загальний',
                 'meta-description' => 'Мета опис',
@@ -96,7 +98,6 @@ return [
             ],
         ],
     ],
-
     'installer' => [
         'index' => [
             'create-administrator' => [
@@ -108,7 +109,6 @@ return [
                 'password'         => 'Пароль',
                 'title'            => 'Створити адміністратора',
             ],
-
             'environment-configuration' => [
                 'allowed-currencies'  => 'Дозволені валюти',
                 'allowed-locales'     => 'Дозволені локалізації',
@@ -146,13 +146,11 @@ return [
                 'usd'                 => 'Долар США (USD)',
                 'warning-message'     => 'Увага! Це значення більше не можна змінити - валюта за замовчуванням та локалізація.',
             ],
-
             'installation-processing' => [
                 'unopim'      => 'Установка UnoPim',
                 'unopim-info' => 'Створення таблиць бази даних може зайняти кілька хвилин.',
                 'title'       => 'Процес установки',
             ],
-
             'installation-completed' => [
                 'admin-panel'               => 'Панель адміністратора',
                 'unopim-forums'             => 'Форуми UnoPim',
@@ -160,7 +158,6 @@ return [
                 'title-info'                => 'UnoPim успішно встановлено.',
                 'title'                     => 'Установка завершена',
             ],
-
             'ready-for-installation' => [
                 'create-databsae-table'   => 'Створити таблиці бази даних',
                 'install-info-button'     => 'Натисніть цю кнопку, щоб почати',
@@ -170,7 +167,6 @@ return [
                 'start-installation'      => 'Почати установку',
                 'title'                   => 'Готово до установки',
             ],
-
             'start' => [
                 'locale'        => 'Локалізація',
                 'main'          => 'Головне',
@@ -178,7 +174,6 @@ return [
                 'title'         => 'Установка UnoPim',
                 'welcome-title' => 'Ласкаво просимо до UnoPim :version',
             ],
-
             'server-requirements' => [
                 'calendar'    => 'Календар',
                 'ctype'       => 'cType',
@@ -201,7 +196,6 @@ return [
                 'tokenizer'   => 'Токенізатор',
                 'xml'         => 'XML',
             ],
-
             'back'                     => 'Назад',
             'unopim-info'              => 'Проєкт громади',
             'unopim-logo'              => 'Логотип UnoPim',

@@ -1,0 +1,16 @@
+{
+    "description": "Default Claude Code settings for the UnoPim repository",
+    "permissions": {
+        "allow": [
+            "Skill(unopim-backend-dev)",
+            "Skill(unopim-code-review)",
+            "Skill(unopim-dev-cycle)",
+            "Skill(unopim-plugin-dev)",
+            "Skill(unopim-datagrid)",
+            "Skill(unopim-data-transfer)",
+            "Skill(unopim-git)"
+        ],
+        "deny": [],
+        "ask": []
+    }
+}

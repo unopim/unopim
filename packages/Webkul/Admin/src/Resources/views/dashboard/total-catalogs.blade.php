@@ -20,17 +20,19 @@
 
                 <!-- Total Products -->
                 <v-entity-count-display
-                    img-src="{{ unopim_asset('images/icon-products.svg')}}" 
-                    img-title="@lang('admin::app.dashboard.index.total-products')" 
-                    label="@lang('admin::app.dashboard.index.total-products')" 
+                    img-src="{{ unopim_asset('images/icon-products.svg')}}"
+                    img-title="@lang('admin::app.dashboard.index.total-products')"
+                    label="@lang('admin::app.dashboard.index.total-products')"
+                    link-url="{{ route('admin.catalog.products.index') }}"
                     :total-count="report.statistics.totalProducts">
                 </v-entity-count-display>
 
                 <!-- Total Categories -->
                 <v-entity-count-display
-                    img-src="{{ unopim_asset('images/icon-categories.svg')}}" 
-                    img-title="@lang('admin::app.dashboard.index.total-categories')" 
-                    label="@lang('admin::app.dashboard.index.total-categories')" 
+                    img-src="{{ unopim_asset('images/icon-categories.svg')}}"
+                    img-title="@lang('admin::app.dashboard.index.total-categories')"
+                    label="@lang('admin::app.dashboard.index.total-categories')"
+                    link-url="{{ route('admin.catalog.categories.index') }}"
                     :total-count="report.statistics.totalCategories">
                 </v-entity-count-display>
             </div>
@@ -77,11 +79,11 @@
 
 
     <script type="text/x-template" id="v-entity-count-display-template">
-        <div class="flex gap-3 p-4 bg-white dark:bg-cherry-900 box-shadow rounded-lg flex-1 min-w-[200px] ">
+        <a :href="linkUrl" class="flex gap-3 p-4 bg-white dark:bg-cherry-900 box-shadow rounded-lg flex-1 min-w-[200px] no-underline cursor-pointer hover:shadow-md transition-shadow">
             <div class="w-full h-[60px] max-w-[60px] max-h-[60px]">
                 <img :src="imgSrc" :title="imgTitle">
             </div>
-        
+
             <div class="grid gap-2.5 place-content-start">
                 <p class="text-sm text-zinc-600 dark:text-slate-300">
                     @{{label}}
@@ -90,13 +92,13 @@
                     @{{ totalCount }}
                 </p>
             </div>
-        </div>
+        </a>
     </script>
 
     <script type="module">
         app.component('v-entity-count-display', {
             template: '#v-entity-count-display-template',
-            props: ['imgSrc', 'imgTitle', 'label', 'totalCount']
+            props: ['imgSrc', 'imgTitle', 'label', 'totalCount', 'linkUrl']
         });
     </script>
 

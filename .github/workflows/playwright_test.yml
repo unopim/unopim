@@ -2,19 +2,20 @@ name: Playwright Tests
 
 on: [push, pull_request]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
 
+env:
+  FORCE_COLOR: 1
+
 jobs:
   playwright_tests:
-    name: Playwright End-to-end UI Test
-    runs-on: ${{ matrix.operating-systems }}
-
-    strategy:
-      matrix:
-        operating-systems: [ubuntu-latest]
-        php-versions: ['8.2']
+    name: Playwright E2E
+    runs-on: ubuntu-24.04
 
     services:
       mysql:
@@ -23,16 +24,19 @@ jobs:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: unopim
         ports:
-          - 3306
+          - 3306:3306
         options: >-
           --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=3
+          --tmpfs /var/lib/mysql:rw,noexec,nosuid,size=600m
+          --tmpfs /tmp:rw,noexec,nosuid,size=100m
 
     env:
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       GROQ_INVALID_KEY: ${{ secrets.GROQ_INVALID_KEY }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       UNOPIM_URL: ${{ secrets.UNOPIM_URL }}
       ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
       ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
@@ -41,65 +45,89 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php-versions }}
+          php-version: '8.3'
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
           ini-values: error_reporting=E_ALL
           tools: composer:v2
+          coverage: none
 
-      - name: Running Composer Install
-        run: composer install
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v5
+        with:
+          path: |
+            vendor
+            ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v5
+        with:
+          path: tests/e2e-pw/node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('tests/e2e-pw/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-npm-
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('tests/e2e-pw/package-lock.json') }}
+
+      - name: Install npm & Playwright browsers
+        run: |
+          cd tests/e2e-pw
+          npm install --no-progress --prefer-offline
+          npx playwright install --with-deps chromium
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-progress
 
       - name: Setting Environment
         run: |
           cp .env.example .env
           sed -i "s|^\(APP_ENV=\s*\).*$|\1testing|" .env
+          sed -i "s|^\(APP_DEBUG=\s*\).*$|\1false|" .env
           sed -i "s|^\(DB_HOST=\s*\).*$|\1127.0.0.1|" .env
-          sed -i "s|^\(DB_PORT=\s*\).*$|\1${{ job.services.mysql.ports['3306'] }}|" .env
+          sed -i "s|^\(DB_PORT=\s*\).*$|\13306|" .env
           sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
           sed -i "s|^\(DB_USERNAME=\s*\).*$|\1root|" .env
           sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
-          cat .env
 
-      - name: Running UnoPim Installer
+      - name: Running UnoPim Installer & Start Server
         run: |
           php artisan unopim:install --skip-env-check --skip-admin-creation
-          php artisan migrate --force
           php artisan migrate:fresh --seed
-          php artisan serve --host=0.0.0.0 --port=8000 &
-
-      - name: Wait for UnoPim to start
-        run: npx wait-on http://localhost:8000
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Install Playwright dependencies
-        run: |
-          cd tests/e2e-pw
-          npm install
-          npx playwright install-deps chromium
-          npx playwright install chromium
-
-      - name: Start Queue Worker
-        run: php artisan queue:work &
+          php artisan db:seed --class="Webkul\\Installer\\Database\\Seeders\\ProductTableSeeder"
+          php artisan serve --host=0.0.0.0 --port=8000 > /dev/null 2>&1 &
+          php artisan queue:work --queue=default,system,completeness > /dev/null 2>&1 &
+          echo "Waiting for server..."
+          timeout 30 bash -c 'until curl -s http://127.0.0.1:8000 > /dev/null; do sleep 1; done'
 
       - name: Run Playwright tests
-        if: ${{ success() }}
         run: |
           cd tests/e2e-pw
           npx playwright test --reporter=list
 
-      - name: Upload Playwright report
+      - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
-          name: playwright-report
-          path: tests/e2e-pw/playwright-report
-
+          name: playwright-report-${{ github.run_id }}
+          path: |
+            tests/e2e-pw/playwright-report
+            tests/e2e-pw/test-results
+          retention-days: 1

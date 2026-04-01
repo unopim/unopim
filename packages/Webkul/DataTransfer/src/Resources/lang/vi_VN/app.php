@@ -10,7 +10,7 @@ return [
                     'invalid-attribute-family'                 => 'Giá trị không hợp lệ cho cột gia đình thuộc tính (gia đình thuộc tính không tồn tại?)',
                     'invalid-type'                             => 'Loại sản phẩm không hợp lệ hoặc không được hỗ trợ',
                     'sku-not-found'                            => 'Sản phẩm với SKU đã cho không được tìm thấy',
-                    'super-attribute-not-found'                => 'Thuộc tính cấu hình với mã: \'%s\' không được tìm thấy hoặc không thuộc về gia đình thuộc tính: \'%s\'',
+                    'super-attribute-not-found'                => 'Thuộc tính cấu hình với mã: \'%s\' không được tìm thấy hoặc không thuộc về gia đình thuộc tính: \'%s\' :code :familyCode',
                     'configurable-attributes-not-found'        => 'Thuộc tính có thể cấu hình yêu cầu để tạo mô hình sản phẩm',
                     'configurable-attributes-wrong-type'       => 'Chỉ các loại thuộc tính đã chọn không dựa trên vị trí hoặc kênh mới có thể được chọn làm thuộc tính có thể cấu hình cho sản phẩm cấu hình',
                     'variant-configurable-attribute-not-found' => 'Thuộc tính cấu hình biến thể: :code cần thiết để tạo ra',

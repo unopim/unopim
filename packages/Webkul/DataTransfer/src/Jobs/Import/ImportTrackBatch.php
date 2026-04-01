@@ -59,13 +59,17 @@ class ImportTrackBatch implements ShouldQueue
 
         $logger->info(trans('data_transfer::app.job.started'));
 
+        // Mark as validating and set started_at so the tracker timer begins from validation phase
+        $importHelper->stateUpdate(ImportHelper::STATE_VALIDATING, ['started_at' => now()]);
+
         // Validate the import
         $import = $importHelper->validate();
 
         $this->importBatch = $import->getImport();
 
         if ($import->isValid() && $this->importBatch->state === ImportHelper::STATE_VALIDATED) {
-            $importHelper->started();
+            // Don't overwrite started_at — it was set at validation start
+            $importHelper->started(preserveStartedAt: true);
         }
 
         // Check for pending batches
@@ -80,7 +84,9 @@ class ImportTrackBatch implements ShouldQueue
                 $this->importBatch->errors = [$e->getMessage()];
                 $this->importBatch->save();
 
-                \Log::error('Import process failed: '.$e->getMessage());
+                $logger->error("Import process failed: {$e->getMessage()}", [
+                    'exception' => $e->getTraceAsString(),
+                ]);
 
                 return;
             }
@@ -102,5 +108,18 @@ class ImportTrackBatch implements ShouldQueue
 
         // Gather stats
         $stats = $importHelper->stats($state);
+    }
+
+    public function failed(\Throwable $exception)
+    {
+        $logger = JobLogger::make($this->importBatch->id);
+
+        $logger->error("ImportTrackBatch failed: {$exception->getMessage()}", [
+            'exception' => $exception->getTraceAsString(),
+        ]);
+
+        $this->importBatch->state = ImportHelper::STATE_FAILED;
+        $this->importBatch->errors = [$exception->getMessage()];
+        $this->importBatch->save();
     }
 }

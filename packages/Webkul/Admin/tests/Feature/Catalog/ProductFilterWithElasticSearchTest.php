@@ -86,9 +86,11 @@ it('should filter products by SKU using Elasticsearch', function () {
                         'bool' => [
                             'filter' => [
                                 [
-                                    'query_string' => [
-                                        'default_field' => 'sku',
-                                        'query'         => '*testSku123*',
+                                    'wildcard' => [
+                                        'sku' => [
+                                            'value'   => '*testSku123*',
+                                            'rewrite' => 'top_terms_1024',
+                                        ],
                                     ],
                                 ],
                             ],
@@ -506,9 +508,26 @@ it('should filter products by text attribute using Elasticsearch', function () {
                         'bool' => [
                             'filter' => [
                                 [
-                                    'query_string' => [
-                                        'default_field' => 'values.common.'.$attribute->code.'-'.$attribute->type,
-                                        'query'         => '*test_value* OR *test_value2*',
+                                    'bool' => [
+                                        'should'               => [
+                                            [
+                                                'match_phrase_prefix' => [
+                                                    'values.common.'.$attribute->code.'-'.$attribute->type => [
+                                                        'query'          => 'test_value',
+                                                        'max_expansions' => 1000,
+                                                    ],
+                                                ],
+                                            ],
+                                            [
+                                                'match_phrase_prefix' => [
+                                                    'values.common.'.$attribute->code.'-'.$attribute->type => [
+                                                        'query'          => 'test_value2',
+                                                        'max_expansions' => 1000,
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
+                                        'minimum_should_match' => 1,
                                     ],
                                 ],
                             ],
@@ -570,9 +589,11 @@ it('should filter products by textarea attribute using Elasticsearch', function 
                         'bool' => [
                             'filter' => [
                                 [
-                                    'query_string' => [
-                                        'default_field' => 'values.common.'.$attribute->code.'-'.$attribute->type,
-                                        'query'         => '*test_value*',
+                                    'match_phrase_prefix' => [
+                                        'values.common.'.$attribute->code.'-'.$attribute->type => [
+                                            'query'          => 'test_value',
+                                            'max_expansions' => 1000,
+                                        ],
                                     ],
                                 ],
                             ],
@@ -758,9 +779,8 @@ it('should filter products by select attribute using Elasticsearch', function ()
                         'bool' => [
                             'filter' => [
                                 [
-                                    'query_string' => [
-                                        'default_field' => 'values.common.'.$attribute->code.'-'.$attribute->type,
-                                        'query'         => 'option1',
+                                    'terms' => [
+                                        'values.common.'.$attribute->code.'-'.$attribute->type => ['option1'],
                                     ],
                                 ],
                             ],
@@ -821,9 +841,26 @@ it('should filter products by multiselect attribute using Elasticsearch', functi
                         'bool' => [
                             'filter' => [
                                 [
-                                    'query_string' => [
-                                        'default_field' => 'values.common.'.$attribute->code.'-'.$attribute->type,
-                                        'query'         => '*option1* OR *option2*',
+                                    'bool' => [
+                                        'should'               => [
+                                            [
+                                                'wildcard' => [
+                                                    'values.common.'.$attribute->code.'-'.$attribute->type => [
+                                                        'value'   => '*option1*',
+                                                        'rewrite' => 'top_terms_1024',
+                                                    ],
+                                                ],
+                                            ],
+                                            [
+                                                'wildcard' => [
+                                                    'values.common.'.$attribute->code.'-'.$attribute->type => [
+                                                        'value'   => '*option2*',
+                                                        'rewrite' => 'top_terms_1024',
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
+                                        'minimum_should_match' => 1,
                                     ],
                                 ],
                             ],
@@ -1017,7 +1054,10 @@ it('should filter products by image attribute using Elasticsearch', function () 
                                         'should' => [
                                             [
                                                 'wildcard' => [
-                                                    'values.common.'.$attribute->code.'-'.$attribute->type => '*image1.jpg*',
+                                                    'values.common.'.$attribute->code.'-'.$attribute->type => [
+                                                        'value'   => '*image1.jpg*',
+                                                        'rewrite' => 'top_terms_1024',
+                                                    ],
                                                 ],
                                             ],
                                         ],
@@ -1086,7 +1126,10 @@ it('should filter products by file attribute using Elasticsearch', function () {
                                         'should' => [
                                             [
                                                 'wildcard' => [
-                                                    'values.common.'.$attribute->code.'-'.$attribute->type => '*file1.pdf*',
+                                                    'values.common.'.$attribute->code.'-'.$attribute->type => [
+                                                        'value'   => '*file1.pdf*',
+                                                        'rewrite' => 'top_terms_1024',
+                                                    ],
                                                 ],
                                             ],
                                         ],
@@ -1151,9 +1194,26 @@ it('should filter products by checkbox attribute using Elasticsearch', function 
                         'bool' => [
                             'filter' => [
                                 [
-                                    'query_string' => [
-                                        'default_field' => 'values.common.'.$attribute->code.'-'.$attribute->type,
-                                        'query'         => '*option1* OR *option2*',
+                                    'bool' => [
+                                        'should'               => [
+                                            [
+                                                'wildcard' => [
+                                                    'values.common.'.$attribute->code.'-'.$attribute->type => [
+                                                        'value'   => '*option1*',
+                                                        'rewrite' => 'top_terms_1024',
+                                                    ],
+                                                ],
+                                            ],
+                                            [
+                                                'wildcard' => [
+                                                    'values.common.'.$attribute->code.'-'.$attribute->type => [
+                                                        'value'   => '*option2*',
+                                                        'rewrite' => 'top_terms_1024',
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
+                                        'minimum_should_match' => 1,
                                     ],
                                 ],
                             ],
@@ -1214,11 +1274,17 @@ it('should filter products by gallery attribute using Elasticsearch', function (
                                         'should' => [
                                             [
                                                 'wildcard' => [
-                                                    'values.common.'.$attribute->code.'-'.$attribute->type => '*image1.jpg*',
+                                                    'values.common.'.$attribute->code.'-'.$attribute->type => [
+                                                        'value'   => '*image1.jpg*',
+                                                        'rewrite' => 'top_terms_1024',
+                                                    ],
                                                 ],
                                             ], [
                                                 'wildcard' => [
-                                                    'values.common.'.$attribute->code.'-'.$attribute->type => '*image2.jpg*',
+                                                    'values.common.'.$attribute->code.'-'.$attribute->type => [
+                                                        'value'   => '*image2.jpg*',
+                                                        'rewrite' => 'top_terms_1024',
+                                                    ],
                                                 ],
                                             ],
                                         ],

@@ -53,6 +53,17 @@ return [
         ],
     ],
 
+    'notifications' => [
+        'completeness-title'             => 'Completeness Calculation Completed',
+        'completeness-calculated'        => 'Completeness calculated for :count products.',
+        'completeness-calculated-family' => 'Completeness calculated for :count products in family ":family".',
+        'email-subject'                  => 'Completeness Calculation Completed',
+        'email-greeting'                 => 'Hello,',
+        'email-body'                     => 'The completeness calculation has been completed for :count products.',
+        'email-body-family'              => 'The completeness calculation has been completed for :count products in attribute family ":family".',
+        'email-footer'                   => 'You can view the completeness details on your dashboard.',
+    ],
+
     'dashboard' => [
         'index' => [
             'completeness' => [

@@ -11,7 +11,6 @@ return [
             'powered-by'             => 'Toimii :unopim:lla,',
             'open-source-project-by' => 'Avoimen lähdekoodin projekti :webkul:lta.',
         ],
-
         'forget-password' => [
             'create' => [
                 'email'                  => 'Rekisteröity sähköposti',
@@ -26,7 +25,6 @@ return [
                 'open-source-project-by' => 'Avoimen lähdekoodin projekti :webkul:lta.',
             ],
         ],
-
         'reset-password' => [
             'back-link-title'        => 'Takaisin kirjautumiseen',
             'confirm-password'       => 'Vahvista salasana',
@@ -38,7 +36,6 @@ return [
             'open-source-project-by' => 'Avoimen lähdekoodin projekti :webkul:lta.',
         ],
     ],
-
     'notifications' => [
         'description-text' => 'Luettelo kaikista ilmoituksista',
         'marked-success'   => 'Ilmoitus merkitty onnistuneesti',
@@ -55,7 +52,6 @@ return [
             'processing' => 'Käsitellään',
         ],
     ],
-
     'account' => [
         'edit' => [
             'back-btn'          => 'Takaisin',
@@ -76,25 +72,89 @@ return [
             'user-timezone'     => 'Aikavyöhyke',
         ],
     ],
-
     'dashboard' => [
-        'index' => [
-            'title'            => 'Kojelauta',
-            'user-info'        => 'Seuraa nopeasti PIM:si tärkeimpiä avainlukuja',
-            'user-name'        => 'Hei! :user_name',
-            'catalog-details'  => 'Luettelo',
-            'total-families'   => 'Perheitä yhteensä',
-            'total-attributes' => 'Attribuutteja yhteensä',
-            'total-groups'     => 'Ryhmiä yhteensä',
-            'total-categories' => 'Kategorioita yhteensä',
-            'total-products'   => 'Tuotteita yhteensä',
-            'settings-details' => 'Luettelon rakenne',
-            'total-locales'    => 'Käännöskieliä yhteensä',
-            'total-currencies' => 'Valuuttoja yhteensä',
-            'total-channels'   => 'Kanavia yhteensä',
+        'invalid-type' => 'Virheellinen hallintapaneelin widget-tyyppi.',
+        'index'        => [
+            'title'                => 'Kojelauta',
+            'user-info'            => 'Seuraa nopeasti PIM:si tärkeimpiä avainlukuja',
+            'user-name'            => 'Hei! :user_name',
+            'catalog-details'      => 'Luettelo',
+            'total-families'       => 'Perheitä yhteensä',
+            'total-attributes'     => 'Attribuutteja yhteensä',
+            'total-groups'         => 'Ryhmiä yhteensä',
+            'total-categories'     => 'Kategorioita yhteensä',
+            'total-products'       => 'Tuotteita yhteensä',
+            'settings-details'     => 'Luettelon rakenne',
+            'total-locales'        => 'Käännöskieliä yhteensä',
+            'total-currencies'     => 'Valuuttoja yhteensä',
+            'total-channels'       => 'Kanavia yhteensä',
+            'completeness'         => 'Täydellisyys',
+            'active'               => 'Aktiivinen',
+            'inactive'             => 'Passiivinen',
+            'simple'               => 'Yksinkertainen',
+            'configurable'         => 'Muutettavissa',
+            'product-stats'        => 'Tuotetilastot',
+            'product-type-dist'    => 'Tuotetyyppijakauma',
+            'products-by-status'   => 'Tuotteet tilan mukaan',
+            'products-over-time'   => 'Tuotetoiminta (Viimeiset 7 päivää)',
+            'legend-created'       => 'Luotu',
+            'legend-updated'       => 'Päivitetty',
+            'recent-activity'      => 'Viimeaikainen toiminta',
+            'no-activity'          => 'Viimeisiä toimintoja ei löytynyt.',
+            'updated'              => 'päivitetty',
+            'created'              => 'luotu',
+            'deleted'              => 'poistettu',
+            'ago'                  => 'sitten',
+            'just-now'             => 'hetki sitten',
+            'data-transfer'        => 'Tietojen siirto',
+            'no-jobs'              => 'Viimeisiä tuonti/vienti töitä ei löytynyt.',
+            'job-type-import'      => 'Tuonti',
+            'job-type-export'      => 'Vienti',
+            'job-state-completed'  => 'Valmis',
+            'job-state-failed'     => 'Epäonnistunut',
+            'job-state-processing' => 'Käsittelyssä',
+            'job-state-pending'    => 'Odottaa',
+            'job-state-validated'  => 'Vahvistettu',
+            'rows-processed'       => 'Käsitellyt rivit',
+            'errors'               => 'Virheet',
+            'quick-links'          => 'Nopeat linkit',
+            'create-product'       => 'Luo tuote',
+            'import-data'          => 'Tuo tiedot',
+            'export-data'          => 'Vie tiedot',
+            'manage-attributes'    => 'Hallitse attribuutteja',
+            'view-all-activity'    => 'Näytä kaikki',
+            'view-all-jobs'        => 'Näytä kaikki työt',
+            'new-this-week'        => 'Uudet tällä viikolla',
+            'with-variants'        => 'Varianttien kanssa',
+            'avg-completeness'     => 'Keskimääräinen täydellisyys',
+            'enriched'             => 'Rikkaampi',
+            'analytics-section'    => 'Analytiikka',
+            'operations-section'   => 'Toiminnot',
+            'needs-attention'      => 'Vaatii huomiota',
+            'unenriched-products'  => 'Rikkaantumattomat tuotteet',
+            'failed-jobs-24h'      => 'Epäonnistuneet työt (24h)',
+            'low-completeness'     => 'Alhainen täydellisyys',
+            'all-good'             => 'Kaikki näyttää hyvältä!',
+            'channel-readiness'    => 'Kanavan valmius',
+            'ready-to-publish'     => 'valmis julkaistavaksi',
+            'of'                   => 'of',
+            'products-ready'       => 'tuotteet valmiina',
+            'no-readiness-data'    => 'Ei täydellisyystietoja saatavilla vielä.',
+            'entity-types'         => [
+                'product'          => 'Tuote',
+                'category'         => 'Kategoria',
+                'attribute'        => 'Attribuutti',
+                'attribute-family' => 'Perhe',
+                'attribute-group'  => 'Ryhmä',
+                'category-field'   => 'Kategoriakenttä',
+                'channel'          => 'Kanava',
+                'role'             => 'Rooli',
+                'job-instance'     => 'Työ',
+                'webhook'          => 'Webhook',
+                'api-key'          => 'API-avain',
+            ],
         ],
     ],
-
     'catalog' => [
         'products' => [
             'index' => [
@@ -104,8 +164,7 @@ return [
                 'magic-ai-error'            => 'Varmista, että Magic AI -tunnukset ovat oikein ja että oikea malli on valittu.',
                 'magic-ai-validate-error'   => 'Tarkista Magic AI -kirjautumistiedot.',
                 'magic-ai-validate-success' => 'Magic AI -tunnistetiedot tarkistettu onnistuneesti',
-
-                'create' => [
+                'create'                    => [
                     'back-btn'                          => 'Takaisin',
                     'configurable-attributes'           => 'Muunnettavat ominaisuudet',
                     'create-btn'                        => 'Luo tuote',
@@ -118,7 +177,6 @@ return [
                     'not-config-super-attributes-error' => 'Tätä Super-ominaisuutta ":super_attributes" ei löydy',
                     'sku-exists-error'                  => 'SKU arvo ":sku" on jo käytössä',
                 ],
-
                 'datagrid' => [
                     'active'                 => 'Ota käyttöön',
                     'attribute-family'       => 'Ominaisuusperhe',
@@ -148,49 +206,43 @@ return [
                     'update-status'          => 'Päivitä tila',
                     'parent'                 => 'Vanhempi',
                     'parent-identifier'      => 'Vanhempi: :sku',
+                    'created-at'             => 'Luotu',
+                    'updated-at'             => 'Päivitetty',
                 ],
             ],
-
             'edit' => [
-                'preview'  => 'Esikatselu',
-                'remove'   => 'Poista',
-                'save-btn' => 'Tallenna tuote',
-                'title'    => 'Muokkaa tuotetta',
-
+                'preview'    => 'Esikatselu',
+                'remove'     => 'Poista',
+                'save-btn'   => 'Tallenna tuote',
+                'title'      => 'Muokkaa tuotetta',
                 'categories' => [
                     'title' => 'Kategoriat',
                 ],
-
                 'images' => [
                     'info'  => 'Kuvan tarkkuuden tulisi olla 560px X 609px',
                     'title' => 'Kuvat',
                 ],
-
                 'videos' => [
                     'error' => ':attribute voi olla enintään :max kilotavua. Valitse pienempi tiedosto.',
                     'info'  => 'Videon suurin sallittu koko on :size',
                     'title' => 'Videot',
                 ],
-
                 'links' => [
                     'related-products' => [
                         'empty-info' => 'Lisää liittyvä tuote.',
                         'info'       => 'Näytettävien tuotteiden lisäksi asiakkaille esitellään liittyviä tuotteita.',
                         'title'      => 'Liittyvät tuotteet',
                     ],
-
                     'up-sells' => [
                         'empty-info' => 'Lisää lisämyyntituote.',
                         'info'       => 'Asiakkaille esitetään lisämyyntituote, joka on premium- tai korkealaatuinen vaihtoehto',
                         'title'      => 'Lisämyyntituotteet',
                     ],
-
                     'cross-sells' => [
                         'empty-info' => 'Lisää ristiinmyyntituotteet.',
                         'info'       => 'Ostoskoriin lisättävien tuotteiden vieressä olevat "impulssiostot".',
                         'title'      => 'Ristiinmyyntituotteet',
                     ],
-
                     'add-btn'           => 'Lisää',
                     'delete'            => 'Poista',
                     'empty-info'        => 'Lisää :type tuotteet yhdellä kertaa.',
@@ -199,7 +251,6 @@ return [
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Liitännäiset tuotteet',
                 ],
-
                 'types' => [
                     'configurable' => [
                         'add-btn'                            => 'Lisää variantti',
@@ -213,18 +264,16 @@ return [
                         'sku'                                => 'SKU - :sku',
                         'title'                              => 'Muunnokset',
                         'variant-exists'                     => 'Tämä variantti tai SKU on jo käytössä.',
-                        'variant-attribute-option-not-found' => 'Varianttiominaisuus tai vaihtoehto ei löytynyt',
-                        'supper-attribute-not-found'         => 'Super-ominaisuutta ei löytynyt',
-                        'variant-given-exists'               => 'Tämä variantti on jo olemassa',
-
-                        'create' => [
+                        'variant-attribute-option-not-found' => 'Varianttiominaisuus tai vaihtoehto ei löytynyt :attributes',
+                        'supper-attribute-not-found'         => 'Super-ominaisuutta ei löytynyt :attribute',
+                        'variant-given-exists'               => 'Tämä variantti on jo olemassa :variants',
+                        'create'                             => [
                             'description'            => 'Kuvaus',
                             'name'                   => 'Nimi',
                             'save-btn'               => 'Lisää',
                             'title'                  => 'Lisää variantti',
                             'variant-already-exists' => 'Tämä variantti on jo olemassa',
                         ],
-
                         'edit' => [
                             'disabled'        => 'Poistettu käytöstä',
                             'edit-info'       => 'Jos haluat päivittää tuoteominaisuuksia, mene',
@@ -240,7 +289,6 @@ return [
                             'title'           => 'Tuote',
                             'weight'          => 'Paino',
                         ],
-
                         'mass-edit' => [
                             'add-images'          => 'Lisää kuvia',
                             'apply-to-all-btn'    => 'Hae kaikille',
@@ -267,23 +315,31 @@ return [
                         ],
                     ],
                 ],
-
                 'translate' => [
-                    'translate-btn'            => 'Käännä',
-                    'title'                    => 'Käännä',
-                    'source-channel'           => 'Lähdekanava',
-                    'locale'                   => 'Lähdealue',
-                    'translated-content'       => 'Käännetty sisältö',
-                    'translating'              => 'Käännetään',
-                    'apply'                    => 'Käytä',
-                    'cancel'                   => 'Peruuta',
-                    'target-locales'           => 'Kohdealueet',
-                    'target-channel'           => 'Kohdekanava',
-                    'attributes'               => 'Ominaisuudet',
-                    'source-content'           => 'Lähdesisältö',
-                    'tranlated-job-processed'  => 'Käännetyn sisällön tallennustehtävä käsitelty.',
+                    'translate-btn'               => 'Käännä',
+                    'title'                       => 'Käännä',
+                    'source-channel'              => 'Lähdekanava',
+                    'locale'                      => 'Lähdealue',
+                    'translated-content'          => 'Käännetty sisältö',
+                    'translating'                 => 'Käännetään',
+                    'apply'                       => 'Käytä',
+                    'back'                        => 'Takaisin',
+                    'cancel'                      => 'Peruuta',
+                    'target-locales'              => 'Kohdealueet',
+                    'target-channel'              => 'Kohdekanava',
+                    'attributes'                  => 'Ominaisuudet',
+                    'tranlated-job-processed'     => 'Käännetyn sisällön tallennustehtävä käsitelty.',
+                    'step'                        => 'Vaihe',
+                    'select-source'               => 'Valitse lähde',
+                    'select-target'               => 'Valitse kohde',
+                    'first-step-title'            => 'Vaihe 1: Valitse lähdekanava, kieli ja attribuutit',
+                    'first-step-title-attributes' => 'Vaihe 1: Valitse lähdekanava ja kieli',
+                    'source-content'              => 'Lähdesisältö',
+                    'second-step-title'           => 'Vaihe 2: Valitse kohdekanava ja kielet',
+                    'target-content'              => 'Kohdesisältö',
+                    'next'                        => 'Seuraava',
+                    'empty-translation-data'      => 'Tietoja ei ole saatavilla käännöstä varten lähdekanavan ja kielen perusteella',
                 ],
-
                 'product-info' => [
                     'title'        => 'Tuotetiedot',
                     'status'       => 'Tila',
@@ -293,6 +349,7 @@ return [
                     'created-at'   => 'Luotu',
                     'product-type' => 'Tuotetyyppi',
                 ],
+                'more-actions' => 'Lisää toimintoja',
             ],
             'bulk-edit' => [
                 'validation' => [
@@ -305,27 +362,22 @@ return [
                     'select-attribute-or-family' => 'Valitse vähintään yksi attribuutti tai attribuuttiperhe.',
                     'failed'                     => 'Validointi epäonnistui.',
                 ],
-
-                'modal'                      => [
+                'modal' => [
                     'title'            => 'Attribuutit massamuokkaukseen',
                     'btn-cancel'       => 'Peruuta',
                     'btn-proceed'      => 'Jatka',
                     'attribute-family' => 'Valitse attribuuttiperhe',
                 ],
-
                 'index' => [
-                    'no-product'    => 'Yhtään tuotetta ei ole valittu massamuokkaukseen.',
+                    'no-product' => 'Yhtään tuotetta ei ole valittu massamuokkaukseen.',
                 ],
-
                 'filter' => [
-                    'many-product'      => 'Liian monta tuotetta valittu.',
-                    'redirect-message'  => 'Ohjataan massamuokkausnäkymään.',
+                    'many-product'     => 'Liian monta tuotetta valittu.',
+                    'redirect-message' => 'Ohjataan massamuokkausnäkymään.',
                 ],
-
                 'handle-save' => [
-                    'edit-success'  => 'Massamuokkaus onnistui.',
+                    'edit-success' => 'Massamuokkaus onnistui.',
                 ],
-
                 'id'              => 'ID',
                 'no-changes'      => 'Ei muutoksia tallennettavaksi.',
                 'success'         => 'Toiminto suoritettu onnistuneesti.',
@@ -335,9 +387,8 @@ return [
                 'img-preview'     => 'Kuvan esikatselu',
                 'no-image'        => 'Ei kuvaa',
                 'img-fail'        => 'Kuvan lataus epäonnistui.',
-                'no-opton'        => 'No Options',
+                'no-option'       => 'Ei vaihtoehtoja',
             ],
-
             'create-success'          => 'Tuote luotiin onnistuneesti',
             'delete-failed'           => 'Tuotteen poistaminen epäonnistui',
             'delete-success'          => 'Tuote poistettiin onnistuneesti',
@@ -351,30 +402,28 @@ return [
             'upload-success'          => 'Tuotetiedosto ladattiin onnistuneesti.',
             'update-failure'          => 'Tuotetta ei voitu päivittää.',
         ],
-
         'attributes' => [
             'index' => [
                 'create-btn' => 'Luo ominaisuus',
                 'title'      => 'Ominaisuudet',
-
-                'datagrid' => [
-                    'channel-based'       => 'Kanavakohtainen',
-                    'code'                => 'Koodi',
-                    'created-at'          => 'Luotu',
-                    'delete'              => 'Poista',
-                    'edit'                => 'Muokkaa',
-                    'id'                  => 'ID',
-                    'locale-based'        => 'Kielikohtainen',
-                    'mass-delete-success' => 'Valitut ominaisuudet poistettu onnistuneesti',
-                    'name'                => 'Nimi',
-                    'required'            => 'Pakollinen',
-                    'type'                => 'Tyyppi',
-                    'unique'              => 'Ainutlaatuinen',
-                    'delete-failed'       => 'Tätä ominaisuutta ei voida poistaa.',
-                    'mass-delete-failed'  => 'Valittuja ominaisuuksia ei voida poistaa.',
+                'datagrid'   => [
+                    'channel-based'            => 'Kanavakohtainen',
+                    'code'                     => 'Koodi',
+                    'created-at'               => 'Luotu',
+                    'delete'                   => 'Poista',
+                    'edit'                     => 'Muokkaa',
+                    'id'                       => 'ID',
+                    'locale-based'             => 'Kielikohtainen',
+                    'mass-delete-success'      => 'Valitut ominaisuudet poistettu onnistuneesti',
+                    'name'                     => 'Nimi',
+                    'required'                 => 'Pakollinen',
+                    'type'                     => 'Tyyppi',
+                    'unique'                   => 'Ainutlaatuinen',
+                    'delete-failed'            => 'Tätä ominaisuutta ei voida poistaa.',
+                    'mass-delete-failed'       => 'Valittuja ominaisuuksia ei voida poistaa.',
+                    'delete-attribute-failure' => 'Tätä attribuuttia ei voi poistaa, koska se on käytössä muokattavissa tuotteissa',
                 ],
             ],
-
             'create' => [
                 'add-attribute-options' => 'Lisää ominaisuuden vaihtoehtoja',
                 'add-option'            => 'Lisää vaihtoehto',
@@ -397,13 +446,12 @@ return [
                 'enable-wysiwyg'        => 'Ota käyttöön WYSIWYG-editori',
                 'file'                  => 'Tiedosto',
                 'general'               => 'Yleinen',
-                'image'                 => 'Kuva',
                 'gallery'               => 'Galleria',
+                'image'                 => 'Kuva',
                 'input-options'         => 'Syöttövalinnat',
                 'input-validation'      => 'Syötteen validointi',
                 'is-comparable'         => 'Ominaisuus on vertailtavissa',
                 'is-configurable'       => 'Käytä konfiguroitavien tuotteiden luomiseen',
-                'is-filterable'         => 'Käytä suodattimessa',
                 'is-required'           => 'Pakollinen',
                 'is-unique'             => 'Ainutlaatuinen',
                 'is-visible-on-front'   => 'Näkyvissä tuotteen katselusivulla',
@@ -433,8 +481,8 @@ return [
                 'usable-in-grid'        => 'Käytettävissä ruudukossa',
                 'is-filterable'         => 'On suodatettavissa',
                 'ai-translate'          => 'AI Käännös',
-
-                'option' => [
+                'invalid-swatch-type'   => ':attribute ei ole sallittu attribuuttityypille :type, jossa on swatch-tyyppi :swatch_type.',
+                'option'                => [
                     'color'    => 'Väri',
                     'dropdown' => 'Pudotusvalikko',
                     'image'    => 'Kuvanäyte',
@@ -442,7 +490,6 @@ return [
                     'text'     => 'Tekstinäyte',
                 ],
             ],
-
             'edit' => [
                 'add-attribute-options' => 'Lisää ominaisuuden vaihtoehtoja',
                 'add-option'            => 'Lisää vaihtoehto',
@@ -466,12 +513,10 @@ return [
                 'file'                  => 'Tiedosto',
                 'general'               => 'Yleinen',
                 'image'                 => 'Kuva',
-                'gallery'               => 'Galleria',
                 'input-options'         => 'Syöttövalinnat',
                 'input-validation'      => 'Syötteen validointi',
                 'is-comparable'         => 'Ominaisuus on vertailtavissa',
                 'is-configurable'       => 'Käytä konfiguroitavien tuotteiden luomiseen',
-                'is-filterable'         => 'Käytä suodattimessa',
                 'is-required'           => 'Pakollinen',
                 'is-unique'             => 'Ainutlaatuinen',
                 'is-visible-on-front'   => 'Näkyvissä tuotteen katselusivulla (etuosa)',
@@ -501,22 +546,19 @@ return [
                 'usable-in-grid'        => 'Käytettävissä ruudukossa',
                 'is-filterable'         => 'On suodatettavissa',
                 'ai-translate'          => 'AI Käännös',
-                'invalid-swatch-type'   => ':attribute ei ole sallittu attribuuttityypille :type, jossa on swatch-tyyppi :swatch_type.',
-
-                'option' => [
-                    'create-success'       => 'Attribuuttivaihtoehto luotiin onnistuneesti',
-                    'delete-success'       => 'Attribuuttivaihtoehto poistettiin onnistuneesti',
-                    'save-btn'             => 'Tallenna vaihtoehto',
-                    'sort-update-failure'  => 'Järjestyksen päivitys epäonnistui',
-                    'sort-update-success'  => 'Järjestys päivitetty onnistuneesti',
-                    'update-success'       => 'Attribuuttivaihtoehto päivitettiin onnistuneesti',
-                    'color'                => 'Väri',
-                    'dropdown'             => 'Pudotusvalikko',
-                    'image'                => 'Kuvanäyte',
-                    'text'                 => 'Tekstinäyte',
+                'option'                => [
+                    'save-btn'            => 'Tallenna vaihtoehto',
+                    'create-success'      => 'Attribuuttivaihtoehto luotiin onnistuneesti',
+                    'update-success'      => 'Attribuuttivaihtoehto päivitettiin onnistuneesti',
+                    'sort-update-success' => 'Järjestys päivitetty onnistuneesti',
+                    'sort-update-failure' => 'Järjestyksen päivitys epäonnistui',
+                    'delete-success'      => 'Attribuuttivaihtoehto poistettiin onnistuneesti',
+                    'color'               => 'Väri',
+                    'dropdown'            => 'Pudotusvalikko',
+                    'image'               => 'Kuvanäyte',
+                    'text'                => 'Tekstinäyte',
                 ],
             ],
-
             'create-success'    => 'Ominaisuus luotu onnistuneesti',
             'delete-failed'     => 'Ominaisuuden poisto epäonnistui',
             'delete-success'    => 'Ominaisuus poistettu onnistuneesti',
@@ -524,19 +566,16 @@ return [
             'user-define-error' => 'Ei voi poistaa järjestelmän ominaisuutta',
             'not-found'         => 'Ominaisuutta koodilla ":code" ei löytynyt',
         ],
-
         'attribute-options' => [
             'create-success'       => 'Attribuuttivaihtoehto luotiin onnistuneesti',
             'update-success'       => 'Attribuuttivaihtoehto päivitettiin onnistuneesti',
             'usable-in-grid-error' => 'Vain 4 attribuuttia voidaan merkitä käytettäväksi ruudukossa.',
         ],
-
         'attribute-groups' => [
             'index' => [
                 'create-btn' => 'Luo attribuuttiryhmä',
                 'title'      => 'Attribuuttiryhmät',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'code'                => 'Koodi',
                     'delete'              => 'Poista',
                     'mass-delete-success' => 'Valitut attribuuttiryhmät poistettiin onnistuneesti',
@@ -548,7 +587,6 @@ return [
                     'update-status'       => 'Päivitä tila',
                 ],
             ],
-
             'create' => [
                 'title'    => 'Lisää attribuuttiryhmä',
                 'save-btn' => 'Tallenna attribuuttiryhmä',
@@ -557,7 +595,6 @@ return [
                 'code'     => 'Koodi',
                 'label'    => 'Tunniste',
             ],
-
             'edit' => [
                 'title'    => 'Muokkaa attribuuttiryhmää',
                 'back-btn' => 'Takaisin',
@@ -566,7 +603,6 @@ return [
                 'code'     => 'Koodi',
                 'label'    => 'Tunniste',
             ],
-
             'create-success'        => 'Attribuuttiryhmä luotu onnistuneesti',
             'delete-failed'         => 'Attribuuttiryhmän poisto epäonnistui',
             'delete-success'        => 'Attribuuttiryhmä poistettiin onnistuneesti',
@@ -575,12 +611,10 @@ return [
             'attribute-group-error' => 'Ryhmää käytetään perheissä.',
             'not-found'             => 'Attribuuttiryhmää koodilla ":code" ei löytynyt',
         ],
-
         'categories' => [
             'index' => [
-                'add-btn' => 'Luo kategoria',
-                'title'   => 'Kategoriat',
-
+                'add-btn'  => 'Luo kategoria',
+                'title'    => 'Kategoriat',
                 'datagrid' => [
                     'active'         => 'Aktiivinen',
                     'code'           => 'Koodi',
@@ -590,14 +624,13 @@ return [
                     'id'             => 'ID',
                     'inactive'       => 'Ei käytössä',
                     'name'           => 'Näytön nimi',
+                    'category-name'  => 'Nimi',
                     'no-of-products' => 'Tuotteiden määrä',
                     'position'       => 'Sijainti',
-                    'category-name'  => 'Nimi',
                     'status'         => 'Näkyvä valikossa',
                     'update-status'  => 'Päivitä tila',
                 ],
             ],
-
             'create' => [
                 'back-btn'            => 'Takaisin',
                 'code'                => 'Koodi',
@@ -618,7 +651,6 @@ return [
                 'right-section'       => 'Määritysosio',
                 'left-section'        => 'Yleinen osio',
             ],
-
             'edit' => [
                 'back-btn'               => 'Takaisin',
                 'code'                   => 'Koodi',
@@ -637,7 +669,6 @@ return [
                 'right-section'          => 'Määritysosio',
                 'left-section'           => 'Yleinen osio',
             ],
-
             'category'             => 'Kategoria',
             'create-success'       => 'Kategoria luotu onnistuneesti.',
             'delete-category-root' => 'Et voi poistaa pääkategoriaa, joka on liitetty kanavaan.',
@@ -652,14 +683,12 @@ return [
             'create-failure'       => 'Kategoriaa ei voitu luoda.',
             'update-failure'       => 'Kategoriaa ei voitu päivittää.',
         ],
-
         'category_fields' => [
             'index' => [
                 'create-btn' => 'Luo kategoria kenttä',
                 'add-btn'    => 'Luo kategoria kenttä',
                 'title'      => 'Kategoriakentät',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'channel-based'       => 'Kanavakohtainen',
                     'code'                => 'Koodi',
                     'created-at'          => 'Luotu',
@@ -684,7 +713,6 @@ return [
                     'mass-delete-failed'  => 'Valittuja kenttiä ei voida poistaa',
                 ],
             ],
-
             'create' => [
                 'add-field-options'   => 'Lisää kategoria kenttä vaihtoehtoja',
                 'add-option'          => 'Lisää vaihtoehto',
@@ -739,8 +767,7 @@ return [
                 'set-section-right'   => 'Määritys osio',
                 'settings'            => 'Asetukset',
                 'same-code-error'     => 'Vaihtoehtojen koodin tulee olla ainutlaatuinen.',
-
-                'option' => [
+                'option'              => [
                     'dropdown' => 'Pudotusvalikko',
                     'save-btn' => 'Tallenna Vaihtoehto',
                     'color'    => 'Väri Swatch',
@@ -748,7 +775,6 @@ return [
                     'text'     => 'Teksti Swatch',
                 ],
             ],
-
             'edit' => [
                 'add-field-options'   => 'Lisää kategoria kenttä vaihtoehtoja',
                 'add-option'          => 'Lisää vaihtoehto',
@@ -774,6 +800,7 @@ return [
                 'image'               => 'Kuva',
                 'input-options'       => 'Syöte vaihtoehdot',
                 'input-validation'    => 'Syöte validointi',
+                'is-filterable'       => 'Käytä kerrostetussa navigoinnissa',
                 'is-required'         => 'Pakollinen',
                 'is-unique'           => 'Ainutlaatuinen',
                 'label'               => 'Otsikko',
@@ -803,8 +830,7 @@ return [
                 'set-section-right'   => 'Määritys osio',
                 'settings'            => 'Asetukset',
                 'same-code-error'     => 'Vaihtoehtojen koodin tulee olla ainutlaatuinen.',
-
-                'option' => [
+                'option'              => [
                     'dropdown' => 'Pudotusvalikko',
                     'save-btn' => 'Tallenna Vaihtoehto',
                     'color'    => 'Väri Swatch',
@@ -812,7 +838,6 @@ return [
                     'text'     => 'Teksti Swatch',
                 ],
             ],
-
             'create-success'    => 'Kategoriakenttä luotiin onnistuneesti',
             'delete-failed'     => 'Kategoriakenttä poistaminen epäonnistui',
             'delete-success'    => 'Kategoriakenttä poistettu onnistuneesti',
@@ -820,17 +845,14 @@ return [
             'user-define-error' => 'Ei voida poistaa järjestelmän kategoria kenttää',
             'not-found'         => 'Kategoria kenttää koodilla ":code" ei löydy',
         ],
-
         'category-fields-options' => [
             'create-success' => 'Kategoriakenttävaihtoehto luotu onnistuneesti',
             'update-success' => 'Kategoriakenttävaihtoehto päivitetty onnistuneesti',
         ],
-
         'families' => [
             'index' => [
-                'add'   => 'Luo Attribuuttiperhe',
-                'title' => 'Perheet',
-
+                'add'      => 'Luo Attribuuttiperhe',
+                'title'    => 'Perheet',
                 'datagrid' => [
                     'code'           => 'Koodi',
                     'delete'         => 'Poista',
@@ -845,7 +867,6 @@ return [
                     'update-success' => 'Valitut :resource päivitettiin onnistuneesti',
                 ],
             ],
-
             'create' => [
                 'assign-group-btn'                 => 'Määritä Attribuuttiryhmä',
                 'assign-group-title'               => 'Määritä Attribuuttiryhmä',
@@ -876,7 +897,6 @@ return [
                 'unassigned-attribute-groups'      => 'Määräämättömät attribuuttiryhmät',
                 'assign-first-attribute-group'     => 'Määritä ryhmä perheelle.',
             ],
-
             'edit' => [
                 'assign-group-btn'                 => 'Määritä Attribuuttiryhmä',
                 'assign-group-title'               => 'Määritä Attribuuttiryhmä',
@@ -910,7 +930,6 @@ return [
                 'variant-options-label'            => 'Määritettävät vaihtoehdot',
                 'select-variant'                   => 'Valitse attribuutit',
             ],
-
             'attribute-family'               => 'Attribuuttiperhe',
             'attribute-product-error'        => 'Perhe on käytössä tuotteissa.',
             'create-success'                 => 'Perhe luotiin onnistuneesti.',
@@ -923,7 +942,6 @@ return [
             'not-found'                      => 'Attribuuttiperheellä, jonka koodi on ":code", ei löytynyt',
             'can-not-update-variant-options' => 'Ei voida päivittää määritettäväviä vaihtoehtoja, koska tällä perheellä on jo varianttituotteita.',
         ],
-
         'history' => [
             'index' => [
                 'datagrid' => [
@@ -934,7 +952,6 @@ return [
             ],
         ],
     ],
-
     'settings' => [
         'locales' => [
             'index' => [
@@ -943,8 +960,7 @@ return [
                 'title'                 => 'Käännöskielet',
                 'can-not-delete-error'  => 'Et voi poistaa kieltä, joka on liitetty kanavaan tai käyttäjään',
                 'can-not-disable-error' => 'Et voi poistaa käytöstä kieltä, joka on liitetty kanavaan tai käyttäjään',
-
-                'datagrid' => [
+                'datagrid'              => [
                     'actions'     => 'Toiminnot',
                     'code'        => 'Koodi',
                     'delete'      => 'Poista',
@@ -955,14 +971,12 @@ return [
                     'name'        => 'Näyttönimi',
                     'rtl'         => 'RTL',
                     'mass-update' => 'Päivitä tila',
-
-                    'status' => [
+                    'status'      => [
                         'title'    => 'Tila',
                         'active'   => 'Ota käyttöön',
                         'inactive' => 'Poista käytöstä',
                     ],
                 ],
-
                 'create' => [
                     'code'             => 'Koodi',
                     'direction'        => 'Suunta',
@@ -973,11 +987,9 @@ return [
                     'title'            => 'Luo käännöskieli',
                     'status'           => 'Tila',
                 ],
-
                 'edit' => [
                     'title' => 'Muokkaa käännöskieltä',
                 ],
-
                 'create-success'    => 'Käännöskieli luotu onnistuneesti.',
                 'delete-failed'     => 'Käännöskielen poistaminen epäonnistui',
                 'delete-success'    => 'Käännöskieli poistettu onnistuneesti.',
@@ -986,7 +998,6 @@ return [
                 'update-success'    => 'Käännöskieli päivitetty onnistuneesti.',
             ],
         ],
-
         'currencies' => [
             'index' => [
                 'create-btn'            => 'Luo valuutta',
@@ -994,8 +1005,7 @@ return [
                 'title'                 => 'Valuutat',
                 'can-not-delete-error'  => 'Et voi poistaa valuuttaa, joka on liitetty kanavaan',
                 'can-not-disable-error' => 'Et voi poistaa käytöstä valuuttaa, joka on liitetty kanavaan',
-
-                'datagrid' => [
+                'datagrid'              => [
                     'actions'        => 'Toiminnot',
                     'code'           => 'Koodi',
                     'delete'         => 'Poista',
@@ -1007,14 +1017,12 @@ return [
                     'partial-action' => 'Joitakin toimintoja ei suoritettu järjestelmän rajoitteiden vuoksi: :resource',
                     'update-success' => 'Valitut :resource päivitettiin onnistuneesti',
                     'mass-update'    => 'Päivitä tila',
-
-                    'status' => [
+                    'status'         => [
                         'title'    => 'Tila',
                         'active'   => 'Ota käyttöön',
                         'inactive' => 'Poista käytöstä',
                     ],
                 ],
-
                 'create' => [
                     'code'           => 'Koodi',
                     'create-btn'     => 'Luo valuutta',
@@ -1027,11 +1035,9 @@ return [
                     'title'          => 'Luo uusi valuutta',
                     'status'         => 'Tila',
                 ],
-
                 'edit' => [
                     'title' => 'Muokkaa valuuttaa',
                 ],
-
                 'create-success'    => 'Valuutta luotu onnistuneesti.',
                 'delete-failed'     => 'Valuutan poistaminen epäonnistui',
                 'delete-success'    => 'Valuutta poistettu onnistuneesti.',
@@ -1040,7 +1046,6 @@ return [
                 'cannot-delete'     => 'Valuuttaa ei voi poistaa.',
             ],
         ],
-
         'data-transfer' => [
             'tracker' => [
                 'index' => [
@@ -1058,28 +1063,28 @@ return [
                         'user'                 => 'Käyttäjä',
                         'created_at'           => 'Luotu',
                         'updated_at'           => 'Päivitetty',
-
-                        'pending'    => 'Odottaa',
-                        'validated'  => 'Vahvistettu',
-                        'processing' => 'Käsitellään',
-                        'processed'  => 'Käsitelty',
-                        'linking'    => 'Linkitetään',
-                        'linked'     => 'Linkitetty',
-
-                        'indexing'  => 'Indeksoidaan',
-                        'indexed'   => 'Indeksoitu',
-                        'completed' => 'Valmis',
-                        'failed'    => 'Epäonnistui',
+                        'pending'              => 'Odottaa',
+                        'validating'           => 'Vahvistetaan',
+                        'validated'            => 'Vahvistettu',
+                        'processing'           => 'Käsitellään',
+                        'processed'            => 'Käsitelty',
+                        'linking'              => 'Linkitetään',
+                        'linked'               => 'Linkitetty',
+                        'indexing'             => 'Indeksoidaan',
+                        'indexed'              => 'Indeksoitu',
+                        'completed'            => 'Valmis',
+                        'paused'               => 'Keskeytetty',
+                        'cancelled'            => 'Peruutettu',
+                        'failed'               => 'Epäonnistui',
                     ],
                 ],
-
                 'import' => [
                     'back-btn'                => 'Takaisin',
                     'completed-batches'       => 'Valmiiden erien kokonaismäärä:',
                     'download-error-report'   => 'Lataa täydellinen raportti',
                     'edit-btn'                => 'Muokkaa',
                     'imported-info'           => 'Onnittelut! Tuonti onnistui.',
-                    'importing-info'          => 'Vienti käynnissä',
+                    'exporting-info'          => 'Vienti käynnissä',
                     'indexing-info'           => 'Resurssien indeksointi (hinta, Elasticsearch) käynnissä',
                     'linking-info'            => 'Resurssien linkitys käynnissä',
                     'progress'                => 'Edistyminen:',
@@ -1097,7 +1102,6 @@ return [
                     'validation-failed-info'  => 'Tuonti ei kelpaa. Korjaa seuraavat virheet ja yritä uudelleen.',
                     'validation-success-info' => 'Tuonti on kelvollinen. Aloita tuontiprosessi napsauttamalla "Vie".',
                 ],
-
                 'summary' => [
                     'total-batches' => 'Erien kokonaismäärä:',
                     'created'       => 'Luotujen tietueiden kokonaismäärä:',
@@ -1108,21 +1112,50 @@ return [
                     'updated'       => 'Päivitettyjen tietueiden kokonaismäärä:',
                     'skipped'       => 'Ohitettujen tietueiden kokonaismäärä:',
                 ],
-
-                'info'              => 'Onnittelut! Tehtävä suoritettiin onnistuneesti.',
-                'create-success'    => 'Vienti luotiin onnistuneesti.',
-                'delete-failed'     => 'Viennin poistaminen epäonnistui.',
-                'delete-success'    => 'Vienti poistettiin onnistuneesti.',
-                'not-valid'         => 'Vienti ei kelpaa',
-                'nothing-to-import' => 'Ei tuontiresursseja.',
-                'setup-queue-error' => 'Muuta jonon ohjain arvoon "database" tai "redis" aloittaaksesi tuontiprosessin.',
-                'update-success'    => 'Vienti päivitettiin onnistuneesti.',
-                'failed-info'       => 'Tehtävä epäonnistui. Korjaa seuraavat virheet ja yritä uudelleen.',
-                'download-log-file' => 'Lataa lokitiedosto',
+                'info'                  => 'Onnittelut! Tehtävä suoritettiin onnistuneesti.',
+                'running-time'          => 'Suoritusaika',
+                'estimated-remaining'   => 'Arvioitu jäljellä',
+                'total-duration'        => 'Kokonaiskesto',
+                'status'                => 'Tila',
+                'waiting'               => 'Odottaa',
+                'total-records'         => 'Tietueita yhteensä',
+                'job-id'                => 'Työn ID',
+                'records-created'       => 'Luodut tietueet',
+                'records-updated'       => 'Päivitetyt tietueet',
+                'records-deleted'       => 'Poistetut tietueet',
+                'run-again'             => 'Suorita uudelleen',
+                'completed-success'     => 'Työ suoritettu onnistuneesti',
+                'completed-info-sub'    => 'Kaikki tietueet on käsitelty ja indeksoitu. Katalogisi on ajan tasalla.',
+                'create-success'        => 'Vienti luotiin onnistuneesti.',
+                'delete-failed'         => 'Viennin poistaminen epäonnistui.',
+                'delete-success'        => 'Vienti poistettiin onnistuneesti.',
+                'not-valid'             => 'Vienti ei kelpaa',
+                'nothing-to-import'     => 'Ei tuontiresursseja.',
+                'setup-queue-error'     => 'Muuta jonon ohjain arvoon "database" tai "redis" aloittaaksesi tuontiprosessin.',
+                'update-success'        => 'Vienti päivitettiin onnistuneesti.',
+                'failed-info'           => 'Tehtävä epäonnistui. Korjaa seuraavat virheet ja yritä uudelleen.',
+                'download-log-file'     => 'Lataa lokitiedosto',
+                'pause'                 => 'Tauko',
+                'resume'                => 'Jatka',
+                'cancel'                => 'Peruuta',
+                'paused'                => 'Tuonti on keskeytetty.',
+                'resumed'               => 'Tuontia on jatkettu.',
+                'cancelled'             => 'Tuonti on peruutettu.',
+                'paused-info'           => 'Tuonti on keskeytetty. Jäljellä olevat erät ovat pidossa.',
+                'paused-info-export'    => 'Vienti on keskeytetty. Jäljellä olevat erät ovat pidossa.',
+                'cancelled-info'        => 'Tuonti peruutettiin. Osittaiset tulokset näytetään alla.',
+                'cancelled-info-export' => 'Vienti peruutettiin. Osittaiset tulokset näytetään alla.',
+                'cancel-confirm'        => 'Haluatko varmasti peruuttaa tämän työn? Tätä toimintoa ei voi kumota.',
+                'live'                  => 'Reaaliaikainen',
+                'import-progress'       => 'Tuonnin edistyminen',
+                'export-progress'       => 'Viennin edistyminen',
+                'linking-progress'      => 'Linkityksen edistyminen',
+                'indexing-progress'     => 'Indeksoinnin edistyminen',
+                'job-label'             => 'Työ',
             ],
-
             'imports' => [
-                'create' => [
+                'import-start-fail' => 'Tuontiprosessin käynnistäminen epäonnistui. Yritä uudelleen.',
+                'create'            => [
                     'code'                => 'Koodi',
                     'action'              => 'Toiminto',
                     'allowed-errors'      => 'Sallitut virheet',
@@ -1141,6 +1174,14 @@ return [
                     'general'             => 'Yleinen',
                     'upload_images'       => 'Lataa kuvat asettaaksesi polun',
                     'download-sample-zip' => 'Lataa esimerkkikuva ZIP',
+                    'zip-uploading'       => 'Ladataan ja puretaan ZIP...',
+                    'zip-upload-success'  => 'ZIP ladattu ja purettu onnistuneesti.',
+                    'zip-upload-error'    => 'ZIP-lataus epäonnistui. Yritä uudelleen.',
+                    'invalid-zip'         => 'Ladattu tiedosto ei ole kelvollinen ZIP-arkisto.',
+                    'zip-upload-or'       => 'tai lataa ZIP-tiedosto kuvista',
+                    'zip-click-upload'    => 'Napsauta ladataksesi ZIP-tiedoston kuvista',
+                    'zip-files-extracted' => 'tiedostoa purettu',
+                    'zip-drop-hint'       => 'Napsauta tai vedä ja pudota ZIP-tiedosto tähän',
                     'images-directory'    => 'Polku',
                     'process-in-queue'    => 'Käsitellään jonossa',
                     'results'             => 'Tulokset',
@@ -1152,7 +1193,6 @@ return [
                     'type'                => 'Tyyppi',
                     'validation-strategy' => 'Validointistrategia',
                 ],
-
                 'edit' => [
                     'images'              => 'Kuvat',
                     'action'              => 'Toiminto',
@@ -1179,16 +1219,13 @@ return [
                     'type'                => 'Tyyppi',
                     'validation-strategy' => 'Validointistrategia',
                 ],
-
                 'batch' => [
                     'title' => 'Tuonti lisätty jonoon',
                 ],
-
                 'index' => [
                     'button-title' => 'Luo tuonti',
                     'title'        => 'Tuonnit',
-
-                    'datagrid' => [
+                    'datagrid'     => [
                         'actions'               => 'Toiminnot',
                         'completed-at'          => 'Valmistunut',
                         'created'               => 'Luotu',
@@ -1209,19 +1246,33 @@ return [
                         'import'                => 'Tuo',
                     ],
                 ],
-
                 'import' => [
+                    'action'                  => 'Toimintatila',
                     'back-btn'                => 'Takaisin',
                     'completed-batches'       => 'Valmiit erät yhteensä:',
                     'download-error-report'   => 'Lataa virheraportti',
                     'edit-btn'                => 'Muokkaa',
-                    'imported-info'           => 'Onnittelut! Tuontisi oli onnistunut.',
-                    'importing-info'          => 'Tuo prosessissa',
                     'exporting-info'          => 'Vie prosessissa',
+                    'exporting-info-sub'      => 'Luodaan vientitiedostoa ja kirjoitetaan tietueita. Odota.',
+                    'file_path'               => 'Tiedostopolku',
+                    'imported-info'           => 'Onnittelut! Tuontisi oli onnistunut.',
+                    'import-now'              => 'Tuo nyt',
+                    'importing-info'          => 'Tuo prosessissa',
+                    'importing-info-sub'      => 'Käsitellään eriä ja kirjoitetaan tietueita tietokantaan.',
                     'indexing-info'           => 'Resurssien indeksointi (hinta, Elastic Search) prosessissa',
+                    'indexing-info-sub'       => 'Rakennetaan hakuindeksejä ja hintavälimuisteja uudelleen tuonnin jälkeen. Tämä vaihe suoritetaan automaattisesti.',
+                    'indexing-type'           => 'Hinta + ES',
                     'linking-info'            => 'Resurssien linkitys prosessissa',
-                    'progress'                => 'Edistyminen:',
+                    'linking-info-sub'        => 'Linkitetään liittyviä resursseja ja tietueiden välisiä yhteyksiä.',
                     'pending-info'            => 'Odottamassa työn käsittelyä jonossa',
+                    'pending-info-sub'        => 'Työsi on lisätty käsittelyjonoon. Työntekijä ottaa sen käsittelyyn pian.',
+                    'pending-step-complete'   => 'Valmis',
+                    'pending-step-export'     => 'Viedään',
+                    'pending-step-import'     => 'Tuodaan',
+                    'pending-step-queue'      => 'Jonossa',
+                    'pending-step-validate'   => 'Vahvistetaan',
+                    'profile'                 => 'Tuo-profiili',
+                    'progress'                => 'Edistyminen:',
                     'title'                   => 'Tuo',
                     'total-batches'           => 'Erät yhteensä:',
                     'total-created'           => 'Luodut rekisterit yhteensä:',
@@ -1230,26 +1281,23 @@ return [
                     'total-invalid-rows'      => 'Virheelliset rivit yhteensä:',
                     'total-rows-processed'    => 'Prosessoidut rivit yhteensä:',
                     'total-updated'           => 'Päivitetyt rekisterit yhteensä:',
-                    'validate-info'           => 'Napsauta "Vahvista tiedot" tarkistaaksesi tuontisi.',
                     'validate'                => 'Vahvista',
-                    'file_path'               => 'Tiedostopolku',
-                    'import-now'              => 'Tuo nyt',
-                    'action'                  => 'Toimintatila',
-                    'profile'                 => 'Tuo-profiili',
+                    'validate-info'           => 'Napsauta "Vahvista tiedot" tarkistaaksesi tuontisi.',
                     'validating-info'         => 'Tiedot alkoivat lukea ja validoida',
+                    'validating-info-sub'     => 'Tarkistetaan skeeman eheys, kenttämääritykset ja tietotyypit ennen tuonnin aloittamista.',
                     'validation-failed-info'  => 'Tuontisi on virheellinen. Korjaa seuraavat virheet ja yritä uudelleen.',
-                    'validation-success-info' => 'Tuontisi on kelvollinen. Napsauta "Tuo" aloittaaksesi tuontiprosessin.',
+                    'validation-success-info' => 'Tuontisi on kelvollinen. Aloitetaan tuonti automaattisesti...',
                 ],
-
-                'create-success'    => 'Tuonti luotiin onnistuneesti.',
-                'delete-failed'     => 'Tuonnin poistaminen epäonnistui odottamattomasti.',
-                'delete-success'    => 'Tuonti poistettiin onnistuneesti.',
-                'not-valid'         => 'Tuonti on virheellinen',
-                'nothing-to-import' => 'Ei ole resursseja tuoda.',
-                'setup-queue-error' => 'Vaihda jono-ajuri "tietokannaksi" tai "redisiksi", jotta voit aloittaa tuontiprosessin.',
-                'update-success'    => 'Tuonti päivitettiin onnistuneesti.',
+                'create-success'     => 'Tuonti luotiin onnistuneesti.',
+                'delete-failed'      => 'Tuonnin poistaminen epäonnistui odottamattomasti.',
+                'delete-success'     => 'Tuonti poistettiin onnistuneesti.',
+                'invalid-zip'        => 'Ladattu tiedosto ei ole kelvollinen ZIP-arkisto.',
+                'not-valid'          => 'Tuonti on virheellinen',
+                'nothing-to-import'  => 'Ei ole resursseja tuoda.',
+                'setup-queue-error'  => 'Vaihda jono-ajuri "tietokannaksi" tai "redisiksi", jotta voit aloittaa tuontiprosessin.',
+                'update-success'     => 'Tuonti päivitettiin onnistuneesti.',
+                'zip-upload-success' => 'ZIP ladattu ja purettu onnistuneesti.',
             ],
-
             'exports' => [
                 'create' => [
                     'code'                => 'Koodi',
@@ -1280,7 +1328,6 @@ return [
                     'type'                => 'Tyyppi',
                     'validation-strategy' => 'Validointistrategia',
                 ],
-
                 'edit' => [
                     'action'              => 'Toiminto',
                     'allowed-errors'      => 'Sallitut virheet',
@@ -1304,16 +1351,13 @@ return [
                     'type'                => 'Tyyppi',
                     'validation-strategy' => 'Validointistrategia',
                 ],
-
                 'batch' => [
                     'title' => 'Vienti lisätty jonoon',
                 ],
-
                 'index' => [
                     'button-title' => 'Luo vienti',
                     'title'        => 'Viennit',
-
-                    'datagrid' => [
+                    'datagrid'     => [
                         'actions'               => 'Toiminnot',
                         'completed-at'          => 'Valmistunut',
                         'created'               => 'Luotu',
@@ -1334,7 +1378,6 @@ return [
                         'export'                => 'Vienti',
                     ],
                 ],
-
                 'export' => [
                     'back-btn'                => 'Takaisin',
                     'completed-batches'       => 'Valmistuneet erät yhteensä:',
@@ -1364,7 +1407,6 @@ return [
                     'file-format'             => 'Tiedostomuoto',
                     'with-media'              => 'Medioiden kanssa',
                 ],
-
                 'create-success'    => 'Vienti luotu onnistuneesti.',
                 'delete-failed'     => 'Viennin poistaminen epäonnistui odottamattomasti.',
                 'delete-success'    => 'Vienti poistettu onnistuneesti.',
@@ -1374,7 +1416,6 @@ return [
                 'update-success'    => 'Vienti päivitetty onnistuneesti.',
             ],
         ],
-
         'channels' => [
             'index' => [
                 'create-btn'           => 'Luo Kanava',
@@ -1393,7 +1434,6 @@ return [
                     'root-category' => 'Pääkategoria',
                 ],
             ],
-
             'create' => [
                 'allowed-ips'            => 'Sallitut IP-osoitteet',
                 'cancel'                 => 'Takaisin',
@@ -1428,7 +1468,6 @@ return [
                 'theme'                  => 'Teema',
                 'title'                  => 'Luo Kanava',
             ],
-
             'edit' => [
                 'allowed-ips'            => 'Sallitut IP-osoitteet',
                 'back-btn'               => 'Takaisin',
@@ -1466,13 +1505,11 @@ return [
                 'update-success'         => 'Kanava päivitettiin onnistuneesti',
             ],
         ],
-
         'users' => [
             'index' => [
-                'admin' => 'Ylläpitäjä',
-                'title' => 'Käyttäjät',
-                'user'  => 'Käyttäjä',
-
+                'admin'  => 'Ylläpitäjä',
+                'title'  => 'Käyttäjät',
+                'user'   => 'Käyttäjä',
                 'create' => [
                     'confirm-password'  => 'Vahvista salasana',
                     'email'             => 'Sähköposti',
@@ -1486,7 +1523,6 @@ return [
                     'user-timezone'     => 'Aikavyöhyke',
                     'select'            => 'Valitse',
                 ],
-
                 'datagrid' => [
                     'actions'  => 'Toiminnot',
                     'active'   => 'Aktiivinen',
@@ -1500,12 +1536,10 @@ return [
                     'status'   => 'Tila',
                     'image'    => 'Kuva',
                 ],
-
                 'edit' => [
                     'title' => 'Muokkaa Käyttäjää',
                 ],
             ],
-
             'edit' => [
                 'back-btn'         => 'Takaisin',
                 'confirm-password' => 'Vahvista salasana',
@@ -1518,7 +1552,6 @@ return [
                 'status'           => 'Tila',
                 'title'            => 'Muokkaa Käyttäjää',
             ],
-
             'activate-warning'          => 'Tilisi ei ole vielä aktivoitu, ota yhteys järjestelmänvalvojaan.',
             'cannot-change'             => 'Käyttäjää ei voi muuttaa',
             'create-success'            => 'Käyttäjä luotu onnistuneesti.',
@@ -1531,13 +1564,11 @@ return [
             'update-success'            => 'Käyttäjä päivitettiin onnistuneesti.',
             'current-user-delete-error' => 'Kirjautunutta käyttäjää ei voi poistaa.',
         ],
-
         'roles' => [
             'index' => [
                 'create-btn' => 'Luo Rooli',
                 'title'      => 'Roolit',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'delete'          => 'Poista',
                     'edit'            => 'Muokkaa',
                     'id'              => 'ID',
@@ -1545,7 +1576,6 @@ return [
                     'permission-type' => 'Oikeuden tyyppi',
                 ],
             ],
-
             'create' => [
                 'access-control' => 'Pääsynvalvonta',
                 'all'            => 'Kaikki',
@@ -1558,7 +1588,6 @@ return [
                 'save-btn'       => 'Tallenna Rooli',
                 'title'          => 'Luo Rooli',
             ],
-
             'edit' => [
                 'access-control' => 'Pääsynvalvonta',
                 'all'            => 'Kaikki',
@@ -1571,7 +1600,6 @@ return [
                 'save-btn'       => 'Tallenna Rooli',
                 'title'          => 'Muokkaa Roolia',
             ],
-
             'being-used'        => 'Rooli on jo käytössä järjestelmänvalvojan käyttäjällä',
             'being-used-by'     => 'Rooli on jo käytössä käyttäjällä :name',
             'create-success'    => 'Roolit luotu onnistuneesti',
@@ -1581,7 +1609,519 @@ return [
             'update-success'    => 'Rooli päivitettiin onnistuneesti',
         ],
     ],
-
+    'configuration' => [
+        'index' => [
+            'delete'          => 'Poista',
+            'no-result-found' => 'Ei tuloksia löytynyt',
+            'save-btn'        => 'Tallenna konfiguraatio',
+            'save-message'    => 'Konfiguraatio tallennettiin onnistuneesti',
+            'search'          => 'Hae',
+            'title'           => 'Konfiguraatio',
+            'general'         => [
+                'info'    => '',
+                'title'   => 'Yleinen',
+                'general' => [
+                    'info'  => '',
+                    'title' => 'Yleinen',
+                ],
+                'magic-ai' => [
+                    'info'     => 'Aseta Magic AI -vaihtoehdot.',
+                    'title'    => 'Taikatekoäly',
+                    'settings' => [
+                        'enabled'     => 'Käytössä',
+                        'ai-platform' => 'Oletusalusta',
+                        'ai-model'    => 'Oletusmalli',
+                        'title'       => 'Yleiset asetukset',
+                        'title-info'  => 'Paranna kokemustasi Magic AI:llä syöttämällä yksinoikeutettu API-avain ja määrittämällä relevantti organisaatio saumattoman integraation saavuttamiseksi. Ota hallinta OpenAI-tunnuksistasi ja mukauta asetukset tarpeidesi mukaan.',
+                    ],
+                    'image-generation' => [
+                        'enabled'     => 'Käytössä',
+                        'ai-platform' => 'Oletusalusta',
+                        'ai-model'    => 'Oletusmalli',
+                        'title'       => 'Kuvan luominen',
+                        'title-info'  => 'Tämä toiminto mahdollistaa kuvan luomisen jokaisen kuvan lataamisen yhteydessä, jossa kuvia halutaan luoda käyttäen DALL-E:tä.<br/><br/>Käyttöönoton jälkeen voit käyttää kuvan luomista kuvien lataamisen yhteydessä.',
+                    ],
+                    'translation' => [
+                        'title'                       => 'Käännös',
+                        'enabled'                     => 'Käytössä',
+                        'title-info'                  => 'Tämä ominaisuus aktivoi Magic AI:n tekstien kääntämiseen, mahdollistaen tekstin muuttamisen yhdeltä kieleltä toiselle saumattomasti.',
+                        'ai-platform'                 => 'Oletusalusta',
+                        'global-source-channel'       => 'Lähdekanava',
+                        'global-source-locale'        => 'Lähdekieli',
+                        'translation-model'           => 'Käännösmalli',
+                        'replace-existing-value'      => 'Korvaa nykyinen arvo',
+                        'target-channel'              => 'Kohdekanava',
+                        'target-locales'              => 'Kohdekielet',
+                        'replace-existing-value-info' => 'Korvaa olemassa oleva arvo, jos se on jo olemassa.',
+                    ],
+                    'agentic-pim' => [
+                        'title'                     => 'Agenttinen PIM',
+                        'title-info'                => 'Määritä tekoälyagentin chat, itsenäiset rikastustyönkulut ja laadunvalvonta. Nämä ominaisuudet mahdollistavat keskustelupohjaisen tuotehallinnan ja ennakoivan katalogien ylläpidon.',
+                        'enabled'                   => 'Ota tekoälyagentin chat käyttöön',
+                        'enabled-info'              => 'Ota käyttöön kelluva tekoälykeskusteluwidget keskustelupohjaiseen tuotehallintaan yli 27 työkalutoiminnolla.',
+                        'max-steps'                 => 'Agentin max. askeleet per vuoro',
+                        'max-steps-info'            => 'Työkalukutsun iteraatioiden enimmäismäärä, jotka tekoälyagentti voi suorittaa käyttäjäviestiä kohden. Suuremmat arvot mahdollistavat monimutkaisemmat monivaihetoiminnot.',
+                        'daily-token-budget'        => 'Päivittäinen tokenibudjetti',
+                        'daily-token-budget-info'   => 'Tekoälytokenien enimmäismäärä (syöte + tuloste), jotka voidaan kuluttaa päivässä kaikkien käyttäjien kesken. Aseta 0 rajattomaksi. Auttaa hallitsemaan API-kustannuksia.',
+                        'auto-enrichment'           => 'Automaattinen rikastus tuotteen luonnissa',
+                        'auto-enrichment-info'      => 'Luo automaattisesti puuttuvat kuvaukset, kategoriat ja SEO-sisältö, kun uusia tuotteita luodaan tai tuodaan.',
+                        'quality-monitor'           => 'Katalogin laadunvalvonta',
+                        'quality-monitor-info'      => 'Suorita ajastetut skannaukset tunnistamaan puutteelliset tuotteet, puuttuvat käännökset, kaksoiskappaleet ja hintapoikkeamat.',
+                        'confidence-threshold'      => 'Luottamusraja',
+                        'confidence-threshold-info' => 'Vähimmäisluottamuspisteet (0-1) tekoälyn tuottamien muutosten automaattiselle käyttöönotolle. Tämän rajan alapuolella muutokset laitetaan jonoon ihmisen tarkistettavaksi.',
+                        'approval-mode'             => 'Muutosten hyväksymistila',
+                        'approval-mode-info'        => 'Hallitsee, miten tekoälyagentti käsittelee kirjoitustoimintoja. "Vahvista ja sovella": agentti ehdottaa arvoja chatissa, odottaa vahvistuksen ja suorittaa sitten. "Tiukka vahvistus": sama, mutta tarkistaa myös jokaisen muutoksen jälkeen. "Vain ehdota": kuvaa muutokset mutta ei koskaan suorita (vain luku).',
+                    ],
+                ],
+            ],
+        ],
+        'integrations' => [
+            'index' => [
+                'create-btn' => 'Luo',
+                'title'      => 'Integraatiot',
+                'datagrid'   => [
+                    'delete'          => 'Poista',
+                    'edit'            => 'Muokkaa',
+                    'id'              => 'ID',
+                    'name'            => 'Nimi',
+                    'user'            => 'Käyttäjä',
+                    'client-id'       => 'Asiakas-ID',
+                    'permission-type' => 'Pääsypääntyyppi',
+                ],
+            ],
+            'create' => [
+                'access-control' => 'Pääsyoikeuden hallinta',
+                'all'            => 'Kaikki',
+                'back-btn'       => 'Takaisin',
+                'custom'         => 'Mukautettu',
+                'assign-user'    => 'Määritä käyttäjä',
+                'general'        => 'Yleinen',
+                'name'           => 'Nimi',
+                'permissions'    => 'Oikeudet',
+                'save-btn'       => 'Tallenna',
+                'title'          => 'Uusi integraatio',
+            ],
+            'edit' => [
+                'access-control' => 'Pääsyoikeuden hallinta',
+                'all'            => 'Kaikki',
+                'back-btn'       => 'Takaisin',
+                'custom'         => 'Mukautettu',
+                'assign-user'    => 'Määritä käyttäjä',
+                'general'        => 'Yleinen',
+                'name'           => 'Nimi',
+                'credentials'    => 'Tunnistetiedot',
+                'client-id'      => 'Asiakas-ID',
+                'secret-key'     => 'Salainen avain',
+                'generate-btn'   => 'Luo',
+                're-secret-btn'  => 'Luo uudelleen salainen avain',
+                'permissions'    => 'Oikeudet',
+                'save-btn'       => 'Tallenna',
+                'title'          => 'Muokkaa integraatiota',
+            ],
+            'being-used'                     => 'API-integraatio on jo käytössä admin-käyttäjällä',
+            'create-success'                 => 'API-integraatio luotiin onnistuneesti',
+            'delete-failed'                  => 'API-integraation poisto epäonnistui',
+            'delete-success'                 => 'API-integraatio poistettiin onnistuneesti',
+            'last-delete-error'              => 'Viimeistä API-integraatiota ei voi poistaa',
+            'update-success'                 => 'API-integraatio päivitettiin onnistuneesti',
+            'generate-key-success'           => 'API-avain luotiin onnistuneesti',
+            're-generate-secret-key-success' => 'API-salainen avain luotiin uudelleen onnistuneesti',
+            'client-not-found'               => 'Asiakasta ei löytynyt',
+        ],
+        'prompt' => [
+            'datagrid' => [
+                'id'               => 'Tunnus',
+                'title'            => 'Otsikko',
+                'prompt'           => 'Kehotus',
+                'type'             => 'Tyyppi',
+                'purpose'          => 'Käyttötarkoitus',
+                'text-generation'  => 'Tekstin luonti',
+                'image-generation' => 'Kuvan luonti',
+                'translation'      => 'Käännös',
+                'created-at'       => 'Luotu',
+                'updated-at'       => 'Päivitetty',
+                'actions'          => 'Toiminnot',
+                'edit'             => 'Muokkaa',
+                'delete'           => 'Poista',
+                'product'          => 'Tuote',
+                'category'         => 'Kategoria',
+            ],
+            'create' => [
+                'title'               => 'Kehotus',
+                'create-btn'          => 'Luo Kehotus',
+                'edit-title'          => 'Muokkaa Kehotusta',
+                'create-title'        => 'Luo Uusi Kehotus',
+                'label-title'         => 'Otsikko',
+                'purpose'             => 'Käyttötarkoitus',
+                'text-generation'     => 'Tekstin generointi',
+                'image-generation'    => 'Kuvan generointi',
+                'select-purpose'      => 'Valitse tarkoitus',
+                'select-model'        => '-- Valitse malli --',
+                'loading-models'      => 'Ladataan malleja...',
+                'no-models-available' => 'Malleja ei ole saatavilla. Valitse alusta tai määritä sellainen Alustat-välilehdellä.',
+                'type'                => 'Tyyppi',
+                'prompt'              => 'Kehotus',
+                'save-btn'            => 'Tallenna Kehotus',
+            ],
+            'message' => [
+                'save-success'   => 'Kehotus tallennettu onnistuneesti.',
+                'update-success' => 'Kehotus päivitetty onnistuneesti.',
+                'delete-success' => 'Kehotus poistettu onnistuneesti.',
+                'delete-fail'    => 'Kehotuksen poistaminen epäonnistui.',
+            ],
+        ],
+        'system-prompt' => [
+            'datagrid' => [
+                'id'          => 'ID',
+                'title'       => 'Otsikko',
+                'tone'        => 'Sävy',
+                'max-tokens'  => 'Maks. tokenit',
+                'temperature' => 'Lämpötila',
+                'status'      => 'Tila',
+                'created-at'  => 'Luotu',
+                'updated-at'  => 'Päivitetty',
+                'actions'     => 'Toiminnot',
+                'save'        => 'Tallenna',
+                'edit'        => 'Muokkaa',
+                'delete'      => 'poista',
+            ],
+            'create' => [
+                'title'        => 'Järjestelmäkehote',
+                'create-btn'   => 'Luo järjestelmäkehote',
+                'edit-title'   => 'Muokkaa järjestelmäkehotetta',
+                'create-title' => 'Luo uusi järjestelmäkehote',
+                'label-title'  => 'Otsikko',
+                'max-tokens'   => 'Maks. tulostokenit',
+                'temperature'  => 'Lämpötila',
+                'type'         => 'Tyyppi',
+                'prompt'       => 'Kehote',
+                'save-btn'     => 'Tallenna kehote',
+                'prompt-tone'  => 'Kehotteen sävy',
+            ],
+            'message' => [
+                'save-success'   => 'Järjestelmäkehote tallennettu onnistuneesti.',
+                'update-success' => 'Järjestelmäkehote päivitetty onnistuneesti.',
+                'delete-success' => 'Järjestelmäkehote poistettu onnistuneesti.',
+                'delete-fail'    => 'Järjestelmäkehotteen poistaminen epäonnistui.',
+            ],
+        ],
+        'platform' => [
+            'title'           => 'AI-alustat',
+            'create-btn'      => 'Lisää alusta',
+            'create-title'    => 'Lisää AI-alusta',
+            'edit-title'      => 'Muokkaa AI-alustaa',
+            'save-btn'        => 'Tallenna',
+            'saving'          => 'Tallennetaan',
+            'test-connection' => 'Testaa yhteys',
+            'setup'           => [
+                'title'              => 'Aloita Magic AI:n käyttö',
+                'description'        => 'Yhdistä AI-palveluntarjoajasi avataksesi tekoälypohjaisen sisällön luonnin, kuvien luonnin ja käännökset. Lisää ensimmäinen alustasi aloittaaksesi.',
+                'step-1'             => 'Valitse palveluntarjoaja',
+                'step-2'             => 'Syötä API-avaimesi',
+                'step-3'             => 'Valitse mallit ja tallenna',
+                'add-first'          => 'Lisää ensimmäinen alustasi',
+                'no-default-warning' => 'Oletusalustaa ei ole asetettu. Aseta yksi alusta oletukseksi ottaaksesi AI-ominaisuudet käyttöön koko sovelluksessa.',
+                'no-platform-hint'   => 'Alustoja ei ole vielä määritetty. Siirry Alustat-välilehdelle lisätäksesi ensimmäisen AI-palveluntarjoajasi.',
+                'lightning-icon'     => 'Taikatekoäly',
+                'warning-icon'       => 'Varoitus',
+            ],
+            'testing'         => 'Testataan',
+            'fetch-models'    => 'Hae mallit',
+            'fetching-models' => 'Haetaan',
+            'set-default'     => 'Aseta oletukseksi',
+            'datagrid'        => [
+                'label'      => 'Nimi',
+                'provider'   => 'Palveluntarjoaja',
+                'models'     => 'Mallit',
+                'default'    => 'Oletus',
+                'status'     => 'Tila',
+                'created-at' => 'Luotu',
+                'edit'       => 'Muokkaa',
+                'delete'     => 'Poista',
+            ],
+            'fields' => [
+                'label'                    => 'Nimi',
+                'provider'                 => 'Palveluntarjoaja',
+                'select-provider'          => '-- Valitse palveluntarjoaja --',
+                'api-url'                  => 'API URL',
+                'api-url-hint'             => 'Esitäytetty oletuspäätepisteellä. Muokkaa vain, jos käytät välityspalvelinta tai mukautettua käyttöönottoa.',
+                'api-key'                  => 'API-avain',
+                'models'                   => 'Mallit',
+                'custom-model-placeholder' => 'Kirjoita mukautettu malli-ID...',
+                'add'                      => 'Lisää',
+                'enter-key-to-fetch'       => 'Syötä API-avaimesi yllä hakeaksesi saatavilla olevat mallit automaattisesti.',
+                'search-models'            => 'Hae malleja...',
+                'no-models-match'          => 'Yksikään malli ei vastaa hakuasi.',
+                'azure-deployment'         => 'Käyttöönoton nimi',
+                'azure-api-version'        => 'API-versio',
+                'is-default'               => 'Aseta oletukseksi',
+                'status'                   => 'Tila',
+                'use-default'              => '-- Käytä oletusalustaa --',
+                'use-default-hint'         => 'Jätä tyhjäksi käyttääksesi oletukseksi merkittyä alustaa. Alusta merkitty *-merkillä on oletusalusta.',
+                'no-image-platform'        => 'Kuvankäsittelykelpoista alustaa ei ole määritetty. Lisää ensin OpenAI-, Gemini- tai xAI-alusta.',
+                'image-platform-hint'      => 'Vain kuvan luontia tukevat alustat on listattu (OpenAI, Gemini, xAI).',
+                'remove-model'             => 'Poista malli :model',
+                'invalid-model-name'       => 'Virheellinen mallin nimi. Käytä vain kirjaimia, numeroita, väliviivoja, pisteitä, kaksoispisteitä ja kauttaviivoja (esim. gpt-4o, claude-3-sonnet).',
+            ],
+            'message' => [
+                'save-success'          => 'Alusta tallennettu onnistuneesti.',
+                'update-success'        => 'Alusta päivitetty onnistuneesti.',
+                'delete-success'        => 'Alusta poistettu onnistuneesti.',
+                'delete-fail'           => 'Alustan poistaminen epäonnistui.',
+                'cannot-delete-default' => 'Ainoaa oletusalustaa ei voi poistaa.',
+                'set-default-success'   => 'Alusta asetettu oletukseksi onnistuneesti.',
+                'test-success'          => 'Yhteys vahvistettu onnistuneesti!',
+                'test-fail'             => 'Yhteystesti epäonnistui',
+                'fetch-models-fail'     => 'Mallien haku epäonnistui',
+                'invalid-model-names'   => 'Virheelliset mallien nimet: :names. Mallien nimien on alettava kirjaimella tai numerolla ja sisällettävä vain kirjaimia, numeroita, väliviivoja, pisteitä, kaksoispisteitä ja kauttaviivoja.',
+            ],
+        ],
+    ],
+    'components' => [
+        'layouts' => [
+            'header' => [
+                'account-title' => 'Tili',
+                'app-version'   => 'Versio : :version',
+                'logout'        => 'Kirjaudu ulos',
+                'my-account'    => 'Oma Tili',
+                'notifications' => 'Ilmoitukset',
+                'visit-shop'    => 'Vierailu Kaupassa',
+            ],
+            'sidebar' => [
+                'attribute-families' => 'Attribuuttiperheet',
+                'attribute-groups'   => 'Attribuuttiryhmät',
+                'attributes'         => 'Attribuutit',
+                'history'            => 'Historia',
+                'edit-section'       => 'Tiedot',
+                'general'            => 'Yleinen',
+                'catalog'            => 'Tuoteluettelo',
+                'categories'         => 'Kategoriat',
+                'category_fields'    => 'Kategoriakentät',
+                'channels'           => 'Kanavat',
+                'collapse'           => 'Pudota alas',
+                'configure'          => 'Konfiguroi',
+                'currencies'         => 'Valuutat',
+                'dashboard'          => 'Ohjauspaneeli',
+                'data-transfer'      => 'Tietojen siirto',
+                'groups'             => 'Ryhmät',
+                'tracker'            => 'Työn seurantapaneeli',
+                'imports'            => 'Tuo',
+                'exports'            => 'Vie',
+                'locales'            => 'Käännöskielet',
+                'magic-ai'           => 'Taikatekoäly',
+                'mode'               => 'Tumma tila',
+                'products'           => 'Tuotteet',
+                'roles'              => 'Roolit',
+                'settings'           => 'Asetukset',
+                'themes'             => 'Teemat',
+                'users'              => 'Käyttäjät',
+                'integrations'       => 'Integraatiot',
+                'prompt'             => 'Kehote',
+                'general-tab'        => 'Määritys',
+            ],
+        ],
+        'datagrid' => [
+            'index' => [
+                'no-records-selected'              => 'Mikään tallenne ei ole valittuna.',
+                'must-select-a-mass-action-option' => 'Sinun täytyy valita massatoiminto.',
+                'must-select-a-mass-action'        => 'Sinun täytyy valita massatoiminto.',
+            ],
+            'toolbar' => [
+                'length-of'    => ':length of',
+                'of'           => '/',
+                'per-page'     => 'Per sivu',
+                'results'      => ':total tulosta',
+                'selected'     => ':total valittu',
+                'mass-actions' => [
+                    'submit'        => 'Lähetä',
+                    'select-option' => 'Valitse vaihtoehto',
+                    'select-action' => 'Valitse toiminto',
+                ],
+                'filter' => [
+                    'title' => 'Suodata',
+                ],
+                'search_by' => [
+                    'code'       => 'Etsi koodilla',
+                    'code_or_id' => 'Etsi koodilla tai id:llä',
+                ],
+                'search' => [
+                    'title' => 'Etsi',
+                ],
+                'manage-columns' => [
+                    'title' => 'Sarakkeita',
+                ],
+                'pagination' => [
+                    'first-page'    => 'Ensimmäinen sivu',
+                    'previous-page' => 'Edellinen sivu',
+                    'next-page'     => 'Seuraava sivu',
+                    'last-page'     => 'Viimeinen sivu',
+                    'page-number'   => 'Sivunumero',
+                ],
+            ],
+            'filters' => [
+                'select'   => 'Valitse',
+                'title'    => 'Määritä suodattimet',
+                'save'     => 'Tallenna',
+                'dropdown' => [
+                    'searchable' => [
+                        'atleast-two-chars' => 'Kirjoita vähintään 2 merkkiä...',
+                        'no-results'        => 'Ei tuloksia...',
+                    ],
+                ],
+                'custom-filters' => [
+                    'clear-all' => 'Tyhjennä kaikki',
+                    'title'     => 'Mukautetut suodattimet',
+                ],
+                'boolean-options' => [
+                    'false' => 'Epätosi',
+                    'true'  => 'Tosi',
+                ],
+                'date-options' => [
+                    'last-month'        => 'Viime kuukausi',
+                    'last-six-months'   => 'Viimeiset 6 kuukautta',
+                    'last-three-months' => 'Viimeiset 3 kuukautta',
+                    'this-month'        => 'Tämä kuukausi',
+                    'this-week'         => 'Tämä viikko',
+                    'this-year'         => 'Tämä vuosi',
+                    'today'             => 'Tänään',
+                    'yesterday'         => 'Eilen',
+                ],
+            ],
+            'table' => [
+                'actions'              => 'Toiminnot',
+                'no-records-available' => 'Ei tallenteita saatavilla.',
+            ],
+            'manage-columns' => [
+                'title'             => 'Hallitse sarakkeita',
+                'available-columns' => 'Saatavilla olevat sarakkeet',
+                'selected-columns'  => 'Valitut sarakkeet',
+                'apply-btn'         => 'Käytä',
+            ],
+        ],
+        'modal' => [
+            'confirm' => [
+                'agree-btn'    => 'Hyväksy',
+                'disagree-btn' => 'Epäile',
+                'message'      => 'Oletko varma, että haluat tehdä tämän toiminnon?',
+                'title'        => 'Oletko varma?',
+            ],
+            'delete' => [
+                'agree-btn'    => 'Poista',
+                'disagree-btn' => 'Peruuta',
+                'message'      => 'Oletko varma, että haluat poistaa?',
+                'title'        => 'Vahvista poisto',
+            ],
+            'history' => [
+                'title'           => 'Historian esikatselu',
+                'subtitle'        => 'Katsokaa nopeasti päivityksenne ja muutoksenne.',
+                'close-btn'       => 'Sulje',
+                'version-label'   => 'Versio',
+                'date-time-label' => 'Päivämäärä/Aika',
+                'user-label'      => 'Käyttäjä',
+                'name-label'      => 'Avain',
+                'old-value-label' => 'Vanha arvo',
+                'new-value-label' => 'Uusi arvo',
+                'no-history'      => 'Historiaa ei löytynyt',
+            ],
+        ],
+        'products' => [
+            'search' => [
+                'add-btn'       => 'Lisää valittu tuote',
+                'empty-info'    => 'Ei tuotteita saatavilla haun mukaisella hakusanalla.',
+                'empty-title'   => 'Tuotteita ei löytynyt',
+                'product-image' => 'Tuotteen kuva',
+                'qty'           => ':qty Saatavilla',
+                'sku'           => 'SKU - :sku',
+                'title'         => 'Valitse tuotteet',
+            ],
+        ],
+        'media' => [
+            'images' => [
+                'add-image-btn'      => 'Lisää kuva',
+                'generate-with-ai'   => 'Luo tekoälyllä',
+                'upload-from-device' => 'Lataa laitteelta',
+                'cancel'             => 'Peruuta',
+                'ai-add-image-btn'   => 'Taikatekoäly',
+                'ai-btn-info'        => 'Luo kuva',
+                'allowed-types'      => 'png, jpeg, jpg',
+                'not-allowed-error'  => 'Vain kuva tiedostot (.jpeg, .jpg, .png, ..) ovat sallittuja.',
+                'upload-media-btn'   => 'Lataa mediaa',
+                'ai-generation'      => [
+                    '1024x1024'        => '1024x1024',
+                    '1024x1792'        => '1024x1792',
+                    '1792x1024'        => '1792x1024',
+                    'apply'            => 'Käytä',
+                    'dall-e-2'         => 'Dall.E 2',
+                    'dall-e-3'         => 'Dall.E 3',
+                    'generate'         => 'Luo',
+                    'generating'       => 'Luodaan...',
+                    'hd'               => 'HD',
+                    'model'            => 'Malli',
+                    'number-of-images' => 'Kuvien määrä',
+                    'prompt'           => 'Ohje',
+                    'quality'          => 'Laatu',
+                    'regenerate'       => 'Luo uudelleen',
+                    'regenerating'     => 'Luo uudelleen...',
+                    'size'             => 'Koko',
+                    'standard'         => 'Vakio',
+                    'title'            => 'AI-kuvien luominen',
+                ],
+                'placeholders' => [
+                    'front'     => 'Etupuoli',
+                    'next'      => 'Seuraava',
+                    'size'      => 'Koko',
+                    'use-cases' => 'Käyttötapaukset',
+                    'zoom'      => 'Zoom',
+                ],
+            ],
+            'gallery' => [
+                'not-allowed-error' => 'Vain kuva- ja videotiedostot ovat sallittuja. (.mp4, .jpg ..)',
+            ],
+            'videos' => [
+                'add-video-btn'     => 'Lisää video',
+                'allowed-types'     => 'mp4, webm, mkv',
+                'not-allowed-error' => 'Vain video tiedostot (.mp4, .mov, .ogg ..) ovat sallittuja.',
+            ],
+            'files' => [
+                'add-file-btn'      => 'Lisää tiedosto',
+                'allowed-types'     => 'pdf',
+                'not-allowed-error' => 'Vain pdf tiedostot ovat sallittuja',
+            ],
+        ],
+        'tinymce' => [
+            'ai-btn-tile'   => 'Taikatekoäly',
+            'ai-generation' => [
+                'apply'                  => 'Käytä',
+                'generate'               => 'Luo',
+                'generated-content'      => 'Luo sisältöä',
+                'generated-content-info' => 'AI-sisältö voi olla harhaanjohtavaa. Tarkista luotu sisältö ennen sen käyttöä.',
+                'generating'             => 'Luodaan...',
+                'prompt'                 => 'Ohje',
+                'title'                  => 'AI-apu',
+                'platform'               => 'Alusta',
+                'model'                  => 'Malli',
+                'rich-preview'           => 'Rikas esikatselu',
+                'system-prompt'          => 'Järjestelmäkehote',
+                'select-system-prompt'   => 'Valitse järjestelmäkehote',
+                'tone-instructions'      => 'Sävy / Ohjeet',
+                'max-tokens'             => 'Maks. tokenit',
+                'temperature'            => 'Lämpötila',
+                'gpt-3-5-turbo'          => 'OpenAI gpt-3.5-turbo',
+                'llama2'                 => 'Llama 2',
+                'mistral'                => 'Mistral',
+                'dolphin-phi'            => 'Dolphin Phi',
+                'phi'                    => 'Phi-2',
+                'starling-lm'            => 'Starling',
+                'llama2-uncensored'      => 'Llama 2 sensuroimaton',
+                'llama2:13b'             => 'Llama 2 13B',
+                'llama2:70b'             => 'Llama 2 70B',
+                'orca-mini'              => 'Orca Mini',
+                'vicuna'                 => 'Vicuna',
+                'llava'                  => 'LLaVA',
+                'default-prompt'         => 'Oletuskehotus',
+            ],
+        ],
+    ],
     'acl' => [
         'addresses'                => 'Osoitteet',
         'attribute-families'       => 'Attribuuttiperheet',
@@ -1607,7 +2147,10 @@ return [
         'imports'                  => 'Tuonti',
         'invoices'                 => 'Laskut',
         'locales'                  => 'Käännöskieliasetukset',
-        'magic-ai'                 => 'Magic AI',
+        'magic-ai'                 => 'Taikatekoäly',
+        'magic-ai-general'         => 'Yleinen',
+        'magic-ai-prompt'          => 'Kehote',
+        'magic-ai-system-prompt'   => 'Järjestelmäkehote',
         'marketing'                => 'Markkinointi',
         'newsletter-subscriptions' => 'Uutiskirjeen tilaukset',
         'note'                     => 'Huomautus',
@@ -1641,54 +2184,44 @@ return [
         'integrations'             => 'Integraatiot',
         'api'                      => 'API',
         'tracker'                  => 'Työseuranta',
-        'imports'                  => 'Tuonti',
         'exports'                  => 'Vienti',
         'mass-update'              => 'Määräpäivitys',
         'mass-delete'              => 'Määräpoisto',
     ],
-
     'errors' => [
         'dashboard' => 'Ohjauspaneeli',
         'go-back'   => 'Palaa takaisin',
-        'support'   => 'Jos ongelma jatkuu, ota yhteyttä sähköpostitse <a href=":link" class=":class">:email</a>., jos ongelma jatkuu, ota yhteyttä sähköpostitse <a href=":link" class=":class">:email</a> avuksi.',
-
-        '404' => [
+        'support'   => 'Jos ongelma jatkuu, ota yhteyttä sähköpostitse <a href=":link" class=":class">:email</a> avuksi.',
+        '404'       => [
             'description' => 'Voi ei! Sivua, jota etsit, ei ole saatavilla. Emme löytäneet etsimääsi.',
             'title'       => '404 Sivua ei löydy',
         ],
-
         '401' => [
             'description' => 'Voi ei! Näyttää siltä, että sinulla ei ole oikeuksia päästä tälle sivulle. Sinulta puuttuvat tarvittavat tunnukset.',
             'title'       => '401 Käyttöoikeudet puuttuvat',
             'message'     => 'Autentikointi epäonnistui, koska tunnukset olivat virheellisiä tai aikaraja on umpeutunut.',
         ],
-
         '403' => [
             'description' => 'Voi ei! Tämä sivu on rajoitettu. Sinulla ei ole tarvittavia oikeuksia nähdä tätä sisältöä.',
             'title'       => '403 Pääsy kielletty',
         ],
-
         '413' => [
             'description' => 'Voi ei! Näyttää siltä, että yrität ladata liian suuren tiedoston. Jos haluat ladata sen, päivitä PHP-konfiguraatio.',
             'title'       => '413 Sisältö liian suuri',
         ],
-
         '419' => [
             'description' => 'Voi ei! Istuntosi on päättynyt. Päivitä sivu ja kirjaudu uudelleen sisään jatkaaksesi.',
             'title'       => '419 Istunto on päättynyt',
         ],
-
         '500' => [
             'description' => 'Voi ei! Jotain meni pieleen. Meillä on vaikeuksia ladata etsimääsi sivua.',
             'title'       => '500 Sisäinen palvelinvirhe',
         ],
-
         '503' => [
             'description' => 'Voi ei! Näyttää siltä, että olemme väliaikaisesti poissa käytöstä huoltotoimenpiteiden vuoksi. Tarkista myöhemmin uudelleen.',
             'title'       => '503 Palvelu ei saatavilla',
         ],
     ],
-
     'export' => [
         'csv'                  => 'CSV',
         'download'             => 'Lataa',
@@ -1701,438 +2234,35 @@ return [
         'error'                => 'Jotain meni pieleen!',
         'product-not-selected' => 'Tuotteita ei valittu pikavientiin',
     ],
-
     'validations' => [
         'slug-being-used' => 'Tämä slug on käytössä joko kategorioissa tai tuotteissa.',
         'slug-reserved'   => 'Tämä slug on varattu.',
         'invalid-locale'  => 'Kelvottomat paikkakunnat :locales',
     ],
-
     'footer' => [
-        'copy-right' => 'Powered by <a href="https://unopim.com/" target="_blank">UnoPim</a>, A Community Project by <a href="https://webkul.com/" target="_blank">Webkul</a>',
+        'copy-right' => 'Powered by <a href="https://unopim.com/" target="_blank">UnoPim</a>, Yhteisöprojekti <a href="https://webkul.com/" target="_blank">Webkul</a>:n toimesta',
     ],
-
     'emails' => [
-        'dear'   => 'Dear :admin_name',
-        'thanks' => 'If you need any kind of help please contact us at <a href=":link" style=":style">:email</a>.<br/>Thanks!',
-
-        'admin' => [
+        'dear'   => 'Hyvä :admin_name',
+        'thanks' => 'Jos tarvitset apua, ota meihin yhteyttä osoitteessa <a href=":link" style=":style">:email</a>.<br/>Kiitos!',
+        'admin'  => [
             'forgot-password' => [
-                'description'    => 'You are receiving this email because we received a password reset request for your account.',
-                'greeting'       => 'Forgot Password!',
-                'reset-password' => 'Reset Password',
-                'subject'        => 'Reset Password Email',
+                'description'    => 'Saat tämän sähköpostin, koska saimme salasanan nollauspyynnön tilillesi.',
+                'greeting'       => 'Unohditko salasanan!',
+                'reset-password' => 'Nollaa salasana',
+                'subject'        => 'Salasanan nollaus sähköposti',
             ],
         ],
     ],
-
     'common' => [
-        'yes'     => 'Yes',
-        'no'      => 'No',
-        'true'    => 'True',
-        'false'   => 'False',
-        'enable'  => 'Enabled',
-        'disable' => 'Disabled',
+        'yes'            => 'Kyllä',
+        'no'             => 'No',
+        'true'           => 'Tosi',
+        'false'          => 'Epätosi',
+        'enable'         => 'Ota käyttöön',
+        'disable'        => 'Poista käytöstä',
+        'no-match-found' => 'Osumia ei löytynyt!',
     ],
-
-    'configuration' => [
-        'index' => [
-            'delete'          => 'Poista',
-            'no-result-found' => 'Ei tuloksia löytynyt',
-            'save-btn'        => 'Tallenna konfiguraatio',
-            'save-message'    => 'Konfiguraatio tallennettiin onnistuneesti',
-            'search'          => 'Hae',
-            'title'           => 'Konfiguraatio',
-
-            'general' => [
-                'info'  => '',
-                'title' => 'Yleinen',
-
-                'general' => [
-                    'info'  => '',
-                    'title' => 'Yleinen',
-                ],
-
-                'magic-ai' => [
-                    'info'  => 'Aseta Magic AI -vaihtoehdot.',
-                    'title' => 'Magic AI',
-
-                    'settings' => [
-                        'api-key'        => 'API-avain',
-                        'enabled'        => 'Käytössä',
-                        'llm-api-domain' => 'LLM API -verkkotunnus',
-                        'organization'   => 'Organisaation tunnus',
-                        'api-model'      => 'Mallit',
-                        'title'          => 'Yleiset asetukset',
-                        'title-info'     => 'Paranna kokemustasi Magic AI:llä syöttämällä yksinoikeutettu API-avain ja määrittämällä relevantti organisaatio saumattoman integraation saavuttamiseksi. Ota hallinta OpenAI-tunnuksistasi ja mukauta asetukset tarpeidesi mukaan.',
-                    ],
-
-                    'image-generation' => [
-                        'enabled'    => 'Käytössä',
-                        'title'      => 'Kuvan luominen',
-                        'title-info' => 'Tämä toiminto mahdollistaa kuvan luomisen jokaisen kuvan lataamisen yhteydessä, jossa kuvia halutaan luoda käyttäen DALL-E:tä.<br/><br/>Käyttöönoton jälkeen voit käyttää kuvan luomista kuvien lataamisen yhteydessä.',
-                    ],
-
-                    'translation'   => [
-                        'title'                  => 'Käännös',
-                        'enabled'                => 'Käytössä',
-                        'title-info'             => 'Tämä ominaisuus aktivoi Magic AI:n tekstien kääntämiseen, mahdollistaen tekstin muuttamisen yhdeltä kieleltä toiselle saumattomasti.',
-                        'global-source-channel'  => 'Lähdekanava',
-                        'global-source-locale'   => 'Lähdekieli',
-                        'translation-model'      => 'Käännösmalli',
-                        'replace-existing-value' => 'Korvaa nykyinen arvo',
-                        'target-channel'         => 'Kohdekanava',
-                        'target-locales'         => 'Kohdekielet',
-                    ],
-                ],
-            ],
-        ],
-
-        'integrations' => [
-            'index' => [
-                'create-btn' => 'Luo',
-                'title'      => 'Integraatiot',
-
-                'datagrid' => [
-                    'delete'          => 'Poista',
-                    'edit'            => 'Muokkaa',
-                    'id'              => 'ID',
-                    'name'            => 'Nimi',
-                    'user'            => 'Käyttäjä',
-                    'client-id'       => 'Asiakas-ID',
-                    'permission-type' => 'Pääsypääntyyppi',
-                ],
-            ],
-
-            'create' => [
-                'access-control' => 'Pääsyoikeuden hallinta',
-                'all'            => 'Kaikki',
-                'back-btn'       => 'Takaisin',
-                'custom'         => 'Mukautettu',
-                'assign-user'    => 'Määritä käyttäjä',
-                'general'        => 'Yleinen',
-                'name'           => 'Nimi',
-                'permissions'    => 'Oikeudet',
-                'save-btn'       => 'Tallenna',
-                'title'          => 'Uusi integraatio',
-            ],
-
-            'edit' => [
-                'access-control' => 'Pääsyoikeuden hallinta',
-                'all'            => 'Kaikki',
-                'back-btn'       => 'Takaisin',
-                'custom'         => 'Mukautettu',
-                'assign-user'    => 'Määritä käyttäjä',
-                'general'        => 'Yleinen',
-                'name'           => 'Nimi',
-                'credentials'    => 'Tunnistetiedot',
-                'client-id'      => 'Asiakas-ID',
-                'secret-key'     => 'Salainen avain',
-                'generate-btn'   => 'Luo',
-                're-secret-btn'  => 'Luo uudelleen salainen avain',
-                'permissions'    => 'Oikeudet',
-                'save-btn'       => 'Tallenna',
-                'title'          => 'Muokkaa integraatiota',
-            ],
-
-            'being-used'                     => 'API-integraatio on jo käytössä admin-käyttäjällä',
-            'create-success'                 => 'API-integraatio luotiin onnistuneesti',
-            'delete-failed'                  => 'API-integraation poisto epäonnistui',
-            'delete-success'                 => 'API-integraatio poistettiin onnistuneesti',
-            'last-delete-error'              => 'Viimeistä API-integraatiota ei voi poistaa',
-            'update-success'                 => 'API-integraatio päivitettiin onnistuneesti',
-            'generate-key-success'           => 'API-avain luotiin onnistuneesti',
-            're-generate-secret-key-success' => 'API-salainen avain luotiin uudelleen onnistuneesti',
-            'client-not-found'               => 'Asiakasta ei löytynyt',
-        ],
-
-        'prompt' => [
-            'datagrid' => [
-                'id'            => 'Tunnus',
-                'title'         => 'Otsikko',
-                'prompt'        => 'Kehotus',
-                'type'          => 'Tyyppi',
-                'created-at'    => 'Luotu',
-                'updated-at'    => 'Päivitetty',
-                'actions'       => 'Toiminnot',
-                'edit'          => 'Muokkaa',
-                'delete'        => 'Poista',
-                'product'       => 'Tuote',
-                'category'      => 'Kategoria',
-            ],
-            'create' => [
-                'title'         => 'Kehotus',
-                'create-btn'    => 'Luo Kehotus',
-                'edit-title'    => 'Muokkaa Kehotusta',
-                'create-title'  => 'Luo Uusi Kehotus',
-                'label-title'   => 'Otsikko',
-                'type'          => 'Tyyppi',
-                'prompt'        => 'Kehotus',
-                'save-btn'      => 'Tallenna Kehotus',
-            ],
-            'message' => [
-                'save-success'      => 'Kehotus tallennettu onnistuneesti.',
-                'update-success'    => 'Kehotus päivitetty onnistuneesti.',
-                'delete-success'    => 'Kehotus poistettu onnistuneesti.',
-                'delete-fail'       => 'Kehotuksen poistaminen epäonnistui.',
-            ],
-        ],
-    ],
-
-    'components' => [
-        'layouts' => [
-            'header' => [
-                'account-title' => 'Tili',
-                'app-version'   => 'Versio : :version',
-                'logout'        => 'Kirjaudu ulos',
-                'my-account'    => 'Oma Tili',
-                'notifications' => 'Ilmoitukset',
-                'visit-shop'    => 'Vierailu Kaupassa',
-            ],
-
-            'sidebar' => [
-                'attribute-families' => 'Attribuuttiperheet',
-                'attribute-groups'   => 'Attribuuttiryhmät',
-                'attributes'         => 'Attribuutit',
-                'history'            => 'Historia',
-                'edit-section'       => 'Tiedot',
-                'general'            => 'Yleinen',
-                'catalog'            => 'Tuoteluettelo',
-                'categories'         => 'Kategoriat',
-                'category_fields'    => 'Kategoriakentät',
-                'channels'           => 'Kanavat',
-                'collapse'           => 'Pudota alas',
-                'configure'          => 'Konfiguroi',
-                'currencies'         => 'Valuutat',
-                'dashboard'          => 'Ohjauspaneeli',
-                'data-transfer'      => 'Tietojen siirto',
-                'groups'             => 'Ryhmät',
-                'tracker'            => 'Työn seurantapaneeli',
-                'imports'            => 'Tuo',
-                'exports'            => 'Vie',
-                'locales'            => 'Käännöskielet',
-                'magic-ai'           => 'Magic AI',
-                'mode'               => 'Tumma tila',
-                'products'           => 'Tuotteet',
-                'roles'              => 'Roolit',
-                'settings'           => 'Asetukset',
-                'themes'             => 'Teemat',
-                'users'              => 'Käyttäjät',
-                'integrations'       => 'Integraatiot',
-                'prompt'             => 'Kehote',
-                'general-tab'        => 'Määritys',
-            ],
-        ],
-
-        'datagrid' => [
-            'index' => [
-                'no-records-selected'              => 'Mikään tallenne ei ole valittuna.',
-                'must-select-a-mass-action-option' => 'Sinun täytyy valita massatoiminto.',
-                'must-select-a-mass-action'        => 'Sinun täytyy valita massatoiminto.',
-            ],
-
-            'toolbar' => [
-                'length-of' => ':length of',
-                'of'        => '/',
-                'per-page'  => 'Per sivu',
-                'results'   => ':total tulosta',
-                'selected'  => ':total valittu',
-
-                'mass-actions' => [
-                    'submit'        => 'Lähetä',
-                    'select-option' => 'Valitse vaihtoehto',
-                    'select-action' => 'Valitse toiminto',
-                ],
-
-                'filter' => [
-                    'title' => 'Suodata',
-                ],
-
-                'search_by' => [
-                    'code'       => 'Etsi koodilla',
-                    'code_or_id' => 'Etsi koodilla tai id:llä',
-                ],
-
-                'search' => [
-                    'title' => 'Etsi',
-                ],
-
-                'manage-columns' => [
-                    'title' => 'Sarakkeita',
-                ],
-            ],
-
-            'filters' => [
-                'select'   => 'Valitse',
-                'title'    => 'Määritä suodattimet',
-                'save'     => 'Tallenna',
-                'dropdown' => [
-                    'searchable' => [
-                        'atleast-two-chars' => 'Kirjoita vähintään 2 merkkiä...',
-                        'no-results'        => 'Ei tuloksia...',
-                    ],
-                ],
-
-                'custom-filters' => [
-                    'clear-all' => 'Tyhjennä kaikki',
-                    'title'     => 'Mukautetut suodattimet',
-                ],
-
-                'boolean-options' => [
-                    'false' => 'Epätosi',
-                    'true'  => 'Tosi',
-                ],
-
-                'date-options' => [
-                    'last-month'        => 'Viime kuukausi',
-                    'last-six-months'   => 'Viimeiset 6 kuukautta',
-                    'last-three-months' => 'Viimeiset 3 kuukautta',
-                    'this-month'        => 'Tämä kuukausi',
-                    'this-week'         => 'Tämä viikko',
-                    'this-year'         => 'Tämä vuosi',
-                    'today'             => 'Tänään',
-                    'yesterday'         => 'Eilen',
-                ],
-            ],
-
-            'table' => [
-                'actions'              => 'Toiminnot',
-                'no-records-available' => 'Ei tallenteita saatavilla.',
-            ],
-
-            'manage-columns' => [
-                'title'             => 'Hallitse sarakkeita',
-                'available-columns' => 'Saatavilla olevat sarakkeet',
-                'selected-columns'  => 'Valitut sarakkeet',
-                'apply-btn'         => 'Käytä',
-            ],
-        ],
-
-        'modal' => [
-            'confirm' => [
-                'agree-btn'    => 'Hyväksy',
-                'disagree-btn' => 'Epäile',
-                'message'      => 'Oletko varma, että haluat tehdä tämän toiminnon?',
-                'title'        => 'Oletko varma?',
-            ],
-
-            'delete' => [
-                'agree-btn'    => 'Poista',
-                'disagree-btn' => 'Peruuta',
-                'message'      => 'Oletko varma, että haluat poistaa?',
-                'title'        => 'Vahvista poisto',
-            ],
-
-            'history' => [
-                'title'           => 'Historian esikatselu',
-                'subtitle'        => 'Katsokaa nopeasti päivityksenne ja muutoksenne.',
-                'close-btn'       => 'Sulje',
-                'version-label'   => 'Versio',
-                'date-time-label' => 'Päivämäärä/Aika',
-                'user-label'      => 'Käyttäjä',
-                'name-label'      => 'Avain',
-                'old-value-label' => 'Vanha arvo',
-                'new-value-label' => 'Uusi arvo',
-                'no-history'      => 'Historiaa ei löytynyt',
-            ],
-        ],
-
-        'products' => [
-            'search' => [
-                'add-btn'       => 'Lisää valittu tuote',
-                'empty-info'    => 'Ei tuotteita saatavilla haun mukaisella hakusanalla.',
-                'empty-title'   => 'Tuotteita ei löytynyt',
-                'product-image' => 'Tuotteen kuva',
-                'qty'           => ':qty Saatavilla',
-                'sku'           => 'SKU - :sku',
-                'title'         => 'Valitse tuotteet',
-            ],
-        ],
-
-        'media' => [
-            'images' => [
-                'add-image-btn'      => 'Lisää kuva',
-                'generate-with-ai'   => 'Luo tekoälyllä',
-                'upload-from-device' => 'Lataa laitteelta',
-                'cancel'             => 'Peruuta',
-                'ai-add-image-btn'   => 'Magic AI',
-                'ai-btn-info'        => 'Luo kuva',
-                'allowed-types'      => 'png, jpeg, jpg',
-                'not-allowed-error'  => 'Vain kuva tiedostot (.jpeg, .jpg, .png, ..) ovat sallittuja.',
-                'upload-media-btn'   => 'Lataa mediaa',
-
-                'ai-generation' => [
-                    '1024x1024'        => '1024x1024',
-                    '1024x1792'        => '1024x1792',
-                    '1792x1024'        => '1792x1024',
-                    'apply'            => 'Käytä',
-                    'dall-e-2'         => 'Dall.E 2',
-                    'dall-e-3'         => 'Dall.E 3',
-                    'generate'         => 'Luo',
-                    'generating'       => 'Luodaan...',
-                    'hd'               => 'HD',
-                    'model'            => 'Malli',
-                    'number-of-images' => 'Kuvien määrä',
-                    'prompt'           => 'Ohje',
-                    'quality'          => 'Laatu',
-                    'regenerate'       => 'Luo uudelleen',
-                    'regenerating'     => 'Luo uudelleen...',
-                    'size'             => 'Koko',
-                    'standard'         => 'Vakio',
-                    'title'            => 'AI-kuvien luominen',
-                ],
-
-                'placeholders' => [
-                    'front'     => 'Etupuoli',
-                    'next'      => 'Seuraava',
-                    'size'      => 'Koko',
-                    'use-cases' => 'Käyttötapaukset',
-                    'zoom'      => 'Zoom',
-                ],
-            ],
-
-            'videos' => [
-                'add-video-btn'     => 'Lisää video',
-                'allowed-types'     => 'mp4, webm, mkv',
-                'not-allowed-error' => 'Vain video tiedostot (.mp4, .mov, .ogg ..) ovat sallittuja.',
-            ],
-
-            'files' => [
-                'add-file-btn'      => 'Lisää tiedosto',
-                'allowed-types'     => 'pdf',
-                'not-allowed-error' => 'Vain pdf tiedostot ovat sallittuja',
-            ],
-        ],
-
-        'tinymce' => [
-            'ai-btn-tile' => 'Magic AI',
-
-            'ai-generation' => [
-                'apply'                  => 'Käytä',
-                'generate'               => 'Luo',
-                'generated-content'      => 'Luo sisältöä',
-                'generated-content-info' => 'AI-sisältö voi olla harhaanjohtavaa. Tarkista luotu sisältö ennen sen käyttöä.',
-                'generating'             => 'Luodaan...',
-                'prompt'                 => 'Ohje',
-                'title'                  => 'AI-apu',
-                'model'                  => 'Malli',
-                'gpt-3-5-turbo'          => 'OpenAI gpt-3.5-turbo',
-                'llama2'                 => 'Llama 2',
-                'mistral'                => 'Mistral',
-                'dolphin-phi'            => 'Dolphin Phi',
-                'phi'                    => 'Phi-2',
-                'starling-lm'            => 'Starling',
-                'llama2-uncensored'      => 'Llama 2 Uncensored',
-                'llama2:13b'             => 'Llama 2 13B',
-                'llama2:70b'             => 'Llama 2 70B',
-                'orca-mini'              => 'Orca Mini',
-                'vicuna'                 => 'Vicuna',
-                'llava'                  => 'LLaVA',
-                'default-prompt'         => 'Oletuskehotus',
-            ],
-        ],
-    ],
-
     'default-prompt' => [
         'detailed' => [
             'title'  => 'Yksityiskohtainen Tuotekuvaus',

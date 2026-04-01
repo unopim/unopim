@@ -6,7 +6,6 @@ return [
             'attribute-families' => [
                 'default' => '默认',
             ],
-
             'attribute-groups' => [
                 'description'      => '描述',
                 'general'          => '一般',
@@ -14,7 +13,6 @@ return [
                 'price'            => '价格',
                 'media'            => '媒体',
             ],
-
             'attributes' => [
                 'brand'                => '品牌',
                 'color'                => '颜色',
@@ -45,7 +43,6 @@ return [
                 'weight'               => '重量',
                 'width'                => '宽度',
             ],
-
             'attribute-options' => [
                 'black'  => '黑色的',
                 'green'  => '绿色的',
@@ -58,19 +55,16 @@ return [
                 'yellow' => '黄色的',
             ],
         ],
-
         'category' => [
             'categories' => [
                 'description' => '根类别描述',
                 'name'        => '根',
             ],
-
             'category_fields' => [
                 'name'        => '姓名',
                 'description' => '描述',
             ],
         ],
-
         'core' => [
             'channels' => [
                 'meta-title'       => '示范店',
@@ -78,7 +72,6 @@ return [
                 'meta-description' => '演示商店元描述',
                 'name'             => '默认',
             ],
-
             'currencies' => [
                 'AED' => '迪拉姆',
                 'AFN' => '以色列谢克尔',
@@ -95,19 +88,16 @@ return [
                 'USD' => '美元',
             ],
         ],
-
         'user' => [
             'roles' => [
                 'description' => '该角色用户将拥有所有访问权限',
                 'name'        => '行政人员',
             ],
-
             'users' => [
                 'name' => '例子',
             ],
         ],
     ],
-
     'installer' => [
         'index' => [
             'create-administrator' => [
@@ -119,7 +109,6 @@ return [
                 'password'         => '密码',
                 'title'            => '创建管理员',
             ],
-
             'environment-configuration' => [
                 'allowed-currencies'  => '允许的货币',
                 'allowed-locales'     => '允许的区域设置',
@@ -157,13 +146,11 @@ return [
                 'usd'                 => '美元 (USD)',
                 'warning-message'     => '提防！默认系统语言和默认货币的设置是永久性的，不能再次更改。',
             ],
-
             'installation-processing' => [
                 'unopim'      => '安装 UnoPim',
                 'unopim-info' => '创建数据库表，这可能需要一些时间',
                 'title'       => '安装',
             ],
-
             'installation-completed' => [
                 'admin-panel'               => '管理面板',
                 'unopim-forums'             => 'UnoPim 论坛',
@@ -171,7 +158,6 @@ return [
                 'title-info'                => 'UnoPim 已成功安装在您的系统上。',
                 'title'                     => '安装完成',
             ],
-
             'ready-for-installation' => [
                 'create-databsae-table'   => '创建数据库表',
                 'install-info-button'     => '点击下面的按钮即可',
@@ -181,7 +167,6 @@ return [
                 'start-installation'      => '开始安装',
                 'title'                   => '准备安装',
             ],
-
             'start' => [
                 'locale'        => '语言环境',
                 'main'          => '开始',
@@ -189,7 +174,6 @@ return [
                 'title'         => '您的 UnoPim 安装',
                 'welcome-title' => '欢迎来到乌诺皮姆 :version',
             ],
-
             'server-requirements' => [
                 'calendar'    => '日历',
                 'ctype'       => '类型',
@@ -212,7 +196,6 @@ return [
                 'tokenizer'   => '分词器',
                 'xml'         => 'XML',
             ],
-
             'back'                     => '后退',
             'unopim-info'              => '社区项目',
             'unopim-logo'              => '乌诺皮姆标志',
