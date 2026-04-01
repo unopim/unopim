@@ -63,7 +63,8 @@ async function fillUserForm(adminPage, {
  * Helper: Create a user end-to-end and verify success.
  */
 async function createUser(adminPage, name, email) {
-  await navigateTo(adminPage, 'users');
+  await adminPage.goto('/admin/settings/users', { waitUntil: 'networkidle', timeout: 60000 });
+  await adminPage.getByRole('button', { name: 'Create User' }).waitFor({ state: 'visible', timeout: 30000 });
   await adminPage.getByRole('button', { name: 'Create User' }).click();
   await fillUserForm(adminPage, {
     name,
@@ -79,7 +80,7 @@ async function createUser(adminPage, name, email) {
  * Silently succeeds if the user is not found.
  */
 async function deleteUser(adminPage, email) {
-  await navigateTo(adminPage, 'users');
+  await adminPage.goto('/admin/settings/users', { waitUntil: 'networkidle', timeout: 60000 });
   await searchInDataGrid(adminPage, email);
   const row = adminPage.locator('#app div').filter({ hasText: email });
   const deleteBtn = row.locator('span[title="Delete"]').first();

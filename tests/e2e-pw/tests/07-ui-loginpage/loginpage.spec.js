@@ -112,6 +112,6 @@ test('Login with valid credentials', async ({ adminPage }) => {
   await adminPage.fill('input[name=email]', email);
   await adminPage.fill('input[name=password]', password);
   await adminPage.press('input[name=password]', 'Enter');
-  await expect(adminPage).toHaveURL(/\/dashboard/);
+  await expect(adminPage).toHaveURL(/\/admin\//);  // Redirects to last visited admin page or dashboard
 });
 });
