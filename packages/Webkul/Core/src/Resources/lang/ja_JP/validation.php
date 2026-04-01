@@ -12,7 +12,7 @@ return [
     'type'                         => ':attribute は有効なタイプでなければなりません。',
     'validation-type'              => ':attribute は有効なタイプでなければなりません。',
     'field-option-not-found'       => ':attribute に無効なオプション :invalid_codes が含まれています。',
-    'boolean-string'               => 'この値は、「true」または「false」として表されるブール文字列でなければなりません。',
+    'boolean-string'               => ':attribute この値は、「true」または「false」として表されるブール文字列でなければなりません。',
     'not-supported'                => ':attribute は次の値 (:unsupported) をサポートしていません。',
     'seperator-not-supported'      => '区切り文字としてサポートされているのは、,、;、または | のみです。',
     'file-type'                    => 'ファイルのタイプは csv、xls、xlsx でなければなりません。',

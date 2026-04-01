@@ -51,18 +51,27 @@ class TextFilter extends AbstractElasticSearchAttributeFilter
                 break;
 
             case FilterOperators::CONTAINS:
-                $escapedQueryArray = array_map(function ($q) {
-                    $q = preg_replace('/([+\-&|!(){}\[\]^"~*?:\\\\\/])/', '\\\\$1', $q);
+                /**
+                 * Use match_phrase_prefix for text fields instead of query_string with leading
+                 * wildcards to avoid exceeding maxClauseCount on large indexes.
+                 */
+                $clauses = [];
 
-                    return str_contains($q, ' ') ? '"*'.$q.'*"' : '*'.$q.'*';
-                }, (array) $value);
+                foreach ((array) $value as $val) {
+                    $clauses[] = [
+                        'match_phrase_prefix' => [
+                            $attributePath => [
+                                'query'          => $val,
+                                'max_expansions' => 1000,
+                            ],
+                        ],
+                    ];
+                }
 
-                $escapedQuery = implode(' OR ', $escapedQueryArray);
-
-                $clause = [
-                    'query_string' => [
-                        'default_field' => $attributePath,
-                        'query'         => $escapedQuery,
+                $clause = count($clauses) === 1 ? $clauses[0] : [
+                    'bool' => [
+                        'should'               => $clauses,
+                        'minimum_should_match' => 1,
                     ],
                 ];
 
@@ -70,10 +79,17 @@ class TextFilter extends AbstractElasticSearchAttributeFilter
                 break;
 
             case FilterOperators::WILDCARD:
+                /**
+                 * Cap wildcard expansion with rewrite: 'top_terms_1024' to avoid
+                 * exceeding maxClauseCount on high-cardinality keyword fields.
+                 */
                 $escapedValue = QueryString::escapeValue(current((array) $value));
                 $clause = [
                     'wildcard' => [
-                        $attributePath.'.keyword' => '*'.$escapedValue.'*',
+                        $attributePath.'.keyword' => [
+                            'value'   => '*'.$escapedValue.'*',
+                            'rewrite' => 'top_terms_1024',
+                        ],
                     ],
                 ];
 

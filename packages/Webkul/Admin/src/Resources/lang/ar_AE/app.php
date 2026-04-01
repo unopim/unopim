@@ -11,7 +11,6 @@ return [
             'powered-by'             => 'مدعوم من :unopim,',
             'open-source-project-by' => 'مشروع مفتوح المصدر بواسطة :webkul.',
         ],
-
         'forget-password' => [
             'create' => [
                 'email'                  => 'بريد الكتروني مسجل',
@@ -26,7 +25,6 @@ return [
                 'open-source-project-by' => 'مشروع مفتوح المصدر بواسطة :webkul.',
             ],
         ],
-
         'reset-password' => [
             'back-link-title'        => 'العودة لتسجيل الدخول؟',
             'confirm-password'       => 'تأكيد كلمة المرور',
@@ -38,7 +36,6 @@ return [
             'open-source-project-by' => 'مشروع مفتوح المصدر بواسطة :webkul.',
         ],
     ],
-
     'notifications' => [
         'description-text' => 'سرد جميع الإخطارات',
         'marked-success'   => 'تم وضع علامة على الإخطار بنجاح',
@@ -55,7 +52,6 @@ return [
             'processing' => 'يعالج',
         ],
     ],
-
     'account' => [
         'edit' => [
             'back-btn'          => 'خلف',
@@ -76,25 +72,89 @@ return [
             'user-timezone'     => 'وحدة زمنية',
         ],
     ],
-
     'dashboard' => [
-        'index' => [
-            'title'            => 'لوحة القيادة',
-            'user-info'        => 'الرصد بسرعة ، ما \'s count in your PIM',
-            'user-name'        => 'مرحبًا! :user_name',
-            'catalog-details'  => 'فهرس',
-            'total-families'   => 'إجمالي العائلات',
-            'total-attributes' => 'إجمالي السمات',
-            'total-groups'     => 'المجموعات الكلية',
-            'total-categories' => 'إجمالي الفئات',
-            'total-products'   => 'إجمالي المنتجات',
-            'settings-details' => 'هيكل الكتالوج',
-            'total-locales'    => 'إجمالي الأماكن',
-            'total-currencies' => 'إجمالي العملات',
-            'total-channels'   => 'إجمالي القنوات',
+        'invalid-type' => 'نوع عنصر لوحة التحكم غير صالح.',
+        'index'        => [
+            'title'                => 'لوحة القيادة',
+            'user-info'            => 'اطّلع بسرعة على الإحصاءات في نظام إدارة معلومات المنتج الخاص بك.',
+            'user-name'            => 'مرحبًا! :user_name',
+            'catalog-details'      => 'فهرس',
+            'total-families'       => 'إجمالي العائلات',
+            'total-attributes'     => 'إجمالي السمات',
+            'total-groups'         => 'المجموعات الكلية',
+            'total-categories'     => 'إجمالي الفئات',
+            'total-products'       => 'إجمالي المنتجات',
+            'settings-details'     => 'هيكل الكتالوج',
+            'total-locales'        => 'إجمالي الأماكن',
+            'total-currencies'     => 'إجمالي العملات',
+            'total-channels'       => 'إجمالي القنوات',
+            'completeness'         => 'الاكتمال',
+            'active'               => 'نشط',
+            'inactive'             => 'غير نشط',
+            'simple'               => 'بسيط',
+            'configurable'         => 'قابل للتكوين',
+            'product-stats'        => 'إحصائيات المنتج',
+            'product-type-dist'    => 'توزيع نوع المنتج',
+            'products-by-status'   => 'المنتجات حسب الحالة',
+            'products-over-time'   => 'نشاط المنتج (آخر 7 أيام)',
+            'legend-created'       => 'تم الإنشاء',
+            'legend-updated'       => 'تم التحديث',
+            'recent-activity'      => 'نشاط حديث',
+            'no-activity'          => 'لم يتم العثور على نشاط حديث.',
+            'updated'              => 'تم التحديث',
+            'created'              => 'تم الإنشاء',
+            'deleted'              => 'تم الحذف',
+            'ago'                  => 'منذ',
+            'just-now'             => 'الآن',
+            'data-transfer'        => 'نقل البيانات',
+            'no-jobs'              => 'لم يتم العثور على وظائف استيراد/تصدير حديثة.',
+            'job-type-import'      => 'استيراد',
+            'job-type-export'      => 'تصدير',
+            'job-state-completed'  => 'مكتمل',
+            'job-state-failed'     => 'فشل',
+            'job-state-processing' => 'جاري المعالجة',
+            'job-state-pending'    => 'قيد الانتظار',
+            'job-state-validated'  => 'تم التحقق',
+            'rows-processed'       => 'الصفوف المعالجة',
+            'errors'               => 'أخطاء',
+            'quick-links'          => 'روابط سريعة',
+            'create-product'       => 'إنشاء منتج',
+            'import-data'          => 'استيراد البيانات',
+            'export-data'          => 'تصدير البيانات',
+            'manage-attributes'    => 'إدارة السمات',
+            'view-all-activity'    => 'عرض الكل',
+            'view-all-jobs'        => 'عرض جميع الوظائف',
+            'new-this-week'        => 'جديد هذا الأسبوع',
+            'with-variants'        => 'مع المتغيرات',
+            'avg-completeness'     => 'متوسط الاكتمال',
+            'enriched'             => 'مُعزز',
+            'analytics-section'    => 'التحليلات',
+            'operations-section'   => 'العمليات',
+            'needs-attention'      => 'يحتاج إلى اهتمام',
+            'unenriched-products'  => 'منتجات غير مُعززة',
+            'failed-jobs-24h'      => 'وظائف فاشلة (24 ساعة)',
+            'low-completeness'     => 'اكتمال منخفض',
+            'all-good'             => 'كل شيء يبدو جيدًا!',
+            'channel-readiness'    => 'جاهزية القناة',
+            'ready-to-publish'     => 'جاهز للنشر',
+            'of'                   => 'of',
+            'products-ready'       => 'المنتجات جاهزة',
+            'no-readiness-data'    => 'لا توجد بيانات اكتمال متاحة بعد.',
+            'entity-types'         => [
+                'product'          => 'منتج',
+                'category'         => 'فئة',
+                'attribute'        => 'سمة',
+                'attribute-family' => 'عائلة',
+                'attribute-group'  => 'مجموعة',
+                'category-field'   => 'حقل الفئة',
+                'channel'          => 'قناة',
+                'role'             => 'دور',
+                'job-instance'     => 'مهمة',
+                'webhook'          => 'ويب هوك',
+                'api-key'          => 'مفتاح API',
+            ],
         ],
     ],
-
     'catalog' => [
         'products' => [
             'index' => [
@@ -104,8 +164,7 @@ return [
                 'magic-ai-error'            => 'يرجى التحقق من بيانات اعتماد Magic AI والتأكد من اختيار النموذج الصحيح.',
                 'magic-ai-validate-error'   => 'يرجى التحقق من بيانات اعتماد Magic AI.',
                 'magic-ai-validate-success' => 'تم التحقق من بيانات اعتماد Magic AI بنجاح.',
-
-                'create' => [
+                'create'                    => [
                     'back-btn'                          => 'خلف',
                     'configurable-attributes'           => 'سمات قابلة للتكوين',
                     'create-btn'                        => 'إنشاء المنتج',
@@ -118,7 +177,6 @@ return [
                     'not-config-super-attributes-error' => 'لم يتم العثور على هذه السمات الفائقة بقيمة ":super_attributes"',
                     'sku-exists-error'                  => 'SKU بقيمة ":sku" موجودة بالفعل',
                 ],
-
                 'datagrid' => [
                     'active'                 => 'نشيط',
                     'attribute-family'       => 'تنسب الأسرة',
@@ -131,7 +189,7 @@ return [
                     'copy'                   => 'ينسخ',
                     'disable'                => 'إبطال',
                     'id'                     => 'بطاقة تعريف',
-                    'id-value'               => 'بطاقة تعريف:id',
+                    'id-value'               => 'المعرف: :id',
                     'image'                  => 'صورة',
                     'mass-delete-success'    => 'تم حذف المنتجات المختارة بنجاح',
                     'mass-update-success'    => 'تم تحديث المنتجات المحددة بنجاح',
@@ -147,59 +205,52 @@ return [
                     'type'                   => 'يكتب',
                     'update-status'          => 'تحديث الحالة',
                     'parent'                 => 'الأبوين',
-                    'parent-identifier'      => 'الوالد : :sku',
+                    'parent-identifier'      => 'الأصل: :sku',
+                    'created-at'             => 'تاريخ الإنشاء',
+                    'updated-at'             => 'تاريخ التحديث',
                 ],
             ],
-
             'edit' => [
-                'preview'  => 'معاينة',
-                'remove'   => 'يزيل',
-                'save-btn' => 'حفظ المنتج',
-                'title'    => 'تحرير المنتج',
-
+                'preview'    => 'معاينة',
+                'remove'     => 'يزيل',
+                'save-btn'   => 'حفظ المنتج',
+                'title'      => 'تحرير المنتج',
                 'categories' => [
                     'title' => 'فئات',
                 ],
-
                 'images' => [
                     'info'  => 'يجب أن يكون حل الصورة مثل 560px x 609px',
                     'title' => 'الصور',
                 ],
-
                 'videos' => [
                     'error' => 'لا يجوز أن يكون حجم الملف :max أكبر من :attribute كيلوبايت. يرجى اختيار ملف أصغر حجمًا.',
                     'info'  => 'يجب أن يكون الحد الأقصى لحجم الفيديو مثل :size',
                     'title' => 'أشرطة فيديو',
                 ],
-
                 'links' => [
                     'related-products' => [
                         'empty-info' => 'إضافة منتجات الارتباط ذات الصلة.',
                         'info'       => 'بالإضافة إلى المنتج الذي يشاهده العميل ، يتم تقديمها مع المنتجات ذات الصلة.',
                         'title'      => 'منتجات ذات صله',
                     ],
-
                     'up-sells' => [
                         'empty-info' => 'إضافة ما يصل منتجات جمع منتجات.',
                         'info'       => 'يتم تقديم العميل مع منتجات مبيعات ، والتي تعمل كبديل عالي الجودة أو عالي الجودة للمنتج الذي يشاهدونه حاليًا.',
                         'title'      => 'المنتجات الصاعدة',
                     ],
-
                     'cross-sells' => [
                         'empty-info' => 'أضف منتجات جمعية البيع المتقاطعة.',
-                        'info'       => 'بجوار عربة التسوق ، أنت \'ll find these \"impulse-buy\" products positioned as cross-sells to complement the items already added to your cart.',
+                        'info'       => 'بجوار سلة التسوق ستجد منتجات بيع متقاطع موضوعة لإكمال العناصر التي أُضيفت بالفعل إلى سلتك.',
                         'title'      => 'منتجات المبيعات',
                     ],
-
                     'add-btn'           => 'يضيف',
                     'delete'            => 'يمسح',
                     'empty-info'        => 'لإضافة منتجات :type أثناء التنقل.',
                     'empty-title'       => 'أضف منتج',
                     'image-placeholder' => 'صورة المنتج',
-                    'sku'               => ':sku التزلج - ماك',
+                    'sku'               => 'SKU - :sku',
                     'title'             => 'ذات الصلة',
                 ],
-
                 'types' => [
                     'configurable' => [
                         'add-btn'                            => 'إضافة البديل',
@@ -210,21 +261,19 @@ return [
                         'image-placeholder'                  => 'صورة المنتج',
                         'info'                               => 'تعتمد منتجات التباين على كل مجموعة ممكنة من السمة.',
                         'qty'                                => ':qty الكمية',
-                        'sku'                                => ':sku التزلج - ماك',
+                        'sku'                                => 'SKU - :sku',
                         'title'                              => 'الاختلافات',
                         'variant-exists'                     => 'هذا المزيج البديل موجود بالفعل أو تم أخذ SKU بالفعل.',
                         'variant-attribute-option-not-found' => 'لم يتم العثور على سمة أو خيار متغير بقيمة ":attributes"',
-                        'supper-attribute-not-found'         => 'لم يتم العثور على سمة سوبر بقيمة ":attribute"',
+                        'supper-attribute-not-found'         => 'لم يتم العثور على السمة الفائقة بالقيمة ":attribute"',
                         'variant-given-exists'               => 'هذا المتغير بقيمة ":variants" موجود بالفعل',
-
-                        'create' => [
+                        'create'                             => [
                             'description'            => 'وصف',
                             'name'                   => 'اسم',
                             'save-btn'               => 'يضيف',
                             'title'                  => 'إضافة البديل',
                             'variant-already-exists' => 'هذا البديل موجود بالفعل',
                         ],
-
                         'edit' => [
                             'disabled'        => 'عاجز',
                             'edit-info'       => 'إذا كنت ترغب في تحديث معلومات المنتج بالتفصيل ، فانتقل إلى',
@@ -240,7 +289,6 @@ return [
                             'title'           => 'منتج',
                             'weight'          => 'وزن',
                         ],
-
                         'mass-edit' => [
                             'add-images'          => 'إضافة الصور',
                             'apply-to-all-btn'    => 'تنطبق على الجميع',
@@ -267,23 +315,31 @@ return [
                         ],
                     ],
                 ],
-
                 'translate' => [
-                    'translate-btn'            => 'ترجمة',
-                    'title'                    => 'ترجمة',
-                    'source-channel'           => 'القناة المصدر',
-                    'locale'                   => 'الإعدادات المحلية المصدر',
-                    'translated-content'       => 'المحتوى المترجم',
-                    'translating'              => 'جاري الترجمة',
-                    'apply'                    => 'تطبيق',
-                    'cancel'                   => 'إلغاء',
-                    'target-locales'           => 'الإعدادات المحلية المستهدفة',
-                    'target-channel'           => 'القناة المستهدفة',
-                    'attributes'               => 'السمات',
-                    'source-content'           => 'المحتوى المصدر',
-                    'tranlated-job-processed'  => 'تمت معالجة مهمة تخزين المحتوى المترجم.',
+                    'translate-btn'               => 'ترجمة',
+                    'title'                       => 'ترجمة',
+                    'source-channel'              => 'القناة المصدر',
+                    'locale'                      => 'الإعدادات المحلية المصدر',
+                    'translated-content'          => 'المحتوى المترجم',
+                    'translating'                 => 'جاري الترجمة',
+                    'apply'                       => 'تطبيق',
+                    'back'                        => 'رجوع',
+                    'cancel'                      => 'إلغاء',
+                    'target-locales'              => 'الإعدادات المحلية المستهدفة',
+                    'target-channel'              => 'القناة المستهدفة',
+                    'attributes'                  => 'السمات',
+                    'tranlated-job-processed'     => 'تمت معالجة مهمة تخزين المحتوى المترجم.',
+                    'step'                        => 'خطوة',
+                    'select-source'               => 'اختر المصدر',
+                    'select-target'               => 'اختر الهدف',
+                    'first-step-title'            => 'الخطوة 1: اختر قناة المصدر واللغة والسمات',
+                    'first-step-title-attributes' => 'الخطوة 1: اختر قناة المصدر واللغة',
+                    'source-content'              => 'المحتوى المصدر',
+                    'second-step-title'           => 'الخطوة 2: اختر القناة المستهدفة واللغات',
+                    'target-content'              => 'المحتوى المستهدف',
+                    'next'                        => 'التالي',
+                    'empty-translation-data'      => 'البيانات غير متوفرة للترجمة بناءً على القناة المصدر والإعدادات المحلية',
                 ],
-
                 'product-info' => [
                     'title'        => 'معلومات المنتج',
                     'status'       => 'الحالة',
@@ -293,8 +349,8 @@ return [
                     'created-at'   => 'تاريخ الإنشاء',
                     'product-type' => 'نوع المنتج',
                 ],
+                'more-actions' => 'إجراءات إضافية',
             ],
-
             'bulk-edit' => [
                 'validation' => [
                     'decimal'                    => 'يرجى إدخال رقم عشري صالح.',
@@ -306,27 +362,22 @@ return [
                     'select-attribute-or-family' => 'يرجى اختيار سمة واحدة على الأقل أو عائلة سمات.',
                     'failed'                     => 'فشلت عملية التحقق.',
                 ],
-
-                'modal'                      => [
+                'modal' => [
                     'title'            => 'السمات للتحرير الجماعي',
                     'btn-cancel'       => 'إلغاء',
                     'btn-proceed'      => 'متابعة',
                     'attribute-family' => 'اختر عائلة السمات',
                 ],
-
                 'index' => [
-                    'no-product'    => 'لم يتم اختيار أي منتجات للتحرير الجماعي.',
+                    'no-product' => 'لم يتم اختيار أي منتجات للتحرير الجماعي.',
                 ],
-
                 'filter' => [
-                    'many-product'      => 'تم اختيار عدد كبير جدًا من المنتجات.',
-                    'redirect-message'  => 'إعادة التوجيه إلى عرض التحرير الجماعي.',
+                    'many-product'     => 'تم اختيار عدد كبير جدًا من المنتجات.',
+                    'redirect-message' => 'إعادة التوجيه إلى عرض التحرير الجماعي.',
                 ],
-
                 'handle-save' => [
-                    'edit-success'  => 'تم التحرير الجماعي بنجاح.',
+                    'edit-success' => 'تم التحرير الجماعي بنجاح.',
                 ],
-
                 'id'              => 'المعرف',
                 'no-changes'      => 'لا توجد تغييرات للحفظ.',
                 'success'         => 'تم تنفيذ العملية بنجاح.',
@@ -336,9 +387,8 @@ return [
                 'img-preview'     => 'معاينة الصورة',
                 'no-image'        => 'لا توجد صورة',
                 'img-fail'        => 'فشل تحميل الصورة.',
-                'no-opton'        => 'No Options',
+                'no-option'       => 'لا توجد خيارات',
             ],
-
             'create-success'          => 'تم إنشاء المنتج بنجاح',
             'delete-failed'           => 'فشل حذف المنتج',
             'delete-success'          => 'تم حذف المنتج بنجاح',
@@ -347,18 +397,16 @@ return [
             'update-success'          => 'تم تحديث المنتج بنجاح',
             'unique-validation'       => 'هذه القيمة مأخوذة بالفعل.',
             'invalid-type'            => 'لم يتم العثور على نوع المنتج بقيمة ":type"',
-            'product-not-found'       => 'المنتج مع SKU ":SKU" لا يمكن العثور عليها',
-            'parent-not-found'        => 'الوالد مع SKU ":SKU" لا يمكن العثور عليها',
+            'product-not-found'       => 'تعذر العثور على المنتج ذو SKU ":sku"',
+            'parent-not-found'        => 'تعذر العثور على الأصل ذو SKU ":sku"',
             'upload-success'          => 'تم تحميل ملف المنتج بنجاح.',
             'update-failure'          => 'تعذر تحديث المنتج.',
         ],
-
         'attributes' => [
             'index' => [
                 'create-btn' => 'إنشاء السمة',
                 'title'      => 'صفات',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'channel-based'            => 'القناة القائمة',
                     'code'                     => 'شفرة',
                     'created-at'               => 'أنشئت في',
@@ -376,7 +424,6 @@ return [
                     'delete-attribute-failure' => 'لا يمكن حذف هذه الخاصية لأنها قيد الاستخدام في المنتجات القابلة للتكوين',
                 ],
             ],
-
             'create' => [
                 'add-attribute-options' => 'إضافة خيارات السمة',
                 'add-option'            => 'أضف الخيار',
@@ -392,20 +439,19 @@ return [
                 'configuration'         => 'إعدادات',
                 'create-empty-option'   => 'إنشاء خيار فارغ افتراضي',
                 'date'                  => 'تاريخ',
-                'datetime'              => 'DateTime',
+                'datetime'              => 'تاريخ ووقت',
                 'decimal'               => 'عدد عشري',
                 'default-value'         => 'القيمة الافتراضية',
                 'email'                 => 'بريد إلكتروني',
                 'enable-wysiwyg'        => 'تمكين محرر wysiwyg',
                 'file'                  => 'ملف',
                 'general'               => 'عام',
-                'image'                 => 'صورة',
                 'gallery'               => 'معرض',
+                'image'                 => 'صورة',
                 'input-options'         => 'خيارات الإدخال',
                 'input-validation'      => 'التحقق من صحة المدخلات',
                 'is-comparable'         => 'السمة قابلة للمقارنة',
                 'is-configurable'       => 'استخدم لإنشاء منتج قابل للتكوين',
-                'is-filterable'         => 'استخدم في الملاحة الطبقات',
                 'is-required'           => 'مطلوب',
                 'is-unique'             => 'فريد من نوعة',
                 'is-visible-on-front'   => 'مرئية على صفحة عرض المنتج على الواجهة الأمامية',
@@ -416,13 +462,13 @@ return [
                 'options'               => 'خيارات',
                 'position'              => 'موضع',
                 'price'                 => 'سعر',
-                'regex'                 => 'Regex',
+                'regex'                 => 'تعبير نمطي',
                 'save-btn'              => 'حفظ السمة',
                 'select'                => 'يختار',
                 'select-type'           => 'حدد نوع السمة',
                 'swatch'                => 'نمط العيّنة',
                 'text'                  => 'نص',
-                'textarea'              => 'Textarea',
+                'textarea'              => 'منطقة نص',
                 'title'                 => 'اضف ميزة',
                 'type'                  => 'يكتب',
                 'url'                   => 'عنوان URL',
@@ -435,8 +481,8 @@ return [
                 'usable-in-grid'        => 'قابلة للاستخدام في الشبكة',
                 'is-filterable'         => 'قابل للتصفية',
                 'ai-translate'          => 'ترجمة الذكاء الاصطناعي',
-
-                'option' => [
+                'invalid-swatch-type'   => 'ال:attribute غير مسموح به لنوع السمة :type مع نوع العينة :swatch_type.',
+                'option'                => [
                     'color'    => 'تغيير الالوان',
                     'dropdown' => 'اسقاط',
                     'image'    => 'حوامل الصورة',
@@ -444,7 +490,6 @@ return [
                     'text'     => 'نصوص نص',
                 ],
             ],
-
             'edit' => [
                 'add-attribute-options' => 'إضافة خيارات السمة',
                 'add-option'            => 'أضف الخيار',
@@ -460,7 +505,7 @@ return [
                 'configuration'         => 'إعدادات',
                 'create-empty-option'   => 'إنشاء خيار فارغ افتراضي',
                 'date'                  => 'تاريخ',
-                'datetime'              => 'DateTime',
+                'datetime'              => 'تاريخ ووقت',
                 'decimal'               => 'عدد عشري',
                 'default-value'         => 'القيمة الافتراضية',
                 'email'                 => 'بريد إلكتروني',
@@ -468,12 +513,10 @@ return [
                 'file'                  => 'ملف',
                 'general'               => 'عام',
                 'image'                 => 'صورة',
-                'gallery'               => 'معرض',
                 'input-options'         => 'خيارات الإدخال',
                 'input-validation'      => 'التحقق من صحة المدخلات',
                 'is-comparable'         => 'السمة قابلة للمقارنة',
                 'is-configurable'       => 'استخدم لإنشاء منتج قابل للتكوين',
-                'is-filterable'         => 'استخدم في الملاحة الطبقات',
                 'is-required'           => 'مطلوب',
                 'is-unique'             => 'فريد من نوعة',
                 'is-visible-on-front'   => 'مرئية على صفحة عرض المنتج على الواجهة الأمامية',
@@ -484,13 +527,13 @@ return [
                 'options'               => 'خيارات',
                 'position'              => 'موضع',
                 'price'                 => 'سعر',
-                'regex'                 => 'Regex',
+                'regex'                 => 'تعبير نمطي',
                 'save-btn'              => 'حفظ السمة',
                 'select'                => 'يختار',
                 'select-type'           => 'حدد نوع السمة',
                 'swatch'                => 'نمط العيّنة',
                 'text'                  => 'نص',
-                'textarea'              => 'Textarea',
+                'textarea'              => 'منطقة نص',
                 'title'                 => 'تحرير السمة',
                 'type'                  => 'يكتب',
                 'url'                   => 'عنوان URL',
@@ -503,22 +546,19 @@ return [
                 'usable-in-grid'        => 'قابلة للاستخدام في الشبكة',
                 'is-filterable'         => 'قابل للتصفية',
                 'ai-translate'          => 'ترجمة الذكاء الاصطناعي',
-                'invalid-swatch-type'   => 'القيمة :attribute غير مسموح بها لنوع السمة :type مع نوع السواتش :swatch_type.',
-
-                'option' => [
-                    'create-success'       => 'تم إنشاء خيار السمة بنجاح',
-                    'delete-success'       => 'تم حذف خيار السمة بنجاح',
-                    'save-btn'             => 'حفظ الخيار',
-                    'sort-update-failure'  => 'فشل في تحديث ترتيب الفرز',
-                    'sort-update-success'  => 'تم تحديث ترتيب الفرز بنجاح',
-                    'update-success'       => 'تم تحديث خيار السمة بنجاح',
-                    'color'                => 'تغيير الالوان',
-                    'dropdown'             => 'اسقاط',
-                    'image'                => 'حوامل الصورة',
-                    'text'                 => 'نصوص نص',
+                'option'                => [
+                    'save-btn'            => 'حفظ الخيار',
+                    'create-success'      => 'تم إنشاء خيار السمة بنجاح',
+                    'update-success'      => 'تم تحديث خيار السمة بنجاح',
+                    'sort-update-success' => 'تم تحديث ترتيب الفرز بنجاح',
+                    'sort-update-failure' => 'فشل في تحديث ترتيب الفرز',
+                    'delete-success'      => 'تم حذف خيار السمة بنجاح',
+                    'color'               => 'تغيير الالوان',
+                    'dropdown'            => 'اسقاط',
+                    'image'               => 'حوامل الصورة',
+                    'text'                => 'نصوص نص',
                 ],
             ],
-
             'create-success'    => 'السمة التي تم إنشاؤها بنجاح',
             'delete-failed'     => 'فشل حذف السمة',
             'delete-success'    => 'تم حذف السمة بنجاح',
@@ -526,19 +566,16 @@ return [
             'user-define-error' => 'لا يمكن حذف سمة النظام',
             'not-found'         => 'لم يتم العثور على السمة برمز ":code"',
         ],
-
         'attribute-options' => [
             'create-success'       => 'خيار السمة الذي تم إنشاؤه بنجاح',
             'update-success'       => 'تم تحديث خيار السمة بنجاح',
             'usable-in-grid-error' => 'يمكن استخدام 4 سمات فقط في تمكين الشبكة.',
         ],
-
         'attribute-groups' => [
             'index' => [
                 'create-btn' => 'إنشاء مجموعة السمة',
                 'title'      => 'مجموعات السمات',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'code'                => 'شفرة',
                     'delete'              => 'يمسح',
                     'mass-delete-success' => 'تم حذف مجموعة السمات المحددة بنجاح',
@@ -550,7 +587,6 @@ return [
                     'update-status'       => 'تحديث الحالة',
                 ],
             ],
-
             'create' => [
                 'title'    => 'إضافة مجموعة السمة',
                 'save-btn' => 'حفظ مجموعة السمة',
@@ -559,7 +595,6 @@ return [
                 'code'     => 'شفرة',
                 'label'    => 'ملصق',
             ],
-
             'edit' => [
                 'title'    => 'تحرير مجموعة السمة',
                 'back-btn' => 'خلف',
@@ -568,38 +603,34 @@ return [
                 'code'     => 'شفرة',
                 'label'    => 'ملصق',
             ],
-
             'create-success'        => 'مجموعة السمات التي تم إنشاؤها بنجاح',
             'delete-failed'         => 'فشلت مجموعة السمات المحذوفة',
             'delete-success'        => 'تم حذف مجموعة السمة بنجاح',
             'update-success'        => 'تم تحديث مجموعة السمات بنجاح',
             'user-define-error'     => 'لا يمكن حذف مجموعة سمة النظام',
             'attribute-group-error' => 'يتم استخدام المجموعة في العائلات.',
-            'not-found'             => 'لم يتم العثور على مجموعة السمات برمز "code"',
+            'not-found'             => 'لم يتم العثور على مجموعة السمات برمز ":code"',
         ],
-
         'categories' => [
             'index' => [
-                'add-btn' => 'إنشاء فئة',
-                'title'   => 'فئات',
-
+                'add-btn'  => 'إنشاء فئة',
+                'title'    => 'فئات',
                 'datagrid' => [
                     'active'         => 'نشيط',
                     'code'           => 'شفرة',
                     'delete'         => 'يمسح',
-                    'delete-success' => 'تم اختياره:تم حذف المورد بنجاح',
+                    'delete-success' => 'تم حذف :resource المحددة بنجاح',
                     'edit'           => 'يحرر',
                     'id'             => 'بطاقة تعريف',
                     'inactive'       => 'غير نشط',
                     'name'           => 'اسم العرض',
+                    'category-name'  => 'اسم',
                     'no-of-products' => 'عدد من المنتجات',
                     'position'       => 'موضع',
-                    'category-name'  => 'اسم',
                     'status'         => 'مرئية في القائمة',
                     'update-status'  => 'تحديث الحالة',
                 ],
             ],
-
             'create' => [
                 'back-btn'            => 'خلف',
                 'code'                => 'شفرة',
@@ -620,7 +651,6 @@ return [
                 'right-section'       => 'قسم التكوين',
                 'left-section'        => 'القسم العام',
             ],
-
             'edit' => [
                 'back-btn'               => 'خلف',
                 'code'                   => 'شفرة',
@@ -639,7 +669,6 @@ return [
                 'right-section'          => 'قسم التكوين',
                 'left-section'           => 'القسم العام',
             ],
-
             'category'             => 'فئة',
             'create-success'       => 'فئة تم إنشاؤها بنجاح.',
             'delete-category-root' => 'لا يمكنك حذف فئة الجذر المرتبطة بقناة.',
@@ -654,14 +683,12 @@ return [
             'create-failure'       => 'تعذر إنشاء الفئة.',
             'update-failure'       => 'تعذر تحديث الفئة.',
         ],
-
         'category_fields' => [
             'index' => [
                 'create-btn' => 'إنشاء حقل فئة',
                 'add-btn'    => 'إنشاء حقل الفئة',
                 'title'      => 'حقول الفئة',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'channel-based'       => 'القناة القائمة',
                     'code'                => 'شفرة',
                     'created-at'          => 'أنشئت في',
@@ -686,7 +713,6 @@ return [
                     'mass-delete-failed'  => 'لا يمكن حذف حقول الفئة المحددة.',
                 ],
             ],
-
             'create' => [
                 'add-field-options'   => 'إضافة خيارات حقل الفئة',
                 'add-option'          => 'أضف الخيار',
@@ -702,7 +728,7 @@ return [
                 'configuration'       => 'إعدادات',
                 'create-empty-option' => 'إنشاء خيار فارغ افتراضي',
                 'date'                => 'تاريخ',
-                'datetime'            => 'DateTime',
+                'datetime'            => 'تاريخ ووقت',
                 'decimal'             => 'عدد عشري',
                 'default-value'       => 'القيمة الافتراضية',
                 'email'               => 'بريد إلكتروني',
@@ -720,13 +746,13 @@ return [
                 'number'              => 'رقم',
                 'options'             => 'خيارات',
                 'position'            => 'موضع',
-                'regex'               => 'Regex',
+                'regex'               => 'تعبير نمطي',
                 'save-btn'            => 'حفظ حقل الفئة',
                 'select'              => 'يختار',
                 'select-type'         => 'اختر صنف',
-                'swatch'              => 'Swatch',
+                'swatch'              => 'عيّنة',
                 'text'                => 'نص',
-                'textarea'            => 'Textarea',
+                'textarea'            => 'منطقة نص',
                 'title'               => 'إضافة حقل الفئة',
                 'type'                => 'يكتب',
                 'url'                 => 'عنوان URL',
@@ -741,8 +767,7 @@ return [
                 'set-section-right'   => 'قسم التكوين',
                 'settings'            => 'إعدادات',
                 'same-code-error'     => 'يجب أن يكون رمز الخيار فريدًا.',
-
-                'option' => [
+                'option'              => [
                     'dropdown' => 'اسقاط',
                     'save-btn' => 'حفظ الخيار',
                     'color'    => 'تغيير الالوان',
@@ -750,7 +775,6 @@ return [
                     'text'     => 'نصوص نص',
                 ],
             ],
-
             'edit' => [
                 'add-field-options'   => 'إضافة خيارات حقل الفئة',
                 'add-option'          => 'أضف الخيار',
@@ -766,7 +790,7 @@ return [
                 'configuration'       => 'إعدادات',
                 'create-empty-option' => 'إنشاء خيار فارغ افتراضي',
                 'date'                => 'تاريخ',
-                'datetime'            => 'DateTime',
+                'datetime'            => 'تاريخ ووقت',
                 'decimal'             => 'عدد عشري',
                 'default-value'       => 'القيمة الافتراضية',
                 'email'               => 'بريد إلكتروني',
@@ -785,13 +809,13 @@ return [
                 'number'              => 'رقم',
                 'options'             => 'خيارات',
                 'position'            => 'موضع',
-                'regex'               => 'Regex',
+                'regex'               => 'تعبير نمطي',
                 'save-btn'            => 'حفظ حقل الفئة',
                 'select'              => 'يختار',
                 'select-type'         => 'اختر صنف',
-                'swatch'              => 'Swatch',
+                'swatch'              => 'عيّنة',
                 'text'                => 'نص',
-                'textarea'            => 'Textarea',
+                'textarea'            => 'منطقة نص',
                 'title'               => 'تحرير حقل فئة',
                 'type'                => 'يكتب',
                 'url'                 => 'عنوان URL',
@@ -806,8 +830,7 @@ return [
                 'set-section-right'   => 'قسم التكوين',
                 'settings'            => 'إعدادات',
                 'same-code-error'     => 'يجب أن يكون رمز الخيار فريدًا.',
-
-                'option' => [
+                'option'              => [
                     'dropdown' => 'اسقاط',
                     'save-btn' => 'حفظ الخيار',
                     'color'    => 'تغيير الالوان',
@@ -815,7 +838,6 @@ return [
                     'text'     => 'نصوص نص',
                 ],
             ],
-
             'create-success'    => 'تم إنشاء حقل الفئة بنجاح',
             'delete-failed'     => 'فشل حقل الفئة المحذوفة',
             'delete-success'    => 'حذف حقل الفئة بنجاح',
@@ -823,17 +845,14 @@ return [
             'user-define-error' => 'لا يمكن حذف حقل فئة النظام',
             'not-found'         => 'لم يتم العثور على عائلة السمات برمز ":code"',
         ],
-
         'category-fields-options' => [
             'create-success' => 'خيار حقل الفئة تم إنشاؤه بنجاح',
             'update-success' => 'تم تحديث خيار حقل الفئة بنجاح',
         ],
-
         'families' => [
             'index' => [
-                'add'   => 'إنشاء عائلة السمة',
-                'title' => 'العائلات',
-
+                'add'      => 'إنشاء عائلة السمة',
+                'title'    => 'العائلات',
                 'datagrid' => [
                     'code'           => 'شفرة',
                     'delete'         => 'يمسح',
@@ -848,11 +867,9 @@ return [
                     'update-success' => 'تم تحديث :resource المحددة بنجاح',
                 ],
             ],
-
             'create' => [
                 'assign-group-btn'                 => 'تعيين مجموعة السمة',
                 'assign-group-title'               => 'تعيين مجموعة السمة',
-                'assign-group-btn'                 => 'تعيين مجموعة السمة',
                 'back-btn'                         => 'خلف',
                 'code'                             => 'شفرة',
                 'label'                            => 'ملصق',
@@ -880,11 +897,9 @@ return [
                 'unassigned-attribute-groups'      => 'مجموعات السمات غير المعينة',
                 'assign-first-attribute-group'     => 'تعيين المجموعة في الأسرة.',
             ],
-
             'edit' => [
                 'assign-group-btn'                 => 'تعيين مجموعة السمة',
                 'assign-group-title'               => 'تعيين مجموعة السمة',
-                'assign-group-btn'                 => 'تعيين مجموعة السمة',
                 'back-btn'                         => 'خلف',
                 'code'                             => 'شفرة',
                 'label'                            => 'ملصق',
@@ -915,7 +930,6 @@ return [
                 'variant-options-label'            => 'خيارات قابلة للتكوين',
                 'select-variant'                   => 'حدد السمات',
             ],
-
             'attribute-family'               => 'تنسب الأسرة',
             'attribute-product-error'        => 'يتم استخدام الأسرة في المنتجات.',
             'create-success'                 => 'خلقت الأسرة بنجاح.',
@@ -925,10 +939,9 @@ return [
             'last-delete-error'              => 'مطلوب عائلة واحدة على الأقل.',
             'update-success'                 => 'تحديث الأسرة بنجاح.',
             'user-define-error'              => 'لا يمكن حذف عائلة سمة النظام',
-            'not-found'                      => 'لم يتم العثور على مجموعة السمات برمز "code"',
+            'not-found'                      => 'لم يتم العثور على عائلة السمات برمز ":code"',
             'can-not-update-variant-options' => 'لا يمكن تحديث الخيارات القابلة للتكوين لأن هذه العائلة لديها بالفعل منتجات متغيرة.',
         ],
-
         'history' => [
             'index' => [
                 'datagrid' => [
@@ -939,35 +952,31 @@ return [
             ],
         ],
     ],
-
     'settings' => [
         'locales' => [
             'index' => [
                 'create-btn'            => 'إنشاء لغة',
                 'locale'                => 'لغة',
                 'title'                 => 'أماكن',
-                'can-not-delete-error'  => 'لا يمكنك حذف القناة ":channel." لأن PIM الخاص بك يحتاج إلى قناة واحدة على الأقل.',
+                'can-not-delete-error'  => 'لا يمكنك حذف لغة مرتبطة بقناة أو مستخدم.',
                 'can-not-disable-error' => 'لا يمكنك تعطيل لغة مرتبطة بقناة أو مستخدم',
-
-                'datagrid' => [
+                'datagrid'              => [
                     'actions'     => 'أجراءات',
                     'code'        => 'شفرة',
                     'delete'      => 'يمسح',
                     'direction'   => 'اتجاه',
                     'edit'        => 'يحرر',
                     'id'          => 'بطاقة تعريف',
-                    'ltr'         => 'LTR',
+                    'ltr'         => 'من اليسار إلى اليمين',
                     'name'        => 'اسم العرض',
-                    'rtl'         => 'RTL',
+                    'rtl'         => 'من اليمين إلى اليسار',
                     'mass-update' => 'تحديث الحالة',
-
-                    'status' => [
+                    'status'      => [
                         'title'    => 'حالة',
                         'active'   => 'نشيط',
                         'inactive' => 'غير نشط',
                     ],
                 ],
-
                 'create' => [
                     'code'             => 'شفرة',
                     'direction'        => 'اتجاه',
@@ -978,11 +987,9 @@ return [
                     'title'            => 'إنشاء لغة',
                     'status'           => 'حالة',
                 ],
-
                 'edit' => [
                     'title' => 'تحرير اللغة',
                 ],
-
                 'create-success'    => 'تم إنشاؤها موضعي بنجاح.',
                 'delete-failed'     => 'فشل الحذف موضعي',
                 'delete-success'    => 'تم حذف اللغة بنجاح.',
@@ -991,7 +998,6 @@ return [
                 'update-success'    => 'تم تحديث اللغة بنجاح.',
             ],
         ],
-
         'currencies' => [
             'index' => [
                 'create-btn'            => 'إنشاء العملة',
@@ -999,8 +1005,7 @@ return [
                 'title'                 => 'العملات',
                 'can-not-delete-error'  => 'لا يمكنك حذف عملة مرتبطة بقناة',
                 'can-not-disable-error' => 'لا يمكنك تعطيل عملة مرتبطة بقناة',
-
-                'datagrid' => [
+                'datagrid'              => [
                     'actions'        => 'أجراءات',
                     'code'           => 'شفرة',
                     'delete'         => 'يمسح',
@@ -1012,14 +1017,12 @@ return [
                     'partial-action' => 'لم يتم تنفيذ بعض الإجراءات بسبب قيود النظام المقيدة على :resource',
                     'update-success' => 'تم تحديث :resource المحددة بنجاح',
                     'mass-update'    => 'تحديث الحالة',
-
-                    'status' => [
+                    'status'         => [
                         'title'    => 'حالة',
                         'active'   => 'نشيط',
                         'inactive' => 'غير نشط',
                     ],
                 ],
-
                 'create' => [
                     'code'           => 'شفرة',
                     'create-btn'     => 'إنشاء العملة',
@@ -1032,11 +1035,9 @@ return [
                     'title'          => 'إنشاء عملة جديدة',
                     'status'         => 'حالة',
                 ],
-
                 'edit' => [
                     'title' => 'تحرير العملة',
                 ],
-
                 'create-success'    => 'العملة التي تم إنشاؤها بنجاح.',
                 'delete-failed'     => 'فشلت العملة المحذوفة',
                 'delete-success'    => 'تم حذف العملة بنجاح.',
@@ -1045,7 +1046,6 @@ return [
                 'cannot-delete'     => 'لا يمكن حذف العملة.',
             ],
         ],
-
         'data-transfer' => [
             'tracker' => [
                 'index' => [
@@ -1063,34 +1063,34 @@ return [
                         'user'                 => 'مستخدم',
                         'created_at'           => 'أنشئت في',
                         'updated_at'           => 'تم التحديث في',
-
-                        'pending'    => 'قيد الانتظار',
-                        'validated'  => 'التحقق من صحة',
-                        'processing' => 'يعالج',
-                        'processed'  => 'معالجة',
-                        'linking'    => 'الربط',
-                        'linked'     => 'مرتبط',
-
-                        'indexing'  => 'الفهرسة',
-                        'indexed'   => 'مفهرسة',
-                        'completed' => 'مكتمل',
-                        'failed'    => 'فشل',
+                        'pending'              => 'قيد الانتظار',
+                        'validating'           => 'جاري التحقق',
+                        'validated'            => 'التحقق من صحة',
+                        'processing'           => 'يعالج',
+                        'processed'            => 'معالجة',
+                        'linking'              => 'الربط',
+                        'linked'               => 'مرتبط',
+                        'indexing'             => 'الفهرسة',
+                        'indexed'              => 'مفهرسة',
+                        'completed'            => 'مكتمل',
+                        'paused'               => 'متوقف مؤقتاً',
+                        'cancelled'            => 'ملغي',
+                        'failed'               => 'فشل',
                     ],
                 ],
-
                 'import' => [
                     'back-btn'                => 'خلف',
                     'completed-batches'       => 'إجمالي الدُفعات المكتملة:',
                     'download-error-report'   => 'قم بتنزيل التقرير الكامل',
                     'edit-btn'                => 'يحرر',
                     'imported-info'           => 'تهانينا!كان استيرادك ناجحًا.',
-                    'importing-info'          => 'التصدير في العملية',
+                    'exporting-info'          => 'التصدير قيد التنفيذ',
                     'indexing-info'           => 'فهرسة الموارد (السعر ، البحث المرن) قيد التقدم',
                     'linking-info'            => 'الموارد المرتبطة قيد التقدم',
                     'progress'                => 'تقدم:',
                     'title'                   => 'يصدّر',
                     'total-batches'           => 'إجمالي الدُفعات:',
-                    'total-created'           => 'إجمالي السجلات التي تم إنشاؤها:',
+                    'created'                 => 'إجمالي السجلات المنشأة:',
                     'total-deleted'           => 'إجمالي السجلات المحذوفة:',
                     'total-errors'            => 'إجمالي الأخطاء:',
                     'total-invalid-rows'      => 'صفوف إجمالية غير صالحة:',
@@ -1102,23 +1102,64 @@ return [
                     'validation-failed-info'  => 'استيرادك غير صالح.الرجاء إصلاح الأخطاء التالية وحاول مرة أخرى.',
                     'validation-success-info' => 'استيرادك صالح.انقر على التصدير لبدء عملية الاستيراد.',
                 ],
-
-                'create-success'    => 'تم إنشاؤها التصدير بنجاح.',
-                'delete-failed'     => 'فشل حذف التصدير بشكل غير متوقع.',
-                'delete-success'    => 'تم حذف التصدير بنجاح.',
-                'not-valid'         => 'التصدير غير صالح',
-                'nothing-to-import' => 'لا توجد موارد للاستيراد.',
-                'setup-queue-error' => 'يرجى تغيير برنامج قائمة الانتظار الخاص بك إلى "قاعدة البيانات" أو "redis" لبدء عملية الاستيراد.',
-                'update-success'    => 'تم تحديث التصدير بنجاح.',
-                'failed-info'       => 'لقد فشلت المهمة. الرجاء إصلاح الأخطاء التالية والمحاولة مرة أخرى.',
-                'download-log-file' => 'سجل التنزيل',
+                'summary' => [
+                    'total-batches' => 'إجمالي الدُفعات:',
+                    'created'       => 'إجمالي السجلات المنشأة:',
+                    'deleted'       => 'إجمالي السجلات المحذوفة:',
+                    'errors'        => 'إجمالي الأخطاء:',
+                    'invalid-rows'  => 'إجمالي الصفوف غير الصالحة:',
+                    'processed'     => 'إجمالي الصفوف المعالجة:',
+                    'updated'       => 'إجمالي السجلات المحدّثة:',
+                    'skipped'       => 'إجمالي السجلات المتخطاة:',
+                ],
+                'info'                  => 'تهانينا! تم تنفيذ المهمة بنجاح.',
+                'running-time'          => 'وقت التشغيل',
+                'estimated-remaining'   => 'الوقت المتبقي المقدّر',
+                'total-duration'        => 'المدة الإجمالية',
+                'status'                => 'الحالة',
+                'waiting'               => 'في انتظار',
+                'total-records'         => 'إجمالي السجلات',
+                'job-id'                => 'معرف المهمة',
+                'records-created'       => 'السجلات المنشأة',
+                'records-updated'       => 'السجلات المحدّثة',
+                'records-deleted'       => 'السجلات المحذوفة',
+                'run-again'             => 'تشغيل مرة أخرى',
+                'completed-success'     => 'تمت المهمة بنجاح',
+                'completed-info-sub'    => 'تمت معالجة جميع السجلات وفهرستها. الكتالوج محدث الآن.',
+                'create-success'        => 'تم إنشاؤها التصدير بنجاح.',
+                'delete-failed'         => 'فشل حذف التصدير بشكل غير متوقع.',
+                'delete-success'        => 'تم حذف التصدير بنجاح.',
+                'not-valid'             => 'التصدير غير صالح',
+                'nothing-to-import'     => 'لا توجد موارد للاستيراد.',
+                'setup-queue-error'     => 'يرجى تغيير برنامج قائمة الانتظار الخاص بك إلى "قاعدة البيانات" أو "redis" لبدء عملية الاستيراد.',
+                'update-success'        => 'تم تحديث التصدير بنجاح.',
+                'failed-info'           => 'لقد فشلت المهمة. الرجاء إصلاح الأخطاء التالية والمحاولة مرة أخرى.',
+                'download-log-file'     => 'سجل التنزيل',
+                'pause'                 => 'إيقاف مؤقت',
+                'resume'                => 'استئناف',
+                'cancel'                => 'إلغاء',
+                'paused'                => 'تم إيقاف الاستيراد مؤقتاً.',
+                'resumed'               => 'تم استئناف الاستيراد.',
+                'cancelled'             => 'تم إلغاء الاستيراد.',
+                'paused-info'           => 'الاستيراد متوقف مؤقتاً. الدُفعات المتبقية قيد الانتظار.',
+                'paused-info-export'    => 'التصدير متوقف مؤقتاً. الدُفعات المتبقية قيد الانتظار.',
+                'cancelled-info'        => 'تم إلغاء الاستيراد. النتائج الجزئية معروضة أدناه.',
+                'cancelled-info-export' => 'تم إلغاء التصدير. النتائج الجزئية معروضة أدناه.',
+                'cancel-confirm'        => 'هل أنت متأكد من إلغاء هذه المهمة؟ لا يمكن التراجع عن هذا الإجراء.',
+                'live'                  => 'مباشر',
+                'import-progress'       => 'تقدم الاستيراد',
+                'export-progress'       => 'تقدم التصدير',
+                'linking-progress'      => 'تقدم الربط',
+                'indexing-progress'     => 'تقدم الفهرسة',
+                'job-label'             => 'مهمة',
             ],
-
             'imports' => [
-                'create' => [
+                'import-start-fail' => 'فشل بدء عملية الاستيراد. يرجى المحاولة مرة أخرى.',
+                'create'            => [
                     'code'                => 'شفرة',
                     'action'              => 'فعل',
                     'allowed-errors'      => 'الأخطاء المسموح بها',
+                    'allowed-file-types'  => 'أنواع الملفات المسموحة (CSV، XLSX، XLS)',
                     'back-btn'            => 'خلف',
                     'create-update'       => 'إنشاء/تحديث',
                     'delete'              => 'يمسح',
@@ -1126,12 +1167,21 @@ return [
                     'images'              => 'الصور',
                     'download-sample'     => 'تنزيل :resource عينة',
                     'field-separator'     => 'فاصل الحقل',
+                    'separator-info'      => 'استخدم فقط لملفات CSV',
                     'file-info-example'   => 'على سبيل المثال ، في حالة صور المنتج ، يجب وضع الملفات في/مجلد/تخزين/تخزين/تطبيق/استيراد/منتجات.',
                     'file-info'           => 'استخدم المسار النسبي إلى/الجذر/التخزين/التطبيق/الاستيراد ، على سبيل المثالصور المنتج ، استيراد الصور.',
                     'file'                => 'ملف',
                     'general'             => 'عام',
                     'upload_images'       => 'تحميل الصور لتعيين المسار',
                     'download-sample-zip' => 'تنزيل عينة الصور Zip',
+                    'zip-uploading'       => 'جاري رفع واستخراج ZIP...',
+                    'zip-upload-success'  => 'تم رفع واستخراج ZIP بنجاح.',
+                    'zip-upload-error'    => 'فشل رفع ZIP. يرجى المحاولة مرة أخرى.',
+                    'invalid-zip'         => 'الملف المرفوع ليس أرشيف ZIP صالح.',
+                    'zip-upload-or'       => 'أو ارفع ملف ZIP للصور',
+                    'zip-click-upload'    => 'انقر لرفع ملف ZIP للصور',
+                    'zip-files-extracted' => 'ملفات مستخرجة',
+                    'zip-drop-hint'       => 'انقر أو اسحب وأفلت ملف ZIP هنا',
                     'images-directory'    => 'طريق',
                     'process-in-queue'    => 'العملية في قائمة الانتظار',
                     'results'             => 'نتائج',
@@ -1143,16 +1193,17 @@ return [
                     'type'                => 'يكتب',
                     'validation-strategy' => 'استراتيجية التحقق من الصحة',
                 ],
-
                 'edit' => [
                     'images'              => 'الصور',
                     'action'              => 'فعل',
                     'allowed-errors'      => 'الأخطاء المسموح بها',
+                    'allowed-file-types'  => 'أنواع الملفات المسموحة (CSV، XLSX، XLS)',
                     'back-btn'            => 'خلف',
                     'create-update'       => 'إنشاء/تحديث',
                     'delete'              => 'يمسح',
                     'download-sample'     => 'تنزيل عينة',
                     'field-separator'     => 'فاصل الحقل',
+                    'separator-info'      => 'استخدم فقط لملفات CSV',
                     'file-info-example'   => 'على سبيل المثال ، في حالة صور المنتجات ، يجب وضع الملفات في/مجلد/تخزين/تخزين/تطبيق/استيراد/المنتج.',
                     'file-info'           => 'استخدم المسار النسبي إلى/الجذر/التخزين/التطبيق/الاستيراد ، على سبيل المثالصور المنتج ، استيراد الصور.',
                     'file'                => 'ملف',
@@ -1168,16 +1219,13 @@ return [
                     'type'                => 'يكتب',
                     'validation-strategy' => 'استراتيجية التحقق من الصحة',
                 ],
-
                 'batch' => [
                     'title' => 'تمت إضافة الاستيراد في قائمة الانتظار',
                 ],
-
                 'index' => [
                     'button-title' => 'إنشاء الاستيراد',
                     'title'        => 'الواردات',
-
-                    'datagrid' => [
+                    'datagrid'     => [
                         'actions'               => 'أجراءات',
                         'completed-at'          => 'أكمل في',
                         'created'               => 'مخلوق',
@@ -1195,20 +1243,36 @@ return [
                         'updated'               => 'محدث',
                         'uploaded-file'         => 'ملف تم تحميله',
                         'images_directory_path' => 'ملف الصور',
+                        'import'                => 'استيراد',
                     ],
                 ],
-
                 'import' => [
+                    'action'                  => 'وضع الإجراء',
                     'back-btn'                => 'خلف',
                     'completed-batches'       => 'إجمالي الدُفعات المكتملة:',
                     'download-error-report'   => 'قم بتنزيل التقرير الكامل',
                     'edit-btn'                => 'يحرر',
+                    'exporting-info'          => 'التصدير قيد التنفيذ',
+                    'exporting-info-sub'      => 'جاري إنشاء ملف التصدير وكتابة السجلات. يرجى الانتظار.',
+                    'file_path'               => 'مسار الملف',
                     'imported-info'           => 'تهانينا!كان استيرادك ناجحًا.',
+                    'import-now'              => 'الاستيراد الآن',
                     'importing-info'          => 'الاستيراد في العملية',
+                    'importing-info-sub'      => 'جاري معالجة الدُفعات وكتابة السجلات في قاعدة البيانات.',
                     'indexing-info'           => 'فهرسة الموارد (السعر ، البحث المرن) قيد التقدم',
+                    'indexing-info-sub'       => 'إعادة بناء فهارس البحث وذاكرة الأسعار بعد الاستيراد. هذه الخطوة تعمل تلقائياً.',
+                    'indexing-type'           => 'السعر + ES',
                     'linking-info'            => 'الموارد المرتبطة قيد التقدم',
-                    'progress'                => 'تقدم:',
+                    'linking-info-sub'        => 'ربط الموارد والارتباطات ذات الصلة بين السجلات.',
                     'pending-info'            => 'في انتظار معالجة الوظائف في قائمة الانتظار',
+                    'pending-info-sub'        => 'تمت إضافة مهمتك إلى قائمة المعالجة. سيتم التقاطها قريباً.',
+                    'pending-step-complete'   => 'مكتمل',
+                    'pending-step-export'     => 'تصدير',
+                    'pending-step-import'     => 'جاري الاستيراد',
+                    'pending-step-queue'      => 'في قائمة الانتظار',
+                    'pending-step-validate'   => 'جاري التحقق',
+                    'profile'                 => 'ملف الاستيراد',
+                    'progress'                => 'تقدم:',
                     'title'                   => 'يستورد',
                     'total-batches'           => 'إجمالي الدُفعات:',
                     'total-created'           => 'إجمالي السجلات التي تم إنشاؤها:',
@@ -1217,25 +1281,23 @@ return [
                     'total-invalid-rows'      => 'صفوف إجمالية غير صالحة:',
                     'total-rows-processed'    => 'إجمالي الصفوف التي تمت معالجتها:',
                     'total-updated'           => 'إجمالي السجلات المحدثة:',
-                    'validate-info'           => 'انقر على التحقق من صحة البيانات للتحقق من الاستيراد.',
                     'validate'                => 'التحقق',
-                    'file_path'               => 'مسار الملف',
-                    'import-now'              => 'الاستيراد الآن',
-                    'action'                  => 'وضع الإجراء',
+                    'validate-info'           => 'انقر على التحقق من صحة البيانات للتحقق من الاستيراد.',
                     'validating-info'         => 'بدأت البيانات في القراءة والتحقق من التحقق منها',
+                    'validating-info-sub'     => 'التحقق من سلامة المخطط وتعيينات الحقول وأنواع البيانات قبل بدء الاستيراد.',
                     'validation-failed-info'  => 'استيرادك غير صالح.الرجاء إصلاح الأخطاء التالية وحاول مرة أخرى.',
-                    'validation-success-info' => 'استيرادك صالح.انقر على الاستيراد لبدء عملية الاستيراد.',
+                    'validation-success-info' => 'استيرادك صالح. بدء الاستيراد تلقائيًا...',
                 ],
-
-                'create-success'    => 'استيراد تم إنشاؤه بنجاح.',
-                'delete-failed'     => 'فشل حذف الاستيراد بشكل غير متوقع.',
-                'delete-success'    => 'استيراد حذف بنجاح.',
-                'not-valid'         => 'الاستيراد غير صالح',
-                'nothing-to-import' => 'لا توجد موارد للاستيراد.',
-                'setup-queue-error' => 'يرجى تغيير برنامج قائمة الانتظار الخاص بك إلى "قاعدة البيانات" أو "redis" لبدء عملية الاستيراد.',
-                'update-success'    => 'استيراد تحديث بنجاح.',
+                'create-success'     => 'استيراد تم إنشاؤه بنجاح.',
+                'delete-failed'      => 'فشل حذف الاستيراد بشكل غير متوقع.',
+                'delete-success'     => 'استيراد حذف بنجاح.',
+                'invalid-zip'        => 'الملف المرفوع ليس أرشيف ZIP صالح.',
+                'not-valid'          => 'الاستيراد غير صالح',
+                'nothing-to-import'  => 'لا توجد موارد للاستيراد.',
+                'setup-queue-error'  => 'يرجى تغيير برنامج قائمة الانتظار الخاص بك إلى "قاعدة البيانات" أو "redis" لبدء عملية الاستيراد.',
+                'update-success'     => 'استيراد تحديث بنجاح.',
+                'zip-upload-success' => 'تم رفع واستخراج ZIP بنجاح.',
             ],
-
             'exports' => [
                 'create' => [
                     'code'                => 'شفرة',
@@ -1259,13 +1321,13 @@ return [
                     'results'             => 'نتائج',
                     'save-btn'            => 'حفظ التصدير',
                     'settings'            => 'إعدادات',
+                    'filters'             => 'عوامل التصفية',
                     'skip-errors'         => 'تخطي الأخطاء',
                     'stop-on-errors'      => 'توقف عن الأخطاء',
                     'title'               => 'إنشاء التصدير',
                     'type'                => 'يكتب',
                     'validation-strategy' => 'استراتيجية التحقق من الصحة',
                 ],
-
                 'edit' => [
                     'action'              => 'فعل',
                     'allowed-errors'      => 'الأخطاء المسموح بها',
@@ -1289,16 +1351,13 @@ return [
                     'type'                => 'يكتب',
                     'validation-strategy' => 'استراتيجية التحقق من الصحة',
                 ],
-
                 'batch' => [
                     'title' => 'تمت إضافة التصدير في قائمة الانتظار',
                 ],
-
                 'index' => [
                     'button-title' => 'إنشاء التصدير',
                     'title'        => 'صادرات',
-
-                    'datagrid' => [
+                    'datagrid'     => [
                         'actions'               => 'أجراءات',
                         'completed-at'          => 'أكمل في',
                         'created'               => 'مخلوق',
@@ -1316,13 +1375,14 @@ return [
                         'updated'               => 'محدث',
                         'uploaded-file'         => 'ملف تم تحميله',
                         'images_directory_path' => 'ملف الصور',
+                        'export'                => 'تصدير',
                     ],
                 ],
-
                 'export' => [
                     'back-btn'                => 'خلف',
                     'completed-batches'       => 'إجمالي الدُفعات المكتملة:',
                     'download-error-report'   => 'قم بتنزيل التقرير الكامل',
+                    'download-created-file'   => 'تحميل الملفات المصدّرة',
                     'edit-btn'                => 'يحرر',
                     'exported-info'           => 'تهانينا!كان تصديرك ناجحًا.',
                     'exporting-info'          => 'التصدير في العملية',
@@ -1343,9 +1403,10 @@ return [
                     'validating-info'         => 'بدأت البيانات في القراءة والتحقق من التحقق منها',
                     'validation-failed-info'  => 'تصديرك غير صالح.الرجاء إصلاح الأخطاء التالية وحاول مرة أخرى.',
                     'validation-success-info' => 'تصديرك صالح.انقر على التصدير لبدء عملية التصدير.',
-                    'action'                  => 'وضع الإجراء',
+                    'profile'                 => 'ملف التصدير',
+                    'file-format'             => 'تنسيق الملف',
+                    'with-media'              => 'مع الوسائط',
                 ],
-
                 'create-success'    => 'تم إنشاؤها التصدير بنجاح.',
                 'delete-failed'     => 'فشل حذف التصدير بشكل غير متوقع.',
                 'delete-success'    => 'تم حذف التصدير بنجاح.',
@@ -1355,14 +1416,13 @@ return [
                 'update-success'    => 'تم تحديث التصدير بنجاح.',
             ],
         ],
-
         'channels' => [
             'index' => [
                 'create-btn'           => 'إنشاء قناة',
                 'delete-failed'        => 'فشل حذف القناة',
                 'delete-success'       => 'تم حذف القناة بنجاح.',
                 'last-delete-error'    => 'لا يمكن حذف القناة الافتراضية.',
-                'can-not-delete-error' => 'أنت تستطيع\'t delete the channel ":channel" because your PIM needs to have at least one channel.',
+                'can-not-delete-error' => 'لا يمكنك حذف القناة ":channel" لأن نظام إدارة معلومات المنتج يجب أن يحتوي على قناة واحدة على الأقل.',
                 'title'                => 'القنوات',
                 'datagrid'             => [
                     'code'          => 'شفرة',
@@ -1374,7 +1434,6 @@ return [
                     'root-category' => 'فئة الجذر',
                 ],
             ],
-
             'create' => [
                 'allowed-ips'            => 'سماح IPS',
                 'cancel'                 => 'خلف',
@@ -1389,7 +1448,7 @@ return [
                 'favicon-size'           => 'يجب أن يكون دقة الصورة مثل 16px x 16px',
                 'general'                => 'عام',
                 'hostname'               => 'اسم المضيف',
-                'hostname-placeholder'   => 'https://www.example.com (Don\'t add slash in the end.)',
+                'hostname-placeholder'   => 'https://www.example.com (لا تضف / في النهاية.)',
                 'last-delete-error'      => 'مطلوب قناة واحدة على الأقل.',
                 'locales'                => 'أماكن',
                 'logo'                   => 'شعار',
@@ -1409,7 +1468,6 @@ return [
                 'theme'                  => 'سمة',
                 'title'                  => 'إنشاء قناة',
             ],
-
             'edit' => [
                 'allowed-ips'            => 'سماح IPS',
                 'back-btn'               => 'خلف',
@@ -1424,7 +1482,7 @@ return [
                 'favicon-size'           => 'يجب أن يكون دقة الصورة مثل 16px x 16px',
                 'general'                => 'عام',
                 'hostname'               => 'اسم المضيف',
-                'hostname-placeholder'   => 'https://www.example.com (Don\'t add slash in the end.)',
+                'hostname-placeholder'   => 'https://www.example.com (لا تضف / في النهاية.)',
                 'last-delete-error'      => 'مطلوب قناة واحدة على الأقل.',
                 'locales'                => 'أماكن',
                 'select-locales'         => 'حدد الأماكن',
@@ -1447,13 +1505,11 @@ return [
                 'update-success'         => 'تحديث القناة بنجاح',
             ],
         ],
-
         'users' => [
             'index' => [
-                'admin' => 'مسؤل',
-                'title' => 'المستخدمون',
-                'user'  => 'مستخدم',
-
+                'admin'  => 'مسؤل',
+                'title'  => 'المستخدمون',
+                'user'   => 'مستخدم',
                 'create' => [
                     'confirm-password'  => 'تأكيد كلمة المرور',
                     'email'             => 'بريد إلكتروني',
@@ -1467,26 +1523,23 @@ return [
                     'user-timezone'     => 'وحدة زمنية',
                     'select'            => 'يختار',
                 ],
-
                 'datagrid' => [
                     'actions'  => 'أجراءات',
                     'active'   => 'نشيط',
                     'delete'   => 'يمسح',
                     'edit'     => 'يحرر',
                     'email'    => 'بريد إلكتروني',
-                    'id'       => 'ID',
+                    'id'       => 'المعرف',
                     'inactive' => 'غير نشط',
                     'name'     => 'اسم',
                     'role'     => 'دور',
                     'status'   => 'حالة',
                     'image'    => 'صورة',
                 ],
-
                 'edit' => [
                     'title' => 'تحرير العضو',
                 ],
             ],
-
             'edit' => [
                 'back-btn'         => 'خلف',
                 'confirm-password' => 'تأكيد كلمة المرور',
@@ -1499,7 +1552,6 @@ return [
                 'status'           => 'حالة',
                 'title'            => 'تحرير العضو',
             ],
-
             'activate-warning'          => 'لم يتم تنشيط حسابك بعد ، يرجى الاتصال بالمسؤول.',
             'cannot-change'             => 'لا يمكن تغيير المستخدم',
             'create-success'            => 'تم إنشاء المستخدم بنجاح.',
@@ -1512,13 +1564,11 @@ return [
             'update-success'            => 'تم تحديث المستخدم بنجاح.',
             'current-user-delete-error' => 'لا يمكن حذف المستخدم الذي قام بتسجيل الدخول',
         ],
-
         'roles' => [
             'index' => [
                 'create-btn' => 'إنشاء دور',
                 'title'      => 'أدوار',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'delete'          => 'يمسح',
                     'edit'            => 'يحرر',
                     'id'              => 'بطاقة تعريف',
@@ -1526,7 +1576,6 @@ return [
                     'permission-type' => 'نوع إذن',
                 ],
             ],
-
             'create' => [
                 'access-control' => 'صلاحية التحكم صلاحية الدخول',
                 'all'            => 'الجميع',
@@ -1539,7 +1588,6 @@ return [
                 'save-btn'       => 'حفظ الدور',
                 'title'          => 'إنشاء دور',
             ],
-
             'edit' => [
                 'access-control' => 'صلاحية التحكم صلاحية الدخول',
                 'all'            => 'الجميع',
@@ -1552,7 +1600,6 @@ return [
                 'save-btn'       => 'حفظ الدور',
                 'title'          => 'تحرير الدور',
             ],
-
             'being-used'        => 'يتم استخدام الدور بالفعل في مستخدم المسؤول',
             'being-used-by'     => 'الدور مستخدم بالفعل بواسطة المستخدم :name',
             'create-success'    => 'أدوار تم إنشاؤها بنجاح',
@@ -1562,490 +1609,77 @@ return [
             'update-success'    => 'يتم تحديث الأدوار بنجاح',
         ],
     ],
-
-    'reporting' => [
-        'view' => [
-            'day'           => 'يوم',
-            'end-date'      => 'تاريخ الانتهاء',
-            'export-csv'    => 'تصدير CSV',
-            'export-xls'    => 'تصدير XLS',
-            'month'         => 'شهر',
-            'not-available' => 'لا توجد سجلات متاحة.',
-            'start-date'    => 'تاريخ البدء',
-            'year'          => 'سنة',
-        ],
-
-        'empty' => [
-            'info'  => 'لا توجد بيانات متاحة للفاصل الزمني المحدد',
-            'title' => 'لا تتوافر بيانات',
-        ],
-    ],
-
     'configuration' => [
         'index' => [
-            'back-btn'                     => 'خلف',
-            'delete'                       => 'يمسح',
-            'enable-at-least-one-payment'  => 'تمكين طريقة دفع واحدة على الأقل.',
-            'enable-at-least-one-shipping' => 'تمكين طريقة شحن واحدة على الأقل.',
-            'no-result-found'              => 'لم يتم العثور على نتائج',
-            'save-btn'                     => 'حفظ التكوين',
-            'save-message'                 => 'تم حفظ التكوين بنجاح',
-            'search'                       => 'يبحث',
-            'title'                        => 'إعدادات',
-
-            'general' => [
-                'info'  => '',
-                'title' => 'عام',
-
+            'delete'          => 'يمسح',
+            'no-result-found' => 'لم يتم العثور على نتائج',
+            'save-btn'        => 'حفظ التكوين',
+            'save-message'    => 'تم حفظ التكوين بنجاح',
+            'search'          => 'يبحث',
+            'title'           => 'إعدادات',
+            'general'         => [
+                'info'    => '',
+                'title'   => 'عام',
                 'general' => [
                     'info'  => '',
                     'title' => 'عام',
                 ],
-
-                'content' => [
-                    'info'  => 'تعيين خيارات المقارنة ، خيارات قائمة الأمنيات ، خيارات البحث عن الصور ، تذييل ، تذييل تذييل ونصوص مخصصة.',
-                    'title' => 'محتوى',
-
-                    'settings' => [
-                        'compare-options'     => 'مقارنة الخيارات',
-                        'image-search-option' => 'خيار البحث عن الصور',
-                        'title'               => 'إعدادات',
-                        'title-info'          => 'تشير الإعدادات إلى الخيارات القابلة للتكوين التي تتحكم في كيفية تصرف النظام أو التطبيق أو الجهاز ، المصمم لتفضيلات ومتطلبات المستخدم.',
-                        'wishlist-options'    => 'خيارات قائمة الأمنيات',
-                    ],
-
-                    'custom-scripts' => [
-                        'custom-css'        => 'لغة تنسيق ويب حسب الطلب',
-                        'custom-javascript' => 'JavaScript مخصص',
-                        'title'             => 'البرامج النصية المخصصة',
-                        'title-info'        => 'البرامج النصية المخصصة عبارة عن أجزاء مخصصة من التعليمات البرمجية التي تم إنشاؤها لإضافة وظائف أو ميزات محددة إلى البرامج ، مما يعزز قدراتها بشكل فريد.',
-                    ],
-                ],
-
-                'design' => [
-                    'info'  => 'تعيين شعار ورمز فافيكون.',
-                    'title' => 'تصميم',
-
-                    'admin-logo' => [
-                        'favicon'    => 'فافيكون',
-                        'logo-image' => 'صورة الشعار',
-                        'title'      => 'شعار المسؤول',
-                        'title-info' => 'شعار المسؤول هو الصورة المميزة أو شعار تمثل واجهة الإدارة لنظام أو موقع ويب ، وغالبًا ما يكون قابلاً للتخصيص.',
-                    ],
-                ],
-
                 'magic-ai' => [
-                    'info'  => 'تعيين خيارات سحر الذكاء الاصطناعي.',
-                    'title' => 'السحر لديك',
-
+                    'info'     => 'تعيين خيارات سحر الذكاء الاصطناعي.',
+                    'title'    => 'الذكاء الاصطناعي السحري',
                     'settings' => [
-                        'api-key'        => 'مفتاح API',
-                        'enabled'        => 'تمكين',
-                        'llm-api-domain' => 'LLM API المجال',
-                        'organization'   => 'معرف المنظمة',
-                        'title'          => 'الاعدادات العامة',
-                        'title-info'     => 'عزز تجربتك مع ميزة Magic AI من خلال إدخال مفتاح API الحصري والإشارة إلى المنظمة ذات الصلة للتكامل دون عناء.اغتنم الأمر عبر بيانات اعتماد Openai وتخصيص الإعدادات وفقًا لاحتياجاتك المحددة.',
+                        'enabled'     => 'تمكين',
+                        'ai-platform' => 'المنصة الافتراضية',
+                        'ai-model'    => 'النموذج الافتراضي',
+                        'title'       => 'الاعدادات العامة',
+                        'title-info'  => 'عزز تجربتك مع ميزة Magic AI من خلال إدخال مفتاح API الحصري والإشارة إلى المنظمة ذات الصلة للتكامل دون عناء.اغتنم الأمر عبر بيانات اعتماد Openai وتخصيص الإعدادات وفقًا لاحتياجاتك المحددة.',
                     ],
-
-                    'content-generation' => [
-                        'category-description-prompt'      => 'فئة الوصف موجه',
-                        'cms-page-content-prompt'          => 'موجه محتوى صفحة CMS',
-                        'enabled'                          => 'تمكين',
-                        'product-description-prompt'       => 'موجه وصف المنتج',
-                        'product-short-description-prompt' => 'موجة وصف قصيرة المنتج',
-                        'title'                            => 'توليد المحتوى',
-                        'title-info'                       => 'ستمكّن هذه الميزة MAGIC AI لكل محرر WYSIWYG ، حيث تريد أن تدير المحتوى باستخدام AI. <br/> <br/> عند تمكينه ، انتقل إلى أي محرر لإنشاء محتوى.',
-                    ],
-
                     'image-generation' => [
-                        'enabled'    => 'تمكين',
-                        'title'      => 'توليد الصور',
-                        'title-info' => 'ستمكّن هذه الميزة Magic AI لكل تحميل صورة ، حيث تريد إنشاء صور باستخدام Dall-e. <br/> <br/> عند تمكينها ، انتقل إلى أي تحميل صورة لإنشاء الصورة.',
+                        'enabled'     => 'تمكين',
+                        'ai-platform' => 'المنصة الافتراضية',
+                        'ai-model'    => 'النموذج الافتراضي',
+                        'title'       => 'توليد الصور',
+                        'title-info'  => 'ستمكّن هذه الميزة Magic AI لكل تحميل صورة ، حيث تريد إنشاء صور باستخدام Dall-e. <br/> <br/> عند تمكينها ، انتقل إلى أي تحميل صورة لإنشاء الصورة.',
                     ],
-
-                    'translation'   => [
-                        'title'                  => 'الترجمة',
-                        'enabled'                => 'مفعل',
-                        'title-info'             => 'هذه الميزة ستمكن Magic AI من ترجمة النصوص، مما يتيح لك تحويل النص من لغة إلى أخرى بسهولة.',
-                        'global-source-channel'  => 'القناة المصدرية',
-                        'global-source-locale'   => 'اللغة المصدرية',
-                        'translation-model'      => 'نموذج الترجمة',
-                        'replace-existing-value' => 'استبدال القيمة الحالية',
-                        'target-channel'         => 'القناة المستهدفة',
-                        'target-locales'         => 'اللغات المستهدفة',
+                    'translation' => [
+                        'title'                       => 'الترجمة',
+                        'enabled'                     => 'مفعل',
+                        'title-info'                  => 'هذه الميزة ستمكن Magic AI من ترجمة النصوص، مما يتيح لك تحويل النص من لغة إلى أخرى بسهولة.',
+                        'ai-platform'                 => 'المنصة الافتراضية',
+                        'global-source-channel'       => 'القناة المصدرية',
+                        'global-source-locale'        => 'اللغة المصدرية',
+                        'translation-model'           => 'نموذج الترجمة',
+                        'replace-existing-value'      => 'استبدال القيمة الحالية',
+                        'target-channel'              => 'القناة المستهدفة',
+                        'target-locales'              => 'اللغات المستهدفة',
+                        'replace-existing-value-info' => 'استبدال القيمة الموجودة إذا كانت موجودة بالفعل.',
                     ],
-
-                    'review-translation' => [
-                        'dolphin-phi'       => 'الدلفين فاي',
-                        'enabled'           => 'تمكين',
-                        'gpt-3-5-turbo'     => 'Openai GPT-3.5-Turbo',
-                        'llama2'            => 'لاما 2',
-                        'llama2-uncensored' => 'لاما 2 غير خاضعة للرقابة',
-                        'llama2:13b'        => 'Llama 2 13B',
-                        'llama2:70b'        => 'Llama 2 70B',
-                        'llava'             => 'الحمم',
-                        'mistral'           => 'خطأ',
-                        'model'             => 'نموذج',
-                        'orca-mini'         => 'orca mini',
-                        'phi'               => 'PHI-2',
-                        'starling-lm'       => 'زرزور',
-                        'title'             => 'مراجعة الترجمة',
-                        'title-info'        => 'توفير خيار للعميل أو الزائر لترجمة مراجعة العملاء إلى اللغة الإنجليزية. <br/> <br/> عند تمكينه ، انتقل إلى المراجعة وستجد الزر "ترجمة إلى اللغة الإنجليزية" إذا قمت بمراجعة أخرى ثم اللغة الإنجليزية.',
-                        'vicuna'            => 'فيكونا',
-                    ],
-
-                    'checkout-message' => [
-                        'dolphin-phi'       => 'الدلفين فاي',
-                        'enabled'           => 'تمكين',
-                        'gpt-3-5-turbo'     => 'Openai GPT-3.5-Turbo',
-                        'llama2'            => 'لاما 2',
-                        'llama2-uncensored' => 'لاما 2 غير خاضعة للرقابة',
-                        'llama2:13b'        => 'Llama 2 13B',
-                        'llama2:70b'        => 'Llama 2 70B',
-                        'llava'             => 'الحمم',
-                        'mistral'           => 'خطأ',
-                        'model'             => 'نموذج',
-                        'orca-mini'         => 'orca mini',
-                        'phi'               => 'PHI-2',
-                        'prompt'            => 'اِسْتَدْعَى',
-                        'starling-lm'       => 'زرزور',
-                        'title'             => 'رسالة الخروج الشخصية',
-                        'title-info'        => 'صاغ رسالة تسجيل مخصصة للعملاء على صفحة الشكر ، وتكييف المحتوى لتردد مع التفضيلات الفردية وتعزيز تجربة ما بعد الشراء الإجمالية.',
-                        'vicuna'            => 'فيكونا',
-                    ],
-                ],
-            ],
-
-            'catalog' => [
-                'info'     => 'فهرس',
-                'title'    => 'فهرس',
-                'products' => [
-                    'info'  => 'قم بتعيين ضيف الخروج ، صفحة عرض المنتج ، صفحة عرض العربة ، تخزين الأمامي ، المراجعة ونيمة المشاركة الاجتماعية.',
-                    'title' => 'منتجات',
-
-                    'guest-checkout' => [
-                        'allow-guest-checkout'      => 'اسمح للضيف بالخروج',
-                        'allow-guest-checkout-hint' => 'تلميح:في حالة تشغيله ، يمكن تكوين هذا الخيار لكل منتج على وجه التحديد.',
-                        'title'                     => 'ضيف المحاسبة',
-                        'title-info'                => 'يتيح الخروج من الضيوف للعملاء شراء المنتجات دون إنشاء حساب ، وتبسيط عملية الشراء للراحة والمعاملات الأسرع.',
-                    ],
-
-                    'product-view-page' => [
-                        'allow-no-of-related-products'  => 'عدد المسموح به من المنتجات ذات الصلة',
-                        'allow-no-of-up-sells-products' => 'عدد المسموح به من منتجات البيع',
-                        'title'                         => 'تكوين صفحة عرض المنتج',
-                        'title-info'                    => 'يستلزم تكوين صفحة عرض المنتج ضبط التصميم والعناصر الموجودة على منتج \'s display page, enhancing user experience and information presentation.',
-                    ],
-
-                    'cart-view-page' => [
-                        'allow-no-of-cross-sells-products' => 'عدد المسموح به من المنتجات عبر البيع',
-                        'title'                            => 'تكوين صفحة عرض العربة',
-                        'title-info'                       => 'يتضمن تكوين صفحة عرض العربة ترتيب العناصر والتفاصيل والخيارات على صفحة عربة التسوق ، وتحسين تفاعل المستخدم وتدفق الشراء.',
-                    ],
-
-                    'storefront' => [
-                        'buy-now-button-display' => 'السماح للعملاء بشراء المنتجات مباشرة',
-                        'cheapest-first'         => 'أرخص أولا',
-                        'comma-separated'        => 'مفصولة بفواصل',
-                        'database'               => 'قاعدة البيانات',
-                        'default-list-mode'      => 'وضع القائمة الافتراضي',
-                        'elastic'                => 'البحث المرن',
-                        'expensive-first'        => 'باهظة الثمن أولاً',
-                        'from-a-z'               => 'من A-Z',
-                        'from-z-a'               => 'من Z-A',
-                        'grid'                   => 'شبكة',
-                        'latest-first'           => 'أحدث أولا',
-                        'list'                   => 'قائمة',
-                        'oldest-first'           => 'الأقدم أولا',
-                        'products-per-page'      => 'منتجات لكل صفحة',
-                        'search-mode'            => 'وضع البحث',
-                        'sort-by'                => 'ترتيب حسب',
-                        'title'                  => 'واجهة المتجر',
-                        'title-info'             => 'Storefront هي الواجهة التي تواجه العملاء لمتجر عبر الإنترنت ، وعرض المنتجات والفئات والملاحة لتجربة تسوق سلسة.',
-                    ],
-
-                    'small-image' => [
-                        'height'     => 'ارتفاع',
-                        'title'      => 'صورة صغيرة',
-                        'title-info' => 'Storefront هي الواجهة التي تواجه العملاء لمتجر عبر الإنترنت ، وعرض المنتجات والفئات والملاحة لتجربة تسوق سلسة.',
-                        'width'      => 'عرض',
-                    ],
-
-                    'medium-image' => [
-                        'height'     => 'ارتفاع',
-                        'title'      => 'صورة متوسطة',
-                        'title-info' => 'تشير الصورة المتوسطة إلى صورة معتدلة الحجم توفر توازنًا بين التفاصيل ومساحة الشاشة ، وتستخدم عادةً في الصور المرئية.',
-                        'width'      => 'عرض',
-                    ],
-
-                    'large-image' => [
-                        'height'     => 'Height',
-                        'title'      => 'صورة كبيرة',
-                        'title-info' => 'تمثل الصورة الكبيرة صورة عالية الدقة توفر تفاصيل محسّنة وتأثيرًا بصريًا ، وغالبًا ما تستخدم لعرض المنتجات أو الرسومات.',
-                        'width'      => 'عرض',
-                    ],
-
-                    'review' => [
-                        'allow-guest-review' => 'السماح بمراجعة الضيف',
-                        'title'              => 'مراجعة',
-                        'title-info'         => 'تقييم أو تقييم شيء ما ، غالبًا ما يتضمن الآراء والتعليقات.',
-                    ],
-
-                    'attribute' => [
-                        'file-upload-size'  => 'حجم تحميل الملف المسموح به (في كيلو بايت)',
-                        'image-upload-size' => 'حجم تحميل الصورة المسموح به (في كيلو بايت)',
-                        'title'             => 'يصف',
-                        'title-info'        => 'خاصية أو خاصية تحدد كائنًا ، يؤثر على سلوكه أو مظهره أو وظيفته.',
-                    ],
-
-                    'social-share' => [
-                        'enable-share-email'     => 'تمكين المشاركة في البريد الإلكتروني؟',
-                        'enable-share-facebook'  => 'تمكين المشاركة في الفيسبوك؟',
-                        'enable-share-linkedin'  => 'تمكين حصة في LinkedIn؟',
-                        'enable-share-pinterest' => 'تمكين حصة في Pinterest؟',
-                        'enable-share-twitter'   => 'تمكين المشاركة في تويتر؟',
-                        'enable-share-whatsapp'  => 'تمكين المشاركة في ما \'s App?',
-                        'enable-social-share'    => 'تمكين المشاركة الاجتماعية؟',
-                        'share'                  => 'يشارك',
-                        'share-message'          => 'مشاركة الرسالة',
-                        'title'                  => 'حصة الاجتماعي',
-                        'title-info'             => 'مشاركة الأشياء من موقع ويب مع الأصدقاء على منصات التواصل الاجتماعي مثل Facebook أو Twitter أو Instagram.',
-                    ],
-                ],
-
-                'rich-snippets' => [
-                    'info'  => 'تعيين المنتجات والفئات.',
-                    'title' => 'قصاصات غنية',
-
-                    'products' => [
-                        'enable'          => 'يُمكَِن',
-                        'show-categories' => 'عرض الفئات',
-                        'show-images'     => 'عرض الصور',
-                        'show-offers'     => 'Show Offers',
-                        'show-ratings'    => 'عرض التصنيفات',
-                        'show-reviews'    => 'عرض الاستعراضات',
-                        'show-sku'        => 'عرض SKU',
-                        'show-weight'     => 'إظهار الوزن',
-                        'title'           => 'منتجات',
-                        'title-info'      => 'العناصر المتاحة للشراء أو الاستخدام ، والتي تقدمها شركة أو بائع.',
-                    ],
-
-                    'categories' => [
-                        'enable'                  => 'يُمكَِن',
-                        'show-search-input-field' => 'إظهار حقل إدخال البحث',
-                        'title'                   => 'فئات',
-                        'title-info'              => 'تشير "الفئات" إلى المجموعات أو التصنيفات التي تساعد على تنظيم وتجميع منتجات أو عناصر مماثلة معًا لتسهيل التصفح والملاحة.',
-                    ],
-                ],
-            ],
-
-            'customer' => [
-                'info'  => 'عميل',
-                'title' => 'عميل',
-
-                'address' => [
-                    'info'  => 'تعيين البلد ، الدولة ، الرمز البريدي والخطوط في عنوان الشارع.',
-                    'title' => 'عنوان',
-
-                    'requirements' => [
-                        'city'       => 'مدينة',
-                        'country'    => 'دولة',
-                        'state'      => 'ولاية',
-                        'title'      => 'متطلبات',
-                        'title-info' => 'المتطلبات هي الشروط أو الميزات أو المواصفات اللازمة لشيء ما ليتم تحقيقه أو تحقيقه أو تلبية بنجاح.',
-                        'zip'        => 'أَزِيز',
-                    ],
-
-                    'information' => [
-                        'street-lines' => 'خطوط في عنوان الشارع',
-                        'title'        => 'معلومة',
-                        'title-info'   => 'تشير "خطوط في عنوان الشارع" إلى الأجزاء الفردية للعنوان ، غالبًا ما يتم فصلها عن طريق الفواصل ، وتوفير معلومات الموقع مثل رقم المنزل والشارع والمدينة والمزيد.',
-                    ],
-                ],
-
-                'captcha' => [
-                    'info'  => 'تعيين مفتاح الموقع ، المفتاح السري والحالة.',
-                    'title' => 'كابتشا',
-
-                    'credentials' => [
-                        'secret-key' => 'المفتاح السري',
-                        'site-key'   => 'مفتاح الموقع',
-                        'status'     => 'حالة',
-                        'title'      => 'أوراق اعتماد',
-                        'title-info' => '"Sitemap:خريطة تخطيط موقع لمحركات البحث. المفتاح السري:رمز آمن لتشفير البيانات أو المصادقة أو حماية الوصول إلى واجهة برمجة التطبيقات."',
-                    ],
-
-                    'validations' => [
-                        'captcha'  => 'هناك خطأ ما! حاول مرة اخرى.',
-                        'required' => 'الرجاء تحديد Captcha',
-                    ],
-                ],
-
-                'settings' => [
-                    'settings-info' => 'تعيين اشتراك النشرة الإخبارية ، والتحقق من البريد الإلكتروني وتسجيل الدخول الاجتماعي.',
-                    'title'         => 'إعدادات',
-
-                    'newsletter' => [
-                        'subscription' => 'السماح لاشتراك النشرة الإخبارية',
-                        'title'        => 'الاشتراك في النشرة الإخبارية',
-                        'title-info'   => 'تحتوي "معلومات النشرة الإخبارية" على تحديثات أو عروض أو محتوى مشترك بانتظام من خلال رسائل البريد الإلكتروني للمشتركين ، وإبقائهم على اطلاع ومشاركة.',
-                    ],
-
-                    'email' => [
-                        'email-verification' => 'السماح بالتحقق من البريد الإلكتروني',
-                        'title'              => 'تأكيد بواسطة البريد الالكتروني',
-                        'title-info'         => 'يؤكد "التحقق من البريد الإلكتروني" صحة عنوان البريد الإلكتروني ، غالبًا عن طريق إرسال رابط تأكيد ، وتعزيز أمان الحساب وموثوقية الاتصال.',
-                    ],
-
-                    'social-login' => [
-                        'enable-facebook'   => 'تمكين Facebook',
-                        'enable-github'     => 'تمكين جيثب',
-                        'enable-google'     => 'تمكين جوجل',
-                        'enable-linkedin'   => 'تمكين LinkedIn',
-                        'enable-twitter'    => 'تمكين تويتر',
-                        'social-login'      => 'تسجيل الدخول الاجتماعي',
-                        'social-login-info' => 'يمكّن "تسجيل الدخول الاجتماعي" المستخدمين من الوصول إلى مواقع الويب باستخدام حسابات وسائل التواصل الاجتماعي الخاصة بهم ، وتبسيط عمليات التسجيل وعمليات تسجيل الدخول للراحة.',
-                    ],
-                ],
-            ],
-
-            'email' => [
-                'info'  => 'بريد إلكتروني',
-                'title' => 'بريد إلكتروني',
-
-                'email-settings' => [
-                    'admin-email'           => 'البريد الإلكتروني المسؤول',
-                    'admin-email-tip'       => 'عنوان البريد الإلكتروني للمسؤول لهذه القناة لتلقي رسائل البريد الإلكتروني',
-                    'admin-name'            => 'اسم المسؤول',
-                    'admin-name-tip'        => 'سيتم عرض هذا الاسم في جميع رسائل البريد الإلكتروني للمسؤول',
-                    'admin-page-limit'      => 'العناصر الافتراضية لكل صفحة (مسؤول)',
-                    'email-sender-name'     => 'اسم مرسل البريد الإلكتروني',
-                    'email-sender-name-tip' => 'سيتم عرض هذا الاسم في صندوق الوارد للعملاء',
-                    'info'                  => 'اضبط اسم مرسل البريد الإلكتروني ، وعنوان البريد الإلكتروني للمتجر ، واسم المسؤول وعنوان البريد الإلكتروني للمسؤول.',
-                    'shop-email-from'       => 'تسوق عنوان البريد الإلكتروني',
-                    'shop-email-from-tip'   => 'عنوان البريد الإلكتروني لهذه القناة لإرسال رسائل بريد إلكتروني إلى عملائك',
-                    'title'                 => 'إعدادات البريد الإلكتروني',
-                ],
-
-                'notifications' => [
-                    'info'      => '"الإخطار" هي رسالة أو تنبيه تقوم بإبلاغ المستخدمين بالأحداث أو التحديثات أو الإجراءات ، مما يعزز مشاركة المستخدم ووعيه.',
-                    'new-admin' => 'إرسال بريد إلكتروني للتأكيد إلى المسؤول',
-                    'title'     => 'إشعارات',
-                ],
-            ],
-
-            'sales' => [
-                'info'  => 'مبيعات',
-                'title' => 'مبيعات',
-
-                'shipping' => [
-                    'info'  => 'تعيين معلومات الشحن.',
-                    'title' => 'شحن',
-
-                    'origin' => [
-                        'bank-details'   => 'التفاصيل المصرفية',
-                        'city'           => 'مدينة',
-                        'contact-number' => 'رقم الاتصال',
-                        'country'        => 'دولة',
-                        'state'          => 'ولاية',
-                        'store-name'     => 'اسم المتجر',
-                        'street-address' => 'عنوان الشارع',
-                        'title'          => 'أصل',
-                        'title-info'     => 'يشير أصل الشحن إلى الموقع الذي تنشأ فيه البضائع أو المنتجات قبل نقلها إلى وجهتها.',
-                        'vat-number'     => 'ظريبه الشراء',
-                        'zip'            => 'أَزِيز',
-                    ],
-                ],
-
-                'shipping-methods' => [
-                    'info'  => 'تعيين معلومات طرق الشحن',
-                    'title' => 'طرق الشحن',
-
-                    'free-shipping' => [
-                        'description' => 'وصف',
-                        'page-title'  => 'ًالشحن مجانا',
-                        'status'      => 'حالة',
-                        'title'       => 'عنوان',
-                        'title-info'  => 'يشير "الشحن المجاني" إلى طريقة الشحن حيث يتم التنازل عن تكلفة الشحن ، ويغطي البائع مصاريف الشحن لتسليم البضائع إلى المشتري.',
-                    ],
-
-                    'flat-rate-shipping' => [
-                        'description' => 'وصف',
-                        'page-title'  => 'تعريفة موحدة للشحن بغض النظر عن الكمية',
-                        'rate'        => 'معدل',
-                        'status'      => 'حالة',
-                        'title'       => 'عنوان',
-                        'title-info'  => 'الشحن المسطح هو طريقة شحن حيث يتم فرض رسوم ثابتة للشحن ، بغض النظر عن وزن الحزمة أو الحجم أو المسافة.هذا يبسط تكاليف الشحن ويمكن أن يكون مفيدًا لكل من المشترين والبائعين.',
-                        'type'        => 'يكتب',
-                    ],
-                ],
-
-                'invoice-settings' => [
-                    'info'  => 'تعيين رقم الفاتورة وشروط الدفع وتصميم زلة الفاتورة وتذكير الفاتورة.',
-                    'title' => 'إعدادات الفاتورة',
-
-                    'invoice-number' => [
-                        'generator'  => 'مولد رقم الفاتورة',
-                        'length'     => 'طول رقم الفاتورة',
-                        'prefix'     => 'بادئة رقم الفاتورة',
-                        'suffix'     => 'رقم الفاتورة لاحقة',
-                        'title'      => 'إعدادات رقم الفاتورة',
-                        'title-info' => 'تكوين القواعد أو المعلمات لإنشاء وتعيين أرقام تعريف فريدة لصالح فواتير لأغراض التنظيمية والتتبع.',
-                    ],
-
-                    'payment-terms' => [
-                        'due-duration'      => 'مدة بسبب',
-                        'due-duration-day'  => ':due-duration يوم',
-                        'due-duration-days' => ':due-duration أيام',
-                        'title'             => 'شروط الدفع',
-                        'title-info'        => 'شروط المتفق عليها التي تملي متى وكيف يجب أن يتم الدفع للسلع أو الخدمات من قبل المشتري للبائع.',
-                    ],
-
-                    'invoice-slip-design' => [
-                        'logo'       => 'شعار',
-                        'title'      => 'تصميم زلة فاتورة',
-                        'title-info' => 'التصميم المرئي وتنسيق قسيمة الفاتورة ، بما في ذلك العلامة التجارية للشركة والتفصيل والتسعير وتفاصيل الدفع للعرض التقديمي المهني.',
-                    ],
-
-                    'invoice-reminders' => [
-                        'interval-between-reminders' => 'الفاصل بين التذكيرات',
-                        'maximum-limit-of-reminders' => 'الحد الأقصى للتذكير',
-                        'title'                      => 'تذكيرات فاتورة',
-                        'title-info'                 => 'تم إرسال الإخطارات أو الاتصالات الآلية إلى العملاء لتذكيرهم بالمدفوعات القادمة أو المتأخرة للفواتير.',
-                    ],
-                ],
-            ],
-
-            'taxes' => [
-                'title' => 'الضرائب',
-
-                'catalog' => [
-                    'title'      => 'فهرس',
-                    'title-info' => 'قم بتعيين حسابات الموقع الافتراضية',
-
-                    'pricing' => [
-                        'title'         => 'التسعير',
-                        'title-info'    => 'تفاصيل حول تكلفة السلع أو الخدمات ، بما في ذلك السعر الأساسي ، والخصومات ، والضرائب ، والرسوم الإضافية. المعلومات',
-                        'tax-inclusive' => 'ضريبة شاملة',
-                    ],
-
-                    'default-location-calculation' => [
-                        'default-country'   => 'البلد الافتراضي',
-                        'default-post-code' => 'رمز النشر الافتراضي',
-                        'default-state'     => 'الحالة الافتراضية',
-                        'title'             => 'حساب الموقع الافتراضي',
-                        'title-info'        => 'التحديد الآلي للموقع القياسي أو الأولي بناءً على عوامل أو إعدادات محددة مسبقًا.',
+                    'agentic-pim' => [
+                        'title'                     => 'PIM الوكيل',
+                        'title-info'                => 'تكوين دردشة وكيل الذكاء الاصطناعي وسير عمل الإثراء التلقائي ومراقبة الجودة. تتيح هذه الميزات إدارة المنتجات التحادثية والصيانة الاستباقية للكتالوج.',
+                        'enabled'                   => 'تمكين دردشة وكيل الذكاء الاصطناعي',
+                        'enabled-info'              => 'تمكين أداة الدردشة العائمة للذكاء الاصطناعي لإدارة المنتجات التحادثية مع أكثر من 27 إجراء أداة.',
+                        'max-steps'                 => 'الحد الأقصى لخطوات الوكيل لكل دورة',
+                        'max-steps-info'            => 'الحد الأقصى لعدد تكرارات استدعاء الأداة التي يمكن لوكيل الذكاء الاصطناعي تنفيذها لكل رسالة مستخدم. تسمح القيم الأعلى بعمليات متعددة الخطوات أكثر تعقيدًا.',
+                        'daily-token-budget'        => 'ميزانية الرموز اليومية',
+                        'daily-token-budget-info'   => 'الحد الأقصى لرموز الذكاء الاصطناعي (الإدخال + الإخراج) التي يمكن استهلاكها يوميًا عبر جميع المستخدمين. اضبط على 0 للاستخدام غير المحدود. يساعد في التحكم في تكاليف API.',
+                        'auto-enrichment'           => 'الإثراء التلقائي عند إنشاء المنتج',
+                        'auto-enrichment-info'      => 'إنشاء الأوصاف والفئات ومحتوى SEO المفقود تلقائيًا عند إنشاء منتجات جديدة أو استيرادها.',
+                        'quality-monitor'           => 'مراقب جودة الكتالوج',
+                        'quality-monitor-info'      => 'تشغيل عمليات فحص مجدولة لاكتشاف المنتجات غير المكتملة والترجمات المفقودة والإدخالات المكررة والتناقضات في الأسعار.',
+                        'confidence-threshold'      => 'حد الثقة',
+                        'confidence-threshold-info' => 'الحد الأدنى لدرجة الثقة (0-1) للتغييرات المُنشأة بالذكاء الاصطناعي ليتم تطبيقها تلقائيًا. أسفل هذا الحد، يتم وضع التغييرات في قائمة الانتظار للمراجعة البشرية.',
+                        'approval-mode'             => 'وضع الموافقة على التغيير',
+                        'approval-mode-info'        => 'يتحكم في كيفية تعامل وكيل الذكاء الاصطناعي مع عمليات الكتابة. "تأكيد وتطبيق": يقترح الوكيل القيم في الدردشة وينتظر التأكيد ثم ينفذ. "تأكيد صارم": نفس الشيء ولكن يتحقق أيضًا بعد كل تغيير. "اقتراح فقط": يصف التغييرات ولكن لا ينفذها أبدًا (للقراءة فقط).',
                     ],
                 ],
             ],
         ],
-
         'integrations' => [
             'index' => [
                 'create-btn' => 'يخلق',
                 'title'      => 'التكامل',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'delete'          => 'يمسح',
                     'edit'            => 'يحرر',
                     'id'              => 'بطاقة تعريف',
@@ -2055,7 +1689,6 @@ return [
                     'permission-type' => 'نوع إذن',
                 ],
             ],
-
             'create' => [
                 'access-control' => 'صلاحية التحكم صلاحية الدخول',
                 'all'            => 'الجميع',
@@ -2068,7 +1701,6 @@ return [
                 'save-btn'       => 'يحفظ',
                 'title'          => 'تكامل جديد',
             ],
-
             'edit' => [
                 'access-control' => 'صلاحية التحكم صلاحية الدخول',
                 'all'            => 'الجميع',
@@ -2086,7 +1718,6 @@ return [
                 'save-btn'       => 'يحفظ',
                 'title'          => 'تحرير التكامل',
             ],
-
             'being-used'                     => 'تم استخدام تكامل API بالفعل في مستخدم المسؤول',
             'create-success'                 => 'تم إنشاء تكامل API بنجاح',
             'delete-failed'                  => 'تم حذف تكامل API',
@@ -2097,40 +1728,155 @@ return [
             're-generate-secret-key-success' => 'يتم تجديد مفتاح API السري بنجاح',
             'client-not-found'               => 'لم يتم العثور على العميل',
         ],
-
         'prompt' => [
             'datagrid' => [
-                'id'            => 'المعرف',
-                'title'         => 'العنوان',
-                'prompt'        => 'الموجه',
-                'type'          => 'النوع',
-                'created-at'    => 'تاريخ الإنشاء',
-                'updated-at'    => 'تاريخ التحديث',
-                'actions'       => 'الإجراءات',
-                'edit'          => 'تعديل',
-                'delete'        => 'حذف',
-                'product'       => 'المنتج',
-                'category'      => 'الفئة',
+                'id'               => 'المعرف',
+                'title'            => 'العنوان',
+                'prompt'           => 'الموجه',
+                'type'             => 'النوع',
+                'purpose'          => 'الغرض',
+                'text-generation'  => 'توليد النص',
+                'image-generation' => 'توليد الصور',
+                'translation'      => 'الترجمة',
+                'created-at'       => 'تاريخ الإنشاء',
+                'updated-at'       => 'تاريخ التحديث',
+                'actions'          => 'الإجراءات',
+                'edit'             => 'تعديل',
+                'delete'           => 'حذف',
+                'product'          => 'المنتج',
+                'category'         => 'الفئة',
             ],
             'create' => [
-                'title'         => 'الموجه',
-                'create-btn'    => 'إنشاء موجه',
-                'edit-title'    => 'تعديل الموجه',
-                'create-title'  => 'إنشاء موجه جديد',
-                'label-title'   => 'العنوان',
-                'type'          => 'النوع',
-                'prompt'        => 'الموجه',
-                'save-btn'      => 'حفظ الموجه',
+                'title'               => 'الموجه',
+                'create-btn'          => 'إنشاء موجه',
+                'edit-title'          => 'تعديل الموجه',
+                'create-title'        => 'إنشاء موجه جديد',
+                'label-title'         => 'العنوان',
+                'purpose'             => 'الغرض',
+                'text-generation'     => 'توليد النصوص',
+                'image-generation'    => 'توليد الصور',
+                'select-purpose'      => 'اختر الغرض',
+                'select-model'        => '-- اختر النموذج --',
+                'loading-models'      => 'جارٍ تحميل النماذج...',
+                'no-models-available' => 'لا توجد نماذج متاحة. اختر منصة أو قم بإعدادها في علامة تبويب المنصات.',
+                'type'                => 'النوع',
+                'prompt'              => 'الموجه',
+                'save-btn'            => 'حفظ الموجه',
             ],
             'message' => [
-                'save-success'      => 'تم حفظ الموجه بنجاح.',
-                'update-success'    => 'تم تحديث الموجه بنجاح.',
-                'delete-success'    => 'تم حذف الموجه بنجاح.',
-                'delete-fail'       => 'فشل في حذف الموجه.',
+                'save-success'   => 'تم حفظ الموجه بنجاح.',
+                'update-success' => 'تم تحديث الموجه بنجاح.',
+                'delete-success' => 'تم حذف الموجه بنجاح.',
+                'delete-fail'    => 'فشل في حذف الموجه.',
+            ],
+        ],
+        'system-prompt' => [
+            'datagrid' => [
+                'id'          => 'المعرف',
+                'title'       => 'العنوان',
+                'tone'        => 'النبرة',
+                'max-tokens'  => 'الحد الأقصى للرموز',
+                'temperature' => 'الحرارة',
+                'status'      => 'الحالة',
+                'created-at'  => 'تاريخ الإنشاء',
+                'updated-at'  => 'تاريخ التحديث',
+                'actions'     => 'إجراءات',
+                'save'        => 'حفظ',
+                'edit'        => 'تعديل',
+                'delete'      => 'حذف',
+            ],
+            'create' => [
+                'title'        => 'موجه النظام',
+                'create-btn'   => 'إنشاء موجه النظام',
+                'edit-title'   => 'تعديل موجه النظام',
+                'create-title' => 'إنشاء موجه نظام جديد',
+                'label-title'  => 'العنوان',
+                'max-tokens'   => 'الحد الأقصى لرموز الإخراج',
+                'temperature'  => 'الحرارة',
+                'type'         => 'النوع',
+                'prompt'       => 'الموجه',
+                'save-btn'     => 'حفظ الموجه',
+                'prompt-tone'  => 'نبرة الموجه',
+            ],
+            'message' => [
+                'save-success'   => 'تم حفظ موجه النظام بنجاح.',
+                'update-success' => 'تم تحديث موجه النظام بنجاح.',
+                'delete-success' => 'تم حذف موجه النظام بنجاح.',
+                'delete-fail'    => 'فشل حذف موجه النظام.',
+            ],
+        ],
+        'platform' => [
+            'title'           => 'منصات الذكاء الاصطناعي',
+            'create-btn'      => 'إضافة منصة',
+            'create-title'    => 'إضافة منصة ذكاء اصطناعي',
+            'edit-title'      => 'تعديل منصة ذكاء اصطناعي',
+            'save-btn'        => 'حفظ',
+            'saving'          => 'جاري الحفظ',
+            'test-connection' => 'اختبار الاتصال',
+            'setup'           => [
+                'title'              => 'ابدأ مع Magic AI',
+                'description'        => 'اتصل بمزود الذكاء الاصطناعي الخاص بك لفتح توليد المحتوى وإنشاء الصور والترجمة المدعومة بالذكاء الاصطناعي. أضف منصتك الأولى للبدء.',
+                'step-1'             => 'اختر مزوداً',
+                'step-2'             => 'أدخل مفتاح API الخاص بك',
+                'step-3'             => 'اختر النماذج واحفظ',
+                'add-first'          => 'أضف منصتك الأولى',
+                'no-default-warning' => 'لم يتم تعيين منصة افتراضية. يرجى تعيين منصة واحدة كافتراضية لتفعيل ميزات الذكاء الاصطناعي عبر التطبيق.',
+                'no-platform-hint'   => 'لم يتم تكوين أي منصات بعد. انتقل إلى علامة التبويب "المنصات" لإضافة مزود الذكاء الاصطناعي الأول.',
+                'lightning-icon'     => 'الذكاء الاصطناعي السحري',
+                'warning-icon'       => 'تحذير',
+            ],
+            'testing'         => 'جاري الاختبار',
+            'fetch-models'    => 'جلب النماذج',
+            'fetching-models' => 'جاري الجلب',
+            'set-default'     => 'تعيين كافتراضي',
+            'datagrid'        => [
+                'label'      => 'التسمية',
+                'provider'   => 'المزود',
+                'models'     => 'النماذج',
+                'default'    => 'افتراضي',
+                'status'     => 'الحالة',
+                'created-at' => 'تاريخ الإنشاء',
+                'edit'       => 'تعديل',
+                'delete'     => 'حذف',
+            ],
+            'fields' => [
+                'label'                    => 'التسمية',
+                'provider'                 => 'المزود',
+                'select-provider'          => '-- اختر المزود --',
+                'api-url'                  => 'رابط API',
+                'api-url-hint'             => 'مملوء مسبقاً بنقطة النهاية الافتراضية. عدّل فقط عند استخدام وكيل أو نشر مخصص.',
+                'api-key'                  => 'مفتاح API',
+                'models'                   => 'النماذج',
+                'custom-model-placeholder' => 'اكتب معرف النموذج المخصص...',
+                'add'                      => 'إضافة',
+                'enter-key-to-fetch'       => 'أدخل مفتاح API أعلاه لجلب النماذج المتاحة تلقائياً.',
+                'search-models'            => 'البحث في النماذج...',
+                'no-models-match'          => 'لا توجد نماذج تطابق بحثك.',
+                'azure-deployment'         => 'اسم النشر',
+                'azure-api-version'        => 'إصدار API',
+                'is-default'               => 'تعيين كافتراضي',
+                'status'                   => 'الحالة',
+                'use-default'              => '-- استخدام المنصة الافتراضية --',
+                'use-default-hint'         => 'اتركه فارغاً لاستخدام المنصة المحددة كافتراضية. المنصات المميزة بعلامة * هي الافتراضية.',
+                'no-image-platform'        => 'لم يتم تكوين منصة قادرة على الصور. أضف منصة OpenAI أو Gemini أو xAI أولاً.',
+                'image-platform-hint'      => 'يتم عرض المنصات الداعمة لتوليد الصور فقط (OpenAI، Gemini، xAI).',
+                'remove-model'             => 'إزالة النموذج :model',
+                'invalid-model-name'       => 'اسم نموذج غير صالح. استخدم فقط الأحرف والأرقام والشرطات والنقاط والنقطتين والشرطات المائلة (مثل gpt-4o، claude-3-sonnet).',
+            ],
+            'message' => [
+                'save-success'          => 'تم حفظ المنصة بنجاح.',
+                'update-success'        => 'تم تحديث المنصة بنجاح.',
+                'delete-success'        => 'تم حذف المنصة بنجاح.',
+                'delete-fail'           => 'فشل حذف المنصة.',
+                'cannot-delete-default' => 'لا يمكن حذف المنصة الافتراضية الوحيدة.',
+                'set-default-success'   => 'تم تعيين المنصة كافتراضية بنجاح.',
+                'test-success'          => 'تم التحقق من الاتصال بنجاح!',
+                'test-fail'             => 'فشل اختبار الاتصال',
+                'fetch-models-fail'     => 'تعذّر جلب النماذج',
+                'invalid-model-names'   => 'أسماء نماذج غير صالحة: :names. يجب أن تبدأ أسماء النماذج بحرف أو رقم وتحتوي فقط على أحرف وأرقام وشرطات ونقاط ونقطتين وشرطات مائلة.',
             ],
         ],
     ],
-
     'components' => [
         'layouts' => [
             'header' => [
@@ -2140,124 +1886,78 @@ return [
                 'my-account'    => 'حسابي',
                 'notifications' => 'إشعارات',
                 'visit-shop'    => 'زيارة متجر',
-
-                'mega-search' => [
-                    'categories'                      => 'فئات',
-                    'customers'                       => 'عملاء',
-                    'explore-all-categories'          => 'استكشاف جميع الفئات',
-                    'explore-all-customers'           => 'استكشف جميع العملاء',
-                    'explore-all-matching-categories' => 'استكشف جميع الفئات المطابقة لـ ":query" ( :count)',
-                    'explore-all-matching-customers'  => 'استكشف جميع العملاء المطابقة لـ ":query" ( :count)',
-                    'explore-all-matching-orders'     => 'استكشف جميع الطلبات المطابقة لـ ":query" ( :count)',
-                    'explore-all-matching-products'   => 'استكشف جميع المنتجات المطابقة لـ ":count" ()',
-                    'explore-all-orders'              => 'استكشاف جميع الطلبات',
-                    'explore-all-products'            => 'استكشاف جميع المنتجات',
-                    'orders'                          => 'طلبات',
-                    'products'                        => 'منتجات',
-                    'sku'                             => 'رمز المنتج: :sku',
-                    'title'                           => 'البحث الضخم',
-                ],
             ],
-
             'sidebar' => [
-                'attribute-families'        => 'تسمة العائلات',
-                'attribute-groups'          => 'مجموعات السمات',
-                'attributes'                => 'صفات',
-                'history'                   => 'تاريخ',
-                'edit-section'              => 'بيانات',
-                'general'                   => 'عام',
-                'campaigns'                 => 'الحملات',
-                'catalog'                   => 'فهرس',
-                'categories'                => 'فئات',
-                'category_fields'           => 'حقول الفئة',
-                'channels'                  => 'القنوات',
-                'cms'                       => 'CMS',
-                'collapse'                  => 'ينهار',
-                'communications'            => 'مجال الاتصالات',
-                'configure'                 => 'إعدادات',
-                'currencies'                => 'العملات',
-                'customers'                 => 'عملاء',
-                'dashboard'                 => 'لوحة القيادة',
-                'data-transfer'             => 'نقل البيانات',
-                'discount'                  => 'تخفيض',
-                'email-templates'           => 'قوالب البريد الإلكتروني',
-                'events'                    => 'الأحداث',
-                'exchange-rates'            => 'معدل التحويل',
-                'groups'                    => 'مجموعات',
-                'tracker'                   => 'تعقب الوظائف',
-                'imports'                   => 'الواردات',
-                'exports'                   => 'صادرات',
-                'invoices'                  => 'فواتير',
-                'locales'                   => 'أماكن',
-                'magic-ai'                  => 'السحر لديك',
-                'marketing'                 => 'تسويق',
-                'mode'                      => 'الوضع المظلم',
-                'newsletter-subscriptions'  => 'اشتراك الرسائل الإخبارية',
-                'orders'                    => 'طلبات',
-                'products'                  => 'منتجات',
-                'promotions'                => 'الترقيات',
-                'refunds'                   => 'المبالغ المستردة',
-                'reporting'                 => 'الإبلاغ',
-                'reviews'                   => 'المراجعات',
-                'roles'                     => 'أدوار',
-                'sales'                     => 'مبيعات',
-                'search-seo'                => 'البحث و SEO',
-                'search-synonyms'           => 'مرادفات البحث',
-                'search-terms'              => 'شروط البحث',
-                'settings'                  => 'إعدادات',
-                'shipments'                 => 'الشحنات',
-                'sitemaps'                  => 'خرفات Sitemap',
-                'tax-categories'            => 'فئات الضرائب',
-                'tax-rates'                 => 'معدلات الضرائب',
-                'taxes'                     => 'الضرائب',
-                'themes'                    => 'موضوعات',
-                'transactions'              => 'المعاملات',
-                'url-rewrites'              => 'url إعادة كتابة',
-                'users'                     => 'المستخدمون',
-                'integrations'              => 'التكامل',
-                'prompt'                    => 'الموجه',
-                'general-tab'               => 'الإعدادات',
+                'attribute-families' => 'عائلات السمات',
+                'attribute-groups'   => 'مجموعات السمات',
+                'attributes'         => 'صفات',
+                'history'            => 'تاريخ',
+                'edit-section'       => 'بيانات',
+                'general'            => 'عام',
+                'catalog'            => 'فهرس',
+                'categories'         => 'فئات',
+                'category_fields'    => 'حقول الفئة',
+                'channels'           => 'القنوات',
+                'collapse'           => 'ينهار',
+                'configure'          => 'إعدادات',
+                'currencies'         => 'العملات',
+                'dashboard'          => 'لوحة القيادة',
+                'data-transfer'      => 'نقل البيانات',
+                'groups'             => 'مجموعات',
+                'tracker'            => 'تعقب الوظائف',
+                'imports'            => 'الواردات',
+                'exports'            => 'صادرات',
+                'locales'            => 'أماكن',
+                'magic-ai'           => 'الذكاء الاصطناعي السحري',
+                'mode'               => 'الوضع المظلم',
+                'products'           => 'منتجات',
+                'roles'              => 'أدوار',
+                'settings'           => 'إعدادات',
+                'themes'             => 'موضوعات',
+                'users'              => 'المستخدمون',
+                'integrations'       => 'التكامل',
+                'prompt'             => 'الموجه',
+                'general-tab'        => 'الإعدادات',
             ],
         ],
-
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => 'لم يتم اختيار سجلات.',
-                'must-select-a-mass-action-option' => 'يجب عليك تحديد إجراء جماعي \'s option.',
+                'must-select-a-mass-action-option' => 'يجب عليك تحديد خيار لإجراء جماعي.',
                 'must-select-a-mass-action'        => 'يجب عليك تحديد إجراء جماعي.',
             ],
-
             'toolbar' => [
-                'length-of' => ':length من',
-                'ل'         => 'ل',
-                'per-page'  => 'لكل صفحة',
-                'results'   => ':total النتائج',
-                'selected'  => ':total المحددة',
-
+                'length-of'    => ':length من',
+                'of'           => 'of',
+                'per-page'     => 'لكل صفحة',
+                'results'      => ':total النتائج',
+                'selected'     => ':total المحددة',
                 'mass-actions' => [
                     'submit'        => 'يُقدِّم',
                     'select-option' => 'حدد الخيار',
                     'select-action' => 'اختر فعلا',
                 ],
-
                 'filter' => [
                     'title' => 'منقي',
                 ],
-
                 'search_by' => [
                     'code'       => 'البحث حسب الرمز',
                     'code_or_id' => 'ابحث حسب الرمز أو الهوية',
                 ],
-
                 'search' => [
                     'title' => 'يبحث',
                 ],
-
                 'manage-columns' => [
                     'title' => 'إدارة الأعمدة',
                 ],
+                'pagination' => [
+                    'first-page'    => 'الصفحة الأولى',
+                    'previous-page' => 'الصفحة السابقة',
+                    'next-page'     => 'الصفحة التالية',
+                    'last-page'     => 'الصفحة الأخيرة',
+                    'page-number'   => 'رقم الصفحة',
+                ],
             ],
-
             'filters' => [
                 'select'   => 'يختار',
                 'title'    => 'تطبيق المرشحات',
@@ -2268,17 +1968,14 @@ return [
                         'no-results'        => 'لم يتم العثور على نتائج...',
                     ],
                 ],
-
                 'custom-filters' => [
                     'clear-all' => 'امسح الكل',
                     'title'     => 'مرشحات مخصصة',
                 ],
-
                 'boolean-options' => [
                     'false' => 'خطأ شنيع',
                     'true'  => 'حقيقي',
                 ],
-
                 'date-options' => [
                     'last-month'        => 'الشهر الماضي',
                     'last-six-months'   => 'آخر 6 أشهر',
@@ -2290,12 +1987,10 @@ return [
                     'yesterday'         => 'أمس',
                 ],
             ],
-
             'table' => [
                 'actions'              => 'أجراءات',
                 'no-records-available' => 'لا توجد سجلات متاحة.',
             ],
-
             'manage-columns' => [
                 'title'             => 'إدارة الأعمدة',
                 'available-columns' => 'الأعمدة المتاحة',
@@ -2303,7 +1998,6 @@ return [
                 'apply-btn'         => 'تطبيق',
             ],
         ],
-
         'modal' => [
             'confirm' => [
                 'agree-btn'    => 'يوافق',
@@ -2311,14 +2005,12 @@ return [
                 'message'      => 'هل أنت متأكد من أنك تريد أداء هذا الإجراء؟',
                 'title'        => 'هل أنت متأكد؟',
             ],
-
             'delete' => [
                 'agree-btn'    => 'يمسح',
                 'disagree-btn' => 'يلغي',
                 'message'      => 'هل أنت متأكد أنك تريد حذف؟',
                 'title'        => 'تأكيد الحذف',
             ],
-
             'history' => [
                 'title'           => 'معاينة التاريخ',
                 'subtitle'        => 'مراجعة التحديثات والتغييرات الخاصة بك بسرعة.',
@@ -2332,7 +2024,6 @@ return [
                 'no-history'      => 'لم يتم العثور على تاريخ',
             ],
         ],
-
         'products' => [
             'search' => [
                 'add-btn'       => 'إضافة منتج محدد',
@@ -2344,7 +2035,6 @@ return [
                 'title'         => 'حدد المنتجات',
             ],
         ],
-
         'media' => [
             'images' => [
                 'add-image-btn'      => 'إضافة صورة',
@@ -2353,11 +2043,10 @@ return [
                 'cancel'             => 'إلغاء',
                 'ai-add-image-btn'   => 'الذكاء الاصطناعي السحري',
                 'ai-btn-info'        => 'توليد الصورة',
-                'allowed-types'      => 'بابوا نيو غينيا، الحياة السياسية في فرنسا، JPG',
+                'allowed-types'      => 'PNG، JPEG، JPG',
                 'not-allowed-error'  => 'يُسمح فقط بملفات الصور (.jpeg، .jpg، .png، ..).',
                 'upload-media-btn'   => 'رفع الوسائط',
-
-                'ai-generation' => [
+                'ai-generation'      => [
                     '1024x1024'        => '1024x1024',
                     '1024x1792'        => '1024x1792',
                     '1792x1024'        => '1792x1024',
@@ -2377,7 +2066,6 @@ return [
                     'standard'         => 'معيار',
                     'title'            => 'توليد الصور بالذكاء الاصطناعي',
                 ],
-
                 'placeholders' => [
                     'front'     => 'أمام',
                     'next'      => 'التالي',
@@ -2386,23 +2074,22 @@ return [
                     'zoom'      => 'تكبير',
                 ],
             ],
-
+            'gallery' => [
+                'not-allowed-error' => 'يُسمح فقط بملفات الصور والفيديو. (.mp4، .jpg ..)',
+            ],
             'videos' => [
                 'add-video-btn'     => 'أضف فيديو',
                 'allowed-types'     => 'mp4، ويب إم، مكف',
                 'not-allowed-error' => 'يُسمح فقط بملفات الفيديو (.mp4، .mov، .ogg ..).',
             ],
-
             'files' => [
                 'add-file-btn'      => 'اضف ملف',
                 'allowed-types'     => 'بي دي إف',
                 'not-allowed-error' => 'يسمح فقط بملفات pdf',
             ],
         ],
-
         'tinymce' => [
-            'ai-btn-tile' => 'الذكاء الاصطناعي السحري',
-
+            'ai-btn-tile'   => 'الذكاء الاصطناعي السحري',
             'ai-generation' => [
                 'apply'                  => 'يتقدم',
                 'generate'               => 'يولد',
@@ -2411,7 +2098,14 @@ return [
                 'generating'             => 'جارٍ الإنشاء...',
                 'prompt'                 => 'اِسْتَدْعَى',
                 'title'                  => 'مساعدة الذكاء الاصطناعي',
+                'platform'               => 'المنصة',
                 'model'                  => 'نموذج',
+                'rich-preview'           => 'معاينة غنية',
+                'system-prompt'          => 'موجه النظام',
+                'select-system-prompt'   => 'اختر موجه النظام',
+                'tone-instructions'      => 'النبرة / التعليمات',
+                'max-tokens'             => 'الحد الأقصى للرموز',
+                'temperature'            => 'الحرارة',
                 'gpt-3-5-turbo'          => 'OpenAI gpt-3.5-turbo',
                 'llama2'                 => 'اللاما 2',
                 'mistral'                => 'ميسترال',
@@ -2428,27 +2122,20 @@ return [
             ],
         ],
     ],
-
     'acl' => [
         'addresses'                => 'عناوين',
         'attribute-families'       => 'عائلات السمات',
         'attribute-groups'         => 'مجموعات السمات',
         'attributes'               => 'صفات',
-        'campaigns'                => 'الحملات',
         'cancel'                   => 'يلغي',
-        'cart-rules'               => 'قواعد سلة التسوق',
-        'catalog-rules'            => 'قواعد الكتالوج',
         'catalog'                  => 'فهرس',
         'categories'               => 'فئات',
         'channels'                 => 'القنوات',
-        'cms'                      => 'نظام إدارة المحتوى',
-        'communications'           => 'مجال الاتصالات',
         'configure'                => 'تهيئة',
         'configuration'            => 'إعدادات',
         'copy'                     => 'ينسخ',
         'create'                   => 'يخلق',
         'currencies'               => 'العملات',
-        'customers'                => 'عملاء',
         'dashboard'                => 'لوحة القيادة',
         'data-transfer'            => 'نقل البيانات',
         'delete'                   => 'يمسح',
@@ -2461,6 +2148,9 @@ return [
         'invoices'                 => 'الفواتير',
         'locales'                  => 'اللغات',
         'magic-ai'                 => 'الذكاء الاصطناعي السحري',
+        'magic-ai-general'         => 'عام',
+        'magic-ai-prompt'          => 'الموجه',
+        'magic-ai-system-prompt'   => 'موجه النظام',
         'marketing'                => 'تسويق',
         'newsletter-subscriptions' => 'اشتراك الرسائل الإخبارية',
         'note'                     => 'ملحوظة',
@@ -2488,56 +2178,50 @@ return [
         'users'                    => 'المستخدمين',
         'category_fields'          => 'حقول الفئة',
         'view'                     => 'منظر',
+        'execute'                  => 'تنفيذ الوظيفة',
         'history'                  => 'تاريخ',
         'restore'                  => 'يعيد',
         'integrations'             => 'التكامل',
         'api'                      => 'واجهة برمجة التطبيقات',
+        'tracker'                  => 'متعقب الوظيفة',
+        'exports'                  => 'التصديرات',
         'mass-update'              => 'تحديث جماعي',
         'mass-delete'              => 'حذف جماعي',
     ],
-
     'errors' => [
         'dashboard' => 'لوحة القيادة',
         'go-back'   => 'عُد',
-        'support'   => 'إذا استمرت المشكلة، فتواصل معنا على <a href=":link " class="  :class "> :email</a> للحصول على المساعدة.',
-
-        '404' => [
+        'support'   => 'إذا استمرت المشكلة، فتواصل معنا على <a href=":link" class=":class">:email</a> للحصول على المساعدة.',
+        '404'       => [
             'description' => 'أُووبس! الصفحة التي تبحث عنها في إجازة. يبدو أننا لم نتمكن من العثور على ما كنت تبحث عنه.',
             'title'       => '404 الصفحة غير موجودة',
         ],
-
         '401' => [
             'description' => 'أُووبس! يبدو أنه غير مسموح لك بالوصول إلى هذه الصفحة. يبدو أنك تفتقد بيانات الاعتماد الضرورية.',
             'title'       => '401 غير مصرح به',
             'message'     => 'فشلت المصادقة بسبب بيانات اعتماد غير صالحة أو رمز مميز منتهي الصلاحية.',
         ],
-
         '403' => [
             'description' => 'أُووبس! هذه الصفحة محظورة. يبدو أنك لا تملك الأذونات المطلوبة لعرض هذا المحتوى.',
             'title'       => '403 ممنوع',
         ],
-
         '413' => [
             'description' => 'أُووبس! يبدو أنك تحاول تحميل ملف كبير جدًا. إذا كنت تريد تحميل نفس الشيء، فيرجى تحديث تكوين PHP وفقًا لذلك.',
             'title'       => '413 المحتوى كبير جدًا',
         ],
-
         '419' => [
             'description' => 'أُووبس! انتهت صلاحية جلسة العمل الخاصة بك. يرجى تحديث الصفحة وتسجيل الدخول مرة أخرى للمتابعة.',
             'title'       => '419 انتهت صلاحية الجلسة',
         ],
-
         '500' => [
             'description' => 'أُووبس! هناك خطأ ما. يبدو أننا نواجه مشكلة في تحميل الصفحة التي تبحث عنها.',
             'title'       => '500 خطأ داخلي في الخادم',
         ],
-
         '503' => [
             'description' => 'أُووبس! يبدو أننا متوقفون مؤقتًا للصيانة. يرجى التحقق مرة أخرى بعد قليل.',
             'title'       => '503 الخدمة غير متوفرة',
         ],
     ],
-
     'export' => [
         'csv'                  => 'CSV',
         'download'             => 'تحميل',
@@ -2550,22 +2234,18 @@ return [
         'error'                => 'حدث خطأ ما!',
         'product-not-selected' => 'لم يتم تحديد أي منتجات للتصدير السريع',
     ],
-
     'validations' => [
         'slug-being-used' => 'يتم استخدام هذه سبيكة في أي من الفئات أو المنتجات.',
         'slug-reserved'   => 'هذه البزاقة محجوزة.',
         'invalid-locale'  => 'لغات محلية غير صالحة :locales',
     ],
-
     'footer' => [
         'copy-right' => 'مدعوم من <a href="https://unopim.com/" target="_blank">UnoPim</a>، مشروع مجتمعي من <a href="https://webkul.com/" target="_blank">Webkul</a>',
     ],
-
     'emails' => [
         'dear'   => 'عزيزي :admin_name',
-        'thanks' => 'إذا كنت بحاجة إلى أي نوع من المساعدة، يرجى الاتصال بنا على <a href=":link " style=" :style"></a>.<br/>شكرًا!',
-
-        'admin' => [
+        'thanks' => 'إذا كنت بحاجة إلى أي نوع من المساعدة، يرجى الاتصال بنا على <a href=":link" style=":style">:email</a>.<br/>شكرًا!',
+        'admin'  => [
             'forgot-password' => [
                 'description'    => 'لقد تلقيت هذا البريد الإلكتروني لأننا تلقينا طلبًا لإعادة تعيين كلمة المرور لحسابك.',
                 'greeting'       => 'هل نسيت كلمة السر!',
@@ -2574,62 +2254,52 @@ return [
             ],
         ],
     ],
-
     'common' => [
-        'yes'     => 'نعم',
-        'no'      => 'لا',
-        'true'    => 'حقيقي',
-        'false'   => 'خطأ شنيع',
-        'enable'  => 'ممكّن',
-        'disable' => 'عاجز',
+        'yes'            => 'نعم',
+        'no'             => 'لا',
+        'true'           => 'حقيقي',
+        'false'          => 'خطأ شنيع',
+        'enable'         => 'ممكّن',
+        'disable'        => 'عاجز',
+        'no-match-found' => 'لم يتم العثور على تطابق!',
     ],
-
     'default-prompt' => [
         'detailed' => [
             'title'  => 'وصف المنتج التفصيلي',
             'prompt' => 'اكتب وصفًا شاملاً لـ @name، يشمل ميزاته وفوائده والمواصفات الفنية وتعليمات الاستخدام.',
         ],
-
         'overview' => [
             'title'  => 'نظرة عامة على المنتج',
             'prompt' => 'قم بإنشاء نظرة عامة عن @name مع تسليط الضوء على ميزاته الرئيسية ومزاياه وجمهوره المستهدف مثل @brand و@color.',
         ],
-
         'features' => [
             'title'  => 'ميزات المنتج وفوائده',
             'prompt' => 'قائمة بالميزات الرئيسية لـ @name، موضحًا كيف تضيف قيمة لحياة العميل.',
         ],
-
         'technical' => [
             'title'  => 'المواصفات الفنية للمنتج',
             'prompt' => 'قم بإعداد قائمة شاملة بالمواصفات الفنية لـ @name، بما في ذلك الأبعاد والمواد والتوافق.',
         ],
-
         'care' => [
             'title'  => 'العناية بالمنتج وصيانته',
             'prompt' => 'اكتب دليلًا حول كيفية العناية بـ @name، بما في ذلك نصائح التنظيف والتخزين واستكشاف الأخطاء.',
         ],
-
         'tagline' => [
             'title'  => 'شعار المنتج',
             'prompt' => 'اكتب شعارًا جذابًا ومختصرًا لـ @name يعبر عن جوهره وفوائده.',
         ],
-
         'summary' => [
             'title'  => 'ملخص المنتج',
             'prompt' => 'قم بتلخيص الميزات الرئيسية لـ @name في 50-60 كلمة.',
         ],
-
         'headline' => [
             'title'  => 'عنوان المنتج',
             'prompt' => 'اكتب عنوانًا ملفتًا لـ @name يبرز نقطة البيع الفريدة.',
         ],
-
         'brief' => [
             'title'  => 'وصف موجز للمنتج',
             'prompt' => 'اكتب وصفًا موجزًا لـ @name مع التركيز على مزاياه وجمهوره المستهدف.',
         ],
-
         'elevator' => [
             'title'  => 'عرض المنتج السريع',
             'prompt' => 'قم بإنشاء عرض سريع لـ @name يلخص الغرض والفوائد في 30-40 كلمة.',

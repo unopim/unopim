@@ -3,8 +3,10 @@
 return [
     'seeders' => [
         'attribute' => [
-            'attribute-families' => 'Standard',
-            'attribute-groups'   => [
+            'attribute-families' => [
+                'default' => 'Standard',
+            ],
+            'attribute-groups' => [
                 'description'      => 'Beskrivning',
                 'general'          => 'Allmänt',
                 'meta-description' => 'Meta beskrivning',
@@ -96,7 +98,6 @@ return [
             ],
         ],
     ],
-
     'installer' => [
         'index' => [
             'create-administrator' => [
@@ -108,7 +109,6 @@ return [
                 'password'         => 'Lösenord',
                 'title'            => 'Skapa Administratör',
             ],
-
             'environment-configuration' => [
                 'allowed-currencies'  => 'Tillåtna Valutor',
                 'allowed-locales'     => 'Tillåtna Språk',
@@ -146,13 +146,11 @@ return [
                 'usd'                 => 'Amerikansk Dollar (USD)',
                 'warning-message'     => 'Varning! Standardspråk och standardvaluta kan inte ändras senare.',
             ],
-
             'installation-processing' => [
                 'unopim'      => 'Installerar UnoPim',
                 'unopim-info' => 'Skapar tabeller i databasen, detta kan ta några minuter.',
                 'title'       => 'Installationsprocess',
             ],
-
             'installation-completed' => [
                 'admin-panel'               => 'Administrationspanel',
                 'unopim-forums'             => 'UnoPim Forum',
@@ -160,7 +158,6 @@ return [
                 'title-info'                => 'UnoPim har installerats framgångsrikt.',
                 'title'                     => 'Installation Slutförd',
             ],
-
             'ready-for-installation' => [
                 'create-databsae-table'   => 'Skapa Databastabeller',
                 'install-info-button'     => 'Klicka på knappen nedan för att börja',
@@ -170,7 +167,6 @@ return [
                 'start-installation'      => 'Starta Installation',
                 'title'                   => 'Redo för Installation',
             ],
-
             'start' => [
                 'locale'        => 'Språk',
                 'main'          => 'Start',
@@ -178,7 +174,6 @@ return [
                 'title'         => 'Installera UnoPim',
                 'welcome-title' => 'Välkommen till UnoPim :version',
             ],
-
             'server-requirements' => [
                 'calendar'    => 'Kalender',
                 'ctype'       => 'cType',
@@ -201,7 +196,6 @@ return [
                 'tokenizer'   => 'Tokenizer',
                 'xml'         => 'XML',
             ],
-
             'back'                     => 'Tillbaka',
             'unopim-info'              => 'Gemenskapsprojekt',
             'unopim-logo'              => 'UnoPim-logotyp',

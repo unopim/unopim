@@ -6,7 +6,6 @@ return [
             'attribute-families' => [
                 'default' => 'デフォルト',
             ],
-
             'attribute-groups' => [
                 'description'      => '説明',
                 'general'          => '一般',
@@ -14,7 +13,6 @@ return [
                 'price'            => '価格',
                 'media'            => 'メディア',
             ],
-
             'attributes' => [
                 'brand'                => 'ブランド',
                 'color'                => '色',
@@ -45,7 +43,6 @@ return [
                 'weight'               => '重さ',
                 'width'                => '幅',
             ],
-
             'attribute-options' => [
                 'black'  => '黒',
                 'green'  => '緑',
@@ -58,19 +55,16 @@ return [
                 'yellow' => '黄色',
             ],
         ],
-
         'category' => [
             'categories' => [
                 'description' => 'ルートカテゴリの説明',
                 'name'        => '根',
             ],
-
             'category_fields' => [
                 'name'        => '名前',
                 'description' => '説明',
             ],
         ],
-
         'core' => [
             'channels' => [
                 'meta-title'       => 'デモストア',
@@ -78,7 +72,6 @@ return [
                 'meta-description' => 'デモストアのメタディスクリプション',
                 'name'             => 'デフォルト',
             ],
-
             'currencies' => [
                 'AED' => 'ディルハム',
                 'AFN' => 'イスラエルシェケル',
@@ -95,19 +88,16 @@ return [
                 'USD' => '米ドル',
             ],
         ],
-
         'user' => [
             'roles' => [
                 'description' => 'この役割のユーザーはすべてのアクセス権を持ちます',
                 'name'        => '管理者',
             ],
-
             'users' => [
                 'name' => '例',
             ],
         ],
     ],
-
     'installer' => [
         'index' => [
             'create-administrator' => [
@@ -119,7 +109,6 @@ return [
                 'password'         => 'パスワード',
                 'title'            => '管理者の作成',
             ],
-
             'environment-configuration' => [
                 'allowed-currencies'  => '使用できる通貨',
                 'allowed-locales'     => '許可されるロケール',
@@ -157,13 +146,11 @@ return [
                 'usd'                 => '米ドル (USD)',
                 'warning-message'     => '気をつけて！デフォルトのシステム言語およびデフォルトの通貨の設定は永続的であり、二度と変更することはできません。',
             ],
-
             'installation-processing' => [
                 'unopim'      => 'UnoPimのインストール',
                 'unopim-info' => 'データベーステーブルを作成しています。これには少し時間がかかる場合があります',
                 'title'       => 'インストール',
             ],
-
             'installation-completed' => [
                 'admin-panel'               => '管理者パネル',
                 'unopim-forums'             => 'ウノピムフォーラム',
@@ -171,7 +158,6 @@ return [
                 'title-info'                => 'UnoPim はシステムに正常にインストールされました。',
                 'title'                     => 'インストールが完了しました',
             ],
-
             'ready-for-installation' => [
                 'create-databsae-table'   => 'データベーステーブルを作成する',
                 'install-info-button'     => '下のボタンをクリックしてください',
@@ -181,7 +167,6 @@ return [
                 'start-installation'      => 'インストールの開始',
                 'title'                   => 'インストールの準備ができました',
             ],
-
             'start' => [
                 'locale'        => 'ロケール',
                 'main'          => '始める',
@@ -189,7 +174,6 @@ return [
                 'title'         => 'UnoPim のインストール',
                 'welcome-title' => 'UnoPimへようこそ :version',
             ],
-
             'server-requirements' => [
                 'calendar'    => 'カレンダー',
                 'ctype'       => 'cタイプ',
@@ -212,7 +196,6 @@ return [
                 'tokenizer'   => 'トークナイザー',
                 'xml'         => 'XML',
             ],
-
             'back'                     => '戻る',
             'unopim-info'              => 'によるコミュニティプロジェクト',
             'unopim-logo'              => 'ウノピムのロゴ',

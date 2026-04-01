@@ -5,6 +5,7 @@ namespace Webkul\User\Models;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\User\Contracts\Role as RoleContract;
@@ -51,7 +52,7 @@ class Role extends Model implements HistoryContract, RoleContract
     /**
      * Get the admins.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function admins()
     {

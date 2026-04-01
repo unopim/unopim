@@ -573,3 +573,154 @@ it('should allow update of configurable product if has permission', function () 
         'Expected status 200, 404 or 422, but got '.$response->status()
     );
 });
+
+/** Delete ACL Tests */
+it('should not allow deletion of category if does not have permission', function () {
+    $headers = $this->getAuthenticationHeaders('custom');
+
+    $code = Category::first()->code;
+
+    $this->withHeaders($headers)->json('DELETE', route('admin.api.categories.delete', ['code' => $code]))
+        ->assertForbidden();
+});
+
+it('should allow deletion of category if has delete permission', function () {
+    $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.categories.delete']);
+
+    $category = Category::factory()->create();
+
+    $response = $this->withHeaders($headers)->json('DELETE', route('admin.api.categories.delete', ['code' => $category->code]));
+
+    $this->assertTrue(
+        in_array($response->status(), [200, 404]),
+        'Expected status 200 or 404, but got '.$response->status()
+    );
+});
+
+it('should not allow deletion of simple product if does not have permission', function () {
+    $headers = $this->getAuthenticationHeaders('custom');
+
+    $this->withHeaders($headers)->json('DELETE', route('admin.api.products.delete', ['code' => 'test-sku']))
+        ->assertForbidden();
+});
+
+it('should allow deletion of simple product if has delete permission', function () {
+    $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.products.delete']);
+
+    $product = Product::factory()->simple()->withInitialValues()->create();
+
+    $response = $this->withHeaders($headers)->json('DELETE', route('admin.api.products.delete', ['code' => $product->sku]));
+
+    $this->assertTrue(
+        in_array($response->status(), [200, 404]),
+        'Expected status 200 or 404, but got '.$response->status()
+    );
+});
+
+/** PATCH ACL Tests */
+it('should not allow patch of category if does not have permission', function () {
+    $headers = $this->getAuthenticationHeaders('custom');
+
+    $code = Category::first()->code;
+
+    $this->withHeaders($headers)->json('PATCH', route('admin.api.categories.patch', ['code' => $code]), [])
+        ->assertForbidden();
+});
+
+it('should allow patch of category if has edit permission', function () {
+    $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.categories.edit']);
+
+    $code = Category::first()->code;
+
+    $response = $this->withHeaders($headers)->json('PATCH', route('admin.api.categories.patch', ['code' => $code]), []);
+
+    $this->assertTrue(
+        in_array($response->status(), [200, 422]),
+        'Expected status 200 or 422, but got '.$response->status()
+    );
+});
+
+it('should not allow patch of simple product if does not have permission', function () {
+    $headers = $this->getAuthenticationHeaders('custom');
+
+    $this->withHeaders($headers)->json('PATCH', route('admin.api.products.patch', ['sku' => 'test-sku']), [])
+        ->assertForbidden();
+});
+
+it('should allow patch of simple product if has edit permission', function () {
+    $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.products.edit']);
+
+    $product = Product::factory()->simple()->withInitialValues()->create();
+
+    $response = $this->withHeaders($headers)->json('PATCH', route('admin.api.products.patch', ['sku' => $product->sku]), []);
+
+    $this->assertTrue(
+        in_array($response->status(), [200, 422]),
+        'Expected status 200 or 422, but got '.$response->status()
+    );
+});
+
+it('should not allow patch of configurable product if does not have permission', function () {
+    $headers = $this->getAuthenticationHeaders('custom');
+
+    $this->withHeaders($headers)->json('PATCH', route('admin.api.configrable_products.patch', ['code' => 'test-sku']), [])
+        ->assertForbidden();
+});
+
+it('should allow patch of configurable product if has edit permission', function () {
+    $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.products.edit']);
+
+    $product = Product::factory()->configurable()->withInitialValues()->create();
+
+    $response = $this->withHeaders($headers)->json('PATCH', route('admin.api.configrable_products.patch', ['code' => $product->sku]), []);
+
+    $this->assertTrue(
+        in_array($response->status(), [200, 422]),
+        'Expected status 200 or 422, but got '.$response->status()
+    );
+});
+
+/** Attribute Options ACL Tests */
+it('should not allow creation of attribute options if does not have permission', function () {
+    $headers = $this->getAuthenticationHeaders('custom');
+
+    $this->withHeaders($headers)->json('POST', route('admin.api.attribute_options.store_option', ['code' => 'sku']), [])
+        ->assertForbidden();
+});
+
+it('should not allow update of attribute options if does not have permission', function () {
+    $headers = $this->getAuthenticationHeaders('custom');
+
+    $this->withHeaders($headers)->json('PUT', route('admin.api.attribute_options.update_option', ['code' => 'sku']), [])
+        ->assertForbidden();
+});
+
+/** Category Field Options ACL Tests */
+it('should not allow creation of category field options if does not have permission', function () {
+    $headers = $this->getAuthenticationHeaders('custom');
+
+    $this->withHeaders($headers)->json('POST', route('admin.api.category-fields-options.store_option', ['code' => 'name']), [])
+        ->assertForbidden();
+});
+
+it('should not allow update of category field options if does not have permission', function () {
+    $headers = $this->getAuthenticationHeaders('custom');
+
+    $this->withHeaders($headers)->json('PUT', route('admin.api.category-fields-options.update_option', ['code' => 'name']), [])
+        ->assertForbidden();
+});
+
+/** Media Upload ACL Tests */
+it('should not allow product media upload if does not have edit permission', function () {
+    $headers = $this->getAuthenticationHeaders('custom');
+
+    $this->withHeaders($headers)->json('POST', route('admin.api.media-files.product.store'), [])
+        ->assertForbidden();
+});
+
+it('should not allow category media upload if does not have edit permission', function () {
+    $headers = $this->getAuthenticationHeaders('custom');
+
+    $this->withHeaders($headers)->json('POST', route('admin.api.media-files.category.store'), [])
+        ->assertForbidden();
+});

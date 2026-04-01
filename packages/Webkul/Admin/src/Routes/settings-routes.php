@@ -147,6 +147,12 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
                 Route::get('index/{id}', 'indexData')->name('admin.settings.data_transfer.imports.index_data');
 
+                Route::post('pause/{id}', 'pause')->name('admin.settings.data_transfer.imports.pause');
+
+                Route::post('resume/{id}', 'resume')->name('admin.settings.data_transfer.imports.resume');
+
+                Route::post('cancel/{id}', 'cancel')->name('admin.settings.data_transfer.imports.cancel');
+
                 Route::get('stats/{id}/{state?}', 'stats')->name('admin.settings.data_transfer.imports.stats');
 
                 Route::get('download-sample/{type?}', 'downloadSample')->name('admin.settings.data_transfer.imports.download_sample');
@@ -156,6 +162,8 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
                 Route::get('download-error-report/{id}', 'downloadErrorReport')->name('admin.settings.data_transfer.imports.download_error_report');
 
                 Route::get('download-sample-images-zip/{type?}', 'downloadSampleImagesZip')->name('admin.settings.data_transfer.imports.download_sample_zip');
+
+                Route::post('upload-images-zip', 'uploadImagesZip')->name('admin.settings.data_transfer.imports.upload_images_zip');
             });
 
             /**

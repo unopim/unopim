@@ -52,7 +52,7 @@ class ProductDataSource extends ApiDataSource
     {
         $paginator = $this->paginator->toArray();
 
-        $withCompleteness = filter_var(request()->get('with_completeness', false), FILTER_VALIDATE_BOOLEAN);
+        $withCompleteness = filter_var(request()->input('with_completeness', false), FILTER_VALIDATE_BOOLEAN);
 
         return array_map(
             fn ($item) => $this->normalizeProduct($item, $withCompleteness),
@@ -90,7 +90,7 @@ class ProductDataSource extends ApiDataSource
             );
         }
 
-        $withCompleteness = filter_var(request()->get('with_completeness', false), FILTER_VALIDATE_BOOLEAN);
+        $withCompleteness = filter_var(request()->input('with_completeness', false), FILTER_VALIDATE_BOOLEAN);
 
         return $this->normalizeProduct($product, $withCompleteness);
     }

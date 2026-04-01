@@ -29,7 +29,7 @@ class DatabaseSequenceHelper
             return;
         }
 
-        $tablePrefix ??= Db::getTablePrefix();
+        $tablePrefix ??= DB::getTablePrefix();
 
         $tableName = $tablePrefix.$table;
 

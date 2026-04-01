@@ -275,7 +275,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     public function prepareColumns()
     {
-        $this->managedColumns = request()->get('managedColumns', []);
+        $this->managedColumns = request()->input('managedColumns', []);
         $this->defaultColumns = ! empty($this->managedColumns)
             ? $this->managedColumns
             : $this->defaultColumns;
@@ -427,12 +427,24 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             $result = ResultCursorFactory::createCursor($esQuery, $requestedParams);
 
             $ids = $result->getAllIds();
+            $total = $result->count();
+
+            /**
+             * If the requested page exceeds available data (ES returns no IDs but total > 0),
+             * reset to page 1 and re-fetch to avoid showing empty records with a non-zero count.
+             */
+            if (empty($ids) && $total > 0 && $pagination['page'] > 1) {
+                $pagination['page'] = 1;
+                $requestedParams['pagination']['page'] = 1;
+
+                $result = ResultCursorFactory::createCursor($esQuery, $requestedParams);
+                $ids = $result->getAllIds();
+                $total = $result->count();
+            }
 
             $this->queryBuilder->whereIn('products.id', $ids);
 
             if (! empty($ids)) {
-                $tablePrefix = DB::getTablePrefix();
-
                 $this->queryBuilder->orderByRaw(
                     DB::rawQueryGrammar()->orderByField(DB::getTablePrefix().'products.id', $ids)
                 );
@@ -443,8 +455,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
                 return;
             }
-
-            $total = $result->count();
 
             $this->paginator = new LengthAwarePaginator(
                 $total ? $this->queryBuilder->get() : [],

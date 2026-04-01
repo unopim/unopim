@@ -6,7 +6,6 @@ return [
             'attribute-families' => [
                 'default' => 'गलती करना',
             ],
-
             'attribute-groups' => [
                 'description'      => 'विवरण',
                 'general'          => 'सामान्य',
@@ -14,7 +13,6 @@ return [
                 'price'            => 'मूल्य',
                 'media'            => 'मीडिया',
             ],
-
             'attributes' => [
                 'brand'                => 'ब्रांड',
                 'color'                => 'रंग',
@@ -45,7 +43,6 @@ return [
                 'weight'               => 'वज़न',
                 'width'                => 'चौड़ाई',
             ],
-
             'attribute-options' => [
                 'black'  => 'काला',
                 'green'  => 'हरा',
@@ -58,19 +55,16 @@ return [
                 'yellow' => 'पीला',
             ],
         ],
-
         'category' => [
             'categories' => [
                 'description' => 'मूल श्रेणी विवरण',
                 'name'        => 'जड़',
             ],
-
             'category_fields' => [
                 'name'        => 'नाम',
                 'description' => 'विवरण',
             ],
         ],
-
         'core' => [
             'channels' => [
                 'meta-title'       => 'डेमो स्टोर',
@@ -78,7 +72,6 @@ return [
                 'meta-description' => 'डेमो स्टोर मेटा विवरण',
                 'name'             => 'गलती करना',
             ],
-
             'currencies' => [
                 'AED' => 'दिर्हाम',
                 'AFN' => 'इज़राइली शेकेल',
@@ -95,19 +88,16 @@ return [
                 'USD' => 'अमेरिकी डॉलर',
             ],
         ],
-
         'user' => [
             'roles' => [
                 'description' => 'इस भूमिका के उपयोगकर्ताओं के पास सभी पहुंच होगी',
                 'name'        => 'प्रशासक',
             ],
-
             'users' => [
                 'name' => 'उदाहरण',
             ],
         ],
     ],
-
     'installer' => [
         'index' => [
             'create-administrator' => [
@@ -119,7 +109,6 @@ return [
                 'password'         => 'पासवर्ड',
                 'title'            => 'व्यवस्थापक बनाएँ',
             ],
-
             'environment-configuration' => [
                 'allowed-currencies'  => 'अनुमत मुद्राएँ',
                 'allowed-locales'     => 'अनुमत स्थान',
@@ -143,27 +132,25 @@ return [
                 'iranian'             => 'ईरानी रियाल (आईआरआर)',
                 'israeli'             => 'इज़राइली शेकेल (एएफएन)',
                 'japanese-yen'        => 'जापानी येन (जेपीवाई)',
-                'mysql'               => 'MySQL',
-                'pgsql'               => 'pgSQL',
+                'mysql'               => 'मायएसक्यूएल',
+                'pgsql'               => 'पीजीएसक्यूएल',
                 'pound'               => 'पाउंड स्टर्लिंग (GBP)',
                 'rupee'               => 'भारतीय रुपया (INR)',
                 'russian-ruble'       => 'रूसी रूबल (आरयूबी)',
                 'saudi'               => 'सऊदी रियाल (SAR)',
                 'select-timezone'     => 'समयक्षेत्र चुनें',
-                'sqlsrv'              => 'SQLSRV',
+                'sqlsrv'              => 'एसक्यूएलएसआरवी',
                 'title'               => 'डेटाबेस कॉन्फ़िगरेशन',
                 'turkish-lira'        => 'तुर्की लीरा (TRY)',
                 'ukrainian-hryvnia'   => 'यूक्रेनी रिव्निया (UAH)',
                 'usd'                 => 'अमेरिकी डॉलर (USD)',
                 'warning-message'     => 'सावधान! आपकी डिफ़ॉल्ट सिस्टम भाषाओं के साथ-साथ डिफ़ॉल्ट मुद्रा की सेटिंग्स स्थायी हैं और इन्हें फिर कभी नहीं बदला जा सकता है।',
             ],
-
             'installation-processing' => [
                 'unopim'      => 'स्थापना यूनोपिम',
                 'unopim-info' => 'डेटाबेस तालिकाएँ बनाने में कुछ क्षण लग सकते हैं',
                 'title'       => 'इंस्टालेशन',
             ],
-
             'installation-completed' => [
                 'admin-panel'               => 'व्यवस्थापक पैनल',
                 'unopim-forums'             => 'यूनोपिम फोरम',
@@ -171,7 +158,6 @@ return [
                 'title-info'                => 'UnoPim आपके सिस्टम पर सफलतापूर्वक इंस्टॉल हो गया है।',
                 'title'                     => 'स्थापना पूर्ण हुई',
             ],
-
             'ready-for-installation' => [
                 'create-databsae-table'   => 'डेटाबेस तालिका बनाएं',
                 'install-info-button'     => 'के लिए नीचे दिए गए बटन पर क्लिक करें',
@@ -181,7 +167,6 @@ return [
                 'start-installation'      => 'इंस्टालेशन प्रारंभ करें',
                 'title'                   => 'इंस्टालेशन के लिए तैयार',
             ],
-
             'start' => [
                 'locale'        => 'स्थान',
                 'main'          => 'शुरू',
@@ -189,7 +174,6 @@ return [
                 'title'         => 'आपका यूनोपिम इंस्टॉल',
                 'welcome-title' => 'यूनोपिम में आपका स्वागत है :version',
             ],
-
             'server-requirements' => [
                 'calendar'    => 'कैलेंडर',
                 'ctype'       => 'cप्रकार',
@@ -200,7 +184,7 @@ return [
                 'gd'          => 'गोलों का अंतर',
                 'hash'        => 'हैश',
                 'intl'        => 'अंतर्राष्ट्रीय',
-                'json'        => 'JSON',
+                'json'        => 'जेसन',
                 'mbstring'    => 'एमबीस्ट्रिंग',
                 'openssl'     => 'Opensl',
                 'pcre'        => 'पीसीआर',
@@ -212,7 +196,6 @@ return [
                 'tokenizer'   => 'टोकननाइज़र',
                 'xml'         => 'एक्सएमएल',
             ],
-
             'back'                     => 'पीछे',
             'unopim-info'              => 'द्वारा एक सामुदायिक परियोजना',
             'unopim-logo'              => 'यूनोपिम लोगो',

@@ -11,7 +11,6 @@ return [
             'powered-by'             => 'Под управлением :unopim,',
             'open-source-project-by' => 'Проект с открытым исходным кодом от :webkul.',
         ],
-
         'forget-password' => [
             'create' => [
                 'email'                  => 'зарегистрированная электронная почта',
@@ -26,7 +25,6 @@ return [
                 'open-source-project-by' => 'Проект с открытым исходным кодом от :webkul.',
             ],
         ],
-
         'reset-password' => [
             'back-link-title'        => 'Вернуться, чтобы войти в систему?',
             'confirm-password'       => 'Подтвердите пароль',
@@ -38,7 +36,6 @@ return [
             'open-source-project-by' => 'Проект с открытым исходным кодом от :webkul.',
         ],
     ],
-
     'notifications' => [
         'description-text' => 'Перечислите все уведомления',
         'marked-success'   => 'Уведомление отмечено успешно',
@@ -55,7 +52,6 @@ return [
             'processing' => 'Обработка',
         ],
     ],
-
     'account' => [
         'edit' => [
             'back-btn'          => 'Назад',
@@ -76,33 +72,99 @@ return [
             'user-timezone'     => 'Часовой пояс',
         ],
     ],
-
     'dashboard' => [
-        'index' => [
-            'title'            => 'Панель приборов',
-            'user-info'        => 'Быстро мониторинг, что \'s count in your PIM',
-            'user-name'        => 'Привет! :user_name',
-            'catalog-details'  => 'Каталог',
-            'total-families'   => 'Всего семей',
-            'total-attributes' => 'Общие атрибуты',
-            'total-groups'     => 'Общие группы',
-            'total-categories' => 'Общие категории',
-            'total-products'   => 'Общая продукция',
-            'settings-details' => 'Каталосная структура',
-            'total-locales'    => 'Общее количество мест',
-            'total-currencies' => 'Общая валюта',
-            'total-channels'   => 'Общие каналы',
+        'invalid-type' => 'Недопустимый тип виджета панели управления.',
+        'index'        => [
+            'title'                => 'Панель приборов',
+            'user-info'            => 'Быстрый мониторинг данных в вашей системе PIM',
+            'user-name'            => 'Привет! :user_name',
+            'catalog-details'      => 'Каталог',
+            'total-families'       => 'Всего семей',
+            'total-attributes'     => 'Общие атрибуты',
+            'total-groups'         => 'Общие группы',
+            'total-categories'     => 'Общие категории',
+            'total-products'       => 'Общая продукция',
+            'settings-details'     => 'Каталосная структура',
+            'total-locales'        => 'Общее количество мест',
+            'total-currencies'     => 'Общая валюта',
+            'total-channels'       => 'Общие каналы',
+            'completeness'         => 'Полнота',
+            'active'               => 'Активные',
+            'inactive'             => 'Неактивные',
+            'simple'               => 'Простой',
+            'configurable'         => 'Конфигурируемый',
+            'product-stats'        => 'Статистика товаров',
+            'product-type-dist'    => 'Распределение по типу',
+            'products-by-status'   => 'Товары по статусу',
+            'products-over-time'   => 'Активность товаров (Последние 7 дней)',
+            'legend-created'       => 'Создано',
+            'legend-updated'       => 'Обновлено',
+            'recent-activity'      => 'Последняя активность',
+            'no-activity'          => 'Активность не найдена.',
+            'updated'              => 'обновлено',
+            'created'              => 'создано',
+            'deleted'              => 'удалено',
+            'ago'                  => 'назад',
+            'just-now'             => 'только что',
+            'data-transfer'        => 'Передача данных',
+            'no-jobs'              => 'Недавних задач импорта/экспорта не найдено.',
+            'job-type-import'      => 'Импорт',
+            'job-type-export'      => 'Экспорт',
+            'job-state-completed'  => 'Завершено',
+            'job-state-failed'     => 'Ошибка',
+            'job-state-processing' => 'Обработка',
+            'job-state-pending'    => 'Ожидание',
+            'job-state-validated'  => 'Проверено',
+            'rows-processed'       => 'Обработано строк',
+            'errors'               => 'Ошибки',
+            'quick-links'          => 'Быстрые ссылки',
+            'create-product'       => 'Создать товар',
+            'import-data'          => 'Импорт данных',
+            'export-data'          => 'Экспорт данных',
+            'manage-attributes'    => 'Управление атрибутами',
+            'view-all-activity'    => 'Показать все',
+            'view-all-jobs'        => 'Все задачи',
+            'new-this-week'        => 'Новые за неделю',
+            'with-variants'        => 'С вариантами',
+            'avg-completeness'     => 'Средняя полнота',
+            'enriched'             => 'Обогащенные',
+            'analytics-section'    => 'Аналитика',
+            'operations-section'   => 'Операции',
+            'needs-attention'      => 'Требует внимания',
+            'unenriched-products'  => 'Необогащённые товары',
+            'failed-jobs-24h'      => 'Ошибки (24ч)',
+            'low-completeness'     => 'Низкая полнота',
+            'all-good'             => 'Всё в порядке!',
+            'channel-readiness'    => 'Готовность каналов',
+            'ready-to-publish'     => 'готовы к публикации',
+            'of'                   => 'из',
+            'products-ready'       => 'товаров готово',
+            'no-readiness-data'    => 'Данных о полноте пока нет.',
+            'entity-types'         => [
+                'product'          => 'Продукт',
+                'category'         => 'Категория',
+                'attribute'        => 'Атрибут',
+                'attribute-family' => 'Семейство',
+                'attribute-group'  => 'Группа',
+                'category-field'   => 'Поле категории',
+                'channel'          => 'Канал',
+                'role'             => 'Роль',
+                'job-instance'     => 'Задание',
+                'webhook'          => 'Вебхук',
+                'api-key'          => 'API-ключ',
+            ],
         ],
     ],
-
     'catalog' => [
         'products' => [
             'index' => [
-                'already-taken' => ':name уже занят.',
-                'create-btn'    => 'Создать продукт',
-                'title'         => 'Продукты',
-
-                'create' => [
+                'already-taken'             => ':name уже занят.',
+                'create-btn'                => 'Создать продукт',
+                'title'                     => 'Продукты',
+                'magic-ai-error'            => 'Пожалуйста, проверьте учетные данные Magic AI и убедитесь, что выбрана правильная модель.',
+                'magic-ai-validate-error'   => 'Пожалуйста, проверьте учетные данные Magic AI.',
+                'magic-ai-validate-success' => 'Учетные данные Magic AI успешно проверены',
+                'create'                    => [
                     'back-btn'                          => 'Назад',
                     'configurable-attributes'           => 'Настраиваемые атрибуты',
                     'create-btn'                        => 'Создать продукт',
@@ -115,7 +177,6 @@ return [
                     'not-config-super-attributes-error' => 'Это супер атрибуты со значением ":super_attributes" не может быть найдено',
                     'sku-exists-error'                  => 'Артикул со значением ":sku" уже существует.',
                 ],
-
                 'datagrid' => [
                     'active'                 => 'Активный',
                     'attribute-family'       => 'Атрибут семьи',
@@ -145,49 +206,43 @@ return [
                     'update-status'          => 'Обновить состояние',
                     'parent'                 => 'Родительский',
                     'parent-identifier'      => 'Родитель: :sku',
+                    'created-at'             => 'Дата создания',
+                    'updated-at'             => 'Дата обновления',
                 ],
             ],
-
             'edit' => [
-                'preview'  => 'Предварительный просмотр',
-                'remove'   => 'Удалять',
-                'save-btn' => 'Сохранить продукт',
-                'title'    => 'Редактировать продукт',
-
+                'preview'    => 'Предварительный просмотр',
+                'remove'     => 'Удалять',
+                'save-btn'   => 'Сохранить продукт',
+                'title'      => 'Редактировать продукт',
                 'categories' => [
                     'title' => 'Категории',
                 ],
-
                 'images' => [
                     'info'  => 'Разрешение изображения должно быть как 560px x 609px',
                     'title' => 'Изображений',
                 ],
-
                 'videos' => [
                     'error' => ':attribute не может быть больше :max килобайт. Выберите файл меньшего размера.',
                     'info'  => 'Максимальный размер видео должен быть как :size',
                     'title' => 'Видео',
                 ],
-
                 'links' => [
                     'related-products' => [
                         'empty-info' => 'Добавить продукты связанных ассоциаций.',
                         'info'       => 'В дополнение к продукту, который просматривает клиент, им представлены связанные продукты.',
                         'title'      => 'сопутствующие товары',
                     ],
-
                     'up-sells' => [
                         'empty-info' => 'Сложите продукты Association Sell.',
                         'info'       => 'Заказчите представлены продукты с продажей, которая служит премиальной или более качественной альтернативой продукту, который они в настоящее время просматривают.',
                         'title'      => 'Продукты с продажей',
                     ],
-
                     'cross-sells' => [
                         'empty-info' => 'Добавить продукты Association Cross Sell.',
-                        'info'       => 'Рядом с корзиной, вы \'ll find these \"impulse-buy\" products positioned as cross-sells to complement the items already added to your cart.',
+                        'info'       => 'Рядом с корзиной вы найдёте товары «импульсной покупки», расположенные как перекрёстные продажи для дополнения товаров, уже добавленных в вашу корзину.',
                         'title'      => 'Продукты перекрестных продаж',
                     ],
-
                     'add-btn'           => 'Добавлять',
                     'delete'            => 'Удалить',
                     'empty-info'        => 'Чтобы добавить :type продукты на ходу.',
@@ -196,7 +251,6 @@ return [
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Ассоциации',
                 ],
-
                 'types' => [
                     'configurable' => [
                         'add-btn'                            => 'Добавить вариант',
@@ -213,15 +267,13 @@ return [
                         'variant-attribute-option-not-found' => 'Атрибут варианта или опция со значением ":attributes" не найдены',
                         'supper-attribute-not-found'         => 'Атрибут ужина со значением ":attribute" не найдены',
                         'variant-given-exists'               => 'Этот вариант со значением ":variants" уже существует',
-
-                        'create' => [
+                        'create'                             => [
                             'description'            => 'Описание',
                             'name'                   => 'Имя',
                             'save-btn'               => 'Добавлять',
                             'title'                  => 'Добавить вариант',
                             'variant-already-exists' => 'Этот вариант уже существует',
                         ],
-
                         'edit' => [
                             'disabled'        => 'Неполноценный',
                             'edit-info'       => 'Если вы хотите подробно обновить информацию о продукте, то перейдите в',
@@ -237,7 +289,6 @@ return [
                             'title'           => 'Продукт',
                             'weight'          => 'Масса',
                         ],
-
                         'mass-edit' => [
                             'add-images'          => 'Добавить изображения',
                             'apply-to-all-btn'    => 'Применить ко всему',
@@ -264,23 +315,31 @@ return [
                         ],
                     ],
                 ],
-
                 'translate' => [
-                    'translate-btn'            => 'Перевести',
-                    'title'                    => 'Перевод',
-                    'source-channel'           => 'Исходный канал',
-                    'locale'                   => 'Исходная локализация',
-                    'translated-content'       => 'Переведённый контент',
-                    'translating'              => 'Перевод...',
-                    'apply'                    => 'Применить',
-                    'cancel'                   => 'Отмена',
-                    'target-locales'           => 'Целевые локализации',
-                    'target-channel'           => 'Целевой канал',
-                    'attributes'               => 'Атрибуты',
-                    'source-content'           => 'Исходный контент',
-                    'tranlated-job-processed'  => 'Задача сохранения переведённого контента выполнена.',
+                    'translate-btn'               => 'Перевести',
+                    'title'                       => 'Перевод',
+                    'source-channel'              => 'Исходный канал',
+                    'locale'                      => 'Исходная локализация',
+                    'translated-content'          => 'Переведённый контент',
+                    'translating'                 => 'Перевод...',
+                    'apply'                       => 'Применить',
+                    'back'                        => 'Назад',
+                    'cancel'                      => 'Отмена',
+                    'target-locales'              => 'Целевые локализации',
+                    'target-channel'              => 'Целевой канал',
+                    'attributes'                  => 'Атрибуты',
+                    'tranlated-job-processed'     => 'Задача сохранения переведённого контента выполнена.',
+                    'step'                        => 'Шаг',
+                    'select-source'               => 'Выберите источник',
+                    'select-target'               => 'Выберите цель',
+                    'first-step-title'            => 'Шаг 1: Выберите исходный канал, язык и атрибуты',
+                    'first-step-title-attributes' => 'Шаг 1: Выберите исходный канал и язык',
+                    'source-content'              => 'Исходный контент',
+                    'second-step-title'           => 'Шаг 2: Выберите целевой канал и языки',
+                    'target-content'              => 'Целевое содержимое',
+                    'next'                        => 'Далее',
+                    'empty-translation-data'      => 'Данные для перевода недоступны на основе исходного канала и локали',
                 ],
-
                 'product-info' => [
                     'title'        => 'Информация о продукте',
                     'status'       => 'Статус',
@@ -290,6 +349,7 @@ return [
                     'created-at'   => 'Дата создания',
                     'product-type' => 'Тип продукта',
                 ],
+                'more-actions' => 'Дополнительные действия',
             ],
             'bulk-edit' => [
                 'validation' => [
@@ -302,27 +362,22 @@ return [
                     'select-attribute-or-family' => 'Пожалуйста, выберите хотя бы один атрибут или семейство атрибутов.',
                     'failed'                     => 'Ошибка проверки.',
                 ],
-
-                'modal'                      => [
+                'modal' => [
                     'title'            => 'Атрибуты для массового редактирования',
                     'btn-cancel'       => 'Отмена',
                     'btn-proceed'      => 'Продолжить',
                     'attribute-family' => 'Выберите семейство атрибутов',
                 ],
-
                 'index' => [
-                    'no-product'    => 'Не выбрано ни одного товара для массового редактирования.',
+                    'no-product' => 'Не выбрано ни одного товара для массового редактирования.',
                 ],
-
                 'filter' => [
-                    'many-product'      => 'Выбрано слишком много товаров.',
-                    'redirect-message'  => 'Перенаправление в режим массового редактирования.',
+                    'many-product'     => 'Выбрано слишком много товаров.',
+                    'redirect-message' => 'Перенаправление в режим массового редактирования.',
                 ],
-
                 'handle-save' => [
-                    'edit-success'  => 'Массовое редактирование выполнено успешно.',
+                    'edit-success' => 'Массовое редактирование выполнено успешно.',
                 ],
-
                 'id'              => 'ID',
                 'no-changes'      => 'Нет изменений для сохранения.',
                 'success'         => 'Задание успешно выполнено.',
@@ -332,9 +387,8 @@ return [
                 'img-preview'     => 'Предварительный просмотр изображения',
                 'no-image'        => 'Нет изображения',
                 'img-fail'        => 'Не удалось загрузить изображение',
-                'no-opton'        => 'Нет вариантов',
+                'no-option'       => 'Нет вариантов',
             ],
-
             'create-success'          => 'Продукт создан успешно',
             'delete-failed'           => 'Удален продукта не удалось',
             'delete-success'          => 'Продукт удален успешно',
@@ -348,13 +402,11 @@ return [
             'upload-success'          => 'Файл продукта успешно загружен.',
             'update-failure'          => 'Не удалось обновить продукт.',
         ],
-
         'attributes' => [
             'index' => [
                 'create-btn' => 'Создать атрибут',
                 'title'      => 'Атрибуты',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'channel-based'            => 'Канал на основе',
                     'code'                     => 'Код',
                     'created-at'               => 'Создан в',
@@ -372,7 +424,6 @@ return [
                     'delete-attribute-failure' => 'Невозможно удалить этот атрибут, так как он используется для настраиваемых продуктов',
                 ],
             ],
-
             'create' => [
                 'add-attribute-options' => 'Добавить параметры атрибута',
                 'add-option'            => 'Добавить опцию',
@@ -395,13 +446,12 @@ return [
                 'enable-wysiwyg'        => 'Включить редактор Wysiwyg',
                 'file'                  => 'Файл',
                 'general'               => 'Общий',
-                'image'                 => 'Изображение',
                 'gallery'               => 'Галерея',
+                'image'                 => 'Изображение',
                 'input-options'         => 'Параметры ввода',
                 'input-validation'      => 'Входная проверка',
                 'is-comparable'         => 'Атрибут сопоставим',
                 'is-configurable'       => 'Используйте для создания настраиваемого продукта',
-                'is-filterable'         => 'Использовать в слоистой навигации',
                 'is-required'           => 'Требуется',
                 'is-unique'             => 'Уникальный',
                 'is-visible-on-front'   => 'Видимо на странице просмотра продукта на фронт-конце',
@@ -418,7 +468,7 @@ return [
                 'select-type'           => 'Выберите тип атрибута',
                 'swatch'                => 'Образец Тип',
                 'text'                  => 'Текст',
-                'textarea'              => 'Textarea',
+                'textarea'              => 'Текстовое поле',
                 'title'                 => 'Добавить атрибут',
                 'type'                  => 'Тип',
                 'url'                   => 'URL',
@@ -431,8 +481,8 @@ return [
                 'usable-in-grid'        => 'Используется в сетке',
                 'is-filterable'         => 'Фильтруемый',
                 'ai-translate'          => 'Перевод ИИ',
-
-                'option' => [
+                'invalid-swatch-type'   => 'Тип :attribute не разрешен для типа атрибута :type с типом образца :swatch_type.',
+                'option'                => [
                     'color'    => 'Образец цвета',
                     'dropdown' => 'Падать',
                     'image'    => 'Образец изображения',
@@ -440,7 +490,6 @@ return [
                     'text'     => 'Текстовый образец',
                 ],
             ],
-
             'edit' => [
                 'add-attribute-options' => 'Добавить параметры атрибута',
                 'add-option'            => 'Добавить опцию',
@@ -464,12 +513,10 @@ return [
                 'file'                  => 'Файл',
                 'general'               => 'Общий',
                 'image'                 => 'Изображение',
-                'gallery'               => 'Галерея',
                 'input-options'         => 'Параметры ввода',
                 'input-validation'      => 'Входная проверка',
                 'is-comparable'         => 'Атрибут сопоставим',
                 'is-configurable'       => 'Используйте для создания настраиваемого продукта',
-                'is-filterable'         => 'Использовать в слоистой навигации',
                 'is-required'           => 'Требуется',
                 'is-unique'             => 'Уникальный',
                 'is-visible-on-front'   => 'Видимо на странице просмотра продукта на фронт-конце',
@@ -486,7 +533,7 @@ return [
                 'select-type'           => 'Выберите тип атрибута',
                 'swatch'                => 'Образец Тип',
                 'text'                  => 'Текст',
-                'textarea'              => 'Textarea',
+                'textarea'              => 'Текстовое поле',
                 'title'                 => 'Редактировать атрибут',
                 'type'                  => 'Тип',
                 'url'                   => 'URL',
@@ -499,22 +546,19 @@ return [
                 'usable-in-grid'        => 'Пользуемое в сетке',
                 'is-filterable'         => 'Фильтруемый',
                 'ai-translate'          => 'Перевод ИИ',
-                'invalid-swatch-type'   => ':attribute не разрешен для типа атрибута :type с типом swatch :swatch_type.',
-
-                'option' => [
-                    'create-success'      => 'Параметр атрибута успешно создан',
-                    'delete-success'      => 'Параметр атрибута успешно удалён',
+                'option'                => [
                     'save-btn'            => 'Сохранить опцию',
-                    'sort-update-failure' => 'Не удалось обновить порядок сортировки',
-                    'sort-update-success' => 'Порядок сортировки успешно обновлён',
+                    'create-success'      => 'Параметр атрибута успешно создан',
                     'update-success'      => 'Параметр атрибута успешно обновлён',
+                    'sort-update-success' => 'Порядок сортировки успешно обновлён',
+                    'sort-update-failure' => 'Не удалось обновить порядок сортировки',
+                    'delete-success'      => 'Параметр атрибута успешно удалён',
                     'color'               => 'Образец цвета',
                     'dropdown'            => 'Падать',
                     'image'               => 'Образец изображения',
                     'text'                => 'Текстовый образец',
                 ],
             ],
-
             'create-success'    => 'Атрибут создан успешно',
             'delete-failed'     => 'Атрибут Удален не удался',
             'delete-success'    => 'Атрибут удален успешно',
@@ -522,20 +566,16 @@ return [
             'user-define-error' => 'Не может удалить атрибут системы',
             'not-found'         => 'Атрибут с кодом ":code" не найден',
         ],
-
         'attribute-options' => [
-            'create-success' => 'Успешная опция атрибута создана успешно',
-            'update-success' => 'Параметр атрибута успешно обновлена',
-
+            'create-success'       => 'Успешная опция атрибута создана успешно',
+            'update-success'       => 'Параметр атрибута успешно обновлена',
             'usable-in-grid-error' => 'Только 4 атрибута могут быть использованы в сетке.',
         ],
-
         'attribute-groups' => [
             'index' => [
                 'create-btn' => 'Создать группу атрибутов',
                 'title'      => 'Атрибуты группы',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'code'                => 'Код',
                     'delete'              => 'Удалить',
                     'mass-delete-success' => 'Выбранная группа атрибутов успешно удалена',
@@ -547,7 +587,6 @@ return [
                     'update-status'       => 'Обновить состояние',
                 ],
             ],
-
             'create' => [
                 'title'    => 'Добавить группу атрибутов',
                 'save-btn' => 'Сохранить группу атрибутов',
@@ -556,7 +595,6 @@ return [
                 'code'     => 'Код',
                 'label'    => 'Этикетка',
             ],
-
             'edit' => [
                 'title'    => 'Редактировать группу атрибутов',
                 'back-btn' => 'Назад',
@@ -565,7 +603,6 @@ return [
                 'code'     => 'Код',
                 'label'    => 'Этикетка',
             ],
-
             'create-success'        => 'Attribute Group создана успешно',
             'delete-failed'         => 'Удаленная группа атрибутов не удалось',
             'delete-success'        => 'Атрибут группы удален успешно',
@@ -574,12 +611,10 @@ return [
             'attribute-group-error' => 'Группа используется в семьях.',
             'not-found'             => 'Группа атрибутов с кодом ":code" не найдена',
         ],
-
         'categories' => [
             'index' => [
-                'add-btn' => 'Создать категорию',
-                'title'   => 'Категории',
-
+                'add-btn'  => 'Создать категорию',
+                'title'    => 'Категории',
                 'datagrid' => [
                     'active'         => 'Активный',
                     'code'           => 'Код',
@@ -589,14 +624,13 @@ return [
                     'id'             => 'ИДЕНТИФИКАТОР',
                     'inactive'       => 'Неактивный',
                     'name'           => 'Отображаемое имя',
+                    'category-name'  => 'Название',
                     'no-of-products' => 'Количество продуктов',
                     'position'       => 'Позиция',
-                    'category-name'  => 'Название',
                     'status'         => 'Видимо в меню',
                     'update-status'  => 'Обновить состояние',
                 ],
             ],
-
             'create' => [
                 'back-btn'            => 'Назад',
                 'code'                => 'Код',
@@ -617,7 +651,6 @@ return [
                 'right-section'       => 'Раздел конфигурации',
                 'left-section'        => 'Общий раздел',
             ],
-
             'edit' => [
                 'back-btn'               => 'Назад',
                 'code'                   => 'Код',
@@ -636,7 +669,6 @@ return [
                 'right-section'          => 'Раздел конфигурации',
                 'left-section'           => 'Общий раздел',
             ],
-
             'category'             => 'Категория',
             'create-success'       => 'Категория создана успешно.',
             'delete-category-root' => 'Вы не можете удалить корневую категорию, которая связана с каналом.',
@@ -651,14 +683,12 @@ return [
             'create-failure'       => 'Не удалось создать категорию.',
             'update-failure'       => 'Не удалось обновить категорию.',
         ],
-
         'category_fields' => [
             'index' => [
                 'create-btn' => 'Создать поле категории',
                 'add-btn'    => 'Создать поле категории',
                 'title'      => 'Поля категории',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'channel-based'       => 'Канал на основе',
                     'code'                => 'Код',
                     'created-at'          => 'Создан в',
@@ -683,7 +713,6 @@ return [
                     'mass-delete-failed'  => 'Выбранные поля категории не могут быть удалены.',
                 ],
             ],
-
             'create' => [
                 'add-field-options'   => 'Добавить параметры поля категории',
                 'add-option'          => 'Добавить опцию',
@@ -723,7 +752,7 @@ return [
                 'select-type'         => 'Выберите тип',
                 'swatch'              => 'Образец',
                 'text'                => 'Текст',
-                'textarea'            => 'Textarea',
+                'textarea'            => 'Текстовое поле',
                 'title'               => 'Добавить поле категории',
                 'type'                => 'Тип',
                 'url'                 => 'URL',
@@ -738,8 +767,7 @@ return [
                 'set-section-right'   => 'Раздел конфигурации',
                 'settings'            => 'Настройки',
                 'same-code-error'     => 'Код опции должен быть уникальным.',
-
-                'option' => [
+                'option'              => [
                     'dropdown' => 'Падать',
                     'save-btn' => 'Сохранить опцию',
                     'color'    => 'Образец цвета',
@@ -747,7 +775,6 @@ return [
                     'text'     => 'Текстовый образец',
                 ],
             ],
-
             'edit' => [
                 'add-field-options'   => 'Добавить параметры поля категории',
                 'add-option'          => 'Добавить опцию',
@@ -788,7 +815,7 @@ return [
                 'select-type'         => 'Выберите тип',
                 'swatch'              => 'Образец',
                 'text'                => 'Текст',
-                'textarea'            => 'Textarea',
+                'textarea'            => 'Текстовое поле',
                 'title'               => 'Редактировать поле категории',
                 'type'                => 'Тип',
                 'url'                 => 'URL',
@@ -803,8 +830,7 @@ return [
                 'set-section-right'   => 'Раздел конфигурации',
                 'settings'            => 'Настройки',
                 'same-code-error'     => 'Код опции должен быть уникальным.',
-
-                'option' => [
+                'option'              => [
                     'dropdown' => 'Падать',
                     'save-btn' => 'Сохранить опцию',
                     'color'    => 'Образец цвета',
@@ -812,7 +838,6 @@ return [
                     'text'     => 'Текстовый образец',
                 ],
             ],
-
             'create-success'    => 'Поле категории создано успешно',
             'delete-failed'     => 'Удаленная поля категории не удалось',
             'delete-success'    => 'Поле категории успешно удалено',
@@ -820,17 +845,14 @@ return [
             'user-define-error' => 'Не может удалить поле категории системы',
             'not-found'         => 'Поле категории с кодом ":code" не найдено',
         ],
-
         'category-fields-options' => [
             'create-success' => 'Вариант поля категории создан успешно',
             'update-success' => 'Параметр поля категории успешно обновлена',
         ],
-
         'families' => [
             'index' => [
-                'add'   => 'Создать семейство атрибутов',
-                'title' => 'Семьи',
-
+                'add'      => 'Создать семейство атрибутов',
+                'title'    => 'Семьи',
                 'datagrid' => [
                     'code'           => 'Код',
                     'delete'         => 'Удалить',
@@ -845,11 +867,9 @@ return [
                     'update-success' => 'Выбранные :resource были успешно обновлены',
                 ],
             ],
-
             'create' => [
                 'assign-group-btn'                 => 'Назначить группу атрибутов',
                 'assign-group-title'               => 'Назначить группу атрибутов',
-                'assign-group-btn'                 => 'Назначить группу атрибутов',
                 'back-btn'                         => 'Назад',
                 'code'                             => 'Код',
                 'label'                            => 'Этикетка',
@@ -877,11 +897,9 @@ return [
                 'unassigned-attribute-groups'      => 'Незначенные группы атрибутов',
                 'assign-first-attribute-group'     => 'Назначьте группу в семью.',
             ],
-
             'edit' => [
                 'assign-group-btn'                 => 'Назначить группу атрибутов',
                 'assign-group-title'               => 'Назначить группу атрибутов',
-                'assign-group-btn'                 => 'Назначить группу атрибутов',
                 'back-btn'                         => 'Назад',
                 'code'                             => 'Код',
                 'label'                            => 'Этикетка',
@@ -912,7 +930,6 @@ return [
                 'variant-options-label'            => 'Настраиваемые параметры',
                 'select-variant'                   => 'Выберите атрибуты',
             ],
-
             'attribute-family'               => 'Атрибут семьи',
             'attribute-product-error'        => 'Семья используется в продуктах.',
             'create-success'                 => 'Семья создала успешно.',
@@ -925,7 +942,6 @@ return [
             'not-found'                      => 'Не удалось найти семейство атрибутов с кодом ":code"',
             'can-not-update-variant-options' => 'Не может обновить настраиваемые параметры, так как у этого семейства уже есть варианты продуктов.',
         ],
-
         'history' => [
             'index' => [
                 'datagrid' => [
@@ -936,7 +952,6 @@ return [
             ],
         ],
     ],
-
     'settings' => [
         'locales' => [
             'index' => [
@@ -945,26 +960,23 @@ return [
                 'title'                 => 'Локации',
                 'can-not-delete-error'  => 'Вы не можете удалить локаль, связанный с каналом или пользователем',
                 'can-not-disable-error' => 'Вы не можете отключить локаль, связанный с каналом или пользователем',
-
-                'datagrid' => [
+                'datagrid'              => [
                     'actions'     => 'Действия',
                     'code'        => 'Код',
                     'delete'      => 'Удалить',
                     'direction'   => 'Направление',
                     'edit'        => 'Редактировать',
                     'id'          => 'ИДЕНТИФИКАТОР',
-                    'ltr'         => 'LTR',
+                    'ltr'         => 'Слева направо',
                     'name'        => 'Отображаемое имя',
                     'rtl'         => 'Rtl',
                     'mass-update' => 'Обновить состояние',
-
-                    'status' => [
+                    'status'      => [
                         'title'    => 'Положение дел',
                         'active'   => 'Давать возможность',
                         'inactive' => 'Запрещать',
                     ],
                 ],
-
                 'create' => [
                     'code'             => 'Код',
                     'direction'        => 'Направление',
@@ -975,11 +987,9 @@ return [
                     'title'            => 'Создать локаль',
                     'status'           => 'Положение дел',
                 ],
-
                 'edit' => [
                     'title' => 'Редактировать локаль',
                 ],
-
                 'create-success'    => 'Локаль создал успешно.',
                 'delete-failed'     => 'Удаление локали не удалось',
                 'delete-success'    => 'Локаль успешно удален.',
@@ -988,7 +998,6 @@ return [
                 'update-success'    => 'Локаль обновлен успешно.',
             ],
         ],
-
         'currencies' => [
             'index' => [
                 'create-btn'            => 'Создать валюту',
@@ -996,8 +1005,7 @@ return [
                 'title'                 => 'Валюты',
                 'can-not-delete-error'  => 'Вы не можете удалить валюту, связанную с каналом',
                 'can-not-disable-error' => 'Вы не можете отключить валюту, связанную с каналом',
-
-                'datagrid' => [
+                'datagrid'              => [
                     'actions'        => 'Действия',
                     'code'           => 'Код',
                     'delete'         => 'Удалить',
@@ -1009,14 +1017,12 @@ return [
                     'partial-action' => 'Некоторые действия не были выполнены из-за ограничений системы на :resource',
                     'update-success' => 'Выбранные :resource были успешно обновлены',
                     'mass-update'    => 'Обновить состояние',
-
-                    'status' => [
+                    'status'         => [
                         'title'    => 'Положение дел',
                         'active'   => 'Давать возможность',
                         'inactive' => 'Запрещать',
                     ],
                 ],
-
                 'create' => [
                     'code'           => 'Код',
                     'create-btn'     => 'Создать валюту',
@@ -1029,11 +1035,9 @@ return [
                     'title'          => 'Создать новую валюту',
                     'status'         => 'Положение дел',
                 ],
-
                 'edit' => [
                     'title' => 'Редактировать валюту',
                 ],
-
                 'create-success'    => 'Валюта создана успешно.',
                 'delete-failed'     => 'Удалена валюта не удалась',
                 'delete-success'    => 'Валюта удалена успешно.',
@@ -1042,7 +1046,6 @@ return [
                 'cannot-delete'     => 'Валюта не может быть удалена.',
             ],
         ],
-
         'data-transfer' => [
             'tracker' => [
                 'index' => [
@@ -1060,34 +1063,34 @@ return [
                         'user'                 => 'Пользователь',
                         'created_at'           => 'Создан в',
                         'updated_at'           => 'Обновлено в',
-
-                        'pending'    => 'В ожидании',
-                        'validated'  => 'Подтвержден',
-                        'processing' => 'Обработка',
-                        'processed'  => 'Обработанный',
-                        'linking'    => 'Связывание',
-                        'linked'     => 'Связанный',
-
-                        'indexing'  => 'Индексация',
-                        'indexed'   => 'Индексирован',
-                        'completed' => 'Завершенный',
-                        'failed'    => 'Неуспешный',
+                        'pending'              => 'В ожидании',
+                        'validating'           => 'Проверка',
+                        'validated'            => 'Подтвержден',
+                        'processing'           => 'Обработка',
+                        'processed'            => 'Обработанный',
+                        'linking'              => 'Связывание',
+                        'linked'               => 'Связанный',
+                        'indexing'             => 'Индексация',
+                        'indexed'              => 'Индексирован',
+                        'completed'            => 'Завершенный',
+                        'paused'               => 'Приостановлено',
+                        'cancelled'            => 'Отменено',
+                        'failed'               => 'Неуспешный',
                     ],
                 ],
-
                 'import' => [
                     'back-btn'                => 'Назад',
                     'completed-batches'       => 'Общее количество партий завершено:',
                     'download-error-report'   => 'Скачать полный отчет',
                     'edit-btn'                => 'Редактировать',
                     'imported-info'           => 'Поздравляю!Ваш импорт был успешным.',
-                    'importing-info'          => 'Экспорт в процессе',
+                    'exporting-info'          => 'Экспорт выполняется',
                     'indexing-info'           => 'Индексация ресурсов (цена, эластичный поиск)',
                     'linking-info'            => 'Ресурсы, связывающие в процессе',
                     'progress'                => 'Прогресс:',
                     'title'                   => 'Экспорт',
                     'total-batches'           => 'Всего партий:',
-                    'total-created'           => 'Общие записи созданы:',
+                    'created'                 => 'Всего создано записей:',
                     'total-deleted'           => 'Общие записи удалены:',
                     'total-errors'            => 'Общие ошибки:',
                     'total-invalid-rows'      => 'Всего недействительных рядов:',
@@ -1099,23 +1102,64 @@ return [
                     'validation-failed-info'  => 'Ваш импорт недействителен.Пожалуйста, исправьте следующие ошибки и попробуйте еще раз.',
                     'validation-success-info' => 'Ваш импорт действителен.Нажмите на экспорт, чтобы начать процесс импорта.',
                 ],
-
-                'create-success'    => 'Экспорт создал успешно.',
-                'delete-failed'     => 'Удаление экспорта не удалось неожиданно.',
-                'delete-success'    => 'Экспорт успешно удален.',
-                'not-valid'         => 'Экспорт недействителен',
-                'nothing-to-import' => 'Нет ресурсов для импорта.',
-                'setup-queue-error' => 'Пожалуйста, измените свой драйвер очереди на «базу данных» или «Redis», чтобы начать процесс импорта.',
-                'update-success'    => 'Экспорт успешно обновлен.',
-                'failed-info'       => 'Работа провалилась. Пожалуйста, исправьте следующие ошибки и повторите попытку.',
-                'download-log-file' => 'Скачать журнал',
+                'summary' => [
+                    'total-batches' => 'Всего пакетов:',
+                    'created'       => 'Всего создано записей:',
+                    'deleted'       => 'Всего удалено записей:',
+                    'errors'        => 'Всего ошибок:',
+                    'invalid-rows'  => 'Всего недопустимых строк:',
+                    'processed'     => 'Всего обработано строк:',
+                    'updated'       => 'Всего обновлено записей:',
+                    'skipped'       => 'Всего пропущено записей:',
+                ],
+                'info'                  => 'Поздравляем! Задание выполнено успешно.',
+                'running-time'          => 'Время выполнения',
+                'estimated-remaining'   => 'Ожидаемое оставшееся время',
+                'total-duration'        => 'Общая длительность',
+                'status'                => 'Статус',
+                'waiting'               => 'Ожидание',
+                'total-records'         => 'Всего записей',
+                'job-id'                => 'ID задания',
+                'records-created'       => 'Созданные записи',
+                'records-updated'       => 'Обновлённые записи',
+                'records-deleted'       => 'Удалённые записи',
+                'run-again'             => 'Запустить снова',
+                'completed-success'     => 'задание выполнено успешно',
+                'completed-info-sub'    => 'Все записи обработаны и проиндексированы. Ваш каталог актуален.',
+                'create-success'        => 'Экспорт создал успешно.',
+                'delete-failed'         => 'Удаление экспорта не удалось неожиданно.',
+                'delete-success'        => 'Экспорт успешно удален.',
+                'not-valid'             => 'Экспорт недействителен',
+                'nothing-to-import'     => 'Нет ресурсов для импорта.',
+                'setup-queue-error'     => 'Пожалуйста, измените свой драйвер очереди на «базу данных» или «Redis», чтобы начать процесс импорта.',
+                'update-success'        => 'Экспорт успешно обновлен.',
+                'failed-info'           => 'Работа провалилась. Пожалуйста, исправьте следующие ошибки и повторите попытку.',
+                'download-log-file'     => 'Скачать журнал',
+                'pause'                 => 'Пауза',
+                'resume'                => 'Возобновить',
+                'cancel'                => 'Отменить',
+                'paused'                => 'Импорт приостановлен.',
+                'resumed'               => 'Импорт возобновлён.',
+                'cancelled'             => 'Импорт отменён.',
+                'paused-info'           => 'Импорт приостановлен. Оставшиеся пакеты находятся в ожидании.',
+                'paused-info-export'    => 'Экспорт приостановлен. Оставшиеся пакеты находятся в ожидании.',
+                'cancelled-info'        => 'Импорт отменён. Частичные результаты показаны ниже.',
+                'cancelled-info-export' => 'Экспорт отменён. Частичные результаты показаны ниже.',
+                'cancel-confirm'        => 'Вы уверены, что хотите отменить это задание? Это действие нельзя отменить.',
+                'live'                  => 'В реальном времени',
+                'import-progress'       => 'Прогресс импорта',
+                'export-progress'       => 'Прогресс экспорта',
+                'linking-progress'      => 'Прогресс связывания',
+                'indexing-progress'     => 'Прогресс индексации',
+                'job-label'             => 'Задание',
             ],
-
             'imports' => [
-                'create' => [
+                'import-start-fail' => 'Не удалось запустить процесс импорта. Пожалуйста, попробуйте снова.',
+                'create'            => [
                     'code'                => 'Код',
                     'action'              => 'Действие',
                     'allowed-errors'      => 'Разрешенные ошибки',
+                    'allowed-file-types'  => 'Допустимые типы файлов (CSV, XLSX, XLS)',
                     'back-btn'            => 'Назад',
                     'create-update'       => 'Создать/обновить',
                     'delete'              => 'Удалить',
@@ -1123,12 +1167,21 @@ return [
                     'images'              => 'Изображений',
                     'download-sample'     => 'Загрузить :resource Образец CSV',
                     'field-separator'     => 'Полевой сепаратор',
+                    'separator-info'      => 'Используйте только для файлов CSV',
                     'file-info-example'   => 'Например, в случае представления продуктов файлы должны быть размещены в папке/root/root/hore/app/import/product-images.',
                     'file-info'           => 'Используйте относительный путь к/project-root/storage/app/import, например,Установки продуктов, импортные изображения.',
                     'file'                => 'Файл',
                     'general'             => 'Общий',
                     'upload_images'       => 'Загрузить изображения, чтобы установить путь',
-                    'download-sample-zip' => 'Download Sample Images ZIP',
+                    'download-sample-zip' => 'Скачать ZIP с образцами изображений',
+                    'zip-uploading'       => 'Загрузка и распаковка ZIP...',
+                    'zip-upload-success'  => 'ZIP успешно загружен и распакован.',
+                    'zip-upload-error'    => 'Не удалось загрузить ZIP. Попробуйте снова.',
+                    'invalid-zip'         => 'Загруженный файл не является допустимым архивом ZIP.',
+                    'zip-upload-or'       => 'или загрузите ZIP с изображениями',
+                    'zip-click-upload'    => 'Нажмите, чтобы загрузить ZIP с изображениями',
+                    'zip-files-extracted' => 'файлов извлечено',
+                    'zip-drop-hint'       => 'Нажмите или перетащите ZIP-файл сюда',
                     'images-directory'    => 'Путь',
                     'process-in-queue'    => 'Процесс в очереди',
                     'results'             => 'Полученные результаты',
@@ -1140,16 +1193,17 @@ return [
                     'type'                => 'Тип',
                     'validation-strategy' => 'Стратегия проверки',
                 ],
-
                 'edit' => [
                     'images'              => 'Изображений',
                     'action'              => 'Действие',
                     'allowed-errors'      => 'Разрешенные ошибки',
+                    'allowed-file-types'  => 'Допустимые типы файлов (CSV, XLSX, XLS)',
                     'back-btn'            => 'Назад',
                     'create-update'       => 'Создать/обновить',
                     'delete'              => 'Удалить',
                     'download-sample'     => 'Загрузить пример',
                     'field-separator'     => 'Полевой сепаратор',
+                    'separator-info'      => 'Используйте только для файлов CSV',
                     'file-info-example'   => 'Например, в случае представления продуктов файлы должны быть размещены в папке/root/root/hore/app/import/product-images.',
                     'file-info'           => 'Используйте относительный путь к/project-root/storage/app/import, например,Установки продуктов, импортные изображения.',
                     'file'                => 'Файл',
@@ -1165,16 +1219,13 @@ return [
                     'type'                => 'Тип',
                     'validation-strategy' => 'Стратегия проверки',
                 ],
-
                 'batch' => [
                     'title' => 'Импорт добавлен в очередь',
                 ],
-
                 'index' => [
                     'button-title' => 'Создать импорт',
                     'title'        => 'Импорт',
-
-                    'datagrid' => [
+                    'datagrid'     => [
                         'actions'               => 'Действия',
                         'completed-at'          => 'Завершено в',
                         'created'               => 'Созданный',
@@ -1192,20 +1243,36 @@ return [
                         'updated'               => 'Обновлено',
                         'uploaded-file'         => 'Загруженный файл',
                         'images_directory_path' => 'Файл изображений',
+                        'import'                => 'Импорт',
                     ],
                 ],
-
                 'import' => [
+                    'action'                  => 'Режим действия',
                     'back-btn'                => 'Назад',
                     'completed-batches'       => 'Общее количество партий завершено:',
                     'download-error-report'   => 'Скачать полный отчет',
                     'edit-btn'                => 'Редактировать',
+                    'exporting-info'          => 'Экспорт выполняется',
+                    'exporting-info-sub'      => 'Генерация файла экспорта и запись данных. Пожалуйста, подождите.',
+                    'file_path'               => 'Путь к файлу',
                     'imported-info'           => 'Поздравляю!Ваш импорт был успешным.',
+                    'import-now'              => 'Импорт сейчас',
                     'importing-info'          => 'Импорт в процесс',
+                    'importing-info-sub'      => 'Обработка пакетов и запись данных в базу данных.',
                     'indexing-info'           => 'Индексация ресурсов (цена, эластичный поиск)',
+                    'indexing-info-sub'       => 'Перестроение поисковых индексов и кэшей цен после импорта. Этот шаг выполняется автоматически.',
+                    'indexing-type'           => 'Цена + ES',
                     'linking-info'            => 'Ресурсы, связывающие в процессе',
-                    'progress'                => 'Прогресс:',
+                    'linking-info-sub'        => 'Связывание связанных ресурсов и ассоциаций между записями.',
                     'pending-info'            => 'В ожидании обработки работы в очереди',
+                    'pending-info-sub'        => 'Ваше задание добавлено в очередь обработки. Обработчик скоро его подхватит.',
+                    'pending-step-complete'   => 'Завершено',
+                    'pending-step-export'     => 'Экспорт',
+                    'pending-step-import'     => 'Импортирование',
+                    'pending-step-queue'      => 'В очереди',
+                    'pending-step-validate'   => 'Проверка',
+                    'profile'                 => 'Профиль импорта',
+                    'progress'                => 'Прогресс:',
                     'title'                   => 'Импортировать',
                     'total-batches'           => 'Всего партий:',
                     'total-created'           => 'Общие записи созданы:',
@@ -1214,25 +1281,23 @@ return [
                     'total-invalid-rows'      => 'Всего недействительных рядов:',
                     'total-rows-processed'    => 'Общие строки обрабатывались:',
                     'total-updated'           => 'Общие записи обновлены:',
-                    'validate-info'           => 'Нажмите на проверку данных, чтобы проверить свой импорт.',
                     'validate'                => 'Проверять',
-                    'file_path'               => 'Путь к файлу',
-                    'import-now'              => 'Импорт сейчас',
-                    'action'                  => 'Режим действия',
+                    'validate-info'           => 'Нажмите на проверку данных, чтобы проверить свой импорт.',
                     'validating-info'         => 'Данные начали читать и проверять',
+                    'validating-info-sub'     => 'Проверка целостности схемы, сопоставлений полей и типов данных перед началом импорта.',
                     'validation-failed-info'  => 'Ваш импорт недействителен.Пожалуйста, исправьте следующие ошибки и попробуйте еще раз.',
-                    'validation-success-info' => 'Ваш импорт действителен.Нажмите «Импорт», чтобы запустить процесс импорта.',
+                    'validation-success-info' => 'Ваш импорт действителен. Импорт запускается автоматически...',
                 ],
-
-                'create-success'    => 'Импорт создан успешно.',
-                'delete-failed'     => 'Удаление импорта неожиданно не удалось.',
-                'delete-success'    => 'Импорт удален успешно.',
-                'not-valid'         => 'Импорт недействителен',
-                'nothing-to-import' => 'Нет ресурсов для импорта.',
-                'setup-queue-error' => 'Пожалуйста, измените свой драйвер очереди на «базу данных» или «Redis», чтобы начать процесс импорта.',
-                'update-success'    => 'Импорт успешно обновлен.',
+                'create-success'     => 'Импорт создан успешно.',
+                'delete-failed'      => 'Удаление импорта неожиданно не удалось.',
+                'delete-success'     => 'Импорт удален успешно.',
+                'invalid-zip'        => 'Загруженный файл не является допустимым архивом ZIP.',
+                'not-valid'          => 'Импорт недействителен',
+                'nothing-to-import'  => 'Нет ресурсов для импорта.',
+                'setup-queue-error'  => 'Пожалуйста, измените свой драйвер очереди на «базу данных» или «Redis», чтобы начать процесс импорта.',
+                'update-success'     => 'Импорт успешно обновлен.',
+                'zip-upload-success' => 'ZIP успешно загружен и распакован.',
             ],
-
             'exports' => [
                 'create' => [
                     'code'                => 'Код',
@@ -1256,13 +1321,13 @@ return [
                     'results'             => 'Полученные результаты',
                     'save-btn'            => 'Сохранить экспорт',
                     'settings'            => 'Настройки',
+                    'filters'             => 'Фильтры',
                     'skip-errors'         => 'Пропустить ошибки',
                     'stop-on-errors'      => 'Остановитесь на ошибках',
                     'title'               => 'Создать экспорт',
                     'type'                => 'Тип',
                     'validation-strategy' => 'Стратегия проверки',
                 ],
-
                 'edit' => [
                     'action'              => 'Действие',
                     'allowed-errors'      => 'Разрешенные ошибки',
@@ -1286,16 +1351,13 @@ return [
                     'type'                => 'Тип',
                     'validation-strategy' => 'Стратегия проверки',
                 ],
-
                 'batch' => [
                     'title' => 'Экспорт добавлен в очередь',
                 ],
-
                 'index' => [
                     'button-title' => 'Создать экспорт',
                     'title'        => 'Экспорт',
-
-                    'datagrid' => [
+                    'datagrid'     => [
                         'actions'               => 'Действия',
                         'completed-at'          => 'Завершено в',
                         'created'               => 'Созданный',
@@ -1313,13 +1375,14 @@ return [
                         'updated'               => 'Обновлено',
                         'uploaded-file'         => 'Загруженный файл',
                         'images_directory_path' => 'Файл изображений',
+                        'export'                => 'Экспорт',
                     ],
                 ],
-
                 'export' => [
                     'back-btn'                => 'Назад',
                     'completed-batches'       => 'Общее количество партий завершено:',
                     'download-error-report'   => 'Скачать полный отчет',
+                    'download-created-file'   => 'Скачать экспортированные файлы',
                     'edit-btn'                => 'Редактировать',
                     'exported-info'           => 'Поздравляю!Ваш экспорт был успешным.',
                     'exporting-info'          => 'Экспорт в процессе',
@@ -1340,9 +1403,10 @@ return [
                     'validating-info'         => 'Данные начали читать и проверять',
                     'validation-failed-info'  => 'Ваш экспорт недействителен.Пожалуйста, исправьте следующие ошибки и попробуйте еще раз.',
                     'validation-success-info' => 'Ваш экспорт действителен.Нажмите на экспорт, чтобы начать процесс экспорта.',
-                    'action'                  => 'Режим действия',
+                    'profile'                 => 'Профиль экспорта',
+                    'file-format'             => 'Формат файла',
+                    'with-media'              => 'С медиафайлами',
                 ],
-
                 'create-success'    => 'Экспорт создал успешно.',
                 'delete-failed'     => 'Удаление экспорта не удалось неожиданно.',
                 'delete-success'    => 'Экспорт успешно удален.',
@@ -1352,7 +1416,6 @@ return [
                 'update-success'    => 'Экспорт успешно обновлен.',
             ],
         ],
-
         'channels' => [
             'index' => [
                 'create-btn'           => 'Создать канал',
@@ -1371,7 +1434,6 @@ return [
                     'root-category' => 'Корневая категория',
                 ],
             ],
-
             'create' => [
                 'allowed-ips'            => 'Разрешен IPS',
                 'cancel'                 => 'Назад',
@@ -1386,7 +1448,7 @@ return [
                 'favicon-size'           => 'Разрешение изображения должно быть похоже на 16px x 16px',
                 'general'                => 'Общий',
                 'hostname'               => 'Имя хоста',
-                'hostname-placeholder'   => 'https://www.example.com (Don\'t add slash in the end.)',
+                'hostname-placeholder'   => 'https://www.example.com (Не добавляйте слэш в конце.)',
                 'last-delete-error'      => 'По крайней мере один канал требуется.',
                 'locales'                => 'Локации',
                 'logo'                   => 'Логотип',
@@ -1406,7 +1468,6 @@ return [
                 'theme'                  => 'Тема',
                 'title'                  => 'Создать канал',
             ],
-
             'edit' => [
                 'allowed-ips'            => 'Разрешен IPS',
                 'back-btn'               => 'Назад',
@@ -1421,7 +1482,7 @@ return [
                 'favicon-size'           => 'Разрешение изображения должно быть похоже на 16px x 16px',
                 'general'                => 'Общий',
                 'hostname'               => 'Имя хоста',
-                'hostname-placeholder'   => 'https://www.example.com (Don\'t add slash in the end.)',
+                'hostname-placeholder'   => 'https://www.example.com (Не добавляйте слэш в конце.)',
                 'last-delete-error'      => 'По крайней мере один канал требуется.',
                 'locales'                => 'Локации',
                 'select-locales'         => 'Выберите локалы',
@@ -1444,13 +1505,11 @@ return [
                 'update-success'         => 'Успешно обновить канал',
             ],
         ],
-
         'users' => [
             'index' => [
-                'admin' => 'Администратор',
-                'title' => 'Пользователи',
-                'user'  => 'Пользователь',
-
+                'admin'  => 'Администратор',
+                'title'  => 'Пользователи',
+                'user'   => 'Пользователь',
                 'create' => [
                     'confirm-password'  => 'Подтвердите пароль',
                     'email'             => 'Электронная почта',
@@ -1464,7 +1523,6 @@ return [
                     'user-timezone'     => 'Часовой пояс',
                     'select'            => 'Выбирать',
                 ],
-
                 'datagrid' => [
                     'actions'  => 'Действия',
                     'active'   => 'Активный',
@@ -1478,12 +1536,10 @@ return [
                     'status'   => 'Положение дел',
                     'image'    => 'Изображение',
                 ],
-
                 'edit' => [
                     'title' => 'Редактировать пользователя',
                 ],
             ],
-
             'edit' => [
                 'back-btn'         => 'Назад',
                 'confirm-password' => 'Подтвердите пароль',
@@ -1496,7 +1552,6 @@ return [
                 'status'           => 'Положение дел',
                 'title'            => 'Редактировать пользователя',
             ],
-
             'activate-warning'          => 'Ваша учетная запись еще не активирована, пожалуйста, свяжитесь с администратором.',
             'cannot-change'             => 'Пользователь не может быть изменен',
             'create-success'            => 'Пользователь создан успешно.',
@@ -1509,13 +1564,11 @@ return [
             'update-success'            => 'Пользователь успешно обновлен.',
             'current-user-delete-error' => 'Зарегистрированный пользователь не может быть удален.',
         ],
-
         'roles' => [
             'index' => [
                 'create-btn' => 'Создать роль',
                 'title'      => 'Роли',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'delete'          => 'Удалить',
                     'edit'            => 'Редактировать',
                     'id'              => 'Идентификатор',
@@ -1523,7 +1576,6 @@ return [
                     'permission-type' => 'Тип разрешения',
                 ],
             ],
-
             'create' => [
                 'access-control' => 'Контроль доступа',
                 'all'            => 'Все',
@@ -1536,7 +1588,6 @@ return [
                 'save-btn'       => 'Спасите роль',
                 'title'          => 'Создать роль',
             ],
-
             'edit' => [
                 'access-control' => 'Контроль доступа',
                 'all'            => 'Все',
@@ -1549,7 +1600,6 @@ return [
                 'save-btn'       => 'Спасите роль',
                 'title'          => 'Редактировать роль',
             ],
-
             'being-used'        => 'Роль уже используется у пользователя администратора',
             'being-used-by'     => 'Роль уже используется :name Пользователем',
             'create-success'    => 'Роли созданы успешно',
@@ -1559,490 +1609,77 @@ return [
             'update-success'    => 'Роли успешно обновляются',
         ],
     ],
-
-    'reporting' => [
-        'view' => [
-            'day'           => 'День',
-            'end-date'      => 'Дата окончания',
-            'export-csv'    => 'Экспорт CSV',
-            'export-xls'    => 'Экспорт XLS',
-            'month'         => 'Месяц',
-            'not-available' => 'Нет записей.',
-            'start-date'    => 'Дата начала',
-            'year'          => 'Год',
-        ],
-
-        'empty' => [
-            'info'  => 'Данные не доступны для выбранного интервала',
-            'title' => 'Данные недоступны',
-        ],
-    ],
-
     'configuration' => [
         'index' => [
-            'back-btn'                     => 'Назад',
-            'delete'                       => 'Удалить',
-            'enable-at-least-one-payment'  => 'Включить хотя бы один способ оплаты.',
-            'enable-at-least-one-shipping' => 'Включить хотя бы один метод доставки.',
-            'no-result-found'              => 'Результатов не найдено',
-            'save-btn'                     => 'Сохранить конфигурацию',
-            'save-message'                 => 'Конфигурация успешно сохранилась',
-            'search'                       => 'Поиск',
-            'title'                        => 'Конфигурация',
-
-            'general' => [
-                'info'  => '',
-                'title' => 'Общий',
-
+            'delete'          => 'Удалить',
+            'no-result-found' => 'Результатов не найдено',
+            'save-btn'        => 'Сохранить конфигурацию',
+            'save-message'    => 'Конфигурация успешно сохранилась',
+            'search'          => 'Поиск',
+            'title'           => 'Конфигурация',
+            'general'         => [
+                'info'    => '',
+                'title'   => 'Общий',
                 'general' => [
                     'info'  => '',
                     'title' => 'Общий',
                 ],
-
-                'content' => [
-                    'info'  => 'Установите параметры сравнения, параметры пожелания, параметры поиска изображений, нижний колонтитул, нижний колонтитул и пользовательские сценарии.',
-                    'title' => 'Содержание',
-
-                    'settings' => [
-                        'compare-options'     => 'Сравните варианты',
-                        'image-search-option' => 'Опция поиска изображения',
-                        'title'               => 'Настройки',
-                        'title-info'          => 'Настройки относятся к настраиваемым вариантам, которые управляют тем, как ведет себя система, приложение или устройство, адаптированные к предпочтениям и требованиям пользователей.',
-                        'wishlist-options'    => 'Варианты списка желаний',
-                    ],
-
-                    'custom-scripts' => [
-                        'custom-css'        => 'Пользовательские CSS',
-                        'custom-javascript' => 'Пользовательский JavaScript',
-                        'title'             => 'Пользовательские сценарии',
-                        'title-info'        => 'Пользовательские сценарии - это персонализированные фрагменты кода, созданные для добавления конкретных функций или функций в программное обеспечение, уникальное улучшение его возможностей.',
-                    ],
-                ],
-
-                'design' => [
-                    'info'  => 'Установите логотип и значок Favicon.',
-                    'title' => 'Дизайн',
-
-                    'admin-logo' => [
-                        'favicon'    => 'Фавикон',
-                        'logo-image' => 'Изображение логотипа',
-                        'title'      => 'Администратор логотип',
-                        'title-info' => 'Логотип администратора - это отличительное изображение или эмблема, представляющая интерфейс администрирования системы или веб -сайта, часто настраиваемый.',
-                    ],
-                ],
-
                 'magic-ai' => [
-                    'info'  => 'Установить варианты магии ИИ.',
-                    'title' => 'У тебя волшебство',
-
+                    'info'     => 'Установить варианты магии ИИ.',
+                    'title'    => 'У тебя волшебство',
                     'settings' => [
-                        'api-key'        => 'API -ключ',
-                        'enabled'        => 'Включено',
-                        'llm-api-domain' => 'LLM API -домен',
-                        'organization'   => 'Идентификатор организации',
-                        'title'          => 'общие настройки',
-                        'title-info'     => 'Увеличьте свой опыт работы с функцией Magic AI, введя свой эксклюзивный ключ API и указав соответствующую организацию для легкой интеграции.Захватить команду по поводу ваших учетных данных и настроить настройки в соответствии с вашими конкретными потребностями.',
+                        'enabled'     => 'Включено',
+                        'ai-platform' => 'Платформа по умолчанию',
+                        'ai-model'    => 'Модель по умолчанию',
+                        'title'       => 'общие настройки',
+                        'title-info'  => 'Увеличьте свой опыт работы с функцией Magic AI, введя свой эксклюзивный ключ API и указав соответствующую организацию для легкой интеграции.Захватить команду по поводу ваших учетных данных и настроить настройки в соответствии с вашими конкретными потребностями.',
                     ],
-
-                    'content-generation' => [
-                        'category-description-prompt'      => 'Описание категории',
-                        'cms-page-content-prompt'          => 'Подсказка контента CMS Page',
-                        'enabled'                          => 'Включено',
-                        'product-description-prompt'       => 'Подсказка описания продукта',
-                        'product-short-description-prompt' => 'Краткое описание продукта',
-                        'title'                            => 'Содержание генерации',
-                        'title-info'                       => 'Эта функция позволит Magic AI для каждого редактора Wysiwyg, где вы хотите создать контент с помощью AI.',
-                    ],
-
                     'image-generation' => [
-                        'enabled'    => 'Включено',
-                        'title'      => 'Генерация изображений',
-                        'title-info' => 'Эта функция будет включать магический ИИ для каждой загрузки изображения, где вы хотите генерировать изображения, используя Dall-E. <br/> <br/> при включении, перейдите в любую загрузку изображения, чтобы сгенерировать изображение.',
+                        'enabled'     => 'Включено',
+                        'ai-platform' => 'Платформа по умолчанию',
+                        'ai-model'    => 'Модель по умолчанию',
+                        'title'       => 'Генерация изображений',
+                        'title-info'  => 'Эта функция будет включать магический ИИ для каждой загрузки изображения, где вы хотите генерировать изображения, используя Dall-E. <br/> <br/> при включении, перейдите в любую загрузку изображения, чтобы сгенерировать изображение.',
                     ],
-
-                    'translation'   => [
-                        'title'                  => 'Перевод',
-                        'enabled'                => 'Включено',
-                        'title-info'             => 'Эта функция активирует Magic AI для перевода текста, позволяя легко конвертировать текст с одного языка на другой.',
-                        'global-source-channel'  => 'Источник Канала',
-                        'global-source-locale'   => 'Язык Источника',
-                        'translation-model'      => 'Модель Перевода',
-                        'replace-existing-value' => 'Заменить Существующее Значение',
-                        'target-channel'         => 'Целевой Канал',
-                        'target-locales'         => 'Целевые Локали',
+                    'translation' => [
+                        'title'                       => 'Перевод',
+                        'enabled'                     => 'Включено',
+                        'title-info'                  => 'Эта функция активирует Magic AI для перевода текста, позволяя легко конвертировать текст с одного языка на другой.',
+                        'ai-platform'                 => 'Платформа по умолчанию',
+                        'global-source-channel'       => 'Источник Канала',
+                        'global-source-locale'        => 'Язык Источника',
+                        'translation-model'           => 'Модель Перевода',
+                        'replace-existing-value'      => 'Заменить Существующее Значение',
+                        'target-channel'              => 'Целевой Канал',
+                        'target-locales'              => 'Целевые Локали',
+                        'replace-existing-value-info' => 'Заменить существующее значение, если оно уже существует.',
                     ],
-
-                    'review-translation' => [
-                        'dolphin-phi'       => 'Dolphin Phi',
-                        'enabled'           => 'Включено',
-                        'gpt-3-5-turbo'     => 'OpenAI GPT-3,5-Turbo',
-                        'llama2'            => 'Лама 2',
-                        'llama2-uncensored' => 'Лама 2 без цензуры',
-                        'llama2:13b'        => 'Llama 2 13B',
-                        'llama2:70b'        => 'Llama 2 70B',
-                        'llava'             => 'Лава',
-                        'mistral'           => 'Мистраль',
-                        'model'             => 'Модель',
-                        'orca-mini'         => 'Orca mini',
-                        'phi'               => 'Phi-2',
-                        'starling-lm'       => 'Скворец',
-                        'title'             => 'Обзор перевод',
-                        'title-info'        => 'Предоставьте вариант для клиента или посетителя для перевода отзывов клиентов на английский.',
-                        'vicuna'            => 'Викуна',
-                    ],
-
-                    'checkout-message' => [
-                        'dolphin-phi'       => 'Dolphin Phi',
-                        'enabled'           => 'Включено',
-                        'gpt-3-5-turbo'     => 'OpenAI GPT-3,5-Turbo',
-                        'llama2'            => 'Лама 2',
-                        'llama2-uncensored' => 'Лама 2 без цензуры',
-                        'llama2:13b'        => 'Llama 2 13B',
-                        'llama2:70b'        => 'Llama 2 70B',
-                        'llava'             => 'Лава',
-                        'mistral'           => 'Мистраль',
-                        'model'             => 'Модель',
-                        'orca-mini'         => 'Orca mini',
-                        'phi'               => 'Phi-2',
-                        'prompt'            => 'Быстрый',
-                        'starling-lm'       => 'Скворец',
-                        'title'             => 'Персонализированное сообщение о проверке',
-                        'title-info'        => 'Создайте персонализированное сообщение о проверке для клиентов на странице благодарности, адаптируя контент, чтобы резонировать с индивидуальными предпочтениями и улучшить общий опыт после покупки.',
-                        'vicuna'            => 'Викуна',
-                    ],
-                ],
-            ],
-
-            'catalog' => [
-                'info'     => 'Каталог',
-                'title'    => 'Каталог',
-                'products' => [
-                    'info'  => 'Установите гостевую оформление, страница просмотра продукта, страницу просмотра тележки, фронт хранилища, обзор и атрибут социального обмена.',
-                    'title' => 'Продукты',
-
-                    'guest-checkout' => [
-                        'allow-guest-checkout'      => 'Разрешить гостевую проверку',
-                        'allow-guest-checkout-hint' => 'Подсказка: при включении, эта опция может быть настроена специально для каждого продукта.',
-                        'title'                     => 'Гостевая проверка',
-                        'title-info'                => 'Гостевая проверка позволяет клиентам покупать продукты без создания учетной записи, оптимизируя процесс покупки для удобства и более быстрых транзакций.',
-                    ],
-
-                    'product-view-page' => [
-                        'allow-no-of-related-products'  => 'Разрешенное количество связанных продуктов',
-                        'allow-no-of-up-sells-products' => 'Разрешенное количество продуктов для продажи',
-                        'title'                         => 'Конфигурация страницы просмотра продукта',
-                        'title-info'                    => 'Конфигурация просмотра продукта влечет за собой настройка макета и элементов на продукт \'s display page, enhancing user experience and information presentation.',
-                    ],
-
-                    'cart-view-page' => [
-                        'allow-no-of-cross-sells-products' => 'Разрешенное количество продуктов по перекрестной продаже',
-                        'title'                            => 'Конфигурация страницы просмотра корзины',
-                        'title-info'                       => 'Конфигурация страницы просмотра корзины включает в себя расположение элементов, деталей и опций на странице корзины покупок, улучшение взаимодействия с пользователем и потока покупки.',
-                    ],
-
-                    'storefront' => [
-                        'buy-now-button-display' => 'Позвольте клиентам напрямую покупать товары',
-                        'cheapest-first'         => 'Самый дешевый первый',
-                        'comma-separated'        => 'Разделенные запятой',
-                        'database'               => 'База данных',
-                        'default-list-mode'      => 'Режим списка по умолчанию',
-                        'elastic'                => 'Эластичный поиск',
-                        'expensive-first'        => 'Сначала дорого',
-                        'from-a-z'               => 'От A-Z',
-                        'from-z-a'               => 'От Z-A',
-                        'grid'                   => 'Сетка',
-                        'latest-first'           => 'Новички вперед',
-                        'list'                   => 'Список',
-                        'oldest-first'           => 'Сначала старые',
-                        'products-per-page'      => 'Продукты на страницу',
-                        'search-mode'            => 'Поиск режима',
-                        'sort-by'                => 'Сортировать по',
-                        'title'                  => 'Магазин',
-                        'title-info'             => 'StoreFront-это интерфейс интерфейса интернет-магазина, демонстрирующий продукты, категории и навигацию для беспрепятственного опыта покупок.',
-                    ],
-
-                    'small-image' => [
-                        'height'     => 'Высота',
-                        'title'      => 'Небольшое изображение',
-                        'title-info' => 'StoreFront-это интерфейс интерфейса интернет-магазина, демонстрирующий продукты, категории и навигацию для беспрепятственного опыта покупок.',
-                        'width'      => 'Ширина',
-                    ],
-
-                    'medium-image' => [
-                        'height'     => 'Высота',
-                        'title'      => 'Средний изображение',
-                        'title-info' => 'Среднее изображение относится к изображению умеренного размера, которая обеспечивает баланс между деталями и пространством экрана, обычно используемым для визуальных эффектов.',
-                        'width'      => 'Ширина',
-                    ],
-
-                    'large-image' => [
-                        'height'     => 'Высота',
-                        'title'      => 'Большое изображение',
-                        'title-info' => 'Большое изображение представляет собой изображение с высоким разрешением, обеспечивающее улучшенные детали и визуальное воздействие, часто используемое для демонстрации продуктов или графики.',
-                        'width'      => 'Ширина',
-                    ],
-
-                    'review' => [
-                        'allow-guest-review' => 'Разрешить гостя',
-                        'title'              => 'Обзор',
-                        'title-info'         => 'Оценка или оценка чего -либо, часто с участием мнений и обратной связи.',
-                    ],
-
-                    'attribute' => [
-                        'file-upload-size'  => 'Разрешенный размер загрузки файла (в KB)',
-                        'image-upload-size' => 'Размер загрузки изображения (в КБ)',
-                        'title'             => 'Атрибут',
-                        'title-info'        => 'Характеристика или свойство, которое определяет объект, влияя на его поведение, внешний вид или функцию.',
-                    ],
-
-                    'social-share' => [
-                        'enable-share-email'     => 'Включить поделиться по электронной почте?',
-                        'enable-share-facebook'  => 'Включить поделиться в Facebook?',
-                        'enable-share-linkedin'  => 'Включить поделиться в LinkedIn?',
-                        'enable-share-pinterest' => 'Включить долю в Pinterest?',
-                        'enable-share-twitter'   => 'Включить поделиться в Twitter?',
-                        'enable-share-whatsapp'  => 'Включить разделение в том, что \'s App?',
-                        'enable-social-share'    => 'Включить социальную долю?',
-                        'share'                  => 'Делиться',
-                        'share-message'          => 'Поделиться сообщением',
-                        'title'                  => 'Социальная доля',
-                        'title-info'             => 'Обмен вещами с сайта с друзьями на социальных сетях, таких как Facebook, Twitter или Instagram.',
-                    ],
-                ],
-
-                'rich-snippets' => [
-                    'info'  => 'Установите продукты и категории.',
-                    'title' => 'Богатые фрагменты',
-
-                    'products' => [
-                        'enable'          => 'Давать возможность',
-                        'show-categories' => 'Показать категории',
-                        'show-images'     => 'Показать изображения',
-                        'show-offers'     => 'Показать предложения',
-                        'show-ratings'    => 'Показать рейтинги',
-                        'show-reviews'    => 'Показать обзоры',
-                        'show-sku'        => 'Показать Sku',
-                        'show-weight'     => 'Показать вес',
-                        'title'           => 'Продукты',
-                        'title-info'      => 'Предметы, доступные для покупки или использования, предлагаемые бизнесом или продавцом.',
-                    ],
-
-                    'categories' => [
-                        'enable'                  => 'Давать возможность',
-                        'show-search-input-field' => 'Показать поле ввода поиска',
-                        'title'                   => 'Категории',
-                        'title-info'              => '«Категории» относятся к группам или классификациям, которые помогают организовать и группировать аналогичные продукты или предметы вместе для облегчения просмотра и навигации.',
-                    ],
-                ],
-            ],
-
-            'customer' => [
-                'info'  => 'Клиент',
-                'title' => 'Клиент',
-
-                'address' => [
-                    'info'  => 'Установить страну, штат, молния и линии на адрес уличного адреса.',
-                    'title' => 'Адрес',
-
-                    'requirements' => [
-                        'city'       => 'Город',
-                        'country'    => 'Страна',
-                        'state'      => 'Состояние',
-                        'title'      => 'Требования',
-                        'title-info' => 'Требования - это условия, функции или спецификации, необходимые для того, чтобы что -то было выполнено, достигнуто или успешно выполнено.',
-                        'zip'        => 'Молния',
-                    ],
-
-                    'information' => [
-                        'street-lines' => 'Линии по адресу улицы',
-                        'title'        => 'Информация',
-                        'title-info'   => '«Линии в адресе улица» относятся к отдельным сегментам адреса, часто разделенного запятыми, предоставляя информацию о месте, такую ​​как номер дома, улица, город и многое другое.',
-                    ],
-                ],
-
-                'captcha' => [
-                    'info'  => 'Установите ключ сайта, секретный ключ и статус.',
-                    'title' => 'Капча',
-
-                    'credentials' => [
-                        'secret-key' => 'Секретный ключ',
-                        'site-key'   => 'Ключ сайта',
-                        'status'     => 'Положение дел',
-                        'title'      => 'Реквизиты для входа',
-                        'title-info' => '«Sitemap: карта макета веб -сайта для поисковых систем. Секретный ключ: защищенный код для шифрования данных, аутентификации или защиты доступа к API».',
-                    ],
-
-                    'validations' => [
-                        'captcha'  => 'Что-то пошло не так! Пожалуйста, попробуйте еще раз.',
-                        'required' => 'Пожалуйста, выберите CAPTCHA',
-                    ],
-                ],
-
-                'settings' => [
-                    'settings-info' => 'Установите подписку на новостную рассылку, проверку электронной почты и социальное вход.',
-                    'title'         => 'Настройки',
-
-                    'newsletter' => [
-                        'subscription' => 'Разрешить подписку на рассылку',
-                        'title'        => 'Подписка на новости',
-                        'title-info'   => '«Информация о новостной рассылке» содержит обновления, предложения или контент, регулярно обмениваемые электронными письмами подписчикам, что делает их информированными и вовлеченными.',
-                    ],
-
-                    'email' => [
-                        'email-verification' => 'Разрешить проверку электронной почты',
-                        'title'              => 'Подтверждение по элетронной почте',
-                        'title-info'         => '«Проверка электронной почты» подтверждает подлинность адреса электронной почты, часто путем отправки ссылки на подтверждение, повышения безопасности учетной записи и надежности общения.',
-                    ],
-
-                    'social-login' => [
-                        'enable-facebook'   => 'Включить Facebook',
-                        'enable-github'     => 'Включить GitHub',
-                        'enable-google'     => 'Включить Google',
-                        'enable-linkedin'   => 'Включить LinkedIn',
-                        'enable-twitter'    => 'Включить Twitter',
-                        'social-login'      => 'Социальный вход',
-                        'social-login-info' => '«Социальный вход» позволяет пользователям получать доступ к веб -сайтам, используя свои учетные записи в социальных сетях, оптимизируя процессы регистрации и входа в систему для удобства.',
-                    ],
-                ],
-            ],
-
-            'email' => [
-                'info'  => 'Электронная почта',
-                'title' => 'Электронная почта',
-
-                'email-settings' => [
-                    'admin-email'           => 'Административное письмо',
-                    'admin-email-tip'       => 'Адрес электронной почты администратора для этого канала для получения электронных писем',
-                    'admin-name'            => 'Административное имя',
-                    'admin-name-tip'        => 'Это имя будет отображаться во всех электронных письмах администратора',
-                    'admin-page-limit'      => 'Элементы по умолчанию на страницу (администратор)',
-                    'email-sender-name'     => 'Имя отправителя электронной почты',
-                    'email-sender-name-tip' => 'Это имя будет отображаться в почтовом ящике клиентов',
-                    'info'                  => 'Установите имя отправителя по электронной почте, адрес электронной почты магазина, имя администратора и адрес электронной почты администратора.',
-                    'shop-email-from'       => 'Магазин адрес электронной почты',
-                    'shop-email-from-tip'   => 'Адрес электронной почты этого канала для отправки электронных писем вашим клиентам',
-                    'title'                 => 'Настройки электронной почты',
-                ],
-
-                'notifications' => [
-                    'info'      => '«Уведомление» - это сообщение или оповещение, которое информирует пользователей о событиях, обновлениях или действиях, улучшая вовлечение пользователей и осознание.',
-                    'new-admin' => 'Отправить подтверждение по электронной почте администратору',
-                    'title'     => 'Уведомления',
-                ],
-            ],
-
-            'sales' => [
-                'info'  => 'Продажи',
-                'title' => 'Продажи',
-
-                'shipping' => [
-                    'info'  => 'Установите информацию о доставке.',
-                    'title' => 'Перевозки',
-
-                    'origin' => [
-                        'bank-details'   => 'Банковские детали',
-                        'city'           => 'Город',
-                        'contact-number' => 'Контактный номер',
-                        'country'        => 'Страна',
-                        'state'          => 'Состояние',
-                        'store-name'     => 'Название магазина',
-                        'street-address' => 'Адрес улицы',
-                        'title'          => 'Источник',
-                        'title-info'     => 'Происхождение доставки относится к месту, где товары или продукты происходят перед тем, как их доставить в пункт назначения.',
-                        'vat-number'     => 'Номер НДС',
-                        'zip'            => 'Молния',
-                    ],
-                ],
-
-                'shipping-methods' => [
-                    'info'  => 'Установите информацию о методах доставки',
-                    'title' => 'Методы доставки',
-
-                    'free-shipping' => [
-                        'description' => 'Описание',
-                        'page-title'  => 'Бесплатная доставка',
-                        'status'      => 'Положение дел',
-                        'title'       => 'Заголовок',
-                        'title-info'  => '«Бесплатная доставка» относится к методу доставки, где стоимость доставки отменяется, а продавец покрывает расходы на доставку для доставки товаров покупателю.',
-                    ],
-
-                    'flat-rate-shipping' => [
-                        'description' => 'Описание',
-                        'page-title'  => 'Фиксированная стоимость доставки',
-                        'rate'        => 'Ставка',
-                        'status'      => 'Положение дел',
-                        'title'       => 'Заголовок',
-                        'title-info'  => 'Перевозка по фиксированной ставке - это метод доставки, при котором за доставка взимается фиксированная плата, независимо от веса, размера или расстояния пакета.Это упрощает стоимость доставки и может быть выгодным как для покупателей, так и для продавцов.',
-                        'type'        => 'Тип',
-                    ],
-                ],
-
-                'invoice-settings' => [
-                    'info'  => 'Установите номер счета, Условия оплаты, проектирование счетов и напоминания счетов.',
-                    'title' => 'Настройки счетов',
-
-                    'invoice-number' => [
-                        'generator'  => 'Генератор номеров счета',
-                        'length'     => 'Длина номера счета',
-                        'prefix'     => 'Номер счета -фактуры префикс',
-                        'suffix'     => 'Номер счета -фактуры суффикс',
-                        'title'      => 'Настройки номера счета',
-                        'title-info' => 'Конфигурация правил или параметров для генерации и назначения уникальных идентификационных номеров для счетов для организационных целей и отслеживания.',
-                    ],
-
-                    'payment-terms' => [
-                        'due-duration'      => 'Срок продолжительности',
-                        'due-duration-day'  => ':due-duration День',
-                        'due-duration-days' => ':due-duration День',
-                        'title'             => 'Условия оплаты',
-                        'title-info'        => 'Согласованные условия, диктуя, когда и как оплата за товары или услуги должна быть произведена покупателем продавцу.',
-                    ],
-
-                    'invoice-slip-design' => [
-                        'logo'       => 'Логотип',
-                        'title'      => 'Дизайн скольжения счетов',
-                        'title-info' => 'Визуальная компоновка и форматирование счета -фактуры, в том числе брендинг компании, детализацию, цены и данные о платежах для профессиональной презентации.',
-                    ],
-
-                    'invoice-reminders' => [
-                        'interval-between-reminders' => 'Интервал между напоминаниями',
-                        'maximum-limit-of-reminders' => 'Максимальный предел напоминаний',
-                        'title'                      => 'Напоминания о счетах',
-                        'title-info'                 => 'Автоматизированные уведомления или сообщения, отправленные клиентам, чтобы напомнить им о предстоящих или просроченных платежах по счетам.',
-                    ],
-                ],
-            ],
-
-            'taxes' => [
-                'title' => 'Налоги',
-
-                'catalog' => [
-                    'title'      => 'Каталог',
-                    'title-info' => 'Установить цены и расчеты местоположения по умолчанию',
-
-                    'pricing' => [
-                        'title'         => 'Ценообразование',
-                        'title-info'    => 'Подробная информация о стоимости товаров или услуг, включая базовую цену, скидки, налоги и дополнительные сборы. Информация',
-                        'tax-inclusive' => 'Налогообложение инклюзивного',
-                    ],
-
-                    'default-location-calculation' => [
-                        'default-country'   => 'Страна по умолчанию',
-                        'default-post-code' => 'По умолчанию почтовый код',
-                        'default-state'     => 'Состояние по умолчанию',
-                        'title'             => 'Расчет расположения по умолчанию',
-                        'title-info'        => 'Автоматизированное определение стандартного или начального местоположения на основе предопределенных факторов или настроек.',
+                    'agentic-pim' => [
+                        'title'                     => 'Агентский PIM',
+                        'title-info'                => 'Настройте чат AI-агента, автономные процессы обогащения и мониторинг качества. Эти функции обеспечивают диалоговое управление товарами и проактивное обслуживание каталога.',
+                        'enabled'                   => 'Включить чат AI-агента',
+                        'enabled-info'              => 'Включите плавающий виджет чата AI для диалогового управления товарами с более чем 27 действиями инструментов.',
+                        'max-steps'                 => 'Макс. шагов агента за ход',
+                        'max-steps-info'            => 'Максимальное количество итераций вызовов инструментов, которые AI-агент может выполнить на одно сообщение пользователя. Более высокие значения позволяют выполнять более сложные многоэтапные операции.',
+                        'daily-token-budget'        => 'Дневной бюджет токенов',
+                        'daily-token-budget-info'   => 'Максимальное количество AI-токенов (вход + выход), которые могут быть потреблены в день всеми пользователями. Установите 0 для неограниченного использования. Помогает контролировать затраты на API.',
+                        'auto-enrichment'           => 'Автоматическое обогащение при создании товара',
+                        'auto-enrichment-info'      => 'Автоматически генерировать недостающие описания, категории и SEO-контент при создании или импорте новых товаров.',
+                        'quality-monitor'           => 'Монитор качества каталога',
+                        'quality-monitor-info'      => 'Запускать запланированные сканирования для обнаружения неполных товаров, отсутствующих переводов, дублирующих записей и ценовых аномалий.',
+                        'confidence-threshold'      => 'Порог уверенности',
+                        'confidence-threshold-info' => 'Минимальный показатель уверенности (0-1) для автоматического применения изменений, сгенерированных AI. Ниже этого порога изменения ставятся в очередь на проверку человеком.',
+                        'approval-mode'             => 'Режим утверждения изменений',
+                        'approval-mode-info'        => 'Управляет тем, как AI-агент обрабатывает операции записи. «Подтвердить и применить»: агент предлагает значения в чате, ожидает подтверждения, затем выполняет. «Строгое подтверждение»: то же самое, но также проверяет после каждого изменения. «Только предложить»: описывает изменения, но никогда не выполняет (только чтение).',
                     ],
                 ],
             ],
         ],
-
         'integrations' => [
             'index' => [
                 'create-btn' => 'Создавать',
                 'title'      => 'Интеграции',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'delete'          => 'Удалить',
                     'edit'            => 'Редактировать',
                     'id'              => 'Идентификатор',
@@ -2052,7 +1689,6 @@ return [
                     'permission-type' => 'Тип разрешения',
                 ],
             ],
-
             'create' => [
                 'access-control' => 'Контроль доступа',
                 'all'            => 'Все',
@@ -2065,7 +1701,6 @@ return [
                 'save-btn'       => 'Сохранять',
                 'title'          => 'Новая интеграция',
             ],
-
             'edit' => [
                 'access-control' => 'Контроль доступа',
                 'all'            => 'Все',
@@ -2083,7 +1718,6 @@ return [
                 'save-btn'       => 'Сохранять',
                 'title'          => 'Редактировать интеграцию',
             ],
-
             'being-used'                     => 'Интеграция API уже используется у пользователя администратора',
             'create-success'                 => 'Интеграция API успешно создана',
             'delete-failed'                  => 'Интеграция API удалена',
@@ -2094,40 +1728,155 @@ return [
             're-generate-secret-key-success' => 'API Secret Key успешно регенерируется',
             'client-not-found'               => 'Клиент не найден',
         ],
-
         'prompt' => [
             'datagrid' => [
-                'id'            => 'ID',
-                'title'         => 'Заголовок',
-                'prompt'        => 'Подсказка',
-                'type'          => 'Тип',
-                'created-at'    => 'Создано',
-                'updated-at'    => 'Обновлено',
-                'actions'       => 'Действия',
-                'edit'          => 'Редактировать',
-                'delete'        => 'Удалить',
-                'product'       => 'Продукт',
-                'category'      => 'Категория',
+                'id'               => 'ID',
+                'title'            => 'Заголовок',
+                'prompt'           => 'Подсказка',
+                'type'             => 'Тип',
+                'purpose'          => 'Назначение',
+                'text-generation'  => 'Генерация текста',
+                'image-generation' => 'Генерация изображений',
+                'translation'      => 'Перевод',
+                'created-at'       => 'Создано',
+                'updated-at'       => 'Обновлено',
+                'actions'          => 'Действия',
+                'edit'             => 'Редактировать',
+                'delete'           => 'Удалить',
+                'product'          => 'Продукт',
+                'category'         => 'Категория',
             ],
             'create' => [
-                'title'         => 'Подсказка',
-                'create-btn'    => 'Создать подсказку',
-                'edit-title'    => 'Редактировать подсказку',
-                'create-title'  => 'Создать новую подсказку',
-                'label-title'   => 'Заголовок',
-                'type'          => 'Тип',
-                'prompt'        => 'Подсказка',
-                'save-btn'      => 'Сохранить подсказку',
+                'title'               => 'Подсказка',
+                'create-btn'          => 'Создать подсказку',
+                'edit-title'          => 'Редактировать подсказку',
+                'create-title'        => 'Создать новую подсказку',
+                'label-title'         => 'Заголовок',
+                'purpose'             => 'Назначение',
+                'text-generation'     => 'Генерация текста',
+                'image-generation'    => 'Генерация изображений',
+                'select-purpose'      => 'Выберите назначение',
+                'select-model'        => '-- Выберите модель --',
+                'loading-models'      => 'Загрузка моделей...',
+                'no-models-available' => 'Нет доступных моделей. Выберите платформу или настройте её на вкладке Платформы.',
+                'type'                => 'Тип',
+                'prompt'              => 'Подсказка',
+                'save-btn'            => 'Сохранить подсказку',
             ],
             'message' => [
-                'save-success'      => 'Подсказка успешно сохранена.',
-                'update-success'    => 'Подсказка успешно обновлена.',
-                'delete-success'    => 'Подсказка успешно удалена.',
-                'delete-fail'       => 'Не удалось удалить подсказку.',
+                'save-success'   => 'Подсказка успешно сохранена.',
+                'update-success' => 'Подсказка успешно обновлена.',
+                'delete-success' => 'Подсказка успешно удалена.',
+                'delete-fail'    => 'Не удалось удалить подсказку.',
+            ],
+        ],
+        'system-prompt' => [
+            'datagrid' => [
+                'id'          => 'ID',
+                'title'       => 'Название',
+                'tone'        => 'Тон',
+                'max-tokens'  => 'Макс. токены',
+                'temperature' => 'Температура',
+                'status'      => 'Статус',
+                'created-at'  => 'Дата создания',
+                'updated-at'  => 'Дата обновления',
+                'actions'     => 'Действия',
+                'save'        => 'Сохранить',
+                'edit'        => 'Редактировать',
+                'delete'      => 'удалить',
+            ],
+            'create' => [
+                'title'        => 'Системный промпт',
+                'create-btn'   => 'Создать системный промпт',
+                'edit-title'   => 'Редактировать системный промпт',
+                'create-title' => 'Создать новый системный промпт',
+                'label-title'  => 'Название',
+                'max-tokens'   => 'Макс. выходные токены',
+                'temperature'  => 'Температура',
+                'type'         => 'Тип',
+                'prompt'       => 'Промпт',
+                'save-btn'     => 'Сохранить промпт',
+                'prompt-tone'  => 'Тон промпта',
+            ],
+            'message' => [
+                'save-success'   => 'Системный промпт успешно сохранён.',
+                'update-success' => 'Системный промпт успешно обновлён.',
+                'delete-success' => 'Системный промпт успешно удалён.',
+                'delete-fail'    => 'Не удалось удалить системный промпт.',
+            ],
+        ],
+        'platform' => [
+            'title'           => 'Платформы ИИ',
+            'create-btn'      => 'Добавить платформу',
+            'create-title'    => 'Добавить платформу AI',
+            'edit-title'      => 'Редактировать платформу AI',
+            'save-btn'        => 'Сохранить',
+            'saving'          => 'Сохранение',
+            'test-connection' => 'Проверить соединение',
+            'setup'           => [
+                'title'              => 'Начните работу с Magic AI',
+                'description'        => 'Подключите вашего поставщика AI, чтобы разблокировать генерацию контента, создание изображений и перевод на основе AI. Добавьте свою первую платформу, чтобы начать.',
+                'step-1'             => 'Выберите поставщика',
+                'step-2'             => 'Введите ваш ключ API',
+                'step-3'             => 'Выберите модели и сохраните',
+                'add-first'          => 'Добавьте свою первую платформу',
+                'no-default-warning' => 'Платформа по умолчанию не задана. Установите одну платформу как платформу по умолчанию для включения функций AI во всём приложении.',
+                'no-platform-hint'   => 'Платформы ещё не настроены. Перейдите на вкладку «Платформы», чтобы добавить первого поставщика AI.',
+                'lightning-icon'     => 'Магия ИИ',
+                'warning-icon'       => 'Предупреждение',
+            ],
+            'testing'         => 'Тестирование',
+            'fetch-models'    => 'Получить модели',
+            'fetching-models' => 'Получение',
+            'set-default'     => 'Установить по умолчанию',
+            'datagrid'        => [
+                'label'      => 'Метка',
+                'provider'   => 'Поставщик',
+                'models'     => 'Модели',
+                'default'    => 'По умолчанию',
+                'status'     => 'Статус',
+                'created-at' => 'Дата создания',
+                'edit'       => 'Редактировать',
+                'delete'     => 'Удалить',
+            ],
+            'fields' => [
+                'label'                    => 'Метка',
+                'provider'                 => 'Поставщик',
+                'select-provider'          => '-- Выберите поставщика --',
+                'api-url'                  => 'API URL',
+                'api-url-hint'             => 'Предварительно заполнено конечной точкой по умолчанию. Редактируйте только при использовании прокси или пользовательского развёртывания.',
+                'api-key'                  => 'Ключ API',
+                'models'                   => 'Модели',
+                'custom-model-placeholder' => 'Введите пользовательский ID модели...',
+                'add'                      => 'Добавить',
+                'enter-key-to-fetch'       => 'Введите ваш ключ API выше, чтобы автоматически получить доступные модели.',
+                'search-models'            => 'Поиск моделей...',
+                'no-models-match'          => 'Ни одна модель не соответствует вашему запросу.',
+                'azure-deployment'         => 'Имя развёртывания',
+                'azure-api-version'        => 'Версия API',
+                'is-default'               => 'Установить по умолчанию',
+                'status'                   => 'Статус',
+                'use-default'              => '-- Использовать платформу по умолчанию --',
+                'use-default-hint'         => 'Оставьте пустым, чтобы использовать платформу, отмеченную как платформа по умолчанию. Платформы, отмеченные *, установлены по умолчанию.',
+                'no-image-platform'        => 'Платформа с поддержкой изображений не настроена. Сначала добавьте платформу OpenAI, Gemini или xAI.',
+                'image-platform-hint'      => 'Отображаются только платформы, поддерживающие генерацию изображений (OpenAI, Gemini, xAI).',
+                'remove-model'             => 'Удалить модель :model',
+                'invalid-model-name'       => 'Недопустимое имя модели. Используйте только буквы, цифры, дефисы, точки, двоеточия и косые черты (напр. gpt-4o, claude-3-sonnet).',
+            ],
+            'message' => [
+                'save-success'          => 'Платформа успешно сохранена.',
+                'update-success'        => 'Платформа успешно обновлена.',
+                'delete-success'        => 'Платформа успешно удалена.',
+                'delete-fail'           => 'Не удалось удалить платформу.',
+                'cannot-delete-default' => 'Невозможно удалить единственную платформу по умолчанию.',
+                'set-default-success'   => 'Платформа успешно установлена по умолчанию.',
+                'test-success'          => 'Соединение успешно проверено!',
+                'test-fail'             => 'Проверка соединения не удалась',
+                'fetch-models-fail'     => 'Не удалось получить модели',
+                'invalid-model-names'   => 'Недопустимые имена моделей: :names. Имена моделей должны начинаться с буквы или цифры и содержать только буквы, цифры, дефисы, точки, двоеточия и косые черты.',
             ],
         ],
     ],
-
     'components' => [
         'layouts' => [
             'header' => [
@@ -2137,124 +1886,78 @@ return [
                 'my-account'    => 'Мой счет',
                 'notifications' => 'Уведомления',
                 'visit-shop'    => 'Посетите магазин',
-
-                'mega-search' => [
-                    'categories'                      => 'Категории',
-                    'customers'                       => 'Клиенты',
-                    'explore-all-categories'          => 'Исследуйте все категории',
-                    'explore-all-customers'           => 'Исследуйте всех клиентов',
-                    'explore-all-matching-categories' => 'Изучить все категории, соответствующие ":query" (:count)',
-                    'explore-all-matching-customers'  => 'Просмотреть всех клиентов, соответствующих «:query» (:count)',
-                    'explore-all-matching-orders'     => 'Просмотреть все заказы, соответствующие «:query» (:count)',
-                    'explore-all-matching-products'   => 'Просмотреть все продукты, соответствующие «:query» (:count)',
-                    'explore-all-orders'              => 'Исследуйте все заказы',
-                    'explore-all-products'            => 'Исследуйте все продукты',
-                    'orders'                          => 'Приказ',
-                    'products'                        => 'Продукты',
-                    'sku'                             => 'Артикул: :sku',
-                    'title'                           => 'Мега -поиск',
-                ],
             ],
-
             'sidebar' => [
-                'attribute-families'       => 'Атрибут семьи',
-                'attribute-groups'         => 'Группы атрибутов',
-                'attributes'               => 'Атрибуты',
-                'history'                  => 'История',
-                'edit-section'             => 'Данные',
-                'general'                  => 'Общий',
-                'campaigns'                => 'Кампании',
-                'catalog'                  => 'Каталог',
-                'categories'               => 'Категории',
-                'category_fields'          => 'Поля категории',
-                'channels'                 => 'каналы',
-                'cms'                      => 'CMS',
-                'collapse'                 => 'Крах',
-                'communications'           => 'Коммуникации',
-                'configure'                => 'Конфигурация',
-                'currencies'               => 'Валюты',
-                'customers'                => 'Клиенты',
-                'dashboard'                => 'Панель приборов',
-                'data-transfer'            => 'Обмен данными',
-                'discount'                 => 'Скидка',
-                'email-templates'          => 'Шаблоны электронной почты',
-                'events'                   => 'События',
-                'exchange-rates'           => 'Обменные курсы',
-                'groups'                   => 'Группа',
-                'tracker'                  => 'Трекер работы',
-                'imports'                  => 'Импорт',
-                'exports'                  => 'Экспорт',
-                'invoices'                 => 'Счета',
-                'locales'                  => 'Локации',
-                'magic-ai'                 => 'У тебя волшебство',
-                'marketing'                => 'Маркетинг',
-                'mode'                     => 'Темный режим',
-                'newsletter-subscriptions' => 'Подписки на информационные бюллетени',
-                'orders'                   => 'Приказ',
-                'products'                 => 'Продукты',
-                'promotions'               => 'Акции',
-                'refunds'                  => 'Возврат средств',
-                'reporting'                => 'Составление отчетов',
-                'reviews'                  => 'Обзоры',
-                'roles'                    => 'Роли',
-                'sales'                    => 'Продажи',
-                'search-seo'               => 'Поиск и SEO',
-                'search-synonyms'          => 'Поиск синонимов',
-                'search-terms'             => 'Поисковые термины',
-                'settings'                 => 'Настройки',
-                'shipments'                => 'Поставки',
-                'sitemaps'                 => 'Sitemaps',
-                'tax-categories'           => 'Налоговые категории',
-                'tax-rates'                => 'Налоговые ставки',
-                'taxes'                    => 'Налоги',
-                'themes'                   => 'Темы',
-                'transactions'             => 'Транзакции',
-                'url-rewrites'             => 'URL переписывает',
-                'users'                    => 'Пользователи',
-                'integrations'             => 'Интеграции',
-                'prompt'                   => 'Подсказка',
-                'general-tab'              => 'Настройки',
+                'attribute-families' => 'Атрибут семьи',
+                'attribute-groups'   => 'Группы атрибутов',
+                'attributes'         => 'Атрибуты',
+                'history'            => 'История',
+                'edit-section'       => 'Данные',
+                'general'            => 'Общий',
+                'catalog'            => 'Каталог',
+                'categories'         => 'Категории',
+                'category_fields'    => 'Поля категории',
+                'channels'           => 'каналы',
+                'collapse'           => 'Крах',
+                'configure'          => 'Конфигурация',
+                'currencies'         => 'Валюты',
+                'dashboard'          => 'Панель приборов',
+                'data-transfer'      => 'Обмен данными',
+                'groups'             => 'Группа',
+                'tracker'            => 'Трекер работы',
+                'imports'            => 'Импорт',
+                'exports'            => 'Экспорт',
+                'locales'            => 'Локации',
+                'magic-ai'           => 'У тебя волшебство',
+                'mode'               => 'Темный режим',
+                'products'           => 'Продукты',
+                'roles'              => 'Роли',
+                'settings'           => 'Настройки',
+                'themes'             => 'Темы',
+                'users'              => 'Пользователи',
+                'integrations'       => 'Интеграции',
+                'prompt'             => 'Подсказка',
+                'general-tab'        => 'Настройки',
             ],
         ],
-
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => 'Записи не были выбраны.',
                 'must-select-a-mass-action-option' => 'Вы должны выбрать массовое действие \'s option.',
                 'must-select-a-mass-action'        => 'Вы должны выбрать массовое действие.',
             ],
-
             'toolbar' => [
-                'length-of' => ':length из',
-                'из'        => 'из',
-                'per-page'  => 'На страницу',
-                'results'   => ':total Результаты',
-                'selected'  => ':total Выбрано',
-
+                'length-of'    => ':length из',
+                'of'           => 'of',
+                'per-page'     => 'На страницу',
+                'results'      => ':total Результаты',
+                'selected'     => ':total Выбрано',
                 'mass-actions' => [
                     'submit'        => 'Представлять на рассмотрение',
                     'select-option' => 'Выберите опцию',
                     'select-action' => 'Выберите действие',
                 ],
-
                 'filter' => [
                     'title' => 'Фильтр',
                 ],
-
                 'search_by' => [
                     'code'       => 'Поиск по коду',
                     'code_or_id' => 'Поиск по коду или идентификатору',
                 ],
-
                 'search' => [
                     'title' => 'Поиск',
                 ],
-
                 'manage-columns' => [
                     'title' => 'столбцами',
                 ],
+                'pagination' => [
+                    'first-page'    => 'Первая страница',
+                    'previous-page' => 'Предыдущая страница',
+                    'next-page'     => 'Следующая страница',
+                    'last-page'     => 'Последняя страница',
+                    'page-number'   => 'Номер страницы',
+                ],
             ],
-
             'filters' => [
                 'select'   => 'Выбирать',
                 'title'    => 'Применить фильтры',
@@ -2265,17 +1968,14 @@ return [
                         'no-results'        => 'Результатов не найдено...',
                     ],
                 ],
-
                 'custom-filters' => [
                     'clear-all' => 'Очистить все',
                     'title'     => 'Пользовательские фильтры',
                 ],
-
                 'boolean-options' => [
                     'false' => 'ЛОЖЬ',
                     'true'  => 'Истинный',
                 ],
-
                 'date-options' => [
                     'last-month'        => 'Прошлый месяц',
                     'last-six-months'   => 'Последние 6 месяцев',
@@ -2287,12 +1987,10 @@ return [
                     'yesterday'         => 'Вчера',
                 ],
             ],
-
             'table' => [
                 'actions'              => 'Действия',
                 'no-records-available' => 'Нет записей.',
             ],
-
             'manage-columns' => [
                 'title'             => 'Управление столбцами',
                 'available-columns' => 'Доступные столбцы',
@@ -2300,7 +1998,6 @@ return [
                 'apply-btn'         => 'Применить',
             ],
         ],
-
         'modal' => [
             'confirm' => [
                 'agree-btn'    => 'Соглашаться',
@@ -2308,14 +2005,12 @@ return [
                 'message'      => 'Вы уверены, что хотите выполнить это действие?',
                 'title'        => 'Вы уверены?',
             ],
-
             'delete' => [
                 'agree-btn'    => 'Удалить',
                 'disagree-btn' => 'Отмена',
                 'message'      => 'Вы уверены, что хотите удалить?',
                 'title'        => 'Подтвердить удаление',
             ],
-
             'history' => [
                 'title'           => 'Предварительный просмотр истории',
                 'subtitle'        => 'Быстро просмотрите ваши обновления и изменения.',
@@ -2329,7 +2024,6 @@ return [
                 'no-history'      => 'История не найдена',
             ],
         ],
-
         'products' => [
             'search' => [
                 'add-btn'       => 'Добавьте выбранный продукт',
@@ -2341,21 +2035,18 @@ return [
                 'title'         => 'Выберите продукты',
             ],
         ],
-
         'media' => [
             'images' => [
                 'add-image-btn'      => 'Добавить изображение',
                 'generate-with-ai'   => 'Создать с помощью ИИ',
                 'upload-from-device' => 'Загрузить с устройства',
                 'cancel'             => 'Отмена',
-
-                'ai-add-image-btn'  => 'У тебя волшебство',
-                'ai-btn-info'       => 'Генерировать изображение',
-                'allowed-types'     => 'Png, JPEG, JPG',
-                'upload-media-btn'  => 'Загрузить медиа',
-                'not-allowed-error' => 'Разрешены только файлы изображений (.jpeg, .jpg, .png, ..).',
-
-                'ai-generation' => [
+                'ai-add-image-btn'   => 'У тебя волшебство',
+                'ai-btn-info'        => 'Генерировать изображение',
+                'allowed-types'      => 'Png, JPEG, JPG',
+                'not-allowed-error'  => 'Разрешены только файлы изображений (.jpeg, .jpg, .png, ..).',
+                'upload-media-btn'   => 'Загрузить медиа',
+                'ai-generation'      => [
                     '1024x1024'        => '1024x1024',
                     '1024x1792'        => '1024x1792',
                     '1792x1024'        => '1792x1024',
@@ -2375,7 +2066,6 @@ return [
                     'standard'         => 'Стандартный',
                     'title'            => 'Генерация изображений ИИ',
                 ],
-
                 'placeholders' => [
                     'front'     => 'Передний',
                     'next'      => 'Следующий',
@@ -2384,23 +2074,22 @@ return [
                     'zoom'      => 'Зум',
                 ],
             ],
-
+            'gallery' => [
+                'not-allowed-error' => 'Допускаются только изображения и видеофайлы. (.mp4, .jpg ..)',
+            ],
             'videos' => [
                 'add-video-btn'     => 'Добавить видео',
                 'allowed-types'     => 'MP4, Webm, MKV',
                 'not-allowed-error' => 'Разрешены только файлы видео (.mp4, .mov, .ogg ..).',
             ],
-
             'files' => [
                 'add-file-btn'      => 'Добавить файл',
                 'allowed-types'     => 'PDF',
                 'not-allowed-error' => 'Разрешены только файлы PDF',
             ],
         ],
-
         'tinymce' => [
-            'ai-btn-tile' => 'У тебя волшебство',
-
+            'ai-btn-tile'   => 'У тебя волшебство',
             'ai-generation' => [
                 'apply'                  => 'Применять',
                 'generate'               => 'Генерировать',
@@ -2409,16 +2098,23 @@ return [
                 'generating'             => 'Генерируя ...',
                 'prompt'                 => 'Быстрый',
                 'title'                  => 'Помощь ИИ',
+                'platform'               => 'Платформа',
                 'model'                  => 'Модель',
+                'rich-preview'           => 'Форматированный предпросмотр',
+                'system-prompt'          => 'Системный промпт',
+                'select-system-prompt'   => 'Выберите системный промпт',
+                'tone-instructions'      => 'Тон / Инструкции',
+                'max-tokens'             => 'Макс. токены',
+                'temperature'            => 'Температура',
                 'gpt-3-5-turbo'          => 'OpenAI GPT-3,5-Turbo',
                 'llama2'                 => 'Лама 2',
                 'mistral'                => 'Мистраль',
-                'dolphin-phi'            => 'Dolphin Phi',
-                'phi'                    => 'Phi-2',
+                'dolphin-phi'            => 'Дельфин Пи',
+                'phi'                    => 'Пи-2',
                 'starling-lm'            => 'Скворец',
                 'llama2-uncensored'      => 'Лама 2 без цензуры',
-                'llama2:13b'             => 'Llama 2 13B',
-                'llama2:70b'             => 'Llama 2 70B',
+                'llama2:13b'             => 'Лама 2 13B',
+                'llama2:70b'             => 'Лама 2 70B',
                 'orca-mini'              => 'Orca mini',
                 'vicuna'                 => 'Викуна',
                 'llava'                  => 'Лава',
@@ -2426,27 +2122,20 @@ return [
             ],
         ],
     ],
-
     'acl' => [
         'addresses'                => 'Адреса',
         'attribute-families'       => 'Атрибут семьи',
         'attribute-groups'         => 'Группы атрибутов',
         'attributes'               => 'Атрибуты',
-        'campaigns'                => 'Кампании',
         'cancel'                   => 'Отмена',
-        'cart-rules'               => 'Правила телеги',
-        'catalog-rules'            => 'Правила каталога',
         'catalog'                  => 'Каталог',
         'categories'               => 'Категории',
         'channels'                 => 'каналы',
-        'cms'                      => 'CMS',
-        'communications'           => 'Коммуникации',
         'configure'                => 'Настройка',
         'configuration'            => 'Конфигурация',
         'copy'                     => 'Копия',
         'create'                   => 'Создавать',
         'currencies'               => 'Валюты',
-        'customers'                => 'Клиенты',
         'dashboard'                => 'Панель приборов',
         'data-transfer'            => 'Обмен данными',
         'delete'                   => 'Удалить',
@@ -2459,6 +2148,9 @@ return [
         'invoices'                 => 'Счета',
         'locales'                  => 'Локации',
         'magic-ai'                 => 'У тебя волшебство',
+        'magic-ai-general'         => 'Общие',
+        'magic-ai-prompt'          => 'Промпт',
+        'magic-ai-system-prompt'   => 'Системный промпт',
         'marketing'                => 'Маркетинг',
         'newsletter-subscriptions' => 'Подписки на информационные бюллетени',
         'note'                     => 'Примечание',
@@ -2475,7 +2167,7 @@ return [
         'search-terms'             => 'Поисковые термины',
         'settings'                 => 'Настройки',
         'shipments'                => 'Поставки',
-        'sitemaps'                 => 'Sitemaps',
+        'sitemaps'                 => 'Карта сайта',
         'subscribers'              => 'Подписчики информационных бюллетеней',
         'tax-categories'           => 'Налоговые категории',
         'tax-rates'                => 'Налоговые ставки',
@@ -2486,56 +2178,50 @@ return [
         'users'                    => 'Пользователи',
         'category_fields'          => 'Поля категории',
         'view'                     => 'Вид',
+        'execute'                  => 'Выполнение задания',
         'history'                  => 'История',
         'restore'                  => 'Восстановить',
         'integrations'             => 'Интеграции',
         'api'                      => 'API',
+        'tracker'                  => 'Трекер заданий',
+        'exports'                  => 'Экспорт',
         'mass-update'              => 'Массовое обновление',
         'mass-delete'              => 'Массовое удаление',
     ],
-
     'errors' => [
         'dashboard' => 'Панель приборов',
         'go-back'   => 'Возвращаться',
         'support'   => 'Если проблема не устранена, свяжитесь с нами по адресу <a href=":link" class=":class">:email</a> для получения помощи.',
-
-        '404' => [
+        '404'       => [
             'description' => 'Уп!Страница, которую вы \'re looking for is on vacation. It seems we couldn\'t find what you were searching for.',
             'title'       => '404 Страница не найдена',
         ],
-
         '401' => [
             'description' => 'Уп!Выглядит, как вы\'re not allowed to access this page. It seems you\'re missing the necessary credentials.',
             'title'       => '401 несанкционирован',
             'message'     => 'Аутентификация не удалась из -за неверных полномочий или истекшего токена.',
         ],
-
         '403' => [
             'description' => 'Уп!Эта страница не ограничена.Похоже, ты не ДОН \'t have the required permissions to view this content.',
             'title'       => '403 запрещено',
         ],
-
         '413' => [
             'description' => 'Уп!Кажется, вы пытаетесь загрузить слишком большой файл.Если вы хотите загрузить то же самое, пожалуйста, обновите конфигурацию PHP соответственно.',
             'title'       => '413 Слишком большой контент',
         ],
-
         '419' => [
             'description' => 'Уп!Время сеанса истекло.Пожалуйста, обновите страницу и войдите снова, чтобы продолжить.',
             'title'       => '419 сеанс истек',
         ],
-
         '500' => [
             'description' => 'Уп!Что-то пошло не так.Кажется, мы \'re having trouble loading the page you\'re looking for.',
             'title'       => '500 - внутренняя ошибка сервера',
         ],
-
         '503' => [
             'description' => 'Уп!Похоже, мы \'re temporarily down for maintenance. Please check back in a bit.',
             'title'       => '503 Сервис недоступен',
         ],
     ],
-
     'export' => [
         'csv'                  => 'CSV',
         'download'             => 'Скачать',
@@ -2548,22 +2234,18 @@ return [
         'error'                => 'Что-то пошло не так!',
         'product-not-selected' => 'Не выбраны товары для быстрого экспорта',
     ],
-
     'validations' => [
         'slug-being-used' => 'Этот слизняк используется в категориях или в продуктах.',
         'slug-reserved'   => 'Этот слизняк зарезервирован.',
         'invalid-locale'  => 'Недопустимые локали :locales',
     ],
-
     'footer' => [
         'copy-right' => 'Приведено в действие <a href="https://unopim.com/" target="_blank">UnoPim</a>, A Community Project by <a href="https://webkul.com/" target="_blank">Webkul</a>',
     ],
-
     'emails' => [
         'dear'   => 'Уважаемый :admin_name',
         'thanks' => 'Если вам нужна какая-либо помощь, свяжитесь с нами по адресу <a href=":link" style=":style">:email</a>.<br/>Спасибо!',
-
-        'admin' => [
+        'admin'  => [
             'forgot-password' => [
                 'description'    => 'Вы получаете это письмо, потому что мы получили запрос на сброс пароля для вашей учетной записи.',
                 'greeting'       => 'Забыли пароль!',
@@ -2572,16 +2254,15 @@ return [
             ],
         ],
     ],
-
     'common' => [
-        'yes'     => 'Да',
-        'no'      => 'Нет',
-        'true'    => 'Истинный',
-        'false'   => 'ЛОЖЬ',
-        'enable'  => 'Включено',
-        'disable' => 'Неполноценный',
+        'yes'            => 'Да',
+        'no'             => 'Нет',
+        'true'           => 'Истинный',
+        'false'          => 'ЛОЖЬ',
+        'enable'         => 'Включено',
+        'disable'        => 'Неполноценный',
+        'no-match-found' => 'Совпадений не найдено!',
     ],
-
     'default-prompt' => [
         'detailed' => [
             'title'  => 'Подробное описание продукта',

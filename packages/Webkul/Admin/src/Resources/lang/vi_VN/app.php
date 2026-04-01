@@ -11,7 +11,6 @@ return [
             'powered-by'             => 'Được cung cấp bởi :unopim,',
             'open-source-project-by' => 'Dự án mã nguồn mở của :webkul.',
         ],
-
         'forget-password' => [
             'create' => [
                 'email'                  => 'Email đã đăng ký',
@@ -26,7 +25,6 @@ return [
                 'open-source-project-by' => 'Dự án mã nguồn mở của :webkul.',
             ],
         ],
-
         'reset-password' => [
             'back-link-title'        => 'Quay lại Đăng nhập?',
             'confirm-password'       => 'Xác nhận mật khẩu',
@@ -38,7 +36,6 @@ return [
             'open-source-project-by' => 'Dự án mã nguồn mở của :webkul.',
         ],
     ],
-
     'notifications' => [
         'description-text' => 'Danh sách tất cả các thông báo',
         'marked-success'   => 'Thông báo đã được đánh dấu thành công',
@@ -55,7 +52,6 @@ return [
             'processing' => 'Đang xử lý',
         ],
     ],
-
     'account' => [
         'edit' => [
             'back-btn'          => 'Quay lại',
@@ -76,25 +72,89 @@ return [
             'user-timezone'     => 'Múi giờ của người dùng',
         ],
     ],
-
     'dashboard' => [
-        'index' => [
-            'title'            => 'Bảng điều khiển',
-            'user-info'        => 'Giám sát nhanh, những gì được tính trong PIM của bạn',
-            'user-name'        => 'Xin chào! :user_name',
-            'catalog-details'  => 'Danh mục',
-            'total-families'   => 'Tổng gia đình',
-            'total-attributes' => 'Tổng thuộc tính',
-            'total-groups'     => 'Tổng nhóm',
-            'total-categories' => 'Tổng danh mục',
-            'total-products'   => 'Tổng sản phẩm',
-            'settings-details' => 'Cấu trúc danh mục',
-            'total-locales'    => 'Tổng địa phương',
-            'total-currencies' => 'Tổng tiền tệ',
-            'total-channels'   => 'Tổng kênh',
+        'invalid-type' => 'Loại tiện ích bảng điều khiển không hợp lệ.',
+        'index'        => [
+            'title'                => 'Bảng điều khiển',
+            'user-info'            => 'Giám sát nhanh, những gì được tính trong PIM của bạn',
+            'user-name'            => 'Xin chào! :user_name',
+            'catalog-details'      => 'Danh mục',
+            'total-families'       => 'Tổng gia đình',
+            'total-attributes'     => 'Tổng thuộc tính',
+            'total-groups'         => 'Tổng nhóm',
+            'total-categories'     => 'Tổng danh mục',
+            'total-products'       => 'Tổng sản phẩm',
+            'settings-details'     => 'Cấu trúc danh mục',
+            'total-locales'        => 'Tổng địa phương',
+            'total-currencies'     => 'Tổng tiền tệ',
+            'total-channels'       => 'Tổng kênh',
+            'completeness'         => 'Hoàn thiện',
+            'active'               => 'Hoạt động',
+            'inactive'             => 'Không hoạt động',
+            'simple'               => 'Đơn giản',
+            'configurable'         => 'Có thể cấu hình',
+            'product-stats'        => 'Thống kê sản phẩm',
+            'product-type-dist'    => 'Phân bố loại sản phẩm',
+            'products-by-status'   => 'Sản phẩm theo trạng thái',
+            'products-over-time'   => 'Hoạt động sản phẩm (7 ngày qua)',
+            'legend-created'       => 'Đã tạo',
+            'legend-updated'       => 'Đã cập nhật',
+            'recent-activity'      => 'Hoạt động gần đây',
+            'no-activity'          => 'Không có hoạt động gần đây.',
+            'updated'              => 'đã cập nhật',
+            'created'              => 'đã tạo',
+            'deleted'              => 'đã xóa',
+            'ago'                  => 'trước',
+            'just-now'             => 'vừa xong',
+            'data-transfer'        => 'Truyền dữ liệu',
+            'no-jobs'              => 'Không có công việc nhập/xuất gần đây.',
+            'job-type-import'      => 'Nhập',
+            'job-type-export'      => 'Xuất',
+            'job-state-completed'  => 'Hoàn thành',
+            'job-state-failed'     => 'Thất bại',
+            'job-state-processing' => 'Đang xử lý',
+            'job-state-pending'    => 'Chờ xử lý',
+            'job-state-validated'  => 'Đã xác thực',
+            'rows-processed'       => 'Hàng đã xử lý',
+            'errors'               => 'Lỗi',
+            'quick-links'          => 'Liên kết nhanh',
+            'create-product'       => 'Tạo sản phẩm',
+            'import-data'          => 'Nhập dữ liệu',
+            'export-data'          => 'Xuất dữ liệu',
+            'manage-attributes'    => 'Quản lý thuộc tính',
+            'view-all-activity'    => 'Xem tất cả',
+            'view-all-jobs'        => 'Xem tất cả công việc',
+            'new-this-week'        => 'Mới tuần này',
+            'with-variants'        => 'Có biến thể',
+            'avg-completeness'     => 'Hoàn thiện TB',
+            'enriched'             => 'Đã làm giàu',
+            'analytics-section'    => 'Phân tích',
+            'operations-section'   => 'Vận hành',
+            'needs-attention'      => 'Cần chú ý',
+            'unenriched-products'  => 'Sản phẩm chưa làm giàu',
+            'failed-jobs-24h'      => 'Công việc thất bại (24h)',
+            'low-completeness'     => 'Hoàn thiện thấp',
+            'all-good'             => 'Mọi thứ đều ổn!',
+            'channel-readiness'    => 'Mức sẵn sàng kênh',
+            'ready-to-publish'     => 'sẵn sàng xuất bản',
+            'of'                   => '/',
+            'products-ready'       => 'sản phẩm sẵn sàng',
+            'no-readiness-data'    => 'Chưa có dữ liệu hoàn thiện.',
+            'entity-types'         => [
+                'product'          => 'Sản phẩm',
+                'category'         => 'Danh mục',
+                'attribute'        => 'Thuộc tính',
+                'attribute-family' => 'Nhóm thuộc tính',
+                'attribute-group'  => 'Nhóm',
+                'category-field'   => 'Trường danh mục',
+                'channel'          => 'Kênh',
+                'role'             => 'Vai trò',
+                'job-instance'     => 'Công việc',
+                'webhook'          => 'Webhook',
+                'api-key'          => 'Khóa API',
+            ],
         ],
     ],
-
     'catalog' => [
         'products' => [
             'index' => [
@@ -104,8 +164,7 @@ return [
                 'magic-ai-error'            => 'Kiểm tra lại thông tin Magic AI của bạn và đảm bảo rằng mô hình chính xác đã được chọn.',
                 'magic-ai-validate-error'   => 'Vui lòng kiểm tra thông tin đăng nhập Magic AI.',
                 'magic-ai-validate-success' => 'Thông tin đăng nhập Magic AI đã được xác thực thành công.',
-
-                'create' => [
+                'create'                    => [
                     'back-btn'                          => 'Quay lại',
                     'configurable-attributes'           => 'Thuộc tính có thể cấu hình',
                     'create-btn'                        => 'Tạo sản phẩm',
@@ -118,7 +177,6 @@ return [
                     'not-config-super-attributes-error' => 'Không tìm thấy siêu thuộc tính ":super_attributes"',
                     'sku-exists-error'                  => 'SKU ":sku" đã được sử dụng',
                 ],
-
                 'datagrid' => [
                     'active'                 => 'Hoạt động',
                     'attribute-family'       => 'Gia đình thuộc tính',
@@ -148,49 +206,43 @@ return [
                     'update-status'          => 'Cập nhật trạng thái',
                     'parent'                 => 'Sản phẩm cha',
                     'parent-identifier'      => 'Cha: :sku',
+                    'created-at'             => 'Ngày tạo',
+                    'updated-at'             => 'Ngày cập nhật',
                 ],
             ],
-
             'edit' => [
-                'preview'  => 'Xem trước',
-                'remove'   => 'Xóa',
-                'save-btn' => 'Lưu sản phẩm',
-                'title'    => 'Chỉnh sửa sản phẩm',
-
+                'preview'    => 'Xem trước',
+                'remove'     => 'Xóa',
+                'save-btn'   => 'Lưu sản phẩm',
+                'title'      => 'Chỉnh sửa sản phẩm',
                 'categories' => [
                     'title' => 'Danh mục',
                 ],
-
                 'images' => [
                     'info'  => 'Hình ảnh phải có độ phân giải 560px X 609px',
                     'title' => 'Hình ảnh',
                 ],
-
                 'videos' => [
                     'error' => ':attribute không thể lớn hơn :max kilobyte. Vui lòng chọn tệp nhỏ hơn.',
                     'info'  => 'Kích thước video tối đa là :size',
                     'title' => 'Video',
                 ],
-
                 'links' => [
                     'related-products' => [
                         'empty-info' => 'Thêm sản phẩm liên quan.',
                         'info'       => 'Ngoài sản phẩm được hiển thị, khách hàng sẽ thấy các sản phẩm liên quan.',
                         'title'      => 'Sản phẩm liên quan',
                     ],
-
                     'up-sells' => [
                         'empty-info' => 'Thêm sản phẩm bán lên.',
                         'info'       => 'Khách hàng sẽ thấy các sản phẩm cao cấp hoặc sản phẩm tốt hơn.',
                         'title'      => 'Sản phẩm bán lên',
                     ],
-
                     'cross-sells' => [
                         'empty-info' => 'Thêm sản phẩm bán chéo.',
                         'info'       => 'Khách hàng sẽ thấy các sản phẩm khác có thể mua cùng với các sản phẩm trong giỏ hàng.',
                         'title'      => 'Sản phẩm bán chéo',
                     ],
-
                     'add-btn'           => 'Thêm',
                     'delete'            => 'Xóa',
                     'empty-info'        => 'Thêm sản phẩm loại :type.',
@@ -199,7 +251,6 @@ return [
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Sản phẩm',
                 ],
-
                 'types' => [
                     'configurable' => [
                         'add-btn'                            => 'Thêm biến thể',
@@ -213,18 +264,16 @@ return [
                         'sku'                                => 'SKU - :sku',
                         'title'                              => 'Biến thể',
                         'variant-exists'                     => 'Biến thể hoặc SKU này đã tồn tại.',
-                        'variant-attribute-option-not-found' => 'Không tìm thấy tùy chọn thuộc tính cho biến thể này',
-                        'supper-attribute-not-found'         => 'Không tìm thấy siêu thuộc tính',
-                        'variant-given-exists'               => 'Biến thể này đã tồn tại',
-
-                        'create' => [
+                        'variant-attribute-option-not-found' => 'Không tìm thấy tùy chọn thuộc tính cho biến thể này :attributes',
+                        'supper-attribute-not-found'         => 'Không tìm thấy siêu thuộc tính :attribute',
+                        'variant-given-exists'               => 'Biến thể này đã tồn tại :variants',
+                        'create'                             => [
                             'description'            => 'Mô tả',
                             'name'                   => 'Tên',
                             'save-btn'               => 'Thêm',
                             'title'                  => 'Thêm biến thể',
                             'variant-already-exists' => 'Biến thể này đã tồn tại.',
                         ],
-
                         'edit' => [
                             'disabled'        => 'Tắt',
                             'edit-info'       => 'Để cập nhật thông tin sản phẩm, hãy truy cập trang sản phẩm',
@@ -240,7 +289,6 @@ return [
                             'title'           => 'Sản phẩm',
                             'weight'          => 'Cân nặng',
                         ],
-
                         'mass-edit' => [
                             'add-images'          => 'Thêm hình ảnh',
                             'apply-to-all-btn'    => 'Áp dụng cho tất cả',
@@ -267,23 +315,31 @@ return [
                         ],
                     ],
                 ],
-
                 'translate' => [
-                    'translate-btn'            => 'Dịch',
-                    'title'                    => 'Dịch',
-                    'source-channel'           => 'Kênh Nguồn',
-                    'locale'                   => 'Ngôn Ngữ Nguồn',
-                    'translated-content'       => 'Nội Dung Đã Dịch',
-                    'translating'              => 'Đang Dịch',
-                    'apply'                    => 'Áp Dụng',
-                    'cancel'                   => 'Hủy',
-                    'target-locales'           => 'Ngôn Ngữ Đích',
-                    'target-channel'           => 'Kênh Đích',
-                    'attributes'               => 'Thuộc Tính',
-                    'source-content'           => 'Nội Dung Nguồn',
-                    'tranlated-job-processed'  => 'Nhiệm vụ lưu nội dung đã dịch đã được xử lý.',
+                    'translate-btn'               => 'Dịch',
+                    'title'                       => 'Dịch',
+                    'source-channel'              => 'Kênh Nguồn',
+                    'locale'                      => 'Ngôn Ngữ Nguồn',
+                    'translated-content'          => 'Nội Dung Đã Dịch',
+                    'translating'                 => 'Đang Dịch',
+                    'apply'                       => 'Áp Dụng',
+                    'back'                        => 'Quay lại',
+                    'cancel'                      => 'Hủy',
+                    'target-locales'              => 'Ngôn Ngữ Đích',
+                    'target-channel'              => 'Kênh Đích',
+                    'attributes'                  => 'Thuộc Tính',
+                    'tranlated-job-processed'     => 'Nhiệm vụ lưu nội dung đã dịch đã được xử lý.',
+                    'step'                        => 'Bước',
+                    'select-source'               => 'Chọn nguồn',
+                    'select-target'               => 'Chọn đích',
+                    'first-step-title'            => 'Bước 1: Chọn kênh nguồn, ngôn ngữ và thuộc tính',
+                    'first-step-title-attributes' => 'Bước 1: Chọn kênh nguồn và ngôn ngữ',
+                    'source-content'              => 'Nội Dung Nguồn',
+                    'second-step-title'           => 'Bước 2: Chọn kênh đích và ngôn ngữ',
+                    'target-content'              => 'Nội dung đích',
+                    'next'                        => 'Tiếp theo',
+                    'empty-translation-data'      => 'Không có dữ liệu để dịch dựa trên kênh nguồn và ngôn ngữ',
                 ],
-
                 'product-info' => [
                     'title'        => 'Thông tin sản phẩm',
                     'status'       => 'Trạng thái',
@@ -293,6 +349,7 @@ return [
                     'created-at'   => 'Ngày tạo',
                     'product-type' => 'Loại sản phẩm',
                 ],
+                'more-actions' => 'Hành động khác',
             ],
             'bulk-edit' => [
                 'validation' => [
@@ -305,27 +362,22 @@ return [
                     'select-attribute-or-family' => 'Vui lòng chọn ít nhất một thuộc tính hoặc một nhóm thuộc tính.',
                     'failed'                     => 'Xác thực không thành công.',
                 ],
-
-                'modal'                      => [
+                'modal' => [
                     'title'            => 'Thuộc tính cho chỉnh sửa hàng loạt',
                     'btn-cancel'       => 'Hủy',
                     'btn-proceed'      => 'Tiếp tục',
                     'attribute-family' => 'Chọn nhóm thuộc tính',
                 ],
-
                 'index' => [
-                    'no-product'    => 'Chưa chọn sản phẩm nào để chỉnh sửa hàng loạt.',
+                    'no-product' => 'Chưa chọn sản phẩm nào để chỉnh sửa hàng loạt.',
                 ],
-
                 'filter' => [
-                    'many-product'      => 'Đã chọn quá nhiều sản phẩm.',
-                    'redirect-message'  => 'Đang chuyển đến chế độ chỉnh sửa hàng loạt.',
+                    'many-product'     => 'Đã chọn quá nhiều sản phẩm.',
+                    'redirect-message' => 'Đang chuyển đến chế độ chỉnh sửa hàng loạt.',
                 ],
-
                 'handle-save' => [
-                    'edit-success'  => 'Chỉnh sửa hàng loạt thành công.',
+                    'edit-success' => 'Chỉnh sửa hàng loạt thành công.',
                 ],
-
                 'id'              => 'ID',
                 'no-changes'      => 'Không có thay đổi nào để lưu.',
                 'success'         => 'Thực thi công việc thành công.',
@@ -335,9 +387,8 @@ return [
                 'img-preview'     => 'Xem trước hình ảnh',
                 'no-image'        => 'Không có hình ảnh',
                 'img-fail'        => 'Tải hình ảnh thất bại',
-                'no-opton'        => 'Không có tùy chọn',
+                'no-option'       => 'Không có tùy chọn',
             ],
-
             'create-success'          => 'Sản phẩm đã được tạo thành công',
             'delete-failed'           => 'Đã có lỗi khi xóa sản phẩm',
             'delete-success'          => 'Sản phẩm đã được xóa thành công',
@@ -351,30 +402,28 @@ return [
             'upload-success'          => 'Tệp sản phẩm đã được tải lên thành công.',
             'update-failure'          => 'Không thể cập nhật sản phẩm.',
         ],
-
         'attributes' => [
             'index' => [
                 'create-btn' => 'Tạo Thuộc Tính',
                 'title'      => 'Thuộc Tính',
-
-                'datagrid' => [
-                    'channel-based'       => 'Theo Kênh',
-                    'code'                => 'Mã',
-                    'created-at'          => 'Tạo vào',
-                    'delete'              => 'Xoá',
-                    'edit'                => 'Chỉnh sửa',
-                    'id'                  => 'ID',
-                    'locale-based'        => 'Theo Ngôn Ngữ',
-                    'mass-delete-success' => 'Các thuộc tính đã chọn đã bị xoá thành công',
-                    'name'                => 'Tên',
-                    'required'            => 'Bắt buộc',
-                    'type'                => 'Loại',
-                    'unique'              => 'Duy nhất',
-                    'delete-failed'       => 'Không thể xoá thuộc tính này.',
-                    'mass-delete-failed'  => 'Không thể xoá các thuộc tính đã chọn.',
+                'datagrid'   => [
+                    'channel-based'            => 'Theo Kênh',
+                    'code'                     => 'Mã',
+                    'created-at'               => 'Tạo vào',
+                    'delete'                   => 'Xoá',
+                    'edit'                     => 'Chỉnh sửa',
+                    'id'                       => 'ID',
+                    'locale-based'             => 'Theo Ngôn Ngữ',
+                    'mass-delete-success'      => 'Các thuộc tính đã chọn đã bị xoá thành công',
+                    'name'                     => 'Tên',
+                    'required'                 => 'Bắt buộc',
+                    'type'                     => 'Loại',
+                    'unique'                   => 'Duy nhất',
+                    'delete-failed'            => 'Không thể xoá thuộc tính này.',
+                    'mass-delete-failed'       => 'Không thể xoá các thuộc tính đã chọn.',
+                    'delete-attribute-failure' => 'Thuộc tính này không thể bị xóa vì nó đang được sử dụng cho các sản phẩm có thể cấu hình',
                 ],
             ],
-
             'create' => [
                 'add-attribute-options' => 'Thêm các tuỳ chọn thuộc tính',
                 'add-option'            => 'Thêm tuỳ chọn',
@@ -397,13 +446,12 @@ return [
                 'enable-wysiwyg'        => 'Bật trình soạn thảo WYSIWYG',
                 'file'                  => 'Tệp',
                 'general'               => 'Chung',
-                'image'                 => 'Hình ảnh',
                 'gallery'               => 'Thư viện',
+                'image'                 => 'Hình ảnh',
                 'input-options'         => 'Tùy chọn nhập liệu',
                 'input-validation'      => 'Xác thực nhập liệu',
                 'is-comparable'         => 'Thuộc tính này có thể so sánh',
                 'is-configurable'       => 'Dùng để tạo sản phẩm có thể cấu hình',
-                'is-filterable'         => 'Có thể sử dụng trong bộ lọc',
                 'is-required'           => 'Bắt buộc',
                 'is-unique'             => 'Duy nhất',
                 'is-visible-on-front'   => 'Hiển thị trên trang chi tiết sản phẩm (mặt trước)',
@@ -433,8 +481,8 @@ return [
                 'usable-in-grid'        => 'Có thể sử dụng trong lưới',
                 'is-filterable'         => 'Có thể lọc',
                 'ai-translate'          => 'Dịch thuật AI',
-
-                'option' => [
+                'invalid-swatch-type'   => ':attribute không được phép cho loại thuộc tính :type với loại mẫu :swatch_type.',
+                'option'                => [
                     'color'    => 'Mẫu màu sắc',
                     'dropdown' => 'Danh sách thả xuống',
                     'image'    => 'Mẫu hình ảnh',
@@ -442,7 +490,6 @@ return [
                     'text'     => 'Mẫu văn bản',
                 ],
             ],
-
             'edit' => [
                 'add-attribute-options' => 'Thêm các tuỳ chọn thuộc tính',
                 'add-option'            => 'Thêm tuỳ chọn',
@@ -466,12 +513,10 @@ return [
                 'file'                  => 'Tệp',
                 'general'               => 'Chung',
                 'image'                 => 'Hình ảnh',
-                'gallery'               => 'Thư viện',
                 'input-options'         => 'Tùy chọn nhập liệu',
                 'input-validation'      => 'Xác thực nhập liệu',
                 'is-comparable'         => 'Thuộc tính này có thể so sánh',
                 'is-configurable'       => 'Dùng để tạo sản phẩm có thể cấu hình',
-                'is-filterable'         => 'Có thể sử dụng trong bộ lọc',
                 'is-required'           => 'Bắt buộc',
                 'is-unique'             => 'Duy nhất',
                 'is-visible-on-front'   => 'Hiển thị trên trang chi tiết sản phẩm (mặt trước)',
@@ -501,22 +546,19 @@ return [
                 'usable-in-grid'        => 'Có thể sử dụng trong lưới',
                 'is-filterable'         => 'Có thể lọc',
                 'ai-translate'          => 'Dịch thuật AI',
-                'invalid-swatch-type'   => ':attribute không được phép cho loại thuộc tính :type với loại swatch :swatch_type.',
-
-                'option' => [
-                    'create-success'      => 'Tùy chọn thuộc tính đã được tạo thành công',
-                    'delete-success'      => 'Tùy chọn thuộc tính đã bị xóa thành công',
+                'option'                => [
                     'save-btn'            => 'Lưu tùy chọn',
-                    'sort-update-failure' => 'Cập nhật thứ tự sắp xếp thất bại',
-                    'sort-update-success' => 'Cập nhật thứ tự sắp xếp thành công',
+                    'create-success'      => 'Tùy chọn thuộc tính đã được tạo thành công',
                     'update-success'      => 'Tùy chọn thuộc tính đã được cập nhật thành công',
+                    'sort-update-success' => 'Cập nhật thứ tự sắp xếp thành công',
+                    'sort-update-failure' => 'Cập nhật thứ tự sắp xếp thất bại',
+                    'delete-success'      => 'Tùy chọn thuộc tính đã bị xóa thành công',
                     'color'               => 'Mẫu màu sắc',
                     'dropdown'            => 'Danh sách thả xuống',
                     'image'               => 'Mẫu hình ảnh',
                     'text'                => 'Mẫu văn bản',
                 ],
             ],
-
             'create-success'    => 'Thuộc tính đã được tạo thành công',
             'delete-failed'     => 'Không thể xoá thuộc tính',
             'delete-success'    => 'Thuộc tính đã bị xoá',
@@ -524,19 +566,16 @@ return [
             'user-define-error' => 'Không thể xoá thuộc tính hệ thống',
             'not-found'         => 'Không tìm thấy thuộc tính với mã ":code"',
         ],
-
         'attribute-options' => [
             'create-success'       => 'Tùy chọn thuộc tính đã được tạo thành công',
             'update-success'       => 'Tùy chọn thuộc tính đã được cập nhật thành công',
             'usable-in-grid-error' => 'Chỉ có 4 thuộc tính có thể được đánh dấu là có thể sử dụng trong lưới.',
         ],
-
         'attribute-groups' => [
             'index' => [
                 'create-btn' => 'Tạo nhóm thuộc tính',
                 'title'      => 'Nhóm thuộc tính',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'code'                => 'Mã',
                     'delete'              => 'Xóa',
                     'mass-delete-success' => 'Các nhóm thuộc tính đã chọn đã bị xóa',
@@ -548,7 +587,6 @@ return [
                     'update-status'       => 'Cập nhật trạng thái',
                 ],
             ],
-
             'create' => [
                 'title'    => 'Thêm nhóm thuộc tính mới',
                 'save-btn' => 'Lưu nhóm thuộc tính',
@@ -557,7 +595,6 @@ return [
                 'code'     => 'Mã',
                 'label'    => 'Nhãn',
             ],
-
             'edit' => [
                 'title'    => 'Chỉnh sửa nhóm thuộc tính',
                 'back-btn' => 'Quay lại',
@@ -566,7 +603,6 @@ return [
                 'code'     => 'Mã',
                 'label'    => 'Nhãn',
             ],
-
             'create-success'        => 'Nhóm thuộc tính đã được tạo thành công',
             'delete-failed'         => 'Xóa nhóm thuộc tính không thành công',
             'delete-success'        => 'Nhóm thuộc tính đã được xóa thành công',
@@ -575,29 +611,26 @@ return [
             'attribute-group-error' => 'Nhóm này đang được sử dụng trong các gia đình.',
             'not-found'             => 'Không tìm thấy nhóm thuộc tính với mã ":code"',
         ],
-
         'categories' => [
             'index' => [
-                'add-btn' => 'Tạo danh mục',
-                'title'   => 'Danh mục',
-
+                'add-btn'  => 'Tạo danh mục',
+                'title'    => 'Danh mục',
                 'datagrid' => [
                     'active'         => 'Hoạt động',
                     'code'           => 'Mã',
                     'delete'         => 'Xóa',
-                    'delete-success' => 'Các tài nguyên đã chọn đã bị xóa',
+                    'delete-success' => 'Các tài nguyên đã chọn đã bị xóa :resource',
                     'edit'           => 'Chỉnh sửa',
                     'id'             => 'ID',
                     'inactive'       => 'Không hoạt động',
                     'name'           => 'Tên hiển thị',
+                    'category-name'  => 'Tên',
                     'no-of-products' => 'Số sản phẩm',
                     'position'       => 'Vị trí',
-                    'category-name'  => 'Tên',
                     'status'         => 'Hiển thị trong menu',
                     'update-status'  => 'Cập nhật trạng thái',
                 ],
             ],
-
             'create' => [
                 'back-btn'            => 'Quay lại',
                 'code'                => 'Mã',
@@ -618,7 +651,6 @@ return [
                 'right-section'       => 'Cài đặt',
                 'left-section'        => 'Chung',
             ],
-
             'edit' => [
                 'back-btn'               => 'Quay lại',
                 'code'                   => 'Mã',
@@ -637,7 +669,6 @@ return [
                 'right-section'          => 'Cài đặt',
                 'left-section'           => 'Chung',
             ],
-
             'category'             => 'Danh mục',
             'create-success'       => 'Danh mục đã được tạo thành công.',
             'delete-category-root' => 'Không thể xóa danh mục gốc đã liên kết với kênh.',
@@ -652,14 +683,12 @@ return [
             'create-failure'       => 'Không thể tạo danh mục.',
             'update-failure'       => 'Không thể cập nhật danh mục.',
         ],
-
         'category_fields' => [
             'index' => [
                 'create-btn' => 'Tạo Trường Danh Mục',
                 'add-btn'    => 'Tạo Trường Danh Mục',
                 'title'      => 'Các Trường Danh Mục',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'channel-based'       => 'Dựa trên Kênh',
                     'code'                => 'Mã',
                     'created-at'          => 'Ngày Tạo',
@@ -684,7 +713,6 @@ return [
                     'mass-delete-failed'  => 'Không thể xóa các trường danh mục đã chọn.',
                 ],
             ],
-
             'create' => [
                 'add-field-options'   => 'Thêm Tùy Chọn Trường Danh Mục',
                 'add-option'          => 'Thêm Tùy Chọn',
@@ -739,8 +767,7 @@ return [
                 'set-section-right'   => 'Phần Cấu Hình',
                 'settings'            => 'Cài Đặt',
                 'same-code-error'     => 'Mã tùy chọn phải là duy nhất.',
-
-                'option' => [
+                'option'              => [
                     'dropdown' => 'Danh Sách Thả Xuống',
                     'save-btn' => 'Lưu Tùy Chọn',
                     'color'    => 'Mẫu Màu',
@@ -748,7 +775,6 @@ return [
                     'text'     => 'Mẫu Văn Bản',
                 ],
             ],
-
             'edit' => [
                 'add-field-options'   => 'Thêm Tùy Chọn Trường Danh Mục',
                 'add-option'          => 'Thêm Tùy Chọn',
@@ -804,8 +830,7 @@ return [
                 'set-section-right'   => 'Phần Cấu Hình',
                 'settings'            => 'Cài Đặt',
                 'same-code-error'     => 'Mã tùy chọn phải là duy nhất.',
-
-                'option' => [
+                'option'              => [
                     'dropdown' => 'Danh Sách Thả Xuống',
                     'save-btn' => 'Lưu Tùy Chọn',
                     'color'    => 'Mẫu Màu',
@@ -813,7 +838,6 @@ return [
                     'text'     => 'Mẫu Văn Bản',
                 ],
             ],
-
             'create-success'    => 'Trường Danh Mục Tạo Thành Công',
             'delete-failed'     => 'Xóa Trường Danh Mục Thất Bại',
             'delete-success'    => 'Xóa Trường Danh Mục Thành Công',
@@ -821,17 +845,14 @@ return [
             'user-define-error' => 'Không thể xóa Trường Danh Mục hệ thống',
             'not-found'         => 'Không tìm thấy Trường Danh Mục với mã ":code"',
         ],
-
         'category-fields-options' => [
             'create-success' => 'Tùy chọn trường danh mục đã được tạo thành công',
             'update-success' => 'Tùy chọn trường danh mục đã được cập nhật thành công',
         ],
-
         'families' => [
             'index' => [
-                'add'   => 'Tạo nhóm thuộc tính',
-                'title' => 'Các gia đình',
-
+                'add'      => 'Tạo nhóm thuộc tính',
+                'title'    => 'Các gia đình',
                 'datagrid' => [
                     'code'           => 'Mã',
                     'delete'         => 'Xóa',
@@ -846,7 +867,6 @@ return [
                     'update-success' => 'Đã cập nhật thành công :resource đã chọn',
                 ],
             ],
-
             'create' => [
                 'assign-group-btn'                 => 'Gán nhóm thuộc tính',
                 'assign-group-title'               => 'Gán nhóm thuộc tính',
@@ -877,7 +897,6 @@ return [
                 'unassigned-attribute-groups'      => 'Nhóm thuộc tính chưa gán',
                 'assign-first-attribute-group'     => 'Gán nhóm cho gia đình.',
             ],
-
             'edit' => [
                 'assign-group-btn'                 => 'Gán nhóm thuộc tính',
                 'assign-group-title'               => 'Gán nhóm thuộc tính',
@@ -911,7 +930,6 @@ return [
                 'variant-options-label'            => 'Tùy chọn cấu hình',
                 'select-variant'                   => 'Chọn thuộc tính',
             ],
-
             'attribute-family'               => 'Gia đình thuộc tính',
             'attribute-product-error'        => 'Gia đình này đang được sử dụng trong các sản phẩm.',
             'create-success'                 => 'Gia đình đã được tạo thành công.',
@@ -924,7 +942,6 @@ return [
             'not-found'                      => 'Không tìm thấy gia đình thuộc tính với mã ":code".',
             'can-not-update-variant-options' => 'Không thể cập nhật tùy chọn cấu hình vì gia đình này đã có sản phẩm biến thể.',
         ],
-
         'history' => [
             'index' => [
                 'datagrid' => [
@@ -935,7 +952,6 @@ return [
             ],
         ],
     ],
-
     'settings' => [
         'locales' => [
             'index' => [
@@ -944,8 +960,7 @@ return [
                 'title'                 => 'Các Ngôn Ngữ',
                 'can-not-delete-error'  => 'Bạn không thể xóa ngôn ngữ liên kết với kênh hoặc người dùng',
                 'can-not-disable-error' => 'Bạn không thể tắt ngôn ngữ liên kết với kênh hoặc người dùng',
-
-                'datagrid' => [
+                'datagrid'              => [
                     'actions'     => 'Hành động',
                     'code'        => 'Mã',
                     'delete'      => 'Xóa',
@@ -956,14 +971,12 @@ return [
                     'name'        => 'Tên hiển thị',
                     'rtl'         => 'RTL',
                     'mass-update' => 'Cập nhật trạng thái',
-
-                    'status' => [
+                    'status'      => [
                         'title'    => 'Trạng thái',
                         'active'   => 'Kích hoạt',
                         'inactive' => 'Vô hiệu hóa',
                     ],
                 ],
-
                 'create' => [
                     'code'             => 'Mã',
                     'direction'        => 'Hướng',
@@ -974,11 +987,9 @@ return [
                     'title'            => 'Tạo Ngôn Ngữ',
                     'status'           => 'Trạng thái',
                 ],
-
                 'edit' => [
                     'title' => 'Chỉnh sửa Ngôn Ngữ',
                 ],
-
                 'create-success'    => 'Ngôn ngữ được tạo thành công.',
                 'delete-failed'     => 'Xóa ngôn ngữ không thành công.',
                 'delete-success'    => 'Ngôn ngữ đã được xóa thành công.',
@@ -987,7 +998,6 @@ return [
                 'update-success'    => 'Ngôn ngữ đã được cập nhật thành công.',
             ],
         ],
-
         'currencies' => [
             'index' => [
                 'create-btn'            => 'Tạo Tiền Tệ',
@@ -995,8 +1005,7 @@ return [
                 'title'                 => 'Các Tiền Tệ',
                 'can-not-delete-error'  => 'Bạn không thể xóa một tiền tệ liên kết với một kênh',
                 'can-not-disable-error' => 'Bạn không thể tắt một tiền tệ liên kết với một kênh',
-
-                'datagrid' => [
+                'datagrid'              => [
                     'actions'        => 'Hành động',
                     'code'           => 'Mã',
                     'delete'         => 'Xóa',
@@ -1008,14 +1017,12 @@ return [
                     'partial-action' => 'Một số hành động không thực hiện được do các hạn chế của hệ thống đối với :resource',
                     'update-success' => 'Các :resource đã chọn được cập nhật thành công.',
                     'mass-update'    => 'Cập nhật trạng thái',
-
-                    'status' => [
+                    'status'         => [
                         'title'    => 'Trạng thái',
                         'active'   => 'Kích hoạt',
                         'inactive' => 'Vô hiệu hóa',
                     ],
                 ],
-
                 'create' => [
                     'code'           => 'Mã',
                     'create-btn'     => 'Tạo Tiền Tệ',
@@ -1028,11 +1035,9 @@ return [
                     'title'          => 'Tạo Tiền Tệ Mới',
                     'status'         => 'Trạng thái',
                 ],
-
                 'edit' => [
                     'title' => 'Chỉnh sửa Tiền Tệ',
                 ],
-
                 'create-success'    => 'Tiền tệ được tạo thành công.',
                 'delete-failed'     => 'Xóa tiền tệ không thành công.',
                 'delete-success'    => 'Tiền tệ đã được xóa thành công.',
@@ -1041,7 +1046,6 @@ return [
                 'cannot-delete'     => 'Không thể xóa tiền tệ.',
             ],
         ],
-
         'data-transfer' => [
             'tracker' => [
                 'index' => [
@@ -1059,28 +1063,28 @@ return [
                         'user'                 => 'Người dùng',
                         'created_at'           => 'Thời gian tạo',
                         'updated_at'           => 'Thời gian cập nhật',
-
-                        'pending'    => 'Chờ xử lý',
-                        'validated'  => 'Đã xác thực',
-                        'processing' => 'Đang xử lý',
-                        'processed'  => 'Đã xử lý',
-                        'linking'    => 'Đang liên kết',
-                        'linked'     => 'Đã liên kết',
-
-                        'indexing'  => 'Đang lập chỉ mục',
-                        'indexed'   => 'Đã lập chỉ mục',
-                        'completed' => 'Đã hoàn thành',
-                        'failed'    => 'Thất bại',
+                        'pending'              => 'Chờ xử lý',
+                        'validating'           => 'Đang xác thực',
+                        'validated'            => 'Đã xác thực',
+                        'processing'           => 'Đang xử lý',
+                        'processed'            => 'Đã xử lý',
+                        'linking'              => 'Đang liên kết',
+                        'linked'               => 'Đã liên kết',
+                        'indexing'             => 'Đang lập chỉ mục',
+                        'indexed'              => 'Đã lập chỉ mục',
+                        'completed'            => 'Đã hoàn thành',
+                        'paused'               => 'Đã tạm dừng',
+                        'cancelled'            => 'Đã hủy',
+                        'failed'               => 'Thất bại',
                     ],
                 ],
-
                 'import' => [
                     'back-btn'                => 'Quay lại',
                     'completed-batches'       => 'Tổng số lô đã hoàn thành:',
                     'download-error-report'   => 'Tải báo cáo lỗi đầy đủ',
                     'edit-btn'                => 'Chỉnh sửa',
                     'imported-info'           => 'Chúc mừng! Việc nhập khẩu của bạn đã thành công.',
-                    'importing-info'          => 'Đang xuất khẩu',
+                    'exporting-info'          => 'Đang xuất dữ liệu',
                     'indexing-info'           => 'Đang lập chỉ mục tài nguyên (Giá cả, Elastic Search)',
                     'linking-info'            => 'Đang liên kết tài nguyên',
                     'progress'                => 'Tiến độ:',
@@ -1098,7 +1102,6 @@ return [
                     'validation-failed-info'  => 'Việc nhập khẩu của bạn không hợp lệ. Vui lòng sửa các lỗi sau và thử lại.',
                     'validation-success-info' => 'Việc nhập khẩu của bạn hợp lệ. Nhấn "Xuất khẩu" để bắt đầu quá trình nhập khẩu.',
                 ],
-
                 'summary' => [
                     'total-batches' => 'Tổng số lô:',
                     'created'       => 'Tổng số bản ghi đã tạo:',
@@ -1109,21 +1112,50 @@ return [
                     'updated'       => 'Tổng số bản ghi đã cập nhật:',
                     'skipped'       => 'Tổng số bản ghi bị bỏ qua:',
                 ],
-
-                'info'              => 'Chúc mừng! Công việc của bạn đã được thực hiện thành công.',
-                'create-success'    => 'Xuất khẩu đã được tạo thành công.',
-                'delete-failed'     => 'Xóa xuất khẩu không thành công.',
-                'delete-success'    => 'Xuất khẩu đã được xóa thành công.',
-                'not-valid'         => 'Xuất khẩu không hợp lệ',
-                'nothing-to-import' => 'Không có tài nguyên nào để nhập khẩu.',
-                'setup-queue-error' => 'Vui lòng thay đổi trình điều khiển hàng đợi thành "database" hoặc "redis" để bắt đầu quá trình nhập khẩu.',
-                'update-success'    => 'Xuất khẩu đã được cập nhật thành công.',
-                'failed-info'       => 'Công việc đã thất bại. Vui lòng sửa các lỗi sau và thử lại.',
-                'download-log-file' => 'Tải tệp nhật ký',
+                'info'                  => 'Chúc mừng! Công việc của bạn đã được thực hiện thành công.',
+                'running-time'          => 'Thời gian chạy',
+                'estimated-remaining'   => 'Ước tính còn lại',
+                'total-duration'        => 'Tổng thời gian',
+                'status'                => 'Trạng thái',
+                'waiting'               => 'Đang chờ',
+                'total-records'         => 'Tổng số bản ghi',
+                'job-id'                => 'ID công việc',
+                'records-created'       => 'Bản ghi được tạo',
+                'records-updated'       => 'Bản ghi đã cập nhật',
+                'records-deleted'       => 'Bản ghi đã xóa',
+                'run-again'             => 'Chạy lại',
+                'completed-success'     => 'công việc đã hoàn thành thành công',
+                'completed-info-sub'    => 'Tất cả bản ghi đã được xử lý và lập chỉ mục. Danh mục của bạn đã được cập nhật.',
+                'create-success'        => 'Xuất khẩu đã được tạo thành công.',
+                'delete-failed'         => 'Xóa xuất khẩu không thành công.',
+                'delete-success'        => 'Xuất khẩu đã được xóa thành công.',
+                'not-valid'             => 'Xuất khẩu không hợp lệ',
+                'nothing-to-import'     => 'Không có tài nguyên nào để nhập khẩu.',
+                'setup-queue-error'     => 'Vui lòng thay đổi trình điều khiển hàng đợi thành "database" hoặc "redis" để bắt đầu quá trình nhập khẩu.',
+                'update-success'        => 'Xuất khẩu đã được cập nhật thành công.',
+                'failed-info'           => 'Công việc đã thất bại. Vui lòng sửa các lỗi sau và thử lại.',
+                'download-log-file'     => 'Tải tệp nhật ký',
+                'pause'                 => 'Tạm dừng',
+                'resume'                => 'Tiếp tục',
+                'cancel'                => 'Hủy',
+                'paused'                => 'Quá trình nhập đã được tạm dừng.',
+                'resumed'               => 'Quá trình nhập đã được tiếp tục.',
+                'cancelled'             => 'Quá trình nhập đã bị hủy.',
+                'paused-info'           => 'Quá trình nhập đang tạm dừng. Các lô còn lại đang chờ.',
+                'paused-info-export'    => 'Quá trình xuất đang tạm dừng. Các lô còn lại đang chờ.',
+                'cancelled-info'        => 'Quá trình nhập đã bị hủy. Kết quả một phần được hiển thị bên dưới.',
+                'cancelled-info-export' => 'Quá trình xuất đã bị hủy. Kết quả một phần được hiển thị bên dưới.',
+                'cancel-confirm'        => 'Bạn có chắc chắn muốn hủy công việc này không? Hành động này không thể hoàn tác.',
+                'live'                  => 'Trực tiếp',
+                'import-progress'       => 'Tiến độ nhập',
+                'export-progress'       => 'Tiến độ xuất',
+                'linking-progress'      => 'Tiến độ liên kết',
+                'indexing-progress'     => 'Tiến độ lập chỉ mục',
+                'job-label'             => 'Công việc',
             ],
-
-            'import' => [
-                'create' => [
+            'imports' => [
+                'import-start-fail' => 'Không thể bắt đầu quá trình nhập. Vui lòng thử lại.',
+                'create'            => [
                     'code'                => 'Mã',
                     'action'              => 'Hành động',
                     'allowed-errors'      => 'Lỗi cho phép',
@@ -1133,27 +1165,34 @@ return [
                     'delete'              => 'Xóa',
                     'media'               => 'Tệp / Hình ảnh',
                     'images'              => 'Hình ảnh',
-                    'download-sample'     => 'Tải xuống mẫu :resource CSV',
+                    'download-sample'     => 'Tải xuống mẫu CSV :resource',
                     'field-separator'     => 'Ký tự phân cách trường',
-                    'separator-info'      => 'Sử dụng chỉ cho các tệp CSV',
-                    'file-info-example'   => 'Đặt hình ảnh vào storage/app/public/. Nếu hình ảnh nằm trong storage/app/public/import-images, hãy thêm import-images/ vào đường dẫn và chỉ sử dụng tên tệp trong tệp nhập.',
-                    'file-info'           => 'Sử dụng đường dẫn tương đối đến /project-root/storage/app/import, ví dụ product-images, import-images.',
+                    'separator-info'      => 'Chỉ sử dụng cho tệp CSV',
+                    'file-info-example'   => 'Đặt hình ảnh vào storage/app/public/. Đối với hình ảnh trong storage/app/public/import-images, bao gồm import-images/ trong đường dẫn và chỉ sử dụng tên tệp trong tệp nhập.',
+                    'file-info'           => 'Sử dụng đường dẫn tương đối đến /project-root/storage/app/import, ví dụ: product-images, import-images.',
                     'file'                => 'Tệp',
                     'general'             => 'Chung',
-                    'upload_images'       => 'Tải lên hình ảnh để cài đặt đường dẫn',
-                    'download-sample-zip' => 'Tải xuống các tệp mẫu dưới dạng ZIP',
+                    'upload_images'       => 'Tải lên hình ảnh để đặt đường dẫn',
+                    'download-sample-zip' => 'Tải xuống mẫu hình ảnh ZIP',
+                    'zip-uploading'       => 'Đang tải lên và giải nén ZIP...',
+                    'zip-upload-success'  => 'ZIP đã được tải lên và giải nén thành công.',
+                    'zip-upload-error'    => 'Tải lên ZIP thất bại. Vui lòng thử lại.',
+                    'invalid-zip'         => 'Tệp đã tải lên không phải là tệp ZIP hợp lệ.',
+                    'zip-upload-or'       => 'hoặc tải lên một tệp ZIP chứa hình ảnh',
+                    'zip-click-upload'    => 'Nhấn để tải lên tệp ZIP chứa hình ảnh',
+                    'zip-files-extracted' => 'tệp đã giải nén',
+                    'zip-drop-hint'       => 'Nhấp hoặc kéo và thả tệp ZIP vào đây',
                     'images-directory'    => 'Đường dẫn',
-                    'process-in-queue'    => 'Đang xử lý trong hàng đợi',
+                    'process-in-queue'    => 'Xử lý trong hàng đợi',
                     'results'             => 'Kết quả',
                     'save-btn'            => 'Lưu nhập',
                     'settings'            => 'Cài đặt',
                     'skip-errors'         => 'Bỏ qua lỗi',
-                    'stop-on-errors'      => 'Dừng khi có lỗi',
+                    'stop-on-errors'      => 'Dừng lại khi có lỗi',
                     'title'               => 'Tạo nhập',
                     'type'                => 'Loại',
                     'validation-strategy' => 'Chiến lược xác thực',
                 ],
-
                 'edit' => [
                     'images'              => 'Hình ảnh',
                     'action'              => 'Hành động',
@@ -1164,93 +1203,101 @@ return [
                     'delete'              => 'Xóa',
                     'download-sample'     => 'Tải xuống mẫu',
                     'field-separator'     => 'Ký tự phân cách trường',
-                    'separator-info'      => 'Sử dụng chỉ cho các tệp CSV',
-                    'file-info-example'   => 'Đặt hình ảnh vào storage/app/public/. Nếu hình ảnh nằm trong storage/app/public/import-images, hãy thêm import-images/ vào đường dẫn và chỉ sử dụng tên tệp trong tệp nhập.',
-                    'file-info'           => 'Sử dụng đường dẫn tương đối đến /project-root/storage/app/import, ví dụ product-images, import-images.',
+                    'separator-info'      => 'Chỉ sử dụng cho tệp CSV',
+                    'file-info-example'   => 'Đặt hình ảnh vào storage/app/public/. Đối với hình ảnh trong storage/app/public/import-images, bao gồm import-images/ trong đường dẫn và chỉ sử dụng tên tệp trong tệp nhập.',
+                    'file-info'           => 'Sử dụng đường dẫn tương đối đến /project-root/storage/app/import, ví dụ: product-images, import-images.',
                     'file'                => 'Tệp',
                     'general'             => 'Chung',
                     'images-directory'    => 'Đường dẫn',
-                    'process-in-queue'    => 'Đang xử lý trong hàng đợi',
+                    'process-in-queue'    => 'Xử lý trong hàng đợi',
                     'results'             => 'Kết quả',
                     'save-btn'            => 'Lưu nhập',
                     'settings'            => 'Cài đặt',
                     'skip-errors'         => 'Bỏ qua lỗi',
-                    'stop-on-errors'      => 'Dừng khi có lỗi',
+                    'stop-on-errors'      => 'Dừng lại khi có lỗi',
                     'title'               => 'Chỉnh sửa nhập',
                     'type'                => 'Loại',
                     'validation-strategy' => 'Chiến lược xác thực',
                 ],
-
                 'batch' => [
-                    'title' => 'Nhập vào hàng đợi',
+                    'title' => 'Nhập đã được thêm vào hàng đợi',
                 ],
-
                 'index' => [
                     'button-title' => 'Tạo nhập',
                     'title'        => 'Nhập',
-
-                    'datagrid' => [
+                    'datagrid'     => [
                         'actions'               => 'Hành động',
-                        'completed-at'          => 'Hoàn thành lúc',
+                        'completed-at'          => 'Hoàn thành vào',
                         'created'               => 'Đã tạo',
                         'delete'                => 'Xóa',
                         'deleted'               => 'Đã xóa',
-                        'edit'                  => 'Chỉnh sửa',
+                        'edit'                  => 'Sửa',
                         'error-file'            => 'Tệp lỗi',
                         'id'                    => 'ID',
                         'code'                  => 'Mã',
                         'type'                  => 'Loại',
                         'action'                => 'Hành động',
-                        'started-at'            => 'Bắt đầu lúc',
+                        'started-at'            => 'Bắt đầu vào',
                         'state'                 => 'Trạng thái',
                         'summary'               => 'Tóm tắt',
                         'updated'               => 'Đã cập nhật',
                         'uploaded-file'         => 'Tệp đã tải lên',
-                        'images_directory_path' => 'Đường dẫn thư mục hình ảnh',
+                        'images_directory_path' => 'Tệp hình ảnh',
                         'import'                => 'Nhập',
                     ],
                 ],
-
                 'import' => [
+                    'action'                  => 'Chế độ hành động',
                     'back-btn'                => 'Quay lại',
-                    'completed-batches'       => 'Các đợt đã hoàn thành:',
-                    'download-error-report'   => 'Tải xuống báo cáo lỗi',
-                    'edit-btn'                => 'Chỉnh sửa',
-                    'imported-info'           => 'Chúc mừng! Nhập khẩu của bạn đã hoàn thành thành công.',
-                    'importing-info'          => 'Đang nhập khẩu',
-                    'exporting-info'          => 'Đang xuất khẩu',
-                    'indexing-info'           => 'Đang chỉ mục các tài nguyên (giá, Elastic Search)',
+                    'completed-batches'       => 'Tổng số lô đã hoàn thành:',
+                    'download-error-report'   => 'Tải xuống báo cáo đầy đủ',
+                    'edit-btn'                => 'Sửa',
+                    'exporting-info'          => 'Đang xuất dữ liệu',
+                    'exporting-info-sub'      => 'Đang tạo tệp xuất và ghi bản ghi. Vui lòng chờ.',
+                    'file_path'               => 'Đường dẫn tệp',
+                    'imported-info'           => 'Chúc mừng! Nhập của bạn đã thành công.',
+                    'import-now'              => 'Nhập ngay',
+                    'importing-info'          => 'Nhập đang được xử lý',
+                    'importing-info-sub'      => 'Đang xử lý các lô và ghi bản ghi vào cơ sở dữ liệu.',
+                    'indexing-info'           => 'Đang lập chỉ mục tài nguyên (Giá, Elastic Search)',
+                    'indexing-info-sub'       => 'Đang xây dựng lại chỉ mục tìm kiếm và bộ nhớ đệm giá sau khi nhập. Bước này chạy tự động.',
+                    'indexing-type'           => 'Giá + ES',
                     'linking-info'            => 'Đang liên kết tài nguyên',
+                    'linking-info-sub'        => 'Đang liên kết các tài nguyên liên quan và mối quan hệ giữa các bản ghi.',
+                    'pending-info'            => 'Công việc đang chờ — đang chờ công nhân bắt đầu...',
+                    'pending-info-sub'        => 'Công việc của bạn đã được thêm vào hàng đợi xử lý. Một worker sẽ nhận nó trong thời gian ngắn.',
+                    'pending-step-complete'   => 'Hoàn thành',
+                    'pending-step-export'     => 'Đang xuất',
+                    'pending-step-import'     => 'Đang nhập',
+                    'pending-step-queue'      => 'Trong hàng đợi',
+                    'pending-step-validate'   => 'Đang xác thực',
+                    'profile'                 => 'Hồ sơ nhập',
                     'progress'                => 'Tiến trình:',
-                    'pending-info'            => 'Chờ xử lý trong hàng đợi',
                     'title'                   => 'Nhập',
-                    'total-batches'           => 'Tổng số đợt:',
-                    'total-created'           => 'Tổng số bản ghi đã tạo:',
+                    'total-batches'           => 'Tổng số lô:',
+                    'total-created'           => 'Tổng số bản ghi được tạo:',
                     'total-deleted'           => 'Tổng số bản ghi đã xóa:',
                     'total-errors'            => 'Tổng số lỗi:',
-                    'total-invalid-rows'      => 'Tổng số dòng không hợp lệ:',
-                    'total-rows-processed'    => 'Tổng số dòng đã xử lý:',
+                    'total-invalid-rows'      => 'Tổng số hàng không hợp lệ:',
+                    'total-rows-processed'    => 'Tổng số hàng đã xử lý:',
                     'total-updated'           => 'Tổng số bản ghi đã cập nhật:',
-                    'validate-info'           => 'Nhấp vào để kiểm tra dữ liệu và kiểm tra nhập khẩu.',
-                    'validate'                => 'Kiểm tra',
-                    'file_path'               => 'Đường dẫn tệp',
-                    'import-now'              => 'Nhập ngay',
-                    'action'                  => 'Loại hành động',
-                    'profile'                 => 'Hồ sơ nhập khẩu',
-                    'validating-info'         => 'Đang bắt đầu đọc và kiểm tra dữ liệu',
-                    'validation-failed-info'  => 'Nhập khẩu của bạn không hợp lệ. Vui lòng sửa lỗi và thử lại.',
-                    'validation-success-info' => 'Nhập khẩu của bạn hợp lệ. Nhấn "Nhập khẩu" để bắt đầu quá trình nhập.',
+                    'validate'                => 'Xác thực',
+                    'validate-info'           => 'Nhấp vào Xác thực dữ liệu để kiểm tra nhập của bạn.',
+                    'validating-info'         => 'Đang đọc tệp và xác thực dữ liệu...',
+                    'validating-info-sub'     => 'Đang kiểm tra tính toàn vẹn của lược đồ, ánh xạ trường và kiểu dữ liệu trước khi bắt đầu nhập.',
+                    'validation-failed-info'  => 'Dữ liệu nhập không hợp lệ. Vui lòng sửa các lỗi sau và thử lại.',
+                    'validation-success-info' => 'Nhập của bạn hợp lệ. Bắt đầu nhập tự động...',
                 ],
-
-                'create-success'    => 'Nhập khẩu đã được tạo thành công.',
-                'delete-failed'     => 'Không thể xóa nhập khẩu.',
-                'delete-success'    => 'Nhập khẩu đã được xóa thành công.',
-                'not-valid'         => 'Nhập khẩu không hợp lệ',
-                'nothing-to-import' => 'Không có tài nguyên nào để nhập khẩu.',
-                'setup-queue-error' => 'Vui lòng thay đổi driver hàng đợi thành "database" hoặc "redis" để bắt đầu quá trình nhập khẩu.',
-                'update-success'    => 'Nhập khẩu đã được cập nhật thành công.',
+                'create-success'     => 'Nhập đã được tạo thành công.',
+                'delete-failed'      => 'Xóa nhập không thành công một cách bất ngờ.',
+                'delete-success'     => 'Nhập đã được xóa thành công.',
+                'invalid-zip'        => 'Tệp đã tải lên không phải là tệp ZIP hợp lệ.',
+                'not-valid'          => 'Nhập không hợp lệ',
+                'nothing-to-import'  => 'Không có tài nguyên nào để nhập.',
+                'setup-queue-error'  => 'Vui lòng thay đổi trình điều khiển hàng đợi của bạn thành "database" hoặc "redis" để bắt đầu quá trình nhập.',
+                'update-success'     => 'Nhập đã được cập nhật thành công.',
+                'zip-upload-success' => 'ZIP đã được tải lên và giải nén thành công.',
             ],
-
             'exports' => [
                 'create' => [
                     'code'                => 'Mã',
@@ -1281,7 +1328,6 @@ return [
                     'type'                => 'Loại',
                     'validation-strategy' => 'Chiến lược xác thực',
                 ],
-
                 'edit' => [
                     'action'              => 'Hành động',
                     'allowed-errors'      => 'Lỗi được phép',
@@ -1305,16 +1351,13 @@ return [
                     'type'                => 'Loại',
                     'validation-strategy' => 'Chiến lược xác thực',
                 ],
-
                 'batch' => [
                     'title' => 'Xuất khẩu đã thêm vào hàng đợi',
                 ],
-
                 'index' => [
                     'button-title' => 'Tạo xuất khẩu',
                     'title'        => 'Xuất khẩu',
-
-                    'datagrid' => [
+                    'datagrid'     => [
                         'actions'               => 'Hành động',
                         'completed-at'          => 'Hoàn thành lúc',
                         'created'               => 'Đã tạo',
@@ -1335,7 +1378,6 @@ return [
                         'export'                => 'Xuất khẩu',
                     ],
                 ],
-
                 'export' => [
                     'back-btn'                => 'Quay lại',
                     'completed-batches'       => 'Tổng số batch đã hoàn thành:',
@@ -1365,7 +1407,6 @@ return [
                     'file-format'             => 'Định dạng tệp',
                     'with-media'              => 'Với phương tiện',
                 ],
-
                 'create-success'    => 'Xuất khẩu đã được tạo thành công.',
                 'delete-failed'     => 'Xóa xuất khẩu thất bại.',
                 'delete-success'    => 'Xuất khẩu đã được xóa thành công.',
@@ -1375,7 +1416,6 @@ return [
                 'update-success'    => 'Xuất khẩu đã được cập nhật thành công.',
             ],
         ],
-
         'channels' => [
             'index' => [
                 'create-btn'           => 'Tạo Kênh',
@@ -1394,7 +1434,6 @@ return [
                     'root-category' => 'Danh Mục Gốc',
                 ],
             ],
-
             'create' => [
                 'allowed-ips'            => 'IP Được Phép',
                 'cancel'                 => 'Quay lại',
@@ -1429,7 +1468,6 @@ return [
                 'theme'                  => 'Chủ Đề',
                 'title'                  => 'Tạo Kênh',
             ],
-
             'edit' => [
                 'allowed-ips'            => 'IP Được Phép',
                 'back-btn'               => 'Quay lại',
@@ -1467,13 +1505,11 @@ return [
                 'update-success'         => 'Cập nhật kênh thành công',
             ],
         ],
-
         'users' => [
             'index' => [
-                'admin' => 'Quản trị viên',
-                'title' => 'Người dùng',
-                'user'  => 'Người dùng',
-
+                'admin'  => 'Quản trị viên',
+                'title'  => 'Người dùng',
+                'user'   => 'Người dùng',
                 'create' => [
                     'confirm-password'  => 'Xác nhận mật khẩu',
                     'email'             => 'Email',
@@ -1487,7 +1523,6 @@ return [
                     'user-timezone'     => 'Múi giờ',
                     'select'            => 'Chọn',
                 ],
-
                 'datagrid' => [
                     'actions'  => 'Hành động',
                     'active'   => 'Hoạt động',
@@ -1501,12 +1536,10 @@ return [
                     'status'   => 'Trạng thái',
                     'image'    => 'Hình ảnh',
                 ],
-
                 'edit' => [
                     'title' => 'Chỉnh sửa người dùng',
                 ],
             ],
-
             'edit' => [
                 'back-btn'         => 'Quay lại',
                 'confirm-password' => 'Xác nhận mật khẩu',
@@ -1519,7 +1552,6 @@ return [
                 'status'           => 'Trạng thái',
                 'title'            => 'Chỉnh sửa người dùng',
             ],
-
             'activate-warning'          => 'Tài khoản của bạn chưa được kích hoạt, vui lòng liên hệ với quản trị viên.',
             'cannot-change'             => 'Không thể thay đổi người dùng',
             'create-success'            => 'Người dùng đã được tạo thành công.',
@@ -1532,13 +1564,11 @@ return [
             'update-success'            => 'Người dùng đã được cập nhật thành công.',
             'current-user-delete-error' => 'Không thể xóa người dùng hiện tại.',
         ],
-
         'roles' => [
             'index' => [
                 'create-btn' => 'Tạo vai trò',
                 'title'      => 'Vai trò',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'delete'          => 'Xóa',
                     'edit'            => 'Chỉnh sửa',
                     'id'              => 'ID',
@@ -1546,7 +1576,6 @@ return [
                     'permission-type' => 'Loại quyền',
                 ],
             ],
-
             'create' => [
                 'access-control' => 'Kiểm soát quyền truy cập',
                 'all'            => 'Tất cả',
@@ -1559,7 +1588,6 @@ return [
                 'save-btn'       => 'Lưu vai trò',
                 'title'          => 'Tạo vai trò',
             ],
-
             'edit' => [
                 'access-control' => 'Kiểm soát quyền truy cập',
                 'all'            => 'Tất cả',
@@ -1572,7 +1600,6 @@ return [
                 'save-btn'       => 'Lưu vai trò',
                 'title'          => 'Chỉnh sửa vai trò',
             ],
-
             'being-used'        => 'Vai trò đã được sử dụng bởi người dùng quản trị',
             'being-used-by'     => 'Vai trò đã được sử dụng bởi người dùng :name',
             'create-success'    => 'Vai trò đã được tạo thành công',
@@ -1582,160 +1609,6 @@ return [
             'update-success'    => 'Vai trò đã được cập nhật thành công',
         ],
     ],
-
-    'acl' => [
-        'addresses'                => 'Địa chỉ',
-        'attribute-families'       => 'Nhóm thuộc tính',
-        'attribute-groups'         => 'Nhóm thuộc tính',
-        'attributes'               => 'Thuộc tính',
-        'cancel'                   => 'Hủy bỏ',
-        'catalog'                  => 'Danh mục',
-        'categories'               => 'Danh mục',
-        'channels'                 => 'Kênh',
-        'configure'                => 'Cấu hình',
-        'configuration'            => 'Cấu hình',
-        'copy'                     => 'Sao chép',
-        'create'                   => 'Tạo',
-        'currencies'               => 'Tiền tệ',
-        'dashboard'                => 'Bảng điều khiển',
-        'data-transfer'            => 'Chuyển dữ liệu',
-        'delete'                   => 'Xóa',
-        'edit'                     => 'Chỉnh sửa',
-        'email-templates'          => 'Mẫu email',
-        'events'                   => 'Sự kiện',
-        'groups'                   => 'Nhóm',
-        'import'                   => 'Nhập',
-        'imports'                  => 'Nhập khẩu',
-        'invoices'                 => 'Hóa đơn',
-        'locales'                  => 'Cục địa phương',
-        'magic-ai'                 => 'Magic AI',
-        'marketing'                => 'Tiếp thị',
-        'newsletter-subscriptions' => 'Đăng ký bản tin',
-        'note'                     => 'Ghi chú',
-        'orders'                   => 'Đơn hàng',
-        'products'                 => 'Sản phẩm',
-        'promotions'               => 'Khuyến mãi',
-        'refunds'                  => 'Hoàn tiền',
-        'reporting'                => 'Báo cáo',
-        'reviews'                  => 'Đánh giá',
-        'roles'                    => 'Vai trò',
-        'sales'                    => 'Bán hàng',
-        'search-seo'               => 'Tìm kiếm & SEO',
-        'search-synonyms'          => 'Từ đồng nghĩa tìm kiếm',
-        'search-terms'             => 'Các điều khoản tìm kiếm',
-        'settings'                 => 'Cài đặt',
-        'shipments'                => 'Giao hàng',
-        'sitemaps'                 => 'Sơ đồ trang web',
-        'subscribers'              => 'Người đăng ký',
-        'tax-categories'           => 'Danh mục thuế',
-        'tax-rates'                => 'Tỷ lệ thuế',
-        'taxes'                    => 'Thuế',
-        'themes'                   => 'Chủ đề',
-        'integration'              => 'Tích hợp',
-        'url-rewrites'             => 'Tái viết URL',
-        'users'                    => 'Người dùng',
-        'category_fields'          => 'Các trường danh mục',
-        'view'                     => 'Xem',
-        'execute'                  => 'Thực hiện',
-        'history'                  => 'Lịch sử',
-        'restore'                  => 'Khôi phục',
-        'integrations'             => 'Tích hợp',
-        'api'                      => 'API',
-        'tracker'                  => 'Theo dõi công việc',
-        'imports'                  => 'Nhập khẩu',
-        'exports'                  => 'Xuất khẩu',
-        'mass-update'              => 'Cập nhật hàng loạt',
-        'mass-delete'              => 'Xóa hàng loạt',
-    ],
-
-    'errors' => [
-        'dashboard' => 'Bảng điều khiển',
-        'go-back'   => 'Quay lại',
-        'support'   => 'Nếu vấn đề tiếp tục, hãy liên hệ với chúng tôi tại <a href=":link" class=":class">:email</a> để được trợ giúp.',
-
-        '404' => [
-            'description' => 'Oops! Trang bạn đang tìm kiếm đang nghỉ lễ. Có vẻ như chúng tôi không thể tìm thấy những gì bạn đang tìm kiếm.',
-            'title'       => '404 Trang không tìm thấy',
-        ],
-
-        '401' => [
-            'description' => 'Oops! Có vẻ như bạn không có quyền truy cập vào trang này. Có vẻ như bạn thiếu các quyền cần thiết.',
-            'title'       => '401 Không được phép',
-            'message'     => 'Lỗi xác thực do thông tin đăng nhập không chính xác hoặc token hết hạn.',
-        ],
-
-        '403' => [
-            'description' => 'Oops! Trang này không thể truy cập được. Có vẻ như bạn không có quyền xem nội dung này.',
-            'title'       => '403 Cấm',
-        ],
-
-        '413' => [
-            'description' => 'Oops! Có vẻ như bạn đang cố tải lên một tệp rất lớn. Nếu muốn tải lên, vui lòng cập nhật cấu hình PHP của bạn.',
-            'title'       => '413 Nội dung quá lớn',
-        ],
-
-        '419' => [
-            'description' => 'Oops! Phiên của bạn đã hết hạn. Vui lòng làm mới trang và đăng nhập lại để tiếp tục.',
-            'title'       => '419 Phiên đã hết hạn',
-        ],
-
-        '500' => [
-            'description' => 'Oops! Có gì đó không đúng. Có vẻ như chúng tôi gặp sự cố khi tải trang bạn đang tìm kiếm.',
-            'title'       => '500 Lỗi máy chủ nội bộ',
-        ],
-
-        '503' => [
-            'description' => 'Oops! Có vẻ như chúng tôi đang tạm thời đóng cửa để bảo trì. Vui lòng kiểm tra lại sau.',
-            'title'       => '503 Dịch vụ không khả dụng',
-        ],
-    ],
-
-    'export' => [
-        'csv'                  => 'CSV',
-        'download'             => 'Tải về',
-        'export'               => 'Xuất nhanh',
-        'no-records'           => 'Không có dữ liệu để xuất',
-        'xls'                  => 'XLS',
-        'xlsx'                 => 'XLSX',
-        'with-media'           => 'Với phương tiện',
-        'export-success'       => 'Xuất khẩu thành công!',
-        'error'                => 'Đã xảy ra lỗi!',
-        'product-not-selected' => 'Chưa chọn sản phẩm nào để xuất nhanh',
-    ],
-
-    'validations' => [
-        'slug-being-used' => 'Slug này đang được sử dụng trong các danh mục hoặc sản phẩm.',
-        'slug-reserved'   => 'Slug này đã được đặt.',
-        'invalid-locale'  => 'Địa điểm không hợp lệ :locales',
-    ],
-
-    'footer' => [
-        'copy-right' => 'Được hỗ trợ bởi UnoPim, Dự án cộng đồng của Webkul',
-    ],
-
-    'emails' => [
-        'dear'   => 'Kính gửi :admin_name',
-        'thanks' => 'Nếu bạn cần bất kỳ sự hỗ trợ nào, vui lòng liên hệ với chúng tôi tại <a href=":link" style=":style">:email</a>.<br/>Cảm ơn bạn!',
-
-        'admin' => [
-            'forgot-password' => [
-                'description'    => 'Bạn nhận được email này vì chúng tôi nhận được yêu cầu đặt lại mật khẩu cho tài khoản của bạn.',
-                'greeting'       => 'Quên mật khẩu!',
-                'reset-password' => 'Đặt lại mật khẩu',
-                'subject'        => 'Email đặt lại mật khẩu',
-            ],
-        ],
-    ],
-
-    'common' => [
-        'yes'     => 'Có',
-        'no'      => 'Không',
-        'true'    => 'Đúng',
-        'false'   => 'Sai',
-        'enable'  => 'Bật',
-        'disable' => 'Tắt',
-    ],
-
     'configuration' => [
         'index' => [
             'delete'          => 'Xóa',
@@ -1744,50 +1617,69 @@ return [
             'save-message'    => 'Cấu hình đã được lưu thành công',
             'search'          => 'Tìm kiếm',
             'title'           => 'Cấu hình',
-
-            'general' => [
-                'info'  => '',
-                'title' => 'Chung',
-
+            'general'         => [
+                'info'    => '',
+                'title'   => 'Chung',
                 'general' => [
                     'info'  => '',
                     'title' => 'Chung',
                 ],
-
                 'magic-ai' => [
-                    'info'  => 'Thiết lập các tùy chọn Magic AI.',
-                    'title' => 'Magic AI',
-
+                    'info'     => 'Thiết lập các tùy chọn Magic AI.',
+                    'title'    => 'Magic AI',
                     'settings' => [
-                        'api-key'        => 'Khóa API',
-                        'enabled'        => 'Đã bật',
-                        'llm-api-domain' => 'Miền API LLM',
-                        'organization'   => 'ID Tổ chức',
-                        'title'          => 'Cài đặt chung',
-                        'title-info'     => 'Nâng cao trải nghiệm của bạn với Magic AI bằng cách nhập API Key của bạn và xác định Tổ chức liên quan cho tích hợp dễ dàng. Kiểm soát các thông tin của bạn với OpenAI và tùy chỉnh các cài đặt theo nhu cầu cụ thể của bạn.',
+                        'enabled'     => 'Đã bật',
+                        'ai-platform' => 'Nền tảng mặc định',
+                        'ai-model'    => 'Mô hình mặc định',
+                        'title'       => 'Cài đặt chung',
+                        'title-info'  => 'Nâng cao trải nghiệm của bạn với Magic AI bằng cách nhập API Key của bạn và xác định Tổ chức liên quan cho tích hợp dễ dàng. Kiểm soát các thông tin của bạn với OpenAI và tùy chỉnh các cài đặt theo nhu cầu cụ thể của bạn.',
                     ],
-
-                    'translation'   => [
-                        'title'                  => 'Dịch thuật',
-                        'enabled'                => 'Đã bật',
-                        'title-info'             => 'Tính năng này sẽ kích hoạt Magic AI để dịch văn bản, cho phép bạn chuyển đổi văn bản từ ngôn ngữ này sang ngôn ngữ khác một cách dễ dàng.',
-                        'global-source-channel'  => 'Kênh Nguồn',
-                        'global-source-locale'   => 'Ngôn Ngữ Nguồn',
-                        'translation-model'      => 'Mô Hình Dịch',
-                        'replace-existing-value' => 'Thay Thế Giá Trị Hiện Có',
-                        'target-channel'         => 'Kênh Mục Tiêu',
-                        'target-locales'         => 'Ngôn Ngữ Mục Tiêu',
+                    'image-generation' => [
+                        'enabled'     => 'Đã bật',
+                        'ai-platform' => 'Nền tảng mặc định',
+                        'ai-model'    => 'Mô hình mặc định',
+                        'title'       => 'Tạo hình ảnh',
+                        'title-info'  => 'Cấu hình nền tảng AI và mô hình mặc định để tạo hình ảnh sản phẩm. Chỉ các nền tảng hỗ trợ tạo hình ảnh (OpenAI, Gemini, xAI) được liệt kê.',
+                    ],
+                    'translation' => [
+                        'title'                       => 'Dịch thuật',
+                        'enabled'                     => 'Đã bật',
+                        'title-info'                  => 'Tính năng này sẽ kích hoạt Magic AI để dịch văn bản, cho phép bạn chuyển đổi văn bản từ ngôn ngữ này sang ngôn ngữ khác một cách dễ dàng.',
+                        'ai-platform'                 => 'Nền tảng mặc định',
+                        'global-source-channel'       => 'Kênh Nguồn',
+                        'global-source-locale'        => 'Ngôn Ngữ Nguồn',
+                        'translation-model'           => 'Mô Hình Dịch',
+                        'replace-existing-value'      => 'Thay Thế Giá Trị Hiện Có',
+                        'target-channel'              => 'Kênh Mục Tiêu',
+                        'target-locales'              => 'Ngôn Ngữ Mục Tiêu',
+                        'replace-existing-value-info' => 'Thay thế giá trị hiện có nếu đã tồn tại.',
+                    ],
+                    'agentic-pim' => [
+                        'title'                     => 'PIM Tác nhân',
+                        'title-info'                => 'Cấu hình trò chuyện tác nhân AI, quy trình làm giàu tự động và giám sát chất lượng. Các tính năng này cho phép quản lý sản phẩm theo hội thoại và bảo trì danh mục chủ động.',
+                        'enabled'                   => 'Bật trò chuyện tác nhân AI',
+                        'enabled-info'              => 'Bật widget trò chuyện AI nổi để quản lý sản phẩm theo hội thoại với hơn 27 hành động công cụ.',
+                        'max-steps'                 => 'Số bước tối đa của tác nhân mỗi lượt',
+                        'max-steps-info'            => 'Số lần lặp gọi công cụ tối đa mà tác nhân AI có thể thực hiện cho mỗi tin nhắn người dùng. Giá trị cao hơn cho phép các thao tác nhiều bước phức tạp hơn.',
+                        'daily-token-budget'        => 'Ngân sách token hàng ngày',
+                        'daily-token-budget-info'   => 'Số token AI tối đa (đầu vào + đầu ra) có thể được tiêu thụ mỗi ngày trên tất cả người dùng. Đặt thành 0 để không giới hạn. Giúp kiểm soát chi phí API.',
+                        'auto-enrichment'           => 'Tự động làm giàu khi tạo sản phẩm',
+                        'auto-enrichment-info'      => 'Tự động tạo mô tả, danh mục và nội dung SEO còn thiếu khi sản phẩm mới được tạo hoặc nhập.',
+                        'quality-monitor'           => 'Giám sát chất lượng danh mục',
+                        'quality-monitor-info'      => 'Chạy quét theo lịch để phát hiện sản phẩm không đầy đủ, bản dịch còn thiếu, mục trùng lặp và bất thường về giá.',
+                        'confidence-threshold'      => 'Ngưỡng tin cậy',
+                        'confidence-threshold-info' => 'Điểm tin cậy tối thiểu (0-1) để các thay đổi do AI tạo được áp dụng tự động. Dưới ngưỡng này, các thay đổi được xếp hàng chờ xem xét bởi con người.',
+                        'approval-mode'             => 'Chế độ phê duyệt thay đổi',
+                        'approval-mode-info'        => 'Kiểm soát cách tác nhân AI xử lý các thao tác ghi. "Xác nhận và áp dụng": tác nhân đề xuất giá trị trong cuộc trò chuyện, chờ xác nhận, sau đó thực thi. "Xác nhận nghiêm ngặt": tương tự nhưng cũng xác minh sau mỗi thay đổi. "Chỉ đề xuất": mô tả các thay đổi nhưng không bao giờ thực thi (chỉ đọc).',
                     ],
                 ],
             ],
         ],
-
         'integrations' => [
             'index' => [
                 'create-btn' => 'Tạo',
                 'title'      => 'Tích hợp',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'delete'          => 'Xóa',
                     'edit'            => 'Chỉnh sửa',
                     'id'              => 'ID',
@@ -1797,7 +1689,6 @@ return [
                     'permission-type' => 'Loại quyền',
                 ],
             ],
-
             'create' => [
                 'access-control' => 'Kiểm soát truy cập',
                 'all'            => 'Tất cả',
@@ -1810,7 +1701,6 @@ return [
                 'save-btn'       => 'Lưu',
                 'title'          => 'Tạo mới Tích hợp',
             ],
-
             'edit' => [
                 'access-control' => 'Kiểm soát truy cập',
                 'all'            => 'Tất cả',
@@ -1828,7 +1718,6 @@ return [
                 'save-btn'       => 'Lưu',
                 'title'          => 'Chỉnh sửa Tích hợp',
             ],
-
             'being-used'                     => 'Tích hợp API đã được sử dụng bởi Người quản lý',
             'create-success'                 => 'Tích hợp API đã được tạo thành công',
             'delete-failed'                  => 'Tích hợp API không thể xóa',
@@ -1839,40 +1728,155 @@ return [
             're-generate-secret-key-success' => 'Khóa bí mật API đã được tạo lại thành công',
             'client-not-found'               => 'Không tìm thấy khách hàng',
         ],
-
         'prompt' => [
             'datagrid' => [
-                'id'            => 'ID',
-                'title'         => 'Tiêu đề',
-                'prompt'        => 'Gợi ý',
-                'type'          => 'Loại',
-                'created-at'    => 'Ngày tạo',
-                'updated-at'    => 'Ngày cập nhật',
-                'actions'       => 'Hành động',
-                'edit'          => 'Chỉnh sửa',
-                'delete'        => 'Xóa',
-                'product'       => 'Sản phẩm',
-                'category'      => 'Danh mục',
+                'id'               => 'ID',
+                'title'            => 'Tiêu đề',
+                'prompt'           => 'Gợi ý',
+                'type'             => 'Loại',
+                'purpose'          => 'Mục đích',
+                'text-generation'  => 'Tạo văn bản',
+                'image-generation' => 'Tạo hình ảnh',
+                'translation'      => 'Dịch thuật',
+                'created-at'       => 'Ngày tạo',
+                'updated-at'       => 'Ngày cập nhật',
+                'actions'          => 'Hành động',
+                'edit'             => 'Chỉnh sửa',
+                'delete'           => 'Xóa',
+                'product'          => 'Sản phẩm',
+                'category'         => 'Danh mục',
             ],
             'create' => [
-                'title'         => 'Gợi ý',
-                'create-btn'    => 'Tạo Gợi ý',
-                'edit-title'    => 'Chỉnh sửa Gợi ý',
-                'create-title'  => 'Tạo Gợi ý Mới',
-                'label-title'   => 'Tiêu đề',
-                'type'          => 'Loại',
-                'prompt'        => 'Gợi ý',
-                'save-btn'      => 'Lưu Gợi ý',
+                'title'               => 'Gợi ý',
+                'create-btn'          => 'Tạo Gợi ý',
+                'edit-title'          => 'Chỉnh sửa Gợi ý',
+                'create-title'        => 'Tạo Gợi ý Mới',
+                'label-title'         => 'Tiêu đề',
+                'purpose'             => 'Mục đích',
+                'text-generation'     => 'Tạo văn bản',
+                'image-generation'    => 'Tạo hình ảnh',
+                'select-purpose'      => 'Chọn mục đích',
+                'select-model'        => '-- Chọn mô hình --',
+                'loading-models'      => 'Đang tải mô hình...',
+                'no-models-available' => 'Không có mô hình nào khả dụng. Chọn một nền tảng hoặc cấu hình trong tab Nền tảng.',
+                'type'                => 'Loại',
+                'prompt'              => 'Gợi ý',
+                'save-btn'            => 'Lưu Gợi ý',
             ],
             'message' => [
-                'save-success'      => 'Gợi ý đã được lưu thành công.',
-                'update-success'    => 'Gợi ý đã được cập nhật thành công.',
-                'delete-success'    => 'Gợi ý đã được xóa thành công.',
-                'delete-fail'       => 'Không thể xóa gợi ý.',
+                'save-success'   => 'Gợi ý đã được lưu thành công.',
+                'update-success' => 'Gợi ý đã được cập nhật thành công.',
+                'delete-success' => 'Gợi ý đã được xóa thành công.',
+                'delete-fail'    => 'Không thể xóa gợi ý.',
+            ],
+        ],
+        'system-prompt' => [
+            'datagrid' => [
+                'id'          => 'ID',
+                'title'       => 'Tiêu đề',
+                'tone'        => 'Giọng điệu',
+                'max-tokens'  => 'Token tối đa',
+                'temperature' => 'Nhiệt độ',
+                'status'      => 'Trạng thái',
+                'created-at'  => 'Ngày tạo',
+                'updated-at'  => 'Ngày cập nhật',
+                'actions'     => 'Hành động',
+                'save'        => 'Lưu',
+                'edit'        => 'Sửa',
+                'delete'      => 'xóa',
+            ],
+            'create' => [
+                'title'        => 'Lệnh hệ thống',
+                'create-btn'   => 'Tạo lệnh hệ thống',
+                'edit-title'   => 'Sửa lệnh hệ thống',
+                'create-title' => 'Tạo lệnh hệ thống mới',
+                'label-title'  => 'Tiêu đề',
+                'max-tokens'   => 'Token đầu ra tối đa',
+                'temperature'  => 'Nhiệt độ',
+                'type'         => 'Loại',
+                'prompt'       => 'Lệnh',
+                'save-btn'     => 'Lưu lệnh',
+                'prompt-tone'  => 'Giọng điệu lệnh',
+            ],
+            'message' => [
+                'save-success'   => 'Lệnh hệ thống đã được lưu thành công.',
+                'update-success' => 'Lệnh hệ thống đã được cập nhật thành công.',
+                'delete-success' => 'Lệnh hệ thống đã được xóa thành công.',
+                'delete-fail'    => 'Xóa lệnh hệ thống thất bại.',
+            ],
+        ],
+        'platform' => [
+            'title'           => 'Nền tảng AI',
+            'create-btn'      => 'Thêm nền tảng',
+            'create-title'    => 'Thêm nền tảng AI',
+            'edit-title'      => 'Sửa nền tảng AI',
+            'save-btn'        => 'Lưu',
+            'saving'          => 'Đang lưu',
+            'test-connection' => 'Kiểm tra kết nối',
+            'setup'           => [
+                'title'              => 'Bắt đầu với Magic AI',
+                'description'        => 'Kết nối nhà cung cấp AI của bạn để mở khóa tính năng tạo nội dung, tạo hình ảnh và dịch thuật được hỗ trợ bởi AI. Thêm nền tảng đầu tiên để bắt đầu.',
+                'step-1'             => 'Chọn nhà cung cấp',
+                'step-2'             => 'Nhập khóa API của bạn',
+                'step-3'             => 'Chọn mô hình và lưu',
+                'add-first'          => 'Thêm nền tảng đầu tiên của bạn',
+                'no-default-warning' => 'Chưa đặt nền tảng mặc định. Vui lòng đặt một nền tảng làm mặc định để kích hoạt các tính năng AI trên toàn ứng dụng.',
+                'no-platform-hint'   => 'Chưa có nền tảng nào được cấu hình. Vào tab Nền tảng để thêm nhà cung cấp AI đầu tiên.',
+                'lightning-icon'     => 'Magic AI',
+                'warning-icon'       => 'Cảnh báo',
+            ],
+            'testing'         => 'Đang kiểm tra',
+            'fetch-models'    => 'Lấy mô hình',
+            'fetching-models' => 'Đang lấy',
+            'set-default'     => 'Đặt làm mặc định',
+            'datagrid'        => [
+                'label'      => 'Nhãn',
+                'provider'   => 'Nhà cung cấp',
+                'models'     => 'Mô hình',
+                'default'    => 'Mặc định',
+                'status'     => 'Trạng thái',
+                'created-at' => 'Ngày tạo',
+                'edit'       => 'Sửa',
+                'delete'     => 'Xóa',
+            ],
+            'fields' => [
+                'label'                    => 'Nhãn',
+                'provider'                 => 'Nhà cung cấp',
+                'select-provider'          => '-- Chọn nhà cung cấp --',
+                'api-url'                  => 'URL API',
+                'api-url-hint'             => 'Đã điền sẵn với endpoint mặc định. Chỉ chỉnh sửa nếu sử dụng proxy hoặc triển khai tùy chỉnh.',
+                'api-key'                  => 'Khóa API',
+                'models'                   => 'Mô hình',
+                'custom-model-placeholder' => 'Nhập ID mô hình tùy chỉnh...',
+                'add'                      => 'Thêm',
+                'enter-key-to-fetch'       => 'Nhập khóa API ở trên để tự động lấy các mô hình có sẵn.',
+                'search-models'            => 'Tìm kiếm mô hình...',
+                'no-models-match'          => 'Không có mô hình nào phù hợp với tìm kiếm của bạn.',
+                'azure-deployment'         => 'Tên triển khai',
+                'azure-api-version'        => 'Phiên bản API',
+                'is-default'               => 'Đặt làm mặc định',
+                'status'                   => 'Trạng thái',
+                'use-default'              => '-- Sử dụng nền tảng mặc định --',
+                'use-default-hint'         => 'Để trống để sử dụng nền tảng được đánh dấu là mặc định. Các nền tảng có dấu * là mặc định.',
+                'no-image-platform'        => 'Chưa cấu hình nền tảng hỗ trợ hình ảnh. Vui lòng thêm nền tảng OpenAI, Gemini hoặc xAI trước.',
+                'image-platform-hint'      => 'Chỉ hiển thị các nền tảng hỗ trợ tạo hình ảnh (OpenAI, Gemini, xAI).',
+                'remove-model'             => 'Xóa mô hình :model',
+                'invalid-model-name'       => 'Tên mô hình không hợp lệ. Chỉ sử dụng chữ cái, số, dấu gạch ngang, dấu chấm, dấu hai chấm và dấu gạch chéo (ví dụ: gpt-4o, claude-3-sonnet).',
+            ],
+            'message' => [
+                'save-success'          => 'Nền tảng đã được lưu thành công.',
+                'update-success'        => 'Nền tảng đã được cập nhật thành công.',
+                'delete-success'        => 'Nền tảng đã được xóa thành công.',
+                'delete-fail'           => 'Xóa nền tảng thất bại.',
+                'cannot-delete-default' => 'Không thể xóa nền tảng mặc định duy nhất.',
+                'set-default-success'   => 'Nền tảng đã được đặt làm mặc định thành công.',
+                'test-success'          => 'Kết nối đã được xác minh thành công!',
+                'test-fail'             => 'Kiểm tra kết nối thất bại',
+                'fetch-models-fail'     => 'Không thể lấy danh sách mô hình',
+                'invalid-model-names'   => 'Tên mô hình không hợp lệ: :names. Tên mô hình phải bắt đầu bằng chữ cái hoặc số và chỉ chứa chữ cái, số, dấu gạch ngang, dấu chấm, dấu hai chấm và dấu gạch chéo.',
             ],
         ],
     ],
-
     'components' => [
         'layouts' => [
             'header' => [
@@ -1883,7 +1887,6 @@ return [
                 'notifications' => 'Thông báo',
                 'visit-shop'    => 'Thăm cửa hàng',
             ],
-
             'sidebar' => [
                 'attribute-families' => 'Nhóm thuộc tính',
                 'attribute-groups'   => 'Nhóm thuộc tính',
@@ -1917,45 +1920,44 @@ return [
                 'general-tab'        => 'Cấu hình',
             ],
         ],
-
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => 'Không có bản ghi nào được chọn.',
                 'must-select-a-mass-action-option' => 'Bạn phải chọn một tùy chọn cho hành động hàng loạt.',
                 'must-select-a-mass-action'        => 'Bạn phải chọn một hành động hàng loạt.',
             ],
-
             'toolbar' => [
-                'length-of' => ':length of',
-                'of'        => 'của',
-                'per-page'  => 'Mỗi trang',
-                'results'   => ':total Kết quả',
-                'selected'  => ':total Đã chọn',
-
+                'length-of'    => ':length của',
+                'of'           => 'của',
+                'per-page'     => 'Mỗi trang',
+                'results'      => ':total Kết quả',
+                'selected'     => ':total Đã chọn',
                 'mass-actions' => [
                     'submit'        => 'Gửi',
                     'select-option' => 'Chọn tùy chọn',
                     'select-action' => 'Chọn hành động',
                 ],
-
                 'filter' => [
                     'title' => 'Lọc',
                 ],
-
                 'search_by' => [
                     'code'       => 'Tìm kiếm theo mã',
                     'code_or_id' => 'Tìm kiếm theo mã hoặc ID',
                 ],
-
                 'search' => [
                     'title' => 'Tìm kiếm',
                 ],
-
                 'manage-columns' => [
                     'title' => 'Cột',
                 ],
+                'pagination' => [
+                    'first-page'    => 'Trang đầu',
+                    'previous-page' => 'Trang trước',
+                    'next-page'     => 'Trang tiếp',
+                    'last-page'     => 'Trang cuối',
+                    'page-number'   => 'Số trang',
+                ],
             ],
-
             'filters' => [
                 'select'   => 'Chọn',
                 'title'    => 'Áp dụng bộ lọc',
@@ -1966,17 +1968,14 @@ return [
                         'no-results'        => 'Không tìm thấy kết quả...',
                     ],
                 ],
-
                 'custom-filters' => [
                     'clear-all' => 'Xóa tất cả',
                     'title'     => 'Bộ lọc tùy chỉnh',
                 ],
-
                 'boolean-options' => [
                     'false' => 'Sai',
                     'true'  => 'Đúng',
                 ],
-
                 'date-options' => [
                     'last-month'        => 'Tháng trước',
                     'last-six-months'   => '6 tháng qua',
@@ -1988,12 +1987,10 @@ return [
                     'yesterday'         => 'Hôm qua',
                 ],
             ],
-
             'table' => [
                 'actions'              => 'Các hành động',
                 'no-records-available' => 'Không có bản ghi nào.',
             ],
-
             'manage-columns' => [
                 'title'             => 'Quản lý cột',
                 'available-columns' => 'Cột có sẵn',
@@ -2001,7 +1998,6 @@ return [
                 'apply-btn'         => 'Áp dụng',
             ],
         ],
-
         'modal' => [
             'confirm' => [
                 'agree-btn'    => 'Đồng ý',
@@ -2009,14 +2005,12 @@ return [
                 'message'      => 'Bạn có chắc chắn muốn thực hiện hành động này?',
                 'title'        => 'Bạn chắc chắn chứ?',
             ],
-
             'delete' => [
                 'agree-btn'    => 'Xóa',
                 'disagree-btn' => 'Hủy',
                 'message'      => 'Bạn có chắc chắn muốn xóa không?',
                 'title'        => 'Xác nhận xóa',
             ],
-
             'history' => [
                 'title'           => 'Xem trước lịch sử',
                 'subtitle'        => 'Xem nhanh các thay đổi của bạn.',
@@ -2030,7 +2024,6 @@ return [
                 'no-history'      => 'Không tìm thấy lịch sử',
             ],
         ],
-
         'products' => [
             'search' => [
                 'add-btn'       => 'Thêm sản phẩm đã chọn',
@@ -2042,7 +2035,6 @@ return [
                 'title'         => 'Chọn sản phẩm',
             ],
         ],
-
         'media' => [
             'images' => [
                 'add-image-btn'      => 'Thêm ảnh',
@@ -2054,24 +2046,50 @@ return [
                 'allowed-types'      => 'png, jpeg, jpg',
                 'not-allowed-error'  => 'Chỉ cho phép các tệp hình ảnh (.jpeg, .jpg, .png, ..)',
                 'upload-media-btn'   => 'Tải lên phương tiện',
+                'ai-generation'      => [
+                    '1024x1024'        => '1024x1024',
+                    '1024x1792'        => '1024x1792',
+                    '1792x1024'        => '1792x1024',
+                    'apply'            => 'Áp dụng',
+                    'dall-e-2'         => 'Dall.E 2',
+                    'dall-e-3'         => 'Dall.E 3',
+                    'generate'         => 'Tạo',
+                    'generating'       => 'Đang tạo...',
+                    'hd'               => 'HD',
+                    'model'            => 'Mô hình',
+                    'number-of-images' => 'Số lượng hình ảnh',
+                    'prompt'           => 'Lệnh',
+                    'quality'          => 'Chất lượng',
+                    'regenerate'       => 'Tạo lại',
+                    'regenerating'     => 'Đang tạo lại...',
+                    'size'             => 'Kích thước',
+                    'standard'         => 'Tiêu chuẩn',
+                    'title'            => 'Tạo hình ảnh AI',
+                ],
+                'placeholders' => [
+                    'front'     => 'Mặt trước',
+                    'next'      => 'Tiếp theo',
+                    'size'      => 'Kích thước',
+                    'use-cases' => 'Trường hợp sử dụng',
+                    'zoom'      => 'Phóng to',
+                ],
             ],
-
+            'gallery' => [
+                'not-allowed-error' => 'Chỉ cho phép tệp hình ảnh và video. (.mp4, .jpg ..)',
+            ],
             'videos' => [
                 'add-video-btn'     => 'Thêm video',
                 'allowed-types'     => 'mp4, webm, mkv',
                 'not-allowed-error' => 'Chỉ cho phép các tệp video (.mp4, .mov, .ogg, ..)',
             ],
-
             'files' => [
                 'add-file-btn'      => 'Thêm tệp',
                 'allowed-types'     => 'pdf',
                 'not-allowed-error' => 'Chỉ cho phép các tệp pdf',
             ],
         ],
-
         'tinymce' => [
-            'ai-btn-tile' => 'AI ma thuật',
-
+            'ai-btn-tile'   => 'AI ma thuật',
             'ai-generation' => [
                 'apply'                  => 'Áp dụng',
                 'generate'               => 'Tạo',
@@ -2080,7 +2098,14 @@ return [
                 'generating'             => 'Đang tạo...',
                 'prompt'                 => 'Yêu cầu',
                 'title'                  => 'Trợ giúp AI',
+                'platform'               => 'Nền tảng',
                 'model'                  => 'Mô hình',
+                'rich-preview'           => 'Xem trước đầy đủ',
+                'system-prompt'          => 'Lệnh hệ thống',
+                'select-system-prompt'   => 'Chọn lệnh hệ thống',
+                'tone-instructions'      => 'Giọng điệu / Hướng dẫn',
+                'max-tokens'             => 'Token tối đa',
+                'temperature'            => 'Nhiệt độ',
                 'gpt-3-5-turbo'          => 'OpenAI gpt-3.5-turbo',
                 'llama2'                 => 'Llama 2',
                 'mistral'                => 'Mistral',
@@ -2097,7 +2122,147 @@ return [
             ],
         ],
     ],
-
+    'acl' => [
+        'addresses'                => 'Địa chỉ',
+        'attribute-families'       => 'Nhóm thuộc tính',
+        'attribute-groups'         => 'Nhóm thuộc tính',
+        'attributes'               => 'Thuộc tính',
+        'cancel'                   => 'Hủy bỏ',
+        'catalog'                  => 'Danh mục',
+        'categories'               => 'Danh mục',
+        'channels'                 => 'Kênh',
+        'configure'                => 'Cấu hình',
+        'configuration'            => 'Cấu hình',
+        'copy'                     => 'Sao chép',
+        'create'                   => 'Tạo',
+        'currencies'               => 'Tiền tệ',
+        'dashboard'                => 'Bảng điều khiển',
+        'data-transfer'            => 'Chuyển dữ liệu',
+        'delete'                   => 'Xóa',
+        'edit'                     => 'Chỉnh sửa',
+        'email-templates'          => 'Mẫu email',
+        'events'                   => 'Sự kiện',
+        'groups'                   => 'Nhóm',
+        'import'                   => 'Nhập',
+        'imports'                  => 'Nhập khẩu',
+        'invoices'                 => 'Hóa đơn',
+        'locales'                  => 'Cục địa phương',
+        'magic-ai'                 => 'Magic AI',
+        'magic-ai-general'         => 'Chung',
+        'magic-ai-prompt'          => 'Lệnh',
+        'magic-ai-system-prompt'   => 'Prompt hệ thống',
+        'marketing'                => 'Tiếp thị',
+        'newsletter-subscriptions' => 'Đăng ký bản tin',
+        'note'                     => 'Ghi chú',
+        'orders'                   => 'Đơn hàng',
+        'products'                 => 'Sản phẩm',
+        'promotions'               => 'Khuyến mãi',
+        'refunds'                  => 'Hoàn tiền',
+        'reporting'                => 'Báo cáo',
+        'reviews'                  => 'Đánh giá',
+        'roles'                    => 'Vai trò',
+        'sales'                    => 'Bán hàng',
+        'search-seo'               => 'Tìm kiếm & SEO',
+        'search-synonyms'          => 'Từ đồng nghĩa tìm kiếm',
+        'search-terms'             => 'Các điều khoản tìm kiếm',
+        'settings'                 => 'Cài đặt',
+        'shipments'                => 'Giao hàng',
+        'sitemaps'                 => 'Sơ đồ trang web',
+        'subscribers'              => 'Người đăng ký',
+        'tax-categories'           => 'Danh mục thuế',
+        'tax-rates'                => 'Tỷ lệ thuế',
+        'taxes'                    => 'Thuế',
+        'themes'                   => 'Chủ đề',
+        'integration'              => 'Tích hợp',
+        'url-rewrites'             => 'Tái viết URL',
+        'users'                    => 'Người dùng',
+        'category_fields'          => 'Các trường danh mục',
+        'view'                     => 'Xem',
+        'execute'                  => 'Thực hiện',
+        'history'                  => 'Lịch sử',
+        'restore'                  => 'Khôi phục',
+        'integrations'             => 'Tích hợp',
+        'api'                      => 'API',
+        'tracker'                  => 'Theo dõi công việc',
+        'exports'                  => 'Xuất khẩu',
+        'mass-update'              => 'Cập nhật hàng loạt',
+        'mass-delete'              => 'Xóa hàng loạt',
+    ],
+    'errors' => [
+        'dashboard' => 'Bảng điều khiển',
+        'go-back'   => 'Quay lại',
+        'support'   => 'Nếu vấn đề tiếp tục, hãy liên hệ với chúng tôi tại <a href=":link" class=":class">:email</a> để được trợ giúp.',
+        '404'       => [
+            'description' => 'Oops! Trang bạn đang tìm kiếm đang nghỉ lễ. Có vẻ như chúng tôi không thể tìm thấy những gì bạn đang tìm kiếm.',
+            'title'       => '404 Trang không tìm thấy',
+        ],
+        '401' => [
+            'description' => 'Oops! Có vẻ như bạn không có quyền truy cập vào trang này. Có vẻ như bạn thiếu các quyền cần thiết.',
+            'title'       => '401 Không được phép',
+            'message'     => 'Lỗi xác thực do thông tin đăng nhập không chính xác hoặc token hết hạn.',
+        ],
+        '403' => [
+            'description' => 'Oops! Trang này không thể truy cập được. Có vẻ như bạn không có quyền xem nội dung này.',
+            'title'       => '403 Cấm',
+        ],
+        '413' => [
+            'description' => 'Oops! Có vẻ như bạn đang cố tải lên một tệp rất lớn. Nếu muốn tải lên, vui lòng cập nhật cấu hình PHP của bạn.',
+            'title'       => '413 Nội dung quá lớn',
+        ],
+        '419' => [
+            'description' => 'Oops! Phiên của bạn đã hết hạn. Vui lòng làm mới trang và đăng nhập lại để tiếp tục.',
+            'title'       => '419 Phiên đã hết hạn',
+        ],
+        '500' => [
+            'description' => 'Oops! Có gì đó không đúng. Có vẻ như chúng tôi gặp sự cố khi tải trang bạn đang tìm kiếm.',
+            'title'       => '500 Lỗi máy chủ nội bộ',
+        ],
+        '503' => [
+            'description' => 'Oops! Có vẻ như chúng tôi đang tạm thời đóng cửa để bảo trì. Vui lòng kiểm tra lại sau.',
+            'title'       => '503 Dịch vụ không khả dụng',
+        ],
+    ],
+    'export' => [
+        'csv'                  => 'CSV',
+        'download'             => 'Tải về',
+        'export'               => 'Xuất nhanh',
+        'no-records'           => 'Không có dữ liệu để xuất',
+        'xls'                  => 'XLS',
+        'xlsx'                 => 'XLSX',
+        'with-media'           => 'Với phương tiện',
+        'export-success'       => 'Xuất khẩu thành công!',
+        'error'                => 'Đã xảy ra lỗi!',
+        'product-not-selected' => 'Chưa chọn sản phẩm nào để xuất nhanh',
+    ],
+    'validations' => [
+        'slug-being-used' => 'Slug này đang được sử dụng trong các danh mục hoặc sản phẩm.',
+        'slug-reserved'   => 'Slug này đã được đặt.',
+        'invalid-locale'  => 'Địa điểm không hợp lệ :locales',
+    ],
+    'footer' => [
+        'copy-right' => 'Được hỗ trợ bởi <a href="https://unopim.com/" target="_blank">UnoPim</a>, Dự án cộng đồng của <a href="https://webkul.com/" target="_blank">Webkul</a>',
+    ],
+    'emails' => [
+        'dear'   => 'Kính gửi :admin_name',
+        'thanks' => 'Nếu bạn cần bất kỳ sự hỗ trợ nào, vui lòng liên hệ với chúng tôi tại <a href=":link" style=":style">:email</a>.<br/>Cảm ơn bạn!',
+        'admin'  => [
+            'forgot-password' => [
+                'description'    => 'Bạn nhận được email này vì chúng tôi nhận được yêu cầu đặt lại mật khẩu cho tài khoản của bạn.',
+                'greeting'       => 'Quên mật khẩu!',
+                'reset-password' => 'Đặt lại mật khẩu',
+                'subject'        => 'Email đặt lại mật khẩu',
+            ],
+        ],
+    ],
+    'common' => [
+        'yes'            => 'Có',
+        'no'             => 'Không',
+        'true'           => 'Đúng',
+        'false'          => 'Sai',
+        'enable'         => 'Bật',
+        'disable'        => 'Tắt',
+        'no-match-found' => 'Không tìm thấy kết quả!',
+    ],
     'default-prompt' => [
         'detailed' => [
             'title'  => 'Mô tả chi tiết sản phẩm',

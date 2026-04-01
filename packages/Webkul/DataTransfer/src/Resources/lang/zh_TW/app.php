@@ -10,7 +10,7 @@ return [
                     'invalid-attribute-family'                 => '屬性家族的列值無效 (屬性家族不存在?)',
                     'invalid-type'                             => '產品類型無效或不支持',
                     'sku-not-found'                            => '找不到指定的 SKU 的產品',
-                    'super-attribute-not-found'                => '配置屬性代碼: \'%s\' 未找到或不屬於屬性家族: \'%s\'',
+                    'super-attribute-not-found'                => '配置屬性代碼: \'%s\' 未找到或不屬於屬性家族: \'%s\' :code :familyCode',
                     'configurable-attributes-not-found'        => '配置屬性需要用於建立產品模型',
                     'configurable-attributes-wrong-type'       => '僅支持類型選擇屬性，不基於位置或渠道，可以作為配置屬性',
                     'variant-configurable-attribute-not-found' => '變量配置屬性: :code 需要建立',

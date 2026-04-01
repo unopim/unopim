@@ -3,6 +3,7 @@
 namespace Webkul\DataTransfer\Helpers\Importers\Product;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Webkul\Product\Repositories\ProductRepository;
 
 class SKUStorage
@@ -46,21 +47,54 @@ class SKUStorage
 
     /**
      * Load the SKU
+     *
+     * Uses raw DB queries and chunked processing for maximum performance.
      */
     public function load(array $skus = []): void
     {
         if (empty($skus)) {
-            $products = $this->productRepository->all($this->selectColumns);
-        } else {
-            $products = $this->productRepository->findWhereIn('sku', $skus, $this->selectColumns);
+            $products = DB::table('products')
+                ->select($this->selectColumns)
+                ->get();
+
+            foreach ($products as $product) {
+                $this->set($product->sku, [
+                    'id'                  => $product->id,
+                    'type'                => $product->type,
+                    'attribute_family_id' => $product->attribute_family_id,
+                ]);
+            }
+
+            return;
         }
 
-        foreach ($products as $product) {
-            $this->set($product->sku, [
-                'id'                  => $product->id,
-                'type'                => $product->type,
-                'attribute_family_id' => $product->attribute_family_id,
-            ]);
+        /**
+         * Filter out already loaded SKUs to avoid redundant DB queries.
+         */
+        $skusToLoad = array_filter($skus, fn (string $sku) => ! $this->has($sku));
+
+        if (empty($skusToLoad)) {
+            return;
+        }
+
+        /**
+         * Chunk large SKU lists to prevent query parameter overflow
+         * and reduce memory pressure. Uses raw DB query instead of
+         * Eloquent to avoid model hydration overhead.
+         */
+        foreach (array_chunk($skusToLoad, 1000) as $chunk) {
+            $products = DB::table('products')
+                ->select($this->selectColumns)
+                ->whereIn('sku', $chunk)
+                ->get();
+
+            foreach ($products as $product) {
+                $this->set($product->sku, [
+                    'id'                  => $product->id,
+                    'type'                => $product->type,
+                    'attribute_family_id' => $product->attribute_family_id,
+                ]);
+            }
         }
     }
 

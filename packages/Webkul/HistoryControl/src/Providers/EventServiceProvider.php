@@ -4,6 +4,7 @@ namespace Webkul\HistoryControl\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
+use Webkul\HistoryControl\Listeners\ProxyValueSyncEventListener;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -42,7 +43,7 @@ class EventServiceProvider extends ServiceProvider
             }
         }
 
-        Event::listen('core.model.proxy.sync.*', 'Webkul\HistoryControl\Listeners\ProxyValueSyncEventListener@handle');
+        Event::listen('core.model.proxy.sync.*', [ProxyValueSyncEventListener::class, 'handle']);
     }
 
     /**

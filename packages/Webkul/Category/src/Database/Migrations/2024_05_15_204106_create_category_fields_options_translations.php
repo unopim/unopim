@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -18,7 +19,7 @@ return new class extends Migration
             $table->text('label')->nullable();
 
             $table->unique(['category_field_option_id', 'locale'], 'fields_options_locale_unique');
-            $table->foreign('category_field_option_id', 'fk_category_field_option_translations')->references('id')->on('category_field_options')->onDelete('cascade');
+            $table->foreign('category_field_option_id', DB::getTablePrefix().'fk_cat_field_opt_translations')->references('id')->on('category_field_options')->onDelete('cascade');
 
         });
     }

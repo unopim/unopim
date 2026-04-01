@@ -8,6 +8,14 @@ use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Intervention\Image\Drivers\Gd\Driver as GdDriver;
+use Intervention\Image\Drivers\Imagick\Driver as ImagickDriver;
+use Intervention\Image\ImageManager;
+use Webkul\Core\Console\Commands\DownCommand;
+use Webkul\Core\Console\Commands\TranslationsChecker;
+use Webkul\Core\Console\Commands\UnoPimPublish;
+use Webkul\Core\Console\Commands\UnoPimVersion;
+use Webkul\Core\Console\Commands\UpCommand;
 use Webkul\Core\Core;
 use Webkul\Core\ElasticSearch;
 use Webkul\Core\Exceptions\Handler;
@@ -25,6 +33,12 @@ class CoreServiceProvider extends ServiceProvider
     public function boot(): void
     {
         include __DIR__.'/../Http/helpers.php';
+
+        $purifierCachePath = storage_path('app/purifier');
+
+        if (! is_dir($purifierCachePath)) {
+            mkdir($purifierCachePath, 0755, true);
+        }
 
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
 
@@ -54,11 +68,11 @@ class CoreServiceProvider extends ServiceProvider
         });
 
         $this->app->extend('command.down', function () {
-            return new \Webkul\Core\Console\Commands\DownCommand;
+            return new DownCommand;
         });
 
         $this->app->extend('command.up', function () {
-            return new \Webkul\Core\Console\Commands\UpCommand;
+            return new UpCommand;
         });
 
         /**
@@ -84,6 +98,17 @@ class CoreServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->singleton('image_manager', function ($app) {
+            $driver = $app['config']->get('image.driver', 'gd');
+
+            return match ($driver) {
+                'imagick' => new ImageManager(new ImagickDriver),
+                default   => new ImageManager(new GdDriver),
+            };
+        });
+
+        $this->app->alias('image_manager', ImageManager::class);
+
         $this->registerFacades();
 
         $this->registerCommands();
@@ -125,8 +150,9 @@ class CoreServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                \Webkul\Core\Console\Commands\UnoPimPublish::class,
-                \Webkul\Core\Console\Commands\UnoPimVersion::class,
+                TranslationsChecker::class,
+                UnoPimPublish::class,
+                UnoPimVersion::class,
             ]);
         }
     }

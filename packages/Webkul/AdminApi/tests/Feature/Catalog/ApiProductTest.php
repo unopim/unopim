@@ -612,6 +612,8 @@ it('should return validation error for unique common attribute value when updati
         ],
     ];
 
+    config(['elasticsearch.enabled' => false]);
+
     $this->withHeaders($this->headers)->json('PUT', route('admin.api.products.update', ['code' => $updatedproduct['sku']]), $updatedproduct)
         ->assertStatus(422)
         ->assertJsonStructure([
@@ -622,6 +624,8 @@ it('should return validation error for unique common attribute value when updati
             ],
         ])
         ->assertJsonFragment(['success' => false]);
+
+    config(['elasticsearch.enabled' => true]);
 
     $product->refresh();
 
@@ -673,6 +677,8 @@ it('should return validation error for unique channel and locale wise attribute 
         ],
     ];
 
+    config(['elasticsearch.enabled' => false]);
+
     $this->withHeaders($this->headers)->json('PUT', route('admin.api.products.update', ['code' => $updatedproduct['sku']]), $updatedproduct)
         ->assertStatus(422)
         ->assertJsonStructure([
@@ -683,6 +689,8 @@ it('should return validation error for unique channel and locale wise attribute 
             ],
         ])
         ->assertJsonFragment(['success' => false]);
+
+    config(['elasticsearch.enabled' => true]);
 
     $product->refresh();
 
@@ -728,6 +736,8 @@ it('should return validation error for unique channel wise attribute value when 
         ],
     ];
 
+    config(['elasticsearch.enabled' => false]);
+
     $this->withHeaders($this->headers)->json('PUT', route('admin.api.products.update', ['code' => $updatedproduct['sku']]), $updatedproduct)
         ->assertStatus(422)
         ->assertJsonStructure([
@@ -738,6 +748,8 @@ it('should return validation error for unique channel wise attribute value when 
             ],
         ])
         ->assertJsonFragment(['success' => false]);
+
+    config(['elasticsearch.enabled' => true]);
 
     $product->refresh();
 
@@ -785,6 +797,8 @@ it('should return validation error for unique locale wise attribute value when u
         ],
     ];
 
+    config(['elasticsearch.enabled' => false]);
+
     $this->withHeaders($this->headers)->json('PUT', route('admin.api.products.update', ['code' => $updatedproduct['sku']]), $updatedproduct)
         ->assertStatus(422)
         ->assertJsonStructure([
@@ -795,6 +809,8 @@ it('should return validation error for unique locale wise attribute value when u
             ],
         ])
         ->assertJsonFragment(['success' => false]);
+
+    config(['elasticsearch.enabled' => true]);
 
     $product->refresh();
 

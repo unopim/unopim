@@ -3,6 +3,7 @@
 namespace Webkul\Webhook\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\View\View;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
 use Webkul\Webhook\DataGrids\LogsDataGrid;
 use Webkul\Webhook\Repositories\LogsRepository;
@@ -16,7 +17,7 @@ class WebhookLogsController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function index()
     {

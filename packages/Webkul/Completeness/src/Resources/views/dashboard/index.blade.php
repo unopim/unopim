@@ -8,7 +8,7 @@
 @pushOnce('scripts')
     <script type="text/x-template" id="v-dashboard-percentage-cards-template">
         <div v-if="isLoading" class="flex flex-wrap gap-4">
-            <div v-for="i in 3" :key="i" class="bg-white dark:bg-cherry-900 box-shadow rounded-lg p-4 flex-1 max-w-[360px] min-w-[300px] animate-pulse">
+            <div v-for="i in 3" :key="i" class="bg-white dark:bg-cherry-900 box-shadow rounded-lg p-4 flex-1 min-w-[280px] animate-pulse">
                 <header class="flex gap-2 justify-between mb-5 pb-2 border-b dark:border-gray-600">
                     <div>
                         <div class="shimmer w-[200px] h-6 mb-4"></div>
@@ -84,15 +84,15 @@
     </script>
 
     <script type="text/x-template" id="v-percentage-card-template">
-        <section class="bg-white dark:bg-cherry-900 box-shadow rounded-lg p-4 flex-1 max-w-[360px] min-w-[300px]">
-            <header class="flex gap-2 items-center justify-between max-w-[360px] mb-3 pb-3.5 border-b dark:border-gray-600">
+        <section class="bg-white dark:bg-cherry-900 box-shadow rounded-lg p-4 flex-1 min-w-[280px]">
+            <header class="flex gap-2 items-center justify-between mb-3 pb-3.5 border-b dark:border-gray-600">
                 <div class="pr-2">
                     <h2
                         class="text-lg font-semibold text-gray-800 dark:text-white"
                         v-text="title"
                     >
                     </h2>
-                    <span class="text-xs text-gray-800 dark:text-white max-w-[360px]">
+                    <span class="text-xs text-gray-800 dark:text-white">
                         <i v-if="productCount != 0">
                             @lang('completeness::app.dashboard.index.completeness.calculated-products'): @{{ productCount }} / @{{ totalProductCount }} <br>
                         </i>
