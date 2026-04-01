@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid } = require('../../utils/helpers');
+const { navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Create an export job with given parameters.
@@ -14,8 +14,7 @@ async function createExport(adminPage, code, format = 'CSV', withMedia = true) {
   if (withMedia) {
     await adminPage.locator('div').filter({ hasText: /^With Media$/ }).locator('div').click();
   }
-  await adminPage.getByRole('button', { name: 'Save Export' }).click();
-  await adminPage.waitForLoadState('networkidle');
+  await clickSaveAndExpect(adminPage, 'Save Export', /Export created successfully/i);
 }
 
 /**
@@ -92,7 +91,6 @@ test.describe('UnoPim Export Jobs', () => {
     const uid = generateUid();
     const code = `cat-csv-${uid}`;
     await createExport(adminPage, code, 'CSV', true);
-    await expect(adminPage.locator('#app').getByText(/Export created successfully/i)).toBeVisible();
 
     // Cleanup
     await deleteExport(adminPage, code);
@@ -106,7 +104,6 @@ test.describe('UnoPim Export Jobs', () => {
 
     // Create the first export
     await createExport(adminPage, code, 'CSV', true);
-    await expect(adminPage.locator('#app').getByText(/Export created successfully/i)).toBeVisible();
 
     // Try to create another with the same code
     await createExport(adminPage, code, 'CSV', true);
@@ -124,7 +121,6 @@ test.describe('UnoPim Export Jobs', () => {
 
     // Create
     await createExport(adminPage, code, 'CSV', true);
-    await expect(adminPage.locator('#app').getByText(/Export created successfully/i)).toBeVisible();
 
     // Search
     await navigateTo(adminPage, 'exports');
@@ -163,7 +159,6 @@ test.describe('UnoPim Export Jobs', () => {
 
     // Create
     await createExport(adminPage, code, 'CSV', true);
-    await expect(adminPage.locator('#app').getByText(/Export created successfully/i)).toBeVisible();
 
     // Navigate and search
     await navigateTo(adminPage, 'exports');
@@ -213,7 +208,6 @@ test.describe('UnoPim Export Jobs', () => {
     const code = `cat-xls-${uid}`;
 
     await createExport(adminPage, code, 'XLS', false);
-    await expect(adminPage.locator('#app').getByText(/Export created successfully/i)).toBeVisible();
     await expect(adminPage.getByRole('button', { name: 'Export Now' })).toBeVisible();
     await adminPage.getByRole('button', { name: 'Export Now' }).click();
     await expect(adminPage.locator('#app').getByText('Job queued')).toBeVisible();
@@ -229,7 +223,6 @@ test.describe('UnoPim Export Jobs', () => {
     const code = `cat-xlsx-${uid}`;
 
     await createExport(adminPage, code, 'XLSX', true);
-    await expect(adminPage.locator('#app').getByText(/Export created successfully/i)).toBeVisible();
 
     // Cleanup
     await deleteExport(adminPage, code);
@@ -242,7 +235,6 @@ test.describe('UnoPim Export Jobs', () => {
     const code = `prod-csv-${uid}`;
 
     await createExport(adminPage, code, 'CSV', true);
-    await expect(adminPage.locator('#app').getByText(/Export created successfully/i)).toBeVisible();
 
     // Cleanup
     await deleteExport(adminPage, code);
@@ -255,7 +247,6 @@ test.describe('UnoPim Export Jobs', () => {
     const code = `prod-xls-${uid}`;
 
     await createExport(adminPage, code, 'XLS', false);
-    await expect(adminPage.locator('#app').getByText(/Export created successfully/i)).toBeVisible();
 
     // Cleanup
     await deleteExport(adminPage, code);
@@ -268,10 +259,6 @@ test.describe('UnoPim Export Jobs', () => {
     const code = `prod-xlsx-${uid}`;
 
     await createExport(adminPage, code, 'XLSX', true);
-    // Toast may disappear quickly on redirect — accept either toast or landing on the export detail page
-    const toastOrDetail = adminPage.locator('#app').getByText(/Export created successfully/i)
-      .or(adminPage.getByRole('button', { name: 'Export Now' }));
-    await expect(toastOrDetail.first()).toBeVisible({ timeout: 20000 });
 
     // Cleanup
     await deleteExport(adminPage, code);

@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, searchInDataGrid } = require('../../utils/helpers');
+const { navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Fill channel creation form and submit.
@@ -55,8 +55,7 @@ async function createChannel(adminPage, code, name) {
   await navigateTo(adminPage, 'channels');
   await adminPage.getByRole('link', { name: 'Create Channel' }).click();
   await fillChannelForm(adminPage, { code, name });
-  await adminPage.getByRole('button', { name: 'Save Channel' }).click();
-  await expect(adminPage.locator('#app').getByText(/Channel created successfully/i)).toBeVisible();
+  await clickSaveAndExpect(adminPage, 'Save Channel', /Channel created successfully/i);
 }
 
 /**
@@ -149,8 +148,7 @@ test.describe('Channel Management', () => {
     await navigateTo(adminPage, 'channels');
     await adminPage.getByRole('link', { name: 'Create Channel' }).click();
     await fillChannelForm(adminPage, { code, name: '' });
-    await adminPage.getByRole('button', { name: 'Save Channel' }).click();
-    await expect(adminPage.locator('#app').getByText(/Channel created successfully/i)).toBeVisible();
+    await clickSaveAndExpect(adminPage, 'Save Channel', /Channel created successfully/i);
 
     // Cleanup
     await deleteChannel(adminPage, code);
@@ -196,8 +194,7 @@ test.describe('Channel Management', () => {
     await row.locator('span[title="Edit"]').first().click();
     await adminPage.waitForLoadState('networkidle');
     await adminPage.locator('input[name="en_US\\[name\\]"]').fill(`${uid} Updated`);
-    await adminPage.getByRole('button', { name: 'Save Channel' }).click();
-    await expect(adminPage.locator('#app').getByText(/Update Channel Successfully/i)).toBeVisible();
+    await clickSaveAndExpect(adminPage, 'Save Channel', /Update Channel Successfully/i);
 
     // Cleanup
     await deleteChannel(adminPage, code);

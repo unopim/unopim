@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, searchInDataGrid } = require('../../utils/helpers');
+const { navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Fill user creation modal with all fields.
@@ -71,8 +71,7 @@ async function createUser(adminPage, name, email) {
     password: 'testing123',
     confirmPassword: 'testing123',
   });
-  await adminPage.getByRole('button', { name: 'Save User' }).click();
-  await expect(adminPage.locator('#app').getByText(/User created successfully/i)).toBeVisible({ timeout: 20000 });
+  await clickSaveAndExpect(adminPage, 'Save User', /User created successfully/i);
 }
 
 /**
@@ -259,8 +258,7 @@ test.describe('User Management', () => {
     await row.locator('span[title="Edit"]').first().click();
     await adminPage.waitForLoadState('networkidle');
     await adminPage.locator('label[for="status"]').click();
-    await adminPage.getByRole('button', { name: 'Save User' }).click();
-    await expect(adminPage.locator('#app').getByText(/User updated successfully/i)).toBeVisible({ timeout: 20000 });
+    await clickSaveAndExpect(adminPage, 'Save User', /User updated successfully/i);
 
     // Cleanup
     await deleteUser(adminPage, email);

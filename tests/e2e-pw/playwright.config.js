@@ -15,7 +15,7 @@ module.exports = defineConfig({
   workers: workerCount,
   reporter: [['html', { outputFolder: 'playwright-report', open: 'never' }]],
   timeout: process.env.CI ? 120_000 : 60_000,
-  expect: { timeout: 15_000 },
+  expect: { timeout: 20_000 },
   globalSetup: require.resolve('./global-setup.js'),
   use: {
     baseURL: process.env.BASE_URL || 'http://127.0.0.1:8000',
@@ -23,7 +23,7 @@ module.exports = defineConfig({
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'off',
-    actionTimeout: 15_000,
+    actionTimeout: 30_000,
     navigationTimeout: 60_000,
   },
   projects: [

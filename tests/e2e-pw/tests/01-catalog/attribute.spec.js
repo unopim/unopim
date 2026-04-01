@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid } = require('../../utils/helpers');
+const { navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Create an attribute via UI and land on the edit page.
@@ -253,8 +253,7 @@ test.describe('UnoPim Attribute', () => {
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.locator('input[name="en_US\\[name\\]"]').fill('prudact nem');
     await adminPage.locator('#is_required').nth(1).click();
-    await adminPage.getByRole('button', { name: 'Save Attribute' }).click();
-    await expect(adminPage.locator('#app').getByText(/Attribute Updated Successfully/i)).toBeVisible();
+    await clickSaveAndExpect(adminPage, 'Save Attribute', /Attribute Updated Successfully/i);
 
     // Cleanup
     await deleteAttribute(adminPage, code);
@@ -732,8 +731,7 @@ test.describe('Swatch Type Attribute Option', () => {
     await expect(adminPage.locator('#app').getByText('Add Row')).toBeVisible();
     await addTextSwatchOption(adminPage, `red_${uid}`, 'Red');
     await addTextSwatchOption(adminPage, `blue_${uid}`, 'Blue');
-    await adminPage.getByRole('button', { name: 'Save Attribute' }).click();
-    await expect(adminPage.locator('#app').getByText(/Attribute Updated Successfully/i)).toBeVisible();
+    await clickSaveAndExpect(adminPage, 'Save Attribute', /Attribute Updated Successfully/i);
     // Cleanup
     await deleteAttribute(adminPage, code);
   });
@@ -804,8 +802,7 @@ test.describe('Swatch Type Attribute Option', () => {
     await expect(adminPage.locator('#app').getByText('Add Row')).toBeVisible();
     await addColorSwatchOption(adminPage, `red_${uid}`, 'Red', '#ff0000');
     await addColorSwatchOption(adminPage, `aqua_${uid}`, 'Aqua Blue', '#00faf6');
-    await adminPage.getByRole('button', { name: 'Save Attribute' }).click();
-    await expect(adminPage.locator('#app').getByText(/Attribute Updated Successfully/i)).toBeVisible();
+    await clickSaveAndExpect(adminPage, 'Save Attribute', /Attribute Updated Successfully/i);
     // Cleanup
     await deleteAttribute(adminPage, code);
   });
@@ -878,8 +875,7 @@ test.describe('Swatch Type Attribute Option', () => {
     await addImageSwatchOption(adminPage, `stripes_${uid}`, 'Stripes Pattern', 'assets/stripes.jpg');
     await addImageSwatchOption(adminPage, `dots_${uid}`, 'Dots Pattern', 'assets/dotted.png');
     await addImageSwatchOption(adminPage, `checked_${uid}`, 'Checked Pattern', 'assets/check.jpeg');
-    await adminPage.getByRole('button', { name: 'Save Attribute' }).click();
-    await expect(adminPage.locator('#app').getByText(/Attribute Updated Successfully/i)).toBeVisible();
+    await clickSaveAndExpect(adminPage, 'Save Attribute', /Attribute Updated Successfully/i);
     // Cleanup
     await deleteAttribute(adminPage, code);
   });

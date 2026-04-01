@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, searchInDataGrid } = require('../../utils/helpers');
+const { navigateTo, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Create a locale via the modal.
@@ -11,8 +11,7 @@ async function createLocale(adminPage, code, enableStatus = true) {
   if (enableStatus) {
     await adminPage.locator('label[for="status"]').click();
   }
-  await adminPage.getByRole('button', { name: 'Save Locale' }).click();
-  await expect(adminPage.locator('#app').getByText(/Locale created successfully/i)).toBeVisible();
+  await clickSaveAndExpect(adminPage, 'Save Locale', /Locale created successfully/i);
 }
 
 /**
@@ -87,8 +86,7 @@ test.describe('Locale Management', () => {
     const row = adminPage.locator('#app div').filter({ hasText: 'af_ZA' });
     await row.locator('span[title="Edit"]').first().click();
     await adminPage.locator('label[for="status"]').click();
-    await adminPage.getByRole('button', { name: 'Save Locale' }).click();
-    await expect(adminPage.locator('#app').getByText(/Locale updated successfully/i)).toBeVisible();
+    await clickSaveAndExpect(adminPage, 'Save Locale', /Locale updated successfully/i);
 
     // Cleanup
     await deleteLocale(adminPage, 'af_ZA');

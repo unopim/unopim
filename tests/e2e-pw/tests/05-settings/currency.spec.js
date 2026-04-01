@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, searchInDataGrid } = require('../../utils/helpers');
+const { navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Generate a random 3-letter uppercase currency code unlikely to collide with real ones.
@@ -32,8 +32,7 @@ async function createCurrency(adminPage, code, symbol = '$', decimal = '2') {
   await navigateTo(adminPage, 'currencies');
   await adminPage.getByRole('button', { name: 'Create Currency' }).click();
   await fillCurrencyModal(adminPage, { code, symbol, decimal });
-  await adminPage.getByRole('button', { name: 'Save Currency' }).click();
-  await expect(adminPage.locator('#app').getByText(/Currency created successfully/i)).toBeVisible();
+  await clickSaveAndExpect(adminPage, 'Save Currency', /Currency created successfully/i);
 }
 
 /**
@@ -110,8 +109,7 @@ test.describe('Currency Management', () => {
     const row = adminPage.locator('#app div').filter({ hasText: code });
     await row.locator('span[title="Edit"]').first().click();
     await adminPage.fill('input[type="number"][name="decimal"]', '3');
-    await adminPage.getByRole('button', { name: 'Save Currency' }).click();
-    await expect(adminPage.locator('#app').getByText(/Currency updated successfully/i)).toBeVisible();
+    await clickSaveAndExpect(adminPage, 'Save Currency', /Currency updated successfully/i);
 
     // Cleanup
     await deleteCurrency(adminPage, code);

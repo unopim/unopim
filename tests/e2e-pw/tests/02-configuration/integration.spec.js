@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, searchInDataGrid } = require('../../utils/helpers');
+const { navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Delete ALL existing integrations so admin_id is free for new ones.
@@ -31,10 +31,7 @@ async function createIntegration(adminPage, name) {
   await adminPage.getByRole('textbox', { name: 'Name' }).fill(name);
   await adminPage.locator('input[name="admin_id"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
   await adminPage.getByRole('option').first().click();
-  await adminPage.getByRole('button', { name: 'Save' }).click();
-  // Wait for redirect to the edit page (toast may disappear before assertion)
-  await adminPage.waitForURL(/\/admin\/integrations\/api-keys\/edit\//, { timeout: 20000 }).catch(() => {});
-  await adminPage.waitForLoadState('networkidle');
+  await clickSaveAndExpect(adminPage, 'Save', /API Integration is created successfully/i, /\/admin\/integrations\/api-keys\/edit\//);
 }
 
 /**
@@ -211,8 +208,7 @@ test.describe('UnoPim Integration API Keys', () => {
     await row.locator('span[title="Edit"]').first().click();
     await adminPage.waitForLoadState('load');
     await adminPage.getByRole('textbox', { name: 'Name' }).fill(updatedName);
-    await adminPage.getByRole('button', { name: 'Save' }).click();
-    await expect(adminPage.locator('#app').getByText(/API Integration is updated successfully/i)).toBeVisible({ timeout: 20000 });
+    await clickSaveAndExpect(adminPage, 'Save', /API Integration is updated successfully/i);
 
     await deleteIntegration(adminPage, updatedName);
   });

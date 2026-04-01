@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, searchInDataGrid } = require('../../utils/helpers');
+const { navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Create an "All" permission role via the UI.
@@ -12,8 +12,7 @@ async function createAdminRole(adminPage, name, description = 'Full access role'
   await adminPage.getByRole('option', { name: 'All' }).locator('span').first().click();
   await adminPage.getByRole('textbox', { name: 'Name' }).fill(name);
   await adminPage.getByRole('textbox', { name: 'Description' }).fill(description);
-  await adminPage.getByRole('button', { name: 'Save Role' }).click();
-  await expect(adminPage.locator('#app').getByText(/Roles Created Successfully/i)).toBeVisible();
+  await clickSaveAndExpect(adminPage, 'Save Role', /Roles Created Successfully/i);
 }
 
 /**
@@ -34,12 +33,7 @@ async function createCustomRole(adminPage, name, description, permissions = ['Da
   await adminPage.getByRole('textbox', { name: 'Name' }).fill(name);
   await adminPage.getByRole('textbox', { name: 'Description' }).fill(description);
 
-  const saveResponse = adminPage.waitForResponse(
-    resp => resp.url().includes('/roles') && resp.request().method() === 'POST'
-  );
-  await adminPage.getByRole('button', { name: 'Save Role' }).click();
-  await saveResponse;
-  await expect(adminPage.locator('#app').getByText(/Roles Created Successfully/i)).toBeVisible();
+  await clickSaveAndExpect(adminPage, 'Save Role', /Roles Created Successfully/i);
 }
 
 /**
@@ -149,8 +143,7 @@ test.describe('Role Management', () => {
     await row.locator('span[title="Edit"]').first().click();
     await adminPage.waitForLoadState('networkidle');
     await adminPage.getByRole('textbox', { name: 'Description' }).fill('Updated full access of UnoPim');
-    await adminPage.getByRole('button', { name: 'Save Role' }).click();
-    await expect(adminPage.locator('#app').getByText(/Roles is updated successfully/i)).toBeVisible();
+    await clickSaveAndExpect(adminPage, 'Save Role', /Roles is updated successfully/i);
 
     // Cleanup
     await deleteRole(adminPage, roleName);
@@ -199,8 +192,7 @@ test.describe('Role Management', () => {
     const categoriesLabel = adminPage.locator('label').filter({ hasText: 'Categories' }).locator('span').first();
     await categoriesLabel.waitFor({ state: 'visible', timeout: 10000 });
     await categoriesLabel.click();
-    await adminPage.getByRole('button', { name: 'Save Role' }).click();
-    await expect(adminPage.locator('#app').getByText(/Roles is updated successfully/i)).toBeVisible();
+    await clickSaveAndExpect(adminPage, 'Save Role', /Roles is updated successfully/i);
 
     // Cleanup
     await deleteRole(adminPage, roleName);

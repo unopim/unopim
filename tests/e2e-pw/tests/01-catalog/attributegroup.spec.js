@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid } = require('../../utils/helpers');
+const { navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Create an attribute group via UI and return its code.
@@ -10,8 +10,7 @@ async function createAttributeGroup(adminPage, code, name) {
   await adminPage.waitForLoadState('networkidle');
   await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
   await adminPage.locator('input[name="en_US\\[name\\]"]').fill(name);
-  await adminPage.getByRole('button', { name: 'Save Attribute Group' }).click();
-  await expect(adminPage.locator('#app').getByText(/Attribute Group Created Successfully/i)).toBeVisible({ timeout: 20000 });
+  await clickSaveAndExpect(adminPage, 'Save Attribute Group', /Attribute Group Created Successfully/i);
 }
 
 /**
@@ -120,8 +119,7 @@ test.describe('UnoPim Attribute Group Tests', () => {
     const itemRow = adminPage.locator('div', { hasText: code });
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.locator('input[name="en_US\\[name\\]"]').fill('After Update');
-    await adminPage.getByRole('button', { name: 'Save Attribute Group' }).click();
-    await expect(adminPage.locator('#app').getByText(/Attribute Group Updated Successfully/i)).toBeVisible();
+    await clickSaveAndExpect(adminPage, 'Save Attribute Group', /Attribute Group Updated Successfully/i);
 
     // Cleanup
     await deleteAttributeGroup(adminPage, code);

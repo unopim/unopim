@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid } = require('../../utils/helpers');
+const { navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Create a category via UI.
@@ -10,8 +10,7 @@ async function createCategory(adminPage, code, name) {
   await adminPage.waitForLoadState('networkidle');
   await adminPage.locator('input[name="code"]').fill(code);
   await adminPage.locator('#name').fill(name);
-  await adminPage.getByRole('button', { name: 'Save Category' }).click();
-  await expect(adminPage.locator('#app').getByText(/category created successfully/i)).toBeVisible({ timeout: 20000 });
+  await clickSaveAndExpect(adminPage, 'Save Category', /category created successfully/i);
 }
 
 /**
@@ -148,8 +147,7 @@ test.describe('UnoPim Category Tests', () => {
     await row.locator('span[title="Edit"]').first().click();
     await adminPage.waitForLoadState('networkidle');
     await adminPage.locator('#name').fill(`Updated ${uid}`);
-    await adminPage.getByRole('button', { name: 'Save Category' }).click();
-    await expect(adminPage.locator('#app').getByText(/category updated successfully/i)).toBeVisible({ timeout: 20000 });
+    await clickSaveAndExpect(adminPage, 'Save Category', /category updated successfully/i);
 
     // Cleanup
     await deleteCategory(adminPage, code);

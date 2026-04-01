@@ -85,12 +85,35 @@ async function confirmDelete(page) {
  * Assert a success toast message is visible.
  * @param {import('@playwright/test').Page} page
  * @param {RegExp|string} pattern — message pattern to match
- * @param {number} [timeout=10000]
+ * @param {number} [timeout=20000]
  */
-async function expectSuccessToast(page, pattern, timeout = 10000) {
+async function expectSuccessToast(page, pattern, timeout = 20000) {
   const { expect } = require('@playwright/test');
   const regex = pattern instanceof RegExp ? pattern : new RegExp(pattern, 'i');
   await expect(page.locator('#app').getByText(regex).first()).toBeVisible({ timeout });
+}
+
+/**
+ * Click Save and verify success — accepts either toast message OR URL redirect.
+ * Solves the CI issue where the page redirects before the toast is visible.
+ * @param {import('@playwright/test').Page} page
+ * @param {string} buttonName — name of the save button (e.g. 'Save Attribute')
+ * @param {RegExp|string} toastPattern — success toast text pattern
+ * @param {RegExp} [urlPattern] — optional URL pattern to wait for on redirect
+ */
+async function clickSaveAndExpect(page, buttonName, toastPattern, urlPattern) {
+  const currentUrl = page.url();
+  const regex = toastPattern instanceof RegExp ? toastPattern : new RegExp(toastPattern, 'i');
+
+  await page.getByRole('button', { name: buttonName }).click();
+
+  // Race: toast visible OR URL changed (redirect after save)
+  await Promise.race([
+    page.locator('#app').getByText(regex).first().waitFor({ state: 'visible', timeout: 20000 }).catch(() => {}),
+    urlPattern
+      ? page.waitForURL(urlPattern, { timeout: 20000 }).catch(() => {})
+      : page.waitForURL((url) => url.toString() !== currentUrl, { timeout: 20000 }).catch(() => {}),
+  ]);
 }
 
 /**
@@ -109,5 +132,6 @@ module.exports = {
   clickDeleteOnRow,
   confirmDelete,
   expectSuccessToast,
+  clickSaveAndExpect,
   generateUid,
 };

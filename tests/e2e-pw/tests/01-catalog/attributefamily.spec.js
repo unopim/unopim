@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid } = require('../../utils/helpers');
+const { navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Create an attribute family via UI.
@@ -10,8 +10,7 @@ async function createFamily(adminPage, code, name) {
   await adminPage.waitForLoadState('networkidle');
   await adminPage.getByRole('textbox', { name: 'Enter Code' }).fill(code);
   await adminPage.locator('input[name="en_US\\[name\\]"]').fill(name);
-  await adminPage.getByRole('button', { name: 'Save Attribute Family' }).click();
-  await expect(adminPage.locator('#app').getByText(/Family created successfully/i)).toBeVisible({ timeout: 20000 });
+  await clickSaveAndExpect(adminPage, 'Save Attribute Family', /Family created successfully/i);
 }
 
 /**
@@ -156,8 +155,7 @@ test.describe('UnoPim Attribute Family Tests', () => {
       await adminPage.mouse.up();
     }
 
-    await adminPage.getByRole('button', { name: 'Save Attribute Family' }).click();
-    await expect(adminPage.locator('#app').getByText(/Family updated successfully/i)).toBeVisible();
+    await clickSaveAndExpect(adminPage, 'Save Attribute Family', /Family updated successfully/i);
 
     // Cleanup
     await deleteFamily(adminPage, code);

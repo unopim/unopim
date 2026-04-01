@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid } = require('../../utils/helpers');
+const { navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Create a product import job with given code and file.
@@ -12,8 +12,7 @@ async function createProductImport(adminPage, code, filePath = 'assets/1k_produc
   await adminPage.getByRole('option', { name: 'Products' }).locator('span').first().click();
   const fileInput = adminPage.locator('input[type="file"]').first();
   await fileInput.setInputFiles(filePath);
-  await adminPage.getByRole('button', { name: 'Save Import' }).click();
-  await adminPage.waitForLoadState('networkidle');
+  await clickSaveAndExpect(adminPage, 'Save Import', /Import created successfully/i);
 }
 
 /**
@@ -25,8 +24,7 @@ async function createCategoryImport(adminPage, code, filePath = 'assets/1k_produ
   await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
   const fileInput = adminPage.locator('input[type="file"]').first();
   await fileInput.setInputFiles(filePath);
-  await adminPage.getByRole('button', { name: 'Save Import' }).click();
-  await adminPage.waitForLoadState('networkidle');
+  await clickSaveAndExpect(adminPage, 'Save Import', /Import created successfully/i);
 }
 
 /**
@@ -171,8 +169,6 @@ test.describe('UnoPim Import Jobs', () => {
     const code = `prod-imp-${uid}`;
 
     await createProductImport(adminPage, code);
-    await expect(adminPage.locator('#app').getByText(/Import created successfully/i)
-      .or(adminPage.getByRole('button', { name: 'Import Now' })).first()).toBeVisible({ timeout: 20000 });
     await adminPage.getByRole('button', { name: 'Import Now' }).click();
     await expect(adminPage.locator('#app').getByText('Job queued')).toBeVisible();
 
@@ -188,8 +184,6 @@ test.describe('UnoPim Import Jobs', () => {
 
     // Create the first import
     await createProductImport(adminPage, code);
-    await expect(adminPage.locator('#app').getByText(/Import created successfully/i)
-      .or(adminPage.getByRole('button', { name: 'Import Now' })).first()).toBeVisible({ timeout: 20000 });
 
     // Try to create another with the same code
     await createProductImport(adminPage, code);
@@ -206,8 +200,6 @@ test.describe('UnoPim Import Jobs', () => {
     const code = `search-imp-${uid}`;
 
     await createProductImport(adminPage, code);
-    await expect(adminPage.locator('#app').getByText(/Import created successfully/i)
-      .or(adminPage.getByRole('button', { name: 'Import Now' })).first()).toBeVisible({ timeout: 20000 });
 
     // Search
     await navigateTo(adminPage, 'imports');
@@ -246,8 +238,6 @@ test.describe('UnoPim Import Jobs', () => {
 
     // Create
     await createProductImport(adminPage, code);
-    await expect(adminPage.locator('#app').getByText(/Import created successfully/i)
-      .or(adminPage.getByRole('button', { name: 'Import Now' })).first()).toBeVisible({ timeout: 20000 });
 
     // Navigate and search
     await navigateTo(adminPage, 'imports');
@@ -297,8 +287,6 @@ test.describe('UnoPim Import Jobs', () => {
     const code = `cat-imp-${uid}`;
 
     await createCategoryImport(adminPage, code);
-    await expect(adminPage.locator('#app').getByText(/Import created successfully/i)
-      .or(adminPage.getByRole('button', { name: 'Import Now' })).first()).toBeVisible({ timeout: 20000 });
 
     // Cleanup
     await deleteImport(adminPage, code);

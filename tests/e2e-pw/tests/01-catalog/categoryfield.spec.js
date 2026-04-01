@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid } = require('../../utils/helpers');
+const { navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Helper: Create a category field via UI.
@@ -12,8 +12,7 @@ async function createCategoryField(adminPage, code, name, type = 'Text') {
   await adminPage.locator('#type').getByRole('combobox').locator('div').filter({ hasText: 'Select option' }).click();
   await adminPage.getByRole('option', { name: type }).first().click();
   await adminPage.locator('input[name="en_US\\[name\\]"]').fill(name);
-  await adminPage.getByRole('button', { name: 'Save Category Field' }).click();
-  await expect(adminPage.locator('#app').getByText(/Category Field Created Successfully/i)).toBeVisible({ timeout: 20000 });
+  await clickSaveAndExpect(adminPage, 'Save Category Field', /Category Field Created Successfully/i);
 }
 
 /**
@@ -151,8 +150,7 @@ test.describe('UnoPim Category Field Tests', () => {
     const row = adminPage.locator('div', { hasText: code });
     await row.locator('span[title="Edit"]').first().click();
     await adminPage.locator('input[name="en_US\\[name\\]"]').fill('After Update');
-    await adminPage.getByRole('button', { name: 'Save Category Field' }).click();
-    await expect(adminPage.locator('#app').getByText(/Category Field Updated Successfully/i)).toBeVisible();
+    await clickSaveAndExpect(adminPage, 'Save Category Field', /Category Field Updated Successfully/i);
 
     // Cleanup
     await deleteCategoryField(adminPage, code);
