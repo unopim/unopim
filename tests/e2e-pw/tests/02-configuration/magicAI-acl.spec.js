@@ -43,7 +43,7 @@ test.describe("UnoPim Magic AI ACL Test Cases", () => {
             waitUntil: "networkidle",
         });
         await expect(
-            adminPage.getByText("AI Platforms", { exact: true }).first(),
+            adminPage.locator('#app').getByText("AI Platforms", { exact: true }).first(),
         ).toBeVisible();
 
         // Check sidebar visibility

@@ -2,6 +2,7 @@ const { test, expect } = require('../../utils/fixtures');
 
 test.describe('UnoPim MyAccount', () => {
 test('My Account', async ({ adminPage }) => {
+  await adminPage.waitForLoadState('networkidle');
   const profileBtn = adminPage.locator('header').getByRole('button').last();
   await profileBtn.click();
   await adminPage.getByRole('link', { name: 'My Account' }).click();
