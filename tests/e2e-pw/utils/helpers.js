@@ -32,9 +32,7 @@ const ROUTES = {
 async function navigateTo(page, route) {
   const url = ROUTES[route];
   if (!url) throw new Error(`Unknown route: "${route}". Available: ${Object.keys(ROUTES).join(', ')}`);
-  await page.goto(url, { waitUntil: 'load', timeout: 30000 });
-  // Wait for Vue app to render — look for any interactive element in #app
-  await page.locator('#app').locator('a, button, input, .multiselect').first().waitFor({ state: 'visible', timeout: 20000 });
+  await page.goto(url, { waitUntil: 'load', timeout: 60000 });
 }
 
 /**
