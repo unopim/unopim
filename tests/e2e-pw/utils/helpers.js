@@ -32,9 +32,9 @@ const ROUTES = {
 async function navigateTo(page, route) {
   const url = ROUTES[route];
   if (!url) throw new Error(`Unknown route: "${route}". Available: ${Object.keys(ROUTES).join(', ')}`);
-  await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
-  // Wait for Vue DataGrid to render (skeleton loaders disappear)
-  await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
+  await page.goto(url, { waitUntil: 'load', timeout: 30000 });
+  // Wait for Vue app to render — look for any interactive element in #app
+  await page.locator('#app').locator('a, button, input, .multiselect').first().waitFor({ state: 'visible', timeout: 20000 });
 }
 
 /**
@@ -45,9 +45,12 @@ async function navigateTo(page, route) {
  */
 async function searchInDataGrid(page, text, placeholder = 'Search') {
   const searchInput = page.getByPlaceholder(placeholder).first();
+  await searchInput.waitFor({ state: 'visible', timeout: 20000 });
   await searchInput.fill(text);
   await page.keyboard.press('Enter');
-  await page.waitForLoadState('networkidle');
+  // Wait for the DataGrid to refresh after search
+  await page.waitForLoadState('load');
+  await page.waitForTimeout(500);
 }
 
 /**
