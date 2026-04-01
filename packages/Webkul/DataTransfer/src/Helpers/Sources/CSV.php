@@ -13,6 +13,11 @@ class CSV extends AbstractSource
     protected mixed $reader;
 
     /**
+     * Maximum line length for fgetcsv (0 = unlimited)
+     */
+    protected int $maxLineLength = 0;
+
+    /**
      * Create a new helper instance.
      *
      * @return void
@@ -29,7 +34,15 @@ class CSV extends AbstractSource
         try {
             $this->reader = fopen(Storage::disk('private')->path($filePath), 'r');
 
-            $this->columnNames = fgetcsv($this->reader, 4096, $delimiter);
+            /**
+             * Set a larger read buffer for better I/O performance on large files.
+             * This reduces the number of system read calls.
+             */
+            if (is_resource($this->reader)) {
+                stream_set_read_buffer($this->reader, 65536);
+            }
+
+            $this->columnNames = fgetcsv($this->reader, $this->maxLineLength, $delimiter);
 
             $this->totalColumns = count($this->columnNames);
         } catch (\Exception $e) {
@@ -83,7 +96,7 @@ class CSV extends AbstractSource
      */
     protected function getNextRow(): array
     {
-        $parsed = fgetcsv($this->reader, 4096, $this->delimiter);
+        $parsed = fgetcsv($this->reader, $this->maxLineLength, $this->delimiter);
 
         if (is_array($parsed) && count($parsed) != $this->totalColumns) {
             foreach ($parsed as $element) {

@@ -11,7 +11,6 @@ return [
             'powered-by'             => ':unopim-аас дэмжигдсэн,',
             'open-source-project-by' => ':webkul-ийн нээлттэй эхийн төсөл.',
         ],
-
         'forget-password' => [
             'create' => [
                 'email'                  => 'Бүрэн и-мэйл',
@@ -26,7 +25,6 @@ return [
                 'open-source-project-by' => ':webkul-ийн нээлттэй эхийн төсөл.',
             ],
         ],
-
         'reset-password' => [
             'back-link-title'        => 'Нэвтрэхийн тулд буцах уу?',
             'confirm-password'       => 'Нууц үгээ баталгаажуулах',
@@ -38,7 +36,6 @@ return [
             'open-source-project-by' => ':webkul-ийн нээлттэй эхийн төсөл.',
         ],
     ],
-
     'notifications' => [
         'description-text' => 'Бүх мэдэгдлийг жагсаа',
         'marked-success'   => 'Мэдэгдэл амжилттай тэмдэглэгдсэн байна',
@@ -55,7 +52,6 @@ return [
             'processing' => 'Хүнсний бүтээгдэхүүний боловсруулалт',
         ],
     ],
-
     'account' => [
         'edit' => [
             'back-btn'          => 'Буцах',
@@ -76,25 +72,89 @@ return [
             'user-timezone'     => 'Цагийн бүс',
         ],
     ],
-
     'dashboard' => [
-        'index' => [
-            'title'            => 'Хотер самбар',
-            'user-info'        => 'Хурдан хянах, юу вэ \'s count in your PIM',
-            'user-name'        => 'Сайн уу!:user_name',
-            'catalog-details'  => 'Каталог',
-            'total-families'   => 'Нийт гэр бүлүүд',
-            'total-attributes' => 'Нийт шинж чанарууд',
-            'total-groups'     => 'Нийт бүлгүүрүүд',
-            'total-categories' => 'Нийт ангилал',
-            'total-products'   => 'Нийт бүтээгдэхүүн',
-            'settings-details' => 'КЛлаг КАРГлагийн бүтэц',
-            'total-locales'    => 'Нийт нутаг',
-            'total-currencies' => 'Нийт валютууд',
-            'total-channels'   => 'Нийт сувгууд',
+        'invalid-type' => 'Хяналтын самбарын виджетийн төрөл буруу байна.',
+        'index'        => [
+            'title'                => 'Хотер самбар',
+            'user-info'            => 'Хурдан хянах, юу вэ \'s count in your PIM',
+            'user-name'            => 'Сайн уу!:user_name',
+            'catalog-details'      => 'Каталог',
+            'total-families'       => 'Нийт гэр бүлүүд',
+            'total-attributes'     => 'Нийт шинж чанарууд',
+            'total-groups'         => 'Нийт бүлгүүрүүд',
+            'total-categories'     => 'Нийт ангилал',
+            'total-products'       => 'Нийт бүтээгдэхүүн',
+            'settings-details'     => 'КЛлаг КАРГлагийн бүтэц',
+            'total-locales'        => 'Нийт нутаг',
+            'total-currencies'     => 'Нийт валютууд',
+            'total-channels'       => 'Нийт сувгууд',
+            'completeness'         => 'Бүрэн байдал',
+            'active'               => 'Идэвхтэй',
+            'inactive'             => 'Идэвхгүй',
+            'simple'               => 'Энгийн',
+            'configurable'         => 'Тохируулах боломжтой',
+            'product-stats'        => 'Бүтээгдэхүүний статистик',
+            'product-type-dist'    => 'Бүтээгдэхүүний төрөл тараалт',
+            'products-by-status'   => 'Бүтээгдэхүүнүүдийн статусын дагуу',
+            'products-over-time'   => 'Бүтээгдэхүүний идэвхжил (Сүүлийн 7 өдөр)',
+            'legend-created'       => 'Бүтээгдсэн',
+            'legend-updated'       => 'Шинэчлэгдсэн',
+            'recent-activity'      => 'Сүүлийн үйл ажиллагаа',
+            'no-activity'          => 'Сүүлийн үед үйл ажиллагаа олдсонгүй.',
+            'updated'              => 'шинэчлэгдсэн',
+            'created'              => 'бүтээгдсэн',
+            'deleted'              => 'устгасан',
+            'ago'                  => 'өмнө',
+            'just-now'             => 'одоо л',
+            'data-transfer'        => 'Мэдээллийн шилжилт',
+            'no-jobs'              => 'Сүүлийн импорт/экспортын ажил олдсонгүй.',
+            'job-type-import'      => 'Импорт',
+            'job-type-export'      => 'Экспорт',
+            'job-state-completed'  => 'Гүйцэтгэсэн',
+            'job-state-failed'     => 'Амжилтгүй',
+            'job-state-processing' => 'Боловсруулж байна',
+            'job-state-pending'    => 'Хүлээгдэж байна',
+            'job-state-validated'  => 'Баталгаажсан',
+            'rows-processed'       => 'Боловсруулсан мөрүүд',
+            'errors'               => 'Алдаанууд',
+            'quick-links'          => 'Түргэн холбоосууд',
+            'create-product'       => 'Бүтээгдэхүүн үүсгэх',
+            'import-data'          => 'Мэдээлэл импортлох',
+            'export-data'          => 'Мэдээлэл экспортлох',
+            'manage-attributes'    => 'Шинж чанаруудыг удирдах',
+            'view-all-activity'    => 'Бүгдийг харах',
+            'view-all-jobs'        => 'Бүгдийг харах',
+            'new-this-week'        => 'Энэ долоо хоногт шинэ',
+            'with-variants'        => 'Олон хувилбаруудтай',
+            'avg-completeness'     => 'Дундаж бүрэн байдал',
+            'enriched'             => 'Баяжуулсан',
+            'analytics-section'    => 'Аналитик',
+            'operations-section'   => 'Үйл ажиллагаа',
+            'needs-attention'      => 'Анхаарал шаардлагатай',
+            'unenriched-products'  => 'Баяжуулалгүй бүтээгдэхүүнүүд',
+            'failed-jobs-24h'      => 'Амжилтгүй ажлууд (24ц)',
+            'low-completeness'     => 'Бага бүрэн байдал',
+            'all-good'             => 'Бүгд сайн байна!',
+            'channel-readiness'    => 'Арван зургийн бэлэн байдал',
+            'ready-to-publish'     => 'нээлт хийхэд бэлэн',
+            'of'                   => 'of',
+            'products-ready'       => 'бүтээгдэхүүн бэлэн',
+            'no-readiness-data'    => 'Бүрэн байдалтай мэдээлэл одоогоор байхгүй.',
+            'entity-types'         => [
+                'product'          => 'Бүтээгдэхүүн',
+                'category'         => 'Ангилал',
+                'attribute'        => 'Шинж чанар',
+                'attribute-family' => 'Гэр бүл',
+                'attribute-group'  => 'Бүлэг',
+                'category-field'   => 'Ангиллын талбар',
+                'channel'          => 'Суваг',
+                'role'             => 'Үүрэг',
+                'job-instance'     => 'Ажил',
+                'webhook'          => 'Вэбхүүк',
+                'api-key'          => 'API түлхүүр',
+            ],
         ],
     ],
-
     'catalog' => [
         'products' => [
             'index' => [
@@ -104,8 +164,7 @@ return [
                 'magic-ai-error'            => 'Magic AI-ийн эрхийг шалгаж, зөв загвар сонгосон эсэхийг баталгаажуулна уу.',
                 'magic-ai-validate-error'   => 'Magic AI-ийн эрхийг шалгана уу.',
                 'magic-ai-validate-success' => 'Magic AI-ийн эрх амжилттай баталгаажлаа.',
-
-                'create' => [
+                'create'                    => [
                     'back-btn'                          => 'Буцах',
                     'configurable-attributes'           => 'Тохиромжтой шинж чанарууд',
                     'create-btn'                        => 'Бүтээгдэхүүн үүсгэх',
@@ -118,7 +177,6 @@ return [
                     'not-config-super-attributes-error' => 'Энэ ":super_attributes" утгатай супер шинж чанарууд олдсонгүй',
                     'sku-exists-error'                  => 'SKU нь үнэ цэнэтэй ":sku" аль хэдийн байгаа',
                 ],
-
                 'datagrid' => [
                     'active'                 => 'Идэвхтэй',
                     'attribute-family'       => 'Атрибутын гэр бүл',
@@ -148,49 +206,43 @@ return [
                     'update-status'          => 'Статтын шинэчлэлтийн',
                     'parent'                 => 'Хуучин аадчлал',
                     'parent-identifier'      => 'Эцэг эх: :sku',
+                    'created-at'             => 'Үүсгэсэн огноо',
+                    'updated-at'             => 'Шинэчилсэн огноо',
                 ],
             ],
-
             'edit' => [
-                'preview'  => 'Киноны урөдчилсан үзлэг',
-                'remove'   => 'Зөөх',
-                'save-btn' => 'Бүтээгдэхүүнийг хадгалах',
-                'title'    => 'Бүтээгдэхүүнийг засах',
-
+                'preview'    => 'Киноны урөдчилсан үзлэг',
+                'remove'     => 'Зөөх',
+                'save-btn'   => 'Бүтээгдэхүүнийг хадгалах',
+                'title'      => 'Бүтээгдэхүүнийг засах',
                 'categories' => [
                     'title' => 'Ангилал',
                 ],
-
                 'images' => [
                     'info'  => 'Зургийн нарийвчлал нь 560px x 609px шиг байх ёстой',
                     'title' => 'Түрнэгт',
                 ],
-
                 'videos' => [
                     'error' => ':attribute нь :max килобайтаас ихгүй байж болно. Жижиг файл сонгоно yy.',
                     'info'  => 'Видеоны дээд хэмжээ нь :size шиг байх ёстой.',
                     'title' => 'Видео бичлэг',
                 ],
-
                 'links' => [
                     'related-products' => [
                         'empty-info' => 'Холбоотой холболтын бүтээгдэхүүнийг нэмэх.',
                         'info'       => 'Үйлчлүүлэгчээс гадна үйлчлүүлэгч үзэж байгаа бөгөөд тэдгээрийг холбогдох бүтээгдэхүүнээр танилцуулж байна.',
                         'title'      => 'Холбоотой бүтээгдэхүүн',
                     ],
-
                     'up-sells' => [
                         'empty-info' => 'Борлуулалтын холбооны бүтээгдэхүүнийг нэмнэ.',
                         'info'       => 'Үйлчлүүлэгч одоо үзэж байгаа бүтээгдэхүүний дээд зэргийн эсвэл өндөр чанартай бүтээгдэхүүнээр зарагддаг.',
                         'title'      => 'Зарах бүтээгдэхүүн',
                     ],
-
                     'cross-sells' => [
                         'empty-info' => 'Борлуулах холбооны холболтын бүтээгдэхүүн нэмнэ.',
                         'info'       => 'Дэлгүүрийн тэрэгтэй зэргэлдээ, та \'ll find these \"impulse-buy\" products positioned as cross-sells to complement the items already added to your cart.',
                         'title'      => 'Хөндлөн зарах бүтээгдэхүүнүүд',
                     ],
-
                     'add-btn'           => 'Нэмэх',
                     'delete'            => 'Эдгээх',
                     'empty-info'        => ':type бүтээгдэхүүн нэмэхийн тулд.',
@@ -199,7 +251,6 @@ return [
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Хүнтгал',
                 ],
-
                 'types' => [
                     'configurable' => [
                         'add-btn'                            => 'Хувилбар нэмэх',
@@ -216,15 +267,13 @@ return [
                         'variant-attribute-option-not-found' => '":attributes" утгатай хувилбарын шинж чанар эсвэл сонголт олдсонгүй',
                         'supper-attribute-not-found'         => '":attribute" утгатай оройн хоол олдсонгүй',
                         'variant-given-exists'               => '":variants" утгатай энэ хувилбар аль хэдийн байна',
-
-                        'create' => [
+                        'create'                             => [
                             'description'            => 'Тодорхойлолт / төрөл анги',
                             'name'                   => 'Нэр',
                             'save-btn'               => 'Нэмэх',
                             'title'                  => 'Хувилбар нэмэх',
                             'variant-already-exists' => 'Энэ хувилбарууд аль хэдийн байгаа',
                         ],
-
                         'edit' => [
                             'disabled'        => 'Эрэмдэг зэрэмдэг',
                             'edit-info'       => 'Хэрэв та бүтээгдэхүүний мэдээллийг нарийвчлан шинэчлэхийг хүсч байвал, дараа нь очно уу',
@@ -240,7 +289,6 @@ return [
                             'title'           => 'Үр дун',
                             'weight'          => 'Жин',
                         ],
-
                         'mass-edit' => [
                             'add-images'          => 'Зургийг нэмэх',
                             'apply-to-all-btn'    => 'Бүгдэд нь хандана уу',
@@ -267,23 +315,31 @@ return [
                         ],
                     ],
                 ],
-
                 'translate' => [
-                    'translate-btn'            => 'Орчуулах',
-                    'title'                    => 'Орчуулах',
-                    'source-channel'           => 'Эх суваг',
-                    'locale'                   => 'Эх орон нутгийн тохиргоо',
-                    'translated-content'       => 'Орчуулагдсан агуулга',
-                    'translating'              => 'Орчуулж байна',
-                    'apply'                    => 'Хэрэглэх',
-                    'cancel'                   => 'Цуцлах',
-                    'target-locales'           => 'Зорилтот орон нутгийн тохиргоо',
-                    'target-channel'           => 'Зорилтот суваг',
-                    'attributes'               => 'Шинж чанарууд',
-                    'source-content'           => 'Эх агуулга',
-                    'tranlated-job-processed'  => 'Орчуулсан агуулгыг хадгалах ажил хийгдлээ.',
+                    'translate-btn'               => 'Орчуулах',
+                    'title'                       => 'Орчуулах',
+                    'source-channel'              => 'Эх суваг',
+                    'locale'                      => 'Эх орон нутгийн тохиргоо',
+                    'translated-content'          => 'Орчуулагдсан агуулга',
+                    'translating'                 => 'Орчуулж байна',
+                    'apply'                       => 'Хэрэглэх',
+                    'back'                        => 'Буцах',
+                    'cancel'                      => 'Цуцлах',
+                    'target-locales'              => 'Зорилтот орон нутгийн тохиргоо',
+                    'target-channel'              => 'Зорилтот суваг',
+                    'attributes'                  => 'Шинж чанарууд',
+                    'tranlated-job-processed'     => 'Орчуулсан агуулгыг хадгалах ажил хийгдлээ.',
+                    'step'                        => 'Алхам',
+                    'select-source'               => 'Эх сурвалж сонгох',
+                    'select-target'               => 'Зорилтот сонгох',
+                    'first-step-title'            => 'Алхам 1: Эх сурвалж суваг, хэл болон шинж чанаруудыг сонгох',
+                    'first-step-title-attributes' => 'Алхам 1: Эх сурвалж суваг болон хэлийг сонгох',
+                    'source-content'              => 'Эх агуулга',
+                    'second-step-title'           => 'Алхам 2: Зорилтот суваг болон хэлүүдийг сонгох',
+                    'target-content'              => 'Зорилтот агуулга',
+                    'next'                        => 'Дараах',
+                    'empty-translation-data'      => 'Эх сурвалж суваг болон хэлний үндсэн дээр орчуулах өгөгдөл байхгүй байна',
                 ],
-
                 'product-info' => [
                     'title'        => 'Бүтээгдэхүүний мэдээлэл',
                     'status'       => 'Төлөв',
@@ -293,6 +349,7 @@ return [
                     'created-at'   => 'Үүсгэсэн огноо',
                     'product-type' => 'Бүтээгдэхүүний төрөл',
                 ],
+                'more-actions' => 'Нэмэлт үйлдлүүд',
             ],
             'bulk-edit' => [
                 'validation' => [
@@ -305,27 +362,22 @@ return [
                     'select-attribute-or-family' => 'Дор хаяж нэг атрибут эсвэл атрибутын бүлгийг сонгоно уу.',
                     'failed'                     => 'Шалгалт амжилтгүй боллоо.',
                 ],
-
-                'modal'                      => [
+                'modal' => [
                     'title'            => 'Бөөнөөр засах атрибутууд',
                     'btn-cancel'       => 'Цуцлах',
                     'btn-proceed'      => 'Үргэлжлүүлэх',
                     'attribute-family' => 'Атрибутын бүлгийг сонгох',
                 ],
-
                 'index' => [
-                    'no-product'    => 'Бөөнөөр засах бараа сонгогдоогүй байна.',
+                    'no-product' => 'Бөөнөөр засах бараа сонгогдоогүй байна.',
                 ],
-
                 'filter' => [
-                    'many-product'      => 'Хэт олон бараа сонгогдсон байна.',
-                    'redirect-message'  => 'Бөөнөөр засах харагдац руу чиглүүлж байна.',
+                    'many-product'     => 'Хэт олон бараа сонгогдсон байна.',
+                    'redirect-message' => 'Бөөнөөр засах харагдац руу чиглүүлж байна.',
                 ],
-
                 'handle-save' => [
-                    'edit-success'  => 'Бөөнөөр засвар амжилттай.',
+                    'edit-success' => 'Бөөнөөр засвар амжилттай.',
                 ],
-
                 'id'              => 'ID',
                 'no-changes'      => 'Хадгалах өөрчлөлт алга.',
                 'success'         => 'Ажил амжилттай гүйцэтгэгдлээ.',
@@ -335,9 +387,8 @@ return [
                 'img-preview'     => 'Зургийн урьдчилсан харагдац',
                 'no-image'        => 'Зураг алга',
                 'img-fail'        => 'Зураг байршуулах амжилтгүй боллоо',
-                'no-opton'        => 'Сонголт алга',
+                'no-option'       => 'Сонголт байхгүй',
             ],
-
             'create-success'          => 'Бүтээгдэхүүн амжилттай бүтээгдсэн',
             'delete-failed'           => 'Бүтээгдэхүүнийг устгасан бүтэлгүйтэв',
             'delete-success'          => 'Бүтээгдэхүүн амжилттай устгасан',
@@ -351,13 +402,11 @@ return [
             'upload-success'          => 'Бүтээгдэхүүний файлыг амжилттай байршуулсан.',
             'update-failure'          => 'Бүтээгдэхүүнийг шинэчилж чадаагүй.',
         ],
-
         'attributes' => [
             'index' => [
                 'create-btn' => 'Атрибут үүсгэх',
                 'title'      => 'Тусгай чанар',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'channel-based'            => 'Судалгаа дээр суурилсан',
                     'code'                     => 'Хуулө цааз',
                     'created-at'               => 'Бүтэмж дээр бүтсэн',
@@ -375,7 +424,6 @@ return [
                     'delete-attribute-failure' => 'Энэ шинж чанарыг тохируулж болох бүтээгдэхүүнүүдэд ашиглагдаж байгаа тул устгах боломжгүй',
                 ],
             ],
-
             'create' => [
                 'add-attribute-options' => 'Аттрикийн сонголтыг нэмнэ үү',
                 'add-option'            => 'Нэмэх сонголт',
@@ -384,7 +432,7 @@ return [
                 'admin'                 => 'админ',
                 'admin-name'            => 'Админы нэр',
                 'back-btn'              => 'Буцах',
-                'boolean'               => 'Boolean',
+                'boolean'               => 'Логик',
                 'checkbox'              => 'Гэвчэлтэх цэг',
                 'code'                  => 'Хуулө цааз',
                 'color'                 => 'Өнгө',
@@ -398,13 +446,12 @@ return [
                 'enable-wysiwyg'        => 'Wysiwyg редакторыг идэвхжүүлэх',
                 'file'                  => 'Багажны хайрцаг',
                 'general'               => 'Жанжин',
-                'image'                 => 'Дүр',
                 'gallery'               => 'Галерей',
+                'image'                 => 'Дүр',
                 'input-options'         => 'Оруулах сонголтууд',
                 'input-validation'      => 'Орох орно',
                 'is-comparable'         => 'Аттрибутыг харьцуулж болно',
                 'is-configurable'       => 'Тохируулж болох бүтээгдэхүүнийг үүсгэхийн тулд ашиглана уу',
-                'is-filterable'         => 'Давхардсан навигацид ашиглана уу',
                 'is-required'           => 'Шаардлагатай',
                 'is-unique'             => 'Өвөрмөц юм',
                 'is-visible-on-front'   => 'Урд талын хуудсан дээрх бүтээгдэхүүний харагдах хуудсан дээр харагдах болно',
@@ -434,8 +481,8 @@ return [
                 'usable-in-grid'        => 'Сүлжээнд ашиглах боломжтой',
                 'is-filterable'         => 'Шүүж болох',
                 'ai-translate'          => 'ХИ Орчуулга',
-
-                'option' => [
+                'invalid-swatch-type'   => ':attribute нь :type төрлийн шинж чанарт :swatch_type өнгөний төрлийг ашиглахыг зөвшөөрөхгүй.',
+                'option'                => [
                     'color'    => 'Өнгөт сэлгэлт',
                     'dropdown' => 'Дусах',
                     'image'    => 'Зургийн залгуур',
@@ -443,7 +490,6 @@ return [
                     'text'     => 'Текст swatch',
                 ],
             ],
-
             'edit' => [
                 'add-attribute-options' => 'Аттрикийн сонголтыг нэмнэ үү',
                 'add-option'            => 'Нэмэх сонголт',
@@ -452,7 +498,7 @@ return [
                 'admin'                 => 'админ',
                 'admin-name'            => 'Админы нэр',
                 'back-btn'              => 'Буцах',
-                'boolean'               => 'Boolean',
+                'boolean'               => 'Логик',
                 'checkbox'              => 'Гэвчэлтэх цэг',
                 'code'                  => 'Хуулө цааз',
                 'color'                 => 'Өнгө',
@@ -467,12 +513,10 @@ return [
                 'file'                  => 'Багажны хайрцаг',
                 'general'               => 'Жанжин',
                 'image'                 => 'Дүр',
-                'gallery'               => 'Галерей',
                 'input-options'         => 'Оруулах сонголтууд',
                 'input-validation'      => 'Орох орно',
                 'is-comparable'         => 'Аттрибутыг харьцуулж болно',
                 'is-configurable'       => 'Тохируулж болох бүтээгдэхүүнийг үүсгэхийн тулд ашиглана уу',
-                'is-filterable'         => 'Давхардсан навигацид ашиглана уу',
                 'is-required'           => 'Шаардлагатай',
                 'is-unique'             => 'Өвөрмөц юм',
                 'is-visible-on-front'   => 'Урд талын хуудсан дээрх бүтээгдэхүүний харагдах хуудсан дээр харагдах болно',
@@ -502,22 +546,19 @@ return [
                 'usable-in-grid'        => 'Сүлжээнд ашиглах боломжтой',
                 'is-filterable'         => 'Шүүж болох',
                 'ai-translate'          => 'ХИ Орчуулга',
-                'invalid-swatch-type'   => ':attribute нь :type төрлийн attribute-д :swatch_type swatch type ашиглахыг зөвшөөрдөггүй.',
-
-                'option' => [
-                    'create-success'      => 'Аттрибутын сонголт амжилттай бүтээгдсэн',
-                    'delete-success'      => 'Аттрибутын сонголт амжилттай устгагдсан',
+                'option'                => [
                     'save-btn'            => 'Сонголт хэмнэх',
-                    'sort-update-failure' => 'Эрэмбэлэлтийн дарааллыг шинэчлэхэд амжилтгүй боллоо',
-                    'sort-update-success' => 'Эрэмбэлэлтийн дараалал амжилттай шинэчлэгдсэн',
+                    'create-success'      => 'Аттрибутын сонголт амжилттай бүтээгдсэн',
                     'update-success'      => 'Аттрибутын сонголтыг амжилттай шинэчилсэн',
+                    'sort-update-success' => 'Эрэмбэлэлтийн дараалал амжилттай шинэчлэгдсэн',
+                    'sort-update-failure' => 'Эрэмбэлэлтийн дарааллыг шинэчлэхэд амжилтгүй боллоо',
+                    'delete-success'      => 'Аттрибутын сонголт амжилттай устгагдсан',
                     'color'               => 'Өнгөт сэлгэлт',
                     'dropdown'            => 'Дусах',
                     'image'               => 'Зургийн залгуур',
                     'text'                => 'Текст swatch',
                 ],
             ],
-
             'create-success'    => 'Аттрибут амжилттай бүтээгдсэн',
             'delete-failed'     => 'Аттрибут устгасан',
             'delete-success'    => 'Аттрибут амжилттай устгасан',
@@ -525,19 +566,16 @@ return [
             'user-define-error' => 'Системийн шинж чанарыг устгах боломжгүй',
             'not-found'         => '":code" кодтой атрибут олдсонгүй',
         ],
-
         'attribute-options' => [
             'create-success'       => 'Аттрибутын сонголт амжилттай бүтээгдсэн',
             'update-success'       => 'Аттрибутын сонголтыг амжилттай шинэчилсэн',
             'usable-in-grid-error' => 'Зөвхөн 4 шинж чанарыг зөвхөн сүлжээнд ашиглах боломжтой.',
         ],
-
         'attribute-groups' => [
             'index' => [
                 'create-btn' => 'Аттрибутын бүлгүүдийг үүсгэх',
                 'title'      => 'Аттрибутын бүлгүүд',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'code'                => 'Хуулө цааз',
                     'delete'              => 'Эдгээх',
                     'mass-delete-success' => 'Сонгосон атрибутын бүлгийг амжилттай устгасан',
@@ -549,7 +587,6 @@ return [
                     'update-status'       => 'Статтын шинэчлэлтийн',
                 ],
             ],
-
             'create' => [
                 'title'    => 'Аттрибутын бүлгийг нэмэх',
                 'save-btn' => 'Атрибутын бүлгийг хадгалах',
@@ -558,7 +595,6 @@ return [
                 'code'     => 'Хуулө цааз',
                 'label'    => 'Шошго',
             ],
-
             'edit' => [
                 'title'    => 'Autibutibute Group',
                 'back-btn' => 'Буцах',
@@ -567,7 +603,6 @@ return [
                 'code'     => 'Хуулө цааз',
                 'label'    => 'Шошго',
             ],
-
             'create-success'        => 'Аттрибутын бүлэг амжилттай бүтээгдсэн',
             'delete-failed'         => 'Аттрибутын бүлгийг устгасан',
             'delete-success'        => 'Аттрибутын бүлэг амжилттай устгасан',
@@ -576,12 +611,10 @@ return [
             'attribute-group-error' => 'бүлгийг гэр бүлд ашигладаг.',
             'not-found'             => '":code" кодтой атрибутын бүлэг олдсонгүй',
         ],
-
         'categories' => [
             'index' => [
-                'add-btn' => 'Ангилал',
-                'title'   => 'Ангилал',
-
+                'add-btn'  => 'Ангилал',
+                'title'    => 'Ангилал',
                 'datagrid' => [
                     'active'         => 'Идэвхтэй',
                     'code'           => 'Хуулө цааз',
@@ -591,14 +624,13 @@ return [
                     'id'             => 'Цамц',
                     'inactive'       => 'Идэвхгүй',
                     'name'           => 'Харагдах нэр',
+                    'category-name'  => 'Нэр',
                     'no-of-products' => 'Бүтээгдэхүүний тоо',
                     'position'       => 'Байрлал',
                     'status'         => 'Цэсэнд харагдахуйц',
-                    'category-name'  => 'Нэр',
                     'update-status'  => 'Статтын шинэчлэлтийн',
                 ],
             ],
-
             'create' => [
                 'back-btn'            => 'Буцах',
                 'code'                => 'Хуулө цааз',
@@ -619,7 +651,6 @@ return [
                 'right-section'       => 'Тохиргооны хэсэг',
                 'left-section'        => 'Ерөнхий нэг хэсэг',
             ],
-
             'edit' => [
                 'back-btn'               => 'Буцах',
                 'code'                   => 'Хуулө цааз',
@@ -638,7 +669,6 @@ return [
                 'right-section'          => 'Тохиргооны хэсэг',
                 'left-section'           => 'Ерөнхий нэг хэсэг',
             ],
-
             'category'             => 'Зэрэглэл',
             'create-success'       => 'Ангилал амжилттай бүтээгдсэн.',
             'delete-category-root' => 'Та сувагтай холбоотой эх ангиллыг устгах боломжгүй.',
@@ -653,14 +683,12 @@ return [
             'create-failure'       => 'Ангилалыг үүсгэж чадаагүй.',
             'update-failure'       => 'Ангилалыг шинэчилж чадаагүй.',
         ],
-
         'category_fields' => [
             'index' => [
                 'create-btn' => 'Ангилалын талбар үүсгэх',
                 'add-btn'    => 'Ангилалын талбар үүсгэх',
                 'title'      => 'Ангилалын талбар',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'channel-based'       => 'Судалгаа дээр суурилсан',
                     'code'                => 'Хуулө цааз',
                     'created-at'          => 'Бүтэмж дээр бүтсэн',
@@ -685,7 +713,6 @@ return [
                     'mass-delete-failed'  => 'Сонгосон категорийн талбарыг устгах боломжгүй.',
                 ],
             ],
-
             'create' => [
                 'add-field-options'   => 'Ангилалын талбарыг нэмнэ үү',
                 'add-option'          => 'Нэмэх сонголт',
@@ -694,7 +721,7 @@ return [
                 'admin'               => 'админ',
                 'admin-name'          => 'Админы нэр',
                 'back-btn'            => 'Буцах',
-                'boolean'             => 'Boolean',
+                'boolean'             => 'Логик',
                 'checkbox'            => 'Гэвчэлтэх цэг',
                 'code'                => 'Хуулө цааз',
                 'color'               => 'Өнгө',
@@ -740,8 +767,7 @@ return [
                 'set-section-right'   => 'Тохиргооны хэсэг',
                 'settings'            => 'Тохиргоо',
                 'same-code-error'     => 'Сонголтын код нь өвөрмөц байх ёстой.',
-
-                'option' => [
+                'option'              => [
                     'dropdown' => 'Дусах',
                     'save-btn' => 'Сонголт хэмнэх',
                     'color'    => 'Өнгөт сэлгэлт',
@@ -749,7 +775,6 @@ return [
                     'text'     => 'Текст swatch',
                 ],
             ],
-
             'edit' => [
                 'add-field-options'   => 'Ангилалын талбарыг нэмнэ үү',
                 'add-option'          => 'Нэмэх сонголт',
@@ -758,7 +783,7 @@ return [
                 'admin'               => 'админ',
                 'admin-name'          => 'Админы нэр',
                 'back-btn'            => 'Буцах',
-                'boolean'             => 'Boolean',
+                'boolean'             => 'Логик',
                 'checkbox'            => 'Гэвчэлтэх цэг',
                 'code'                => 'Хуулө цааз',
                 'color'               => 'Өнгө',
@@ -805,8 +830,7 @@ return [
                 'set-section-right'   => 'Тохиргооны хэсэг',
                 'settings'            => 'Тохиргоо',
                 'same-code-error'     => 'Сонголтын код нь өвөрмөц байх ёстой.',
-
-                'option' => [
+                'option'              => [
                     'dropdown' => 'Дусах',
                     'save-btn' => 'Сонголт хэмнэх',
                     'color'    => 'Өнгөт сэлгэлт',
@@ -814,7 +838,6 @@ return [
                     'text'     => 'Текст swatch',
                 ],
             ],
-
             'create-success'    => 'Ангилалын талбар амжилттай бүтээгдсэн',
             'delete-failed'     => 'Ангилалын талбарыг устгасан',
             'delete-success'    => 'Ангилалын талбар амжилттай устгагдсан',
@@ -822,17 +845,14 @@ return [
             'user-define-error' => 'Системийн ангиллын талбарыг устгах боломжгүй',
             'not-found'         => '":code" кодтой ангиллын талбар олдсонгүй',
         ],
-
         'category-fields-options' => [
             'create-success' => 'Ангилалын талбарын сонголт амжилттай бүтээгдсэн',
             'update-success' => 'Ангилалын талбарын сонголт амжилттай шинэчлэгдсэн',
         ],
-
         'families' => [
             'index' => [
-                'add'   => 'Аттрибутын гэр бүлийг бий болгох',
-                'title' => 'Гэр бүлүүд',
-
+                'add'      => 'Аттрибутын гэр бүлийг бий болгох',
+                'title'    => 'Гэр бүлүүд',
                 'datagrid' => [
                     'code'           => 'Хуулө цааз',
                     'delete'         => 'Эдгээх',
@@ -847,11 +867,9 @@ return [
                     'update-success' => 'Сонгосон :resource амжилттай шинэчлэгдсэн',
                 ],
             ],
-
             'create' => [
                 'assign-group-btn'                 => 'Атрибутын бүлгийг томилох',
                 'assign-group-title'               => 'Атрибутын бүлгийг томилох',
-                'assign-group-btn'                 => 'Атрибутын бүлгийг томилох',
                 'back-btn'                         => 'Буцах',
                 'code'                             => 'Хуулө цааз',
                 'label'                            => 'Шошго',
@@ -879,11 +897,9 @@ return [
                 'unassigned-attribute-groups'      => 'Тайзлаагүй шинж чанарууд',
                 'assign-first-attribute-group'     => 'Бүлгийг гэр бүлд нь өг.',
             ],
-
             'edit' => [
                 'assign-group-btn'                 => 'Атрибутын бүлгийг томилох',
                 'assign-group-title'               => 'Атрибутын бүлгийг томилох',
-                'assign-group-btn'                 => 'Атрибутын бүлгийг томилох',
                 'back-btn'                         => 'Буцах',
                 'code'                             => 'Хуулө цааз',
                 'label'                            => 'Шошго',
@@ -914,7 +930,6 @@ return [
                 'variant-options-label'            => 'Тохируулах боломжтой сонголтууд',
                 'select-variant'                   => 'Аттрибутуудыг сонгоно уу',
             ],
-
             'attribute-family'               => 'Атрибутын гэр бүл',
             'attribute-product-error'        => 'гэр бүл нь бүтээгдэхүүнд ашигладаг.',
             'create-success'                 => 'Гэр бүл амжилттай бүтээсэн.',
@@ -927,7 +942,6 @@ return [
             'not-found'                      => '":code" кодтой аттрибутын гэр бүл олдсонгүй',
             'can-not-update-variant-options' => 'Энэ гэр бүлд аль хэдийн хувьсагчдын хувилбаруудтай тохируулах сонголтыг шинэчлэх боломжгүй байна.',
         ],
-
         'history' => [
             'index' => [
                 'datagrid' => [
@@ -938,7 +952,6 @@ return [
             ],
         ],
     ],
-
     'settings' => [
         'locales' => [
             'index' => [
@@ -947,8 +960,7 @@ return [
                 'title'                 => 'Орон нутгийн',
                 'can-not-delete-error'  => 'Та суваг эсвэл хэрэглэгчтэй холбосон байршлыг устгах боломжгүй',
                 'can-not-disable-error' => 'Та суваг эсвэл хэрэглэгчтэй холбосон байршлыг идэвхгүй болгох боломжгүй',
-
-                'datagrid' => [
+                'datagrid'              => [
                     'actions'     => 'Үйлдэл',
                     'code'        => 'Хуулө цааз',
                     'delete'      => 'Эдгээх',
@@ -959,14 +971,12 @@ return [
                     'name'        => 'Харагдах нэр',
                     'rtl'         => 'Rtl',
                     'mass-update' => 'Статтын шинэчлэлтийн',
-
-                    'status' => [
+                    'status'      => [
                         'title'    => 'Байдал',
                         'active'   => 'Идэвхжүүлэх',
                         'inactive' => 'Идэвхгүй болгох',
                     ],
                 ],
-
                 'create' => [
                     'code'             => 'Хуулө цааз',
                     'direction'        => 'Чиглэл',
@@ -977,11 +987,9 @@ return [
                     'title'            => 'Нуцент үүсгэх',
                     'status'           => 'Байдал',
                 ],
-
                 'edit' => [
                     'title' => 'Засварлах',
                 ],
-
                 'create-success'    => 'Амжилттай бүтээсэн.',
                 'delete-failed'     => 'Locale Direetion бүтэлгүйтэв',
                 'delete-success'    => 'Локалыг амжилттай устгасан.',
@@ -990,7 +998,6 @@ return [
                 'update-success'    => 'Локал амжилттай шинэчлэгдсэн.',
             ],
         ],
-
         'currencies' => [
             'index' => [
                 'create-btn'            => 'Валют үүсгэх',
@@ -998,8 +1005,7 @@ return [
                 'title'                 => 'Валютууд',
                 'can-not-delete-error'  => 'Та суваг руу холбосон валютыг устгах боломжгүй',
                 'can-not-disable-error' => 'Та сувагтай холбосон валютыг идэвхгүй болгох боломжгүй',
-
-                'datagrid' => [
+                'datagrid'              => [
                     'actions'        => 'Үйлдэл',
                     'code'           => 'Хуулө цааз',
                     'delete'         => 'Эдгээх',
@@ -1009,16 +1015,14 @@ return [
                     'name'           => 'Харагдах нэр',
                     'no-resource'    => 'Үйлдэлд хүрэлцэхгүй байгаа нөөц',
                     'partial-action' => ':resource дээр системийн хязгаарлалтын улмаас зарим үйлдлийг хийгээгүй.',
-                    'update-success' => 'Сонгосон:Нөөц амжилттай шинэчлэгдсэн',
+                    'update-success' => 'Сонгосон :resource амжилттай шинэчлэгдлээ',
                     'mass-update'    => 'Статтын шинэчлэлтийн',
-
-                    'status' => [
+                    'status'         => [
                         'title'    => 'Байдал',
                         'active'   => 'Идэвхжүүлэх',
                         'inactive' => 'Идэвхгүй болгох',
                     ],
                 ],
-
                 'create' => [
                     'code'           => 'Хуулө цааз',
                     'create-btn'     => 'Валют үүсгэх',
@@ -1031,11 +1035,9 @@ return [
                     'title'          => 'Шинэ валютыг үүсгэх',
                     'status'         => 'Байдал',
                 ],
-
                 'edit' => [
                     'title' => 'Валютыг засах',
                 ],
-
                 'create-success'    => 'Амжилттай бүтээсэн валют.',
                 'delete-failed'     => 'Валют устгасан бүтэлгүйтэв',
                 'delete-success'    => 'Валют амжилттай устгасан.',
@@ -1044,7 +1046,6 @@ return [
                 'cannot-delete'     => 'Валютыг устгах боломжгүй.',
             ],
         ],
-
         'data-transfer' => [
             'tracker' => [
                 'index' => [
@@ -1062,34 +1063,34 @@ return [
                         'user'                 => 'Хэрэглэгч',
                         'created_at'           => 'Бүтэмж дээр бүтсэн',
                         'updated_at'           => 'Шинэчлэгдсэн',
-
-                        'pending'    => 'Унжсан',
-                        'validated'  => 'Хялбартгасан сурталчилагдсан',
-                        'processing' => 'Хүнсний бүтээгдэхүүний боловсруулалт',
-                        'processed'  => 'Боловсруулсан',
-                        'linking'    => 'Холбох',
-                        'linked'     => 'Холбоотой',
-
-                        'indexing'  => 'Өөрийг харгалзүүлэх',
-                        'indexed'   => 'Индексээр хийсэн',
-                        'completed' => 'Төгссөн',
-                        'failed'    => 'Амсхийээгүй',
+                        'pending'              => 'Унжсан',
+                        'validating'           => 'Шалгаж байна',
+                        'validated'            => 'Хялбартгасан сурталчилагдсан',
+                        'processing'           => 'Хүнсний бүтээгдэхүүний боловсруулалт',
+                        'processed'            => 'Боловсруулсан',
+                        'linking'              => 'Холбох',
+                        'linked'               => 'Холбоотой',
+                        'indexing'             => 'Өөрийг харгалзүүлэх',
+                        'indexed'              => 'Индексээр хийсэн',
+                        'completed'            => 'Төгссөн',
+                        'paused'               => 'Түр зогссон',
+                        'cancelled'            => 'Цуцлагдсан',
+                        'failed'               => 'Амсхийээгүй',
                     ],
                 ],
-
                 'import' => [
                     'back-btn'                => 'Буцах',
                     'completed-batches'       => 'Нийт багц дууссан:',
                     'download-error-report'   => 'Бүрэн тайланг татаж авах',
                     'edit-btn'                => 'Хянан засварлах / хэвлэлд бэлтгэх',
                     'imported-info'           => 'Баяр хүргэе!Таны импорт амжилттай болсон.',
-                    'importing-info'          => 'Процесс дээр экспортлох',
+                    'exporting-info'          => 'Экспорт явагдаж байна',
                     'indexing-info'           => 'ХӨГЖЛИЙН ҮЙЛ АЖИЛЛАГАА (ҮНЭГҮЙ, ҮНЭГҮЙ ХУГАЦАА)',
                     'linking-info'            => 'ХӨДӨЛМӨРИЙН ТӨЛӨВЛӨГӨӨГҮЙ',
                     'progress'                => 'Явц:',
                     'title'                   => 'Гадаадад гаргах',
                     'total-batches'           => 'Нийт багц:',
-                    'total-created'           => 'Үүсгэсэн нийт бүртгэл:',
+                    'created'                 => 'Нийт үүсгэсэн бичлэгүүд:',
                     'total-deleted'           => 'Нийт бүртгэлийг устгасан:',
                     'total-errors'            => 'Нийт алдаа:',
                     'total-invalid-rows'      => 'Нийт буруу мөрүүд:',
@@ -1101,23 +1102,64 @@ return [
                     'validation-failed-info'  => 'Таны импорт буруу байна.Дараах алдааг засаад дахин оролдоно уу.',
                     'validation-success-info' => 'Таны импорт хүчин төгөлдөр байна.Импортлох үйл явцыг эхлүүлэхийн тулд экспортлох дээр дарна уу.',
                 ],
-
-                'create-success'    => 'Экспорт амжилттай бүтээсэн.',
-                'delete-failed'     => 'Экспортын устгал нь гэнэтийн амжилтгүй болсон.',
-                'delete-success'    => 'Экспорт амжилттай устгагдсан.',
-                'not-valid'         => 'Экспорт буруу байна',
-                'nothing-to-import' => 'Импорт хийх нөөц байхгүй.',
-                'setup-queue-error' => 'Дарааллын жолоочоо "мэдээллийн сан" эсвэл импортын үйл явцыг эхлүүлэхийн тулд "мэдээллийн сан" эсвэл "Redis" -ийг өөрчилнө үү.',
-                'update-success'    => 'Экспорт амжилттай шинэчлэгдсэн.',
-                'failed-info'       => 'Ажил бүтэлгүйтсэн. Дараах алдааг засаад дахин оролдоно уу.',
-                'download-log-file' => 'Бүртгэлийг татаж авах',
+                'summary' => [
+                    'total-batches' => 'Нийт багцууд:',
+                    'created'       => 'Нийт үүсгэсэн бичлэгүүд:',
+                    'deleted'       => 'Нийт устгасан бичлэгүүд:',
+                    'errors'        => 'Нийт алдаанууд:',
+                    'invalid-rows'  => 'Нийт буруу мөрүүд:',
+                    'processed'     => 'Нийт боловсруулсан мөрүүд:',
+                    'updated'       => 'Нийт шинэчилсэн бичлэгүүд:',
+                    'skipped'       => 'Нийт алгассан бичлэгүүд:',
+                ],
+                'info'                  => 'Баяр хүргэе! Таны ажил амжилттай гүйцэтгэгдлээ.',
+                'running-time'          => 'Ажиллаж буй хугацаа',
+                'estimated-remaining'   => 'Үлдсэн хугацаа',
+                'total-duration'        => 'Нийт хугацаа',
+                'status'                => 'Төлөв',
+                'waiting'               => 'Хүлээж байна',
+                'total-records'         => 'Нийт бичлэгүүд',
+                'job-id'                => 'Ажлын ID',
+                'records-created'       => 'Үүсгэсэн бичлэгүүд',
+                'records-updated'       => 'Шинэчилсэн бичлэгүүд',
+                'records-deleted'       => 'Устгасан бичлэгүүд',
+                'run-again'             => 'Дахин ажиллуулах',
+                'completed-success'     => 'ажил амжилттай дууслаа',
+                'completed-info-sub'    => 'Бүх бичлэгүүд боловсруулагдаж, индексжүүлэгдлээ. Таны каталог шинэчлэгдсэн.',
+                'create-success'        => 'Экспорт амжилттай бүтээсэн.',
+                'delete-failed'         => 'Экспортын устгал нь гэнэтийн амжилтгүй болсон.',
+                'delete-success'        => 'Экспорт амжилттай устгагдсан.',
+                'not-valid'             => 'Экспорт буруу байна',
+                'nothing-to-import'     => 'Импорт хийх нөөц байхгүй.',
+                'setup-queue-error'     => 'Дарааллын жолоочоо "мэдээллийн сан" эсвэл импортын үйл явцыг эхлүүлэхийн тулд "мэдээллийн сан" эсвэл "Redis" -ийг өөрчилнө үү.',
+                'update-success'        => 'Экспорт амжилттай шинэчлэгдсэн.',
+                'failed-info'           => 'Ажил бүтэлгүйтсэн. Дараах алдааг засаад дахин оролдоно уу.',
+                'download-log-file'     => 'Бүртгэлийг татаж авах',
+                'pause'                 => 'Түр зогсоох',
+                'resume'                => 'Үргэлжлүүлэх',
+                'cancel'                => 'Цуцлах',
+                'paused'                => 'Импорт түр зогссон.',
+                'resumed'               => 'Импорт үргэлжилж байна.',
+                'cancelled'             => 'Импорт цуцлагдсан.',
+                'paused-info'           => 'Импорт түр зогссон. Үлдсэн багцууд хүлээгдэж байна.',
+                'paused-info-export'    => 'Экспорт түр зогссон. Үлдсэн багцууд хүлээгдэж байна.',
+                'cancelled-info'        => 'Импорт цуцлагдсан. Хэсэгчилсэн үр дүнг доор харуулж байна.',
+                'cancelled-info-export' => 'Экспорт цуцлагдсан. Хэсэгчилсэн үр дүнг доор харуулж байна.',
+                'cancel-confirm'        => 'Та энэ ажлыг цуцлахдаа итгэлтэй байна уу? Энэ үйлдлийг буцаах боломжгүй.',
+                'live'                  => 'Шууд',
+                'import-progress'       => 'Импортын явц',
+                'export-progress'       => 'Экспортын явц',
+                'linking-progress'      => 'Холболтын явц',
+                'indexing-progress'     => 'Индексжүүлэлтийн явц',
+                'job-label'             => 'Ажил',
             ],
-
             'imports' => [
-                'create' => [
+                'import-start-fail' => 'Импортын процесс эхлүүлж чадсангүй. Дахин оролдоно уу.',
+                'create'            => [
                     'code'                => 'Хуулө цааз',
                     'action'              => 'Үйл ажиллагаа',
                     'allowed-errors'      => 'Зөвшөөрөгдсөн алдаанууд',
+                    'allowed-file-types'  => 'Зөвшөөрөгдсөн файлын төрлүүд (CSV, XLSX, XLS)',
                     'back-btn'            => 'Буцах',
                     'create-update'       => 'Үүсгэх / шинэчлэх',
                     'delete'              => 'Эдгээх',
@@ -1125,12 +1167,21 @@ return [
                     'images'              => 'Түрнэгт',
                     'download-sample'     => 'Татаж авах :resource Жишээ CSV',
                     'field-separator'     => 'Талбар тусгаарлагч',
+                    'separator-info'      => 'Зөвхөн CSV файлд ашиглана',
                     'file-info-example'   => 'Жишээлбэл, Бүтээгдэхүүн-зураг, файлууд, файлууд дээр файлууд, файл / програм / апп / Апп / Appl / Appl / Apply / Stock / Apply / Stock / Бүтээгдэхүүний зураг дээр байрлуулах ёстой.',
                     'file-info'           => 'Харьцангуй замыг ашиглах / Төслийн үндэс / хадгалах / Апп / Апп / Импорт, e.g.Бүтээгдэхүүн-зураг, импортын зураг.',
                     'file'                => 'Багажны хайрцаг',
                     'general'             => 'Жанжин',
                     'upload_images'       => 'Замгаа тохируулахын тулд зургийг байршуулах',
                     'download-sample-zip' => 'Дээжийг татаж авах ZIP',
+                    'zip-uploading'       => 'ZIP файлыг байршуулж задалж байна...',
+                    'zip-upload-success'  => 'ZIP файл амжилттай байршуулагдаж задлагдлаа.',
+                    'zip-upload-error'    => 'ZIP файл байршуулахад алдаа гарлаа. Дахин оролдоно уу.',
+                    'invalid-zip'         => 'Байршуулсан файл зөв ZIP архив биш байна.',
+                    'zip-upload-or'       => 'эсвэл зургуудын ZIP файл байршуулах',
+                    'zip-click-upload'    => 'Зургуудын ZIP файл байршуулахын тулд дарна уу',
+                    'zip-files-extracted' => 'файл задлагдсан',
+                    'zip-drop-hint'       => 'Дарах эсвэл ZIP файлыг энд чирж оруулна уу',
                     'images-directory'    => 'Харгүй',
                     'process-in-queue'    => 'Дараалалд оролцох',
                     'results'             => 'Үр дүн',
@@ -1142,16 +1193,17 @@ return [
                     'type'                => 'Маяг',
                     'validation-strategy' => 'Баталгааийн стратеги',
                 ],
-
                 'edit' => [
                     'images'              => 'Түрнэгт',
                     'action'              => 'Үйл ажиллагаа',
                     'allowed-errors'      => 'Зөвшөөрөгдсөн алдаанууд',
+                    'allowed-file-types'  => 'Зөвшөөрөгдсөн файлын төрлүүд (CSV, XLSX, XLS)',
                     'back-btn'            => 'Буцах',
                     'create-update'       => 'Үүсгэх / шинэчлэх',
                     'delete'              => 'Эдгээх',
                     'download-sample'     => 'Татаж авах дээж',
                     'field-separator'     => 'Талбар тусгаарлагч',
+                    'separator-info'      => 'Зөвхөн CSV файлд ашиглана',
                     'file-info-example'   => 'Жишээлбэл, Бүтээгдэхүүн-зураг, файлууд, файлууд дээр файлууд, файл / програм / апп / Апп / Appl / Appl / Apply / Stock / Apply / Stock / Бүтээгдэхүүний зураг дээр байрлуулах ёстой.',
                     'file-info'           => 'Харьцангуй замыг ашиглах / Төслийн үндэс / хадгалах / Апп / Апп / Импорт, e.g.Бүтээгдэхүүн-зураг, импортын зураг.',
                     'file'                => 'Багажны хайрцаг',
@@ -1167,16 +1219,13 @@ return [
                     'type'                => 'Маяг',
                     'validation-strategy' => 'Баталгааийн стратеги',
                 ],
-
                 'batch' => [
                     'title' => 'Дараалалд оруулав',
                 ],
-
                 'index' => [
                     'button-title' => 'Хэлбэрт',
                     'title'        => 'Тор байллтгах импортын',
-
-                    'datagrid' => [
+                    'datagrid'     => [
                         'actions'               => 'Үйлдэл',
                         'completed-at'          => 'Хийж дууслаа',
                         'created'               => 'Үл үүсгэгдсэн',
@@ -1194,20 +1243,36 @@ return [
                         'updated'               => 'Шинэчилсэн цаг нь',
                         'uploaded-file'         => 'Байршуулсан файл',
                         'images_directory_path' => 'Зураг файл',
+                        'import'                => 'Импорт',
                     ],
                 ],
-
                 'import' => [
+                    'action'                  => 'Гүйцэтгэлийн горим',
                     'back-btn'                => 'Буцах',
                     'completed-batches'       => 'Нийт багц дууссан:',
                     'download-error-report'   => 'Бүрэн тайланг татаж авах',
                     'edit-btn'                => 'Хянан засварлах / хэвлэлд бэлтгэх',
+                    'exporting-info'          => 'Экспорт явагдаж байна',
+                    'exporting-info-sub'      => 'Экспорт файл үүсгэж, бичлэгүүдийг бичиж байна. Түр хүлээнэ үү.',
+                    'file_path'               => 'Файлын зам',
                     'imported-info'           => 'Баяр хүргэе!Таны импорт амжилттай болсон.',
+                    'import-now'              => 'Импорт одоо болоод байна',
                     'importing-info'          => 'Процесст импортлох',
+                    'importing-info-sub'      => 'Багцуудыг боловсруулж, бичлэгүүдийг өгөгдлийн санд бичиж байна.',
                     'indexing-info'           => 'ХӨГЖЛИЙН ҮЙЛ АЖИЛЛАГАА (ҮНЭГҮЙ, ҮНЭГҮЙ ХУГАЦАА)',
+                    'indexing-info-sub'       => 'Импортын дараа хайлтын индекс болон үнийн кэшийг дахин бүтээж байна. Энэ алхам автоматаар ажиллана.',
+                    'indexing-type'           => 'Үнэ + ES',
                     'linking-info'            => 'ХӨДӨЛМӨРИЙН ТӨЛӨВЛӨГӨӨГҮЙ',
-                    'progress'                => 'Явц:',
+                    'linking-info-sub'        => 'Холбогдох нөөцүүд болон бичлэгүүдийн хоорондын холбоосуудыг үүсгэж байна.',
                     'pending-info'            => 'Дараалалд ажлын байр боловсруулахыг хүлээж байна',
+                    'pending-info-sub'        => 'Таны ажил боловсруулалтын дараалалд нэмэгдлээ. Удахгүй боловсруулагдана.',
+                    'pending-step-complete'   => 'Дууссан',
+                    'pending-step-export'     => 'Экспортлох',
+                    'pending-step-import'     => 'Импортлож байна',
+                    'pending-step-queue'      => 'Дараалалд байна',
+                    'pending-step-validate'   => 'Шалгаж байна',
+                    'profile'                 => 'Импортын профайл',
+                    'progress'                => 'Явц:',
                     'title'                   => 'Импортлох',
                     'total-batches'           => 'Нийт багц:',
                     'total-created'           => 'Үүсгэсэн нийт бүртгэл:',
@@ -1216,25 +1281,23 @@ return [
                     'total-invalid-rows'      => 'Нийт буруу мөрүүд:',
                     'total-rows-processed'    => 'Нийт мөр боловсруулагдсан:',
                     'total-updated'           => 'Нийт бүртгэл шинэчлэгдсэн:',
-                    'validate-info'           => 'Импортоо шалгаж баталгаажуулахын тулд баталгаажуулах өгөгдлийг дарна уу.',
                     'validate'                => 'Хүчинлэх',
-                    'file_path'               => 'Файлын зам',
-                    'import-now'              => 'Импорт одоо болоод байна',
-                    'action'                  => 'Гүйцэтгэлийн горим',
+                    'validate-info'           => 'Импортоо шалгаж баталгаажуулахын тулд баталгаажуулах өгөгдлийг дарна уу.',
                     'validating-info'         => 'Мэдээлэл уншиж, баталгаажуулж эхлэв',
+                    'validating-info-sub'     => 'Импорт эхлэхээс өмнө схемийн бүрэн бүтэн байдал, талбарын зураглал, өгөгдлийн төрлүүдийг шалгаж байна.',
                     'validation-failed-info'  => 'Таны импорт буруу байна.Дараах алдааг засаад дахин оролдоно уу.',
-                    'validation-success-info' => 'Таны импорт хүчин төгөлдөр байна.Импортлохын тулд импортын процессыг эхлүүлэхийн тулд дарна уу.',
+                    'validation-success-info' => 'Таны импорт хүчинтэй. Импортыг автоматаар эхлүүлж байна...',
                 ],
-
-                'create-success'    => 'Импорт амжилттай бүтээсэн.',
-                'delete-failed'     => 'Импортын устгах нь гэнэтийн амжилтгүй болсон.',
-                'delete-success'    => 'Импорт амжилттай устгасан.',
-                'not-valid'         => 'Импорт буруу байна',
-                'nothing-to-import' => 'Импорт хийх нөөц байхгүй.',
-                'setup-queue-error' => 'Дарааллын жолоочоо "мэдээллийн сан" эсвэл импортын үйл явцыг эхлүүлэхийн тулд "мэдээллийн сан" эсвэл "Redis" -ийг өөрчилнө үү.',
-                'update-success'    => 'Импорт амжилттай шинэчилсэн.',
+                'create-success'     => 'Импорт амжилттай бүтээсэн.',
+                'delete-failed'      => 'Импортын устгах нь гэнэтийн амжилтгүй болсон.',
+                'delete-success'     => 'Импорт амжилттай устгасан.',
+                'invalid-zip'        => 'Байршуулсан файл зөв ZIP архив биш байна.',
+                'not-valid'          => 'Импорт буруу байна',
+                'nothing-to-import'  => 'Импорт хийх нөөц байхгүй.',
+                'setup-queue-error'  => 'Дарааллын жолоочоо "мэдээллийн сан" эсвэл импортын үйл явцыг эхлүүлэхийн тулд "мэдээллийн сан" эсвэл "Redis" -ийг өөрчилнө үү.',
+                'update-success'     => 'Импорт амжилттай шинэчилсэн.',
+                'zip-upload-success' => 'ZIP файл амжилттай байршуулагдаж задлагдлаа.',
             ],
-
             'exports' => [
                 'create' => [
                     'code'                => 'Хуулө цааз',
@@ -1258,13 +1321,13 @@ return [
                     'results'             => 'Үр дүн',
                     'save-btn'            => 'Экспорт хадгалах',
                     'settings'            => 'Тохиргоо',
+                    'filters'             => 'Шүүлтүүрүүд',
                     'skip-errors'         => 'Алдаа алгасах',
                     'stop-on-errors'      => 'Алдаа дээр зогс',
                     'title'               => 'Экспорт үүсгэх',
                     'type'                => 'Маяг',
                     'validation-strategy' => 'Баталгааийн стратеги',
                 ],
-
                 'edit' => [
                     'action'              => 'Үйл ажиллагаа',
                     'allowed-errors'      => 'Зөвшөөрөгдсөн алдаанууд',
@@ -1288,16 +1351,13 @@ return [
                     'type'                => 'Маяг',
                     'validation-strategy' => 'Баталгааийн стратеги',
                 ],
-
                 'batch' => [
                     'title' => 'ДЭЛГЭРЭНГҮЙ АЖИЛЛАГАА',
                 ],
-
                 'index' => [
                     'button-title' => 'Экспорт үүсгэх',
                     'title'        => 'Эксби зэрэг',
-
-                    'datagrid' => [
+                    'datagrid'     => [
                         'actions'               => 'Үйлдэл',
                         'completed-at'          => 'Хийж дууслаа',
                         'created'               => 'Үл үүсгэгдсэн',
@@ -1315,13 +1375,14 @@ return [
                         'updated'               => 'Шинэчилсэн цаг нь',
                         'uploaded-file'         => 'Байршуулсан файл',
                         'images_directory_path' => 'Зураг файл',
+                        'export'                => 'Экспорт',
                     ],
                 ],
-
                 'export' => [
                     'back-btn'                => 'Буцах',
                     'completed-batches'       => 'Нийт багц дууссан:',
                     'download-error-report'   => 'Бүрэн тайланг татаж авах',
+                    'download-created-file'   => 'Экспортолсон файлуудыг татах',
                     'edit-btn'                => 'Хянан засварлах / хэвлэлд бэлтгэх',
                     'exported-info'           => 'Баяр хүргэе!Таны экспорт амжилттай болсон.',
                     'exporting-info'          => 'Процесс дээр экспортлох',
@@ -1342,9 +1403,10 @@ return [
                     'validating-info'         => 'Мэдээлэл уншиж, баталгаажуулж эхлэв',
                     'validation-failed-info'  => 'Таны экспорт буруу байна.Дараах алдааг засаад дахин оролдоно уу.',
                     'validation-success-info' => 'Таны экспорт хүчинтэй байна.Экспортыг эхлүүлэхийн тулд Экспорт дээр дарна уу.',
-                    'action'                  => 'Гүйцэтгэлийн горим',
+                    'profile'                 => 'Экспортын профайл',
+                    'file-format'             => 'Файлын формат',
+                    'with-media'              => 'Медиатай',
                 ],
-
                 'create-success'    => 'Экспорт амжилттай бүтээсэн.',
                 'delete-failed'     => 'Экспортын устгал нь гэнэтийн амжилтгүй болсон.',
                 'delete-success'    => 'Экспорт амжилттай устгагдсан.',
@@ -1354,7 +1416,6 @@ return [
                 'update-success'    => 'Экспорт амжилттай шинэчлэгдсэн.',
             ],
         ],
-
         'channels' => [
             'index' => [
                 'create-btn'           => 'Суваг үүсгэх',
@@ -1373,7 +1434,6 @@ return [
                     'root-category' => 'Ангийн катог',
                 ],
             ],
-
             'create' => [
                 'allowed-ips'            => 'Зөвшөөрөгдсөн IPS зөвшөөрөгдсөн',
                 'cancel'                 => 'Буцах',
@@ -1388,7 +1448,7 @@ return [
                 'favicon-size'           => 'Зургийн нарийвчлал нь 16px x 16px шиг байх ёстой',
                 'general'                => 'Жанжин',
                 'hostname'               => 'Хотийнгуу нэр',
-                'hostname-placeholder'   => 'https://www.example.com (Don\'t add slash in the end.)',
+                'hostname-placeholder'   => 'https://www.example.com (Эцэст нь слэш нэмэхгүй байх.)',
                 'last-delete-error'      => 'Дор хаяж нэг суваг шаардлагатай.',
                 'locales'                => 'Орон нутгийн',
                 'logo'                   => 'Лого',
@@ -1408,7 +1468,6 @@ return [
                 'theme'                  => 'Сэдэв',
                 'title'                  => 'Суваг үүсгэх',
             ],
-
             'edit' => [
                 'allowed-ips'            => 'Зөвшөөрөгдсөн IPS зөвшөөрөгдсөн',
                 'back-btn'               => 'Буцах',
@@ -1423,7 +1482,7 @@ return [
                 'favicon-size'           => 'Зургийн нарийвчлал нь 16px x 16px шиг байх ёстой',
                 'general'                => 'Жанжин',
                 'hostname'               => 'Хотийнгуу нэр',
-                'hostname-placeholder'   => 'https://www.example.com (Don\'t add slash in the end.)',
+                'hostname-placeholder'   => 'https://www.example.com (Эцэст нь слэш нэмэхгүй байх.)',
                 'last-delete-error'      => 'Дор хаяж нэг суваг шаардлагатай.',
                 'locales'                => 'Орон нутгийн',
                 'select-locales'         => 'Орон нутагт сонгоно уу',
@@ -1446,13 +1505,11 @@ return [
                 'update-success'         => 'Суваг амжилттай шинэчлэх',
             ],
         ],
-
         'users' => [
             'index' => [
-                'admin' => 'админ',
-                'title' => 'Хэрэглэгчид',
-                'user'  => 'Хэрэглэгч',
-
+                'admin'  => 'админ',
+                'title'  => 'Хэрэглэгчид',
+                'user'   => 'Хэрэглэгч',
                 'create' => [
                     'confirm-password'  => 'Нууц үгээ баталгаажуулах',
                     'email'             => 'Байлдлаа',
@@ -1466,7 +1523,6 @@ return [
                     'user-timezone'     => 'Цагийн бүс',
                     'select'            => 'Шилэх',
                 ],
-
                 'datagrid' => [
                     'actions'  => 'Үйлдэл',
                     'active'   => 'Идэвхтэй',
@@ -1480,12 +1536,10 @@ return [
                     'status'   => 'Байдал',
                     'image'    => 'Дүр',
                 ],
-
                 'edit' => [
                     'title' => 'Хэрэглэгчийг засах',
                 ],
             ],
-
             'edit' => [
                 'back-btn'         => 'Буцах',
                 'confirm-password' => 'Нууц үгээ баталгаажуулах',
@@ -1498,7 +1552,6 @@ return [
                 'status'           => 'Байдал',
                 'title'            => 'Хэрэглэгчийг засах',
             ],
-
             'activate-warning'          => 'Таны бүртгэл хараахан идэвхжээгүй байна, администратор холбоо барина уу.',
             'cannot-change'             => 'Хэрэглэгчийг өөрчлөх боломжгүй',
             'create-success'            => 'Хэрэглэгч амжилттай бүтээсэн.',
@@ -1511,13 +1564,11 @@ return [
             'update-success'            => 'Хэрэглэгч амжилттай шинэчлэгдсэн.',
             'current-user-delete-error' => 'Нэвтэрсэн хэрэглэгчийг устгах боломжгүй',
         ],
-
         'roles' => [
             'index' => [
                 'create-btn' => 'Бүтээх',
                 'title'      => 'Дүрээ',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'delete'          => 'Эдгээх',
                     'edit'            => 'Хянан засварлах / хэвлэлд бэлтгэх',
                     'id'              => 'Цамц',
@@ -1525,7 +1576,6 @@ return [
                     'permission-type' => 'Хөнгөнд оруулна',
                 ],
             ],
-
             'create' => [
                 'access-control' => 'Удирдлага',
                 'all'            => 'Бүгд',
@@ -1538,7 +1588,6 @@ return [
                 'save-btn'       => 'Үүрэг хамгаалах',
                 'title'          => 'Бүтээх',
             ],
-
             'edit' => [
                 'access-control' => 'Удирдлага',
                 'all'            => 'Бүгд',
@@ -1551,7 +1600,6 @@ return [
                 'save-btn'       => 'Үүрэг хамгаалах',
                 'title'          => 'Дүрийг засах',
             ],
-
             'being-used'        => 'Дүрийг аль хэдийн админ хэрэглэгч ашиглаж байсан',
             'being-used-by'     => 'Үүргийг :name Хэрэглэгч аль хэдийн ашигласан',
             'create-success'    => 'Амжилттай бүтээсэн үүрэг',
@@ -1561,490 +1609,77 @@ return [
             'update-success'    => 'Роулс амжилттай шинэчлэгдэж байна',
         ],
     ],
-
-    'reporting' => [
-        'view' => [
-            'day'           => 'Өдөр',
-            'end-date'      => 'Дуусах цаг',
-            'export-csv'    => 'CSV экспортлох',
-            'export-xls'    => 'XLS экспортлох',
-            'month'         => 'Сар',
-            'not-available' => 'Бичлэг байхгүй байна.',
-            'start-date'    => 'Эхлэх өдөр',
-            'year'          => 'Жил',
-        ],
-
-        'empty' => [
-            'info'  => 'Сонгосон интервалд ямар ч мэдээлэл байхгүй байна',
-            'title' => 'Мэдээлэл байхгүй байна',
-        ],
-    ],
-
     'configuration' => [
         'index' => [
-            'back-btn'                     => 'Буцах',
-            'delete'                       => 'Эдгээх',
-            'enable-at-least-one-payment'  => 'Дор хаяж нэг төлбөрийн аргыг идэвхжүүлнэ.',
-            'enable-at-least-one-shipping' => 'Дор хаяж нэг тээврийн аргыг идэвхжүүлнэ.',
-            'no-result-found'              => 'Үр дүн олдсонгүй',
-            'save-btn'                     => 'Тохиргоог хадгалах',
-            'save-message'                 => 'Тохиргоо амжилттай хадгалсан',
-            'search'                       => 'Эрэл хайгуул хийх',
-            'title'                        => 'Тохиролцоо',
-
-            'general' => [
-                'info'  => '',
-                'title' => 'Жанжин',
-
+            'delete'          => 'Эдгээх',
+            'no-result-found' => 'Үр дүн олдсонгүй',
+            'save-btn'        => 'Тохиргоог хадгалах',
+            'save-message'    => 'Тохиргоо амжилттай хадгалсан',
+            'search'          => 'Эрэл хайгуул хийх',
+            'title'           => 'Тохиролцоо',
+            'general'         => [
+                'info'    => '',
+                'title'   => 'Жанжин',
                 'general' => [
                     'info'  => '',
                     'title' => 'Жанжин',
                 ],
-
-                'content' => [
-                    'info'  => 'Харьцуулах сонголтыг тохируулах, хүслийн жагсаалт, Хайлтын сонголтууд, Зургийн хайлтын сонголтууд, хөл, сэлүүр, сэлүүрт скрипт.',
-                    'title' => 'Сэтгэл ханамжтай',
-
-                    'settings' => [
-                        'compare-options'     => 'Сонгvохын баримтуудыг нь харьцах',
-                        'image-search-option' => 'Зургийн хайлтын сонголт',
-                        'title'               => 'Тохиргоо',
-                        'title-info'          => 'Тохиргоо нь систем, програм, төхөөрөмжийг хэрхэн тохируулах, ашиглах тохиргоог хянах тохиргоог хянах тохиргоонд ханддаг.',
-                        'wishlist-options'    => 'Хүсэлтийн жагсаалт',
-                    ],
-
-                    'custom-scripts' => [
-                        'custom-css'        => 'Захиалгат CSS',
-                        'custom-javascript' => 'Захиалгат Javascript',
-                        'title'             => 'Эрхэм л скриптер',
-                        'title-info'        => 'Захиалгат скриптүүд нь програм хангамж, програм хангамжийг програмчлах, програм хангамжийг нэмж, програм хангамжийг ашиглан програм хангамж, шинж чанарыг сайжруулах.',
-                    ],
-                ],
-
-                'design' => [
-                    'info'  => 'Лого, Фавикон дүрсийг тохируулна уу.',
-                    'title' => 'Дизайн',
-
-                    'admin-logo' => [
-                        'favicon'    => 'Дугуй',
-                        'logo-image' => 'ЛОПОН зураг',
-                        'title'      => 'Админ лого',
-                        'title-info' => 'Админ лого бол систем эсвэл вэбсайт эсвэл вэбсайтыг төлөөлж буй өвөрмөц дүрс эсвэл бэлгэ тэмдэг юм.',
-                    ],
-                ],
-
                 'magic-ai' => [
-                    'info'  => 'Magic AI сонголтыг тохируулах.',
-                    'title' => 'Чамд ид шид байна',
-
+                    'info'     => 'Magic AI сонголтыг тохируулах.',
+                    'title'    => 'Чамд ид шид байна',
                     'settings' => [
-                        'api-key'        => 'API түлхүүр',
-                        'enabled'        => 'Оруулах',
-                        'llm-api-domain' => 'Llm api домэйн',
-                        'organization'   => 'Зөвлөгөө ID',
-                        'title'          => 'Ерөнхий Тохиргоо',
-                        'title-info'     => 'Онцгой API түлхүүрийг ашиглан туршлагад өөрийн туршлагыг сайжруулах,Openai-ийн итгэмжлэлийн дээгүүр командыг дарж, Тохиргооны дагуу тохиргоогоо тохируулна уу.',
+                        'enabled'     => 'Оруулах',
+                        'ai-platform' => 'Үндсэн платформ',
+                        'ai-model'    => 'Үндсэн загвар',
+                        'title'       => 'Ерөнхий Тохиргоо',
+                        'title-info'  => 'Онцгой API түлхүүрийг ашиглан туршлагад өөрийн туршлагыг сайжруулах,Openai-ийн итгэмжлэлийн дээгүүр командыг дарж, Тохиргооны дагуу тохиргоогоо тохируулна уу.',
                     ],
-
-                    'content-generation' => [
-                        'category-description-prompt'      => 'Ангилалын тайлбарыг өдөөх',
-                        'cms-page-content-prompt'          => 'CMS Хуудасны агуулгын шуурхай',
-                        'enabled'                          => 'Оруулах',
-                        'product-description-prompt'       => 'Бүтээгдэхүүний тодорхойлолт',
-                        'product-short-description-prompt' => 'Бүтээгдэхүүний богино тайлбар',
-                        'title'                            => 'Агуулгын үе үе',
-                        'title-info'                       => 'Энэ шинж чанар нь AI ашиглан агуулга хийхийг хүсч буй Wysiwyg utift ui-ийг AI-г идэвхжүүлэхийг идэвхжүүлэх болно.',
-                    ],
-
                     'image-generation' => [
-                        'enabled'    => 'Оруулах',
-                        'title'      => 'Зургийн үеийн үе',
-                        'title-info' => 'Энэ функц нь Mall-e-e-ыг ашиглан зураг байршуулахыг хүссэн зураг дээрх шидэт AI-г идэвхжүүлэх болно. <br/> <br.',
+                        'enabled'     => 'Оруулах',
+                        'ai-platform' => 'Үндсэн платформ',
+                        'ai-model'    => 'Үндсэн загвар',
+                        'title'       => 'Зургийн үеийн үе',
+                        'title-info'  => 'Энэ функц нь Mall-e-e-ыг ашиглан зураг байршуулахыг хүссэн зураг дээрх шидэт AI-г идэвхжүүлэх болно. <br/> <br.',
                     ],
-
-                    'translation'   => [
-                        'title'                  => 'Орчуулга',
-                        'enabled'                => 'Идэвхжсэн',
-                        'title-info'             => 'Энэхүү функц нь Magic AI-ийг идэвхжүүлснээр текстийг орчуулах боломжийг олгож, нэг хэлнээс нөгөө хэл рүү хялбархан хөрвүүлэх боломжийг бүрдүүлнэ.',
-                        'global-source-channel'  => 'Эх үүсвэрийн суваг',
-                        'global-source-locale'   => 'Эх үүсвэрийн хэл',
-                        'translation-model'      => 'Орчуулгын загвар',
-                        'replace-existing-value' => 'Одоо байгаа утгыг солих',
-                        'target-channel'         => 'Зорилтот суваг',
-                        'target-locales'         => 'Зорилтот хэлнүүд',
+                    'translation' => [
+                        'title'                       => 'Орчуулга',
+                        'enabled'                     => 'Идэвхжсэн',
+                        'title-info'                  => 'Энэхүү функц нь Magic AI-ийг идэвхжүүлснээр текстийг орчуулах боломжийг олгож, нэг хэлнээс нөгөө хэл рүү хялбархан хөрвүүлэх боломжийг бүрдүүлнэ.',
+                        'ai-platform'                 => 'Үндсэн платформ',
+                        'global-source-channel'       => 'Эх үүсвэрийн суваг',
+                        'global-source-locale'        => 'Эх үүсвэрийн хэл',
+                        'translation-model'           => 'Орчуулгын загвар',
+                        'replace-existing-value'      => 'Одоо байгаа утгыг солих',
+                        'target-channel'              => 'Зорилтот суваг',
+                        'target-locales'              => 'Зорилтот хэлнүүд',
+                        'replace-existing-value-info' => 'Хэрэв утга аль хэдийн байгаа бол орлуулах.',
                     ],
-
-                    'review-translation' => [
-                        'dolphin-phi'       => 'Далайн гахай phi',
-                        'enabled'           => 'Оруулах',
-                        'gpt-3-5-turbo'     => 'Oplei Gpt-3.5-Turbo',
-                        'llama2'            => 'Llama 2',
-                        'llama2-uncensored' => 'LLAMA 2 ХӨГЖИЛТЭЙ',
-                        'llama2:13b'        => 'Llama 2 13B',
-                        'llama2:70b'        => 'Llama 2 70B',
-                        'llava'             => 'Лава',
-                        'mistral'           => 'Хувь зүй',
-                        'model'             => 'Загвар',
-                        'orca-mini'         => 'Orca mini',
-                        'phi'               => 'Phi-2',
-                        'starling-lm'       => 'Сэнт',
-                        'title'             => 'Орчуулга явуулах',
-                        'title-info'        => 'Хэрэглэгчдэд үзүүлэх эсвэл зочинд хэрэглэгчдэд үзүүлэх сонголтыг англи хэл рүү орчуулах. <br/> <br/> <br/> Англи хэл рүү нэвтрэн орж, англи хэл рүү \'Англи хэл рүү орчуулах\' товчийг дарахад та "Англи хэл рүү орчуулах" товчийг дарахад та "Англи хэл рүү" Англи хэл дээр очоод дараа нь англи хэл рүүгээ ороорой.',
-                        'vicuna'            => 'Хүрээ',
-                    ],
-
-                    'checkout-message' => [
-                        'dolphin-phi'       => 'Далайн гахай phi',
-                        'enabled'           => 'Оруулах',
-                        'gpt-3-5-turbo'     => 'Oplei Gpt-3.5-Turbo',
-                        'llama2'            => 'Llama 2',
-                        'llama2-uncensored' => 'LLAMA 2 ХӨГЖИЛТЭЙ',
-                        'llama2:13b'        => 'Llama 2 13B',
-                        'llama2:70b'        => 'Llama 2 70B',
-                        'llava'             => 'Лава',
-                        'mistral'           => 'Хувь зүй',
-                        'model'             => 'Загвар',
-                        'orca-mini'         => 'Orca mini',
-                        'phi'               => 'Phi-2',
-                        'prompt'            => 'Шаламгай',
-                        'starling-lm'       => 'Сэнт',
-                        'title'             => 'Хувийн төлбөртэй мессеж',
-                        'title-info'        => 'Та бүхэнд талархлын хуудсан дээр хувийн төлбөр тооцоог хийхдээ хувийн төлбөртэй, худалдан авалтын дараах үеийн туршлагыг сайжруулж, худалдан авалтын дараах үеийн туршлагыг сайжруулах.',
-                        'vicuna'            => 'Хүрээ',
-                    ],
-                ],
-            ],
-
-            'catalog' => [
-                'info'     => 'Каталог',
-                'title'    => 'Каталог',
-                'products' => [
-                    'info'  => 'Зочдын үзлэг, Бүтээгдэхүүний харах хуудас, Cart Vise PASSE, НЭГДСЭН НЭГДСЭН ХУУДАС НЭГДСЭН ХУДАЛДААНЫ ХУДАЛДАН АВАХ, ХУДАЛДАН АВЧ БАЙНА.',
-                    'title' => 'Бүтээгдэхүүн',
-
-                    'guest-checkout' => [
-                        'allow-guest-checkout'      => 'Зочдын үзлэгийг зөвшөөрөх',
-                        'allow-guest-checkout-hint' => 'Зөвлөгөө:Хэрэв асаалттай бол энэ сонголтыг бүтээгдэхүүний хувьд тусгайлан тохируулж болно.',
-                        'title'                     => 'Зошохыг товло',
-                        'title-info'                => 'Зочны үзлэг нь үйлчлүүлэгчдэд худалдан авагчдыг үүсгэхгүйгээр бүтээгдэхүүн худалдан авахгүйгээр бүтээгдэхүүн худалдаж авах боломжийг олгодог.',
-                    ],
-
-                    'product-view-page' => [
-                        'allow-no-of-related-products'  => 'Холбогдох бүтээгдэхүүн зөвшөөрөгдсөн тоо',
-                        'allow-no-of-up-sells-products' => 'Борлуулалтын бүртгэлд зөвшөөрөгдсөн тоо',
-                        'title'                         => 'Бүтээгдэхүүний харах хуудасны тохиргоо',
-                        'title-info'                    => 'Бүтээгдэхүүний харах хуудасны тохиргоо нь бүтээгдэхүүний байрлал, элементүүдийг тохируулахад хүргэдэг \'s display page, enhancing user experience and information presentation.',
-                    ],
-
-                    'cart-view-page' => [
-                        'allow-no-of-cross-sells-products' => 'Хөндлөн зарах бүтээгдэхүүний тоо',
-                        'title'                            => 'Сагс харах хуудасны тохиргоо',
-                        'title-info'                       => 'Сагс харах хуудасны тохиргоо нь бараа, дэлгэрэнгүй мэдээлэл, дэлгэрэнгүй мэдээлэл, дэлгэрэнгүй мэдээллийг дэлгүүр хэсэх, худалдан авах, худалдан авах',
-                    ],
-
-                    'storefront' => [
-                        'buy-now-button-display' => 'Үйлчлүүлэгчдэд шууд бүтээгдэхүүн худалдаж авахыг зөвшөөрөх',
-                        'cheapest-first'         => 'Хамгийн хямд',
-                        'comma-separated'        => 'Таслал тусгаарлагдсан',
-                        'database'               => 'Мэдээллийн сан',
-                        'default-list-mode'      => 'Үндсэн жагсаалтын горим',
-                        'elastic'                => 'Нүүр жимс',
-                        'expensive-first'        => 'Эхлээд үнэтэй',
-                        'from-a-z'               => 'A-Z-ээс',
-                        'from-z-a'               => 'Z-a-ээс',
-                        'grid'                   => 'Дэвэрсэн усан',
-                        'latest-first'           => 'Хамгийн шинэ нь',
-                        'list'                   => 'Жагсаалт',
-                        'oldest-first'           => 'Хамгийн эртний',
-                        'products-per-page'      => 'Хуудас бүрт бүтээгдэхүүн',
-                        'search-mode'            => 'Хайлтын горим',
-                        'sort-by'                => 'Элбэгх',
-                        'title'                  => 'Дэлгүүр ажил дэлгүүр хэс',
-                        'title-info'             => 'Дэлгүүрийн дэлгүүр нь онлайн дэлгүүр, ангилал, категори, бүтээгдэхүүнийг үзэх,',
-                    ],
-
-                    'small-image' => [
-                        'height'     => 'Өндөрлөг',
-                        'title'      => 'Жижиг утга',
-                        'title-info' => 'Дэлгүүрийн дэлгүүр нь онлайн дэлгүүр, ангилал, категори, бүтээгдэхүүнийг үзэх,',
-                        'width'      => 'Өргөн',
-                    ],
-
-                    'medium-image' => [
-                        'height'     => 'Өндөрлөг',
-                        'title'      => 'Бүтөрөгний дүр',
-                        'title-info' => 'Дунд зэргийн зураг нь харааны болон дэлгэцийн хоорондох нарийвчилсан, дэлгэцийн хоорондох тэнцвэрийг илэрхийлдэг дунд зэргийн хэмжээтэй зургийг илэрхийлдэг.',
-                        'width'      => 'Өргөн',
-                    ],
-
-                    'large-image' => [
-                        'height'     => 'Өндөрлөг',
-                        'title'      => 'Томоохуд',
-                        'title-info' => 'Том зураг нь сайжруулсан нарийвчилсан, харааны нөлөөллийг илэрхийлж буй нарийвчилсан, харааны нөлөөллийг илэрхийлдэг.',
-                        'width'      => 'Өргөн',
-                    ],
-
-                    'review' => [
-                        'allow-guest-review' => 'Зочдын тоймыг зөвшөөрөх',
-                        'title'              => 'Тойм',
-                        'title-info'         => 'ҮНЭЛГЭЭ, ЭНД ДАРЖ ҮЙЛ АЖИЛЛАГАА, ЭРХ ЗҮЙН ЭРХ ЗҮЙН ЭРХ ЗҮЙ.',
-                    ],
-
-                    'attribute' => [
-                        'file-upload-size'  => 'Зөвшөөрөгдсөн файл байршуулах хэмжээ (KB дээр)',
-                        'image-upload-size' => 'Зөвшөөрөгдсөн зураг байршуулах хэмжээ (KB-д)',
-                        'title'             => 'Хүн алдаа',
-                        'title-info'        => 'Объектыг тодорхойлдог шинж чанар, шинж чанар, гадаад байдал, эсвэл гадаад төрх, үйл ажиллагаа.',
-                    ],
-
-                    'social-share' => [
-                        'enable-share-email'     => 'Имэйлд хуваалцахыг идэвхжүүлэх үү?',
-                        'enable-share-facebook'  => 'Facebook-д хуваалцахыг идэвхжүүлэх үү?',
-                        'enable-share-linkedin'  => 'LinkedIn-д хуваалцахыг идэвхжүүлэх үү?',
-                        'enable-share-pinterest' => 'Pinterest-д хуваалцахыг идэвхжүүлэх үү?',
-                        'enable-share-twitter'   => 'Твиттерийг хуваалцахыг идэвхжүүлэх үү?',
-                        'enable-share-whatsapp'  => 'Хуваалцах зүйлээ идэвхжүүлэх \'s App?',
-                        'enable-social-share'    => 'Нийгмийн хувьцааг идэвхжүүлэх үү?',
-                        'share'                  => 'Хуваах',
-                        'share-message'          => 'Хөрөнгөтэй Захиа',
-                        'title'                  => 'Нийгмийн хуваалцах',
-                        'title-info'             => 'Facebook, Twitter, Instram, Instram, Instagram гэх мэт нийгмийн хэвлэл мэдээллийн хэрэгслээр найзуудтайгаа хуваалцах.',
-                    ],
-                ],
-
-                'rich-snippets' => [
-                    'info'  => 'Бүтээгдэхүүн, категорийг тохируулах.',
-                    'title' => 'Баялаг мэргэн бууч',
-
-                    'products' => [
-                        'enable'          => 'Болоцоо огох',
-                        'show-categories' => 'Ангиллыг харуулах',
-                        'show-images'     => 'Зурагыг харуулах',
-                        'show-offers'     => 'Саналыг харуулах',
-                        'show-ratings'    => 'Дуу abshysomings тэмдэг',
-                        'show-reviews'    => 'Хариууулах илгээх',
-                        'show-sku'        => 'Цуваа шоу',
-                        'show-weight'     => 'Жинэг',
-                        'title'           => 'Бүтээгдэхүүн',
-                        'title-info'      => 'Бизнес эсвэл худалдагчид санал болгож буй худалдан авах, ашиглах боломжтой зүйлс.',
-                    ],
-
-                    'categories' => [
-                        'enable'                  => 'Болоцоо огох',
-                        'show-search-input-field' => 'Хайлтын оролтын талбарыг харуул',
-                        'title'                   => 'Ангилал',
-                        'title-info'              => '"Ангилалууд" ангилал, ижил төстэй бүтээгдэхүүн, эд зүйлсийг зохион байгуулахад туслах бүлгүүд, ангилал, ангилал.',
-                    ],
-                ],
-            ],
-
-            'customer' => [
-                'info'  => 'Худалдан авагч',
-                'title' => 'Худалдан авагч',
-
-                'address' => [
-                    'info'  => 'Гудамжны хаягаар улс, муж, ZIP, мөр, мөрийг тавь.',
-                    'title' => 'Хаяглах',
-
-                    'requirements' => [
-                        'city'       => 'Хот',
-                        'country'    => 'Улс',
-                        'state'      => 'Улс гурэн',
-                        'title'      => 'Шаардлага',
-                        'title-info' => 'Шаардлага нь нөхцөл байдал, онцлог шинж чанар, онцлог шинж чанар, онцлог шинж чанарууд, эсвэл амжилтанд хүрсэн эсвэл амжилтанд хүрсэн нөхцөл юм.',
-                        'zip'        => 'Цахилгаан',
-                    ],
-
-                    'information' => [
-                        'street-lines' => 'Гудамжны хаяг дахь шугамууд',
-                        'title'        => 'Мэдээлэл',
-                        'title-info'   => '"Гудамжны хаягийн шугам" гэсэн мөрөнд "Хаяг, гудамж, хот, хот, хот гэх мэт асуудлыг шийднэ.',
-                    ],
-                ],
-
-                'captcha' => [
-                    'info'  => 'Сайтын түлхүүр, нууц түлхүүр, статусыг тохируулах.',
-                    'title' => 'Обььта',
-
-                    'credentials' => [
-                        'secret-key' => 'Нууцыг нууц түлхүүр',
-                        'site-key'   => 'Сүлжээний түлхүүр',
-                        'status'     => 'Байдал',
-                        'title'      => 'Итгэмжлэх жууч бичиг',
-                        'title-info' => '"Sitemap:Хайлтын системд зориулсан вэбсайтын зураг төсөл. Нууц түлхүүр:Мэдээлэл шифрлэлтийн код, баталгаажуулах код, API хандалтын хамгаалалт."',
-                    ],
-
-                    'validations' => [
-                        'captcha'  => 'Ямар нэгэн зүйл буруугаар эргэсэн! Дахин оролдоно уу.',
-                        'required' => 'CAPTCHA-г сонгоно уу',
-                    ],
-                ],
-
-                'settings' => [
-                    'settings-info' => 'Мэдээллийн мэдүүлэгчийн захиалгыг тохируулах, имэйл баталгаажуулалт, нийгмийн нэвтрэх.',
-                    'title'         => 'Тохиргоо',
-
-                    'newsletter' => [
-                        'subscription' => 'Мэдээллийн товхимол захиалгыг зөвшөөрөх',
-                        'title'        => 'Мэдээллийн товхимол',
-                        'title-info'   => '"Мэдээллийн мэдээлэл" шинэчлэлт, санал, агуулга, агуулгыг захиалагчидтай хамт олон, контентоор хуваалцаж, тэдэнд мэдээлж, оролцож,',
-                    ],
-
-                    'email' => [
-                        'email-verification' => 'Имэйл баталгаажуулалтыг зөвшөөрөх',
-                        'title'              => 'И-мэйл батлах',
-                        'title-info'         => '"Имэйл баталгаажуулалт" нь имэйл хаягийг баталгаажуулах, дансны аюулгүй байдал, харилцааны найдвартай байдлыг илгээж, олон удаа баталгаажуулах, харилцах найдвартай байдлыг баталгаажуулдаг.',
-                    ],
-
-                    'social-login' => [
-                        'enable-facebook'   => 'Facebook-ийг идэвхжүүлэх',
-                        'enable-github'     => 'Github-г идэвхжүүлэх',
-                        'enable-google'     => 'Google-г идэвхжүүлэх',
-                        'enable-linkedin'   => 'Linkedin-ийг идэвхжүүлэх',
-                        'enable-twitter'    => 'Твиттерийг идэвхжүүлэх',
-                        'social-login'      => 'Нийгмийн нэвтрэх',
-                        'social-login-info' => '"Нийгмийн нэвтрэх" нь хэрэглэгчдэд нийтийн мэдээллийн хэрэгслийн дансаа ашиглан вэб медиа акаунтууд, нэвтрүүлэх, нэвтрэх үйл явцыг ашиглах боломжийг олгодог.',
-                    ],
-                ],
-            ],
-
-            'email' => [
-                'info'  => 'Байлдлаа',
-                'title' => 'Байлдлаа',
-
-                'email-settings' => [
-                    'admin-email'           => 'Админ имэйл',
-                    'admin-email-tip'       => 'Имэйлийг хүлээн авахын тулд админ улсын имэйлийн имэйл хаяг',
-                    'admin-name'            => 'Админы нэр',
-                    'admin-name-tip'        => 'Энэ нэрийг бүх админ имэйлд харуулах болно',
-                    'admin-page-limit'      => 'Хуудасны үндсэн зүйл (админ)',
-                    'email-sender-name'     => 'И-мэйл илгээгчийн нэр',
-                    'email-sender-name-tip' => 'Энэ нэрийг үйлчлүүлэгчдэд ирсэн имэйл хайрцагт харуулна',
-                    'info'                  => 'Имэйл илгээгчийн нэрийг тохируулаарай, дэлгүүрийн имэйл хаяг, Админ нэр, админ имэйл хаяг.',
-                    'shop-email-from'       => 'Дэлгүүрийн имэйл хаяг',
-                    'shop-email-from-tip'   => 'Энэ сувгийн имэйл хаяг нь үйлчлүүлэгчдээ имэйл илгээх',
-                    'title'                 => 'Илгэийн тохиргоо',
-                ],
-
-                'notifications' => [
-                    'info'      => '"Мэдэгдэл" гэдэг нь хэрэглэгчдэд шинэчлэгдэж, шинэчлэлт, анхааруулга, сэрэмжлүүлэг, хэрэглэгч, хэрэглэгч, хэрэглэгчдийн оролцоо, мэдлэгийг сайжруулах.',
-                    'new-admin' => 'Админ руу баталгаажуулах и-мэйл илгээх',
-                    'title'     => 'Мэдэгдэл',
-                ],
-            ],
-
-            'sales' => [
-                'info'  => 'Шиллол үйлчилгээ',
-                'title' => 'Шиллол үйлчилгээ',
-
-                'shipping' => [
-                    'info'  => 'Хүргэлтийн мэдээллийг тохируулах.',
-                    'title' => 'Тээврийн үйлчилгээ',
-
-                    'origin' => [
-                        'bank-details'   => 'Банкныгийн бусад сан',
-                        'city'           => 'Хот',
-                        'contact-number' => 'Холбогдох дугаар',
-                        'country'        => 'Улс',
-                        'state'          => 'Улс гурэн',
-                        'store-name'     => 'Хэсгийн дэлгүүр',
-                        'street-address' => 'Гудамжны хаяг',
-                        'title'          => 'Эхлэл',
-                        'title-info'     => 'Хүргэлт гарал үүсэл нь бараа, бүтээгдэхүүнийг очих газраа хүргэхээс өмнө бараа, бүтээгдэхүүнийг гаралдан үүсгэдэг.',
-                        'vat-number'     => 'НӨАТ-ын дугаар',
-                        'zip'            => 'Цахилгаан',
-                    ],
-                ],
-
-                'shipping-methods' => [
-                    'info'  => 'Хүргэлтийн аргыг тохируулах',
-                    'title' => 'Ав тээврийн зэрэг арга',
-
-                    'free-shipping' => [
-                        'description' => 'Тодорхойлолт / төрөл анги',
-                        'page-title'  => 'Чөлөөт тээвэрлэлт',
-                        'status'      => 'Байдал',
-                        'title'       => 'Гарчиг',
-                        'title-info'  => '"ҮНЭГҮЙ хүргэлт" нь хүргэлтийн өртөг нь чөлөөлөгдсөн тээврийн аргыг хэлдэг бөгөөд худалдагч нь худалдан авагчдад бараа хүргэх тээврийн зардлыг бүрдүүлдэг.',
-                    ],
-
-                    'flat-rate-shipping' => [
-                        'description' => 'Тодорхойлолт / төрөл анги',
-                        'page-title'  => 'Хавтгай ханшийн хүргэлт',
-                        'rate'        => 'Үнэ',
-                        'status'      => 'Байдал',
-                        'title'       => 'Гарчиг',
-                        'title-info'  => 'Хавтгай ханш хүргэлт нь тээврийн хэмжээ, хэмжээ, хэмжээтэй, зайнаас үл хамааран тээврийн хэрэгсэл, эсвэл зайнаас үл хамааран тээврийн хэрэгсэл юм.Энэ нь тээврийн зардлыг хялбаршуулж, худалдан авагч, худалдагчдад давуу талтай байж болно.',
-                        'type'        => 'Маяг',
-                    ],
-                ],
-
-                'invoice-settings' => [
-                    'info'  => 'Нэхэмжлэлийн дугаар, төлбөрийн нөхцлийг тохируулах, нэхэмжлэх хуудасны хуудас, нэхэмжлэх сануулагч.',
-                    'title' => 'Ноогдлын тохиргоо',
-
-                    'invoice-number' => [
-                        'generator'  => 'Нэхэмжлэхийн дугаар үүсгэгч',
-                        'length'     => 'Нэхэмжлэхийн дугаар',
-                        'prefix'     => 'Нэхэмжлэхийн дугаар угтвар',
-                        'suffix'     => 'Нэхэмжлэхийн дугаарын дагавар',
-                        'title'      => 'Нэхэмжлэхийн дугаар тохиргоо',
-                        'title-info' => 'Зохион байгуулалт, параметрийн тохиргоог бий болгох, параметрүүдийг зохион байгуулалт, мөрдөх, хянах зорилгоор хуваарилах.',
-                    ],
-
-                    'payment-terms' => [
-                        'due-duration'      => 'Ноогсон үрэгдэл',
-                        'due-duration-day'  => ':due-duration Өдөр',
-                        'due-duration-days' => ':due-duration Өдөр',
-                        'title'             => 'Төлбөрийн нөхцөл',
-                        'title-info'        => 'Худалдан авагчийг хэзээ худалдагчид хүлээн авагч, үйлчилгээнд хэрхэн төлөх тухай тохиролцсон нөхцөл байдал.',
-                    ],
-
-                    'invoice-slip-design' => [
-                        'logo'       => 'Лого',
-                        'title'      => 'Нэхэмжлэх хуудасны дизайн',
-                        'title-info' => 'МЭДЭЭЛЛИЙН ТӨЛӨВЛӨГӨӨ, АЖИЛЛАГАА, ТӨЛБӨРИЙН НЭГДСЭН, ТӨЛБӨР, ТӨЛБӨР, ТӨЛБӨР, ТӨЛБӨРИЙН НЭГДСЭН, ТӨЛБӨР, ТӨЛБӨРГҮЙ.',
-                    ],
-
-                    'invoice-reminders' => [
-                        'interval-between-reminders' => 'Сануулагч хоорондын интервал',
-                        'maximum-limit-of-reminders' => 'Сануулагчийн дээд хязгаар',
-                        'title'                      => 'Нэхэмжлэлийн сануулга',
-                        'title-info'                 => 'Автомат мэдэгдэл эсвэл харилцаа холбоо, харилцаа холбоо нь нэхэмжлэхийг олж авах эсвэл хугацаа хэтрүүлсэн эсвэл хугацаа хэтрүүлсэн төлбөрийн төлбөрийг сануулах зорилгоор илгээсэн.',
-                    ],
-                ],
-            ],
-
-            'taxes' => [
-                'title' => 'Бум',
-
-                'catalog' => [
-                    'title'      => 'Каталог',
-                    'title-info' => 'Үнийн болон үндсэн байршлын тооцоог тохируулах',
-
-                    'pricing' => [
-                        'title'         => 'Үнэ',
-                        'title-info'    => 'Бараа, үйлчилгээний өртгийн талаарх дэлгэрэнгүй мэдээлэл, үндсэн үнэ, хөнгөлөлт, татвар, нэмэлт төлбөр, нэмэлт төлбөр',
-                        'tax-inclusive' => 'Татварыг хамарсан',
-                    ],
-
-                    'default-location-calculation' => [
-                        'default-country'   => 'Үндсэн улс',
-                        'default-post-code' => 'Үндсэн шуудангийн код',
-                        'default-state'     => 'Үндсэн байдал',
-                        'title'             => 'Байршлын үндсэн тооцоо',
-                        'title-info'        => 'Урьдчилан тогтоосон хүчин зүйл эсвэл тохиргоонд суурилсан стандарт эсвэл анхны байршлыг автоматаар тодорхойлох.',
+                    'agentic-pim' => [
+                        'title'                     => 'Агентлаг PIM',
+                        'title-info'                => 'AI агентын чат, бие даасан баяжуулалтын ажлын урсгал болон чанарын хяналтыг тохируулна. Эдгээр функцууд нь ярилцлагад суурилсан бүтээгдэхүүний удирдлага болон идэвхтэй каталогийн засвар үйлчилгээг боломжтой болгоно.',
+                        'enabled'                   => 'AI агентын чатыг идэвхжүүлэх',
+                        'enabled-info'              => '27+ хэрэгслийн үйлдэлтэй ярилцлагад суурилсан бүтээгдэхүүний удирдлагад зориулсан хөвөгч AI чат виджетийг идэвхжүүлнэ.',
+                        'max-steps'                 => 'Ээлж тутамд агентын хамгийн их алхам',
+                        'max-steps-info'            => 'AI агент хэрэглэгчийн мессеж бүрт гүйцэтгэж болох хэрэгслийн дуудлагын давталтын хамгийн их тоо. Илүү өндөр утгууд нь илүү нарийн олон алхамт үйлдлүүдийг зөвшөөрнө.',
+                        'daily-token-budget'        => 'Өдрийн токен төсөв',
+                        'daily-token-budget-info'   => 'Бүх хэрэглэгчдэд өдөрт хэрэглэх боломжтой AI токенуудын хамгийн их тоо (оролт + гаралт). Хязгааргүй болгохын тулд 0-ээр тохируулна. API зардлыг хянахад тусална.',
+                        'auto-enrichment'           => 'Бүтээгдэхүүн үүсгэх үед автомат баяжуулалт',
+                        'auto-enrichment-info'      => 'Шинэ бүтээгдэхүүн үүсгэх эсвэл импортлох үед дутуу тайлбар, ангилал болон SEO агуулгыг автоматаар үүсгэнэ.',
+                        'quality-monitor'           => 'Каталогийн чанарын хяналт',
+                        'quality-monitor-info'      => 'Бүрэн бус бүтээгдэхүүн, дутуу орчуулга, давхардсан бичлэгүүд болон үнийн гажуудлыг илрүүлэхийн тулд товлосон сканнердлагыг ажиллуулна.',
+                        'confidence-threshold'      => 'Итгэлцлийн босго',
+                        'confidence-threshold-info' => 'AI-аар үүсгэсэн өөрчлөлтүүдийг автоматаар хэрэглэх хамгийн бага итгэлцлийн оноо (0-1). Энэ босгоноос доош өөрчлөлтүүд хүний шалгалтад дараалалд орно.',
+                        'approval-mode'             => 'Өөрчлөлт зөвшөөрөх горим',
+                        'approval-mode-info'        => 'AI агент бичих үйлдлүүдийг хэрхэн зохицуулахыг хянана. "Баталгаажуулж хэрэглэх": агент чатаар утгуудыг санал болгож, баталгаажуулалт хүлээн, дараа нь гүйцэтгэнэ. "Хатуу баталгаажуулалт": ижил боловч өөрчлөлт бүрийн дараа шалгана. "Зөвхөн санал болгох": өөрчлөлтүүдийг тайлбарлах боловч хэзээ ч гүйцэтгэхгүй (зөвхөн унших).',
                     ],
                 ],
             ],
         ],
-
         'integrations' => [
             'index' => [
                 'create-btn' => 'Шуүгиан дэгдээх',
                 'title'      => 'Бүртгэл',
-
-                'datagrid' => [
+                'datagrid'   => [
                     'delete'          => 'Эдгээх',
                     'edit'            => 'Хянан засварлах / хэвлэлд бэлтгэх',
                     'id'              => 'Цамц',
@@ -2054,7 +1689,6 @@ return [
                     'permission-type' => 'Хөнгөнд оруулна',
                 ],
             ],
-
             'create' => [
                 'access-control' => 'Удирдлага',
                 'all'            => 'Бүгд',
@@ -2067,7 +1701,6 @@ return [
                 'save-btn'       => 'Аврах',
                 'title'          => 'Шинэ мөрүүд',
             ],
-
             'edit' => [
                 'access-control' => 'Удирдлага',
                 'all'            => 'Бүгд',
@@ -2085,7 +1718,6 @@ return [
                 'save-btn'       => 'Аврах',
                 'title'          => 'Интеграцийг засах',
             ],
-
             'being-used'                     => 'API интеграцийг админ хэрэглэгчдэд хэрэглэгддэг',
             'create-success'                 => 'API интеграци амжилттай бүтээгдсэн',
             'delete-failed'                  => 'API-г ингэснээр устгасан байна',
@@ -2096,40 +1728,155 @@ return [
             're-generate-secret-key-success' => 'API нууц түлхүүрийг амжилттай зохицуулж байна',
             'client-not-found'               => 'Үйлчлүүлэгч олдсонгүй',
         ],
-
         'prompt' => [
             'datagrid' => [
-                'id'            => 'ID',
-                'title'         => 'Гарчиг',
-                'prompt'        => 'Тушаал',
-                'type'          => 'Төрөл',
-                'created-at'    => 'Үүсгэсэн огноо',
-                'updated-at'    => 'Шинэчилсэн огноо',
-                'actions'       => 'Үйлдлүүд',
-                'edit'          => 'Засах',
-                'delete'        => 'Устгах',
-                'product'       => 'Бүтээгдэхүүн',
-                'category'      => 'Ангилал',
+                'id'               => 'ID',
+                'title'            => 'Гарчиг',
+                'prompt'           => 'Тушаал',
+                'type'             => 'Төрөл',
+                'purpose'          => 'Зорилго',
+                'text-generation'  => 'Текст үүсгэх',
+                'image-generation' => 'Зураг үүсгэх',
+                'translation'      => 'Орчуулга',
+                'created-at'       => 'Үүсгэсэн огноо',
+                'updated-at'       => 'Шинэчилсэн огноо',
+                'actions'          => 'Үйлдлүүд',
+                'edit'             => 'Засах',
+                'delete'           => 'Устгах',
+                'product'          => 'Бүтээгдэхүүн',
+                'category'         => 'Ангилал',
             ],
             'create' => [
-                'title'         => 'Тушаал',
-                'create-btn'    => 'Тушаал үүсгэх',
-                'edit-title'    => 'Тушаал засах',
-                'create-title'  => 'Шинэ тушаал үүсгэх',
-                'label-title'   => 'Гарчиг',
-                'type'          => 'Төрөл',
-                'prompt'        => 'Тушаал',
-                'save-btn'      => 'Тушаал хадгалах',
+                'title'               => 'Тушаал',
+                'create-btn'          => 'Тушаал үүсгэх',
+                'edit-title'          => 'Тушаал засах',
+                'create-title'        => 'Шинэ тушаал үүсгэх',
+                'label-title'         => 'Гарчиг',
+                'purpose'             => 'Зорилго',
+                'text-generation'     => 'Текст үүсгэх',
+                'image-generation'    => 'Зураг үүсгэх',
+                'select-purpose'      => 'Зорилго сонгох',
+                'select-model'        => '-- Загвар сонгох --',
+                'loading-models'      => 'Загварууд ачааллаж байна...',
+                'no-models-available' => 'Боломжтой загвар байхгүй байна. Платформ сонгох эсвэл Платформ табаас тохируулна уу.',
+                'type'                => 'Төрөл',
+                'prompt'              => 'Тушаал',
+                'save-btn'            => 'Тушаал хадгалах',
             ],
             'message' => [
-                'save-success'      => 'Тушаал амжилттай хадгалагдлаа.',
-                'update-success'    => 'Тушаал амжилттай шинэчлэгдлээ.',
-                'delete-success'    => 'Тушаал амжилттай устгагдлаа.',
-                'delete-fail'       => 'Тушаал устгахад алдаа гарлаа.',
+                'save-success'   => 'Тушаал амжилттай хадгалагдлаа.',
+                'update-success' => 'Тушаал амжилттай шинэчлэгдлээ.',
+                'delete-success' => 'Тушаал амжилттай устгагдлаа.',
+                'delete-fail'    => 'Тушаал устгахад алдаа гарлаа.',
+            ],
+        ],
+        'system-prompt' => [
+            'datagrid' => [
+                'id'          => 'ID',
+                'title'       => 'Гарчиг',
+                'tone'        => 'Өнгө аяс',
+                'max-tokens'  => 'Хамгийн их токен',
+                'temperature' => 'Температур',
+                'status'      => 'Төлөв',
+                'created-at'  => 'Үүсгэсэн огноо',
+                'updated-at'  => 'Шинэчилсэн огноо',
+                'actions'     => 'Үйлдлүүд',
+                'save'        => 'Хадгалах',
+                'edit'        => 'Засварлах',
+                'delete'      => 'устгах',
+            ],
+            'create' => [
+                'title'        => 'Системийн промпт',
+                'create-btn'   => 'Системийн промпт үүсгэх',
+                'edit-title'   => 'Системийн промпт засварлах',
+                'create-title' => 'Шинэ системийн промпт үүсгэх',
+                'label-title'  => 'Гарчиг',
+                'max-tokens'   => 'Хамгийн их гаралтын токен',
+                'temperature'  => 'Температур',
+                'type'         => 'Төрөл',
+                'prompt'       => 'Промпт',
+                'save-btn'     => 'Промпт хадгалах',
+                'prompt-tone'  => 'Промптын өнгө аяс',
+            ],
+            'message' => [
+                'save-success'   => 'Системийн промпт амжилттай хадгалагдлаа.',
+                'update-success' => 'Системийн промпт амжилттай шинэчлэгдлээ.',
+                'delete-success' => 'Системийн промпт амжилттай устгагдлаа.',
+                'delete-fail'    => 'Системийн промпт устгахад алдаа гарлаа.',
+            ],
+        ],
+        'platform' => [
+            'title'           => 'AI платформууд',
+            'create-btn'      => 'Платформ нэмэх',
+            'create-title'    => 'AI платформ нэмэх',
+            'edit-title'      => 'AI платформ засварлах',
+            'save-btn'        => 'Хадгалах',
+            'saving'          => 'Хадгалж байна',
+            'test-connection' => 'Холболт шалгах',
+            'setup'           => [
+                'title'              => 'Magic AI-тай эхлэх',
+                'description'        => 'AI-аар ажилладаг контент үүсгэх, зураг бүтээх, орчуулах боломжийг нээхийн тулд AI үйлчилгээ үзүүлэгчээ холбоно уу. Эхлэхийн тулд анхны платформоо нэмнэ үү.',
+                'step-1'             => 'Үйлчилгээ үзүүлэгч сонгох',
+                'step-2'             => 'API түлхүүрээ оруулна уу',
+                'step-3'             => 'Загварууд сонгоод хадгалах',
+                'add-first'          => 'Анхны платформоо нэмэх',
+                'no-default-warning' => 'Үндсэн платформ тохируулагдаагүй байна. Програмын хэмжээнд AI боломжуудыг идэвхжүүлэхийн тулд нэг платформыг үндсэн болгож тохируулна уу.',
+                'no-platform-hint'   => 'Одоогоор ямар ч платформ тохируулагдаагүй байна. Анхны AI үйлчилгээ үзүүлэгчээ нэмэхийн тулд Платформууд таб руу очно уу.',
+                'lightning-icon'     => 'Сайхан AI',
+                'warning-icon'       => 'Анхааруулга',
+            ],
+            'testing'         => 'Шалгаж байна',
+            'fetch-models'    => 'Загварууд татах',
+            'fetching-models' => 'Татаж байна',
+            'set-default'     => 'Үндсэн болгох',
+            'datagrid'        => [
+                'label'      => 'Шошго',
+                'provider'   => 'Үйлчилгээ үзүүлэгч',
+                'models'     => 'Загварууд',
+                'default'    => 'Үндсэн',
+                'status'     => 'Төлөв',
+                'created-at' => 'Үүсгэсэн огноо',
+                'edit'       => 'Засварлах',
+                'delete'     => 'Устгах',
+            ],
+            'fields' => [
+                'label'                    => 'Шошго',
+                'provider'                 => 'Үйлчилгээ үзүүлэгч',
+                'select-provider'          => '-- Үйлчилгээ үзүүлэгч сонгох --',
+                'api-url'                  => 'API URL',
+                'api-url-hint'             => 'Үндсэн төгсгөлийн цэгээр урьдчилан бөглөгдсөн. Зөвхөн прокси эсвэл тусгай байршуулалт ашиглаж байгаа бол засварлана уу.',
+                'api-key'                  => 'API түлхүүр',
+                'models'                   => 'Загварууд',
+                'custom-model-placeholder' => 'Тусгай загварын ID бичнэ үү...',
+                'add'                      => 'Нэмэх',
+                'enter-key-to-fetch'       => 'Боломжит загваруудыг автоматаар татахын тулд дээр API түлхүүрээ оруулна уу.',
+                'search-models'            => 'Загварууд хайх...',
+                'no-models-match'          => 'Таны хайлтад тохирох загвар олдсонгүй.',
+                'azure-deployment'         => 'Байршуулалтын нэр',
+                'azure-api-version'        => 'API хувилбар',
+                'is-default'               => 'Үндсэн болгох',
+                'status'                   => 'Төлөв',
+                'use-default'              => '-- Үндсэн платформ ашиглах --',
+                'use-default-hint'         => 'Үндсэн гэж тэмдэглэгдсэн платформыг ашиглахын тулд хоосон орхино уу. * тэмдэгтэй платформууд үндсэн юм.',
+                'no-image-platform'        => 'Зураг үүсгэх чадвартай платформ тохируулагдаагүй байна. Эхлээд OpenAI, Gemini, эсвэл xAI платформ нэмнэ үү.',
+                'image-platform-hint'      => 'Зөвхөн зураг үүсгэхийг дэмждэг платформууд жагсаагдсан (OpenAI, Gemini, xAI).',
+                'remove-model'             => ':model загварыг устгах',
+                'invalid-model-name'       => 'Загварын нэр буруу байна. Зөвхөн үсэг, тоо, зураас, цэг, хос цэг, налуу зураас ашиглана уу (жнь. gpt-4o, claude-3-sonnet).',
+            ],
+            'message' => [
+                'save-success'          => 'Платформ амжилттай хадгалагдлаа.',
+                'update-success'        => 'Платформ амжилттай шинэчлэгдлээ.',
+                'delete-success'        => 'Платформ амжилттай устгагдлаа.',
+                'delete-fail'           => 'Платформ устгахад алдаа гарлаа.',
+                'cannot-delete-default' => 'Цорын ганц үндсэн платформыг устгах боломжгүй.',
+                'set-default-success'   => 'Платформ амжилттай үндсэн болгож тохируулагдлаа.',
+                'test-success'          => 'Холболт амжилттай баталгаажлаа!',
+                'test-fail'             => 'Холболтын шалгалт амжилтгүй болсон',
+                'fetch-models-fail'     => 'Загварууд татагдсангүй',
+                'invalid-model-names'   => 'Буруу загварын нэрс: :names. Загварын нэр үсэг эсвэл тоогоор эхлэх ёстой бөгөөд зөвхөн үсэг, тоо, зураас, цэг, хос цэг, налуу зураас агуулж болно.',
             ],
         ],
     ],
-
     'components' => [
         'layouts' => [
             'header' => [
@@ -2139,124 +1886,78 @@ return [
                 'my-account'    => 'Миний данс',
                 'notifications' => 'Мэдэгдэл',
                 'visit-shop'    => 'Дэлгүүр',
-
-                'mega-search' => [
-                    'categories'                      => 'Ангилал',
-                    'customers'                       => 'Хэрэг бүртгөмжлэдэг',
-                    'explore-all-categories'          => 'Бүх ангиллыг судлах',
-                    'explore-all-customers'           => 'Бүх үйлчлүүлэгчдийг судлах',
-                    'explore-all-matching-categories' => '":query" (:count)-тай тохирох бүх категорийг судлах',
-                    'explore-all-matching-customers'  => '":query" (:count)-тай таарч буй бүх харилцагчдыг судлах',
-                    'explore-all-matching-orders'     => '":query" (:count)-тай тохирох бүх захиалгыг судлах',
-                    'explore-all-matching-products'   => '":query" (:count)-тай тохирох бүх бүтээгдэхүүнийг судлах',
-                    'explore-all-orders'              => 'Бүх захиалгыг судлах',
-                    'explore-all-products'            => 'Бүх бүтээгдэхүүнийг судлах',
-                    'orders'                          => 'Захиалга',
-                    'products'                        => 'Бүтээгдэхүүн',
-                    'sku'                             => 'SKU: :sku',
-                    'title'                           => 'Мега хайлт',
-                ],
             ],
-
             'sidebar' => [
-                'attribute-families'       => 'Аттригийн гэр бүлүүд',
-                'attribute-groups'         => 'Аттрибутын бүлгүүд',
-                'attributes'               => 'Тусгай чанар',
-                'history'                  => 'Түүх',
-                'edit-section'             => 'Мэдээ',
-                'general'                  => 'Жанжин',
-                'campaigns'                => 'Кампанит ажил',
-                'catalog'                  => 'Каталог',
-                'categories'               => 'Ангилал',
-                'category_fields'          => 'Ангилалын талбар',
-                'channels'                 => 'Сувгууд',
-                'cms'                      => 'См',
-                'collapse'                 => 'Сүйрэл',
-                'communications'           => 'Харилцаа',
-                'configure'                => 'Тохиролцоо',
-                'currencies'               => 'Валютууд',
-                'customers'                => 'Хэрэг бүртгөмжлэдэг',
-                'dashboard'                => 'Хотер самбар',
-                'data-transfer'            => 'Мэдээлэл дээр',
-                'discount'                 => 'Хямдруулах',
-                'email-templates'          => 'И-мэйл хаягууд',
-                'events'                   => 'Галтт хүн',
-                'exchange-rates'           => 'Валютын ханш',
-                'groups'                   => 'Гүүжээр бүл бүл',
-                'tracker'                  => 'Ажилийн барилгын',
-                'imports'                  => 'Тор байллтгах импортын',
-                'exports'                  => 'Эксби зэрэг',
-                'invoices'                 => 'Зураглагч',
-                'locales'                  => 'Орон нутгийн',
-                'magic-ai'                 => 'Чамд ид шид байна',
-                'marketing'                => 'Зээлнгийн',
-                'mode'                     => 'Харанхуй горим',
-                'newsletter-subscriptions' => 'Мэдээллийн товхимол',
-                'orders'                   => 'Захиалга',
-                'products'                 => 'Бүтээгдэхүүн',
-                'promotions'               => 'Захидал',
-                'refunds'                  => 'Аурхай тогтооноос',
-                'reporting'                => 'Тайлан',
-                'reviews'                  => 'Хянах',
-                'roles'                    => 'Дүрээ',
-                'sales'                    => 'Шиллол үйлчилгээ',
-                'search-seo'               => 'Хайх & seo',
-                'search-synonyms'          => 'Синоним хайх',
-                'search-terms'             => 'Хайлаас хасах Нэмэх',
-                'settings'                 => 'Тохиргоо',
-                'shipments'                => 'Хүргэлт',
-                'sitemaps'                 => 'Sitemaps',
-                'tax-categories'           => 'Татварын ангилал',
-                'tax-rates'                => 'Татварын үнэ',
-                'taxes'                    => 'Бум',
-                'themes'                   => 'Сэдэвүүд',
-                'transactions'             => 'Ашиглэлийн ажил',
-                'url-rewrites'             => 'URL Дахин бичих',
-                'users'                    => 'Хэрэглэгчид',
-                'integrations'             => 'Бүртгэл',
-                'prompt'                   => 'Түлхүүр үг',
-                'general-tab'              => 'Тохиргоо',
+                'attribute-families' => 'Аттригийн гэр бүлүүд',
+                'attribute-groups'   => 'Аттрибутын бүлгүүд',
+                'attributes'         => 'Тусгай чанар',
+                'history'            => 'Түүх',
+                'edit-section'       => 'Мэдээ',
+                'general'            => 'Жанжин',
+                'catalog'            => 'Каталог',
+                'categories'         => 'Ангилал',
+                'category_fields'    => 'Ангилалын талбар',
+                'channels'           => 'Сувгууд',
+                'collapse'           => 'Сүйрэл',
+                'configure'          => 'Тохиролцоо',
+                'currencies'         => 'Валютууд',
+                'dashboard'          => 'Хотер самбар',
+                'data-transfer'      => 'Мэдээлэл дээр',
+                'groups'             => 'Гүүжээр бүл бүл',
+                'tracker'            => 'Ажилийн барилгын',
+                'imports'            => 'Тор байллтгах импортын',
+                'exports'            => 'Эксби зэрэг',
+                'locales'            => 'Орон нутгийн',
+                'magic-ai'           => 'Чамд ид шид байна',
+                'mode'               => 'Харанхуй горим',
+                'products'           => 'Бүтээгдэхүүн',
+                'roles'              => 'Дүрээ',
+                'settings'           => 'Тохиргоо',
+                'themes'             => 'Сэдэвүүд',
+                'users'              => 'Хэрэглэгчид',
+                'integrations'       => 'Бүртгэл',
+                'prompt'             => 'Түлхүүр үг',
+                'general-tab'        => 'Тохиргоо',
             ],
         ],
-
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => 'Бичлэгийг сонгоогүй байна.',
                 'must-select-a-mass-action-option' => 'Та массын үйлдлийг сонгох ёстой \'s option.',
                 'must-select-a-mass-action'        => 'Та массын үйлдлийг сонгох ёстой.',
             ],
-
             'toolbar' => [
-                'length-of'   => ':length -ын',
-                '-оор / -өөр' => '-оор / -өөр',
-                'per-page'    => 'Бүр хуудас',
-                'results'     => ':total Үр дүн',
-                'selected'    => ':total Сонгосон',
-
+                'length-of'    => ':length -ын',
+                'of'           => 'of',
+                'per-page'     => 'Бүр хуудас',
+                'results'      => ':total Үр дүн',
+                'selected'     => ':total Сонгосон',
                 'mass-actions' => [
                     'submit'        => 'Бууж өгөх',
                     'select-option' => 'Сонголт сонгоно уу',
                     'select-action' => 'Хэсэгийг сонгоно уу',
                 ],
-
                 'filter' => [
                     'title' => 'Шүүх',
                 ],
-
                 'search_by' => [
                     'code'       => 'Кодоор хайлт хийх',
                     'code_or_id' => 'Код эсвэл ID-ээр хайх',
                 ],
-
                 'search' => [
                     'title' => 'Эрэл хайгуул хийх',
                 ],
-
                 'manage-columns' => [
                     'title' => 'Багануудыг',
                 ],
+                'pagination' => [
+                    'first-page'    => 'Эхний хуудас',
+                    'previous-page' => 'Өмнөх хуудас',
+                    'next-page'     => 'Дараагийн хуудас',
+                    'last-page'     => 'Сүүлийн хуудас',
+                    'page-number'   => 'Хуудасны дугаар',
+                ],
             ],
-
             'filters' => [
                 'select'   => 'Шилэх',
                 'title'    => 'Шүүлтүүрийг түрхэнэ',
@@ -2267,17 +1968,14 @@ return [
                         'no-results'        => 'Үр дүн олдсонгүй ...',
                     ],
                 ],
-
                 'custom-filters' => [
                     'clear-all' => 'Бүгдийг цэвэрлэ',
                     'title'     => 'Захиалгат шүүлтүүр',
                 ],
-
                 'boolean-options' => [
                     'false' => 'Хуурамч',
                     'true'  => 'Үнэн',
                 ],
-
                 'date-options' => [
                     'last-month'        => 'Өнгөрсөн сар',
                     'last-six-months'   => 'Сүүлийн 6 сар',
@@ -2289,12 +1987,10 @@ return [
                     'yesterday'         => 'Өчигдөр',
                 ],
             ],
-
             'table' => [
                 'actions'              => 'Үйлдэл',
                 'no-records-available' => 'Бичлэг байхгүй байна.',
             ],
-
             'manage-columns' => [
                 'title'             => 'Багануудыг удирдах',
                 'available-columns' => 'Боломжтой баганууд',
@@ -2302,7 +1998,6 @@ return [
                 'apply-btn'         => 'Өргөдөл гаргах',
             ],
         ],
-
         'modal' => [
             'confirm' => [
                 'agree-btn'    => 'Зөвшөөрөх',
@@ -2310,14 +2005,12 @@ return [
                 'message'      => 'Та энэ үйлдлийг гүйцэтгэхийг хүсч байна уу?',
                 'title'        => 'Чи итгэлтэй байна уу?',
             ],
-
             'delete' => [
                 'agree-btn'    => 'Эдгээх',
                 'disagree-btn' => 'Цуаах',
                 'message'      => 'Та устгахыг хүсч байна уу?',
                 'title'        => 'Хасахыг баталгаажуулна уу',
             ],
-
             'history' => [
                 'title'           => 'Түүх урьдчилан харах',
                 'subtitle'        => 'Шинэчлэлт, өөрчлөлтийг хурдан хянах.',
@@ -2331,7 +2024,6 @@ return [
                 'no-history'      => 'Түүх олдсонгүй',
             ],
         ],
-
         'products' => [
             'search' => [
                 'add-btn'       => 'Сонгосон бүтээгдэхүүн нэмэх',
@@ -2343,7 +2035,6 @@ return [
                 'title'         => 'Бүтээгдэхүүнийг сонгох',
             ],
         ],
-
         'media' => [
             'images' => [
                 'add-image-btn'      => 'Зураг нэмэх',
@@ -2355,11 +2046,10 @@ return [
                 'allowed-types'      => 'PNG, JPEG, JPG',
                 'not-allowed-error'  => 'Зөвхөн зураг (.jpeg, .jpeg, .jpg, .jpg, .png, .png, ..png, ..) Зөвшөөрөгдсөн.',
                 'upload-media-btn'   => 'Медиа байршуулах',
-
-                'ai-generation' => [
-                    '1024X1024'        => '1024X1024',
-                    '1024X1792'        => '1024X1792',
-                    '1792X1024'        => '1792X1024',
+                'ai-generation'      => [
+                    '1024x1024'        => '1024x1024',
+                    '1024x1792'        => '1024x1792',
+                    '1792x1024'        => '1792x1024',
                     'apply'            => 'Хандах',
                     'dall-e-2'         => '2-оос',
                     'dall-e-3'         => '3-аас',
@@ -2376,7 +2066,6 @@ return [
                     'standard'         => 'Стандарт',
                     'title'            => 'AI зургийн үе',
                 ],
-
                 'placeholders' => [
                     'front'     => 'Урд',
                     'next'      => 'Дараачийн',
@@ -2385,23 +2074,22 @@ return [
                     'zoom'      => 'Zhza-ZYG',
                 ],
             ],
-
+            'gallery' => [
+                'not-allowed-error' => 'Зөвхөн зураг болон видео файлууд зөвшөөрөгдөнө. (.mp4, .jpg ..)',
+            ],
             'videos' => [
                 'add-video-btn'     => 'Видках',
                 'allowed-types'     => 'MP4, WebM, MKV',
                 'not-allowed-error' => 'Зөвхөн видео файлууд (.mp4, .mov, .mov, .mov,.) Зөвшөөрнө ..',
             ],
-
             'files' => [
                 'add-file-btn'      => 'Нэмэх',
                 'allowed-types'     => 'үдэдны',
                 'not-allowed-error' => 'Зөвхөн PDF файлуудыг зөвшөөрдөг',
             ],
         ],
-
         'tinymce' => [
-            'ai-btn-tile' => 'Чамд ид шид байна',
-
+            'ai-btn-tile'   => 'Чамд ид шид байна',
             'ai-generation' => [
                 'apply'                  => 'Хандах',
                 'generate'               => 'Үйлдвэрлэх',
@@ -2410,7 +2098,14 @@ return [
                 'generating'             => 'Бий болгох ...',
                 'prompt'                 => 'Шаламгай',
                 'title'                  => 'AI Тусламж',
+                'platform'               => 'Платформ',
                 'model'                  => 'Загвар',
+                'rich-preview'           => 'Баялаг урьдчилан харах',
+                'system-prompt'          => 'Системийн промпт',
+                'select-system-prompt'   => 'Системийн промпт сонгох',
+                'tone-instructions'      => 'Өнгө аяс / Зааварчилгаа',
+                'max-tokens'             => 'Хамгийн их токен',
+                'temperature'            => 'Температур',
                 'gpt-3-5-turbo'          => 'Oplei Gpt-3.5-Turbo',
                 'llama2'                 => 'Llama 2',
                 'mistral'                => 'Хувь зүй',
@@ -2427,27 +2122,20 @@ return [
             ],
         ],
     ],
-
     'acl' => [
         'addresses'                => 'Хаягдарлагдах хаяг',
         'attribute-families'       => 'Аттригийн гэр бүлүүд',
         'attribute-groups'         => 'Аттрибутын бүлгүүд',
         'attributes'               => 'Тусгай чанар',
-        'campaigns'                => 'Кампанит ажил',
         'cancel'                   => 'Цуаах',
-        'cart-rules'               => 'Тэрэгний дүрэм',
-        'catalog-rules'            => 'Каталогын дүрэм',
         'catalog'                  => 'Каталог',
         'categories'               => 'Ангилал',
         'channels'                 => 'Сувгууд',
-        'cms'                      => 'См',
-        'communications'           => 'Харилцаа',
         'configure'                => 'Эвлүүл',
         'configuration'            => 'Тохиролцоо',
         'copy'                     => 'Хуулах',
         'create'                   => 'Шуүгиан дэгдээх',
         'currencies'               => 'Валютууд',
-        'customers'                => 'Хэрэг бүртгөмжлэдэг',
         'dashboard'                => 'Хотер самбар',
         'data-transfer'            => 'Мэдээлэл дээр',
         'delete'                   => 'Эдгээх',
@@ -2460,6 +2148,9 @@ return [
         'invoices'                 => 'Зураглагч',
         'locales'                  => 'Орон нутгийн',
         'magic-ai'                 => 'Чамд ид шид байна',
+        'magic-ai-general'         => 'Ерөнхий',
+        'magic-ai-prompt'          => 'Промпт',
+        'magic-ai-system-prompt'   => 'Системийн промпт',
         'marketing'                => 'Зээлнгийн',
         'newsletter-subscriptions' => 'Мэдээллийн товхимол',
         'note'                     => 'Мөнгөн дэвсгэрт',
@@ -2476,7 +2167,7 @@ return [
         'search-terms'             => 'Хайлаас хасах Нэмэх',
         'settings'                 => 'Тохиргоо',
         'shipments'                => 'Хүргэлт',
-        'sitemaps'                 => 'Sitemaps',
+        'sitemaps'                 => 'Сайтын газрын зураг',
         'subscribers'              => 'Мэдээллийн хуудас захиалагч',
         'tax-categories'           => 'Татварын ангилал',
         'tax-rates'                => 'Татварын үнэ',
@@ -2487,56 +2178,50 @@ return [
         'users'                    => 'Хэрэглэгчид',
         'category_fields'          => 'Ангилалын талбар',
         'view'                     => 'Харагдац',
+        'execute'                  => 'Ажлыг гүйцэтгэх',
         'history'                  => 'Түүх',
         'restore'                  => 'Сэргээх',
         'integrations'             => 'Бүртгэл',
         'api'                      => 'Api',
+        'tracker'                  => 'Ажлын хянагч',
+        'exports'                  => 'Экспорт',
         'mass-update'              => '[translation needed]',
         'mass-delete'              => '[translation needed]',
     ],
-
     'errors' => [
         'dashboard' => 'Хотер самбар',
         'go-back'   => 'Буцах',
         'support'   => 'Хэрэв асуудал хэвээр байвал <a href=":link" class=":class">:email</a> хаягаар бидэнтэй холбогдож тусламж аваарай.',
-
-        '404' => [
+        '404'       => [
             'description' => 'Өө!Таны хуудас \'re looking for is on vacation. It seems we couldn\'t find what you were searching for.',
             'title'       => '404 хуудас олдсонгүй',
         ],
-
         '401' => [
             'description' => 'Өө!Чам шиг харагдаж байна\'re not allowed to access this page. It seems you\'re missing the necessary credentials.',
             'title'       => 'Зөвшөөрөлгүй 401',
             'message'     => 'Буруу итгэмжлэлийн улмаас баталгаажуулалт амжилтгүй болсон эсвэл хугацаа нь дууссан токен.',
         ],
-
         '403' => [
             'description' => 'Өө!Энэ хуудас нь хязгаарлагдмал байна.Энэ нь танд таалагдахгүй байна\'t have the required permissions to view this content.',
             'title'       => '403 хориотой',
         ],
-
         '413' => [
             'description' => 'Өө!Та хэт том файлыг байршуулахыг оролдож байна.Хэрэв та ижил байршуулахыг хүсч байвал PHP тохиргоог шинэчилнэ үү.',
             'title'       => '413 агуулга хэт том байна',
         ],
-
         '419' => [
             'description' => 'Өө!Таны хуралдаан хугацаа дууссан байна.Хуудсыг сэргээнэ үү, Үргэлжлүүлэхийн тулд дахин нэвтрэн орно уу.',
             'title'       => '419 хуралдаан хугацаа дууссан байна',
         ],
-
         '500' => [
             'description' => 'Өө!Ямар нэгэн зүйл буруугаар эргэсэн.Бид тийм санагдаж байна\'re having trouble loading the page you\'re looking for.',
             'title'       => '500 Дотоод серверийн алдаа',
         ],
-
         '503' => [
             'description' => 'Өө!Бид \ шиг харагдаж байна\'re temporarily down for maintenance. Please check back in a bit.',
             'title'       => '503 үйлчилгээ боломжгүй байна',
         ],
     ],
-
     'export' => [
         'csv'                  => 'Csv',
         'download'             => 'Татаж авах',
@@ -2549,22 +2234,18 @@ return [
         'error'                => 'Ямар нэгэн алдаа гарлаа!',
         'product-not-selected' => 'Хурдан экспортод зориулан бүтээгдэхүүн сонгогдоогүй байна',
     ],
-
     'validations' => [
         'slug-being-used' => 'Энэ slug нь ангилал эсвэл бүтээгдэхүүний аль ч хэсэгт ашиглаж байна.',
         'slug-reserved'   => 'Энэ slug нөөцлөгдсөн байна.',
         'invalid-locale'  => 'Хүчингүй нутаг дэвсгэр :locales',
     ],
-
     'footer' => [
         'copy-right' => '<a href=" hrefttp://unopim.com/" target="_blank">UnoPim</a>, A Community Project by <a href="https://webkul.com/" target="_blank">Webkul</a>',
     ],
-
     'emails' => [
         'dear'   => 'Эрхэм :admin_name',
         'thanks' => 'Хэрэв танд ямар нэгэн тусламж хэрэгтэй бол <a href=":link" style=":style">:email</a> хаягаар бидэнтэй холбогдоно уу.<br/>Баярлалаа!',
-
-        'admin' => [
+        'admin'  => [
             'forgot-password' => [
                 'description'    => 'Таны акаунтыг шинэчлэх хүсэлтийг шинэчлэх хүсэлтийг хүлээн авсан тул та энэ имэйлийг хүлээн авч байна.',
                 'greeting'       => 'Нууц үгээ мартсан!',
@@ -2573,16 +2254,15 @@ return [
             ],
         ],
     ],
-
     'common' => [
-        'yes'     => 'Мон',
-        'no'      => '-Гүй / -битгий',
-        'true'    => 'Үнэн',
-        'false'   => 'Хуурамч',
-        'enable'  => 'Оруулах',
-        'disable' => 'Эрэмдэг зэрэмдэг',
+        'yes'            => 'Мон',
+        'no'             => '-Гүй / -битгий',
+        'true'           => 'Үнэн',
+        'false'          => 'Хуурамч',
+        'enable'         => 'Оруулах',
+        'disable'        => 'Эрэмдэг зэрэмдэг',
+        'no-match-found' => 'Тохирох зүйл олдсонгүй!',
     ],
-
     'default-prompt' => [
         'detailed' => [
             'title'  => 'Бүтээгдэхүүний дэлгэрэнгүй тайлбар',

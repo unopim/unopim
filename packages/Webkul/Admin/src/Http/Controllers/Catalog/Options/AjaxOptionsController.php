@@ -56,12 +56,12 @@ class AjaxOptionsController extends Controller
     /**
      * Fetch and format options for async select and multiselect handlers
      */
-    public function getOptions()
+    public function getOptions(): JsonResponse
     {
-        $attributeId = request()->get('attributeId');
-        $entityName = request()->get('entityName');
-        $page = request()->get('page');
-        $query = request()->get('query') ?? '';
+        $attributeId = request()->input('attributeId');
+        $entityName = request()->input('entityName');
+        $page = request()->input('page');
+        $query = request()->input('query') ?? '';
 
         $queryParams = request()->except(['page', 'query', 'entityName', 'attributeId']);
 

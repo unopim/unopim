@@ -79,10 +79,10 @@ it('should update Attribute group', function () {
 
     $attributeGroup = AttributeGroup::factory()->create();
 
-    $locales = Locale::where('status', 1)->limit(3);
+    $locales = Locale::where('status', 1)->limit(3)->get();
     $data = [];
     foreach ($locales as $locale) {
-        $data[$locale] = ['name' => $locale.fake()->word()];
+        $data[$locale->code] = ['name' => $locale->code.fake()->word()];
     }
 
     $response = putJson(route('admin.catalog.attribute.groups.update', $attributeGroup->id), [

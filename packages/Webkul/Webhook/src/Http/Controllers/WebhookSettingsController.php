@@ -4,7 +4,9 @@ namespace Webkul\Webhook\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Event;
+use Illuminate\View\View;
 use Webkul\Webhook\Models\WebhookSetting;
 use Webkul\Webhook\Repositories\SettingsRepository;
 
@@ -17,7 +19,7 @@ class WebhookSettingsController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function index()
     {
@@ -27,7 +29,7 @@ class WebhookSettingsController
     /**
      * Store a newly created resource in storage.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function store(Request $request)
     {
@@ -35,7 +37,7 @@ class WebhookSettingsController
             'webhook_url' => 'url',
         ]);
 
-        $active = (int) $request->get('webhook_active', '0');
+        $active = (int) $request->input('webhook_active', '0');
 
         $settings = [
             'webhook_active' => $active,

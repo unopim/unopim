@@ -3,8 +3,10 @@
 return [
     'seeders' => [
         'attribute' => [
-            'attribute-families' => '屬性家族',
-            'attribute-groups'   => [
+            'attribute-families' => [
+                'default' => '預設',
+            ],
+            'attribute-groups' => [
                 'description'      => '描述',
                 'general'          => '一般',
                 'meta-description' => '中繼描述',
@@ -107,7 +109,6 @@ return [
                 'password'         => '密碼',
                 'title'            => '建立管理員',
             ],
-
             'environment-configuration' => [
                 'allowed-currencies'  => '允許的貨幣',
                 'allowed-locales'     => '允許的地區',
@@ -145,13 +146,11 @@ return [
                 'usd'                 => '美元 (USD)',
                 'warning-message'     => '警告！這些配置為永久設定，無法更改。',
             ],
-
             'installation-processing' => [
                 'unopim'      => '正在安裝 UnoPim',
                 'unopim-info' => '正在建立資料庫表，這可能需要幾分鐘。',
                 'title'       => '安裝中',
             ],
-
             'installation-completed' => [
                 'admin-panel'               => '管理面板',
                 'unopim-forums'             => 'UnoPim 論壇',
@@ -159,7 +158,6 @@ return [
                 'title-info'                => 'UnoPim 已成功安裝。',
                 'title'                     => '安裝完成',
             ],
-
             'ready-for-installation' => [
                 'create-databsae-table'   => '建立資料庫表',
                 'install-info-button'     => '點擊下面的按鈕開始',
@@ -169,7 +167,6 @@ return [
                 'start-installation'      => '開始安裝',
                 'title'                   => '準備安裝',
             ],
-
             'start' => [
                 'locale'        => '地區',
                 'main'          => '主頁',
@@ -177,7 +174,6 @@ return [
                 'title'         => '您的 UnoPim 安裝',
                 'welcome-title' => '歡迎來到 UnoPim :version',
             ],
-
             'server-requirements' => [
                 'calendar'    => '日曆',
                 'ctype'       => 'cType',
@@ -200,7 +196,6 @@ return [
                 'tokenizer'   => '分詞器',
                 'xml'         => 'XML',
             ],
-
             'back'                     => '返回',
             'unopim-info'              => '社區項目',
             'unopim-logo'              => 'UnoPim 標誌',

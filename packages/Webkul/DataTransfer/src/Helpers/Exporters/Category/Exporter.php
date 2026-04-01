@@ -11,6 +11,7 @@ use Webkul\DataTransfer\Helpers\Exporters\AbstractExporter;
 use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
 use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
+use Webkul\Product\Models\ProductProxy;
 
 class Exporter extends AbstractExporter
 {
@@ -179,10 +180,8 @@ class Exporter extends AbstractExporter
      */
     protected function productCountsByCategory(string $code): int
     {
-        if (! $this->source) {
-            $this->source = app()->make(config('exporters.categories.source'));
-        }
-
-        return $this->source->getProducts($code)->count();
+        return ProductProxy::query()
+            ->whereJsonContains('values->categories', $code)
+            ->count();
     }
 }

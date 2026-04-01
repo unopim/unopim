@@ -8,7 +8,27 @@
   </a>
 </p>
 
-UnoPim is an open-source Product Information Management (PIM) system built on the Laravel framework. It helps businesses organize, manage, and enrich their product information in one central repository.
+<p align="center">
+  <a href="https://github.com/unopim/unopim/releases"><img src="https://img.shields.io/github/v/release/unopim/unopim?label=version" alt="Latest Version"></a>
+  <a href="https://github.com/unopim/unopim/blob/master/LICENSE"><img src="https://img.shields.io/github/license/unopim/unopim" alt="License"></a>
+  <a href="https://github.com/unopim/unopim/actions"><img src="https://img.shields.io/github/actions/workflow/status/unopim/unopim/linting_tests.yml?branch=master&label=tests" alt="Tests"></a>
+  <a href="https://github.com/unopim/unopim"><img src="https://img.shields.io/github/stars/unopim/unopim" alt="GitHub Stars"></a>
+</p>
+
+UnoPim is an open-source Product Information Management (PIM) system built on Laravel 12. It helps businesses organize, manage, and enrich their product information in one central repository — now with built-in AI agent capabilities for conversational product management.
+
+## 🆕 What's New in v2.0.0
+
+- **AI Agent Chat** — Manage products through natural language with 32+ tool actions (search, create, update, bulk edit, export, generate content/images, memory, planning, quality reports, and more)
+- **Agentic PIM** — Autonomous product enrichment, catalog quality monitoring, approval workflows, content feedback loop, and persistent agent memory
+- **Multi-Platform MagicAI** — Support for 10+ AI providers (OpenAI, Anthropic, Gemini, Groq, Ollama, Mistral, DeepSeek, and more) with database-backed credential management
+- **Laravel 12 Upgrade** — Modernized bootstrap architecture with `bootstrap/app.php` fluent API, removing Kernel classes
+- **Enhanced Dashboard** — Channel readiness, product trends, recent activity, and needs-attention widgets
+- **Import/Export Performance & Tracker UI** — Real-time step-by-step progress tracking, ZIP image upload, eager loading optimizations, increased batch sizes, deferred indexing, and field processor improvements for high-volume data handling
+- **AI-Powered Search** — Embedding similarity and semantic ranking services for intelligent product discovery
+- **Improved CI/CD** — Translation auditing, Composer caching, concurrency groups, PHP 8.3 across all workflows
+
+> Upgrading from v1.0.0? See the [Upgrade Guide](UPGRADE-1.0.0-2.0.0.md) and [CHANGELOG](CHANGELOG.md).
 
 ## 🛠️ System Requirements
 
@@ -16,8 +36,8 @@ Ensure your server meets the following requirements:
 
 * **Server**: Nginx or Apache2
 * **RAM**: 8GB
-* **Node.js**: **18.17.1 LTS** or higher
-* **PHP**: **8.2** or higher
+* **PHP**: **8.3** or higher
+* **Node.js**: **20 LTS** or higher
 * **Composer**: **2.5** or higher
 * **Database (choose one):**
   * **MySQL**: 8.0.32 or higher
@@ -35,57 +55,63 @@ Ensure your server meets the following requirements:
 
 ## ✨ Features
 
-- **Centralized Product Management**  
+- **AI Agent Chat**
+  Manage products through natural language — search, create, update, bulk edit, export, categorize, and generate content via conversational AI with multi-step tool calling.
+
+- **Magic AI with Multi-Platform Support**
+  Generate product content, images, and translations using 10+ AI providers. Configure and manage AI platforms with encrypted credential storage, connection testing, and dynamic model selection.
+
+  ![AI-powered Product Content Generation](https://raw.githubusercontent.com/unopim/temp-media/main/advanced-features.png)
+
+- **Centralized Product Management**
   Manage all your product data in one place.
 
   ![Centralized Product Management Interface](https://raw.githubusercontent.com/unopim/temp-media/main/catalog-management.png)
 
-- **Data Enrichment**  
+- **Data Enrichment**
   Enhance your product information with detailed attributes and descriptions.
 
   ![Data Enrichment Interface](https://raw.githubusercontent.com/unopim/temp-media/main/data-enrichment.png)
 
-- **Magic AI for Product Content Generation**  
-  Automatically generate engaging product content using advanced Large Language Model (LLM) technology.
+- **Dashboard with Analytics**
+  Monitor channel readiness, product trends, recent activity, and items needing attention at a glance.
 
-  ![AI-powered Product Content Generation](https://raw.githubusercontent.com/unopim/temp-media/main/advanced-features.png)
-
-- **User Management**  
+- **User Management**
   Control user access and permissions.
 
   ![User Management Interface](https://raw.githubusercontent.com/unopim/temp-media/main/access-control.png)
 
-- **API Integration**  
+- **API Integration**
   Seamlessly integrate with other systems via RESTful APIs.
 
   ![API Integration Interface](https://raw.githubusercontent.com/unopim/temp-media/main/api-integration.png)
 
-- **Localization**  
-  Support for multiple languages and locales.
+- **Localization**
+  Support for 30+ languages and locales.
 
   ![Localization Support](https://raw.githubusercontent.com/unopim/temp-media/main/localization-and-channels.png)
 
-- **Multi-Channel**  
+- **Multi-Channel**
   Support for multiple sales channels.
 
   ![Multi-Channel Support](https://raw.githubusercontent.com/unopim/temp-media/main/multi-channel-support.png)
 
-- **Multi-Currency**  
+- **Multi-Currency**
   Support for multiple currencies.
 
   ![Multi-Currency Support](https://raw.githubusercontent.com/unopim/temp-media/main/multi-currency-support.png)
 
-- **Import/Export Functionality**  
-  Easily import and export product data using CSV and XLSX formats, with a quick export feature for streamlined data handling.
+- **Import/Export with Real-Time Tracker**
+  Import and export product data using CSV, XLSX, and ZIP formats with real-time step-by-step progress tracking, pipeline visualization, and job-specific logging. Optimized for high-volume data handling with eager loading, increased batch sizes, and deferred indexing.
 
   ![Data Import/Export Interface](https://raw.githubusercontent.com/unopim/temp-media/main/data-transfer.png)
 
-- **Themes**  
+- **Themes**
   UI compatible with both Light and Dark themes.
 
   ![Light/Dark Theme Interface](https://raw.githubusercontent.com/unopim/temp-media/main/user-interface.png)
 
-- **Version Control**  
+- **Version Control**
   Track the history of changes in your product data.
 
   ![Version Control Interface](https://raw.githubusercontent.com/unopim/temp-media/main/version-control.png)
@@ -110,14 +136,14 @@ To get started with UnoPim, follow these steps:
     php artisan serve
     ```
 
-4. **Access UnoPim**:  
+4. **Access UnoPim**:
    Open your browser and go to `http://localhost:8000`.
 
-5. **Queue Operations**:  
-   To execute import/export operations and product completeness score calculation initiate the Queue command:
+5. **Queue Operations**:
+   To execute import/export operations, AI agent tasks, and product completeness score calculation, start the queue worker:
 
    ```bash
-   php artisan queue:work --queue=system,default
+   php artisan queue:work --queue=system,default,completeness
    ```
 
 ## 🐳 Installation with Docker
@@ -128,12 +154,12 @@ If you have Docker/Docker Compose installed, follow these steps:
    - HTTPS: `git clone https://github.com/unopim/unopim.git`
    - SSH: `git clone git@github.com:unopim/unopim.git`
 
-2. **Enter the directory**:  
+2. **Enter the directory**:
    ```bash
    cd unopim
    ```
 
-3. **Start the Docker containers**:  
+3. **Start the Docker containers**:
    ```bash
    docker-compose up -d
    ```
@@ -144,21 +170,21 @@ If you have Docker/Docker Compose installed, follow these steps:
    - MySQL: `http://localhost:3306`
 
 
-> **Note**:  
-> If MySQL is already running on your system, change the MySQL port in the `docker-compose.yml` and `.env` files.  
+> **Note**:
+> If MySQL is already running on your system, change the MySQL port in the `docker-compose.yml` and `.env` files.
 > Run `docker-compose up -d` again to apply changes.
 
 ## ☁️ Cloud Installation via Amazon AMI
 
 You can also deploy UnoPim quickly using our pre-configured Amazon Machine Image (AMI) available on the AWS Marketplace:
 
-👉 [**Launch UnoPim on AWS**](https://aws.amazon.com/marketplace/pp/prodview-fdyosdv7k3cgw)
+[**Launch UnoPim on AWS**](https://aws.amazon.com/marketplace/pp/prodview-fdyosdv7k3cgw)
 
 This AMI allows you to get started with UnoPim on a cloud environment without manual setup. Ideal for scalable production or testing environments.
 
 ## 📖 Usage
 
-Once installed, you can start adding and managing your products. The intuitive interface allows you to categorize products, enrich data, and manage user permissions easily.
+Once installed, you can start adding and managing your products. The intuitive interface allows you to categorize products, enrich data, and manage user permissions easily. Use the AI Agent Chat to manage products through natural language commands.
 
 ## 📬 Postman API Collection
 

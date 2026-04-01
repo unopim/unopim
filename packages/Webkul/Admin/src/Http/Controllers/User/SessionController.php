@@ -2,6 +2,8 @@
 
 namespace Webkul\Admin\Http\Controllers\User;
 
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 use Webkul\Admin\Http\Controllers\Controller;
 
 class SessionController extends Controller
@@ -9,9 +11,9 @@ class SessionController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
-    public function create()
+    public function create(): View|RedirectResponse
     {
         if (auth()->guard('admin')->check()) {
             return redirect()->route('admin.dashboard.index');
@@ -30,10 +32,8 @@ class SessionController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function store()
+    public function store(): RedirectResponse
     {
         $this->validate(request(), [
             'email'    => 'required|email',
@@ -63,9 +63,8 @@ class SessionController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function destroy()
+    public function destroy(): RedirectResponse
     {
         auth()->guard('admin')->logout();
 

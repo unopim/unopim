@@ -31,7 +31,7 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         return [
-            'sku'                 => $this->faker->uuid,
+            'sku'                 => $this->faker->unique()->regexify('[A-Z]{3}[0-9]{4}'),
             'type'                => 'simple',
             'status'              => 1,
             'attribute_family_id' => AttributeFamily::find(1)?->id ?? AttributeFamily::factory()->withMinimalAttributesForProductTypes()->create()->id,

@@ -55,7 +55,7 @@
                     @if($item['name'] == 'admin::app.configuration.index.general.magic-ai.translation.title')
                         <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow grid grid-cols-2 gap-4">
                             @foreach ($item['fields'] as $index => $field)
-                                <div class="{{ $index < 3 ? 'col-span-2' : '' }}">
+                                <div class="{{ $index < 4 ? 'col-span-2' : '' }}">
                                     @if ($field['type'] == 'blade' && view()->exists($path = $field['path']))
                                         {!! view($path, compact('field', 'item'))->render() !!}
                                     @else

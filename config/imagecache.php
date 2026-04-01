@@ -1,5 +1,9 @@
 <?php
 
+use Webkul\Core\ImageCache\Templates\Large;
+use Webkul\Core\ImageCache\Templates\Medium;
+use Webkul\Core\ImageCache\Templates\Small;
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -51,9 +55,9 @@ return [
      */
 
     'templates' => [
-        'small'  => 'Webkul\Shop\CacheFilters\Small',
-        'medium' => 'Webkul\Shop\CacheFilters\Medium',
-        'large'  => 'Webkul\Shop\CacheFilters\Large',
+        'small'  => Small::class,
+        'medium' => Medium::class,
+        'large'  => Large::class,
     ],
 
     /*
@@ -66,4 +70,16 @@ return [
      */
 
     'lifetime' => 525600,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cache Driver
+    |--------------------------------------------------------------------------
+    |
+    | Optionally specify a custom cache driver to use for image caching.
+    | Set to null to use the default Laravel cache driver.
+    |
+     */
+
+    'cache_driver' => null,
 ];

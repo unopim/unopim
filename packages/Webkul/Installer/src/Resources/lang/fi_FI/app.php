@@ -6,7 +6,6 @@ return [
             'attribute-families' => [
                 'default' => 'Oletus',
             ],
-
             'attribute-groups' => [
                 'description'      => 'Kuvaus',
                 'general'          => 'Yleinen',
@@ -14,7 +13,6 @@ return [
                 'price'            => 'Hinta',
                 'media'            => 'Media',
             ],
-
             'attributes' => [
                 'brand'                => 'Brändi',
                 'color'                => 'Väri',
@@ -45,7 +43,6 @@ return [
                 'weight'               => 'Paino',
                 'width'                => 'Leveys',
             ],
-
             'attribute-options' => [
                 'black'  => 'Musta',
                 'green'  => 'Vihreä',
@@ -58,19 +55,16 @@ return [
                 'yellow' => 'Keltainen',
             ],
         ],
-
         'category' => [
             'categories' => [
                 'description' => 'Juuri Kategorian Kuvaus',
                 'name'        => 'Juuri',
             ],
-
             'category_fields' => [
                 'name'        => 'Nimi',
                 'description' => 'Kuvaus',
             ],
         ],
-
         'core' => [
             'channels' => [
                 'meta-title'       => 'Demo Store',
@@ -78,7 +72,6 @@ return [
                 'meta-description' => 'Demo Store Meta Kuvaus',
                 'name'             => 'Oletus',
             ],
-
             'currencies' => [
                 'AED' => 'Dirham',
                 'AFN' => 'Israelin Shekeli',
@@ -95,19 +88,16 @@ return [
                 'USD' => 'US Dollari',
             ],
         ],
-
         'user' => [
             'roles' => [
                 'description' => 'Tämä rooli antaa käyttäjälle kaikki oikeudet',
                 'name'        => 'Ylläpitäjä',
             ],
-
             'users' => [
                 'name' => 'Esimerkki',
             ],
         ],
     ],
-
     'installer' => [
         'index' => [
             'create-administrator' => [
@@ -119,7 +109,6 @@ return [
                 'password'         => 'Salasana',
                 'title'            => 'Luo Ylläpitäjä',
             ],
-
             'environment-configuration' => [
                 'allowed-currencies'  => 'Sallitut valuutat',
                 'allowed-locales'     => 'Sallitut paikalliset asetukset',
@@ -157,13 +146,11 @@ return [
                 'usd'                 => 'Yhdysvaltain Dollari (USD)',
                 'warning-message'     => 'Varoitus! Järjestelmän oletuskielen ja valuutan asetuksia ei voi myöhemmin muuttaa.',
             ],
-
             'installation-processing' => [
                 'unopim'      => 'UnoPim Asennus',
                 'unopim-info' => 'Tietokantataulukoiden luominen, tämä voi kestää hetken',
                 'title'       => 'Asennus',
             ],
-
             'installation-completed' => [
                 'admin-panel'               => 'Ylläpitäjän Paneeli',
                 'unopim-forums'             => 'UnoPim Foorumit',
@@ -171,7 +158,6 @@ return [
                 'title-info'                => 'UnoPim on onnistuneesti asennettu järjestelmään.',
                 'title'                     => 'Asennus Valmis',
             ],
-
             'ready-for-installation' => [
                 'create-databsae-table'   => 'Luo tietokantataulut',
                 'install-info-button'     => 'Klikkaa alla olevaa painiketta aloittaaksesi',
@@ -181,7 +167,6 @@ return [
                 'start-installation'      => 'Aloita Asennus',
                 'title'                   => 'Valmis Asennukseen',
             ],
-
             'start' => [
                 'locale'        => 'Paikalliset asetukset',
                 'main'          => 'Aloita',
@@ -189,7 +174,6 @@ return [
                 'title'         => 'UnoPim Asennus',
                 'welcome-title' => 'Tervetuloa UnoPim :version',
             ],
-
             'server-requirements' => [
                 'calendar'    => 'Kalenteri',
                 'ctype'       => 'cType',
@@ -212,10 +196,9 @@ return [
                 'tokenizer'   => 'Tokenisaattori',
                 'xml'         => 'XML',
             ],
-
             'back'                     => 'Takaisin',
             'unopim-info'              => 'Yhteisöprojekti',
-            'unopim-logo'              => 'UnoPim Logo',
+            'unopim-logo'              => 'UnoPim-logo',
             'unopim'                   => 'UnoPim',
             'continue'                 => 'Jatka',
             'installation-description' => 'UnoPimin asennus sisältää useita vaiheita. Tässä yleiskatsaus:',

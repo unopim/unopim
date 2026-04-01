@@ -10,7 +10,7 @@ return [
                     'invalid-attribute-family'                 => 'Nieprawidłowa wartość dla kolumny rodziny atrybutów (rodzina atrybutów nie istnieje?)',
                     'invalid-type'                             => 'Typ produktu jest nieprawidłowy lub nieobsługiwany',
                     'sku-not-found'                            => 'Produkt o podanym SKU nie został znaleziony',
-                    'super-attribute-not-found'                => 'Atrybut konfigurowalny z kodem: \'%s\' nie znaleziony lub nie należy do rodziny atrybutów: \'%s\'',
+                    'super-attribute-not-found'                => 'Atrybut konfigurowalny z kodem: \'%s\' nie znaleziony lub nie należy do rodziny atrybutów: \'%s\' :code :familyCode',
                     'configurable-attributes-not-found'        => 'Atrybuty konfigurowalne są wymagane do tworzenia modelu produktu',
                     'configurable-attributes-wrong-type'       => 'Tylko atrybuty typu, które nie są oparte na lokalizacji lub kanale, mogą być konfigurowalnymi atrybutami dla produktu konfigurowalnego',
                     'variant-configurable-attribute-not-found' => 'Wariant konfigurowalnego atrybutu: :code jest wymagany do stworzenia',

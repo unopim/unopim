@@ -55,7 +55,7 @@ class AttributeFamilyController extends ApiController
      *
      * @return \Illuminate\Http\Response
      */
-    public function store()
+    public function store(): JsonResponse
     {
         $validator = $this->codeRequireWithUniqueValidator('attribute_families');
 
@@ -91,7 +91,7 @@ class AttributeFamilyController extends ApiController
      *
      * @return \Illuminate\Http\Response
      */
-    public function update(string $code)
+    public function update(string $code): JsonResponse
     {
         $attributeFamily = $this->attributeFamilyRepository->findOneByField('code', $code);
         if (! $attributeFamily) {

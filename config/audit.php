@@ -1,5 +1,13 @@
 <?php
 
+use OwenIt\Auditing\Models\Audit;
+use OwenIt\Auditing\Resolvers\IpAddressResolver;
+use OwenIt\Auditing\Resolvers\UrlResolver;
+use OwenIt\Auditing\Resolvers\UserAgentResolver;
+use OwenIt\Auditing\Resolvers\UserResolver;
+use Webkul\HistoryControl\Resolvers\PrimaryIdResolver;
+use Webkul\User\Models\Admin;
+
 return [
 
     'enabled' => env('AUDITING_ENABLED', true),
@@ -13,7 +21,7 @@ return [
     |
     */
 
-    'implementation' => OwenIt\Auditing\Models\Audit::class,
+    'implementation' => Audit::class,
 
     /*
     |--------------------------------------------------------------------------
@@ -27,8 +35,8 @@ return [
     'user'      => [
         'primary_key' => 'id',
         'foreign_key' => 'user_id', // Adjust this if your foreign key is different
-        'model'       => Webkul\User\Models\Admin::class, // Change this to your Admin model
-        'resolver'    => OwenIt\Auditing\Resolvers\UserResolver::class,
+        'model'       => Admin::class, // Change this to your Admin model
+        'resolver'    => UserResolver::class,
         'guards'      => [
             'admin',
         ],
@@ -43,10 +51,10 @@ return [
     |
     */
     'resolvers' => [
-        'ip_address' => OwenIt\Auditing\Resolvers\IpAddressResolver::class,
-        'user_agent' => OwenIt\Auditing\Resolvers\UserAgentResolver::class,
-        'url'        => OwenIt\Auditing\Resolvers\UrlResolver::class,
-        'history_id' => Webkul\HistoryControl\Resolvers\PrimaryIdResolver::class,
+        'ip_address' => IpAddressResolver::class,
+        'user_agent' => UserAgentResolver::class,
+        'url'        => UrlResolver::class,
+        'history_id' => PrimaryIdResolver::class,
     ],
 
     /*
