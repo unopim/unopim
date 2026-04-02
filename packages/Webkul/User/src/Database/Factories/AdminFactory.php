@@ -27,11 +27,9 @@ class AdminFactory extends Factory
             'name'         => $this->faker->name(),
             'email'        => $this->faker->unique()->email,
             'password'     => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
-            'role_id'      => fn () => Role::first()?->id ?? Role::factory()->create()->id,
+            'role_id'      => 1,
             'status'       => 1,
-            'ui_locale_id' => fn () => Locale::where('code', 'en_US')->first()?->id
-                ?? Locale::first()?->id
-                ?? Locale::create(['code' => 'en_US', 'status' => 1])->id,
+            'ui_locale_id' => 58,
             'image'        => null,
         ];
     }
