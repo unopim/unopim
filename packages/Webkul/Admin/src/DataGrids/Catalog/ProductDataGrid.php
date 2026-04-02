@@ -275,7 +275,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     public function prepareColumns()
     {
-        $this->managedColumns = request()->get('managedColumns', []);
+        $this->managedColumns = request()->input('managedColumns', []);
         $this->defaultColumns = ! empty($this->managedColumns)
             ? $this->managedColumns
             : $this->defaultColumns;

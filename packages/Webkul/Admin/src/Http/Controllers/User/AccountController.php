@@ -3,7 +3,7 @@
 namespace Webkul\Admin\Http\Controllers\User;
 
 use Hash;
-use Illuminate\Http\Response;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -21,10 +21,8 @@ class AccountController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return View
      */
-    public function edit()
+    public function edit(): View
     {
         $user = auth()->guard('admin')->user();
 
@@ -33,10 +31,8 @@ class AccountController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
-     * @return Response
      */
-    public function update()
+    public function update(): RedirectResponse
     {
         $user = auth()->guard('admin')->user();
 

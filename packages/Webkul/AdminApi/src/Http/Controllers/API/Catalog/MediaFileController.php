@@ -38,10 +38,8 @@ class MediaFileController extends ApiController
 
     /**
      * Handles the storage of media files for products.
-     *
-     * @return JsonResponse
      */
-    public function storeProductMedia()
+    public function storeProductMedia(): JsonResponse
     {
         request()->validate([
             'file'      => 'required',
@@ -99,10 +97,8 @@ class MediaFileController extends ApiController
 
     /**
      * Handles the storage of media files for categories.
-     *
-     * @return JsonResponse
      */
-    public function storeCategoryMedia()
+    public function storeCategoryMedia(): JsonResponse
     {
         request()->validate([
             'file'           => 'required',
@@ -152,10 +148,8 @@ class MediaFileController extends ApiController
 
     /**
      * Handles the storage of media files for swatch attribute.
-     *
-     * @return JsonResponse
      */
-    public function storeSwatchMedia()
+    public function storeSwatchMedia(): JsonResponse
     {
         request()->validate([
             'code' => [

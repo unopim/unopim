@@ -98,11 +98,9 @@ class CheckForMaintenanceMode extends BaseCheckForMaintenanceMode
      */
     protected function setAllowedIps(): void
     {
+        $allowedIps = config('app.maintenance_allowed_ips', env('MAINTENANCE_ALLOWED_IPS', ''));
 
-        $channel = core()->getCurrentChannel();
-
-        $this->excludedIPs = array_map('trim', explode(',', $channel->allowed_ips ?? ''));
-
+        $this->excludedIPs = array_filter(array_map('trim', explode(',', $allowedIps)));
     }
 
     /**

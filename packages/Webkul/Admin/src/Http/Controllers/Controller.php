@@ -5,7 +5,7 @@ namespace Webkul\Admin\Http\Controllers;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Http\Response;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller as BaseController;
 
 class Controller extends BaseController
@@ -14,10 +14,8 @@ class Controller extends BaseController
 
     /**
      * Display a listing of the resource.
-     *
-     * @return Response
      */
-    public function redirectToLogin()
+    public function redirectToLogin(): RedirectResponse
     {
         return redirect()->route('admin.session.create');
     }

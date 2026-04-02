@@ -3,7 +3,7 @@
 namespace Webkul\Admin\Http\Controllers\User;
 
 use Illuminate\Contracts\Auth\PasswordBroker;
-use Illuminate\Http\Response;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Password;
 use Illuminate\View\View;
 use Webkul\Admin\Http\Controllers\Controller;
@@ -15,7 +15,7 @@ class ForgetPasswordController extends Controller
      *
      * @return View
      */
-    public function create()
+    public function create(): View|RedirectResponse
     {
         if (auth()->guard('admin')->check()) {
             return redirect()->route('admin.dashboard.index');
@@ -34,10 +34,8 @@ class ForgetPasswordController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return Response
      */
-    public function store()
+    public function store(): RedirectResponse
     {
         try {
             $this->validate(request(), [
@@ -69,10 +67,8 @@ class ForgetPasswordController extends Controller
 
     /**
      * Get the broker to be used during password reset.
-     *
-     * @return PasswordBroker
      */
-    public function broker()
+    public function broker(): PasswordBroker
     {
         return Password::broker('admins');
     }

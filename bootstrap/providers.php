@@ -1,13 +1,5 @@
 <?php
 
-use App\Providers\AppServiceProvider;
-use Astrotomic\Translatable\TranslatableServiceProvider;
-use Barryvdh\DomPDF\ServiceProvider;
-use Intervention\Image\ImageServiceProvider;
-use Konekt\Concord\ConcordServiceProvider;
-use Maatwebsite\Excel\ExcelServiceProvider;
-use OwenIt\Auditing\AuditingServiceProvider;
-use Prettus\Repository\Providers\RepositoryServiceProvider;
 use Webkul\Admin\Providers\AdminServiceProvider;
 use Webkul\AdminApi\Providers\AdminApiServiceProvider;
 use Webkul\AiAgent\Providers\AiAgentServiceProvider;
@@ -32,23 +24,9 @@ use Webkul\Webhook\Providers\WebhookServiceProvider;
 
 return [
     /*
-     * Package service providers.
-     */
-    TranslatableServiceProvider::class,
-    ServiceProvider::class,
-    ImageServiceProvider::class,
-    ConcordServiceProvider::class,
-    ExcelServiceProvider::class,
-    RepositoryServiceProvider::class,
-    AuditingServiceProvider::class,
-
-    /*
-     * Application service providers.
-     */
-    AppServiceProvider::class,
-
-    /*
      * Webkul package service providers.
+     * Third-party packages (DomPDF, Translatable, Concord, Excel,
+     * Repository, Auditing) and AppServiceProvider are auto-discovered.
      */
     AdminApiServiceProvider::class,
     AdminServiceProvider::class,

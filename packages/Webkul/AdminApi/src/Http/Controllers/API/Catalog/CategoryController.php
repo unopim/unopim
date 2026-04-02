@@ -67,7 +67,7 @@ class CategoryController extends ApiController
                 'success' => false,
                 'message' => trans('admin::app.catalog.categories.delete-category-root'),
                 'code'    => $code,
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         try {
@@ -77,14 +77,14 @@ class CategoryController extends ApiController
                 'success' => true,
                 'message' => trans('admin::app.catalog.categories.delete-success'),
                 'code'    => $code,
-            ], 200);
+            ], JsonResponse::HTTP_OK);
         } catch (\Exception $e) {
 
             return response()->json([
                 'success' => false,
                 'message' => trans('admin::app.catalog.categories.delete-failed'),
                 'code'    => $code,
-            ], 500);
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -95,10 +95,8 @@ class CategoryController extends ApiController
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return JsonResponse
      */
-    public function store()
+    public function store(): JsonResponse
     {
         $requestData = request()->only([
             'code',
@@ -133,10 +131,8 @@ class CategoryController extends ApiController
 
     /**
      * Update the specified resource in storage.
-     *
-     * @return JsonResponse
      */
-    public function update(string $code)
+    public function update(string $code): JsonResponse
     {
         $category = $this->categoryRepository->findOneByField('code', $code);
         if (! $category) {
@@ -174,7 +170,7 @@ class CategoryController extends ApiController
         }
     }
 
-    public function sanitizeInput(&$requestData)
+    public function sanitizeInput(&$requestData): void
     {
         $fields = $this->categoryFieldRepository->findByField('status', true)
             ->where('enable_wysiwyg', '==', 1)
@@ -204,7 +200,7 @@ class CategoryController extends ApiController
     /**
      * Patch the resource.
      */
-    public function partialUpdate(string $code)
+    public function partialUpdate(string $code): JsonResponse
     {
         $category = $this->categoryRepository->findOneByField('code', $code);
         if (! $category) {

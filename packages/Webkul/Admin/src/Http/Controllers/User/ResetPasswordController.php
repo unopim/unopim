@@ -7,7 +7,7 @@ use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\PasswordBroker;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Foundation\Auth\ResetsPasswords;
-use Illuminate\Http\Response;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
@@ -26,7 +26,7 @@ class ResetPasswordController extends Controller
      * @param  string|null  $token
      * @return Factory|View
      */
-    public function create($token = null)
+    public function create($token = null): View
     {
         return view('admin::users.reset-password.create')->with([
             'token' => $token,
@@ -36,10 +36,8 @@ class ResetPasswordController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return Response
      */
-    public function store()
+    public function store(): RedirectResponse
     {
         try {
             $this->validate(request(), [
@@ -92,10 +90,8 @@ class ResetPasswordController extends Controller
 
     /**
      * Get the broker to be used during password reset.
-     *
-     * @return PasswordBroker
      */
-    public function broker()
+    public function broker(): PasswordBroker
     {
         return Password::broker('admins');
     }

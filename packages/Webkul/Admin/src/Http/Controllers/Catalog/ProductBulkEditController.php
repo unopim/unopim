@@ -47,10 +47,8 @@ class ProductBulkEditController extends Controller
 
     /**
      * Apply filters for bulk edit and store filtered product & attribute IDs in session.
-     *
-     * @return JsonResponse
      */
-    public function filters(BulkEditRequest $bulkEditRequest)
+    public function filters(BulkEditRequest $bulkEditRequest): JsonResponse
     {
         $productIds = $bulkEditRequest->input('indices', []);
         $filters = $bulkEditRequest->input('filter', []);
@@ -58,7 +56,7 @@ class ProductBulkEditController extends Controller
         if (count($productIds) > 100) {
             return response()->json([
                 'message' => trans('admin::app.catalog.products.bulk-edit.filter.many-product'),
-            ], 422);
+            ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         session(['bulk_edit_product_ids' => $productIds]);
@@ -79,10 +77,8 @@ class ProductBulkEditController extends Controller
 
     /**
      * Show the bulk edit page with filtered products and attributes.
-     *
-     * @return View|RedirectResponse
      */
-    public function index()
+    public function index(): View|RedirectResponse
     {
         $productIds = session('bulk_edit_product_ids', []);
         $attributeIds = session('bulk_edit_attribute_ids');
@@ -109,10 +105,8 @@ class ProductBulkEditController extends Controller
 
     /**
      * Store uploaded product media for a given attribute.
-     *
-     * @return JsonResponse
      */
-    public function storeProductMedia()
+    public function storeProductMedia(): JsonResponse
     {
         request()->validate([
             'sku'       => 'required|string',
@@ -169,10 +163,8 @@ class ProductBulkEditController extends Controller
 
     /**
      * Return a formatted JSON response for validation errors.
-     *
-     * @return JsonResponse
      */
-    protected function validateErrorResponse(mixed $validator, string $message = 'Validation failed.', int $code = 422)
+    protected function validateErrorResponse(mixed $validator, string $message = 'Validation failed.', int $code = JsonResponse::HTTP_UNPROCESSABLE_ENTITY): JsonResponse
     {
         $errors = $validator instanceof Validator ? (new ValidationException($validator))->errors() : $validator;
 
@@ -185,10 +177,8 @@ class ProductBulkEditController extends Controller
 
     /**
      * Handle bulk save of product updates via queued job.
-     *
-     * @return JsonResponse
      */
-    public function handleBulkSave()
+    public function handleBulkSave(): JsonResponse
     {
         $data = request()->all();
 
@@ -235,10 +225,8 @@ class ProductBulkEditController extends Controller
 
     /**
      * Retrieve attributes for bulk edit.
-     *
-     * @return JsonResponse
      */
-    public function getAttributes(Request $request)
+    public function getAttributes(Request $request): JsonResponse
     {
         $query = $this->attributeRepository
             ->whereNotIn('code', ['sku'])
@@ -249,7 +237,7 @@ class ProductBulkEditController extends Controller
             $attributes = $query->whereIn('id', $ids)->paginate(self::DEFAULT_PER_PAGE);
 
         } elseif ($request->filled('query')) {
-            $queryParam = $request->get('query', '');
+            $queryParam = $request->input('query', '');
 
             $attributes = $query->where(function ($queryBuilder) use ($queryParam) {
                 $queryBuilder->whereTranslationLike('name', '%'.$queryParam.'%')
