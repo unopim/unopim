@@ -3,7 +3,9 @@
 namespace Webkul\User\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Webkul\Core\Models\Locale;
 use Webkul\User\Models\Admin;
+use Webkul\User\Models\Role;
 
 class AdminFactory extends Factory
 {

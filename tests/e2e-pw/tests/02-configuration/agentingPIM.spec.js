@@ -1,4 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
+const { navigateTo } = require('../../utils/helpers');
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 
@@ -449,20 +450,19 @@ test('7.3 - Sessions tab shows session count badge after chat activity', async (
 // ═════════════════════════════════════════════════
 
 test('8.1 - Agenting PIM button is visible on products page', async ({ adminPage }) => {
-  await adminPage.goto('/admin/catalog/products', { waitUntil: 'networkidle' });
+  await navigateTo(adminPage, 'products');
 
   await expect(adminPage.getByRole('button', { name: 'Open Agenting PIM' })).toBeVisible();
 });
 
 test('8.2 - Agenting PIM button is visible on categories page', async ({ adminPage }) => {
-  await adminPage.goto('/admin/catalog/categories', { waitUntil: 'domcontentloaded', timeout: 30000 });
-  await adminPage.waitForLoadState('load');
+  await navigateTo(adminPage, 'categories');
 
-  await expect(adminPage.getByRole('button', { name: 'Open Agenting PIM' })).toBeVisible({ timeout: 15000 });
+  await expect(adminPage.getByRole('button', { name: 'Open Agenting PIM' })).toBeVisible({ timeout: 20000 });
 });
 
 test('8.3 - Agenting PIM button is visible on configuration page', async ({ adminPage }) => {
-  await adminPage.goto('/admin/configuration/general/magic_ai', { waitUntil: 'networkidle' });
+  await navigateTo(adminPage, 'configuration');
 
   await expect(adminPage.getByRole('button', { name: 'Open Agenting PIM' })).toBeVisible();
 });

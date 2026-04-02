@@ -14,8 +14,14 @@ env:
 
 jobs:
   playwright_tests:
-    name: Playwright E2E
+    name: Playwright E2E | Shard ${{ matrix.shard-index }}/${{ matrix.shard-total }}
     runs-on: ubuntu-24.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        shard-index: [1, 2, 3, 4]
+        shard-total: [4]
 
     services:
       mysql:
@@ -101,33 +107,86 @@ jobs:
           cp .env.example .env
           sed -i "s|^\(APP_ENV=\s*\).*$|\1testing|" .env
           sed -i "s|^\(APP_DEBUG=\s*\).*$|\1false|" .env
+          sed -i "s|^\(APP_URL=\s*\).*$|\1http://127.0.0.1:8000|" .env
           sed -i "s|^\(DB_HOST=\s*\).*$|\1127.0.0.1|" .env
           sed -i "s|^\(DB_PORT=\s*\).*$|\13306|" .env
           sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
           sed -i "s|^\(DB_USERNAME=\s*\).*$|\1root|" .env
           sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
 
-      - name: Running UnoPim Installer & Start Server
+      - name: Running UnoPim Installer
+        run: php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
+
+      - name: Setup Nginx + PHP-FPM
         run: |
-          php artisan unopim:install --skip-env-check --skip-admin-creation
-          php artisan migrate:fresh --seed
-          php artisan db:seed --class="Webkul\\Installer\\Database\\Seeders\\ProductTableSeeder"
-          php artisan serve --host=0.0.0.0 --port=8000 > /dev/null 2>&1 &
-          php artisan queue:work --queue=default,system,completeness > /dev/null 2>&1 &
-          echo "Waiting for server..."
-          timeout 30 bash -c 'until curl -s http://127.0.0.1:8000 > /dev/null; do sleep 1; done'
+          # Install nginx
+          sudo apt-get update -qq && sudo apt-get install -y -qq nginx > /dev/null 2>&1
+
+          # Find PHP-FPM version and socket
+          PHP_VERSION=$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')
+          FPM_SOCK="/run/php/php${PHP_VERSION}-fpm.sock"
+
+          # Configure PHP-FPM
+          sudo sed -i "s|^listen = .*|listen = ${FPM_SOCK}|" /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
+          sudo sed -i "s|^user = .*|user = runner|" /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
+          sudo sed -i "s|^group = .*|group = runner|" /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
+          sudo sed -i "s|^listen.owner = .*|listen.owner = runner|" /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
+          sudo sed -i "s|^listen.group = .*|listen.group = runner|" /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
+
+          # Configure Nginx
+          sudo tee /etc/nginx/sites-available/unopim > /dev/null <<NGINX
+          server {
+              listen 8000;
+              server_name localhost;
+              root $(pwd)/public;
+              index index.php;
+
+              location / {
+                  try_files \$uri \$uri/ /index.php?\$query_string;
+              }
+
+              location ~ \.php$ {
+                  fastcgi_pass unix:${FPM_SOCK};
+                  fastcgi_param SCRIPT_FILENAME \$realpath_root\$fastcgi_script_name;
+                  include fastcgi_params;
+              }
+
+              location ~ /\.(?!well-known).* {
+                  deny all;
+              }
+          }
+          NGINX
+
+          sudo ln -sf /etc/nginx/sites-available/unopim /etc/nginx/sites-enabled/unopim
+          sudo rm -f /etc/nginx/sites-enabled/default
+
+          # Set permissions
+          sudo chown -R runner:runner storage bootstrap/cache
+          chmod -R 775 storage bootstrap/cache
+
+          # Start services
+          sudo service php${PHP_VERSION}-fpm start
+          sudo service nginx start
+
+          # Start queue worker
+          php artisan queue:work --queue=default,system,completeness > /tmp/queue.log 2>&1 &
+
+          # Wait for server
+          echo "Waiting for nginx..."
+          timeout 30 bash -c 'until curl -s http://127.0.0.1:8000 > /dev/null; do sleep 1; done' || (sudo nginx -t && sudo cat /var/log/nginx/error.log && exit 1)
 
       - name: Run Playwright tests
         run: |
           cd tests/e2e-pw
-          npx playwright test --reporter=list
+          npx playwright test --reporter=list,html --shard=${{ matrix.shard-index }}/${{ matrix.shard-total }}
 
       - name: Upload test results
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@v5
         with:
-          name: playwright-report-${{ github.run_id }}
+          name: playwright-report-shard-${{ matrix.shard-index }}-${{ github.run_id }}
           path: |
             tests/e2e-pw/playwright-report
             tests/e2e-pw/test-results
+            storage/logs/laravel.log
           retention-days: 1

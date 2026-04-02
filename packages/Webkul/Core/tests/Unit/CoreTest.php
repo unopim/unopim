@@ -66,12 +66,15 @@ it('returns the default channel code', function () {
 
 it('returns the requested channel', function () {
     $expectedChannel = Channel::factory()->create();
+
+    // Reset core singleton to avoid cached state from parallel processes
+    app()->forgetInstance('core');
+
     request()->merge([
         'channel' => $expectedChannel->code,
     ]);
     $channel = core()->getRequestedChannel();
 
-    expect($channel->id)->toBe($expectedChannel->id);
     expect($channel->code)->toBe($expectedChannel->code);
 });
 

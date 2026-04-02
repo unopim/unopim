@@ -8,24 +8,36 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * Note: Use table names WITHOUT the wk_ prefix — Laravel adds
+     * the DB_PREFIX automatically. Using wk_ here would result in
+     * wk_wk_channels which doesn't exist.
      */
     public function up(): void
     {
-        Schema::table('wk_channels', function (Blueprint $table) {
-            $table->index('code', 'wk_channels_code_idx');
-        });
+        if (Schema::hasTable('channels')) {
+            Schema::table('channels', function (Blueprint $table) {
+                $table->index('code', 'channels_code_idx');
+            });
+        }
 
-        Schema::table('wk_locales', function (Blueprint $table) {
-            $table->index('status', 'wk_locales_status_idx');
-        });
+        if (Schema::hasTable('locales')) {
+            Schema::table('locales', function (Blueprint $table) {
+                $table->index('status', 'locales_status_idx');
+            });
+        }
 
-        Schema::table('wk_currencies', function (Blueprint $table) {
-            $table->index('status', 'wk_currencies_status_idx');
-        });
+        if (Schema::hasTable('currencies')) {
+            Schema::table('currencies', function (Blueprint $table) {
+                $table->index('status', 'currencies_status_idx');
+            });
+        }
 
-        Schema::table('wk_core_config', function (Blueprint $table) {
-            $table->index(['code', 'channel_code', 'locale_code'], 'wk_core_config_lookup_idx');
-        });
+        if (Schema::hasTable('core_config')) {
+            Schema::table('core_config', function (Blueprint $table) {
+                $table->index(['code', 'channel_code', 'locale_code'], 'core_config_lookup_idx');
+            });
+        }
     }
 
     /**
@@ -33,20 +45,28 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('wk_channels', function (Blueprint $table) {
-            $table->dropIndex('wk_channels_code_idx');
-        });
+        if (Schema::hasTable('channels')) {
+            Schema::table('channels', function (Blueprint $table) {
+                $table->dropIndex('channels_code_idx');
+            });
+        }
 
-        Schema::table('wk_locales', function (Blueprint $table) {
-            $table->dropIndex('wk_locales_status_idx');
-        });
+        if (Schema::hasTable('locales')) {
+            Schema::table('locales', function (Blueprint $table) {
+                $table->dropIndex('locales_status_idx');
+            });
+        }
 
-        Schema::table('wk_currencies', function (Blueprint $table) {
-            $table->dropIndex('wk_currencies_status_idx');
-        });
+        if (Schema::hasTable('currencies')) {
+            Schema::table('currencies', function (Blueprint $table) {
+                $table->dropIndex('currencies_status_idx');
+            });
+        }
 
-        Schema::table('wk_core_config', function (Blueprint $table) {
-            $table->dropIndex('wk_core_config_lookup_idx');
-        });
+        if (Schema::hasTable('core_config')) {
+            Schema::table('core_config', function (Blueprint $table) {
+                $table->dropIndex('core_config_lookup_idx');
+            });
+        }
     }
 };
