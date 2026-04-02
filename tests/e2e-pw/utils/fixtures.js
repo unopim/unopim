@@ -5,18 +5,17 @@ const path = require('path');
 const STORAGE_STATE = path.resolve(__dirname, '../.state/admin-auth.json');
 
 exports.test = base.test.extend({
+  /**
+   * Authenticated admin page fixture.
+   * Creates a browser context with pre-saved admin session.
+   * Each test navigates to its own page via navigateTo().
+   */
   adminPage: async ({ browser }, use) => {
-    // Create context with saved admin auth state
     const context = await browser.newContext({ storageState: STORAGE_STATE });
     const page = await context.newPage();
 
-    // Navigate to dashboard to validate session and warm up the app
-    await page.goto('/admin/dashboard', { waitUntil: 'domcontentloaded', timeout: 30000 });
-
-    // Pass to test
     await use(page);
 
-    // Cleanup
     await page.close();
     await context.close();
   },

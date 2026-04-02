@@ -1,8 +1,9 @@
 const { test, expect } = require('../../utils/fixtures');
+const { navigateTo } = require('../../utils/helpers');
 
 test.describe('UnoPim MyAccount', () => {
 test('My Account', async ({ adminPage }) => {
-  await adminPage.waitForLoadState('networkidle');
+  await navigateTo(adminPage, 'dashboard');
   const profileBtn = adminPage.locator('header').getByRole('button').last();
   await profileBtn.click();
   await adminPage.getByRole('link', { name: 'My Account' }).click();

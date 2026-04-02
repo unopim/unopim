@@ -1,11 +1,12 @@
 const { test, expect } = require('../../utils/fixtures');
+const { navigateTo } = require('../../utils/helpers');
 
 /**
  * Helper: Open the profile dropdown reliably.
- * Waits for network idle before clicking to avoid dashboard AJAX interference.
+ * Navigates to dashboard first, then waits for network idle.
  */
 async function openProfileDropdown(adminPage) {
-  await adminPage.waitForLoadState('networkidle');
+  await navigateTo(adminPage, 'dashboard');
   const profileBtn = adminPage.locator('header').getByRole('button').last();
   await profileBtn.click();
   // Wait for dropdown content to render

@@ -1,6 +1,11 @@
 const { test, expect } = require('../../utils/fixtures');
+const { navigateTo } = require('../../utils/helpers');
 
 test.describe('UnoPim Dashboard (v2.0.0)', () => {
+
+test.beforeEach(async ({ adminPage }) => {
+  await navigateTo(adminPage, 'dashboard');
+});
 
 // ═════════════════════════════════════════════════
 // SECTION 1: Header & Navigation
