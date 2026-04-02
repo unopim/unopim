@@ -322,7 +322,7 @@ test.describe('Configurable Product CRUD', () => {
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
 
     // Select a configurable attribute (e.g., Brand) when prompted
-    await adminPage.getByRole('paragraph').filter({ hasText: 'Brand' }).locator('span').click();
+    await adminPage.locator('p').filter({ hasText: 'Brand' }).locator('span').click();
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
     // After creation, the app redirects to the product edit page
     await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
@@ -343,7 +343,7 @@ test.describe('Configurable Product CRUD', () => {
     await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
     await adminPage.locator('input[name="sku"]').fill(sku);
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
-    await adminPage.getByRole('paragraph').filter({ hasText: 'Brand' }).locator('span').click();
+    await adminPage.locator('p').filter({ hasText: 'Brand' }).locator('span').click();
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
     await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await adminPage.waitForLoadState('networkidle').catch(() => {});
@@ -383,7 +383,7 @@ test.describe('Configurable Product CRUD', () => {
     await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
     await adminPage.locator('input[name="sku"]').fill(sku);
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
-    await adminPage.getByRole('paragraph').filter({ hasText: 'Brand' }).locator('span').click();
+    await adminPage.locator('p').filter({ hasText: 'Brand' }).locator('span').click();
     await adminPage.getByRole('button', { name: 'Save Product' }).click();
     await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await adminPage.waitForLoadState('networkidle').catch(() => {});

@@ -39,7 +39,7 @@ test.describe('Verify the behaviour of Product Completeness feature', () => {
     }
 
     // Check for the Complete column — it should show either N/A or a score
-    await expect(adminPage.getByRole('paragraph').filter({ hasText: /^Complete$/ })).toBeVisible();
+    await expect(adminPage.locator('p').filter({ hasText: /^Complete$/ })).toBeVisible();
     const hasNA = await adminPage.getByText('N/A').first().isVisible({ timeout: 3000 }).catch(() => false);
     const hasScore = await adminPage.locator('#app').getByText(/%/).first().isVisible({ timeout: 3000 }).catch(() => false);
     expect(hasNA || hasScore).toBeTruthy();

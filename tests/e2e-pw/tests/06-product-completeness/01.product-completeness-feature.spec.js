@@ -113,7 +113,7 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await adminPage.waitForLoadState('networkidle');
     await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 20000 });
     await expect(adminPage).toHaveURL(/\/admin\/catalog\/families\/edit\/\d+\?completeness/);
-    await expect(adminPage.getByRole('paragraph').filter({ hasText: 'Completeness' })).toBeVisible();
+    await expect(adminPage.locator('p').filter({ hasText: 'Completeness' })).toBeVisible();
     await expect(adminPage.locator('div').filter({ hasText: /^Code$/ }).first()).toBeVisible();
     await expect(adminPage.locator('div').filter({ hasText: /^Name$/ }).first()).toBeVisible();
     await expect(adminPage.locator('div').filter({ hasText: /^Required in Channels$/ }).first()).toBeVisible();
@@ -138,10 +138,10 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     await adminPage.waitForLoadState('networkidle');
 
     // Look for "Complete" column header — if visible, check N/A exists
-    const completeHeader = adminPage.getByRole('paragraph').filter({ hasText: /^Complete$/ });
+    const completeHeader = adminPage.locator('p').filter({ hasText: /^Complete$/ });
     const hasCompleteColumn = await completeHeader.isVisible({ timeout: 5000 }).catch(() => false);
     if (hasCompleteColumn) {
-      await expect(adminPage.getByRole('paragraph').filter({ hasText: 'N/A' }).first()).toBeVisible();
+      await expect(adminPage.locator('p').filter({ hasText: 'N/A' }).first()).toBeVisible();
     } else {
       // No Complete column — products may not have completeness enabled, verify at least products exist
       const hasProducts = await adminPage.locator('span[title="Edit"]').first().isVisible({ timeout: 5000 }).catch(() => false);

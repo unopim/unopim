@@ -110,12 +110,13 @@ async function clickSaveAndExpect(page, buttonName, toastPattern, urlPattern) {
 
   await page.getByRole('button', { name: buttonName }).click();
 
-  // Race: toast visible OR URL changed (redirect after save)
-  await Promise.race([
-    page.locator('#app').getByText(regex).first().waitFor({ state: 'visible', timeout: 20000 }).catch(() => {}),
+  // Either toast appears OR URL changes (redirect after save).
+  // Uses Promise.any — fails only if BOTH timeout (real failure).
+  await Promise.any([
+    page.locator('#app').getByText(regex).first().waitFor({ state: 'visible', timeout: 20000 }),
     urlPattern
-      ? page.waitForURL(urlPattern, { timeout: 20000 }).catch(() => {})
-      : page.waitForURL((url) => url.toString() !== currentUrl, { timeout: 20000 }).catch(() => {}),
+      ? page.waitForURL(urlPattern, { timeout: 20000 })
+      : page.waitForURL((url) => url.toString() !== currentUrl, { timeout: 20000 }),
   ]);
 }
 
