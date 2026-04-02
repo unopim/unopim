@@ -5,10 +5,10 @@ const { navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = requir
  * Generate a random 3-letter uppercase currency code unlikely to collide with real ones.
  */
 function randomCurrencyCode() {
+  const { randomInt } = require('crypto');
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  // Start with Z or Q to avoid common real currency codes
-  const prefix = 'Z';
-  return prefix + chars[Math.floor(Math.random() * 26)] + chars[Math.floor(Math.random() * 26)];
+  // Start with Z to avoid common real currency codes
+  return 'Z' + chars[randomInt(26)] + chars[randomInt(26)];
 }
 
 /**

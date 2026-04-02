@@ -22,7 +22,8 @@ exports.test = base.test.extend({
 
   /** Unique identifier for test data isolation in parallel execution */
   uid: async ({}, use) => {
-    await use(Date.now().toString(36) + Math.random().toString(36).slice(2, 6));
+    const { randomBytes } = require('crypto');
+    await use(Date.now().toString(36) + randomBytes(4).toString('hex'));
   },
 });
 

@@ -125,7 +125,8 @@ async function clickSaveAndExpect(page, buttonName, toastPattern, urlPattern) {
  * @returns {string} unique ID like "m1abc2def"
  */
 function generateUid() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  const { randomBytes } = require('crypto');
+  return Date.now().toString(36) + randomBytes(4).toString('hex');
 }
 
 module.exports = {
