@@ -115,10 +115,7 @@ jobs:
           sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
 
       - name: Running UnoPim Installer
-        run: |
-          php artisan unopim:install --skip-env-check --skip-admin-creation
-          php artisan migrate:fresh --seed
-          php artisan db:seed --class="Webkul\\Installer\\Database\\Seeders\\ProductTableSeeder"
+        run: php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
 
       - name: Setup Nginx + PHP-FPM
         run: |

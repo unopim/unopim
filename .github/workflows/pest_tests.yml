@@ -76,7 +76,7 @@ jobs:
           sed -i "s|^\(DB_PREFIX=\s*\).*$|\1${{ matrix.db-prefix }}|" .env
 
       - name: Running UnoPim Installer
-        run: php artisan unopim:install --skip-env-check --skip-admin-creation
+        run: php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
 
       - name: Running Pest Tests
         run: vendor/bin/pest --colors=always --parallel --processes=4
@@ -155,7 +155,7 @@ jobs:
           sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
 
       - name: Running UnoPim Installer
-        run: php artisan unopim:install --skip-env-check --skip-admin-creation
+        run: php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
 
       - name: Enable Elasticsearch and build indexes
         run: |

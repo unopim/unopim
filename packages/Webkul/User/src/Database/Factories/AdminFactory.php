@@ -28,7 +28,10 @@ class AdminFactory extends Factory
             'password'     => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
             'role_id'      => 1,
             'status'       => 1,
-            'ui_locale_id' => Locale::where('code', 'en_US')->value('id') ?? 1,
+            'ui_locale_id' => fn () => Locale::firstOrCreate(
+                ['code' => 'en_US'],
+                ['status' => 1]
+            )->id,
             'image'        => null,
         ];
     }
