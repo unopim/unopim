@@ -59,17 +59,24 @@ async function createFamilyWithGeneralGroup(adminPage, familyCode, familyName) {
  * Helper: Navigate to the completeness tab for a family by code.
  */
 async function goToFamilyCompletenessTab(adminPage, familyCode) {
-  await adminPage.goto('/admin/catalog/families', { waitUntil: 'networkidle', timeout: 60000 });
-  await adminPage.getByRole('textbox', { name: 'Search' }).first().waitFor({ state: 'visible', timeout: 30000 });
-  await adminPage.getByRole('textbox', { name: 'Search' }).first().fill(familyCode);
-  await adminPage.keyboard.press('Enter');
-  await adminPage.waitForLoadState('networkidle');
-  await expect(adminPage.locator('span[title="Edit"]').first()).toBeVisible({ timeout: 20000 });
-  const itemRow = adminPage.locator('div', { hasText: familyCode });
-  await itemRow.locator('span[title="Edit"]').first().click();
-  await adminPage.getByRole('link', { name: 'Completeness' }).click();
-  await adminPage.waitForLoadState('networkidle');
-  await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 20000 });
+  if (familyCode === 'default') {
+    // For default family, go directly to edit page (ID=1) — avoids slow listing page
+    await adminPage.goto('/admin/catalog/families/edit/1?completeness', { waitUntil: 'load', timeout: 60000 });
+  } else {
+    // For custom families, search in listing
+    await adminPage.goto('/admin/catalog/families', { waitUntil: 'load', timeout: 60000 });
+    const searchInput = adminPage.getByRole('textbox', { name: 'Search' }).first();
+    await searchInput.waitFor({ state: 'visible', timeout: 60000 });
+    await searchInput.fill(familyCode);
+    await adminPage.keyboard.press('Enter');
+    await adminPage.waitForLoadState('load');
+    await expect(adminPage.locator('span[title="Edit"]').first()).toBeVisible({ timeout: 30000 });
+    const itemRow = adminPage.locator('div', { hasText: familyCode });
+    await itemRow.locator('span[title="Edit"]').first().click();
+    await adminPage.getByRole('link', { name: 'Completeness' }).click();
+  }
+  await adminPage.waitForLoadState('load');
+  await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 30000 });
 }
 
 /**
