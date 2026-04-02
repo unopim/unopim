@@ -61,7 +61,9 @@ async function createFamilyWithGeneralGroup(adminPage, familyCode, familyName) {
 async function goToFamilyCompletenessTab(adminPage, familyCode) {
   if (familyCode === 'default') {
     // For default family, go directly to edit page (ID=1) — avoids slow listing page
-    await adminPage.goto('/admin/catalog/families/edit/1?completeness', { waitUntil: 'load', timeout: 60000 });
+    await adminPage.goto('/admin/catalog/families/edit/1', { waitUntil: 'load', timeout: 60000 });
+    await adminPage.getByRole('link', { name: 'Completeness' }).waitFor({ state: 'visible', timeout: 30000 });
+    await adminPage.getByRole('link', { name: 'Completeness' }).click();
   } else {
     // For custom families, search in listing
     await adminPage.goto('/admin/catalog/families', { waitUntil: 'load', timeout: 60000 });

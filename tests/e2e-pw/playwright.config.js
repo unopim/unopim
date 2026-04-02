@@ -4,7 +4,7 @@ const os = require('os');
 
 const STORAGE_STATE = path.resolve(__dirname, '.state/admin-auth.json');
 const workerCount = process.env.CI
-  ? Math.max(2, Math.floor(os.cpus().length / 2))
+  ? 1  // Single worker in CI — artisan serve is single-threaded, parallel workers cause timeouts
   : Math.max(2, os.cpus().length - 1);
 
 module.exports = defineConfig({
