@@ -6,7 +6,6 @@ return [
             'attribute-families' => [
                 'default' => 'Por defecto',
             ],
-
             'attribute-groups' => [
                 'description'      => 'Descripción',
                 'general'          => 'General',
@@ -14,7 +13,6 @@ return [
                 'price'            => 'Precio',
                 'media'            => 'Medios',
             ],
-
             'attributes' => [
                 'brand'                => 'Marca',
                 'color'                => 'Color',
@@ -45,7 +43,6 @@ return [
                 'weight'               => 'Peso',
                 'width'                => 'Ancho',
             ],
-
             'attribute-options' => [
                 'black'  => 'Negro',
                 'green'  => 'Verde',
@@ -58,19 +55,16 @@ return [
                 'yellow' => 'Amarillo',
             ],
         ],
-
         'category' => [
             'categories' => [
                 'description' => 'Descripción de la categoría raíz',
                 'name'        => 'Raíz',
             ],
-
             'category_fields' => [
                 'name'        => 'Nombre',
                 'description' => 'Descripción',
             ],
         ],
-
         'core' => [
             'channels' => [
                 'meta-title'       => 'tienda de demostración',
@@ -78,7 +72,6 @@ return [
                 'meta-description' => 'Meta descripción de la tienda de demostración',
                 'name'             => 'Por defecto',
             ],
-
             'currencies' => [
                 'AED' => 'dírham',
                 'AFN' => 'Shekel israelí',
@@ -95,19 +88,16 @@ return [
                 'USD' => 'dólar estadounidense',
             ],
         ],
-
         'user' => [
             'roles' => [
                 'description' => 'Los usuarios de este rol tendrán todo el acceso.',
                 'name'        => 'Administrador',
             ],
-
             'users' => [
                 'name' => 'Ejemplo',
             ],
         ],
     ],
-
     'installer' => [
         'index' => [
             'create-administrator' => [
@@ -119,7 +109,6 @@ return [
                 'password'         => 'Contraseña',
                 'title'            => 'Crear administrador',
             ],
-
             'environment-configuration' => [
                 'allowed-currencies'  => 'Monedas permitidas',
                 'allowed-locales'     => 'Localidades permitidas',
@@ -157,13 +146,11 @@ return [
                 'usd'                 => 'Dólar estadounidense (USD)',
                 'warning-message'     => '¡Tener cuidado! La configuración de los idiomas predeterminados del sistema, así como la moneda predeterminada, son permanentes y no se pueden cambiar nunca más.',
             ],
-
             'installation-processing' => [
                 'unopim'      => 'Instalación UnoPim',
                 'unopim-info' => 'Crear las tablas de la base de datos, esto puede llevar unos momentos.',
                 'title'       => 'Instalación',
             ],
-
             'installation-completed' => [
                 'admin-panel'               => 'Panel de administración',
                 'unopim-forums'             => 'Foro UnoPim',
@@ -171,7 +158,6 @@ return [
                 'title-info'                => 'UnoPim se instaló correctamente en su sistema.',
                 'title'                     => 'Instalación completada',
             ],
-
             'ready-for-installation' => [
                 'create-databsae-table'   => 'Crear la tabla de base de datos',
                 'install-info-button'     => 'Haga clic en el botón de abajo para',
@@ -181,7 +167,6 @@ return [
                 'start-installation'      => 'Iniciar instalación',
                 'title'                   => 'Listo para la instalación',
             ],
-
             'start' => [
                 'locale'        => 'Lugar',
                 'main'          => 'Comenzar',
@@ -189,7 +174,6 @@ return [
                 'title'         => 'Su instalación de UnoPim',
                 'welcome-title' => 'Bienvenido a UnoPim :version',
             ],
-
             'server-requirements' => [
                 'calendar'    => 'Calendario',
                 'ctype'       => 'cTipo',
@@ -212,7 +196,6 @@ return [
                 'tokenizer'   => 'tokenizador',
                 'xml'         => 'XML',
             ],
-
             'back'                     => 'Atrás',
             'unopim-info'              => 'un proyecto comunitario de',
             'unopim-logo'              => 'Logotipo de UnoPim',

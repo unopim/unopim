@@ -6,6 +6,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Webkul\Attribute\Contracts\Group;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Core\Filesystem\FileStorer;
@@ -96,7 +97,7 @@ abstract class AbstractType
     /**
      * Create product.
      *
-     * @return \Webkul\Product\Contracts\Product
+     * @return Product
      */
     public function create(array $data)
     {
@@ -114,7 +115,7 @@ abstract class AbstractType
      *
      * @param  int  $id
      * @param  string  $attribute
-     * @return \Webkul\Product\Contracts\Product
+     * @return Product
      */
     public function update(array $data, $id, $attribute = 'id')
     {
@@ -380,7 +381,7 @@ abstract class AbstractType
     /**
      * Copy product.
      *
-     * @return \Webkul\Product\Contracts\Product
+     * @return Product
      *
      * @throws \Exception
      */
@@ -444,8 +445,8 @@ abstract class AbstractType
     /**
      * Specify type instance product.
      *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return \Webkul\Product\Type\AbstractType
+     * @param  Product  $product
+     * @return AbstractType
      */
     public function setProduct($product)
     {
@@ -495,9 +496,9 @@ abstract class AbstractType
     /**
      * Retrieve product attributes.
      *
-     * @param  \Webkul\Attribute\Contracts\Group  $group
+     * @param  Group  $group
      * @param  bool  $skipSuperAttribute
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
     public function getEditableAttributes($group = null, $skipSuperAttribute = true)
     {

@@ -4,8 +4,11 @@ namespace Webkul\AdminApi\Http\Controllers\Integrations;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 use Laravel\Passport\ClientRepository;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\AdminApi\DataGrids\Integrations\ApiKeysDataGrid;
@@ -30,10 +33,8 @@ class ApiKeysController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
      */
-    public function index()
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             return app(ApiKeysDataGrid::class)->toJson();
@@ -44,10 +45,8 @@ class ApiKeysController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
      */
-    public function create()
+    public function create(): View
     {
         $adminUsers = json_encode($this->adminRepository->all(['id', 'name', 'email'])->toArray());
 
@@ -61,10 +60,8 @@ class ApiKeysController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function store()
+    public function store(): RedirectResponse
     {
         $this->validate(request(), [
             'name'            => 'required',
@@ -92,10 +89,8 @@ class ApiKeysController extends Controller
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @return \Illuminate\View\View
      */
-    public function edit(int $id)
+    public function edit(int $id): View
     {
         $apiKey = $this->apiKeyRepository->findOrFail($id);
 
@@ -105,11 +100,10 @@ class ApiKeysController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @return \Illuminate\Http\Response
      *
-     * @throws \Illuminate\Validation\ValidationException If the required parameters are not provided.
+     * @throws ValidationException If the required parameters are not provided.
      */
-    public function update(int $id)
+    public function update(int $id): RedirectResponse
     {
         $this->validate(request(), [
             'name'            => 'required',
@@ -162,11 +156,11 @@ class ApiKeysController extends Controller
      * for the specified admin user and API key. The client ID and secret key are then
      * associated with the API key in the database.
      *
-     * @return \Illuminate\Http\JsonResponse The JSON response containing the new client ID and secret key.
+     * @return JsonResponse The JSON response containing the new client ID and secret key.
      *
-     * @throws \Illuminate\Validation\ValidationException If the required parameters are not provided.
+     * @throws ValidationException If the required parameters are not provided.
      */
-    public function generateKey()
+    public function generateKey(): JsonResponse
     {
         $this->validate(request(), [
             'name'     => 'required',
@@ -207,16 +201,16 @@ class ApiKeysController extends Controller
      * finds the corresponding client in the database, and then regenerates its secret key.
      * If the client is not found, it returns a JSON response with a 404 status code and an error message.
      *
-     * @return \Illuminate\Http\JsonResponse The JSON response containing the regenerated secret key.
+     * @return JsonResponse The JSON response containing the regenerated secret key.
      */
-    public function regenerateSecretKey()
+    public function regenerateSecretKey(): JsonResponse
     {
         $data = request()->only('oauth_client_id');
 
         $client = $this->clients->find($data['oauth_client_id']);
 
         if (! $client) {
-            return new JsonResponse(['message' => trans('admin::app.integrations.api-keys.client-not-found')], 404);
+            return new JsonResponse(['message' => trans('admin::app.integrations.api-keys.client-not-found')], JsonResponse::HTTP_NOT_FOUND);
         }
 
         $client = $this->regenerateSecret($client);
@@ -228,10 +222,8 @@ class ApiKeysController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(int $id)
+    public function destroy(int $id): JsonResponse
     {
         $apiKey = $this->apiKeyRepository->findOrFail($id);
 
@@ -248,12 +240,13 @@ class ApiKeysController extends Controller
 
             return new JsonResponse(['message' => trans('admin::app.configuration.integrations.delete-success')]);
         } catch (\Exception $e) {
+            report($e);
         }
 
         return new JsonResponse([
             'message' => trans(
                 'admin::app.configuration.integrations.delete-failed'
             ),
-        ], 500);
+        ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
     }
 }

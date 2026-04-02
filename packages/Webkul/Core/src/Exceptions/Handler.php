@@ -2,14 +2,16 @@
 
 namespace Webkul\Core\Exceptions;
 
-use App\Exceptions\Handler as BaseHandler;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Exceptions\PostTooLargeException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
 
-class Handler extends BaseHandler
+class Handler extends ExceptionHandler
 {
     /**
      * Register the exception handling callbacks for the application.
@@ -37,7 +39,7 @@ class Handler extends BaseHandler
     public function render($request, Throwable $exception)
     {
         if ($exception instanceof PostTooLargeException) {
-            return response()->view('admin::errors.index', ['errorCode' => $exception->getStatusCode() ?? 413]);
+            return response()->view('admin::errors.index', ['errorCode' => JsonResponse::HTTP_REQUEST_ENTITY_TOO_LARGE]);
         }
 
         return parent::render($request, $exception);
@@ -49,14 +51,10 @@ class Handler extends BaseHandler
     private function handleAuthenticationException(): void
     {
         $this->renderable(function (AuthenticationException $exception, Request $request) {
-            $path = $request->is(config('app.admin_url').'/*') ? 'admin' : 'api';
-
-            if ($request->wantsJson()) {
-                return response()->json(['error' => trans('admin::app.errors.401.message')], 401);
-            }
-
-            if ($path !== 'admin') {
-                return redirect()->guest(route('shop.customer.session.index'));
+            if ($request->wantsJson() || $this->isApiRequest($request)) {
+                return response()->json([
+                    'error' => trans('admin::app.errors.401.message'),
+                ], JsonResponse::HTTP_UNAUTHORIZED);
             }
 
             return redirect()->guest(route('admin.session.create'));
@@ -69,15 +67,18 @@ class Handler extends BaseHandler
     private function handleHttpException(): void
     {
         $this->renderable(function (HttpException $exception, Request $request) {
+            $errorCode = in_array($exception->getStatusCode(), [
+                JsonResponse::HTTP_UNAUTHORIZED,
+                JsonResponse::HTTP_FORBIDDEN,
+                JsonResponse::HTTP_NOT_FOUND,
+                JsonResponse::HTTP_UNKNOWN_STATUS,
+                JsonResponse::HTTP_SERVICE_UNAVAILABLE,
+            ]) ? $exception->getStatusCode() : JsonResponse::HTTP_INTERNAL_SERVER_ERROR;
 
-            $errorCode = in_array($exception->getStatusCode(), [401, 419, 403, 404, 503])
-                ? $exception->getStatusCode()
-                : 500;
-
-            if ($request->wantsJson()) {
+            if ($request->wantsJson() || $this->isApiRequest($request)) {
                 return response()->json([
                     'error'       => trans("admin::app.errors.{$errorCode}.title"),
-                    'description' => trans("admin::app.shop.errors.{$errorCode}.description"),
+                    'description' => trans("admin::app.errors.{$errorCode}.description"),
                 ], $errorCode);
             }
 
@@ -91,13 +92,12 @@ class Handler extends BaseHandler
     private function handleServerException(): void
     {
         $this->renderable(function (Throwable $throwable, Request $request) {
+            $errorCode = JsonResponse::HTTP_INTERNAL_SERVER_ERROR;
 
-            $errorCode = 500;
-
-            if ($request->wantsJson()) {
+            if ($request->wantsJson() || $this->isApiRequest($request)) {
                 return response()->json([
                     'error'       => trans("admin::app.errors.{$errorCode}.title"),
-                    'description' => trans("admin::app.shop.errors.{$errorCode}.description"),
+                    'description' => trans("admin::app.errors.{$errorCode}.description"),
                 ], $errorCode);
             }
 
@@ -121,9 +121,24 @@ class Handler extends BaseHandler
     private function handlePostTooLargeException(): void
     {
         $this->renderable(function (PostTooLargeException $exception, Request $request) {
-            $errorCode = $exception->getStatusCode() ?? 413;
+            $errorCode = JsonResponse::HTTP_REQUEST_ENTITY_TOO_LARGE;
+
+            if ($request->wantsJson() || $this->isApiRequest($request)) {
+                return response()->json([
+                    'message'   => trans('admin::app.errors.413.title'),
+                    'errorCode' => $errorCode,
+                ], $errorCode);
+            }
 
             return response()->view('admin::errors.index', compact('errorCode'));
         });
+    }
+
+    /**
+     * Determine if the request is an API request.
+     */
+    private function isApiRequest(Request $request): bool
+    {
+        return $request->is('api/*') || $request->is('*/api/*');
     }
 }

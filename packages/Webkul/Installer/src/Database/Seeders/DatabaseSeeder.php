@@ -3,6 +3,7 @@
 namespace Webkul\Installer\Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Webkul\AiAgent\Database\Seeders\AgenticPimConfigSeeder;
 use Webkul\Installer\Database\Seeders\Attribute\DatabaseSeeder as AttributeSeeder;
 use Webkul\Installer\Database\Seeders\Category\DatabaseSeeder as CategorySeeder;
 use Webkul\Installer\Database\Seeders\Core\DatabaseSeeder as CoreSeeder;
@@ -26,5 +27,6 @@ class DatabaseSeeder extends Seeder
         $this->call(UserSeeder::class, false, ['parameters' => $parameters]);
         $this->call(MagicAiPromptSeeder::class, false, ['parameters' => $parameters]);
         $this->call(MagicAISystemPromptSeeder::class, false, ['parameters' => $parameters]);
+        $this->call(AgenticPimConfigSeeder::class);
     }
 }

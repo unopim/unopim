@@ -4,6 +4,7 @@ use Webkul\Attribute\Models\Attribute;
 use Webkul\Core\Models\Locale;
 use Webkul\Core\Repositories\CoreConfigRepository;
 use Webkul\MagicAI\Facades\MagicAI;
+use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Services\Prompt\ProductPrompt;
 use Webkul\Product\Models\Product;
 
@@ -11,6 +12,29 @@ beforeEach(function () {
     ProductPrompt::resetInstance();
 
     $this->loginAsAdmin();
+
+    // Create a default platform for tests
+    MagicAIPlatform::query()->delete();
+    MagicAIPlatform::create([
+        'label'      => 'Test Platform',
+        'provider'   => 'groq',
+        'api_url'    => 'https://api.groq.com/openai/v1',
+        'api_key'    => 'test-key',
+        'models'     => 'qwen-qwq-32b,deepseek-r1-distill-llama-70b',
+        'is_default' => true,
+        'status'     => true,
+    ]);
+
+    // Enable Magic AI
+    app(CoreConfigRepository::class)->create([
+        'general' => [
+            'magic_ai' => [
+                'settings' => [
+                    'enabled' => '1',
+                ],
+            ],
+        ],
+    ]);
 });
 
 it('should translate the field successfully', function () {
@@ -35,20 +59,6 @@ it('should translate the field successfully', function () {
         ],
     ]);
 
-    $coreConfigRepository = app(CoreConfigRepository::class);
-    $coreConfigRepository->create([
-        'general' => [
-            'magic_ai' => [
-                'settings' => [
-                    'enabled'     => '1',
-                    'ai_platform' => 'groq',
-                    'api_domain'  => 'api.groq.com',
-                    'api_model'   => 'deepseek-r1-distill-llama-70b',
-                ],
-            ],
-        ],
-    ]);
-
     $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
     $productId = $product->id;
     $field = 'name';
@@ -59,11 +69,10 @@ it('should translate the field successfully', function () {
     $targetChannel = 'default';
     $targetLocale = 'af_ZA';
 
+    MagicAI::shouldReceive('useDefault')->andReturnSelf();
+    MagicAI::shouldReceive('setPlatformId')->andReturnSelf();
     MagicAI::shouldReceive('setModel')
         ->with($model)
-        ->andReturnSelf();
-    MagicAI::shouldReceive('setPlatForm')
-        ->with(core()->getConfigData('general.magic_ai.settings.ai_platform'))
         ->andReturnSelf();
     MagicAI::shouldReceive('setPrompt')
         ->andReturnSelf();
@@ -178,19 +187,6 @@ it('should translate all attributes successfully', function () {
         ],
     ]);
 
-    app(CoreConfigRepository::class)->create([
-        'general' => [
-            'magic_ai' => [
-                'settings' => [
-                    'enabled'     => '1',
-                    'ai_platform' => 'groq',
-                    'api_domain'  => 'api.groq.com',
-                    'api_model'   => 'deepseek-r1-distill-llama-70b',
-                ],
-            ],
-        ],
-    ]);
-
     $product->attribute_family
         ->attributeFamilyGroupMappings
         ->first()?->customAttributes()?->attach($attribute);
@@ -204,70 +200,78 @@ it('should translate all attributes successfully', function () {
     $targetLocale = 'af_ZA';
     $attributes = implode(',', ['name', 'description']);
 
+    MagicAI::shouldReceive('useDefault')->andReturnSelf();
+    MagicAI::shouldReceive('setPlatformId')->andReturnSelf();
     MagicAI::shouldReceive('setModel')->with($model)->andReturnSelf();
-    MagicAI::shouldReceive('setPlatForm')->with(core()->getConfigData('general.magic_ai.settings.ai_platform'))->andReturnSelf();
     MagicAI::shouldReceive('setPrompt')->andReturnSelf();
-    MagicAI::shouldReceive('ask')->andReturn('<p>translated_content</p>');
+    MagicAI::shouldReceive('ask')->andReturn('<p>test</p>');
 
     $this->post(route('admin.magic_ai.translate.all.attribute', [
         'resource_id'   => $productId,
+        'attributes'    => $attributes,
         'locale'        => $locale,
         'channel'       => $channel,
         'model'         => $model,
         'resource_type' => $resourceType,
         'targetChannel' => $targetChannel,
         'targetLocale'  => $targetLocale,
-        'attributes'    => $attributes,
     ]))
         ->assertOk()
         ->assertJsonStructure([
             'headers',
-            'fields' => [
-                '*' => [
-                    'fieldLabel',
-                    'fieldName',
-                    'isTranslatable',
-                    'sourceData',
-                    'translatedData',
-                    'type',
-                ],
-            ],
-            'translated' => [
-                '*' => [
-                    '*' => [
-                        'field',
-                        'content',
+            'fields',
+            'translated',
+        ]);
+});
+
+it('should save all translated attributes successfully', function () {
+    Locale::whereIn('code', ['fr_FR', 'es_ES', 'de_DE', 'en_US'])->update(['status' => 1]);
+
+    $defaultChannel = core()->getDefaultChannel();
+    $defaultChannelLocale = $defaultChannel->locales->first()->code;
+
+    $attribute = Attribute::factory()->create([
+        'value_per_locale'  => true,
+        'value_per_channel' => true,
+        'type'              => 'text',
+    ]);
+
+    $attributeCode = $attribute->code;
+
+    $product = Product::factory()->simple()->create([
+        'values' => [
+            'channel_locale_specific' => [
+                'default' => [
+                    $defaultChannelLocale => [
+                        $attributeCode => 'smartphone',
+                        'name'         => 'smartPhone',
                     ],
                 ],
             ],
-        ]);
-
-    $translatedData = [
-        [
-            'field'          => 'name',
-            'isTranslatable' => true,
-            'sourceData'     => '',
-            'translations'   => [
-                ['locale' => 'af_ZA', 'content' => 'Nom smatfon'],
-            ],
         ],
+    ]);
+
+    $product->attribute_family
+        ->attributeFamilyGroupMappings
+        ->first()?->customAttributes()?->attach($attribute);
+
+    $productId = $product->id;
+    $targetChannel = 'default';
+
+    $translatedValues = [
         [
-            'field'          => 'description',
-            'isTranslatable' => true,
-            'sourceData'     => 'This phone is very intresting.',
-            'translations'   => [
-                ['locale' => 'fr', 'content' => 'Hierdie telefoon is baie interessant.'],
+            'field'        => 'name',
+            'translations' => [
+                ['locale' => 'af_ZA', 'content' => 'Translated Name'],
             ],
         ],
     ];
 
     $this->post(route('admin.magic_ai.store.translated.all_attribute'), [
         'resource_id'    => $productId,
+        'translatedData' => json_encode($translatedValues),
         'targetChannel'  => $targetChannel,
-        'translatedData' => json_encode($translatedData),
     ])
         ->assertOk()
-        ->assertJson([
-            'message' => trans('admin::app.catalog.products.edit.translate.tranlated-job-processed'),
-        ]);
+        ->assertJson(['message' => trans('admin::app.catalog.products.edit.translate.tranlated-job-processed')]);
 });

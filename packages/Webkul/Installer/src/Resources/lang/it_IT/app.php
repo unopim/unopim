@@ -3,8 +3,10 @@
 return [
     'seeders' => [
         'attribute' => [
-            'attribute-families' => 'Default',
-            'attribute-groups'   => [
+            'attribute-families' => [
+                'default' => 'Predefinito',
+            ],
+            'attribute-groups' => [
                 'description'      => 'Descrizione',
                 'general'          => 'Generale',
                 'meta-description' => 'Meta Descrizione',
@@ -96,7 +98,6 @@ return [
             ],
         ],
     ],
-
     'installer' => [
         'index' => [
             'create-administrator' => [
@@ -108,7 +109,6 @@ return [
                 'password'         => 'Password',
                 'title'            => 'Crea Amministratore',
             ],
-
             'environment-configuration' => [
                 'allowed-currencies'  => 'Valute Consentite',
                 'allowed-locales'     => 'Locali Consentite',
@@ -146,13 +146,11 @@ return [
                 'usd'                 => 'Dollaro USA (USD)',
                 'warning-message'     => 'Attenzione! Le impostazioni della lingua e della valuta predefinite non possono essere modificate in seguito.',
             ],
-
             'installation-processing' => [
                 'unopim'      => 'Installazione UnoPim',
                 'unopim-info' => 'Creazione delle tabelle del database, potrebbe richiedere del tempo',
                 'title'       => 'Installazione',
             ],
-
             'installation-completed' => [
                 'admin-panel'               => 'Pannello Amministratore',
                 'unopim-forums'             => 'Forum UnoPim',
@@ -160,7 +158,6 @@ return [
                 'title-info'                => 'UnoPim è stato installato con successo.',
                 'title'                     => 'Installazione Completata',
             ],
-
             'ready-for-installation' => [
                 'create-databsae-table'   => 'Crea Tabelle Database',
                 'install-info-button'     => 'Clicca il pulsante qui sotto per iniziare',
@@ -170,15 +167,13 @@ return [
                 'start-installation'      => 'Avvia Installazione',
                 'title'                   => 'Pronto per l\'Installazione',
             ],
-
             'start' => [
-                'locale'        => 'Locale',
+                'locale'        => 'Lingua',
                 'main'          => 'Inizio',
                 'select-locale' => 'Seleziona Locale',
                 'title'         => 'Installazione UnoPim',
                 'welcome-title' => 'Benvenuto in UnoPim :version',
             ],
-
             'server-requirements' => [
                 'calendar'    => 'Calendario',
                 'ctype'       => 'cType',
@@ -201,7 +196,6 @@ return [
                 'tokenizer'   => 'Tokenizer',
                 'xml'         => 'XML',
             ],
-
             'back'                     => 'Indietro',
             'unopim-info'              => 'Progetto Comunitario',
             'unopim-logo'              => 'Logo UnoPim',

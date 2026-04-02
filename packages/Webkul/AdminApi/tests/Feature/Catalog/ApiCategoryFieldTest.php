@@ -164,8 +164,8 @@ it('should create category fields with certain types', function () {
                 ->assertJsonFragment(['success' => true, 'message' => trans('admin::app.catalog.category_fields.create-success')]);
 
             $this->assertDatabaseHas($this->getFullTableName(CategoryField::class), $data);
-        } catch (\Exception $e) {
-            throw new \Exception('Failed with categoryField code: '.$code.'. '.$e->getMessage());
+        } catch (Exception $e) {
+            throw new Exception('Failed with categoryField code: '.$code.'. '.$e->getMessage());
         }
     }
 });
@@ -253,8 +253,8 @@ it('should not create category fields with certain codes', function () {
             unset($data['labels']);
 
             $this->assertDatabaseMissing($this->getFullTableName(CategoryField::class), $data);
-        } catch (\Exception $e) {
-            throw new \Exception('Failed with categoryField code: '.$code.'. '.$e->getMessage());
+        } catch (Exception $e) {
+            throw new Exception('Failed with categoryField code: '.$code.'. '.$e->getMessage());
         }
     }
 });
@@ -362,8 +362,8 @@ it('should create text category field with these validation types', function () 
                 ->assertCreated();
 
             $this->assertDatabaseHas($this->getFullTableName(CategoryField::class), $data);
-        } catch (\Exception $e) {
-            throw new \Exception('Failed with validation type code: '.$validation.'. '.$e->getMessage());
+        } catch (Exception $e) {
+            throw new Exception('Failed with validation type code: '.$validation.'. '.$e->getMessage());
         }
     }
 });
@@ -414,6 +414,11 @@ it('should update a categoryField successfully', function () {
         ->assertJsonFragment(['message' => trans('admin::app.catalog.category_fields.update-success')]);
 
     unset($data['labels']);
+
+    // Empty string validation is stored as null in DB
+    if (isset($data['validation']) && $data['validation'] === '') {
+        $data['validation'] = null;
+    }
 
     $this->assertDatabaseHas($this->getFullTableName(CategoryField::class), $data);
 

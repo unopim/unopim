@@ -2,6 +2,7 @@
 
 namespace Webkul\Product\Database\Eloquent;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder as BaseBuilder;
 use Illuminate\Pagination\Paginator;
 
@@ -17,17 +18,19 @@ class Builder extends BaseBuilder
      * @param  array  $columns
      * @param  string  $pageName
      * @param  int|null  $page
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @return LengthAwarePaginator
      *
      * @throws \InvalidArgumentException
      */
-    public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
+    public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null, $total = null)
     {
         $page = $page ?: Paginator::resolveCurrentPage($pageName);
 
         $perPage = $perPage ?: $this->model->getPerPage();
 
-        $results = ($total = $this->toBase()->getCountForPagination($columns))
+        $total = $total ?: $this->toBase()->getCountForPagination($columns);
+
+        $results = $total
             ? $this->forPage($page, $perPage)->get($columns)
             : $this->model->newCollection();
 

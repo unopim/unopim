@@ -10,7 +10,7 @@ return [
                     'invalid-attribute-family'                 => 'Walang katanggap-tanggap na halaga para sa kolum ng pamilya ng mga attribute (ang pamilya ng mga attribute ay wala?)',
                     'invalid-type'                             => 'Ang uri ng produkto ay hindi wasto o hindi suportado',
                     'sku-not-found'                            => 'Hindi natagpuan ang produkto na may tukoy na SKU',
-                    'super-attribute-not-found'                => 'Ang konfigurableng attribute na may code: \'%s\' ay hindi natagpuan o hindi kabilang sa pamilya ng mga attribute: \'%s\'',
+                    'super-attribute-not-found'                => 'Ang konfigurableng attribute na may code: \'%s\' ay hindi natagpuan o hindi kabilang sa pamilya ng mga attribute: \'%s\' :code :familyCode',
                     'configurable-attributes-not-found'        => 'Kailangan ang mga konfigurableng attribute para lumikha ng modelo ng produkto',
                     'configurable-attributes-wrong-type'       => 'Ang mga atributong uri na hindi kanais-nais o batay sa lokasyon ay hindi maaaring maging mga konfigurableng atribut para sa isang konfigurableng produkto',
                     'variant-configurable-attribute-not-found' => 'Ang variant ng konfigurableng attribute: :code ay kinakailangan para lumikha',

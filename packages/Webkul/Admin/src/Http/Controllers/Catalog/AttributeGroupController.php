@@ -3,7 +3,9 @@
 namespace Webkul\Admin\Http\Controllers\Catalog;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Event;
+use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Catalog\AttributeGroupDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Attribute\Repositories\AttributeGroupRepository;
@@ -27,9 +29,9 @@ class AttributeGroupController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
-    public function index()
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             return app(AttributeGroupDataGrid::class)->toJson();
@@ -40,20 +42,16 @@ class AttributeGroupController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
      */
-    public function create()
+    public function create(): View
     {
         return view('admin::catalog.attributegroups.create', ['locales' => $this->localeRepository->getActiveLocales()]);
     }
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function store()
+    public function store(): RedirectResponse
     {
         $this->validate(request(), [
             'code' => ['required', 'unique:attribute_groups,code', new Code],
@@ -74,10 +72,8 @@ class AttributeGroupController extends Controller
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @return \Illuminate\View\View
      */
-    public function edit(int $id)
+    public function edit(int $id): View
     {
         $attributeGroup = $this->attributeGroupRepository->findOrFail($id);
 
@@ -88,10 +84,8 @@ class AttributeGroupController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function update(int $id)
+    public function update(int $id): RedirectResponse
     {
         $this->validate(request(), [
             'code' => ['required', 'unique:attribute_groups,code,'.$id, new Code],
@@ -120,7 +114,7 @@ class AttributeGroupController extends Controller
         if ($attributeGroup->groupMappings()->count()) {
             return new JsonResponse([
                 'message' => trans('admin::app.catalog.attribute-groups.attribute-group-error'),
-            ], 400);
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         try {

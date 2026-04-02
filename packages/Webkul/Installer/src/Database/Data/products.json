@@ -1,0 +1,631 @@
+{
+  "products": [
+    {
+      "sku": "boat-rockerz-550-bluetooth",
+      "type": "simple",
+      "attribute_family_id": 1,
+      "values": {
+        "common": {
+          "sku": "boat-rockerz-550-bluetooth",
+          "image": "products/Product-1.jpeg",
+          "color": "Black",
+          "url_key": "boat-rockerz-550-bluetooth-headphones",
+          "product_number": "ROCKERZ-550-BLK"
+        },
+        "channel_specific": {
+          "default": {
+            "cost": {
+              "USD": "18",
+              "INR": 1499
+            }
+          }
+        },
+        "channel_locale_specific": {
+          "default": {
+            "en_US": {
+              "name": "boAt Rockerz 550 Bluetooth Wireless Headphone",
+              "price": {
+                "USD": "27",
+                "INR": 2249
+              },
+              "meta_title": "boAt Rockerz 550 Wireless Headphone – 20H Battery, 40mm Drivers",
+              "description": "<p>The boAt Rockerz 550 is a powerful over-ear Bluetooth headphone built for bass lovers. Featuring 40mm dynamic drivers with boAt Signature Sound, it delivers deep punchy bass and crisp highs. The foldable design and padded ear cushions ensure all-day comfort, while the built-in mic lets you take calls hands-free. Enjoy up to 20 hours of playback on a single charge. Compatible with Alexa voice assistant for seamless smart control.</p>",
+              "meta_keywords": "boAt Rockerz 550|wireless headphone India|boAt headphone|Bluetooth over-ear headphone",
+              "meta_description": "Shop boAt Rockerz 550 Wireless Headphone with 20H battery, 40mm drivers, and boAt Signature Sound. Best headphone under 2500.",
+              "short_description": "<p>boAt Rockerz 550 Bluetooth headphone with 40mm drivers, 20H battery life, foldable design, built-in mic, and Alexa support.</p>"
+            },
+            "hi_IN": {
+              "name": "boAt Rockerz 550 ब्लूटूथ वायरलेस हेडफोन",
+              "price": {
+                "USD": 27.0,
+                "INR": 2249
+              },
+              "short_description": "<p>boAt Rockerz 550 – 40mm डायनेमिक ड्राइवर, 20 घंटे की बैटरी, फोल्डेबल डिज़ाइन, बिल्ट-इन माइक और Alexa सपोर्ट।</p>",
+              "description": "<p>boAt Rockerz 550 बास प्रेमियों के लिए बना एक शक्तिशाली ओवर-ईयर ब्लूटूथ हेडफोन है। 40mm डायनेमिक ड्राइवर के साथ boAt सिग्नेचर साउंड गहरे बास और क्रिस्प हाई देता है। फोल्डेबल डिज़ाइन और पैडेड ईयर कुशन पूरे दिन आराम सुनिश्चित करते हैं। एक चार्ज पर 20 घंटे की प्लेबैक। Alexa वॉयस असिस्टेंट के साथ कम्पेटिबल।</p>",
+              "meta_title": "boAt Rockerz 550 वायरलेस हेडफोन – 20H बैटरी, 40mm ड्राइवर",
+              "meta_keywords": "boAt Rockerz 550|वायरलेस हेडफोन इंडिया|boAt हेडफोन|ब्लूटूथ ओवर-ईयर हेडफोन",
+              "meta_description": "boAt Rockerz 550 वायरलेस हेडफोन खरीदें – 20H बैटरी, 40mm ड्राइवर और boAt सिग्नेचर साउंड। 2500 से कम में बेस्ट हेडफोन।"
+            },
+            "fr_FR": {
+              "name": "boAt Rockerz 550 Casque Bluetooth sans fil",
+              "price": {
+                "USD": 27.0,
+                "INR": 2249
+              },
+              "short_description": "<p>boAt Rockerz 550 avec haut-parleurs 40mm, 20h d'autonomie, design pliable, micro intégré et support Alexa.</p>",
+              "description": "<p>Le boAt Rockerz 550 est un casque Bluetooth over-ear puissant conçu pour les amateurs de basses. Avec des haut-parleurs dynamiques de 40mm et le boAt Signature Sound, il offre des basses profondes et des aigus nets. Design pliable et coussinets rembourrés pour un confort toute la journée. Jusqu'à 20h d'autonomie. Compatible Alexa.</p>",
+              "meta_title": "boAt Rockerz 550 Casque sans fil – 20H autonomie, haut-parleurs 40mm",
+              "meta_keywords": "boAt Rockerz 550|casque sans fil Inde|casque boAt|casque Bluetooth over-ear",
+              "meta_description": "Achetez le casque boAt Rockerz 550 avec 20H d'autonomie, haut-parleurs 40mm et boAt Signature Sound."
+            }
+          }
+        }
+      }
+    },
+    {
+      "sku": "noise-colorfit-pro4-smartwatch",
+      "type": "simple",
+      "attribute_family_id": 1,
+      "values": {
+        "common": {
+          "sku": "noise-colorfit-pro4-smartwatch",
+          "image": "products/Product-2.jpeg",
+          "url_key": "noise-colorfit-pro4-smartwatch",
+          "product_number": "NCF-PRO4-BLK"
+        },
+        "channel_specific": {
+          "default": {
+            "cost": {
+              "USD": "22",
+              "INR": 1800
+            }
+          }
+        },
+        "channel_locale_specific": {
+          "default": {
+            "en_US": {
+              "name": "Noise ColorFit Pro 4 Smart Watch",
+              "price": {
+                "USD": "36",
+                "INR": 2999
+              },
+              "meta_title": "Noise ColorFit Pro 4 Smartwatch – 1.72\" Display, Bluetooth Calling, SpO2",
+              "description": "<p>The Noise ColorFit Pro 4 is a feature-packed smartwatch built for the modern Indian lifestyle. The large 1.72-inch TFT display with 500 nits brightness is easily visible even in direct sunlight. It features Bluetooth calling, SpO2 monitoring, heart rate tracking, stress monitoring, and over 100 sports modes. With 7 days of battery life and IP68 water resistance, it keeps up with your active life. Compatible with both Android and iOS.</p>",
+              "meta_keywords": "Noise ColorFit Pro 4|smartwatch India|Noise smartwatch|Bluetooth calling watch",
+              "meta_description": "Buy Noise ColorFit Pro 4 Smartwatch with Bluetooth calling, 1.72\" display, SpO2, and 7-day battery. Best smartwatch under 3000.",
+              "short_description": "<p>Noise ColorFit Pro 4 with 1.72\" TFT display, Bluetooth calling, SpO2, HR tracking, 100+ sports modes, and 7-day battery. IP68 rated.</p>"
+            },
+            "hi_IN": {
+              "name": "Noise ColorFit Pro 4 स्मार्टवॉच",
+              "price": {
+                "USD": 36.0,
+                "INR": 2999
+              },
+              "short_description": "<p>Noise ColorFit Pro 4 – 1.72\" TFT डिस्प्ले, ब्लूटूथ कॉलिंग, SpO2, HR ट्रैकिंग, 100+ स्पोर्ट्स मोड और 7 दिन बैटरी। IP68 रेटेड।</p>",
+              "description": "<p>Noise ColorFit Pro 4 एक फीचर-पैक्ड स्मार्टवॉच है जो आधुनिक भारतीय जीवनशैली के लिए बनाई गई है। 500 निट्स ब्राइटनेस के साथ बड़ा 1.72 इंच TFT डिस्प्ले सीधी धूप में भी आसानी से दिखता है। ब्लूटूथ कॉलिंग, SpO2 मॉनिटरिंग, हार्ट रेट ट्रैकिंग और 100 से अधिक स्पोर्ट्स मोड। 7 दिन की बैटरी लाइफ और IP68 वाटर रेसिस्टेंस।</p>",
+              "meta_title": "Noise ColorFit Pro 4 स्मार्टवॉच – 1.72\" डिस्प्ले, ब्लूटूथ कॉलिंग, SpO2",
+              "meta_keywords": "Noise ColorFit Pro 4|स्मार्टवॉच इंडिया|Noise स्मार्टवॉच|ब्लूटूथ कॉलिंग वॉच",
+              "meta_description": "Noise ColorFit Pro 4 स्मार्टवॉच खरीदें – ब्लूटूथ कॉलिंग, 1.72\" डिस्प्ले और 7 दिन बैटरी। 3000 से कम में बेस्ट स्मार्टवॉच।"
+            },
+            "fr_FR": {
+              "name": "Noise ColorFit Pro 4 Montre connectée",
+              "price": {
+                "USD": 36.0,
+                "INR": 2999
+              },
+              "short_description": "<p>Noise ColorFit Pro 4 avec écran TFT 1,72\", appels Bluetooth, SpO2, suivi FC, 100+ modes sport et 7 jours d'autonomie. IP68.</p>",
+              "description": "<p>La Noise ColorFit Pro 4 est une smartwatch polyvalente conçue pour le mode de vie indien moderne. Le grand écran TFT de 1,72 pouces à 500 nits est lisible même en plein soleil. Elle intègre les appels Bluetooth, le suivi SpO2, la fréquence cardiaque, le stress et plus de 100 modes sportifs. 7 jours d'autonomie et résistance IP68.</p>",
+              "meta_title": "Noise ColorFit Pro 4 Montre connectée – Écran 1,72\", appels Bluetooth, SpO2",
+              "meta_keywords": "Noise ColorFit Pro 4|montre connectée Inde|Noise smartwatch|montre appels Bluetooth",
+              "meta_description": "Achetez la Noise ColorFit Pro 4 avec appels Bluetooth, écran 1,72\" et 7 jours d'autonomie."
+            }
+          }
+        }
+      }
+    },
+    {
+      "sku": "prestige-iris-750w-mixer-grinder",
+      "type": "simple",
+      "attribute_family_id": 1,
+      "values": {
+        "common": {
+          "sku": "prestige-iris-750w-mixer-grinder",
+          "image": "products/Product-3.jpeg",
+          "color": "White",
+          "url_key": "prestige-iris-750w-mixer-grinder",
+          "product_number": "PRI-750-WB"
+        },
+        "channel_specific": {
+          "default": {
+            "cost": {
+              "USD": "28",
+              "INR": 2300
+            }
+          }
+        },
+        "channel_locale_specific": {
+          "default": {
+            "en_US": {
+              "name": "Prestige Iris 750 Watt Mixer Grinder with 3 Jars",
+              "price": {
+                "USD": "46",
+                "INR": 3795
+              },
+              "meta_title": "Prestige Iris 750W Mixer Grinder – 3 Jars, Stainless Steel Blades, 5-Year Warranty",
+              "description": "<p>The Prestige Iris 750 Watt Mixer Grinder is a kitchen essential trusted by Indian households. Powered by a heavy-duty 750W motor with 3 speed settings and a pulse function, it effortlessly grinds spices, makes chutneys, blends smoothies, and prepares batters. Includes a 1.5L liquidizing jar, 0.9L multipurpose jar, and 0.4L dry grinding jar — all with stainless steel blades. The ergonomic handles, easy-clean design, and Prestige's 5-year motor warranty make it a reliable daily companion.</p>",
+              "meta_keywords": "Prestige Iris mixer grinder|750W mixer grinder|mixer grinder India|Prestige mixer",
+              "meta_description": "Buy Prestige Iris 750W Mixer Grinder with 3 stainless steel jars and 5-year motor warranty. Perfect for every Indian kitchen.",
+              "short_description": "<p>Prestige Iris 750W Mixer Grinder with 3 jars (1.5L, 0.9L, 0.4L), stainless steel blades, 3 speeds, pulse function, and 5-year motor warranty.</p>"
+            },
+            "hi_IN": {
+              "name": "प्रेस्टिज आइरिस 750 वाट मिक्सर ग्राइंडर 3 जार के साथ",
+              "price": {
+                "USD": 46.0,
+                "INR": 3795
+              },
+              "short_description": "<p>प्रेस्टिज आइरिस 750W मिक्सर ग्राइंडर – 3 जार (1.5L, 0.9L, 0.4L), स्टेनलेस स्टील ब्लेड, 3 स्पीड, पल्स फंक्शन और 5 साल की मोटर वारंटी।</p>",
+              "description": "<p>प्रेस्टिज आइरिस 750 वाट मिक्सर ग्राइंडर भारतीय घरों का एक भरोसेमंद किचन साथी है। 3 स्पीड सेटिंग और पल्स फंक्शन के साथ 750W हेवी-ड्यूटी मोटर मसाले पीसने, चटनी बनाने, स्मूदी ब्लेंड करने और बैटर तैयार करने में आसान है। 1.5L लिक्विडाइज़िंग जार, 0.9L मल्टीपर्पज़ जार और 0.4L ड्राई ग्राइंडिंग जार शामिल। प्रेस्टिज की 5 साल की मोटर वारंटी के साथ।</p>",
+              "meta_title": "प्रेस्टिज आइरिस 750W मिक्सर ग्राइंडर – 3 जार, स्टेनलेस स्टील ब्लेड, 5 साल वारंटी",
+              "meta_keywords": "प्रेस्टिज आइरिस मिक्सर ग्राइंडर|750W मिक्सर ग्राइंडर|मिक्सर ग्राइंडर इंडिया|प्रेस्टिज मिक्सर",
+              "meta_description": "प्रेस्टिज आइरिस 750W मिक्सर ग्राइंडर खरीदें – 3 स्टेनलेस स्टील जार और 5 साल की मोटर वारंटी। हर भारतीय रसोई के लिए परफेक्ट।"
+            },
+            "fr_FR": {
+              "name": "Mixeur Broyeur Prestige Iris 750 W avec 3 bols",
+              "price": {
+                "USD": 46.0,
+                "INR": 3795
+              },
+              "short_description": "<p>Prestige Iris 750W avec 3 bols (1,5L, 0,9L, 0,4L), lames inox, 3 vitesses, fonction pulse et garantie moteur 5 ans.</p>",
+              "description": "<p>Le mixeur broyeur Prestige Iris 750 W est un incontournable de la cuisine indienne. Le moteur robuste de 750W avec 3 vitesses et la fonction pulse broie les épices, prépare les chutneys, mixe les smoothies et les pâtes sans effort. Livré avec 3 bols en acier inoxydable de 1,5L, 0,9L et 0,4L. Garantie moteur 5 ans Prestige.</p>",
+              "meta_title": "Prestige Iris 750W Mixeur Broyeur – 3 bols inox, garantie 5 ans",
+              "meta_keywords": "Prestige Iris mixeur broyeur|mixeur 750W Inde|mixeur broyeur Inde|Prestige mixeur",
+              "meta_description": "Achetez le mixeur Prestige Iris 750W avec 3 bols inox et garantie moteur 5 ans. Idéal pour toute cuisine indienne."
+            }
+          }
+        }
+      }
+    },
+    {
+      "sku": "boat-airdopes-141-tws",
+      "type": "simple",
+      "attribute_family_id": 1,
+      "values": {
+        "common": {
+          "sku": "boat-airdopes-141-tws",
+          "image": "products/Product-4.jpeg",
+          "color": "Black",
+          "url_key": "boat-airdopes-141-tws-earbuds",
+          "product_number": "AIRDOPES-141-BLK"
+        },
+        "channel_specific": {
+          "default": {
+            "cost": {
+              "USD": "8",
+              "INR": 699
+            }
+          }
+        },
+        "channel_locale_specific": {
+          "default": {
+            "en_US": {
+              "name": "boAt Airdopes 141 TWS Bluetooth Earbuds",
+              "price": {
+                "USD": "15",
+                "INR": 1299
+              },
+              "meta_title": "boAt Airdopes 141 TWS Earbuds – 42H Playtime, ENx Technology, IPX4",
+              "description": "<p>The boAt Airdopes 141 are India's #1 selling truly wireless earbuds, delivering an immersive audio experience at an unbeatable price. The 8mm drivers with boAt Signature Sound produce rich, clear audio for music, calls, and gaming. ENx technology ensures voice clarity during calls by reducing background noise. With a total playtime of 42 hours (6H earbuds + 36H case) and IPX4 water resistance, these earbuds are ready for any situation. ASAP Charge gives 75 minutes of playback with just 10 minutes of charging.</p>",
+              "meta_keywords": "boAt Airdopes 141|TWS earbuds India|best earbuds under 1500|boAt earbuds",
+              "meta_description": "Buy boAt Airdopes 141 TWS Earbuds with 42H total playtime, ENx technology, and ASAP Charge. Best earbuds under ₹1500 in India.",
+              "short_description": "<p>boAt Airdopes 141 TWS with 8mm drivers, 42H total playtime, ENx call tech, ASAP Charge (10 min = 75 min), and IPX4 rating.</p>"
+            },
+            "hi_IN": {
+              "name": "boAt Airdopes 141 TWS ब्लूटूथ इयरबड्स",
+              "price": {
+                "USD": 15.0,
+                "INR": 1299
+              },
+              "short_description": "<p>boAt Airdopes 141 – 8mm ड्राइवर, 42H कुल प्लेटाइम, ENx कॉल टेक्नोलॉजी, ASAP चार्ज और IPX4 रेटिंग।</p>",
+              "description": "<p>boAt Airdopes 141 भारत के #1 बेस्टसेलिंग ट्रूली वायरलेस इयरबड्स हैं। 8mm ड्राइवर के साथ boAt सिग्नेचर साउंड म्यूजिक, कॉल और गेमिंग के लिए रिच ऑडियो देता है। ENx टेक्नोलॉजी बैकग्राउंड नॉइज़ कम करके कॉल क्लैरिटी सुनिश्चित करती है। कुल 42 घंटे प्लेटाइम (6H इयरबड्स + 36H केस) और IPX4 वाटर रेसिस्टेंस। ASAP चार्ज से 10 मिनट में 75 मिनट की प्लेबैक।</p>",
+              "meta_title": "boAt Airdopes 141 TWS इयरबड्स – 42H प्लेटाइम, ENx टेक्नोलॉजी, IPX4",
+              "meta_keywords": "boAt Airdopes 141|TWS इयरबड्स इंडिया|1500 से कम बेस्ट इयरबड्स|boAt इयरबड्स",
+              "meta_description": "boAt Airdopes 141 TWS इयरबड्स खरीदें – 42H प्लेटाइम, ENx टेक्नोलॉजी और ASAP चार्ज। ₹1500 से कम में बेस्ट इयरबड्स।"
+            },
+            "fr_FR": {
+              "name": "boAt Airdopes 141 Écouteurs TWS Bluetooth",
+              "price": {
+                "USD": 15.0,
+                "INR": 1299
+              },
+              "short_description": "<p>boAt Airdopes 141 avec haut-parleurs 8mm, 42H d'autonomie totale, technologie ENx, ASAP Charge et IPX4.</p>",
+              "description": "<p>Les boAt Airdopes 141 sont les écouteurs sans fil les plus vendus en Inde. Les haut-parleurs 8mm avec boAt Signature Sound produisent un audio riche pour la musique, les appels et le gaming. La technologie ENx réduit les bruits de fond. Autonomie totale de 42h (6H + 36H étui) et résistance IPX4. ASAP Charge : 10 min = 75 min de lecture.</p>",
+              "meta_title": "boAt Airdopes 141 Écouteurs TWS – 42H autonomie, ENx, ASAP Charge",
+              "meta_keywords": "boAt Airdopes 141|écouteurs TWS Inde|meilleurs écouteurs moins de 1500|boAt écouteurs",
+              "meta_description": "Achetez les boAt Airdopes 141 avec 42H d'autonomie, technologie ENx et ASAP Charge."
+            }
+          }
+        }
+      }
+    },
+    {
+      "sku": "milton-thermosteel-flip-lid-750ml",
+      "type": "simple",
+      "attribute_family_id": 1,
+      "values": {
+        "common": {
+          "sku": "milton-thermosteel-flip-lid-750ml",
+          "image": "products/Product-5.jpeg",
+          "color": "Silver",
+          "url_key": "milton-thermosteel-flip-lid-750ml",
+          "product_number": "MLT-FLIP-750-SLV"
+        },
+        "channel_specific": {
+          "default": {
+            "cost": {
+              "USD": "9",
+              "INR": 720
+            }
+          }
+        },
+        "channel_locale_specific": {
+          "default": {
+            "en_US": {
+              "name": "Milton Thermosteel Flip Lid Flask 750 ml",
+              "price": {
+                "USD": "15",
+                "INR": 1249
+              },
+              "meta_title": "Milton Thermosteel Flip Lid Flask 750ml – 24H Cold, 12H Hot, Food Grade Steel",
+              "description": "<p>The Milton Thermosteel Flip Lid Flask 750ml is a trusted Indian household companion for hot chai or cold nimbu pani on the go. Crafted from premium food-grade 18/8 stainless steel with double-wall vacuum insulation, it keeps beverages hot for up to 12 hours and cold for up to 24 hours. The easy flip-lid opens with one hand and the leak-proof design ensures zero spills in your bag. Certified food-safe with no plastic contact with beverage. BPA-free and rustproof for long-lasting use.</p>",
+              "meta_keywords": "Milton Thermosteel flask|insulated water bottle India|Milton flip lid bottle|stainless steel flask",
+              "meta_description": "Shop Milton Thermosteel Flip Lid Flask 750ml. Keeps hot 12H and cold 24H. Food-grade stainless steel, leak-proof, BPA-free.",
+              "short_description": "<p>Milton Thermosteel Flip Lid Flask 750ml with double-wall vacuum insulation, hot 12H, cold 24H, leak-proof flip lid, and food-grade 18/8 steel.</p>"
+            },
+            "hi_IN": {
+              "name": "मिल्टन थर्मोस्टील फ्लिप लिड फ्लास्क 750 ml",
+              "price": {
+                "USD": 15.0,
+                "INR": 1249
+              },
+              "short_description": "<p>मिल्टन थर्मोस्टील फ्लिप लिड 750ml – डबल-वॉल वैक्यूम इंसुलेशन, 12H गर्म, 24H ठंडा, लीक-प्रूफ और फूड-ग्रेड 18/8 स्टील।</p>",
+              "description": "<p>मिल्टन थर्मोस्टील फ्लिप लिड फ्लास्क 750ml चलते-फिरते गर्म चाय या ठंडे नींबू पानी के लिए एक भरोसेमंद भारतीय घरेलू साथी है। प्रीमियम फूड-ग्रेड 18/8 स्टेनलेस स्टील से बना, डबल-वॉल वैक्यूम इंसुलेशन के साथ यह पेय को 12 घंटे तक गर्म और 24 घंटे तक ठंडा रखता है। वन-हैंड फ्लिप-लिड और लीक-प्रूफ डिज़ाइन। BPA-फ्री और रस्टप्रूफ।</p>",
+              "meta_title": "मिल्टन थर्मोस्टील फ्लिप लिड फ्लास्क 750ml – 24H ठंडा, 12H गर्म, फूड ग्रेड स्टील",
+              "meta_keywords": "मिल्टन थर्मोस्टील फ्लास्क|इंसुलेटेड बॉटल इंडिया|मिल्टन फ्लिप लिड बॉटल|स्टेनलेस स्टील फ्लास्क",
+              "meta_description": "मिल्टन थर्मोस्टील फ्लिप लिड फ्लास्क 750ml खरीदें। 12H गर्म और 24H ठंडा। फूड-ग्रेड स्टेनलेस स्टील और लीक-प्रूफ।"
+            },
+            "fr_FR": {
+              "name": "Thermos Milton Thermosteel Flip Lid 750 ml",
+              "price": {
+                "USD": 15.0,
+                "INR": 1249
+              },
+              "short_description": "<p>Milton Thermosteel 750ml avec isolation double paroi, chaud 12H, froid 24H, couvercle flip étanche et acier inox 18/8.</p>",
+              "description": "<p>La gourde Milton Thermosteel Flip Lid 750ml est le compagnon idéal pour le thé chaud ou l'eau froide en déplacement. Fabriquée en acier inoxydable 18/8 certifié alimentaire avec isolation sous vide double paroi, elle maintient les boissons chaudes 12h et froides 24h. Couvercle flip d'une main, design étanche, sans BPA et anti-rouille.</p>",
+              "meta_title": "Milton Thermosteel Flip Lid 750ml – Chaud 12H, Froid 24H, Acier alimentaire",
+              "meta_keywords": "Milton Thermosteel gourde|gourde isotherme Inde|Milton flip lid|gourde acier inoxydable",
+              "meta_description": "Achetez la gourde Milton Thermosteel 750ml. Chaud 12H, froid 24H. Acier alimentaire, étanche, sans BPA."
+            }
+          }
+        }
+      }
+    },
+    {
+      "sku": "wildcraft-hatchback-30l-backpack",
+      "type": "simple",
+      "attribute_family_id": 1,
+      "values": {
+        "common": {
+          "sku": "wildcraft-hatchback-30l-backpack",
+          "image": "products/Product-6.jpeg",
+          "color": "Blue",
+          "url_key": "wildcraft-hatchback-30l-backpack",
+          "product_number": "WC-HB30-NVY"
+        },
+        "channel_specific": {
+          "default": {
+            "cost": {
+              "USD": "18",
+              "INR": 1499
+            }
+          }
+        },
+        "channel_locale_specific": {
+          "default": {
+            "en_US": {
+              "name": "Wildcraft Hatchback 30L Laptop Backpack",
+              "price": {
+                "USD": "31",
+                "INR": 2595
+              },
+              "meta_title": "Wildcraft Hatchback 30L Laptop Backpack – Raincover, 15.6\" Laptop Sleeve",
+              "description": "<p>The Wildcraft Hatchback 30L Laptop Backpack is built for students, daily commuters, and weekend travellers across India. It features a dedicated padded sleeve for 15.6-inch laptops, a front organiser pocket, and a quick-access top pocket. The breathable air-mesh back panel and padded shoulder straps ensure all-day comfort even on long commutes. An in-built rain cover protects your belongings during sudden Indian monsoon showers. Made from water-resistant 600D polyester for long-lasting everyday use.</p>",
+              "meta_keywords": "Wildcraft backpack|30L laptop backpack India|Wildcraft Hatchback|college backpack India",
+              "meta_description": "Buy Wildcraft Hatchback 30L Laptop Backpack with rain cover, 15.6\" laptop sleeve, and breathable back panel. Perfect for college and travel.",
+              "short_description": "<p>Wildcraft Hatchback 30L with 15.6\" laptop sleeve, rain cover, air-mesh back panel, organiser pocket, and water-resistant 600D polyester.</p>"
+            },
+            "hi_IN": {
+              "name": "Wildcraft हैचबैक 30L लैपटॉप बैकपैक",
+              "price": {
+                "USD": 31.0,
+                "INR": 2595
+              },
+              "short_description": "<p>Wildcraft हैचबैक 30L – 15.6\" लैपटॉप स्लीव, रेनकवर, एयर-मेश बैक पैनल, ऑर्गनाइज़र पॉकेट और वाटर-रेसिस्टेंट 600D पॉलिएस्टर।</p>",
+              "description": "<p>Wildcraft हैचबैक 30L लैपटॉप बैकपैक भारत भर के छात्रों, डेली कम्यूटर्स और वीकेंड ट्रैवलर्स के लिए बनाया गया है। 15.6 इंच लैपटॉप के लिए डेडिकेटेड पैडेड स्लीव, फ्रंट ऑर्गनाइज़र पॉकेट और क्विक-एक्सेस टॉप पॉकेट। ब्रीदेबल एयर-मेश बैक पैनल और पैडेड शोल्डर स्ट्रैप्स। इन-बिल्ट रेन कवर मानसून की बारिश में सामान की रक्षा करता है।</p>",
+              "meta_title": "Wildcraft हैचबैक 30L लैपटॉप बैकपैक – रेनकवर, 15.6\" लैपटॉप स्लीव",
+              "meta_keywords": "Wildcraft बैकपैक|30L लैपटॉप बैकपैक इंडिया|Wildcraft हैचबैक|कॉलेज बैकपैक इंडिया",
+              "meta_description": "Wildcraft हैचबैक 30L लैपटॉप बैकपैक खरीदें – रेन कवर और 15.6\" लैपटॉप स्लीव के साथ। कॉलेज और ट्रैवल के लिए परफेक्ट।"
+            },
+            "fr_FR": {
+              "name": "Sac à dos ordinateur Wildcraft Hatchback 30L",
+              "price": {
+                "USD": 31.0,
+                "INR": 2595
+              },
+              "short_description": "<p>Wildcraft Hatchback 30L avec poche laptop 15,6\", couvre-pluie, dos en mesh aéré, poche organiseur et polyester 600D.</p>",
+              "description": "<p>Le sac à dos Wildcraft Hatchback 30L est conçu pour les étudiants, navetteurs et voyageurs en Inde. Il dispose d'un compartiment rembourré pour les laptops 15,6 pouces, d'une poche organiseur frontale et d'une poche d'accès rapide. Le dos en mesh respirant et les bretelles rembourrées assurent le confort toute la journée. Couvre-pluie intégré pour les moussons. Polyester 600D résistant à l'eau.</p>",
+              "meta_title": "Wildcraft Hatchback 30L Sac à dos ordinateur – Couvre-pluie, poche laptop 15,6\"",
+              "meta_keywords": "sac à dos Wildcraft|sac à dos 30L ordinateur Inde|Wildcraft Hatchback|sac à dos collège Inde",
+              "meta_description": "Achetez le sac à dos Wildcraft Hatchback 30L avec couvre-pluie et poche laptop 15,6\". Idéal pour les études et les voyages."
+            }
+          }
+        }
+      }
+    },
+    {
+      "sku": "nike-air-force-1-07-cfg",
+      "type": "configurable",
+      "attribute_family_id": 1,
+      "super_attributes": [
+        "size"
+      ],
+      "values": {
+        "common": {
+          "sku": "nike-air-force-1-07-cfg",
+          "size": "9",
+          "image": "products/Product-7.jpeg",
+          "url_key": "nike-air-force-1-07"
+        },
+        "channel_specific": {
+          "default": {
+            "cost": {
+              "USD": "48",
+              "INR": 3999
+            }
+          }
+        },
+        "channel_locale_specific": {
+          "default": {
+            "en_US": {
+              "name": "Nike Air Force 1 '07 Sneakers",
+              "price": {
+                "USD": "90",
+                "INR": 7495
+              },
+              "meta_title": "Nike Air Force 1 '07 Sneakers – Classic Basketball Icon, Air Sole",
+              "description": "<p>The Nike Air Force 1 '07 is the shoe that started it all. First designed for the hardwood in 1982, the AF1 is a timeless basketball icon that has transcended sport to become a street style staple loved across India and the world. The premium leather upper with perforations provides breathability, while the encapsulated Air sole unit offers superior cushioning for all-day comfort. The pivot circle on the rubber outsole ensures multi-directional traction whether you are on or off the court.</p>",
+              "meta_keywords": "Nike Air Force 1|AF1 sneakers India|Nike shoes|classic Nike sneakers",
+              "meta_description": "Buy Nike Air Force 1 '07 Sneakers in India. Classic leather upper, encapsulated Air sole, and iconic pivot circle outsole.",
+              "short_description": "<p>Nike Air Force 1 '07 with premium leather upper, encapsulated Air cushioning, pivot circle rubber outsole, and iconic low-top silhouette.</p>"
+            },
+            "hi_IN": {
+              "name": "Nike Air Force 1 '07 स्नीकर्स",
+              "price": {
+                "USD": 90.0,
+                "INR": 7495
+              },
+              "short_description": "<p>Nike Air Force 1 '07 – प्रीमियम लेदर अपर, एनकैप्सुलेटेड Air कुशनिंग, पिवट सर्कल रबर आउटसोल और आइकॉनिक लो-टॉप सिल्हूट।</p>",
+              "description": "<p>Nike Air Force 1 '07 वह जूता है जिसने सब कुछ शुरू किया। 1982 में बास्केटबॉल कोर्ट के लिए पहली बार डिज़ाइन किया गया, AF1 एक कालातीत आइकन है जो स्ट्रीट स्टाइल स्टेपल बन गया है। परफोरेशन के साथ प्रीमियम लेदर अपर ब्रीदेबिलिटी देता है जबकि एनकैप्सुलेटेड Air सोल यूनिट बेहतरीन कुशनिंग प्रदान करती है। रबर आउटसोल पर पिवट सर्कल मल्टी-डायरेक्शनल ट्रैक्शन सुनिश्चित करता है।</p>",
+              "meta_title": "Nike Air Force 1 '07 स्नीकर्स – क्लासिक बास्केटबॉल आइकन, Air सोल",
+              "meta_keywords": "Nike Air Force 1|AF1 स्नीकर्स इंडिया|Nike जूते|क्लासिक Nike स्नीकर्स",
+              "meta_description": "Nike Air Force 1 '07 स्नीकर्स भारत में खरीदें। क्लासिक लेदर अपर, एनकैप्सुलेटेड Air सोल और आइकॉनिक पिवट सर्कल आउटसोल।"
+            },
+            "fr_FR": {
+              "name": "Baskets Nike Air Force 1 '07",
+              "price": {
+                "USD": 90.0,
+                "INR": 7495
+              },
+              "short_description": "<p>Nike Air Force 1 '07 avec tige cuir premium, amorti Air encapsulé, semelle à pivot circulaire et silhouette low-top iconique.</p>",
+              "description": "<p>La Nike Air Force 1 '07 est la chaussure qui a tout lancé. Conçue pour le parquet en 1982, l'AF1 est une icône intemporelle du basketball devenue un incontournable du style urbain. La tige en cuir premium perforé offre de la respirabilité, tandis que l'unité Air encapsulée procure un amorti supérieur. La semelle à pivot circulaire assure une traction multidirectionnelle.</p>",
+              "meta_title": "Baskets Nike Air Force 1 '07 – Icône basketball classique, semelle Air",
+              "meta_keywords": "Nike Air Force 1|baskets AF1 Inde|chaussures Nike|baskets Nike classiques",
+              "meta_description": "Achetez les baskets Nike Air Force 1 '07. Tige cuir classique, amorti Air encapsulé et semelle à pivot iconique."
+            }
+          }
+        }
+      }
+    },
+    {
+      "sku": "puma-virat-kohli-evoknit-tshirt-cfg",
+      "type": "configurable",
+      "attribute_family_id": 1,
+      "super_attributes": [
+        "size"
+      ],
+      "values": {
+        "common": {
+          "sku": "puma-virat-kohli-evoknit-tshirt-cfg",
+          "size": "M",
+          "image": "products/Product-8.jpeg",
+          "url_key": "puma-one8-evoknit-polo-tshirt"
+        },
+        "channel_specific": {
+          "default": {
+            "cost": {
+              "USD": "12",
+              "INR": 999
+            }
+          }
+        },
+        "channel_locale_specific": {
+          "default": {
+            "en_US": {
+              "name": "PUMA One8 Evoknit Polo T-Shirt",
+              "price": {
+                "USD": "25",
+                "INR": 2099
+              },
+              "meta_title": "PUMA One8 Evoknit Polo T-Shirt – Virat Kohli Collection, Moisture-Wicking",
+              "description": "<p>The PUMA One8 Evoknit Polo T-Shirt is part of the exclusive PUMA x Virat Kohli collection, designed for athletes and style-conscious individuals alike. Crafted with PUMA's innovative Evoknit fabric technology, the seamless knit construction moves with your body for unrestricted performance. The moisture-wicking DRYCELL fabric pulls sweat away from the skin, keeping you dry and comfortable during workouts or casual outings. The classic polo collar adds a refined touch to a performance-ready silhouette.</p>",
+              "meta_keywords": "PUMA One8 t-shirt|Virat Kohli PUMA|PUMA polo India|sports t-shirt India",
+              "meta_description": "Shop PUMA One8 Evoknit Polo from Virat Kohli's collection. Seamless knit, DRYCELL moisture-wicking fabric for sport and style.",
+              "short_description": "<p>PUMA One8 Evoknit Polo T-Shirt with seamless Evoknit fabric, DRYCELL moisture-wicking technology, and polo collar from Virat Kohli's collection.</p>"
+            },
+            "hi_IN": {
+              "name": "PUMA One8 Evoknit पोलो T-शर्ट",
+              "price": {
+                "USD": 25.0,
+                "INR": 2099
+              },
+              "short_description": "<p>PUMA One8 Evoknit पोलो – सीमलेस Evoknit फैब्रिक, DRYCELL मॉइस्चर-विकिंग टेक्नोलॉजी और पोलो कॉलर। विराट कोहली कलेक्शन।</p>",
+              "description": "<p>PUMA One8 Evoknit पोलो T-शर्ट एक्सक्लूसिव PUMA x विराट कोहली कलेक्शन का हिस्सा है। PUMA की इनोवेटिव Evoknit फैब्रिक टेक्नोलॉजी के साथ सीमलेस निट कंस्ट्रक्शन असीमित परफॉर्मेंस के लिए आपके शरीर के साथ चलता है। DRYCELL फैब्रिक पसीने को त्वचा से दूर खींचता है। क्लासिक पोलो कॉलर परफॉर्मेंस-रेडी सिल्हूट में रिफाइन्ड टच जोड़ता है।</p>",
+              "meta_title": "PUMA One8 Evoknit पोलो T-शर्ट – विराट कोहली कलेक्शन, मॉइस्चर-विकिंग",
+              "meta_keywords": "PUMA One8 T-शर्ट|विराट कोहली PUMA|PUMA पोलो इंडिया|स्पोर्ट्स T-शर्ट इंडिया",
+              "meta_description": "PUMA One8 Evoknit पोलो खरीदें – विराट कोहली कलेक्शन से। सीमलेस निट और DRYCELL मॉइस्चर-विकिंग फैब्रिक।"
+            },
+            "fr_FR": {
+              "name": "Polo PUMA One8 Evoknit",
+              "price": {
+                "USD": 25.0,
+                "INR": 2099
+              },
+              "short_description": "<p>Polo PUMA One8 Evoknit avec tricot sans couture, tissu DRYCELL évacuation d'humidité et col polo. Collection Virat Kohli.</p>",
+              "description": "<p>Le polo PUMA One8 Evoknit fait partie de la collection exclusive PUMA x Virat Kohli, conçue pour les athlètes et les amateurs de style. La construction en tricot sans couture Evoknit suit les mouvements du corps. Le tissu DRYCELL évacue la transpiration pour vous garder au sec lors de l'entraînement ou en ville. Le col polo classique apporte une touche soignée.</p>",
+              "meta_title": "Polo PUMA One8 Evoknit – Collection Virat Kohli, évacuation d'humidité",
+              "meta_keywords": "PUMA One8 t-shirt|Virat Kohli PUMA|polo PUMA Inde|t-shirt sport Inde",
+              "meta_description": "Achetez le polo PUMA One8 Evoknit de la collection Virat Kohli. Tricot sans couture et tissu DRYCELL pour le sport et le style."
+            }
+          }
+        }
+      }
+    },
+    {
+      "sku": "adidas-tiro-23-track-pant-cfg",
+      "type": "configurable",
+      "attribute_family_id": 1,
+      "super_attributes": [
+        "size"
+      ],
+      "values": {
+        "common": {
+          "sku": "adidas-tiro-23-track-pant-cfg",
+          "size": "M",
+          "image": "products/Product-9.jpeg",
+          "url_key": "adidas-tiro-23-track-pants"
+        },
+        "channel_specific": {
+          "default": {
+            "cost": {
+              "USD": "17",
+              "INR": 1399
+            }
+          }
+        },
+        "channel_locale_specific": {
+          "default": {
+            "en_US": {
+              "name": "Adidas Tiro 23 League Training Pants",
+              "price": {
+                "USD": "34",
+                "INR": 2799
+              },
+              "meta_title": "Adidas Tiro 23 League Training Pants – AEROREADY, Tapered Fit",
+              "description": "<p>The Adidas Tiro 23 League Training Pants are a football training essential that has earned a cult following among Indian athletes and streetwear enthusiasts alike. Engineered with AEROREADY moisture-absorbing fabric that keeps you dry and confident through intense training sessions. The tapered leg and zip ankles allow you to pull them on and off over cleats with ease. Side pockets offer secure storage for small essentials. Made with recycled materials as part of adidas's commitment to sustainability.</p>",
+              "meta_keywords": "Adidas Tiro 23 track pants|Adidas training pants India|Adidas Tiro pants|football training pants",
+              "meta_description": "Buy Adidas Tiro 23 League Training Pants with AEROREADY moisture management and tapered fit. Iconic football-inspired style.",
+              "short_description": "<p>Adidas Tiro 23 League Training Pants with AEROREADY fabric, tapered fit, zip ankles, side pockets, and recycled materials.</p>"
+            },
+            "hi_IN": {
+              "name": "Adidas Tiro 23 लीग ट्रेनिंग पैंट्स",
+              "price": {
+                "USD": 34.0,
+                "INR": 2799
+              },
+              "short_description": "<p>Adidas Tiro 23 लीग ट्रेनिंग पैंट्स – AEROREADY फैब्रिक, टेपर्ड फिट, ज़िप एंकल्स, साइड पॉकेट और रीसाइकिल्ड मैटेरियल।</p>",
+              "description": "<p>Adidas Tiro 23 लीग ट्रेनिंग पैंट्स एक फुटबॉल ट्रेनिंग एसेंशियल है जिसने भारतीय एथलीट और स्ट्रीटवियर एंथुज़ियास्ट दोनों के बीच पंथ अनुसरण अर्जित किया है। AEROREADY मॉइस्चर-एब्जॉर्बिंग फैब्रिक आपको इंटेंस ट्रेनिंग सेशन के दौरान सूखा और आत्मविश्वासी रखता है। टेपर्ड लेग और ज़िप एंकल्स क्लीट्स के ऊपर पहनना और उतारना आसान बनाते हैं। रीसाइकिल्ड मैटेरियल से बना।</p>",
+              "meta_title": "Adidas Tiro 23 लीग ट्रेनिंग पैंट्स – AEROREADY, टेपर्ड फिट",
+              "meta_keywords": "Adidas Tiro 23 ट्रैक पैंट्स|Adidas ट्रेनिंग पैंट्स इंडिया|Adidas Tiro पैंट्स|फुटबॉल ट्रेनिंग पैंट्स",
+              "meta_description": "Adidas Tiro 23 लीग ट्रेनिंग पैंट्स खरीदें – AEROREADY मॉइस्चर मैनेजमेंट और टेपर्ड फिट के साथ।"
+            },
+            "fr_FR": {
+              "name": "Pantalon d'entraînement Adidas Tiro 23 League",
+              "price": {
+                "USD": 34.0,
+                "INR": 2799
+              },
+              "short_description": "<p>Adidas Tiro 23 avec tissu AEROREADY, coupe fuselée, chevilles zippées, poches latérales et matériaux recyclés.</p>",
+              "description": "<p>Le pantalon Adidas Tiro 23 League est un essentiel de l'entraînement football plébiscité par les athlètes et les amateurs de streetwear en Inde. Le tissu AEROREADY absorbe l'humidité pour vous garder au sec lors des séances intenses. La coupe fuselée et les chevilles zippées facilitent l'enfilage par-dessus les crampons. Fabriqué avec des matériaux recyclés.</p>",
+              "meta_title": "Pantalon Adidas Tiro 23 League – AEROREADY, Coupe fuselée",
+              "meta_keywords": "Adidas Tiro 23 pantalon|pantalon training Adidas Inde|pantalon Tiro Adidas|pantalon football training",
+              "meta_description": "Achetez le pantalon Adidas Tiro 23 League avec tissu AEROREADY et coupe fuselée. Style football iconique."
+            }
+          }
+        }
+      }
+    },
+    {
+      "sku": "woodland-waterproof-trekking-shoe-cfg",
+      "type": "configurable",
+      "attribute_family_id": 1,
+      "super_attributes": [
+        "size"
+      ],
+      "values": {
+        "common": {
+          "sku": "woodland-waterproof-trekking-shoe-cfg",
+          "size": "8",
+          "image": "products/Product-10.jpeg",
+          "url_key": "woodland-waterproof-trekking-shoes"
+        },
+        "channel_specific": {
+          "default": {
+            "cost": {
+              "USD": "38",
+              "INR": 3199
+            }
+          }
+        },
+        "channel_locale_specific": {
+          "default": {
+            "en_US": {
+              "name": "Woodland Waterproof High-Ankle Trekking Shoes",
+              "price": {
+                "USD": "72",
+                "INR": 5995
+              },
+              "meta_title": "Woodland Waterproof High-Ankle Trekking Shoes – Genuine Leather, Anti-Skid Sole",
+              "description": "<p>Woodland Waterproof High-Ankle Trekking Shoes are built for the rugged terrains of the Himalayas, Western Ghats, and beyond. Crafted from genuine full-grain leather with a waterproof membrane lining, they shield your feet from rain, streams, and damp trails without sacrificing breathability. The high-ankle collar provides crucial ankle support on uneven terrain while the thick anti-skid rubber outsole delivers reliable grip on both wet and dry surfaces. Padded collar and tongue cushion the foot for extended comfort during long treks and hikes.</p>",
+              "meta_keywords": "Woodland trekking shoes|waterproof hiking shoes India|Woodland shoes|high ankle trekking boots",
+              "meta_description": "Buy Woodland Waterproof High-Ankle Trekking Shoes. Genuine leather, waterproof membrane, anti-skid sole for Himalayan treks.",
+              "short_description": "<p>Woodland Waterproof High-Ankle Trekking Shoes with genuine full-grain leather, waterproof membrane, anti-skid rubber sole, and padded ankle collar.</p>"
+            },
+            "hi_IN": {
+              "name": "Woodland वाटरप्रूफ हाई-एंकल ट्रेकिंग शूज़",
+              "price": {
+                "USD": 72.0,
+                "INR": 5995
+              },
+              "short_description": "<p>Woodland वाटरप्रूफ हाई-एंकल ट्रेकिंग शूज़ – असली फुल-ग्रेन लेदर, वाटरप्रूफ मेम्ब्रेन, एंटी-स्किड रबर सोल और पैडेड एंकल कॉलर।</p>",
+              "description": "<p>Woodland वाटरप्रूफ हाई-एंकल ट्रेकिंग शूज़ हिमालय, पश्चिमी घाट और उससे आगे के कठिन इलाकों के लिए बनाए गए हैं। असली फुल-ग्रेन लेदर और वाटरप्रूफ मेम्ब्रेन लाइनिंग बारिश, नालों और नम रास्तों से पैरों की रक्षा करती है। हाई-एंकल कॉलर असमान इलाके पर एंकल सपोर्ट देता है जबकि मोटा एंटी-स्किड रबर आउटसोल गीली और सूखी दोनों सतहों पर विश्वसनीय ग्रिप देता है।</p>",
+              "meta_title": "Woodland वाटरप्रूफ हाई-एंकल ट्रेकिंग शूज़ – असली लेदर, एंटी-स्किड सोल",
+              "meta_keywords": "Woodland ट्रेकिंग शूज़|वाटरप्रूफ हाइकिंग शूज़ इंडिया|Woodland जूते|हाई एंकल ट्रेकिंग बूट्स",
+              "meta_description": "Woodland वाटरप्रूफ हाई-एंकल ट्रेकिंग शूज़ खरीदें। असली लेदर, वाटरप्रूफ मेम्ब्रेन और एंटी-स्किड सोल।"
+            },
+            "fr_FR": {
+              "name": "Chaussures de trekking Woodland imperméables montantes",
+              "price": {
+                "USD": 72.0,
+                "INR": 5995
+              },
+              "short_description": "<p>Woodland chaussures montantes imperméables avec cuir pleine fleur, membrane waterproof, semelle anti-dérapante et col cheville rembourré.</p>",
+              "description": "<p>Les chaussures Woodland imperméables montantes sont conçues pour les terrains accidentés de l'Himalaya et des Ghats. En cuir pleine fleur véritable avec membrane imperméable, elles protègent les pieds de la pluie et des ruisseaux. Le col haut apporte un soutien de cheville crucial sur terrain inégal, tandis que l'épaisse semelle en caoutchouc anti-dérapante garantit de l'adhérence sur surfaces humides et sèches.</p>",
+              "meta_title": "Woodland Chaussures Trekking Imperméables Montantes – Cuir véritable, semelle anti-dérapante",
+              "meta_keywords": "chaussures trekking Woodland|chaussures randonnée imperméables Inde|chaussures Woodland|bottes trekking montantes",
+              "meta_description": "Achetez les chaussures Woodland imperméables montantes. Cuir véritable, membrane waterproof et semelle anti-dérapante pour les treks himalayens."
+            }
+          }
+        }
+      }
+    }
+  ]
+}

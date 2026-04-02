@@ -15,7 +15,12 @@
 
     $field['options'] = isset($field['repository']) ? ($repositoryOptions ?? []) : ($field['options'] ?? []);
 
-    $value = core()->getConfigData($nameKey) ?? '';
+    $value = core()->getConfigData($nameKey) ?? ($field['default_value'] ?? '');
+
+    // For select fields, ensure value is always a string so v-select-handler matching works
+    if (($field['type'] ?? '') === 'select' && $value !== '') {
+        $value = (string) $value;
+    }
 @endphp
 
 
@@ -59,6 +64,7 @@
                     ::value="value"
                     ::rules="validations"
                     ::label="label"
+                    ::placeholder="field.placeholder || ''"
                     @input="emitChangeEvent($event.target.value, name)"
                 />
             </template>
@@ -85,6 +91,7 @@
                     ::rules="validations"
                     ::value="value"
                     ::label="label"
+                    ::placeholder="field.placeholder || ''"
                     ::min="field.name == 'minimum_order_amount'"
                     @input="emitChangeEvent($event.target.value, name)"
                 />

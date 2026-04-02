@@ -1,12 +1,13 @@
 <?php
 
+use Webkul\Theme\Themes;
 use Webkul\Theme\ViewRenderEventManager;
 
 if (! function_exists('themes')) {
     /**
      * Themes.
      *
-     * @return \Webkul\Theme\Themes
+     * @return Themes
      */
     function themes()
     {

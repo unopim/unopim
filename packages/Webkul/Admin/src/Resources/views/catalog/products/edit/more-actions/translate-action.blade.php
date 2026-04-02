@@ -47,90 +47,80 @@
                             @lang('admin::app.catalog.products.edit.translate.title')
                         </p>
                     </x-slot>
-                    <x-slot:content class="flex gap-5 mt-3.5 max-xl:flex-wrap">
-                        <div class="w-full max-h-[calc(100vh-160px)] overflow-y-auto pr-2">
-                        <section class="left-column flex flex-col gap-2 flex-1/5" :class="currentStep === 3 ? '' : 'w-full'">
-                            <section class="grid gap-2 items-center justify-center modal-steps-section mb-4 dark:text-white">
-                                <div class="flex justify-center items-center">
-                                    <div class="w-3 h-3 bg-violet-700 rounded-full"></div>
-                                    <hr class="w-[200px] dark:bg-cherry-600 h-1 border-0" :class="currentStep >= 2 ? 'bg-violet-700' : 'bg-violet-100'">
-                                    <div class="w-3 h-3 bg-violet-400 rounded-full" :class="currentStep >= 2 ? 'bg-violet-700' : 'bg-violet-400'"></div>
+                    <x-slot:content class="flex gap-5 max-xl:flex-wrap text-base dark:text-white !p-0">
+                        <!-- Steps 1 & 2: Source/Target Selection (centered layout) -->
+                        <template v-if="!translatedValues">
+                            <div class="w-full max-w-lg mx-auto py-6 px-4">
+                                <!-- Step Indicator -->
+                                <div class="flex items-center justify-center mb-6">
+                                    <div class="flex items-center">
+                                        <span class="inline-flex items-center justify-center min-w-[28px] min-h-[28px] w-7 h-7 rounded-full text-xs font-bold text-white bg-violet-700 shrink-0">1</span>
+                                        <span class="inline-block w-20 h-0.5 mx-1" :class="currentStep >= 2 ? 'bg-violet-700' : 'bg-gray-200 dark:bg-gray-600'"></span>
+                                        <span class="inline-flex items-center justify-center min-w-[28px] min-h-[28px] w-7 h-7 rounded-full text-xs font-bold shrink-0" :class="currentStep >= 2 ? 'bg-violet-700 text-white' : 'bg-gray-200 dark:bg-gray-600 text-gray-500 dark:text-gray-400'">2</span>
+                                    </div>
                                 </div>
-    
-                                <div class="flex justify-around items-center text-center dark:text-slate-50">
-                                    <p class="text-sm" :class="currentStep === 1 ? 'text-violet-700' : ''">@lang('admin::app.catalog.products.edit.translate.step') 1 <br> @lang('admin::app.catalog.products.edit.translate.select-source')</p>
-                                    <p class="text-sm" :class="currentStep === 2 ? 'text-violet-700' : ''">@lang('admin::app.catalog.products.edit.translate.step') 2 <br> @lang('admin::app.catalog.products.edit.translate.select-target')</p>
+                                <div class="flex justify-center gap-10 mb-6 text-xs text-gray-500 dark:text-gray-400">
+                                    <span :class="currentStep === 1 ? 'text-violet-700 dark:text-violet-400 font-semibold' : ''">@lang('admin::app.catalog.products.edit.translate.select-source')</span>
+                                    <span :class="currentStep === 2 ? 'text-violet-700 dark:text-violet-400 font-semibold' : ''">@lang('admin::app.catalog.products.edit.translate.select-target')</span>
                                 </div>
-    
-                                @lang('admin::app.catalog.products.edit.translate.first-step-title')
-                            </section>
-    
-                            <section class="bg-violet-50 dark:bg-cherry-800 rounded-md mb-2 p-3" id="step-1">
-                                <h3 class="dark:text-white mb-2 text-sm font-bold">
-                                    @lang('admin::app.catalog.products.edit.translate.source-content')
-                                </h3>
-    
-                                <!-- Source Channel -->
-                                <x-admin::form.control-group>
-                                    <x-admin::form.control-group.label class="required">
-                                        @lang('admin::app.catalog.products.edit.translate.source-channel')
-                                    </x-admin::form.control-group.label>
+
+                                <!-- Source Content Card -->
+                                <div class="bg-violet-50 dark:bg-cherry-800 rounded-lg p-4 mb-4">
+                                    <h3 class="text-sm font-semibold text-gray-800 dark:text-white mb-3">
+                                        @lang('admin::app.catalog.products.edit.translate.source-content')
+                                    </h3>
+
                                     @php
                                         $channels = core()->getAllChannels();
                                         $options = [];
-    
                                         foreach ($channels as $channel) {
                                             $channelName = $channel->name;
-    
                                             $options[] = [
                                                 'id'    => $channel->code,
                                                 'label' => empty($channelName) ? "[$channel->code]" : $channelName,
                                             ];
                                         }
-    
                                         $optionsInJson = json_encode($options);
                                     @endphp
-                                    <x-admin::form.control-group.control
-                                        type="select"
-                                        name="channel"
-                                        rules="required"
-                                        ::value="sourceChannel"
-                                        :options="$optionsInJson"
-                                        @input="getSourceLocale"
-                                        ::disabled="currentStep > 2"
-                                    >
-                                    </x-admin::form.control-group.control>
-    
-                                    <x-admin::form.control-group.error control-name="channel"></x-admin::form.control-group.error>
-                                </x-admin::form.control-group >
-    
-                                <!-- Source Locale -->
-                                <x-admin::form.control-group v-if="localeOption">
-                                    <x-admin::form.control-group.label class="required">
-                                        @lang('admin::app.catalog.products.edit.translate.locale')
-                                    </x-admin::form.control-group.label>
-    
-                                    <x-admin::form.control-group.control
-                                        type="select"
-                                        name="locale"
-                                        rules="required"
-                                        ref="localeRef"
-                                        ::value="sourceLocale"
-                                        ::options="localeOption"
-                                        @input="resetTargetLocales"
-                                        ::disabled="currentStep > 2"
-                                    >
-                                    </x-admin::form.control-group.control>
-    
-                                    <x-admin::form.control-group.error control-name="locale"></x-admin::form.control-group.error>
-                                </x-admin::form.control-group >
-    
-                                <!-- Attributes -->
-                                <x-admin::form.control-group>
-                                    <x-admin::form.control-group.label class="required w-full">
-                                        @lang('admin::app.catalog.products.edit.translate.attributes')
-                                    </x-admin::form.control-group.label>
-                                    <div class="w-full ">
+
+                                    <x-admin::form.control-group>
+                                        <x-admin::form.control-group.label class="required">
+                                            @lang('admin::app.catalog.products.edit.translate.source-channel')
+                                        </x-admin::form.control-group.label>
+                                        <x-admin::form.control-group.control
+                                            type="select"
+                                            name="channel"
+                                            rules="required"
+                                            ::value="sourceChannel"
+                                            :options="$optionsInJson"
+                                            @input="getSourceLocale"
+                                            ::disabled="currentStep > 2"
+                                        />
+                                        <x-admin::form.control-group.error control-name="channel" />
+                                    </x-admin::form.control-group>
+
+                                    <x-admin::form.control-group v-if="localeOption">
+                                        <x-admin::form.control-group.label class="required">
+                                            @lang('admin::app.catalog.products.edit.translate.locale')
+                                        </x-admin::form.control-group.label>
+                                        <x-admin::form.control-group.control
+                                            type="select"
+                                            name="locale"
+                                            rules="required"
+                                            ref="localeRef"
+                                            ::value="sourceLocale"
+                                            ::options="localeOption"
+                                            @input="resetTargetLocales"
+                                            ::disabled="currentStep > 2"
+                                        />
+                                        <x-admin::form.control-group.error control-name="locale" />
+                                    </x-admin::form.control-group>
+
+                                    <!-- Attributes -->
+                                    <x-admin::form.control-group>
+                                        <x-admin::form.control-group.label class="required">
+                                            @lang('admin::app.catalog.products.edit.translate.attributes')
+                                        </x-admin::form.control-group.label>
                                         <x-admin::form.control-group.control
                                             type="multiselect"
                                             name="attributes"
@@ -138,155 +128,208 @@
                                             rules="required"
                                             ::value="attributes ?? []"
                                             ::options="attributesOptions"
-                                            class="w-full"
                                             ::disabled="currentStep > 2"
                                         />
-    
                                         <x-admin::form.control-group.error control-name="attributes" />
-                                    </div>
-                                </x-admin::form.control-group>
-                            </section>
-    
-                            <template v-if="currentStep > 1">
-                                <h2 class="mt-6 mb-2 text-center">@lang('admin::app.catalog.products.edit.translate.second-step-title')</h2>
-                                <section class="bg-violet-50 dark:bg-cherry-800 rounded-md mb-2 p-3" id="step-2">
-                                    <h3 class="dark:text-white mb-2 text-sm font-bold">
-                                        @lang('admin::app.catalog.products.edit.translate.target-content')
-                                    </h3>
-    
-                                    <x-admin::form.control-group>
-                                        <x-admin::form.control-group.label class="required">
-                                            @lang('admin::app.catalog.products.edit.translate.target-channel')
-                                        </x-admin::form.control-group.label>
-                                        <x-admin::form.control-group.control
-                                            type="select"
-                                            name="targetChannel"
-                                            rules="required"
-                                            ::value="targetChannel"
-                                            :options="$optionsInJson"
-                                            @input="getTargetLocale"
-                                            ::disabled="currentStep > 2"
-                                        />
-                                        <x-admin::form.control-group.error control-name="targetChannel" />
                                     </x-admin::form.control-group>
-    
-                                    <x-admin::form.control-group v-if="targetLocOptions">
-                                        <x-admin::form.control-group.label class="required">
-                                            @lang('admin::app.catalog.products.edit.translate.target-locales')
-                                        </x-admin::form.control-group.label>
-                                        <x-admin::form.control-group.control
-                                            type="multiselect"
-                                            id="section"
-                                            ref="targetLocOptionsRef"
-                                            name="targetLocale"
-                                            rules="required"
-                                            ::value="targetLocales"
-                                            ::options="targetLocOptions"
-                                            track-by="id"
-                                            label-by="label"
-                                            ::disabled="currentStep > 2"
-                                        />
-                                        <x-admin::form.control-group.error control-name="targetLocale" />
-                                    </x-admin::form.control-group>
-                                </section>
-                            </template>
-                        </section>
+                                </div>
 
-                        <!-- Translated Content -->
-                        <section class="right-column flex flex-col gap-2 w-full flex-2 max-xl:flex-auto" v-if="translatedValues">
-                            <h3 class="text-gray-800 dark:text-white font-medium">@lang('admin::app.catalog.products.edit.translate.translated-content')</h3>
-                            <table class="table-fixed border-4 border-violet-50 border-collapse w-full dark:border-cherry-700 dark:text-slate-50">
-                                <thead>
-                                    <th
-                                        class="font-semibold relative border border-white dark:bg-cherry-700 dark:border-cherry-800 bg-violet-50 text-center"
-                                        v-for="(data, index) in translatedValues.headers"
-                                        v-text="data"
-                                    ></th>
-                                </thead>
-                                 <tbody ref="tbody">
-                                    <tr
-                                        class="border-b dark:border-cherry-700"
-                                        v-for="(data, locale) in translatedValues.translated"
-                                    >
-                                        <td
-                                            class="bg-white dark:bg-cherry-800 border-r dark:border-cherry-700 p-2 text-sm text-gray-600 dark:text-gray-300"
-                                        >
-                                            <span
-                                                v-text="locale"
-                                                class="w-full h-full text-sm text-gray-600 dark:text-gray-300 transition-all  focus:border-gray-400 dark:focus:border-gray-400 bg-transparent dark:border-gray-600"
-                                            >
-                                            </span>
-                                        </td>
-                                        <td
-                                            class="bg-white dark:bg-cherry-800 border-r dark:border-cherry-700 p-2 text-sm text-gray-600 dark:text-gray-300"
-                                            v-for="(translatedField) in data"
-                                        >
-                                            <input
-                                                :value="translatedField.content"
-                                                :type="translatedValues.fields[translatedField.field]?.type == 'textarea' ? 'textarea' : 'text'"
-                                                :name="translatedField.field + '_' + locale"
-                                                v-model="translatedField.content"
-                                                class="w-full h-full text-sm text-gray-600 dark:text-gray-300 transition-all focus:border-gray-400 dark:focus:border-gray-400 bg-transparent dark:border-gray-600"
+                                <!-- Target Content Card (Step 2) -->
+                                <template v-if="currentStep > 1">
+                                    <div class="bg-violet-50 dark:bg-cherry-800 rounded-lg p-4">
+                                        <h3 class="text-sm font-semibold text-gray-800 dark:text-white mb-3">
+                                            @lang('admin::app.catalog.products.edit.translate.target-content')
+                                        </h3>
+
+                                        <x-admin::form.control-group>
+                                            <x-admin::form.control-group.label class="required">
+                                                @lang('admin::app.catalog.products.edit.translate.target-channel')
+                                            </x-admin::form.control-group.label>
+                                            <x-admin::form.control-group.control
+                                                type="select"
+                                                name="targetChannel"
+                                                rules="required"
+                                                ::value="targetChannel"
+                                                :options="$optionsInJson"
+                                                @input="getTargetLocale"
+                                                ::disabled="currentStep > 2"
                                             />
-                                        </td>
-                                    </tr>
-                                 </tbody>
-                            </table>
-                        </section>
-                        </div>
+                                            <x-admin::form.control-group.error control-name="targetChannel" />
+                                        </x-admin::form.control-group>
+
+                                        <x-admin::form.control-group v-if="targetLocOptions">
+                                            <x-admin::form.control-group.label class="required">
+                                                @lang('admin::app.catalog.products.edit.translate.target-locales')
+                                            </x-admin::form.control-group.label>
+                                            <x-admin::form.control-group.control
+                                                type="multiselect"
+                                                id="section"
+                                                ref="targetLocOptionsRef"
+                                                name="targetLocale"
+                                                rules="required"
+                                                ::value="targetLocales"
+                                                ::options="targetLocOptions"
+                                                track-by="id"
+                                                label-by="label"
+                                                ::disabled="currentStep > 2"
+                                            />
+                                            <x-admin::form.control-group.error control-name="targetLocale" />
+                                        </x-admin::form.control-group>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+
+                        <!-- Step 3: Translation Preview (full-width clean layout) -->
+                        <template v-if="translatedValues">
+                            <div class="w-full px-4 py-4">
+                                <!-- Summary Banner -->
+                                <div class="flex items-center gap-3 bg-violet-50 dark:bg-cherry-800 rounded-lg px-4 py-3 mb-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" class="shrink-0">
+                                        <g clip-path="url(#clip0_bulk_preview)">
+                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M12.1484 9.31989L9.31995 12.1483L19.9265 22.7549L22.755 19.9265L12.1484 9.31989ZM12.1484 10.7341L10.7342 12.1483L13.5626 14.9767L14.9768 13.5625L12.1484 10.7341Z" fill="#6d28d9"/>
+                                            <path d="M2.39219 2.39217L5.78438 3.95197L9.17656 2.39217L7.61677 5.78436L9.17656 9.17655L5.78438 7.61676L2.39219 9.17655L3.95198 5.78436L2.39219 2.39217Z" fill="#6d28d9"/>
+                                            <path d="M3.30947 11.0877L5.78434 12.2257L8.25922 11.0877L7.12122 13.5626L8.25922 16.0374L5.78434 14.8994L3.30947 16.0374L4.44746 13.5626L3.30947 11.0877Z" fill="#6d28d9"/>
+                                        </g>
+                                        <defs><clipPath id="clip0_bulk_preview"><rect width="24" height="24" fill="white"/></clipPath></defs>
+                                    </svg>
+                                    <div>
+                                        <p class="text-sm font-semibold text-gray-800 dark:text-white">
+                                            @lang('admin::app.catalog.products.edit.translate.translated-content')
+                                        </p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                                            @{{ Object.keys(translatedValues.translated).length }} @lang('admin::app.catalog.products.edit.translate.locale')@{{ Object.keys(translatedValues.translated).length > 1 ? 's' : '' }}
+                                            &middot; @{{ Object.keys(translatedValues.fields).length }} @lang('admin::app.catalog.products.edit.translate.attributes')
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Translation Cards per Locale -->
+                                <div class="space-y-4 max-h-[400px] overflow-y-auto pr-1">
+                                    <div
+                                        v-for="(data, locale) in translatedValues.translated"
+                                        :key="locale"
+                                        class="border border-gray-200 dark:border-cherry-700 rounded-lg overflow-hidden"
+                                    >
+                                        <!-- Locale Header -->
+                                        <div class="flex items-center bg-gray-50 dark:bg-cherry-800 px-4 py-2.5 border-b border-gray-200 dark:border-cherry-700">
+                                            <span class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                                                <span class="inline-block w-2 h-2 rounded-full bg-violet-500"></span>
+                                                @{{ locale }}
+                                            </span>
+                                        </div>
+
+                                        <!-- Attribute Fields -->
+                                        <div class="bg-white dark:bg-cherry-900 divide-y divide-gray-100 dark:divide-cherry-700">
+                                            <div
+                                                v-for="(translatedField) in data"
+                                                :key="translatedField.field"
+                                                class="px-4 py-3"
+                                            >
+                                                <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">
+                                                    @{{ translatedValues.fields[translatedField.field]?.label || translatedField.field }}
+                                                </label>
+                                                <textarea
+                                                    v-if="translatedValues.fields[translatedField.field]?.type === 'textarea'"
+                                                    v-model="translatedField.content"
+                                                    :name="translatedField.field + '_' + locale"
+                                                    rows="3"
+                                                    class="w-full text-sm text-gray-700 dark:text-gray-300 bg-transparent border border-gray-200 dark:border-cherry-700 rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500 resize-y"
+                                                ></textarea>
+                                                <input
+                                                    v-else
+                                                    v-model="translatedField.content"
+                                                    type="text"
+                                                    :name="translatedField.field + '_' + locale"
+                                                    class="w-full text-sm text-gray-700 dark:text-gray-300 bg-transparent border border-gray-200 dark:border-cherry-700 rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
                     </x-slot>
 
                     <x-slot:footer>
-                        <div class="flex gap-x-2.5 items-center">
-                            <template v-if="currentStep === 1">
-                                <button
-                                    type="button"
-                                    class="secondary-button"
-                                    @click="nextStep"
-                                >
-                                    @lang('admin::app.catalog.products.edit.translate.next')
-                                </button>
-                            </template>
-                            <template v-else-if="currentStep === 2 && ! translatedValues">
-                                <button
-                                    type="button"
-                                    class="secondary-button"
-                                    @click="cancel"
-                                    ::disabled="isLoading"
-                                >
-                                    @lang('admin::app.catalog.products.edit.translate.cancel')
-                                </button>
-                                <button
-                                    type="submit"
-                                    class="primary-button"
-                                    ::disabled="isLoading"
-                                >
-                                    <!-- Spinner -->
-                                    <template v-if="isLoading">
-                                        <img
-                                            class="animate-spin h-5 w-5 text-violet-700"
-                                            src="{{ unopim_asset('images/spinner.svg') }}"
-                                        />
+                        <div class="flex items-center justify-between w-full">
+                            <div v-if="false"></div>
+                            <div v-else></div>
 
-                                        @lang('admin::app.catalog.products.edit.translate.translating')
-                                    </template>
+                            <div class="flex gap-x-2.5 items-center">
+                                <!-- Step 1: Next -->
+                                <template v-if="currentStep === 1">
+                                    <button
+                                        type="button"
+                                        class="primary-button"
+                                        @click="nextStep"
+                                    >
+                                        @lang('admin::app.catalog.products.edit.translate.next')
+                                        <span class="icon-arrow-right text-lg"></span>
+                                    </button>
+                                </template>
 
-                                    <template v-else>
-                                        <span class="icon-magic text-2xl text-violet-700"></span>
-                                        @lang('admin::app.catalog.products.edit.translate.translate-btn')
-                                    </template>
-                                </button>
-                            </template>
+                                <!-- Step 2: Cancel + Translate -->
+                                <template v-else-if="currentStep === 2 && !translatedValues">
+                                    <button
+                                        type="button"
+                                        class="secondary-button"
+                                        @click="cancel"
+                                        ::disabled="isLoading"
+                                    >
+                                        @lang('admin::app.catalog.products.edit.translate.cancel')
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        class="primary-button flex items-center gap-1.5"
+                                        ::disabled="isLoading"
+                                    >
+                                        <template v-if="isLoading">
+                                            <img
+                                                class="animate-spin h-4 w-4"
+                                                src="{{ unopim_asset('images/spinner.svg') }}"
+                                            />
+                                            @lang('admin::app.catalog.products.edit.translate.translating')
+                                        </template>
+                                        <template v-else>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="none">
+                                                <g clip-path="url(#clip0_bulk_footer)">
+                                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12.1484 9.31989L9.31995 12.1483L19.9265 22.7549L22.755 19.9265L12.1484 9.31989ZM12.1484 10.7341L10.7342 12.1483L13.5626 14.9767L14.9768 13.5625L12.1484 10.7341Z" fill="currentColor"/>
+                                                    <path d="M2.39219 2.39217L5.78438 3.95197L9.17656 2.39217L7.61677 5.78436L9.17656 9.17655L5.78438 7.61676L2.39219 9.17655L3.95198 5.78436L2.39219 2.39217Z" fill="currentColor"/>
+                                                    <path d="M3.30947 11.0877L5.78434 12.2257L8.25922 11.0877L7.12122 13.5626L8.25922 16.0374L5.78434 14.8994L3.30947 16.0374L4.44746 13.5626L3.30947 11.0877Z" fill="currentColor"/>
+                                                </g>
+                                                <defs><clipPath id="clip0_bulk_footer"><rect width="24" height="24" fill="white"/></clipPath></defs>
+                                            </svg>
+                                            @lang('admin::app.catalog.products.edit.translate.translate-btn')
+                                        </template>
+                                    </button>
+                                </template>
 
-                            <template v-else-if="translatedValues">
-                                <button
-                                    type="button"
-                                    class="primary-button"
-                                    @click="apply"
-                                >
-                                    @lang('admin::app.catalog.products.edit.translate.apply')
-                                </button>
-                            </template>
+                                <!-- Step 3: Back + Cancel + Apply -->
+                                <template v-else-if="translatedValues">
+                                    <button
+                                        type="button"
+                                        class="secondary-button"
+                                        @click="goBackToStep2"
+                                    >
+                                        &larr; @lang('admin::app.catalog.products.edit.translate.back')
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="secondary-button"
+                                        @click="cancel"
+                                    >
+                                        @lang('admin::app.catalog.products.edit.translate.cancel')
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="primary-button"
+                                        @click="apply"
+                                    >
+                                        @lang('admin::app.catalog.products.edit.translate.apply')
+                                    </button>
+                                </template>
+                            </div>
                         </div>
                     </x-slot>
                 </x-admin::modal>
@@ -487,8 +530,6 @@
                                 this.translatedValues = response.data;
 
                                 this.currentStep += 1;
-
-                                this.$emitter.emit('modal-size-change', 'full');
                             } else {
                                 this.$emitter.emit('add-flash', {
                                     type: 'warning',
@@ -558,6 +599,10 @@
                     this.localeOption = null;
                     this.targetLocOptions = null;
                 },
+                goBackToStep2() {
+                    this.translatedValues = null;
+                    this.currentStep = 2;
+                },
                 nextStep(e) {
                     e.stopPropagation();
 
@@ -568,8 +613,6 @@
                 handleToggle(params) {
                     if (false === params?.isActive) {
                         this.currentStep = 1;
-
-                        this.$emitter.emit('modal-size-change', 'medium');
                     }
                 }
             },

@@ -3,8 +3,11 @@
 namespace Webkul\Admin\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\Admin\Http\Requests\ConfigurationForm;
 use Webkul\Core\Contracts\Validator\ConfigValidator;
 use Webkul\Core\Repositories\CoreConfigRepository;
@@ -15,7 +18,7 @@ class ConfigurationController extends Controller
     /**
      * Tree instance.
      *
-     * @var \Webkul\Core\Tree
+     * @var Tree
      */
     protected $configTree;
 
@@ -49,10 +52,8 @@ class ConfigurationController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
      */
-    public function index()
+    public function index(): View|RedirectResponse
     {
         $groups = Arr::get(
             $this->configTree->items,
@@ -75,10 +76,8 @@ class ConfigurationController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function search()
+    public function search(): JsonResponse
     {
         $results = $this->coreConfigRepository->search($this->configTree->items, request()->query('query'));
 
@@ -89,10 +88,8 @@ class ConfigurationController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(ConfigurationForm $request)
+    public function store(ConfigurationForm $request): RedirectResponse
     {
         try {
             $data = $request->all();
@@ -124,10 +121,8 @@ class ConfigurationController extends Controller
 
     /**
      * Download the file for the specified resource.
-     *
-     * @return \Symfony\Component\HttpFoundation\StreamedResponse
      */
-    public function download()
+    public function download(): StreamedResponse
     {
         $path = request()->route()->parameters()['path'];
 
