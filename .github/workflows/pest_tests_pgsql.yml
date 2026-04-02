@@ -1,4 +1,4 @@
-name: Pest Tests
+name: Pest Tests (PostgreSQL)
 
 on: [push, pull_request]
 
@@ -10,25 +10,26 @@ permissions:
   contents: read
 
 jobs:
-  pest:
+  pest-pgsql:
     runs-on: ubuntu-24.04
-    name: Pest Tests (MySQL)
+    name: Pest Tests (PostgreSQL)
+    continue-on-error: true
 
     services:
-      mysql:
-        image: mysql:8.0
+      postgres:
+        image: postgres:16
         env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: unopim
+          POSTGRES_USER: unopim
+          POSTGRES_PASSWORD: unopim
+          POSTGRES_DB: unopim
         ports:
-          - 3306:3306
+          - 5432:5432
         options: >-
-          --health-cmd="mysqladmin ping"
+          --health-cmd="pg_isready -U unopim"
           --health-interval=5s
           --health-timeout=3s
           --health-retries=3
-          --tmpfs /var/lib/mysql:rw,noexec,nosuid,size=600m
-          --tmpfs /tmp:rw,noexec,nosuid,size=100m
+          --tmpfs /var/lib/postgresql/data:rw,noexec,nosuid,size=600m
 
     steps:
       - name: Checkout
@@ -38,7 +39,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
-          extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
+          extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_pgsql, tokenizer, zip
           ini-values: error_reporting=E_ALL
           tools: composer:v2
           coverage: none
@@ -63,12 +64,12 @@ jobs:
         run: |
           cp .env.example .env
           sed -i "s|^\(APP_ENV=\s*\).*$|\1testing|" .env
+          sed -i "s|^\(DB_CONNECTION=\s*\).*$|\1pgsql|" .env
           sed -i "s|^\(DB_HOST=\s*\).*$|\1127.0.0.1|" .env
-          sed -i "s|^\(DB_PORT=\s*\).*$|\13306|" .env
+          sed -i "s|^\(DB_PORT=\s*\).*$|\15432|" .env
           sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
-          sed -i "s|^\(DB_USERNAME=\s*\).*$|\1root|" .env
-          sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
-          sed -i "s|^\(DB_PREFIX=\s*\).*$|\1wk_|" .env
+          sed -i "s|^\(DB_USERNAME=\s*\).*$|\1unopim|" .env
+          sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1unopim|" .env
 
       - name: Running UnoPim Installer
         run: php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
@@ -76,25 +77,26 @@ jobs:
       - name: Running Pest Tests
         run: vendor/bin/pest --colors=always
 
-  pest-elasticsearch:
+  pest-pgsql-elasticsearch:
     runs-on: ubuntu-24.04
-    name: Pest Tests (MySQL + Elasticsearch)
+    name: Pest Tests (PostgreSQL + Elasticsearch)
+    continue-on-error: true
 
     services:
-      mysql:
-        image: mysql:8.0
+      postgres:
+        image: postgres:16
         env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: unopim
+          POSTGRES_USER: unopim
+          POSTGRES_PASSWORD: unopim
+          POSTGRES_DB: unopim
         ports:
-          - 3306:3306
+          - 5432:5432
         options: >-
-          --health-cmd="mysqladmin ping"
+          --health-cmd="pg_isready -U unopim"
           --health-interval=5s
           --health-timeout=3s
           --health-retries=3
-          --tmpfs /var/lib/mysql:rw,noexec,nosuid,size=600m
-          --tmpfs /tmp:rw,noexec,nosuid,size=100m
+          --tmpfs /var/lib/postgresql/data:rw,noexec,nosuid,size=600m
 
       elasticsearch:
         image: elasticsearch:8.17.0
@@ -118,7 +120,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
-          extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
+          extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_pgsql, tokenizer, zip
           ini-values: error_reporting=E_ALL
           tools: composer:v2
           coverage: none
@@ -143,11 +145,12 @@ jobs:
         run: |
           cp .env.example .env
           sed -i "s|^\(APP_ENV=\s*\).*$|\1testing|" .env
+          sed -i "s|^\(DB_CONNECTION=\s*\).*$|\1pgsql|" .env
           sed -i "s|^\(DB_HOST=\s*\).*$|\1127.0.0.1|" .env
-          sed -i "s|^\(DB_PORT=\s*\).*$|\13306|" .env
+          sed -i "s|^\(DB_PORT=\s*\).*$|\15432|" .env
           sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
-          sed -i "s|^\(DB_USERNAME=\s*\).*$|\1root|" .env
-          sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
+          sed -i "s|^\(DB_USERNAME=\s*\).*$|\1unopim|" .env
+          sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1unopim|" .env
 
       - name: Running UnoPim Installer
         run: php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
