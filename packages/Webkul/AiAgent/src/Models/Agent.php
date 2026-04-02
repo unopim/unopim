@@ -24,8 +24,6 @@ class Agent extends Model implements AgentContract, AuditableContract, Presentab
     protected $historyTags = ['ai-agent'];
 
     /**
-     * Table name — always use wk_ prefix.
-     *
      * @var string
      */
     protected $table = 'ai_agent_agents';
