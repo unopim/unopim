@@ -33,7 +33,7 @@ function createTestJobTrack(JobInstances $jobInstance, string $state = 'processi
         'file_path'           => 'imports/test.csv',
         'meta'                => json_encode($jobInstance->toArray()),
         'job_instances_id'    => $jobInstance->id,
-        'user_id'             => 1,
+        'user_id'             => auth('admin')->id(),
         'started_at'          => now(),
     ]);
 }
