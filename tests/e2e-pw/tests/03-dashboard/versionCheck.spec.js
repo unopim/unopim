@@ -2,6 +2,10 @@ const { test, expect } = require('../../utils/fixtures');
 
 test.describe('UnoPim Version Check', () => {
 
+test.beforeEach(async ({ adminPage }) => {
+  await navigateTo(adminPage, 'dashboard');
+});
+
 // ═════════════════════════════════════════════════
 // SECTION 1: Profile Dropdown & Version Display
 // ═════════════════════════════════════════════════
