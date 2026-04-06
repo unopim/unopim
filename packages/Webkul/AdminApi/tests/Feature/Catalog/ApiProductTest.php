@@ -342,7 +342,9 @@ it('should partially update the locale specific attribute in product', function 
     $attribute = Attribute::factory()->create(['value_per_locale' => true, 'value_per_channel' => false, 'type' => 'text']);
     $family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
-    $locales = Locale::where('status', 1)->limit(2)->pluck('code')->toArray();
+    // Use only locales assigned to the default channel to avoid validation errors
+    $channelLocales = core()->getDefaultChannel()->locales->pluck('code')->toArray();
+    $locales = array_slice($channelLocales, 0, 2);
 
     $data = [];
     foreach ($locales as $locale) {
@@ -426,7 +428,9 @@ it('should update the locale specific attribute in product', function () {
     $attribute = Attribute::factory()->create(['value_per_locale' => true, 'value_per_channel' => false, 'type' => 'text']);
     $family->first()->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
-    $locales = Locale::where('status', 1)->limit(2)->pluck('code')->toArray();
+    // Use only locales assigned to the default channel to avoid validation errors
+    $channelLocales = core()->getDefaultChannel()->locales->pluck('code')->toArray();
+    $locales = array_slice($channelLocales, 0, 2);
 
     $data = [];
     foreach ($locales as $locale) {
