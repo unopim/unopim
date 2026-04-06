@@ -509,7 +509,7 @@ test('Check the AI translate checkbox in attribute', async({adminPage})=>{
   await expect(adminPage.getByText(/Attribute Updated Successfully/)).toBeVisible();
 });
 
-test.skip('Create product and Generate the content from the MagicAI', async({adminPage})=>{
+test('Create product for MagicAI tests', async({adminPage})=>{
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   await adminPage.getByRole('button', { name: 'Create Product' }).click();
   await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
@@ -525,17 +525,6 @@ test.skip('Create product and Generate the content from the MagicAI', async({adm
   await URL.fill('mahindra-be6-batman-edition');
   await adminPage.locator('input[name="values[common][color]"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option', { name: 'Black' }).locator('span').first().click();
-  await adminPage.getByRole('button', { name: 'Magic AI' }).first().click();
-  await adminPage.locator('div').filter({ hasText: /^Select option$/ }).nth(3).click();
-  await adminPage.getByRole('textbox', { name: 'default_prompt-searchbox' }).fill('Create');
-  await adminPage.getByRole('option', { name: 'Create Description Press' }).locator('span').first().click();
-  await expect(adminPage.locator('div').filter({ hasText: /^Friendly Assistant$/ })).toBeVisible();
-  await adminPage.getByRole('button', { name: 'Generate' }).click();
-  await adminPage.waitForTimeout(500);
-  await adminPage.getByRole('button', { name: 'Apply' }).click();
-  const mainDescFrame = adminPage.frameLocator('#description_ifr');
-  await mainDescFrame.locator('body').click();
-  await mainDescFrame.locator('body').type('This is the ACER Laptop with high functionality');
   await adminPage.locator('#meta_title').fill('thakubali');
   await adminPage.locator('#price').click();
   await adminPage.locator('#price').fill('40000');
@@ -543,14 +532,14 @@ test.skip('Create product and Generate the content from the MagicAI', async({adm
   await expect(adminPage.getByText(/Product updated successfully/i)).toBeVisible();
 });
 
-test.skip('Check that AI Translate is visible on Short-Description', async({adminPage})=>{
+test('Check that AI Translate is visible on Short-Description', async({adminPage})=>{
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
   await itemRow.locator('span[title="Edit"]').first().click();
   await expect(adminPage.getByRole('button', { name: 'Translate' }).first()).toBeVisible();
 });
 
-test.skip('Check more option and translate is visible', async ({ adminPage }) => {
+test('Check more option and translate is visible', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
   await itemRow.locator('span[title="Edit"]').first().click();
@@ -559,7 +548,7 @@ test.skip('Check more option and translate is visible', async ({ adminPage }) =>
   await expect(adminPage.locator('span[title="Translate"]')).toBeVisible();
 });
 
-test.skip('Click on Translate and verify the fields', async({adminPage})=>{
+test('Click on Translate and verify the fields', async({adminPage})=>{
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
   await itemRow.locator('span[title="Edit"]').first().click();
@@ -572,7 +561,7 @@ test.skip('Click on Translate and verify the fields', async({adminPage})=>{
   await expect(adminPage.getByRole('button', { name: 'Next' })).toBeVisible();
 });
 
-test.skip('Click on next and verify the step 2 fields', async({adminPage})=>{
+test('Click on next and verify the step 2 fields', async({adminPage})=>{
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
   await itemRow.locator('span[title="Edit"]').first().click();
