@@ -29,5 +29,8 @@ yarn.lock
 yarn-error.log
 .phpunit.cache/
 .playwright-mcp/
+.claude/settings.json
+tests/e2e-pw/.state/
 tests/e2e-pw/playwright-report/
+tests/e2e-pw/test-results/
 tests/e2e-pw/test-results/

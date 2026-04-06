@@ -22,8 +22,6 @@ class Credential extends Model implements AuditableContract, CredentialContract,
     protected $historyTags = ['ai-agent-credential'];
 
     /**
-     * Table name — always use wk_ prefix.
-     *
      * @var string
      */
     protected $table = 'ai_agent_credentials';

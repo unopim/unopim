@@ -1,11 +1,11 @@
 const { test, expect } = require("../../utils/fixtures");
+const { navigateTo } = require("../../utils/helpers");
 
 test.describe("UnoPim Magic AI ACL Test Cases", () => {
     test("Verify Platforms permission exists in Role creation", async ({
         adminPage,
     }) => {
-        await adminPage.getByRole("link", { name: " Settings" }).click();
-        await adminPage.getByRole("link", { name: "Roles" }).click();
+        await navigateTo(adminPage, "roles");
         await adminPage.getByRole("link", { name: "Create Role" }).click();
 
         await adminPage.waitForLoadState("networkidle");
@@ -29,7 +29,6 @@ test.describe("UnoPim Magic AI ACL Test Cases", () => {
                 // Secondary attempt (label click often works)
                 await magicAILayer.click();
             }
-            await adminPage.waitForTimeout(1000);
         }
 
         await expect(adminPage.getByText("Platform").first()).toBeAttached({
@@ -44,7 +43,7 @@ test.describe("UnoPim Magic AI ACL Test Cases", () => {
             waitUntil: "networkidle",
         });
         await expect(
-            adminPage.getByText("AI Platforms", { exact: true }).first(),
+            adminPage.locator('#app').getByText("AI Platforms", { exact: true }).first(),
         ).toBeVisible();
 
         // Check sidebar visibility

@@ -155,12 +155,12 @@ class ModuleServiceProvider extends CoreModuleServiceProvider
 ### Step 5: Migration
 
 - File in: `Database/Migration/` (NOT `Database/Migrations/`)
-- Table name: `wk_{module}_credentials` (always `wk_` prefix)
+- Table name: `{module}_credentials` (DB_PREFIX added automatically by Laravel)
 - Column names: camelCase matching model `$fillable` (e.g. `apiUrl`, `consumerKey`)
 - Include `extras` JSON column for flexible extra config
 
 ```php
-Schema::create('wk_{module}_credentials', function (Blueprint $table) {
+Schema::create('{module}_credentials', function (Blueprint $table) {
     $table->id();
     $table->string('label');
     $table->string('apiUrl');
@@ -185,7 +185,7 @@ class Credential extends Model implements CredentialContract, PresentableHistory
 {
     use HasFactory, HistoryTrait;
 
-    protected $table = 'wk_{module}_credentials';
+    protected $table = '{module}_credentials';
     protected $casts = ['extras' => 'array', 'status' => 'boolean'];
     protected $auditExclude = ['consumerSecret'];   // never Crypt::encryptString
 }
@@ -275,7 +275,7 @@ src/DataGrids/Credential/CredentialDataGrid.php
 ```
 
 Rules:
-- `DB::table('wk_{module}_credentials')` in `prepareQueryBuilder()`
+- `DB::table('{module}_credentials')` in `prepareQueryBuilder()`
 - Methods have PHPDoc `@return` only (no PHP type hints)
 - Column `closure` uses `fn ($row) =>` (arrow function)
 - Action `url` uses `function ($row) { return route(...); }` (regular function)
@@ -376,7 +376,7 @@ Add to `bootstrap/providers.php`:
 
 ### Database
 - [ ] Migration in `Database/Migration/` (NOT `Migrations`)
-- [ ] Tables use `wk_` prefix
+- [ ] Tables use DB_PREFIX (auto-added by Laravel)
 - [ ] camelCase column names match model `$fillable`
 - [ ] `extras` JSON column present
 

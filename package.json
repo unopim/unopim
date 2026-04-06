@@ -1,15 +1,19 @@
 {
+    "name": "unopim",
+    "version": "2.0.0",
     "private": true,
+    "description": "UnoPim - Open Source PIM",
     "scripts": {
         "dev": "vite",
         "build": "vite build"
     },
+    "dependencies": {
+        "vue-multiselect": "^3.0.0"
+    },
     "devDependencies": {
+        "@playwright/test": "^1.58.2",
         "axios": "^1.6.4",
         "laravel-vite-plugin": "^1.2.0",
         "vite": "^6.3.0"
-    },
-    "dependencies": {
-        "vue-multiselect": "^3.0.0"
     }
 }

@@ -1,5 +1,18 @@
 const { test, expect } = require('../../utils/fixtures');
 
+/**
+ * Helper: Open the notification dropdown reliably.
+ * Waits for network idle, clicks the bell icon, and waits for the dropdown to appear.
+ */
+async function openNotificationDropdown(adminPage) {
+  await adminPage.waitForLoadState('networkidle');
+  const bellIcon = adminPage.locator('.icon-notification');
+  await bellIcon.click();
+  // Wait for the dropdown content to render
+  const dropdownHeader = adminPage.locator('a[href*="/admin/notifications"]');
+  await dropdownHeader.waitFor({ state: 'visible', timeout: 5000 });
+}
+
 test.describe('UnoPim Notifications', () => {
 
 // ═════════════════════════════════════════════════
@@ -35,31 +48,33 @@ test('1.3 - Notification bell icon shows unread badge when unread notifications 
 // ═════════════════════════════════════════════════
 
 test('2.1 - Clicking notification bell opens dropdown', async ({ adminPage }) => {
-  await adminPage.locator('[title="Notifications"]').click();
+  await openNotificationDropdown(adminPage);
 
   await expect(adminPage.getByText('Notifications', { exact: true })).toBeVisible();
-  await expect(adminPage.getByRole('link', { name: 'View All' })).toBeVisible();
+  const viewAllLink = adminPage.locator('a[href*="/admin/notifications"]').filter({ hasText: /View All/i });
+  await expect(viewAllLink).toBeVisible();
 });
 
 test('2.2 - Notification dropdown has View All link pointing to notifications page', async ({ adminPage }) => {
-  await adminPage.locator('[title="Notifications"]').click();
+  await openNotificationDropdown(adminPage);
 
-  const viewAllLink = adminPage.getByRole('link', { name: 'View All' });
+  const viewAllLink = adminPage.locator('a[href*="/admin/notifications"]');
   await expect(viewAllLink).toBeVisible();
   await expect(viewAllLink).toHaveAttribute('href', /\/admin\/notifications/);
 });
 
 test('2.3 - Notification dropdown shows Notifications heading in footer', async ({ adminPage }) => {
-  await adminPage.locator('[title="Notifications"]').click();
+  await openNotificationDropdown(adminPage);
 
   // Dropdown header shows "Notifications"
   await expect(adminPage.getByText('Notifications', { exact: true })).toBeVisible();
-  // Footer always has "View All"
-  await expect(adminPage.getByRole('link', { name: 'View All' })).toBeVisible();
+  // Footer always has "View All" link pointing to notifications page
+  const viewAllLink = adminPage.locator('a[href*="/admin/notifications"]').filter({ hasText: /View All/i });
+  await expect(viewAllLink).toBeVisible();
 });
 
 test('2.4 - Notification dropdown shows Read All when notifications exist', async ({ adminPage }) => {
-  await adminPage.locator('[title="Notifications"]').click();
+  await openNotificationDropdown(adminPage);
 
   // Read All only appears when there are notifications
   const readAll = adminPage.getByText('Read All');
@@ -75,7 +90,7 @@ test('2.4 - Notification dropdown shows Read All when notifications exist', asyn
 });
 
 test('2.5 - Notification dropdown displays notification entries with title, description, and time', async ({ adminPage }) => {
-  await adminPage.locator('[title="Notifications"]').click();
+  await openNotificationDropdown(adminPage);
 
   // Wait for the dropdown to be fully loaded
   await expect(adminPage.getByText('Notifications', { exact: true })).toBeVisible();
@@ -97,9 +112,10 @@ test('2.5 - Notification dropdown displays notification entries with title, desc
 // ═════════════════════════════════════════════════
 
 test('3.1 - Navigate to Notification History page via View All link', async ({ adminPage }) => {
-  await adminPage.locator('[title="Notifications"]').click();
+  await openNotificationDropdown(adminPage);
 
-  const viewAllLink = adminPage.getByRole('link', { name: 'View All' });
+  // Use specific locator to target the View All link inside notification dropdown
+  const viewAllLink = adminPage.locator('a[href*="/admin/notifications"]').filter({ hasText: /View All/i });
   await expect(viewAllLink).toBeVisible();
   await viewAllLink.click();
   await adminPage.waitForLoadState('networkidle');

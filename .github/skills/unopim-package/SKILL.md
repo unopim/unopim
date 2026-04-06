@@ -4,7 +4,7 @@ description: >
   Generate complete production-ready Unopim modules (Unopim-style packages)
   including ServiceProvider, ModuleServiceProvider, routes, ACL, menu,
   controllers, repositories, models with HistoryTrait, views, config files
-  (exporters / quick_exporters / importers / acl / menu), migrations with wk_
+  (exporters / quick_exporters / importers / acl / menu), migrations with DB_PREFIX
   prefix, factories, presenters, contracts, and composer.json. Use this skill
   when creating new Unopim integration connectors (WooCommerce, Shopify,
   Shopware, module, etc.) or any new Unopim module/package from scratch.
@@ -46,7 +46,7 @@ packages/Webkul/{ModuleName}/
 │   └── {module-name}-routes.php
 ├── Database/
 │   ├── Migration/                               # NOT "Migrations" — singular
-│   │   └── 2025_01_01_000000_wk_{module}_credentials.php
+│   │   └── 2025_01_01_000000_{module}_credentials.php
 │   └── Factories/
 │       └── CredentialFactory.php
 ├── Resources/
@@ -259,11 +259,11 @@ class Credential extends Model implements CredentialContract, PresentableHistory
     use HasFactory, HistoryTrait;
 
     /**
-     * Table name — always use wk_ prefix.
+     * Table name — always use DB_PREFIX.
      *
      * @var string
      */
-    protected $table = 'wk_{module}_credentials';
+    protected $table = '{module}_credentials';
 
     /**
      * Fillable attributes.
@@ -439,7 +439,7 @@ return [
 
 ## 10. Migration
 
-Table prefix is always `wk_`. Folder is `Database/Migration/` (NOT `Migrations`).
+Table prefix is set via DB_PREFIX in .env (default: wk_). Folder is `Database/Migration/` (NOT `Migrations`).
 Column names use camelCase to match model `$fillable` exactly.
 
 ```php
@@ -456,7 +456,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('wk_{module}_credentials', function (Blueprint $table) {
+        Schema::create('{module}_credentials', function (Blueprint $table) {
             $table->id();
             $table->string('label');
             $table->string('apiUrl');
@@ -473,7 +473,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('wk_{module}_credentials');
+        Schema::dropIfExists('{module}_credentials');
     }
 };
 ```
@@ -499,7 +499,7 @@ package discovery. For local dev, add to `bootstrap/providers.php`:
 - [ ] `ModuleServiceProvider` extends `CoreModuleServiceProvider` with `$models[]`
 - [ ] Event name: `unopim.admin.layout.head.before` (never without `.before`)
 - [ ] Migration in `Database/Migration/` (not `Migrations`)
-- [ ] All table names prefixed with `wk_`
+- [ ] Table names use DB_PREFIX (auto-added by Laravel)
 - [ ] All models use `HistoryTrait` + implement `PresentableHistoryInterface`
 - [ ] All models have `$auditExclude` for sensitive fields
 - [ ] All models have `extras` JSON column with `'extras' => 'array'` cast

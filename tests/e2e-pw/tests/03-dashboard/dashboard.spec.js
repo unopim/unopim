@@ -1,6 +1,11 @@
 const { test, expect } = require('../../utils/fixtures');
+const { navigateTo } = require('../../utils/helpers');
 
 test.describe('UnoPim Dashboard (v2.0.0)', () => {
+
+test.beforeEach(async ({ adminPage }) => {
+  await navigateTo(adminPage, 'dashboard');
+});
 
 // ═════════════════════════════════════════════════
 // SECTION 1: Header & Navigation
@@ -416,7 +421,7 @@ test('8.3 - Completeness shows improvement suggestion text', async ({ adminPage 
 
 test('8.4 - Completeness shows locale names with progress percentage', async ({ adminPage }) => {
   // Should show locale names like "English (United States)" with a percentage
-  const englishLocale = adminPage.getByText('English (United States)');
+  const englishLocale = adminPage.getByText('English (United States)').first();
   await englishLocale.scrollIntoViewIfNeeded();
   await expect(englishLocale).toBeVisible();
 
@@ -462,6 +467,7 @@ test('9.2 - Channel Readiness shows data or empty state message', async ({ admin
 // ═════════════════════════════════════════════════
 
 test('10.1 - Shows Operations section heading', async ({ adminPage }) => {
+  await adminPage.waitForLoadState('networkidle');
   const heading = adminPage.getByText('Operations');
   await heading.scrollIntoViewIfNeeded();
   await expect(heading).toBeVisible();
