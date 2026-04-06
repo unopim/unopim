@@ -2,42 +2,56 @@
 
 ## Supported Versions
 
-For versions of UnoPim, we support and provide patches for any security vulnerabilities.
+We provide security updates only for supported versions of UnoPim.
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 0.2.x   | :white_check_mark: |
-| 0.3.x   | :white_check_mark: |
-| 1.0.x   | :white_check_mark: |
-| 2.0.x   | :white_check_mark: |
+| Version | Status        | Security Fixes |
+| ------- | ------------- | -------------- |
+| 0.2.x   | ❌ Deprecated | ❌             |
+| 0.3.x   | ❌ Deprecated | ❌             |
+| 1.0.x   | ✅ Supported  | ✅             |
+| 2.0.x   | ✅ Supported  | ✅             |
+
+> ⚠️ Versions 0.2.x and 0.3.x are deprecated and no longer receive security updates.  
+> Please upgrade to a supported version.
+
+---
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in any supported version of UnoPim, please do the following:
+If you discover a security vulnerability, please report it responsibly:
 
-1. **Do not open a public issue.** Security vulnerabilities should be reported privately to prevent malicious actors from exploiting the issue before it is fixed.
-2. **Send an email to** [support@webkul.com](mailto:support@webkul.com) **with the following information:**
-   - A detailed description of the vulnerability.
-   - Steps to reproduce the vulnerability, if possible.
-   - Any potential impacts or exploits you foresee.
-   - Any other relevant information (e.g., your operating system, UnoPim version, etc.).
+1. **Do not open a public issue.**
+2. **Email:** [support@webkul.com](mailto:support@webkul.com)
 
-We will respond to your report within 72 hours with an acknowledgment of receipt. Further correspondence will be done through email.
+Include:
+- Description of the issue
+- Steps to reproduce
+- Impact assessment
+- Affected version(s)
+- Any suggested fixes (optional)
 
-## Security Vulnerability Process
+We will acknowledge receipt within **72 hours**.
 
-Upon receiving a security vulnerability report for version 0.3.x of UnoPim, we will follow these steps:
+---
 
-1. **Acknowledgment**: We will acknowledge receipt of the vulnerability report within 72 hours.
-2. **Investigation**: We will investigate the reported vulnerability and determine its impact and severity.
-3. **Mitigation Plan**: We will develop a plan to mitigate the vulnerability, which may involve code changes, configuration adjustments, or other measures.
-4. **Patch Development**: We will develop and test a patch to fix the vulnerability.
-5. **Release**: We will release the patch as part of a new version of UnoPim. Release notes will include information about the vulnerability, credit to the reporter (if they wish to be credited), and any necessary steps for users to update.
+## Security Process
 
-## Preferred Languages
+For supported versions (**1.0.x** and **2.0.x**), we follow this process:
 
-We prefer vulnerability reports to be written in English.
+1. **Acknowledgment** (within 72 hours)
+2. **Investigation & severity assessment**
+3. **Fix development**
+4. **Patch release**
+5. **Disclosure** (with credit, if desired)
+
+---
+
+## Preferred Language
+
+Please report vulnerabilities in **English**.
+
+---
 
 ## Thank You
 
-We appreciate your efforts to help improve the security of UnoPim. Thank you for working with us to keep our users safe.
+We appreciate responsible disclosure and your help in keeping UnoPim secure.
