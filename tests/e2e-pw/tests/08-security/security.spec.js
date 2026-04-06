@@ -36,32 +36,37 @@ test.describe('Security Vulnerability Fixes', () => {
 
   // ─── Vuln 3: Password Validation (before rate limit test) ─────────
 
-  test('User creation should reject weak passwords', async ({ adminPage }) => {
-    // Ensure we are authenticated — navigate to users page and check
-    await adminPage.goto('/admin/settings/users', { waitUntil: 'networkidle' });
+  test('User creation should reject weak passwords', async ({ browser }) => {
+    // Use a fresh authenticated context to avoid stale session issues
+    const context = await browser.newContext({ storageState: undefined, baseURL: BASE_URL });
+    const page = await context.newPage();
 
-    // If redirected to login, re-authenticate
-    if (adminPage.url().includes('/admin/login')) {
-      await adminPage.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
-      await adminPage.getByRole('textbox', { name: 'Password' }).fill('admin123');
-      await adminPage.getByRole('button', { name: 'Sign In' }).click();
-      await adminPage.waitForURL('**/admin/dashboard', { timeout: 15000 });
-      await adminPage.goto('/admin/settings/users', { waitUntil: 'networkidle' });
-    }
+    // Login fresh
+    await page.goto('/admin/login', { waitUntil: 'networkidle' });
+    await page.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
+    await page.getByRole('textbox', { name: 'Password' }).fill('admin123');
+    await page.getByRole('button', { name: 'Sign In' }).click();
+    await page.waitForLoadState('networkidle');
+
+    // Navigate to users
+    await page.goto('/admin/settings/users', { waitUntil: 'networkidle' });
 
     // "Create User" is a <button> that opens a modal
-    await adminPage.getByRole('button', { name: 'Create User' }).click();
+    await page.getByRole('button', { name: 'Create User' }).click();
 
     // Modal form uses role-based textbox selectors
-    await adminPage.getByRole('textbox', { name: 'Name' }).fill('Weak Pass User');
-    await adminPage.getByRole('textbox', { name: 'email@example.com' }).fill(`weakpwd_${Date.now()}@example.com`);
-    await adminPage.getByRole('textbox', { name: 'Password', exact: true }).fill('abc');
-    await adminPage.getByRole('textbox', { name: 'Confirm Password' }).fill('abc');
+    await page.getByRole('textbox', { name: 'Name' }).fill('Weak Pass User');
+    await page.getByRole('textbox', { name: 'email@example.com' }).fill(`weakpwd_${Date.now()}@example.com`);
+    await page.getByRole('textbox', { name: 'Password', exact: true }).fill('abc');
+    await page.getByRole('textbox', { name: 'Confirm Password' }).fill('abc');
 
-    await adminPage.getByRole('button', { name: 'Save User' }).click();
+    await page.getByRole('button', { name: 'Save User' }).click();
 
-    const errorMsg = adminPage.locator('#app').getByText(/at least 6 characters/i);
+    const errorMsg = page.locator('#app').getByText(/at least 6 characters/i);
     await expect(errorMsg.first()).toBeVisible({ timeout: 10000 });
+
+    await page.close();
+    await context.close();
   });
 
   // ─── Vuln 4: User Enumeration via Forgot Password ─────────────────
