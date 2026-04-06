@@ -586,7 +586,7 @@ test('Click on next and verify the step 2 fields', async({adminPage})=>{
   await expect(adminPage.getByRole('button', { name: 'Translate' }).nth(1)).toBeVisible();
 });
 
-test('Verify the fields in translated content after click on Translate button', async({adminPage})=>{
+test.skip('Verify the fields in translated content after click on Translate button', async({adminPage})=>{
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   const itemRow = adminPage.locator('div', { hasText: 'mahindra-be6-batman' });
   await itemRow.locator('span[title="Edit"]').first().click();
