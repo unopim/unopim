@@ -57,7 +57,7 @@ class ForgetPasswordController extends Controller
             session()->flash('error', trans('admin::app.users.forget-password.create.email-settings-error'));
             report($e);
 
-            return redirect()->back();
+            return redirect()->route('admin.forget_password.create');
         }
     }
 

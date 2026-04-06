@@ -1,121 +1,96 @@
 const { test, expect } = require('../../utils/fixtures');
 const { navigateTo } = require('../../utils/helpers');
 
-const LOGIN_URL = '/admin/login';
-const FORGOT_URL = '/admin/forget-password';
-
 /**
- * Helper: Log out and go to login page.
+ * Create a fresh unauthenticated browser page (no saved session).
  */
-async function goToLoginPage(page) {
-  await page.goto(LOGIN_URL, { waitUntil: 'domcontentloaded' });
-  if (page.url().includes('/admin/login')) {
-    await page.waitForLoadState('networkidle');
-    return;
-  }
-  await page.click('button.rounded-full');
-  await page.getByRole('link', { name: 'Logout' }).click();
-  await expect(page).toHaveURL(/\/admin\/login/);
+async function createGuestPage(browser) {
+  const context = await browser.newContext({ storageState: undefined });
+  const page = await context.newPage();
+  return { page, context };
 }
 
 test.describe('Security Vulnerability Fixes', () => {
 
   // ─── Vuln 1: Open Redirect via Referer ─────────────────────────────
 
-  test('Login page should not redirect to external URLs', async ({ adminPage }) => {
-    await goToLoginPage(adminPage);
+  test('Login page should not redirect to external URLs', async ({ browser }) => {
+    const { page, context } = await createGuestPage(browser);
 
-    // Attempt login with invalid credentials — the page should NOT redirect externally
-    await adminPage.fill('input[name=email]', 'admin@example.com');
-    await adminPage.fill('input[name=password]', 'wrongpassword');
-    await adminPage.press('input[name=password]', 'Enter');
-    await adminPage.waitForLoadState('networkidle');
+    await page.goto('http://127.0.0.1:8000/admin/login', { waitUntil: 'networkidle' });
 
-    // Verify we are still on the same host (not redirected externally)
-    const currentUrl = adminPage.url();
+    await page.fill('input[name=email]', 'admin@example.com');
+    await page.fill('input[name=password]', 'wrongpassword');
+    await page.press('input[name=password]', 'Enter');
+    await page.waitForLoadState('networkidle');
+
+    const currentUrl = page.url();
     expect(currentUrl).toContain('127.0.0.1');
-    expect(currentUrl).not.toContain('attacker.com');
+    expect(currentUrl).toContain('/admin/login');
+
+    await page.close();
+    await context.close();
   });
 
-  // ─── Vuln 3: Password Validation (runs before rate-limit test to avoid throttle) ──
+  // ─── Vuln 3: Password Validation (before rate limit test) ─────────
 
   test('User creation should reject weak passwords', async ({ adminPage }) => {
-    // Prior tests log out / invalidate the session, so re-authenticate
-    await adminPage.goto('/admin/login', { waitUntil: 'networkidle' });
-    if (adminPage.url().includes('/admin/login')) {
-      await adminPage.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
-      await adminPage.getByRole('textbox', { name: 'Password' }).fill('admin123');
-      await adminPage.getByRole('button', { name: 'Sign In' }).click();
-      await adminPage.waitForURL('**/admin/dashboard', { timeout: 15000 });
-    }
-
     await navigateTo(adminPage, 'users');
 
-    // Click "Create User" button (opens modal)
-    await adminPage.getByRole('button', { name: 'Create User' }).click();
+    const createBtn = adminPage.locator('#app').getByText('Create User').first();
+    await createBtn.click();
+    await adminPage.waitForTimeout(500);
 
-    // Fill form with a weak password using role-based selectors (modal form)
-    await adminPage.getByRole('textbox', { name: 'Name' }).fill('Weak Pass User');
-    await adminPage.getByRole('textbox', { name: 'email@example.com' }).fill(`weakpwd_${Date.now()}@example.com`);
-    await adminPage.getByRole('textbox', { name: 'Password', exact: true }).fill('abc');
-    await adminPage.getByRole('textbox', { name: 'Confirm Password' }).fill('abc');
+    await adminPage.fill('input[name=name]', 'Weak Pass User');
+    await adminPage.fill('input[name=email]', `weakpwd_${Date.now()}@example.com`);
+    await adminPage.fill('input[name=password]', 'abc');
+    await adminPage.fill('input[name=password_confirmation]', 'abc');
 
-    // Try to submit
-    await adminPage.getByRole('button', { name: 'Save User' }).click();
+    const saveBtn = adminPage.getByRole('button', { name: 'Save User' });
+    await saveBtn.click();
 
-    // Should show validation error for short password
-    const errorMsg = adminPage.locator('#app').getByText(/The Password field must be at least 6 characters/i);
+    const errorMsg = adminPage.locator('text=at least 6 characters');
     await expect(errorMsg.first()).toBeVisible({ timeout: 10000 });
   });
 
   // ─── Vuln 4: User Enumeration via Forgot Password ─────────────────
 
-  test('Forgot password should show same message for existing and non-existing emails', async ({ adminPage }) => {
-    await goToLoginPage(adminPage);
+  test('Forgot password should show same message for existing and non-existing emails', async ({ browser }) => {
+    const { page, context } = await createGuestPage(browser);
 
-    // Go to forgot password page
-    await adminPage.goto(FORGOT_URL, { waitUntil: 'networkidle' });
+    await page.goto('http://127.0.0.1:8000/admin/forget-password', { waitUntil: 'networkidle' });
 
-    // Submit with a non-existing email
-    await adminPage.fill('input[name=email]', `nonexistent_${Date.now()}@example.com`);
-    await adminPage.press('input[name=email]', 'Enter');
-    await adminPage.waitForLoadState('networkidle');
+    await page.fill('input[name=email]', `nonexistent_${Date.now()}@example.com`);
+    await page.press('input[name=email]', 'Enter');
+    await page.waitForLoadState('networkidle');
 
-    // Should show generic success message (not "email not exist" error)
-    const pageText = await adminPage.locator('body').textContent();
+    const pageText = await page.locator('body').textContent();
     expect(pageText).not.toContain('Email Not Exist');
     expect(pageText).not.toContain('email-not-exist');
 
-    // Should show the generic "if account exists" message
-    const successMsg = adminPage.locator('text=If an account with that email exists');
+    const successMsg = page.locator('text=If an account with that email exists');
     await expect(successMsg.first()).toBeVisible({ timeout: 10000 });
+
+    await page.close();
+    await context.close();
   });
 
-  // ─── Vuln 2: Rate Limiting on Login (last — triggers throttle that blocks further logins) ──
+  // ─── Vuln 2: Rate Limiting (last — exhausts the rate limiter) ─────
 
-  test('Login should be rate limited after multiple failed attempts', async ({ adminPage }) => {
-    await goToLoginPage(adminPage);
+  test('Login should be rate limited after multiple failed attempts', async ({ browser }) => {
+    const { page, context } = await createGuestPage(browser);
+
+    await page.goto('http://127.0.0.1:8000/admin/login', { waitUntil: 'networkidle' });
 
     let rateLimited = false;
 
     for (let i = 0; i < 8; i++) {
-      // After rate limiting, the login form may no longer be present
-      const emailInput = adminPage.locator('input[name=email]');
-      if (!(await emailInput.isVisible({ timeout: 3000 }).catch(() => false))) {
-        const bodyText = await adminPage.locator('body').textContent();
-        if (bodyText.includes('Too Many Attempts') || bodyText.includes('429')) {
-          rateLimited = true;
-          break;
-        }
-      }
+      await page.fill('input[name=email]', 'admin@example.com');
+      await page.fill('input[name=password]', `wrong${i}`);
+      await page.press('input[name=password]', 'Enter');
+      await page.waitForLoadState('networkidle');
 
-      await emailInput.fill('admin@example.com');
-      await adminPage.fill('input[name=password]', `wrong${i}`);
-      await adminPage.press('input[name=password]', 'Enter');
-      await adminPage.waitForLoadState('networkidle');
-
-      // Check if we got a 429 (Too Many Requests) page or throttle message
-      const bodyText = await adminPage.locator('body').textContent();
+      const bodyText = await page.locator('body').textContent();
       if (bodyText.includes('Too Many Attempts') || bodyText.includes('429')) {
         rateLimited = true;
         break;
@@ -123,6 +98,9 @@ test.describe('Security Vulnerability Fixes', () => {
     }
 
     expect(rateLimited).toBe(true);
+
+    await page.close();
+    await context.close();
   });
 
 });
