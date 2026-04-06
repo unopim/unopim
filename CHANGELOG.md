@@ -1,5 +1,21 @@
 # v2.0.x
 
+## v2.0.1
+
+### Security Fixes
+- Fixed **Open Redirect via Referer Header** (Medium) — Login and forgot-password pages accepted spoofed `Referer` headers containing 'admin' in external URLs (e.g., `https://attacker.com/admin`), allowing phishing redirects. Added host validation using `parse_url()` to ensure the intended redirect URL belongs to the same application host.
+- Fixed **No Rate Limiting on Admin Login** (Medium) — Login and forgot-password endpoints had no throttle protection, allowing unlimited brute-force attempts. Added named rate limiters (`admin-login`, `admin-forgot-password`) in `AdminServiceProvider` using `RateLimiter::for()` with per-email+IP segmentation (5 attempts/minute).
+- Fixed **No Server-Side Password Validation** (Medium) — `UserForm` accepted passwords with no minimum length (e.g., single character "a"). Added `min:6` validation rule to align with existing password validation in `AccountController` and `ResetPasswordController`.
+- Fixed **User Enumeration via Forgot Password** (Medium) — Forgot-password endpoint returned different responses for existing emails ("Reset link sent") vs non-existing ("Email Not Exist"), enabling account enumeration. Changed to return a single generic message regardless of email existence: "If an account with that email exists, a password reset link has been sent."
+- Fixed **Privilege Escalation via User Edit Endpoint** (High) — Two root causes: (1) `admin.settings.users.update` and `admin.settings.users.destroy` routes were missing from the ACL config, causing Bouncer middleware to skip authorization checks entirely — any authenticated user could replay captured requests via Burp Suite. (2) No guard prevented non-superadmins from assigning `permission_type: all` roles. Added missing ACL entries and controller-level privilege escalation guards in both `store()` and `prepareUserData()`.
+
+### Tests
+- Added **11 Pest security tests** in `packages/Webkul/User/tests/Feature/SecurityTest.php` covering all 5 vulnerabilities including Burp replay privilege escalation scenario.
+- Added **4 Playwright E2E security tests** in `tests/e2e-pw/tests/08-security/security.spec.js` for login redirect, rate limiting, password validation, and forgot-password enumeration.
+- Updated `UserAclTest` to use custom role instead of all-access `role_id=1` for user creation ACL test (aligned with new privilege escalation guard).
+
+---
+
 ## v2.0.0
 
 ### Features

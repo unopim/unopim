@@ -17,7 +17,7 @@ return [
                 'email'                  => 'Registered Email',
                 'email-not-exist'        => 'Email Not Exists',
                 'page-title'             => 'Forget Password',
-                'reset-link-sent'        => 'Reset Password link sent',
+                'reset-link-sent'        => 'If an account with that email exists, a password reset link has been sent.',
                 'email-settings-error'   => 'Email could not be sent. Please check your email configuration details',
                 'sign-in-link'           => 'Back to Sign In ?',
                 'submit-btn'             => 'Reset',
@@ -1659,6 +1659,7 @@ return [
 
             'activate-warning'          => 'Your account is yet to be activated, please contact administrator.',
             'cannot-change'             => 'User cannot be changed',
+            'cannot-escalate-role'      => 'You do not have permission to assign an all-access role.',
             'create-success'            => 'User created successfully.',
             'delete-failed'             => 'User deleted failed.',
             'delete-success'            => 'User deleted successfully.',

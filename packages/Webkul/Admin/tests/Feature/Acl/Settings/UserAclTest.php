@@ -1,6 +1,7 @@
 <?php
 
 use Webkul\User\Models\Admin;
+use Webkul\User\Models\Role;
 
 it('should not display the users list if does not have permission', function () {
     $this->loginWithPermissions();
@@ -27,12 +28,17 @@ it('should not create the user if does not have permission', function () {
 it('should create the user if has permission', function () {
     $this->loginWithPermissions(permissions: ['dashboard', 'settings.users.users.create']);
 
+    $customRole = Role::factory()->create([
+        'permission_type' => 'custom',
+        'permissions'     => ['dashboard'],
+    ]);
+
     $response = $this->post(route('admin.settings.users.store'), [
         'name'                  => 'test',
         'email'                 => 'test@example.com',
         'password'              => 'admin1234',
         'status'                => 1,
-        'role_id'               => 1,
+        'role_id'               => $customRole->id,
         'timezone'              => 'Asia/Kolkata',
         'ui_locale_id'          => 2,
         'password_confirmation' => 'admin1234',

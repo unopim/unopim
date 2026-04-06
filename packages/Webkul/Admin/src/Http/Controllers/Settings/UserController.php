@@ -61,6 +61,21 @@ class UserController extends Controller
             'timezone',
         ]);
 
+        /**
+         * Prevent non-superadmins from assigning all-access roles.
+         */
+        $targetRole = $this->roleRepository->find($data['role_id']);
+
+        if (
+            $targetRole
+            && $targetRole->permission_type === 'all'
+            && auth()->guard('admin')->user()->role->permission_type !== 'all'
+        ) {
+            return new JsonResponse([
+                'message' => trans('admin::app.settings.users.cannot-escalate-role'),
+            ], JsonResponse::HTTP_FORBIDDEN);
+        }
+
         if ($data['password'] ?? null) {
             $data['password'] = bcrypt($data['password']);
 
@@ -272,6 +287,19 @@ class UserController extends Controller
             )
         ) {
             return $this->cannotChangeRedirectResponse('status');
+        }
+
+        /**
+         * Prevent non-superadmins from assigning all-access roles.
+         */
+        $targetRole = $this->roleRepository->find($data['role_id'] ?? $user->role_id);
+
+        if (
+            $targetRole
+            && $targetRole->permission_type === 'all'
+            && auth()->guard('admin')->user()->role->permission_type !== 'all'
+        ) {
+            return $this->cannotChangeRedirectResponse('role');
         }
 
         /**

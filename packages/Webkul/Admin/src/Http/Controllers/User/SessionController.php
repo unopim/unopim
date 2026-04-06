@@ -19,8 +19,12 @@ class SessionController extends Controller
             return redirect()->route('admin.dashboard.index');
         }
 
-        if (strpos(url()->previous(), 'admin') !== false) {
-            $intendedUrl = url()->previous();
+        $previous = url()->previous();
+        $appHost = parse_url(config('app.url'), PHP_URL_HOST);
+        $previousHost = parse_url($previous, PHP_URL_HOST);
+
+        if ($previousHost === $appHost && str_contains($previous, 'admin')) {
+            $intendedUrl = $previous;
         } else {
             $intendedUrl = route('admin.dashboard.index');
         }
