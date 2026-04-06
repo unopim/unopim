@@ -58,6 +58,9 @@ return [
         'attribute-families' => [
             'title' => 'Attribute Families',
         ],
+        'attribute-options' => [
+            'title' => 'Attribute Options',
+        ],
     ],
     'validation' => [
         'errors' => [

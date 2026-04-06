@@ -95,7 +95,6 @@ class Exporter extends AbstractExporter
                     'value_per_channel' => $rowData['value_per_channel'] ?? null,
                     'is_filterable'     => $rowData['is_filterable'] ?? null,
                     'ai_translate'      => $rowData['ai_translate'] ?? null,
-                    'productCounts'     => $productCounts,
                 ];
 
                 $attributes[] = $data;

@@ -114,12 +114,6 @@ return [
                         ],
                     ],
                 ],
-                [
-                    'name'     => 'with_media',
-                    'title'    => 'With Media',
-                    'required' => false,
-                    'type'     => 'boolean',
-                ],
             ],
         ],
     ],
@@ -150,12 +144,6 @@ return [
                             'label' => 'XLSX',
                         ],
                     ],
-                ],
-                [
-                    'name'     => 'with_media',
-                    'title'    => 'With Media',
-                    'required' => false,
-                    'type'     => 'boolean',
                 ],
             ],
         ],
@@ -188,11 +176,36 @@ return [
                         ],
                     ],
                 ],
+            ],
+        ],
+    ],
+
+    'attribute-options' => [
+        'title'       => 'data_transfer::app.exporters.attribute-options.title',
+        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\AttributeOption\Exporter',
+        'source'      => 'Webkul\Attribute\Repositories\AttributeOptionRepository',
+        'sample_path' => 'data-transfer/samples/attribute-options.csv',
+        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\AttributeOptionJobValidator',
+        'filters'     => [
+            'fields' => [
                 [
-                    'name'     => 'with_media',
-                    'title'    => 'With Media',
-                    'required' => false,
-                    'type'     => 'boolean',
+                    'name'       => 'file_format',
+                    'title'      => 'File Format',
+                    'type'       => 'select',
+                    'required'   => true,
+                    'validation' => 'required',
+                    'options'    => [
+                        [
+                            'value' => 'Csv',
+                            'label' => 'CSV',
+                        ], [
+                            'value' => 'Xls',
+                            'label' => 'XLS',
+                        ], [
+                            'value' => 'Xlsx',
+                            'label' => 'XLSX',
+                        ],
+                    ],
                 ],
             ],
         ],

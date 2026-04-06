@@ -7,8 +7,6 @@ use Webkul\DataTransfer\Helpers\Exporters\AttributeGroup\Exporter;
 use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 
-// ─── Shared Helpers ───────────────────────────────────────────────────────────
-
 /**
  * Build a JobTrack mock with the given file format.
  */
@@ -67,8 +65,6 @@ function getGroupProtectedProperty(object $object, string $property): mixed
     return $ref->getValue($object);
 }
 
-// ─── Global beforeEach / afterEach ───────────────────────────────────────────
-
 beforeEach(function () {
     $this->exportBatchRepository = Mockery::mock(JobTrackBatchRepository::class);
     $this->exportFileBuffer = Mockery::mock(FileExportFileBuffer::class);
@@ -83,12 +79,6 @@ beforeEach(function () {
 
 afterEach(fn () => Mockery::close());
 
-// ─── Shared assertion logic ───────────────────────────────────────────────────
-//
-// Accepts $exporter explicitly to avoid "Using $this when not in object context"
-// which happens when closures are defined at file scope.
-//
-
 $sharedGroupAssertions = function (string $fileFormat, Exporter $exporter): void {
     $exporter->setExport(makeGroupExportTrack($fileFormat));
 
@@ -96,36 +86,28 @@ $sharedGroupAssertions = function (string $fileFormat, Exporter $exporter): void
     $batch = makeGroupBatch([groupRow()]);
     $result = $exporter->prepareAttributeGroups($batch, "dummy/path/attribute-groups.{$fileFormat}");
 
-    // ── Structure ──────────────────────────────────────────────────────────
     expect($result)
         ->toBeArray()
         ->toHaveCount(count($locales));
 
-    // ── en_US row ─────────────────────────────────────────────────────────
     $enRow = collect($result)->firstWhere('locale', 'en_US');
 
     expect($enRow)->not->toBeNull()
         ->and($enRow['code'])->toBe('general')
-        ->and($enRow['name'])->toBe('General')
-        ->and($enRow['column'])->toBe(1)
-        ->and($enRow['position'])->toBe(1)
+        ->and($enRow['label'])->toBe('General')
         ->and($enRow['locale'])->toBe('en_US');
 
-    // ── fr_FR row (when locale is active) ─────────────────────────────────
     if ($locales->contains('fr_FR')) {
         $frRow = collect($result)->firstWhere('locale', 'fr_FR');
 
         expect($frRow)->not->toBeNull()
-            ->and($frRow['name'])->toBe('Général');
+            ->and($frRow['label'])->toBe('Général');
     }
 
-    // ── Required keys present in every row ────────────────────────────────
     foreach ($result as $row) {
-        expect($row)->toHaveKeys(['code', 'locale', 'name', 'column', 'position']);
+        expect($row)->toHaveKeys(['code', 'locale', 'label']);
     }
 };
-
-// ─── initilize() ─────────────────────────────────────────────────────────────
 
 describe('initilize', function () {
     it('calls initialize on the file buffer for CSV', function () {
@@ -150,8 +132,6 @@ describe('initilize', function () {
     });
 });
 
-// ─── CSV ─────────────────────────────────────────────────────────────────────
-
 describe('prepareAttributeGroups [CSV]', function () use ($sharedGroupAssertions) {
     it('produces one row per locale with correct field values', function () use ($sharedGroupAssertions) {
         ($sharedGroupAssertions)('Csv', $this->exporter);
@@ -163,9 +143,7 @@ describe('prepareAttributeGroups [CSV]', function () use ($sharedGroupAssertions
         $batch = makeGroupBatch([['code' => 'technical']]);
         $result = $this->exporter->prepareAttributeGroups($batch, 'dummy/path/attribute-groups.csv');
 
-        expect($result[0]['name'])->toBeNull()
-            ->and($result[0]['column'])->toBeNull()
-            ->and($result[0]['position'])->toBeNull();
+        expect($result[0]['label'])->toBeNull();
     });
 
     it('handles missing translations gracefully for CSV', function () {
@@ -175,7 +153,7 @@ describe('prepareAttributeGroups [CSV]', function () use ($sharedGroupAssertions
         $result = $this->exporter->prepareAttributeGroups($batch, 'dummy/path/attribute-groups.csv');
 
         foreach ($result as $row) {
-            expect($row['name'])->toBeNull();
+            expect($row['label'])->toBeNull();
         }
     });
 
@@ -191,11 +169,11 @@ describe('prepareAttributeGroups [CSV]', function () use ($sharedGroupAssertions
         $result = $this->exporter->prepareAttributeGroups($batch, 'dummy/path/attribute-groups.csv');
 
         $enRow = collect($result)->firstWhere('locale', 'en_US');
-        expect($enRow['name'])->toBe('General');
+        expect($enRow['label'])->toBe('General');
 
         $frRow = collect($result)->firstWhere('locale', 'fr_FR');
         if ($frRow) {
-            expect($frRow['name'])->toBeNull();
+            expect($frRow['label'])->toBeNull();
         }
     });
 
@@ -225,8 +203,6 @@ describe('prepareAttributeGroups [CSV]', function () use ($sharedGroupAssertions
     });
 });
 
-// ─── XLS ─────────────────────────────────────────────────────────────────────
-
 describe('prepareAttributeGroups [XLS]', function () use ($sharedGroupAssertions) {
     it('produces one row per locale with correct field values', function () use ($sharedGroupAssertions) {
         ($sharedGroupAssertions)('Xls', $this->exporter);
@@ -238,9 +214,7 @@ describe('prepareAttributeGroups [XLS]', function () use ($sharedGroupAssertions
         $batch = makeGroupBatch([['code' => 'technical']]);
         $result = $this->exporter->prepareAttributeGroups($batch, 'dummy/path/attribute-groups.xls');
 
-        expect($result[0]['name'])->toBeNull()
-            ->and($result[0]['column'])->toBeNull()
-            ->and($result[0]['position'])->toBeNull();
+        expect($result[0]['label'])->toBeNull();
     });
 
     it('handles missing translations gracefully for XLS', function () {
@@ -250,7 +224,7 @@ describe('prepareAttributeGroups [XLS]', function () use ($sharedGroupAssertions
         $result = $this->exporter->prepareAttributeGroups($batch, 'dummy/path/attribute-groups.xls');
 
         foreach ($result as $row) {
-            expect($row['name'])->toBeNull();
+            expect($row['label'])->toBeNull();
         }
     });
 
@@ -265,11 +239,11 @@ describe('prepareAttributeGroups [XLS]', function () use ($sharedGroupAssertions
         $result = $this->exporter->prepareAttributeGroups($batch, 'dummy/path/attribute-groups.xls');
 
         $enRow = collect($result)->firstWhere('locale', 'en_US');
-        expect($enRow['name'])->toBe('General');
+        expect($enRow['label'])->toBe('General');
 
         $frRow = collect($result)->firstWhere('locale', 'fr_FR');
         if ($frRow) {
-            expect($frRow['name'])->toBeNull();
+            expect($frRow['label'])->toBeNull();
         }
     });
 
@@ -299,8 +273,6 @@ describe('prepareAttributeGroups [XLS]', function () use ($sharedGroupAssertions
     });
 });
 
-// ─── XLSX ────────────────────────────────────────────────────────────────────
-
 describe('prepareAttributeGroups [XLSX]', function () use ($sharedGroupAssertions) {
     it('produces one row per locale with correct field values', function () use ($sharedGroupAssertions) {
         ($sharedGroupAssertions)('Xlsx', $this->exporter);
@@ -312,9 +284,7 @@ describe('prepareAttributeGroups [XLSX]', function () use ($sharedGroupAssertion
         $batch = makeGroupBatch([['code' => 'technical']]);
         $result = $this->exporter->prepareAttributeGroups($batch, 'dummy/path/attribute-groups.xlsx');
 
-        expect($result[0]['name'])->toBeNull()
-            ->and($result[0]['column'])->toBeNull()
-            ->and($result[0]['position'])->toBeNull();
+        expect($result[0]['label'])->toBeNull();
     });
 
     it('handles missing translations gracefully for XLSX', function () {
@@ -324,7 +294,7 @@ describe('prepareAttributeGroups [XLSX]', function () use ($sharedGroupAssertion
         $result = $this->exporter->prepareAttributeGroups($batch, 'dummy/path/attribute-groups.xlsx');
 
         foreach ($result as $row) {
-            expect($row['name'])->toBeNull();
+            expect($row['label'])->toBeNull();
         }
     });
 
@@ -339,11 +309,11 @@ describe('prepareAttributeGroups [XLSX]', function () use ($sharedGroupAssertion
         $result = $this->exporter->prepareAttributeGroups($batch, 'dummy/path/attribute-groups.xlsx');
 
         $enRow = collect($result)->firstWhere('locale', 'en_US');
-        expect($enRow['name'])->toBe('General');
+        expect($enRow['label'])->toBe('General');
 
         $frRow = collect($result)->firstWhere('locale', 'fr_FR');
         if ($frRow) {
-            expect($frRow['name'])->toBeNull();
+            expect($frRow['label'])->toBeNull();
         }
     });
 
@@ -372,8 +342,6 @@ describe('prepareAttributeGroups [XLSX]', function () use ($sharedGroupAssertion
         expect(count($result))->toBe(2 * count($locales));
     });
 });
-
-// ─── Output parity across all formats ────────────────────────────────────────
 
 describe('output parity across formats', function () {
     it('produces identical group rows regardless of file format', function () {

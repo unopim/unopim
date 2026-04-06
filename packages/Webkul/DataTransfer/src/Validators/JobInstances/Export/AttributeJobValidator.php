@@ -11,7 +11,6 @@ class AttributeJobValidator extends JobValidator
      */
     protected array $rules = [
         'filters.file_format' => 'required',
-        'filters.with_media'  => 'in:1,0',
     ];
 
     /**
@@ -19,6 +18,5 @@ class AttributeJobValidator extends JobValidator
      */
     protected array $attributeNames = [
         'filters.file_format' => 'File Format',
-        'filters.with_media'  => 'With Media',
     ];
 }

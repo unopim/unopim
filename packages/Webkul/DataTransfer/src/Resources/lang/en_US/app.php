@@ -34,6 +34,51 @@ return [
                 ],
             ],
         ],
+        'attributes' => [
+            'title'      => 'Attributes',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attribute code :code is already in use.',
+                    'code_not_found_to_delete'             => 'Attribute code not found for deletion.',
+                    'code_is_system_and_cannot_be_deleted' => 'System attribute cannot be deleted.',
+                ],
+            ],
+        ],
+
+        'attribute-groups' => [
+            'title'      => 'Attribute Groups',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Attribute group code :code is already in use.',
+                    'code_not_found_to_delete'             => 'Attribute group code not found for deletion.',
+                    'code_is_system_and_cannot_be_deleted' => 'System attribute group cannot be deleted.',
+                ],
+            ],
+        ],
+
+        'attribute-families' => [
+            'title'      => 'Attribute Families',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attribute family code :code is already in use.',
+                    'code_not_found_to_delete' => 'Attribute family code not found for deletion.',
+                    'invalid-attribute-group'  => 'Attribute group ":code" does not exist.',
+                    'invalid-attribute'        => 'Attribute ":code" does not exist.',
+                    'invalid-channel'          => 'Channel ":code" does not exist.',
+                ],
+            ],
+        ],
+
+        'attribute-options' => [
+            'title'      => 'Attribute Options',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Attribute option code :code is already in use.',
+                    'code_not_found_to_delete' => 'Attribute option code not found for deletion.',
+                    'invalid-attribute'        => 'Attribute ":code" does not exist.',
+                ],
+            ],
+        ],
     ],
 
     'exporters' => [
@@ -65,6 +110,10 @@ return [
 
         'attribute-families' => [
             'title' => 'Attribute Families',
+        ],
+
+        'attribute-options' => [
+            'title' => 'Attribute Options',
         ],
     ],
 

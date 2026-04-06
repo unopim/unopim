@@ -78,11 +78,9 @@ class Exporter extends AbstractExporter
 
             foreach ($locales as $locale) {
                 $data = [
-                    'code'     => $rowData['code'] ?? null,
-                    'locale'   => $locale,
-                    'name'     => $translations[$locale]['name'] ?? null,
-                    'column'   => $rowData['column'] ?? null,
-                    'position' => $rowData['position'] ?? null,
+                    'code'   => $rowData['code'] ?? null,
+                    'locale' => $locale,
+                    'name'   => $translations[$locale]['name'] ?? null,
                 ];
 
                 $attributeGroups[] = $data;
