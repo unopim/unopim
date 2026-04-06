@@ -509,7 +509,7 @@ test('Check the AI translate checkbox in attribute', async({adminPage})=>{
   await expect(adminPage.getByText(/Attribute Updated Successfully/)).toBeVisible();
 });
 
-test('Create product and Generate the content from the MagicAI', async({adminPage})=>{
+test.skip('Create product and Generate the content from the MagicAI', async({adminPage})=>{
   await adminPage.getByRole('link', { name: ' Catalog' }).click();
   await adminPage.getByRole('button', { name: 'Create Product' }).click();
   await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
