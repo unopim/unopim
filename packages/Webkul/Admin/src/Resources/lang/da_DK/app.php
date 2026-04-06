@@ -17,7 +17,7 @@ return [
                 'email'                  => 'Registreret e-mail',
                 'email-not-exist'        => 'E-mail eksisterer ikke',
                 'page-title'             => 'Glemt adgangskode',
-                'reset-link-sent'        => 'Link til nulstilling af adgangskode sendt',
+                'reset-link-sent'        => 'Hvis en konto med den e-mail findes, er et link til nulstilling af adgangskode sendt.',
                 'email-settings-error'   => 'E-mail kunne ikke sendes. Tjek venligst dine e-mailindstillinger',
                 'sign-in-link'           => 'Tilbage til log ind?',
                 'submit-btn'             => 'Nulstil',
@@ -1518,6 +1518,7 @@ return [
 
             'activate-warning'          => 'Din konto er endnu ikke aktiveret, kontakt administrator.',
             'cannot-change'             => 'Bruger kan ikke ændres',
+            'cannot-escalate-role'      => 'Du har ikke tilladelse til at tildele en rolle med fuld adgang.',
             'create-success'            => 'Bruger oprettet succesfuldt.',
             'delete-failed'             => 'Bruger sletning mislykkedes.',
             'delete-success'            => 'Bruger slettet succesfuldt.',

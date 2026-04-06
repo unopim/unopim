@@ -17,7 +17,7 @@ return [
                 'email'                  => 'Rekisteröity sähköposti',
                 'email-not-exist'        => 'Sähköpostiosoitetta ei löydy',
                 'page-title'             => 'Salasanan palauttaminen',
-                'reset-link-sent'        => 'Salasanan palautuslinkki lähetetty',
+                'reset-link-sent'        => 'Jos tili kyseisellä sähköpostiosoitteella on olemassa, salasanan palautuslinkki on lähetetty.',
                 'email-settings-error'   => 'Sähköpostia ei voitu lähettää. Tarkista sähköpostiasetukset',
                 'sign-in-link'           => 'Takaisin kirjautumiseen',
                 'submit-btn'             => 'Palauta',
@@ -1516,6 +1516,7 @@ return [
 
             'activate-warning'          => 'Tilisi ei ole vielä aktivoitu, ota yhteys järjestelmänvalvojaan.',
             'cannot-change'             => 'Käyttäjää ei voi muuttaa',
+            'cannot-escalate-role'      => 'Sinulla ei ole oikeutta määrittää täyden pääsyn roolia.',
             'create-success'            => 'Käyttäjä luotu onnistuneesti.',
             'delete-failed'             => 'Käyttäjän poistaminen epäonnistui.',
             'delete-success'            => 'Käyttäjä poistettu onnistuneesti.',

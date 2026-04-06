@@ -17,7 +17,7 @@ return [
                 'email'                  => 'geregistreerde email',
                 'email-not-exist'        => 'E -mail bestaat niet',
                 'page-title'             => 'Wachtwoord vergeten',
-                'reset-link-sent'        => 'Reset wachtwoordlink verzonden',
+                'reset-link-sent'        => 'Als er een account met dat e-mailadres bestaat, is er een link voor het opnieuw instellen van het wachtwoord verzonden.',
                 'email-settings-error'   => 'E -mail kon niet worden verzonden.Controleer uw e -mailconfiguratiegegevens',
                 'sign-in-link'           => 'Terug om aan te melden?',
                 'submit-btn'             => 'Reset',
@@ -1496,6 +1496,7 @@ return [
 
             'activate-warning'          => 'Uw account moet nog worden geactiveerd, neem contact op met de beheerder.',
             'cannot-change'             => 'Gebruiker kan niet worden gewijzigd',
+            'cannot-escalate-role'      => 'U heeft geen toestemming om een rol met volledige toegang toe te wijzen.',
             'create-success'            => 'Gebruiker met succes gemaakt.',
             'delete-failed'             => 'Gebruiker verwijderd mislukt.',
             'delete-success'            => 'Gebruiker met succes verwijderd.',

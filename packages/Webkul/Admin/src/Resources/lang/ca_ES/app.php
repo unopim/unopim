@@ -17,7 +17,7 @@ return [
                 'email'                  => 'Correu electrònic registrat',
                 'email-not-exist'        => 'El correu no existeix',
                 'page-title'             => 'Oblidar contrasenya',
-                'reset-link-sent'        => 'Enllaç per restablir la contrasenya enviat',
+                'reset-link-sent'        => 'Si existeix un compte amb aquest correu electrònic, s\'ha enviat un enllaç per restablir la contrasenya.',
                 'email-settings-error'   => 'No s’ha pogut enviar el correu electrònic. Reviseu els detalls de configuració del correu',
                 'sign-in-link'           => 'Tornar a Iniciar sessió?',
                 'submit-btn'             => 'Restablir',
@@ -1519,6 +1519,7 @@ return [
 
             'activate-warning'          => 'El teu compte encara no està activat, contacta amb l\'administrador.',
             'cannot-change'             => 'L\'usuari no pot ser modificat',
+            'cannot-escalate-role'      => 'No teniu permís per assignar un rol amb accés complet.',
             'create-success'            => 'Usuari creat correctament.',
             'delete-failed'             => 'Error en eliminar l\'usuari.',
             'delete-success'            => 'Usuari eliminat correctament.',

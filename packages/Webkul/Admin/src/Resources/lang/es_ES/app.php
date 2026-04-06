@@ -17,7 +17,7 @@ return [
                 'email'                  => 'Correo electrónico registrado',
                 'email-not-exist'        => 'El correo electrónico no existe',
                 'page-title'             => 'Contraseña olvidada',
-                'reset-link-sent'        => 'Restablecer el enlace de contraseña enviado',
+                'reset-link-sent'        => 'Si existe una cuenta con ese correo electrónico, se ha enviado un enlace para restablecer la contraseña.',
                 'email-settings-error'   => 'El correo electrónico no pudo ser enviado.Verifique los detalles de su configuración de correo electrónico',
                 'sign-in-link'           => '¿Volver para iniciar sesión?',
                 'submit-btn'             => 'Reiniciar',
@@ -1515,6 +1515,7 @@ return [
 
             'activate-warning'          => 'Su cuenta aún no se ha activado, comuníquese con el administrador.',
             'cannot-change'             => 'El usuario no se puede cambiar',
+            'cannot-escalate-role'      => 'No tiene permiso para asignar un rol con acceso completo.',
             'create-success'            => 'User created successfully.',
             'delete-failed'             => 'User deleted failed.',
             'delete-success'            => 'Usuario eliminado con éxito.',

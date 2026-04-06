@@ -2,8 +2,11 @@
 
 namespace Webkul\Admin\Providers;
 
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Webkul\Core\Tree;
@@ -17,6 +20,8 @@ class AdminServiceProvider extends ServiceProvider
      */
     public function boot(Router $router)
     {
+        $this->configureRateLimiting();
+
         Route::middleware('web')->group(__DIR__.'/../Routes/web.php');
 
         $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'admin');
@@ -135,5 +140,23 @@ class AdminServiceProvider extends ServiceProvider
         $tree->items = core()->sortItems($tree->items);
 
         return $tree;
+    }
+
+    /**
+     * Configure rate limiters for admin authentication routes.
+     */
+    protected function configureRateLimiting(): void
+    {
+        RateLimiter::for('admin-login', function (Request $request) {
+            $key = $request->input('email', '').'|'.$request->ip();
+
+            return Limit::perMinute(5)->by($key);
+        });
+
+        RateLimiter::for('admin-forgot-password', function (Request $request) {
+            $key = $request->input('email', '').'|'.$request->ip();
+
+            return Limit::perMinute(5)->by($key);
+        });
     }
 }

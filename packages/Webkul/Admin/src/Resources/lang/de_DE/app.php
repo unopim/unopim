@@ -17,7 +17,7 @@ return [
                 'email'                  => 'Registrierte E-Mail',
                 'email-not-exist'        => 'E-Mail existiert nicht',
                 'page-title'             => 'Passwort vergessen',
-                'reset-link-sent'        => 'Link zum Zurücksetzen des Passworts gesendet',
+                'reset-link-sent'        => 'Wenn ein Konto mit dieser E-Mail-Adresse existiert, wurde ein Link zum Zurücksetzen des Passworts gesendet.',
                 'email-settings-error'   => 'E-Mail konnte nicht gesendet werden. Bitte überprüfen Sie Ihre E-Mail-Konfigurationsdetails',
                 'sign-in-link'           => 'Zurück zur Anmeldung ?',
                 'submit-btn'             => 'Zurücksetzen',
@@ -1518,6 +1518,7 @@ return [
 
             'activate-warning'          => 'Ihr Konto muss noch aktiviert werden. Bitte wenden Sie sich an Administrator.',
             'cannot-change'             => 'Der Benutzer kann nicht geändert werden',
+            'cannot-escalate-role'      => 'Sie haben keine Berechtigung, eine Rolle mit Vollzugriff zuzuweisen.',
             'create-success'            => 'Benutzer erfolgreich erstellt.',
             'delete-failed'             => 'Benutzer gelöscht fehlgeschlagen.',
             'delete-success'            => 'Benutzer erfolgreich gelöscht.',

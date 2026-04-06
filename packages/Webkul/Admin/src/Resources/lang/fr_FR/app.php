@@ -17,7 +17,7 @@ return [
                 'email'                  => 'Adresse e-mail',
                 'email-not-exist'        => 'L\'e-mail n\'existe pas',
                 'page-title'             => 'Mot de passe oublié',
-                'reset-link-sent'        => 'Lien de réinitilisation du mot de passe envoyé',
+                'reset-link-sent'        => 'Si un compte avec cet e-mail existe, un lien de réinitialisation du mot de passe a été envoyé.',
                 'email-settings-error'   => 'L\'e-mail n\'a pas pu être envoyé. Veuillez vérifier les paramètres d\'envoi d\'e-mail',
                 'sign-in-link'           => 'Retour à la connexion',
                 'submit-btn'             => 'Réinitialiser',
@@ -1510,6 +1510,7 @@ return [
 
             'activate-warning'          => 'Votre compte n\'a pas été activé, veuillez contacter l\'administrateur.',
             'cannot-change'             => 'L\'utilisateur ne peut pas être modifié',
+            'cannot-escalate-role'      => 'Vous n\'avez pas la permission d\'attribuer un rôle avec accès complet.',
             'create-success'            => 'L\'utilisateur a été créé avec succès.',
             'delete-failed'             => 'Erreur lors de la suppression de l\'utilisateur.',
             'delete-success'            => 'L\'utilisateur a été supprimé avec succès.',

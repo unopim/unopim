@@ -17,7 +17,7 @@ return [
                 'email'                  => 'Бүрэн и-мэйл',
                 'email-not-exist'        => 'Имэйл байхгүй байна',
                 'page-title'             => 'Нууц үгээ мартсан',
-                'reset-link-sent'        => 'Нууц үгийн холбоосыг дахин тохируулах',
+                'reset-link-sent'        => 'If an account with that email exists, a password reset link has been sent.',
                 'email-settings-error'   => 'Имэйл илгээх боломжгүй байна.Имэйл тохиргооны дэлгэрэнгүй мэдээллийг шалгана уу',
                 'sign-in-link'           => 'Нэвтрэхийн тулд буцах уу?',
                 'submit-btn'             => 'Нөөц',
@@ -1496,6 +1496,7 @@ return [
 
             'activate-warning'          => 'Таны бүртгэл хараахан идэвхжээгүй байна, администратор холбоо барина уу.',
             'cannot-change'             => 'Хэрэглэгчийг өөрчлөх боломжгүй',
+            'cannot-escalate-role'      => 'You do not have permission to assign an all-access role.',
             'create-success'            => 'Хэрэглэгч амжилттай бүтээсэн.',
             'delete-failed'             => 'Хэрэглэгч устгасан.',
             'delete-success'            => 'Хэрэглэгч амжилттай устгасан.',
