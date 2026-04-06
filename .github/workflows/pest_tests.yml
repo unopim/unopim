@@ -35,7 +35,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
-          ini-values: error_reporting=E_ALL
+          ini-values: error_reporting=E_ALL, memory_limit=512M
           tools: composer:v2
 
       - name: Running Composer Install
