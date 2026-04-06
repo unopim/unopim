@@ -51,7 +51,7 @@ class SessionController extends Controller
         if (! auth()->guard('admin')->attempt(request(['email', 'password']), $remember)) {
             session()->flash('error', trans('admin::app.settings.users.login-error'));
 
-            return redirect()->back();
+            return redirect()->route('admin.session.create');
         }
 
         if (! auth()->guard('admin')->user()->status) {
