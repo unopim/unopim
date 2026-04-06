@@ -710,15 +710,13 @@ test('7.3 - Open AI Assistance modal and verify fields', async ({ adminPage }) =
   await expect(magicAIBtn).toBeVisible({ timeout: 20000 });
   await magicAIBtn.click();
 
-  // Verify AI Assistance modal fields
-  await expect(adminPage.locator('#app').getByText('AI Assistance')).toBeVisible();
-  await expect(adminPage.locator('#app').getByText('Default Prompt')).toBeVisible();
-  // System Prompt field may have different label — check for the prompt textarea/input area
-  const hasSystemPrompt = await adminPage.locator('#app').getByText('System Prompt', { exact: true }).isVisible({ timeout: 5000 }).catch(() => false);
-  const hasPromptField = hasSystemPrompt || await adminPage.locator('#app textarea, #app .ql-editor').first().isVisible({ timeout: 5000 }).catch(() => false);
-  expect(hasPromptField).toBeTruthy();
-  await expect(adminPage.getByRole('button', { name: 'Generate' })).toBeVisible();
-  await expect(adminPage.locator('.multiselect').first()).toBeVisible();
+  // Verify AI Assistance modal fields — wait for modal to fully render
+  await expect(adminPage.locator('#app').getByText('AI Assistance')).toBeVisible({ timeout: 10000 });
+  await expect(adminPage.locator('#app').getByText('Default Prompt')).toBeVisible({ timeout: 10000 });
+  // "System Prompt" collapsible header is always visible once the modal renders
+  await expect(adminPage.locator('#app').getByText('System Prompt')).toBeVisible({ timeout: 10000 });
+  await expect(adminPage.getByRole('button', { name: 'Generate' })).toBeVisible({ timeout: 10000 });
+  await expect(adminPage.locator('.multiselect').first()).toBeVisible({ timeout: 10000 });
 
   // Close modal
   await adminPage.locator('.icon-cancel').click();
