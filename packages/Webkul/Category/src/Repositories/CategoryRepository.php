@@ -4,6 +4,7 @@ namespace Webkul\Category\Repositories;
 
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Collection;
 use Webkul\Category\Contracts\Category;
 use Webkul\Core\Eloquent\Repository;
 use Webkul\Core\Filesystem\FileStorer;
@@ -58,7 +59,7 @@ class CategoryRepository extends Repository
     /**
      * Create category.
      *
-     * @return \Webkul\Category\Contracts\Category
+     * @return Category
      */
     public function create(array $data, bool $withoutFormattingValues = false)
     {
@@ -85,7 +86,7 @@ class CategoryRepository extends Repository
      *
      * @param  int  $id
      * @param  string  $attribute
-     * @return \Webkul\Category\Contracts\Category
+     * @return Category
      */
     public function update(array $data, $id, $attribute = 'id', bool $withoutFormattingValues = false)
     {
@@ -109,7 +110,7 @@ class CategoryRepository extends Repository
      * Specify category tree.
      *
      * @param  int  $id
-     * @return \Webkul\Category\Contracts\Category
+     * @return Category
      */
     public function getCategoryTree($id = null)
     {
@@ -122,7 +123,7 @@ class CategoryRepository extends Repository
      * Specify category tree.
      *
      * @param  int  $id
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
     public function getCategoryTreeWithoutDescendant($id = null)
     {
@@ -174,7 +175,7 @@ class CategoryRepository extends Repository
     /**
      * Get root categories.
      *
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
     public function getRootCategories()
     {
@@ -186,7 +187,7 @@ class CategoryRepository extends Repository
     /**
      * Get child categories.
      *
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
     public function getChildCategories(int $parentId, int $categoryId = 0)
     {
@@ -203,7 +204,7 @@ class CategoryRepository extends Repository
      * get visible category tree.
      *
      * @param  int  $id
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
     public function getVisibleCategoryTree($id = null)
     {

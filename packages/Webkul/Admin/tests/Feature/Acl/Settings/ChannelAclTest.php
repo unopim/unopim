@@ -58,7 +58,7 @@ it('should not be able to delete channel if does not have permission', function 
     $this->delete(route('admin.settings.channels.delete', ['id' => $channel->id]))
         ->assertSeeText('Unauthorized');
 
-    $this->assertDatabaseHas($this->getFullTableName(channel::class), ['id' => $channel->id]);
+    $this->assertDatabaseHas($this->getFullTableName(Channel::class), ['id' => $channel->id]);
 });
 
 it('should be able to delete channel if have permission', function () {

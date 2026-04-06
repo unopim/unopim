@@ -2,6 +2,7 @@
 
 namespace Webkul\AdminApi\Repositories;
 
+use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository as BaseClientRepository;
 use Laravel\Passport\Passport;
 
@@ -11,7 +12,7 @@ class ClientRepository extends BaseClientRepository
      * Get a client by the given ID.
      *
      * @param  int|string  $id
-     * @return \Laravel\Passport\Client|null
+     * @return Client|null
      */
     public function find($id)
     {
@@ -34,7 +35,7 @@ class ClientRepository extends BaseClientRepository
      * Get an active client by the given ID.
      *
      * @param  int|string  $id
-     * @return \Laravel\Passport\Client|null
+     * @return Client|null
      */
     public function findActive($id)
     {

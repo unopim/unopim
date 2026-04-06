@@ -4,8 +4,11 @@ namespace Webkul\AdminApi\Http\Controllers\Integrations;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 use Laravel\Passport\ClientRepository;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\AdminApi\DataGrids\Integrations\ApiKeysDataGrid;
@@ -31,7 +34,7 @@ class ApiKeysController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function index()
     {
@@ -45,7 +48,7 @@ class ApiKeysController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function create()
     {
@@ -62,7 +65,7 @@ class ApiKeysController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function store()
     {
@@ -93,7 +96,7 @@ class ApiKeysController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function edit(int $id)
     {
@@ -105,9 +108,9 @@ class ApiKeysController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      *
-     * @throws \Illuminate\Validation\ValidationException If the required parameters are not provided.
+     * @throws ValidationException If the required parameters are not provided.
      */
     public function update(int $id)
     {
@@ -162,9 +165,9 @@ class ApiKeysController extends Controller
      * for the specified admin user and API key. The client ID and secret key are then
      * associated with the API key in the database.
      *
-     * @return \Illuminate\Http\JsonResponse The JSON response containing the new client ID and secret key.
+     * @return JsonResponse The JSON response containing the new client ID and secret key.
      *
-     * @throws \Illuminate\Validation\ValidationException If the required parameters are not provided.
+     * @throws ValidationException If the required parameters are not provided.
      */
     public function generateKey()
     {
@@ -207,7 +210,7 @@ class ApiKeysController extends Controller
      * finds the corresponding client in the database, and then regenerates its secret key.
      * If the client is not found, it returns a JSON response with a 404 status code and an error message.
      *
-     * @return \Illuminate\Http\JsonResponse The JSON response containing the regenerated secret key.
+     * @return JsonResponse The JSON response containing the regenerated secret key.
      */
     public function regenerateSecretKey()
     {
@@ -229,7 +232,7 @@ class ApiKeysController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function destroy(int $id)
     {

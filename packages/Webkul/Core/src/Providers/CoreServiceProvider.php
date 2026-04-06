@@ -8,6 +8,10 @@ use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Webkul\Core\Console\Commands\DownCommand;
+use Webkul\Core\Console\Commands\UnoPimPublish;
+use Webkul\Core\Console\Commands\UnoPimVersion;
+use Webkul\Core\Console\Commands\UpCommand;
 use Webkul\Core\Core;
 use Webkul\Core\ElasticSearch;
 use Webkul\Core\Exceptions\Handler;
@@ -54,11 +58,11 @@ class CoreServiceProvider extends ServiceProvider
         });
 
         $this->app->extend('command.down', function () {
-            return new \Webkul\Core\Console\Commands\DownCommand;
+            return new DownCommand;
         });
 
         $this->app->extend('command.up', function () {
-            return new \Webkul\Core\Console\Commands\UpCommand;
+            return new UpCommand;
         });
 
         /**
@@ -125,8 +129,8 @@ class CoreServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                \Webkul\Core\Console\Commands\UnoPimPublish::class,
-                \Webkul\Core\Console\Commands\UnoPimVersion::class,
+                UnoPimPublish::class,
+                UnoPimVersion::class,
             ]);
         }
     }

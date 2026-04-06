@@ -55,7 +55,7 @@ class CategoryFieldController extends ApiController
     /**
      * Store a newly created resource in storage.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function store()
     {
@@ -109,7 +109,7 @@ class CategoryFieldController extends ApiController
     /**
      * Update the specified resource in storage.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function update(string $code)
     {
@@ -160,7 +160,7 @@ class CategoryFieldController extends ApiController
     /**
      * Display a single result of the resource.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function getOptions($code)
     {
@@ -174,7 +174,7 @@ class CategoryFieldController extends ApiController
     /**
      * Store a newly created resource in storage.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function storeOption(string $fieldCode)
     {
@@ -219,7 +219,7 @@ class CategoryFieldController extends ApiController
     /**
      * Update the specified resource in storage.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function updateOption(string $fieldCode)
     {
