@@ -5,6 +5,10 @@ const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 
 test.describe('UnoPim Agenting PIM Chat Widget', () => {
 
+test.beforeEach(async ({ adminPage }) => {
+  await navigateTo(adminPage, 'dashboard');
+});
+
 // ═════════════════════════════════════════════════
 // SECTION 1: Widget Panel — Open / Close / Header
 // ═════════════════════════════════════════════════

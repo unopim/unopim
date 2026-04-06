@@ -12,7 +12,7 @@ const STORAGE_STATE = path.resolve(__dirname, '.state/admin-auth.json');
  * - Minimum 2 workers to parallelize across test files
  */
 const workerCount = isCI
-  ? Math.max(2, Math.floor(os.cpus().length / 2))
+  ? 1  // artisan serve is single-threaded — 1 worker per shard (4 shards run in parallel)
   : Math.max(2, os.cpus().length - 1);
 
 module.exports = defineConfig({

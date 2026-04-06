@@ -4,7 +4,7 @@ description: >
   Handle module attribute mapping and mapping history management in Unopim.
   Use this skill when creating module attribute mapping UI, mapping controller,
   mapping history, or restricting fields to module structure. Only Attribute
-  Mapping and History tabs are allowed. Covers wk_ table prefix, Migration/
+  Mapping and History tabs are allowed. Covers DB_PREFIX (auto-added by Laravel), Migration/
   singular folder, HistoryTrait on models, flat ACL, cURL HTTP client, and
   JsonResponse controller pattern.
 version: "2.0.0"
@@ -142,7 +142,7 @@ If mismatch → throw validation error with field name.
 
 ## 6. Database Structure
 
-### Table: `wk_module_attribute_mappings`
+### Table: `module_attribute_mappings`
 
 | Column                | Type       | Notes               |
 | --------------------- | ---------- | ------------------- |
@@ -154,7 +154,7 @@ If mismatch → throw validation error with field name.
 
 For pictures: store multiple attribute IDs as JSON array.
 
-### Table: `wk_module_mapping_histories`
+### Table: `module_mapping_histories`
 
 | Column      | Type       | Notes                    |
 | ----------- | ---------- | ------------------------ |
@@ -228,8 +228,8 @@ Table columns: `module Field | Unopim Field | Default Value`
 
 When generating module Export Mapping module, MUST generate:
 
-- Migration: `wk_module_attribute_mappings`
-- Migration: `wk_module_mapping_histories`
+- Migration: `module_attribute_mappings`
+- Migration: `module_mapping_histories`
 - Model + Contract interface for each table
 - Repository for each model
 - `AttributeMappingController`

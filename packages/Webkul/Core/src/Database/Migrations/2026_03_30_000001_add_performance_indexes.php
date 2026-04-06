@@ -8,10 +8,6 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * Note: Use table names WITHOUT the wk_ prefix — Laravel adds
-     * the DB_PREFIX automatically. Using wk_ here would result in
-     * wk_wk_channels which doesn't exist.
      */
     public function up(): void
     {

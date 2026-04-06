@@ -19,8 +19,10 @@ Copilot, Claude, Kilo Code, Cursor, etc.).
 ## Critical Conventions (Never Deviate)
 
 ### Table Naming
-- All tables: `wk_` prefix (e.g. `wk_woocommerce_credentials`, `wk_module_mappings`)
-- Never: `module_credentials`, `shopify_credentials` — always add `wk_`
+- Tables use `DB_PREFIX` (configured in `.env`, default `wk_`) — Laravel adds this automatically
+- In migrations, models, and `DB::table()` — use names **WITHOUT** prefix (e.g. `{module}_credentials`)
+- Laravel converts `{module}_credentials` → `wk_{module}_credentials` at runtime
+- **Never** hardcode `wk_` in table names — it causes `wk_wk_` double prefix issues
 
 ### Folder Paths
 - Migration folder: `Database/Migration/` at package root — NOT `Migrations` (no 's')
@@ -47,7 +49,7 @@ class Credential extends Model implements CredentialContract, PresentableHistory
 {
     use HistoryTrait;
 
-    protected $table = 'wk_{module}_credentials';
+    protected $table = '{module}_credentials';  // No wk_ — DB_PREFIX is added automatically
     protected $casts = ['extras' => 'array'];
     protected $auditExclude = ['consumerSecret'];   // NOT Crypt::encryptString
 }

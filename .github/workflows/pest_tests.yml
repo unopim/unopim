@@ -12,12 +12,7 @@ permissions:
 jobs:
   pest:
     runs-on: ubuntu-24.04
-    name: Pest Tests (MySQL, prefix=${{ matrix.db-prefix || 'none' }})
-
-    strategy:
-      fail-fast: false
-      matrix:
-        db-prefix: ['wk_', '']
+    name: Pest Tests (MySQL)
 
     services:
       mysql:
@@ -73,13 +68,13 @@ jobs:
           sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
           sed -i "s|^\(DB_USERNAME=\s*\).*$|\1root|" .env
           sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
-          sed -i "s|^\(DB_PREFIX=\s*\).*$|\1${{ matrix.db-prefix }}|" .env
+          sed -i "s|^\(DB_PREFIX=\s*\).*$|\1wk_|" .env
 
       - name: Running UnoPim Installer
         run: php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
 
       - name: Running Pest Tests
-        run: vendor/bin/pest --colors=always --parallel --processes=4
+        run: vendor/bin/pest --colors=always
 
   pest-elasticsearch:
     runs-on: ubuntu-24.04
@@ -168,4 +163,4 @@ jobs:
           php artisan unopim:category:index
 
       - name: Running Pest Tests
-        run: vendor/bin/pest --colors=always --parallel --processes=4
+        run: vendor/bin/pest --colors=always

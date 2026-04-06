@@ -75,7 +75,7 @@ jobs:
         run: php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
 
       - name: Running Pest Tests
-        run: vendor/bin/pest --colors=always --parallel --processes=4
+        run: vendor/bin/pest --colors=always
 
   pest-pgsql-elasticsearch:
     runs-on: ubuntu-24.04
@@ -166,4 +166,4 @@ jobs:
           php artisan unopim:category:index
 
       - name: Running Pest Tests
-        run: vendor/bin/pest --colors=always --parallel --processes=4
+        run: vendor/bin/pest --colors=always
