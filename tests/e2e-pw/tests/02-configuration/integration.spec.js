@@ -111,7 +111,7 @@ test.describe('UnoPim Integration API Keys', () => {
     await navigateTo(adminPage, 'integrations');
     const perPageBtn = adminPage.getByRole('button', { name: 'Per Page' });
     await perPageBtn.click();
-    await adminPage.getByText('20', { exact: true }).click();
+    await adminPage.locator('#app').getByText('20', { exact: true }).click();
     await expect(perPageBtn).toContainText('20');
   });
 

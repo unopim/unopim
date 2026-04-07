@@ -25,7 +25,7 @@ async function goToLoginPage(adminPage) {
 test.describe('Login Page', () => {
 
 test('Logout Check', async ({ adminPage }) => {
-  await adminPage.waitForLoadState('networkidle');
+  await adminPage.goto('/admin/dashboard', { waitUntil: 'load', timeout: 30000 });
   await adminPage.click('button.rounded-full');
   await adminPage.getByRole('link', { name: 'Logout' }).click();
   await expect(adminPage).toHaveURL(UNOPIM_URL);

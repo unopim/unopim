@@ -1,11 +1,12 @@
 const { test, expect } = require('../../utils/fixtures');
+const { navigateTo } = require('../../utils/helpers');
 
 /**
  * Helper: Open the notification dropdown reliably.
- * Waits for network idle, clicks the bell icon, and waits for the dropdown to appear.
+ * Navigates to dashboard first, then clicks the bell icon.
  */
 async function openNotificationDropdown(adminPage) {
-  await adminPage.waitForLoadState('networkidle');
+  await navigateTo(adminPage, 'dashboard');
   const bellIcon = adminPage.locator('.icon-notification');
   await bellIcon.click();
   // Wait for the dropdown content to render
@@ -14,6 +15,10 @@ async function openNotificationDropdown(adminPage) {
 }
 
 test.describe('UnoPim Notifications', () => {
+
+test.beforeEach(async ({ adminPage }) => {
+  await navigateTo(adminPage, 'dashboard');
+});
 
 // ═════════════════════════════════════════════════
 // SECTION 1: Notification Bell Icon & Header

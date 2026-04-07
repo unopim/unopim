@@ -180,14 +180,21 @@ test.describe('UnoPim Import Jobs', () => {
 
   test('Create Import with duplicate Code shows validation error', async ({ adminPage }) => {
     const uid = generateUid();
-    const code = `dup-imp-${uid}`;
+    const code = `dup_imp_${uid}`;
 
     // Create the first import
     await createProductImport(adminPage, code);
 
-    // Try to create another with the same code
-    await createProductImport(adminPage, code);
-    await expect(adminPage.locator('#app').getByText('The code has already been taken.')).toBeVisible();
+    // Try to create another with the same code — don't use helper, expect error not success
+    await navigateTo(adminPage, 'imports');
+    await adminPage.getByRole('link', { name: 'Create Import' }).click();
+    await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
+    await adminPage.locator('#import-type').getByRole('combobox').locator('div').filter({ hasText: 'Categories' }).click();
+    await adminPage.getByRole('option', { name: 'Products' }).locator('span').first().click();
+    const fileInput = adminPage.locator('input[type="file"]').first();
+    await fileInput.setInputFiles('assets/1k_products.xlsx');
+    await adminPage.getByRole('button', { name: 'Save Import' }).click();
+    await expect(adminPage.locator('#app').getByText(/code has already been taken/i)).toBeVisible({ timeout: 20000 });
 
     // Cleanup
     await deleteImport(adminPage, code);
@@ -226,7 +233,7 @@ test.describe('UnoPim Import Jobs', () => {
     await navigateTo(adminPage, 'imports');
     const perPageBtn = adminPage.getByRole('button', { name: 'Per Page' });
     await perPageBtn.click();
-    await adminPage.getByText('20', { exact: true }).click();
+    await adminPage.locator('#app').getByText('20', { exact: true }).click();
     await expect(perPageBtn).toContainText('20');
   });
 
