@@ -6,11 +6,9 @@ services:
       args:
         UNOPIM_IMAGE: ${UNOPIM_IMAGE:-webkul/unopim}
         UNOPIM_TAG: ${UNOPIM_TAG:-1.0.1}
-    container_name: unopim-web
+    container_name: ${COMPOSE_PROJECT_NAME:-unopim}-web
     volumes:
       - .:/var/www/html
-      - unopim-vendor:/var/www/html/vendor
-      - unopim-node-modules:/var/www/html/node_modules
     ports:
       - "${APP_PORT:-8000}:80"
     restart: unless-stopped
@@ -39,11 +37,9 @@ services:
       args:
         UNOPIM_IMAGE: ${UNOPIM_IMAGE:-webkul/unopim}
         UNOPIM_TAG: ${UNOPIM_TAG:-1.0.1}
-    container_name: unopim-q
+    container_name: ${COMPOSE_PROJECT_NAME:-unopim}-q
     volumes:
       - .:/var/www/html
-      - unopim-vendor:/var/www/html/vendor
-      - unopim-node-modules:/var/www/html/node_modules
     restart: unless-stopped
     env_file: .env
     environment:
@@ -64,18 +60,18 @@ services:
 
   unopim-mysql:
     image: mysql:8.0.36-debian
-    container_name: unopim-mysql
+    container_name: ${COMPOSE_PROJECT_NAME:-unopim}-mysql
     volumes:
       - unopim-mysql-disk:/var/lib/mysql
     ports:
-      - "127.0.0.1:${DB_PORT:-3306}:3306"
+      - "127.0.0.1:${FORWARD_DB_PORT:-3306}:3306"
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-unopim_root_secret}
       MYSQL_DATABASE: ${DB_DATABASE:-unopim}
       MYSQL_USER: ${DB_USERNAME:-unopim}
       MYSQL_PASSWORD: ${DB_PASSWORD:-unopim_secret}
-    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --log-bin-trust-function-creators=1
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-unopim_root_secret}"]
       interval: 10s
@@ -90,10 +86,10 @@ services:
 
   unopim-redis:
     image: redis:7.2-alpine
-    container_name: unopim-redis
+    container_name: ${COMPOSE_PROJECT_NAME:-unopim}-redis
     restart: unless-stopped
     ports:
-      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
+      - "127.0.0.1:${FORWARD_REDIS_PORT:-6379}:6379"
     volumes:
       - unopim-redis-disk:/data
     healthcheck:
@@ -110,7 +106,7 @@ services:
 
   unopim-elasticsearch:
     image: elasticsearch:8.17.0
-    container_name: unopim-elasticsearch
+    container_name: ${COMPOSE_PROJECT_NAME:-unopim}-elasticsearch
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
@@ -118,7 +114,7 @@ services:
     volumes:
       - unopim-elasticsearch-disk:/usr/share/elasticsearch/data
     ports:
-      - "127.0.0.1:${ELASTICSEARCH_PORT:-9200}:9200"
+      - "127.0.0.1:${FORWARD_ES_PORT:-9200}:9200"
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
@@ -134,10 +130,10 @@ services:
 
   unopim-mailpit:
     image: axllent/mailpit:v1.21
-    container_name: unopim-mailpit
+    container_name: ${COMPOSE_PROJECT_NAME:-unopim}-mailpit
     restart: unless-stopped
     ports:
-      - "127.0.0.1:${MAILPIT_UI_PORT:-8025}:8025"
+      - "127.0.0.1:${FORWARD_MAILPIT_PORT:-8025}:8025"
     logging:
       driver: "json-file"
       options:
@@ -148,5 +144,3 @@ volumes:
   unopim-mysql-disk:
   unopim-redis-disk:
   unopim-elasticsearch-disk:
-  unopim-vendor:
-  unopim-node-modules:

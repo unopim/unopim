@@ -3,19 +3,22 @@ set -e
 
 LOCK_FILE="/var/www/html/storage/unopim.lock"
 
-# First-time setup: install dependencies and run installer
+# First-time setup: install dependencies, migrate, and seed
 if [ ! -f "$LOCK_FILE" ]; then
     echo "First-time setup: installing dependencies..."
     composer install --no-interaction --optimize-autoloader
-    npm install
-    npm run build
-    php artisan unopim:install -n --skip-env-check --skip-admin-creation
+
+    # Generate app key if not set
+    if [ -z "$APP_KEY" ] || [ "$APP_KEY" = "" ]; then
+        php artisan key:generate --force
+    fi
+
+    php artisan migrate --force
+    php artisan db:seed --force
     touch "$LOCK_FILE"
     echo "Setup complete."
-fi
-
-# Run pending migrations on subsequent starts
-if [ -f "$LOCK_FILE" ]; then
+else
+    # Run pending migrations on subsequent starts
     php artisan migrate --force --no-interaction 2>/dev/null || true
 fi
 
