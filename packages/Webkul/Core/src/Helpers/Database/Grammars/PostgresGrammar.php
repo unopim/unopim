@@ -48,9 +48,13 @@ class PostgresGrammar implements Grammar
 
         $lastKey = array_pop($operators);
 
+        // Escape column name — handles both 'values' and 'table.values'
+        $parts = explode('.', $column);
+        $quotedColumn = implode('.', array_map(fn ($p) => '"'.$p.'"', $parts));
+
         $jsonString = ! empty($operators)
-            ? "{$column}->".implode('->', $operators)."->>{$lastKey}"
-            : "{$column}->>'{$lastKey}'";
+            ? "{$quotedColumn}->".implode('->', $operators)."->>{$lastKey}"
+            : "{$quotedColumn}->>'{$lastKey}'";
 
         return $jsonString;
     }

@@ -14,8 +14,14 @@ env:
 
 jobs:
   playwright_tests:
-    name: Playwright E2E
+    name: Playwright E2E | Shard ${{ matrix.shard-index }}/${{ matrix.shard-total }}
     runs-on: ubuntu-24.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        shard-index: [1, 2, 3, 4]
+        shard-total: [4]
 
     services:
       mysql:
@@ -101,6 +107,7 @@ jobs:
           cp .env.example .env
           sed -i "s|^\(APP_ENV=\s*\).*$|\1testing|" .env
           sed -i "s|^\(APP_DEBUG=\s*\).*$|\1false|" .env
+          sed -i "s|^\(APP_URL=\s*\).*$|\1http://127.0.0.1:8000|" .env
           sed -i "s|^\(DB_HOST=\s*\).*$|\1127.0.0.1|" .env
           sed -i "s|^\(DB_PORT=\s*\).*$|\13306|" .env
           sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
@@ -109,25 +116,24 @@ jobs:
 
       - name: Running UnoPim Installer & Start Server
         run: |
-          php artisan unopim:install --skip-env-check --skip-admin-creation
-          php artisan migrate:fresh --seed
-          php artisan db:seed --class="Webkul\\Installer\\Database\\Seeders\\ProductTableSeeder"
-          php artisan serve --host=0.0.0.0 --port=8000 > /dev/null 2>&1 &
-          php artisan queue:work --queue=default,system,completeness > /dev/null 2>&1 &
+          php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
+          php artisan serve --host=0.0.0.0 --port=8000 > /tmp/server.log 2>&1 &
+          php artisan queue:work --queue=default,system,completeness > /tmp/queue.log 2>&1 &
           echo "Waiting for server..."
-          timeout 30 bash -c 'until curl -s http://127.0.0.1:8000 > /dev/null; do sleep 1; done'
+          timeout 30 bash -c 'until curl -s http://127.0.0.1:8000 > /dev/null; do sleep 1; done' || (cat /tmp/server.log && exit 1)
 
       - name: Run Playwright tests
         run: |
           cd tests/e2e-pw
-          npx playwright test --reporter=list
+          npx playwright test --reporter=list,html --shard=${{ matrix.shard-index }}/${{ matrix.shard-total }}
 
       - name: Upload test results
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@v5
         with:
-          name: playwright-report-${{ github.run_id }}
+          name: playwright-report-shard-${{ matrix.shard-index }}-${{ github.run_id }}
           path: |
             tests/e2e-pw/playwright-report
             tests/e2e-pw/test-results
+            storage/logs/laravel.log
           retention-days: 1

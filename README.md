@@ -17,7 +17,7 @@
 
 UnoPim is an open-source Product Information Management (PIM) system built on Laravel 12. It helps businesses organize, manage, and enrich their product information in one central repository — now with built-in AI agent capabilities for conversational product management.
 
-## 🆕 What's New in v2.0.0
+## 🆕 What's New in v2.0.x
 
 - **AI Agent Chat** — Manage products through natural language with 32+ tool actions (search, create, update, bulk edit, export, generate content/images, memory, planning, quality reports, and more)
 - **Agentic PIM** — Autonomous product enrichment, catalog quality monitoring, approval workflows, content feedback loop, and persistent agent memory
