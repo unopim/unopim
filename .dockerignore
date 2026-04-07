@@ -3,9 +3,9 @@
 .github
 .claude
 
-# Dependencies (installed at runtime)
-node_modules
+# Dependencies (installed during build)
 vendor
+node_modules
 
 # Test artifacts
 .phpunit.cache
@@ -14,7 +14,7 @@ tests/e2e-pw/.state
 tests/e2e-pw/test-results
 tests/e2e-pw/playwright-report
 
-# Runtime files (should not be baked into image)
+# Runtime data (mounted as volumes, not baked into image)
 storage/logs/*
 storage/framework/cache/*
 storage/framework/sessions/*
@@ -22,5 +22,7 @@ storage/framework/views/*
 storage/debugbar/*
 storage/unopim.lock
 
-# Local backups
+# Local files
 backups
+.env
+.env.testing
