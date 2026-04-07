@@ -1,24 +1,26 @@
+# Version control & CI
 .git
 .github
 .claude
-.phpunit.cache
-.playwright-mcp
 
+# Dependencies (installed at runtime)
 node_modules
 vendor
 
+# Test artifacts
+.phpunit.cache
+.playwright-mcp
 tests/e2e-pw/.state
 tests/e2e-pw/test-results
 tests/e2e-pw/playwright-report
 
+# Runtime files (should not be baked into image)
 storage/logs/*
 storage/framework/cache/*
 storage/framework/sessions/*
 storage/framework/views/*
 storage/debugbar/*
+storage/unopim.lock
 
+# Local backups
 backups
-
-*.md
-!README.md
-LICENSE

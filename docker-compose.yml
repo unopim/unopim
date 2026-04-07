@@ -1,4 +1,23 @@
+# =============================================================================
+# UnoPim Docker Compose Configuration
+# =============================================================================
+# Quick start:
+#   1. cp .env.docker .env          (configure environment)
+#   2. docker compose up -d         (start all services)
+#   3. Wait ~60s for first-time setup (migrations + seeding)
+#   4. Open http://localhost:8000/admin
+#
+# Port conflicts? Set FORWARD_* variables in .env:
+#   FORWARD_DB_PORT=3307
+#   FORWARD_REDIS_PORT=6380
+#   FORWARD_ES_PORT=9201
+#   FORWARD_MAILPIT_PORT=8026
+# =============================================================================
+
 services:
+  # ---------------------------------------------------------------------------
+  # Application (Web Server)
+  # ---------------------------------------------------------------------------
   unopim-web:
     build:
       context: .
@@ -15,7 +34,9 @@ services:
     env_file: .env
     environment:
       DB_HOST: unopim-mysql
+      DB_PORT: 3306
       REDIS_HOST: unopim-redis
+      REDIS_PORT: 6379
       ELASTICSEARCH_HOST: unopim-elasticsearch:9200
       MAIL_HOST: unopim-mailpit
       MAIL_PORT: 1025
@@ -30,6 +51,9 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  # ---------------------------------------------------------------------------
+  # Queue Worker (system, completeness, default)
+  # ---------------------------------------------------------------------------
   unopim-q:
     build:
       context: .
@@ -44,7 +68,9 @@ services:
     env_file: .env
     environment:
       DB_HOST: unopim-mysql
+      DB_PORT: 3306
       REDIS_HOST: unopim-redis
+      REDIS_PORT: 6379
       ELASTICSEARCH_HOST: unopim-elasticsearch:9200
       QUEUE_NAMES: "system,completeness,default"
     depends_on:
@@ -58,6 +84,9 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  # ---------------------------------------------------------------------------
+  # MySQL 8.0
+  # ---------------------------------------------------------------------------
   unopim-mysql:
     image: mysql:8.0.36-debian
     container_name: ${COMPOSE_PROJECT_NAME:-unopim}-mysql
@@ -67,13 +96,17 @@ services:
       - "127.0.0.1:${FORWARD_DB_PORT:-3306}:3306"
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-unopim_root_secret}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-password}
       MYSQL_DATABASE: ${DB_DATABASE:-unopim}
       MYSQL_USER: ${DB_USERNAME:-unopim}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-unopim_secret}
-    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --log-bin-trust-function-creators=1
+      MYSQL_PASSWORD: ${DB_PASSWORD:-password}
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --log-bin-trust-function-creators=1
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-unopim_root_secret}"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -84,6 +117,9 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  # ---------------------------------------------------------------------------
+  # Redis 7.2 (cache + queue backend)
+  # ---------------------------------------------------------------------------
   unopim-redis:
     image: redis:7.2-alpine
     container_name: ${COMPOSE_PROJECT_NAME:-unopim}-redis
@@ -104,6 +140,9 @@ services:
         max-size: "5m"
         max-file: "2"
 
+  # ---------------------------------------------------------------------------
+  # Elasticsearch 8.17 (product + category search)
+  # ---------------------------------------------------------------------------
   unopim-elasticsearch:
     image: elasticsearch:8.17.0
     container_name: ${COMPOSE_PROJECT_NAME:-unopim}-elasticsearch
@@ -128,12 +167,16 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  # ---------------------------------------------------------------------------
+  # Mailpit (local SMTP + web UI for email testing)
+  # ---------------------------------------------------------------------------
   unopim-mailpit:
     image: axllent/mailpit:v1.21
     container_name: ${COMPOSE_PROJECT_NAME:-unopim}-mailpit
     restart: unless-stopped
     ports:
       - "127.0.0.1:${FORWARD_MAILPIT_PORT:-8025}:8025"
+      - "127.0.0.1:${FORWARD_MAILPIT_SMTP_PORT:-1025}:1025"
     logging:
       driver: "json-file"
       options:
