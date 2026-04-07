@@ -25,7 +25,8 @@ class Installer extends Command
      */
     protected $signature = 'unopim:install
         { --skip-env-check : Skip env check. }
-        { --skip-admin-creation : Skip admin creation. }';
+        { --skip-admin-creation : Skip admin creation. }
+        { --with-demo-data : Seed sample products and demo data. }';
 
     /**
      * The console command description.
@@ -150,6 +151,10 @@ class Installer extends Command
         if (! $this->option('skip-admin-creation')) {
             $this->warn('Step: Create admin credentials...');
             $this->createAdminCredentials();
+        }
+
+        if ($this->option('with-demo-data')) {
+            $this->seedSampleProducts();
         }
 
         ComposerEvents::postCreateProject();
