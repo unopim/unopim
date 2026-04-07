@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => 'Sihirli Yapay Zekâ',
         'general'               => 'Genel',
         'prompt'                => 'Prompt',
         'system-prompt'         => 'Sistem Promptu',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => 'Sihirli Yapay Zekâ',
         'platform'       => 'Platformlar',
         'settings'       => 'Ayarlar',
         'prompt'         => 'Promptlar',

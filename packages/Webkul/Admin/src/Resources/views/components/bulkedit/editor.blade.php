@@ -22,10 +22,14 @@
 @php
     $channelLocales = [];
     $allLocales = [];
-    $channels = core()->getAllChannels();
+    $channelCollection = core()->getAllChannels();
     $channelCurrencies = [];
+    $channelNames = [];
+    $localeNames = [];
 
-    foreach ($channels as $channel) {
+    foreach ($channelCollection as $channel) {
+        $channelNames[$channel->code] = $channel->name ?: $channel->code;
+
         $channelCurrencies[$channel->code] = $channel->currencies->map(function ($currency) {
             return [
                 'code'   => $currency->code,
@@ -36,6 +40,10 @@
         $locales = $channel->locales->pluck('code')->toArray();
         $channelLocales[$channel->code] = $locales;
         $allLocales = array_merge($allLocales, $locales);
+
+        foreach ($channel->locales as $locale) {
+            $localeNames[$locale->code] = $locale->name ?: $locale->code;
+        }
     }
 
     $allCurrencies = [];
@@ -47,7 +55,7 @@
     }
 
     $allCurrencies = array_values($allCurrencies);
-    $channels = $channels->pluck('code')->toArray();
+    $channels = $channelCollection->pluck('code')->toArray();
     $allLocales = array_unique($allLocales);
 
     $headers = [];
@@ -65,7 +73,7 @@
                 foreach ($currencies as $currency) {
                     foreach ($locales as $locale) {
                         $headers[] = [
-                            'label' => "{$label} - {$channelCode} - {$currency['code']} - {$locale}",
+                            'label' => "{$label} - " . ($channelNames[$channelCode] ?? $channelCode) . " - {$currency['code']} - " . ($localeNames[$locale] ?? $locale),
                         ];
                         $finalColumns[] = [
                             'id'       => $index,
@@ -84,7 +92,7 @@
             foreach ($channels as $channelCode) {
                 foreach ($channelCurrencies[$channelCode] as $currency) {
                     $headers[] = [
-                        'label' => "{$label} - {$channelCode} - {$currency['code']}",
+                        'label' => "{$label} - " . ($channelNames[$channelCode] ?? $channelCode) . " - {$currency['code']}",
                     ];
                     $finalColumns[] = [
                         'id'       => $index,
@@ -101,7 +109,7 @@
             foreach ($allCurrencies as $currency) {
                 foreach ($allLocales as $locale) {
                     $headers[] = [
-                        'label' => "{$label} - {$currency['code']} - {$locale}",
+                        'label' => "{$label} - {$currency['code']} - " . ($localeNames[$locale] ?? $locale),
                     ];
                     $finalColumns[] = [
                         'id'       => $index,
@@ -132,7 +140,7 @@
             foreach ($channels as $channelCode) {
                 foreach ($channelLocales[$channelCode] as $locale) {
                     $headers[] = [
-                        'label' => "{$label} - {$channelCode} - {$locale}",
+                        'label' => "{$label} - " . ($channelNames[$channelCode] ?? $channelCode) . " - " . ($localeNames[$locale] ?? $locale),
                     ];
                     $finalColumns[] = [
                         'id'       => $index,
@@ -148,7 +156,7 @@
         } elseif ($col['value_per_channel']) {
             foreach ($channels as $channelCode) {
                 $headers[] = [
-                    'label' => "{$label} - {$channelCode}",
+                    'label' => "{$label} - " . ($channelNames[$channelCode] ?? $channelCode),
                 ];
                 $finalColumns[] = [
                     'id'       => $index,
@@ -162,7 +170,7 @@
         } elseif ($col['value_per_locale']) {
             foreach ($allLocales as $locale) {
                 $headers[] = [
-                    'label' => "{$label} - {$locale}",
+                    'label' => "{$label} - " . ($localeNames[$locale] ?? $locale),
                 ];
                 $finalColumns[] = [
                     'id'       => $index,
@@ -204,18 +212,36 @@
 
 @pushOnce('scripts')
     <script type="text/x-template" id="v-spreadsheet-editor-template">
-        <div class="flex  justify-end gap-x-2.5">
-            <a
-                href="{{ route('admin.catalog.products.index') }}"
-                class="transparent-button"
-            >
-                @lang('admin::app.account.edit.back-btn')
-            </a>
-            <button class="primary-button" @click="handleSave">@lang('admin::app.catalog.products.edit.types.configurable.edit.save-btn')</button>
+        <div class="flex gap-4 justify-between items-center mb-4 max-sm:flex-wrap">
+            <div class="grid gap-1.5">
+                <p class="text-xl text-gray-800 dark:text-slate-50 font-bold leading-6">
+                    @lang('admin::app.catalog.products.bulk-edit.action')
+                </p>
+
+                <p class="text-gray-600 dark:text-gray-300 text-sm">
+                    @lang('admin::app.catalog.products.bulk-edit.description')
+                </p>
+            </div>
+
+            <div class="flex gap-x-2.5 items-center">
+                <a
+                    href="{{ route('admin.catalog.products.index') }}"
+                    class="transparent-button"
+                >
+                    @lang('admin::app.account.edit.back-btn')
+                </a>
+
+                <button
+                    class="primary-button"
+                    @click="handleSave"
+                >
+                    @lang('admin::app.catalog.products.edit.types.configurable.edit.save-btn')
+                </button>
+            </div>
         </div>
 
-        <div class="h-[calc(100vh-150px)] mt-2 overflow-y-auto space-y-4 rounded-lg shadow-lg">
-            <table class="table-fixed border-4 border-violet-50 border-collapse w-full dark:border-cherry-700">
+        <div class="h-[calc(100vh-170px)] mb-16 overflow-auto rounded-md shadow-sm border border-gray-200 dark:border-cherry-700 bg-white dark:bg-cherry-900" style="--active-cell-color: #7c3aed;">
+            <table class="table-fixed border border-gray-200 border-collapse w-full dark:border-cherry-700">
                 <v-spreadsheet-header 
                     :columns="columns" 
                     :headers="headers"
@@ -230,6 +256,32 @@
                     :fltColumns="fltColumns"
                 />
             </table>
+        </div>
+
+        <!-- Image Preview Overlay -->
+        <div
+            v-if="previewImage"
+            class="fixed inset-0 z-[999] flex items-center justify-center bg-gray-900/60"
+            v-on:click.self="previewImage = null"
+        >
+            <div class="bg-white dark:bg-cherry-900 rounded-lg shadow-2xl max-w-2xl w-full mx-4 overflow-hidden">
+                <div class="flex items-center justify-between p-4 border-b dark:border-cherry-700">
+                    <p class="text-lg text-gray-800 dark:text-white font-bold">
+                        @lang('admin::app.catalog.products.bulk-edit.img-preview')
+                    </p>
+                    <span
+                        class="icon-cancel text-2xl cursor-pointer text-gray-600 dark:text-gray-300 hover:text-gray-800"
+                        v-on:click="previewImage = null"
+                    ></span>
+                </div>
+                <div class="p-6 flex items-center justify-center bg-gray-50 dark:bg-cherry-800 min-h-[300px]">
+                    <img
+                        :src="previewImage"
+                        class="max-w-full max-h-[500px] object-contain rounded"
+                        v-on:error="previewImage = null"
+                    />
+                </div>
+            </div>
         </div>
     </script>
 
@@ -281,6 +333,7 @@
                     currentPage: 1,
                     isLoading: false,
                     updatedEntityData: {},
+                    previewImage: null,
                 };
             },
 
@@ -292,6 +345,10 @@
                 registerGlobalEvents() {
                     this.$emitter.on('update-spreadsheet-data', (data) => {
                         this.updateEntityData(data);
+                    });
+
+                    this.$emitter.on('preview-image', (url) => {
+                        this.previewImage = url;
                     });
                 },
 

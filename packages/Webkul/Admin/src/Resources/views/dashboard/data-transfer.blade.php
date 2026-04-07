@@ -29,9 +29,10 @@
 
                 <!-- Recent Jobs List -->
                 <div v-if="recentJobs.length > 0" class="divide-y divide-zinc-100 dark:divide-cherry-800">
-                    <div
+                    <a
                         v-for="job in recentJobs"
                         :key="job.id"
+                        :href="'{{ route('admin.settings.data_transfer.tracker.view', ':id') }}'.replace(':id', job.id)"
                         class="flex items-center gap-3 p-4 hover:bg-zinc-50 dark:hover:bg-cherry-800/50 transition-colors"
                     >
                         <!-- Type Icon -->
@@ -48,8 +49,8 @@
                         <!-- Job Details -->
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-2">
-                                <span class="text-sm font-semibold text-zinc-800 dark:text-slate-200 capitalize">
-                                    @{{ job.type }}
+                                <span class="text-sm font-semibold text-zinc-800 dark:text-slate-200">
+                                    @{{ job.job_code || job.type }}
                                 </span>
 
                                 <span
@@ -61,6 +62,10 @@
                             </div>
 
                             <div class="flex items-center gap-3 mt-1">
+                                <span class="text-xs text-zinc-500 dark:text-slate-400 capitalize">
+                                    @{{ job.entity_type }} &middot; @{{ job.type }}
+                                </span>
+
                                 <span class="text-xs text-zinc-500 dark:text-slate-400">
                                     @lang('admin::app.dashboard.index.rows-processed'):
                                     <span class="font-medium text-zinc-700 dark:text-slate-300">@{{ job.processed_rows_count || 0 }}</span>
@@ -83,7 +88,7 @@
                                 @{{ job.user_name }}
                             </p>
                         </div>
-                    </div>
+                    </a>
                 </div>
 
                 <!-- Empty State -->

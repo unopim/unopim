@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
+use function Laravel\Prompts\password;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
@@ -469,19 +470,18 @@ class DefaultUser extends Command
      */
     protected function getUserPassword(bool $isAdmin): string
     {
-        $userPassword = $this->option('password') ?: text(
+        $userPassword = $this->option('password') ?: password(
             label: 'Input a Secure Password for User',
-            default: $isAdmin ? 'admin@123' : 'user@123',
-            required: true
+            required: true,
+            hint: 'Minimum 6 characters',
         );
 
         while (strlen($userPassword) < 6) {
             $this->generateWarnings('Password must be at least 6 characters.');
 
-            $userPassword = text(
+            $userPassword = password(
                 label: 'Input a Secure Password for User',
-                default: $isAdmin ? 'admin@123' : 'user@123',
-                required: true
+                required: true,
             );
         }
 

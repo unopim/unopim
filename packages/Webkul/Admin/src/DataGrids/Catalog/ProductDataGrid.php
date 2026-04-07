@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Webkul\Admin\Traits\AttributeColumnTrait;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
+use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Services\AttributeService;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\DataGrid\Contracts\ExportableInterface;
@@ -291,6 +292,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
             $this->addColumn($propertyColumns[$column]);
         }
+
+        $this->addFilterableAttributes();
     }
 
     public function prepareAttributeColumns($column)
@@ -304,6 +307,32 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $this->attributeColumns[$column] = ['is_filterable' => $attribute->is_filterable];
 
         $this->addColumn($this->buildColumnDefinition($attribute));
+    }
+
+    /**
+     * Add filterable attributes that are not already in the visible columns
+     * so they appear in the filter panel without being shown in the grid.
+     */
+    protected function addFilterableAttributes(): void
+    {
+        $existingCodes = array_merge(
+            $this->defaultColumns,
+            array_keys($this->attributeColumns)
+        );
+
+        $filterableAttributes = app(AttributeRepository::class)
+            ->where('is_filterable', true)
+            ->whereNotIn('code', $existingCodes)
+            ->get();
+
+        foreach ($filterableAttributes as $attribute) {
+            $this->attributeColumns[$attribute->code] = ['is_filterable' => true];
+
+            $columnDefinition = $this->buildColumnDefinition($attribute);
+            $columnDefinition['visible'] = false;
+
+            $this->addColumn($columnDefinition);
+        }
     }
 
     /**

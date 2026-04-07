@@ -103,7 +103,7 @@
                             :value="old('ui_locale_id') ?: $user->ui_locale_id"
                             :label="trans('admin::app.account.edit.ui-locale')"
                             :placeholder="trans('admin::app.account.edit.ui-locale')"
-                            :options="core()->getAllActiveLocales()"
+                            :options="core()->getTranslatableLocales()"
                             track-by="id"
                             label-by="name"
                         >

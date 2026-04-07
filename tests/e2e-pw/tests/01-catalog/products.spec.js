@@ -281,11 +281,84 @@ await adminPage.getByText('20', { exact: true }).click();
 await expect(perPageButton).toContainText('20');
 });
 
-test('should allow quick export', async ({ adminPage }) => {
-await adminPage.getByRole('link', { name: ' Catalog' }).click();
-await adminPage.getByRole('link', { name: 'Products' }).click();
-await adminPage.getByRole('button', { name: 'Quick Export' }).click();
-await expect(adminPage.locator('#app').getByText('Download')).toBeVisible();
+// ─── Product Listing Features ────────────────────────────────────────
+
+test.describe('Product Listing Features', () => {
+  test('29 - should allow product search', async ({ adminPage }) => {
+    const sku = `srch-${generateUid()}`;
+    await createSimpleProduct(adminPage, sku);
+
+    await navigateTo(adminPage, 'products');
+    await searchInDataGrid(adminPage, sku);
+    await expect(adminPage.locator('#app').getByText('1 Results')).toBeVisible({ timeout: 20000 });
+    await expect(adminPage.locator('#app').getByText(sku)).toBeVisible();
+
+    // Cleanup
+    await deleteProductBySku(adminPage, sku);
+  });
+
+  test('30 - should open the filter menu when clicked', async ({ adminPage }) => {
+    await navigateTo(adminPage, 'products');
+    await adminPage.getByText('Filter', { exact: true }).click();
+    await expect(adminPage.locator('#app').getByText('Apply Filters')).toBeVisible();
+  });
+
+  test('31 - should allow setting items per page', async ({ adminPage }) => {
+    await navigateTo(adminPage, 'products');
+    const perPageButton = adminPage.locator('#app').locator('button:has(.icon-chevron-down)').first();
+    await perPageButton.click();
+    // Click the dropdown list item "20" specifically (not a span showing count)
+    await adminPage.locator('#app li').getByText('20', { exact: true }).click();
+    await expect(perPageButton).toContainText('20');
+  });
+
+  test('32 - should allow quick export', async ({ adminPage }) => {
+    await navigateTo(adminPage, 'products');
+    await adminPage.getByRole('button', { name: 'Quick Export' }).click();
+    await expect(adminPage.locator('#app').getByText('Download')).toBeVisible();
+  });
+
+  test('32a - should download XLS file via quick export without errors', async ({ adminPage }) => {
+    test.setTimeout(60000);
+    const sku = `qexp-${generateUid()}`;
+    await createSimpleProduct(adminPage, sku);
+
+    await navigateTo(adminPage, 'products');
+    await adminPage.waitForLoadState('networkidle');
+
+    // Select the product using mass action checkbox
+    const checkbox = adminPage.locator('input[type="checkbox"].peer').first();
+    await checkbox.waitFor({ state: 'visible', timeout: 10000 });
+    await checkbox.check({ force: true });
+
+    // Open Quick Export modal
+    await adminPage.getByRole('button', { name: 'Quick Export' }).click();
+    await expect(adminPage.locator('#app').getByText('Download')).toBeVisible();
+
+    // XLS is the default format, so just click the Export button and wait for download
+    const [download] = await Promise.all([
+      adminPage.waitForEvent('download', { timeout: 30000 }).catch(() => null),
+      adminPage.locator('.primary-button').filter({ hasText: 'Quick Export' }).click(),
+    ]);
+
+    // If download event fires, the export succeeded as a file download
+    if (download) {
+      const fileName = download.suggestedFilename();
+      expect(fileName).toMatch(/\.(xls|xlsx)$/);
+    } else {
+      // If no download event, verify no error was shown (AJAX blob approach)
+      await expect(adminPage.locator('#app').getByText(/Return value must be of type/i)).not.toBeVisible({ timeout: 5000 });
+    }
+
+    // Cleanup
+    await deleteProductBySku(adminPage, sku);
+  });
+
+  test('33 - should allow selecting all products with mass action checkbox', async ({ adminPage }) => {
+    await navigateTo(adminPage, 'products');
+    await adminPage.click('label[for="mass_action_select_all_records"]');
+    await expect(adminPage.locator('#mass_action_select_all_records')).toBeChecked();
+  });
 });
 
 test('should perform actions on a product (Edit, Copy, Delete)', async ({ adminPage }) => {

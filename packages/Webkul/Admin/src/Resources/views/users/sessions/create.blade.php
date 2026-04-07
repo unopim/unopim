@@ -41,6 +41,7 @@
                                 id="email"
                                 name="email"
                                 rules="required|email"
+                                :value="old('email')"
                                 :label="trans('admin::app.users.sessions.email')"
                                 :placeholder="trans('admin::app.users.sessions.email')"
                             />

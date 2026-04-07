@@ -290,24 +290,33 @@ class Dashboard
     public function getDataTransferStatus()
     {
         $recentJobs = DB::table('job_track')
+            ->leftJoin('job_instances', 'job_instances.id', '=', 'job_track.job_instances_id')
             ->leftJoin('admins', 'admins.id', '=', 'job_track.user_id')
             ->select(
                 'job_track.id',
                 'job_track.state',
-                'job_track.type',
+                'job_instances.code as job_code',
+                'job_instances.type',
+                'job_instances.entity_type',
                 'job_track.processed_rows_count',
                 'job_track.invalid_rows_count',
                 'job_track.errors_count',
+                'job_track.summary',
                 'job_track.started_at',
                 'job_track.completed_at',
                 'job_track.created_at',
                 'admins.name as user_name',
             )
             ->orderByDesc('job_track.created_at')
-            ->limit(5)
+            ->limit(10)
             ->get()
             ->map(function ($job) {
+                $summary = ! empty($job->summary) ? json_decode($job->summary, true) : [];
+
+                $job->processed_rows_count = $summary['processed'] ?? $job->processed_rows_count;
                 $job->time_ago = $this->calculateTimeAgo($job->created_at);
+
+                unset($job->summary);
 
                 return $job;
             });

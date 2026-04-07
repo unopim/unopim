@@ -77,5 +77,67 @@ class MagicAiPromptSeeder extends Seeder
         ];
 
         DB::table('magic_ai_prompts')->insert($prompts);
+
+        $imagePrompts = [
+            [
+                'prompt'     => 'Generate a professional product photo of @name on a clean white background with soft studio lighting, showing the product from the front angle.',
+                'title'      => 'White Background Product Photo',
+                'type'       => 'product',
+                'purpose'    => 'image_generation',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ], [
+                'prompt'     => 'Create a lifestyle product image of @name in a real-world setting, showing how a customer would use it in everyday life.',
+                'title'      => 'Lifestyle Product Image',
+                'type'       => 'product',
+                'purpose'    => 'image_generation',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ], [
+                'prompt'     => 'Generate a close-up detail shot of @name highlighting its texture, material quality, and craftsmanship.',
+                'title'      => 'Close-Up Detail Shot',
+                'type'       => 'product',
+                'purpose'    => 'image_generation',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ], [
+                'prompt'     => 'Create a product image of @name with dimensions and size reference, showing scale comparison for customer clarity.',
+                'title'      => 'Product with Size Reference',
+                'type'       => 'product',
+                'purpose'    => 'image_generation',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ], [
+                'prompt'     => 'Generate a flat lay composition featuring @name arranged neatly with complementary accessories on a minimal background.',
+                'title'      => 'Flat Lay Composition',
+                'type'       => 'product',
+                'purpose'    => 'image_generation',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ], [
+                'prompt'     => 'Create a 360-degree style multi-angle product image of @name showing the front, side, and back views in a single composition.',
+                'title'      => 'Multi-Angle Product View',
+                'type'       => 'product',
+                'purpose'    => 'image_generation',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ], [
+                'prompt'     => 'Generate a hero banner image of @name with a gradient background and bold visual composition, suitable for e-commerce homepage or category page.',
+                'title'      => 'Hero Banner Image',
+                'type'       => 'product',
+                'purpose'    => 'image_generation',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ], [
+                'prompt'     => 'Create a product packaging mockup image of @name showing the product inside its retail packaging with branding visible.',
+                'title'      => 'Packaging Mockup',
+                'type'       => 'product',
+                'purpose'    => 'image_generation',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ];
+
+        DB::table('magic_ai_prompts')->insert($imagePrompts);
     }
 }

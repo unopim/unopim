@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => 'Taianomainen tekoäly',
         'general'               => 'Yleinen',
         'prompt'                => 'Kehote',
         'system-prompt'         => 'Järjestelmäkehote',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => 'Taianomainen tekoäly',
         'platform'       => 'Alustat',
         'settings'       => 'Asetukset',
         'prompt'         => 'Kehotteet',

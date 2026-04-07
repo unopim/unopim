@@ -40,7 +40,9 @@ return [
         'description-text' => 'Liste over alle varslinger',
         'marked-success'   => 'Varsling merket som lest',
         'no-record'        => 'Ingen registreringer funnet',
+        'of'               => 'av',
         'read-all'         => 'Merk som lest',
+        'showing'          => 'Viser',
         'title'            => 'Varslinger',
         'view-all'         => 'Vis alle',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => 'Fullført',
             'pending'    => 'Ventende',
             'processing' => 'Behandling pågår',
+            'read'       => 'Lest',
+            'unread'     => 'Ulest',
         ],
     ],
     'account' => [
@@ -1960,10 +1964,12 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => 'Velg',
-                'title'    => 'Bruk filter',
-                'save'     => 'Lagre',
-                'dropdown' => [
+                'select'        => 'Velg',
+                'title'         => 'Bruk filter',
+                'save'          => 'Lagre',
+                'add-filter'    => 'Legg til filter',
+                'remove-filter' => 'Fjern filter',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Skriv minst 2 tegn...',
                         'no-results'        => 'Ingen resultater funnet...',

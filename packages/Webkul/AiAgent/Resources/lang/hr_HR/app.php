@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => 'Čarobna AI',
         'general'               => 'Općenito',
         'prompt'                => 'Upit',
         'system-prompt'         => 'Sistemski upit',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => 'Čarobna AI',
         'platform'       => 'Platforme',
         'settings'       => 'Postavke',
         'prompt'         => 'Upiti',

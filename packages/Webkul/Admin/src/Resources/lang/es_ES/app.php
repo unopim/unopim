@@ -40,7 +40,9 @@ return [
         'description-text' => 'Enumere todas las notificaciones',
         'marked-success'   => 'Notificación marcada con éxito',
         'no-record'        => 'ningún record fue encontrado',
+        'of'               => 'de',
         'read-all'         => 'Marcar como leído',
+        'showing'          => 'Mostrando',
         'title'            => 'Notificaciones',
         'view-all'         => 'Ver todo',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => 'Completado',
             'pending'    => 'Pendiente',
             'processing' => 'Procesando',
+            'read'       => 'Leídas',
+            'unread'     => 'No leídas',
         ],
     ],
     'account' => [
@@ -1960,10 +1964,12 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => 'Seleccionar',
-                'title'    => 'Aplicar filtros',
-                'save'     => 'Ahorrar',
-                'dropdown' => [
+                'select'        => 'Seleccionar',
+                'title'         => 'Aplicar filtros',
+                'save'          => 'Ahorrar',
+                'add-filter'    => 'Agregar filtro',
+                'remove-filter' => 'Eliminar filtro',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Escriba al menos 2 caracteres ...',
                         'no-results'        => 'No se han encontrado resultados...',
