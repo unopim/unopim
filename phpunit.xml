@@ -4,6 +4,7 @@
     xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
     bootstrap="vendor/autoload.php"
     colors="true"
+    cacheDirectory=".phpunit.cache"
     executionOrder="depends,defects"
     failOnRisky="true"
     failOnWarning="true"
@@ -44,6 +45,18 @@
 
         <testsuite name="Completeness Feature Test">
             <directory suffix="Test.php">packages/Webkul/Completeness/tests/Feature</directory>
+        </testsuite>
+
+        <testsuite name="Product Unit Test">
+            <directory suffix="Test.php">packages/Webkul/Product/tests/Unit</directory>
+        </testsuite>
+
+        <testsuite name="Attribute Unit Test">
+            <directory suffix="Test.php">packages/Webkul/Attribute/tests/Unit</directory>
+        </testsuite>
+
+        <testsuite name="Category Unit Test">
+            <directory suffix="Test.php">packages/Webkul/Category/tests/Unit</directory>
         </testsuite>
 
     </testsuites>

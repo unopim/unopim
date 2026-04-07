@@ -4,110 +4,100 @@ return [
     'seeders' => [
         'attribute' => [
             'attribute-families' => [
-                'default' => 'Default',
+                'default' => 'Per defecte',
             ],
-
             'attribute-groups' => [
                 'description'      => 'Descripció',
                 'general'          => 'General',
                 'meta-description' => 'Meta descripció',
                 'price'            => 'Preu',
-                'media'            => 'Mitjans',
+                'media'            => 'Multimèdia',
             ],
-
             'attributes' => [
-                'brand'                => 'Brand',
+                'brand'                => 'Marca',
                 'color'                => 'Color',
                 'cost'                 => 'Cost',
-                'description'          => 'Description',
-                'featured'             => 'Featured',
-                'guest-checkout'       => 'Guest Checkout',
-                'height'               => 'Height',
+                'description'          => 'Descripció',
+                'featured'             => 'Destacat',
+                'guest-checkout'       => 'Compra com a convidat',
+                'height'               => 'Alçada',
                 'image'                => 'Imatge',
-                'length'               => 'Length',
-                'manage-stock'         => 'Manage Stock',
-                'meta-description'     => 'Meta Description',
-                'meta-keywords'        => 'Meta Keywords',
-                'meta-title'           => 'Meta Title',
-                'name'                 => 'Name',
-                'new'                  => 'New',
-                'price'                => 'Price',
-                'product-number'       => 'Product Number',
-                'short-description'    => 'Short Description',
-                'size'                 => 'Size',
+                'length'               => 'Longitud',
+                'manage-stock'         => 'Gestionar estoc',
+                'meta-description'     => 'Descripció Meta',
+                'meta-keywords'        => 'Paraules clau Meta',
+                'meta-title'           => 'Títol Meta',
+                'name'                 => 'Nom',
+                'new'                  => 'Nou',
+                'price'                => 'Preu',
+                'product-number'       => 'Número de producte',
+                'short-description'    => 'Descripció breu',
+                'size'                 => 'Mida',
                 'sku'                  => 'SKU',
-                'special-price-from'   => 'Special Price From',
-                'special-price-to'     => 'Special Price To',
-                'special-price'        => 'Special Price',
-                'tax-category'         => 'Tax Category',
-                'url-key'              => 'URL Key',
-                'visible-individually' => 'Visible Individually',
-                'weight'               => 'Weight',
-                'width'                => 'Width',
+                'special-price-from'   => 'Preu especial des de',
+                'special-price-to'     => 'Preu especial fins a',
+                'special-price'        => 'Preu especial',
+                'tax-category'         => 'Categoria fiscal',
+                'url-key'              => 'Clau URL',
+                'visible-individually' => 'Visible individualment',
+                'weight'               => 'Pes',
+                'width'                => 'Amplada',
             ],
-
             'attribute-options' => [
-                'black'  => 'Black',
-                'green'  => 'Green',
+                'black'  => 'Negre',
+                'green'  => 'Verd',
                 'l'      => 'L',
                 'm'      => 'M',
-                'red'    => 'Red',
+                'red'    => 'Vermell',
                 's'      => 'S',
-                'white'  => 'White',
+                'white'  => 'Blanc',
                 'xl'     => 'XL',
-                'yellow' => 'Yellow',
+                'yellow' => 'Groc',
             ],
         ],
-
         'category' => [
             'categories' => [
-                'description' => 'Root Category Description',
-                'name'        => 'Root',
+                'description' => 'Descripció de la categoria arrel',
+                'name'        => 'Arrel',
             ],
-
             'category_fields' => [
-                'name'        => 'Name',
-                'description' => 'Description',
+                'name'        => 'Nom',
+                'description' => 'Descripció',
             ],
         ],
-
         'core' => [
             'channels' => [
-                'meta-title'       => 'Demo store',
-                'meta-keywords'    => 'Demo store meta keyword',
-                'meta-description' => 'Demo store meta description',
-                'name'             => 'Default',
+                'meta-title'       => 'Botiga de demostració',
+                'meta-keywords'    => 'Paraula clau meta de la botiga de demostració',
+                'meta-description' => 'Descripció meta de la botiga de demostració',
+                'name'             => 'Per defecte',
             ],
-
             'currencies' => [
                 'AED' => 'Dirham',
-                'AFN' => 'Israeli Shekel',
-                'CNY' => 'Chinese Yuan',
+                'AFN' => 'Shekel israelià',
+                'CNY' => 'Yuan xinès',
                 'EUR' => 'EURO',
-                'GBP' => 'Pound Sterling',
-                'INR' => 'Indian Rupee',
-                'IRR' => 'Iranian Rial',
-                'JPY' => 'Japanese Yen',
-                'RUB' => 'Russian Ruble',
-                'SAR' => 'Saudi Riyal',
-                'TRY' => 'Turkish Lira',
-                'UAH' => 'Ukrainian Hryvnia',
-                'USD' => 'US Dollar',
+                'GBP' => 'Lliura esterlina',
+                'INR' => 'Rupia índia',
+                'IRR' => 'Rial iranià',
+                'JPY' => 'Ien japonès',
+                'RUB' => 'Ruble rus',
+                'SAR' => 'Rial saudita',
+                'TRY' => 'Lira turca',
+                'UAH' => 'Hryvnia ucraïnesa',
+                'USD' => 'Dòlar nord-americà',
             ],
         ],
-
         'user' => [
             'roles' => [
-                'description' => 'This role users will have all the access',
-                'name'        => 'Administrator',
+                'description' => 'Els usuaris d\'aquest rol tindran tots els accessos',
+                'name'        => 'Administrador',
             ],
-
             'users' => [
-                'name' => 'Example',
+                'name' => 'Exemple',
             ],
         ],
     ],
-
     'installer' => [
         'index' => [
             'create-administrator' => [
@@ -119,7 +109,6 @@ return [
                 'password'         => 'Contrasenya',
                 'title'            => 'Crea administrador',
             ],
-
             'environment-configuration' => [
                 'allowed-currencies'  => 'Monedes permeses',
                 'allowed-locales'     => 'Idiomes permesos',
@@ -157,13 +146,11 @@ return [
                 'usd'                 => 'Dòlar estatunidenc (USD)',
                 'warning-message'     => 'Atenció! Els ajustos per als idiomes predeterminats i la moneda són permanents i no es poden canviar mai més.',
             ],
-
             'installation-processing' => [
                 'unopim'      => 'Instal·lació d’UnoPim',
                 'unopim-info' => 'Creant les taules de la base de dades, aquest procés pot trigar uns instants',
                 'title'       => 'Instal·lació',
             ],
-
             'installation-completed' => [
                 'admin-panel'               => 'Panell d’administració',
                 'unopim-forums'             => 'Fòrum UnoPim',
@@ -171,7 +158,6 @@ return [
                 'title-info'                => 'UnoPim s’ha instal·lat correctament al sistema.',
                 'title'                     => 'Instal·lació completada',
             ],
-
             'ready-for-installation' => [
                 'create-databsae-table'   => 'Crea la taula de la base de dades',
                 'install-info-button'     => 'Fes clic al botó següent per',
@@ -181,7 +167,6 @@ return [
                 'start-installation'      => 'Comença la instal·lació',
                 'title'                   => 'Llest per a la instal·lació',
             ],
-
             'start' => [
                 'locale'        => 'Idioma',
                 'main'          => 'Començar',
@@ -189,7 +174,6 @@ return [
                 'title'         => 'La teva instal·lació d’UnoPim',
                 'welcome-title' => 'Benvingut a UnoPim :version',
             ],
-
             'server-requirements' => [
                 'calendar'    => 'Calendari',
                 'ctype'       => 'cType',
@@ -212,7 +196,6 @@ return [
                 'tokenizer'   => 'Tokenitzador',
                 'xml'         => 'XML',
             ],
-
             'back'                     => 'Enrere',
             'unopim-info'              => 'Un projecte comunitari de',
             'unopim-logo'              => 'Logotip UnoPim',

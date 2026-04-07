@@ -12,7 +12,7 @@ return [
     'type'                         => 'El :attribute debe ser de un tipo válido.',
     'validation-type'              => 'El :attribute debe ser de un tipo válido.',
     'field-option-not-found'       => 'El :attribute contiene opciones no válidas :invalid_codes.',
-    'boolean-string'               => 'Este valor debe ser una cadena booleana representada como "verdadero" o "falso"',
+    'boolean-string'               => ':attribute Este valor debe ser una cadena booleana representada como "verdadero" o "falso"',
     'not-supported'                => 'El :attribute no admite los siguientes valores (:unsupported).',
     'seperator-not-supported'      => 'Solo se admiten , o ; o | como separador.',
     'file-type'                    => 'El archivo debe ser de tipo csv,xls,xlsx',

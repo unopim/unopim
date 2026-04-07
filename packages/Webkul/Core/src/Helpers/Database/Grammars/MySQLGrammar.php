@@ -45,7 +45,11 @@ class MySQLGrammar implements Grammar
     {
         $jsonPath = '$.'.implode('.', $pathSegments);
 
-        return "JSON_UNQUOTE(JSON_EXTRACT({$column}, '{$jsonPath}'))";
+        // Escape column name — handles both 'values' and 'table.values'
+        $parts = explode('.', $column);
+        $escaped = implode('.', array_map(fn ($p) => "`{$p}`", $parts));
+
+        return "JSON_UNQUOTE(JSON_EXTRACT({$escaped}, '{$jsonPath}'))";
     }
 
     public function orderByField(string $column, array $ids, string $type = ''): string

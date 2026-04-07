@@ -1112,3 +1112,33 @@ it('should store the associations value when updating configurable product', fun
         $this->assertEquals($value, $product->values['associations'][$type] ?? '');
     }
 });
+
+it('should allow empty value for optional attribute with numeric validation', function () {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create([
+        'is_required' => 0,
+        'validation'  => 'number',
+        'type'        => 'text',
+    ]);
+
+    $product = Product::factory()->simple()->create();
+    $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
+
+    $attributeCode = $attribute->code;
+
+    $data = [
+        'sku'    => $product->sku,
+        'values' => [
+            'common' => [
+                $attributeCode => '', // Empty value
+            ],
+        ],
+    ];
+
+    $this->put(route('admin.catalog.products.update', $product->id), $data)
+        ->assertSessionHas('success', trans('admin::app.catalog.products.update-success'));
+
+    $product->refresh();
+    $this->assertEquals('', $product->values['common'][$attributeCode] ?? '');
+});

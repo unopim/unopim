@@ -3,8 +3,10 @@
 return [
     'seeders' => [
         'attribute' => [
-            'attribute-families' => 'Aileler',
-            'attribute-groups'   => [
+            'attribute-families' => [
+                'default' => 'Varsayılan',
+            ],
+            'attribute-groups' => [
                 'description'      => 'Tanım',
                 'general'          => 'Genel',
                 'meta-description' => 'Meta Açıklama',
@@ -96,7 +98,6 @@ return [
             ],
         ],
     ],
-
     'installer' => [
         'index' => [
             'create-administrator' => [
@@ -108,7 +109,6 @@ return [
                 'password'         => 'Şifre',
                 'title'            => 'Yönetici Oluştur',
             ],
-
             'environment-configuration' => [
                 'allowed-currencies'  => 'İzin Verilen Para Birimleri',
                 'allowed-locales'     => 'İzin Verilen Dil Ayarları',
@@ -146,13 +146,11 @@ return [
                 'usd'                 => 'Amerikan Doları (USD)',
                 'warning-message'     => 'Uyarı! Varsayılan dil ve para birimi daha sonra değiştirilemez.',
             ],
-
             'installation-processing' => [
                 'unopim'      => 'UnoPim Kurulumu',
                 'unopim-info' => 'Veritabanı tabloları oluşturuluyor, bu işlem birkaç dakika sürebilir.',
                 'title'       => 'Kurulum İşlemi',
             ],
-
             'installation-completed' => [
                 'admin-panel'               => 'Yönetici Paneli',
                 'unopim-forums'             => 'UnoPim Forumları',
@@ -160,7 +158,6 @@ return [
                 'title-info'                => 'UnoPim başarıyla yüklendi.',
                 'title'                     => 'Kurulum Tamamlandı',
             ],
-
             'ready-for-installation' => [
                 'create-databsae-table'   => 'Veritabanı Tablolarını Oluştur',
                 'install-info-button'     => 'Aşağıdaki düğmeye tıklayın',
@@ -170,7 +167,6 @@ return [
                 'start-installation'      => 'Kurulumu Başlat',
                 'title'                   => 'Kurulum İçin Hazır',
             ],
-
             'start' => [
                 'locale'        => 'Dil',
                 'main'          => 'Ana Sayfa',
@@ -178,7 +174,6 @@ return [
                 'title'         => 'UnoPim Kurulumu',
                 'welcome-title' => 'UnoPim :version kurulumuna hoş geldiniz',
             ],
-
             'server-requirements' => [
                 'calendar'    => 'Takvim',
                 'ctype'       => 'cType',
@@ -201,10 +196,9 @@ return [
                 'tokenizer'   => 'Tokenizer',
                 'xml'         => 'XML',
             ],
-
             'back'                     => 'Geri',
             'unopim-info'              => 'Topluluk Projesi',
-            'unopim-logo'              => 'UnoPim Logo',
+            'unopim-logo'              => 'UnoPim Logosu',
             'unopim'                   => 'UnoPim',
             'continue'                 => 'Devam Et',
             'installation-description' => 'UnoPim kurulum süreci birkaç adımdan oluşur. Aşağıda özetlenmiştir:',

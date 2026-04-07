@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Webkul\Admin\Http\Controllers\DashboardController;
 use Webkul\Admin\Http\Controllers\DataGridController;
 use Webkul\Admin\Http\Controllers\MagicAI\MagicAIController;
+use Webkul\Admin\Http\Controllers\MagicAI\MagicAIPlatformController;
 use Webkul\Admin\Http\Controllers\MagicAI\MagicAISystemPromptController;
 use Webkul\Admin\Http\Controllers\ManageColumnController;
 use Webkul\Admin\Http\Controllers\TinyMCEController;
@@ -79,6 +80,22 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
         Route::post('translate/all/attribute', 'translateAllAttribute')->name('admin.magic_ai.translate.all.attribute');
 
         Route::post('save/translated-attributes', 'saveAllTranslatedAttributes')->name('admin.magic_ai.store.translated.all_attribute');
+
+        Route::get('platforms', 'platforms')->name('admin.magic_ai.platforms');
+    });
+
+    /**
+     * Platform Routes
+     */
+    Route::controller(MagicAIPlatformController::class)->prefix('magic-ai/platform')->group(function () {
+        Route::get('', 'index')->name('admin.magic_ai.platform.index');
+        Route::post('', 'store')->name('admin.magic_ai.platform.store');
+        Route::post('test-connection', 'testConnection')->name('admin.magic_ai.platform.test');
+        Route::post('fetch-models', 'fetchModels')->name('admin.magic_ai.platform.fetch_models');
+        Route::get('{id}', 'edit')->name('admin.magic_ai.platform.edit');
+        Route::put('{id}', 'update')->name('admin.magic_ai.platform.update');
+        Route::delete('{id}', 'destroy')->name('admin.magic_ai.platform.delete');
+        Route::post('{id}/default', 'setDefault')->name('admin.magic_ai.platform.set_default');
     });
 
     /**

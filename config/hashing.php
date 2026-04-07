@@ -15,7 +15,20 @@ return [
     |
     */
 
-    'driver' => 'bcrypt',
+    'driver' => env('HASH_DRIVER', 'bcrypt'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Rehash On Login
+    |--------------------------------------------------------------------------
+    |
+    | If enabled, the hashed password will automatically be rehashed when
+    | the hashing algorithm or options have been changed since the last
+    | time the user logged into the application.
+    |
+    */
+
+    'rehash_on_login' => true,
 
     /*
     |--------------------------------------------------------------------------

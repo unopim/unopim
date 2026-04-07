@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
 use Webkul\Core\ElasticSearch;
 use Webkul\Installer\Database\Seeders\DatabaseSeeder as UnoPimDatabaseSeeder;
+use Webkul\Installer\Database\Seeders\ProductTableSeeder;
 use Webkul\Installer\Events\ComposerEvents;
 
 use function Laravel\Prompts\multiselect;
@@ -24,7 +25,8 @@ class Installer extends Command
      */
     protected $signature = 'unopim:install
         { --skip-env-check : Skip env check. }
-        { --skip-admin-creation : Skip admin creation. }';
+        { --skip-admin-creation : Skip admin creation. }
+        { --with-demo-data : Seed sample products and demo data. }';
 
     /**
      * The console command description.
@@ -149,6 +151,10 @@ class Installer extends Command
         if (! $this->option('skip-admin-creation')) {
             $this->warn('Step: Create admin credentials...');
             $this->createAdminCredentials();
+        }
+
+        if ($this->option('with-demo-data')) {
+            $this->seedSampleProducts();
         }
 
         ComposerEvents::postCreateProject();
@@ -441,6 +447,14 @@ class Installer extends Command
                 ]
             );
 
+            if (select(
+                label: 'Do you want sample products?',
+                options: ['yes', 'no'],
+                default: 'no'
+            ) === 'yes') {
+                $this->seedSampleProducts();
+            }
+
             $filePath = storage_path('installed');
 
             File::put($filePath, 'UnoPim installation completed successfully');
@@ -456,6 +470,27 @@ class Installer extends Command
             Event::dispatch('unopim.installed');
         } catch (\Exception $e) {
             return $this->error($e->getMessage());
+        }
+    }
+
+    protected function seedSampleProducts(): void
+    {
+        try {
+            $this->warn('Step: Seeding sample products...');
+
+            app(ProductTableSeeder::class)->run([
+                'default_locale'     => core()->getDefaultLocaleCodeFromDefaultChannel(),
+                'allowed_locales'    => [core()->getDefaultLocaleCodeFromDefaultChannel()],
+            ]);
+
+            $this->info('Sample products seeded successfully.');
+
+            if (config('elasticsearch.enabled') == 'true') {
+                $this->warn('Step: Re-indexing products to Elasticsearch...');
+                $this->call('unopim:product:index');
+            }
+        } catch (\Exception $e) {
+            $this->error("Failed to seed sample products: {$e->getMessage()}");
         }
     }
 

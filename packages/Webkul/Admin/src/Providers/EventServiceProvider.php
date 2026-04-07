@@ -3,6 +3,7 @@
 namespace Webkul\Admin\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Webkul\Admin\Listeners\Admin;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -13,7 +14,7 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         'admin.password.update.after' => [
-            'Webkul\Admin\Listeners\Admin@afterPasswordUpdated',
+            [Admin::class, 'afterPasswordUpdated'],
         ],
     ];
 }

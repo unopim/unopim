@@ -36,7 +36,7 @@ class ProxyValueSyncEventListener
                 $model->auditEvent = self::AUDIT_EVENT;
                 $model->isCustomEvent = true;
 
-                Event::dispatch(AuditCustom::class, [$model]);
+                Event::dispatch(new AuditCustom($model));
             }
         }
     }

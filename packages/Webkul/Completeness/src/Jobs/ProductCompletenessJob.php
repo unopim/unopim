@@ -58,6 +58,15 @@ class ProductCompletenessJob implements ShouldQueue
             ->findWhereIn('id', $this->productIds)
             ->keyBy('id');
 
+        if (app()->environment('testing')) {
+            \Log::debug('CompletenessJob', [
+                'productIds'    => $this->productIds,
+                'productsFound' => $products->keys()->toArray(),
+                'channelCount'  => count($this->channels),
+                'channels'      => collect($this->channels)->map(fn ($c) => ['id' => $c['id'], 'code' => $c['code'], 'locales' => count($c['locales'])])->toArray(),
+            ]);
+        }
+
         $scoreRows = [];
         $avgScores = [];
         $deleteQueue = [];
@@ -103,7 +112,8 @@ class ProductCompletenessJob implements ShouldQueue
             }
 
             $prefix = DB::getTablePrefix();
-            DB::statement("UPDATE {$prefix}products SET avg_completeness_score = CASE id {$cases} END WHERE id IN ({$idList})");
+            $castType = DB::getDriverName() === 'pgsql' ? 'INTEGER' : 'SIGNED';
+            DB::statement("UPDATE {$prefix}products SET avg_completeness_score = CAST(CASE id {$cases} END AS {$castType}) WHERE id IN ({$idList})");
         }
     }
 
@@ -120,6 +130,7 @@ class ProductCompletenessJob implements ShouldQueue
     protected function loadStaticData(): void
     {
         $this->channels = $this->channelRepository
+            ->skipCache()
             ->with([
                 'locales' => function ($query) {
                     $query->select('locales.id', 'locales.code')->where('status', 1)->orderBy('code');

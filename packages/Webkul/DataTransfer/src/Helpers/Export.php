@@ -13,6 +13,7 @@ use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
 use Webkul\DataTransfer\Jobs\Export\File\SpoutWriterFactory;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
+use Webkul\DataTransfer\Services\JobLogger;
 
 class Export
 {
@@ -104,7 +105,7 @@ class Export
     /**
      * Error helper instance.
      *
-     * @var \Webkul\DataTransfer\Helpers\Error
+     * @var Error
      */
     protected $typeExporter;
 
@@ -177,7 +178,7 @@ class Export
     /**
      * Returns error helper instance.
      *
-     * @return \Webkul\DataTransfer\Helpers\Error
+     * @return Error
      */
     public function getErrorHelper()
     {
@@ -316,7 +317,7 @@ class Export
         $this->setExport($export);
 
         if (! $this->jobLogger) {
-            $this->setLogger(\Webkul\DataTransfer\Services\JobLogger::make($this->export->id));
+            $this->setLogger(JobLogger::make($this->export->id));
         }
 
         $this->jobLogger->info('Export resumed — re-dispatching pending batches.');

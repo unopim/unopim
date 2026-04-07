@@ -2,6 +2,8 @@
 
 namespace Webkul\Admin\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
+use Illuminate\View\View;
 use Webkul\Admin\Helpers\Dashboard;
 
 class DashboardController extends Controller
@@ -12,8 +14,13 @@ class DashboardController extends Controller
      * @var array
      */
     protected $typeFunctions = [
-        'total-catalogs'       => 'getTotalCatalogs',
-        'total-configurations' => 'getTotalConfigurations',
+        'total-catalogs'        => 'getTotalCatalogs',
+        'total-configurations'  => 'getTotalConfigurations',
+        'product-stats'         => 'getProductStats',
+        'recent-activity'       => 'getRecentActivity',
+        'data-transfer-status'  => 'getDataTransferStatus',
+        'needs-attention'       => 'getNeedsAttention',
+        'channel-readiness'     => 'getChannelReadiness',
     ];
 
     /**
@@ -26,9 +33,9 @@ class DashboardController extends Controller
     /**
      * Dashboard page.
      *
-     * @return \Illuminate\View\View|\Illuminate\Http\JsonResponse
+     * @return View|JsonResponse
      */
-    public function index()
+    public function index(): View
     {
         return view('admin::dashboard.index')->with([
 
@@ -37,12 +44,16 @@ class DashboardController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function stats()
+    public function stats(): JsonResponse
     {
-        $stats = $this->dashboardHelper->{$this->typeFunctions[request()->query('type')]}();
+        $type = request()->query('type');
+
+        if (! isset($this->typeFunctions[$type])) {
+            return response()->json(['message' => trans('admin::app.dashboard.invalid-type')], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        $stats = $this->dashboardHelper->{$this->typeFunctions[$type]}();
 
         return response()->json([
             'statistics' => $stats,

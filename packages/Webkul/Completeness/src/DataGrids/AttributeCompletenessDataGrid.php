@@ -2,6 +2,7 @@
 
 namespace Webkul\Completeness\DataGrids;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Webkul\DataGrid\DataGrid;
 
@@ -19,7 +20,7 @@ class AttributeCompletenessDataGrid extends DataGrid
     /**
      * Prepare query builder.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return Builder
      */
     public function prepareQueryBuilder()
     {
@@ -64,7 +65,7 @@ class AttributeCompletenessDataGrid extends DataGrid
         $this->addFilter('id', 'attributes.id');
         $this->addFilter('code', 'attributes.code');
         $this->addFilter('name', 'attribute_translations.name');
-        $this->addFilter('channel_required', $tablePrefix.'channels.code');
+        $this->addFilter('channel_required', 'channels.code');
 
         return $queryBuilder;
     }

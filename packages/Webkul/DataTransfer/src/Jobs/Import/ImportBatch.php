@@ -60,5 +60,13 @@ class ImportBatch implements ShouldQueue
 
         $this->importBatch->state = 'failed';
         $this->importBatch->save();
+
+        $jobTrack = $this->importBatch->jobTrack;
+
+        if ($jobTrack && $jobTrack->state !== ImportHelper::STATE_FAILED) {
+            $jobTrack->state = ImportHelper::STATE_FAILED;
+            $jobTrack->completed_at = now();
+            $jobTrack->save();
+        }
     }
 }

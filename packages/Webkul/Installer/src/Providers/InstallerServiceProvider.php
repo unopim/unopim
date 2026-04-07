@@ -2,7 +2,6 @@
 
 namespace Webkul\Installer\Providers;
 
-use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Webkul\Installer\Console\Commands\DefaultUser as DefaultUserCommand;
@@ -10,24 +9,16 @@ use Webkul\Installer\Console\Commands\Installer as InstallerCommand;
 use Webkul\Installer\Console\Commands\PurgeUnusedImages as PurgeUnusedImagesCommand;
 use Webkul\Installer\Http\Middleware\CanInstall;
 use Webkul\Installer\Http\Middleware\Locale;
+use Webkul\Installer\Listeners\Installer;
 
 class InstallerServiceProvider extends ServiceProvider
 {
     /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = false;
-
-    /**
      * Bootstrap the application events.
-     *
-     * @return void
      */
-    public function boot(Router $router)
+    public function boot(): void
     {
-        $router->middlewareGroup('install', [CanInstall::class]);
+        $this->app['router']->middlewareGroup('install', [CanInstall::class]);
 
         $this->loadRoutesFrom(__DIR__.'/../Routes/web.php');
 
@@ -35,9 +26,9 @@ class InstallerServiceProvider extends ServiceProvider
 
         $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'installer');
 
-        $router->aliasMiddleware('installer_locale', Locale::class);
+        $this->app['router']->aliasMiddleware('installer_locale', Locale::class);
 
-        Event::listen('unopim.installed', 'Webkul\Installer\Listeners\Installer@installed');
+        Event::listen('unopim.installed', [Installer::class, 'installed']);
     }
 
     /**

@@ -55,6 +55,12 @@ class Completed implements ShouldQueue
         JobLogger::make($this->jobTrackId)->error("Completed job failed: {$exception->getMessage()}", [
             'exception' => $exception->getTraceAsString(),
         ]);
+
+        if ($this->import && $this->import->state !== ImportHelper::STATE_FAILED) {
+            $this->import->state = ImportHelper::STATE_FAILED;
+            $this->import->completed_at = now();
+            $this->import->save();
+        }
     }
 
     /**

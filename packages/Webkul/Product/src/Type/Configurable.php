@@ -5,6 +5,7 @@ namespace Webkul\Product\Type;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Webkul\Admin\Validations\ConfigurableUniqueSku;
+use Webkul\Product\Models\Product;
 
 class Configurable extends AbstractType
 {
@@ -49,7 +50,7 @@ class Configurable extends AbstractType
     /**
      * Get default variant.
      *
-     * @return \Webkul\Product\Models\Product
+     * @return Product
      */
     public function getDefaultVariant()
     {
@@ -86,7 +87,7 @@ class Configurable extends AbstractType
      */
     public function updateDefaultVariantId()
     {
-        if (! $defaultVariantId = request()->get('default_variant_id')) {
+        if (! $defaultVariantId = request()->input('default_variant_id')) {
             return;
         }
 
@@ -235,7 +236,7 @@ class Configurable extends AbstractType
     /**
      * Copy relationships.
      *
-     * @param  \Webkul\Product\Models\Product  $product
+     * @param  Product  $product
      * @return void
      */
     protected function copyRelationships($product)

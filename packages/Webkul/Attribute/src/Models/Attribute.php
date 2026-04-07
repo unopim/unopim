@@ -136,9 +136,11 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
      */
     public function getValidationRules(?string $currentChannelCode = null, ?string $currentLocaleCode = null, ?int $id = null, bool $withUniqueValidation = true)
     {
-        $validations = $this->fieldTypeValidations();
+        $validations = [
+            $this->is_required ? 'required' : 'nullable',
+        ];
 
-        $validations[] = $this->is_required ? 'required' : 'nullable';
+        $validations = array_merge($validations, $this->fieldTypeValidations());
 
         if ($this->type == 'price') {
             $validations[] = "regex:/^\d+(\.\d+)?$/";
@@ -185,6 +187,8 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
 
         if ($this->is_required) {
             $validations[] = 'required';
+        } else {
+            $validations[] = 'nullable';
         }
 
         if ($this->type === 'file') {

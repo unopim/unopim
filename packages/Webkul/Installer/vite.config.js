@@ -10,6 +10,8 @@ export default defineConfig(({ mode }) => {
     return {
         build: {
             emptyOutDir: true,
+            minify: "esbuild",
+            cssCodeSplit: true,
         },
 
         envDir,
