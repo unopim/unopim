@@ -1,122 +1,121 @@
 # =============================================================================
-# UnoPim Docker Compose — Production-Grade Multi-Container Setup
+# UnoPim Docker Compose — Quick Start (Pre-built Images)
 # =============================================================================
 #
-# Default: Nginx + PHP-FPM (recommended for production)
-#
-# Services:
-#   unopim-nginx        — Nginx reverse proxy (serves static files, proxies PHP)
-#   unopim-fpm          — PHP 8.3 FPM (application server)
-#   unopim-q            — Queue worker (system, completeness, default)
-#   unopim-scheduler    — Laravel scheduler (cron replacement)
-#   unopim-mysql        — MySQL 8.0 (database)
-#   unopim-redis        — Redis 7.2 (cache + queue backend)
-#   unopim-elasticsearch — Elasticsearch 8.17 (product search)
-#   unopim-mailpit      — Mailpit (local email testing)
+# No source code needed. Just pull and run.
 #
 # Quick start:
+#   curl -O https://raw.githubusercontent.com/unopim/unopim/master/docker-compose.hub.yml
+#   curl -O https://raw.githubusercontent.com/unopim/unopim/master/.env.docker
 #   cp .env.docker .env
-#   docker compose up -d
-#   # Wait ~90s for first-time setup, then open http://localhost:8000/admin
-#
-# Apache alternative:
-#   docker compose -f docker-compose.yml -f docker-compose.apache.yml up -d
-#
-# Port conflicts? Override FORWARD_* variables in .env
+#   docker compose -f docker-compose.hub.yml up -d
+#   # Wait ~90s, then open http://localhost:8000/admin
 #
 # =============================================================================
-
-# ─── Shared configuration (reused via YAML anchors) ─────────────────
-x-app-environment: &app-environment
-  DB_HOST: unopim-mysql
-  DB_PORT: 3306
-  REDIS_HOST: unopim-redis
-  REDIS_PORT: 6379
-  ELASTICSEARCH_HOST: unopim-elasticsearch:9200
-  MAIL_HOST: unopim-mailpit
-  MAIL_PORT: 1025
-
-x-app-depends: &app-depends
-  unopim-mysql:
-    condition: service_healthy
-  unopim-redis:
-    condition: service_healthy
-
-x-logging: &default-logging
-  driver: "json-file"
-  options:
-    max-size: "10m"
-    max-file: "3"
 
 services:
   # ---------------------------------------------------------------------------
   # Nginx Reverse Proxy
   # ---------------------------------------------------------------------------
   unopim-nginx:
-    build:
-      context: .
-      dockerfile: dockerfiles/nginx.Dockerfile
+    image: nginx:1.27-alpine
     volumes:
-      - .:/var/www/html:ro
+      - unopim-app:/var/www/html:ro
+      - ./dockerfiles/nginx.conf:/etc/nginx/conf.d/default.conf:ro
     ports:
       - "${APP_PORT:-8000}:80"
     restart: unless-stopped
     depends_on:
       unopim-fpm:
         condition: service_healthy
-    logging: *default-logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # ---------------------------------------------------------------------------
   # PHP-FPM Application Server
   # ---------------------------------------------------------------------------
   unopim-fpm:
-    build:
-      context: .
-      dockerfile: dockerfiles/fpm.Dockerfile
+    image: webkul/unopim:${UNOPIM_TAG:-latest}
     volumes:
-      - .:/var/www/html
+      - unopim-app:/var/www/html
     restart: unless-stopped
     env_file: .env
     environment:
-      <<: *app-environment
+      DB_HOST: unopim-mysql
+      DB_PORT: 3306
+      REDIS_HOST: unopim-redis
+      REDIS_PORT: 6379
+      ELASTICSEARCH_HOST: unopim-elasticsearch:9200
+      MAIL_HOST: unopim-mailpit
+      MAIL_PORT: 1025
     depends_on:
-      <<: *app-depends
-    logging: *default-logging
+      unopim-mysql:
+        condition: service_healthy
+      unopim-redis:
+        condition: service_healthy
+    healthcheck:
+      interval: 30s
+      timeout: 10s
+      start_period: 90s
+      retries: 3
+      test: ["CMD", "php-fpm", "-t"]
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # ---------------------------------------------------------------------------
-  # Queue Worker (system, completeness, default)
+  # Queue Worker
   # ---------------------------------------------------------------------------
   unopim-q:
-    build:
-      context: .
-      dockerfile: dockerfiles/q.Dockerfile
+    image: webkul/unopim-queue:${UNOPIM_TAG:-latest}
     volumes:
-      - .:/var/www/html
+      - unopim-app:/var/www/html
     restart: unless-stopped
     env_file: .env
     environment:
-      <<: *app-environment
+      DB_HOST: unopim-mysql
+      DB_PORT: 3306
+      REDIS_HOST: unopim-redis
+      REDIS_PORT: 6379
+      ELASTICSEARCH_HOST: unopim-elasticsearch:9200
       QUEUE_NAMES: "system,completeness,default"
     depends_on:
-      <<: *app-depends
-    logging: *default-logging
+      unopim-mysql:
+        condition: service_healthy
+      unopim-redis:
+        condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # ---------------------------------------------------------------------------
-  # Scheduler (replaces cron — runs schedule:work)
+  # Scheduler
   # ---------------------------------------------------------------------------
   unopim-scheduler:
-    build:
-      context: .
-      dockerfile: dockerfiles/q.Dockerfile
-    entrypoint: ["/var/www/html/dockerfiles/scheduler-entrypoint.sh"]
+    image: webkul/unopim-queue:${UNOPIM_TAG:-latest}
+    entrypoint: ["php", "artisan", "schedule:work", "--no-interaction"]
     volumes:
-      - .:/var/www/html
+      - unopim-app:/var/www/html
     restart: unless-stopped
     env_file: .env
     environment:
-      <<: *app-environment
+      DB_HOST: unopim-mysql
+      DB_PORT: 3306
+      REDIS_HOST: unopim-redis
+      REDIS_PORT: 6379
+      ELASTICSEARCH_HOST: unopim-elasticsearch:9200
     depends_on:
-      <<: *app-depends
+      unopim-mysql:
+        condition: service_healthy
+      unopim-redis:
+        condition: service_healthy
     logging:
       driver: "json-file"
       options:
@@ -149,10 +148,14 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
-    logging: *default-logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # ---------------------------------------------------------------------------
-  # Redis 7.2 (cache + queue backend)
+  # Redis 7.2
   # ---------------------------------------------------------------------------
   unopim-redis:
     image: redis:7.2-alpine
@@ -174,7 +177,7 @@ services:
         max-file: "2"
 
   # ---------------------------------------------------------------------------
-  # Elasticsearch 8.17 (product + category search)
+  # Elasticsearch 8.17
   # ---------------------------------------------------------------------------
   unopim-elasticsearch:
     image: elasticsearch:8.17.0
@@ -193,10 +196,14 @@ services:
       timeout: 10s
       retries: 5
       start_period: 45s
-    logging: *default-logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # ---------------------------------------------------------------------------
-  # Mailpit (local SMTP + web UI for email testing)
+  # Mailpit (local email testing)
   # ---------------------------------------------------------------------------
   unopim-mailpit:
     image: axllent/mailpit:v1.21
@@ -211,6 +218,7 @@ services:
         max-file: "2"
 
 volumes:
+  unopim-app:
   unopim-mysql-data:
   unopim-redis-data:
   unopim-elasticsearch-data:

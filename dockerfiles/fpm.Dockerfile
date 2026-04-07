@@ -1,12 +1,9 @@
 # =============================================================================
-# UnoPim Queue Worker (PHP 8.3 CLI)
+# UnoPim PHP-FPM Application Server
 # =============================================================================
-# Lightweight CLI image for processing background jobs.
-# Processes system, completeness, and default queues.
-#
 # Multi-stage build:
 #   Stage 1 (composer) — install PHP dependencies
-#   Stage 2 (app)      — production CLI image
+#   Stage 2 (app)      — production PHP-FPM image
 # =============================================================================
 
 # ---------------------------------------------------------------------------
@@ -28,18 +25,18 @@ RUN composer install \
 # ---------------------------------------------------------------------------
 # Stage 2: Production image
 # ---------------------------------------------------------------------------
-FROM php:8.3-cli
+FROM php:8.3-fpm
 
 LABEL maintainer="Webkul <support@webkul.com>"
-LABEL org.opencontainers.image.title="UnoPim Queue Worker"
-LABEL org.opencontainers.image.description="Background job processor for UnoPim PIM"
+LABEL org.opencontainers.image.title="UnoPim FPM"
+LABEL org.opencontainers.image.description="PHP-FPM application server for UnoPim PIM"
 LABEL org.opencontainers.image.source="https://github.com/unopim/unopim"
 
 # System dependencies + PHP extensions
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
+    git \
     unzip \
-    gosu \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
     libpng-dev \
@@ -72,9 +69,24 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 COPY dockerfiles/php.ini "$PHP_INI_DIR/conf.d/unopim.ini"
 
+# PHP-FPM pool configuration
+COPY dockerfiles/www.conf /usr/local/etc/php-fpm.d/www.conf
+
+# Install Composer (for runtime use in entrypoint)
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
 # Application code + Composer vendor from stage 1
 WORKDIR /var/www/html
 COPY . .
 COPY --from=composer /app/vendor ./vendor
 
-ENTRYPOINT ["/var/www/html/dockerfiles/q-entrypoint.sh"]
+# Set permissions
+RUN chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
+
+EXPOSE 9000
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=3 \
+    CMD ["php-fpm","-t"]
+
+ENTRYPOINT ["/var/www/html/dockerfiles/fpm-entrypoint.sh"]

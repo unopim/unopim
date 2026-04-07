@@ -31,7 +31,7 @@ if [ ! -f "$LOCK_FILE" ]; then
         if grep -q "^APP_KEY=$" /var/www/html/.env 2>/dev/null || [ -z "$APP_KEY" ]; then
             echo "→ Generating application key..."
             php artisan key:generate --force
-            # Export into current process so Apache inherits the new key
+            # Export into current process so PHP-FPM inherits the new key
             export APP_KEY=$(grep "^APP_KEY=" /var/www/html/.env | cut -d '=' -f 2-)
         fi
 
@@ -69,5 +69,5 @@ chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 # Clear compiled views (may be stale from previous container)
 php artisan view:clear 2>/dev/null || true
 
-# Start Apache
-exec apache2-foreground
+# Start PHP-FPM (master runs as root, workers run as www-data via www.conf)
+exec php-fpm

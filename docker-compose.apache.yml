@@ -1,0 +1,51 @@
+# =============================================================================
+# UnoPim Apache Override
+# =============================================================================
+# Replaces Nginx + PHP-FPM with Apache + mod_php (single container).
+#
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.apache.yml up -d
+#
+# Or set in .env:
+#   COMPOSE_FILE=docker-compose.yml:docker-compose.apache.yml
+# =============================================================================
+
+services:
+  # Disable Nginx and FPM (replaced by Apache)
+  unopim-nginx:
+    deploy:
+      replicas: 0
+
+  unopim-fpm:
+    deploy:
+      replicas: 0
+
+  # Apache + PHP (replaces Nginx + FPM)
+  unopim-web:
+    build:
+      context: .
+      dockerfile: dockerfiles/web.Dockerfile
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "${APP_PORT:-8000}:80"
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DB_HOST: unopim-mysql
+      DB_PORT: 3306
+      REDIS_HOST: unopim-redis
+      REDIS_PORT: 6379
+      ELASTICSEARCH_HOST: unopim-elasticsearch:9200
+      MAIL_HOST: unopim-mailpit
+      MAIL_PORT: 1025
+    depends_on:
+      unopim-mysql:
+        condition: service_healthy
+      unopim-redis:
+        condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
