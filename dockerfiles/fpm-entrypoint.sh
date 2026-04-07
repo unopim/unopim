@@ -60,7 +60,7 @@ if [ ! -f "$LOCK_FILE" ]; then
 else
     # Run pending migrations on subsequent starts (safe — never drops tables)
     echo "→ Checking for pending migrations..."
-    php artisan migrate --force --no-interaction 2>/dev/null || true
+    php artisan migrate --force --no-interaction
 fi
 
 # Ensure storage directories are writable

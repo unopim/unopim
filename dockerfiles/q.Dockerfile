@@ -3,8 +3,31 @@
 # =============================================================================
 # Lightweight CLI image for processing background jobs.
 # Processes system, completeness, and default queues.
+#
+# Multi-stage build:
+#   Stage 1 (composer) — install PHP dependencies
+#   Stage 2 (app)      — production CLI image
 # =============================================================================
 
+# ---------------------------------------------------------------------------
+# Stage 1: Composer dependencies
+# ---------------------------------------------------------------------------
+FROM composer:2 AS composer
+
+WORKDIR /app
+COPY composer.json composer.lock ./
+COPY packages/ packages/
+RUN composer install \
+    --no-dev \
+    --no-interaction \
+    --no-scripts \
+    --prefer-dist \
+    --optimize-autoloader \
+    --ignore-platform-reqs
+
+# ---------------------------------------------------------------------------
+# Stage 2: Production image
+# ---------------------------------------------------------------------------
 FROM php:8.3-cli
 
 LABEL maintainer="Webkul <support@webkul.com>"
@@ -40,7 +63,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         pcntl \
         pdo_mysql \
         zip \
-    && pecl install redis \
+    && pecl install redis-6.1.0 \
     && docker-php-ext-enable redis \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
@@ -49,6 +72,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 COPY dockerfiles/php.ini "$PHP_INI_DIR/conf.d/unopim.ini"
 
+# Application code + Composer vendor from stage 1
 WORKDIR /var/www/html
+COPY . .
+COPY --from=composer /app/vendor ./vendor
 
 ENTRYPOINT ["/var/www/html/dockerfiles/q-entrypoint.sh"]
