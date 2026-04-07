@@ -153,7 +153,7 @@ test.describe('UnoPim Export Jobs', () => {
     await navigateTo(adminPage, 'exports');
     const perPageBtn = adminPage.getByRole('button', { name: 'Per Page' });
     await perPageBtn.click();
-    await adminPage.getByText('20', { exact: true }).click();
+    await adminPage.locator('#app').getByText('20', { exact: true }).click();
     await expect(perPageBtn).toContainText('20');
   });
 

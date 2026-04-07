@@ -1,5 +1,46 @@
 # v2.0.x
 
+## v2.0.1
+
+### Features
+- Added **ManageAssociations AI Agent Tool** — manage product associations (related, cross-sell, up-sell) via natural language in the AI Agent Chat, with clickable product links in search results for internal navigation.
+- Added **`--with-demo-data` installer option** — `php artisan unopim:install --with-demo-data` seeds sample products during installation for quick demos and testing.
+- Added **`clean_content()` XSS sanitization helper** — uses HTMLPurifier to strip Blade directives, PHP tags, and dangerous HTML from user-generated content.
+- Added **IP-based debug filtering** — `APP_DEBUG_ALLOWED_IPS` environment variable restricts debugbar access to specific IP addresses in production.
+- Added **PIM-specific test assertions** — `CoreAssertions` trait with `assertProductExists()`, `assertCategoryExists()`, `assertAttributeExists()`, `assertChannelExists()`, `assertLocaleExists()`, and `assertSuccessJsonResponse()` helpers for Pest tests.
+
+### Improvements
+- Upgraded **Vite** from `4.0` to `6.3` with manual chunk splitting (Vue, VeeValidate, vendor), CSS code splitting, and esbuild minifier for faster builds. Upgraded `laravel-vite-plugin` to `1.2`, `vue` to `3.5`, and `@vitejs/plugin-vue` to `5.x`.
+- Replaced **deprecated `Request::get()`** with `->input()` across 30 occurrences in 13 files for Symfony 7.4 compatibility.
+- Added **return type hints** and **HTTP status constants** (`JsonResponse::HTTP_OK`, etc.) to all public controller methods across Admin and AdminApi packages, replacing 70+ magic numbers.
+- Removed **auto-discovered providers** from `bootstrap/providers.php` — third-party packages (DomPDF, Translatable, Concord, Excel) are auto-discovered by Laravel and no longer need explicit registration.
+- Standardized **exception handling** — use `wantsJson()` instead of `ajax()` for API detection, added `report($e)` to silent catch blocks.
+- Rewrote **Playwright E2E tests** for full independence — every test creates its own data, acts, asserts, and cleans up. Shared helpers (`navigateTo()`, `searchInDataGrid()`, `clickSaveAndExpect()`) reduce duplication. Tests support parallel execution with unique identifiers.
+- Added **PostgreSQL CI workflow** — separate Pest test workflow against PostgreSQL 16 with and without Elasticsearch.
+
+### Bug Fixes
+- Fixed **format validation** applied to empty optional attributes and category fields — validation is now skipped when the value is empty ([#319](https://github.com/unopim/unopim/issues/319)).
+- Fixed **dark mode visibility** in job tracker progress bars and AI platform configuration button styling ([#320](https://github.com/unopim/unopim/issues/320)).
+- Fixed **double table prefix** in migration — hardcoded `wk_` prefix on table names caused `wk_wk_channels` when `DB_PREFIX` was set. Migrations now use unprefixed names with `Schema::hasTable` guards.
+- Fixed **`AdminFactory` FK violations** in parallel test databases — replaced hardcoded `role_id` and `ui_locale_id` with dynamic database lookups.
+- Fixed **undefined `$channel` variable** in `CheckForMaintenanceMode` — now reads from `env()` config instead of undefined variable.
+- Fixed **missing null check** on `sanitizeData()` return value in `ProductController` — method can return `null` when product data has no attributes to sanitize.
+- Fixed **clipboard copy** fallback for non-HTTPS environments in AI Agent Chat.
+- Fixed **DB table prefix** issue in `ExportProducts` values column query.
+
+### Security
+- Added **NoCacheMiddleware** — prevents browsers and proxies from caching admin pages (`Cache-Control: no-store`, `Pragma: no-cache`).
+- Enhanced **SecureHeaders** middleware with `Permissions-Policy` and `X-Permitted-Cross-Domain-Policies` headers.
+- Added **`maintenance_allowed_ips`** and **`debug_allowed_ips`** configuration in `config/app.php` for environment-level access control.
+
+### Performance
+- Added **database indexes** on `channels.code`, `locales.status`, `currencies.status`, and a composite index on `core_config(code, channel_code, locale_code)` for faster config lookups and queries.
+
+### Dependency Updates
+- Bumped `phpseclib/phpseclib` from `3.0.48` to `3.0.50` ([#289](https://github.com/unopim/unopim/pull/289)).
+- Upgraded `vite` to `^6.3`, `laravel-vite-plugin` to `^1.2`, `vue` to `^3.5`, `@vitejs/plugin-vue` to `^5.0`.
+---
+
 ## v2.0.0
 
 ### Features
