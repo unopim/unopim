@@ -1,6 +1,23 @@
 const { test, expect } = require('../../utils/fixtures');
+const { navigateTo } = require('../../utils/helpers');
+
+/**
+ * Helper: Open the profile dropdown reliably.
+ * Navigates to dashboard first, then waits for network idle.
+ */
+async function openProfileDropdown(adminPage) {
+  await navigateTo(adminPage, 'dashboard');
+  const profileBtn = adminPage.locator('header').getByRole('button').last();
+  await profileBtn.click();
+  // Wait for dropdown content to render
+  await expect(adminPage.getByRole('link', { name: 'Logout' })).toBeVisible({ timeout: 5000 });
+}
 
 test.describe('UnoPim Version Check', () => {
+
+test.beforeEach(async ({ adminPage }) => {
+  await navigateTo(adminPage, 'dashboard');
+});
 
 // ═════════════════════════════════════════════════
 // SECTION 1: Profile Dropdown & Version Display
@@ -12,8 +29,7 @@ test('1.1 - Admin profile button is visible in header', async ({ adminPage }) =>
 });
 
 test('1.2 - Clicking profile button opens dropdown', async ({ adminPage }) => {
-  const profileBtn = adminPage.locator('header').getByRole('button').last();
-  await profileBtn.click();
+  await openProfileDropdown(adminPage);
 
   // Dropdown should show version, My Account, and Logout
   await expect(adminPage.locator('#app').getByText(/Version/)).toBeVisible();
@@ -22,8 +38,7 @@ test('1.2 - Clicking profile button opens dropdown', async ({ adminPage }) => {
 });
 
 test('1.3 - Profile dropdown shows version string in format "Version : vX.X.X"', async ({ adminPage }) => {
-  const profileBtn = adminPage.locator('header').getByRole('button').last();
-  await profileBtn.click();
+  await openProfileDropdown(adminPage);
 
   const versionLocator = adminPage.locator('#app').getByText(/Version\s*:\s*v\d+\.\d+\.\d+/);
   await expect(versionLocator).toBeVisible();
@@ -31,16 +46,14 @@ test('1.3 - Profile dropdown shows version string in format "Version : vX.X.X"',
   expect(versionText).toMatch(/Version\s*:\s*v\d+\.\d+\.\d+/);
 });
 
-test('1.4 - Version displays v2.0.0', async ({ adminPage }) => {
-  const profileBtn = adminPage.locator('header').getByRole('button').last();
-  await profileBtn.click();
+test('1.4 - Version displays v2.0.1', async ({ adminPage }) => {
+  await openProfileDropdown(adminPage);
 
-  await expect(adminPage.locator('#app').getByText(/Version\s*:\s*v2\.0\.0/)).toBeVisible();
+  await expect(adminPage.locator('#app').getByText(/Version\s*:\s*v2\.0\.1/)).toBeVisible();
 });
 
 test('1.5 - Profile dropdown shows UnoPim logo icon next to version', async ({ adminPage }) => {
-  const profileBtn = adminPage.locator('header').getByRole('button').last();
-  await profileBtn.click();
+  await openProfileDropdown(adminPage);
 
   const logo = adminPage.locator('img[src*="unopim"]');
   await expect(logo.first()).toBeVisible();
@@ -51,8 +64,7 @@ test('1.5 - Profile dropdown shows UnoPim logo icon next to version', async ({ a
 // ═════════════════════════════════════════════════
 
 test('2.1 - Profile dropdown shows My Account link with correct URL', async ({ adminPage }) => {
-  const profileBtn = adminPage.locator('header').getByRole('button').last();
-  await profileBtn.click();
+  await openProfileDropdown(adminPage);
 
   const myAccountLink = adminPage.getByRole('link', { name: 'My Account' });
   await expect(myAccountLink).toBeVisible();
@@ -60,16 +72,14 @@ test('2.1 - Profile dropdown shows My Account link with correct URL', async ({ a
 });
 
 test('2.2 - Profile dropdown shows Logout link', async ({ adminPage }) => {
-  const profileBtn = adminPage.locator('header').getByRole('button').last();
-  await profileBtn.click();
+  await openProfileDropdown(adminPage);
 
   const logoutLink = adminPage.getByRole('link', { name: 'Logout' });
   await expect(logoutLink).toBeVisible();
 });
 
 test('2.3 - My Account link navigates to account edit page', async ({ adminPage }) => {
-  const profileBtn = adminPage.locator('header').getByRole('button').last();
-  await profileBtn.click();
+  await openProfileDropdown(adminPage);
 
   const myAccountLink = adminPage.getByRole('link', { name: 'My Account' });
   await expect(myAccountLink).toBeVisible();
@@ -87,6 +97,7 @@ test('3.1 - Dark mode toggle icon is visible in header', async ({ adminPage }) =
 });
 
 test('3.2 - Clicking dark mode toggle switches the icon', async ({ adminPage }) => {
+  await adminPage.waitForLoadState('networkidle');
   const darkIcon = adminPage.locator('.icon-dark');
   const lightIcon = adminPage.locator('.icon-light');
 

@@ -21,7 +21,7 @@ trait CoreAssertions
      */
     public function assertProductExists(string $sku, array $additional = []): void
     {
-        $this->assertDatabaseHas('wk_products', array_merge(['sku' => $sku], $additional));
+        $this->assertDatabaseHas('products', array_merge(['sku' => $sku], $additional));
     }
 
     /**
@@ -29,7 +29,7 @@ trait CoreAssertions
      */
     public function assertProductMissing(string $sku): void
     {
-        $this->assertDatabaseMissing('wk_products', ['sku' => $sku]);
+        $this->assertDatabaseMissing('products', ['sku' => $sku]);
     }
 
     /**
@@ -37,7 +37,7 @@ trait CoreAssertions
      */
     public function assertAttributeExists(string $code, array $additional = []): void
     {
-        $this->assertDatabaseHas('wk_attributes', array_merge(['code' => $code], $additional));
+        $this->assertDatabaseHas('attributes', array_merge(['code' => $code], $additional));
     }
 
     /**
@@ -45,7 +45,7 @@ trait CoreAssertions
      */
     public function assertCategoryExists(string $code, array $additional = []): void
     {
-        $this->assertDatabaseHas('wk_categories', array_merge(['code' => $code], $additional));
+        $this->assertDatabaseHas('categories', array_merge(['code' => $code], $additional));
     }
 
     /**
@@ -53,7 +53,7 @@ trait CoreAssertions
      */
     public function assertAttributeFamilyExists(string $code, array $additional = []): void
     {
-        $this->assertDatabaseHas('wk_attribute_families', array_merge(['code' => $code], $additional));
+        $this->assertDatabaseHas('attribute_families', array_merge(['code' => $code], $additional));
     }
 
     /**
@@ -61,7 +61,7 @@ trait CoreAssertions
      */
     public function assertChannelExists(string $code, array $additional = []): void
     {
-        $this->assertDatabaseHas('wk_channels', array_merge(['code' => $code], $additional));
+        $this->assertDatabaseHas('channels', array_merge(['code' => $code], $additional));
     }
 
     /**
@@ -69,7 +69,7 @@ trait CoreAssertions
      */
     public function assertLocaleExists(string $code, bool $active = true): void
     {
-        $this->assertDatabaseHas('wk_locales', [
+        $this->assertDatabaseHas('locales', [
             'code'   => $code,
             'status' => $active,
         ]);
@@ -97,7 +97,7 @@ trait CoreAssertions
      */
     public function assertCoreConfigValue(string $code, string $value, ?string $channelCode = null, ?string $localeCode = null): void
     {
-        $this->assertDatabaseHas('wk_core_config', array_filter([
+        $this->assertDatabaseHas('core_config', array_filter([
             'code'         => $code,
             'value'        => $value,
             'channel_code' => $channelCode,

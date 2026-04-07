@@ -22,8 +22,6 @@ class AgentExecution extends Model implements AgentExecutionContract, AuditableC
     protected $historyTags = ['ai-agent-execution'];
 
     /**
-     * Table name — always use wk_ prefix.
-     *
      * @var string
      */
     protected $table = 'ai_agent_executions';
