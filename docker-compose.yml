@@ -1,48 +1,152 @@
-version : "3"
 services:
   unopim-web:
     build:
       context: .
       dockerfile: dockerfiles/web.Dockerfile
+      args:
+        UNOPIM_IMAGE: ${UNOPIM_IMAGE:-webkul/unopim}
+        UNOPIM_TAG: ${UNOPIM_TAG:-1.0.1}
     container_name: unopim-web
     volumes:
       - .:/var/www/html
+      - unopim-vendor:/var/www/html/vendor
+      - unopim-node-modules:/var/www/html/node_modules
     ports:
-      - "8000:80"
-    restart: "no"
-    depends_on:
-      - unopim-mysql
-
-  unopim-mysql:
-    image: mysql:8
-    container_name: unopim-mysql
-    volumes:
-      - unopim-mysql-disk:/var/lib/mysql
-    ports:
-      - "3306:3306"
-    restart: "no"
+      - "${APP_PORT:-8000}:80"
+    restart: unless-stopped
+    env_file: .env
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: unopim
+      DB_HOST: unopim-mysql
+      REDIS_HOST: unopim-redis
+      ELASTICSEARCH_HOST: unopim-elasticsearch:9200
+      MAIL_HOST: unopim-mailpit
+      MAIL_PORT: 1025
+    depends_on:
+      unopim-mysql:
+        condition: service_healthy
+      unopim-redis:
+        condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   unopim-q:
     build:
       context: .
       dockerfile: dockerfiles/q.Dockerfile
+      args:
+        UNOPIM_IMAGE: ${UNOPIM_IMAGE:-webkul/unopim}
+        UNOPIM_TAG: ${UNOPIM_TAG:-1.0.1}
     container_name: unopim-q
     volumes:
       - .:/var/www/html
+      - unopim-vendor:/var/www/html/vendor
+      - unopim-node-modules:/var/www/html/node_modules
     restart: unless-stopped
+    env_file: .env
+    environment:
+      DB_HOST: unopim-mysql
+      REDIS_HOST: unopim-redis
+      ELASTICSEARCH_HOST: unopim-elasticsearch:9200
+      QUEUE_NAMES: "system,completeness,default"
     depends_on:
-      - unopim-mysql
+      unopim-mysql:
+        condition: service_healthy
+      unopim-redis:
+        condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  unopim-mysql:
+    image: mysql:8.0.36-debian
+    container_name: unopim-mysql
+    volumes:
+      - unopim-mysql-disk:/var/lib/mysql
+    ports:
+      - "127.0.0.1:${DB_PORT:-3306}:3306"
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-unopim_root_secret}
+      MYSQL_DATABASE: ${DB_DATABASE:-unopim}
+      MYSQL_USER: ${DB_USERNAME:-unopim}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-unopim_secret}
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-unopim_root_secret}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  unopim-redis:
+    image: redis:7.2-alpine
+    container_name: unopim-redis
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
+    volumes:
+      - unopim-redis-disk:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  unopim-elasticsearch:
+    image: elasticsearch:8.17.0
+    container_name: unopim-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - unopim-elasticsearch-disk:/usr/share/elasticsearch/data
+    ports:
+      - "127.0.0.1:${ELASTICSEARCH_PORT:-9200}:9200"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 45s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   unopim-mailpit:
-    image: 'axllent/mailpit:latest'
+    image: axllent/mailpit:v1.21
     container_name: unopim-mailpit
-    restart: "no"
+    restart: unless-stopped
     ports:
-      - "8025:8025"
+      - "127.0.0.1:${MAILPIT_UI_PORT:-8025}:8025"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
 
-# On-disk storage of DB data, when containers are stopped
 volumes:
-  unopim-mysql-disk: {}
+  unopim-mysql-disk:
+  unopim-redis-disk:
+  unopim-elasticsearch-disk:
+  unopim-vendor:
+  unopim-node-modules:

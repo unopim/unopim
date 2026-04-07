@@ -1,16 +1,26 @@
 #!/bin/bash
+set -e
 
 LOCK_FILE="/var/www/html/storage/unopim.lock"
 
+# First-time setup: install dependencies and run installer
 if [ ! -f "$LOCK_FILE" ]; then
-    composer install
+    echo "First-time setup: installing dependencies..."
+    composer install --no-interaction --optimize-autoloader
     npm install
-    php artisan unopim:install -n
-    
+    npm run build
+    php artisan unopim:install -n --skip-env-check --skip-admin-creation
     touch "$LOCK_FILE"
+    echo "Setup complete."
 fi
 
-chown -R 1001:1001 /var/www/html/storage
+# Run pending migrations on subsequent starts
+if [ -f "$LOCK_FILE" ]; then
+    php artisan migrate --force --no-interaction 2>/dev/null || true
+fi
 
-# Hand back control to the default entrypoint
-apache2-foreground
+# Ensure storage directories are writable
+chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Hand back control to Apache
+exec apache2-foreground
