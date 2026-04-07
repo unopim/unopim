@@ -10,7 +10,7 @@ QUEUE_TRIES="${QUEUE_TRIES:-3}"
 QUEUE_MAX_JOBS="${QUEUE_MAX_JOBS:-1000}"
 QUEUE_MAX_TIME="${QUEUE_MAX_TIME:-3600}"
 
-# Wait for web container to finish first-time setup (with timeout)
+# Wait for app server to finish first-time setup (with timeout)
 SETUP_WAIT_TIMEOUT="${SETUP_WAIT_TIMEOUT:-300}"
 elapsed=0
 
@@ -27,9 +27,9 @@ echo "Application ready."
 
 echo "Starting queue worker: queues=${QUEUE_NAMES}"
 
-# queue:work is production-grade (single boot, reuses app state)
+# Drop to www-data and start queue:work
 # --max-jobs/--max-time auto-restart the worker to prevent memory leaks
-exec php artisan queue:work \
+exec gosu www-data php artisan queue:work \
     --queue="${QUEUE_NAMES}" \
     --timeout="${QUEUE_TIMEOUT}" \
     --tries="${QUEUE_TRIES}" \

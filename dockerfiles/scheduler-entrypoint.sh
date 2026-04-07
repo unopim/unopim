@@ -3,7 +3,7 @@ set -e
 
 LOCK_FILE="/var/www/html/storage/unopim.lock"
 
-# Wait for web container to finish first-time setup (with timeout)
+# Wait for app server to finish first-time setup (with timeout)
 SETUP_WAIT_TIMEOUT="${SETUP_WAIT_TIMEOUT:-300}"
 elapsed=0
 
@@ -20,5 +20,5 @@ echo "Application ready."
 
 echo "Starting Laravel scheduler (runs every minute)..."
 
-# Run schedule:work which handles the cron internally
-exec php artisan schedule:work --no-interaction
+# Drop to www-data and start scheduler
+exec gosu www-data php artisan schedule:work --no-interaction

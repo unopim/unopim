@@ -2,7 +2,7 @@
 # UnoPim Queue Worker (PHP 8.3 CLI)
 # =============================================================================
 # Lightweight CLI image for processing background jobs.
-# No Apache — runs queue:work directly.
+# Processes system, completeness, and default queues.
 # =============================================================================
 
 FROM php:8.3-cli
@@ -12,10 +12,11 @@ LABEL org.opencontainers.image.title="UnoPim Queue Worker"
 LABEL org.opencontainers.image.description="Background job processor for UnoPim PIM"
 LABEL org.opencontainers.image.source="https://github.com/unopim/unopim"
 
-# System dependencies + PHP extensions (same as web image)
+# System dependencies + PHP extensions
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     unzip \
+    gosu \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
     libpng-dev \
