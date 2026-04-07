@@ -1,5 +1,29 @@
 # v2.0.x
 
+## v2.0.1
+
+### Bug Fixes
+- Fixed **format validation** applied to empty optional attributes and category fields — validation is now skipped when the value is empty ([#319](https://github.com/unopim/unopim/issues/319)).
+- Fixed **dark mode visibility** in job tracker progress bars and AI platform configuration button styling ([#320](https://github.com/unopim/unopim/issues/320)).
+- Fixed **docker web entrypoint** file with corrected configuration ([#236](https://github.com/unopim/unopim/pull/236)).
+- Fixed **dynamic attribute fields rendering** in product edit creating dummy extra spaces ([#271](https://github.com/unopim/unopim/pull/271)).
+- Fixed **import file path deletion** — added checks before deleting import file paths ([#276](https://github.com/unopim/unopim/pull/276)).
+- Fixed **missing 'code' field** in swatch attribute option tests ([#252](https://github.com/unopim/unopim/pull/252)).
+- Fixed **redundant 'v' prefix** in version display ([#670](https://github.com/unopim/unopim/pull/670)).
+- Fixed **product search** to be case-insensitive for SKU filtering.
+- Fixed **Select All checkbox state** not syncing when individual items are deselected ([#671](https://github.com/unopim/unopim/pull/671)).
+
+### Security Fixes
+- Fixed **Open Redirect via Referer Header** (Medium) — Login and forgot-password pages accepted spoofed `Referer` headers containing 'admin' in external URLs (e.g., `https://attacker.com/admin`), allowing phishing redirects. Added host validation using `parse_url()` to ensure the intended redirect URL belongs to the same application host.
+- Fixed **No Rate Limiting on Admin Login** (Medium) — Login and forgot-password endpoints had no throttle protection, allowing unlimited brute-force attempts. Added named rate limiters (`admin-login`, `admin-forgot-password`) in `AdminServiceProvider` using `RateLimiter::for()` with per-email+IP segmentation (5 attempts/minute).
+- Fixed **No Server-Side Password Validation** (Medium) — `UserForm` accepted passwords with no minimum length (e.g., single character "a"). Added `min:6` validation rule to align with existing password validation in `AccountController` and `ResetPasswordController`.
+- Fixed **User Enumeration via Forgot Password** (Medium) — Forgot-password endpoint returned different responses for existing emails ("Reset link sent") vs non-existing ("Email Not Exist"), enabling account enumeration. Changed to return a single generic message regardless of email existence: "If an account with that email exists, a password reset link has been sent."
+- Fixed **Privilege Escalation via User Edit Endpoint** (High) — Two root causes: (1) `admin.settings.users.update` and `admin.settings.users.destroy` routes were missing from the ACL config, causing Bouncer middleware to skip authorization checks entirely — any authenticated user could replay captured requests via Burp Suite. (2) No guard prevented non-superadmins from assigning `permission_type: all` roles. Added missing ACL entries and controller-level privilege escalation guards in both `store()` and `prepareUserData()`.
+- Added **NoCacheMiddleware** — prevents browsers and proxies from caching admin pages (`Cache-Control: no-store`, `Pragma: no-cache`).
+- Enhanced **SecureHeaders** middleware with `Permissions-Policy` and `X-Permitted-Cross-Domain-Policies` headers.
+
+---
+
 ## v2.0.0
 
 ### Features
