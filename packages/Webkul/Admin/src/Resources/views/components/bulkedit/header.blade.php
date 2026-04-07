@@ -1,16 +1,16 @@
 @pushOnce('scripts')
     <script type="text/x-template" id="v-spreadsheet-header-template">
         <colgroup>
-            <col style="width: 64px" id="col_0" />
+            <col style="width: 46px" id="col_0" />
             <template v-for="(header, index) in headers" :key="'col_' + index">
-                <col :span="header.colspan" class="border dark:border-cherry-700 border-violet-50" :id="'col_' + (index + 1)" :style="{ width: '100px' }" />
+                <col :span="header.colspan" class="border dark:border-cherry-700 border-gray-200" :id="'col_' + (index + 1)" :style="{ width: '180px' }" />
             </template>
         </colgroup>
 
-        <thead class="sticky top-0 z-50 ">
-            <tr class="text-sm dark:text-white text-gray-600 border-b border-gray-600">
-                <th 
-                    class="sticky left-0 z-50 border border-white bg-violet-50 dark:bg-cherry-700 dark:border-cherry-800"
+        <thead class="sticky top-0 z-50">
+            <tr class="text-xs dark:text-white text-gray-600 border-b border-gray-300 dark:border-cherry-700">
+                <th
+                    class="sticky left-0 z-50 border border-gray-200 bg-gray-100 dark:bg-cherry-800 dark:border-cherry-700 text-center text-xs font-medium px-1"
                 >
                     @lang('admin::app.catalog.products.bulk-edit.id')
                 </th>

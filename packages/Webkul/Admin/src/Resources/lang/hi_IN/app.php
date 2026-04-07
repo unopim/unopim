@@ -40,7 +40,9 @@ return [
         'description-text' => 'सभी सूचनाओं को सूचीबद्ध करें',
         'marked-success'   => 'अधिसूचना सफलतापूर्वक चिह्नित है',
         'no-record'        => 'कोई रिकॉर्ड नहीं मिला',
+        'of'               => 'में से',
         'read-all'         => 'पढ़े हुए का चिह्न',
+        'showing'          => 'दिखा रहा है',
         'title'            => 'अधिसूचना',
         'view-all'         => 'सभी को देखें',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => 'पुरा होना।',
             'pending'    => 'लंबित',
             'processing' => 'प्रसंस्करण',
+            'read'       => 'पढ़ा हुआ',
+            'unread'     => 'अपठित',
         ],
     ],
     'account' => [
@@ -1960,10 +1964,12 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => 'चुनना',
-                'title'    => 'फिल्टर लागू करें',
-                'save'     => 'बचाना',
-                'dropdown' => [
+                'select'        => 'चुनना',
+                'title'         => 'फिल्टर लागू करें',
+                'save'          => 'बचाना',
+                'add-filter'    => 'फ़िल्टर जोड़ें',
+                'remove-filter' => 'फ़िल्टर हटाएं',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'कम से कम 2 वर्ण टाइप करें ...',
                         'no-results'        => 'कोई परिणाम नहीं मिला...',

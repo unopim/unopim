@@ -40,7 +40,9 @@ return [
         'description-text' => 'Lista wszystkich powiadomień',
         'marked-success'   => 'Powiadomienie oznaczone jako przeczytane',
         'no-record'        => 'Brak rekordów',
+        'of'               => 'z',
         'read-all'         => 'Oznacz jako przeczytane',
+        'showing'          => 'Wyświetlanie',
         'title'            => 'Powiadomienia',
         'view-all'         => 'Wyświetl wszystkie',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => 'Zakończone',
             'pending'    => 'Oczekujące',
             'processing' => 'Przetwarzanie',
+            'read'       => 'Przeczytane',
+            'unread'     => 'Nieprzeczytane',
         ],
     ],
     'account' => [
@@ -1960,10 +1964,12 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => 'Wybierz',
-                'title'    => 'Zastosuj filtry',
-                'save'     => 'Zapisz',
-                'dropdown' => [
+                'select'        => 'Wybierz',
+                'title'         => 'Zastosuj filtry',
+                'save'          => 'Zapisz',
+                'add-filter'    => 'Dodaj filtr',
+                'remove-filter' => 'Usuń filtr',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Wpisz co najmniej 2 znaki...',
                         'no-results'        => 'Brak wyników...',

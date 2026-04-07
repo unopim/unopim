@@ -299,7 +299,7 @@
                                 </x-admin::form.control-group.label>
 
                                 @php
-                                    $locales = core()->getAllActiveLocales();
+                                    $locales = core()->getTranslatableLocales();
                                 @endphp
 
                                 <x-admin::form.control-group.control

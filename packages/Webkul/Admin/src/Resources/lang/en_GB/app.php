@@ -40,7 +40,9 @@ return [
         'description-text' => 'List all Notifications',
         'marked-success'   => 'Notification Marked Successfully',
         'no-record'        => 'No Records Found',
+        'of'               => 'of',
         'read-all'         => 'Mark as Read',
+        'showing'          => 'Showing',
         'title'            => 'Notifications',
         'view-all'         => 'View All',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => 'Completed',
             'pending'    => 'Pending',
             'processing' => 'Processing',
+            'read'       => 'Read',
+            'unread'     => 'Unread',
         ],
     ],
     'account' => [
@@ -1960,10 +1964,12 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => 'Select',
-                'title'    => 'Apply Filters',
-                'save'     => 'Save',
-                'dropdown' => [
+                'select'        => 'Select',
+                'title'         => 'Apply Filters',
+                'save'          => 'Save',
+                'add-filter'    => 'Add Filter',
+                'remove-filter' => 'Remove Filter',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Type at least 2 characters...',
                         'no-results'        => 'No results found...',

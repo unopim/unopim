@@ -107,6 +107,23 @@ test('Click visibility toggle for showing the password', async ({ adminPage }) =
   expect(inputType).toBe('text');
 });
 
+test('Email field should be preserved after failed login', async ({ adminPage }) => {
+  await goToLoginPage(adminPage);
+  await adminPage.fill('input[name=email]', email);
+  await adminPage.fill('input[name=password]', invalidPassword);
+  await adminPage.press('input[name=password]', 'Enter');
+  // Wait for redirect back to login page with error
+  await expect(adminPage.locator('.gap-12 > .text-sm')).toContainText(
+    'Please check your credentials and try again.'
+  );
+  // Email should be preserved
+  const emailValue = await adminPage.inputValue('input[name=email]');
+  expect(emailValue).toBe(email);
+  // Password should be cleared
+  const passwordValue = await adminPage.inputValue('input[name=password]');
+  expect(passwordValue).toBe('');
+});
+
 test('Login with valid credentials', async ({ adminPage }) => {
   await goToLoginPage(adminPage);
   await adminPage.fill('input[name=email]', email);

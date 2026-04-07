@@ -409,3 +409,24 @@ it('should remove already existing variant product through a configurable produc
 
     $this->assertDatabaseMissing($this->getFullTableName(Product::class), $variantData);
 });
+
+it('should return a downloadable file response for quick export in xls format', function () {
+    $this->loginAsAdmin();
+
+    $product = Product::factory()->create();
+
+    $response = $this->withHeaders([
+        'X-Requested-With' => 'XMLHttpRequest',
+    ])->json('GET', route('admin.catalog.products.index'), [
+        'export'     => 1,
+        'format'     => 'xls',
+        'pagination' => [
+            'page'     => 1,
+            'per_page' => 10,
+        ],
+    ]);
+
+    $response->assertOk();
+    $response->assertHeader('content-type', 'application/vnd.ms-excel');
+    $response->assertHeader('content-disposition');
+});

@@ -40,7 +40,9 @@ return [
         'description-text' => 'Listahan ng lahat ng Notifications',
         'marked-success'   => 'Notification na Marked bilang Nabasang Tagumpay',
         'no-record'        => 'Walang Record na Natagpuan',
+        'of'               => 'sa',
         'read-all'         => 'Markahan bilang Basang Lahat',
+        'showing'          => 'Ipinapakita',
         'title'            => 'Mga Abiso',
         'view-all'         => 'Tingnan ang Lahat',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => 'Nakatapos',
             'pending'    => 'Nasa Paghihintay',
             'processing' => 'Pinoproseso',
+            'read'       => 'Nabasa',
+            'unread'     => 'Hindi nabasa',
         ],
     ],
     'account' => [
@@ -1960,10 +1964,12 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => 'Pumili',
-                'title'    => 'Mag-apply ng Mga Salain',
-                'save'     => 'I-save',
-                'dropdown' => [
+                'select'        => 'Pumili',
+                'title'         => 'Mag-apply ng Mga Salain',
+                'save'          => 'I-save',
+                'add-filter'    => 'Magdagdag ng Filter',
+                'remove-filter' => 'Alisin ang Filter',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Mag-type ng hindi bababa sa 2 karakter...',
                         'no-results'        => 'Walang natagpuang resulta...',

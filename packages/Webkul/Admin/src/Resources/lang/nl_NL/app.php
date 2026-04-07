@@ -40,7 +40,9 @@ return [
         'description-text' => 'Maak een lijst van alle meldingen',
         'marked-success'   => 'Melding met succes gemarkeerd',
         'no-record'        => 'Geen record gevonden',
+        'of'               => 'van',
         'read-all'         => 'Markeer als gelezen',
+        'showing'          => 'Weergave',
         'title'            => 'Meldingen',
         'view-all'         => 'Bekijk alles',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => 'Voltooid',
             'pending'    => 'In behandeling',
             'processing' => 'Verwerken',
+            'read'       => 'Gelezen',
+            'unread'     => 'Ongelezen',
         ],
     ],
     'account' => [
@@ -1960,10 +1964,12 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => 'Uitkiezen',
-                'title'    => 'Breng filters aan',
-                'save'     => 'Redden',
-                'dropdown' => [
+                'select'        => 'Uitkiezen',
+                'title'         => 'Breng filters aan',
+                'save'          => 'Redden',
+                'add-filter'    => 'Filter toevoegen',
+                'remove-filter' => 'Filter verwijderen',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Typ minimaal 2 tekens ...',
                         'no-results'        => 'Geen resultaat gevonden...',

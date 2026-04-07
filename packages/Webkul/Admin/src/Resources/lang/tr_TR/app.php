@@ -40,7 +40,9 @@ return [
         'description-text' => 'Tüm Bildirimlerin Listesi',
         'marked-success'   => 'Bildirim Başarıyla İşaretlendi',
         'no-record'        => 'Kayıt Bulunamadı',
+        'of'               => '/',
         'read-all'         => 'Tümünü Okundu Olarak İşaretle',
+        'showing'          => 'Gösteriliyor',
         'title'            => 'Bildirimler',
         'view-all'         => 'Tümünü Görüntüle',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => 'Tamamlandı',
             'pending'    => 'Bekliyor',
             'processing' => 'İşleniyor',
+            'read'       => 'Okunmuş',
+            'unread'     => 'Okunmamış',
         ],
     ],
     'account' => [
@@ -1960,10 +1964,12 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => 'Seç',
-                'title'    => 'Filtre Uygula',
-                'save'     => 'Kaydet',
-                'dropdown' => [
+                'select'        => 'Seç',
+                'title'         => 'Filtre Uygula',
+                'save'          => 'Kaydet',
+                'add-filter'    => 'Filtre Ekle',
+                'remove-filter' => 'Filtreyi Kaldır',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'En az 2 karakter girin...',
                         'no-results'        => 'Sonuç bulunamadı...',

@@ -40,7 +40,9 @@ return [
         'description-text' => 'Popis svih obavijesti',
         'marked-success'   => 'Obavijest uspješno označena',
         'no-record'        => 'Nema zapisa',
+        'of'               => 'od',
         'read-all'         => 'Označi kao pročitano',
+        'showing'          => 'Prikaz',
         'title'            => 'Obavijesti',
         'view-all'         => 'Prikaži sve',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => 'Dovršeno',
             'pending'    => 'Na čekanju',
             'processing' => 'Obrada u tijeku',
+            'read'       => 'Pročitano',
+            'unread'     => 'Nepročitano',
         ],
     ],
     'account' => [
@@ -1960,10 +1964,12 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => 'Odaberite',
-                'title'    => 'Primijeni filtre',
-                'save'     => 'Spremi',
-                'dropdown' => [
+                'select'        => 'Odaberite',
+                'title'         => 'Primijeni filtre',
+                'save'          => 'Spremi',
+                'add-filter'    => 'Dodaj filtar',
+                'remove-filter' => 'Ukloni filtar',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Upišite najmanje 2 znaka...',
                         'no-results'        => 'Nema rezultata...',

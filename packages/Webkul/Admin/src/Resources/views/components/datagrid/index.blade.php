@@ -70,6 +70,12 @@
 
                     selectedCurrency: null,
 
+                    activeFilterIndices: [],
+
+                    showFilterPicker: false,
+
+                    filterPickerSearch: '',
+
                     available: {
                         id: null,
 
@@ -154,6 +160,10 @@
 
                             this.available.meta = currentDatagrid.available.meta;
 
+                            if (currentDatagrid.activeFilterIndices?.length) {
+                                this.activeFilterIndices = currentDatagrid.activeFilterIndices;
+                            }
+
                             if (urlParams.has('search')) {
                                 let searchAppliedColumn = this.findAppliedColumn('all');
 
@@ -237,6 +247,13 @@
                             this.available.meta = meta;
 
                             this.available.searchPlaceholder = search_placeholder;
+
+                            // Initialize active filters on first load
+                            if (this.activeFilterIndices.length === 0) {
+                                this.activeFilterIndices = this.available.columns
+                                    .filter(col => col.filterable && col.visible !== false)
+                                    .map(col => col.index);
+                            }
 
                             // Remove filters for attribute columns which have been disabled
                             if (this.available?.meta?.managedColumn?.enabled && this.available?.columns?.length) {
@@ -790,6 +807,7 @@
                                         requestCount: ++datagrid.requestCount,
                                         available: this.available,
                                         applied: this.applied,
+                                        activeFilterIndices: this.activeFilterIndices,
                                     };
                                 }
 
@@ -811,6 +829,7 @@
                         requestCount: 0,
                         available: this.available,
                         applied: this.applied,
+                        activeFilterIndices: this.activeFilterIndices,
                     };
                 },
 
@@ -882,6 +901,36 @@
 
                             break;
                     }
+                },
+
+                getActiveFilterColumns() {
+                    return this.available.columns.filter(
+                        col => col.filterable && this.activeFilterIndices.includes(col.index)
+                    );
+                },
+
+                getInactiveFilterColumns() {
+                    return this.available.columns.filter(
+                        col => col.filterable && !this.activeFilterIndices.includes(col.index)
+                    );
+                },
+
+                addActiveFilter(columnIndex) {
+                    if (!this.activeFilterIndices.includes(columnIndex)) {
+                        this.activeFilterIndices.push(columnIndex);
+                    }
+
+                    this.updateDatagrids();
+                },
+
+                removeActiveFilter(columnIndex) {
+                    this.activeFilterIndices = this.activeFilterIndices.filter(i => i !== columnIndex);
+
+                    this.applied.filters.columns = this.applied.filters.columns.filter(
+                        col => col.index !== columnIndex
+                    );
+
+                    this.updateDatagrids();
                 },
 
                 checkAndFilter(column) {

@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => 'AI Ajaib',
         'general'               => 'Umum',
         'prompt'                => 'Perintah',
         'system-prompt'         => 'Perintah Sistem',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => 'AI Ajaib',
         'platform'       => 'Platform',
         'settings'       => 'Pengaturan',
         'prompt'         => 'Perintah',

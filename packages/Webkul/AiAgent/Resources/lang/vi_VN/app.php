@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => 'AI Kỳ Diệu',
         'general'               => 'Chung',
         'prompt'                => 'Lệnh nhắc',
         'system-prompt'         => 'Lệnh nhắc hệ thống',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => 'AI Kỳ Diệu',
         'platform'       => 'Nền tảng',
         'settings'       => 'Cài đặt',
         'prompt'         => 'Lệnh nhắc',

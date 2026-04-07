@@ -40,7 +40,9 @@ return [
         'description-text' => 'Listă de toate notificările',
         'marked-success'   => 'Notificare marcată ca citită',
         'no-record'        => 'Niciun record găsit',
+        'of'               => 'din',
         'read-all'         => 'Marchează ca citită',
+        'showing'          => 'Se afișează',
         'title'            => 'Notificări',
         'view-all'         => 'Vizualizați toate',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => 'Finalizat',
             'pending'    => 'Așteptare',
             'processing' => 'În procesare',
+            'read'       => 'Citite',
+            'unread'     => 'Necitite',
         ],
     ],
     'account' => [
@@ -1960,10 +1964,12 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => 'Selectați',
-                'title'    => 'Aplicare Filtre',
-                'save'     => 'Salvează',
-                'dropdown' => [
+                'select'        => 'Selectați',
+                'title'         => 'Aplicare Filtre',
+                'save'          => 'Salvează',
+                'add-filter'    => 'Adaugă filtru',
+                'remove-filter' => 'Elimină filtru',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Introduceți cel puțin 2 caractere...',
                         'no-results'        => 'Niciun rezultat găsit...',

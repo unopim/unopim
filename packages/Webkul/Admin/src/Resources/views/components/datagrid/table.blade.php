@@ -47,8 +47,8 @@
 
                             <!-- Columns -->
                             <p
-                                v-for="column in $parent.available.columns"
-                                class="flex gap-1.5 items-center break-words"
+                                v-for="column in visibleColumns"
+                                class="flex gap-1.5 items-center min-w-0"
                                 :class="{'cursor-pointer select-none hover:text-gray-800 dark:hover:text-white': column.sortable}"
                                 @click="$parent.sortPage(column)"
                             >
@@ -114,10 +114,10 @@
                                 </p>
 
                                 <!-- Columns -->
-                                 <template
-                                    v-if="record.is_closure"
-                                    v-for="column in $parent.available.columns"
-                                 >
+                                <div
+                                    class="min-w-0"
+                                    v-for="column in visibleColumns"
+                                >
                                     <template v-if="column.type === 'image'">
                                         <img
                                             :src="record[column.index] ? record[column.index] : '{{ unopim_asset('images/placeholder.svg') }}'"
@@ -154,32 +154,14 @@
                                         </template>
                                     </template>
 
-                                    <template v-else-if="typeof record[column.index] === 'string' && record[column.index].length > 25">
-                                        <p
-                                            class="break-words text-nowrap overflow-hidden text-ellipsis hover:text-wrap"
-                                            v-html="record[column.index]"
-                                        >
-                                        </p>
-                                    </template>
-
                                     <p
                                         v-else
-                                        class="break-words"
+                                        class="truncate"
+                                        :title="record[column.index]"
                                         v-html="record[column.index]"
                                     >
                                     </p>
-                                 </template>
-
-                                <template
-                                    v-else
-                                    v-for="column in $parent.available.columns"
-                                >
-                                    <p
-                                        class="break-words"
-                                        v-html="record[column.index]"
-                                    >
-                                    </p>
-                                </template>
+                                </div>
 
                                 <!-- Actions -->
                                 <div
@@ -223,8 +205,12 @@
             template: '#v-datagrid-table-template',
 
             computed: {
+                visibleColumns() {
+                    return this.$parent.available.columns.filter(c => c.visible !== false);
+                },
+
                 gridsCount() {
-                    let count = this.$parent.available.columns.length;
+                    let count = this.visibleColumns.length;
 
                     if (this.$parent.available.actions.length) {
                         ++count;

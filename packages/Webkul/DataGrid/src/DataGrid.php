@@ -152,6 +152,7 @@ abstract class DataGrid
             filterable: $column['filterable'],
             sortable: $column['sortable'],
             closure: $column['closure'] ?? null,
+            visible: $column['visible'] ?? true,
         );
     }
 
