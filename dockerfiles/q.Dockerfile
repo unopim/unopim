@@ -28,50 +28,22 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         --with-freetype \
         --with-jpeg \
         --with-webp \
+    # Only install extensions NOT already in php:8.3-cli
+    # Already included: ctype, curl, dom, fileinfo, iconv, mbstring,
+    #   openssl, pdo, session, simplexml, tokenizer, xml, xmlwriter, opcache
     && docker-php-ext-install -j$(nproc) \
         bcmath \
         calendar \
-        ctype \
-        curl \
-        dom \
         exif \
-        fileinfo \
         gd \
         gmp \
         intl \
-        mbstring \
-        opcache \
         pcntl \
-        pdo \
         pdo_mysql \
-        session \
-        simplexml \
-        tokenizer \
-        xml \
-        xmlwriter \
         zip \
     && pecl install redis \
     && docker-php-ext-enable redis \
-    && apt-get purge -y --auto-remove \
-        libfreetype6-dev \
-        libjpeg62-turbo-dev \
-        libpng-dev \
-        libwebp-dev \
-        libzip-dev \
-        libxml2-dev \
-        libonig-dev \
-        libicu-dev \
-        libgmp-dev \
-    && apt-get install -y --no-install-recommends \
-        libfreetype6 \
-        libjpeg62-turbo \
-        libpng16-16 \
-        libwebp7 \
-        libzip4 \
-        libxml2 \
-        libonig5 \
-        libicu72 \
-        libgmp10 \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # PHP production configuration

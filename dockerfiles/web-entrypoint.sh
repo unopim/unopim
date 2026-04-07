@@ -31,6 +31,8 @@ if [ ! -f "$LOCK_FILE" ]; then
         if grep -q "^APP_KEY=$" /var/www/html/.env 2>/dev/null || [ -z "$APP_KEY" ]; then
             echo "→ Generating application key..."
             php artisan key:generate --force
+            # Export into current process so Apache inherits the new key
+            export APP_KEY=$(grep "^APP_KEY=" /var/www/html/.env | cut -d '=' -f 2-)
         fi
 
         echo "→ Running database migrations..."
