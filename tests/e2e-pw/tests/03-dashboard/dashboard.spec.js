@@ -1,6 +1,6 @@
 const { test, expect } = require('../../utils/fixtures');
 
-test.describe('UnoPim Dashboard (v2.0.0)', () => {
+test.describe('UnoPim Dashboard (v2.0.1)', () => {
 
 // ═════════════════════════════════════════════════
 // SECTION 1: Header & Navigation
