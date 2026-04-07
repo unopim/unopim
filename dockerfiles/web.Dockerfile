@@ -3,7 +3,7 @@
 # =============================================================================
 # Multi-stage build:
 #   Stage 1 (composer) — install PHP dependencies
-#   Stage 2 (app)      — final production image
+#   Stage 2 (app)      — production Apache image
 #
 # Pre-built frontend assets (public/themes/) are committed in the repo,
 # so no Node.js build step is needed. For development, run npm run dev
@@ -16,7 +16,8 @@
 FROM composer:2 AS composer
 
 WORKDIR /app
-COPY . .
+COPY composer.json composer.lock ./
+COPY packages/ packages/
 RUN composer install \
     --no-dev \
     --no-interaction \
@@ -83,7 +84,7 @@ RUN a2enmod rewrite headers deflate \
         /etc/apache2/sites-available/000-default.conf \
     && echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
-# Install Composer (for runtime use: composer install in entrypoint)
+# Install Composer (for runtime use in development)
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # Install Node.js runtime (for npm run dev during development)
@@ -97,7 +98,7 @@ WORKDIR /var/www/html
 COPY . .
 COPY --from=composer /app/vendor ./vendor
 
-# Set permissions
+# Set permissions and prepare for non-root execution
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 

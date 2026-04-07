@@ -69,4 +69,5 @@ chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 # Clear compiled views (may be stale from previous container)
 php artisan view:clear 2>/dev/null || true
 
+# Start Apache (inherits environment including APP_KEY)
 exec apache2-foreground

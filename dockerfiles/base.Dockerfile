@@ -1,20 +1,20 @@
 # =============================================================================
-# UnoPim Queue Worker (PHP 8.3 CLI)
+# UnoPim Base Image — Shared PHP runtime for web + queue + scheduler
 # =============================================================================
-# Lightweight CLI image for processing background jobs.
-# No Apache — runs queue:work directly.
+# This image contains PHP 8.3 with all required extensions for UnoPim.
+# The web.Dockerfile and q.Dockerfile extend this to avoid duplicating
+# the extension installation (~5 min build time).
 # =============================================================================
 
-FROM php:8.3-cli
+FROM php:8.3-cli AS base
 
 LABEL maintainer="Webkul <support@webkul.com>"
-LABEL org.opencontainers.image.title="UnoPim Queue Worker"
-LABEL org.opencontainers.image.description="Background job processor for UnoPim PIM"
 LABEL org.opencontainers.image.source="https://github.com/unopim/unopim"
 
-# System dependencies + PHP extensions (same as web image)
+# System dependencies + PHP extensions
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
+    git \
     unzip \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
@@ -29,6 +29,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         --with-freetype \
         --with-jpeg \
         --with-webp \
+    # Only install extensions NOT already in php:8.3
+    # Already included: ctype, curl, dom, fileinfo, iconv, mbstring,
+    #   openssl, pdo, session, simplexml, tokenizer, xml, xmlwriter, opcache
     && docker-php-ext-install -j$(nproc) \
         bcmath \
         calendar \
@@ -47,7 +50,3 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # PHP production configuration
 RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 COPY dockerfiles/php.ini "$PHP_INI_DIR/conf.d/unopim.ini"
-
-WORKDIR /var/www/html
-
-ENTRYPOINT ["/var/www/html/dockerfiles/q-entrypoint.sh"]
