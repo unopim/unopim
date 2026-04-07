@@ -418,7 +418,7 @@ return [
                 'save-btn'              => 'Zapisz atrybut',
                 'select'                => 'Wybierz',
                 'select-type'           => 'Wybierz typ atrybutu',
-                'swatch'                => 'Próbka',
+                'swatch'                => 'Próbka typ',
                 'text'                  => 'Tekst',
                 'textarea'              => 'Pole tekstowe',
                 'title'                 => 'Dodaj atrybut',
@@ -486,7 +486,7 @@ return [
                 'save-btn'              => 'Zapisz atrybut',
                 'select'                => 'Wybierz',
                 'select-type'           => 'Wybierz typ atrybutu',
-                'swatch'                => 'Próbka',
+                'swatch'                => 'Próbka typ',
                 'text'                  => 'Tekst',
                 'textarea'              => 'Pole tekstowe',
                 'title'                 => 'Edytuj atrybut',
@@ -501,6 +501,7 @@ return [
                 'usable-in-grid'        => 'Można używać w siatce',
                 'is-filterable'         => 'Jest filtrowalne',
                 'ai-translate'          => 'Tłumaczenie SI',
+                'invalid-swatch-type'   => ':attribute nie jest dozwolony dla typu atrybutu :type z typem swatch :swatch_type.',
 
                 'option' => [
                     'create-success'      => 'Opcja atrybutu została pomyślnie utworzona',
@@ -509,6 +510,10 @@ return [
                     'sort-update-failure' => 'Nie udało się zaktualizować kolejności sortowania',
                     'sort-update-success' => 'Kolejność sortowania została zaktualizowana',
                     'update-success'      => 'Opcja atrybutu została pomyślnie zaktualizowana',
+                    'color'               => 'Kolor próbki',
+                    'dropdown'            => 'Menu rozwijane',
+                    'image'               => 'Obraz próbki',
+                    'text'                => 'Tekst próbki',
                 ],
             ],
 

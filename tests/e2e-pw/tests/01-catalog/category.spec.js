@@ -13,9 +13,7 @@ test.describe('UnoPim Category', () => {
     await adminPage.locator('#name').type('Television');
     await adminPage.waitForTimeout(500);
     await adminPage.getByRole('button', { name: 'Save Category' }).click();
-    await adminPage.waitForTimeout(500);
     await expect(adminPage.getByText('The code field is required')).toBeVisible();
-    await adminPage.waitForTimeout(500);
   });
 
   test('Create Categories with empty Name field', async ({ adminPage }) => {
@@ -30,9 +28,7 @@ test.describe('UnoPim Category', () => {
     await adminPage.locator('input[name="code"]').fill('television');
     await adminPage.waitForTimeout(500);
     await adminPage.getByRole('button', { name: 'Save Category' }).click();
-    await adminPage.waitForTimeout(500);
     await expect(adminPage.getByText('The Name field is required')).toBeVisible();
-    await adminPage.waitForTimeout(500);
   });
 
   test('Create Categories with empty Code and Name field', async ({ adminPage }) => {
@@ -51,11 +47,9 @@ test.describe('UnoPim Category', () => {
     await adminPage.locator('#name').fill('');
     await adminPage.waitForTimeout(500);
     await adminPage.getByRole('button', { name: 'Save Category' }).click();
-    await adminPage.waitForTimeout(500);
     await expect(adminPage.getByText('The code field is required')).toBeVisible();
     await adminPage.waitForTimeout(500);
     await expect(adminPage.getByText('The Name field is required')).toBeVisible();
-    await adminPage.waitForTimeout(500);
   });
 
   test('Create Categories with all field', async ({ adminPage }) => {
@@ -131,9 +125,7 @@ test.describe('UnoPim Category', () => {
     await adminPage.goBack();
     await adminPage.waitForTimeout(500);
     await itemRow.locator('span[title="Delete"]').first().click();
-    await adminPage.waitForTimeout(500);
     await expect(adminPage.locator('text=Are you sure you want to delete?')).toBeVisible();
-    await adminPage.waitForTimeout(500);
   });
 
   test('should allow selecting all category with the mass action checkbox', async ({ adminPage }) => {
@@ -144,7 +136,6 @@ test.describe('UnoPim Category', () => {
     await adminPage.click('label[for="mass_action_select_all_records"]');
     await adminPage.waitForTimeout(500);
     await expect(adminPage.locator('#mass_action_select_all_records')).toBeChecked();
-    await adminPage.waitForTimeout(500);
   });
 
   test('Update Categories', async ({ adminPage }) => {
@@ -170,7 +161,6 @@ test.describe('UnoPim Category', () => {
     await adminPage.getByRole('button', { name: 'Save Category' }).click();
     await adminPage.waitForTimeout(500);
     await expect(adminPage.getByText(/Category updated successfully/i)).toBeVisible();
-    await adminPage.waitForTimeout(500);
   });
 
   test('Delete Category', async ({ adminPage }) => {
@@ -181,9 +171,7 @@ test.describe('UnoPim Category', () => {
     await adminPage.getByText('LG TelevisionLG Televisiontest1').getByTitle('Delete').click();
     await adminPage.waitForTimeout(500);
     await adminPage.getByRole('button', { name: 'Delete' }).click();
-    await adminPage.waitForTimeout(500);
     await expect(adminPage.getByText(/The category has been successfully deleted/i)).toBeVisible();
-    await adminPage.waitForTimeout(500);
   });
 
   test('Delete Root Category', async ({ adminPage }) => {
@@ -195,8 +183,6 @@ test.describe('UnoPim Category', () => {
     await itemRow.locator('span[title="Delete"]').first().click();
     await adminPage.waitForTimeout(500);
     await adminPage.getByRole('button', { name: 'Delete' }).click();
-    await adminPage.waitForTimeout(500);
     await expect(adminPage.getByText(/You cannot delete the root category that is associated with a channel./i)).toBeVisible();
-    await adminPage.waitForTimeout(500);
   });
 });

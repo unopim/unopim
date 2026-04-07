@@ -67,14 +67,16 @@ Route::group([
 
     /** Media API Routes */
     Route::controller(MediaFileController::class)->prefix('media-files')->group(function () {
-        // Route::get('', 'index')->name('admin.api.categories.index');
-        // Route::get('{code}', 'get')->name('admin.api.categories.get');
         Route::prefix('category')->group(function () {
             Route::post('', 'storeCategoryMedia')->name('admin.api.media-files.category.store');
         });
 
         Route::prefix('product')->group(function () {
             Route::post('', 'storeProductMedia')->name('admin.api.media-files.product.store');
+        });
+
+        Route::prefix('swatch')->group(function () {
+            Route::post('', 'storeSwatchMedia')->name('admin.api.media-files.attribute.options.store');
         });
     });
 

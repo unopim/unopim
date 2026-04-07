@@ -419,7 +419,7 @@ return [
                 'save-btn'              => 'Desar atribut',
                 'select'                => 'Seleccionar',
                 'select-type'           => 'Seleccionar tipus d\'atribut',
-                'swatch'                => 'Muestra',
+                'swatch'                => 'Muestra tipus',
                 'text'                  => 'Text',
                 'textarea'              => 'Àrea de text',
                 'title'                 => 'Afegir atribut',
@@ -487,7 +487,7 @@ return [
                 'save-btn'              => 'Desar atribut',
                 'select'                => 'Seleccionar',
                 'select-type'           => 'Seleccionar tipus d\'atribut',
-                'swatch'                => 'Muestra',
+                'swatch'                => 'Muestra tipus',
                 'text'                  => 'Text',
                 'textarea'              => 'Àrea de text',
                 'title'                 => 'Editar atribut',
@@ -502,6 +502,7 @@ return [
                 'usable-in-grid'        => 'Útil a la graella',
                 'is-filterable'         => 'És filtrable',
                 'ai-translate'          => 'Traducció IA',
+                'invalid-swatch-type'   => ':attribute no està permès per al tipus d\'atribut :type amb tipus de swatch :swatch_type.',
 
                 'option' => [
                     'create-success'      => 'Opció d\'atribut creada amb èxit',
@@ -510,6 +511,10 @@ return [
                     'sort-update-failure' => 'No s\'ha pogut actualitzar l\'ordre de classificació',
                     'sort-update-success' => 'Ordre de classificació actualitzat amb èxit',
                     'update-success'      => 'Opció d\'atribut actualitzada amb èxit',
+                    'color'               => 'Mostra de color',
+                    'dropdown'            => 'Desplegable',
+                    'image'               => 'Mostra d\'imatge',
+                    'text'                => 'Mostra de text',
                 ],
             ],
 

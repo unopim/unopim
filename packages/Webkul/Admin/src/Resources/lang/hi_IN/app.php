@@ -419,7 +419,7 @@ return [
                 'save-btn'              => 'सहेजें विशेषता',
                 'select'                => 'चुनना',
                 'select-type'           => 'विशेषता प्रकार का चयन करें',
-                'swatch'                => 'नमूना',
+                'swatch'                => 'नमूना प्रकार',
                 'text'                  => 'मूलपाठ',
                 'textarea'              => 'पाठ क्षेत्र',
                 'title'                 => 'विशेषता जोड़ें',
@@ -487,7 +487,7 @@ return [
                 'save-btn'              => 'सहेजें विशेषता',
                 'select'                => 'चुनना',
                 'select-type'           => 'विशेषता प्रकार का चयन करें',
-                'swatch'                => 'नमूना',
+                'swatch'                => 'नमूना प्रकार',
                 'text'                  => 'मूलपाठ',
                 'textarea'              => 'पाठ क्षेत्र',
                 'title'                 => 'संपादित करें',
@@ -502,6 +502,7 @@ return [
                 'usable-in-grid'        => 'ग्रिड में प्रयोग करने योग्य',
                 'is-filterable'         => 'फ़िल्टर योग्य है',
                 'ai-translate'          => 'एआई अनुवाद',
+                'invalid-swatch-type'   => ':attribute :type प्रकार के attribute के लिए :swatch_type swatch type के साथ अनुमति नहीं है।',
 
                 'option' => [
                     'create-success'      => 'विशेषता विकल्प सफलतापूर्वक बनाया गया',
@@ -510,6 +511,10 @@ return [
                     'sort-update-failure' => 'क्रम अपडेट करने में विफल',
                     'sort-update-success' => 'क्रम सफलतापूर्वक अपडेट किया गया',
                     'update-success'      => 'विशेषता विकल्प सफलतापूर्वक अपडेट किया गया',
+                    'color'               => 'रंग आदर्श',
+                    'dropdown'            => 'ड्रॉप डाउन',
+                    'image'               => 'छवि नमूना',
+                    'text'                => 'पाठ नमूना',
                 ],
             ],
 

@@ -418,7 +418,7 @@ return [
                 'save-btn'              => 'Lưu thuộc tính',
                 'select'                => 'Chọn',
                 'select-type'           => 'Chọn loại thuộc tính',
-                'swatch'                => 'Mẫu thử',
+                'swatch'                => 'Mẫu thử loại',
                 'text'                  => 'Văn bản',
                 'textarea'              => 'Văn bản lớn',
                 'title'                 => 'Thêm thuộc tính',
@@ -486,7 +486,7 @@ return [
                 'save-btn'              => 'Lưu thuộc tính',
                 'select'                => 'Chọn',
                 'select-type'           => 'Chọn loại thuộc tính',
-                'swatch'                => 'Mẫu thử',
+                'swatch'                => 'Mẫu thử loại',
                 'text'                  => 'Văn bản',
                 'textarea'              => 'Văn bản lớn',
                 'title'                 => 'Chỉnh sửa thuộc tính',
@@ -501,6 +501,7 @@ return [
                 'usable-in-grid'        => 'Có thể sử dụng trong lưới',
                 'is-filterable'         => 'Có thể lọc',
                 'ai-translate'          => 'Dịch thuật AI',
+                'invalid-swatch-type'   => ':attribute không được phép cho loại thuộc tính :type với loại swatch :swatch_type.',
 
                 'option' => [
                     'create-success'      => 'Tùy chọn thuộc tính đã được tạo thành công',
@@ -509,6 +510,10 @@ return [
                     'sort-update-failure' => 'Cập nhật thứ tự sắp xếp thất bại',
                     'sort-update-success' => 'Cập nhật thứ tự sắp xếp thành công',
                     'update-success'      => 'Tùy chọn thuộc tính đã được cập nhật thành công',
+                    'color'               => 'Mẫu màu sắc',
+                    'dropdown'            => 'Danh sách thả xuống',
+                    'image'               => 'Mẫu hình ảnh',
+                    'text'                => 'Mẫu văn bản',
                 ],
             ],
 

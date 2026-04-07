@@ -412,7 +412,7 @@ return [
                 'save-btn'              => 'I-save ang katangian',
                 'select'                => 'Piliin',
                 'select-type'           => 'Piliin ang uri ng katangian',
-                'swatch'                => 'Swatch',
+                'swatch'                => 'Swatch Tipo',
                 'text'                  => 'Teksto',
                 'textarea'              => 'Text Area',
                 'title'                 => 'Magdagdag ng Katangian',
@@ -480,7 +480,7 @@ return [
                 'save-btn'              => 'I-save ang katangian',
                 'select'                => 'Piliin',
                 'select-type'           => 'Piliin ang uri ng katangian',
-                'swatch'                => 'Swatch',
+                'swatch'                => 'Swatch Tipo',
                 'text'                  => 'Teksto',
                 'textarea'              => 'Text Area',
                 'title'                 => 'I-edit ang Katangian',
@@ -495,6 +495,7 @@ return [
                 'usable-in-grid'        => 'Magagamit sa grid',
                 'is-filterable'         => 'Nafifilter',
                 'ai-translate'          => 'AI Pagsasalin',
+                'invalid-swatch-type'   => 'Ang :attribute ay hindi pinapayagan para sa attribute type :type na may swatch type :swatch_type.',
 
                 'option' => [
                     'create-success'      => 'Matagumpay na nalikha ang Opsyon ng Katangian',
@@ -503,6 +504,10 @@ return [
                     'sort-update-failure' => 'Nabigong i-update ang pagkakasunod-sunod',
                     'sort-update-success' => 'Matagumpay na na-update ang pagkakasunod-sunod',
                     'update-success'      => 'Matagumpay na na-update ang Opsyon ng Katangian',
+                    'color'               => 'Color Swatch',
+                    'dropdown'            => 'Dropdown',
+                    'image'               => 'Image Swatch',
+                    'text'                => 'Text Swatch',
                 ],
             ],
 

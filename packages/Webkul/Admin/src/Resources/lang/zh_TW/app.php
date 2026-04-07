@@ -418,7 +418,7 @@ return [
                 'save-btn'              => '保存屬性',
                 'select'                => '選擇',
                 'select-type'           => '選擇屬性類型',
-                'swatch'                => '樣本',
+                'swatch'                => '樣本類型',
                 'text'                  => '文本',
                 'textarea'              => '文本區',
                 'title'                 => '添加屬性',
@@ -486,7 +486,7 @@ return [
                 'save-btn'              => '保存屬性',
                 'select'                => '選擇',
                 'select-type'           => '選擇屬性類型',
-                'swatch'                => '樣本',
+                'swatch'                => '樣本類型',
                 'text'                  => '文本',
                 'textarea'              => '文本區',
                 'title'                 => '編輯屬性',
@@ -501,6 +501,7 @@ return [
                 'usable-in-grid'        => '可在網格中使用',
                 'is-filterable'         => '可篩選',
                 'ai-translate'          => '人工智慧翻譯',
+                'invalid-swatch-type'   => ':attribute 不允許用於屬性類型 :type，Swatch 類型 :swatch_type。',
 
                 'option' => [
                     'create-success'      => '屬性選項創建成功',
@@ -509,6 +510,10 @@ return [
                     'sort-update-failure' => '排序更新失敗',
                     'sort-update-success' => '排序更新成功',
                     'update-success'      => '屬性選項更新成功',
+                    'color'               => '顏色樣本',
+                    'dropdown'            => '下拉選單',
+                    'image'               => '圖片樣本',
+                    'text'                => '文本樣本',
                 ],
             ],
 

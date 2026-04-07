@@ -1,5 +1,10 @@
 # v1.0.x
 
+## v1.0.1
+
+### Changed
+- Removed retired LLM models (GPT-4o, GPT-4o mini).
+
 ## v1.0.0
 
 ### Features

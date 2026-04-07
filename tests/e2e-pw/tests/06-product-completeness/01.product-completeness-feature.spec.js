@@ -62,7 +62,7 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
     const itemRow = adminPage.locator('div', { hasText: 'displaycompletensstab' });
     await itemRow.locator('span[title="Edit"]').first().click();
     await adminPage.getByText('Assign Attribute Group').click();
-    await adminPage.locator('div').filter({ hasText: /^Select option$/ }).click();
+    await adminPage.getByRole('combobox').locator('div').filter({ hasText: 'Select option' }).click();
     await adminPage.getByRole('option', { name: 'General' }).locator('span').first().click();
     await adminPage.getByRole('button', { name: 'Assign Attribute Group' }).click();
     await adminPage.waitForTimeout(200);
@@ -235,14 +235,14 @@ test('Create a new channel and assigned multiple locale and currency', async ({ 
     await adminPage.getByRole('link', { name: 'Create Channel' }).click();
     await adminPage.getByRole('textbox', { name: 'Code' }).click();
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('defaultchannel2');
-    await adminPage.locator('div').filter({ hasText: /^Select Root Category$/ }).click();
+    await adminPage.locator('#root_category_id').getByRole('combobox').locator('div').filter({ hasText: 'Select Root Category' }).click();
     await adminPage.getByText('[root]').click();
     await adminPage.locator('input[name="en_US[name]"]').click();
     await adminPage.locator('input[name="en_US[name]"]').fill('channel3');
-    await adminPage.locator('div').filter({ hasText: /^Select Locales$/ }).click();
+    await adminPage.locator('#locales').getByRole('combobox').locator('div').filter({ hasText: 'Select Locales' }).click();
     await adminPage.locator('#locales').getByText('Afrikaans (South Africa)').click();
     await adminPage.getByRole('option', { name: 'English (United States)' }).locator('span').first().click();
-    await adminPage.locator('div').filter({ hasText: /^Select currencies$/ }).click();
+    await adminPage.locator('#currencies').getByRole('combobox').locator('div').filter({ hasText: 'Select currencies' }).click();
     await adminPage.getByText('Andorran Peseta').click();
     await adminPage.getByRole('option', { name: 'US Dollar' }).locator('span').first().click();
     await adminPage.getByRole('button', { name: 'Save Channel' }).click();

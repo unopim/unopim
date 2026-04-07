@@ -139,51 +139,67 @@ class MagicAIController extends Controller
         } catch (\Exception $e) {
             report($e);
 
+            $message = $e->getMessage();
+
+            if (str_contains($message, 'cURL error 28')) {
+                $message = 'The AI response is taking longer than expected. Please try again.';
+            }
+
             return new JsonResponse([
-                'message' => $e->getMessage(),
+                'message' => $message,
             ], 400);
         }
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Generate a Image.
      */
     public function image(): JsonResponse
     {
+        $model = request()->input('model');
+
+        $platform = str_starts_with($model, 'gemini')
+            ? 'gemini'
+            : 'openai';
+
         config([
             'openai.api_key'      => core()->getConfigData('general.magic_ai.settings.api_key'),
             'openai.organization' => core()->getConfigData('general.magic_ai.settings.organization'),
+            'gemini.api_key'      => core()->getConfigData('general.magic_ai.settings.gemini_api_key'),
         ]);
 
-        $this->validate(request(), [
-            'prompt'  => 'required',
-            'model'   => 'required|in:dall-e-2,dall-e-3',
+        $baseRules = [
+            'prompt' => 'required|string',
+            'model'  => 'required|in:dall-e-2,dall-e-3,gpt-image-1.5,gpt-image-1,gpt-image-1-mini,gemini-3-pro-image-preview,gemini-2.5-flash-image',
+            'size'   => 'required|in:1024x1024,1024x1792,1792x1024',
+        ];
+
+        $openAiRules = [
             'n'       => 'required_if:model,dall-e-2|integer|min:1|max:10',
-            'size'    => 'required|in:1024x1024,1024x1792,1792x1024',
             'quality' => 'required_if:model,dall-e-3|in:standard,hd',
-        ]);
+        ];
 
-        if (core()->getConfigData('general.magic_ai.settings.ai_platform') != 'openai') {
-            return new JsonResponse([
-                'message' => trans('admin::app.catalog.products.index.magic-ai-openai-required'),
-            ], 500);
-        }
+        $this->validate(
+            request(),
+            $platform === 'openai'
+                ? array_merge($baseRules, $openAiRules)
+                : $baseRules
+        );
 
         try {
-            $options = request()->only([
-                'n',
-                'size',
-                'quality',
-            ]);
-
             $prompt = $this->promptService->getPrompt(
                 request()->input('prompt'),
                 request()->input('resource_id'),
                 request()->input('resource_type')
             );
 
-            $images = MagicAI::setModel(request()->input('model'))
-                ->setPlatForm(core()->getConfigData('general.magic_ai.settings.ai_platform'))
+            $options = match ($platform) {
+                'openai' => request()->only(['n', 'size', 'quality']),
+                'gemini' => request()->only(['size']),
+            };
+
+            $images = MagicAI::setModel($model)
+                ->setPlatForm($platform)
                 ->setPrompt($prompt)
                 ->images($options);
 
@@ -222,7 +238,9 @@ class MagicAIController extends Controller
         return view('admin::configuration.magic-ai-prompt.index');
     }
 
-    // Merge the Tone and Prompt here and send the updated prompt on function,
+    /**
+     * Merge tone with prompt and send the final prompt to the function.
+     */
     public function store(): JsonResponse
     {
         $this->validate(request(), [

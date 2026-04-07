@@ -418,7 +418,7 @@ return [
                 'save-btn'              => '属性を保存',
                 'select'                => '選択',
                 'select-type'           => '属性タイプを選択',
-                'swatch'                => 'スウォッチ',
+                'swatch'                => 'スウォッチタイプ',
                 'text'                  => 'テキスト',
                 'textarea'              => 'テキストエリア',
                 'title'                 => '属性を追加',
@@ -485,7 +485,7 @@ return [
                 'save-btn'              => '属性を保存',
                 'select'                => '選択',
                 'select-type'           => '属性タイプを選択',
-                'swatch'                => 'スウォッチ',
+                'swatch'                => 'スウォッチタイプ',
                 'text'                  => 'テキスト',
                 'textarea'              => 'テキストエリア',
                 'title'                 => '属性を編集',
@@ -499,6 +499,7 @@ return [
                 'same-code-error'       => 'オプション コードは一意である必要があります。',
                 'usable-in-grid'        => 'グリッドで使用可能',
                 'ai-translate'          => 'AI翻訳',
+                'invalid-swatch-type'   => ':attribute は属性タイプ :type でスウォッチタイプ :swatch_type に対して許可されていません。',
 
                 'option' => [
                     'create-success'      => '属性オプションが正常に作成されました',
@@ -507,6 +508,10 @@ return [
                     'sort-update-failure' => '並び順の更新に失敗しました',
                     'sort-update-success' => '並び順が正常に更新されました',
                     'update-success'      => '属性オプションが正常に更新されました',
+                    'color'               => 'カラー スウォッチ',
+                    'dropdown'            => 'ドロップダウン',
+                    'image'               => '画像スウォッチ',
+                    'text'                => 'テキスト スウォッチ',
                 ],
             ],
 

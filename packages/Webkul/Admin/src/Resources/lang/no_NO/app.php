@@ -418,7 +418,7 @@ return [
                 'save-btn'              => 'Lagre attributt',
                 'select'                => 'Velg',
                 'select-type'           => 'Velg attributtype',
-                'swatch'                => 'Prøve',
+                'swatch'                => 'Prøve type',
                 'text'                  => 'Tekst',
                 'textarea'              => 'Tekstområde',
                 'title'                 => 'Legg til attributt',
@@ -486,7 +486,7 @@ return [
                 'save-btn'              => 'Lagre attributt',
                 'select'                => 'Velg',
                 'select-type'           => 'Velg attributtype',
-                'swatch'                => 'Prøve',
+                'swatch'                => 'Prøve  type',
                 'text'                  => 'Tekst',
                 'textarea'              => 'Tekstområde',
                 'title'                 => 'Rediger attributt',
@@ -501,6 +501,7 @@ return [
                 'usable-in-grid'        => 'Brukes i rutenett',
                 'is-filterable'         => 'Er filtrerbar',
                 'ai-translate'          => 'AI Oversettelse',
+                'invalid-swatch-type'   => ':attribute er ikke tillatt for attributttype :type med swatch-type :swatch_type.',
 
                 'option' => [
                     'create-success'      => 'Attributtalternativ opprettet',
@@ -509,6 +510,10 @@ return [
                     'sort-update-failure' => 'Kunne ikke oppdatere sorteringsrekkefølge',
                     'sort-update-success' => 'Sorteringsrekkefølge oppdatert',
                     'update-success'      => 'Attributtalternativ oppdatert',
+                    'color'               => 'Fargeprøve',
+                    'dropdown'            => 'Nedtrekksmeny',
+                    'image'               => 'Bildeprøve',
+                    'text'                => 'Tekstprøve',
                 ],
             ],
 

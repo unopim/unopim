@@ -418,7 +418,7 @@ return [
                 'save-btn'              => 'Salvează atributul',
                 'select'                => 'Selectează',
                 'select-type'           => 'Selectează tipul atributului',
-                'swatch'                => 'Eșantion',
+                'swatch'                => 'Eșantion tip',
                 'text'                  => 'Text',
                 'textarea'              => 'Câmp text',
                 'title'                 => 'Adaugă atribut',
@@ -486,7 +486,7 @@ return [
                 'save-btn'              => 'Salvează atributul',
                 'select'                => 'Selectează',
                 'select-type'           => 'Selectează tipul atributului',
-                'swatch'                => 'Eșantion',
+                'swatch'                => 'Eșantion tip',
                 'text'                  => 'Text',
                 'textarea'              => 'Câmp text',
                 'title'                 => 'Editează atribut',
@@ -501,6 +501,7 @@ return [
                 'usable-in-grid'        => 'Utilizabil în grilă',
                 'is-filterable'         => 'Este filtrabil',
                 'ai-translate'          => 'Traducere IA',
+                'invalid-swatch-type'   => ':attribute nu este permis pentru tipul de atribut :type cu tipul swatch :swatch_type.',
 
                 'option' => [
                     'create-success'      => 'Opțiunea atributului a fost creată cu succes',
@@ -509,6 +510,10 @@ return [
                     'sort-update-failure' => 'Actualizarea ordinii de sortare a eșuat',
                     'sort-update-success' => 'Ordinea de sortare a fost actualizată cu succes',
                     'update-success'      => 'Opțiunea atributului a fost actualizată cu succes',
+                    'color'               => 'Eșantion de culoare',
+                    'dropdown'            => 'Meniu derulant',
+                    'image'               => 'Eșantion imagine',
+                    'text'                => 'Eșantion text',
                 ],
             ],
 

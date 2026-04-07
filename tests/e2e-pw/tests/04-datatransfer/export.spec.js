@@ -20,7 +20,7 @@ test('Create Export with empty Type field', async ({ adminPage }) => {
   await adminPage.getByRole('link', { name: 'Create Export' }).click();
   await adminPage.getByRole('textbox', { name: 'Code' }).click();
   await adminPage.getByRole('textbox', { name: 'Code' }).fill('Category Export CSV');
-  await adminPage.locator('div').filter({ hasText: /^Categories$/ }).click();
+  await adminPage.locator('#export-type').getByRole('combobox').locator('div').filter({ hasText: 'Categories' }).click();
   await adminPage.getByRole('option', { name: 'Categories' }).locator('span').first().click();
   await adminPage.locator('input[name="filters[file_format]"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option', { name: 'CSV' }).locator('span').first().click();
@@ -46,7 +46,7 @@ test('Create Export with empty Code, Type and File Format field', async ({ admin
   await adminPage.getByRole('link', { name: 'Create Export' }).click();
   await adminPage.getByRole('textbox', { name: 'Code' }).click();
   await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
-  await adminPage.locator('div').filter({ hasText: /^Categories$/ }).click();
+  await adminPage.locator('#export-type').getByRole('combobox').locator('div').filter({ hasText: 'Categories' }).click();
   await adminPage.getByRole('option', { name: 'Categories' }).locator('span').first().click();
   await adminPage.locator('div').filter({ hasText: /^With Media$/ }).locator('div').click();
   await adminPage.getByRole('button', { name: 'Save Export' }).click();

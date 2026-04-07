@@ -60,19 +60,22 @@ class OpenAI implements LLMModelInterface
      */
     public function images(array $options): array
     {
-        $extraParameters = [];
+        $payload = [
+            'model'  => $this->model,
+            'prompt' => $this->prompt,
+            'n'      => intval($options['n'] ?? 1),
+            'size'   => $options['size'],
+        ];
 
-        if (isset($options['quality']) && $this->model !== 'dall-e-2') {
-            $extraParameters['quality'] = $options['quality'];
+        if ($this->model !== 'gpt-image-1.5' && $this->model !== 'gpt-image-1' && $this->model !== 'gpt-image-1-mini') {
+            $payload['response_format'] = 'b64_json';
         }
 
-        $result = BaseOpenAI::images()->create(array_merge([
-            'model'           => $this->model,
-            'prompt'          => $this->prompt,
-            'n'               => intval($options['n'] ?? 1),
-            'size'            => $options['size'],
-            'response_format' => 'b64_json',
-        ], $extraParameters));
+        if (isset($options['quality']) && $this->model !== 'dall-e-2') {
+            $payload['quality'] = $options['quality'];
+        }
+
+        $result = BaseOpenAI::images()->create($payload);
 
         $images = [];
 
