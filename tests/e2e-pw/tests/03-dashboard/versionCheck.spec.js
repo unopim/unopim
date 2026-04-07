@@ -46,10 +46,10 @@ test('1.3 - Profile dropdown shows version string in format "Version : vX.X.X"',
   expect(versionText).toMatch(/Version\s*:\s*v\d+\.\d+\.\d+/);
 });
 
-test('1.4 - Version displays v2.0.0', async ({ adminPage }) => {
+test('1.4 - Version displays v2.0.1', async ({ adminPage }) => {
   await openProfileDropdown(adminPage);
 
-  await expect(adminPage.locator('#app').getByText(/Version\s*:\s*v2\.0\.0/)).toBeVisible();
+  await expect(adminPage.locator('#app').getByText(/Version\s*:\s*v2\.0\.1/)).toBeVisible();
 });
 
 test('1.5 - Profile dropdown shows UnoPim logo icon next to version', async ({ adminPage }) => {
