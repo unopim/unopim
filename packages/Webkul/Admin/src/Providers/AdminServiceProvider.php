@@ -152,13 +152,13 @@ class AdminServiceProvider extends ServiceProvider
     protected function configureRateLimiting(): void
     {
         RateLimiter::for('admin-login', function (Request $request) {
-            $key = $request->input('email', '').'|'.$request->ip();
+            $key = strtolower(trim((string) $request->input('email', ''))).'|'.$request->ip();
 
             return Limit::perMinute(5)->by($key);
         });
 
         RateLimiter::for('admin-forgot-password', function (Request $request) {
-            $key = $request->input('email', '').'|'.$request->ip();
+            $key = strtolower(trim((string) $request->input('email', ''))).'|'.$request->ip();
 
             return Limit::perMinute(5)->by($key);
         });

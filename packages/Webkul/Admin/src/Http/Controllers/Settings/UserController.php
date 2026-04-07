@@ -136,8 +136,8 @@ class UserController extends Controller
 
         if ($data instanceof RedirectResponse) {
             return new JsonResponse([
-                'message' => trans('admin::app.settings.users.update-success'),
-            ]);
+                'message' => session('error', trans('admin::app.settings.users.cannot-change', ['name' => ''])),
+            ], JsonResponse::HTTP_FORBIDDEN);
         }
 
         Event::dispatch('user.admin.update.before', $id);
