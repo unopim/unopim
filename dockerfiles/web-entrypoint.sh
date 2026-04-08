@@ -73,9 +73,27 @@ if [ ! -f "$LOCK_FILE" ]; then
         echo "══════════════════════════════════════════════"
     fi
 else
-    # Run pending migrations on subsequent starts (safe — never drops tables)
-    echo "→ Checking for pending migrations..."
-    php artisan migrate --force --no-interaction
+    # Lock file exists — check if DB is still intact
+    if php artisan migrate:status --no-interaction >/dev/null 2>&1; then
+        echo "→ Checking for pending migrations..."
+        php artisan migrate --force --no-interaction
+    else
+        echo ""
+        echo "══════════════════════════════════════════════"
+        echo "  WARNING: Database is empty but lock file exists."
+        echo "  This usually happens after 'docker compose down -v'"
+        echo "  which removes all data volumes."
+        echo ""
+        echo "  TIP: Use 'docker compose down' (without -v) to"
+        echo "  preserve your data. Only use -v when you want a"
+        echo "  complete reset."
+        echo ""
+        echo "  Re-running first-time setup..."
+        echo "══════════════════════════════════════════════"
+        echo ""
+        rm -f "$LOCK_FILE"
+        exec "$0" "$@"
+    fi
 fi
 
 # Ensure storage directories are writable

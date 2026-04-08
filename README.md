@@ -148,31 +148,35 @@ To get started with UnoPim, follow these steps:
 
 ## 🐳 Installation with Docker
 
-If you have Docker/Docker Compose installed, follow these steps:
+If you have Docker and Docker Compose (v2+) installed, follow these steps:
 
 1. **Clone the repository**:
-   - HTTPS: `git clone https://github.com/unopim/unopim.git`
-   - SSH: `git clone git@github.com:unopim/unopim.git`
-
-2. **Enter the directory**:
    ```bash
+   git clone https://github.com/unopim/unopim.git
    cd unopim
+   ```
+
+2. **Configure the environment**:
+   ```bash
+   cp .env.docker .env
    ```
 
 3. **Start the Docker containers**:
    ```bash
-   docker-compose up -d
+   docker compose up -d
    ```
 
-   This will pull the necessary images and set up the environment. Once running, access the application at:
+   Wait ~90 seconds for the first-time setup (migrations, seeding), then access:
 
-   - Application: `http://localhost:8000`
-   - MySQL: `http://localhost:3306`
+   - **Application**: `http://localhost:8000/admin`
+   - **Default login**: `admin@example.com` / `admin123`
 
+   **Apache alternative** (instead of Nginx):
+   ```bash
+   docker compose -f docker-compose.yml -f docker-compose.apache.yml up -d
+   ```
 
-> **Note**:
-> If MySQL is already running on your system, change the MySQL port in the `docker-compose.yml` and `.env` files.
-> Run `docker-compose up -d` again to apply changes.
+> **Port conflicts?** If you already have MySQL, Redis, or Elasticsearch running locally, edit the `FORWARD_*` ports in `.env` and restart. See `.env.docker` for details.
 
 ## ☁️ Cloud Installation via Amazon AMI
 
