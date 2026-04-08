@@ -73,3 +73,39 @@ it('should be able to delete roles if has permission', function () {
         'id' => $role->id,
     ]);
 });
+
+it('should not be able to update role if does not have permission', function () {
+    $this->loginWithPermissions();
+    $role = Role::factory()->create();
+
+    $this->put(route('admin.settings.roles.update', ['id' => $role->id]), [
+        'name'            => 'restricted role update',
+        'permission_type' => 'custom',
+        'description'     => 'blocked update attempt',
+        'permissions'     => ['settings.roles.edit'],
+    ])->assertStatus(403);
+
+    $this->assertDatabaseMissing($this->getFullTableName(Role::class), [
+        'id'          => $role->id,
+        'name'        => 'restricted role update',
+        'description' => 'blocked update attempt',
+    ]);
+});
+
+it('should be able to update role if has permission', function () {
+    $this->loginWithPermissions(permissions: ['dashboard', 'settings.roles.edit']);
+    $role = Role::factory()->create();
+
+    $this->put(route('admin.settings.roles.update', ['id' => $role->id]), [
+        'name'            => 'allowed role update',
+        'permission_type' => 'custom',
+        'description'     => 'allowed update',
+        'permissions'     => ['settings.roles.edit'],
+    ])->assertStatus(200);
+
+    $this->assertDatabaseHas($this->getFullTableName(Role::class), [
+        'id'          => $role->id,
+        'name'        => 'allowed role update',
+        'description' => 'allowed update',
+    ]);
+});

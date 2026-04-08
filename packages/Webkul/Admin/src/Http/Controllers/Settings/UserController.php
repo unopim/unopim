@@ -130,6 +130,10 @@ class UserController extends Controller
      */
     public function update(UserForm $request): JsonResponse
     {
+        if (! bouncer()->hasPermission('settings.users.users.edit')) {
+            abort(JsonResponse::HTTP_FORBIDDEN, __('admin::app.errors.403.title'));
+        }
+
         $id = request()->id;
 
         $data = $this->prepareUserData($request, $id);

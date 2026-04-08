@@ -89,6 +89,10 @@ class RoleController extends Controller
      */
     public function update(int $id): View|RedirectResponse
     {
+        if (! bouncer()->hasPermission('settings.roles.edit')) {
+            abort(JsonResponse::HTTP_FORBIDDEN, __('admin::app.errors.403.title'));
+        }
+
         $this->validate(request(), [
             'name'            => 'required',
             'permission_type' => 'required|in:all,custom',
