@@ -1496,7 +1496,7 @@ return [
 
             'activate-warning'          => 'Таны бүртгэл хараахан идэвхжээгүй байна, администратор холбоо барина уу.',
             'cannot-change'             => 'Хэрэглэгчийг өөрчлөх боломжгүй',
-            'cannot-escalate-role'      => 'You do not have permission to assign an all-access role.',
+            'cannot-escalate-role'      => 'Танд бүх эрхтэй үүргийг оноох зөвшөөрөл байхгүй байна.',
             'create-success'            => 'Хэрэглэгч амжилттай бүтээсэн.',
             'delete-failed'             => 'Хэрэглэгч устгасан.',
             'delete-success'            => 'Хэрэглэгч амжилттай устгасан.',
