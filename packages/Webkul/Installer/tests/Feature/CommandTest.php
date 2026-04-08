@@ -1,5 +1,6 @@
 <?php
 
+use Webkul\Installer\Console\Commands\Installer;
 use Webkul\User\Models\Admin;
 
 it('should ask for email if email option is not provided in the command', function () {
@@ -163,5 +164,60 @@ it('should ask for name if invalid user name given in the command', function () 
         '--admin'     => false,
     ])
         ->expectsQuestion('Set the Name for User', 'Admin')
+        ->assertExitCode(0);
+});
+
+it('should validate database prefix in unopim:install command', function () {
+    $this->app->extend(Installer::class, function ($service) {
+        return new class extends Installer
+        {
+            public function call($command, array $arguments = [], $output = null)
+            {
+                return 0;
+            }
+
+            protected function databaseConnectionSuccessful(array $config): bool
+            {
+                return true;
+            }
+
+            protected function envUpdate(string $key, string $value): void
+            { /* Mute */
+            }
+
+            public function handle()
+            {
+                // Ensure prompts occur even if .env exists
+                $this->askForDatabaseDetails();
+
+                return 0;
+            }
+        };
+    });
+
+    $this->artisan('unopim:install', ['--skip-admin-creation' => true])
+        ->expectsQuestion('Please select the database connection', 'mysql')
+        ->expectsQuestion('Please enter the database host', '127.0.0.1')
+        ->expectsQuestion('Please enter the database port', '3306')
+        ->expectsQuestion('Please enter the database name', 'unopim')
+        ->expectsQuestion('Please enter the database prefix', 'too_long_prefix_')
+        ->assertExitCode(1);
+
+    $this->artisan('unopim:install', ['--skip-admin-creation' => true])
+        ->expectsQuestion('Please select the database connection', 'mysql')
+        ->expectsQuestion('Please enter the database host', '127.0.0.1')
+        ->expectsQuestion('Please enter the database port', '3306')
+        ->expectsQuestion('Please enter the database name', 'unopim')
+        ->expectsQuestion('Please enter the database prefix', 'invalid-char!')
+        ->assertExitCode(1);
+
+    $this->artisan('unopim:install', ['--skip-admin-creation' => true])
+        ->expectsQuestion('Please select the database connection', 'mysql')
+        ->expectsQuestion('Please enter the database host', '127.0.0.1')
+        ->expectsQuestion('Please enter the database port', '3306')
+        ->expectsQuestion('Please enter the database name', 'unopim')
+        ->expectsQuestion('Please enter the database prefix', 'uno_')
+        ->expectsQuestion('Please enter your database username', 'root')
+        ->expectsQuestion('Please enter your database password', 'root')
         ->assertExitCode(0);
 });
