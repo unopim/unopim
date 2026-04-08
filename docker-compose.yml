@@ -28,6 +28,7 @@
 
 # ─── Shared configuration (reused via YAML anchors) ─────────────────
 x-app-environment: &app-environment
+  APP_URL: "http://localhost:${APP_PORT:-8000}"
   DB_HOST: unopim-mysql
   DB_PORT: 3306
   REDIS_HOST: unopim-redis
