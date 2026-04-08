@@ -28,6 +28,7 @@
 
 # ─── Shared configuration (reused via YAML anchors) ─────────────────
 x-app-environment: &app-environment
+  APP_URL: "http://localhost:${APP_PORT:-8000}"
   DB_HOST: unopim-mysql
   DB_PORT: 3306
   REDIS_HOST: unopim-redis
@@ -40,6 +41,8 @@ x-app-depends: &app-depends
   unopim-mysql:
     condition: service_healthy
   unopim-redis:
+    condition: service_healthy
+  unopim-elasticsearch:
     condition: service_healthy
 
 x-logging: &default-logging
@@ -182,6 +185,9 @@ services:
       - discovery.type=single-node
       - xpack.security.enabled=false
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - cluster.routing.allocation.disk.watermark.low=${ELASTICSEARCH_DISK_WATERMARK_LOW:-85%}
+      - cluster.routing.allocation.disk.watermark.high=${ELASTICSEARCH_DISK_WATERMARK_HIGH:-90%}
+      - cluster.routing.allocation.disk.watermark.flood_stage=${ELASTICSEARCH_DISK_WATERMARK_FLOOD_STAGE:-95%}
     volumes:
       - unopim-elasticsearch-data:/usr/share/elasticsearch/data
     ports:

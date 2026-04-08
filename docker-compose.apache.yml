@@ -32,6 +32,7 @@ services:
     restart: unless-stopped
     env_file: .env
     environment:
+      APP_URL: "http://localhost:${APP_PORT:-8000}"
       DB_HOST: unopim-mysql
       DB_PORT: 3306
       REDIS_HOST: unopim-redis
@@ -43,6 +44,8 @@ services:
       unopim-mysql:
         condition: service_healthy
       unopim-redis:
+        condition: service_healthy
+      unopim-elasticsearch:
         condition: service_healthy
     logging:
       driver: "json-file"

@@ -27,6 +27,11 @@ if [ ! -f "$LOCK_FILE" ]; then
         echo "→ Installing Composer dependencies..."
         composer install --no-interaction --optimize-autoloader --no-dev
 
+        # Sync APP_URL with APP_PORT if port was changed
+        if [ -n "$APP_PORT" ] && [ "$APP_PORT" != "8000" ] && [ -f /var/www/html/.env ]; then
+            sed -i "s|APP_URL=http://localhost:8000|APP_URL=http://localhost:${APP_PORT}|" /var/www/html/.env
+        fi
+
         # Generate APP_KEY if not already set in .env
         if grep -q "^APP_KEY=$" /var/www/html/.env 2>/dev/null || [ -z "$APP_KEY" ]; then
             echo "→ Generating application key..."
@@ -46,9 +51,32 @@ if [ ! -f "$LOCK_FILE" ]; then
 
         # Build Elasticsearch indexes if enabled
         if [ "${ELASTICSEARCH_ENABLED:-false}" = "true" ]; then
-            echo "→ Building Elasticsearch indexes..."
-            php artisan unopim:product:index --no-interaction 2>/dev/null || true
-            php artisan unopim:category:index --no-interaction 2>/dev/null || true
+            echo "→ Waiting for Elasticsearch to be ready..."
+            ES_HOST="${ELASTICSEARCH_HOST:-unopim-elasticsearch:9200}"
+            # Normalize: support both "host:port" and "http://host:port"
+            case "$ES_HOST" in
+                http://*|https://*) ES_URL="$ES_HOST" ;;
+                *) ES_URL="http://${ES_HOST}" ;;
+            esac
+            ES_READY=0
+            for i in $(seq 1 30); do
+                if curl -sf "${ES_URL}/_cluster/health?wait_for_status=yellow&timeout=5s" >/dev/null 2>&1; then
+                    ES_READY=1
+                    echo "→ Elasticsearch is ready (yellow or green)."
+                    break
+                fi
+                echo "   Waiting for Elasticsearch... ($i/30)"
+                sleep 5
+            done
+
+            if [ "$ES_READY" -eq 1 ]; then
+                echo "→ Building Elasticsearch indexes..."
+                php artisan unopim:product:index --no-interaction 2>/dev/null || true
+                php artisan unopim:category:index --no-interaction 2>/dev/null || true
+            else
+                echo "✗ Elasticsearch did not become ready in time. Failing setup so it can be retried on next container start."
+                exit 1
+            fi
         fi
 
         touch "$LOCK_FILE"
@@ -58,9 +86,27 @@ if [ ! -f "$LOCK_FILE" ]; then
         echo "══════════════════════════════════════════════"
     fi
 else
-    # Run pending migrations on subsequent starts (safe — never drops tables)
-    echo "→ Checking for pending migrations..."
-    php artisan migrate --force --no-interaction
+    # Lock file exists — check if DB is still intact
+    if php artisan migrate:status --no-interaction >/dev/null 2>&1; then
+        echo "→ Checking for pending migrations..."
+        php artisan migrate --force --no-interaction
+    else
+        echo ""
+        echo "══════════════════════════════════════════════"
+        echo "  WARNING: Database is empty but lock file exists."
+        echo "  This usually happens after 'docker compose down -v'"
+        echo "  which removes all data volumes."
+        echo ""
+        echo "  TIP: Use 'docker compose down' (without -v) to"
+        echo "  preserve your data. Only use -v when you want a"
+        echo "  complete reset."
+        echo ""
+        echo "  Re-running first-time setup..."
+        echo "══════════════════════════════════════════════"
+        echo ""
+        rm -f "$LOCK_FILE"
+        exec "$0" "$@"
+    fi
 fi
 
 # Ensure storage directories are writable
