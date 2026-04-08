@@ -27,6 +27,11 @@ if [ ! -f "$LOCK_FILE" ]; then
         echo "→ Installing Composer dependencies..."
         composer install --no-interaction --optimize-autoloader --no-dev
 
+        # Sync APP_URL with APP_PORT if port was changed
+        if [ -n "$APP_PORT" ] && [ "$APP_PORT" != "8000" ] && [ -f /var/www/html/.env ]; then
+            sed -i "s|APP_URL=http://localhost:8000|APP_URL=http://localhost:${APP_PORT}|" /var/www/html/.env
+        fi
+
         # Generate APP_KEY if not already set in .env
         if grep -q "^APP_KEY=$" /var/www/html/.env 2>/dev/null || [ -z "$APP_KEY" ]; then
             echo "→ Generating application key..."
