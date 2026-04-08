@@ -704,6 +704,7 @@ test('7.3 - Open AI Assistance modal and verify fields', async ({ adminPage }) =
   await adminPage.locator('input[name="sku"]').fill(sku);
   await adminPage.getByRole('button', { name: 'Save Product' }).click();
   await expect(adminPage.locator('#app').getByText(/Product created successfully/i)).toBeVisible();
+  await adminPage.waitForLoadState('networkidle');
 
   // Click Magic AI on Description WYSIWYG toolbar
   const magicAIBtn = adminPage.getByRole('button', { name: 'Magic AI' }).last();
@@ -718,8 +719,9 @@ test('7.3 - Open AI Assistance modal and verify fields', async ({ adminPage }) =
   await expect(adminPage.getByRole('button', { name: 'Generate' })).toBeVisible({ timeout: 10000 });
   await expect(adminPage.locator('.multiselect').first()).toBeVisible({ timeout: 10000 });
 
-  // Close modal
+  // Close modal and wait for it to disappear
   await adminPage.locator('.icon-cancel').click();
+  await expect(adminPage.locator('.icon-cancel')).not.toBeVisible({ timeout: 5000 });
 
   // Cleanup: delete the product
   await navigateTo(adminPage, 'products');
