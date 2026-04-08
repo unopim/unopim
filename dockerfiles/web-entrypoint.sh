@@ -53,17 +53,30 @@ if [ ! -f "$LOCK_FILE" ]; then
         if [ "${ELASTICSEARCH_ENABLED:-false}" = "true" ]; then
             echo "→ Waiting for Elasticsearch to be ready..."
             ES_HOST="${ELASTICSEARCH_HOST:-unopim-elasticsearch:9200}"
+            # Normalize: support both "host:port" and "http://host:port"
+            case "$ES_HOST" in
+                http://*|https://*) ES_URL="$ES_HOST" ;;
+                *) ES_URL="http://${ES_HOST}" ;;
+            esac
+            ES_READY=0
             for i in $(seq 1 30); do
-                if curl -sf "http://${ES_HOST}/_cluster/health" >/dev/null 2>&1; then
-                    echo "→ Elasticsearch is ready."
+                if curl -sf "${ES_URL}/_cluster/health?wait_for_status=yellow&timeout=5s" >/dev/null 2>&1; then
+                    ES_READY=1
+                    echo "→ Elasticsearch is ready (yellow or green)."
                     break
                 fi
                 echo "   Waiting for Elasticsearch... ($i/30)"
                 sleep 5
             done
-            echo "→ Building Elasticsearch indexes..."
-            php artisan unopim:product:index --no-interaction 2>/dev/null || true
-            php artisan unopim:category:index --no-interaction 2>/dev/null || true
+
+            if [ "$ES_READY" -eq 1 ]; then
+                echo "→ Building Elasticsearch indexes..."
+                php artisan unopim:product:index --no-interaction 2>/dev/null || true
+                php artisan unopim:category:index --no-interaction 2>/dev/null || true
+            else
+                echo "✗ Elasticsearch did not become ready in time. Failing setup so it can be retried on next container start."
+                exit 1
+            fi
         fi
 
         touch "$LOCK_FILE"

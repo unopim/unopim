@@ -185,9 +185,9 @@ services:
       - discovery.type=single-node
       - xpack.security.enabled=false
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - cluster.routing.allocation.disk.watermark.low=90%
-      - cluster.routing.allocation.disk.watermark.high=95%
-      - cluster.routing.allocation.disk.watermark.flood_stage=97%
+      - cluster.routing.allocation.disk.watermark.low=${ELASTICSEARCH_DISK_WATERMARK_LOW:-85%}
+      - cluster.routing.allocation.disk.watermark.high=${ELASTICSEARCH_DISK_WATERMARK_HIGH:-90%}
+      - cluster.routing.allocation.disk.watermark.flood_stage=${ELASTICSEARCH_DISK_WATERMARK_FLOOD_STAGE:-95%}
     volumes:
       - unopim-elasticsearch-data:/usr/share/elasticsearch/data
     ports:
