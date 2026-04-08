@@ -44,6 +44,8 @@ services:
         condition: service_healthy
       unopim-redis:
         condition: service_healthy
+      unopim-elasticsearch:
+        condition: service_healthy
     logging:
       driver: "json-file"
       options:

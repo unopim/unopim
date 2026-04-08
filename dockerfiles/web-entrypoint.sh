@@ -46,6 +46,16 @@ if [ ! -f "$LOCK_FILE" ]; then
 
         # Build Elasticsearch indexes if enabled
         if [ "${ELASTICSEARCH_ENABLED:-false}" = "true" ]; then
+            echo "→ Waiting for Elasticsearch to be ready..."
+            ES_HOST="${ELASTICSEARCH_HOST:-unopim-elasticsearch:9200}"
+            for i in $(seq 1 30); do
+                if curl -sf "http://${ES_HOST}/_cluster/health" >/dev/null 2>&1; then
+                    echo "→ Elasticsearch is ready."
+                    break
+                fi
+                echo "   Waiting for Elasticsearch... ($i/30)"
+                sleep 5
+            done
             echo "→ Building Elasticsearch indexes..."
             php artisan unopim:product:index --no-interaction 2>/dev/null || true
             php artisan unopim:category:index --no-interaction 2>/dev/null || true
