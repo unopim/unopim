@@ -118,7 +118,7 @@ class ProductIndexer extends Command
 
                             $product = $product->toArray();
 
-                            $product['status'] = (bool) ($product['status'] ?? false);
+                            $product['status'] = (bool) ($product['status'] ?? true);
                             if (isset($product['attribute_family']['status'])) {
                                 $product['attribute_family']['status'] = (bool) $product['attribute_family']['status'];
                             }

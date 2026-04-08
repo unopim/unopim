@@ -123,7 +123,7 @@ class Product
      */
     protected function sanitizeProductArray(array $productArray): array
     {
-        $productArray['status'] = (bool) ($productArray['status'] ?? false);
+        $productArray['status'] = (bool) ($productArray['status'] ?? true);
 
         if (isset($productArray['attribute_family']['status'])) {
             $productArray['attribute_family']['status'] = (bool) $productArray['attribute_family']['status'];
