@@ -195,7 +195,7 @@
                                     <input
                                         type="text"
                                         class="w-full rounded-md border dark:border-cherry-900 bg-white dark:bg-cherry-900 ltr:pl-3 rtl:pr-3 ltr:pr-8 rtl:pl-8 py-1.5 text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:outline-none focus:border-gray-400 dark:focus:border-gray-400"
-                                        placeholder="@lang('admin::app.components.datagrid.filters.select')"
+                                        placeholder="@lang('admin::app.components.datagrid.filters.search-filter')"
                                         v-model="filterPickerSearch"
                                         ref="filterPickerSearchInput"
                                     />

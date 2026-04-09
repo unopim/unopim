@@ -387,6 +387,7 @@ return [
                 'success'         => '任务已成功执行。',
                 'fetch-failed'    => '获取失败。',
                 'action'          => '批量编辑',
+                'description'     => '一次编辑多个产品。更改将在后台处理。',
                 'gallery-preview' => '图库预览',
                 'img-preview'     => '图片预览',
                 'no-image'        => '无图片',
@@ -1969,6 +1970,7 @@ return [
                 'save'          => '节省',
                 'add-filter'    => '添加筛选',
                 'remove-filter' => '移除筛选',
+                'search-filter' => '搜索...',
                 'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => '输入至少2个字符...',

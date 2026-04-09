@@ -387,6 +387,7 @@ return [
                 'success'         => 'Operacija uspješno izvršena.',
                 'fetch-failed'    => 'Preuzimanje nije uspjelo.',
                 'action'          => 'Grupno uređivanje',
+                'description'     => 'Uredite više proizvoda odjednom. Promjene se obrađuju u pozadini.',
                 'gallery-preview' => 'Pregled galerije',
                 'img-preview'     => 'Pregled slike',
                 'no-image'        => 'Nema slike',
@@ -1969,6 +1970,7 @@ return [
                 'save'          => 'Spremi',
                 'add-filter'    => 'Dodaj filtar',
                 'remove-filter' => 'Ukloni filtar',
+                'search-filter' => 'Pretraži...',
                 'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Upišite najmanje 2 znaka...',

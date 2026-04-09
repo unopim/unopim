@@ -387,6 +387,7 @@ return [
                 'success'         => 'Thực thi công việc thành công.',
                 'fetch-failed'    => 'Lấy dữ liệu thất bại.',
                 'action'          => 'Chỉnh sửa hàng loạt',
+                'description'     => 'Chỉnh sửa nhiều sản phẩm cùng lúc. Các thay đổi được xử lý trong nền.',
                 'gallery-preview' => 'Xem trước thư viện',
                 'img-preview'     => 'Xem trước hình ảnh',
                 'no-image'        => 'Không có hình ảnh',
@@ -1969,6 +1970,7 @@ return [
                 'save'          => 'Lưu',
                 'add-filter'    => 'Thêm bộ lọc',
                 'remove-filter' => 'Xóa bộ lọc',
+                'search-filter' => 'Tìm kiếm...',
                 'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Nhập ít nhất 2 ký tự...',

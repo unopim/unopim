@@ -2111,6 +2111,7 @@ return [
                 'save'          => 'Save',
                 'add-filter'    => 'Add Filter',
                 'remove-filter' => 'Remove Filter',
+                'search-filter' => 'Search...',
                 'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Type atleast 2 characters...',

@@ -387,6 +387,7 @@ return [
                 'success'         => 'İşlem başarıyla gerçekleştirildi.',
                 'fetch-failed'    => 'Veri alınamadı.',
                 'action'          => 'Toplu Düzenleme',
+                'description'     => 'Birden fazla ürünü aynı anda düzenleyin. Değişiklikler arka planda işlenir.',
                 'gallery-preview' => 'Galeri Önizleme',
                 'img-preview'     => 'Resim Önizleme',
                 'no-image'        => 'Resim Yok',
@@ -1969,6 +1970,7 @@ return [
                 'save'          => 'Kaydet',
                 'add-filter'    => 'Filtre Ekle',
                 'remove-filter' => 'Filtreyi Kaldır',
+                'search-filter' => 'Ara...',
                 'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'En az 2 karakter girin...',

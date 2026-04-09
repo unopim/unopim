@@ -387,6 +387,7 @@ return [
                 'success'         => 'Job executed successfully.',
                 'fetch-failed'    => 'Failed to fetch.',
                 'action'          => 'Bulk Edit',
+                'description'     => 'Edit multiple products at once. Changes are processed in the background.',
                 'gallery-preview' => 'Gallery Preview',
                 'img-preview'     => 'Image Preview',
                 'no-image'        => 'No Image',
@@ -1969,6 +1970,7 @@ return [
                 'save'          => 'Save',
                 'add-filter'    => 'Add Filter',
                 'remove-filter' => 'Remove Filter',
+                'search-filter' => 'Search...',
                 'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Type at least 2 characters...',

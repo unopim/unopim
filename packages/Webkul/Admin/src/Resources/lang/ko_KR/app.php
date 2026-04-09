@@ -387,6 +387,7 @@ return [
                 'success'         => '작업이 성공적으로 실행되었습니다.',
                 'fetch-failed'    => '가져오기 실패.',
                 'action'          => '일괄 편집',
+                'description'     => '여러 제품을 한 번에 편집합니다. 변경 사항은 백그라운드에서 처리됩니다.',
                 'gallery-preview' => '갤러리 미리보기',
                 'img-preview'     => '이미지 미리보기',
                 'no-image'        => '이미지 없음',
@@ -1969,6 +1970,7 @@ return [
                 'save'          => '저장',
                 'add-filter'    => '필터 추가',
                 'remove-filter' => '필터 제거',
+                'search-filter' => '검색...',
                 'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => '최소 2자 이상 입력...',

@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Webkul\DataTransfer\Models\JobInstances;
 use Webkul\DataTransfer\Models\JobTrack;
 
@@ -7,6 +8,9 @@ use function Pest\Laravel\getJson;
 
 it('should return latest 10 data transfer jobs with correct processed rows from summary', function () {
     $this->loginAsAdmin();
+
+    // Clean up pre-existing records to ensure only test data is queried
+    DB::table('job_track')->delete();
 
     $importInstance = JobInstances::factory()->importJob()->entityProduct()->create();
     $exportInstance = JobInstances::factory()->exportJob()->entityCategory()->create();
