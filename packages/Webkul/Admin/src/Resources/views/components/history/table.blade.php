@@ -99,7 +99,6 @@
                                             :value="record[$parent.available.meta.primary_column]"
                                             :id="`mass_action_select_record_${record[$parent.available.meta.primary_column]}`"
                                             v-model="$parent.applied.massActions.indices"
-                                            @change="$parent.setCurrentSelectionMode"
                                         >
 
                                         <span class="icon-checkbox-normal peer-checked:icon-checkbox-check peer-checked:text-violet-700 cursor-pointer rounded-md text-2xl">
