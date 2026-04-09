@@ -14,7 +14,6 @@
 ### Bug Fixes
 - Fixed **format validation** applied to empty optional attributes and category fields — validation is now skipped when the value is empty ([#319](https://github.com/unopim/unopim/issues/319)).
 - Fixed **dark mode visibility** in job tracker progress bars and AI platform configuration button styling ([#320](https://github.com/unopim/unopim/issues/320)).
-- Fixed **docker web entrypoint** file with corrected configuration ([#236](https://github.com/unopim/unopim/pull/236)).
 - Fixed **dynamic attribute fields rendering** in product edit creating dummy extra spaces ([#271](https://github.com/unopim/unopim/pull/271)).
 - Fixed **import file path deletion** — added checks before deleting import file paths ([#276](https://github.com/unopim/unopim/pull/276)).
 - Fixed **missing 'code' field** in swatch attribute option tests ([#252](https://github.com/unopim/unopim/pull/252)).
@@ -28,6 +27,13 @@
 - Fixed **DB table prefix** issue in `ExportProducts` values column query.
 - Fixed **channel creation 500 error** when no translations were provided — `ChannelRepository::create()` now strips empty translation data before saving.
 - Fixed **API returning "Unauthenticated"** despite valid requests — `config('auth.guards.api.provider')` used instead of `array_keys(config('auth.providers'))[0]`.
+- Fixed **`AdminFactory` FK violations** in parallel test databases — replaced hardcoded `role_id` and `ui_locale_id` with dynamic database lookups ([#330](https://github.com/unopim/unopim/pull/330)).
+- Fixed **installer DB prefix validation** — added validation for `DB_PREFIX` to prevent migration errors ([#335](https://github.com/unopim/unopim/pull/335)).
+
+### Docker
+- Production-ready **Docker configuration** — parameterized base images, added Redis 7.2 and Elasticsearch 8.17 services, healthchecks on all containers, env-based credentials ([#334](https://github.com/unopim/unopim/pull/334)).
+- Added **Elasticsearch readiness checks** and disk watermark config — prevents 503 errors on first setup and race conditions with product indexing ([#339](https://github.com/unopim/unopim/pull/339)).
+- Fixed **docker web entrypoint** file with corrected configuration ([#236](https://github.com/unopim/unopim/pull/236)).
 
 ### Security Fixes
 - Fixed **Open Redirect via Referer Header** (Medium) — Login and forgot-password pages accepted spoofed `Referer` headers containing 'admin' in external URLs. Added host validation using `parse_url()`.
