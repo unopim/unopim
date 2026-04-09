@@ -1,10 +1,13 @@
 const { test, expect } = require('../../utils/fixtures');
 
 /**
- * Navigate to the notifications page.
+ * Navigate to the notifications page and wait for Vue component to render.
  */
 async function navigateToNotifications(page) {
   await page.goto('/admin/notifications', { waitUntil: 'networkidle' });
+
+  // Wait for Vue component to mount — either notifications list or empty state will appear
+  await page.waitForSelector('.icon-notification, a[href*="viewed-notifications"]', { timeout: 15000 });
 }
 
 // ─── Notification Page Tests ────────────────────────────────────────
@@ -12,45 +15,56 @@ async function navigateToNotifications(page) {
 test.describe('Notification Page', () => {
   test('1 - should load the notifications page', async ({ adminPage }) => {
     await navigateToNotifications(adminPage);
-    await expect(adminPage.locator('#app').getByText('Notifications').first()).toBeVisible();
-    await expect(adminPage.locator('#app').getByText('List all the Notifications')).toBeVisible();
+    // Target the page title specifically (not the dropdown header)
+    await expect(adminPage.locator('p.text-xl').filter({ hasText: 'Notifications' })).toBeVisible();
+    await expect(adminPage.getByText('List all the Notifications')).toBeVisible();
   });
 
   test('2 - should display status filter tabs (All, Unread, Read)', async ({ adminPage }) => {
     await navigateToNotifications(adminPage);
-    await expect(adminPage.getByRole('button', { name: 'All' })).toBeVisible();
-    await expect(adminPage.getByRole('button', { name: 'Unread' })).toBeVisible();
-    await expect(adminPage.getByRole('button', { name: 'Read' })).toBeVisible();
+    const tabContainer = adminPage.locator('.flex.gap-4.pt-2.border-b');
+    await expect(tabContainer.getByText('All', { exact: true })).toBeVisible();
+    await expect(tabContainer.getByText('Unread', { exact: true })).toBeVisible();
+    await expect(tabContainer.getByText('Read', { exact: true })).toBeVisible();
   });
 
   test('3 - should switch between tabs', async ({ adminPage }) => {
     await navigateToNotifications(adminPage);
+    const tabContainer = adminPage.locator('.flex.gap-4.pt-2.border-b');
 
     // Click Unread tab
-    await adminPage.getByRole('button', { name: 'Unread' }).click();
+    await tabContainer.getByText('Unread', { exact: true }).click();
     await adminPage.waitForLoadState('networkidle');
-    await expect(adminPage.getByRole('button', { name: 'Unread' })).toHaveClass(/text-violet-700/);
+    await expect(tabContainer.locator('div.text-violet-700').getByText('Unread')).toBeVisible();
 
     // Click Read tab
-    await adminPage.getByRole('button', { name: 'Read' }).click();
+    await tabContainer.getByText('Read', { exact: true }).click();
     await adminPage.waitForLoadState('networkidle');
-    await expect(adminPage.getByRole('button', { name: 'Read' })).toHaveClass(/text-violet-700/);
+    await expect(tabContainer.locator('div.text-violet-700').getByText('Read', { exact: true })).toBeVisible();
 
     // Click All tab
-    await adminPage.getByRole('button', { name: 'All' }).click();
+    await tabContainer.getByText('All', { exact: true }).click();
     await adminPage.waitForLoadState('networkidle');
-    await expect(adminPage.getByRole('button', { name: 'All' })).toHaveClass(/text-violet-700/);
+    await expect(tabContainer.locator('div.text-violet-700').getByText('All')).toBeVisible();
   });
 
   test('4 - should show empty state or notification list', async ({ adminPage }) => {
     await navigateToNotifications(adminPage);
-    await adminPage.waitForLoadState('networkidle');
 
-    // Either notifications are visible or the empty state is shown
-    const hasNotifications = await adminPage.locator('.icon-notification.text-5xl').isVisible().catch(() => false);
-    const hasItems = await adminPage.locator('a[href*="viewed-notifications"]').first().isVisible().catch(() => false);
+    // Scope to main content grid (not the header dropdown which also has notification links)
+    const notificationItem = adminPage.locator('.grid > a[href*="viewed-notifications"]').first();
+    const emptyState = adminPage.getByText('No Record Found');
 
-    expect(hasNotifications || hasItems).toBeTruthy();
+    // Wait for either state to appear
+    await Promise.race([
+      notificationItem.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {}),
+      emptyState.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {}),
+    ]);
+
+    const hasItems = await notificationItem.isVisible().catch(() => false);
+    const hasEmpty = await emptyState.isVisible().catch(() => false);
+
+    expect(hasItems || hasEmpty).toBeTruthy();
   });
 
   test('5 - should display notification bell in header', async ({ adminPage }) => {
@@ -60,36 +74,33 @@ test.describe('Notification Page', () => {
 
   test('6 - should show Mark as Read button when unread notifications exist', async ({ adminPage }) => {
     await navigateToNotifications(adminPage);
-    await adminPage.waitForLoadState('networkidle');
 
-    // Check if there are unread notifications
+    // Check if there are unread notifications via the badge
     const unreadBadge = adminPage.locator('.bg-violet-100');
     const hasUnread = await unreadBadge.isVisible({ timeout: 3000 }).catch(() => false);
 
     if (hasUnread) {
-      await expect(adminPage.getByRole('button', { name: 'Mark as Read' })).toBeVisible();
+      await expect(adminPage.locator('button.transparent-button', { hasText: 'Mark as Read' })).toBeVisible();
     }
   });
 
   test('7 - should show pagination when notifications exist', async ({ adminPage }) => {
     await navigateToNotifications(adminPage);
-    await adminPage.waitForLoadState('networkidle');
 
-    const hasItems = await adminPage.locator('a[href*="viewed-notifications"]').first().isVisible({ timeout: 3000 }).catch(() => false);
+    const hasItems = await adminPage.locator('.grid > a[href*="viewed-notifications"]').first().isVisible({ timeout: 3000 }).catch(() => false);
 
     if (hasItems) {
-      // Pagination section should be visible
-      await expect(adminPage.locator('.icon-chevron-left').last()).toBeVisible();
-      await expect(adminPage.locator('.icon-chevron-right').last()).toBeVisible();
+      // New pagination has chevron buttons and page indicator
+      await expect(adminPage.locator('button .icon-chevron-left').last()).toBeVisible();
+      await expect(adminPage.locator('button .icon-chevron-right').last()).toBeVisible();
     }
   });
 
   test('8 - should use full page width for notification list', async ({ adminPage }) => {
     await navigateToNotifications(adminPage);
-    await adminPage.waitForLoadState('networkidle');
 
-    // The main container should NOT have max-w-max (old bug) — it should span full width
-    const container = adminPage.locator('.bg-white.rounded-md.box-shadow, .dark\\:bg-cherry-900.rounded-md.box-shadow').first();
+    // The main container uses flex-col with rounded-md box-shadow
+    const container = adminPage.locator('.rounded-md.box-shadow').first();
     const isVisible = await container.isVisible({ timeout: 3000 }).catch(() => false);
 
     if (isVisible) {

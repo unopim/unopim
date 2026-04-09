@@ -132,6 +132,9 @@ test('3.2 - Notification History page shows correct title and description', asyn
   await adminPage.goto('/admin/notifications');
   await adminPage.waitForLoadState('networkidle');
 
+  // Wait for Vue component to mount
+  await adminPage.waitForSelector('.icon-notification, a[href*="viewed-notifications"]', { timeout: 15000 });
+
   await expect(adminPage.locator('p').filter({ hasText: 'Notifications' }).first()).toBeVisible();
   await expect(adminPage.getByText('List all the Notifications')).toBeVisible();
 });
@@ -139,6 +142,9 @@ test('3.2 - Notification History page shows correct title and description', asyn
 test('3.3 - Notification History page shows No Record Found or notification entries', async ({ adminPage }) => {
   await adminPage.goto('/admin/notifications');
   await adminPage.waitForLoadState('networkidle');
+
+  // Wait for Vue component to mount
+  await adminPage.waitForSelector('.icon-notification, a[href*="viewed-notifications"]', { timeout: 15000 });
 
   // Either shows "No Record Found" or notification entries
   const noRecords = adminPage.getByText('No Record Found');
@@ -150,28 +156,49 @@ test('3.3 - Notification History page shows No Record Found or notification entr
   // If there are records, the grid would show them instead
 });
 
-test('3.4 - Notification History page has pagination — per Page selector', async ({ adminPage }) => {
+test('3.4 - Notification History page has status tabs', async ({ adminPage }) => {
   await adminPage.goto('/admin/notifications');
   await adminPage.waitForLoadState('networkidle');
 
-  await expect(adminPage.getByText('per Page')).toBeVisible();
+  // Wait for Vue component to mount
+  await adminPage.waitForSelector('.icon-notification, a[href*="viewed-notifications"]', { timeout: 15000 });
+
+  // New UI uses tab divs (All, Unread, Read) instead of per-page selector
+  const tabContainer = adminPage.locator('.flex.gap-4.pt-2.border-b');
+  await expect(tabContainer.getByText('All', { exact: true })).toBeVisible();
+  await expect(tabContainer.getByText('Unread', { exact: true })).toBeVisible();
+  await expect(tabContainer.getByText('Read', { exact: true })).toBeVisible();
 });
 
-test('3.5 - Notification History page has pagination — page of total indicator', async ({ adminPage }) => {
+test('3.5 - Notification History page has pagination info when records exist', async ({ adminPage }) => {
   await adminPage.goto('/admin/notifications');
   await adminPage.waitForLoadState('networkidle');
 
-  await expect(adminPage.getByText('of', { exact: true })).toBeVisible();
+  // Wait for Vue component to mount
+  await adminPage.waitForSelector('.icon-notification, a[href*="viewed-notifications"]', { timeout: 15000 });
+
+  // Pagination shows "Showing X-Y of Z" when records exist
+  const hasItems = await adminPage.locator('.grid > a[href*="viewed-notifications"]').first().isVisible({ timeout: 3000 }).catch(() => false);
+
+  if (hasItems) {
+    await expect(adminPage.getByText('Showing')).toBeVisible();
+  }
 });
 
 test('3.6 - Notification History page has pagination navigation arrows', async ({ adminPage }) => {
   await adminPage.goto('/admin/notifications');
   await adminPage.waitForLoadState('networkidle');
 
-  // Pagination has clickable arrow elements (icon-based, not text)
-  // The page info section with "of" and navigation controls should be present
-  await expect(adminPage.getByText('of', { exact: true })).toBeVisible();
-  await expect(adminPage.getByText('per Page')).toBeVisible();
+  // Wait for Vue component to mount
+  await adminPage.waitForSelector('.icon-notification, a[href*="viewed-notifications"]', { timeout: 15000 });
+
+  // Pagination has chevron buttons for prev/next navigation when records exist
+  const hasItems = await adminPage.locator('.grid > a[href*="viewed-notifications"]').first().isVisible({ timeout: 3000 }).catch(() => false);
+
+  if (hasItems) {
+    await expect(adminPage.locator('button .icon-chevron-left').last()).toBeVisible();
+    await expect(adminPage.locator('button .icon-chevron-right').last()).toBeVisible();
+  }
 });
 
 test('3.7 - Direct URL access to Notification History page works', async ({ adminPage }) => {
