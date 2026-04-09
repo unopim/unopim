@@ -44,6 +44,26 @@ it('should return the category datagrid', function () {
     ]);
 });
 
+it('should return the category datagrid with mass actions and meta configuration', function () {
+    $this->loginAsAdmin();
+
+    Category::factory()->create();
+
+    $response = $this->withHeaders([
+        'X-Requested-With' => 'XMLHttpRequest',
+    ])->json('GET', route('admin.catalog.categories.index'));
+
+    $response->assertStatus(200);
+
+    $data = $response->json();
+
+    $this->assertArrayHasKey('mass_actions', $data);
+    $this->assertNotEmpty($data['mass_actions']);
+    $this->assertArrayHasKey('meta', $data);
+    $this->assertArrayHasKey('primary_column', $data['meta']);
+    $this->assertEquals('category_id', $data['meta']['primary_column']);
+});
+
 it('should create a category successfully', function () {
     $this->loginAsAdmin();
 

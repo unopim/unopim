@@ -131,6 +131,16 @@
                 this.boot();
             },
 
+            watch: {
+                'applied.massActions.indices': {
+                    handler() {
+                        this.setCurrentSelectionMode();
+                    },
+
+                    deep: true,
+                },
+            },
+
             methods: {
                 /**
                  * Initialization: This function checks for any previously saved filters in local storage and applies them as needed.
