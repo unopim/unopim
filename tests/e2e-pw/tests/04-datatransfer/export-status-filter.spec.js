@@ -31,8 +31,12 @@ async function createExportWithStatusFilter(adminPage, code, statusLabel) {
   // Enable "With Media"
   await adminPage.locator('div').filter({ hasText: /^With Media$/ }).locator('div').click();
 
-  // Save the export
+  // Save the export — redirects to the show/detail page
   await clickSaveAndExpect(adminPage, 'Save Export', /Export created successfully/i);
+
+  // Navigate to the edit page to set the Status filter
+  await adminPage.getByRole('link', { name: 'Edit' }).click();
+  await adminPage.waitForLoadState('networkidle');
 
   // Now on the edit page — set the Status filter
   const statusSelect = adminPage.locator('input[name="filters[status]"], select[name="filters[status]"]')
@@ -46,7 +50,7 @@ async function createExportWithStatusFilter(adminPage, code, statusLabel) {
   await statusSelect.click();
   await adminPage.getByRole('option', { name: new RegExp(statusLabel, 'i') }).locator('span').first().click();
 
-  // Save again with the status filter applied
+  // Save with the status filter applied — redirects back to show page
   await adminPage.getByRole('button', { name: /Save Export/i }).click();
   await adminPage.waitForLoadState('networkidle');
 
