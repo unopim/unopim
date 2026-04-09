@@ -387,6 +387,7 @@ return [
                 'success'         => 'ジョブが正常に実行されました。',
                 'fetch-failed'    => '取得に失敗しました。',
                 'action'          => '一括編集',
+                'description'     => '複数の商品を一括編集します。変更はバックグラウンドで処理されます。',
                 'gallery-preview' => 'ギャラリープレビュー',
                 'img-preview'     => '画像プレビュー',
                 'no-image'        => '画像なし',
@@ -1969,6 +1970,7 @@ return [
                 'save'          => '保存',
                 'add-filter'    => 'フィルターを追加',
                 'remove-filter' => 'フィルターを削除',
+                'search-filter' => '検索...',
                 'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => '少なくとも 2 文字を入力してください...',

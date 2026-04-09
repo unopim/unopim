@@ -387,6 +387,7 @@ return [
                 'success'         => 'Taak succesvol uitgevoerd.',
                 'fetch-failed'    => 'Ophalen mislukt.',
                 'action'          => 'Bulk Bewerken',
+                'description'     => 'Bewerk meerdere producten tegelijk. Wijzigingen worden op de achtergrond verwerkt.',
                 'gallery-preview' => 'Galerijvoorbeeld',
                 'img-preview'     => 'Afbeeldingvoorbeeld',
                 'no-image'        => 'Geen Afbeelding',
@@ -1969,6 +1970,7 @@ return [
                 'save'          => 'Redden',
                 'add-filter'    => 'Filter toevoegen',
                 'remove-filter' => 'Filter verwijderen',
+                'search-filter' => 'Zoeken...',
                 'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Typ minimaal 2 tekens ...',

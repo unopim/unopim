@@ -387,6 +387,7 @@ return [
                 'success'         => 'Tarefa executada com sucesso.',
                 'fetch-failed'    => 'Falha ao obter dados.',
                 'action'          => 'Edição em massa',
+                'description'     => 'Edite vários produtos de uma vez. As alterações são processadas em segundo plano.',
                 'gallery-preview' => 'Pré-visualização da Galeria',
                 'img-preview'     => 'Pré-visualização da Imagem',
                 'no-image'        => 'Sem imagem',
@@ -1969,6 +1970,7 @@ return [
                 'save'          => 'Salvar',
                 'add-filter'    => 'Adicionar filtro',
                 'remove-filter' => 'Remover filtro',
+                'search-filter' => 'Pesquisar...',
                 'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Digite pelo menos 2 caracteres...',

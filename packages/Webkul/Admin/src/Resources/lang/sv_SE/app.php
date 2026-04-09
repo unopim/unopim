@@ -387,6 +387,7 @@ return [
                 'success'         => 'Uppgiften har utförts.',
                 'fetch-failed'    => 'Misslyckades med att hämta.',
                 'action'          => 'Massredigering',
+                'description'     => 'Redigera flera produkter samtidigt. Ändringar bearbetas i bakgrunden.',
                 'gallery-preview' => 'Galleri Förhandsgranskning',
                 'img-preview'     => 'Bildförhandsvisning',
                 'no-image'        => 'Ingen bild',
@@ -1969,6 +1970,7 @@ return [
                 'save'          => 'Spara',
                 'add-filter'    => 'Lägg till filter',
                 'remove-filter' => 'Ta bort filter',
+                'search-filter' => 'Sök...',
                 'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Skriv minst 2 tecken...',

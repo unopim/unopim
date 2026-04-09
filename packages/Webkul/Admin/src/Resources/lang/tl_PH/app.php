@@ -387,6 +387,7 @@ return [
                 'success'         => 'Matagumpay na naisagawa ang gawain.',
                 'fetch-failed'    => 'Hindi nakuha ang datos.',
                 'action'          => 'Maramihang Pag-edit',
+                'description'     => 'I-edit ang maraming produkto nang sabay-sabay. Ang mga pagbabago ay pinoproseso sa background.',
                 'gallery-preview' => 'Preview ng Gallery',
                 'img-preview'     => 'Preview ng Imahe',
                 'no-image'        => 'Walang Imahe',
@@ -1969,6 +1970,7 @@ return [
                 'save'          => 'I-save',
                 'add-filter'    => 'Magdagdag ng Filter',
                 'remove-filter' => 'Alisin ang Filter',
+                'search-filter' => 'Maghanap...',
                 'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Mag-type ng hindi bababa sa 2 karakter...',

@@ -387,6 +387,7 @@ return [
                 'success'         => 'Handling gennemført med succes.',
                 'fetch-failed'    => 'Hentning mislykkedes.',
                 'action'          => 'Masseændring',
+                'description'     => 'Rediger flere produkter på én gang. Ændringerne behandles i baggrunden.',
                 'gallery-preview' => 'Galleri forhåndsvisning',
                 'img-preview'     => 'Billedforhåndsvisning',
                 'no-image'        => 'Intet billede',
@@ -1969,6 +1970,7 @@ return [
                 'save'          => 'Gem',
                 'add-filter'    => 'Tilføj filter',
                 'remove-filter' => 'Fjern filter',
+                'search-filter' => 'Søg...',
                 'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Skriv mindst 2 tegn...',

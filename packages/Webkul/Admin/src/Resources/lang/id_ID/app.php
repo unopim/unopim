@@ -387,6 +387,7 @@ return [
                 'success'         => 'Pekerjaan berhasil dijalankan.',
                 'fetch-failed'    => 'Gagal mengambil data.',
                 'action'          => 'Edit Massal',
+                'description'     => 'Edit beberapa produk sekaligus. Perubahan diproses di latar belakang.',
                 'gallery-preview' => 'Pratinjau Galeri',
                 'img-preview'     => 'Pratinjau Gambar',
                 'no-image'        => 'Tidak Ada Gambar',
@@ -1969,6 +1970,7 @@ return [
                 'save'          => 'Menyimpan',
                 'add-filter'    => 'Tambah Filter',
                 'remove-filter' => 'Hapus Filter',
+                'search-filter' => 'Cari...',
                 'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Ketik setidaknya 2 karakter ...',

@@ -387,6 +387,7 @@ return [
                 'success'         => 'Vorgang erfolgreich abgeschlossen.',
                 'fetch-failed'    => 'Abruf fehlgeschlagen.',
                 'action'          => 'Massenbearbeitung',
+                'description'     => 'Mehrere Produkte gleichzeitig bearbeiten. Änderungen werden im Hintergrund verarbeitet.',
                 'gallery-preview' => 'Galerievorschau',
                 'img-preview'     => 'Bildvorschau',
                 'no-image'        => 'Kein Bild',
@@ -1969,6 +1970,7 @@ return [
                 'save'          => 'Speichern',
                 'add-filter'    => 'Filter hinzufügen',
                 'remove-filter' => 'Filter entfernen',
+                'search-filter' => 'Suche...',
                 'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Geben Sie mindestens 2 Zeichen ein...',

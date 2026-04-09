@@ -387,6 +387,7 @@ return [
                 'success'         => 'Sarcină executată cu succes.',
                 'fetch-failed'    => 'Eroare la preluare.',
                 'action'          => 'Editare în masă',
+                'description'     => 'Editați mai multe produse simultan. Modificările sunt procesate în fundal.',
                 'gallery-preview' => 'Previzualizare galerie',
                 'img-preview'     => 'Previzualizare imagine',
                 'no-image'        => 'Nicio imagine',
@@ -1969,6 +1970,7 @@ return [
                 'save'          => 'Salvează',
                 'add-filter'    => 'Adaugă filtru',
                 'remove-filter' => 'Elimină filtru',
+                'search-filter' => 'Căutare...',
                 'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Introduceți cel puțin 2 caractere...',

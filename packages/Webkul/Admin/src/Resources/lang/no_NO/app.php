@@ -387,6 +387,7 @@ return [
                 'success'         => 'Jobb fullført.',
                 'fetch-failed'    => 'Henting mislyktes.',
                 'action'          => 'Masseendring',
+                'description'     => 'Rediger flere produkter samtidig. Endringene behandles i bakgrunnen.',
                 'gallery-preview' => 'Galleri forhåndsvisning',
                 'img-preview'     => 'Bilde forhåndsvisning',
                 'no-image'        => 'Ingen bilde',
@@ -1969,6 +1970,7 @@ return [
                 'save'          => 'Lagre',
                 'add-filter'    => 'Legg til filter',
                 'remove-filter' => 'Fjern filter',
+                'search-filter' => 'Søk...',
                 'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Skriv minst 2 tegn...',

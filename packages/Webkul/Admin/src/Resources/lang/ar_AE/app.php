@@ -387,6 +387,7 @@ return [
                 'success'         => 'تم تنفيذ العملية بنجاح.',
                 'fetch-failed'    => 'فشل في الجلب.',
                 'action'          => 'تحرير جماعي',
+                'description'     => 'تحرير منتجات متعددة دفعة واحدة. تتم معالجة التغييرات في الخلفية.',
                 'gallery-preview' => 'معاينة المعرض',
                 'img-preview'     => 'معاينة الصورة',
                 'no-image'        => 'لا توجد صورة',
@@ -1969,6 +1970,7 @@ return [
                 'save'          => 'يحفظ',
                 'add-filter'    => 'إضافة فلتر',
                 'remove-filter' => 'إزالة فلتر',
+                'search-filter' => 'بحث...',
                 'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'اكتب أحرفًا على الأقل ...',

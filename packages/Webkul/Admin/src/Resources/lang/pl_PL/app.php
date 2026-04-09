@@ -387,6 +387,7 @@ return [
                 'success'         => 'Zadanie zostało pomyślnie wykonane.',
                 'fetch-failed'    => 'Nie udało się pobrać.',
                 'action'          => 'Edycja zbiorcza',
+                'description'     => 'Edytuj wiele produktów jednocześnie. Zmiany są przetwarzane w tle.',
                 'gallery-preview' => 'Podgląd galerii',
                 'img-preview'     => 'Podgląd obrazu',
                 'no-image'        => 'Brak obrazu',
@@ -1969,6 +1970,7 @@ return [
                 'save'          => 'Zapisz',
                 'add-filter'    => 'Dodaj filtr',
                 'remove-filter' => 'Usuń filtr',
+                'search-filter' => 'Szukaj...',
                 'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Wpisz co najmniej 2 znaki...',
