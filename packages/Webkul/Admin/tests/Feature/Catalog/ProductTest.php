@@ -263,6 +263,17 @@ it('should search the products with sku successfully', function () {
         ->assertOk();
 });
 
+it('should search the products with uppercase sku successfully (case-insensitive)', function () {
+    $this->loginAsAdmin();
+
+    $products = Product::factory()->simple()->withInitialValues()->createMany(2);
+
+    $sku = strtoupper($products->first()->sku);
+
+    $this->get(route('admin.catalog.products.search'), ['query' => $sku])
+        ->assertOk();
+});
+
 it('should return validation error when setting duplicate variant configurable attribute value', function () {
     $this->loginAsAdmin();
 

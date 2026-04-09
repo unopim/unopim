@@ -88,8 +88,9 @@ it('should filter products by SKU using Elasticsearch', function () {
                                 [
                                     'wildcard' => [
                                         'sku' => [
-                                            'value'   => '*testSku123*',
-                                            'rewrite' => 'top_terms_1024',
+                                            'value'            => '*testsku123*',
+                                            'case_insensitive' => true,
+                                            'rewrite'          => 'top_terms_1024',
                                         ],
                                     ],
                                 ],
@@ -1296,6 +1297,65 @@ it('should filter products by gallery attribute using Elasticsearch', function (
                     ],
                 ],
             ];
+
+            expect($args['body']['query'])->toEqual($expectedQuery);
+
+            return true;
+        })
+        ->andReturn([
+            'hits' => [
+                'total' => 0,
+                'hits'  => [],
+            ],
+            '_scroll_id' => '83h84747',
+        ]);
+
+    $response = $this->withHeaders([
+        'X-Requested-With' => 'XMLHttpRequest',
+    ])->json('GET', route('admin.catalog.products.index'), $data);
+
+    $response->assertOk();
+});
+
+it('should filter products by uppercase SKU using Elasticsearch (case-insensitive)', function () {
+    $data = [
+        'pagination' => [
+            'page'     => 1,
+            'per_page' => 10,
+        ],
+
+        'filters' => [
+            'sku' => ['TESTSKU123'],
+        ],
+    ];
+
+    ElasticSearch::shouldReceive('search')
+        ->once()
+        ->withArgs(function ($args) {
+            $expectedQuery = [
+                'constant_score' => [
+                    'filter' => [
+                        'bool' => [
+                            'filter' => [
+                                [
+                                    'wildcard' => [
+                                        'sku' => [
+                                            'value'            => '*testsku123*',
+                                            'case_insensitive' => true,
+                                            'rewrite'          => 'top_terms_1024',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ];
+
+            expect($args)->toBeArray();
+            expect($args)->toHaveKey('index');
+            expect($args)->toHaveKey('body');
+            expect($args['body'])->toHaveKey('query');
 
             expect($args['body']['query'])->toEqual($expectedQuery);
 
