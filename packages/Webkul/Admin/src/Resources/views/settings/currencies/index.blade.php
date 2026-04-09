@@ -70,41 +70,44 @@
                 <template #body="{ columns, records, performAction, setCurrentSelectionMode, applied }">
                     <div
                         v-for="record in records"
-                        class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-violet-50 dark:hover:bg-cherry-800"
+                        class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
                         :style="`grid-template-columns: repeat(${gridsCount}, minmax(0, 1fr))`"
+                        @click="selectedCurrencies=1; editModal(record.actions.find(action => action.index === 'edit')?.url)"
                     >
                         <!-- Mass actions -->
                         @if ($hasMassActionPermission)
-                            <input
-                                type="checkbox"
-                                :name="`mass_action_select_record_${record.id}`"
-                                :id="`mass_action_select_record_${record.id}`"
-                                :value="record.id"
-                                class="hidden peer"
-                                v-model="applied.massActions.indices"
-                                @change="setCurrentSelectionMode"
-                            >
+                            <div @click.stop>
+                                <input
+                                    type="checkbox"
+                                    :name="`mass_action_select_record_${record.id}`"
+                                    :id="`mass_action_select_record_${record.id}`"
+                                    :value="record.id"
+                                    class="hidden peer"
+                                    v-model="applied.massActions.indices"
+                                    @change="setCurrentSelectionMode"
+                                >
 
-                            <label
-                                class="icon-checkbox-normal rounded-md text-2xl cursor-pointer peer-checked:icon-checkbox-check peer-checked:text-violet-700"
-                                :for="`mass_action_select_record_${record.id}`"
-                            ></label>
+                                <label
+                                    class="icon-checkbox-normal rounded-md text-2xl cursor-pointer peer-checked:icon-checkbox-check peer-checked:text-violet-700"
+                                    :for="`mass_action_select_record_${record.id}`"
+                                ></label>
+                            </div>
                         @endif
 
                         <!-- id -->
                         <p v-html="record.id"></p>
 
                         <!-- code -->
-                        <p v-html="record.code"></p>
+                        <p v-html="record.code" class="truncate" :title="record.code"></p>
 
                         <!-- name -->
-                        <p v-html="record.name"></p>
+                        <p v-html="record.name" class="truncate" :title="record.name"></p>
 
                         <!-- Status -->
                         <p v-html="record.status"></p>
 
                         <!-- Actions -->
-                        <div class="flex justify-end">
+                        <div class="flex justify-end" @click.stop>
                             @if ($hasEditPermission)
                                 <a @click="selectedCurrencies=1; editModal(record.actions.find(action => action.index === 'edit')?.url)">
                                     <span

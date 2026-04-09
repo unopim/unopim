@@ -119,16 +119,17 @@
         </template>
 
         <!-- DataGrid Body -->
-        <template #body="{ columns, records, performAction, applied, actions, isLoading }">
+        <template #body="{ columns, records, performAction, handleRowClick, applied, actions, isLoading }">
             <template v-if="! isLoading">
                 <div
                     v-for="record in records"
-                    class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
+                    class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
                     :style="'grid-template-columns: 2fr repeat(' + (actions.length ? columns.length : (columns.length -1 )) + ', 1fr)'"
+                    @click="handleRowClick($event, record)"
                 >
                     <div class="flex items-center gap-2.5 overflow-hidden">
                         @if ($hasMassActionPermission)
-                            <div class="mass-action-input">
+                            <div class="mass-action-input" @click.stop>
                                 <input
                                     type="checkbox"
                                     :name="`mass_action_select_record_${record.category_id}`"
@@ -146,15 +147,15 @@
                             </div>
                         @endif
 
-                        <p v-text="record.display_name" class="text-nowrap overflow-hidden text-ellipsis hover:text-wrap"></p>
+                        <p v-text="record.display_name" class="truncate" :title="record.display_name"></p>
                     </div>
 
-                    <p v-text="record.category_name" class="text-nowrap overflow-hidden text-ellipsis hover:text-wrap"></p>
+                    <p v-text="record.category_name" class="truncate" :title="record.category_name"></p>
 
-                    <p v-text="record.code"></p>
+                    <p v-text="record.code" class="truncate" :title="record.code"></p>
 
                     <!-- Actions -->
-                    <div class="flex justify-end">
+                    <div class="flex justify-end" @click.stop>
                         <span
                             class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
                             :class="action.icon"

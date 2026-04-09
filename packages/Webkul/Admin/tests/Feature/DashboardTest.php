@@ -1,8 +1,11 @@
 <?php
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\DataTransfer\Models\JobInstances;
 use Webkul\DataTransfer\Models\JobTrack;
+use Webkul\Product\Models\Product;
 
 use function Pest\Laravel\getJson;
 
@@ -61,6 +64,103 @@ it('should return latest 10 data transfer jobs with correct processed rows from 
 
     // Verify jobSummary exists
     expect($data['jobSummary'])->toHaveKey('completed');
+});
+
+it('should return product stats with correct status breakdown', function () {
+    $this->loginAsAdmin();
+
+    $family = AttributeFamily::first();
+
+    // Create active products
+    Product::factory()->simple()->create([
+        'attribute_family_id' => $family->id,
+        'status'              => 1,
+    ]);
+
+    Product::factory()->simple()->create([
+        'attribute_family_id' => $family->id,
+        'status'              => 1,
+    ]);
+
+    // Create an inactive product
+    Product::factory()->simple()->create([
+        'attribute_family_id' => $family->id,
+        'status'              => 0,
+    ]);
+
+    // Clear cache so fresh stats reflect newly created products
+    Cache::forget('dashboard.product_stats');
+
+    $response = getJson(route('admin.dashboard.stats', ['type' => 'product-stats']));
+
+    $response->assertOk();
+
+    $stats = $response->json('statistics');
+
+    expect($stats)->toHaveKey('statusBreakdown');
+    expect($stats['statusBreakdown'])->toHaveKey('active');
+    expect($stats['statusBreakdown'])->toHaveKey('inactive');
+    expect($stats['statusBreakdown']['active'])->toBeGreaterThanOrEqual(2);
+    expect($stats['statusBreakdown']['inactive'])->toBeGreaterThanOrEqual(1);
+    expect($stats['totalProducts'])->toBeGreaterThanOrEqual(3);
+});
+
+it('should filter products by status when filters are passed', function () {
+    $this->loginAsAdmin();
+
+    $family = AttributeFamily::first();
+
+    // Create active and inactive products
+    $activeProduct = Product::factory()->simple()->create([
+        'attribute_family_id' => $family->id,
+        'status'              => 1,
+    ]);
+
+    $inactiveProduct = Product::factory()->simple()->create([
+        'attribute_family_id' => $family->id,
+        'status'              => 0,
+    ]);
+
+    // Request the product datagrid with status filter for inactive (0)
+    $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest'])
+        ->json('GET', route('admin.catalog.products.index'), [
+            'filters' => [
+                'status' => ['0'],
+            ],
+        ]);
+
+    $response->assertOk();
+
+    $records = $response->json('records');
+
+    // All returned records should be inactive (status = 0)
+    foreach ($records as $record) {
+        expect($record['status'])->toContain(trans('admin::app.common.disable'));
+    }
+
+    // The inactive product should be in the results
+    $skus = collect($records)->pluck('sku')->toArray();
+    expect($skus)->toContain($inactiveProduct->sku);
+});
+
+it('should invalidate dashboard cache when product is created', function () {
+    $this->loginAsAdmin();
+
+    $family = AttributeFamily::first();
+
+    // Prime the cache
+    Cache::forget('dashboard.product_stats');
+    getJson(route('admin.dashboard.stats', ['type' => 'product-stats']))->assertOk();
+    expect(Cache::has('dashboard.product_stats'))->toBeTrue();
+
+    // Creating a product should bust the cache via the observer
+    Product::factory()->simple()->create([
+        'attribute_family_id' => $family->id,
+        'status'              => 1,
+    ]);
+
+    expect(Cache::has('dashboard.product_stats'))->toBeFalse();
+    expect(Cache::has('dashboard.total_catalogs'))->toBeFalse();
 });
 
 it('should return correct job type from job_instances table', function () {

@@ -112,6 +112,7 @@ class MagicAIPlatformDataGrid extends DataGrid
     {
         $this->addAction([
             'icon'   => 'icon-edit',
+            'index'  => 'edit',
             'title'  => trans('admin::app.configuration.platform.datagrid.edit'),
             'method' => 'GET',
             'url'    => fn ($row) => route('admin.magic_ai.platform.edit', $row->id),

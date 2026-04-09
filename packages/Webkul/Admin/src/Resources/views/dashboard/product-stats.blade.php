@@ -13,36 +13,45 @@
         </template>
 
         <template v-else>
-            <a
-                href="{{ route('admin.catalog.products.index') }}"
-                class="bg-white dark:bg-cherry-900 rounded-lg box-shadow p-4 h-full flex flex-col no-underline cursor-pointer hover:shadow-md transition-shadow"
-            >
+            <div class="bg-white dark:bg-cherry-900 rounded-lg box-shadow p-4 h-full flex flex-col">
                 <template v-if="totalProducts > 0">
                     <!-- Top Row: Total + Status cards -->
                     <div class="flex gap-3 mb-4">
                         <!-- Total Products Card -->
-                        <div class="flex-1 rounded-lg p-4" style="background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);">
+                        <a
+                            href="{{ route('admin.catalog.products.index') }}"
+                            class="flex-1 rounded-lg p-4 no-underline hover:opacity-90 transition-opacity"
+                            style="background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);"
+                        >
                             <p class="text-xs text-violet-200 mb-1">@lang('admin::app.dashboard.index.total-products')</p>
                             <p class="text-3xl font-bold text-white leading-none">@{{ totalProducts }}</p>
-                        </div>
+                        </a>
 
                         <!-- Active Card -->
-                        <div class="flex-1 rounded-lg p-4 border" style="border-color: #d1fae5; background: #ecfdf5;">
+                        <a
+                            href="{{ route('admin.catalog.products.index') }}?filters[status][]=1"
+                            class="flex-1 rounded-lg p-4 border no-underline hover:opacity-90 transition-opacity"
+                            style="border-color: #d1fae5; background: #ecfdf5;"
+                        >
                             <div class="flex items-center gap-1.5 mb-1">
                                 <span class="w-2 h-2 rounded-full" style="background: #10b981;"></span>
                                 <p class="text-xs" style="color: #065f46;">@lang('admin::app.dashboard.index.active')</p>
                             </div>
                             <p class="text-2xl font-bold leading-none" style="color: #065f46;">@{{ stats.statusBreakdown.active || 0 }}</p>
-                        </div>
+                        </a>
 
                         <!-- Inactive Card -->
-                        <div class="flex-1 rounded-lg p-4 border" style="border-color: #fef3c7; background: #fffbeb;">
+                        <a
+                            href="{{ route('admin.catalog.products.index') }}?filters[status][]=0"
+                            class="flex-1 rounded-lg p-4 border no-underline hover:opacity-90 transition-opacity"
+                            style="border-color: #fef3c7; background: #fffbeb;"
+                        >
                             <div class="flex items-center gap-1.5 mb-1">
                                 <span class="w-2 h-2 rounded-full" style="background: #f59e0b;"></span>
                                 <p class="text-xs" style="color: #92400e;">@lang('admin::app.dashboard.index.inactive')</p>
                             </div>
                             <p class="text-2xl font-bold leading-none" style="color: #92400e;">@{{ stats.statusBreakdown.inactive || 0 }}</p>
-                        </div>
+                        </a>
                     </div>
 
                     <!-- Type Distribution -->
@@ -132,7 +141,7 @@
                     <img src="{{ unopim_asset('images/icon-products.svg')}}" class="w-12 h-12 opacity-30 mb-3">
                     <p class="text-sm text-zinc-400 dark:text-slate-500">No products yet.</p>
                 </div>
-            </a>
+            </div>
         </template>
     </script>
 

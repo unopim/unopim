@@ -9,7 +9,9 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Webkul\Admin\Console\Commands\RefreshDashboardCacheCommand;
+use Webkul\Admin\Observers\ProductObserver;
 use Webkul\Core\Tree;
+use Webkul\Product\Models\ProductProxy;
 
 class AdminServiceProvider extends ServiceProvider
 {
@@ -33,6 +35,8 @@ class AdminServiceProvider extends ServiceProvider
         $this->registerACL();
 
         $this->app->register(EventServiceProvider::class);
+
+        ProductProxy::observe(ProductObserver::class);
 
         if ($this->app->runningInConsole()) {
             $this->commands([
