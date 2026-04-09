@@ -124,6 +124,9 @@ it('should filter products by status when filters are passed', function () {
     // Request the product datagrid with status filter for inactive (0)
     $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest'])
         ->json('GET', route('admin.catalog.products.index'), [
+            'pagination' => [
+                'per_page' => 100,
+            ],
             'filters' => [
                 'status' => ['0'],
             ],
