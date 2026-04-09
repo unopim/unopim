@@ -55,8 +55,5 @@ jobs:
       - name: Running UnoPim Installer
         run: php artisan unopim:install --skip-env-check --skip-admin-creation
 
-      - name: Running Pest Test (parallel)
-        run: vendor/bin/pest --parallel --processes=2 --exclude-group=heavy --colors=always
-
-      - name: Running Pest Test (heavy tests)
-        run: vendor/bin/pest --group=heavy --colors=always
+      - name: Running Pest Test
+        run: vendor/bin/pest --colors=always

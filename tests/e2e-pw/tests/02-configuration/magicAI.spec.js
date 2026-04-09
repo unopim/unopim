@@ -517,11 +517,8 @@ test('Create product for MagicAI tests', async({adminPage})=>{
   await adminPage.locator('input[name="attribute_family_id"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option', { name: 'Default' }).locator('span').first().click();
   await adminPage.locator('input[name="sku"]').fill('mahindra-be6-batman-edition');
-  const [createResponse] = await Promise.all([
-    adminPage.waitForResponse(response => response.url().includes('/products/create') && response.status() === 200),
-    adminPage.getByRole('button', { name: 'Save Product' }).click(),
-  ]);
-  await adminPage.waitForLoadState('networkidle');
+  await adminPage.getByRole('button', { name: 'Save Product' }).click();
+  await adminPage.waitForURL(/\/products\/edit\/\d+/);
   await expect(adminPage.getByText(/Product created successfully/i)).toBeVisible({ timeout: 15000 });
   const Name = adminPage.locator('input[name="values[channel_locale_specific][default][en_US][name]"]');
   await Name.fill('Mahindra BE 6 Batman Edition');
