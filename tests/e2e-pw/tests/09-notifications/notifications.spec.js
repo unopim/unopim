@@ -2,14 +2,37 @@ const { test, expect } = require('../../utils/fixtures');
 
 /**
  * Re-login if the session has been invalidated (e.g. by earlier login-page tests
- * that log out the shared adminPage session).
+ * that log out the shared adminPage session). Handles rate-limiting from prior
+ * security tests by waiting and retrying.
  */
 async function ensureAuthenticated(page) {
-  if (page.url().includes('/admin/login')) {
-    await page.fill('input[name=email]', 'admin@example.com');
-    await page.fill('input[name=password]', 'admin123');
-    await page.click('button:has-text("Sign In")');
-    await page.waitForLoadState('networkidle');
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const url = page.url();
+
+    // If on login page, try to re-authenticate
+    if (url.includes('/admin/login')) {
+      const emailInput = page.locator('input[name=email]');
+      if (await emailInput.isVisible({ timeout: 3000 }).catch(() => false)) {
+        await emailInput.fill('admin@example.com');
+        await page.fill('input[name=password]', 'admin123');
+        await page.click('button:has-text("Sign In")');
+        await page.waitForLoadState('networkidle');
+      }
+    }
+
+    // Check if we landed on an error page (e.g. 429 rate limit shown as 500)
+    const bodyText = await page.locator('body').textContent().catch(() => '');
+    if (bodyText.includes('500') || bodyText.includes('Too Many') || bodyText.includes('429')) {
+      // Wait for rate limit to expire, then retry navigation
+      await page.waitForTimeout(20000);
+      await page.goto('/admin/notifications', { waitUntil: 'networkidle' });
+      continue;
+    }
+
+    // If we're on an admin page (not login, not error), we're authenticated
+    if (!url.includes('/admin/login')) {
+      return;
+    }
   }
 }
 
@@ -29,6 +52,8 @@ async function navigateToNotifications(page) {
 // ─── Notification Page Tests ────────────────────────────────────────
 
 test.describe('Notification Page', () => {
+  // Allow extra time for re-authentication if rate-limited by prior security tests
+  test.setTimeout(90000);
   test('1 - should load the notifications page', async ({ adminPage }) => {
     await navigateToNotifications(adminPage);
     // Target the page title specifically (not the dropdown header)
