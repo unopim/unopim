@@ -30,7 +30,7 @@
         "laravel/ai": "^0.3.2",
         "laravel/framework": "^12.0",
         "laravel/octane": "^2.3",
-        "laravel/passport": "^12.2",
+        "laravel/passport": "^13.7",
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.0",
         "laravel/tinker": "^2.10",
