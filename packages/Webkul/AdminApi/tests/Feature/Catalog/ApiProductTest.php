@@ -9,6 +9,8 @@ use Webkul\Core\Models\Channel;
 use Webkul\Core\Models\Locale;
 use Webkul\Product\Models\Product;
 
+uses()->group('heavy');
+
 beforeEach(function () {
     $this->headers = $this->getAuthenticationHeaders();
 });
