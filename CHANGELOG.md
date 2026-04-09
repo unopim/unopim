@@ -29,6 +29,7 @@
 - Fixed **API returning "Unauthenticated"** despite valid requests — `config('auth.guards.api.provider')` used instead of `array_keys(config('auth.providers'))[0]`.
 - Fixed **`AdminFactory` FK violations** in parallel test databases — replaced hardcoded `role_id` and `ui_locale_id` with dynamic database lookups ([#330](https://github.com/unopim/unopim/pull/330)).
 - Fixed **installer DB prefix validation** — added validation for `DB_PREFIX` to prevent migration errors ([#335](https://github.com/unopim/unopim/pull/335)).
+- Fixed **ES8 boolean status filter** — Elasticsearch 8 rejects integer `1`/`0` for boolean fields, causing export jobs and product indexing to fail with `"Can't parse boolean value [1]"`. Cast status to strict `true`/`false` across ElasticProductCursor, ProductCursor, Product Observer, and ProductIndexer ([#243](https://github.com/unopim/unopim/issues/243)).
 
 ### Docker
 - Production-ready **Docker configuration** — parameterized base images, added Redis 7.2 and Elasticsearch 8.17 services, healthchecks on all containers, env-based credentials ([#334](https://github.com/unopim/unopim/pull/334)).
