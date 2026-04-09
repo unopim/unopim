@@ -19,6 +19,7 @@
                     </p>
 
                     <span
+                        v-if="!defaultFilterIndices.includes(column.index)"
                         class="icon-cancel cursor-pointer text-lg text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
                         @click="removeActiveFilter(column.index)"
                         title="@lang('admin::app.components.datagrid.filters.remove-filter')"
@@ -84,16 +85,21 @@
                     >
                     </p>
 
-                    <div
-                        class="flex items-center gap-x-1.5"
-                        @click="removeAppliedColumnAllValues(column.index)"
-                    >
+                    <div class="flex items-center gap-x-1.5">
                         <p
                             class="cursor-pointer text-xs font-medium leading-6 text-violet-700"
                             v-if="hasAnyAppliedColumnValues(column.index)"
+                            @click="removeAppliedColumnAllValues(column.index)"
                         >
                             @lang('admin::app.components.datagrid.filters.custom-filters.clear-all')
                         </p>
+
+                        <span
+                            v-if="!defaultFilterIndices.includes(column.index)"
+                            class="icon-cancel cursor-pointer text-lg text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                            @click="removeActiveFilter(column.index)"
+                            title="@lang('admin::app.components.datagrid.filters.remove-filter')"
+                        ></span>
                     </div>
                 </div>
 
@@ -153,16 +159,21 @@
                     >
                     </p>
 
-                    <div
-                        class="flex items-center gap-x-1.5"
-                        @click="removeAppliedColumnAllValues(column.index)"
-                    >
+                    <div class="flex items-center gap-x-1.5">
                         <p
                             class="cursor-pointer text-xs font-medium leading-6 text-violet-700"
                             v-if="hasAnyAppliedColumnValues(column.index)"
+                            @click="removeAppliedColumnAllValues(column.index)"
                         >
                             @lang('admin::app.components.datagrid.filters.custom-filters.clear-all')
                         </p>
+
+                        <span
+                            v-if="!defaultFilterIndices.includes(column.index)"
+                            class="icon-cancel cursor-pointer text-lg text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                            @click="removeActiveFilter(column.index)"
+                            title="@lang('admin::app.components.datagrid.filters.remove-filter')"
+                        ></span>
                     </div>
                 </div>
 
@@ -183,16 +194,21 @@
                     >
                     </p>
 
-                    <div
-                        class="flex items-center gap-x-1.5"
-                        @click="removeAppliedColumnAllValues(column.index)"
-                    >
+                    <div class="flex items-center gap-x-1.5">
                         <p
                             class="cursor-pointer text-xs font-medium leading-6 text-violet-700"
                             v-if="hasAnyAppliedColumnValues(column.index)"
+                            @click="removeAppliedColumnAllValues(column.index)"
                         >
                             @lang('admin::app.components.datagrid.filters.custom-filters.clear-all')
                         </p>
+
+                        <span
+                            v-if="!defaultFilterIndices.includes(column.index)"
+                            class="icon-cancel cursor-pointer text-lg text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                            @click="removeActiveFilter(column.index)"
+                            title="@lang('admin::app.components.datagrid.filters.remove-filter')"
+                        ></span>
                     </div>
                 </div>
 
@@ -224,6 +240,7 @@
                     </p>
 
                     <span
+                        v-if="!defaultFilterIndices.includes(column.index)"
                         class="icon-cancel cursor-pointer text-lg text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
                         @click="removeActiveFilter(column.index)"
                         title="@lang('admin::app.components.datagrid.filters.remove-filter')"
@@ -302,16 +319,21 @@
                     >
                     </p>
 
-                    <div
-                        class="flex items-center gap-x-1.5"
-                        @click="removeAppliedColumnAllValues(column.index)"
-                    >
+                    <div class="flex items-center gap-x-1.5">
                         <p
                             class="cursor-pointer text-xs font-medium leading-6 text-violet-700"
                             v-if="hasAnyAppliedColumnValues(column.index)"
+                            @click="removeAppliedColumnAllValues(column.index)"
                         >
                             @lang('admin::app.components.datagrid.filters.custom-filters.clear-all')
                         </p>
+
+                        <span
+                            v-if="!defaultFilterIndices.includes(column.index)"
+                            class="icon-cancel cursor-pointer text-lg text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                            @click="removeActiveFilter(column.index)"
+                            title="@lang('admin::app.components.datagrid.filters.remove-filter')"
+                        ></span>
                     </div>
                 </div>
 
@@ -390,6 +412,7 @@
                     </p>
 
                     <span
+                        v-if="!defaultFilterIndices.includes(column.index)"
                         class="icon-cancel cursor-pointer text-lg text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
                         @click="removeActiveFilter(column.index)"
                         title="@lang('admin::app.components.datagrid.filters.remove-filter')"
@@ -478,6 +501,7 @@
                     </p>
 
                     <span
+                        v-if="!defaultFilterIndices.includes(column.index)"
                         class="icon-cancel cursor-pointer text-lg text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
                         @click="removeActiveFilter(column.index)"
                         title="@lang('admin::app.components.datagrid.filters.remove-filter')"
@@ -532,6 +556,7 @@
                     </p>
 
                     <span
+                        v-if="!defaultFilterIndices.includes(column.index)"
                         class="icon-cancel cursor-pointer text-lg text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
                         @click="removeActiveFilter(column.index)"
                         title="@lang('admin::app.components.datagrid.filters.remove-filter')"

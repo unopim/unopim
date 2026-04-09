@@ -225,13 +225,7 @@
 
             methods: {
                 handleRowClick(event, record) {
-                    const selection = window.getSelection();
-
-                    if (selection && selection.toString().length > 0) {
-                        return;
-                    }
-
-                    this.$parent.performAction(record.actions.find(action => action.index === 'edit'));
+                    this.$parent.handleRowClick(event, record);
                 }
             }
         });

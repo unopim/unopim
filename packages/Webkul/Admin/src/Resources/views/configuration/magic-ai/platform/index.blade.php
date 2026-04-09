@@ -85,16 +85,17 @@
                 <template #body="{ columns, records, performAction }">
                     <div
                         v-for="record in records"
-                        class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-violet-50 dark:hover:bg-cherry-800"
+                        class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
                         :style="`grid-template-columns: repeat(${gridsCount}, minmax(0, 1fr))`"
+                        @click="editModal(record.actions.find(a => a.index === 'action_1')?.url)"
                     >
-                        <p v-text="record.label"></p>
+                        <p v-text="record.label" class="truncate" :title="record.label"></p>
                         <p v-html="record.provider"></p>
                         <p v-text="record.models" class="truncate" :title="record.models"></p>
                         <p v-html="record.is_default"></p>
                         <p v-html="record.status"></p>
                         <p v-text="record.created_at"></p>
-                        <div class="flex justify-end gap-1">
+                        <div class="flex justify-end gap-1" @click.stop>
                             <a @click="setAsDefault(record)" v-if="!record.is_default_raw" title="@lang('admin::app.configuration.platform.set-default')">
                                 <span class="icon-star cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800"></span>
                             </a>

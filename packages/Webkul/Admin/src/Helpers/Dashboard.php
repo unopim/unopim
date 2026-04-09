@@ -22,6 +22,16 @@ class Dashboard
     protected const CACHE_TTL = 300;
 
     /**
+     * Cache keys that depend on product data.
+     */
+    public const PRODUCT_CACHE_KEYS = [
+        'dashboard.total_catalogs',
+        'dashboard.product_stats',
+        'dashboard.needs_attention',
+        'dashboard.channel_readiness',
+    ];
+
+    /**
      * Create a controller instance.
      *
      * @return void
@@ -36,6 +46,16 @@ class Dashboard
         protected Channel $channel,
         protected Currency $currency
     ) {}
+
+    /**
+     * Invalidate all product-related dashboard cache keys.
+     */
+    public static function invalidateProductCache(): void
+    {
+        foreach (self::PRODUCT_CACHE_KEYS as $key) {
+            Cache::forget($key);
+        }
+    }
 
     /**
      * This method calculates and returns the total number of various catalog entities.

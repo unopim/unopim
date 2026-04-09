@@ -240,8 +240,7 @@ test('6.3 - Product Statistics shows Total Products with numeric count', async (
   const emptyState = adminPage.getByText('No products yet.');
   const emptyVisible = await emptyState.isVisible().catch(() => false);
   test.skip(emptyVisible, 'No products in current environment');
-  const statsCard = adminPage.getByRole('link', { name: /Total Products.*Active.*Inactive/ });
-  await expect(statsCard).toBeVisible();
+  await expect(adminPage.getByText('Total Products').first()).toBeVisible();
 });
 
 test('6.4 - Product Statistics shows Active count with green indicator', async ({ adminPage }) => {
@@ -319,13 +318,51 @@ test('6.11 - Product Statistics shows Enriched metric', async ({ adminPage }) =>
   await expect(adminPage.getByText('Enriched', { exact: true })).toBeVisible();
 });
 
-test('6.12 - Product Statistics card links to products page', async ({ adminPage }) => {
+test('6.12 - Total Products card links to products page (unfiltered)', async ({ adminPage }) => {
   await adminPage.waitForLoadState('networkidle');
   const emptyState = adminPage.getByText('No products yet.');
   const emptyVisible = await emptyState.isVisible().catch(() => false);
   test.skip(emptyVisible, 'No products in current environment');
-  const statsCard = adminPage.getByRole('link', { name: /Total Products.*Active.*Inactive/ });
-  await expect(statsCard).toHaveAttribute('href', /\/admin\/catalog\/products/);
+  // Total Products card links to unfiltered product listing
+  const totalCard = adminPage.locator('a', { has: adminPage.getByText('Total Products') }).first();
+  const href = await totalCard.getAttribute('href');
+  expect(href).toMatch(/\/admin\/catalog\/products$/);
+});
+
+test('6.13 - Active card links to products filtered by status=1', async ({ adminPage }) => {
+  await adminPage.waitForLoadState('networkidle');
+  const emptyState = adminPage.getByText('No products yet.');
+  const emptyVisible = await emptyState.isVisible().catch(() => false);
+  test.skip(emptyVisible, 'No products in current environment');
+  const activeCard = adminPage.locator('a', { has: adminPage.getByText('Active') }).first();
+  const href = await activeCard.getAttribute('href');
+  expect(href).toContain('filters[status][]=1');
+});
+
+test('6.14 - Inactive card links to products filtered by status=0', async ({ adminPage }) => {
+  await adminPage.waitForLoadState('networkidle');
+  const emptyState = adminPage.getByText('No products yet.');
+  const emptyVisible = await emptyState.isVisible().catch(() => false);
+  test.skip(emptyVisible, 'No products in current environment');
+  const inactiveCard = adminPage.locator('a', { has: adminPage.getByText('Inactive') }).first();
+  const href = await inactiveCard.getAttribute('href');
+  expect(href).toContain('filters[status][]=0');
+});
+
+test('6.15 - Clicking Inactive card navigates to product listing with status filter applied', async ({ adminPage }) => {
+  await adminPage.waitForLoadState('networkidle');
+  const emptyState = adminPage.getByText('No products yet.');
+  const emptyVisible = await emptyState.isVisible().catch(() => false);
+  test.skip(emptyVisible, 'No products in current environment');
+
+  // Clear localStorage datagrid state to ensure URL filters take effect
+  await adminPage.evaluate(() => localStorage.removeItem('datagrids'));
+
+  const inactiveCard = adminPage.locator('a', { has: adminPage.getByText('Inactive') }).first();
+  await inactiveCard.click();
+
+  // Should navigate to products page with status filter
+  await expect(adminPage).toHaveURL(/\/admin\/catalog\/products\?filters\[status\]\[\]=0/);
 });
 
 // ═════════════════════════════════════════════════
