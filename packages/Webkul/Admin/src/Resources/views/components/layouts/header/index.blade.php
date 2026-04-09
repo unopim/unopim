@@ -81,7 +81,7 @@
 
                     <!-- Version -->
                     <p class="text-gray-400">
-                        @lang('admin::app.components.layouts.header.app-version', ['version' => 'v' . core()->version()])
+                        @lang('admin::app.components.layouts.header.app-version', ['version' => core()->version()])
                     </p>
                 </div>
 
