@@ -20,6 +20,10 @@ async function createExportWithStatusFilter(adminPage, code, statusLabel) {
   // Fill in export code
   await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
 
+  // Select entity type — Products (only products have the status filter)
+  await adminPage.locator('#export-type').locator('.multiselect__single, .multiselect__placeholder').first().click();
+  await adminPage.getByRole('option', { name: 'Products' }).locator('span').first().click();
+
   // Select file format — CSV
   await adminPage.locator('input[name="filters[file_format]"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').click();
   await adminPage.getByRole('option', { name: 'CSV' }).locator('span').first().click();
