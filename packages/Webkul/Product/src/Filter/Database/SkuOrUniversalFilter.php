@@ -45,7 +45,7 @@ class SkuOrUniversalFilter extends AbstractDatabaseAttributeFilter
 
             $this->queryBuilder->orWhereRaw(
                 sprintf("LOWER($searchPath) LIKE ?"),
-                "%$escapedValue%"
+                '%'.strtolower($escapedValue).'%'
             );
         }
 
