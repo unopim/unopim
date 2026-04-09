@@ -108,6 +108,11 @@ it('should return product stats with correct status breakdown', function () {
 it('should filter products by status when filters are passed', function () {
     $this->loginAsAdmin();
 
+    // Disable Elasticsearch so the DataGrid queries MySQL directly,
+    // avoiding indexing delays with newly created factory products.
+    $esEnabled = config('elasticsearch.enabled');
+    config(['elasticsearch.enabled' => false]);
+
     $family = AttributeFamily::first();
 
     // Create active and inactive products
@@ -144,6 +149,9 @@ it('should filter products by status when filters are passed', function () {
     // The inactive product should be in the results
     $skus = collect($records)->pluck('sku')->toArray();
     expect($skus)->toContain($inactiveProduct->sku);
+
+    // Restore original config
+    config(['elasticsearch.enabled' => $esEnabled]);
 });
 
 it('should invalidate dashboard cache when product is created', function () {

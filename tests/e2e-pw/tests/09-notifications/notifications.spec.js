@@ -1,10 +1,26 @@
 const { test, expect } = require('../../utils/fixtures');
 
 /**
+ * Re-login if the session has been invalidated (e.g. by earlier login-page tests
+ * that log out the shared adminPage session).
+ */
+async function ensureAuthenticated(page) {
+  if (page.url().includes('/admin/login')) {
+    await page.fill('input[name=email]', 'admin@example.com');
+    await page.fill('input[name=password]', 'admin123');
+    await page.click('button:has-text("Sign In")');
+    await page.waitForLoadState('networkidle');
+  }
+}
+
+/**
  * Navigate to the notifications page and wait for Vue component to render.
  */
 async function navigateToNotifications(page) {
   await page.goto('/admin/notifications', { waitUntil: 'networkidle' });
+
+  // Re-login if session was invalidated by prior tests on this shard
+  await ensureAuthenticated(page);
 
   // Wait for Vue component to mount — either notifications list or empty state will appear
   await page.waitForSelector('.icon-notification, a[href*="viewed-notifications"]', { timeout: 15000 });
