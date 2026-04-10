@@ -1,0 +1,18 @@
+name: PR Description Check
+
+on:
+  pull_request:
+    types: [opened, edited, reopened]
+
+jobs:
+  check-description:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR description is not empty
+        run: |
+          DESCRIPTION=$(echo "${{ github.event.pull_request.body }}" | xargs)
+          if [ -z "$DESCRIPTION" ]; then
+            echo "::error::PR description cannot be empty. Please add a meaningful description."
+            exit 1
+          fi
+          echo "PR description is present."
