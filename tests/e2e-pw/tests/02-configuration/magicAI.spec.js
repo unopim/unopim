@@ -723,8 +723,9 @@ test('7.3 - Open AI Assistance modal and verify fields', async ({ adminPage }) =
   // Verify AI Assistance modal fields — wait for modal to fully render
   await expect(adminPage.locator('#app').getByText('AI Assistance')).toBeVisible({ timeout: 10000 });
   await expect(adminPage.locator('#app').getByText('Default Prompt')).toBeVisible({ timeout: 10000 });
-  // "System Prompt" collapsible header is always visible once the modal renders
-  await expect(adminPage.locator('#app').getByText('System Prompt', { exact: true })).toBeVisible({ timeout: 10000 });
+  // "System Prompt" collapsible header is always visible once the modal renders.
+  // The label may include the selected prompt name in parentheses (e.g. "System Prompt (Friendly Assistant)").
+  await expect(adminPage.locator('#app').getByText(/^System Prompt/).first()).toBeVisible({ timeout: 10000 });
   await expect(adminPage.getByRole('button', { name: 'Generate' })).toBeVisible({ timeout: 10000 });
   await expect(adminPage.locator('.multiselect').first()).toBeVisible({ timeout: 10000 });
 
