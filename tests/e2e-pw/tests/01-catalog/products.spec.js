@@ -487,12 +487,15 @@ test.describe('Product Listing Features', () => {
     await navigateTo(adminPage, 'products');
     await adminPage.waitForLoadState('networkidle');
 
-    // Select the product using mass action checkbox.
-    // The checkbox has Tailwind class `peer hidden` (display: none), so use
-    // state: 'attached' instead of 'visible' — check({ force: true }) handles the click.
-    const checkbox = adminPage.locator('input[type="checkbox"].peer').first();
-    await checkbox.waitFor({ state: 'attached', timeout: 10000 });
-    await checkbox.check({ force: true });
+    // Select the product using its row mass-action checkbox.
+    // The datagrid has TWO types of `.peer hidden` checkboxes:
+    //   - #mass_action_select_all_records (header, select-all)
+    //   - mass_action_select_record_${id} (per row)
+    // Use the row checkbox selector to target a single product row.
+    // The checkbox is `display: none` by design; click the label instead.
+    const rowCheckboxLabel = adminPage.locator('label[for^="mass_action_select_record_"]').first();
+    await rowCheckboxLabel.waitFor({ state: 'visible', timeout: 10000 });
+    await rowCheckboxLabel.click();
 
     // Open Quick Export modal
     await adminPage.getByRole('button', { name: 'Quick Export' }).click();

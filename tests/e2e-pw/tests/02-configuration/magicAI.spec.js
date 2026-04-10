@@ -361,18 +361,14 @@ test('3.9 - Edit an existing system prompt', async ({ adminPage }) => {
   await openDatagrid(adminPage, 'Create System Prompt');
 
   await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 20000 });
-  const editIcon = adminPage.locator('span[title="Edit"]').first();
-  await expect(editIcon).toBeVisible({ timeout: 5000 });
-  await editIcon.click();
+  // Click the anchor wrapping the edit icon — the @click handler is on the <a>,
+  // not the span. Clicking the span directly may not trigger the Vue handler.
+  const editLink = adminPage.locator('a:has(span[title="Edit"])').first();
+  await expect(editLink).toBeVisible({ timeout: 5000 });
+  await editLink.click();
 
-  // If the edit modal didn't open on the first click (toggle state race), retry
   const titleInput = adminPage.locator('input[name="title"]');
-  try {
-    await expect(titleInput).toBeVisible({ timeout: 10000 });
-  } catch {
-    await editIcon.click();
-    await expect(titleInput).toBeVisible({ timeout: 15000 });
-  }
+  await expect(titleInput).toBeVisible({ timeout: 20000 });
   const currentTitle = await titleInput.inputValue();
   await titleInput.clear();
   await titleInput.fill(currentTitle + ' Pro');
@@ -382,16 +378,11 @@ test('3.9 - Edit an existing system prompt', async ({ adminPage }) => {
   // Revert the edit
   await adminPage.goto(MAGIC_AI_SYSTEM_PROMPT_URL, { waitUntil: 'networkidle' });
   await openDatagrid(adminPage, 'Create System Prompt');
-  const editIconRevert = adminPage.locator('span[title="Edit"]').first();
-  await expect(editIconRevert).toBeVisible({ timeout: 5000 });
-  await editIconRevert.click();
+  const editLinkRevert = adminPage.locator('a:has(span[title="Edit"])').first();
+  await expect(editLinkRevert).toBeVisible({ timeout: 5000 });
+  await editLinkRevert.click();
   const titleInputRevert = adminPage.locator('input[name="title"]');
-  try {
-    await expect(titleInputRevert).toBeVisible({ timeout: 10000 });
-  } catch {
-    await editIconRevert.click();
-    await expect(titleInputRevert).toBeVisible({ timeout: 15000 });
-  }
+  await expect(titleInputRevert).toBeVisible({ timeout: 20000 });
   await titleInputRevert.clear();
   await titleInputRevert.fill(currentTitle);
   await adminPage.getByRole('button', { name: 'Save' }).click();
