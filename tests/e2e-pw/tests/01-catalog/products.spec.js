@@ -487,9 +487,11 @@ test.describe('Product Listing Features', () => {
     await navigateTo(adminPage, 'products');
     await adminPage.waitForLoadState('networkidle');
 
-    // Select the product using mass action checkbox
+    // Select the product using mass action checkbox.
+    // The checkbox has Tailwind class `peer hidden` (display: none), so use
+    // state: 'attached' instead of 'visible' — check({ force: true }) handles the click.
     const checkbox = adminPage.locator('input[type="checkbox"].peer').first();
-    await checkbox.waitFor({ state: 'visible', timeout: 10000 });
+    await checkbox.waitFor({ state: 'attached', timeout: 10000 });
     await checkbox.check({ force: true });
 
     // Open Quick Export modal

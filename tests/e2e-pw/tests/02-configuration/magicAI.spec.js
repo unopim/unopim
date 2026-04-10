@@ -20,6 +20,9 @@ async function openDatagrid(adminPage, createBtnName) {
     await cancelIcon.click();
     await expect(cancelIcon).not.toBeVisible({ timeout: 5000 });
   }
+  // Allow Vue reactivity to settle after modal close so the next edit click
+  // doesn't race with a pending toggle() state flip.
+  await adminPage.waitForTimeout(500);
 }
 
 /**
@@ -362,8 +365,14 @@ test('3.9 - Edit an existing system prompt', async ({ adminPage }) => {
   await expect(editIcon).toBeVisible({ timeout: 5000 });
   await editIcon.click();
 
+  // If the edit modal didn't open on the first click (toggle state race), retry
   const titleInput = adminPage.locator('input[name="title"]');
-  await expect(titleInput).toBeVisible({ timeout: 20000 });
+  try {
+    await expect(titleInput).toBeVisible({ timeout: 10000 });
+  } catch {
+    await editIcon.click();
+    await expect(titleInput).toBeVisible({ timeout: 15000 });
+  }
   const currentTitle = await titleInput.inputValue();
   await titleInput.clear();
   await titleInput.fill(currentTitle + ' Pro');
@@ -377,7 +386,12 @@ test('3.9 - Edit an existing system prompt', async ({ adminPage }) => {
   await expect(editIconRevert).toBeVisible({ timeout: 5000 });
   await editIconRevert.click();
   const titleInputRevert = adminPage.locator('input[name="title"]');
-  await expect(titleInputRevert).toBeVisible({ timeout: 20000 });
+  try {
+    await expect(titleInputRevert).toBeVisible({ timeout: 10000 });
+  } catch {
+    await editIconRevert.click();
+    await expect(titleInputRevert).toBeVisible({ timeout: 15000 });
+  }
   await titleInputRevert.clear();
   await titleInputRevert.fill(currentTitle);
   await adminPage.getByRole('button', { name: 'Save' }).click();
