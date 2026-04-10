@@ -297,6 +297,11 @@ class Installer extends Command
             'DB_PREFIX' => text(
                 label: 'Please enter the database prefix',
                 default: env('DB_PREFIX') ?? '',
+                validate: fn (string $value) => match (true) {
+                    strlen($value) > 4                     => 'The database prefix should not exceed 4 characters.',
+                    preg_match('/[^a-zA-Z0-9_]/', $value)  => 'The database prefix can only contain letters, numbers, and underscores.',
+                    default                                => null
+                },
                 hint: 'or press enter to continue'
             ),
 
