@@ -2,6 +2,7 @@ name: PR Description Check
 
 on:
   pull_request:
+    branches: [master, staging]
     types: [opened, edited, reopened]
 
 jobs:
