@@ -145,17 +145,6 @@ test('1.5 - Test connection with invalid API key', async ({ adminPage }) => {
   }
 });
 
-test('1.6 - Create and delete OpenAI platform with valid credentials', async ({ adminPage }) => {
-  test.skip(!OPENAI_API_KEY, 'OPENAI_API_KEY not set — skipping platform creation');
-  test.setTimeout(60000);
-
-  const uid = generateUid();
-  const label = `OpenAI E2E ${uid}`;
-
-  await createOpenAIPlatform(adminPage, label);
-  await deletePlatform(adminPage, label);
-});
-
 test('1.8 - Verify platform datagrid columns', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
   await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();

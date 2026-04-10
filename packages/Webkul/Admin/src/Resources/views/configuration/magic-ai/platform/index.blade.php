@@ -487,37 +487,24 @@
 
                     saveWithTest(params, { resetForm, setErrors }) {
                         this.saving = true;
-                        let formData = new FormData(this.$refs.platformForm);
+                        let saveData = new FormData(this.$refs.platformForm);
 
                         if (this.form.provider === 'azure') {
-                            formData.set('extras', JSON.stringify({
+                            saveData.set('extras', JSON.stringify({
                                 deployment: this.form.azure_deployment,
                                 api_version: this.form.azure_api_version,
                             }));
                         }
 
-                        // Test first
-                        this.$axios.post("{{ route('admin.magic_ai.platform.test') }}", formData)
-                            .then(() => {
-                                // Then save
-                                let saveData = new FormData(this.$refs.platformForm);
-                                if (this.form.provider === 'azure') {
-                                    saveData.set('extras', JSON.stringify({
-                                        deployment: this.form.azure_deployment,
-                                        api_version: this.form.azure_api_version,
-                                    }));
-                                }
+                        let url;
+                        if (this.form.id) {
+                            saveData.append('_method', 'put');
+                            url = "{{ route('admin.magic_ai.platform.update', ':id') }}".replace(':id', this.form.id);
+                        } else {
+                            url = "{{ route('admin.magic_ai.platform.store') }}";
+                        }
 
-                                let url;
-                                if (this.form.id) {
-                                    saveData.append('_method', 'put');
-                                    url = "{{ route('admin.magic_ai.platform.update', ':id') }}".replace(':id', this.form.id);
-                                } else {
-                                    url = "{{ route('admin.magic_ai.platform.store') }}";
-                                }
-
-                                return this.$axios.post(url, saveData);
-                            })
+                        this.$axios.post(url, saveData)
                             .then((response) => {
                                 this.saving = false;
                                 this.$refs.platformModal.close();
@@ -533,7 +520,7 @@
                                 } else {
                                     this.$emitter.emit('add-flash', {
                                         type: 'error',
-                                        message: error.response?.data?.message || 'Connection failed. Please check your credentials.',
+                                        message: error.response?.data?.message || 'Save failed. Please try again.',
                                     });
                                 }
                             });
