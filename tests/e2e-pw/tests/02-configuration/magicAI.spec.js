@@ -39,8 +39,24 @@ async function createOpenAIPlatform(adminPage, label) {
   await adminPage.locator('input[name="label"]').fill(label);
   await adminPage.locator('input[name="api_key"]').fill(OPENAI_API_KEY);
   await adminPage.locator('input[name="label"]').click();
-  const modelTag = adminPage.locator('.rounded-full.bg-violet-100').first();
-  await modelTag.waitFor({ state: 'visible', timeout: 30000 }).catch(() => {});
+
+  // Wait for models to load from the API key test call
+  await adminPage.locator('input[type="checkbox"]').first().waitFor({ state: 'visible', timeout: 30000 }).catch(() => {});
+
+  // Explicitly select at least one model — required for save to succeed
+  const gpt4oCheckbox = adminPage.getByRole('checkbox', { name: 'gpt-4o', exact: true });
+  if (await gpt4oCheckbox.isVisible().catch(() => false)) {
+    if (!(await gpt4oCheckbox.isChecked())) {
+      await gpt4oCheckbox.check();
+    }
+  } else {
+    // Fallback: select the first available model checkbox
+    const firstModel = adminPage.locator('.grid.grid-cols-2 label input[type="checkbox"]').first();
+    if (await firstModel.isVisible().catch(() => false)) {
+      await firstModel.check();
+    }
+  }
+
   await adminPage.getByRole('button', { name: 'Save' }).click();
   await expect(adminPage.locator('#app').getByText(/saved successfully|created successfully|updated successfully/i)).toBeVisible({ timeout: 30000 });
 }
