@@ -1970,7 +1970,7 @@ return [
                 'save'          => 'Enregistrer',
                 'add-filter'    => 'Ajouter un filtre',
                 'remove-filter' => 'Supprimer le filtre',
-                'search-filter' => 'Search...',
+                'search-filter' => 'Rechercher...',
                 'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Tapez au moins 2 caractères...',

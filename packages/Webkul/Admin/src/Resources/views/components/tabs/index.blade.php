@@ -74,11 +74,14 @@
 
             methods: {
                 change(selectedTab) {
+                    // Compare by the same key we emit so tabs with distinct values
+                    // but matching titles don't highlight the wrong tab.
+                    const selectedKey = selectedTab.value ?? selectedTab.title;
                     this.tabs.forEach(tab => {
-                        tab.isActive = (tab.title == selectedTab.title);
+                        tab.isActive = ((tab.value ?? tab.title) === selectedKey);
                     });
 
-                    this.$emit('change', selectedTab.value ?? selectedTab.title);
+                    this.$emit('change', selectedKey);
                 },
             },
         });

@@ -269,7 +269,7 @@ class Core
     {
         $langPath = base_path('packages/Webkul/Admin/src/Resources/lang');
 
-        $availableDirs = array_map('basename', glob($langPath.'/*', GLOB_ONLYDIR));
+        $availableDirs = array_map('basename', glob($langPath.'/*', GLOB_ONLYDIR) ?: []);
 
         return $this->localeRepository->all()
             ->filter(fn ($locale) => in_array($locale->code, $availableDirs))
