@@ -97,13 +97,16 @@ class Dashboard
     public function getProductStats()
     {
         return Cache::remember('dashboard.product_stats', self::CACHE_TTL, function () {
-            // Single query for type + status using conditional aggregation
+            // Single query for type + status using conditional aggregation.
+            // Note: `status` may be stored as tinyint (MySQL) or boolean (PostgreSQL).
+            // Use CAST to SIGNED/INTEGER for cross-database compatibility.
+            $castType = DB::getDriverName() === 'pgsql' ? 'INTEGER' : 'SIGNED';
             $stats = DB::table('products')
                 ->select(
                     'type',
                     DB::raw('COUNT(*) as total'),
-                    DB::raw('SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) as active_count'),
-                    DB::raw('SUM(CASE WHEN status = 0 THEN 1 ELSE 0 END) as inactive_count')
+                    DB::raw("SUM(CASE WHEN CAST(status AS {$castType}) = 1 THEN 1 ELSE 0 END) as active_count"),
+                    DB::raw("SUM(CASE WHEN CAST(status AS {$castType}) = 0 THEN 1 ELSE 0 END) as inactive_count")
                 )
                 ->groupBy('type')
                 ->get();
