@@ -102,14 +102,6 @@ test.describe('Verify the behaviour of Product Completeness feature', () => {
     await expect(adminPage.locator('#app').getByText('Completeness updated successfully Close').first()).toBeVisible();
   });
 
-  test.skip('Verify all available channels are displayed when user clicks "Configure Completeness" option', async () => {
-    // This test requires the mass action modal which is unreliable in automated tests
-  });
-
-  test.skip('Verify bulk selection of attributes for required channel updates product completeness visibility', async () => {
-    // This test requires the mass action modal which is unreliable in automated tests
-  });
-
   test('Verify channel can be deselected for specific attribute in completeness settings', async ({ adminPage }) => {
     await goToDefaultFamilyCompleteness(adminPage);
     await adminPage.getByRole('button', { name: 'Per Page' }).click();

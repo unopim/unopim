@@ -1,5 +1,8 @@
 const { test, expect } = require('../../utils/fixtures');
-const UNOPIM_URL = 'http://127.0.0.1:8000/admin/login';
+const path = require('path');
+const BASE_URL = process.env.BASE_URL || 'http://127.0.0.1:8000';
+const UNOPIM_URL = `${BASE_URL}/admin/login`;
+const STORAGE_STATE = path.resolve(__dirname, '../../.state/admin-auth.json');
 const email = 'admin@example.com';
 const password = 'admin123';
 const invalidEmail = 'admin123@example.com';
@@ -21,6 +24,7 @@ async function goToLoginPage(adminPage) {
   await adminPage.getByRole('link', { name: 'Logout' }).click();
   await expect(adminPage).toHaveURL(UNOPIM_URL);
 }
+
 
 test.describe('Login Page', () => {
 
@@ -130,5 +134,9 @@ test('Login with valid credentials', async ({ adminPage }) => {
   await adminPage.fill('input[name=password]', password);
   await adminPage.press('input[name=password]', 'Enter');
   await expect(adminPage).toHaveURL(/\/admin\//);  // Redirects to last visited admin page or dashboard
+
+  // Persist this valid session back to the shared storage state so subsequent
+  // test files don't inherit the invalidated session from earlier logout tests.
+  await adminPage.context().storageState({ path: STORAGE_STATE });
 });
 });

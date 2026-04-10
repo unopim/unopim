@@ -128,7 +128,6 @@ class MagicPromptGrid extends DataGrid
     {
         $this->addAction([
             'icon'   => 'icon-edit',
-            'index'  => 'edit',
             'title'  => trans('admin::app.configuration.prompt.datagrid.edit'),
             'method' => 'GET',
             'url'    => function ($row) {
