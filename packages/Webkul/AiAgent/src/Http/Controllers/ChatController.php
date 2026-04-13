@@ -7,9 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\AiAgent\Chat\AgentRunner;
 use Webkul\AiAgent\Chat\ChatContext;
+use Webkul\AiAgent\Chat\PrismErrorResolver;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
 
@@ -52,12 +54,21 @@ class ChatController extends Controller
 
             return new JsonResponse($result);
         } catch (\Throwable $e) {
-            Log::error('AI Agent chat error', ['exception' => $e]);
+            $resolved = PrismErrorResolver::resolve($e);
+
+            if ($resolved['is_known']) {
+                Log::warning('AI Agent chat provider error', [
+                    'type'    => get_class($e),
+                    'message' => $e->getMessage(),
+                ]);
+            } else {
+                Log::error('AI Agent chat error', ['exception' => $e]);
+            }
 
             return new JsonResponse([
-                'reply'  => trans('ai-agent::app.common.error-generic'),
+                'reply'  => $resolved['message'],
                 'action' => 'error',
-            ], 422);
+            ], $resolved['is_known'] ? $resolved['status'] : 422);
         }
     }
 
@@ -161,10 +172,20 @@ class ChatController extends Controller
             }
         }
 
-        // Store uploaded files — same session persistence pattern
+        // Store uploaded files — same session persistence pattern.
+        //
+        // We deliberately use storeAs() with the original filename's
+        // extension instead of Laravel's default store() / hashName(), which
+        // guesses the extension from the MIME type. PHP often reports CSV
+        // uploads as "text/plain", so hashName() would save "products.csv"
+        // as "<hash>.txt" — and the ImportProducts tool would then reject
+        // it as an unsupported format because the extension check uses
+        // pathinfo() on the stored path.
         $filePaths = [];
         foreach ($request->file('files', []) as $file) {
-            $stored = $file->store('ai-agent/files', 'public');
+            $ext = strtolower($file->getClientOriginalExtension());
+            $filename = Str::random(40).($ext !== '' ? '.'.$ext : '');
+            $stored = $file->storeAs('ai-agent/files', $filename, 'public');
             $filePaths[] = storage_path('app/public/'.$stored);
         }
 

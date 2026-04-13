@@ -327,13 +327,31 @@
 
                     {{-- Pending files --}}
                     <div v-if="pendingFiles.length > 0" class="ap-pending-files">
-                        <div v-for="(f, idx) in pendingFiles" :key="idx" class="relative group">
-                            <img v-if="f.type === 'image'" :src="f.preview" class="w-10 h-10 object-cover rounded-md border border-gray-200 dark:border-cherry-700"/>
-                            <div v-else class="flex items-center gap-1 px-2 py-1.5 rounded-md border text-xs bg-violet-50 dark:bg-violet-900/20 border-violet-200 dark:border-violet-800 text-violet-600 dark:text-violet-400">
-                                <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                                <span class="max-w-[80px] truncate font-medium" v-text="f.name"></span>
-                            </div>
-                            <button @click="removeFile(idx)" class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 hover:bg-red-600 text-white rounded-full text-xs flex items-center justify-center shadow-sm transition-colors" title="Remove">&times;</button>
+                        <div v-for="(f, idx) in pendingFiles" :key="idx" class="ap-pending-chip" :title="f.name">
+                            <button
+                                @click="removeFile(idx)"
+                                class="ap-pending-chip-remove"
+                                :title="trans.removeAttachment"
+                                :aria-label="trans.removeAttachment + ': ' + f.name"
+                                type="button"
+                            >
+                                <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                            <img
+                                v-if="f.type === 'image'"
+                                :src="f.preview"
+                                class="ap-pending-chip-thumb"
+                                alt=""
+                            />
+                            <svg
+                                v-else
+                                class="ap-pending-chip-icon"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                viewBox="0 0 24 24"
+                            ><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            <span class="ap-pending-chip-name" v-text="f.name"></span>
                         </div>
                     </div>
 
@@ -585,10 +603,53 @@
 .dark .ap-clear-chat-btn:hover { background:#4a2733; }
 
 .ap-pending-files {
-    display:flex; flex-wrap:wrap; gap:8px; padding:8px 16px;
+    display:flex; flex-wrap:wrap; gap:6px; padding:8px 16px;
     border-top:1px solid #e5e7eb; background:#f9fafb; flex-shrink:0;
 }
 .dark .ap-pending-files { background:#241f35; border-top-color:#453c5f; }
+
+/* Copilot-style attachment chip: [x] [icon/thumb] filename */
+.ap-pending-chip {
+    display:inline-flex; align-items:center; gap:6px;
+    max-width:220px; height:26px; padding:0 10px 0 4px;
+    border:1px solid #d1d5db; border-radius:6px;
+    background:#fff; color:#374151; font-size:12px;
+    transition:border-color 0.15s, background 0.15s;
+}
+.ap-pending-chip:hover { border-color:#9ca3af; background:#f3f4f6; }
+.dark .ap-pending-chip {
+    border-color:#5b4a80; background:#1f1b2d; color:#e5e7eb;
+}
+.dark .ap-pending-chip:hover { border-color:#7c6ba3; background:#2a2440; }
+
+.ap-pending-chip-remove {
+    display:inline-flex; align-items:center; justify-content:center;
+    width:16px; height:16px; padding:0; flex-shrink:0;
+    background:transparent; border:none; border-radius:3px;
+    color:#6b7280; cursor:pointer; transition:background 0.15s, color 0.15s;
+}
+.ap-pending-chip-remove:hover { background:#e5e7eb; color:#111827; }
+.dark .ap-pending-chip-remove { color:#9ca3af; }
+.dark .ap-pending-chip-remove:hover { background:#3b3252; color:#f3f4f6; }
+
+.ap-pending-chip-thumb {
+    width:16px; height:16px; flex-shrink:0;
+    object-fit:cover; border-radius:3px;
+    border:1px solid #e5e7eb;
+}
+.dark .ap-pending-chip-thumb { border-color:#453c5f; }
+
+.ap-pending-chip-icon {
+    width:14px; height:14px; flex-shrink:0;
+    color:#7c3aed;
+}
+.dark .ap-pending-chip-icon { color:#a78bfa; }
+
+.ap-pending-chip-name {
+    min-width:0; max-width:160px;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+    font-weight:500;
+}
 
 .ap-input-wrap {
     border-top:1px solid #e5e7eb; padding:12px; flex-shrink:0; background:#fff;
@@ -673,6 +734,7 @@ app.component('v-agenting-pim', {
             selectModel: `@lang('ai-agent::app.widget.select-model')`,
             attachCsvXlsx: `@lang('ai-agent::app.widget.attach-csv-xlsx')`,
             attachImage: `@lang('ai-agent::app.widget.attach-image')`,
+            removeAttachment: `@lang('ai-agent::app.widget.remove-attachment')`,
             processing: `@lang('ai-agent::app.widget.processing')`,
             noResponse: `@lang('ai-agent::app.widget.no-response')`,
             errorGeneric: `@lang('ai-agent::app.widget.error-generic')`,

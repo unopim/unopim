@@ -133,8 +133,18 @@ class AgentRunner
                 unset($result['reply']); // Already streamed as text_delta
                 $this->sendSSE('complete', $result);
             } catch (\Throwable $e) {
-                Log::error('AI Agent stream error', ['exception' => $e]);
-                $this->sendSSE('error', ['message' => trans('ai-agent::app.common.error-generic')]);
+                $resolved = PrismErrorResolver::resolve($e);
+
+                if ($resolved['is_known']) {
+                    Log::warning('AI Agent stream provider error', [
+                        'type'    => get_class($e),
+                        'message' => $e->getMessage(),
+                    ]);
+                } else {
+                    Log::error('AI Agent stream error', ['exception' => $e]);
+                }
+
+                $this->sendSSE('error', ['message' => $resolved['message']]);
             }
         }, 200, [
             'Content-Type'      => 'text/event-stream',

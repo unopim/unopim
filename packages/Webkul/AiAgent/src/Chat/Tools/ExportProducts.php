@@ -14,6 +14,7 @@ use Webkul\DataTransfer\Helpers\Export as ExportHelper;
 use Webkul\DataTransfer\Repositories\JobInstancesRepository;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
+use Webkul\DataTransfer\Services\JobLogger;
 
 class ExportProducts implements PimTool
 {
@@ -44,10 +45,10 @@ class ExportProducts implements PimTool
                     return $denied;
                 }
 
-                $prefix = DB::getTablePrefix();
-
-                $qb = DB::table('products as p')
-                    ->select('p.id', 'p.sku', 'p.type', 'p.status', DB::raw("`{$prefix}p`.`values`"));
+                $filters = $this->buildFilters($context, $skus, $status, $category);
+                $jobInstance = $this->createJobInstance($filters);
+                $jobTrack = $this->createJobTrack($jobInstance);
+                $logger = JobLogger::make($jobTrack->id);
 
                 $logger->info('AI export request received.');
 
