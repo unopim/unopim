@@ -6,9 +6,9 @@ use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Throwable;
-use Webkul\Core\Helpers\Database\DatabaseSequenceHelper;
 use Webkul\Installer\Database\Data\Generators\SvgPlaceholderGenerator;
 use Webkul\Installer\Demo\DemoDataProfile;
 
@@ -17,24 +17,14 @@ use Webkul\Installer\Demo\DemoDataProfile;
  * `Database/Data/templates/food_grocery/` and inserts the FMCG reference
  * catalog into the database.
  *
- * Ingest order (must not change — foreign-key dependencies):
- *   1. attribute_groups.json  → attribute_groups
- *   2. attributes.json        → attributes
- *   3. family.json            → attribute_families + group_mappings
- *   4. categories.json        → categories (nested-set)
- *   5. brand_options.json     → attribute_options for the `brand` attribute
- *   6. association_types.json → association_types
- *   7. products.json          → products (parents first, then variants)
- *   8. associations.json      → product_associations
+ * The seeder is idempotent — it checks for existing rows by code/sku and
+ * skips anything already present. Safe to re-run after a template edit.
  *
- * Each step is idempotent — previous rows keyed on `code` are deleted and
- * re-inserted so the seeder can be re-run after a template edit.
+ * Missing locale / channel content is auto-filled at seed time from the
+ * canonical `en_US` / `ecommerce` entry using mechanical derivation rules.
  *
- * SVG placeholder images are generated at runtime via
+ * SVG placeholder images are generated on-demand via
  * {@see SvgPlaceholderGenerator} — no binary assets shipped in git.
- *
- * Missing locale / channel content is auto-filled from the canonical
- * `en_US` / `ecommerce` entry using the rules in `translations.json`.
  */
 class FoodGroceryReferenceSeeder extends Seeder
 {
@@ -75,9 +65,7 @@ class FoodGroceryReferenceSeeder extends Seeder
                 $this->seedFamily();
                 $this->seedCategories();
                 $this->seedBrandOptions();
-                $this->seedAssociationTypes();
                 $this->seedProducts();
-                $this->seedAssociations();
             });
 
             $this->command?->info('food_grocery seeded successfully.');
@@ -85,50 +73,38 @@ class FoodGroceryReferenceSeeder extends Seeder
             $this->command?->error('food_grocery seeder failed: '.$e->getMessage());
             throw $e;
         }
-
-        DatabaseSequenceHelper::fixSequences([
-            'attribute_groups',
-            'attributes',
-            'attribute_options',
-            'attribute_families',
-            'categories',
-            'products',
-        ]);
     }
+
+    /* -------- attribute groups -------------------------------------- */
 
     protected function seedAttributeGroups(): void
     {
         $data = $this->loadJson('attribute_groups.json');
-        $rows = [];
-        $now = Carbon::now();
+        $existingCodes = DB::table('attribute_groups')->pluck('code')->all();
 
         foreach ($data['attribute_groups'] ?? [] as $group) {
-            $rows[] = [
-                'code'       => $group['code'],
-                'position'   => $group['position'] ?? 0,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ];
-        }
+            if (in_array($group['code'], $existingCodes, true)) {
+                continue;
+            }
 
-        if (empty($rows)) {
-            return;
-        }
+            $row = ['code' => $group['code']];
+            if (Schema::hasColumn('attribute_groups', 'is_user_defined')) {
+                $row['is_user_defined'] = 1;
+            }
 
-        $existing = DB::table('attribute_groups')
-            ->whereIn('code', array_column($rows, 'code'))
-            ->pluck('code')
-            ->all();
+            $groupId = DB::table('attribute_groups')->insertGetId($row);
 
-        $toInsert = array_values(array_filter(
-            $rows,
-            static fn ($row) => ! in_array($row['code'], $existing, true)
-        ));
-
-        if (! empty($toInsert)) {
-            DB::table('attribute_groups')->insert($toInsert);
+            $this->seedTranslations(
+                'attribute_group_translations',
+                'attribute_group_id',
+                $groupId,
+                'name',
+                $group['labels'] ?? []
+            );
         }
     }
+
+    /* -------- attributes -------------------------------------------- */
 
     protected function seedAttributes(): void
     {
@@ -150,19 +126,27 @@ class FoodGroceryReferenceSeeder extends Seeder
                 'value_per_locale'  => $attr['value_per_locale'] ?? 0,
                 'value_per_channel' => $attr['value_per_channel'] ?? 0,
                 'is_filterable'     => $attr['is_filterable'] ?? 0,
-                'is_user_defined'   => 1,
                 'validation'        => $attr['validation'] ?? null,
+                'regex_pattern'     => $attr['regex_pattern'] ?? null,
+                'enable_wysiwyg'    => $attr['wysiwyg'] ?? 0,
+                'default_value'     => $attr['default_value'] ?? null,
                 'created_at'        => $now,
                 'updated_at'        => $now,
             ];
 
-            if (! DB::getSchemaBuilder()->hasColumn('attributes', 'is_user_defined')) {
-                unset($row['is_user_defined']);
-            }
+            $attributeId = DB::table('attributes')->insertGetId($row);
 
-            DB::table('attributes')->insert($row);
+            $this->seedTranslations(
+                'attribute_translations',
+                'attribute_id',
+                $attributeId,
+                'name',
+                $attr['labels'] ?? []
+            );
         }
     }
+
+    /* -------- family + group/attribute mappings --------------------- */
 
     protected function seedFamily(): void
     {
@@ -173,23 +157,96 @@ class FoodGroceryReferenceSeeder extends Seeder
             return;
         }
 
-        $existing = DB::table('attribute_families')
-            ->where('code', $familyData['code'])
-            ->first();
+        $existing = DB::table('attribute_families')->where('code', $familyData['code'])->first();
 
         if ($existing) {
-            return;
+            $familyId = (int) $existing->id;
+        } else {
+            $familyId = DB::table('attribute_families')->insertGetId([
+                'code'   => $familyData['code'],
+                'status' => $familyData['status'] ?? 1,
+            ]);
+
+            $this->seedTranslations(
+                'attribute_family_translations',
+                'attribute_family_id',
+                $familyId,
+                'name',
+                $familyData['labels'] ?? []
+            );
         }
 
-        $now = Carbon::now();
-
-        DB::table('attribute_families')->insert([
-            'code'       => $familyData['code'],
-            'status'     => $familyData['status'] ?? 1,
-            'created_at' => $now,
-            'updated_at' => $now,
-        ]);
+        $this->seedFamilyGroupMappings($familyId, $familyData['groups'] ?? []);
     }
+
+    protected function seedFamilyGroupMappings(int $familyId, array $groupCodes): void
+    {
+        $position = 0;
+        foreach ($groupCodes as $groupCode) {
+            $groupId = DB::table('attribute_groups')->where('code', $groupCode)->value('id');
+            if (! $groupId) {
+                continue;
+            }
+
+            $exists = DB::table('attribute_family_group_mappings')
+                ->where('attribute_family_id', $familyId)
+                ->where('attribute_group_id', $groupId)
+                ->exists();
+
+            if (! $exists) {
+                $familyGroupId = DB::table('attribute_family_group_mappings')->insertGetId([
+                    'attribute_family_id' => $familyId,
+                    'attribute_group_id'  => $groupId,
+                    'position'            => $position++,
+                ]);
+            } else {
+                $familyGroupId = (int) DB::table('attribute_family_group_mappings')
+                    ->where('attribute_family_id', $familyId)
+                    ->where('attribute_group_id', $groupId)
+                    ->value('id');
+            }
+
+            $this->seedAttributeGroupMappings($familyGroupId, $groupCode);
+        }
+    }
+
+    /**
+     * Wire every attribute whose template lists this group code to the
+     * given family-group pivot row.
+     */
+    protected function seedAttributeGroupMappings(int $familyGroupId, string $groupCode): void
+    {
+        $data = $this->loadJson('attributes.json');
+        $position = 0;
+
+        foreach ($data['attributes'] ?? [] as $attr) {
+            if (($attr['group'] ?? null) !== $groupCode) {
+                continue;
+            }
+
+            $attributeId = DB::table('attributes')->where('code', $attr['code'])->value('id');
+            if (! $attributeId) {
+                continue;
+            }
+
+            $exists = DB::table('attribute_group_mappings')
+                ->where('attribute_family_group_id', $familyGroupId)
+                ->where('attribute_id', $attributeId)
+                ->exists();
+
+            if ($exists) {
+                continue;
+            }
+
+            DB::table('attribute_group_mappings')->insert([
+                'attribute_family_group_id' => $familyGroupId,
+                'attribute_id'              => $attributeId,
+                'position'                  => $position++,
+            ]);
+        }
+    }
+
+    /* -------- categories -------------------------------------------- */
 
     protected function seedCategories(): void
     {
@@ -200,34 +257,52 @@ class FoodGroceryReferenceSeeder extends Seeder
             return;
         }
 
-        $existing = DB::table('categories')->pluck('code')->all();
         $now = Carbon::now();
-        $lft = (int) (DB::table('categories')->max('_rgt') ?? 0) + 1;
-        $position = 0;
 
         foreach ($categories as $cat) {
-            if (in_array($cat['code'], $existing, true)) {
+            if (DB::table('categories')->where('code', $cat['code'])->exists()) {
                 continue;
             }
 
             $parentId = null;
             if (isset($cat['parent']) && $cat['parent'] !== 'root') {
-                $parentId = DB::table('categories')
-                    ->where('code', $cat['parent'])
-                    ->value('id');
+                $parentId = DB::table('categories')->where('code', $cat['parent'])->value('id');
+            } elseif (isset($cat['parent']) && $cat['parent'] === 'root') {
+                $parentId = DB::table('categories')->where('code', 'root')->value('id');
             }
 
+            $lft = (int) (DB::table('categories')->max('_rgt') ?? 0) + 1;
+
             DB::table('categories')->insert([
-                'code'       => $cat['code'],
-                'parent_id'  => $parentId,
-                'position'   => $position++,
-                '_lft'       => $lft++,
-                '_rgt'       => $lft++,
-                'created_at' => $now,
-                'updated_at' => $now,
+                'code'            => $cat['code'],
+                'parent_id'       => $parentId,
+                '_lft'            => $lft,
+                '_rgt'            => $lft + 1,
+                'additional_data' => json_encode([
+                    'locale_specific' => $this->buildCategoryLocaleBlock($cat['labels'] ?? []),
+                ]),
+                'created_at'      => $now,
+                'updated_at'      => $now,
             ]);
         }
     }
+
+    /**
+     * UnoPim categories store their locale-specific fields (name,
+     * description) in additional_data.locale_specific.<locale>. Build
+     * that block from the template's labels map.
+     */
+    protected function buildCategoryLocaleBlock(array $labels): array
+    {
+        $block = [];
+        foreach ($labels as $locale => $label) {
+            $block[$locale] = ['name' => $label];
+        }
+
+        return $block;
+    }
+
+    /* -------- brand options ----------------------------------------- */
 
     protected function seedBrandOptions(): void
     {
@@ -244,7 +319,6 @@ class FoodGroceryReferenceSeeder extends Seeder
             ->pluck('code')
             ->all();
 
-        $now = Carbon::now();
         $sortOrder = 0;
 
         foreach ($data['options'] ?? [] as $option) {
@@ -252,38 +326,23 @@ class FoodGroceryReferenceSeeder extends Seeder
                 continue;
             }
 
-            DB::table('attribute_options')->insert([
+            $optionId = DB::table('attribute_options')->insertGetId([
                 'attribute_id' => $attributeId,
                 'code'         => $option['code'],
                 'sort_order'   => $sortOrder++,
-                'created_at'   => $now,
-                'updated_at'   => $now,
             ]);
+
+            $this->seedTranslations(
+                'attribute_option_translations',
+                'attribute_option_id',
+                $optionId,
+                'label',
+                $option['labels'] ?? []
+            );
         }
     }
 
-    protected function seedAssociationTypes(): void
-    {
-        if (! DB::getSchemaBuilder()->hasTable('association_types')) {
-            return;
-        }
-
-        $data = $this->loadJson('association_types.json');
-        $existing = DB::table('association_types')->pluck('code')->all();
-        $now = Carbon::now();
-
-        foreach ($data['association_types'] ?? [] as $type) {
-            if (in_array($type['code'], $existing, true)) {
-                continue;
-            }
-
-            DB::table('association_types')->insert([
-                'code'       => $type['code'],
-                'created_at' => $now,
-                'updated_at' => $now,
-            ]);
-        }
-    }
+    /* -------- products ---------------------------------------------- */
 
     protected function seedProducts(): void
     {
@@ -310,7 +369,7 @@ class FoodGroceryReferenceSeeder extends Seeder
         $now = Carbon::now();
         $parentMap = [];
 
-        // Pass 1: seed parents (type=simple with no parent_sku, type=configurable)
+        // Pass 1: seed parents (no parent_sku)
         foreach ($products as $product) {
             if (isset($product['parent_sku'])) {
                 continue;
@@ -322,8 +381,8 @@ class FoodGroceryReferenceSeeder extends Seeder
                 continue;
             }
 
-            $enrichedValues = $this->enrichProductValues($product);
-            $enrichedValues = $this->attachGeneratedImage($product, $enrichedValues);
+            $enriched = $this->enrichProductValues($product);
+            $enriched = $this->attachGeneratedImage($product, $enriched);
 
             $id = DB::table('products')->insertGetId([
                 'sku'                 => $product['sku'],
@@ -331,7 +390,7 @@ class FoodGroceryReferenceSeeder extends Seeder
                 'status'              => 1,
                 'parent_id'           => null,
                 'attribute_family_id' => $familyId,
-                'values'              => json_encode($enrichedValues, JSON_THROW_ON_ERROR),
+                'values'              => json_encode($enriched, JSON_THROW_ON_ERROR),
                 'additional'          => null,
                 'created_at'          => $now,
                 'updated_at'          => $now,
@@ -352,19 +411,11 @@ class FoodGroceryReferenceSeeder extends Seeder
 
             $parentId = $parentMap[$product['parent_sku']] ?? null;
             if ($parentId === null) {
-                $this->command?->warn(
-                    sprintf(
-                        'Variant %s: parent %s not found — skipping',
-                        $product['sku'],
-                        $product['parent_sku']
-                    )
-                );
-
                 continue;
             }
 
-            $enrichedValues = $this->enrichProductValues($product);
-            $enrichedValues = $this->attachGeneratedImage($product, $enrichedValues);
+            $enriched = $this->enrichProductValues($product);
+            $enriched = $this->attachGeneratedImage($product, $enriched);
 
             DB::table('products')->insert([
                 'sku'                 => $product['sku'],
@@ -372,17 +423,17 @@ class FoodGroceryReferenceSeeder extends Seeder
                 'status'              => 1,
                 'parent_id'           => $parentId,
                 'attribute_family_id' => $familyId,
-                'values'              => json_encode($enrichedValues, JSON_THROW_ON_ERROR),
+                'values'              => json_encode($enriched, JSON_THROW_ON_ERROR),
                 'additional'          => null,
                 'created_at'          => $now,
                 'updated_at'          => $now,
             ]);
         }
 
-        $this->seedSuperAttributes($products, $familyId);
+        $this->seedSuperAttributes($products);
     }
 
-    protected function seedSuperAttributes(array $products, int $familyId): void
+    protected function seedSuperAttributes(array $products): void
     {
         $rows = [];
 
@@ -391,17 +442,12 @@ class FoodGroceryReferenceSeeder extends Seeder
                 continue;
             }
 
-            $superCodes = $product['super_attributes'] ?? [];
-            if (empty($superCodes)) {
-                continue;
-            }
-
             $productId = DB::table('products')->where('sku', $product['sku'])->value('id');
             if (! $productId) {
                 continue;
             }
 
-            foreach ($superCodes as $attributeCode) {
+            foreach ($product['super_attributes'] ?? [] as $attributeCode) {
                 $attributeId = DB::table('attributes')->where('code', $attributeCode)->value('id');
                 if (! $attributeId) {
                     continue;
@@ -419,44 +465,41 @@ class FoodGroceryReferenceSeeder extends Seeder
         }
     }
 
-    protected function seedAssociations(): void
-    {
-        if (! DB::getSchemaBuilder()->hasTable('product_associations')) {
+    /* -------- translation helpers ----------------------------------- */
+
+    /**
+     * Insert locale-indexed label rows into a translation table, scoped
+     * to the locales the current demo profile has activated.
+     *
+     * @param  array<string, string>  $labels  Map of locale code → label
+     */
+    protected function seedTranslations(
+        string $table,
+        string $fkColumn,
+        int $entityId,
+        string $labelColumn,
+        array $labels,
+    ): void {
+        if (empty($labels) || ! Schema::hasTable($table)) {
             return;
         }
 
-        $data = $this->loadJson('associations.json');
-        $associations = $data['associations'] ?? [];
-
-        foreach ($associations as $assoc) {
-            $fromId = DB::table('products')->where('sku', $assoc['from_sku'])->value('id');
-            $toId = DB::table('products')->where('sku', $assoc['to_sku'])->value('id');
-
-            if (! $fromId || ! $toId) {
+        foreach ($labels as $locale => $label) {
+            if (! $this->profile->shouldSeedLocale($locale) && $locale !== 'en_US') {
                 continue;
             }
 
-            $typeId = DB::table('association_types')
-                ->where('code', $assoc['type'])
-                ->value('id');
-
-            if (! $typeId) {
-                continue;
-            }
-
-            DB::table('product_associations')->insertOrIgnore([
-                'product_id'          => $fromId,
-                'linked_product_id'   => $toId,
-                'association_type_id' => $typeId,
-                'created_at'          => Carbon::now(),
-                'updated_at'          => Carbon::now(),
+            DB::table($table)->insertOrIgnore([
+                $fkColumn     => $entityId,
+                'locale'      => $locale,
+                $labelColumn  => $label,
             ]);
         }
     }
 
     /**
-     * Fill in missing locale/channel content from canonical en_US/ecommerce
-     * entries. Applies the mechanical rules described in translations.json.
+     * Fill in missing locale/channel content from the canonical en_US
+     * ecommerce entry. Applies mechanical rules from translations.json.
      */
     protected function enrichProductValues(array $product): array
     {
@@ -491,31 +534,20 @@ class FoodGroceryReferenceSeeder extends Seeder
     /**
      * Mechanically derive channel+locale content from the canonical en_US
      * ecommerce entry when the fixture didn't provide a hand-authored variant.
-     *
-     *  - en_GB → en_US with US → UK spelling swaps
-     *  - mobile_app → short_description truncated to ~120 chars
-     *  - print_catalogue → uppercase name + short_description
-     *  - b2b_wholesale → name with "— CASE" suffix
-     *  - other locales → copy of en_US (flagged as pending-translation by
-     *    staying identical to source, which the MagicAI translate demo
-     *    then has real work to do on)
      */
     protected function deriveContent(array $canonical, string $channelCode, string $localeCode): array
     {
         $derived = $canonical;
 
-        // Locale transforms
         if ($localeCode === 'en_GB') {
             $swaps = $this->translations['locale_mechanical_rules']['en_GB']['spelling_swaps'] ?? [];
             foreach ($derived as $key => $value) {
-                if (! is_string($value)) {
-                    continue;
+                if (is_string($value)) {
+                    $derived[$key] = strtr($value, $swaps);
                 }
-                $derived[$key] = strtr($value, $swaps);
             }
         }
 
-        // Channel transforms
         if ($channelCode === 'mobile_app') {
             if (isset($derived['short_description'])) {
                 $derived['short_description'] = Str::limit($derived['short_description'], 120);
