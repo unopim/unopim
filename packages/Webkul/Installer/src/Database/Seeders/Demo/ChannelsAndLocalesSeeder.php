@@ -130,6 +130,17 @@ class ChannelsAndLocalesSeeder extends Seeder
         $rootCategoryId = DB::table('categories')->where('code', 'root')->value('id') ?? 1;
         $now = Carbon::now();
 
+        // Backfill the pre-existing `default` channel to all 8 locales + 5
+        // currencies so admins who land on the default channel (which is
+        // usually the starting point) immediately see multi-locale /
+        // multi-currency content. Without this, default stays wired to
+        // just the original install-time locale.
+        $defaultChannelId = DB::table('channels')->where('code', 'default')->value('id');
+        if ($defaultChannelId) {
+            $this->wireChannelLocales($defaultChannelId, self::DEMO_LOCALES);
+            $this->wireChannelCurrencies($defaultChannelId, self::DEMO_CURRENCIES);
+        }
+
         foreach (self::DEMO_CHANNELS as $code => $spec) {
             $channelId = DB::table('channels')->where('code', $code)->value('id');
 

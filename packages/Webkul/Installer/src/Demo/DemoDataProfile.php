@@ -64,8 +64,11 @@ class DemoDataProfile
             self::PRESET_STARTER => new self(
                 preset: self::PRESET_STARTER,
                 families: ['food_grocery'],
-                locales: array_unique(array_merge(['en_US', 'en_GB'], $userLocales)),
-                channels: ['ecommerce'],
+                locales: array_unique(array_merge(
+                    ['en_US', 'en_GB', 'de_DE', 'fr_FR', 'es_ES', 'it_IT', 'nl_NL', 'pl_PL'],
+                    $userLocales
+                )),
+                channels: ['default', 'ecommerce', 'mobile_app', 'print_catalogue', 'b2b_wholesale'],
             ),
 
             self::PRESET_MEDIUM => new self(
@@ -78,10 +81,10 @@ class DemoDataProfile
                     'electronics_consumer',
                 ],
                 locales: array_unique(array_merge(
-                    ['en_US', 'en_GB', 'de_DE', 'fr_FR', 'es_ES'],
+                    ['en_US', 'en_GB', 'de_DE', 'fr_FR', 'es_ES', 'it_IT', 'nl_NL', 'pl_PL'],
                     $userLocales
                 )),
-                channels: ['ecommerce', 'mobile_app', 'print_catalogue'],
+                channels: ['default', 'ecommerce', 'mobile_app', 'print_catalogue', 'b2b_wholesale'],
             ),
 
             self::PRESET_FULL => new self(
