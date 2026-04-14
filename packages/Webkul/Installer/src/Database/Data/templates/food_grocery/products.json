@@ -1,0 +1,790 @@
+{
+  "_comment": "Phase 0 seed products. Each product is tagged with demo_pattern explaining what pattern it illustrates. See README.md for modelling rationale and cheatsheet.md for the SKU-to-pattern index.",
+  "products": [
+    {
+      "sku": "GS-COLA-CLASSIC-330ML",
+      "type": "simple",
+      "family": "food_grocery",
+      "categories": ["soft_drinks"],
+      "demo_pattern": "simple_channel_scoping",
+      "values": {
+        "common": {
+          "gtin_13": "5012345000010",
+          "manufacturer_part_number": "GS-CC-330-SLIM",
+          "brand": "globalstore_classic",
+          "pack_type": "can",
+          "pack_material": ["aluminium"],
+          "net_weight_g": "345",
+          "net_volume_ml": "330",
+          "gross_weight_g": "350",
+          "pack_dimensions_mm": "66x66x115",
+          "recyclable": true,
+          "energy_kcal_per_100g": "42",
+          "energy_kj_per_100g": "176",
+          "fat_g_per_100g": "0",
+          "saturated_fat_g_per_100g": "0",
+          "carbs_g_per_100g": "10.6",
+          "sugar_g_per_100g": "10.6",
+          "fibre_g_per_100g": "0",
+          "protein_g_per_100g": "0",
+          "salt_g_per_100g": "0.01",
+          "serving_size_g": "330",
+          "allergens_contains": [],
+          "is_organic": false,
+          "is_halal": true,
+          "is_kosher": true,
+          "is_vegan": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "shelf_life_days": "365",
+          "storage_temperature": "ambient",
+          "country_of_origin": "DE",
+          "age_restriction": "none",
+          "image_front": "products/food_grocery/gs-cola-classic-330ml.svg"
+        },
+        "channel_specific": {
+          "ecommerce": { "msrp": { "USD": "1.49", "EUR": "1.29", "GBP": "1.19", "CHF": "1.59" } },
+          "mobile_app": { "msrp": { "USD": "1.49", "EUR": "1.29", "GBP": "1.19" } },
+          "print_catalogue": { "msrp": { "EUR": "1.19" } },
+          "b2b_wholesale": { "cost": { "USD": "0.62", "EUR": "0.55" }, "minimum_order_quantity_cases": "1", "lead_time_days": "3" }
+        },
+        "channel_locale_specific": {
+          "ecommerce": {
+            "en_US": {
+              "name": "GlobalStore Classic Cola 330ml Slim Can",
+              "marketing_description": "<p>The classic cola taste that refreshes the world. GlobalStore Classic Cola delivers crisp, timeless refreshment in every slim can.</p><p>Made with pure carbonated water, sugar, natural cola flavors, and caramel colour. Each 330 ml slim can is perfectly portioned for a satisfying refreshment moment, wherever your day takes you — lunchbox, office fridge, weekend picnic or late-night craving. Halal, kosher, vegan, gluten-free.</p><p><strong>Shelf life:</strong> 12 months unopened. Store at ambient temperature.</p>",
+              "short_description": "Classic cola taste in a 330ml slim can. Refreshing, crisp, and perfectly portioned. Halal, kosher, vegan, gluten-free.",
+              "ingredients_list": "Carbonated water, sugar, natural cola flavourings, caramel colour (E150d), phosphoric acid, natural caffeine.",
+              "meta_title": "GlobalStore Classic Cola 330ml Slim Can — Refreshingly Classic",
+              "meta_description": "The classic cola taste in a perfectly portioned 330ml slim can. Halal, kosher, vegan, gluten-free. Buy now.",
+              "url_key": "globalstore-classic-cola-330ml-slim-can"
+            },
+            "en_GB": {
+              "name": "GlobalStore Classic Cola 330ml Slim Can",
+              "marketing_description": "<p>The classic cola taste that refreshes the world. GlobalStore Classic Cola delivers crisp, timeless refreshment in every slim can.</p><p>Made with pure carbonated water, sugar, natural cola flavourings and caramel colour. Each 330 ml slim can is perfectly portioned for a satisfying refreshment moment. Halal, kosher, vegan, gluten-free.</p>",
+              "short_description": "Classic cola in a 330ml slim can. Halal, kosher, vegan, gluten-free.",
+              "ingredients_list": "Carbonated water, sugar, natural cola flavourings, caramel colour (E150d), phosphoric acid, natural caffeine.",
+              "url_key": "globalstore-classic-cola-330ml"
+            },
+            "de_DE": {
+              "name": "GlobalStore Classic Cola 330ml Slim-Dose",
+              "marketing_description": "<p>Der klassische Cola-Geschmack, der die Welt erfrischt. GlobalStore Classic Cola bietet in jeder Slim-Dose frische, zeitlose Erfrischung.</p><p>Hergestellt aus reinem kohlensäurehaltigem Wasser, Zucker, natürlichen Cola-Aromen und Zuckercouleur. Jede 330-ml-Slim-Dose ist perfekt portioniert — ob für die Brotdose, das Büro oder das Wochenend-Picknick. Halal, koscher, vegan, glutenfrei.</p>",
+              "short_description": "Klassischer Cola-Geschmack in der 330ml Slim-Dose. Halal, koscher, vegan, glutenfrei.",
+              "ingredients_list": "Kohlensäurehaltiges Wasser, Zucker, natürliche Cola-Aromen, Zuckercouleur (E150d), Phosphorsäure, natürliches Koffein.",
+              "storage_instructions": "Bei Raumtemperatur lagern. Nach dem Öffnen gekühlt und innerhalb von 24 Stunden verbrauchen.",
+              "url_key": "globalstore-classic-cola-330ml-slim-dose"
+            },
+            "fr_FR": {
+              "name": "GlobalStore Classic Cola 330ml Canette Slim",
+              "marketing_description": "<p>Le goût cola classique qui rafraîchit le monde. GlobalStore Classic Cola offre une boisson rafraîchissante, nette et intemporelle dans chaque canette slim.</p><p>Fabriqué à partir d'eau gazéifiée pure, de sucre, d'arômes naturels de cola et de colorant caramel. Chaque canette slim de 330 ml est parfaitement dosée. Halal, casher, végan, sans gluten.</p>",
+              "short_description": "Goût cola classique, canette slim 330ml. Halal, casher, végan, sans gluten.",
+              "ingredients_list": "Eau gazéifiée, sucre, arômes naturels de cola, colorant caramel (E150d), acide phosphorique, caféine naturelle.",
+              "url_key": "globalstore-classic-cola-330ml-slim"
+            }
+          },
+          "mobile_app": {
+            "en_US": {
+              "name": "Classic Cola 330ml",
+              "short_description": "Classic cola taste. 330ml slim can. Halal, vegan, gluten-free."
+            },
+            "de_DE": {
+              "name": "Classic Cola 330ml",
+              "short_description": "Klassischer Cola-Geschmack. 330ml Slim-Dose. Halal, vegan, glutenfrei."
+            }
+          },
+          "print_catalogue": {
+            "en_US": {
+              "name": "GLOBALSTORE CLASSIC COLA 330ML SLIM",
+              "short_description": "GS Classic Cola. 330ml slim can. Case of 24. Pallet 120 cases. Shelf 12 months ambient. HAL/KOS/VEG/GF."
+            },
+            "de_DE": {
+              "name": "GLOBALSTORE CLASSIC COLA 330ML SLIM",
+              "short_description": "GS Classic Cola. 330ml Slim-Dose. Karton 24 Dosen. Palette 120 Kartons. Haltbarkeit 12 Monate bei Raumtemperatur."
+            }
+          }
+        }
+      }
+    },
+    {
+      "sku": "GS-COLA-CLASSIC-330ML-CASE-24",
+      "type": "simple",
+      "family": "food_grocery",
+      "categories": ["soft_drinks"],
+      "demo_pattern": "case_contains_consumer_unit",
+      "values": {
+        "common": {
+          "gtin_13": "5012345000027",
+          "gtin_14": "15012345000024",
+          "brand": "globalstore_classic",
+          "pack_type": "box",
+          "pack_material": ["paper", "aluminium"],
+          "net_weight_g": "8280",
+          "gross_weight_g": "8640",
+          "pack_dimensions_mm": "396x264x120",
+          "pack_count": "24",
+          "case_quantity": "24",
+          "recyclable": true,
+          "allergens_contains": [],
+          "is_halal": true,
+          "is_kosher": true,
+          "is_vegan": true,
+          "is_gluten_free": true,
+          "shelf_life_days": "365",
+          "storage_temperature": "ambient",
+          "country_of_origin": "DE",
+          "image_front": "products/food_grocery/gs-cola-classic-330ml-case24.svg"
+        },
+        "channel_specific": {
+          "ecommerce": { "msrp": { "USD": "29.99", "EUR": "26.99", "GBP": "23.99" } },
+          "b2b_wholesale": { "cost": { "USD": "14.88", "EUR": "13.20" }, "minimum_order_quantity_cases": "5", "lead_time_days": "2" }
+        },
+        "channel_locale_specific": {
+          "ecommerce": {
+            "en_US": {
+              "name": "GlobalStore Classic Cola 330ml — Case of 24",
+              "short_description": "24 × 330ml slim cans of classic GlobalStore cola. Outer case for home stocking or B2B ordering.",
+              "marketing_description": "<p>A full case of 24 GlobalStore Classic Cola slim cans, ideal for households that never want to run out, office fridges, event catering, and B2B ordering. Each can delivers the same classic cola taste in a 330ml slim format.</p>",
+              "ingredients_list": "See consumer-unit label.",
+              "url_key": "globalstore-classic-cola-case-24"
+            },
+            "de_DE": {
+              "name": "GlobalStore Classic Cola 330ml — 24er-Pack",
+              "short_description": "24 × 330ml Slim-Dosen GlobalStore Classic Cola als Umkarton.",
+              "url_key": "globalstore-classic-cola-24er-pack"
+            }
+          },
+          "b2b_wholesale": {
+            "en_US": {
+              "name": "GS CLASSIC COLA 330ML — CASE 24",
+              "short_description": "Outer case of 24 slim cans. GTIN-14 scannable. Pallet quantity 120 cases. Lead time 2 days."
+            }
+          }
+        }
+      }
+    },
+    {
+      "sku": "GS-JUICE-ORANGE-250ML",
+      "type": "simple",
+      "family": "food_grocery",
+      "categories": ["juices"],
+      "demo_pattern": "pack_size_variant_small",
+      "values": {
+        "common": {
+          "gtin_13": "5012345000034",
+          "brand": "orchard_valley",
+          "pack_type": "carton",
+          "pack_material": ["tetra_pak"],
+          "net_weight_g": "260",
+          "net_volume_ml": "250",
+          "pack_dimensions_mm": "58x40x115",
+          "recyclable": true,
+          "energy_kcal_per_100g": "45",
+          "energy_kj_per_100g": "188",
+          "fat_g_per_100g": "0.1",
+          "carbs_g_per_100g": "10.3",
+          "sugar_g_per_100g": "10.1",
+          "protein_g_per_100g": "0.7",
+          "salt_g_per_100g": "0.01",
+          "serving_size_g": "250",
+          "allergens_contains": [],
+          "is_organic": false,
+          "is_halal": true,
+          "is_kosher": true,
+          "is_vegan": true,
+          "is_gluten_free": true,
+          "shelf_life_days": "180",
+          "storage_temperature": "ambient",
+          "country_of_origin": "ES",
+          "image_front": "products/food_grocery/gs-juice-orange-250ml.svg"
+        },
+        "channel_specific": {
+          "ecommerce": { "msrp": { "USD": "1.99", "EUR": "1.79", "GBP": "1.59" } },
+          "mobile_app": { "msrp": { "USD": "1.99", "EUR": "1.79" } },
+          "b2b_wholesale": { "cost": { "EUR": "0.85" }, "minimum_order_quantity_cases": "1", "lead_time_days": "4" }
+        },
+        "channel_locale_specific": {
+          "ecommerce": {
+            "en_US": {
+              "name": "Orchard Valley Orange Juice 250ml — Grab & Go",
+              "marketing_description": "<p>Pure-squeezed orange juice in a perfectly portioned 250ml carton — ideal for lunchboxes, single servings, or on-the-go refreshment. Made from ripe Valencia oranges with no added sugar, no preservatives, and no concentrate.</p>",
+              "short_description": "Pure-squeezed orange juice from Valencia oranges. 250ml carton, grab-and-go format.",
+              "ingredients_list": "100% orange juice from concentrate-free Valencia oranges.",
+              "url_key": "orchard-valley-orange-juice-250ml"
+            },
+            "de_DE": {
+              "name": "Orchard Valley Orangensaft 250ml — To Go",
+              "marketing_description": "<p>Frisch gepresster Orangensaft im perfekt portionierten 250ml-Karton — ideal für die Brotzeit, Einzelportionen oder unterwegs. Aus reifen Valencia-Orangen, ohne Zuckerzusatz, ohne Konservierungsstoffe, ohne Konzentrat.</p>",
+              "short_description": "Frisch gepresster Orangensaft aus Valencia-Orangen. 250ml Karton.",
+              "ingredients_list": "100% Orangensaft aus Valencia-Orangen, nicht aus Konzentrat.",
+              "url_key": "orchard-valley-orangensaft-250ml"
+            }
+          }
+        }
+      }
+    },
+    {
+      "sku": "GS-JUICE-ORANGE-1L",
+      "type": "simple",
+      "family": "food_grocery",
+      "categories": ["juices"],
+      "demo_pattern": "pack_size_variant_large",
+      "values": {
+        "common": {
+          "gtin_13": "5012345000041",
+          "brand": "orchard_valley",
+          "pack_type": "carton",
+          "pack_material": ["tetra_pak"],
+          "net_weight_g": "1040",
+          "net_volume_ml": "1000",
+          "pack_dimensions_mm": "95x65x195",
+          "recyclable": true,
+          "energy_kcal_per_100g": "45",
+          "energy_kj_per_100g": "188",
+          "fat_g_per_100g": "0.1",
+          "carbs_g_per_100g": "10.3",
+          "sugar_g_per_100g": "10.1",
+          "protein_g_per_100g": "0.7",
+          "salt_g_per_100g": "0.01",
+          "serving_size_g": "200",
+          "allergens_contains": [],
+          "is_halal": true,
+          "is_kosher": true,
+          "is_vegan": true,
+          "is_gluten_free": true,
+          "shelf_life_days": "180",
+          "storage_temperature": "ambient",
+          "country_of_origin": "ES",
+          "image_front": "products/food_grocery/gs-juice-orange-1l.svg"
+        },
+        "channel_specific": {
+          "ecommerce": { "msrp": { "USD": "4.99", "EUR": "4.49", "GBP": "3.99" } },
+          "mobile_app": { "msrp": { "USD": "4.99", "EUR": "4.49" } },
+          "b2b_wholesale": { "cost": { "EUR": "2.10" }, "minimum_order_quantity_cases": "1", "lead_time_days": "4" }
+        },
+        "channel_locale_specific": {
+          "ecommerce": {
+            "en_US": {
+              "name": "Orchard Valley Orange Juice 1L — Family Size",
+              "marketing_description": "<p>Pure-squeezed orange juice in a family-size 1-litre carton — roughly 5 servings per carton. Ideal for breakfast tables, brunches and shared meals. Made from ripe Valencia oranges with no added sugar, no preservatives, and no concentrate.</p><p><strong>Once opened:</strong> keep refrigerated and consume within 5 days.</p>",
+              "short_description": "Pure-squeezed orange juice from Valencia oranges. 1L family-size carton, ~5 servings.",
+              "ingredients_list": "100% orange juice from concentrate-free Valencia oranges.",
+              "url_key": "orchard-valley-orange-juice-1l"
+            },
+            "de_DE": {
+              "name": "Orchard Valley Orangensaft 1L — Familienpackung",
+              "marketing_description": "<p>Frisch gepresster Orangensaft in der 1-Liter-Familienpackung — etwa 5 Portionen pro Karton. Ideal für Frühstückstische und gemeinsame Mahlzeiten. Aus reifen Valencia-Orangen, ohne Zuckerzusatz, ohne Konservierungsstoffe, ohne Konzentrat.</p>",
+              "short_description": "Frisch gepresster Orangensaft. 1L Familienpackung, ca. 5 Portionen.",
+              "url_key": "orchard-valley-orangensaft-1l"
+            },
+            "fr_FR": {
+              "name": "Orchard Valley Jus d'Orange 1L — Format Familial",
+              "short_description": "Pur jus d'orange des oranges de Valence. Format 1 L, environ 5 portions.",
+              "url_key": "orchard-valley-jus-orange-1l"
+            }
+          }
+        }
+      }
+    },
+    {
+      "sku": "GS-YOGURT-GREEK",
+      "type": "configurable",
+      "family": "food_grocery",
+      "categories": ["yogurt"],
+      "demo_pattern": "configurable_parent_flavour_axis",
+      "super_attributes": ["flavour"],
+      "values": {
+        "common": {
+          "brand": "summit_dairy",
+          "pack_type": "jar",
+          "pack_material": ["plastic"],
+          "net_weight_g": "500",
+          "serving_size_g": "125",
+          "shelf_life_days": "21",
+          "storage_temperature": "chilled_2_8c",
+          "country_of_origin": "GR",
+          "is_halal": true,
+          "is_kosher": true,
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "allergens_contains": ["milk"],
+          "image_front": "products/food_grocery/gs-yogurt-greek.svg"
+        },
+        "channel_specific": {
+          "ecommerce": { "msrp": { "USD": "3.99", "EUR": "3.49", "GBP": "3.19" } }
+        },
+        "channel_locale_specific": {
+          "ecommerce": {
+            "en_US": {
+              "name": "Summit Dairy Greek Yogurt 500g",
+              "marketing_description": "<p>Authentically Greek, slow-strained yogurt in a 500g jar. Rich, thick, and creamy with the tangy freshness of traditional Greek yogurt. Available in natural, strawberry, blueberry, and vanilla varieties. Suitable for vegetarians, halal, kosher, and gluten-free diets. Contains milk.</p>",
+              "short_description": "Authentic Greek yogurt, 500g jar. Available in natural, strawberry, blueberry, and vanilla. Vegetarian, halal, kosher, gluten-free.",
+              "ingredients_list": "Pasteurised milk, live yogurt cultures (L. bulgaricus, S. thermophilus). Flavoured variants also contain the named fruit/flavour.",
+              "storage_instructions": "Keep refrigerated at 2–8°C. Once opened, consume within 3 days.",
+              "url_key": "summit-dairy-greek-yogurt-500g"
+            },
+            "de_DE": {
+              "name": "Summit Dairy Griechischer Joghurt 500g",
+              "short_description": "Authentischer griechischer Joghurt, 500g Becher. Erhältlich in Natur, Erdbeere, Heidelbeere und Vanille.",
+              "ingredients_list": "Pasteurisierte Milch, lebende Joghurtkulturen (L. bulgaricus, S. thermophilus). Aromatisierte Sorten enthalten zusätzlich die genannte Frucht bzw. das genannte Aroma.",
+              "url_key": "summit-dairy-griechischer-joghurt-500g"
+            }
+          }
+        }
+      }
+    },
+    {
+      "sku": "GS-YOGURT-GREEK-NATURAL",
+      "type": "simple",
+      "family": "food_grocery",
+      "parent_sku": "GS-YOGURT-GREEK",
+      "categories": ["yogurt"],
+      "demo_pattern": "variant_flavour",
+      "values": {
+        "common": {
+          "gtin_13": "5012345000058",
+          "brand": "summit_dairy",
+          "sub_brand": "Greek Natural",
+          "pack_type": "jar",
+          "pack_material": ["plastic"],
+          "net_weight_g": "500",
+          "energy_kcal_per_100g": "113",
+          "fat_g_per_100g": "10",
+          "saturated_fat_g_per_100g": "6.5",
+          "carbs_g_per_100g": "3.6",
+          "sugar_g_per_100g": "3.6",
+          "protein_g_per_100g": "3.2",
+          "salt_g_per_100g": "0.1",
+          "allergens_contains": ["milk"],
+          "image_front": "products/food_grocery/gs-yogurt-greek-natural.svg"
+        }
+      }
+    },
+    {
+      "sku": "GS-YOGURT-GREEK-STRAWBERRY",
+      "type": "simple",
+      "family": "food_grocery",
+      "parent_sku": "GS-YOGURT-GREEK",
+      "categories": ["yogurt"],
+      "demo_pattern": "variant_flavour",
+      "values": {
+        "common": {
+          "gtin_13": "5012345000065",
+          "brand": "summit_dairy",
+          "sub_brand": "Greek Strawberry",
+          "pack_type": "jar",
+          "pack_material": ["plastic"],
+          "net_weight_g": "500",
+          "energy_kcal_per_100g": "128",
+          "fat_g_per_100g": "9",
+          "carbs_g_per_100g": "8.2",
+          "sugar_g_per_100g": "8.2",
+          "protein_g_per_100g": "3.1",
+          "allergens_contains": ["milk"],
+          "image_front": "products/food_grocery/gs-yogurt-greek-strawberry.svg"
+        }
+      }
+    },
+    {
+      "sku": "GS-YOGURT-GREEK-BLUEBERRY",
+      "type": "simple",
+      "family": "food_grocery",
+      "parent_sku": "GS-YOGURT-GREEK",
+      "categories": ["yogurt"],
+      "demo_pattern": "variant_flavour",
+      "values": {
+        "common": {
+          "gtin_13": "5012345000072",
+          "brand": "summit_dairy",
+          "sub_brand": "Greek Blueberry",
+          "pack_type": "jar",
+          "pack_material": ["plastic"],
+          "net_weight_g": "500",
+          "energy_kcal_per_100g": "126",
+          "fat_g_per_100g": "9",
+          "carbs_g_per_100g": "7.9",
+          "sugar_g_per_100g": "7.9",
+          "protein_g_per_100g": "3.1",
+          "allergens_contains": ["milk"],
+          "image_front": "products/food_grocery/gs-yogurt-greek-blueberry.svg"
+        }
+      }
+    },
+    {
+      "sku": "GS-YOGURT-GREEK-VANILLA",
+      "type": "simple",
+      "family": "food_grocery",
+      "parent_sku": "GS-YOGURT-GREEK",
+      "categories": ["yogurt"],
+      "demo_pattern": "variant_flavour",
+      "values": {
+        "common": {
+          "gtin_13": "5012345000089",
+          "brand": "summit_dairy",
+          "sub_brand": "Greek Vanilla",
+          "pack_type": "jar",
+          "pack_material": ["plastic"],
+          "net_weight_g": "500",
+          "energy_kcal_per_100g": "124",
+          "fat_g_per_100g": "9",
+          "carbs_g_per_100g": "7.5",
+          "sugar_g_per_100g": "7.4",
+          "protein_g_per_100g": "3.1",
+          "allergens_contains": ["milk"],
+          "image_front": "products/food_grocery/gs-yogurt-greek-vanilla.svg"
+        }
+      }
+    },
+    {
+      "sku": "GS-COFFEE-ARABICA-250G",
+      "type": "simple",
+      "family": "food_grocery",
+      "categories": ["coffee_tea"],
+      "demo_pattern": "simple_premium_with_certifications",
+      "values": {
+        "common": {
+          "gtin_13": "5012345000096",
+          "brand": "alpine_roast",
+          "pack_type": "pouch",
+          "pack_material": ["composite"],
+          "net_weight_g": "250",
+          "pack_dimensions_mm": "150x80x70",
+          "recyclable": false,
+          "energy_kcal_per_100g": "2",
+          "fat_g_per_100g": "0",
+          "carbs_g_per_100g": "0",
+          "protein_g_per_100g": "0.1",
+          "allergens_contains": [],
+          "is_organic": true,
+          "is_halal": true,
+          "is_kosher": true,
+          "is_vegan": true,
+          "is_gluten_free": true,
+          "shelf_life_days": "540",
+          "storage_temperature": "ambient",
+          "country_of_origin": "CH",
+          "certifications": ["fair_trade", "rainforest_alliance", "eu_organic"],
+          "image_front": "products/food_grocery/gs-coffee-arabica-250g.svg"
+        },
+        "channel_specific": {
+          "ecommerce": { "msrp": { "USD": "14.99", "EUR": "13.49", "GBP": "11.99", "CHF": "15.99" } },
+          "print_catalogue": { "msrp": { "EUR": "12.99" } }
+        },
+        "channel_locale_specific": {
+          "ecommerce": {
+            "en_US": {
+              "name": "Alpine Roast Arabica Coffee Beans 250g — Fair Trade Organic",
+              "marketing_description": "<p>Hand-selected Arabica coffee beans, slow-roasted in small batches at our Alpine roastery for a rich, balanced cup. Certified Fair Trade, Rainforest Alliance, and EU Organic — because great coffee starts with great sourcing.</p><p>Notes of dark chocolate, toasted hazelnut, and a clean, citrus-bright finish. Best within 30 days of opening. Whole beans, grind at home for peak freshness.</p>",
+              "short_description": "Premium Arabica whole beans, Fair Trade, Rainforest Alliance, EU Organic. Notes of dark chocolate and hazelnut.",
+              "ingredients_list": "100% Arabica coffee beans.",
+              "url_key": "alpine-roast-arabica-250g"
+            },
+            "de_DE": {
+              "name": "Alpine Roast Arabica Kaffeebohnen 250g — Fair Trade Bio",
+              "marketing_description": "<p>Handverlesene Arabica-Kaffeebohnen, in unserer alpinen Rösterei langsam in kleinen Chargen geröstet für eine vollmundige, ausgewogene Tasse. Fair-Trade-, Rainforest-Alliance- und EU-Bio-zertifiziert.</p><p>Noten von dunkler Schokolade, gerösteten Haselnüssen und einem klaren, zitrusfrischen Abgang. Ganze Bohnen — zum besten Aroma zu Hause frisch mahlen.</p>",
+              "short_description": "Premium-Arabica ganze Bohnen, Fair Trade, Rainforest Alliance, EU-Bio.",
+              "ingredients_list": "100% Arabica-Kaffeebohnen.",
+              "url_key": "alpine-roast-arabica-250g"
+            },
+            "fr_FR": {
+              "name": "Alpine Roast Café Arabica en Grains 250g — Équitable Bio",
+              "short_description": "Café Arabica premium en grains, commerce équitable, Rainforest Alliance, bio UE.",
+              "ingredients_list": "100% café Arabica en grains.",
+              "url_key": "alpine-roast-arabica-250g"
+            }
+          }
+        }
+      }
+    },
+    {
+      "sku": "GS-CEREAL-HONEY-FLAKES-500G",
+      "type": "simple",
+      "family": "food_grocery",
+      "categories": ["breakfast_cereals"],
+      "demo_pattern": "simple_with_full_allergens",
+      "values": {
+        "common": {
+          "gtin_13": "5012345000102",
+          "brand": "sunrise_cereals",
+          "pack_type": "box",
+          "pack_material": ["paper", "plastic"],
+          "net_weight_g": "500",
+          "pack_dimensions_mm": "210x70x290",
+          "recyclable": true,
+          "energy_kcal_per_100g": "378",
+          "energy_kj_per_100g": "1590",
+          "fat_g_per_100g": "2.1",
+          "saturated_fat_g_per_100g": "0.4",
+          "carbs_g_per_100g": "81",
+          "sugar_g_per_100g": "23",
+          "fibre_g_per_100g": "3.5",
+          "protein_g_per_100g": "7.5",
+          "salt_g_per_100g": "0.75",
+          "serving_size_g": "30",
+          "allergens_contains": ["gluten_cereals"],
+          "allergens_traces": ["milk", "tree_nuts"],
+          "is_vegetarian": true,
+          "shelf_life_days": "365",
+          "storage_temperature": "ambient",
+          "country_of_origin": "PL",
+          "image_front": "products/food_grocery/gs-cereal-honey-flakes-500g.svg"
+        },
+        "channel_specific": {
+          "ecommerce": { "msrp": { "USD": "4.99", "EUR": "4.49", "GBP": "3.99" } }
+        },
+        "channel_locale_specific": {
+          "ecommerce": {
+            "en_US": {
+              "name": "Sunrise Honey Corn Flakes 500g",
+              "marketing_description": "<p>Crispy golden corn flakes with a light coating of natural honey. A family breakfast favourite — pair with cold milk, Greek yogurt, or fresh fruit for a delicious start to the day.</p><p><strong>Allergen note:</strong> Contains gluten. Made in a facility that also handles milk and tree nuts.</p>",
+              "short_description": "Crispy corn flakes lightly coated in honey. 500g box, family breakfast favourite. Contains gluten.",
+              "ingredients_list": "Corn (maize), sugar, honey (4%), barley malt extract, salt, vitamins (B1, B2, niacin, B6, folic acid, B12, D).",
+              "url_key": "sunrise-honey-corn-flakes-500g"
+            },
+            "de_DE": {
+              "name": "Sunrise Honig-Cornflakes 500g",
+              "marketing_description": "<p>Knusprige, goldene Cornflakes mit einem leichten Überzug aus natürlichem Honig. Ein Familien-Frühstücksfavorit — kombinieren Sie sie mit kalter Milch, griechischem Joghurt oder frischem Obst für einen köstlichen Start in den Tag.</p><p><strong>Allergenhinweis:</strong> Enthält Gluten. Hergestellt in einem Betrieb, der auch Milch und Schalenfrüchte verarbeitet.</p>",
+              "short_description": "Knusprige Cornflakes mit Honig-Überzug. 500g Packung. Enthält Gluten.",
+              "ingredients_list": "Mais, Zucker, Honig (4%), Gerstenmalzextrakt, Salz, Vitamine (B1, B2, Niacin, B6, Folsäure, B12, D).",
+              "url_key": "sunrise-honig-cornflakes-500g"
+            }
+          }
+        }
+      }
+    },
+    {
+      "sku": "GS-OLIVE-OIL-EXV-500ML",
+      "type": "simple",
+      "family": "food_grocery",
+      "categories": ["cooking_essentials"],
+      "demo_pattern": "simple_organic_mediterranean",
+      "values": {
+        "common": {
+          "gtin_13": "5012345000119",
+          "brand": "mediterra",
+          "pack_type": "bottle",
+          "pack_material": ["glass"],
+          "net_weight_g": "460",
+          "net_volume_ml": "500",
+          "pack_dimensions_mm": "75x75x260",
+          "recyclable": true,
+          "energy_kcal_per_100g": "828",
+          "energy_kj_per_100g": "3400",
+          "fat_g_per_100g": "92",
+          "saturated_fat_g_per_100g": "13",
+          "carbs_g_per_100g": "0",
+          "sugar_g_per_100g": "0",
+          "protein_g_per_100g": "0",
+          "salt_g_per_100g": "0",
+          "allergens_contains": [],
+          "is_organic": true,
+          "is_halal": true,
+          "is_kosher": true,
+          "is_vegan": true,
+          "is_gluten_free": true,
+          "shelf_life_days": "540",
+          "storage_temperature": "ambient",
+          "country_of_origin": "IT",
+          "certifications": ["eu_organic"],
+          "image_front": "products/food_grocery/gs-olive-oil-exv-500ml.svg"
+        },
+        "channel_specific": {
+          "ecommerce": { "msrp": { "USD": "18.99", "EUR": "16.99", "GBP": "14.99" } }
+        },
+        "channel_locale_specific": {
+          "ecommerce": {
+            "en_US": {
+              "name": "Mediterra Organic Extra Virgin Olive Oil 500ml",
+              "marketing_description": "<p>Cold-pressed extra virgin olive oil from certified-organic groves in Puglia, Italy. Fruity, peppery, with a clean finish — the kind of olive oil that makes simple bread and tomatoes feel like a celebration.</p><p>Acidity ≤ 0.3%. Harvested and pressed within 24 hours for peak quality.</p>",
+              "short_description": "Cold-pressed organic extra virgin olive oil from Puglia. 500ml glass bottle. Acidity ≤ 0.3%.",
+              "ingredients_list": "100% organic extra virgin olive oil (cold-pressed).",
+              "url_key": "mediterra-organic-evoo-500ml"
+            },
+            "it_IT": {
+              "name": "Mediterra Olio Extra Vergine d'Oliva Bio 500ml",
+              "marketing_description": "<p>Olio extra vergine d'oliva spremuto a freddo da oliveti biologici certificati in Puglia. Fruttato, piccante, con un finale pulito.</p>",
+              "short_description": "Olio EVO biologico spremuto a freddo dalla Puglia. Bottiglia in vetro da 500ml. Acidità ≤ 0,3%.",
+              "ingredients_list": "100% olio extra vergine d'oliva biologico (spremuto a freddo).",
+              "url_key": "mediterra-evo-bio-500ml"
+            }
+          }
+        }
+      }
+    },
+    {
+      "sku": "GS-CHOCOLATE-DARK-85-100G",
+      "type": "simple",
+      "family": "food_grocery",
+      "categories": ["chocolate_confectionery"],
+      "demo_pattern": "simple_allergen_rich",
+      "values": {
+        "common": {
+          "gtin_13": "5012345000126",
+          "brand": "cocoa_house",
+          "pack_type": "box",
+          "pack_material": ["paper", "composite"],
+          "net_weight_g": "100",
+          "pack_dimensions_mm": "160x80x10",
+          "recyclable": false,
+          "energy_kcal_per_100g": "592",
+          "energy_kj_per_100g": "2450",
+          "fat_g_per_100g": "47",
+          "saturated_fat_g_per_100g": "28",
+          "carbs_g_per_100g": "21",
+          "sugar_g_per_100g": "16",
+          "fibre_g_per_100g": "14",
+          "protein_g_per_100g": "9",
+          "salt_g_per_100g": "0.02",
+          "serving_size_g": "20",
+          "allergens_contains": ["milk", "soy"],
+          "allergens_traces": ["tree_nuts", "peanuts", "gluten_cereals"],
+          "is_vegetarian": true,
+          "is_gluten_free": true,
+          "shelf_life_days": "540",
+          "storage_temperature": "ambient",
+          "country_of_origin": "CH",
+          "image_front": "products/food_grocery/gs-chocolate-dark-85-100g.svg"
+        },
+        "channel_specific": {
+          "ecommerce": { "msrp": { "USD": "5.99", "EUR": "5.49", "GBP": "4.99", "CHF": "6.49" } }
+        },
+        "channel_locale_specific": {
+          "ecommerce": {
+            "en_US": {
+              "name": "Cocoa House Dark Chocolate 85% — 100g Bar",
+              "marketing_description": "<p>Intensely dark Swiss-made chocolate with 85% cocoa solids. Deep, complex, and subtly bitter — for those who take their chocolate seriously. Contains milk and soy; may contain traces of tree nuts, peanuts, and gluten.</p>",
+              "short_description": "Swiss dark chocolate, 85% cocoa, 100g bar. Contains milk and soy.",
+              "ingredients_list": "Cocoa mass, sugar, cocoa butter, milk fat, soy lecithin, natural vanilla. Cocoa solids: 85% minimum.",
+              "url_key": "cocoa-house-dark-85-100g"
+            },
+            "de_DE": {
+              "name": "Cocoa House Dunkle Schokolade 85% — 100g Tafel",
+              "marketing_description": "<p>Intensiv dunkle Schweizer Schokolade mit 85% Kakaoanteil. Tief, komplex und dezent bitter. Enthält Milch und Soja. Kann Spuren von Schalenfrüchten, Erdnüssen und Gluten enthalten.</p>",
+              "short_description": "Schweizer Zartbitterschokolade, 85% Kakao, 100g. Enthält Milch und Soja.",
+              "ingredients_list": "Kakaomasse, Zucker, Kakaobutter, Milchfett, Sojalecithin, natürliches Vanillearoma. Kakaoanteil: mindestens 85%.",
+              "url_key": "cocoa-house-dunkel-85-100g"
+            }
+          }
+        }
+      }
+    },
+    {
+      "sku": "GS-PASTA-SPAGHETTI-500G",
+      "type": "simple",
+      "family": "food_grocery",
+      "categories": ["pasta_rice"],
+      "demo_pattern": "simple_italian",
+      "values": {
+        "common": {
+          "gtin_13": "5012345000133",
+          "brand": "pasta_reale",
+          "pack_type": "box",
+          "pack_material": ["paper"],
+          "net_weight_g": "500",
+          "recyclable": true,
+          "energy_kcal_per_100g": "358",
+          "fat_g_per_100g": "1.5",
+          "carbs_g_per_100g": "72",
+          "sugar_g_per_100g": "3.5",
+          "fibre_g_per_100g": "3",
+          "protein_g_per_100g": "12.5",
+          "salt_g_per_100g": "0.02",
+          "allergens_contains": ["gluten_cereals"],
+          "is_vegetarian": true,
+          "is_vegan": true,
+          "shelf_life_days": "720",
+          "storage_temperature": "ambient",
+          "country_of_origin": "IT",
+          "image_front": "products/food_grocery/gs-pasta-spaghetti-500g.svg"
+        },
+        "channel_specific": {
+          "ecommerce": { "msrp": { "USD": "2.49", "EUR": "2.19", "GBP": "1.99" } }
+        },
+        "channel_locale_specific": {
+          "ecommerce": {
+            "en_US": {
+              "name": "Pasta Reale Spaghetti 500g",
+              "short_description": "Durum wheat spaghetti from Italy. 500g box. 8-minute cook time. Vegan. Contains gluten.",
+              "ingredients_list": "Durum wheat semolina, water.",
+              "url_key": "pasta-reale-spaghetti-500g"
+            },
+            "it_IT": {
+              "name": "Pasta Reale Spaghetti 500g",
+              "short_description": "Spaghetti di grano duro dall'Italia. Confezione da 500g. Cottura 8 minuti. Vegan. Contiene glutine.",
+              "ingredients_list": "Semola di grano duro, acqua.",
+              "url_key": "pasta-reale-spaghetti-500g"
+            }
+          }
+        }
+      }
+    },
+    {
+      "sku": "GS-WATER-STILL-500ML",
+      "type": "simple",
+      "family": "food_grocery",
+      "categories": ["water"],
+      "demo_pattern": "incomplete_missing_allergens",
+      "_incomplete_note": "This product intentionally has no allergens_contains value. When the completeness rule requires it for the ecommerce channel, this row shows as incomplete in the dashboard.",
+      "values": {
+        "common": {
+          "gtin_13": "5012345000140",
+          "brand": "pure_springs",
+          "pack_type": "bottle",
+          "pack_material": ["PET"],
+          "net_weight_g": "520",
+          "net_volume_ml": "500",
+          "recyclable": true,
+          "country_of_origin": "CH",
+          "image_front": "products/food_grocery/gs-water-still-500ml.svg"
+        },
+        "channel_specific": {
+          "ecommerce": { "msrp": { "USD": "0.99", "EUR": "0.89", "GBP": "0.79" } }
+        },
+        "channel_locale_specific": {
+          "ecommerce": {
+            "en_US": {
+              "name": "Pure Springs Still Water 500ml",
+              "short_description": "Still natural mineral water sourced from Alpine springs. 500ml PET bottle.",
+              "url_key": "pure-springs-still-500ml"
+            }
+          }
+        }
+      }
+    },
+    {
+      "sku": "GS-BISCUIT-BUTTER-200G",
+      "type": "simple",
+      "family": "food_grocery",
+      "categories": ["biscuits_cookies"],
+      "demo_pattern": "incomplete_missing_ingredients",
+      "_incomplete_note": "Intentionally missing ingredients_list so the completeness rule flags it as not sellable in the EU.",
+      "values": {
+        "common": {
+          "gtin_13": "5012345000157",
+          "brand": "nova_bakery",
+          "pack_type": "box",
+          "pack_material": ["paper", "plastic"],
+          "net_weight_g": "200",
+          "recyclable": true,
+          "allergens_contains": ["gluten_cereals", "milk", "eggs"],
+          "is_vegetarian": true,
+          "shelf_life_days": "180",
+          "storage_temperature": "ambient",
+          "country_of_origin": "FR",
+          "image_front": "products/food_grocery/gs-biscuit-butter-200g.svg"
+        },
+        "channel_specific": {
+          "ecommerce": { "msrp": { "USD": "3.49", "EUR": "2.99", "GBP": "2.69" } }
+        },
+        "channel_locale_specific": {
+          "ecommerce": {
+            "en_US": {
+              "name": "Nova Bakery French Butter Biscuits 200g",
+              "short_description": "Traditional French butter biscuits from Nova Bakery. 200g box. Contains gluten, milk, eggs.",
+              "url_key": "nova-bakery-butter-biscuits-200g"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

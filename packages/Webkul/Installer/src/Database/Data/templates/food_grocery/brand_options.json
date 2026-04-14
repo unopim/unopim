@@ -1,0 +1,65 @@
+{
+  "attribute_code": "brand",
+  "options": [
+    {
+      "code": "globalstore_classic",
+      "labels": { "en_US": "GlobalStore Classic", "en_GB": "GlobalStore Classic", "de_DE": "GlobalStore Classic", "fr_FR": "GlobalStore Classic" }
+    },
+    {
+      "code": "globalstore_organic",
+      "labels": { "en_US": "GlobalStore Organic", "en_GB": "GlobalStore Organic", "de_DE": "GlobalStore Bio", "fr_FR": "GlobalStore Bio" }
+    },
+    {
+      "code": "globalstore_premium",
+      "labels": { "en_US": "GlobalStore Premium", "en_GB": "GlobalStore Premium", "de_DE": "GlobalStore Premium", "fr_FR": "GlobalStore Premium" }
+    },
+    {
+      "code": "summit_dairy",
+      "labels": { "en_US": "Summit Dairy", "en_GB": "Summit Dairy", "de_DE": "Summit Milch", "fr_FR": "Summit Laitier" }
+    },
+    {
+      "code": "pure_springs",
+      "labels": { "en_US": "Pure Springs", "en_GB": "Pure Springs", "de_DE": "Pure Springs", "fr_FR": "Pure Springs" }
+    },
+    {
+      "code": "orchard_valley",
+      "labels": { "en_US": "Orchard Valley", "en_GB": "Orchard Valley", "de_DE": "Orchard Valley", "fr_FR": "Orchard Valley" }
+    },
+    {
+      "code": "harvest_grove",
+      "labels": { "en_US": "Harvest Grove", "en_GB": "Harvest Grove", "de_DE": "Harvest Grove", "fr_FR": "Harvest Grove" }
+    },
+    {
+      "code": "crunch_co",
+      "labels": { "en_US": "Crunch & Co", "en_GB": "Crunch & Co", "de_DE": "Crunch & Co", "fr_FR": "Crunch & Co" }
+    },
+    {
+      "code": "sunrise_cereals",
+      "labels": { "en_US": "Sunrise Cereals", "en_GB": "Sunrise Cereals", "de_DE": "Sunrise Cerealien", "fr_FR": "Sunrise Céréales" }
+    },
+    {
+      "code": "nova_bakery",
+      "labels": { "en_US": "Nova Bakery", "en_GB": "Nova Bakery", "de_DE": "Nova Bäckerei", "fr_FR": "Nova Boulangerie" }
+    },
+    {
+      "code": "cocoa_house",
+      "labels": { "en_US": "Cocoa House", "en_GB": "Cocoa House", "de_DE": "Cocoa House", "fr_FR": "Cocoa House" }
+    },
+    {
+      "code": "verdant_kitchen",
+      "labels": { "en_US": "Verdant Kitchen", "en_GB": "Verdant Kitchen", "de_DE": "Verdant Küche", "fr_FR": "Verdant Cuisine" }
+    },
+    {
+      "code": "mediterra",
+      "labels": { "en_US": "Mediterra", "en_GB": "Mediterra", "de_DE": "Mediterra", "fr_FR": "Mediterra" }
+    },
+    {
+      "code": "alpine_roast",
+      "labels": { "en_US": "Alpine Roast", "en_GB": "Alpine Roast", "de_DE": "Alpine Röstkaffee", "fr_FR": "Alpine Torréfaction" }
+    },
+    {
+      "code": "pasta_reale",
+      "labels": { "en_US": "Pasta Reale", "en_GB": "Pasta Reale", "de_DE": "Pasta Reale", "fr_FR": "Pasta Reale" }
+    }
+  ]
+}

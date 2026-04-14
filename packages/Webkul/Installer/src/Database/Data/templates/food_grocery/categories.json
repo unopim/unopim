@@ -1,0 +1,213 @@
+{
+  "categories": [
+    {
+      "code": "food",
+      "parent": "root",
+      "position": 1,
+      "labels": {
+        "en_US": "Food & Grocery",
+        "en_GB": "Food & Grocery",
+        "de_DE": "Lebensmittel",
+        "fr_FR": "Alimentation & Épicerie"
+      }
+    },
+    {
+      "code": "beverages",
+      "parent": "food",
+      "position": 1,
+      "labels": {
+        "en_US": "Beverages",
+        "en_GB": "Drinks",
+        "de_DE": "Getränke",
+        "fr_FR": "Boissons"
+      }
+    },
+    {
+      "code": "soft_drinks",
+      "parent": "beverages",
+      "position": 1,
+      "labels": {
+        "en_US": "Soft Drinks",
+        "en_GB": "Soft Drinks",
+        "de_DE": "Erfrischungsgetränke",
+        "fr_FR": "Boissons gazeuses"
+      }
+    },
+    {
+      "code": "juices",
+      "parent": "beverages",
+      "position": 2,
+      "labels": {
+        "en_US": "Juices",
+        "en_GB": "Juices",
+        "de_DE": "Säfte",
+        "fr_FR": "Jus de fruits"
+      }
+    },
+    {
+      "code": "coffee_tea",
+      "parent": "beverages",
+      "position": 3,
+      "labels": {
+        "en_US": "Coffee & Tea",
+        "en_GB": "Coffee & Tea",
+        "de_DE": "Kaffee & Tee",
+        "fr_FR": "Café & Thé"
+      }
+    },
+    {
+      "code": "water",
+      "parent": "beverages",
+      "position": 4,
+      "labels": {
+        "en_US": "Water",
+        "en_GB": "Water",
+        "de_DE": "Wasser",
+        "fr_FR": "Eau"
+      }
+    },
+    {
+      "code": "snacks",
+      "parent": "food",
+      "position": 2,
+      "labels": {
+        "en_US": "Snacks",
+        "en_GB": "Snacks",
+        "de_DE": "Snacks",
+        "fr_FR": "Snacks"
+      }
+    },
+    {
+      "code": "chips_crisps",
+      "parent": "snacks",
+      "position": 1,
+      "labels": {
+        "en_US": "Chips & Crisps",
+        "en_GB": "Crisps",
+        "de_DE": "Chips",
+        "fr_FR": "Chips"
+      }
+    },
+    {
+      "code": "biscuits_cookies",
+      "parent": "snacks",
+      "position": 2,
+      "labels": {
+        "en_US": "Biscuits & Cookies",
+        "en_GB": "Biscuits",
+        "de_DE": "Kekse",
+        "fr_FR": "Biscuits"
+      }
+    },
+    {
+      "code": "chocolate_confectionery",
+      "parent": "snacks",
+      "position": 3,
+      "labels": {
+        "en_US": "Chocolate & Confectionery",
+        "en_GB": "Chocolate & Sweets",
+        "de_DE": "Schokolade & Süßigkeiten",
+        "fr_FR": "Chocolat & Confiserie"
+      }
+    },
+    {
+      "code": "dairy",
+      "parent": "food",
+      "position": 3,
+      "labels": {
+        "en_US": "Dairy",
+        "en_GB": "Dairy",
+        "de_DE": "Milchprodukte",
+        "fr_FR": "Produits laitiers"
+      }
+    },
+    {
+      "code": "milk",
+      "parent": "dairy",
+      "position": 1,
+      "labels": {
+        "en_US": "Milk",
+        "en_GB": "Milk",
+        "de_DE": "Milch",
+        "fr_FR": "Lait"
+      }
+    },
+    {
+      "code": "yogurt",
+      "parent": "dairy",
+      "position": 2,
+      "labels": {
+        "en_US": "Yogurt",
+        "en_GB": "Yoghurt",
+        "de_DE": "Joghurt",
+        "fr_FR": "Yaourt"
+      }
+    },
+    {
+      "code": "cheese",
+      "parent": "dairy",
+      "position": 3,
+      "labels": {
+        "en_US": "Cheese",
+        "en_GB": "Cheese",
+        "de_DE": "Käse",
+        "fr_FR": "Fromage"
+      }
+    },
+    {
+      "code": "pantry",
+      "parent": "food",
+      "position": 4,
+      "labels": {
+        "en_US": "Pantry",
+        "en_GB": "Pantry",
+        "de_DE": "Vorratskammer",
+        "fr_FR": "Épicerie"
+      }
+    },
+    {
+      "code": "pasta_rice",
+      "parent": "pantry",
+      "position": 1,
+      "labels": {
+        "en_US": "Pasta & Rice",
+        "en_GB": "Pasta & Rice",
+        "de_DE": "Nudeln & Reis",
+        "fr_FR": "Pâtes & Riz"
+      }
+    },
+    {
+      "code": "cooking_essentials",
+      "parent": "pantry",
+      "position": 2,
+      "labels": {
+        "en_US": "Cooking Essentials",
+        "en_GB": "Cooking Essentials",
+        "de_DE": "Grundzutaten",
+        "fr_FR": "Essentiels de cuisine"
+      }
+    },
+    {
+      "code": "condiments_sauces",
+      "parent": "pantry",
+      "position": 3,
+      "labels": {
+        "en_US": "Condiments & Sauces",
+        "en_GB": "Condiments & Sauces",
+        "de_DE": "Saucen & Würzmittel",
+        "fr_FR": "Condiments & Sauces"
+      }
+    },
+    {
+      "code": "breakfast_cereals",
+      "parent": "food",
+      "position": 5,
+      "labels": {
+        "en_US": "Breakfast Cereals",
+        "en_GB": "Breakfast Cereals",
+        "de_DE": "Frühstückscerealien",
+        "fr_FR": "Céréales petit-déjeuner"
+      }
+    }
+  ]
+}

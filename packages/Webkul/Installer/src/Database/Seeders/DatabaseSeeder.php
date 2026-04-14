@@ -7,7 +7,9 @@ use Webkul\AiAgent\Database\Seeders\AgenticPimConfigSeeder;
 use Webkul\Installer\Database\Seeders\Attribute\DatabaseSeeder as AttributeSeeder;
 use Webkul\Installer\Database\Seeders\Category\DatabaseSeeder as CategorySeeder;
 use Webkul\Installer\Database\Seeders\Core\DatabaseSeeder as CoreSeeder;
+use Webkul\Installer\Database\Seeders\Demo\FoodGroceryReferenceSeeder;
 use Webkul\Installer\Database\Seeders\User\DatabaseSeeder as UserSeeder;
+use Webkul\Installer\Demo\DemoDataProfile;
 use Webkul\MagicAI\Database\Seeders\MagicAiPromptSeeder;
 use Webkul\MagicAI\Database\Seeders\MagicAISystemPromptSeeder;
 
@@ -28,5 +30,36 @@ class DatabaseSeeder extends Seeder
         $this->call(MagicAiPromptSeeder::class, false, ['parameters' => $parameters]);
         $this->call(MagicAISystemPromptSeeder::class, false, ['parameters' => $parameters]);
         $this->call(AgenticPimConfigSeeder::class);
+
+        $profile = $this->resolveDemoProfile($parameters);
+
+        if (! $profile->isMinimal()) {
+            $this->call(FoodGroceryReferenceSeeder::class, false, [
+                'parameters' => [
+                    'profile' => $profile,
+                ],
+            ]);
+        }
+    }
+
+    /**
+     * Build the DemoDataProfile from installer parameters. Defaults to the
+     * `starter` preset so `unopim:install` without any flag still seeds
+     * something useful out of the box (the food_grocery reference catalog).
+     */
+    protected function resolveDemoProfile(array $parameters): DemoDataProfile
+    {
+        if (isset($parameters['demo_profile']) && $parameters['demo_profile'] instanceof DemoDataProfile) {
+            return $parameters['demo_profile'];
+        }
+
+        $preset = $parameters['demo_preset'] ?? DemoDataProfile::PRESET_STARTER;
+        $userLocales = $parameters['allowed_locales'] ?? [];
+
+        try {
+            return DemoDataProfile::fromPreset($preset, $userLocales);
+        } catch (\InvalidArgumentException) {
+            return DemoDataProfile::fromPreset(DemoDataProfile::PRESET_STARTER, $userLocales);
+        }
     }
 }

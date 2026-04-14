@@ -1,0 +1,824 @@
+{
+  "attributes": [
+    {
+      "code": "gtin_13",
+      "type": "text",
+      "group": "identifiers",
+      "position": 1,
+      "is_required": 1,
+      "is_unique": 1,
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "is_filterable": 0,
+      "validation": "numeric",
+      "max_characters": 13,
+      "labels": {
+        "en_US": "GTIN-13 / EAN-13",
+        "en_GB": "GTIN-13 / EAN-13",
+        "de_DE": "GTIN-13 / EAN-13",
+        "fr_FR": "GTIN-13 / EAN-13"
+      }
+    },
+    {
+      "code": "gtin_14",
+      "type": "text",
+      "group": "identifiers",
+      "position": 2,
+      "is_required": 0,
+      "is_unique": 1,
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "validation": "numeric",
+      "max_characters": 14,
+      "labels": {
+        "en_US": "GTIN-14 / ITF-14 (Case)",
+        "en_GB": "GTIN-14 / ITF-14 (Case)",
+        "de_DE": "GTIN-14 / ITF-14 (Umkarton)",
+        "fr_FR": "GTIN-14 / ITF-14 (Carton)"
+      }
+    },
+    {
+      "code": "manufacturer_part_number",
+      "type": "text",
+      "group": "identifiers",
+      "position": 3,
+      "is_required": 0,
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Manufacturer Part Number",
+        "en_GB": "Manufacturer Part Number",
+        "de_DE": "Hersteller-Teilenummer",
+        "fr_FR": "Référence fabricant"
+      }
+    },
+    {
+      "code": "hs_commodity_code",
+      "type": "text",
+      "group": "identifiers",
+      "position": 4,
+      "is_required": 0,
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "HS Commodity Code",
+        "en_GB": "HS Commodity Code",
+        "de_DE": "HS-Warencode",
+        "fr_FR": "Code SH"
+      }
+    },
+    {
+      "code": "brand",
+      "type": "select",
+      "group": "product_info",
+      "position": 1,
+      "is_required": 1,
+      "is_filterable": 1,
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Brand",
+        "en_GB": "Brand",
+        "de_DE": "Marke",
+        "fr_FR": "Marque"
+      }
+    },
+    {
+      "code": "sub_brand",
+      "type": "text",
+      "group": "product_info",
+      "position": 2,
+      "is_required": 0,
+      "is_filterable": 1,
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Sub-brand",
+        "en_GB": "Sub-brand",
+        "de_DE": "Submarke",
+        "fr_FR": "Sous-marque"
+      }
+    },
+    {
+      "code": "marketing_description",
+      "type": "textarea",
+      "group": "product_info",
+      "position": 3,
+      "is_required": 1,
+      "value_per_locale": 1,
+      "value_per_channel": 1,
+      "wysiwyg": 1,
+      "labels": {
+        "en_US": "Marketing Description",
+        "en_GB": "Marketing Description",
+        "de_DE": "Marketingbeschreibung",
+        "fr_FR": "Description marketing"
+      }
+    },
+    {
+      "code": "short_description",
+      "type": "textarea",
+      "group": "product_info",
+      "position": 4,
+      "is_required": 1,
+      "value_per_locale": 1,
+      "value_per_channel": 1,
+      "wysiwyg": 0,
+      "max_characters": 240,
+      "labels": {
+        "en_US": "Short Description",
+        "en_GB": "Short Description",
+        "de_DE": "Kurzbeschreibung",
+        "fr_FR": "Description courte"
+      }
+    },
+    {
+      "code": "product_claims",
+      "type": "multiselect",
+      "group": "product_info",
+      "position": 5,
+      "is_filterable": 1,
+      "value_per_locale": 1,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Product Claims",
+        "en_GB": "Product Claims",
+        "de_DE": "Produktaussagen",
+        "fr_FR": "Allégations produit"
+      }
+    },
+    {
+      "code": "tagline",
+      "type": "text",
+      "group": "product_info",
+      "position": 6,
+      "value_per_locale": 1,
+      "value_per_channel": 1,
+      "labels": {
+        "en_US": "Tagline",
+        "en_GB": "Tagline",
+        "de_DE": "Slogan",
+        "fr_FR": "Slogan"
+      }
+    },
+    {
+      "code": "pack_type",
+      "type": "select",
+      "group": "packaging",
+      "position": 1,
+      "is_required": 1,
+      "is_filterable": 1,
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Pack Type",
+        "en_GB": "Pack Type",
+        "de_DE": "Verpackungstyp",
+        "fr_FR": "Type d'emballage"
+      }
+    },
+    {
+      "code": "pack_material",
+      "type": "multiselect",
+      "group": "packaging",
+      "position": 2,
+      "is_required": 1,
+      "is_filterable": 1,
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Pack Material",
+        "en_GB": "Pack Material",
+        "de_DE": "Verpackungsmaterial",
+        "fr_FR": "Matériau d'emballage"
+      }
+    },
+    {
+      "code": "net_weight_g",
+      "type": "text",
+      "group": "packaging",
+      "position": 3,
+      "is_required": 1,
+      "validation": "decimal",
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Net Weight (g)",
+        "en_GB": "Net Weight (g)",
+        "de_DE": "Nettogewicht (g)",
+        "fr_FR": "Poids net (g)"
+      }
+    },
+    {
+      "code": "net_volume_ml",
+      "type": "text",
+      "group": "packaging",
+      "position": 4,
+      "validation": "decimal",
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Net Volume (ml)",
+        "en_GB": "Net Volume (ml)",
+        "de_DE": "Nettovolumen (ml)",
+        "fr_FR": "Volume net (ml)"
+      }
+    },
+    {
+      "code": "gross_weight_g",
+      "type": "text",
+      "group": "packaging",
+      "position": 5,
+      "validation": "decimal",
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Gross Weight (g)",
+        "en_GB": "Gross Weight (g)",
+        "de_DE": "Bruttogewicht (g)",
+        "fr_FR": "Poids brut (g)"
+      }
+    },
+    {
+      "code": "pack_dimensions_mm",
+      "type": "text",
+      "group": "packaging",
+      "position": 6,
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Pack Dimensions (LxWxH mm)",
+        "en_GB": "Pack Dimensions (LxWxH mm)",
+        "de_DE": "Verpackungsmaße (LxBxH mm)",
+        "fr_FR": "Dimensions emballage (LxlxH mm)"
+      }
+    },
+    {
+      "code": "pack_count",
+      "type": "text",
+      "group": "packaging",
+      "position": 7,
+      "validation": "numeric",
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Pack Count",
+        "en_GB": "Pack Count",
+        "de_DE": "Packungsanzahl",
+        "fr_FR": "Nombre par pack"
+      }
+    },
+    {
+      "code": "case_quantity",
+      "type": "text",
+      "group": "packaging",
+      "position": 8,
+      "validation": "numeric",
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Units per Case",
+        "en_GB": "Units per Case",
+        "de_DE": "Einheiten pro Karton",
+        "fr_FR": "Unités par carton"
+      }
+    },
+    {
+      "code": "recyclable",
+      "type": "boolean",
+      "group": "packaging",
+      "position": 9,
+      "is_filterable": 1,
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Recyclable",
+        "en_GB": "Recyclable",
+        "de_DE": "Recyclebar",
+        "fr_FR": "Recyclable"
+      }
+    },
+    {
+      "code": "energy_kcal_per_100g",
+      "type": "text",
+      "group": "nutrition",
+      "position": 1,
+      "validation": "decimal",
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Energy (kcal per 100g/ml)",
+        "en_GB": "Energy (kcal per 100g/ml)",
+        "de_DE": "Energie (kcal pro 100g/ml)",
+        "fr_FR": "Énergie (kcal pour 100g/ml)"
+      }
+    },
+    {
+      "code": "energy_kj_per_100g",
+      "type": "text",
+      "group": "nutrition",
+      "position": 2,
+      "validation": "decimal",
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Energy (kJ per 100g/ml)",
+        "en_GB": "Energy (kJ per 100g/ml)",
+        "de_DE": "Energie (kJ pro 100g/ml)",
+        "fr_FR": "Énergie (kJ pour 100g/ml)"
+      }
+    },
+    {
+      "code": "fat_g_per_100g",
+      "type": "text",
+      "group": "nutrition",
+      "position": 3,
+      "validation": "decimal",
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Fat (g per 100g/ml)",
+        "en_GB": "Fat (g per 100g/ml)",
+        "de_DE": "Fett (g pro 100g/ml)",
+        "fr_FR": "Matières grasses (g pour 100g/ml)"
+      }
+    },
+    {
+      "code": "saturated_fat_g_per_100g",
+      "type": "text",
+      "group": "nutrition",
+      "position": 4,
+      "validation": "decimal",
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Saturated Fat (g per 100g/ml)",
+        "en_GB": "Saturated Fat (g per 100g/ml)",
+        "de_DE": "Gesättigte Fettsäuren (g pro 100g/ml)",
+        "fr_FR": "Acides gras saturés (g pour 100g/ml)"
+      }
+    },
+    {
+      "code": "carbs_g_per_100g",
+      "type": "text",
+      "group": "nutrition",
+      "position": 5,
+      "validation": "decimal",
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Carbohydrates (g per 100g/ml)",
+        "en_GB": "Carbohydrates (g per 100g/ml)",
+        "de_DE": "Kohlenhydrate (g pro 100g/ml)",
+        "fr_FR": "Glucides (g pour 100g/ml)"
+      }
+    },
+    {
+      "code": "sugar_g_per_100g",
+      "type": "text",
+      "group": "nutrition",
+      "position": 6,
+      "validation": "decimal",
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Sugar (g per 100g/ml)",
+        "en_GB": "Sugar (g per 100g/ml)",
+        "de_DE": "Zucker (g pro 100g/ml)",
+        "fr_FR": "Sucres (g pour 100g/ml)"
+      }
+    },
+    {
+      "code": "fibre_g_per_100g",
+      "type": "text",
+      "group": "nutrition",
+      "position": 7,
+      "validation": "decimal",
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Fibre (g per 100g/ml)",
+        "en_GB": "Fibre (g per 100g/ml)",
+        "de_DE": "Ballaststoffe (g pro 100g/ml)",
+        "fr_FR": "Fibres (g pour 100g/ml)"
+      }
+    },
+    {
+      "code": "protein_g_per_100g",
+      "type": "text",
+      "group": "nutrition",
+      "position": 8,
+      "validation": "decimal",
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Protein (g per 100g/ml)",
+        "en_GB": "Protein (g per 100g/ml)",
+        "de_DE": "Eiweiß (g pro 100g/ml)",
+        "fr_FR": "Protéines (g pour 100g/ml)"
+      }
+    },
+    {
+      "code": "salt_g_per_100g",
+      "type": "text",
+      "group": "nutrition",
+      "position": 9,
+      "validation": "decimal",
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Salt (g per 100g/ml)",
+        "en_GB": "Salt (g per 100g/ml)",
+        "de_DE": "Salz (g pro 100g/ml)",
+        "fr_FR": "Sel (g pour 100g/ml)"
+      }
+    },
+    {
+      "code": "serving_size_g",
+      "type": "text",
+      "group": "nutrition",
+      "position": 10,
+      "validation": "decimal",
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Serving Size (g/ml)",
+        "en_GB": "Serving Size (g/ml)",
+        "de_DE": "Portionsgröße (g/ml)",
+        "fr_FR": "Portion (g/ml)"
+      }
+    },
+    {
+      "code": "ingredients_list",
+      "type": "textarea",
+      "group": "ingredients_allergens",
+      "position": 1,
+      "is_required": 1,
+      "value_per_locale": 1,
+      "value_per_channel": 0,
+      "wysiwyg": 0,
+      "labels": {
+        "en_US": "Ingredients List",
+        "en_GB": "Ingredients List",
+        "de_DE": "Zutatenliste",
+        "fr_FR": "Liste des ingrédients"
+      }
+    },
+    {
+      "code": "allergens_contains",
+      "type": "multiselect",
+      "group": "ingredients_allergens",
+      "position": 2,
+      "is_required": 1,
+      "is_filterable": 1,
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Allergens (Contains)",
+        "en_GB": "Allergens (Contains)",
+        "de_DE": "Allergene (Enthält)",
+        "fr_FR": "Allergènes (Contient)"
+      }
+    },
+    {
+      "code": "allergens_traces",
+      "type": "multiselect",
+      "group": "ingredients_allergens",
+      "position": 3,
+      "is_filterable": 1,
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Allergens (May Contain Traces)",
+        "en_GB": "Allergens (May Contain Traces)",
+        "de_DE": "Allergene (Kann Spuren enthalten)",
+        "fr_FR": "Allergènes (Peut contenir des traces)"
+      }
+    },
+    {
+      "code": "is_organic",
+      "type": "boolean",
+      "group": "ingredients_allergens",
+      "position": 4,
+      "is_filterable": 1,
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Organic",
+        "en_GB": "Organic",
+        "de_DE": "Bio",
+        "fr_FR": "Bio"
+      }
+    },
+    {
+      "code": "is_halal",
+      "type": "boolean",
+      "group": "ingredients_allergens",
+      "position": 5,
+      "is_filterable": 1,
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Halal",
+        "en_GB": "Halal",
+        "de_DE": "Halal",
+        "fr_FR": "Halal"
+      }
+    },
+    {
+      "code": "is_kosher",
+      "type": "boolean",
+      "group": "ingredients_allergens",
+      "position": 6,
+      "is_filterable": 1,
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Kosher",
+        "en_GB": "Kosher",
+        "de_DE": "Koscher",
+        "fr_FR": "Casher"
+      }
+    },
+    {
+      "code": "is_vegan",
+      "type": "boolean",
+      "group": "ingredients_allergens",
+      "position": 7,
+      "is_filterable": 1,
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Vegan",
+        "en_GB": "Vegan",
+        "de_DE": "Vegan",
+        "fr_FR": "Vegan"
+      }
+    },
+    {
+      "code": "is_vegetarian",
+      "type": "boolean",
+      "group": "ingredients_allergens",
+      "position": 8,
+      "is_filterable": 1,
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Vegetarian",
+        "en_GB": "Vegetarian",
+        "de_DE": "Vegetarisch",
+        "fr_FR": "Végétarien"
+      }
+    },
+    {
+      "code": "is_gluten_free",
+      "type": "boolean",
+      "group": "ingredients_allergens",
+      "position": 9,
+      "is_filterable": 1,
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Gluten Free",
+        "en_GB": "Gluten Free",
+        "de_DE": "Glutenfrei",
+        "fr_FR": "Sans gluten"
+      }
+    },
+    {
+      "code": "shelf_life_days",
+      "type": "text",
+      "group": "shelf_life_storage",
+      "position": 1,
+      "validation": "numeric",
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Shelf Life (days)",
+        "en_GB": "Shelf Life (days)",
+        "de_DE": "Haltbarkeit (Tage)",
+        "fr_FR": "Durée de conservation (jours)"
+      }
+    },
+    {
+      "code": "storage_temperature",
+      "type": "select",
+      "group": "shelf_life_storage",
+      "position": 2,
+      "is_filterable": 1,
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Storage Temperature",
+        "en_GB": "Storage Temperature",
+        "de_DE": "Lagertemperatur",
+        "fr_FR": "Température de stockage"
+      }
+    },
+    {
+      "code": "storage_instructions",
+      "type": "textarea",
+      "group": "shelf_life_storage",
+      "position": 3,
+      "value_per_locale": 1,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Storage Instructions",
+        "en_GB": "Storage Instructions",
+        "de_DE": "Lagerungshinweise",
+        "fr_FR": "Instructions de stockage"
+      }
+    },
+    {
+      "code": "country_of_origin",
+      "type": "select",
+      "group": "compliance_origin",
+      "position": 1,
+      "is_filterable": 1,
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Country of Origin",
+        "en_GB": "Country of Origin",
+        "de_DE": "Herkunftsland",
+        "fr_FR": "Pays d'origine"
+      }
+    },
+    {
+      "code": "certifications",
+      "type": "multiselect",
+      "group": "compliance_origin",
+      "position": 2,
+      "is_filterable": 1,
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Certifications",
+        "en_GB": "Certifications",
+        "de_DE": "Zertifizierungen",
+        "fr_FR": "Certifications"
+      }
+    },
+    {
+      "code": "age_restriction",
+      "type": "select",
+      "group": "compliance_origin",
+      "position": 3,
+      "is_filterable": 1,
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Age Restriction",
+        "en_GB": "Age Restriction",
+        "de_DE": "Altersbeschränkung",
+        "fr_FR": "Restriction d'âge"
+      }
+    },
+    {
+      "code": "alcohol_abv_percent",
+      "type": "text",
+      "group": "compliance_origin",
+      "position": 4,
+      "validation": "decimal",
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Alcohol ABV (%)",
+        "en_GB": "Alcohol ABV (%)",
+        "de_DE": "Alkoholgehalt (% vol)",
+        "fr_FR": "Alcool (% vol)"
+      }
+    },
+    {
+      "code": "msrp",
+      "type": "price",
+      "group": "commercial",
+      "position": 1,
+      "is_required": 1,
+      "value_per_locale": 0,
+      "value_per_channel": 1,
+      "labels": {
+        "en_US": "MSRP",
+        "en_GB": "MSRP",
+        "de_DE": "UVP",
+        "fr_FR": "Prix de vente conseillé"
+      }
+    },
+    {
+      "code": "cost",
+      "type": "price",
+      "group": "commercial",
+      "position": 2,
+      "value_per_locale": 0,
+      "value_per_channel": 1,
+      "labels": {
+        "en_US": "Cost",
+        "en_GB": "Cost",
+        "de_DE": "Kosten",
+        "fr_FR": "Coût"
+      }
+    },
+    {
+      "code": "minimum_order_quantity_cases",
+      "type": "text",
+      "group": "commercial",
+      "position": 3,
+      "validation": "numeric",
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "MOQ (cases)",
+        "en_GB": "MOQ (cases)",
+        "de_DE": "Mindestbestellmenge (Kartons)",
+        "fr_FR": "Quantité minimum (cartons)"
+      }
+    },
+    {
+      "code": "lead_time_days",
+      "type": "text",
+      "group": "commercial",
+      "position": 4,
+      "validation": "numeric",
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Lead Time (days)",
+        "en_GB": "Lead Time (days)",
+        "de_DE": "Lieferzeit (Tage)",
+        "fr_FR": "Délai (jours)"
+      }
+    },
+    {
+      "code": "image_front",
+      "type": "image",
+      "group": "media",
+      "position": 1,
+      "is_required": 1,
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Image — Front of Pack",
+        "en_GB": "Image — Front of Pack",
+        "de_DE": "Bild — Packungsvorderseite",
+        "fr_FR": "Image — Face avant"
+      }
+    },
+    {
+      "code": "image_back",
+      "type": "image",
+      "group": "media",
+      "position": 2,
+      "value_per_locale": 0,
+      "value_per_channel": 0,
+      "labels": {
+        "en_US": "Image — Back of Pack",
+        "en_GB": "Image — Back of Pack",
+        "de_DE": "Bild — Packungsrückseite",
+        "fr_FR": "Image — Face arrière"
+      }
+    },
+    {
+      "code": "meta_title",
+      "type": "text",
+      "group": "seo",
+      "position": 1,
+      "value_per_locale": 1,
+      "value_per_channel": 1,
+      "labels": {
+        "en_US": "Meta Title",
+        "en_GB": "Meta Title",
+        "de_DE": "Meta-Titel",
+        "fr_FR": "Méta-titre"
+      }
+    },
+    {
+      "code": "meta_description",
+      "type": "textarea",
+      "group": "seo",
+      "position": 2,
+      "value_per_locale": 1,
+      "value_per_channel": 1,
+      "labels": {
+        "en_US": "Meta Description",
+        "en_GB": "Meta Description",
+        "de_DE": "Meta-Beschreibung",
+        "fr_FR": "Méta-description"
+      }
+    },
+    {
+      "code": "url_key",
+      "type": "text",
+      "group": "seo",
+      "position": 3,
+      "is_unique": 1,
+      "value_per_locale": 1,
+      "value_per_channel": 1,
+      "labels": {
+        "en_US": "URL Key",
+        "en_GB": "URL Key",
+        "de_DE": "URL-Schlüssel",
+        "fr_FR": "Clé URL"
+      }
+    }
+  ]
+}

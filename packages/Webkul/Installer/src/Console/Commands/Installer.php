@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\File;
 use Webkul\Core\ElasticSearch;
 use Webkul\Installer\Database\Seeders\DatabaseSeeder as UnoPimDatabaseSeeder;
 use Webkul\Installer\Database\Seeders\ProductTableSeeder;
+use Webkul\Installer\Demo\DemoDataProfile;
 use Webkul\Installer\Events\ComposerEvents;
 
 use function Laravel\Prompts\multiselect;
@@ -26,7 +27,8 @@ class Installer extends Command
     protected $signature = 'unopim:install
         { --skip-env-check : Skip env check. }
         { --skip-admin-creation : Skip admin creation. }
-        { --with-demo-data : Seed sample products and demo data. }';
+        { --with-demo-data : Seed sample products and demo data (legacy alias for --demo-preset=starter). }
+        { --demo-preset= : Reference-catalog preset — minimal | starter | medium | full. Default: starter. }';
 
     /**
      * The console command description.
@@ -123,12 +125,14 @@ class Installer extends Command
         $this->warn('Step: Migrating all tables...');
         $this->call('migrate:fresh');
 
-        $this->warn('Step: Seeding basic data for UnoPim kickstart...');
+        $demoPreset = $this->resolveDemoPreset();
+        $this->warn(sprintf('Step: Seeding basic data for UnoPim kickstart (demo preset: %s)...', $demoPreset));
         $this->info(app(UnoPimDatabaseSeeder::class)->run([
             'default_locale'     => $applicationDetails['default_locale'] ?? 'en_US',
             'allowed_locales'    => $applicationDetails['allowed_locales'] ?? ['en_US'],
             'default_currency'   => $applicationDetails['default_currency'] ?? 'USD',
             'allowed_currencies' => $applicationDetails['allowed_currencies'] ?? ['USD'],
+            'demo_preset'        => $demoPreset,
         ]));
 
         $this->warn('Step: Linking storage directory...');
@@ -158,6 +162,34 @@ class Installer extends Command
         }
 
         ComposerEvents::postCreateProject();
+    }
+
+    /**
+     * Decide which demo-catalogue preset to seed.
+     *
+     * Precedence (highest to lowest):
+     *   1. Explicit `--demo-preset=<name>` flag
+     *   2. Legacy `--with-demo-data` flag → resolves to `starter`
+     *   3. Non-interactive installs (`--skip-admin-creation`) → `minimal`
+     *      so CI runs stay fast
+     *   4. Interactive default → `starter` (food_grocery reference catalog)
+     */
+    protected function resolveDemoPreset(): string
+    {
+        $explicit = $this->option('demo-preset');
+        if ($explicit !== null && $explicit !== '') {
+            return (string) $explicit;
+        }
+
+        if ($this->option('with-demo-data')) {
+            return DemoDataProfile::PRESET_STARTER;
+        }
+
+        if ($this->option('skip-admin-creation')) {
+            return DemoDataProfile::PRESET_MINIMAL;
+        }
+
+        return DemoDataProfile::PRESET_STARTER;
     }
 
     /**

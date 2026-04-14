@@ -1,0 +1,104 @@
+{
+  "attribute_groups": [
+    {
+      "code": "identifiers",
+      "position": 1,
+      "labels": {
+        "en_US": "Identifiers",
+        "en_GB": "Identifiers",
+        "de_DE": "Kennungen",
+        "fr_FR": "Identifiants"
+      }
+    },
+    {
+      "code": "product_info",
+      "position": 2,
+      "labels": {
+        "en_US": "Product Info",
+        "en_GB": "Product Info",
+        "de_DE": "Produktinfo",
+        "fr_FR": "Informations produit"
+      }
+    },
+    {
+      "code": "packaging",
+      "position": 3,
+      "labels": {
+        "en_US": "Packaging",
+        "en_GB": "Packaging",
+        "de_DE": "Verpackung",
+        "fr_FR": "Emballage"
+      }
+    },
+    {
+      "code": "nutrition",
+      "position": 4,
+      "labels": {
+        "en_US": "Nutrition",
+        "en_GB": "Nutrition",
+        "de_DE": "Nährwerte",
+        "fr_FR": "Nutrition"
+      }
+    },
+    {
+      "code": "ingredients_allergens",
+      "position": 5,
+      "labels": {
+        "en_US": "Ingredients & Allergens",
+        "en_GB": "Ingredients & Allergens",
+        "de_DE": "Zutaten & Allergene",
+        "fr_FR": "Ingrédients et allergènes"
+      }
+    },
+    {
+      "code": "shelf_life_storage",
+      "position": 6,
+      "labels": {
+        "en_US": "Shelf Life & Storage",
+        "en_GB": "Shelf Life & Storage",
+        "de_DE": "Haltbarkeit & Lagerung",
+        "fr_FR": "Conservation et stockage"
+      }
+    },
+    {
+      "code": "compliance_origin",
+      "position": 7,
+      "labels": {
+        "en_US": "Compliance & Origin",
+        "en_GB": "Compliance & Origin",
+        "de_DE": "Konformität & Herkunft",
+        "fr_FR": "Conformité et origine"
+      }
+    },
+    {
+      "code": "commercial",
+      "position": 8,
+      "labels": {
+        "en_US": "Commercial",
+        "en_GB": "Commercial",
+        "de_DE": "Kommerziell",
+        "fr_FR": "Commercial"
+      }
+    },
+    {
+      "code": "media",
+      "position": 9,
+      "labels": {
+        "en_US": "Media",
+        "en_GB": "Media",
+        "de_DE": "Medien",
+        "fr_FR": "Médias"
+      }
+    },
+    {
+      "code": "seo",
+      "position": 10,
+      "labels": {
+        "en_US": "SEO",
+        "en_GB": "SEO",
+        "de_DE": "SEO",
+        "fr_FR": "SEO"
+      }
+    }
+  ]
+}

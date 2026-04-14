@@ -1,0 +1,58 @@
+{
+  "association_types": [
+    {
+      "code": "upsell",
+      "labels": {
+        "en_US": "Upsell",
+        "en_GB": "Upsell",
+        "de_DE": "Upsell",
+        "fr_FR": "Montée en gamme"
+      }
+    },
+    {
+      "code": "crosssell",
+      "labels": {
+        "en_US": "Cross-sell",
+        "en_GB": "Cross-sell",
+        "de_DE": "Cross-Sell",
+        "fr_FR": "Vente croisée"
+      }
+    },
+    {
+      "code": "substitution",
+      "labels": {
+        "en_US": "Substitution",
+        "en_GB": "Substitution",
+        "de_DE": "Ersatzprodukt",
+        "fr_FR": "Substitution"
+      }
+    },
+    {
+      "code": "case_contains",
+      "labels": {
+        "en_US": "Case Contains (Outer → Consumer Unit)",
+        "en_GB": "Case Contains (Outer → Consumer Unit)",
+        "de_DE": "Umkarton enthält",
+        "fr_FR": "Le carton contient"
+      }
+    },
+    {
+      "code": "pack_size_variant",
+      "labels": {
+        "en_US": "Pack-Size Variant",
+        "en_GB": "Pack-Size Variant",
+        "de_DE": "Packungsgrößen-Variante",
+        "fr_FR": "Variante de format"
+      }
+    },
+    {
+      "code": "seasonal_variant",
+      "labels": {
+        "en_US": "Seasonal Variant",
+        "en_GB": "Seasonal Variant",
+        "de_DE": "Saisonale Variante",
+        "fr_FR": "Variante saisonnière"
+      }
+    }
+  ]
+}

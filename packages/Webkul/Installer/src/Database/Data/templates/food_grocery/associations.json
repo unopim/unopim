@@ -1,0 +1,66 @@
+{
+  "_comment": "Seeded associations between Phase 0 food_grocery products. The FoodGroceryReferenceSeeder inserts one row per association with the given type.",
+  "associations": [
+    {
+      "from_sku": "GS-COLA-CLASSIC-330ML-CASE-24",
+      "to_sku": "GS-COLA-CLASSIC-330ML",
+      "type": "case_contains",
+      "quantity": 24,
+      "note": "Case → consumer unit. Outer GTIN-14 → inner GTIN-13, quantity 24."
+    },
+    {
+      "from_sku": "GS-JUICE-ORANGE-250ML",
+      "to_sku": "GS-JUICE-ORANGE-1L",
+      "type": "pack_size_variant",
+      "note": "Grab-and-go ↔ family-size. Same juice, different occasion."
+    },
+    {
+      "from_sku": "GS-JUICE-ORANGE-1L",
+      "to_sku": "GS-JUICE-ORANGE-250ML",
+      "type": "pack_size_variant",
+      "note": "Reverse of above — the association is bidirectional in practice."
+    },
+    {
+      "from_sku": "GS-COLA-CLASSIC-330ML",
+      "to_sku": "GS-CHOCOLATE-DARK-85-100G",
+      "type": "crosssell",
+      "note": "Cola + chocolate — classic snack pairing."
+    },
+    {
+      "from_sku": "GS-COFFEE-ARABICA-250G",
+      "to_sku": "GS-CHOCOLATE-DARK-85-100G",
+      "type": "crosssell",
+      "note": "Coffee + dark chocolate pairing."
+    },
+    {
+      "from_sku": "GS-COFFEE-ARABICA-250G",
+      "to_sku": "GS-BISCUIT-BUTTER-200G",
+      "type": "crosssell",
+      "note": "Coffee + biscuits."
+    },
+    {
+      "from_sku": "GS-PASTA-SPAGHETTI-500G",
+      "to_sku": "GS-OLIVE-OIL-EXV-500ML",
+      "type": "crosssell",
+      "note": "Italian pasta + Italian olive oil — same meal."
+    },
+    {
+      "from_sku": "GS-YOGURT-GREEK-NATURAL",
+      "to_sku": "GS-CEREAL-HONEY-FLAKES-500G",
+      "type": "crosssell",
+      "note": "Natural yogurt + cereal — breakfast bundle."
+    },
+    {
+      "from_sku": "GS-WATER-STILL-500ML",
+      "to_sku": "GS-JUICE-ORANGE-250ML",
+      "type": "substitution",
+      "note": "Water ↔ orange juice — healthier hydration alternatives."
+    },
+    {
+      "from_sku": "GS-COLA-CLASSIC-330ML",
+      "to_sku": "GS-COLA-CLASSIC-330ML-CASE-24",
+      "type": "upsell",
+      "note": "Buy the case — better unit economics."
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "family": {
+    "code": "food_grocery",
+    "status": 1,
+    "attribute_as_image": "image_front",
+    "attribute_as_label": "short_description",
+    "labels": {
+      "en_US": "Food & Grocery",
+      "en_GB": "Food & Grocery",
+      "de_DE": "Lebensmittel",
+      "fr_FR": "Alimentation & Épicerie"
+    },
+    "groups": [
+      "identifiers",
+      "product_info",
+      "packaging",
+      "nutrition",
+      "ingredients_allergens",
+      "shelf_life_storage",
+      "compliance_origin",
+      "commercial",
+      "media",
+      "seo"
+    ],
+    "required_on_channel": {
+      "ecommerce": [
+        "gtin_13",
+        "brand",
+        "marketing_description",
+        "short_description",
+        "pack_type",
+        "pack_material",
+        "net_weight_g",
+        "ingredients_list",
+        "allergens_contains",
+        "msrp",
+        "image_front"
+      ],
+      "mobile_app": [
+        "gtin_13",
+        "brand",
+        "short_description",
+        "image_front"
+      ],
+      "print_catalogue": [
+        "gtin_13",
+        "brand",
+        "short_description",
+        "pack_type",
+        "net_weight_g",
+        "msrp",
+        "image_front"
+      ],
+      "b2b_wholesale": [
+        "gtin_13",
+        "brand",
+        "pack_type",
+        "case_quantity",
+        "cost",
+        "minimum_order_quantity_cases",
+        "lead_time_days"
+      ]
+    }
+  }
+}

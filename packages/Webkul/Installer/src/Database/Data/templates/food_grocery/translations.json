@@ -1,0 +1,133 @@
+{
+  "_comment": "Shared FMCG translation vocabulary. The seeder's TranslationExpander uses this to derive missing locale content from canonical en_US values. Any product-specific translation in products.json overrides entries here.",
+
+  "common_phrases": {
+    "contains": {
+      "en_US": "Contains", "en_GB": "Contains", "de_DE": "Enthält", "fr_FR": "Contient",
+      "es_ES": "Contiene", "it_IT": "Contiene", "nl_NL": "Bevat", "pl_PL": "Zawiera"
+    },
+    "may_contain_traces": {
+      "en_US": "May contain traces of", "en_GB": "May contain traces of",
+      "de_DE": "Kann Spuren enthalten von", "fr_FR": "Peut contenir des traces de",
+      "es_ES": "Puede contener trazas de", "it_IT": "Può contenere tracce di",
+      "nl_NL": "Kan sporen bevatten van", "pl_PL": "Może zawierać śladowe ilości"
+    },
+    "store_cool_dry": {
+      "en_US": "Store in a cool, dry place", "en_GB": "Store in a cool, dry place",
+      "de_DE": "Kühl und trocken lagern", "fr_FR": "Conserver au frais et au sec",
+      "es_ES": "Conservar en lugar fresco y seco", "it_IT": "Conservare in luogo fresco e asciutto",
+      "nl_NL": "Koel en droog bewaren", "pl_PL": "Przechowywać w chłodnym, suchym miejscu"
+    },
+    "keep_refrigerated": {
+      "en_US": "Keep refrigerated", "en_GB": "Keep refrigerated",
+      "de_DE": "Gekühlt aufbewahren", "fr_FR": "À conserver au réfrigérateur",
+      "es_ES": "Conservar en el frigorífico", "it_IT": "Conservare in frigorifero",
+      "nl_NL": "Gekoeld bewaren", "pl_PL": "Przechowywać w lodówce"
+    },
+    "once_opened": {
+      "en_US": "Once opened, consume within", "en_GB": "Once opened, consume within",
+      "de_DE": "Nach dem Öffnen innerhalb von", "fr_FR": "Après ouverture, consommer sous",
+      "es_ES": "Una vez abierto, consumir en", "it_IT": "Una volta aperto, consumare entro",
+      "nl_NL": "Eenmaal geopend, binnen", "pl_PL": "Po otwarciu spożyć w ciągu"
+    },
+    "per_100g": {
+      "en_US": "per 100g", "en_GB": "per 100g",
+      "de_DE": "pro 100g", "fr_FR": "pour 100g", "es_ES": "por 100g",
+      "it_IT": "per 100g", "nl_NL": "per 100g", "pl_PL": "na 100g"
+    },
+    "serving": {
+      "en_US": "Serving", "en_GB": "Serving",
+      "de_DE": "Portion", "fr_FR": "Portion", "es_ES": "Porción",
+      "it_IT": "Porzione", "nl_NL": "Portie", "pl_PL": "Porcja"
+    }
+  },
+
+  "allergen_labels": {
+    "milk": {
+      "en_US": "milk", "en_GB": "milk", "de_DE": "Milch", "fr_FR": "lait",
+      "es_ES": "leche", "it_IT": "latte", "nl_NL": "melk", "pl_PL": "mleko"
+    },
+    "eggs": {
+      "en_US": "eggs", "en_GB": "eggs", "de_DE": "Eier", "fr_FR": "œufs",
+      "es_ES": "huevos", "it_IT": "uova", "nl_NL": "eieren", "pl_PL": "jaja"
+    },
+    "gluten_cereals": {
+      "en_US": "gluten", "en_GB": "gluten", "de_DE": "glutenhaltiges Getreide",
+      "fr_FR": "céréales contenant du gluten", "es_ES": "cereales con gluten",
+      "it_IT": "cereali contenenti glutine", "nl_NL": "gluten bevattende granen",
+      "pl_PL": "zboża zawierające gluten"
+    },
+    "peanuts": {
+      "en_US": "peanuts", "en_GB": "peanuts", "de_DE": "Erdnüsse", "fr_FR": "arachides",
+      "es_ES": "cacahuetes", "it_IT": "arachidi", "nl_NL": "pinda's", "pl_PL": "orzeszki ziemne"
+    },
+    "tree_nuts": {
+      "en_US": "tree nuts", "en_GB": "tree nuts", "de_DE": "Schalenfrüchte",
+      "fr_FR": "fruits à coque", "es_ES": "frutos de cáscara", "it_IT": "frutta a guscio",
+      "nl_NL": "noten", "pl_PL": "orzechy"
+    },
+    "soy": {
+      "en_US": "soy", "en_GB": "soya", "de_DE": "Soja", "fr_FR": "soja",
+      "es_ES": "soja", "it_IT": "soia", "nl_NL": "soja", "pl_PL": "soja"
+    }
+  },
+
+  "pack_type_labels": {
+    "bottle": {
+      "en_US": "Bottle", "en_GB": "Bottle", "de_DE": "Flasche", "fr_FR": "Bouteille",
+      "es_ES": "Botella", "it_IT": "Bottiglia", "nl_NL": "Fles", "pl_PL": "Butelka"
+    },
+    "can": {
+      "en_US": "Can", "en_GB": "Can", "de_DE": "Dose", "fr_FR": "Canette",
+      "es_ES": "Lata", "it_IT": "Lattina", "nl_NL": "Blik", "pl_PL": "Puszka"
+    },
+    "carton": {
+      "en_US": "Carton", "en_GB": "Carton", "de_DE": "Karton", "fr_FR": "Brique",
+      "es_ES": "Cartón", "it_IT": "Cartone", "nl_NL": "Pak", "pl_PL": "Karton"
+    },
+    "jar": {
+      "en_US": "Jar", "en_GB": "Jar", "de_DE": "Glas", "fr_FR": "Pot",
+      "es_ES": "Tarro", "it_IT": "Vasetto", "nl_NL": "Pot", "pl_PL": "Słoik"
+    },
+    "box": {
+      "en_US": "Box", "en_GB": "Box", "de_DE": "Packung", "fr_FR": "Boîte",
+      "es_ES": "Caja", "it_IT": "Scatola", "nl_NL": "Doos", "pl_PL": "Pudełko"
+    },
+    "pouch": {
+      "en_US": "Pouch", "en_GB": "Pouch", "de_DE": "Beutel", "fr_FR": "Sachet",
+      "es_ES": "Bolsa", "it_IT": "Busta", "nl_NL": "Zak", "pl_PL": "Torebka"
+    }
+  },
+
+  "channel_derivations": {
+    "_note": "Rules the seeder uses to derive non-canonical channel content from the ecommerce canonical.",
+    "mobile_app": {
+      "rule": "truncate_short_description_to_120_chars",
+      "name_rule": "strip_trailing_descriptor_after_em_dash"
+    },
+    "print_catalogue": {
+      "rule": "uppercase_name_prepend_brand",
+      "include_attributes": ["pack_count_or_net_weight", "shelf_life", "case_quantity"],
+      "price_discount": 0.05
+    },
+    "b2b_wholesale": {
+      "rule": "technical_spec_focus",
+      "include_attributes": ["case_quantity", "gtin_14", "lead_time_days", "minimum_order_quantity_cases", "country_of_origin"],
+      "name_rule": "uppercase_with_case_suffix"
+    }
+  },
+
+  "locale_mechanical_rules": {
+    "_note": "en_US -> en_GB transform rules applied by the seeder when en_GB is missing.",
+    "en_GB": {
+      "spelling_swaps": {
+        "color": "colour",
+        "flavor": "flavour",
+        "flavored": "flavoured",
+        "flavorings": "flavourings",
+        "fiber": "fibre",
+        "yogurt": "yoghurt"
+      }
+    }
+  }
+}
