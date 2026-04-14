@@ -40,7 +40,9 @@ return [
         'description-text' => 'Lista de todas as notificações',
         'marked-success'   => 'Notificação marcada como lida',
         'no-record'        => 'Nenhum registo encontrado',
+        'of'               => 'de',
         'read-all'         => 'Marcar como lida',
+        'showing'          => 'A mostrar',
         'title'            => 'Notificações',
         'view-all'         => 'Ver todas',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => 'Completado',
             'pending'    => 'Pendente',
             'processing' => 'Processando',
+            'read'       => 'Lidas',
+            'unread'     => 'Não lidas',
         ],
     ],
     'account' => [
@@ -383,6 +387,7 @@ return [
                 'success'         => 'Tarefa executada com sucesso.',
                 'fetch-failed'    => 'Falha ao obter dados.',
                 'action'          => 'Edição em massa',
+                'description'     => 'Edite vários produtos de uma vez. As alterações são processadas em segundo plano.',
                 'gallery-preview' => 'Pré-visualização da Galeria',
                 'img-preview'     => 'Pré-visualização da Imagem',
                 'no-image'        => 'Sem imagem',
@@ -1961,10 +1966,13 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => 'Selecionar',
-                'title'    => 'Aplicar Filtros',
-                'save'     => 'Salvar',
-                'dropdown' => [
+                'select'        => 'Selecionar',
+                'title'         => 'Aplicar Filtros',
+                'save'          => 'Salvar',
+                'add-filter'    => 'Adicionar filtro',
+                'remove-filter' => 'Remover filtro',
+                'search-filter' => 'Pesquisar...',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Digite pelo menos 2 caracteres...',
                         'no-results'        => 'Nenhum resultado encontrado...',

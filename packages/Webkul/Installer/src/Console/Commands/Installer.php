@@ -423,18 +423,18 @@ class Installer extends Command
             }
         );
 
-        $adminPassword = text(
+        $adminPassword = password(
             label: 'Input a Password for Administrator',
-            default: 'admin123',
-            required: true
+            required: true,
+            hint: 'Minimum 6 characters',
         );
 
         while (strlen($adminPassword) < 6) {
             $this->error('Password must be at least 6 characters.');
 
-            $adminPassword = text(
+            $adminPassword = password(
                 label: 'Input a Secure Password for Administrator',
-                required: true
+                required: true,
             );
         }
 

@@ -41,14 +41,15 @@
                 <template #body="{ columns, records, performAction, applied, setCurrentSelectionMode }">
                     <div
                         v-for="record in records"
-                        class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-violet-50 dark:hover:bg-cherry-800"
+                        class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
                         :style="`grid-template-columns: repeat(${gridsCount}, minmax(0, 1fr))`"
+                        @click="selectedPrompt=1;editModal(record.actions.find(action => action.index === 'action_1')?.url)"
                     >
-                        <!-- Code -->
-                        <p v-text="record.title"></p>
+                        <!-- Title -->
+                        <p v-text="record.title" class="truncate" :title="record.title"></p>
 
-                        <!-- Name -->
-                        <p v-text="record.prompt"></p>
+                        <!-- Prompt -->
+                        <p v-text="record.prompt" class="truncate" :title="record.prompt"></p>
 
                         <p v-html="record.type"></p>
 
@@ -58,7 +59,7 @@
                         <p v-html="record.updated_at"></p>
 
                         <!-- Actions -->
-                        <div class="flex justify-end">
+                        <div class="flex justify-end" @click.stop>
                             <a @click="selectedPrompt=1;editModal(record.actions.find(action => action.index === 'action_1')?.url)">
                                 <span
                                     :class="record.actions.find(action => action.index === 'action_1')?.icon"

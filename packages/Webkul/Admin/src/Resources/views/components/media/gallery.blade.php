@@ -627,7 +627,7 @@
                     isLoading: false,
 
                     ai: {
-                        enabled: Boolean("{{ core()->getConfigData('general.magic_ai.settings.enabled') && core()->getConfigData('general.magic_ai.image_generation.enabled') }}"),
+                        enabled: Boolean("{{ core()->getConfigData('general.magic_ai.image_generation.enabled') }}"),
 
                         prompt: null,
 
@@ -814,6 +814,10 @@
                             this.isLoading = false;
 
                             self.ai.images = response.data.images;
+
+                            if (self.ai.images.length === 1) {
+                                self.ai.images[0].selected = true;
+                            }
                         })
                         .catch(error => {
                             this.isLoading = false;
@@ -856,7 +860,7 @@
 
                 resetAIModal() {
                     this.ai = {
-                        enabled: Boolean("{{ core()->getConfigData('general.magic_ai.settings.enabled') && core()->getConfigData('general.magic_ai.image_generation.enabled') }}"),
+                        enabled: Boolean("{{ core()->getConfigData('general.magic_ai.image_generation.enabled') }}"),
 
                         prompt: null,
 

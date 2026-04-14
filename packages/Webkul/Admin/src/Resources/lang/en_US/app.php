@@ -43,7 +43,9 @@ return [
         'description-text' => 'List all the Notifications',
         'marked-success'   => 'Notification Marked Successfully',
         'no-record'        => 'No Record Found',
+        'of'               => 'of',
         'read-all'         => 'Mark as Read',
+        'showing'          => 'Showing',
         'title'            => 'Notifications',
         'view-all'         => 'View All',
         'status'           => [
@@ -53,6 +55,8 @@ return [
             'completed'  => 'Completed',
             'pending'    => 'Pending',
             'processing' => 'Processing',
+            'read'       => 'Read',
+            'unread'     => 'Unread',
         ],
     ],
 
@@ -413,6 +417,7 @@ return [
                 'success'         => 'Job executed successfully.',
                 'fetch-failed'    => 'Failed to fetch.',
                 'action'          => 'Bulk Edit',
+                'description'     => 'Edit multiple products at once. Changes are processed in the background.',
                 'gallery-preview' => 'Gallery Preview',
                 'img-preview'     => 'Image Preview',
                 'no-image'        => 'No Image',
@@ -2102,10 +2107,13 @@ return [
             ],
 
             'filters' => [
-                'select'   => 'Select',
-                'title'    => 'Apply Filters',
-                'save'     => 'Save',
-                'dropdown' => [
+                'select'        => 'Select',
+                'title'         => 'Apply Filters',
+                'save'          => 'Save',
+                'add-filter'    => 'Add Filter',
+                'remove-filter' => 'Remove Filter',
+                'search-filter' => 'Search...',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Type atleast 2 characters...',
                         'no-results'        => 'No result found...',

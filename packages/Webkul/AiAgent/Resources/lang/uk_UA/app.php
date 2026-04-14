@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => 'Магічний ШІ',
         'general'               => 'Загальне',
         'prompt'                => 'Запит',
         'system-prompt'         => 'Системний запит',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => 'Магічний ШІ',
         'platform'       => 'Платформи',
         'settings'       => 'Налаштування',
         'prompt'         => 'Запити',

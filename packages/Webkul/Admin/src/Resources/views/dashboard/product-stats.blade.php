@@ -17,20 +17,20 @@
                 <template v-if="totalProducts > 0">
                     <!-- Top Row: Total + Status cards -->
                     <div class="flex gap-3 mb-4">
-                        <!-- Total Products Card (no filter — links to full list) -->
+                        <!-- Total Products Card -->
                         <a
-                            :href="productsUrl()"
-                            class="flex-1 rounded-lg p-4 no-underline cursor-pointer hover:shadow-md transition-shadow"
+                            href="{{ route('admin.catalog.products.index') }}"
+                            class="flex-1 rounded-lg p-4 no-underline hover:opacity-90 transition-opacity"
                             style="background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);"
                         >
                             <p class="text-xs text-violet-200 mb-1">@lang('admin::app.dashboard.index.total-products')</p>
                             <p class="text-3xl font-bold text-white leading-none">@{{ totalProducts }}</p>
                         </a>
 
-                        <!-- Active Card (filter status=true) -->
+                        <!-- Active Card -->
                         <a
-                            :href="productsUrl({ status: 'true' })"
-                            class="flex-1 rounded-lg p-4 border no-underline cursor-pointer hover:shadow-md transition-shadow"
+                            href="{{ route('admin.catalog.products.index') }}?filters[status][]=1"
+                            class="flex-1 rounded-lg p-4 border no-underline hover:opacity-90 transition-opacity"
                             style="border-color: #d1fae5; background: #ecfdf5;"
                         >
                             <div class="flex items-center gap-1.5 mb-1">
@@ -40,10 +40,10 @@
                             <p class="text-2xl font-bold leading-none" style="color: #065f46;">@{{ stats.statusBreakdown.active || 0 }}</p>
                         </a>
 
-                        <!-- Inactive Card (filter status=false) -->
+                        <!-- Inactive Card -->
                         <a
-                            :href="productsUrl({ status: 'false' })"
-                            class="flex-1 rounded-lg p-4 border no-underline cursor-pointer hover:shadow-md transition-shadow"
+                            href="{{ route('admin.catalog.products.index') }}?filters[status][]=0"
+                            class="flex-1 rounded-lg p-4 border no-underline hover:opacity-90 transition-opacity"
                             style="border-color: #fef3c7; background: #fffbeb;"
                         >
                             <div class="flex items-center gap-1.5 mb-1">
@@ -59,25 +59,25 @@
                         @lang('admin::app.dashboard.index.product-type-dist')
                     </p>
 
-                    <!-- Stacked Bar -->
+                    <!-- Stacked Bar (each segment deep-links into the grid filtered by that product type) -->
                     <div class="flex rounded-full h-3 overflow-hidden mb-3">
                         <a
                             v-for="(count, type) in stats.typeDistribution"
                             :key="'bar-' + type"
-                            :href="productsUrl({ type })"
+                            :href="typeFilterUrl(type)"
                             class="transition-all duration-700 ease-out first:rounded-l-full last:rounded-r-full cursor-pointer"
                             :style="{ width: Math.max(getPercentage(count), 3) + '%', background: getTypeHex(type) }"
                             :title="type + ': ' + count"
                         ></a>
                     </div>
 
-                    <!-- Type Legend (each chip filters by its product type) -->
+                    <!-- Type Legend (each chip links to products filtered by type=<type>) -->
                     <div class="flex flex-wrap gap-x-4 gap-y-2 mb-4">
                         <a
                             v-for="(count, type) in stats.typeDistribution"
                             :key="'legend-' + type"
-                            :href="productsUrl({ type })"
-                            class="flex items-center gap-2 no-underline cursor-pointer hover:opacity-80 transition-opacity"
+                            :href="typeFilterUrl(type)"
+                            class="flex items-center gap-2 no-underline hover:opacity-80 transition-opacity"
                         >
                             <span class="w-3 h-3 rounded-sm flex-shrink-0" :style="{ background: getTypeHex(type) }"></span>
                             <span class="text-xs text-zinc-700 dark:text-slate-300 capitalize">@{{ type }}</span>
@@ -140,14 +140,10 @@
                 </template>
 
                 <!-- Empty State -->
-                <a
-                    v-else
-                    :href="productsUrl()"
-                    class="flex-1 flex flex-col items-center justify-center py-8 no-underline cursor-pointer"
-                >
+                <div v-else class="flex-1 flex flex-col items-center justify-center py-8">
                     <img src="{{ unopim_asset('images/icon-products.svg')}}" class="w-12 h-12 opacity-30 mb-3">
                     <p class="text-sm text-zinc-400 dark:text-slate-500">No products yet.</p>
-                </a>
+                </div>
             </div>
         </template>
     </script>
@@ -232,25 +228,16 @@
                 },
 
                 /**
-                 * Build a products-index URL with optional filter[column]=value
-                 * query params. The DataGrid component reads these on boot
-                 * and pre-populates the grid filters so the user lands on
-                 * an already-narrowed view.
+                 * Build a products-index URL that deep-links into the grid
+                 * pre-filtered to the given product type. Uses the same
+                 * ?filters[col][]=value format as the Active/Inactive card
+                 * hrefs so the DataGrid's boot() parseUrlFilters() picks it
+                 * up consistently. Internal-678.
                  */
-                productsUrl(filters = {}) {
+                typeFilterUrl(type) {
                     const base = "{{ route('admin.catalog.products.index') }}";
-                    const params = new URLSearchParams();
 
-                    Object.entries(filters).forEach(([column, value]) => {
-                        if (value === undefined || value === null || value === '') {
-                            return;
-                        }
-                        params.append(`filter[${column}]`, value);
-                    });
-
-                    const query = params.toString();
-
-                    return query ? `${base}?${query}` : base;
+                    return `${base}?filters[type][]=${encodeURIComponent(type)}`;
                 }
             }
         });

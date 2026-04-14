@@ -40,7 +40,9 @@ return [
         'description-text' => 'Liste over alle varslinger',
         'marked-success'   => 'Varsling merket som lest',
         'no-record'        => 'Ingen registreringer funnet',
+        'of'               => 'av',
         'read-all'         => 'Merk som lest',
+        'showing'          => 'Viser',
         'title'            => 'Varslinger',
         'view-all'         => 'Vis alle',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => 'Fullført',
             'pending'    => 'Ventende',
             'processing' => 'Behandling pågår',
+            'read'       => 'Lest',
+            'unread'     => 'Ulest',
         ],
     ],
     'account' => [
@@ -383,6 +387,7 @@ return [
                 'success'         => 'Jobb fullført.',
                 'fetch-failed'    => 'Henting mislyktes.',
                 'action'          => 'Masseendring',
+                'description'     => 'Rediger flere produkter samtidig. Endringene behandles i bakgrunnen.',
                 'gallery-preview' => 'Galleri forhåndsvisning',
                 'img-preview'     => 'Bilde forhåndsvisning',
                 'no-image'        => 'Ingen bilde',
@@ -1961,10 +1966,13 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => 'Velg',
-                'title'    => 'Bruk filter',
-                'save'     => 'Lagre',
-                'dropdown' => [
+                'select'        => 'Velg',
+                'title'         => 'Bruk filter',
+                'save'          => 'Lagre',
+                'add-filter'    => 'Legg til filter',
+                'remove-filter' => 'Fjern filter',
+                'search-filter' => 'Søk...',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Skriv minst 2 tegn...',
                         'no-results'        => 'Ingen resultater funnet...',

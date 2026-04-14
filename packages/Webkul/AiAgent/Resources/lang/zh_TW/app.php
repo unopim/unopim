@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => '魔法 AI',
         'general'               => '一般',
         'prompt'                => '提示詞',
         'system-prompt'         => '系統提示詞',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => '魔法 AI',
         'platform'       => '平台',
         'settings'       => '設定',
         'prompt'         => '提示詞',

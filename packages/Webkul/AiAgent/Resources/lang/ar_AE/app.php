@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => 'الذكاء السحري',
         'general'               => 'عام',
         'prompt'                => 'أمر',
         'system-prompt'         => 'أمر النظام',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => 'الذكاء السحري',
         'platform'       => 'المنصات',
         'settings'       => 'الإعدادات',
         'prompt'         => 'الأوامر',

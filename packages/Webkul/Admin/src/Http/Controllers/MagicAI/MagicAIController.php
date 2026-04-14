@@ -93,8 +93,27 @@ class MagicAIController extends Controller
      */
     public function platforms(): JsonResponse
     {
+        $purpose = request()->input('purpose');
+        $platforms = $this->platformRepository->getActivePlatformOptions();
+
+        if ($purpose === 'image_generation') {
+            $platforms = array_values(array_filter(
+                array_map(function ($platform) {
+                    $filtered = AIModel::filterImageModels($platform['models'] ?? [], $platform['id']);
+
+                    if (empty($filtered)) {
+                        return null;
+                    }
+
+                    $platform['models'] = $filtered;
+
+                    return $platform;
+                }, $platforms)
+            ));
+        }
+
         return new JsonResponse([
-            'platforms' => $this->platformRepository->getActivePlatformOptions(),
+            'platforms' => $platforms,
         ]);
     }
 

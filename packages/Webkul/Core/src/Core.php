@@ -261,6 +261,23 @@ class Core
     }
 
     /**
+     * Return all locales that have translation files in the Admin package.
+     *
+     * @return Collection
+     */
+    public function getTranslatableLocales()
+    {
+        $langPath = base_path('packages/Webkul/Admin/src/Resources/lang');
+
+        $availableDirs = array_map('basename', glob($langPath.'/*', GLOB_ONLYDIR) ?: []);
+
+        return $this->localeRepository->all()
+            ->filter(fn ($locale) => in_array($locale->code, $availableDirs))
+            ->sortBy('name')
+            ->values();
+    }
+
+    /**
      * Returns current locale.
      *
      * @return Contracts\Locale

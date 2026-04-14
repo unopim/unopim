@@ -40,7 +40,9 @@ return [
         'description-text' => 'Sebutkan semua pemberitahuan',
         'marked-success'   => 'Pemberitahuan berhasil ditandai',
         'no-record'        => 'Tidak ada catatan yang ditemukan',
+        'of'               => 'dari',
         'read-all'         => 'Tandai sebagai membaca',
+        'showing'          => 'Menampilkan',
         'title'            => 'Pemberitahuan',
         'view-all'         => 'Lihat semua',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => 'Lengkap',
             'pending'    => 'Tertunda',
             'processing' => 'Pengolahan',
+            'read'       => 'Dibaca',
+            'unread'     => 'Belum dibaca',
         ],
     ],
     'account' => [
@@ -383,6 +387,7 @@ return [
                 'success'         => 'Pekerjaan berhasil dijalankan.',
                 'fetch-failed'    => 'Gagal mengambil data.',
                 'action'          => 'Edit Massal',
+                'description'     => 'Edit beberapa produk sekaligus. Perubahan diproses di latar belakang.',
                 'gallery-preview' => 'Pratinjau Galeri',
                 'img-preview'     => 'Pratinjau Gambar',
                 'no-image'        => 'Tidak Ada Gambar',
@@ -1961,10 +1966,13 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => 'Pilih',
-                'title'    => 'Menerapkan filter',
-                'save'     => 'Menyimpan',
-                'dropdown' => [
+                'select'        => 'Pilih',
+                'title'         => 'Menerapkan filter',
+                'save'          => 'Menyimpan',
+                'add-filter'    => 'Tambah Filter',
+                'remove-filter' => 'Hapus Filter',
+                'search-filter' => 'Cari...',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Ketik setidaknya 2 karakter ...',
                         'no-results'        => 'Tidak ada hasil yang ditemukan ...',

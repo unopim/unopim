@@ -40,7 +40,9 @@ return [
         'description-text' => 'Vis alle meddelelser',
         'marked-success'   => 'Meddelelse markeret som læst',
         'no-record'        => 'Ingen poster fundet',
+        'of'               => 'af',
         'read-all'         => 'Markér som læst',
+        'showing'          => 'Viser',
         'title'            => 'Meddelelser',
         'view-all'         => 'Vis alle',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => 'Fuldført',
             'pending'    => 'Afventer',
             'processing' => 'Behandler',
+            'read'       => 'Læst',
+            'unread'     => 'Ulæst',
         ],
     ],
     'account' => [
@@ -383,6 +387,7 @@ return [
                 'success'         => 'Handling gennemført med succes.',
                 'fetch-failed'    => 'Hentning mislykkedes.',
                 'action'          => 'Masseændring',
+                'description'     => 'Rediger flere produkter på én gang. Ændringerne behandles i baggrunden.',
                 'gallery-preview' => 'Galleri forhåndsvisning',
                 'img-preview'     => 'Billedforhåndsvisning',
                 'no-image'        => 'Intet billede',
@@ -1961,10 +1966,13 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => 'Vælg',
-                'title'    => 'Anvend filtre',
-                'save'     => 'Gem',
-                'dropdown' => [
+                'select'        => 'Vælg',
+                'title'         => 'Anvend filtre',
+                'save'          => 'Gem',
+                'add-filter'    => 'Tilføj filter',
+                'remove-filter' => 'Fjern filter',
+                'search-filter' => 'Søg...',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Skriv mindst 2 tegn...',
                         'no-results'        => 'Ingen resultater fundet...',

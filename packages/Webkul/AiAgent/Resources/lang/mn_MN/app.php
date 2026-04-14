@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => 'Ид шидэт AI',
         'general'               => 'Ерөнхий',
         'prompt'                => 'Промпт',
         'system-prompt'         => 'Системийн промпт',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => 'Ид шидэт AI',
         'platform'       => 'Платформууд',
         'settings'       => 'Тохиргоо',
         'prompt'         => 'Промптууд',

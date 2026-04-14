@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => 'Magisk AI',
         'general'               => 'Generelt',
         'prompt'                => 'Ledetekst',
         'system-prompt'         => 'Systemledetekst',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => 'Magisk AI',
         'platform'       => 'Plattformer',
         'settings'       => 'Innstillinger',
         'prompt'         => 'Ledetekster',

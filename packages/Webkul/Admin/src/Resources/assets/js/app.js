@@ -24,13 +24,21 @@ window.app = createApp({
                 const errorKeys = Object.entries(errors)
                     .map(([key, value]) => ({ key, value }))
                     .filter(error => error["value"].length);
-        
+
+                if (! errorKeys.length) return;
+
                 let firstErrorElement = document.querySelector('[name="' + errorKeys[0]["key"] + '"]');
-                
+
+                if (! firstErrorElement) return;
+
                 firstErrorElement.scrollIntoView({
                     behavior: "smooth",
                     block: "center"
                 });
+
+                setTimeout(() => {
+                    firstErrorElement.focus();
+                }, 500);
             }, 100);
         },
     },

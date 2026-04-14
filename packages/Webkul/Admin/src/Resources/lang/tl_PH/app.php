@@ -40,7 +40,9 @@ return [
         'description-text' => 'Listahan ng lahat ng Notifications',
         'marked-success'   => 'Notification na Marked bilang Nabasang Tagumpay',
         'no-record'        => 'Walang Record na Natagpuan',
+        'of'               => 'sa',
         'read-all'         => 'Markahan bilang Basang Lahat',
+        'showing'          => 'Ipinapakita',
         'title'            => 'Mga Abiso',
         'view-all'         => 'Tingnan ang Lahat',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => 'Nakatapos',
             'pending'    => 'Nasa Paghihintay',
             'processing' => 'Pinoproseso',
+            'read'       => 'Nabasa',
+            'unread'     => 'Hindi nabasa',
         ],
     ],
     'account' => [
@@ -383,6 +387,7 @@ return [
                 'success'         => 'Matagumpay na naisagawa ang gawain.',
                 'fetch-failed'    => 'Hindi nakuha ang datos.',
                 'action'          => 'Maramihang Pag-edit',
+                'description'     => 'I-edit ang maraming produkto nang sabay-sabay. Ang mga pagbabago ay pinoproseso sa background.',
                 'gallery-preview' => 'Preview ng Gallery',
                 'img-preview'     => 'Preview ng Imahe',
                 'no-image'        => 'Walang Imahe',
@@ -1961,10 +1966,13 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => 'Pumili',
-                'title'    => 'Mag-apply ng Mga Salain',
-                'save'     => 'I-save',
-                'dropdown' => [
+                'select'        => 'Pumili',
+                'title'         => 'Mag-apply ng Mga Salain',
+                'save'          => 'I-save',
+                'add-filter'    => 'Magdagdag ng Filter',
+                'remove-filter' => 'Alisin ang Filter',
+                'search-filter' => 'Maghanap...',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Mag-type ng hindi bababa sa 2 karakter...',
                         'no-results'        => 'Walang natagpuang resulta...',

@@ -40,7 +40,9 @@ return [
         'description-text' => 'すべての通知を一覧表示',
         'marked-success'   => '通知が正常にマークされました',
         'no-record'        => 'レコードが見つかりません',
+        'of'               => '件中',
         'read-all'         => '既読としてマーク',
+        'showing'          => '表示中',
         'title'            => '通知',
         'view-all'         => 'すべて表示',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => '完了済み',
             'pending'    => '保留中',
             'processing' => '処理中',
+            'read'       => '既読',
+            'unread'     => '未読',
         ],
     ],
     'account' => [
@@ -383,6 +387,7 @@ return [
                 'success'         => 'ジョブが正常に実行されました。',
                 'fetch-failed'    => '取得に失敗しました。',
                 'action'          => '一括編集',
+                'description'     => '複数の商品を一括編集します。変更はバックグラウンドで処理されます。',
                 'gallery-preview' => 'ギャラリープレビュー',
                 'img-preview'     => '画像プレビュー',
                 'no-image'        => '画像なし',
@@ -1961,10 +1966,13 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => '選択',
-                'title'    => 'フィルターを適用',
-                'save'     => '保存',
-                'dropdown' => [
+                'select'        => '選択',
+                'title'         => 'フィルターを適用',
+                'save'          => '保存',
+                'add-filter'    => 'フィルターを追加',
+                'remove-filter' => 'フィルターを削除',
+                'search-filter' => '検索...',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => '少なくとも 2 文字を入力してください...',
                         'no-results'        => '結果が見つかりません...',

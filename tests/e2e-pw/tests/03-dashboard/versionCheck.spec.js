@@ -37,19 +37,26 @@ test('1.2 - Clicking profile button opens dropdown', async ({ adminPage }) => {
   await expect(adminPage.getByRole('link', { name: 'Logout' })).toBeVisible();
 });
 
-test('1.3 - Profile dropdown shows version string in format "Version : vX.X.X"', async ({ adminPage }) => {
+test('1.3 - Profile dropdown shows version string in format "Version : X.X.X" without redundant v prefix', async ({ adminPage }) => {
   await openProfileDropdown(adminPage);
 
-  const versionLocator = adminPage.locator('#app').getByText(/Version\s*:\s*v\d+\.\d+\.\d+/);
+  const versionLocator = adminPage.locator('#app').getByText(/Version\s*:\s*\d+\.\d+\.\d+/);
   await expect(versionLocator).toBeVisible();
   const versionText = await versionLocator.innerText();
-  expect(versionText).toMatch(/Version\s*:\s*v\d+\.\d+\.\d+/);
+  // Must NOT contain "v" prefix before the version number
+  expect(versionText).toMatch(/Version\s*:\s*\d+\.\d+\.\d+/);
+  expect(versionText).not.toMatch(/Version\s*:\s*v\d+/);
 });
 
-test('1.4 - Version displays v2.0.1', async ({ adminPage }) => {
+test('1.4 - Regression: version never displays redundant v prefix', async ({ adminPage }) => {
   await openProfileDropdown(adminPage);
 
-  await expect(adminPage.locator('#app').getByText(/Version\s*:\s*v2\.0\.1/)).toBeVisible();
+  const versionEl = adminPage.locator('#app').getByText(/Version\s*:/);
+  await expect(versionEl).toBeVisible();
+  const text = await versionEl.innerText();
+  // Version label already says "Version", so the value must be plain semver (e.g. "2.0.1"), never "v2.0.1"
+  expect(text).not.toMatch(/:\s*v\d/);
+  expect(text).toMatch(/:\s*\d+\.\d+\.\d+/);
 });
 
 test('1.5 - Profile dropdown shows UnoPim logo icon next to version', async ({ adminPage }) => {

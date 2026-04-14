@@ -14,29 +14,29 @@ beforeEach(function () {
 it('renders the dashboard product-stats widget without errors', function () {
     $this->get(route('admin.dashboard.index'))
         ->assertOk()
-        // The new clickable filter chips depend on this Vue helper.
-        ->assertSee('productsUrl', false);
+        ->assertSee('v-dashboard-product-stats', false);
 });
 
-it('renders the Active stat as a status=true filter link', function () {
+it('renders the Active stat as a status=1 filter link', function () {
     $this->get(route('admin.dashboard.index'))
         ->assertOk()
-        ->assertSee("productsUrl({ status: 'true' })", false);
+        ->assertSee('filters[status][]=1', false);
 });
 
-it('renders the Inactive stat as a status=false filter link', function () {
+it('renders the Inactive stat as a status=0 filter link', function () {
     $this->get(route('admin.dashboard.index'))
         ->assertOk()
-        ->assertSee("productsUrl({ status: 'false' })", false);
+        ->assertSee('filters[status][]=0', false);
 });
 
 it('renders the type-distribution legend chips as type filter links', function () {
     $this->get(route('admin.dashboard.index'))
         ->assertOk()
-        // The legend loop binds :href="productsUrl({ type })" — present in the
-        // template even when the user has zero products of that type because
-        // the loop iterates the typeDistribution payload from the AJAX call.
-        ->assertSee('productsUrl({ type })', false);
+        // The legend loop binds :href="typeFilterUrl(type)" — the helper
+        // builds /admin/catalog/products?filters[type][]=<type>. We assert
+        // the helper name is present in the inlined Vue template so a
+        // future refactor away from it triggers a test failure.
+        ->assertSee('typeFilterUrl(type)', false);
 });
 
 it('returns the product-stats payload from the dashboard stats endpoint', function () {
@@ -51,16 +51,20 @@ it('returns the product-stats payload from the dashboard stats endpoint', functi
             'totalProducts',
             'statusBreakdown',
             'typeDistribution',
+            'withVariants',
         ],
     ]);
 });
 
 it('counts a configurable product that has a variant in withVariants', function () {
     // Reproduces Internal-679: the dashboard "With Variants" stat showed 0
-    // even when configurable products had variants, because the helper
-    // queried a `product_relations` table that is unused for variant
-    // storage. Variants live on `products.parent_id` (see ProductRepository
-    // line 127, ProductFactory::withVariantProduct).
+    // (or a misleading number from the unrelated product_relations table)
+    // even when configurable products had real variants, because the helper
+    // queried the wrong table. Variants live on products.parent_id (see
+    // ProductRepository line 127, ProductFactory::withVariantProduct).
+    Cache::forget('dashboard.product_stats');
+    $baseline = app(Dashboard::class)->getProductStats()['withVariants'];
+
     $configurable = Product::factory()
         ->configurable()
         ->withVariantProduct()
@@ -70,18 +74,22 @@ it('counts a configurable product that has a variant in withVariants', function 
         ->and(Product::where('parent_id', $configurable->id)->count())->toBeGreaterThan(0);
 
     Cache::forget('dashboard.product_stats');
-
     $stats = app(Dashboard::class)->getProductStats();
 
-    expect($stats['withVariants'])->toBeGreaterThanOrEqual(1);
+    // Delta-assertion so the test works regardless of pre-existing data
+    // in the shared dev database.
+    expect($stats['withVariants'])->toBe($baseline + 1);
 });
 
-it('does not count a configurable product without variants in withVariants', function () {
+it('does not count a bare configurable without variants in withVariants', function () {
+    Cache::forget('dashboard.product_stats');
+    $baseline = app(Dashboard::class)->getProductStats()['withVariants'];
+
     Product::factory()->configurable()->create();
 
     Cache::forget('dashboard.product_stats');
-
     $stats = app(Dashboard::class)->getProductStats();
 
-    expect($stats['withVariants'])->toBe(0);
+    // The count must not move when a configurable has no child rows.
+    expect($stats['withVariants'])->toBe($baseline);
 });

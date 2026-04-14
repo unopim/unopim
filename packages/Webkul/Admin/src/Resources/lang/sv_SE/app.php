@@ -40,7 +40,9 @@ return [
         'description-text' => 'Lista över alla meddelanden',
         'marked-success'   => 'Meddelande markerat som läst',
         'no-record'        => 'Inget fyndat',
+        'of'               => 'av',
         'read-all'         => 'Markera alla som lästa',
+        'showing'          => 'Visar',
         'title'            => 'Meddelanden',
         'view-all'         => 'Visa alla',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => 'Slutförd',
             'pending'    => 'Väntar',
             'processing' => 'Bearbetning',
+            'read'       => 'Lästa',
+            'unread'     => 'Olästa',
         ],
     ],
     'account' => [
@@ -383,6 +387,7 @@ return [
                 'success'         => 'Uppgiften har utförts.',
                 'fetch-failed'    => 'Misslyckades med att hämta.',
                 'action'          => 'Massredigering',
+                'description'     => 'Redigera flera produkter samtidigt. Ändringar bearbetas i bakgrunden.',
                 'gallery-preview' => 'Galleri Förhandsgranskning',
                 'img-preview'     => 'Bildförhandsvisning',
                 'no-image'        => 'Ingen bild',
@@ -1961,10 +1966,13 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => 'Välj',
-                'title'    => 'Använd Filter',
-                'save'     => 'Spara',
-                'dropdown' => [
+                'select'        => 'Välj',
+                'title'         => 'Använd Filter',
+                'save'          => 'Spara',
+                'add-filter'    => 'Lägg till filter',
+                'remove-filter' => 'Ta bort filter',
+                'search-filter' => 'Sök...',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Skriv minst 2 tecken...',
                         'no-results'        => 'Inga resultat funna...',

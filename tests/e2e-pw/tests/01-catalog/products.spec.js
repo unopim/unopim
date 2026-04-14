@@ -479,6 +479,47 @@ test.describe('Product Listing Features', () => {
     await expect(adminPage.locator('#app').getByText('Download')).toBeVisible();
   });
 
+  test('32a - should download XLS file via quick export without errors', async ({ adminPage }) => {
+    test.setTimeout(60000);
+    const sku = `qexp-${generateUid()}`;
+    await createSimpleProduct(adminPage, sku);
+
+    await navigateTo(adminPage, 'products');
+    await adminPage.waitForLoadState('networkidle');
+
+    // Select the product using its row mass-action checkbox.
+    // The datagrid has TWO types of `.peer hidden` checkboxes:
+    //   - #mass_action_select_all_records (header, select-all)
+    //   - mass_action_select_record_${id} (per row)
+    // Use the row checkbox selector to target a single product row.
+    // The checkbox is `display: none` by design; click the label instead.
+    const rowCheckboxLabel = adminPage.locator('label[for^="mass_action_select_record_"]').first();
+    await rowCheckboxLabel.waitFor({ state: 'visible', timeout: 10000 });
+    await rowCheckboxLabel.click();
+
+    // Open Quick Export modal
+    await adminPage.getByRole('button', { name: 'Quick Export' }).click();
+    await expect(adminPage.locator('#app').getByText('Download')).toBeVisible();
+
+    // XLS is the default format, so just click the Export button and wait for download
+    const [download] = await Promise.all([
+      adminPage.waitForEvent('download', { timeout: 30000 }).catch(() => null),
+      adminPage.locator('.primary-button').filter({ hasText: 'Quick Export' }).click(),
+    ]);
+
+    // If download event fires, the export succeeded as a file download
+    if (download) {
+      const fileName = download.suggestedFilename();
+      expect(fileName).toMatch(/\.(xls|xlsx)$/);
+    } else {
+      // If no download event, verify no error was shown (AJAX blob approach)
+      await expect(adminPage.locator('#app').getByText(/Return value must be of type/i)).not.toBeVisible({ timeout: 5000 });
+    }
+
+    // Cleanup
+    await deleteProductBySku(adminPage, sku);
+  });
+
   test('33 - should allow selecting all products with mass action checkbox', async ({ adminPage }) => {
     await navigateTo(adminPage, 'products');
     await adminPage.click('label[for="mass_action_select_all_records"]');

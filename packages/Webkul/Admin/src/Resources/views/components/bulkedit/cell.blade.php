@@ -2,8 +2,12 @@
     <script type="text/x-template" id="v-spreadsheet-cell-template">
         <td
             tabindex="0"
-            class="relative text-sm border-box whitespace-nowrap focus:outline-none"
-            :class="{ 'border border-gray-600 dark:border-white': isActive || isSelected }"
+            class="relative text-sm border border-gray-200 dark:border-cherry-700 whitespace-nowrap focus:outline-none"
+            :class="{
+                'z-[2]': isActive,
+                'bg-violet-50 dark:bg-violet-900/30': isSelected && !isActive
+            }"
+            :style="isActive ? 'box-shadow: inset 0 0 0 2px var(--active-cell-color, #7c3aed); outline: none;' : ''"
             :data-row="rowId"
             :data-col="colId"
             @click="onClick"
@@ -25,7 +29,7 @@
             />
             <div
                 v-if="isActive"
-                class="absolute bottom-[-3px] right-[-2px] w-[9px] h-[9px] dark:bg-white bg-cherry-800 cursor-crosshair z-10"
+                class="absolute bottom-[-4px] right-[-4px] w-[8px] h-[8px] bg-violet-600 dark:bg-violet-400 cursor-crosshair z-10 rounded-sm"
                 @mousedown.stop.prevent="onDragHandleDown($event)"
             ></div>
         </td>

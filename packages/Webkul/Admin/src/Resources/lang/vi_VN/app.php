@@ -40,7 +40,9 @@ return [
         'description-text' => 'Danh sách tất cả các thông báo',
         'marked-success'   => 'Thông báo đã được đánh dấu thành công',
         'no-record'        => 'Không tìm thấy bản ghi nào',
+        'of'               => 'trong',
         'read-all'         => 'Đánh dấu tất cả là đã đọc',
+        'showing'          => 'Đang hiển thị',
         'title'            => 'Thông báo',
         'view-all'         => 'Xem tất cả',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => 'Hoàn thành',
             'pending'    => 'Đang chờ xử lý',
             'processing' => 'Đang xử lý',
+            'read'       => 'Đã đọc',
+            'unread'     => 'Chưa đọc',
         ],
     ],
     'account' => [
@@ -383,6 +387,7 @@ return [
                 'success'         => 'Thực thi công việc thành công.',
                 'fetch-failed'    => 'Lấy dữ liệu thất bại.',
                 'action'          => 'Chỉnh sửa hàng loạt',
+                'description'     => 'Chỉnh sửa nhiều sản phẩm cùng lúc. Các thay đổi được xử lý trong nền.',
                 'gallery-preview' => 'Xem trước thư viện',
                 'img-preview'     => 'Xem trước hình ảnh',
                 'no-image'        => 'Không có hình ảnh',
@@ -1961,10 +1966,13 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => 'Chọn',
-                'title'    => 'Áp dụng bộ lọc',
-                'save'     => 'Lưu',
-                'dropdown' => [
+                'select'        => 'Chọn',
+                'title'         => 'Áp dụng bộ lọc',
+                'save'          => 'Lưu',
+                'add-filter'    => 'Thêm bộ lọc',
+                'remove-filter' => 'Xóa bộ lọc',
+                'search-filter' => 'Tìm kiếm...',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Nhập ít nhất 2 ký tự...',
                         'no-results'        => 'Không tìm thấy kết quả...',

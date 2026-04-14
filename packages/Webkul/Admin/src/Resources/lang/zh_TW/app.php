@@ -40,7 +40,9 @@ return [
         'description-text' => '列出所有通知',
         'marked-success'   => '通知成功標記',
         'no-record'        => '找不到記錄',
+        'of'               => '共',
         'read-all'         => '標記為已讀',
+        'showing'          => '顯示',
         'title'            => '通知',
         'view-all'         => '查看全部',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => '已完成',
             'pending'    => '待處理',
             'processing' => '處理中',
+            'read'       => '已讀',
+            'unread'     => '未讀',
         ],
     ],
     'account' => [
@@ -383,6 +387,7 @@ return [
                 'success'         => '任務執行成功。',
                 'fetch-failed'    => '取得資料失敗。',
                 'action'          => '批次編輯',
+                'description'     => '一次編輯多個產品。變更將在背景中處理。',
                 'gallery-preview' => '圖庫預覽',
                 'img-preview'     => '圖片預覽',
                 'no-image'        => '無圖片',
@@ -1961,10 +1966,13 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => '選擇',
-                'title'    => '應用過濾器',
-                'save'     => '保存',
-                'dropdown' => [
+                'select'        => '選擇',
+                'title'         => '應用過濾器',
+                'save'          => '保存',
+                'add-filter'    => '新增篩選',
+                'remove-filter' => '移除篩選',
+                'search-filter' => '搜尋...',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => '至少輸入2個字符...',
                         'no-results'        => '未找到結果...',

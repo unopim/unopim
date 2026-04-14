@@ -40,7 +40,9 @@ return [
         'description-text' => 'Lista de todas las notificaciones',
         'marked-success'   => 'Notificación marcada con éxito',
         'no-record'        => 'No se encontraron registros',
+        'of'               => 'de',
         'read-all'         => 'Marcar como leído',
+        'showing'          => 'Mostrando',
         'title'            => 'Notificaciones',
         'view-all'         => 'Ver todas',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => 'Completado',
             'pending'    => 'Pendiente',
             'processing' => 'En proceso',
+            'read'       => 'Leídas',
+            'unread'     => 'No leídas',
         ],
     ],
     'account' => [
@@ -383,6 +387,7 @@ return [
                 'success'         => 'Operación realizada con éxito.',
                 'fetch-failed'    => 'Error al obtener los datos.',
                 'action'          => 'Edición masiva',
+                'description'     => 'Editar varios productos a la vez. Los cambios se procesan en segundo plano.',
                 'gallery-preview' => 'Vista previa de galería',
                 'img-preview'     => 'Vista previa de imagen',
                 'no-image'        => 'Sin imagen',
@@ -1961,10 +1966,13 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => 'Seleccionar',
-                'title'    => 'Aplicar filtros',
-                'save'     => 'Guardar',
-                'dropdown' => [
+                'select'        => 'Seleccionar',
+                'title'         => 'Aplicar filtros',
+                'save'          => 'Guardar',
+                'add-filter'    => 'Agregar filtro',
+                'remove-filter' => 'Eliminar filtro',
+                'search-filter' => 'Buscar...',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Escribe al menos 2 caracteres...',
                         'no-results'        => 'No se encontraron resultados...',

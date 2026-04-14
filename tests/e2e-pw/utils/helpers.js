@@ -22,6 +22,7 @@ const ROUTES = {
   exports:           '/admin/settings/data-transfer/exports',
   imports:           '/admin/settings/data-transfer/imports',
   configuration:     '/admin/configuration',
+  notifications:     '/admin/notifications',
 };
 
 /**

@@ -40,7 +40,9 @@ return [
         'description-text' => 'Luettelo kaikista ilmoituksista',
         'marked-success'   => 'Ilmoitus merkitty onnistuneesti',
         'no-record'        => 'Tietueita ei löytynyt',
+        'of'               => '/',
         'read-all'         => 'Merkitse luetuksi',
+        'showing'          => 'Näytetään',
         'title'            => 'Ilmoitukset',
         'view-all'         => 'Näytä kaikki',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => 'Valmis',
             'pending'    => 'Odottaa',
             'processing' => 'Käsitellään',
+            'read'       => 'Luettu',
+            'unread'     => 'Lukematon',
         ],
     ],
     'account' => [
@@ -383,6 +387,7 @@ return [
                 'success'         => 'Toiminto suoritettu onnistuneesti.',
                 'fetch-failed'    => 'Tietojen haku epäonnistui.',
                 'action'          => 'Massamuokkaus',
+                'description'     => 'Muokkaa useita tuotteita kerralla. Muutokset käsitellään taustalla.',
                 'gallery-preview' => 'Gallerian esikatselu',
                 'img-preview'     => 'Kuvan esikatselu',
                 'no-image'        => 'Ei kuvaa',
@@ -1961,10 +1966,13 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => 'Valitse',
-                'title'    => 'Määritä suodattimet',
-                'save'     => 'Tallenna',
-                'dropdown' => [
+                'select'        => 'Valitse',
+                'title'         => 'Määritä suodattimet',
+                'save'          => 'Tallenna',
+                'add-filter'    => 'Lisää suodatin',
+                'remove-filter' => 'Poista suodatin',
+                'search-filter' => 'Haku...',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Kirjoita vähintään 2 merkkiä...',
                         'no-results'        => 'Ei tuloksia...',

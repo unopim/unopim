@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => 'Mahiwagang AI',
         'general'               => 'Pangkalahatan',
         'prompt'                => 'Prompt',
         'system-prompt'         => 'System Prompt',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => 'Mahiwagang AI',
         'platform'       => 'Mga Plataporma',
         'settings'       => 'Mga Setting',
         'prompt'         => 'Mga Prompt',

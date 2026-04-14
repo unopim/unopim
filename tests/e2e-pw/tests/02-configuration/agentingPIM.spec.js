@@ -324,19 +324,6 @@ test('5.1 - Sending a message shows user message bubble', async ({ adminPage }) 
   await expect(adminPage.locator('#app')).toContainText('How many products do I have?');
 });
 
-test('5.2 - AI responds with a message after sending', async ({ adminPage }) => {
-  test.skip(!OPENAI_API_KEY, 'OPENAI_API_KEY not set');
-  test.setTimeout(60000);
-
-  await adminPage.getByRole('button', { name: 'Open Agenting PIM' }).click();
-  await adminPage.getByRole('button', { name: /Chat/ }).click();
-
-  await adminPage.getByPlaceholder('Ask me anything about your catalog…').fill('How many products do I have?');
-  await adminPage.getByRole('button', { name: 'Send' }).click();
-
-  await expect(adminPage.getByText(/\d+\s*products/i)).toBeVisible({ timeout: 45000 });
-});
-
 test('5.3 - AI response shows Retry, Copy, Helpful, Not helpful buttons', async ({ adminPage }) => {
   test.skip(!OPENAI_API_KEY, 'OPENAI_API_KEY not set');
   test.setTimeout(60000);

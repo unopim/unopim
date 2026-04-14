@@ -40,7 +40,9 @@ return [
         'description-text' => 'Llistar totes les notificacions',
         'marked-success'   => 'Notificació marcada correctament',
         'no-record'        => 'No s’ha trobat cap registre',
+        'of'               => 'de',
         'read-all'         => 'Marcar com a llegides',
+        'showing'          => 'Mostrant',
         'title'            => 'Notificacions',
         'view-all'         => 'Veure totes',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => 'Completades',
             'pending'    => 'Pendents',
             'processing' => 'En procés',
+            'read'       => 'Llegides',
+            'unread'     => 'No llegides',
         ],
     ],
     'account' => [
@@ -383,6 +387,7 @@ return [
                 'success'         => 'Operació completada amb èxit.',
                 'fetch-failed'    => 'Error en obtenir les dades.',
                 'action'          => 'Edició en massa',
+                'description'     => 'Editeu diversos productes alhora. Els canvis es processen en segon pla.',
                 'gallery-preview' => 'Previsualització de la galeria',
                 'img-preview'     => 'Previsualització de la imatge',
                 'no-image'        => 'Sense imatge',
@@ -1961,10 +1966,13 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => 'Seleccionar',
-                'title'    => 'Aplicar filtros',
-                'save'     => 'Guardar',
-                'dropdown' => [
+                'select'        => 'Seleccionar',
+                'title'         => 'Aplicar filtros',
+                'save'          => 'Guardar',
+                'add-filter'    => 'Afegir filtre',
+                'remove-filter' => 'Eliminar filtre',
+                'search-filter' => 'Cerca...',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Escribe al menos 2 caracteres...',
                         'no-results'        => 'No se encontraron resultados...',

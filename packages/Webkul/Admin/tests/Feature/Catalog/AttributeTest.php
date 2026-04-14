@@ -392,7 +392,7 @@ it('should create attribute option with color swatch_value for select type', fun
     $locale = Locale::where('status', 1)->first();
     $color = fake()->hexColor();
     $label = fake()->word();
-    $optionCode = 'opt_'.Str::random(8);
+    $optionCode = 'opt_'.Str::random(10);
     $data = [
         'code'        => $attribute->code,
         'type'        => $attribute->type,
@@ -484,7 +484,7 @@ it('should create attribute option with image swatch_value for select type', fun
 
     $imageUrl = fake()->imageUrl(100, 100);
     $label = fake()->word();
-    $optionCode = 'opt_'.Str::random(8);
+    $optionCode = 'opt_'.Str::random(10);
 
     $data = [
         'code'        => $attribute->code,

@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => 'IA Mágica',
         'general'               => 'Geral',
         'prompt'                => 'Prompt',
         'system-prompt'         => 'Prompt do Sistema',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => 'IA Mágica',
         'platform'       => 'Plataformas',
         'settings'       => 'Configurações',
         'prompt'         => 'Prompts',

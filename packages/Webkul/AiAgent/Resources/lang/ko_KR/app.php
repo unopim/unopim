@@ -3,7 +3,7 @@
 return [
 
     'acl' => [
-        'ai-agent'              => 'Magic AI',
+        'ai-agent'              => '매직 AI',
         'general'               => '일반',
         'prompt'                => '프롬프트',
         'system-prompt'         => '시스템 프롬프트',
@@ -20,7 +20,7 @@ return [
     ],
 
     'menu' => [
-        'ai-agent'       => 'Magic AI',
+        'ai-agent'       => '매직 AI',
         'platform'       => '플랫폼',
         'settings'       => '설정',
         'prompt'         => '프롬프트',

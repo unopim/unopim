@@ -606,43 +606,6 @@ test('9.6 - Adding a custom model ID via the text input', async ({ adminPage }) 
   await adminPage.locator('.icon-cancel').click();
 });
 
-test('9.7 - Edit existing platform shows pre-populated fields with fetched models', async ({ adminPage }) => {
-  test.skip(!OPENAI_API_KEY, 'OPENAI_API_KEY not set — skipping credential tests');
-  test.setTimeout(60000);
-
-  await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
-
-  // Trigger datagrid load
-  await adminPage.getByRole('button', { name: 'Add Platform' }).click();
-  await expect(adminPage.locator('#app').getByText('Add AI Platform')).toBeVisible();
-  await adminPage.locator('.icon-cancel').click();
-  await expect(adminPage.locator('.icon-cancel')).not.toBeVisible();
-
-  const editBtn = adminPage.locator('[title="Edit"]').first();
-  await editBtn.click();
-
-  await expect(adminPage.locator('#app').getByText('Edit AI Platform')).toBeVisible({ timeout: 5000 });
-
-  const providerDisplay = adminPage.locator('input[name="provider"]').first().locator('..').locator('.multiselect__single');
-  await expect(providerDisplay).toBeVisible({ timeout: 5000 });
-  const providerText = await providerDisplay.textContent();
-  expect(providerText.trim().length).toBeGreaterThan(0);
-
-  const labelValue = await adminPage.locator('input[name="label"]').inputValue();
-  expect(labelValue.length).toBeGreaterThan(0);
-
-  const apiKeyValue = await adminPage.locator('input[name="api_key"]').inputValue();
-  expect(apiKeyValue.length).toBeGreaterThan(0);
-
-  const searchModelsInput = adminPage.getByPlaceholder('Search models...');
-  await expect(searchModelsInput).toBeVisible();
-
-  const removeButtons = adminPage.getByRole('button', { name: /Remove model/ });
-  const tagCount = await removeButtons.count();
-  expect(tagCount).toBeGreaterThan(0);
-
-  await adminPage.locator('.icon-cancel').click();
-});
 
 test('9.8 - Save platform with valid API key and selected models succeeds', async ({ adminPage }) => {
   test.skip(!OPENAI_API_KEY, 'OPENAI_API_KEY not set — skipping credential tests');

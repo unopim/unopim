@@ -338,3 +338,31 @@ it('should allow a superadmin to assign all-access role', function () {
         'role_id' => $allAccessRole->id,
     ]);
 });
+
+// ─── Login UX: Email preservation on failed login ───────────────────
+
+it('should preserve email field when login fails with wrong password', function () {
+    $this->withoutMiddleware(ThrottleRequests::class);
+
+    $email = 'admin@example.com';
+
+    $response = post(route('admin.session.store'), [
+        'email'    => $email,
+        'password' => 'wrong-password',
+    ]);
+
+    $response->assertRedirect(route('admin.session.create'));
+    $response->assertSessionHasInput('email', $email);
+});
+
+it('should not preserve password field when login fails', function () {
+    $this->withoutMiddleware(ThrottleRequests::class);
+
+    $response = post(route('admin.session.store'), [
+        'email'    => 'admin@example.com',
+        'password' => 'wrong-password',
+    ]);
+
+    $response->assertRedirect(route('admin.session.create'));
+    $response->assertSessionMissing('_old_input.password');
+});

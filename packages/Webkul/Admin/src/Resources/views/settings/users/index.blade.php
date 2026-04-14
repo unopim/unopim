@@ -104,8 +104,9 @@
                 <template #body="{ columns, records, performAction }">
                     <div
                         v-for="record in records"
-                        class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-violet-50 dark:hover:bg-cherry-800"
+                        class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
                         :style="'grid-template-columns: repeat(' + (record.actions.length ? 6 : 5) + ', minmax(0, 1fr));'"
+                        @click="id=1; editModal(record.actions.find(action => action.index === 'edit')?.url)"
                     >
                         <!-- Id -->
                         <p v-text="record.user_id"></p>
@@ -136,8 +137,9 @@
                                 </div>
 
                                 <div
-                                    class="text-sm"
+                                    class="text-sm truncate"
                                     v-text="record.user_name"
+                                    :title="record.user_name"
                                 >
                                 </div>
                             </div>
@@ -147,13 +149,13 @@
                         <p v-html="record.status"></p>
 
                         <!-- Email -->
-                        <p class="break-words" v-text="record.email"></p>
+                        <p class="truncate" v-text="record.email" :title="record.email"></p>
 
                         <!-- Role -->
-                        <p v-text="record.role_name"></p>
+                        <p v-text="record.role_name" class="truncate" :title="record.role_name"></p>
 
                         <!-- Actions -->
-                        <div class="flex justify-end">
+                        <div class="flex justify-end" @click.stop>
                             <a @click="id=1; editModal(record.actions.find(action => action.index === 'edit')?.url)">
                                 <span
                                     :class="record.actions.find(action => action.index === 'edit')?.icon"
@@ -299,7 +301,7 @@
                                 </x-admin::form.control-group.label>
 
                                 @php
-                                    $locales = core()->getAllActiveLocales();
+                                    $locales = core()->getTranslatableLocales();
                                 @endphp
 
                                 <x-admin::form.control-group.control

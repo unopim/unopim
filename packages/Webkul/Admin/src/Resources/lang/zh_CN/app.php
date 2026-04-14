@@ -40,7 +40,9 @@ return [
         'description-text' => '列出所有通知',
         'marked-success'   => '通知成功地标记了',
         'no-record'        => '没有找到记录',
+        'of'               => '共',
         'read-all'         => '标记为已读',
+        'showing'          => '显示',
         'title'            => '通知',
         'view-all'         => '查看全部',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => '完全的',
             'pending'    => '待办的',
             'processing' => '加工',
+            'read'       => '已读',
+            'unread'     => '未读',
         ],
     ],
     'account' => [
@@ -383,6 +387,7 @@ return [
                 'success'         => '任务已成功执行。',
                 'fetch-failed'    => '获取失败。',
                 'action'          => '批量编辑',
+                'description'     => '一次编辑多个产品。更改将在后台处理。',
                 'gallery-preview' => '图库预览',
                 'img-preview'     => '图片预览',
                 'no-image'        => '无图片',
@@ -1961,10 +1966,13 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => '选择',
-                'title'    => '应用过滤器',
-                'save'     => '节省',
-                'dropdown' => [
+                'select'        => '选择',
+                'title'         => '应用过滤器',
+                'save'          => '节省',
+                'add-filter'    => '添加筛选',
+                'remove-filter' => '移除筛选',
+                'search-filter' => '搜索...',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => '输入至少2个字符...',
                         'no-results'        => '找不到结果...',

@@ -40,7 +40,9 @@ return [
         'description-text' => 'Alle Benachrichtigungen auflisten',
         'marked-success'   => 'Benachrichtigung erfolgreich markiert',
         'no-record'        => 'Kein Datensatz gefunden',
+        'of'               => 'von',
         'read-all'         => 'Als gelesen markieren',
+        'showing'          => 'Anzeige',
         'title'            => 'Benachrichtigungen',
         'view-all'         => 'Alle anzeigen',
         'status'           => [
@@ -50,6 +52,8 @@ return [
             'completed'  => 'Abgeschlossen',
             'pending'    => 'Ausstehend',
             'processing' => 'In Bearbeitung',
+            'read'       => 'Gelesen',
+            'unread'     => 'Ungelesen',
         ],
     ],
     'account' => [
@@ -383,6 +387,7 @@ return [
                 'success'         => 'Vorgang erfolgreich abgeschlossen.',
                 'fetch-failed'    => 'Abruf fehlgeschlagen.',
                 'action'          => 'Massenbearbeitung',
+                'description'     => 'Mehrere Produkte gleichzeitig bearbeiten. Änderungen werden im Hintergrund verarbeitet.',
                 'gallery-preview' => 'Galerievorschau',
                 'img-preview'     => 'Bildvorschau',
                 'no-image'        => 'Kein Bild',
@@ -1961,10 +1966,13 @@ return [
                 ],
             ],
             'filters' => [
-                'select'   => 'Auswählen',
-                'title'    => 'Filter anwenden',
-                'save'     => 'Speichern',
-                'dropdown' => [
+                'select'        => 'Auswählen',
+                'title'         => 'Filter anwenden',
+                'save'          => 'Speichern',
+                'add-filter'    => 'Filter hinzufügen',
+                'remove-filter' => 'Filter entfernen',
+                'search-filter' => 'Suche...',
+                'dropdown'      => [
                     'searchable' => [
                         'atleast-two-chars' => 'Geben Sie mindestens 2 Zeichen ein...',
                         'no-results'        => 'Kein Ergebnis gefunden...',
