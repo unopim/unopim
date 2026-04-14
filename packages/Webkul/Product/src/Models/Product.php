@@ -15,7 +15,6 @@ use Shetabit\Visitor\Traits\Visitable;
 use Webkul\Attribute\Models\AttributeFamilyProxy;
 use Webkul\Attribute\Models\AttributeProxy;
 use Webkul\Attribute\Repositories\AttributeRepository;
-use Webkul\Category\Models\CategoryProxy;
 use Webkul\Completeness\Models\CompletenessSetting;
 use Webkul\Completeness\Models\ProductCompletenessScore;
 use Webkul\HistoryControl\Contracts\HistoryAuditable;
@@ -83,38 +82,6 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
     public function super_attributes(): BelongsToMany
     {
         return $this->belongsToMany(AttributeProxy::modelClass(), 'product_super_attributes');
-    }
-
-    /**
-     * The categories this product is assigned to.
-     *
-     * The `product_categories` pivot is an optional schema addition
-     * (see migration 2026_04_14_180000_create_product_categories_table).
-     * Products created before that migration ran will simply have no
-     * categories attached.
-     */
-    public function categories(): BelongsToMany
-    {
-        return $this->belongsToMany(CategoryProxy::modelClass(), 'product_categories');
-    }
-
-    /**
-     * Directed associations from this product to other products
-     * (upsell, crosssell, substitution, case_contains, pack_size_variant, …).
-     *
-     * Pivot is `product_associations` with an association_type_id and an
-     * optional quantity qualifier. Added by migration
-     * 2026_04_14_190000_create_product_associations_tables — older installs
-     * won't have the table and will see an empty relation.
-     */
-    public function associations(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            static::class,
-            'product_associations',
-            'product_id',
-            'linked_product_id',
-        )->withPivot('association_type_id', 'quantity');
     }
 
     /**

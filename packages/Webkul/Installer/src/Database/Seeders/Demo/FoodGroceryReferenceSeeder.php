@@ -7,7 +7,6 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Throwable;
 use Webkul\Installer\Database\Data\Generators\SvgPlaceholderGenerator;
@@ -47,6 +46,29 @@ class FoodGroceryReferenceSeeder extends Seeder
 
     /** Primary channel used as the canonical source when deriving other channels' content. */
     protected string $primaryChannelCode = 'default';
+
+    /**
+     * UnoPim only ships three association buckets. Every fixture type
+     * maps onto one of them — multiple fixture types can share a bucket.
+     *
+     * @var array<string, string>
+     */
+    protected const ASSOCIATION_TYPE_MAP = [
+        'upsell'            => 'up_sells',
+        'crosssell'         => 'cross_sells',
+        'substitution'      => 'related_products',
+        'pack_size_variant' => 'related_products',
+        'case_contains'     => 'related_products',
+        'seasonal_variant'  => 'related_products',
+    ];
+
+    /**
+     * Prebuilt association map keyed by from_sku. Each entry is
+     * `['related_products' => [...], 'up_sells' => [...], 'cross_sells' => [...]]`.
+     *
+     * @var array<string, array<string, string[]>>
+     */
+    protected array $associationsBySku = [];
 
     public function run(array $parameters = []): void
     {
@@ -91,9 +113,8 @@ class FoodGroceryReferenceSeeder extends Seeder
                 $this->seedFamily();
                 $this->seedCategories();
                 $this->seedBrandOptions();
+                $this->buildAssociationMap();
                 $this->seedProducts();
-                $this->seedAssociationTypes();
-                $this->seedAssociations();
             });
 
             $this->command?->info('food_grocery seeded successfully.');
@@ -446,6 +467,9 @@ class FoodGroceryReferenceSeeder extends Seeder
 
             $enriched = $this->enrichProductValues($product);
             $enriched = $this->attachGeneratedImage($product, $enriched);
+            $enriched = $this->attachCategoriesToValues($enriched, $product['categories'] ?? []);
+            $enriched = $this->attachAssociationsToValues($enriched, $product['sku']);
+            $enriched = $this->fillMissingFamilyAttributes($enriched, (int) $familyId, $product);
 
             $id = DB::table('products')->insertGetId([
                 'sku'                 => $product['sku'],
@@ -459,7 +483,6 @@ class FoodGroceryReferenceSeeder extends Seeder
                 'updated_at'          => $now,
             ]);
 
-            $this->attachCategories($id, $product['categories'] ?? []);
             $parentMap[$product['sku']] = $id;
         }
 
@@ -480,8 +503,11 @@ class FoodGroceryReferenceSeeder extends Seeder
 
             $enriched = $this->enrichProductValues($product);
             $enriched = $this->attachGeneratedImage($product, $enriched);
+            $enriched = $this->attachCategoriesToValues($enriched, $product['categories'] ?? []);
+            $enriched = $this->attachAssociationsToValues($enriched, $product['sku']);
+            $enriched = $this->fillMissingFamilyAttributes($enriched, (int) $familyId, $product);
 
-            $variantId = DB::table('products')->insertGetId([
+            DB::table('products')->insertGetId([
                 'sku'                 => $product['sku'],
                 'type'                => 'simple',
                 'status'              => 1,
@@ -492,8 +518,6 @@ class FoodGroceryReferenceSeeder extends Seeder
                 'created_at'          => $now,
                 'updated_at'          => $now,
             ]);
-
-            $this->attachCategories($variantId, $product['categories'] ?? []);
         }
 
         $this->seedSuperAttributes($products);
@@ -531,99 +555,62 @@ class FoodGroceryReferenceSeeder extends Seeder
         }
     }
 
-    /* -------- association types ------------------------------------- */
+    /* -------- associations ------------------------------------------ */
 
     /**
-     * Seed the association_types registry (upsell, crosssell,
-     * case_contains, …) from association_types.json. No-op if the
-     * optional table from migration 2026_04_14_190000 doesn't exist yet.
+     * Pre-build a per-SKU association map from associations.json. UnoPim
+     * stores associations in the product's own `values.associations`
+     * JSON bucket (not a pivot table), so we need the full list ready
+     * before we start inserting products.
+     *
+     * The fixture declares 6 association types for teaching purposes
+     * (upsell, crosssell, substitution, pack_size_variant, case_contains,
+     * seasonal_variant). UnoPim only has 3 built-in buckets, so each
+     * fixture type maps onto one of them via ASSOCIATION_TYPE_MAP.
+     *
+     * Rows referencing SKUs that aren't authored yet (e.g. the CASE-24
+     * outer-pack) are silently dropped — we'd rather show fewer, correct
+     * associations than dangling pointers.
      */
-    protected function seedAssociationTypes(): void
+    protected function buildAssociationMap(): void
     {
-        if (! Schema::hasTable('association_types')) {
-            return;
-        }
-
-        $data = $this->loadJson('association_types.json');
-        $now = Carbon::now();
-        $existing = DB::table('association_types')->pluck('code')->all();
-
-        foreach ($data['association_types'] ?? [] as $type) {
-            if (in_array($type['code'], $existing, true)) {
-                continue;
-            }
-
-            DB::table('association_types')->insert([
-                'code'       => $type['code'],
-                'created_at' => $now,
-                'updated_at' => $now,
-            ]);
-        }
-    }
-
-    /**
-     * Seed the directed product_associations rows from associations.json.
-     * Skips rows where either product or the association type is missing
-     * (e.g. GS-COLA-CLASSIC-330ML-CASE-24 is referenced but not yet
-     * authored as a standalone product).
-     */
-    protected function seedAssociations(): void
-    {
-        if (! Schema::hasTable('product_associations')) {
-            return;
-        }
-
         $data = $this->loadJson('associations.json');
-        $now = Carbon::now();
+        $allAuthoredSkus = array_column(
+            $this->loadJson('products.json')['products'] ?? [],
+            'sku'
+        );
 
-        $productIds = DB::table('products')
-            ->whereIn('sku', $this->collectAssociationSkus($data['associations'] ?? []))
-            ->pluck('id', 'sku')
-            ->all();
-
-        $typeIds = DB::table('association_types')->pluck('id', 'code')->all();
+        $map = [];
 
         foreach ($data['associations'] ?? [] as $assoc) {
-            $fromId = $productIds[$assoc['from_sku']] ?? null;
-            $toId = $productIds[$assoc['to_sku']] ?? null;
-            $typeId = $typeIds[$assoc['type']] ?? null;
+            $from = $assoc['from_sku'] ?? null;
+            $to = $assoc['to_sku'] ?? null;
+            $fixtureType = $assoc['type'] ?? null;
 
-            if (! $fromId || ! $toId || ! $typeId) {
+            if (! $from || ! $to || ! $fixtureType) {
                 continue;
             }
 
-            DB::table('product_associations')->updateOrInsert(
-                [
-                    'product_id'          => $fromId,
-                    'linked_product_id'   => $toId,
-                    'association_type_id' => $typeId,
-                ],
-                [
-                    'quantity'   => $assoc['quantity'] ?? null,
-                    'created_at' => $now,
-                    'updated_at' => $now,
-                ]
-            );
-        }
-    }
-
-    /**
-     * @param  array<int, array<string, mixed>>  $associations
-     * @return string[]
-     */
-    protected function collectAssociationSkus(array $associations): array
-    {
-        $skus = [];
-        foreach ($associations as $assoc) {
-            if (isset($assoc['from_sku'])) {
-                $skus[] = $assoc['from_sku'];
+            // Drop rows referencing un-authored SKUs so the UI doesn't
+            // render dead links.
+            if (! in_array($to, $allAuthoredSkus, true)) {
+                continue;
             }
-            if (isset($assoc['to_sku'])) {
-                $skus[] = $assoc['to_sku'];
+
+            $bucket = self::ASSOCIATION_TYPE_MAP[$fixtureType] ?? 'related_products';
+
+            $map[$from] ??= ['related_products' => [], 'up_sells' => [], 'cross_sells' => []];
+            $map[$from][$bucket][] = $to;
+        }
+
+        // Deduplicate each bucket.
+        foreach ($map as $sku => $buckets) {
+            foreach ($buckets as $bucket => $skus) {
+                $map[$sku][$bucket] = array_values(array_unique($skus));
             }
         }
 
-        return array_values(array_unique($skus));
+        $this->associationsBySku = $map;
     }
 
     /* -------- translation helpers ----------------------------------- */
@@ -832,30 +819,15 @@ class FoodGroceryReferenceSeeder extends Seeder
     }
 
     /**
-     * Copy a real CC0 JPEG from the Installer package's resources dir
-     * (committed to git, ~50 KB per image) to the Laravel public disk,
-     * then set the product's `image` attribute value. Falls back to the
-     * SVG placeholder generator if no JPEG is found for the SKU — this
-     * lets contributors add new products without a matching image file.
+     * Generate a brand-coloured SVG placeholder that shows the product's
+     * pack silhouette, name, size, and SKU, then store it and write the
+     * path into `values.common.image`. We deliberately don't ship real
+     * photography — the seeder is supposed to produce deterministic,
+     * non-copyright visuals that reflect each product accurately. Random
+     * stock photos don't.
      */
     protected function attachGeneratedImage(array $product, array $values): array
     {
-        $slug = strtolower(str_replace([' ', '_'], '-', $product['sku']));
-        $relativePath = self::FAMILY_CODE.'/'.$slug.'.jpg';
-
-        $sourceJpeg = dirname(__DIR__, 2)
-            .'/../Resources/assets/images/seeders/products/'
-            .$relativePath;
-
-        if (File::exists($sourceJpeg)) {
-            $storagePath = 'products/'.$relativePath;
-            Storage::disk('public')->put($storagePath, File::get($sourceJpeg));
-            $values['common']['image'] = $storagePath;
-
-            return $values;
-        }
-
-        // No JPEG shipped for this SKU — fall back to SVG placeholder.
         $brand = $values['common']['brand'] ?? null;
         $packType = $values['common']['pack_type'] ?? null;
         $netWeight = $values['common']['net_weight_g'] ?? null;
@@ -878,27 +850,227 @@ class FoodGroceryReferenceSeeder extends Seeder
     }
 
     /**
-     * Attach a product to each category code listed in its fixture, using
-     * the `product_categories` pivot (see migration
-     * 2026_04_14_180000_create_product_categories_table).
+     * For every attribute in the food_grocery family that isn't already
+     * set on a given product, synthesise a sensible placeholder value so
+     * the edit form shows populated fields end-to-end.
+     *
+     * The rules:
+     *  - Each attribute is written into the bucket its scoping flags
+     *    dictate (common / channel_specific / locale_specific /
+     *    channel_locale_specific).
+     *  - Select and multiselect attributes are skipped unless we already
+     *    know a safe option code — we don't invent option values.
+     *  - Already-set values (including booleans and zeros) are preserved.
      */
-    protected function attachCategories(int $productId, array $categoryCodes): void
+    protected function fillMissingFamilyAttributes(array $values, int $familyId, array $product): array
     {
-        if (empty($categoryCodes) || ! Schema::hasTable('product_categories')) {
-            return;
-        }
+        $attributes = $this->familyAttributesCache($familyId);
 
-        foreach ($categoryCodes as $categoryCode) {
-            $categoryId = DB::table('categories')->where('code', $categoryCode)->value('id');
-            if (! $categoryId) {
+        $productName = $values['channel_locale_specific']['ecommerce']['en_US']['name']
+            ?? $values['channel_locale_specific']['default']['en_US']['name']
+            ?? $product['sku'];
+
+        foreach ($attributes as $attribute) {
+            $code = $attribute->code;
+            $type = $attribute->type;
+            $perChannel = (bool) $attribute->value_per_channel;
+            $perLocale = (bool) $attribute->value_per_locale;
+
+            // Determine which bucket(s) this attribute belongs in and
+            // ensure each has a value.
+            if (! $perChannel && ! $perLocale) {
+                if (! array_key_exists($code, $values['common'])) {
+                    $default = $this->defaultForType($type, $code, $productName);
+                    if ($default !== null) {
+                        $values['common'][$code] = $default;
+                    }
+                }
+
                 continue;
             }
 
-            DB::table('product_categories')->updateOrInsert(
-                ['product_id' => $productId, 'category_id' => $categoryId],
-                []
-            );
+            if ($perChannel && ! $perLocale) {
+                foreach ($this->allChannelCodes as $channelCode) {
+                    $values['channel_specific'][$channelCode] ??= [];
+                    if (! array_key_exists($code, $values['channel_specific'][$channelCode])) {
+                        $default = $this->defaultForType($type, $code, $productName);
+                        if ($default !== null) {
+                            $values['channel_specific'][$channelCode][$code] = $default;
+                        }
+                    }
+                }
+
+                continue;
+            }
+
+            if (! $perChannel && $perLocale) {
+                // Per-locale-only attributes are stored under
+                // locale_specific (rarely used in practice); fall back
+                // to per-locale entries within channel_locale_specific.
+                foreach ($this->profile->locales as $localeCode) {
+                    $values['channel_locale_specific'][$this->primaryChannelCode] ??= [];
+                    $values['channel_locale_specific'][$this->primaryChannelCode][$localeCode] ??= [];
+                    if (! array_key_exists($code, $values['channel_locale_specific'][$this->primaryChannelCode][$localeCode])) {
+                        $default = $this->defaultForType($type, $code, $productName);
+                        if ($default !== null) {
+                            $values['channel_locale_specific'][$this->primaryChannelCode][$localeCode][$code] = $default;
+                        }
+                    }
+                }
+
+                continue;
+            }
+
+            // perChannel && perLocale
+            foreach ($this->allChannelCodes as $channelCode) {
+                foreach ($this->profile->locales as $localeCode) {
+                    $values['channel_locale_specific'][$channelCode] ??= [];
+                    $values['channel_locale_specific'][$channelCode][$localeCode] ??= [];
+                    if (! array_key_exists($code, $values['channel_locale_specific'][$channelCode][$localeCode])) {
+                        $default = $this->defaultForType($type, $code, $productName);
+                        if ($default !== null) {
+                            $values['channel_locale_specific'][$channelCode][$localeCode][$code] = $default;
+                        }
+                    }
+                }
+            }
         }
+
+        return $values;
+    }
+
+    /**
+     * Returns the default value to use when a given attribute has no
+     * value set for a product. Returns null for types we don't want to
+     * synthesise (select/image/file) so the caller leaves the key
+     * absent rather than setting a bogus value that would break the
+     * form (e.g. an invented select option code).
+     */
+    protected function defaultForType(string $type, string $code, string $productName): mixed
+    {
+        // Select requires a real option code — skip rather than invent.
+        // Image/file have their own upload flow and are handled elsewhere.
+        if (in_array($type, ['select', 'image', 'file', 'gallery'], true)) {
+            return null;
+        }
+
+        // Multiselect values are stored as CSV strings, not arrays —
+        // the edit form's str_contains() check crashes on arrays.
+        // Empty string is the canonical "no selection" form.
+        if ($type === 'multiselect') {
+            return '';
+        }
+
+        // Price: empty map — the edit form renders currency rows with
+        // blank inputs. Better than an invented cost.
+        if ($type === 'price') {
+            return [];
+        }
+
+        if ($type === 'boolean') {
+            return false;
+        }
+
+        if ($type === 'date') {
+            return Carbon::now()->toDateString();
+        }
+
+        if ($type === 'datetime') {
+            return Carbon::now()->toDateTimeString();
+        }
+
+        if ($type === 'textarea') {
+            if (str_starts_with($code, 'meta_')) {
+                return $productName;
+            }
+            if ($code === 'ingredients_list' || $code === 'storage_instructions') {
+                return '—';
+            }
+
+            return '<p>'.htmlspecialchars($productName, ENT_QUOTES).'</p>';
+        }
+
+        // text and everything else — nutrition numeric defaults to 0,
+        // meta/url/tagline defaults to the product name.
+        if (str_ends_with($code, '_per_100g') || $code === 'shelf_life_days' || $code === 'pack_count' || $code === 'case_quantity' || $code === 'net_weight_g' || $code === 'net_volume_ml') {
+            return '0';
+        }
+
+        if ($code === 'url_key') {
+            return Str::slug($productName);
+        }
+
+        return $productName;
+    }
+
+    /**
+     * Cache family attribute rows so we only hit the DB once per run.
+     *
+     * @return array<int, object{code: string, type: string, value_per_channel: int, value_per_locale: int}>
+     */
+    protected function familyAttributesCache(int $familyId): array
+    {
+        static $cache = [];
+        if (isset($cache[$familyId])) {
+            return $cache[$familyId];
+        }
+
+        $cache[$familyId] = DB::table('attribute_family_group_mappings as fgm')
+            ->join('attribute_group_mappings as agm', 'agm.attribute_family_group_id', '=', 'fgm.id')
+            ->join('attributes as a', 'a.id', '=', 'agm.attribute_id')
+            ->where('fgm.attribute_family_id', $familyId)
+            ->select('a.code', 'a.type', 'a.value_per_channel', 'a.value_per_locale')
+            ->get()
+            ->all();
+
+        return $cache[$familyId];
+    }
+
+    /**
+     * UnoPim reads a product's categories from `values.categories` —
+     * a flat array of category codes at the root of the values JSON,
+     * not inside common/channel_specific. See AbstractType::update()
+     * (CATEGORY_VALUES_KEY constant).
+     */
+    protected function attachCategoriesToValues(array $values, array $categoryCodes): array
+    {
+        if (empty($categoryCodes)) {
+            return $values;
+        }
+
+        // Skip codes that don't exist (seeder runs categories pass first,
+        // but a typo in products.json shouldn't poison values).
+        $existing = DB::table('categories')
+            ->whereIn('code', $categoryCodes)
+            ->pluck('code')
+            ->all();
+
+        $values['categories'] = array_values(array_intersect($categoryCodes, $existing));
+
+        return $values;
+    }
+
+    /**
+     * UnoPim stores product → product associations in
+     * `values.associations.{related_products|up_sells|cross_sells}` — each
+     * a flat array of linked SKUs. See AbstractType::update() and the
+     * RELATED/UP_SELLS/CROSS_SELLS constants.
+     */
+    protected function attachAssociationsToValues(array $values, string $fromSku): array
+    {
+        if (empty($this->associationsBySku[$fromSku])) {
+            return $values;
+        }
+
+        $values['associations'] = [];
+        foreach ($this->associationsBySku[$fromSku] as $bucket => $skus) {
+            if (empty($skus)) {
+                continue;
+            }
+            $values['associations'][$bucket] = $skus;
+        }
+
+        return $values;
     }
 
     protected function loadJson(string $file): array
