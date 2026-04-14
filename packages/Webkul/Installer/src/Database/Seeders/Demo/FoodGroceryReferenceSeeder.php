@@ -72,6 +72,7 @@ class FoodGroceryReferenceSeeder extends Seeder
             DB::transaction(function (): void {
                 $this->seedAttributeGroups();
                 $this->seedAttributes();
+                $this->upgradeLegacyAttributeFlags();
                 $this->refreshMultiselectAttributeCodes();
                 $this->seedFamily();
                 $this->seedCategories();
@@ -222,38 +223,73 @@ class FoodGroceryReferenceSeeder extends Seeder
     }
 
     /**
-     * Wire every attribute whose template lists this group code to the
-     * given family-group pivot row.
+     * Wire every attribute (both FMCG-specific ones from attributes.json
+     * AND reused legacy system attributes declared in reused_legacy_attributes)
+     * to the given family-group pivot row.
      */
     protected function seedAttributeGroupMappings(int $familyGroupId, string $groupCode): void
     {
         $data = $this->loadJson('attributes.json');
         $position = 0;
 
+        // FMCG-specific attributes defined in attributes.json
         foreach ($data['attributes'] ?? [] as $attr) {
             if (($attr['group'] ?? null) !== $groupCode) {
                 continue;
             }
 
-            $attributeId = DB::table('attributes')->where('code', $attr['code'])->value('id');
-            if (! $attributeId) {
+            $this->attachAttributeToFamilyGroup($attr['code'], $familyGroupId, $position++);
+        }
+
+        // Legacy system attributes reused by this family
+        foreach ($data['reused_legacy_attributes'] ?? [] as $legacy) {
+            if (($legacy['group'] ?? null) !== $groupCode) {
                 continue;
             }
 
-            $exists = DB::table('attribute_group_mappings')
-                ->where('attribute_family_group_id', $familyGroupId)
-                ->where('attribute_id', $attributeId)
-                ->exists();
+            $this->attachAttributeToFamilyGroup($legacy['code'], $familyGroupId, $position++);
+        }
+    }
 
-            if ($exists) {
+    protected function attachAttributeToFamilyGroup(string $attributeCode, int $familyGroupId, int $position): void
+    {
+        $attributeId = DB::table('attributes')->where('code', $attributeCode)->value('id');
+        if (! $attributeId) {
+            return;
+        }
+
+        $exists = DB::table('attribute_group_mappings')
+            ->where('attribute_family_group_id', $familyGroupId)
+            ->where('attribute_id', $attributeId)
+            ->exists();
+
+        if ($exists) {
+            return;
+        }
+
+        DB::table('attribute_group_mappings')->insert([
+            'attribute_family_group_id' => $familyGroupId,
+            'attribute_id'              => $attributeId,
+            'position'                  => $position,
+        ]);
+    }
+
+    /**
+     * The legacy `brand` attribute ships with is_filterable=0. Upgrade
+     * any legacy attribute for which the template sets make_filterable=true.
+     */
+    protected function upgradeLegacyAttributeFlags(): void
+    {
+        $data = $this->loadJson('attributes.json');
+
+        foreach ($data['reused_legacy_attributes'] ?? [] as $legacy) {
+            if (empty($legacy['make_filterable'])) {
                 continue;
             }
 
-            DB::table('attribute_group_mappings')->insert([
-                'attribute_family_group_id' => $familyGroupId,
-                'attribute_id'              => $attributeId,
-                'position'                  => $position++,
-            ]);
+            DB::table('attributes')
+                ->where('code', $legacy['code'])
+                ->update(['is_filterable' => 1]);
         }
     }
 
