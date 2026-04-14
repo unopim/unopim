@@ -890,7 +890,7 @@ class FoodGroceryReferenceSeeder extends Seeder
             // ensure each has a value.
             if (! $perChannel && ! $perLocale) {
                 if (! array_key_exists($code, $values['common'])) {
-                    $default = $this->defaultForType($type, $code, $productName);
+                    $default = $this->defaultForType($attribute, $productName);
                     if ($default !== null) {
                         $values['common'][$code] = $default;
                     }
@@ -903,7 +903,7 @@ class FoodGroceryReferenceSeeder extends Seeder
                 foreach ($this->allChannelCodes as $channelCode) {
                     $values['channel_specific'][$channelCode] ??= [];
                     if (! array_key_exists($code, $values['channel_specific'][$channelCode])) {
-                        $default = $this->defaultForType($type, $code, $productName);
+                        $default = $this->defaultForType($attribute, $productName);
                         if ($default !== null) {
                             $values['channel_specific'][$channelCode][$code] = $default;
                         }
@@ -921,7 +921,7 @@ class FoodGroceryReferenceSeeder extends Seeder
                     $values['channel_locale_specific'][$this->primaryChannelCode] ??= [];
                     $values['channel_locale_specific'][$this->primaryChannelCode][$localeCode] ??= [];
                     if (! array_key_exists($code, $values['channel_locale_specific'][$this->primaryChannelCode][$localeCode])) {
-                        $default = $this->defaultForType($type, $code, $productName);
+                        $default = $this->defaultForType($attribute, $productName);
                         if ($default !== null) {
                             $values['channel_locale_specific'][$this->primaryChannelCode][$localeCode][$code] = $default;
                         }
@@ -937,7 +937,7 @@ class FoodGroceryReferenceSeeder extends Seeder
                     $values['channel_locale_specific'][$channelCode] ??= [];
                     $values['channel_locale_specific'][$channelCode][$localeCode] ??= [];
                     if (! array_key_exists($code, $values['channel_locale_specific'][$channelCode][$localeCode])) {
-                        $default = $this->defaultForType($type, $code, $productName);
+                        $default = $this->defaultForType($attribute, $productName);
                         if ($default !== null) {
                             $values['channel_locale_specific'][$channelCode][$localeCode][$code] = $default;
                         }
@@ -956,8 +956,13 @@ class FoodGroceryReferenceSeeder extends Seeder
      * absent rather than setting a bogus value that would break the
      * form (e.g. an invented select option code).
      */
-    protected function defaultForType(string $type, string $code, string $productName): mixed
+    protected function defaultForType(object $attribute, string $productName): mixed
     {
+        $type = $attribute->type;
+        $code = $attribute->code;
+        $validation = $attribute->validation ?? null;
+        $regex = $attribute->regex_pattern ?? null;
+
         // Select requires a real option code — skip rather than invent.
         // Image/file have their own upload flow and are handled elsewhere.
         if (in_array($type, ['select', 'image', 'file', 'gallery'], true)) {
@@ -989,6 +994,29 @@ class FoodGroceryReferenceSeeder extends Seeder
             return Carbon::now()->toDateTimeString();
         }
 
+        // Text/textarea attributes with a validation rule must satisfy
+        // that rule or the edit form will reject the product on save.
+        // Fall back to a zero-valued numeric string for numeric rules
+        // and leave the field blank for anything with a regex pattern
+        // we can't reason about.
+        if (in_array($validation, ['numeric', 'decimal', 'integer'], true)) {
+            return '0';
+        }
+
+        if ($validation === 'email') {
+            return 'noreply@example.com';
+        }
+
+        if ($validation === 'url') {
+            return 'https://example.com/';
+        }
+
+        if (! empty($regex)) {
+            // We don't try to satisfy arbitrary regexes — emptying the
+            // field is safer than writing data the form will reject.
+            return '';
+        }
+
         if ($type === 'textarea') {
             if (str_starts_with($code, 'meta_')) {
                 return $productName;
@@ -1000,12 +1028,8 @@ class FoodGroceryReferenceSeeder extends Seeder
             return '<p>'.htmlspecialchars($productName, ENT_QUOTES).'</p>';
         }
 
-        // text and everything else — nutrition numeric defaults to 0,
-        // meta/url/tagline defaults to the product name.
-        if (str_ends_with($code, '_per_100g') || $code === 'shelf_life_days' || $code === 'pack_count' || $code === 'case_quantity' || $code === 'net_weight_g' || $code === 'net_volume_ml') {
-            return '0';
-        }
-
+        // Text with no validation — meta/url/tagline defaults to the
+        // product name, url_key is slugified.
         if ($code === 'url_key') {
             return Str::slug($productName);
         }
@@ -1029,7 +1053,7 @@ class FoodGroceryReferenceSeeder extends Seeder
             ->join('attribute_group_mappings as agm', 'agm.attribute_family_group_id', '=', 'fgm.id')
             ->join('attributes as a', 'a.id', '=', 'agm.attribute_id')
             ->where('fgm.attribute_family_id', $familyId)
-            ->select('a.code', 'a.type', 'a.value_per_channel', 'a.value_per_locale')
+            ->select('a.code', 'a.type', 'a.value_per_channel', 'a.value_per_locale', 'a.validation', 'a.regex_pattern')
             ->get()
             ->all();
 
