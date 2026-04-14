@@ -59,46 +59,11 @@ test.describe('UnoPim Magic AI — Custom (OpenAI-compatible) provider', () => {
     await expect(adminPage.locator('#app').getByText('cerebras-llama-4-scout-17b')).toBeVisible();
   });
 
-  test('Test Connection surfaces the upstream Cerebras 402 body in the UI', async ({ adminPage }) => {
-    // Intercept the POST to the test endpoint and return a Cerebras-style
-    // 402 (the same shape that triggered the original "Unknown error" bug).
-    // The backend already has a Pest test for this; here we verify the UI
-    // actually displays the cleaned-up message to the user.
-    await adminPage.route('**/admin/magic-ai/platform/test-connection', async (route) => {
-      await route.fulfill({
-        status: 400,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          success: false,
-          message: 'Connection test failed: HTTP 402: Payment required to access this resource. Visit your billing tab.',
-        }),
-      });
-    });
-
-    await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
-    await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
-
-    // Pick Custom and fill the minimum fields the modal needs to enable Save.
-    await adminPage.locator('input[name="provider"]').first().locator('..')
-      .locator('.multiselect__placeholder, .multiselect__single').first().click();
-    await adminPage.getByRole('option', { name: /Custom \(OpenAI-compatible\)/ }).first().click();
-
-    await adminPage.locator('input[name="api_key"]').fill('csk-test-key-1234567890');
-    await adminPage.locator('input[name="api_url"]').fill('https://api.cerebras.ai/v1');
-    await adminPage.getByPlaceholder('Type custom model ID...').fill('llama3.1-8b');
-    await adminPage.getByRole('button', { name: '+ Add' }).click();
-
-    // Trigger the save flow which calls /test-connection first.
-    await adminPage.getByRole('button', { name: 'Save' }).click();
-
-    // The flash message must surface the Cerebras text and must NOT leak
-    // either the misleading "Groq Error" prefix or the "Unknown error"
-    // placeholder Prism would otherwise produce.
-    await expect(
-      adminPage.locator('#app').getByText(/Payment required to access this resource/i)
-    ).toBeVisible();
-    await expect(adminPage.locator('#app').getByText(/Groq Error/i)).toHaveCount(0);
-    await expect(adminPage.locator('#app').getByText(/Unknown error/i)).toHaveCount(0);
-  });
+  // NOTE: The earlier "Test Connection surfaces the upstream Cerebras 402 body"
+  // e2e test was removed after master's saveWithTest() method was refactored to
+  // POST directly to /store (no pre-save /test-connection hop). The backend
+  // contract — resolver extracting the upstream body, Groq->Custom prefix
+  // rewrite — is still covered by AiProviderCustomTest.php (two Http::fake
+  // feature tests). That's the right layer for this behaviour.
 
 });
