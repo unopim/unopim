@@ -127,13 +127,16 @@ class Installer extends Command
 
         $demoPreset = $this->resolveDemoPreset();
         $this->warn(sprintf('Step: Seeding basic data for UnoPim kickstart (demo preset: %s)...', $demoPreset));
-        $this->info(app(UnoPimDatabaseSeeder::class)->run([
+
+        $seedParameters = [
             'default_locale'     => $applicationDetails['default_locale'] ?? 'en_US',
             'allowed_locales'    => $applicationDetails['allowed_locales'] ?? ['en_US'],
             'default_currency'   => $applicationDetails['default_currency'] ?? 'USD',
             'allowed_currencies' => $applicationDetails['allowed_currencies'] ?? ['USD'],
             'demo_preset'        => $demoPreset,
-        ]));
+        ];
+
+        $this->info(app(UnoPimDatabaseSeeder::class)->run($seedParameters));
 
         $this->warn('Step: Linking storage directory...');
         $this->call('storage:link');
@@ -157,10 +160,6 @@ class Installer extends Command
             $this->createAdminCredentials();
         }
 
-        if ($this->option('with-demo-data')) {
-            $this->seedSampleProducts();
-        }
-
         ComposerEvents::postCreateProject();
     }
 
@@ -172,7 +171,7 @@ class Installer extends Command
      *   2. Legacy `--with-demo-data` flag → resolves to `starter`
      *   3. Non-interactive installs (`--skip-admin-creation`) → `minimal`
      *      so CI runs stay fast
-     *   4. Interactive default → `starter` (food_grocery reference catalog)
+     *   4. Interactive prompt (default `starter`)
      */
     protected function resolveDemoPreset(): string
     {
@@ -189,7 +188,16 @@ class Installer extends Command
             return DemoDataProfile::PRESET_MINIMAL;
         }
 
-        return DemoDataProfile::PRESET_STARTER;
+        return select(
+            label: 'Which demo catalogue would you like to install?',
+            options: [
+                DemoDataProfile::PRESET_MINIMAL => 'Minimal — schema only, no products (~5s)',
+                DemoDataProfile::PRESET_STARTER => 'Starter — food_grocery reference catalog, ~16 products (~15s)',
+                DemoDataProfile::PRESET_MEDIUM  => 'Medium — 8 industries, ~500 products, 5 locales (~45s, coming in later phases)',
+                DemoDataProfile::PRESET_FULL    => 'Full — all 20 industries, ~1,105 products, 8 locales (~90s, coming in later phases)',
+            ],
+            default: DemoDataProfile::PRESET_STARTER,
+        );
     }
 
     /**
@@ -483,14 +491,6 @@ class Installer extends Command
                     'status'   => 1,
                 ]
             );
-
-            if (select(
-                label: 'Do you want sample products?',
-                options: ['yes', 'no'],
-                default: 'no'
-            ) === 'yes') {
-                $this->seedSampleProducts();
-            }
 
             $filePath = storage_path('installed');
 
