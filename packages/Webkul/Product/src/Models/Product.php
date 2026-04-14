@@ -99,6 +99,25 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
     }
 
     /**
+     * Directed associations from this product to other products
+     * (upsell, crosssell, substitution, case_contains, pack_size_variant, …).
+     *
+     * Pivot is `product_associations` with an association_type_id and an
+     * optional quantity qualifier. Added by migration
+     * 2026_04_14_190000_create_product_associations_tables — older installs
+     * won't have the table and will see an empty relation.
+     */
+    public function associations(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            static::class,
+            'product_associations',
+            'product_id',
+            'linked_product_id',
+        )->withPivot('association_type_id', 'quantity');
+    }
+
+    /**
      * The images that belong to the product.
      */
     public function images(): HasMany

@@ -92,6 +92,8 @@ class FoodGroceryReferenceSeeder extends Seeder
                 $this->seedCategories();
                 $this->seedBrandOptions();
                 $this->seedProducts();
+                $this->seedAssociationTypes();
+                $this->seedAssociations();
             });
 
             $this->command?->info('food_grocery seeded successfully.');
@@ -527,6 +529,101 @@ class FoodGroceryReferenceSeeder extends Seeder
         if (! empty($rows)) {
             DB::table('product_super_attributes')->insertOrIgnore($rows);
         }
+    }
+
+    /* -------- association types ------------------------------------- */
+
+    /**
+     * Seed the association_types registry (upsell, crosssell,
+     * case_contains, …) from association_types.json. No-op if the
+     * optional table from migration 2026_04_14_190000 doesn't exist yet.
+     */
+    protected function seedAssociationTypes(): void
+    {
+        if (! Schema::hasTable('association_types')) {
+            return;
+        }
+
+        $data = $this->loadJson('association_types.json');
+        $now = Carbon::now();
+        $existing = DB::table('association_types')->pluck('code')->all();
+
+        foreach ($data['association_types'] ?? [] as $type) {
+            if (in_array($type['code'], $existing, true)) {
+                continue;
+            }
+
+            DB::table('association_types')->insert([
+                'code'       => $type['code'],
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+        }
+    }
+
+    /**
+     * Seed the directed product_associations rows from associations.json.
+     * Skips rows where either product or the association type is missing
+     * (e.g. GS-COLA-CLASSIC-330ML-CASE-24 is referenced but not yet
+     * authored as a standalone product).
+     */
+    protected function seedAssociations(): void
+    {
+        if (! Schema::hasTable('product_associations')) {
+            return;
+        }
+
+        $data = $this->loadJson('associations.json');
+        $now = Carbon::now();
+
+        $productIds = DB::table('products')
+            ->whereIn('sku', $this->collectAssociationSkus($data['associations'] ?? []))
+            ->pluck('id', 'sku')
+            ->all();
+
+        $typeIds = DB::table('association_types')->pluck('id', 'code')->all();
+
+        foreach ($data['associations'] ?? [] as $assoc) {
+            $fromId = $productIds[$assoc['from_sku']] ?? null;
+            $toId = $productIds[$assoc['to_sku']] ?? null;
+            $typeId = $typeIds[$assoc['type']] ?? null;
+
+            if (! $fromId || ! $toId || ! $typeId) {
+                continue;
+            }
+
+            DB::table('product_associations')->updateOrInsert(
+                [
+                    'product_id'          => $fromId,
+                    'linked_product_id'   => $toId,
+                    'association_type_id' => $typeId,
+                ],
+                [
+                    'quantity'   => $assoc['quantity'] ?? null,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ]
+            );
+        }
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $associations
+     * @return string[]
+     */
+    protected function collectAssociationSkus(array $associations): array
+    {
+        $skus = [];
+        foreach ($associations as $assoc) {
+            if (isset($assoc['from_sku'])) {
+                $skus[] = $assoc['from_sku'];
+            }
+            if (isset($assoc['to_sku'])) {
+                $skus[] = $assoc['to_sku'];
+            }
+        }
+
+        return array_values(array_unique($skus));
     }
 
     /* -------- translation helpers ----------------------------------- */
