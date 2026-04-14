@@ -549,7 +549,9 @@ test('9.4 - Selecting a model adds it as a tag chip', async ({ adminPage }) => {
     await gpt4oCheckbox.check();
   }
 
-  const removeBtn = adminPage.getByRole('button', { name: 'Remove model gpt-4o' });
+  // exact: true — without it the locator substring-matches and finds 4 buttons:
+  // gpt-4o, gpt-4o-mini, gpt-4o-mini-search-preview, gpt-4o-search-preview.
+  const removeBtn = adminPage.getByRole('button', { name: 'Remove model gpt-4o', exact: true });
   await expect(removeBtn).toBeVisible();
 
   await adminPage.locator('.icon-cancel').click();
@@ -574,7 +576,8 @@ test('9.5 - Removing a model tag chip unchecks it in the list', async ({ adminPa
     await gpt4oCheckbox.check();
   }
 
-  await adminPage.getByRole('button', { name: 'Remove model gpt-4o' }).click();
+  // exact: true — see comment on test 9.4 for the substring-match collision.
+  await adminPage.getByRole('button', { name: 'Remove model gpt-4o', exact: true }).click();
   await expect(gpt4oCheckbox).not.toBeChecked();
 
   await adminPage.locator('.icon-cancel').click();
