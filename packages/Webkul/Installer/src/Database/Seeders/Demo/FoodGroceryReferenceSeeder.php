@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Throwable;
+use Webkul\Category\Models\CategoryProxy;
 use Webkul\Installer\Database\Data\Generators\SvgPlaceholderGenerator;
 use Webkul\Installer\Demo\DemoDataProfile;
 
@@ -369,6 +370,15 @@ class FoodGroceryReferenceSeeder extends Seeder
                 'updated_at'      => $now,
             ]);
         }
+
+        // The inserts above use naive append _lft/_rgt values which
+        // violate the nested-set invariant that a parent's range must
+        // enclose its descendants. Without that, getTreeBranchToParent()
+        // bails out and the product edit page can't highlight the
+        // selected category in the tree. Kalnoy\Nestedset's fixTree()
+        // rebuilds the full lft/rgt values from parent_id, which is
+        // the authoritative source of truth we actually set.
+        CategoryProxy::modelClass()::fixTree();
     }
 
     /**
