@@ -497,6 +497,13 @@ class ProductIndexer extends Command
     private function getUnopimProductSetting()
     {
         return [
+            'index' => [
+                'mapping' => [
+                    'total_fields' => [
+                        'limit' => 5000,
+                    ],
+                ],
+            ],
             'analysis' => [
                 'char_filter' => [
                     'newline_remover' => [
