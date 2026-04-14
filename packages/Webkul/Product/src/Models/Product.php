@@ -15,6 +15,7 @@ use Shetabit\Visitor\Traits\Visitable;
 use Webkul\Attribute\Models\AttributeFamilyProxy;
 use Webkul\Attribute\Models\AttributeProxy;
 use Webkul\Attribute\Repositories\AttributeRepository;
+use Webkul\Category\Models\CategoryProxy;
 use Webkul\Completeness\Models\CompletenessSetting;
 use Webkul\Completeness\Models\ProductCompletenessScore;
 use Webkul\HistoryControl\Contracts\HistoryAuditable;
@@ -82,6 +83,19 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
     public function super_attributes(): BelongsToMany
     {
         return $this->belongsToMany(AttributeProxy::modelClass(), 'product_super_attributes');
+    }
+
+    /**
+     * The categories this product is assigned to.
+     *
+     * The `product_categories` pivot is an optional schema addition
+     * (see migration 2026_04_14_180000_create_product_categories_table).
+     * Products created before that migration ran will simply have no
+     * categories attached.
+     */
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(CategoryProxy::modelClass(), 'product_categories');
     }
 
     /**

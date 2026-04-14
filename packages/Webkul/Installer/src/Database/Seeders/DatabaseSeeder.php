@@ -7,6 +7,7 @@ use Webkul\AiAgent\Database\Seeders\AgenticPimConfigSeeder;
 use Webkul\Installer\Database\Seeders\Attribute\DatabaseSeeder as AttributeSeeder;
 use Webkul\Installer\Database\Seeders\Category\DatabaseSeeder as CategorySeeder;
 use Webkul\Installer\Database\Seeders\Core\DatabaseSeeder as CoreSeeder;
+use Webkul\Installer\Database\Seeders\Demo\ChannelsAndLocalesSeeder;
 use Webkul\Installer\Database\Seeders\Demo\FoodGroceryReferenceSeeder;
 use Webkul\Installer\Database\Seeders\User\DatabaseSeeder as UserSeeder;
 use Webkul\Installer\Demo\DemoDataProfile;
@@ -34,6 +35,12 @@ class DatabaseSeeder extends Seeder
         $profile = $this->resolveDemoProfile($parameters);
 
         if (! $profile->isMinimal()) {
+            $this->call(ChannelsAndLocalesSeeder::class, false, [
+                'parameters' => [
+                    'profile' => $profile,
+                ],
+            ]);
+
             $this->call(FoodGroceryReferenceSeeder::class, false, [
                 'parameters' => [
                     'profile' => $profile,

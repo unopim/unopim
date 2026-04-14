@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Throwable;
 use Webkul\Installer\Database\Data\Generators\SvgPlaceholderGenerator;
@@ -41,8 +42,11 @@ class FoodGroceryReferenceSeeder extends Seeder
     /** @var string[] Codes of attributes whose type is `multiselect` (values must be CSV, not arrays) */
     protected array $multiselectAttributeCodes = [];
 
-    /** The channel code UnoPim is actually using in the DB (legacy = `default`). */
-    protected string $targetChannelCode = 'default';
+    /** @var string[] All channel codes in the DB (we populate values for every one). */
+    protected array $allChannelCodes = [];
+
+    /** Primary channel used as the canonical source when deriving other channels' content. */
+    protected string $primaryChannelCode = 'default';
 
     public function run(array $parameters = []): void
     {
@@ -64,9 +68,19 @@ class FoodGroceryReferenceSeeder extends Seeder
 
         $this->translations = $this->loadJson('translations.json');
 
-        // Use whichever channel the user has active — fall back to 'default'
-        // which is what the legacy installer seeds.
-        $this->targetChannelCode = (string) (DB::table('channels')->value('code') ?: 'default');
+        // Populate values across every channel currently active in the DB.
+        // ChannelsAndLocalesSeeder should have created ecommerce / mobile_app /
+        // print_catalogue / b2b_wholesale by the time we get here, but we fall
+        // back gracefully to whatever is present.
+        $this->allChannelCodes = DB::table('channels')->pluck('code')->all();
+        if (empty($this->allChannelCodes)) {
+            $this->allChannelCodes = ['default'];
+        }
+
+        // Prefer `ecommerce` as canonical, fall back to `default`
+        $this->primaryChannelCode = in_array('ecommerce', $this->allChannelCodes, true)
+            ? 'ecommerce'
+            : $this->allChannelCodes[0];
 
         try {
             DB::transaction(function (): void {
@@ -443,6 +457,7 @@ class FoodGroceryReferenceSeeder extends Seeder
                 'updated_at'          => $now,
             ]);
 
+            $this->attachCategories($id, $product['categories'] ?? []);
             $parentMap[$product['sku']] = $id;
         }
 
@@ -464,7 +479,7 @@ class FoodGroceryReferenceSeeder extends Seeder
             $enriched = $this->enrichProductValues($product);
             $enriched = $this->attachGeneratedImage($product, $enriched);
 
-            DB::table('products')->insert([
+            $variantId = DB::table('products')->insertGetId([
                 'sku'                 => $product['sku'],
                 'type'                => 'simple',
                 'status'              => 1,
@@ -475,6 +490,8 @@ class FoodGroceryReferenceSeeder extends Seeder
                 'created_at'          => $now,
                 'updated_at'          => $now,
             ]);
+
+            $this->attachCategories($variantId, $product['categories'] ?? []);
         }
 
         $this->seedSuperAttributes($products);
@@ -559,11 +576,15 @@ class FoodGroceryReferenceSeeder extends Seeder
     }
 
     /**
-     * Fill in missing locale/channel content from the canonical en_US entry
-     * and re-key all channel_specific / channel_locale_specific data under
-     * the ACTIVE DB channel code (legacy = `default`). Also converts any
-     * multiselect-attribute values from arrays to CSV strings so the edit
-     * form's str_contains check doesn't crash.
+     * Fill in missing locale/channel content from the canonical en_US entry.
+     *
+     *  - Treats the author-chosen `default` / `ecommerce` bucket as canonical.
+     *  - Clones that canonical bucket into every active DB channel
+     *    (ecommerce, mobile_app, print_catalogue, b2b_wholesale, default)
+     *    via deriveContent() rules.
+     *  - Clones into every locale the demo profile has activated.
+     *  - Downcasts multiselect array values to CSV strings so the edit
+     *    form's str_contains() check doesn't crash.
      */
     protected function enrichProductValues(array $product): array
     {
@@ -573,42 +594,64 @@ class FoodGroceryReferenceSeeder extends Seeder
         $values['channel_specific'] ??= [];
         $values['channel_locale_specific'] ??= [];
 
-        $target = $this->targetChannelCode;
+        // Find the canonical content bucket (first channel with an en_US entry).
+        $canonical = null;
+        foreach (['ecommerce', 'default'] as $candidate) {
+            if (isset($values['channel_locale_specific'][$candidate]['en_US'])) {
+                $canonical = $values['channel_locale_specific'][$candidate]['en_US'];
 
-        // Re-key channel_specific — move everything under the target channel
-        $oldChannelSpecific = $values['channel_specific'];
-        $values['channel_specific'] = [$target => []];
-        foreach ($oldChannelSpecific as $channelCode => $channelData) {
-            foreach ($channelData as $attrCode => $attrValue) {
-                $values['channel_specific'][$target][$attrCode] ??= $attrValue;
+                break;
+            }
+        }
+        if ($canonical === null) {
+            foreach ($values['channel_locale_specific'] as $bucket) {
+                if (isset($bucket['en_US'])) {
+                    $canonical = $bucket['en_US'];
+
+                    break;
+                }
             }
         }
 
-        // Re-key channel_locale_specific — merge every author-chosen channel
-        // bucket (ecommerce / mobile_app / print_catalogue / …) into the
-        // one `default` channel the DB actually has.
-        $oldChannelLocale = $values['channel_locale_specific'];
-        $canonical = $oldChannelLocale['ecommerce']['en_US']
-            ?? $oldChannelLocale[$target]['en_US']
-            ?? null;
+        // Also collect any hand-authored channel buckets (keyed by channel code).
+        $authored = $values['channel_locale_specific'];
+        $values['channel_locale_specific'] = [];
 
-        $values['channel_locale_specific'] = [$target => []];
-        foreach ($oldChannelLocale as $channelCode => $localeBucket) {
-            foreach ($localeBucket as $localeCode => $content) {
-                $values['channel_locale_specific'][$target][$localeCode] ??= $content;
-            }
-        }
+        foreach ($this->allChannelCodes as $channelCode) {
+            $values['channel_locale_specific'][$channelCode] ??= [];
 
-        // Fill in missing locales by mechanical derivation from canonical
-        if ($canonical !== null) {
             foreach ($this->profile->locales as $localeCode) {
-                if (isset($values['channel_locale_specific'][$target][$localeCode])) {
+                // Hand-authored content wins
+                if (isset($authored[$channelCode][$localeCode])) {
+                    $values['channel_locale_specific'][$channelCode][$localeCode] =
+                        $authored[$channelCode][$localeCode];
+
                     continue;
                 }
+                // Fallback: canonical content from another channel, same locale
+                foreach ($authored as $otherChannel => $otherBucket) {
+                    if (isset($otherBucket[$localeCode])) {
+                        $values['channel_locale_specific'][$channelCode][$localeCode] =
+                            $this->deriveContent($otherBucket[$localeCode], $channelCode, $localeCode);
 
-                $values['channel_locale_specific'][$target][$localeCode] =
-                    $this->deriveContent($canonical, $target, $localeCode);
+                        continue 2;
+                    }
+                }
+                // Last resort: derive from en_US canonical
+                if ($canonical !== null) {
+                    $values['channel_locale_specific'][$channelCode][$localeCode] =
+                        $this->deriveContent($canonical, $channelCode, $localeCode);
+                }
             }
+        }
+
+        // Re-key channel_specific under every channel (copy from author's input
+        // or the first bucket).
+        $authoredCS = $values['channel_specific'];
+        $firstCS = $authoredCS[array_key_first($authoredCS) ?? ''] ?? [];
+        $values['channel_specific'] = [];
+        foreach ($this->allChannelCodes as $channelCode) {
+            $values['channel_specific'][$channelCode] = $authoredCS[$channelCode] ?? $firstCS;
         }
 
         // Downcast multiselect arrays → CSV everywhere values live
@@ -691,17 +734,40 @@ class FoodGroceryReferenceSeeder extends Seeder
         return $derived;
     }
 
+    /**
+     * Copy a real CC0 JPEG from the Installer package's resources dir
+     * (committed to git, ~50 KB per image) to the Laravel public disk,
+     * then set the product's `image` attribute value. Falls back to the
+     * SVG placeholder generator if no JPEG is found for the SKU — this
+     * lets contributors add new products without a matching image file.
+     */
     protected function attachGeneratedImage(array $product, array $values): array
     {
+        $slug = strtolower(str_replace([' ', '_'], '-', $product['sku']));
+        $relativePath = self::FAMILY_CODE.'/'.$slug.'.jpg';
+
+        $sourceJpeg = dirname(__DIR__, 2)
+            .'/../Resources/assets/images/seeders/products/'
+            .$relativePath;
+
+        if (File::exists($sourceJpeg)) {
+            $storagePath = 'products/'.$relativePath;
+            Storage::disk('public')->put($storagePath, File::get($sourceJpeg));
+            $values['common']['image'] = $storagePath;
+
+            return $values;
+        }
+
+        // No JPEG shipped for this SKU — fall back to SVG placeholder.
         $brand = $values['common']['brand'] ?? null;
         $packType = $values['common']['pack_type'] ?? null;
         $netWeight = $values['common']['net_weight_g'] ?? null;
         $netVolume = $values['common']['net_volume_ml'] ?? null;
-
         $canonicalName = $values['channel_locale_specific']['ecommerce']['en_US']['name']
+            ?? $values['channel_locale_specific']['default']['en_US']['name']
             ?? $product['sku'];
 
-        $imagePath = $this->imageGenerator->generate(
+        $values['common']['image'] = $this->imageGenerator->generate(
             sku: $product['sku'],
             family: self::FAMILY_CODE,
             name: $canonicalName,
@@ -711,9 +777,31 @@ class FoodGroceryReferenceSeeder extends Seeder
             netVolumeMl: $netVolume,
         );
 
-        $values['common']['image_front'] = $imagePath;
-
         return $values;
+    }
+
+    /**
+     * Attach a product to each category code listed in its fixture, using
+     * the `product_categories` pivot (see migration
+     * 2026_04_14_180000_create_product_categories_table).
+     */
+    protected function attachCategories(int $productId, array $categoryCodes): void
+    {
+        if (empty($categoryCodes) || ! Schema::hasTable('product_categories')) {
+            return;
+        }
+
+        foreach ($categoryCodes as $categoryCode) {
+            $categoryId = DB::table('categories')->where('code', $categoryCode)->value('id');
+            if (! $categoryId) {
+                continue;
+            }
+
+            DB::table('product_categories')->updateOrInsert(
+                ['product_id' => $productId, 'category_id' => $categoryId],
+                []
+            );
+        }
     }
 
     protected function loadJson(string $file): array
