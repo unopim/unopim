@@ -13,36 +13,45 @@
         </template>
 
         <template v-else>
-            <a
-                href="{{ route('admin.catalog.products.index') }}"
-                class="bg-white dark:bg-cherry-900 rounded-lg box-shadow p-4 h-full flex flex-col no-underline cursor-pointer hover:shadow-md transition-shadow"
-            >
+            <div class="bg-white dark:bg-cherry-900 rounded-lg box-shadow p-4 h-full flex flex-col">
                 <template v-if="totalProducts > 0">
                     <!-- Top Row: Total + Status cards -->
                     <div class="flex gap-3 mb-4">
-                        <!-- Total Products Card -->
-                        <div class="flex-1 rounded-lg p-4" style="background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);">
+                        <!-- Total Products Card (no filter — links to full list) -->
+                        <a
+                            :href="productsUrl()"
+                            class="flex-1 rounded-lg p-4 no-underline cursor-pointer hover:shadow-md transition-shadow"
+                            style="background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);"
+                        >
                             <p class="text-xs text-violet-200 mb-1">@lang('admin::app.dashboard.index.total-products')</p>
                             <p class="text-3xl font-bold text-white leading-none">@{{ totalProducts }}</p>
-                        </div>
+                        </a>
 
-                        <!-- Active Card -->
-                        <div class="flex-1 rounded-lg p-4 border" style="border-color: #d1fae5; background: #ecfdf5;">
+                        <!-- Active Card (filter status=true) -->
+                        <a
+                            :href="productsUrl({ status: 'true' })"
+                            class="flex-1 rounded-lg p-4 border no-underline cursor-pointer hover:shadow-md transition-shadow"
+                            style="border-color: #d1fae5; background: #ecfdf5;"
+                        >
                             <div class="flex items-center gap-1.5 mb-1">
                                 <span class="w-2 h-2 rounded-full" style="background: #10b981;"></span>
                                 <p class="text-xs" style="color: #065f46;">@lang('admin::app.dashboard.index.active')</p>
                             </div>
                             <p class="text-2xl font-bold leading-none" style="color: #065f46;">@{{ stats.statusBreakdown.active || 0 }}</p>
-                        </div>
+                        </a>
 
-                        <!-- Inactive Card -->
-                        <div class="flex-1 rounded-lg p-4 border" style="border-color: #fef3c7; background: #fffbeb;">
+                        <!-- Inactive Card (filter status=false) -->
+                        <a
+                            :href="productsUrl({ status: 'false' })"
+                            class="flex-1 rounded-lg p-4 border no-underline cursor-pointer hover:shadow-md transition-shadow"
+                            style="border-color: #fef3c7; background: #fffbeb;"
+                        >
                             <div class="flex items-center gap-1.5 mb-1">
                                 <span class="w-2 h-2 rounded-full" style="background: #f59e0b;"></span>
                                 <p class="text-xs" style="color: #92400e;">@lang('admin::app.dashboard.index.inactive')</p>
                             </div>
                             <p class="text-2xl font-bold leading-none" style="color: #92400e;">@{{ stats.statusBreakdown.inactive || 0 }}</p>
-                        </div>
+                        </a>
                     </div>
 
                     <!-- Type Distribution -->
@@ -52,26 +61,29 @@
 
                     <!-- Stacked Bar -->
                     <div class="flex rounded-full h-3 overflow-hidden mb-3">
-                        <div
+                        <a
                             v-for="(count, type) in stats.typeDistribution"
                             :key="'bar-' + type"
-                            class="transition-all duration-700 ease-out first:rounded-l-full last:rounded-r-full"
+                            :href="productsUrl({ type })"
+                            class="transition-all duration-700 ease-out first:rounded-l-full last:rounded-r-full cursor-pointer"
                             :style="{ width: Math.max(getPercentage(count), 3) + '%', background: getTypeHex(type) }"
-                        ></div>
+                            :title="type + ': ' + count"
+                        ></a>
                     </div>
 
-                    <!-- Type Legend -->
+                    <!-- Type Legend (each chip filters by its product type) -->
                     <div class="flex flex-wrap gap-x-4 gap-y-2 mb-4">
-                        <div
+                        <a
                             v-for="(count, type) in stats.typeDistribution"
                             :key="'legend-' + type"
-                            class="flex items-center gap-2"
+                            :href="productsUrl({ type })"
+                            class="flex items-center gap-2 no-underline cursor-pointer hover:opacity-80 transition-opacity"
                         >
                             <span class="w-3 h-3 rounded-sm flex-shrink-0" :style="{ background: getTypeHex(type) }"></span>
                             <span class="text-xs text-zinc-700 dark:text-slate-300 capitalize">@{{ type }}</span>
                             <span class="text-xs font-bold text-zinc-800 dark:text-slate-200">@{{ count }}</span>
                             <span class="text-[10px] text-zinc-400 dark:text-slate-500">(@{{ getPercentage(count) }}%)</span>
-                        </div>
+                        </a>
                     </div>
 
                     <!-- Quick Insights -->
@@ -128,11 +140,15 @@
                 </template>
 
                 <!-- Empty State -->
-                <div v-else class="flex-1 flex flex-col items-center justify-center py-8">
+                <a
+                    v-else
+                    :href="productsUrl()"
+                    class="flex-1 flex flex-col items-center justify-center py-8 no-underline cursor-pointer"
+                >
                     <img src="{{ unopim_asset('images/icon-products.svg')}}" class="w-12 h-12 opacity-30 mb-3">
                     <p class="text-sm text-zinc-400 dark:text-slate-500">No products yet.</p>
-                </div>
-            </a>
+                </a>
+            </div>
         </template>
     </script>
 
@@ -213,6 +229,28 @@
                     if (score >= 50) return '#f59e0b';
 
                     return '#ef4444';
+                },
+
+                /**
+                 * Build a products-index URL with optional filter[column]=value
+                 * query params. The DataGrid component reads these on boot
+                 * and pre-populates the grid filters so the user lands on
+                 * an already-narrowed view.
+                 */
+                productsUrl(filters = {}) {
+                    const base = "{{ route('admin.catalog.products.index') }}";
+                    const params = new URLSearchParams();
+
+                    Object.entries(filters).forEach(([column, value]) => {
+                        if (value === undefined || value === null || value === '') {
+                            return;
+                        }
+                        params.append(`filter[${column}]`, value);
+                    });
+
+                    const query = params.toString();
+
+                    return query ? `${base}?${query}` : base;
                 }
             }
         });

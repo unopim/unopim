@@ -160,13 +160,55 @@
                                 searchAppliedColumn.value = [urlParams.get('search')];
                             }
 
+                            this.applyUrlFilters(urlParams);
+
                             this.get();
 
                             return;
                         }
                     }
 
+                    this.applyUrlFilters(urlParams);
+
                     this.get();
+                },
+
+                /**
+                 * Read ?filter[column]=value from the URL and push/replace
+                 * matching entries on applied.filters.columns. Lets external
+                 * pages (e.g. dashboard widgets) deep-link into a pre-filtered
+                 * grid without depending on localStorage state. URL filters
+                 * always override any same-column filter restored from a
+                 * previous session so the deep-link result is predictable.
+                 */
+                applyUrlFilters(urlParams) {
+                    if (! urlParams) {
+                        return;
+                    }
+
+                    const filterPattern = /^filter\[([^\]]+)\]$/;
+
+                    urlParams.forEach((value, key) => {
+                        const match = key.match(filterPattern);
+
+                        if (! match) {
+                            return;
+                        }
+
+                        const columnIndex = match[1];
+
+                        if (columnIndex === '' || columnIndex === 'all') {
+                            return;
+                        }
+
+                        this.applied.filters.columns = this.applied.filters.columns
+                            .filter(column => column.index !== columnIndex);
+
+                        this.applied.filters.columns.push({
+                            index: columnIndex,
+                            value: [value],
+                        });
+                    });
                 },
 
                 /**
