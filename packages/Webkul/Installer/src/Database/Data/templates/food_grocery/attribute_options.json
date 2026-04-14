@@ -1,0 +1,102 @@
+{
+  "_comment": "Option values for every select / multiselect attribute used by the food_grocery reference catalog. Each block is seeded into attribute_options + attribute_option_translations. brand_options.json lives in a separate file because it has far more entries (15 brands) and different semantics.",
+  "attributes": {
+    "pack_type": {
+      "options": [
+        { "code": "bottle",    "labels": { "en_US": "Bottle",    "en_GB": "Bottle",    "de_DE": "Flasche",    "fr_FR": "Bouteille",   "es_ES": "Botella",    "it_IT": "Bottiglia",  "nl_NL": "Fles",        "pl_PL": "Butelka" } },
+        { "code": "can",       "labels": { "en_US": "Can",       "en_GB": "Can",       "de_DE": "Dose",       "fr_FR": "Canette",     "es_ES": "Lata",       "it_IT": "Lattina",    "nl_NL": "Blik",        "pl_PL": "Puszka" } },
+        { "code": "carton",    "labels": { "en_US": "Carton",    "en_GB": "Carton",    "de_DE": "Karton",     "fr_FR": "Carton",      "es_ES": "Cartón",     "it_IT": "Cartone",    "nl_NL": "Pak",         "pl_PL": "Karton" } },
+        { "code": "jar",       "labels": { "en_US": "Jar",       "en_GB": "Jar",       "de_DE": "Glas",       "fr_FR": "Pot",         "es_ES": "Tarro",      "it_IT": "Vasetto",    "nl_NL": "Pot",         "pl_PL": "Słoik" } },
+        { "code": "box",       "labels": { "en_US": "Box",       "en_GB": "Box",       "de_DE": "Schachtel",  "fr_FR": "Boîte",       "es_ES": "Caja",       "it_IT": "Scatola",    "nl_NL": "Doos",        "pl_PL": "Pudełko" } },
+        { "code": "pouch",     "labels": { "en_US": "Pouch",     "en_GB": "Pouch",     "de_DE": "Beutel",     "fr_FR": "Sachet",      "es_ES": "Bolsa",      "it_IT": "Busta",      "nl_NL": "Zak",         "pl_PL": "Torebka" } },
+        { "code": "tetra_pak", "labels": { "en_US": "Tetra Pak", "en_GB": "Tetra Pak", "de_DE": "Tetra Pak",  "fr_FR": "Tetra Pak",   "es_ES": "Tetra Pak",  "it_IT": "Tetra Pak",  "nl_NL": "Tetra Pak",   "pl_PL": "Tetra Pak" } }
+      ]
+    },
+    "pack_material": {
+      "options": [
+        { "code": "aluminium", "labels": { "en_US": "Aluminium", "en_GB": "Aluminium", "de_DE": "Aluminium", "fr_FR": "Aluminium", "es_ES": "Aluminio", "it_IT": "Alluminio", "nl_NL": "Aluminium", "pl_PL": "Aluminium" } },
+        { "code": "glass",     "labels": { "en_US": "Glass",     "en_GB": "Glass",     "de_DE": "Glas",      "fr_FR": "Verre",     "es_ES": "Vidrio",   "it_IT": "Vetro",     "nl_NL": "Glas",      "pl_PL": "Szkło" } },
+        { "code": "paper",     "labels": { "en_US": "Paper",     "en_GB": "Paper",     "de_DE": "Papier",    "fr_FR": "Papier",    "es_ES": "Papel",    "it_IT": "Carta",     "nl_NL": "Papier",    "pl_PL": "Papier" } },
+        { "code": "plastic",   "labels": { "en_US": "Plastic",   "en_GB": "Plastic",   "de_DE": "Kunststoff","fr_FR": "Plastique", "es_ES": "Plástico", "it_IT": "Plastica",  "nl_NL": "Plastic",   "pl_PL": "Plastik" } },
+        { "code": "PET",       "labels": { "en_US": "PET",       "en_GB": "PET",       "de_DE": "PET",       "fr_FR": "PET",       "es_ES": "PET",      "it_IT": "PET",       "nl_NL": "PET",       "pl_PL": "PET" } },
+        { "code": "tetra_pak", "labels": { "en_US": "Tetra Pak", "en_GB": "Tetra Pak", "de_DE": "Tetra Pak", "fr_FR": "Tetra Pak", "es_ES": "Tetra Pak","it_IT": "Tetra Pak", "nl_NL": "Tetra Pak", "pl_PL": "Tetra Pak" } },
+        { "code": "composite", "labels": { "en_US": "Composite", "en_GB": "Composite", "de_DE": "Verbund",   "fr_FR": "Composite", "es_ES": "Compuesto","it_IT": "Composito", "nl_NL": "Composiet", "pl_PL": "Kompozyt" } }
+      ]
+    },
+    "allergens_contains": {
+      "options": [
+        { "code": "none",            "labels": { "en_US": "None declared", "de_DE": "Keine angegeben", "fr_FR": "Aucun déclaré", "es_ES": "Ninguno declarado", "it_IT": "Nessuno dichiarato", "nl_NL": "Geen aangegeven", "pl_PL": "Brak zadeklarowanych" } },
+        { "code": "gluten_cereals",  "labels": { "en_US": "Cereals containing gluten", "de_DE": "Glutenhaltiges Getreide", "fr_FR": "Céréales contenant du gluten", "es_ES": "Cereales con gluten", "it_IT": "Cereali contenenti glutine", "nl_NL": "Glutenbevattende granen", "pl_PL": "Zboża zawierające gluten" } },
+        { "code": "crustaceans",     "labels": { "en_US": "Crustaceans", "de_DE": "Krebstiere", "fr_FR": "Crustacés", "es_ES": "Crustáceos", "it_IT": "Crostacei", "nl_NL": "Schaaldieren", "pl_PL": "Skorupiaki" } },
+        { "code": "eggs",            "labels": { "en_US": "Eggs", "de_DE": "Eier", "fr_FR": "Œufs", "es_ES": "Huevos", "it_IT": "Uova", "nl_NL": "Eieren", "pl_PL": "Jaja" } },
+        { "code": "fish",            "labels": { "en_US": "Fish", "de_DE": "Fisch", "fr_FR": "Poisson", "es_ES": "Pescado", "it_IT": "Pesce", "nl_NL": "Vis", "pl_PL": "Ryby" } },
+        { "code": "peanuts",         "labels": { "en_US": "Peanuts", "de_DE": "Erdnüsse", "fr_FR": "Arachides", "es_ES": "Cacahuetes", "it_IT": "Arachidi", "nl_NL": "Pinda's", "pl_PL": "Orzeszki ziemne" } },
+        { "code": "soy",             "labels": { "en_US": "Soybeans", "de_DE": "Sojabohnen", "fr_FR": "Soja", "es_ES": "Soja", "it_IT": "Soia", "nl_NL": "Soja", "pl_PL": "Soja" } },
+        { "code": "milk",            "labels": { "en_US": "Milk (incl. lactose)", "de_DE": "Milch (einschl. Laktose)", "fr_FR": "Lait (y c. lactose)", "es_ES": "Leche (incl. lactosa)", "it_IT": "Latte (incl. lattosio)", "nl_NL": "Melk (incl. lactose)", "pl_PL": "Mleko (w tym laktoza)" } },
+        { "code": "tree_nuts",       "labels": { "en_US": "Tree nuts", "de_DE": "Schalenfrüchte", "fr_FR": "Fruits à coque", "es_ES": "Frutos de cáscara", "it_IT": "Frutta a guscio", "nl_NL": "Noten", "pl_PL": "Orzechy" } },
+        { "code": "celery",          "labels": { "en_US": "Celery", "de_DE": "Sellerie", "fr_FR": "Céleri", "es_ES": "Apio", "it_IT": "Sedano", "nl_NL": "Selderij", "pl_PL": "Seler" } },
+        { "code": "mustard",         "labels": { "en_US": "Mustard", "de_DE": "Senf", "fr_FR": "Moutarde", "es_ES": "Mostaza", "it_IT": "Senape", "nl_NL": "Mosterd", "pl_PL": "Gorczyca" } },
+        { "code": "sesame",          "labels": { "en_US": "Sesame", "de_DE": "Sesam", "fr_FR": "Sésame", "es_ES": "Sésamo", "it_IT": "Sesamo", "nl_NL": "Sesam", "pl_PL": "Sezam" } },
+        { "code": "sulphites",       "labels": { "en_US": "Sulphur dioxide / sulphites", "de_DE": "Schwefeldioxid / Sulfite", "fr_FR": "Anhydride sulfureux / sulfites", "es_ES": "Dióxido de azufre / sulfitos", "it_IT": "Anidride solforosa / solfiti", "nl_NL": "Zwaveldioxide / sulfieten", "pl_PL": "Dwutlenek siarki / siarczyny" } },
+        { "code": "lupin",           "labels": { "en_US": "Lupin", "de_DE": "Lupinen", "fr_FR": "Lupin", "es_ES": "Altramuces", "it_IT": "Lupini", "nl_NL": "Lupine", "pl_PL": "Łubin" } },
+        { "code": "molluscs",        "labels": { "en_US": "Molluscs", "de_DE": "Weichtiere", "fr_FR": "Mollusques", "es_ES": "Moluscos", "it_IT": "Molluschi", "nl_NL": "Weekdieren", "pl_PL": "Mięczaki" } }
+      ]
+    },
+    "allergens_traces": {
+      "options": [
+        { "code": "milk",           "labels": { "en_US": "Milk", "de_DE": "Milch", "fr_FR": "Lait", "es_ES": "Leche", "it_IT": "Latte", "nl_NL": "Melk", "pl_PL": "Mleko" } },
+        { "code": "tree_nuts",      "labels": { "en_US": "Tree nuts", "de_DE": "Schalenfrüchte", "fr_FR": "Fruits à coque", "es_ES": "Frutos de cáscara", "it_IT": "Frutta a guscio", "nl_NL": "Noten", "pl_PL": "Orzechy" } },
+        { "code": "peanuts",        "labels": { "en_US": "Peanuts", "de_DE": "Erdnüsse", "fr_FR": "Arachides", "es_ES": "Cacahuetes", "it_IT": "Arachidi", "nl_NL": "Pinda's", "pl_PL": "Orzeszki ziemne" } },
+        { "code": "gluten_cereals", "labels": { "en_US": "Cereals containing gluten", "de_DE": "Glutenhaltiges Getreide", "fr_FR": "Céréales contenant du gluten", "es_ES": "Cereales con gluten", "it_IT": "Cereali contenenti glutine", "nl_NL": "Glutenbevattende granen", "pl_PL": "Zboża zawierające gluten" } },
+        { "code": "soy",            "labels": { "en_US": "Soy", "de_DE": "Soja", "fr_FR": "Soja", "es_ES": "Soja", "it_IT": "Soia", "nl_NL": "Soja", "pl_PL": "Soja" } },
+        { "code": "sesame",         "labels": { "en_US": "Sesame", "de_DE": "Sesam", "fr_FR": "Sésame", "es_ES": "Sésamo", "it_IT": "Sesamo", "nl_NL": "Sesam", "pl_PL": "Sezam" } }
+      ]
+    },
+    "certifications": {
+      "options": [
+        { "code": "eu_organic",          "labels": { "en_US": "EU Organic", "de_DE": "EU-Bio", "fr_FR": "Bio UE", "es_ES": "Ecológico UE", "it_IT": "Biologico UE", "nl_NL": "EU Biologisch", "pl_PL": "Rolnictwo ekologiczne UE" } },
+        { "code": "fair_trade",          "labels": { "en_US": "Fair Trade", "de_DE": "Fair Trade", "fr_FR": "Commerce équitable", "es_ES": "Comercio justo", "it_IT": "Commercio equo", "nl_NL": "Fair Trade", "pl_PL": "Sprawiedliwy handel" } },
+        { "code": "rainforest_alliance", "labels": { "en_US": "Rainforest Alliance", "de_DE": "Rainforest Alliance", "fr_FR": "Rainforest Alliance", "es_ES": "Rainforest Alliance", "it_IT": "Rainforest Alliance", "nl_NL": "Rainforest Alliance", "pl_PL": "Rainforest Alliance" } },
+        { "code": "utz",                 "labels": { "en_US": "UTZ", "de_DE": "UTZ", "fr_FR": "UTZ", "es_ES": "UTZ", "it_IT": "UTZ", "nl_NL": "UTZ", "pl_PL": "UTZ" } },
+        { "code": "msc",                 "labels": { "en_US": "MSC (Sustainable Fishing)", "de_DE": "MSC (Nachhaltige Fischerei)", "fr_FR": "MSC (Pêche durable)", "es_ES": "MSC (Pesca sostenible)", "it_IT": "MSC (Pesca sostenibile)", "nl_NL": "MSC (Duurzame visserij)", "pl_PL": "MSC (Zrównoważone rybołówstwo)" } },
+        { "code": "halal",               "labels": { "en_US": "Halal Certified", "de_DE": "Halal-zertifiziert", "fr_FR": "Certifié Halal", "es_ES": "Certificado Halal", "it_IT": "Certificato Halal", "nl_NL": "Halal-gecertificeerd", "pl_PL": "Certyfikat Halal" } },
+        { "code": "kosher",              "labels": { "en_US": "Kosher Certified", "de_DE": "Koscher-zertifiziert", "fr_FR": "Certifié Casher", "es_ES": "Certificado Kosher", "it_IT": "Certificato Kosher", "nl_NL": "Kosher-gecertificeerd", "pl_PL": "Certyfikat Koszerny" } }
+      ]
+    },
+    "product_claims": {
+      "options": [
+        { "code": "vegan",               "labels": { "en_US": "Vegan", "de_DE": "Vegan", "fr_FR": "Végan", "es_ES": "Vegano", "it_IT": "Vegano", "nl_NL": "Veganistisch", "pl_PL": "Wegański" } },
+        { "code": "vegetarian",          "labels": { "en_US": "Vegetarian", "de_DE": "Vegetarisch", "fr_FR": "Végétarien", "es_ES": "Vegetariano", "it_IT": "Vegetariano", "nl_NL": "Vegetarisch", "pl_PL": "Wegetariański" } },
+        { "code": "gluten_free",         "labels": { "en_US": "Gluten-free", "de_DE": "Glutenfrei", "fr_FR": "Sans gluten", "es_ES": "Sin gluten", "it_IT": "Senza glutine", "nl_NL": "Glutenvrij", "pl_PL": "Bezglutenowy" } },
+        { "code": "lactose_free",        "labels": { "en_US": "Lactose-free", "de_DE": "Laktosefrei", "fr_FR": "Sans lactose", "es_ES": "Sin lactosa", "it_IT": "Senza lattosio", "nl_NL": "Lactosevrij", "pl_PL": "Bez laktozy" } },
+        { "code": "organic",             "labels": { "en_US": "Organic", "de_DE": "Bio", "fr_FR": "Bio", "es_ES": "Ecológico", "it_IT": "Biologico", "nl_NL": "Biologisch", "pl_PL": "Ekologiczny" } },
+        { "code": "no_added_sugar",      "labels": { "en_US": "No added sugar", "de_DE": "Ohne Zuckerzusatz", "fr_FR": "Sans sucre ajouté", "es_ES": "Sin azúcar añadido", "it_IT": "Senza zuccheri aggiunti", "nl_NL": "Zonder toegevoegde suikers", "pl_PL": "Bez dodatku cukru" } },
+        { "code": "high_protein",        "labels": { "en_US": "High protein", "de_DE": "Hoher Proteingehalt", "fr_FR": "Riche en protéines", "es_ES": "Alto en proteínas", "it_IT": "Ricco di proteine", "nl_NL": "Eiwitrijk", "pl_PL": "Wysoka zawartość białka" } },
+        { "code": "low_fat",             "labels": { "en_US": "Low fat", "de_DE": "Fettarm", "fr_FR": "Faible en gras", "es_ES": "Bajo en grasas", "it_IT": "A basso contenuto di grassi", "nl_NL": "Vetarm", "pl_PL": "Niskotłuszczowy" } }
+      ]
+    },
+    "storage_temperature": {
+      "options": [
+        { "code": "ambient",      "labels": { "en_US": "Ambient", "de_DE": "Raumtemperatur", "fr_FR": "Température ambiante", "es_ES": "Temperatura ambiente", "it_IT": "Temperatura ambiente", "nl_NL": "Kamertemperatuur", "pl_PL": "Temperatura pokojowa" } },
+        { "code": "chilled_2_8c", "labels": { "en_US": "Chilled (2–8 °C)", "de_DE": "Gekühlt (2–8 °C)", "fr_FR": "Réfrigéré (2–8 °C)", "es_ES": "Refrigerado (2–8 °C)", "it_IT": "Refrigerato (2–8 °C)", "nl_NL": "Gekoeld (2–8 °C)", "pl_PL": "Chłodzony (2–8 °C)" } },
+        { "code": "frozen",       "labels": { "en_US": "Frozen (≤ −18 °C)", "de_DE": "Gefroren (≤ −18 °C)", "fr_FR": "Congelé (≤ −18 °C)", "es_ES": "Congelado (≤ −18 °C)", "it_IT": "Congelato (≤ −18 °C)", "nl_NL": "Diepgevroren (≤ −18 °C)", "pl_PL": "Mrożony (≤ −18 °C)" } }
+      ]
+    },
+    "country_of_origin": {
+      "options": [
+        { "code": "DE", "labels": { "en_US": "Germany",     "de_DE": "Deutschland", "fr_FR": "Allemagne",    "es_ES": "Alemania",   "it_IT": "Germania",    "nl_NL": "Duitsland",    "pl_PL": "Niemcy" } },
+        { "code": "FR", "labels": { "en_US": "France",      "de_DE": "Frankreich",  "fr_FR": "France",       "es_ES": "Francia",    "it_IT": "Francia",     "nl_NL": "Frankrijk",    "pl_PL": "Francja" } },
+        { "code": "IT", "labels": { "en_US": "Italy",       "de_DE": "Italien",     "fr_FR": "Italie",       "es_ES": "Italia",     "it_IT": "Italia",      "nl_NL": "Italië",       "pl_PL": "Włochy" } },
+        { "code": "ES", "labels": { "en_US": "Spain",       "de_DE": "Spanien",     "fr_FR": "Espagne",      "es_ES": "España",     "it_IT": "Spagna",      "nl_NL": "Spanje",       "pl_PL": "Hiszpania" } },
+        { "code": "NL", "labels": { "en_US": "Netherlands", "de_DE": "Niederlande", "fr_FR": "Pays-Bas",     "es_ES": "Países Bajos","it_IT": "Paesi Bassi","nl_NL": "Nederland",    "pl_PL": "Holandia" } },
+        { "code": "PL", "labels": { "en_US": "Poland",      "de_DE": "Polen",       "fr_FR": "Pologne",      "es_ES": "Polonia",    "it_IT": "Polonia",     "nl_NL": "Polen",        "pl_PL": "Polska" } },
+        { "code": "CH", "labels": { "en_US": "Switzerland", "de_DE": "Schweiz",     "fr_FR": "Suisse",       "es_ES": "Suiza",      "it_IT": "Svizzera",    "nl_NL": "Zwitserland",  "pl_PL": "Szwajcaria" } },
+        { "code": "AT", "labels": { "en_US": "Austria",     "de_DE": "Österreich",  "fr_FR": "Autriche",     "es_ES": "Austria",    "it_IT": "Austria",     "nl_NL": "Oostenrijk",   "pl_PL": "Austria" } },
+        { "code": "BE", "labels": { "en_US": "Belgium",     "de_DE": "Belgien",     "fr_FR": "Belgique",     "es_ES": "Bélgica",    "it_IT": "Belgio",      "nl_NL": "België",       "pl_PL": "Belgia" } },
+        { "code": "GR", "labels": { "en_US": "Greece",      "de_DE": "Griechenland","fr_FR": "Grèce",        "es_ES": "Grecia",     "it_IT": "Grecia",      "nl_NL": "Griekenland",  "pl_PL": "Grecja" } },
+        { "code": "GB", "labels": { "en_US": "United Kingdom","de_DE": "Vereinigtes Königreich","fr_FR": "Royaume-Uni","es_ES": "Reino Unido","it_IT": "Regno Unito","nl_NL": "Verenigd Koninkrijk","pl_PL": "Wielka Brytania" } },
+        { "code": "US", "labels": { "en_US": "United States","de_DE": "Vereinigte Staaten","fr_FR": "États-Unis","es_ES": "Estados Unidos","it_IT": "Stati Uniti","nl_NL": "Verenigde Staten","pl_PL": "Stany Zjednoczone" } }
+      ]
+    }
+  }
+}

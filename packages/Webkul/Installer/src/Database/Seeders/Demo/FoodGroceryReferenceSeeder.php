@@ -114,6 +114,7 @@ class FoodGroceryReferenceSeeder extends Seeder
                 $this->seedFamily();
                 $this->seedCategories();
                 $this->seedBrandOptions();
+                $this->seedAttributeOptions();
                 $this->buildAssociationMap();
                 $this->seedProducts();
             });
@@ -433,6 +434,59 @@ class FoodGroceryReferenceSeeder extends Seeder
                 'label',
                 $option['labels'] ?? []
             );
+        }
+    }
+
+    /**
+     * Seed option values for every select / multiselect attribute used
+     * by the food_grocery family (pack_type, pack_material,
+     * allergens_contains, certifications, storage_temperature,
+     * country_of_origin, …). Without this pass the admin dropdowns
+     * show "Select option" with nothing to pick and required selects
+     * fail form validation on save.
+     *
+     * Fixture lives at templates/food_grocery/attribute_options.json —
+     * one block per attribute code, each with a list of options and
+     * per-locale labels.
+     */
+    protected function seedAttributeOptions(): void
+    {
+        $data = $this->loadJson('attribute_options.json');
+
+        foreach ($data['attributes'] ?? [] as $attributeCode => $block) {
+            $attributeId = DB::table('attributes')->where('code', $attributeCode)->value('id');
+            if (! $attributeId) {
+                continue;
+            }
+
+            $existing = DB::table('attribute_options')
+                ->where('attribute_id', $attributeId)
+                ->pluck('code')
+                ->all();
+
+            $sortOrder = 0;
+
+            foreach ($block['options'] ?? [] as $option) {
+                if (in_array($option['code'], $existing, true)) {
+                    $sortOrder++;
+
+                    continue;
+                }
+
+                $optionId = DB::table('attribute_options')->insertGetId([
+                    'attribute_id' => $attributeId,
+                    'code'         => $option['code'],
+                    'sort_order'   => $sortOrder++,
+                ]);
+
+                $this->seedTranslations(
+                    'attribute_option_translations',
+                    'attribute_option_id',
+                    $optionId,
+                    'label',
+                    $option['labels'] ?? []
+                );
+            }
         }
     }
 
@@ -885,11 +939,23 @@ class FoodGroceryReferenceSeeder extends Seeder
             $type = $attribute->type;
             $perChannel = (bool) $attribute->value_per_channel;
             $perLocale = (bool) $attribute->value_per_locale;
+            $required = ! empty($attribute->is_required);
+
+            $needsFill = function ($bucket) use ($code, $required): bool {
+                if (! array_key_exists($code, $bucket)) {
+                    return true;
+                }
+
+                // Required attributes must have a non-empty value, so
+                // overwrite blanks that slipped through from the fixture
+                // (e.g. `allergens_contains: []` → empty CSV string).
+                return $required && $this->isBlank($bucket[$code]);
+            };
 
             // Determine which bucket(s) this attribute belongs in and
             // ensure each has a value.
             if (! $perChannel && ! $perLocale) {
-                if (! array_key_exists($code, $values['common'])) {
+                if ($needsFill($values['common'])) {
                     $default = $this->defaultForType($attribute, $productName);
                     if ($default !== null) {
                         $values['common'][$code] = $default;
@@ -902,7 +968,7 @@ class FoodGroceryReferenceSeeder extends Seeder
             if ($perChannel && ! $perLocale) {
                 foreach ($this->allChannelCodes as $channelCode) {
                     $values['channel_specific'][$channelCode] ??= [];
-                    if (! array_key_exists($code, $values['channel_specific'][$channelCode])) {
+                    if ($needsFill($values['channel_specific'][$channelCode])) {
                         $default = $this->defaultForType($attribute, $productName);
                         if ($default !== null) {
                             $values['channel_specific'][$channelCode][$code] = $default;
@@ -920,7 +986,7 @@ class FoodGroceryReferenceSeeder extends Seeder
                 foreach ($this->profile->locales as $localeCode) {
                     $values['channel_locale_specific'][$this->primaryChannelCode] ??= [];
                     $values['channel_locale_specific'][$this->primaryChannelCode][$localeCode] ??= [];
-                    if (! array_key_exists($code, $values['channel_locale_specific'][$this->primaryChannelCode][$localeCode])) {
+                    if ($needsFill($values['channel_locale_specific'][$this->primaryChannelCode][$localeCode])) {
                         $default = $this->defaultForType($attribute, $productName);
                         if ($default !== null) {
                             $values['channel_locale_specific'][$this->primaryChannelCode][$localeCode][$code] = $default;
@@ -936,7 +1002,7 @@ class FoodGroceryReferenceSeeder extends Seeder
                 foreach ($this->profile->locales as $localeCode) {
                     $values['channel_locale_specific'][$channelCode] ??= [];
                     $values['channel_locale_specific'][$channelCode][$localeCode] ??= [];
-                    if (! array_key_exists($code, $values['channel_locale_specific'][$channelCode][$localeCode])) {
+                    if ($needsFill($values['channel_locale_specific'][$channelCode][$localeCode])) {
                         $default = $this->defaultForType($attribute, $productName);
                         if ($default !== null) {
                             $values['channel_locale_specific'][$channelCode][$localeCode][$code] = $default;
@@ -962,18 +1028,33 @@ class FoodGroceryReferenceSeeder extends Seeder
         $code = $attribute->code;
         $validation = $attribute->validation ?? null;
         $regex = $attribute->regex_pattern ?? null;
+        $required = ! empty($attribute->is_required);
 
-        // Select requires a real option code — skip rather than invent.
         // Image/file have their own upload flow and are handled elsewhere.
-        if (in_array($type, ['select', 'image', 'file', 'gallery'], true)) {
+        if (in_array($type, ['image', 'file', 'gallery'], true)) {
             return null;
         }
 
-        // Multiselect values are stored as CSV strings, not arrays —
-        // the edit form's str_contains() check crashes on arrays.
-        // Empty string is the canonical "no selection" form.
+        // For required select/multiselect we must pick a real option
+        // code or the form rejects the save. Non-required ones are
+        // left blank so reviewers can see which were intentionally
+        // unset.
+        if ($type === 'select') {
+            if (! $required) {
+                return null;
+            }
+            $first = $this->firstOptionCode((int) ($attribute->id ?? 0), $code);
+
+            return $first;
+        }
+
         if ($type === 'multiselect') {
-            return '';
+            if (! $required) {
+                return '';
+            }
+            $first = $this->firstOptionCode((int) ($attribute->id ?? 0), $code);
+
+            return $first ?? '';
         }
 
         // Price: empty map — the edit form renders currency rows with
@@ -1038,6 +1119,52 @@ class FoodGroceryReferenceSeeder extends Seeder
     }
 
     /**
+     * True if the given value should be treated as "no value" from the
+     * perspective of required-attribute validation: null, empty string,
+     * or empty array/price map.
+     */
+    protected function isBlank(mixed $value): bool
+    {
+        if ($value === null) {
+            return true;
+        }
+
+        if (is_string($value)) {
+            return $value === '';
+        }
+
+        if (is_array($value)) {
+            return empty($value);
+        }
+
+        return false;
+    }
+
+    /**
+     * Look up the first option code for an attribute, cached per
+     * attribute id. Used when filling required select / multiselect
+     * defaults.
+     */
+    protected function firstOptionCode(int $attributeId, string $attributeCode): ?string
+    {
+        static $cache = [];
+        if (array_key_exists($attributeId, $cache)) {
+            return $cache[$attributeId];
+        }
+
+        if ($attributeId <= 0) {
+            $attributeId = (int) DB::table('attributes')->where('code', $attributeCode)->value('id');
+        }
+
+        $cache[$attributeId] = DB::table('attribute_options')
+            ->where('attribute_id', $attributeId)
+            ->orderBy('sort_order')
+            ->value('code');
+
+        return $cache[$attributeId];
+    }
+
+    /**
      * Cache family attribute rows so we only hit the DB once per run.
      *
      * @return array<int, object{code: string, type: string, value_per_channel: int, value_per_locale: int}>
@@ -1053,7 +1180,16 @@ class FoodGroceryReferenceSeeder extends Seeder
             ->join('attribute_group_mappings as agm', 'agm.attribute_family_group_id', '=', 'fgm.id')
             ->join('attributes as a', 'a.id', '=', 'agm.attribute_id')
             ->where('fgm.attribute_family_id', $familyId)
-            ->select('a.code', 'a.type', 'a.value_per_channel', 'a.value_per_locale', 'a.validation', 'a.regex_pattern')
+            ->select(
+                'a.id',
+                'a.code',
+                'a.type',
+                'a.value_per_channel',
+                'a.value_per_locale',
+                'a.validation',
+                'a.regex_pattern',
+                'a.is_required'
+            )
             ->get()
             ->all();
 
