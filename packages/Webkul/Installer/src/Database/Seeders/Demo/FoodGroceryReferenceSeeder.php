@@ -38,6 +38,12 @@ class FoodGroceryReferenceSeeder extends Seeder
 
     protected array $translations = [];
 
+    /** @var string[] Codes of attributes whose type is `multiselect` (values must be CSV, not arrays) */
+    protected array $multiselectAttributeCodes = [];
+
+    /** The channel code UnoPim is actually using in the DB (legacy = `default`). */
+    protected string $targetChannelCode = 'default';
+
     public function run(array $parameters = []): void
     {
         $this->profile = $parameters['profile']
@@ -58,10 +64,15 @@ class FoodGroceryReferenceSeeder extends Seeder
 
         $this->translations = $this->loadJson('translations.json');
 
+        // Use whichever channel the user has active — fall back to 'default'
+        // which is what the legacy installer seeds.
+        $this->targetChannelCode = (string) (DB::table('channels')->value('code') ?: 'default');
+
         try {
             DB::transaction(function (): void {
                 $this->seedAttributeGroups();
                 $this->seedAttributes();
+                $this->refreshMultiselectAttributeCodes();
                 $this->seedFamily();
                 $this->seedCategories();
                 $this->seedBrandOptions();
@@ -498,8 +509,25 @@ class FoodGroceryReferenceSeeder extends Seeder
     }
 
     /**
-     * Fill in missing locale/channel content from the canonical en_US
-     * ecommerce entry. Applies mechanical rules from translations.json.
+     * Pull the list of attribute codes whose type is `multiselect` so we
+     * can downcast array values to CSV strings before insert. UnoPim's
+     * dynamic-attribute-fields.blade.php calls str_contains($value, ',')
+     * on multiselect values — passing an array crashes the edit form.
+     */
+    protected function refreshMultiselectAttributeCodes(): void
+    {
+        $this->multiselectAttributeCodes = DB::table('attributes')
+            ->where('type', 'multiselect')
+            ->pluck('code')
+            ->all();
+    }
+
+    /**
+     * Fill in missing locale/channel content from the canonical en_US entry
+     * and re-key all channel_specific / channel_locale_specific data under
+     * the ACTIVE DB channel code (legacy = `default`). Also converts any
+     * multiselect-attribute values from arrays to CSV strings so the edit
+     * form's str_contains check doesn't crash.
      */
     protected function enrichProductValues(array $product): array
     {
@@ -509,23 +537,75 @@ class FoodGroceryReferenceSeeder extends Seeder
         $values['channel_specific'] ??= [];
         $values['channel_locale_specific'] ??= [];
 
-        $canonical = $values['channel_locale_specific']['ecommerce']['en_US'] ?? null;
+        $target = $this->targetChannelCode;
 
-        if (! $canonical) {
-            return $values;
+        // Re-key channel_specific — move everything under the target channel
+        $oldChannelSpecific = $values['channel_specific'];
+        $values['channel_specific'] = [$target => []];
+        foreach ($oldChannelSpecific as $channelCode => $channelData) {
+            foreach ($channelData as $attrCode => $attrValue) {
+                $values['channel_specific'][$target][$attrCode] ??= $attrValue;
+            }
         }
 
-        foreach ($this->profile->channels as $channelCode) {
-            $values['channel_locale_specific'][$channelCode] ??= [];
+        // Re-key channel_locale_specific — merge every author-chosen channel
+        // bucket (ecommerce / mobile_app / print_catalogue / …) into the
+        // one `default` channel the DB actually has.
+        $oldChannelLocale = $values['channel_locale_specific'];
+        $canonical = $oldChannelLocale['ecommerce']['en_US']
+            ?? $oldChannelLocale[$target]['en_US']
+            ?? null;
 
+        $values['channel_locale_specific'] = [$target => []];
+        foreach ($oldChannelLocale as $channelCode => $localeBucket) {
+            foreach ($localeBucket as $localeCode => $content) {
+                $values['channel_locale_specific'][$target][$localeCode] ??= $content;
+            }
+        }
+
+        // Fill in missing locales by mechanical derivation from canonical
+        if ($canonical !== null) {
             foreach ($this->profile->locales as $localeCode) {
-                if (isset($values['channel_locale_specific'][$channelCode][$localeCode])) {
+                if (isset($values['channel_locale_specific'][$target][$localeCode])) {
                     continue;
                 }
 
-                $values['channel_locale_specific'][$channelCode][$localeCode] =
-                    $this->deriveContent($canonical, $channelCode, $localeCode);
+                $values['channel_locale_specific'][$target][$localeCode] =
+                    $this->deriveContent($canonical, $target, $localeCode);
             }
+        }
+
+        // Downcast multiselect arrays → CSV everywhere values live
+        $values['common'] = $this->downcastMultiselectValues($values['common']);
+        foreach ($values['channel_specific'] as $chan => $cs) {
+            $values['channel_specific'][$chan] = $this->downcastMultiselectValues($cs);
+        }
+        foreach ($values['channel_locale_specific'] as $chan => $locales) {
+            foreach ($locales as $loc => $payload) {
+                $values['channel_locale_specific'][$chan][$loc] =
+                    $this->downcastMultiselectValues($payload);
+            }
+        }
+
+        return $values;
+    }
+
+    /**
+     * Convert `["a","b","c"]` → `"a,b,c"` for any attribute in the values
+     * array whose type is `multiselect`. Leaves everything else untouched.
+     */
+    protected function downcastMultiselectValues(array $values): array
+    {
+        foreach ($values as $code => $value) {
+            if (! is_array($value)) {
+                continue;
+            }
+
+            if (! in_array($code, $this->multiselectAttributeCodes, true)) {
+                continue;
+            }
+
+            $values[$code] = implode(',', array_filter(array_map('strval', $value), static fn ($v) => $v !== ''));
         }
 
         return $values;
