@@ -223,10 +223,21 @@ class MagicAIPlatformController extends Controller
         } catch (\Throwable $e) {
             $resolved = PrismErrorResolver::resolve($e);
 
-            // Surface the raw exception message only for unknown errors;
-            // known provider errors (rate limit, overloaded, etc.) get the
-            // translated, user-friendly message with no internal details.
-            $detail = $resolved['is_known'] ? $resolved['message'] : $e->getMessage();
+            // Always use the resolver's message: known errors get the localized
+            // user-friendly text (rate limit / overloaded / too large), and
+            // unknown errors now go through sanitizeRawMessage which extracts
+            // the underlying upstream HTTP response body when Prism's own
+            // message is just an "Unknown error" placeholder.
+            $detail = $resolved['message'];
+
+            // Custom platforms route through Prism's Groq class for the
+            // /chat/completions endpoint. The Groq class hardcodes "Groq Error"
+            // in the exception text, which is misleading when the actual HTTP
+            // call went to (e.g.) Cerebras. Rewrite the prefix so the message
+            // accurately reflects the user's selected provider.
+            if (request()->input('provider') === AiProvider::Custom->value) {
+                $detail = preg_replace('/^Groq Error\b/', 'Custom Provider Error', $detail);
+            }
 
             return new JsonResponse([
                 'success' => false,
@@ -309,18 +320,25 @@ class MagicAIPlatformController extends Controller
 
     /**
      * Configure the Laravel AI SDK provider from request data.
+     *
+     * Writes to both the laravel/ai (`ai.providers.*`) and Prism
+     * (`prism.providers.*`) config namespaces so Test Connection honours
+     * a custom `api_url` regardless of which SDK ends up making the call.
      */
     protected function configureProviderFromRequest(AiProvider $provider): void
     {
         $configKey = $provider->configKey();
+        $apiKey = $this->resolveApiKey();
 
         config([
-            "ai.providers.{$configKey}.key" => $this->resolveApiKey(),
+            "ai.providers.{$configKey}.key"        => $apiKey,
+            "prism.providers.{$configKey}.api_key" => $apiKey,
         ]);
 
         if (request()->input('api_url')) {
             config([
-                "ai.providers.{$configKey}.url" => request()->input('api_url'),
+                "ai.providers.{$configKey}.url"    => request()->input('api_url'),
+                "prism.providers.{$configKey}.url" => request()->input('api_url'),
             ]);
         }
 
@@ -329,7 +347,10 @@ class MagicAIPlatformController extends Controller
             $decoded = is_string($extras) ? json_decode($extras, true) : $extras;
             if (is_array($decoded)) {
                 foreach ($decoded as $key => $value) {
-                    config(["ai.providers.{$configKey}.{$key}" => $value]);
+                    config([
+                        "ai.providers.{$configKey}.{$key}"    => $value,
+                        "prism.providers.{$configKey}.{$key}" => $value,
+                    ]);
                 }
             }
         }

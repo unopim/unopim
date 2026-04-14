@@ -358,6 +358,7 @@ test('7.2 - Add Platform modal has Provider dropdown with all provider options',
   expect(optionTexts.some(t => t.includes('DeepSeek'))).toBe(true);
   expect(optionTexts.some(t => t.includes('Azure OpenAI'))).toBe(true);
   expect(optionTexts.some(t => t.includes('OpenRouter'))).toBe(true);
+  expect(optionTexts.some(t => t.includes('Custom (OpenAI-compatible)'))).toBe(true);
 });
 
 test('7.3 - Selecting OpenAI provider shows Label, API Key, API URL, Models, toggles', async ({ adminPage }) => {

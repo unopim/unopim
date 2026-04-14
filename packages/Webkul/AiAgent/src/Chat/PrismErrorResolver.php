@@ -2,6 +2,7 @@
 
 namespace Webkul\AiAgent\Chat;
 
+use Illuminate\Http\Client\RequestException;
 use Prism\Prism\Exceptions\PrismProviderOverloadedException;
 use Prism\Prism\Exceptions\PrismRateLimitedException;
 use Prism\Prism\Exceptions\PrismRequestTooLargeException;
@@ -66,16 +67,29 @@ class PrismErrorResolver
 
     /**
      * Clean up a raw exception message for display:
-     *  - trim whitespace
-     *  - collapse runs of whitespace
-     *  - truncate to a reasonable length so multi-paragraph stack-trace-like
-     *    messages don't flood the chat bubble
-     *  - strip a trailing empty "Details: []" dump that Prism appends to some
-     *    exceptions when the provider returned no structured rate-limit info
+     *  - prefer the underlying upstream HTTP response body when Prism's
+     *    formatted message is just a "[Provider] Error [code]: Unknown error"
+     *    placeholder (common when third-party "OpenAI-compatible" providers
+     *    return errors using non-standard JSON shapes)
+     *  - trim whitespace and collapse runs of whitespace
+     *  - drop Prism's empty "Details: []" suffix
+     *  - truncate to a reasonable length
      */
     protected static function sanitizeRawMessage(Throwable $e): string
     {
         $message = trim((string) $e->getMessage());
+
+        // When Prism couldn't extract a useful error.message from the upstream
+        // response (e.g. a third-party returns a non-OpenAI error shape), it
+        // writes "Unknown error". In that case fall back to the raw response
+        // body from the underlying RequestException — that's what the upstream
+        // actually said, and it's what the user needs to see.
+        if ($message === '' || str_contains($message, 'Unknown error')) {
+            $upstream = self::extractUpstreamBody($e);
+            if ($upstream !== '') {
+                $message = $upstream;
+            }
+        }
 
         if ($message === '') {
             return '';
@@ -96,5 +110,43 @@ class PrismErrorResolver
         }
 
         return $message;
+    }
+
+    /**
+     * Walk the previous-exception chain to find a Laravel HTTP RequestException
+     * and return the most informative slice of its response body.
+     */
+    protected static function extractUpstreamBody(Throwable $e): string
+    {
+        $current = $e;
+
+        while ($current !== null) {
+            if ($current instanceof RequestException && $current->response !== null) {
+                $status = $current->response->status();
+                $body = trim((string) $current->response->body());
+
+                if ($body === '') {
+                    return '';
+                }
+
+                // Prefer a structured JSON error message field if one exists.
+                $json = $current->response->json();
+                if (is_array($json)) {
+                    foreach (['error.message', 'error', 'message', 'detail', 'detail.message'] as $path) {
+                        $candidate = data_get($json, $path);
+                        if (is_string($candidate) && trim($candidate) !== '') {
+                            return sprintf('HTTP %d: %s', $status, trim($candidate));
+                        }
+                    }
+                }
+
+                // No structured field — return a trimmed slice of the raw body.
+                return sprintf('HTTP %d: %s', $status, mb_substr($body, 0, 400));
+            }
+
+            $current = $current->getPrevious();
+        }
+
+        return '';
     }
 }
