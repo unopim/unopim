@@ -29,9 +29,12 @@
 
                 <label
                     class="grid justify-items-center items-center w-full h-[120px] max-w-[210px] max-h-[120px] border border-dashed dark:border-gray-300 rounded cursor-pointer transition-all hover:border-gray-400 dark:invert dark:mix-blend-exclusion"
-                    :class="[errors['videos.files[0]'] ? 'border border-red-500' : 'border-gray-300']"
+                    :class="[errors['videos.files[0]'] ? 'border border-red-500' : 'border-gray-300', {'border-violet-400 bg-violet-50 dark:bg-cherry-800': isDragging}]"
                     :for="$.uid + '_videoInput'"
                     v-if="allowMultiple || videos.length == 0"
+                    @dragover.prevent="onDragOver"
+                    @dragleave.prevent="onDragLeave"
+                    @drop.prevent="onDrop"
                 >
                     <div class="flex flex-col items-center">
                         <span class="icon-image text-2xl"></span>
@@ -171,6 +174,8 @@
             data() {
                 return {
                     videos: [],
+
+                    isDragging: false,
                 }
             },
 
@@ -179,14 +184,20 @@
             },
 
             methods: {
-                add() {
+                add(files = null) {
                     let videoInput = this.$refs[this.$.uid + '_videoInput'];
 
-                    if (videoInput.files == undefined) {
+                    let filesToProcess = [];
+
+                    if (files) {
+                        filesToProcess = Array.from(files);
+                    } else if (videoInput.files == undefined) {
                         return;
+                    } else {
+                        filesToProcess = Array.from(videoInput.files);
                     }
 
-                    const validFiles = Array.from(videoInput.files).every(file => file.type.includes('video/'));
+                    const validFiles = filesToProcess.every(file => file.type.includes('video/'));
 
                     if (! validFiles) {
                         this.$emitter.emit('add-flash', {
@@ -197,13 +208,31 @@
                         return;
                     }
 
-                    videoInput.files.forEach((file, index) => {
+                    filesToProcess.forEach((file, index) => {
                         this.videos.push({
                             id: 'video_' + this.videos.length,
                             url: '',
                             file: file
                         });
                     });
+
+                    if (!files && videoInput) {
+                        videoInput.value = '';
+                    }
+                },
+
+                onDragOver() {
+                    this.isDragging = true;
+                },
+
+                onDragLeave() {
+                    this.isDragging = false;
+                },
+
+                onDrop(event) {
+                    this.isDragging = false;
+                    const droppedFiles = Array.from(event.dataTransfer.files);
+                    this.add(droppedFiles);
                 },
 
                 remove(video) {
