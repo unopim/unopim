@@ -10,12 +10,16 @@ const PRODUCTS_URL = '/admin/catalog/products';
  * want to assert never exist — so dependent tests should skip.
  */
 async function dashboardHasProducts(adminPage) {
-  await adminPage.goto(DASHBOARD_URL, { waitUntil: 'networkidle' });
-
-  const statsResponse = await adminPage.waitForResponse(
+  // Register the response listener BEFORE navigation so we never miss the
+  // /admin/dashboard/stats call when it resolves during networkidle.
+  const statsResponsePromise = adminPage.waitForResponse(
     (resp) => resp.url().includes('/admin/dashboard/stats') && resp.status() === 200,
     { timeout: 15000 }
   ).catch(() => null);
+
+  await adminPage.goto(DASHBOARD_URL, { waitUntil: 'networkidle' });
+
+  const statsResponse = await statsResponsePromise;
 
   if (!statsResponse) {
     return false;
@@ -35,24 +39,26 @@ test.describe('Dashboard product-stats widget filter links', () => {
   test('Active card links to the products list with status=1 filter', async ({ adminPage }) => {
     test.skip(!(await dashboardHasProducts(adminPage)), 'Dashboard is in empty state — no products in the fixture DB');
 
-    // exact: true — avoid Playwright substring-matching "Active" inside "Inactive".
-    const activeLink = adminPage.locator('#app').getByRole('link', { name: /Active/, exact: true }).first();
+    // Locate by href substring — the accessible name of the card is "Active <count>",
+    // so getByRole with an anchored /^Active$/ regex can never match.
+    const activeLink = adminPage.locator('#app a[href*="filters[status][]=1"]').first();
     await expect(activeLink).toBeVisible();
 
     const href = await activeLink.getAttribute('href');
     expect(href).toContain('/admin/catalog/products');
-    // URL-encoded form of filters[status][]=1
-    expect(href).toContain('filters%5Bstatus%5D%5B%5D=1');
+    // Blade writes the href with literal brackets, and getAttribute() returns the
+    // raw attribute value, so the assertion must match the un-encoded form.
+    expect(href).toContain('filters[status][]=1');
   });
 
   test('Inactive card links with status=0 filter', async ({ adminPage }) => {
     test.skip(!(await dashboardHasProducts(adminPage)), 'Dashboard is in empty state — no products in the fixture DB');
 
-    const inactiveLink = adminPage.locator('#app').getByRole('link', { name: /Inactive/, exact: true }).first();
+    const inactiveLink = adminPage.locator('#app a[href*="filters[status][]=0"]').first();
     await expect(inactiveLink).toBeVisible();
 
     const href = await inactiveLink.getAttribute('href');
-    expect(href).toContain('filters%5Bstatus%5D%5B%5D=0');
+    expect(href).toContain('filters[status][]=0');
   });
 
   test('Configurable legend chip links with type=configurable filter', async ({ adminPage }) => {
@@ -68,8 +74,7 @@ test.describe('Dashboard product-stats widget filter links', () => {
     }
 
     const href = await configurableChip.getAttribute('href');
-    // URL-encoded form of filters[type][]=configurable
-    expect(href).toContain('filters%5Btype%5D%5B%5D=configurable');
+    expect(href).toContain('filters[type][]=configurable');
   });
 
   test('Simple legend chip links with type=simple filter', async ({ adminPage }) => {
@@ -83,7 +88,7 @@ test.describe('Dashboard product-stats widget filter links', () => {
     }
 
     const href = await simpleChip.getAttribute('href');
-    expect(href).toContain('filters%5Btype%5D%5B%5D=simple');
+    expect(href).toContain('filters[type][]=simple');
   });
 
   test('Deep-linking to ?filters[type][]=configurable reaches the backend grid query', async ({ adminPage }) => {

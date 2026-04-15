@@ -188,6 +188,17 @@ class MagicAIPlatformController extends Controller
 
         try {
             $provider = AiProvider::from(request()->input('provider'));
+
+            // Custom providers reuse the Groq SDK under the hood, so without an
+            // explicit api_url the request would silently hit Groq's default
+            // endpoint and ship the caller's API key to the wrong host.
+            if ($provider === AiProvider::Custom && empty(trim((string) request()->input('api_url')))) {
+                return new JsonResponse([
+                    'success' => false,
+                    'message' => trans('admin::app.configuration.platform.message.test-fail').': '.trans('admin::app.configuration.platform.message.custom-api-url-required'),
+                ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+            }
+
             $this->configureProviderFromRequest($provider);
 
             $models = array_values(array_filter(array_map(

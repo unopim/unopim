@@ -68,6 +68,7 @@
                             class="transition-all duration-700 ease-out first:rounded-l-full last:rounded-r-full cursor-pointer"
                             :style="{ width: Math.max(getPercentage(count), 3) + '%', background: getTypeHex(type) }"
                             :title="type + ': ' + count"
+                            :aria-label="type + ': ' + count"
                         ></a>
                     </div>
 
