@@ -1878,6 +1878,7 @@ return [
                 'set-default-success'   => 'Platforma a fost setată ca implicită cu succes.',
                 'test-success'          => 'Conexiunea a fost verificată cu succes!',
                 'test-fail'             => 'Testul conexiunii a eșuat',
+                'no-test-model'         => 'Selectați cel puțin un model compatibil cu textul pentru a rula testul de conexiune.',
                 'fetch-models-fail'     => 'Modelele nu au putut fi obținute',
                 'invalid-model-names'   => 'Nume de model invalide: :names. Numele de model trebuie să înceapă cu o literă sau un număr și să conțină doar litere, cifre, cratime, puncte, două puncte și bare oblice.',
             ],

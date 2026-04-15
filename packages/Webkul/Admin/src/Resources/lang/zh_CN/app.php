@@ -1878,6 +1878,7 @@ return [
                 'set-default-success'   => '平台已成功设为默认。',
                 'test-success'          => '连接验证成功！',
                 'test-fail'             => '连接测试失败',
+                'no-test-model'         => '请至少选择一个支持文本的模型来运行连接测试。',
                 'fetch-models-fail'     => '无法获取模型',
                 'invalid-model-names'   => '无效的模型名称：:names。模型名称必须以字母或数字开头，且仅包含字母、数字、连字符、点、冒号和斜杠。',
             ],

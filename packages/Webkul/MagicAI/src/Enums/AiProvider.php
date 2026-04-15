@@ -18,6 +18,7 @@ enum AiProvider: string
     case DeepSeek = 'deepseek';
     case Azure = 'azure';
     case OpenRouter = 'openrouter';
+    case Custom = 'custom';
 
     public function toLab(): Lab
     {
@@ -32,6 +33,7 @@ enum AiProvider: string
             self::DeepSeek   => Lab::DeepSeek,
             self::Azure      => Lab::Azure,
             self::OpenRouter => Lab::OpenRouter,
+            self::Custom     => Lab::OpenAI,
         };
     }
 
@@ -48,6 +50,13 @@ enum AiProvider: string
             self::DeepSeek   => PrismProvider::DeepSeek,
             self::Azure      => PrismProvider::OpenAI,
             self::OpenRouter => PrismProvider::OpenRouter,
+            // Prism's OpenAI provider posts to /responses (new Responses API,
+            // OpenAI-only). Most "OpenAI-compatible" third parties (Cerebras,
+            // Together, Fireworks, Perplexity, DeepInfra) only implement the
+            // legacy /chat/completions endpoint — which is exactly what the
+            // Groq Prism provider speaks. Routing Custom through Groq lets
+            // any chat-completions-compatible API work out of the box.
+            self::Custom => PrismProvider::Groq,
         };
     }
 
@@ -73,6 +82,7 @@ enum AiProvider: string
             self::DeepSeek   => 'https://api.deepseek.com',
             self::Azure      => '',
             self::OpenRouter => 'https://openrouter.ai/api/v1',
+            self::Custom     => '',
         };
     }
 
@@ -80,7 +90,10 @@ enum AiProvider: string
     {
         return match ($this) {
             self::OpenRouter => 'openrouter',
-            default          => $this->value,
+            // Custom routes through PrismProvider::Groq (chat-completions),
+            // so its api_url override must land in the groq config namespace.
+            self::Custom => 'groq',
+            default      => $this->value,
         };
     }
 
@@ -97,6 +110,7 @@ enum AiProvider: string
             self::DeepSeek   => 'DeepSeek',
             self::Azure      => 'Azure OpenAI',
             self::OpenRouter => 'OpenRouter',
+            self::Custom     => 'Custom (OpenAI-compatible)',
         };
     }
 
@@ -127,12 +141,27 @@ enum AiProvider: string
                 self::DeepSeek   => $this->fetchOpenAiCompatModels($client, $apiKey, 'https://api.deepseek.com/models'),
                 self::OpenRouter => $this->fetchOpenAiCompatModels($client, $apiKey, 'https://openrouter.ai/api/v1/models'),
                 self::Azure      => $this->fetchAzureModels($client, $apiKey, $apiUrl),
+                self::Custom     => $this->fetchCustomModels($client, $apiKey, $apiUrl),
             };
         } catch (\Exception $e) {
             report($e);
 
             throw $e;
         }
+    }
+
+    /**
+     * Fetch models from a user-supplied OpenAI-compatible endpoint.
+     * Returns an empty list (instead of throwing) when no api_url is configured —
+     * the user can still add model IDs manually via the "+ Add" UI.
+     */
+    private function fetchCustomModels(Client $client, ?string $apiKey, ?string $apiUrl): array
+    {
+        if (! $apiUrl) {
+            return [];
+        }
+
+        return $this->fetchOpenAiCompatModels($client, $apiKey, rtrim($apiUrl, '/').'/models');
     }
 
     private function fetchOpenAiModels(Client $client, ?string $apiKey): array

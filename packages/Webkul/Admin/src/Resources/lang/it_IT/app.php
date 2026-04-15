@@ -1878,6 +1878,7 @@ return [
                 'set-default-success'   => 'Piattaforma impostata come predefinita con successo.',
                 'test-success'          => 'Connessione verificata con successo!',
                 'test-fail'             => 'Test di connessione fallito',
+                'no-test-model'         => 'Seleziona almeno un modello in grado di generare testo per eseguire il test di connessione.',
                 'fetch-models-fail'     => 'Impossibile recuperare i modelli',
                 'invalid-model-names'   => 'Nomi del modello non validi: :names. I nomi del modello devono iniziare con una lettera o un numero e contenere solo lettere, numeri, trattini, punti, due punti e barre.',
             ],

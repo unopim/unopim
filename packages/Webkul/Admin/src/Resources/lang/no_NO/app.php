@@ -1878,6 +1878,7 @@ return [
                 'set-default-success'   => 'Plattform angitt som standard vellykket.',
                 'test-success'          => 'Tilkobling bekreftet vellykket!',
                 'test-fail'             => 'Tilkoblingstest mislyktes',
+                'no-test-model'         => 'Velg minst én tekstkapabel modell for å kjøre tilkoblingstesten.',
                 'fetch-models-fail'     => 'Kunne ikke hente modeller',
                 'invalid-model-names'   => 'Ugyldige modellnavn: :names. Modellnavn må starte med en bokstav eller et tall og kun inneholde bokstaver, tall, bindestreker, punktum, kolon og skråstreker.',
             ],

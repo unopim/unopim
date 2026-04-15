@@ -1878,6 +1878,7 @@ return [
                 'set-default-success'   => 'Plataforma establerta com a predeterminada correctament.',
                 'test-success'          => 'Connexió verificada correctament!',
                 'test-fail'             => 'La prova de connexió ha fallat',
+                'no-test-model'         => 'Seleccioneu almenys un model capaç de generar text per executar la prova de connexió.',
                 'fetch-models-fail'     => 'No s\'han pogut obtenir els models',
                 'invalid-model-names'   => 'Noms de model no vàlids: :names. Els noms de model han de començar amb una lletra o un número i contenir només lletres, números, guions, punts, dos punts i barres.',
             ],

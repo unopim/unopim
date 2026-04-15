@@ -1878,6 +1878,7 @@ return [
                 'set-default-success'   => 'Platforma uspješno postavljena kao zadana.',
                 'test-success'          => 'Veza uspješno provjerena!',
                 'test-fail'             => 'Test veze nije uspio',
+                'no-test-model'         => 'Odaberite barem jedan model koji podržava tekst za pokretanje testa veze.',
                 'fetch-models-fail'     => 'Dohvaćanje modela nije uspjelo',
                 'invalid-model-names'   => 'Nevažeći nazivi modela: :names. Nazivi modela moraju započinjati slovom ili brojem i sadržavati samo slova, brojeve, crtice, točke, dvotočke i kose crte.',
             ],

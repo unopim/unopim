@@ -1878,6 +1878,7 @@ return [
                 'set-default-success'   => 'Plateforme définie par défaut avec succès.',
                 'test-success'          => 'Connexion vérifiée avec succès !',
                 'test-fail'             => 'Échec du test de connexion',
+                'no-test-model'         => 'Sélectionnez au moins un modèle compatible avec le texte pour lancer le test de connexion.',
                 'fetch-models-fail'     => 'Impossible de récupérer les modèles',
                 'invalid-model-names'   => 'Noms de modèle invalides : :names. Les noms de modèle doivent commencer par une lettre ou un chiffre et ne contenir que des lettres, chiffres, tirets, points, deux-points et barres obliques.',
             ],

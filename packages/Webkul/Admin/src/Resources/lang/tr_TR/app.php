@@ -1878,6 +1878,7 @@ return [
                 'set-default-success'   => 'Platform başarıyla varsayılan olarak ayarlandı.',
                 'test-success'          => 'Bağlantı başarıyla doğrulandı!',
                 'test-fail'             => 'Bağlantı testi başarısız oldu',
+                'no-test-model'         => 'Bağlantı testini çalıştırmak için en az bir metin destekli model seçin.',
                 'fetch-models-fail'     => 'Modeller alınamadı',
                 'invalid-model-names'   => 'Geçersiz model adları: :names. Model adları bir harf veya rakamla başlamalı ve yalnızca harf, rakam, tire, nokta, iki nokta üst üste ve eğik çizgi içermelidir.',
             ],

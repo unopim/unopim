@@ -1878,6 +1878,7 @@ return [
                 'set-default-success'   => 'Alusta asetettu oletukseksi onnistuneesti.',
                 'test-success'          => 'Yhteys vahvistettu onnistuneesti!',
                 'test-fail'             => 'Yhteystesti epäonnistui',
+                'no-test-model'         => 'Valitse vähintään yksi tekstiä tukeva malli yhteystestin suorittamiseksi.',
                 'fetch-models-fail'     => 'Mallien haku epäonnistui',
                 'invalid-model-names'   => 'Virheelliset mallien nimet: :names. Mallien nimien on alettava kirjaimella tai numerolla ja sisällettävä vain kirjaimia, numeroita, väliviivoja, pisteitä, kaksoispisteitä ja kauttaviivoja.',
             ],

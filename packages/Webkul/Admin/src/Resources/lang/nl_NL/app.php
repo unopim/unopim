@@ -1878,6 +1878,7 @@ return [
                 'set-default-success'   => 'Platform succesvol als standaard ingesteld.',
                 'test-success'          => 'Verbinding succesvol geverifieerd!',
                 'test-fail'             => 'Verbindingstest mislukt',
+                'no-test-model'         => 'Selecteer ten minste één tekstondersteunend model om de verbindingstest uit te voeren.',
                 'fetch-models-fail'     => 'Modellen konden niet worden opgehaald',
                 'invalid-model-names'   => 'Ongeldige modelnamen: :names. Modelnamen moeten beginnen met een letter of cijfer en mogen alleen letters, cijfers, koppeltekens, punten, dubbele punten en schuine strepen bevatten.',
             ],

@@ -10,8 +10,10 @@ use Illuminate\View\View;
 use Prism\Prism\Facades\Prism;
 use Webkul\Admin\DataGrids\MagicAI\MagicAIPlatformDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\AiAgent\Chat\PrismErrorResolver;
 use Webkul\MagicAI\Enums\AiProvider;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
+use Webkul\MagicAI\Support\ModelRecommender;
 
 class MagicAIPlatformController extends Controller
 {
@@ -188,8 +190,22 @@ class MagicAIPlatformController extends Controller
             $provider = AiProvider::from(request()->input('provider'));
             $this->configureProviderFromRequest($provider);
 
-            $models = explode(',', request()->input('models'));
-            $model = trim($models[0]);
+            $models = array_values(array_filter(array_map(
+                'trim',
+                explode(',', (string) request()->input('models'))
+            )));
+
+            // Pick a model that actually supports text completion. Image-only
+            // models like chatgpt-image-latest / dall-e-3 would make the test
+            // fail with "model not found" even though the API key is valid.
+            $model = ModelRecommender::pickTextModel($models);
+
+            if ($model === null || $model === '') {
+                return new JsonResponse([
+                    'success' => false,
+                    'message' => trans('admin::app.configuration.platform.message.test-fail').': '.trans('admin::app.configuration.platform.message.no-test-model'),
+                ], JsonResponse::HTTP_BAD_REQUEST);
+            }
 
             $response = Prism::text()
                 ->using($provider->toPrismProvider(), $model, [
@@ -204,11 +220,29 @@ class MagicAIPlatformController extends Controller
                 'success' => true,
                 'message' => trans('admin::app.configuration.platform.message.test-success'),
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            $resolved = PrismErrorResolver::resolve($e);
+
+            // Always use the resolver's message: known errors get the localized
+            // user-friendly text (rate limit / overloaded / too large), and
+            // unknown errors now go through sanitizeRawMessage which extracts
+            // the underlying upstream HTTP response body when Prism's own
+            // message is just an "Unknown error" placeholder.
+            $detail = $resolved['message'];
+
+            // Custom platforms route through Prism's Groq class for the
+            // /chat/completions endpoint. The Groq class hardcodes "Groq Error"
+            // in the exception text, which is misleading when the actual HTTP
+            // call went to (e.g.) Cerebras. Rewrite the prefix so the message
+            // accurately reflects the user's selected provider.
+            if (request()->input('provider') === AiProvider::Custom->value) {
+                $detail = preg_replace('/^Groq Error\b/', 'Custom Provider Error', $detail);
+            }
+
             return new JsonResponse([
                 'success' => false,
-                'message' => trans('admin::app.configuration.platform.message.test-fail').': '.$e->getMessage(),
-            ], JsonResponse::HTTP_BAD_REQUEST);
+                'message' => trans('admin::app.configuration.platform.message.test-fail').': '.$detail,
+            ], $resolved['is_known'] ? $resolved['status'] : JsonResponse::HTTP_BAD_REQUEST);
         }
     }
 
@@ -227,8 +261,8 @@ class MagicAIPlatformController extends Controller
                 request()->input('api_url'),
             );
 
-            // Pick top recommended models from the fetched list
-            $recommended = $this->pickRecommendedModels($models, $provider);
+            // Pick recommended models to auto-select (includes image models)
+            $recommended = ModelRecommender::recommend($models);
 
             return new JsonResponse([
                 'models'      => $models,
@@ -239,61 +273,6 @@ class MagicAIPlatformController extends Controller
                 'message' => trans('admin::app.configuration.platform.message.fetch-models-fail').': '.$e->getMessage(),
             ], JsonResponse::HTTP_BAD_REQUEST);
         }
-    }
-
-    /**
-     * Pick recommended models from the fetched list.
-     * Uses pattern matching to find the latest/best models for each provider.
-     */
-    protected function pickRecommendedModels(array $models, AiProvider $provider): array
-    {
-        if (empty($models)) {
-            return [];
-        }
-
-        // Provider-specific patterns to match the latest flagship models
-        $patterns = match ($provider) {
-            AiProvider::OpenAI     => ['/^gpt-\d+(\.\d+)?$/i', '/^gpt-\d+(\.\d+)?-mini$/i'],
-            AiProvider::Anthropic  => ['/^claude-.*sonnet/i', '/^claude-.*haiku/i'],
-            AiProvider::Gemini     => ['/gemini-.*pro/i', '/gemini-.*flash$/i'],
-            AiProvider::Groq       => ['/llama.*versatile/i', '/llama.*instant/i'],
-            AiProvider::XAI        => ['/^grok-\d+$/i', '/^grok-\d+-mini$/i'],
-            AiProvider::Mistral    => ['/mistral-large/i', '/mistral-small/i'],
-            AiProvider::DeepSeek   => ['/deepseek-chat/i', '/deepseek-reasoner/i'],
-            default                => [],
-        };
-
-        if (empty($patterns)) {
-            return array_slice($models, 0, 3);
-        }
-
-        $recommended = [];
-
-        foreach ($patterns as $pattern) {
-            $matches = preg_grep($pattern, $models);
-
-            if (! empty($matches)) {
-                // Sort descending so newest version (highest number) comes first
-                $sorted = array_values($matches);
-                rsort($sorted);
-                $recommended[] = $sorted[0];
-            }
-        }
-
-        // If patterns didn't match enough, pad with first models from list
-        if (count($recommended) < 2 && count($models) >= 2) {
-            foreach ($models as $model) {
-                if (! in_array($model, $recommended)) {
-                    $recommended[] = $model;
-                }
-
-                if (count($recommended) >= 3) {
-                    break;
-                }
-            }
-        }
-
-        return array_values(array_unique($recommended));
     }
 
     /**
@@ -341,18 +320,25 @@ class MagicAIPlatformController extends Controller
 
     /**
      * Configure the Laravel AI SDK provider from request data.
+     *
+     * Writes to both the laravel/ai (`ai.providers.*`) and Prism
+     * (`prism.providers.*`) config namespaces so Test Connection honours
+     * a custom `api_url` regardless of which SDK ends up making the call.
      */
     protected function configureProviderFromRequest(AiProvider $provider): void
     {
         $configKey = $provider->configKey();
+        $apiKey = $this->resolveApiKey();
 
         config([
-            "ai.providers.{$configKey}.key" => $this->resolveApiKey(),
+            "ai.providers.{$configKey}.key"        => $apiKey,
+            "prism.providers.{$configKey}.api_key" => $apiKey,
         ]);
 
         if (request()->input('api_url')) {
             config([
-                "ai.providers.{$configKey}.url" => request()->input('api_url'),
+                "ai.providers.{$configKey}.url"    => request()->input('api_url'),
+                "prism.providers.{$configKey}.url" => request()->input('api_url'),
             ]);
         }
 
@@ -361,7 +347,10 @@ class MagicAIPlatformController extends Controller
             $decoded = is_string($extras) ? json_decode($extras, true) : $extras;
             if (is_array($decoded)) {
                 foreach ($decoded as $key => $value) {
-                    config(["ai.providers.{$configKey}.{$key}" => $value]);
+                    config([
+                        "ai.providers.{$configKey}.{$key}"    => $value,
+                        "prism.providers.{$configKey}.{$key}" => $value,
+                    ]);
                 }
             }
         }

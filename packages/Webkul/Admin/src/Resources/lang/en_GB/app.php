@@ -1878,6 +1878,7 @@ return [
                 'set-default-success'   => 'Platform set as default successfully.',
                 'test-success'          => 'Connection verified successfully!',
                 'test-fail'             => 'Connection test failed.',
+                'no-test-model'         => 'Select at least one text-capable model to run the connection test.',
                 'fetch-models-fail'     => 'Could not fetch models.',
                 'invalid-model-names'   => 'Invalid model names: :names. Model names must start with a letter or number and contain only letters, numbers, hyphens, dots, colons, and slashes.',
             ],

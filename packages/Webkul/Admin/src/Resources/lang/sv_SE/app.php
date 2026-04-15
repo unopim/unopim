@@ -1878,6 +1878,7 @@ return [
                 'set-default-success'   => 'Plattform angiven som standard framgångsrikt.',
                 'test-success'          => 'Anslutning verifierad framgångsrikt!',
                 'test-fail'             => 'Anslutningstest misslyckades',
+                'no-test-model'         => 'Välj minst en textkapabel modell för att köra anslutningstestet.',
                 'fetch-models-fail'     => 'Kunde inte hämta modeller',
                 'invalid-model-names'   => 'Ogiltiga modellnamn: :names. Modellnamn måste börja med en bokstav eller siffra och får bara innehålla bokstäver, siffror, bindestreck, punkter, kolon och snedstreck.',
             ],

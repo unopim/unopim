@@ -1878,6 +1878,7 @@ return [
                 'set-default-success'   => 'Platform angivet som standard med succes.',
                 'test-success'          => 'Forbindelse bekræftet med succes!',
                 'test-fail'             => 'Forbindelsestest mislykkedes',
+                'no-test-model'         => 'Vælg mindst én tekstbaseret model for at køre forbindelsestesten.',
                 'fetch-models-fail'     => 'Kunne ikke hente modeller',
                 'invalid-model-names'   => 'Ugyldige modelnavne: :names. Modelnavne skal starte med et bogstav eller tal og kun indeholde bogstaver, tal, bindestreger, punktummer, koloner og skråstreger.',
             ],

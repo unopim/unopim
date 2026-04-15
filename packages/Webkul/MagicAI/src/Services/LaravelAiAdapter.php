@@ -162,6 +162,10 @@ class LaravelAiAdapter implements LLMModelInterface
             AiProvider::DeepSeek   => PrismProvider::DeepSeek,
             AiProvider::Azure      => PrismProvider::OpenAI,
             AiProvider::OpenRouter => PrismProvider::OpenRouter,
+            // See AiProvider::Custom — Prism's Groq provider posts to
+            // /chat/completions, the legacy endpoint every OpenAI-compatible
+            // third party (Cerebras, Together, Fireworks, etc.) implements.
+            AiProvider::Custom => PrismProvider::Groq,
         };
     }
 }

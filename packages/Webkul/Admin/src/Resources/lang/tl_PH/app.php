@@ -1878,6 +1878,7 @@ return [
                 'set-default-success'   => 'Matagumpay na naitakda ang platform bilang default.',
                 'test-success'          => 'Matagumpay na na-verify ang koneksyon!',
                 'test-fail'             => 'Nabigo ang pagsubok sa koneksyon',
+                'no-test-model'         => 'Pumili ng kahit isang text-capable na modelo para patakbuhin ang pagsubok sa koneksyon.',
                 'fetch-models-fail'     => 'Hindi makuha ang mga modelo',
                 'invalid-model-names'   => 'Hindi wastong mga pangalan ng modelo: :names. Ang mga pangalan ng modelo ay dapat magsimula sa titik o numero at maglaman lamang ng mga titik, numero, gitling, tuldok, tutuldok, at pahilis.',
             ],

@@ -1878,6 +1878,7 @@ return [
                 'set-default-success'   => 'Platforma została ustawiona jako domyślna pomyślnie.',
                 'test-success'          => 'Połączenie zweryfikowane pomyślnie!',
                 'test-fail'             => 'Test połączenia nie powiódł się',
+                'no-test-model'         => 'Wybierz co najmniej jeden model obsługujący tekst, aby uruchomić test połączenia.',
                 'fetch-models-fail'     => 'Nie udało się pobrać modeli',
                 'invalid-model-names'   => 'Nieprawidłowe nazwy modeli: :names. Nazwy modeli muszą zaczynać się od litery lub cyfry i zawierać tylko litery, cyfry, myślniki, kropki, dwukropki i ukośniki.',
             ],

@@ -139,6 +139,9 @@
         removeImage(index) {
           this.imageList.splice(index, 1);
           this.commitChanges();
+
+          if (this.imageList.length === 0) {
+          }
         },
 
         preview() {

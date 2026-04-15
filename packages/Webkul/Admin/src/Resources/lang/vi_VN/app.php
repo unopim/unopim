@@ -1878,6 +1878,7 @@ return [
                 'set-default-success'   => 'Nền tảng đã được đặt làm mặc định thành công.',
                 'test-success'          => 'Kết nối đã được xác minh thành công!',
                 'test-fail'             => 'Kiểm tra kết nối thất bại',
+                'no-test-model'         => 'Chọn ít nhất một mô hình hỗ trợ văn bản để chạy kiểm tra kết nối.',
                 'fetch-models-fail'     => 'Không thể lấy danh sách mô hình',
                 'invalid-model-names'   => 'Tên mô hình không hợp lệ: :names. Tên mô hình phải bắt đầu bằng chữ cái hoặc số và chỉ chứa chữ cái, số, dấu gạch ngang, dấu chấm, dấu hai chấm và dấu gạch chéo.',
             ],

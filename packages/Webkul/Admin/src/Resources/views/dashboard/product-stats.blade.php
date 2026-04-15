@@ -59,28 +59,31 @@
                         @lang('admin::app.dashboard.index.product-type-dist')
                     </p>
 
-                    <!-- Stacked Bar -->
+                    <!-- Stacked Bar (each segment deep-links into the grid filtered by that product type) -->
                     <div class="flex rounded-full h-3 overflow-hidden mb-3">
-                        <div
+                        <a
                             v-for="(count, type) in stats.typeDistribution"
                             :key="'bar-' + type"
-                            class="transition-all duration-700 ease-out first:rounded-l-full last:rounded-r-full"
+                            :href="typeFilterUrl(type)"
+                            class="transition-all duration-700 ease-out first:rounded-l-full last:rounded-r-full cursor-pointer"
                             :style="{ width: Math.max(getPercentage(count), 3) + '%', background: getTypeHex(type) }"
-                        ></div>
+                            :title="type + ': ' + count"
+                        ></a>
                     </div>
 
-                    <!-- Type Legend -->
+                    <!-- Type Legend (each chip links to products filtered by type=<type>) -->
                     <div class="flex flex-wrap gap-x-4 gap-y-2 mb-4">
-                        <div
+                        <a
                             v-for="(count, type) in stats.typeDistribution"
                             :key="'legend-' + type"
-                            class="flex items-center gap-2"
+                            :href="typeFilterUrl(type)"
+                            class="flex items-center gap-2 no-underline hover:opacity-80 transition-opacity"
                         >
                             <span class="w-3 h-3 rounded-sm flex-shrink-0" :style="{ background: getTypeHex(type) }"></span>
                             <span class="text-xs text-zinc-700 dark:text-slate-300 capitalize">@{{ type }}</span>
                             <span class="text-xs font-bold text-zinc-800 dark:text-slate-200">@{{ count }}</span>
                             <span class="text-[10px] text-zinc-400 dark:text-slate-500">(@{{ getPercentage(count) }}%)</span>
-                        </div>
+                        </a>
                     </div>
 
                     <!-- Quick Insights -->
@@ -222,6 +225,19 @@
                     if (score >= 50) return '#f59e0b';
 
                     return '#ef4444';
+                },
+
+                /**
+                 * Build a products-index URL that deep-links into the grid
+                 * pre-filtered to the given product type. Uses the same
+                 * ?filters[col][]=value format as the Active/Inactive card
+                 * hrefs so the DataGrid's boot() parseUrlFilters() picks it
+                 * up consistently. Internal-678.
+                 */
+                typeFilterUrl(type) {
+                    const base = "{{ route('admin.catalog.products.index') }}";
+
+                    return `${base}?filters[type][]=${encodeURIComponent(type)}`;
                 }
             }
         });

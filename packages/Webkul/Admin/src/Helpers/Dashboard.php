@@ -156,12 +156,16 @@ class Dashboard
                 ->where('created_at', '>=', $startDate)
                 ->count();
 
-            $withVariants = DB::table('products')
-                ->where('type', 'configurable')
+            // Variants live on `products.parent_id` (a child product row
+            // pointing at its configurable parent), NOT in `product_relations`
+            // — that table is reserved for related/up-sell links. Counting
+            // via product_relations always returned 0 (Internal-679).
+            $withVariants = DB::table('products as parents')
+                ->where('parents.type', 'configurable')
                 ->whereExists(function ($query) {
                     $query->select(DB::raw(1))
-                        ->from('product_relations')
-                        ->whereColumn('product_relations.parent_id', 'products.id');
+                        ->from('products as variants')
+                        ->whereColumn('variants.parent_id', 'parents.id');
                 })
                 ->count();
 

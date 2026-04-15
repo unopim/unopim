@@ -1878,6 +1878,7 @@ return [
                 'set-default-success'   => '平台已成功設為預設。',
                 'test-success'          => '連線驗證成功！',
                 'test-fail'             => '連線測試失敗',
+                'no-test-model'         => '請至少選擇一個支援文字的模型來執行連線測試。',
                 'fetch-models-fail'     => '無法取得模型',
                 'invalid-model-names'   => '無效的模型名稱：:names。模型名稱必須以字母或數字開頭，且僅包含字母、數字、連字號、點、冒號和斜線。',
             ],

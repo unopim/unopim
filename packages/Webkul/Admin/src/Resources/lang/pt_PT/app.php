@@ -1878,6 +1878,7 @@ return [
                 'set-default-success'   => 'Plataforma definida como predefinida com sucesso.',
                 'test-success'          => 'Ligação verificada com sucesso!',
                 'test-fail'             => 'Falha no teste de ligação',
+                'no-test-model'         => 'Selecione pelo menos um modelo compatível com texto para executar o teste de ligação.',
                 'fetch-models-fail'     => 'Não foi possível obter os modelos',
                 'invalid-model-names'   => 'Nomes de modelo inválidos: :names. Os nomes de modelo devem começar com uma letra ou número e conter apenas letras, números, hífens, pontos, dois pontos e barras.',
             ],

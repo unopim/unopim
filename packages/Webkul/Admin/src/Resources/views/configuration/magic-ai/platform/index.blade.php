@@ -346,6 +346,7 @@
                             groq: 'Groq', ollama: 'Ollama', xai: 'xAI (Grok)',
                             mistral: 'Mistral', deepseek: 'DeepSeek',
                             azure: 'Azure OpenAI', openrouter: 'OpenRouter',
+                            custom: 'Custom (OpenAI-compatible)',
                         },
                     };
                 },
@@ -373,6 +374,7 @@
                             xai: 'https://api.x.ai/v1', mistral: 'https://api.mistral.ai/v1',
                             deepseek: 'https://api.deepseek.com', azure: '',
                             openrouter: 'https://openrouter.ai/api/v1',
+                            custom: '',
                         };
                     },
                 },

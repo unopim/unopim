@@ -1878,6 +1878,7 @@ return [
                 'set-default-success'   => 'Platform berhasil ditetapkan sebagai default.',
                 'test-success'          => 'Koneksi berhasil diverifikasi!',
                 'test-fail'             => 'Uji koneksi gagal',
+                'no-test-model'         => 'Pilih setidaknya satu model yang mendukung teks untuk menjalankan uji koneksi.',
                 'fetch-models-fail'     => 'Tidak dapat mengambil model',
                 'invalid-model-names'   => 'Nama model tidak valid: :names. Nama model harus dimulai dengan huruf atau angka dan hanya berisi huruf, angka, tanda hubung, titik, titik dua, dan garis miring.',
             ],
