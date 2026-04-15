@@ -334,3 +334,23 @@ it('pickTextModel recognises sora and stable-diffusion as image/video models', f
 
     expect(ModelRecommender::pickTextModel($models))->toBe('claude-sonnet-4-5');
 });
+
+it('pickTextModel skips Gemini image and video models and lands on a Gemini text model', function () {
+    $models = ['imagen-3.0', 'veo-2', 'gemini-1.5-pro', 'gemini-1.5-flash'];
+
+    expect(ModelRecommender::pickTextModel($models))->toBe('gemini-1.5-pro');
+});
+
+it('pickTextModel skips Ideogram, Recraft, Kling, Luma, Pika image/video models across providers', function () {
+    $models = [
+        'ideogram-v2',
+        'recraft-v3',
+        'kling-v1',
+        'luma-dream-machine',
+        'pika-1.0',
+        'runway-gen-3',
+        'llama-3.1-70b-instruct',
+    ];
+
+    expect(ModelRecommender::pickTextModel($models))->toBe('llama-3.1-70b-instruct');
+});

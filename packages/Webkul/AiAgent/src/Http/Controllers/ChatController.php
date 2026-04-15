@@ -14,6 +14,7 @@ use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\PrismErrorResolver;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
+use Webkul\MagicAI\Support\ModelRecommender;
 
 /**
  * Handles AI chat messages from the global floating widget.
@@ -145,8 +146,13 @@ class ChatController extends Controller
             ], 422);
         }
 
+        // When the widget doesn't pass an explicit model, pick a text-capable
+        // one from the platform's list. The previous `model_list[0]` fallback
+        // would select whichever model sorted first, so providers like OpenAI
+        // that expose image-only entries (e.g. chatgpt-image-latest, dall-e-*)
+        // could land on a model Prism::text() cannot call.
         $model = (string) $request->input('model', '')
-            ?: ($platform->model_list[0] ?? 'gpt-4o');
+            ?: (ModelRecommender::pickTextModel($platform->model_list ?? []) ?? 'gpt-4o');
 
         // Store uploaded images — persist across conversation turns via session.
         // The image is uploaded in the first message, but the user may confirm
@@ -326,7 +332,9 @@ class ChatController extends Controller
         $models = (string) (core()->getConfigData('general.magic_ai.settings.api_model') ?? '');
         $enabled = (bool) core()->getConfigData('general.magic_ai.settings.enabled');
         $agenticEnabled = (bool) core()->getConfigData('general.magic_ai.agentic_pim.enabled');
-        $model = trim(explode(',', $models)[0]);
+
+        $modelList = array_values(array_filter(array_map('trim', explode(',', $models))));
+        $model = (string) (ModelRecommender::pickTextModel($modelList) ?? '');
 
         return new JsonResponse([
             'enabled'         => $enabled,

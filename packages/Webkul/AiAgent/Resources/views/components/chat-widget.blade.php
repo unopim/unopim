@@ -696,6 +696,34 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.0/purify.min.js" integrity="sha384-/knAMB4gMqm3mPGf8xMfFjCF0Fw3GMdmF6Bj25kjGp9TzFKGefvtsYzn/7BNEUU" crossorigin="anonymous"></script>
 
 <script type="module">
+// Mirrors Webkul\MagicAI\Support\ModelRecommender::pickTextModel().
+// The chat widget must never auto-select an image-only model
+// (chatgpt-image-latest, dall-e-*, sora-*, imagen-*, veo-*, …) because
+// Prism::text() can't call them and the request fails with "model not
+// found". Keep this list in sync with ModelRecommender::IMAGE_ONLY_PATTERNS.
+const AGENTIC_PIM_IMAGE_ONLY_PATTERNS = [
+    // OpenAI / Azure
+    /dall-?e/i, /(^|[-_])gpt-image/i, /chatgpt-image/i, /(^|[-_])sora([-_]|$)/i,
+    // Google (Gemini / Vertex)
+    /imagen/i, /(^|[-_])veo([-_]|$)/i,
+    // Stability / Black Forest Labs / Midjourney / Playground
+    /stable-?diffusion/i, /(^|[-_])flux([-_]|$)/i, /midjourney/i, /playground-v/i,
+    // Ideogram / Recraft / Kling / Luma / Pika / Runway / Hunyuan / CogVideo
+    /(^|[-_])ideogram([-_]|$)/i, /(^|[-_])recraft([-_]|$)/i,
+    /(^|[-_])kling([-_]|$)/i, /(^|[-_])luma([-_]|$)/i,
+    /(^|[-_])pika([-_]|$)/i, /(^|[-_])runway([-_]|$)/i,
+    /hunyuan-?video/i, /(^|[-_])cogvideo/i, /(^|[-_])wan-?\d/i, /animate-?diff/i,
+    // Generic "image" / "video" families (catch-all)
+    /(^|[-_])image-?\d/i, /(^|[-_])video-?\d/i,
+];
+const pickTextModel = (models) => {
+    if (!Array.isArray(models) || models.length === 0) return '';
+    for (const m of models) {
+        if (!AGENTIC_PIM_IMAGE_ONLY_PATTERNS.some(rx => rx.test(m))) return m;
+    }
+    return models[0];
+};
+
 app.component('v-agenting-pim', {
     template: '#v-agenting-pim-template',
 
@@ -762,7 +790,7 @@ app.component('v-agenting-pim', {
             showSessions: false,
             platforms: platforms,
             selectedPlatformId: initialPlatform ? initialPlatform.id : null,
-            selectedModel: initialModels[0] || '',
+            selectedModel: pickTextModel(initialModels),
             trans: trans,
             capabilities: [
                 // Row 1: Product creation & updates
@@ -1114,8 +1142,7 @@ app.component('v-agenting-pim', {
             } catch (e) { this.sessions = []; }
         },
         onPlatformChange() {
-            const models = this.availableModels;
-            this.selectedModel = models[0] || '';
+            this.selectedModel = pickTextModel(this.availableModels);
             this.saveState();
         },
         activateCapability(cap) {
@@ -1603,7 +1630,7 @@ app.component('v-agenting-pim', {
                     if (s.selectedModel && this.availableModels.includes(s.selectedModel)) {
                         this.selectedModel = s.selectedModel;
                     } else {
-                        this.selectedModel = this.availableModels[0] || '';
+                        this.selectedModel = pickTextModel(this.availableModels);
                     }
                 }
                 if (s.activeSessionId) this.activeSessionId = s.activeSessionId;

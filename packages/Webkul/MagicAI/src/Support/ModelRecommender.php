@@ -83,16 +83,37 @@ class ModelRecommender
      * @var string[]
      */
     protected const IMAGE_ONLY_PATTERNS = [
+        // OpenAI / Azure
         '/dall-?e/i',
-        '/imagen/i',
         '/(^|[-_])gpt-image/i',
         '/chatgpt-image/i',
-        '/(^|[-_])image-?\d/i',
         '/(^|[-_])sora([-_]|$)/i',
+
+        // Google (Gemini / Vertex)
+        '/imagen/i',
+        '/(^|[-_])veo([-_]|$)/i',
+
+        // Stability / Black Forest Labs / Midjourney / Playground
         '/stable-?diffusion/i',
         '/(^|[-_])flux([-_]|$)/i',
         '/midjourney/i',
         '/playground-v/i',
+
+        // Ideogram / Recraft / Kling / Luma / Pika / Runway / Hunyuan / CogVideo
+        '/(^|[-_])ideogram([-_]|$)/i',
+        '/(^|[-_])recraft([-_]|$)/i',
+        '/(^|[-_])kling([-_]|$)/i',
+        '/(^|[-_])luma([-_]|$)/i',
+        '/(^|[-_])pika([-_]|$)/i',
+        '/(^|[-_])runway([-_]|$)/i',
+        '/hunyuan-?video/i',
+        '/(^|[-_])cogvideo/i',
+        '/(^|[-_])wan-?\d/i',
+        '/animate-?diff/i',
+
+        // Generic "image" / "video" families (catch-all)
+        '/(^|[-_])image-?\d/i',
+        '/(^|[-_])video-?\d/i',
     ];
 
     /**
