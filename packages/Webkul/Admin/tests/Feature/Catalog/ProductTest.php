@@ -270,7 +270,7 @@ it('should search the products with uppercase sku successfully (case-insensitive
 
     $sku = strtoupper($products->first()->sku);
 
-    $this->get(route('admin.catalog.products.search'), ['query' => $sku])
+    $this->get(route('admin.catalog.products.search', ['query' => $sku]))
         ->assertOk();
 });
 
