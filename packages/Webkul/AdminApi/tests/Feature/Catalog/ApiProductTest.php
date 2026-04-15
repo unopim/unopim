@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
@@ -226,6 +227,34 @@ it('should update the product', function () {
 
     $this->assertEquals('text update', $product->values['common'][$attribute->code] ?? '');
     $this->assertEquals([$category->code], $product->values['categories'] ?? '');
+});
+
+it('fires catalog.product.update.after when a simple product is updated via REST', function () {
+    $product = Product::factory()->simple()->create();
+
+    $family = AttributeFamily::where('id', $product->attribute_family_id)->first();
+    $attribute = Attribute::factory()->create(['value_per_locale' => false, 'value_per_channel' => false, 'type' => 'text']);
+    $family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
+
+    Event::fake(['catalog.product.update.after']);
+
+    $payload = [
+        'sku'    => $product->sku,
+        'parent' => null,
+        'family' => $family->code,
+        'values' => [
+            'common' => [
+                'sku'            => $product->sku,
+                $attribute->code => 'webhook-trigger-value',
+            ],
+        ],
+    ];
+
+    $this->withHeaders($this->headers)
+        ->json('PUT', route('admin.api.products.update', ['code' => $product->sku]), $payload)
+        ->assertOk();
+
+    Event::assertDispatched('catalog.product.update.after');
 });
 
 it('should delete the product', function () {

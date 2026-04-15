@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Event;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Product\Models\Product;
 
@@ -65,6 +66,25 @@ it('should fetch attributes for bulk edit modal', function () {
     $options = collect($response->json('options'));
 
     $this->assertTrue($options->where('code', 'sku')->isEmpty(), 'SKU should be excluded from bulk edit attributes');
+});
+
+it('fires catalog.product.update.after for every product saved by bulk edit', function () {
+    $products = Product::factory()->count(2)->create();
+
+    Event::fake(['catalog.product.update.after']);
+
+    // Sync queue in the test env runs BulkProductUpdate inline, so the event
+    // fires within this request. Payload mirrors what the bulk-edit Vue
+    // spreadsheet posts: { product_id: { attribute_code: value } }.
+    $payload = [];
+    foreach ($products as $product) {
+        $payload[$product->id] = ['sku' => $product->sku];
+    }
+
+    $this->postJson(route('admin.catalog.products.bulk-edit.save'), ['data' => $payload])
+        ->assertOk();
+
+    Event::assertDispatched('catalog.product.update.after', count($products));
 });
 
 it('should display readable channel and locale names in column headers', function () {

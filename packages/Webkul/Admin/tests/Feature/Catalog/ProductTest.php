@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Core\Facades\ElasticSearch;
@@ -250,6 +251,21 @@ it('should mass update the status of products to disabled', function () {
 
         $this->assertEquals(0, $product->status);
     }
+});
+
+it('fires catalog.product.update.after for every product in a mass status update', function () {
+    $this->loginAsAdmin();
+
+    $products = Product::factory()->simple()->createMany(2);
+
+    Event::fake(['catalog.product.update.after']);
+
+    $this->post(route('admin.catalog.products.mass_update'), [
+        'indices' => $products->pluck('id')->toArray(),
+        'value'   => true,
+    ])->assertOk();
+
+    Event::assertDispatched('catalog.product.update.after', count($products));
 });
 /** Need to add more assertions */
 it('should search the products with sku successfully', function () {

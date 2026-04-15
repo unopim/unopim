@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\ValidationException;
 use Webkul\Attribute\Services\AttributeService;
 use Webkul\DataTransfer\Helpers\AbstractJob;
@@ -206,6 +207,9 @@ class BulkProductUpdate implements ShouldQueue
 
             $product->values = $values;
             $product->save();
+
+            Event::dispatch('catalog.product.update.after', $product);
+
             $processed++;
 
             if ($processed % 10 === 0) {
