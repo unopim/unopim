@@ -42,9 +42,17 @@ class CSV extends AbstractSource
                 stream_set_read_buffer($this->reader, 65536);
             }
 
-            $this->columnNames = fgetcsv($this->reader, $this->maxLineLength, $delimiter);
+            $headerRow = fgetcsv($this->reader, $this->maxLineLength, $delimiter);
+
+            if ($headerRow === false || $headerRow === null || $headerRow === [null]) {
+                throw new \LogicException(trans('data_transfer::app.validation.errors.file-empty'));
+            }
+
+            $this->columnNames = $headerRow;
 
             $this->totalColumns = count($this->columnNames);
+        } catch (\LogicException $e) {
+            throw $e;
         } catch (\Exception $e) {
             throw new \LogicException("Unable to open file: '{$filePath}'");
         }

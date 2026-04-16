@@ -34,7 +34,15 @@ class Excel extends AbstractSource
 
             $this->totalColumns = Coordinate::columnIndexFromString($highestColumn);
 
-            $this->columnNames = $this->getNextRow();
+            $headerRow = $this->getNextRow();
+
+            if ($headerRow === false || $headerRow === []) {
+                throw new \LogicException(trans('data_transfer::app.validation.errors.file-empty'));
+            }
+
+            $this->columnNames = $headerRow;
+        } catch (\LogicException $e) {
+            throw $e;
         } catch (\Exception $e) {
             throw new \LogicException("Unable to open file: '{$filePath}'");
         }

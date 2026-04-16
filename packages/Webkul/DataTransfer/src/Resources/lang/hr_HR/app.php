@@ -59,6 +59,7 @@ return [
             'invalid-attribute'    => 'Zaglavlje sadrži neispravne atribut(e): "%s".',
             'system'               => 'Došlo je do neočekivane sistemske greške.',
             'wrong-quotes'         => 'Kovrčave navodnike koristite umjesto ravnih navodnika.',
+            'file-empty'           => 'Datoteka je prazna ili ne sadrži redak zaglavlja. Molimo učitajte valjanu datoteku s podacima.',
         ],
     ],
     'job' => [

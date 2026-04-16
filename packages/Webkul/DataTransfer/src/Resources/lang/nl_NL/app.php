@@ -65,6 +65,7 @@ return [
             'invalid-attribute'    => 'Header bevat ongeldig(e) attribuut(en): "%s".',
             'system'               => 'Er heeft zich een onverwachte systeemfout voorgedaan.',
             'wrong-quotes'         => 'Er worden gekrulde aanhalingstekens gebruikt in plaats van rechte aanhalingstekens.',
+            'file-empty'           => 'Het bestand is leeg of bevat geen kopregel. Upload een geldig bestand met gegevens.',
         ],
     ],
 

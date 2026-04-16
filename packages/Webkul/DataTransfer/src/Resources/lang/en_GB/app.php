@@ -59,6 +59,7 @@ return [
             'invalid-attribute'    => 'Header contains invalid attribute(s): "%s".',
             'system'               => 'An unexpected system error occurred.',
             'wrong-quotes'         => 'Curly quotes used instead of straight quotes.',
+            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
         ],
     ],
     'job' => [

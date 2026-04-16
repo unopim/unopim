@@ -59,6 +59,7 @@ return [
             'invalid-attribute'    => 'Antetul conține atribute invalide: "%s".',
             'system'               => 'A apărut o eroare sistemică neașteptată.',
             'wrong-quotes'         => 'A fost utilizată virgulă în loc de virgulă directă.',
+            'file-empty'           => 'Fișierul este gol sau nu conține un rând de antet. Vă rugăm să încărcați un fișier valid cu date.',
         ],
     ],
     'job' => [

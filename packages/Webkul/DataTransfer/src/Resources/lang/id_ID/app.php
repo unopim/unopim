@@ -65,6 +65,7 @@ return [
             'invalid-attribute'    => 'Header berisi atribut yang tidak valid: "%s".',
             'system'               => 'Terjadi kesalahan sistem yang tidak terduga.',
             'wrong-quotes'         => 'Kutipan keriting digunakan sebagai pengganti tanda kutip lurus.',
+            'file-empty'           => 'File kosong atau tidak memiliki baris header. Silakan unggah file yang valid dengan data.',
         ],
     ],
 

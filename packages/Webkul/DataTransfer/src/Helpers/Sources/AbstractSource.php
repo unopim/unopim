@@ -111,10 +111,10 @@ abstract class AbstractSource
     }
 
     /**
-     * Column names getter.
+     * Return total number of columns.
      */
     public function getTotalColumns(): int
     {
-        return $this->columnNames;
+        return $this->totalColumns;
     }
 }
