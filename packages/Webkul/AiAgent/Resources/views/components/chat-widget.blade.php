@@ -1432,6 +1432,15 @@ app.component('v-agenting-pim', {
             const newRating = current === rating ? null : rating;
             // Trigger Vue reactivity by replacing the object
             this.messages[idx] = { ...this.messages[idx], _rating: newRating };
+
+            // Persist feedback to backend
+            if (newRating) {
+                const messageText = this.messages[idx]?.content || '';
+                this.$axios.post("{{ route('ai-agent.chat.rate') }}", {
+                    rating: newRating,
+                    message: messageText.substring(0, 5000),
+                }).catch(() => {});
+            }
         },
 
         needsConfirmation(msg, idx) {
