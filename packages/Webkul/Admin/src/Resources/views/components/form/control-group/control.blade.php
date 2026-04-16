@@ -1448,18 +1448,35 @@
 
                     const file = event.dataTransfer.files[0];
 
-                    if (file) {
-                        this.fieldData.value = file;
-
-                        this.$nextTick(() => {
-                            this.$forceUpdate();
-                        });
+                    if (! file) {
+                        return;
                     }
+
+                    this.fieldData.value = file;
+
+                    // Dropping onto the <label> does NOT auto-attach the
+                    // file to the associated <input type="file">, so the
+                    // traditional multipart/form-data submit would ship an
+                    // empty file input. Populate the real input via the
+                    // DataTransfer API so form submission picks it up.
+                    if (this.$refs.fileInput) {
+                        const dt = new DataTransfer();
+                        dt.items.add(file);
+                        this.$refs.fileInput.files = dt.files;
+                    }
+
+                    this.$nextTick(() => {
+                        this.$forceUpdate();
+                    });
                 },
 
                 clearFile(event) {
                     this.fieldData.value = null;
-                    // this.$refs.fileInput.value = null;
+
+                    if (this.$refs.fileInput) {
+                        this.$refs.fileInput.value = null;
+                    }
+
                     this.$nextTick(() => {
                         // Force update to refresh any related UI without reopening the upload dialog
                         this.$forceUpdate();
