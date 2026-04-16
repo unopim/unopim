@@ -576,10 +576,13 @@ test('11.2 - Data Transfer shows job entries or empty state message', async ({ a
 
 // ═════════════════════════════════════════════════
 // SECTION 12: Open Agenting PIM Button
+// (uses adminPageWithWidget — the widget is hidden
+//  by default in the standard adminPage fixture)
 // ═════════════════════════════════════════════════
 
-test('12.1 - Shows "Open Agenting PIM" floating action button', async ({ adminPage }) => {
-  const agentBtn = adminPage.getByRole('button', { name: 'Open Agenting PIM' });
+test('12.1 - Shows "Open Agenting PIM" floating action button', async ({ adminPageWithWidget }) => {
+  await navigateTo(adminPageWithWidget, 'dashboard');
+  const agentBtn = adminPageWithWidget.getByRole('button', { name: 'Open Agenting PIM' });
   await expect(agentBtn).toBeVisible();
 });
 

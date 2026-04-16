@@ -452,9 +452,9 @@ test('8.1 - Save Configuration without changes succeeds', async ({ adminPage }) 
   await expect(adminPage.locator('#app').getByText('Agentic PIM', { exact: true })).toBeVisible();
 });
 
-test('8.2 - Open Agenting PIM button is visible on Magic AI config page', async ({ adminPage }) => {
-  await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
-  const agentBtn = adminPage.getByRole('button', { name: 'Open Agenting PIM' });
+test('8.2 - Open Agenting PIM button is visible on Magic AI config page', async ({ adminPageWithWidget }) => {
+  await adminPageWithWidget.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
+  const agentBtn = adminPageWithWidget.getByRole('button', { name: 'Open Agenting PIM' });
   await expect(agentBtn).toBeVisible();
 });
 

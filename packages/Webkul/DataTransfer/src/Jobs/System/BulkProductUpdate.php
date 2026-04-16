@@ -91,12 +91,16 @@ class BulkProductUpdate implements ShouldQueue
             ?? $this->createDemoJobInstance();
 
         $this->jobTrackInstance = $this->jobTrackRepository->create([
-            'state'            => AbstractJob::STATE_PENDING,
-            'meta'             => $jobInstance->toJson(),
-            'job_instances_id' => $jobInstance->id,
-            'user_id'          => $this->userId,
-            'created_at'       => now(),
-            'updated_at'       => now(),
+            'state'               => AbstractJob::STATE_PENDING,
+            'type'                => $jobInstance->type,
+            'action'              => $jobInstance->action,
+            'validation_strategy' => $jobInstance->validation_strategy,
+            'allowed_errors'      => $jobInstance->allowed_errors,
+            'field_separator'     => $jobInstance->field_separator,
+            'file_path'           => $jobInstance->file_path,
+            'meta'                => $jobInstance->toJson(),
+            'job_instances_id'    => $jobInstance->id,
+            'user_id'             => $this->userId,
         ]);
 
         $this->jobLogger = JobLogger::make($this->jobTrackInstance->id);
