@@ -2215,6 +2215,7 @@ return [
         '403' => [
             'description' => 'Oops ! Cette page est interdite. Vous n\'êtes pas autorisé à consulter la ressource.',
             'title'       => '403 Interdit',
+            'message'     => 'Vous n\'avez pas la permission d\'accéder à cette page. Veuillez contacter votre administrateur si vous pensez qu\'il s\'agit d\'une erreur.',
         ],
         '413' => [
             'description' => 'Oops ! Il semble que vous essayiez de télécharger un fichier trop volumineux. Veuillez mettre à jour la configuration PHP en conséquence.',

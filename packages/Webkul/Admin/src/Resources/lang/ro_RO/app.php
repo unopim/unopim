@@ -2215,6 +2215,7 @@ return [
         '403' => [
             'description' => 'Oops! Această pagină este interzisă. Se pare că nu ai permisiunea de a vizualiza acest conținut.',
             'title'       => '403 Interzis',
+            'message'     => 'Nu aveți permisiunea de a accesa această pagină. Contactați administratorul dvs. dacă credeți că aceasta este o eroare.',
         ],
         '413' => [
             'description' => 'Oops! Pare că încerci să încarci un fișier prea mare. Dacă dorești să faci acest lucru, actualizează configurația PHP.',

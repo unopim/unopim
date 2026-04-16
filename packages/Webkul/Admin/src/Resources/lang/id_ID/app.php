@@ -2215,6 +2215,7 @@ return [
         '403' => [
             'description' => 'Ups!Halaman ini terlarang.Tampaknya Anda tidak \'t have the required permissions to view this content.',
             'title'       => '403 dilarang',
+            'message'     => 'Anda tidak memiliki izin untuk mengakses halaman ini. Silakan hubungi administrator Anda jika Anda merasa ini adalah kesalahan.',
         ],
         '413' => [
             'description' => 'Ups!Sepertinya Anda mencoba mengunggah file yang terlalu besar.Jika Anda ingin mengunggah yang sama, harap perbarui konfigurasi PHP yang sesuai.',

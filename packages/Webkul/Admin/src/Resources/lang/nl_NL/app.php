@@ -2215,6 +2215,7 @@ return [
         '403' => [
             'description' => 'Oeps!Deze pagina is verboden.Het lijkt erop dat je geen\'t have the required permissions to view this content.',
             'title'       => '403 verboden',
+            'message'     => 'U heeft geen toestemming om deze pagina te openen. Neem contact op met uw beheerder als u denkt dat dit een fout is.',
         ],
         '413' => [
             'description' => 'Oeps!Het lijkt erop dat u een bestand probeert te uploaden dat te groot is.Als u hetzelfde wilt uploaden, werkt u de PHP -configuratie dienovereenkomstig bij.',

@@ -2215,6 +2215,7 @@ return [
         '403' => [
             'description' => '¡Ups! Esta página está restringida. Parece que no tienes permiso para ver este contenido.',
             'title'       => '403 Prohibido',
+            'message'     => 'No tiene permiso para acceder a esta página. Por favor, contacte a su administrador si cree que esto es un error.',
         ],
         '413' => [
             'description' => '¡Ups! Parece que estás intentando cargar un archivo que es demasiado grande. Si deseas cargarlo, actualiza la configuración de PHP.',

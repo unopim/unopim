@@ -2215,6 +2215,7 @@ return [
         '403' => [
             'description' => 'Voi ei! Tämä sivu on rajoitettu. Sinulla ei ole tarvittavia oikeuksia nähdä tätä sisältöä.',
             'title'       => '403 Pääsy kielletty',
+            'message'     => 'Sinulla ei ole oikeutta käyttää tätä sivua. Ota yhteyttä järjestelmänvalvojaan, jos uskot tämän olevan virhe.',
         ],
         '413' => [
             'description' => 'Voi ei! Näyttää siltä, että yrität ladata liian suuren tiedoston. Jos haluat ladata sen, päivitä PHP-konfiguraatio.',

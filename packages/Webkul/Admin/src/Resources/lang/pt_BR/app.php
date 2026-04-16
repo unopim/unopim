@@ -2215,6 +2215,7 @@ return [
         '403' => [
             'description' => 'Oops! Esta página está fora dos limites. Parece que você não tem permissão para ver este conteúdo.',
             'title'       => '403 Proibido',
+            'message'     => 'Você não tem permissão para acessar esta página. Entre em contato com o administrador se acreditar que isso é um erro.',
         ],
         '413' => [
             'description' => 'Oops! Parece que você está tentando carregar um arquivo muito grande. Se você deseja carregar o mesmo, atualize a configuração do PHP.',

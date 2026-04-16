@@ -2215,6 +2215,7 @@ return [
         '403' => [
             'description' => 'Oops! Denna sida är begränsad. Det verkar som att du inte har behörighet att se detta innehåll.',
             'title'       => '403 Förbjuden',
+            'message'     => 'Du har inte behörighet att komma åt den här sidan. Kontakta din administratör om du tror att detta är ett fel.',
         ],
         '413' => [
             'description' => 'Oops! Det verkar som att du försöker ladda upp en för stor fil. Om du vill ladda upp den, vänligen uppdatera PHP-konfigurationen.',
