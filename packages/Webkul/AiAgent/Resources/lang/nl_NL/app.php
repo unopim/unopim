@@ -251,7 +251,7 @@ return [
             'generate-variants-hint'  => 'bijv. "Genereer S/M/L × Rood/Blauw voor SHIRT-001"',
             'edit-image'              => 'Productafbeelding bewerken',
             'edit-image-desc'         => 'Achtergrond verwijderen, verbeteren en retoucheren',
-            'edit-image-hint'         => 'Upload een afbeelding en zeg wat u wilt wijzigen — bijv. "Achtergrond verwijderen"',
+            'edit-image-hint'         => 'Geef een product-SKU op en beschrijf wat u wilt wijzigen — bijv. "Verwijder achtergrond van SKU-123"',
 
             'search-products'         => 'Producten zoeken',
             'search-products-desc'    => 'Producten zoeken op SKU, naam of status',
@@ -324,7 +324,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => 'Bewerk de geüploade productafbeelding volgens de instructies.',
+            'edit-image-prompt'        => 'Bewerk de productafbeelding door deze op te halen via de opgegeven SKU, pas de gevraagde wijzigingen toe en sla deze op.',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',

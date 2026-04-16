@@ -251,7 +251,7 @@ return [
             'generate-variants-hint'  => '例如 "为 SHIRT-001 生成 S/M/L × 红/蓝"',
             'edit-image'              => '编辑产品图片',
             'edit-image-desc'         => '去除背景、增强及修饰',
-            'edit-image-hint'         => '上传图片，然后说明要更改的内容——例如 "去除背景"',
+            'edit-image-hint'         => '输入产品SKU并描述要更改的内容 — 例如"删除SKU-123的背景"',
 
             'search-products'         => '搜索产品',
             'search-products-desc'    => '按 SKU、名称或状态查找产品',
@@ -324,7 +324,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => '按照指示编辑上传的产品图片。',
+            'edit-image-prompt'        => '通过给定的SKU获取产品图片，应用请求的更改并保存回去。',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',
