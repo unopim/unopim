@@ -90,10 +90,14 @@ UnoPim is engineered for high-volume catalogues. Read [how UnoPim scales to hand
 
 - **AI Agent Chat**
   Manage products through natural language — search, create, update, bulk edit, export, categorize, and generate content via conversational AI with multi-step tool calling.
-
+    <p><img src="https://raw.githubusercontent.com/unopim/temp-media/main/ai-agent-chat.png" alt="AI Agent Chat" width="720"></p>
+    
 - **Magic AI with Multi-Platform Support**
   Generate product content, images, and translations using 10+ AI providers. Configure and manage AI platforms with encrypted credential storage, connection testing, and dynamic model selection.
+  <p><img src="https://raw.githubusercontent.com/unopim/temp-media/main/magic-ai-with-multi-platform-support.png" alt="Magic AI with Multi-Platform Support" width="720"></p>
 
+- **Advanced AI-Powered Product Management**
+    Create compelling product content, generate high-quality images, and gain actionable insights with intelligent automation. Leverage customizable dashboards, seamless multi-user collaboration, and smart reporting tools to streamline workflows and boost productivity across your entire platform.
   <p><img src="https://raw.githubusercontent.com/unopim/temp-media/main/advanced-features.png" alt="AI-powered Product Content Generation" width="720"></p>
 
 - **Centralized Product Management**
@@ -109,6 +113,7 @@ UnoPim is engineered for high-volume catalogues. Read [how UnoPim scales to hand
 - **Dashboard with Analytics**
   Monitor channel readiness, product trends, recent activity, and items needing attention at a glance.
 
+    <p><img src="https://raw.githubusercontent.com/unopim/temp-media/main/dashboard-with-analytics.png" alt="Dashboard with Analytics" width="720"></p>
 - **User Management**
   Control user access and permissions.
 
