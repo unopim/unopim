@@ -1,55 +1,71 @@
+const http = require('http');
 const { test, expect } = require('../../utils/fixtures');
 const { navigateTo } = require('../../utils/helpers');
 
 // Real end-to-end proof that product updates reach an external webhook.
-// Uses webhook.site, which provides a public inbox per token and a REST API
-// to list received requests. The earlier bug: bulk edit + mass status never
-// POSTed, because the queued BulkProductUpdate job skipped the event dispatch
-// and ProductComparer dropped status diffs when the old value was 0.
+// Uses a local HTTP server spun up inside the test process to capture
+// incoming webhook POSTs — no external service dependency.
+//
+// The earlier bug: bulk edit + mass status never POSTed, because the queued
+// BulkProductUpdate job skipped the event dispatch and ProductComparer
+// dropped status diffs when the old value was 0.
 //
 // This spec exercises the bulk-edit path end-to-end. The single edit, mass
 // status and REST API paths are covered by deterministic Pest feature tests
-// (ProductBulkEditTest, ProductTest, ApiProductTest) which don't depend on
-// webhook.site availability.
-//
-// Set `SKIP_WEBHOOK_SITE=1` to skip the whole describe block in offline runs.
+// (ProductBulkEditTest, ProductTest, ApiProductTest).
 
-const WEBHOOK_SITE = 'https://webhook.site';
 const WAIT_MS = 20000;
-const POLL_MS = 500;
+const POLL_MS = 300;
 
-async function createInbox(request) {
-  const response = await request.post(`${WEBHOOK_SITE}/token`, {
-    headers: { Accept: 'application/json' },
+/**
+ * Spin up a lightweight HTTP server that collects every incoming request.
+ * Returns { url, requests, close }.
+ */
+function createLocalWebhookServer() {
+  const requests = [];
+
+  return new Promise((resolve, reject) => {
+    const server = http.createServer((req, res) => {
+      let body = '';
+      req.on('data', (chunk) => { body += chunk; });
+      req.on('end', () => {
+        requests.push({
+          method:  req.method,
+          url:     req.url,
+          headers: { ...req.headers },
+          body,
+        });
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: true }));
+      });
+    });
+
+    // Listen on a random available port on all interfaces so the Laravel
+    // app (running on 127.0.0.1:8000) can reach it.
+    server.listen(0, '0.0.0.0', () => {
+      const port = server.address().port;
+      resolve({
+        url:      `http://127.0.0.1:${port}`,
+        requests,
+        close:    () => new Promise((res) => server.close(res)),
+      });
+    });
+
+    server.on('error', reject);
   });
-
-  if (!response.ok()) {
-    throw new Error(`Failed to create webhook.site inbox: ${response.status()}`);
-  }
-
-  return (await response.json()).uuid;
 }
 
-async function deleteInbox(request, uuid) {
-  if (!uuid) return;
-  await request.delete(`${WEBHOOK_SITE}/token/${uuid}`).catch(() => {});
-}
-
-async function waitForInboundRequest(request, uuid, matcher = () => true) {
+/**
+ * Poll the local requests array until a match is found or timeout.
+ */
+async function waitForRequest(requests, matcher = () => true) {
   const deadline = Date.now() + WAIT_MS;
   while (Date.now() < deadline) {
-    const r = await request.get(`${WEBHOOK_SITE}/token/${uuid}/requests?sorting=newest`, {
-      headers: { Accept: 'application/json' },
-    });
-    if (r.ok()) {
-      const body = await r.json();
-      const hits = Array.isArray(body?.data) ? body.data : [];
-      const hit = hits.find(matcher);
-      if (hit) return hit;
-    }
+    const hit = requests.find(matcher);
+    if (hit) return hit;
     await new Promise((res) => setTimeout(res, POLL_MS));
   }
-  throw new Error(`webhook.site inbox ${uuid} got no matching request within ${WAIT_MS}ms`);
+  throw new Error(`Local webhook server got no matching request within ${WAIT_MS}ms`);
 }
 
 async function getCsrfToken(context) {
@@ -167,40 +183,25 @@ async function getFirstProductId(adminPage) {
 }
 
 test.describe('Product webhook delivery — bulk edit E2E', () => {
-  test.skip(
-    process.env.SKIP_WEBHOOK_SITE === '1',
-    'webhook.site integration disabled via SKIP_WEBHOOK_SITE=1',
-  );
+  let webhookServer;
 
-  let inboxUuid;
-
-  test.afterEach(async ({ adminPage, playwright }) => {
+  test.afterEach(async ({ adminPage }) => {
     // Leave the system in the same state the test found it: disable the
     // webhook toggle and wipe any log rows this run created, so other
     // specs that assume an empty log / disabled webhook still pass.
     await disableWebhook(adminPage).catch(() => {});
     await clearWebhookLogs(adminPage).catch(() => {});
 
-    if (inboxUuid) {
-      const apiRequest = await playwright.request.newContext();
-      await deleteInbox(apiRequest, inboxUuid);
-      await apiRequest.dispose();
-      inboxUuid = undefined;
+    if (webhookServer) {
+      await webhookServer.close().catch(() => {});
+      webhookServer = undefined;
     }
   });
 
-  test('bulk edit save dispatches a webhook POST for each updated product', async ({ adminPage, playwright }) => {
-    const apiRequest = await playwright.request.newContext();
+  test('bulk edit save dispatches a webhook POST for each updated product', async ({ adminPage }) => {
+    webhookServer = await createLocalWebhookServer();
 
-    try {
-      inboxUuid = await createInbox(apiRequest);
-    } catch (err) {
-      test.skip(true, `webhook.site unavailable: ${err.message}`);
-      return;
-    }
-
-    const webhookUrl = `${WEBHOOK_SITE}/${inboxUuid}`;
-    await configureWebhook(adminPage, webhookUrl);
+    await configureWebhook(adminPage, webhookServer.url);
 
     const productId = await getFirstProductId(adminPage);
 
@@ -222,10 +223,8 @@ test.describe('Product webhook delivery — bulk edit E2E', () => {
     );
     expect(saveResponse.ok()).toBeTruthy();
 
-    const hit = await waitForInboundRequest(apiRequest, inboxUuid, (req) => req.method === 'POST');
+    const hit = await waitForRequest(webhookServer.requests, (req) => req.method === 'POST');
     expect(hit).toBeTruthy();
     expect(hit.method).toBe('POST');
-
-    await apiRequest.dispose();
   });
 });
