@@ -21,6 +21,10 @@ class WebhookLogsController
      */
     public function index()
     {
+        if (! bouncer()->hasPermission('configuration.webhook.logs')) {
+            abort(401, 'This action is unauthorized');
+        }
+
         if (request()->ajax()) {
             return app(LogsDataGrid::class)->toJson();
         }
