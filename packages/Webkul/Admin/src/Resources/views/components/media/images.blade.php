@@ -2,6 +2,7 @@
     'name'             => 'images',
     'allowMultiple'    => false,
     'showPlaceholders' => false,
+    'showSuggestions'  => true,
     'uploadedImages'   => [],
     'width'            => '120px',
     'height'           => '120px'
@@ -11,6 +12,7 @@
     name="{{ $name }}"
     v-bind:allow-multiple="{{ $allowMultiple ? true : false }}"
     v-bind:show-placeholders="{{ $showPlaceholders ? 'true' : 'false' }}"
+    v-bind:show-suggestions="{{ $showSuggestions ? 'true' : 'false' }}"
     :uploaded-images='{{ json_encode($uploadedImages) }}'
     width="{{ $width }}"
     height="{{ $height }}"
@@ -244,6 +246,7 @@
 
                                             <!-- Icon inside textarea -->
                                             <div
+                                                v-if="showSuggestions"
                                                 class="absolute bottom-2.5 left-1 text-gray-400 cursor-pointer text-2xl"
                                                 @click="openSuggestions"
                                             >
@@ -527,6 +530,11 @@
                     default: false,
                 },
 
+                showSuggestions: {
+                    type: Boolean,
+                    default: true,
+                },
+
                 uploadedImages: {
                     type: Array,
                     default: () => []
@@ -674,16 +682,18 @@
                                 this.fetchImagePrompts();
                             }
 
-                            const tribute = this.$tribute.init({
-                                values: this.fetchSuggestionValues,
-                                lookup: 'name',
-                                fillAttr: 'code',
-                                noMatchTemplate: "@lang('admin::app.common.no-match-found')",
-                                selectTemplate: (item) => `@${item.original.code}`,
-                                menuItemTemplate: (item) => `<div class="p-1.5 rounded-md text-base cursor-pointer transition-all max-sm:place-self-center">${item.original.name || '[' + item.original.code + ']'}</div>`,
-                            });
+                            if (this.showSuggestions) {
+                                const tribute = this.$tribute.init({
+                                    values: this.fetchSuggestionValues,
+                                    lookup: 'name',
+                                    fillAttr: 'code',
+                                    noMatchTemplate: "@lang('admin::app.common.no-match-found')",
+                                    selectTemplate: (item) => `@${item.original.code}`,
+                                    menuItemTemplate: (item) => `<div class="p-1.5 rounded-md text-base cursor-pointer transition-all max-sm:place-self-center">${item.original.name || '[' + item.original.code + ']'}</div>`,
+                                });
 
-                            tribute.attach(this.$refs.imagePromptInput);
+                                tribute.attach(this.$refs.imagePromptInput);
+                            }
                         }
                     });
                 },
