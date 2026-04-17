@@ -146,7 +146,6 @@ test.describe('Bouncer 403 Error Message', () => {
     await expect(errorToast).not.toBeVisible({ timeout: 5000 });
 
     // Verify a meaningful error message is shown (translated text, not raw key)
-    const errorMessage = userPage.locator('#app').locator('.flash-error, [class*="error"], [class*="alert"]').first();
     const pageContent = await userPage.textContent('body');
     expect(pageContent).not.toContain('admin::app.error');
     expect(pageContent).not.toContain('admin::app.errors.403.message');

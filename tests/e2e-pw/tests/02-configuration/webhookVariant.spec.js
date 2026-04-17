@@ -135,7 +135,7 @@ test.describe('Webhook - Variant Product Create Event', () => {
     const uid = generateUid();
     const parentSku = `wh-cfg-${uid}`;
     const variantSku = `wh-cfg-${uid}-var1`;
-    const webhookUrl = 'https://httpbin.org/post';
+    const webhookUrl = 'http://127.0.0.1:9999/webhook-test';
 
     // Step 1: Enable webhook
     await enableWebhook(adminPage, webhookUrl);
