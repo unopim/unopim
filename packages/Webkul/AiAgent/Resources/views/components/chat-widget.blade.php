@@ -832,8 +832,8 @@ app.component('v-agenting-pim', {
                 // Row 5: Image editing & export
                 { key: 'edit_image', label: `@lang('ai-agent::app.widget.capabilities-list.edit-image')`, description: `@lang('ai-agent::app.widget.capabilities-list.edit-image-desc')`,
                   iconSvg: svg('<circle cx="12" cy="12" r="3"/><path d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12z" stroke-dasharray="4 2"/>'),
-                  color: '#D946EF', hint: `@lang('ai-agent::app.widget.capabilities-list.edit-image-hint')`, acceptsImages: true, acceptsSpreadsheet: false,
-                  autoPrompt: `@lang('ai-agent::app.widget.capabilities-list.edit-image-prompt')`, autoFileUpload: true },
+                  color: '#D946EF', hint: `@lang('ai-agent::app.widget.capabilities-list.edit-image-hint')`, acceptsImages: false, acceptsSpreadsheet: false,
+                  autoPrompt: `@lang('ai-agent::app.widget.capabilities-list.edit-image-prompt')`, autoFileUpload: false },
                 { key: 'export_products', label: `@lang('ai-agent::app.widget.capabilities-list.export-products')`, description: `@lang('ai-agent::app.widget.capabilities-list.export-products-desc')`,
                   iconSvg: svg('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>'),
                   color: '#0891B2', hint: `@lang('ai-agent::app.widget.capabilities-list.export-products-hint')`, acceptsImages: false, acceptsSpreadsheet: false,

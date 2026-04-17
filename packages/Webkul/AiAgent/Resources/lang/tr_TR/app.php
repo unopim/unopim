@@ -251,7 +251,7 @@ return [
             'generate-variants-hint'  => 'ör. "SHIRT-001 için S/M/L × Kırmızı/Mavi oluştur"',
             'edit-image'              => 'Ürün Görüntüsünü Düzenle',
             'edit-image-desc'         => 'Arka plan kaldırma, iyileştirme ve rötuş',
-            'edit-image-hint'         => 'Bir görüntü yükleyin, ardından ne değiştirileceğini söyleyin — ör. "Arka planı kaldır"',
+            'edit-image-hint'         => 'Bir ürün SKU\'su girin ve ne değiştirmek istediğinizi açıklayın — ör. "SKU-123\'ün arka planını kaldır"',
 
             'search-products'         => 'Ürün Ara',
             'search-products-desc'    => 'SKU, ad veya duruma göre ürün bul',
@@ -324,7 +324,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => 'Yüklenen ürün görüntüsünü talimatlara göre düzenle.',
+            'edit-image-prompt'        => 'Verilen SKU\'dan ürün görüntüsünü alarak düzenleyin, istenen değişiklikleri uygulayın ve geri kaydedin.',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',

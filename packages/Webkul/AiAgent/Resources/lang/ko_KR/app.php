@@ -251,7 +251,7 @@ return [
             'generate-variants-hint'  => '예: "SHIRT-001에 S/M/L × 빨강/파랑 생성"',
             'edit-image'              => '제품 이미지 편집',
             'edit-image-desc'         => '배경 제거, 보정 및 리터칭',
-            'edit-image-hint'         => '이미지를 업로드한 후 변경 사항을 말하세요 — 예: "배경 제거"',
+            'edit-image-hint'         => '제품 SKU를 입력하고 변경 사항을 설명하세요 — 예: "SKU-123의 배경 제거"',
 
             'search-products'         => '제품 검색',
             'search-products-desc'    => 'SKU, 이름 또는 상태로 제품 찾기',
@@ -324,7 +324,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => '지시에 따라 업로드된 제품 이미지를 편집합니다.',
+            'edit-image-prompt'        => '주어진 SKU에서 제품 이미지를 가져와 요청된 변경 사항을 적용하고 저장합니다.',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',

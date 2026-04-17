@@ -251,7 +251,7 @@ return [
             'generate-variants-hint'  => 'ex. "Gerar S/M/L × Vermelho/Azul para SHIRT-001"',
             'edit-image'              => 'Editar Imagem do Produto',
             'edit-image-desc'         => 'Remoção de fundo, melhoria e retoque',
-            'edit-image-hint'         => 'Carregue uma imagem e diga o que alterar — ex. "Remover fundo"',
+            'edit-image-hint'         => 'Forneça um SKU de produto e descreva o que pretende alterar — ex. "Remover fundo do SKU-123"',
 
             'search-products'         => 'Pesquisar Produtos',
             'search-products-desc'    => 'Encontrar produtos por SKU, nome ou estado',
@@ -324,7 +324,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => 'Editar a imagem do produto carregada conforme as instruções.',
+            'edit-image-prompt'        => 'Edite a imagem do produto obtendo-a pelo SKU fornecido, aplique as alterações solicitadas e guarde-a.',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',

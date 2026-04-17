@@ -251,7 +251,7 @@ return [
             'generate-variants-hint'  => 't.ex. "Generera S/M/L × Röd/Blå för SHIRT-001"',
             'edit-image'              => 'Redigera produktbild',
             'edit-image-desc'         => 'Bakgrundsborttagning, förbättring och retuschering',
-            'edit-image-hint'         => 'Ladda upp en bild och beskriv vad som ska ändras — t.ex. "Ta bort bakgrund"',
+            'edit-image-hint'         => 'Ange en produkt-SKU och beskriv vad som ska ändras — t.ex. "Ta bort bakgrund från SKU-123"',
 
             'search-products'         => 'Sök produkter',
             'search-products-desc'    => 'Hitta produkter efter SKU, namn eller status',
@@ -324,7 +324,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => 'Redigera den uppladdade produktbilden enligt instruktionerna.',
+            'edit-image-prompt'        => 'Redigera produktbilden genom att hämta den från angiven SKU, tillämpa de begärda ändringarna och spara den tillbaka.',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',

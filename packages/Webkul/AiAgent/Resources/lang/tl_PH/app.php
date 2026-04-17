@@ -251,7 +251,7 @@ return [
             'generate-variants-hint'  => 'hal. "Bumuo ng S/M/L × Pula/Asul para sa SHIRT-001"',
             'edit-image'              => 'I-edit ang Larawan ng Produkto',
             'edit-image-desc'         => 'Pag-alis ng background, pagpapaganda at retoke',
-            'edit-image-hint'         => 'Mag-upload ng larawan, pagkatapos sabihin kung ano ang babaguhin — hal. "Alisin ang background"',
+            'edit-image-hint'         => 'Magbigay ng product SKU at ilarawan ang gustong baguhin — hal. "Alisin ang background mula sa SKU-123"',
 
             'search-products'         => 'Maghanap ng mga Produkto',
             'search-products-desc'    => 'Maghanap ng mga produkto ayon sa SKU, pangalan, o status',
@@ -324,7 +324,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => 'I-edit ang na-upload na larawan ng produkto ayon sa mga instruksyon.',
+            'edit-image-prompt'        => 'I-edit ang larawan ng produkto sa pamamagitan ng pagkuha nito mula sa ibinigay na SKU, ilapat ang mga hiniling na pagbabago, at i-save ito pabalik.',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',
