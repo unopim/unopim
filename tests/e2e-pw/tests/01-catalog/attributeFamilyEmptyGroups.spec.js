@@ -62,29 +62,24 @@ test.describe('Attribute Family - Save with empty groups (#709)', () => {
     await adminPage.locator('div', { hasText: code }).locator('span[title="Edit"]').first().click();
     await adminPage.waitForLoadState('networkidle');
 
-    // Click "Delete Group" to remove the assigned group
+    // Select the first assigned group so deleteGroup() has a target
+    const firstGroupNode = adminPage.locator('#assigned-attribute-groups .group_node').first();
+    await firstGroupNode.waitFor({ state: 'visible', timeout: 10000 });
+    await firstGroupNode.click();
+
+    // Open the delete-group confirm modal
     await adminPage.getByText('Delete Group', { exact: true }).click();
-    await adminPage.waitForTimeout(500);
 
-    // Select the group to delete (click its checkbox or select it)
-    const groupCheckbox = adminPage.locator('#assigned-attribute-groups input[type="checkbox"]').first();
-    if (await groupCheckbox.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await groupCheckbox.click();
-      // Confirm deletion
-      const confirmBtn = adminPage.getByRole('button', { name: /Delete/i }).last();
-      await confirmBtn.click();
-      await adminPage.waitForTimeout(500);
-    }
+    // Confirm in the modal (default agree label is "Agree")
+    const agreeBtn = adminPage.getByRole('button', { name: 'Agree', exact: true });
+    await agreeBtn.waitFor({ state: 'visible', timeout: 10000 });
+    await agreeBtn.click();
 
-    // Step 4: Save — should NOT show a 500 error page
-    await adminPage.getByRole('button', { name: 'Save Attribute Family' }).click();
-    await adminPage.waitForLoadState('networkidle').catch(() => {});
+    // Wait for the modal's Agree button to disappear before saving
+    await agreeBtn.waitFor({ state: 'hidden', timeout: 10000 });
 
-    // Verify no error page (no "Undefined variable", no 500)
-    const pageContent = await adminPage.textContent('body');
-    expect(pageContent).not.toContain('Undefined variable');
-    expect(pageContent).not.toContain('ErrorException');
-    expect(pageContent).not.toContain('500 Internal Server Error');
+    // Step 4: Save — must redirect with success flash, not a 500 error
+    await clickSaveAndExpect(adminPage, 'Save Attribute Family', /Family updated successfully/i);
 
     // Cleanup
     await deleteFamily(adminPage, code);

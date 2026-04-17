@@ -6,7 +6,7 @@ const { navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = requir
  */
 async function createEmptyRole(adminPage, roleName) {
   await navigateTo(adminPage, 'roles');
-  await adminPage.getByRole('link', { name: 'Create Role' }).click();
+  await adminPage.getByRole('link', { name: 'Create Role' }).or(adminPage.getByRole('button', { name: 'Create Role' })).first().click();
   await adminPage.waitForLoadState('networkidle');
 
   // Keep permission type as Custom, select only Dashboard so the role saves
@@ -26,7 +26,7 @@ async function createEmptyRole(adminPage, roleName) {
  */
 async function createUserWithRole(adminPage, { name, email, password, roleName }) {
   await navigateTo(adminPage, 'users');
-  await adminPage.getByRole('link', { name: 'Create User' }).click();
+  await adminPage.getByRole('link', { name: 'Create User' }).or(adminPage.getByRole('button', { name: 'Create User' })).first().click();
   await adminPage.waitForLoadState('networkidle');
 
   await adminPage.getByRole('textbox', { name: 'Name' }).fill(name);
@@ -107,8 +107,8 @@ test.describe('Bouncer 403 Error Message', () => {
 
   test('should show a translated error message when a restricted user logs in', async ({ browser }) => {
     const uid = generateUid();
-    const roleName = `NoPerms-${uid}`;
-    const userName = `TestUser-${uid}`;
+    const roleName = `NoPerms${uid}`;
+    const userName = `TestUser ${uid}`;
     const userEmail = `test-${uid}@example.com`;
     const userPassword = 'Test@12345';
     const baseURL = process.env.BASE_URL || 'http://127.0.0.1:8000';
@@ -131,10 +131,11 @@ test.describe('Bouncer 403 Error Message', () => {
     await adminContext.close();
 
     // Step 2: Log in as the restricted user in a fresh context (no stored session)
-    const userContext = await browser.newContext();
+    const userContext = await browser.newContext({ storageState: { cookies: [], origins: [] } });
     const userPage = await userContext.newPage();
 
-    await userPage.goto(`${baseURL}/admin/login`);
+    await userPage.goto(`${baseURL}/admin/login`, { waitUntil: 'domcontentloaded' });
+    await userPage.waitForURL(/\/admin\/login/, { timeout: 10000 }).catch(() => {});
     await userPage.getByRole('textbox', { name: 'Email Address' }).fill(userEmail);
     await userPage.getByRole('textbox', { name: 'Password' }).fill(userPassword);
     await userPage.getByRole('button', { name: 'Sign In' }).click();
