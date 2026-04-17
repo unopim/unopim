@@ -948,6 +948,8 @@ return [
             'can-not-update-variant-options' => 'Tidak dapat memperbarui opsi yang dapat dikonfigurasi karena keluarga ini sudah memiliki produk varian.',
         ],
         'history' => [
+            'view' => 'Lihat Detail Versi',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Versi',

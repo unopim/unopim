@@ -948,6 +948,8 @@ return [
             'can-not-update-variant-options' => 'Ei voida päivittää määritettäväviä vaihtoehtoja, koska tällä perheellä on jo varianttituotteita.',
         ],
         'history' => [
+            'view' => 'Näytä version tiedot',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Versio',

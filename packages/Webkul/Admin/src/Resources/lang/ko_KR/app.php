@@ -948,6 +948,8 @@ return [
             'can-not-update-variant-options' => '이 가족에는 이미 제품 변형이 있어 구성 옵션을 업데이트할 수 없습니다.',
         ],
         'history' => [
+            'view' => '버전 세부 정보 보기',
+
             'index' => [
                 'datagrid' => [
                     'version'   => '버전',

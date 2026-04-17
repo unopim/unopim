@@ -948,6 +948,8 @@ return [
             'can-not-update-variant-options' => '此家族已有產品變體，因此無法更新配置選項。',
         ],
         'history' => [
+            'view' => '檢視版本詳情',
+
             'index' => [
                 'datagrid' => [
                     'version'   => '版本',

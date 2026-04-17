@@ -948,6 +948,8 @@ return [
             'can-not-update-variant-options' => 'Hindi ma-update ang mga opsyon ng configuration dahil mayroon nang mga produkto ng variant sa pamilya.',
         ],
         'history' => [
+            'view' => 'Tingnan ang Mga Detalye ng Bersyon',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Bersyon',

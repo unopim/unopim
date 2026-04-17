@@ -948,6 +948,8 @@ return [
             'can-not-update-variant-options' => 'Nu se pot actualiza opțiunile de configurare deoarece această familie are deja variante de produse.',
         ],
         'history' => [
+            'view' => 'Vizualizare detalii versiune',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Versiune',

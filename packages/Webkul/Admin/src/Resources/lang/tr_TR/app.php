@@ -948,6 +948,8 @@ return [
             'can-not-update-variant-options' => 'Bu ailede zaten ürün varyantları olduğu için konfigürasyon seçenekleri güncellenemiyor.',
         ],
         'history' => [
+            'view' => 'Sürüm Ayrıntılarını Görüntüle',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Versiyon',

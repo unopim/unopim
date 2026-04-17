@@ -948,6 +948,8 @@ return [
             'can-not-update-variant-options' => 'Không thể cập nhật tùy chọn cấu hình vì gia đình này đã có sản phẩm biến thể.',
         ],
         'history' => [
+            'view' => 'Xem chi tiết phiên bản',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Phiên bản',

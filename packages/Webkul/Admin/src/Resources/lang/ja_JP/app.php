@@ -948,6 +948,8 @@ return [
             'can-not-update-variant-options' => 'このファミリにはすでにバリアント製品があるため、構成可能なオプションを更新できません。',
         ],
         'history' => [
+            'view' => 'バージョンの詳細を表示',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'バージョン',

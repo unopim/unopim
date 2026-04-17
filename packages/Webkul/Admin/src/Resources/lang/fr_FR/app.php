@@ -948,6 +948,8 @@ return [
             'can-not-update-variant-options' => 'Impossible de mettre à jour les options configurables car cette famille dispose déjà de variations.',
         ],
         'history' => [
+            'view' => 'Voir les détails de la version',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Version',

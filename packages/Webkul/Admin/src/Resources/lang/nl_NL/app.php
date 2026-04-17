@@ -948,6 +948,8 @@ return [
             'can-not-update-variant-options' => 'Kan configureerbare opties niet bijwerken, omdat deze familie al variantproducten heeft.',
         ],
         'history' => [
+            'view' => 'Versiedetails bekijken',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Versie',

@@ -1011,6 +1011,8 @@ return [
         ],
 
         'history' => [
+            'view' => 'View Version Details',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Version',

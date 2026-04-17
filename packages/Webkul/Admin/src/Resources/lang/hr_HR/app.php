@@ -948,6 +948,8 @@ return [
             'can-not-update-variant-options' => 'Ne možete ažurirati opcije konfiguracije jer ova obitelj već ima varijante proizvoda.',
         ],
         'history' => [
+            'view' => 'Pogledaj detalje verzije',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Verzija',
