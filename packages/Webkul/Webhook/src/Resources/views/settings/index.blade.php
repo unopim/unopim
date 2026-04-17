@@ -4,6 +4,10 @@
         request()->has('history') => 'history',
         default                   => 'general',
     };
+
+    if ($activeTab === 'logs' && ! bouncer()->hasPermission('configuration.webhook.logs')) {
+        $activeTab = 'general';
+    }
 @endphp
 
 <x-admin::layouts.with-history

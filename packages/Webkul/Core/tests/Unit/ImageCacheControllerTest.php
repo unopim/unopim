@@ -19,17 +19,38 @@ describe('ImageCache Controller', function () {
         expect($source)->toContain("'timeout'");
     });
 
-    it('getLogo returns a response when the remote server is reachable', function () {
-        $controller = new Controller;
+    it('getLogo returns a 200 response when fetchFromUrl succeeds', function () {
+        $controller = new class extends Controller
+        {
+            protected function fetchFromUrl(string $url): string
+            {
+                return 'fake-image-bytes';
+            }
+        };
+
+        $response = $controller->getResponse('logo', 'unopim.png');
+
+        expect($response->getStatusCode())->toBeIn([200, 304]);
+    });
+
+    it('getLogo returns 404 when fetchFromUrl fails', function () {
+        $controller = new class extends Controller
+        {
+            protected function fetchFromUrl(string $url): string
+            {
+                throw new Exception('Simulated failure');
+            }
+        };
 
         try {
-            $response = $controller->getResponse('logo', 'unopim.png');
-
-            expect($response->getStatusCode())->toBeIn([200, 304]);
+            $controller->getResponse('logo', 'unopim.png');
         } catch (HttpException $e) {
-            // 404 is acceptable when the remote server is unreachable in test env
             expect($e->getStatusCode())->toBe(404);
+
+            return;
         }
+
+        $this->fail('Expected 404 exception was not thrown');
     });
 
     it('getResponse returns 404 for unknown template', function () {

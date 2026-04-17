@@ -26,8 +26,13 @@ class CSV extends AbstractSource
         string $filePath,
         protected string $delimiter = ','
     ) {
+        $detectedSeparator = self::checkSeparator(Storage::disk('private')->path($filePath));
 
-        if (self::checkSeparator(Storage::disk('private')->path($filePath)) != $delimiter) {
+        if ($detectedSeparator === null) {
+            throw new \LogicException(trans('data_transfer::app.validation.errors.file-empty'));
+        }
+
+        if ($detectedSeparator != $delimiter) {
             throw new \LogicException("Separator '{$delimiter}' is not supported in the provided file.");
         }
 
@@ -44,7 +49,12 @@ class CSV extends AbstractSource
 
             $headerRow = fgetcsv($this->reader, $this->maxLineLength, $delimiter);
 
-            if ($headerRow === false || $headerRow === null || $headerRow === [null]) {
+            if (
+                $headerRow === false
+                || $headerRow === null
+                || $headerRow === [null]
+                || count(array_filter($headerRow, fn ($v) => $v !== null && $v !== '')) === 0
+            ) {
                 throw new \LogicException(trans('data_transfer::app.validation.errors.file-empty'));
             }
 

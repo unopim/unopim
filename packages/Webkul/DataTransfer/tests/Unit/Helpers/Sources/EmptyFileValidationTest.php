@@ -13,10 +13,13 @@ describe('Empty file import validation', function () {
 
         try {
             new CSV('test-empty.csv', ',');
+            $this->fail('Expected LogicException was not thrown');
+        } catch (LogicException $e) {
+            expect($e->getMessage())->toBe(trans('data_transfer::app.validation.errors.file-empty'));
         } finally {
             Storage::disk('private')->delete('test-empty.csv');
         }
-    })->throws(LogicException::class);
+    });
 
     it('throws a user-friendly error when importing an empty XLS/XLSX file', function () {
         $spreadsheet = new Spreadsheet;
@@ -27,20 +30,26 @@ describe('Empty file import validation', function () {
 
         try {
             new Excel('test-empty.xlsx');
+            $this->fail('Expected LogicException was not thrown');
+        } catch (LogicException $e) {
+            expect($e->getMessage())->toBe(trans('data_transfer::app.validation.errors.file-empty'));
         } finally {
             Storage::disk('private')->delete('test-empty.xlsx');
         }
-    })->throws(LogicException::class);
+    });
 
     it('throws a user-friendly error when importing a CSV file with only empty lines', function () {
         Storage::disk('private')->put('test-blank-lines.csv', "\n\n\n");
 
         try {
             new CSV('test-blank-lines.csv', ',');
+            $this->fail('Expected LogicException was not thrown');
+        } catch (LogicException $e) {
+            expect($e->getMessage())->toBe(trans('data_transfer::app.validation.errors.file-empty'));
         } finally {
             Storage::disk('private')->delete('test-blank-lines.csv');
         }
-    })->throws(LogicException::class);
+    });
 
     it('reads CSV files with valid headers successfully', function () {
         $csvContent = "sku,name,status\n";
