@@ -65,6 +65,7 @@ return [
             'invalid-attribute'    => 'El encabezado contiene atributos no válidos: "%s".',
             'system'               => 'Se produjo un error inesperado del sistema.',
             'wrong-quotes'         => 'Se utilizan comillas rizadas en lugar de comillas rectas.',
+            'file-empty'           => 'El archivo está vacío o no contiene una fila de encabezado. Por favor, suba un archivo válido con datos.',
         ],
     ],
 

@@ -948,6 +948,8 @@ return [
             'can-not-update-variant-options' => 'Không thể cập nhật tùy chọn cấu hình vì gia đình này đã có sản phẩm biến thể.',
         ],
         'history' => [
+            'view' => 'Xem chi tiết phiên bản',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Phiên bản',
@@ -2215,6 +2217,7 @@ return [
         '403' => [
             'description' => 'Oops! Trang này không thể truy cập được. Có vẻ như bạn không có quyền xem nội dung này.',
             'title'       => '403 Cấm',
+            'message'     => 'Bạn không có quyền truy cập trang này. Vui lòng liên hệ quản trị viên nếu bạn cho rằng đây là lỗi.',
         ],
         '413' => [
             'description' => 'Oops! Có vẻ như bạn đang cố tải lên một tệp rất lớn. Nếu muốn tải lên, vui lòng cập nhật cấu hình PHP của bạn.',

@@ -251,7 +251,7 @@ return [
             'generate-variants-hint'  => 'ex. "Generează S/M/L × Roșu/Albastru pentru SHIRT-001"',
             'edit-image'              => 'Editare Imagine Produs',
             'edit-image-desc'         => 'Eliminare fundal, îmbunătățire și retușare',
-            'edit-image-hint'         => 'Încărcați o imagine, apoi spuneți ce doriți să modificați — ex. "Elimină fundalul"',
+            'edit-image-hint'         => 'Furnizați un SKU de produs și descrieți ce doriți să modificați — ex. "Eliminați fundalul din SKU-123"',
 
             'search-products'         => 'Căutare Produse',
             'search-products-desc'    => 'Găsiți produse după SKU, nume sau stare',
@@ -324,7 +324,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => 'Editează imaginea produsului încărcată conform instrucțiunilor.',
+            'edit-image-prompt'        => 'Editați imaginea produsului preluând-o din SKU-ul furnizat, aplicați modificările solicitate și salvați-o.',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',

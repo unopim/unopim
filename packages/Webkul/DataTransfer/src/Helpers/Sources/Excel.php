@@ -5,6 +5,7 @@ namespace Webkul\DataTransfer\Helpers\Sources;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
 
 class Excel extends AbstractSource
 {
@@ -34,7 +35,15 @@ class Excel extends AbstractSource
 
             $this->totalColumns = Coordinate::columnIndexFromString($highestColumn);
 
-            $this->columnNames = $this->getNextRow();
+            $headerRow = $this->getNextRow();
+
+            if ($headerRow === false || $headerRow === []) {
+                throw new \LogicException(trans('data_transfer::app.validation.errors.file-empty'));
+            }
+
+            $this->columnNames = $headerRow;
+        } catch (\LogicException $e) {
+            throw $e;
         } catch (\Exception $e) {
             throw new \LogicException("Unable to open file: '{$filePath}'");
         }
@@ -46,7 +55,9 @@ class Excel extends AbstractSource
     protected function getNextRow(): array|bool
     {
         for ($column = 1; $column <= $this->totalColumns; $column++) {
-            $rowData[] = $this->reader->getCellByColumnAndRow($column, $this->currentRowNumber)->getValue();
+            $value = $this->reader->getCellByColumnAndRow($column, $this->currentRowNumber)->getValue();
+
+            $rowData[] = $value instanceof RichText ? $value->getPlainText() : $value;
         }
 
         $filteredRowData = array_filter($rowData);

@@ -251,7 +251,7 @@ return [
             'generate-variants-hint'  => 'np. "Generuj S/M/L × Czerwony/Niebieski dla SHIRT-001"',
             'edit-image'              => 'Edytuj obraz produktu',
             'edit-image-desc'         => 'Usuwanie tła, ulepszanie i retusz',
-            'edit-image-hint'         => 'Prześlij obraz, a następnie powiedz, co zmienić — np. "Usuń tło"',
+            'edit-image-hint'         => 'Podaj SKU produktu i opisz, co zmienić — np. "Usuń tło z SKU-123"',
 
             'search-products'         => 'Szukaj produktów',
             'search-products-desc'    => 'Znajdź produkty według SKU, nazwy lub statusu',
@@ -324,7 +324,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => 'Edytuj przesłany obraz produktu zgodnie z instrukcjami.',
+            'edit-image-prompt'        => 'Edytuj obraz produktu, pobierając go z podanego SKU, zastosuj żądane zmiany i zapisz go z powrotem.',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',

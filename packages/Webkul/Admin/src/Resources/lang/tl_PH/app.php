@@ -948,6 +948,8 @@ return [
             'can-not-update-variant-options' => 'Hindi ma-update ang mga opsyon ng configuration dahil mayroon nang mga produkto ng variant sa pamilya.',
         ],
         'history' => [
+            'view' => 'Tingnan ang Mga Detalye ng Bersyon',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Bersyon',
@@ -2215,6 +2217,7 @@ return [
         '403' => [
             'description' => 'Oops! Hindi ma-access ang pahinang ito. Mukhang wala kang mga permiso para makita ang nilalaman na ito.',
             'title'       => '403 Ipinagbabawal',
+            'message'     => 'Wala kang pahintulot na i-access ang pahinang ito. Mangyaring makipag-ugnayan sa iyong administrator kung sa tingin mo ay isang error ito.',
         ],
         '413' => [
             'description' => 'Oops! Mukhang sinusubukan mong mag-upload ng isang napakalaking file. Kung gusto mong i-upload ito, i-update ang configuration ng PHP.',

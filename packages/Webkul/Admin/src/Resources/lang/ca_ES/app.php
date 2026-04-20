@@ -948,6 +948,8 @@ return [
             'can-not-update-variant-options' => 'No es poden actualitzar les opcions configurables ja que aquesta família ja té productes variants.',
         ],
         'history' => [
+            'view' => 'Veure els detalls de la versió',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Versió',
@@ -2215,6 +2217,7 @@ return [
         '403' => [
             'description' => 'Oops! Aquesta pàgina està prohibida. No tens els permisos necessaris per veure aquest contingut.',
             'title'       => '403 Prohibit',
+            'message'     => 'No teniu permís per accedir a aquesta pàgina. Poseu-vos en contacte amb l\'administrador si creieu que es tracta d\'un error.',
         ],
         '413' => [
             'description' => 'Oops! Estàs intentant pujar un fitxer que és massa gran. Si vols pujar-lo, actualitza la configuració PHP.',

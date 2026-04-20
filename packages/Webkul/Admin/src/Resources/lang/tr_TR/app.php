@@ -948,6 +948,8 @@ return [
             'can-not-update-variant-options' => 'Bu ailede zaten ürün varyantları olduğu için konfigürasyon seçenekleri güncellenemiyor.',
         ],
         'history' => [
+            'view' => 'Sürüm Ayrıntılarını Görüntüle',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Versiyon',
@@ -2215,6 +2217,7 @@ return [
         '403' => [
             'description' => 'Oops! Bu sayfa erişilemez durumda. Bu içeriği görüntülemek için gerekli yetkilere sahip değilsiniz.',
             'title'       => '403 Yasak',
+            'message'     => 'Bu sayfaya erişim izniniz yok. Bunun bir hata olduğunu düşünüyorsanız lütfen yöneticinizle iletişime geçin.',
         ],
         '413' => [
             'description' => 'Oops! Yüklemek istediğiniz dosya çok büyük gibi görünüyor. Yüklemek istiyorsanız, PHP yapılandırmasını güncelleyin.',

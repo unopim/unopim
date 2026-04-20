@@ -948,6 +948,8 @@ return [
             'can-not-update-variant-options' => 'Nie można zaktualizować opcji konfiguracji, ponieważ ta rodzina ma już warianty produktów.',
         ],
         'history' => [
+            'view' => 'Wyświetl szczegóły wersji',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Wersja',
@@ -2215,6 +2217,7 @@ return [
         '403' => [
             'description' => 'Ups! Ta strona jest zabroniona. Wygląda na to, że nie masz dostępu do tego zasobu.',
             'title'       => '403 Zabronione',
+            'message'     => 'Nie masz uprawnień do dostępu do tej strony. Skontaktuj się z administratorem, jeśli uważasz, że to błąd.',
         ],
         '413' => [
             'description' => 'Ups! Wygląda na to, że próbujesz przesłać zbyt duży plik. Jeśli chcesz to zrobić, zmień konfigurację PHP.',

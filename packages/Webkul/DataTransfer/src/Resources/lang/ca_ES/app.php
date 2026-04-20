@@ -59,6 +59,7 @@ return [
             'invalid-attribute'    => 'Capçalera conté atribut(s) invàlid(s): "%s".',
             'system'               => 'S\'ha produït un error de sistema inesperat.',
             'wrong-quotes'         => 'S\'han utilitzat guions curts en lloc de guions rectes.',
+            'file-empty'           => 'El fitxer està buit o no conté una fila de capçalera. Si us plau, pengeu un fitxer vàlid amb dades.',
         ],
     ],
     'job' => [

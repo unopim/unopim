@@ -152,6 +152,13 @@ class ImportProducts implements PimTool
                             continue;
                         }
 
+                        if (! $this->validateSku($sku)) {
+                            $skipped++;
+                            $errors[] = 'Row '.($i + 2)." (SKU: {$sku}): Invalid SKU format. SKU must contain only letters, numbers, hyphens, and underscores.";
+
+                            continue;
+                        }
+
                         try {
                             $existingProduct = DB::table('products')->where('sku', $sku)->first();
 
@@ -611,6 +618,15 @@ class ImportProducts implements PimTool
                 $values['common'][$column] = $value;
             }
         }
+    }
+
+    /**
+     * Validate that a SKU matches the accepted format.
+     * Uses the same pattern as Webkul\Core\Rules\Sku.
+     */
+    protected function validateSku(string $sku): bool
+    {
+        return (bool) preg_match('/^[a-zA-Z0-9]+(?:[-_][a-zA-Z0-9]+)*$/', $sku);
     }
 
     /**

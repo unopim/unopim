@@ -251,7 +251,7 @@ return [
             'generate-variants-hint'  => 'vd. "Tạo S/M/L × Đỏ/Xanh cho SHIRT-001"',
             'edit-image'              => 'Sửa hình ảnh sản phẩm',
             'edit-image-desc'         => 'Xóa nền, nâng cao & chỉnh sửa',
-            'edit-image-hint'         => 'Tải lên hình ảnh, sau đó nói muốn thay đổi gì — vd. "Xóa nền"',
+            'edit-image-hint'         => 'Cung cấp SKU sản phẩm và mô tả muốn thay đổi gì — vd. "Xóa nền của SKU-123"',
 
             'search-products'         => 'Tìm kiếm sản phẩm',
             'search-products-desc'    => 'Tìm sản phẩm theo SKU, tên hoặc trạng thái',
@@ -324,7 +324,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => 'Chỉnh sửa hình ảnh sản phẩm đã tải lên theo hướng dẫn.',
+            'edit-image-prompt'        => 'Chỉnh sửa hình ảnh sản phẩm bằng cách lấy từ SKU đã cho, áp dụng các thay đổi yêu cầu và lưu lại.',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',

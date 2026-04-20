@@ -948,6 +948,8 @@ return [
             'can-not-update-variant-options' => 'Ne možete ažurirati opcije konfiguracije jer ova obitelj već ima varijante proizvoda.',
         ],
         'history' => [
+            'view' => 'Pogledaj detalje verzije',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Verzija',
@@ -2215,6 +2217,7 @@ return [
         '403' => [
             'description' => 'Ups! Ova stranica je zabranjena. Čini se da nemate dozvolu za pregled ovog sadržaja.',
             'title'       => '403 Zabranjeno',
+            'message'     => 'Nemate dopuštenje za pristup ovoj stranici. Obratite se administratoru ako smatrate da je ovo greška.',
         ],
         '413' => [
             'description' => 'Ups! Čini se da pokušavate prenijeti preveliku datoteku. Ako želite prenijeti istu, molimo ažurirajte postavke PHP konfiguracije.',

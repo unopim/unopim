@@ -251,7 +251,7 @@ return [
             'generate-variants-hint'  => 'напр. «Сгенерировать S/M/L × Красный/Синий для SHIRT-001»',
             'edit-image'              => 'Редактировать изображение товара',
             'edit-image-desc'         => 'Удаление фона, улучшение и ретушь',
-            'edit-image-hint'         => 'Загрузите изображение, затем скажите, что изменить — напр. «Убрать фон»',
+            'edit-image-hint'         => 'Укажите SKU товара и опишите, что нужно изменить — напр. "Удалить фон у SKU-123"',
 
             'search-products'         => 'Поиск товаров',
             'search-products-desc'    => 'Найти товары по SKU, названию или статусу',
@@ -324,7 +324,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => 'Отредактировать загруженное изображение товара согласно инструкциям.',
+            'edit-image-prompt'        => 'Отредактируйте изображение товара, получив его по указанному SKU, примените запрошенные изменения и сохраните обратно.',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',

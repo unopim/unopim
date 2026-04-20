@@ -948,6 +948,8 @@ return [
             'can-not-update-variant-options' => 'Konfigurierbare Optionen können nicht aktualisiert werden, da diese Familie bereits Variantenprodukte hat.',
         ],
         'history' => [
+            'view' => 'Versionsdetails anzeigen',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Version',
@@ -2215,6 +2217,7 @@ return [
         '403' => [
             'description' => 'Hoppla! Diese Seite ist gesperrt. Offenbar verfügen Sie nicht über die erforderlichen Berechtigungen, um diesen Inhalt anzuzeigen.',
             'title'       => '403 Verboten',
+            'message'     => 'Sie haben keine Berechtigung, auf diese Seite zuzugreifen. Bitte wenden Sie sich an Ihren Administrator, wenn Sie glauben, dass dies ein Fehler ist.',
         ],
         '413' => [
             'description' => 'Hoppla! Offenbar versuchen Sie, eine Datei hochzuladen, die zu groß ist. Wenn Sie dieselbe Datei hochladen möchten, aktualisieren Sie bitte die PHP-Konfiguration entsprechend.',

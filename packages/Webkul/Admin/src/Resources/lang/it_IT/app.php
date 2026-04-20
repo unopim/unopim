@@ -948,6 +948,8 @@ return [
             'can-not-update-variant-options' => 'Impossibile aggiornare le opzioni di configurazione poiché questa famiglia ha già varianti di prodotto.',
         ],
         'history' => [
+            'view' => 'Visualizza dettagli versione',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Versione',
@@ -2215,6 +2217,7 @@ return [
         '403' => [
             'description' => 'Ops! Questa pagina è off-limits. Sembrava che tu non avessi il permesso di visualizzare questo contenuto.',
             'title'       => '403 Vietato',
+            'message'     => 'Non hai il permesso di accedere a questa pagina. Contatta il tuo amministratore se ritieni che si tratti di un errore.',
         ],
         '413' => [
             'description' => 'Ops! Sembra che stai tentando di caricare un file troppo grande. Se desideri caricare lo stesso, aggiornare la configurazione PHP.',

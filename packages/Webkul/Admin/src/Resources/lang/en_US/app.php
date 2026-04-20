@@ -1011,6 +1011,8 @@ return [
         ],
 
         'history' => [
+            'view' => 'View Version Details',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Version',
@@ -2379,6 +2381,7 @@ return [
         '403' => [
             'description' => 'Oops! This page is off-limits. It appears you don\'t have the required permissions to view this content.',
             'title'       => '403 Forbidden',
+            'message'     => 'You do not have permission to access this page. Please contact your administrator if you believe this is an error.',
         ],
 
         '413' => [

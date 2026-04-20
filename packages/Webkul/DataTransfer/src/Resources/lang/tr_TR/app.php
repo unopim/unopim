@@ -59,6 +59,7 @@ return [
             'invalid-attribute'    => 'Başlık geçersiz attribute(s) içeriyor: "%s".',
             'system'               => 'Beklenmeyen bir sistem hatası oluştu.',
             'wrong-quotes'         => 'Kıvrık tırnaklar, doğru tırnaklar yerine kullanıldı.',
+            'file-empty'           => 'Dosya boş veya başlık satırı içermiyor. Lütfen veri içeren geçerli bir dosya yükleyin.',
         ],
     ],
     'job' => [

@@ -59,6 +59,7 @@ return [
             'invalid-attribute'    => 'Otsikko sisältää virheellisiä attribuutteja: "%s".',
             'system'               => 'Odottamaton järjestelmävirhe tapahtui.',
             'wrong-quotes'         => 'Käyrät lainausmerkit käytetty suoran lainausmerkin sijaan.',
+            'file-empty'           => 'Tiedosto on tyhjä tai siinä ei ole otsikkoriviä. Lataa kelvollinen tiedosto, jossa on tietoja.',
         ],
     ],
     'job' => [

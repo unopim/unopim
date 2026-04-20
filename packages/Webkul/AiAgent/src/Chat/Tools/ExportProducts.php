@@ -6,6 +6,8 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Prism\Prism\Tool;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
@@ -36,16 +38,19 @@ class ExportProducts implements PimTool
     {
         return (new Tool)
             ->as('export_products')
-            ->for('Export products to CSV. Returns a download URL.')
+            ->for('Export products to CSV or XLSX. Returns a download URL. Default format is CSV; use XLSX when the user explicitly asks for Excel or XLSX.')
             ->withStringParameter('skus', 'Comma-separated SKUs to export (leave empty for all)')
             ->withEnumParameter('status', 'Filter by status', ['active', 'inactive', 'all'])
             ->withStringParameter('category', 'Filter by category code')
-            ->using(function (?string $skus = null, string $status = 'all', ?string $category = null) use ($context): string {
+            ->withEnumParameter('format', 'Export file format', ['csv', 'xlsx'])
+            ->using(function (?string $skus = null, string $status = 'all', ?string $category = null, string $format = 'csv') use ($context): string {
                 if ($denied = $this->denyUnlessAllowed($context, 'data_transfer.export')) {
                     return $denied;
                 }
 
-                $filters = $this->buildFilters($context, $skus, $status, $category);
+                $format = strtolower($format);
+
+                $filters = $this->buildFilters($context, $skus, $status, $category, $format);
                 $jobInstance = $this->createJobInstance($filters);
                 $jobTrack = $this->createJobTrack($jobInstance);
                 $logger = JobLogger::make($jobTrack->id);
@@ -65,17 +70,27 @@ class ExportProducts implements PimTool
                         return json_encode(['error' => $message]);
                     }
 
-                    $filename = sprintf('export-%s.csv', now()->format('Y-m-d-His'));
+                    $extension = $format === 'xlsx' ? 'xlsx' : 'csv';
+                    $filename = sprintf('export-%s.%s', now()->format('Y-m-d-His'), $extension);
                     $relativePath = 'ai-agent/exports/'.$filename;
 
                     $this->markTrackAsProcessing($jobTrack->id);
-                    $this->writeCsv($relativePath, $this->buildCsvRows($products, $context));
+
+                    $rows = $this->buildCsvRows($products, $context);
+
+                    if ($format === 'xlsx') {
+                        $this->writeXlsx($relativePath, $rows);
+                    } else {
+                        $this->writeCsv($relativePath, $rows);
+                    }
+
                     $this->markTrackAsCompleted($jobTrack->id, $products, $relativePath, $logger);
 
                     return json_encode([
                         'result' => [
                             'exported'   => $products->count(),
                             'filename'   => $filename,
+                            'format'     => $extension,
                             'tracker_id' => $jobTrack->id,
                         ],
                         'download_url' => asset('storage/'.$relativePath),
@@ -95,12 +110,12 @@ class ExportProducts implements PimTool
     /**
      * Build the export filters stored against the job instance.
      */
-    protected function buildFilters(ChatContext $context, ?string $skus, string $status, ?string $category): array
+    protected function buildFilters(ChatContext $context, ?string $skus, string $status, ?string $category, string $format): array
     {
         $skuList = array_values(array_filter(array_map('trim', explode(',', (string) $skus))));
 
         return [
-            'file_format' => 'Csv',
+            'file_format' => $format === 'xlsx' ? 'Xlsx' : 'Csv',
             'with_media'  => 0,
             'status'      => $status,
             'skus'        => $skuList,
@@ -182,7 +197,7 @@ class ExportProducts implements PimTool
     }
 
     /**
-     * Convert the selected products into CSV rows.
+     * Convert the selected products into export rows.
      */
     protected function buildCsvRows(Collection $products, ChatContext $context): array
     {
@@ -235,6 +250,31 @@ class ExportProducts implements PimTool
         Storage::disk('public')->put($relativePath, stream_get_contents($stream));
 
         fclose($stream);
+    }
+
+    /**
+     * Write the generated XLSX to the public storage disk.
+     */
+    protected function writeXlsx(string $relativePath, array $rows): void
+    {
+        $spreadsheet = new Spreadsheet;
+        $sheet = $spreadsheet->getActiveSheet();
+
+        foreach ($rows as $rowIndex => $row) {
+            foreach ($row as $colIndex => $value) {
+                $sheet->setCellValue([$colIndex + 1, $rowIndex + 1], $value);
+            }
+        }
+
+        $fullPath = Storage::disk('public')->path($relativePath);
+        $dir = \dirname($fullPath);
+
+        if (! is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($fullPath);
     }
 
     /**

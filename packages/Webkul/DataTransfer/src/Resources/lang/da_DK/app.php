@@ -59,6 +59,7 @@ return [
             'invalid-attribute'    => 'Overskriften indeholder ugyldige attributter: "%s".',
             'system'               => 'En uventet systemfejl opstod.',
             'wrong-quotes'         => 'Korte citationstegn blev brugt i stedet for lige citationstegn.',
+            'file-empty'           => 'Filen er tom eller indeholder ingen headerrække. Upload venligst en gyldig fil med data.',
         ],
     ],
     'job' => [

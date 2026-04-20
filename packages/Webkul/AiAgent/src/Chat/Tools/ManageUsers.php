@@ -56,14 +56,22 @@ class ManageUsers implements PimTool
 
     /**
      * Mask email addresses to prevent data exposure via AI responses.
+     * Shows first 2 and last 2 characters of the local part with a
+     * visible block of asterisks so users can tell the email is masked.
      */
     private function maskUserData(object $user): object
     {
         if (! empty($user->email)) {
             $atPos = strpos($user->email, '@');
-            $user->email = $atPos > 2
-                ? substr($user->email, 0, 2).str_repeat('*', $atPos - 2).substr($user->email, $atPos)
-                : str_repeat('*', $atPos).substr($user->email, $atPos);
+            $local = substr($user->email, 0, $atPos);
+            $domain = substr($user->email, $atPos);
+            $len = strlen($local);
+
+            $user->email = match (true) {
+                $len <= 2 => str_repeat('*', 6).$domain,
+                $len <= 4 => substr($local, 0, 2).str_repeat('*', 6).$domain,
+                default   => substr($local, 0, 2).str_repeat('*', 6).substr($local, -2).$domain,
+            };
         }
 
         return $user;

@@ -251,7 +251,7 @@ return [
             'generate-variants-hint'  => 'жнь. "SHIRT-001-д S/M/L × Улаан/Цэнхэр үүсгэх"',
             'edit-image'              => 'Бүтээгдэхүүний зураг засах',
             'edit-image-desc'         => 'Дэвсгэр арилгах, сайжруулах, засварлах',
-            'edit-image-hint'         => 'Зураг байршуулаад юу өөрчлөхийг хэлнэ үү — жнь. "Дэвсгэр арилгах"',
+            'edit-image-hint'         => 'Бүтээгдэхүүний SKU оруулж, юу өөрчлөхийг тайлбарлана уу — жнь. "SKU-123-ын дэвсгэр арилгах"',
 
             'search-products'         => 'Бүтээгдэхүүн хайх',
             'search-products-desc'    => 'SKU, нэр эсвэл төлвөөр бүтээгдэхүүн олох',
@@ -324,7 +324,7 @@ return [
             'export-products-prompt'   => '',
             'assign-categories-prompt' => '',
             'generate-variants-prompt' => '',
-            'edit-image-prompt'        => 'Зааврын дагуу байршуулсан бүтээгдэхүүний зургийг засна.',
+            'edit-image-prompt'        => 'Өгөгдсөн SKU-аас бүтээгдэхүүний зургийг авч, хүссэн өөрчлөлтийг хийж, буцааж хадгална.',
             'search-products-prompt'   => '',
             'generate-content-prompt'  => '',
             'generate-image-prompt'    => '',

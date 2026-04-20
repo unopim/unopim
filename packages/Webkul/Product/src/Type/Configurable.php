@@ -3,6 +3,7 @@
 namespace Webkul\Product\Type;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Webkul\Admin\Validations\ConfigurableUniqueSku;
 use Webkul\Product\Models\Product;
@@ -152,7 +153,9 @@ class Configurable extends AbstractType
         if (isset($data['variants'])) {
             foreach ($data['variants'] as $variantId => $variantData) {
                 if (Str::contains($variantId, 'variant_')) {
-                    $this->createVariant($product, $productSuperAttributes, $variantData, $uniqueAttributes);
+                    $variant = $this->createVariant($product, $productSuperAttributes, $variantData, $uniqueAttributes);
+
+                    Event::dispatch('catalog.product.create.after', $variant);
                 } else {
                     if (is_numeric($index = $previousVariantIds->search($variantId))) {
                         $previousVariantIds->forget($index);

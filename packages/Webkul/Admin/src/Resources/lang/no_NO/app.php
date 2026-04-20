@@ -948,6 +948,8 @@ return [
             'can-not-update-variant-options' => 'Kan ikke oppdatere konfigurasjonsalternativer, fordi denne familien allerede har produktvarianter.',
         ],
         'history' => [
+            'view' => 'Vis versjonsdetaljer',
+
             'index' => [
                 'datagrid' => [
                     'version'   => 'Versjon',
@@ -2215,6 +2217,7 @@ return [
         '403' => [
             'description' => 'Ups! Denne siden er utilgjengelig. Det ser ut som du ikke har tillatelse til å se dette innholdet.',
             'title'       => '403 Forbudt',
+            'message'     => 'Du har ikke tilgang til denne siden. Kontakt administratoren din hvis du mener dette er en feil.',
         ],
         '413' => [
             'description' => 'Ups! Det ser ut som om du prøver å laste opp en fil som er for stor. Hvis du ønsker å laste opp samme, oppdater PHP-konfigurasjonen tilsvarende.',
