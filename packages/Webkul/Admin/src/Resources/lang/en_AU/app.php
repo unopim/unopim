@@ -681,6 +681,7 @@ return [
             'delete-success'       => 'Category Deleted Successfully.',
             'update-success'       => 'Category Updated Successfully.',
             'can-not-update'       => 'This root category is associated with a channel and cannot have a parent category.',
+            'invalid-parent'       => 'The selected parent category is invalid. A category cannot be its own parent or a descendant of itself.',
             'unique-validation'    => 'This value is already taken.',
             'not-found'            => 'Category with Code ":code" Not Found',
             'unknown-fields'       => 'Category Field with Code ":fields" Not Found',

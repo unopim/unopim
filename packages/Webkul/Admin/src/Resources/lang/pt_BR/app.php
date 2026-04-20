@@ -681,6 +681,7 @@ return [
             'delete-success'       => 'Categoria excluída com sucesso.',
             'update-success'       => 'Categoria atualizada com sucesso.',
             'can-not-update'       => 'Esta categoria raiz está associada a um canal e não pode ter uma categoria pai.',
+            'invalid-parent'       => 'A categoria pai selecionada é inválida. Uma categoria não pode ser seu próprio pai ou um descendente de si mesma.',
             'unique-validation'    => 'Este valor já está em uso.',
             'not-found'            => 'Categoria com código ":code" não encontrada',
             'unknown-fields'       => 'Campo de categoria com código ":fields" não encontrado',

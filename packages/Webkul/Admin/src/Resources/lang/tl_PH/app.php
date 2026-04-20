@@ -681,6 +681,7 @@ return [
             'delete-success'       => 'Matagumpay na natanggal ang kategorya.',
             'update-success'       => 'Matagumpay na na-update ang kategorya.',
             'can-not-update'       => 'Ang root category na ito ay naka-link sa isang channel at hindi maaaring magkaroon ng parent category.',
+            'invalid-parent'       => 'Ang napiling parent category ay hindi wasto. Ang isang category ay hindi maaaring maging sariling parent o inapo ng sarili nito.',
             'unique-validation'    => 'Ang halaga na ito ay ginagamit na.',
             'not-found'            => 'Ang kategorya na may kode ":code" ay hindi natagpuan',
             'unknown-fields'       => 'Hindi natagpuang field sa kategorya na may kode ":fields"',

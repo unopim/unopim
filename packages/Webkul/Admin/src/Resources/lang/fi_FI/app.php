@@ -681,6 +681,7 @@ return [
             'delete-success'       => 'Kategoria poistettiin onnistuneesti.',
             'update-success'       => 'Kategoria päivitettiin onnistuneesti.',
             'can-not-update'       => 'Tätä pääkategoriaa ei voi päivittää, koska se on liitetty kanavaan.',
+            'invalid-parent'       => 'Valittu yläkategoria ei kelpaa. Kategoria ei voi olla oma vanhempansa tai itsensä jälkeläinen.',
             'unique-validation'    => 'Tämä arvo on jo käytössä.',
             'not-found'            => 'Kategoria koodilla ":code" ei löytynyt',
             'unknown-fields'       => 'Kategoriakenttä koodilla ":fields" ei löytynyt',

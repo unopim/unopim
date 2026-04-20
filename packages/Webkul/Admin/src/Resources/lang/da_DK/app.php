@@ -681,6 +681,7 @@ return [
             'delete-success'       => 'Kategori blev succesfuldt slettet.',
             'update-success'       => 'Kategori opdateret succesfuldt.',
             'can-not-update'       => 'Denne rodkategori er relateret til en kanal og kan ikke have en forældrekategori.',
+            'invalid-parent'       => 'Den valgte overordnede kategori er ugyldig. En kategori kan ikke være sin egen forælder eller en efterkommer af sig selv.',
             'unique-validation'    => 'Denne værdi er allerede optaget.',
             'not-found'            => 'Kategori med kode ":code" kunne ikke findes',
             'unknown-fields'       => 'Kategori-felt med kode ":fields" kunne ikke findes',

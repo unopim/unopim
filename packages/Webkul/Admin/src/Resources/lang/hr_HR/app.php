@@ -681,6 +681,7 @@ return [
             'delete-success'       => 'Kategorija uspješno izbrisana.',
             'update-success'       => 'Kategorija uspješno ažurirana.',
             'can-not-update'       => 'Ova glavna kategorija je povezana s kanalom i ne može imati roditeljsku kategoriju.',
+            'invalid-parent'       => 'Odabrana nadređena kategorija nije valjana. Kategorija ne može biti vlastiti roditelj niti potomak samog sebe.',
             'unique-validation'    => 'Ova vrijednost je već zauzeta.',
             'not-found'            => 'Kategorija s kodom ":code" nije pronađena',
             'unknown-fields'       => 'Polje kategorije s kodom ":fields" nije pronađeno',

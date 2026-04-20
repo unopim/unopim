@@ -681,6 +681,7 @@ return [
             'delete-success'       => 'Kategori slettet.',
             'update-success'       => 'Kategori oppdatert.',
             'can-not-update'       => 'Denne rotkategorien er tilknyttet et kanal og kan ikke ha en overordnet kategori.',
+            'invalid-parent'       => 'Den valgte overordnede kategorien er ugyldig. En kategori kan ikke være sin egen forelder eller en etterkommer av seg selv.',
             'unique-validation'    => 'Denne verdien er allerede opptatt.',
             'not-found'            => 'Kategori med kode ":code" ble ikke funnet',
             'unknown-fields'       => 'Kategori med kode ":fields" ble ikke funnet',

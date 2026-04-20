@@ -681,6 +681,7 @@ return [
             'delete-success'       => 'La catégorie a été supprimée avec succès.',
             'update-success'       => 'Catégorie mise à jour avec succès.',
             'can-not-update'       => 'Cette catégorie racine est liée à un canal et ne peut pas avoir de catégorie parent.',
+            'invalid-parent'       => 'La catégorie parente sélectionnée est invalide. Une catégorie ne peut pas être son propre parent ou un descendant d\'elle-même.',
             'unique-validation'    => 'Cette valeur est déjà utilisée.',
             'not-found'            => 'La catégorie avec le code ":code" est introuvable',
             'unknown-fields'       => 'Le champ de catégorie avec le code ":fields" est introuvable',

@@ -681,6 +681,7 @@ return [
             'delete-success'       => 'Kategori başarıyla silindi.',
             'update-success'       => 'Kategori başarıyla güncellendi.',
             'can-not-update'       => 'Bu kök kategori bir kanal ile ilişkilidir ve bir üst kategoriye sahip olamaz.',
+            'invalid-parent'       => 'Seçilen üst kategori geçersiz. Bir kategori kendi üst kategorisi veya kendi alt öğesi olamaz.',
             'unique-validation'    => 'Bu değer zaten kullanılıyor.',
             'not-found'            => '":code" koduna sahip kategori bulunamadı',
             'unknown-fields'       => '":fields" koduna sahip kategori için bilinmeyen alanlar',

@@ -681,6 +681,7 @@ return [
             'delete-success'       => 'Kategori raderad',
             'update-success'       => 'Kategori uppdaterad',
             'can-not-update'       => 'Denna rotkategori är kopplad till en kanal och kan inte ha en föräldrakategori.',
+            'invalid-parent'       => 'Den valda överordnade kategorin är ogiltig. En kategori kan inte vara sin egen förälder eller en ättling till sig själv.',
             'unique-validation'    => 'Detta värde är redan i användning.',
             'not-found'            => 'Kategori med kod ":code" hittades inte',
             'unknown-fields'       => 'Okänt fält för kategori med kod ":fields"',

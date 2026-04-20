@@ -681,6 +681,7 @@ return [
             'delete-success'       => '類別已成功刪除。',
             'update-success'       => '類別已成功更新。',
             'can-not-update'       => '此根類別已與通道相關聯，無法擁有父類別。',
+            'invalid-parent'       => '所選父類別無效。類別不能是其自身的父類別或其自身的後代。',
             'unique-validation'    => '此值已經被使用。',
             'not-found'            => '未找到代碼為 ":code" 的類別',
             'unknown-fields'       => '未找到代碼為 ":fields" 的類別字段',

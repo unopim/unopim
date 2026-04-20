@@ -681,6 +681,7 @@ return [
             'delete-success'       => 'Categoria eliminata con successo.',
             'update-success'       => 'Categoria aggiornata con successo.',
             'can-not-update'       => 'Questa categoria radice è associata a un canale e non può avere una categoria genitore.',
+            'invalid-parent'       => 'La categoria padre selezionata non è valida. Una categoria non può essere il proprio padre o un discendente di se stessa.',
             'unique-validation'    => 'Questo valore è già stato preso.',
             'not-found'            => 'Categoria con codice ":code" non trovata',
             'unknown-fields'       => 'Campo categoria con codice ":fields" non trovato',

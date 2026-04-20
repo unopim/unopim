@@ -681,6 +681,7 @@ return [
             'delete-success'       => 'Categorie ștearsă cu succes.',
             'update-success'       => 'Categorie actualizată cu succes.',
             'can-not-update'       => 'Această categorie rădăcină este asociată unui canal și nu poate avea o categorie părinte.',
+            'invalid-parent'       => 'Categoria părinte selectată este invalidă. O categorie nu poate fi propriul său părinte sau un descendent al său.',
             'unique-validation'    => 'Această valoare este deja utilizată.',
             'not-found'            => 'Categorie cu codul ":code" nu a fost găsită',
             'unknown-fields'       => 'Câmp necunoscut pentru categoria cu codul ":fields"',

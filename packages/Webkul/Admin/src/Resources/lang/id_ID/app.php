@@ -681,6 +681,7 @@ return [
             'delete-success'       => 'Kategori ini telah berhasil dihapus.',
             'update-success'       => 'Kategori berhasil diperbarui.',
             'can-not-update'       => 'Kategori root ini terkait dengan saluran dan tidak dapat memiliki kategori induk.',
+            'invalid-parent'       => 'Kategori induk yang dipilih tidak valid. Kategori tidak dapat menjadi induknya sendiri atau turunan dari dirinya sendiri.',
             'unique-validation'    => 'Nilai ini sudah diambil.',
             'not-found'            => 'Kategori dengan kode ":code" tidak dapat ditemukan',
             'unknown-fields'       => 'Bidang kategori dengan kode ":fields" tidak dapat ditemukan',

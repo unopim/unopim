@@ -681,6 +681,7 @@ return [
             'delete-success'       => 'Kategoria została usunięta.',
             'update-success'       => 'Kategoria została zaktualizowana.',
             'can-not-update'       => 'Ta kategoria główna jest powiązana z kanałem i nie może mieć kategorii nadrzędnej.',
+            'invalid-parent'       => 'Wybrana kategoria nadrzędna jest nieprawidłowa. Kategoria nie może być swoim własnym rodzicem ani potomkiem samej siebie.',
             'unique-validation'    => 'Ta wartość jest już zajęta.',
             'not-found'            => 'Nie znaleziono kategorii o kodzie ":code"',
             'unknown-fields'       => 'Nie znaleziono kategorii o polu ":fields"',

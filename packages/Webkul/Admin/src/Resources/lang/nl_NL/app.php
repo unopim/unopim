@@ -681,6 +681,7 @@ return [
             'delete-success'       => 'De categorie is met succes verwijderd.',
             'update-success'       => 'Categorie met succes bijgewerkt.',
             'can-not-update'       => 'Deze rootcategorie is gerelateerd aan een kanaal en kan geen oudercategorie hebben.',
+            'invalid-parent'       => 'De geselecteerde bovenliggende categorie is ongeldig. Een categorie kan niet zijn eigen bovenliggende of een afstammeling van zichzelf zijn.',
             'unique-validation'    => 'Deze waarde is al genomen.',
             'not-found'            => 'Categorie met code ":code" kon niet worden gevonden',
             'unknown-fields'       => 'Categorie -veld met code ":fields" kon niet worden gevonden',

@@ -681,6 +681,7 @@ return [
             'delete-success'       => 'Danh mục đã được xóa thành công.',
             'update-success'       => 'Danh mục đã được cập nhật thành công.',
             'can-not-update'       => 'Danh mục gốc này đã liên kết với một kênh và không thể có danh mục cha.',
+            'invalid-parent'       => 'Danh mục cha được chọn không hợp lệ. Một danh mục không thể là cha hoặc con cháu của chính nó.',
             'unique-validation'    => 'Giá trị này đã được sử dụng.',
             'not-found'            => 'Không tìm thấy danh mục với mã ":code"',
             'unknown-fields'       => 'Không tìm thấy trường trong danh mục với mã ":fields"',

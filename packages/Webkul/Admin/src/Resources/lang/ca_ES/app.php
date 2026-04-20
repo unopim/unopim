@@ -681,6 +681,7 @@ return [
             'delete-success'       => 'La categoria s\'ha eliminat amb èxit.',
             'update-success'       => 'Categoria actualitzada amb èxit.',
             'can-not-update'       => 'Aquesta categoria arrel està associada a un canal i no pot tenir una categoria pare.',
+            'invalid-parent'       => 'La categoria pare seleccionada no és vàlida. Una categoria no pot ser el seu propi pare ni un descendent d\'ella mateixa.',
             'unique-validation'    => 'Aquest valor ja està en ús.',
             'not-found'            => 'No s\'ha pogut trobar la categoria amb codi ":code"',
             'unknown-fields'       => 'No s\'ha pogut trobar el camp de categoria amb codi ":fields"',

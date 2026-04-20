@@ -681,6 +681,7 @@ return [
             'delete-success'       => 'Die Kategorie wurde erfolgreich gelöscht.',
             'update-success'       => 'Kategorie erfolgreich aktualisiert.',
             'can-not-update'       => 'Diese Stammkategorie ist mit einem Kanal verknüpft und kann keine übergeordnete Kategorie haben.',
+            'invalid-parent'       => 'Die ausgewählte übergeordnete Kategorie ist ungültig. Eine Kategorie kann nicht ihr eigenes übergeordnetes Element oder ein Nachkomme von sich selbst sein.',
             'unique-validation'    => 'Dieser Wert ist bereits vergeben.',
             'not-found'            => 'Kategorie mit Code „:code“ konnte nicht gefunden werden',
             'unknown-fields'       => 'Kategoriefeld mit Code „:fields“ konnte nicht gefunden werden',

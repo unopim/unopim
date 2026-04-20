@@ -681,6 +681,7 @@ return [
             'delete-success'       => '该类别已成功删除。',
             'update-success'       => '类别成功更新。',
             'can-not-update'       => '此根类别与通道有关，无法具有父级类别。',
+            'invalid-parent'       => '所选父类别无效。类别不能是其自身的父类别或其自身的后代。',
             'unique-validation'    => '此值已经采用。',
             'not-found'            => '找不到代码为“:code”的类别',
             'unknown-fields'       => '无法找到代码为“:fields”的类别字段',
