@@ -212,13 +212,17 @@ class BulkProductUpdate implements ShouldQueue
             $product->values = $values;
             $product->save();
 
-            Event::dispatch('catalog.product.update.after', $product);
-
             $processed++;
 
             if ($processed % 10 === 0) {
                 $this->updateProgress($processed);
             }
+        }
+
+        // Dispatch a single bulk-edit event so listeners (e.g. webhook) can
+        // handle all processed products in one shot without per-product overhead.
+        if (! empty($productIds)) {
+            Event::dispatch('catalog.product.bulk.edit.after', $productIds);
         }
 
         $this->updateProgress($processed);
