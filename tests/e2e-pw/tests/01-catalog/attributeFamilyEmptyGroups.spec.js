@@ -22,7 +22,7 @@ async function deleteFamily(adminPage, code) {
   const deleteBtn = adminPage.locator('div', { hasText: code }).locator('span[title="Delete"]').first();
   if (await deleteBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
     await deleteBtn.click();
-    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.getByRole('button', { name: 'Delete', exact: true }).first().click();
     await adminPage.waitForLoadState('networkidle');
   }
 }

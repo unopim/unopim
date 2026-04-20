@@ -7,7 +7,7 @@ const { navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = requir
 async function createEmptyRole(adminPage, roleName) {
   await navigateTo(adminPage, 'roles');
   await adminPage.getByRole('link', { name: 'Create Role' }).or(adminPage.getByRole('button', { name: 'Create Role' })).first().click();
-  await adminPage.waitForLoadState('networkidle');
+  await adminPage.waitForLoadState('networkidle').catch(() => {});
 
   // Keep permission type as Custom, select only Dashboard so the role saves
   // (an empty permission set triggers validation error on the role form)
@@ -19,6 +19,44 @@ async function createEmptyRole(adminPage, roleName) {
   await adminPage.getByRole('textbox', { name: 'Description' }).fill('Test role with minimal permissions for 403 message test');
 
   await clickSaveAndExpect(adminPage, 'Save Role', /Roles Created Successfully/i);
+}
+
+/**
+ * Helper: Strip all permissions from a role via a direct PUT request.
+ * The create form requires at least one permission to pass frontend validation,
+ * so we create with Dashboard and then strip via API to trigger the Bouncer's
+ * empty-permissions 403 logout flow.
+ */
+async function stripRolePermissions(adminPage, roleName, baseURL) {
+  await navigateTo(adminPage, 'roles');
+  await searchInDataGrid(adminPage, roleName);
+  await adminPage.locator('span[title="Edit"]').first().click();
+  await adminPage.waitForLoadState('networkidle').catch(() => {});
+
+  const roleId = adminPage.url().match(/\/(\d+)$/)?.[1];
+  if (!roleId) return;
+
+  // Use fetch() inside the browser context so the request carries the admin
+  // session cookies automatically and the CSRF token is taken from the live page.
+  // Omitting permissions from the FormData makes the backend default to [].
+  await adminPage.evaluate(async ({ baseURL, roleId, roleName }) => {
+    // The admin layout does not use a <meta name="csrf-token"> tag —
+    // the token is in the hidden _token input of the current form.
+    const token = document.querySelector('input[name="_token"]')?.value ?? '';
+    const body = new URLSearchParams({
+      _token: token,
+      _method: 'PUT',
+      name: roleName,
+      description: 'Test role with minimal permissions for 403 message test',
+      permission_type: 'custom',
+      // Omitting permissions → backend sets permissions to []
+    });
+    await fetch(`${baseURL}/admin/settings/roles/edit/${roleId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: body.toString(),
+    });
+  }, { baseURL, roleId, roleName });
 }
 
 /**
@@ -82,7 +120,7 @@ async function deleteUser(adminPage, email) {
   const visible = await deleteBtn.isVisible({ timeout: 3000 }).catch(() => false);
   if (!visible) return;
   await deleteBtn.click();
-  await adminPage.getByRole('button', { name: 'Delete' }).click();
+  await adminPage.getByRole('button', { name: 'Delete', exact: true }).first().click();
   await adminPage.waitForLoadState('networkidle');
 }
 
@@ -96,7 +134,7 @@ async function deleteRole(adminPage, name) {
   const visible = await deleteBtn.isVisible({ timeout: 3000 }).catch(() => false);
   if (!visible) return;
   await deleteBtn.click();
-  await adminPage.getByRole('button', { name: 'Delete' }).click();
+  await adminPage.getByRole('button', { name: 'Delete', exact: true }).first().click();
   await adminPage.waitForLoadState('networkidle');
 }
 
@@ -120,6 +158,11 @@ test.describe('Bouncer 403 Error Message', () => {
     const adminPage = await adminContext.newPage();
 
     await createEmptyRole(adminPage, roleName);
+
+    // Strip all permissions from the role so the Bouncer's empty-permissions
+    // 403 logout is triggered when the user logs in.
+    await stripRolePermissions(adminPage, roleName, baseURL);
+
     await createUserWithRole(adminPage, {
       name: userName,
       email: userEmail,
@@ -139,16 +182,24 @@ test.describe('Bouncer 403 Error Message', () => {
     await userPage.getByRole('textbox', { name: 'Email Address' }).fill(userEmail);
     await userPage.getByRole('textbox', { name: 'Password' }).fill(userPassword);
     await userPage.getByRole('button', { name: 'Sign In' }).click();
+
+    // The Bouncer detects empty permissions, logs the user out, and redirects
+    // back to the login page with a session-flashed error message.
     await userPage.waitForLoadState('networkidle').catch(() => {});
 
-    // Step 3: Verify the error message is translated (not a raw translation key)
-    const errorToast = userPage.locator('#app').getByText(/admin::app/i).first();
-    await expect(errorToast).not.toBeVisible({ timeout: 5000 });
+    // Step 3: Positive assertion — the translated 403 message must be present.
+    // It is inlined into the page source by the flash-group component.
+    const pageSource = await userPage.content();
+    expect(pageSource).toContain('You do not have permission to access this page');
 
-    // Verify a meaningful error message is shown (translated text, not raw key)
-    const pageContent = await userPage.textContent('body');
-    expect(pageContent).not.toContain('admin::app.error');
-    expect(pageContent).not.toContain('admin::app.errors.403.message');
+    // Negative assertions — no raw translation keys must appear.
+    expect(pageSource).not.toContain('admin::app.errors.403.message');
+    expect(pageSource).not.toContain('admin::app.error');
+
+    // Also verify the translated toast notification is visible in the DOM.
+    await expect(
+      userPage.getByText(/You do not have permission to access this page/i).first()
+    ).toBeVisible({ timeout: 5000 });
 
     await userPage.close();
     await userContext.close();
