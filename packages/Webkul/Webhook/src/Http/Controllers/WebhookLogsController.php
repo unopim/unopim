@@ -22,7 +22,7 @@ class WebhookLogsController
     public function index()
     {
         if (! bouncer()->hasPermission('configuration.webhook.logs')) {
-            abort(401, 'This action is unauthorized');
+            abort(403, 'This action is unauthorized');
         }
 
         if (request()->ajax()) {
@@ -38,7 +38,7 @@ class WebhookLogsController
     public function destroy(int $id): JsonResponse
     {
         if (! bouncer()->hasPermission('configuration.webhook.logs.delete')) {
-            abort(401, 'This action is unauthorized');
+            abort(403, 'This action is unauthorized');
         }
 
         try {
@@ -62,7 +62,7 @@ class WebhookLogsController
     public function massDestroy(MassDestroyRequest $massDestroyRequest): JsonResponse
     {
         if (! bouncer()->hasPermission('configuration.webhook.logs.mass_delete')) {
-            abort(401, 'This action is unauthorized');
+            abort(403, 'This action is unauthorized');
         }
 
         $logIds = $massDestroyRequest->input('indices');

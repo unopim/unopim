@@ -18,7 +18,7 @@ class AgentController extends Controller
     ) {
         $this->middleware(function ($request, $next) {
             if (! bouncer()->hasPermission('ai-agent.agents')) {
-                abort(401, trans('ai-agent::app.common.unauthorized'));
+                abort(403, trans('ai-agent::app.common.unauthorized'));
             }
 
             return $next($request);

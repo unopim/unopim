@@ -41,7 +41,7 @@ class Bouncer
             ! auth()->guard('admin')->check()
             || ! auth()->guard('admin')->user()->hasPermission($permission)
         ) {
-            abort(401, 'This action is unauthorized');
+            abort(403, 'This action is unauthorized');
         }
     }
 }
