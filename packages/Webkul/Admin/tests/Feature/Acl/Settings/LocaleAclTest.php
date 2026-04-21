@@ -6,7 +6,7 @@ it('should not display the locale list if does not have permission', function ()
     $this->loginWithPermissions();
 
     $this->get(route('admin.settings.locales.index'))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should display the locale list if have permission', function () {
@@ -21,7 +21,7 @@ it('should not create the locale if does not have permission', function () {
     $this->loginWithPermissions();
 
     $this->post(route('admin.settings.locales.store'))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should create the locale if has permission', function () {
@@ -45,7 +45,7 @@ it('should not return the locale json for edit if does not have permission', fun
     $locale = Locale::first();
 
     $this->get(route('admin.settings.locales.edit', ['id' => $locale->id]))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should return the locale json for edit if have permission', function () {
@@ -65,7 +65,7 @@ it('should not be able to delete locale if does not have permission', function (
     $locale = Locale::first();
 
     $this->delete(route('admin.settings.locales.delete', ['id' => $locale->id]))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 
     $this->assertDatabaseHas($this->getFullTableName(Locale::class),
         ['id' => $locale->id]
@@ -100,7 +100,7 @@ it('should not be able to mass update locales if does not have permission', func
         'indices' => $localeIds,
         'value'   => 1,
     ])
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 
     foreach ($localeIds as $id) {
         $this->assertDatabaseHas($this->getFullTableName(Locale::class), ['id' => $id, 'status' => 0]);
@@ -132,7 +132,7 @@ it('should not be able to mass delete locales if does not have permission', func
     $this->post(route('admin.settings.locales.mass_delete'), [
         'indices' => $localeIds,
     ])
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 
     foreach ($localeIds as $id) {
         $this->assertDatabaseHas($this->getFullTableName(Locale::class), ['id' => $id]);

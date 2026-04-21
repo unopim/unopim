@@ -4,7 +4,7 @@ it('should not display webhook logs if user does not have permission', function 
     $this->loginWithPermissions(permissions: ['dashboard', 'configuration.webhook.settings']);
 
     $this->get(route('webhook.logs.index'))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should display webhook logs if user has permission', function () {

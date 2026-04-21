@@ -13,7 +13,7 @@ it('should not display the magic ai platform index page if does not have permiss
     $this->loginWithPermissions();
 
     $this->get(route('admin.magic_ai.platform.index'))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should display the edit magic ai platform page if has permission', function () {
@@ -41,7 +41,7 @@ it('should not display the edit magic ai platform page if does not have permissi
     ]);
 
     $this->get(route('admin.magic_ai.platform.edit', $platform->id))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should hide edit and delete actions in platform datagrid when user lacks those permissions', function () {

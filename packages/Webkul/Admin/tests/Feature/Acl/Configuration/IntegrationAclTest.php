@@ -15,7 +15,7 @@ it('should not display the magic ai tab if does not have permission', function (
     $this->loginWithPermissions();
 
     $this->get(route('admin.configuration.edit', ['general', 'magic_ai']))
-        ->assertSeeText('Unauthorized')
+        ->assertStatus(403)
         ->assertDontSeeText(trans('admin::app.configuration.index.general.magic-ai.settings.title'));
 });
 
@@ -31,7 +31,7 @@ it('should not display the integration index page if does not have permission', 
     $this->loginWithPermissions();
 
     $this->get(route('admin.configuration.integrations.index'))
-        ->assertSeeText('Unauthorized')
+        ->assertStatus(403)
         ->assertDontSeeText(trans('admin::app.configuration.integrations.index.title'));
 });
 
@@ -47,7 +47,7 @@ it('should not display the create integration page if does not have permission',
     $this->loginWithPermissions();
 
     $this->get(route('admin.configuration.integrations.create'))
-        ->assertSeeText('Unauthorized')
+        ->assertStatus(403)
         ->assertDontSeeText(trans('admin::app.configuration.integrations.create.title'));
 });
 
@@ -67,7 +67,7 @@ it('should not display the edit integration page if does not have permission', f
     $apiKey = Apikey::factory()->create(['permission_type' => 'all', 'admin_id' => $userId]);
 
     $this->get(route('admin.configuration.integrations.edit', $apiKey->id))
-        ->assertSeeText('Unauthorized')
+        ->assertStatus(403)
         ->assertDontSeeText(trans('admin::app.configuration.integrations.edit.title'));
 });
 
@@ -92,7 +92,7 @@ it('should not delete an integration if does not have permission', function () {
     $apiKey = Apikey::factory()->create(['permission_type' => 'all', 'admin_id' => $userId]);
 
     $this->delete(route('admin.configuration.integrations.delete', $apiKey))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 
     $this->assertDatabaseHas($this->getFullTableName(Apikey::class), [
         'id'      => $apiKey->id,

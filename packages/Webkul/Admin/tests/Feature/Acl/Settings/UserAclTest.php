@@ -7,7 +7,7 @@ it('should not display the users list if does not have permission', function () 
     $this->loginWithPermissions();
 
     $this->get(route('admin.settings.users.index'))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should display the users list if has permission', function () {
@@ -22,7 +22,7 @@ it('should not create the user if does not have permission', function () {
     $this->loginWithPermissions();
 
     $this->post(route('admin.settings.users.store'))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should create the user if has permission', function () {
@@ -56,7 +56,7 @@ it('should not display the user edit form if does not have permission', function
     $user = Admin::first();
 
     $this->get(route('admin.settings.users.edit', ['id' => $user->id]))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should display the user edit form if has permission', function () {
@@ -75,7 +75,7 @@ it('should not be able to delete user if does not have permission', function () 
     $user = Admin::first();
 
     $this->delete(route('admin.settings.users.delete', ['id' => $user->id]))
-        ->assertSeeText('Unauthorized', false);
+        ->assertStatus(403);
 
     $this->assertDatabaseHas($this->getFullTableName(Admin::class),
         ['id' => $user->id]
