@@ -232,7 +232,8 @@ return [
                 'title'    => 'Edit Product',
 
                 'categories' => [
-                    'title' => 'Categories',
+                    'title'            => 'Categories',
+                    'root-not-allowed' => 'Root category cannot be assigned to a product.',
                 ],
 
                 'images' => [
@@ -423,6 +424,33 @@ return [
                 'no-image'        => 'No Image',
                 'img-fail'        => 'Image upload failed',
                 'no-option'       => 'No Options',
+
+                'keyboard-shortcuts'          => 'Keyboard Shortcuts',
+                'shortcuts-navigation'        => 'Navigation',
+                'shortcuts-editing'           => 'Editing',
+                'shortcuts-selection'         => 'Selection',
+                'shortcuts-clipboard'         => 'Clipboard & Fill',
+                'shortcuts-move-cell'         => 'Move between cells',
+                'shortcuts-move-down'         => 'Move down / confirm edit',
+                'shortcuts-move-up'           => 'Move up',
+                'shortcuts-move-right-left'   => 'Move right / left',
+                'shortcuts-home-end'          => 'First / last column in row',
+                'shortcuts-ctrl-home-end'     => 'First / last cell in grid',
+                'shortcuts-extend-selection'  => 'Extend selection',
+                'shortcuts-select-all'        => 'Select all cells',
+                'shortcuts-enter-edit'        => 'Enter edit mode',
+                'shortcuts-confirm-move-down' => 'Confirm + move down',
+                'shortcuts-confirm-move-right'=> 'Confirm + move right',
+                'shortcuts-escape-revert'     => 'Revert value + exit edit',
+                'shortcuts-clear-cell'        => 'Clear cell',
+                'shortcuts-copy'              => 'Copy',
+                'shortcuts-cut'              => 'Cut',
+                'shortcuts-paste'             => 'Paste',
+                'shortcuts-fill-down'         => 'Fill down',
+                'shortcuts-fill-right'        => 'Fill right',
+                'shortcuts-undo'              => 'Undo',
+                'shortcuts-redo'              => 'Redo',
+                'shortcuts-help'              => 'Toggle keyboard shortcuts',
             ],
 
             'create-success'          => 'Product created successfully',
