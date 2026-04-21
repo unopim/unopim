@@ -300,8 +300,8 @@ it('should block user update from user without user management permissions (Burp
         'password'     => '',
     ]);
 
-    // Should be blocked by Bouncer middleware (401) since user lacks settings.users.users.edit permission
-    $response->assertStatus(401);
+    // Should be blocked by Bouncer middleware (403) since user lacks settings.users.users.edit permission
+    $response->assertStatus(403);
 
     // Verify role was NOT changed
     $attackerAdmin->refresh();
