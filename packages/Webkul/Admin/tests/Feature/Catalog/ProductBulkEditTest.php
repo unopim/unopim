@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Event;
 use Webkul\Attribute\Models\Attribute;
+use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\Attribute\Models\AttributeGroup;
 use Webkul\Product\Models\Product;
 
 beforeEach(function () {
@@ -91,6 +93,46 @@ it('fires catalog.product.bulk.edit.after once with all processed product IDs', 
 
         return count(array_intersect($products->pluck('id')->toArray(), $ids)) === $products->count();
     });
+});
+
+it('should fetch only attributes belonging to the selected products families', function () {
+    // Helper to create a family with a linked attribute group and attribute
+    $makeFamily = function (Attribute $attr): AttributeFamily {
+        $group = AttributeGroup::factory()->create();
+        $family = AttributeFamily::factory()->create();
+        $family->familyGroups()->attach($group);
+        $mapping = $family->attributeFamilyGroupMappings()->first();
+        $mapping->customAttributes()->attach($attr);
+
+        return $family;
+    };
+
+    $attrA = Attribute::factory()->create(['type' => 'text']);
+    $familyA = $makeFamily($attrA);
+
+    $attrB = Attribute::factory()->create(['type' => 'text']);
+    $familyB = $makeFamily($attrB);
+
+    // Create one product per family
+    $productA = Product::factory()->create(['attribute_family_id' => $familyA->id]);
+    $productB = Product::factory()->create(['attribute_family_id' => $familyB->id]);
+
+    // Populate session via the filters endpoint (mirrors real usage)
+    $this->postJson(route('admin.catalog.products.bulkedit.filters'), [
+        'indices' => [$productA->id],
+        'filter'  => [],
+    ])->assertOk();
+
+    $response = $this->getJson(route('admin.catalog.bulkedit.attributes.fetch-all'));
+    $response->assertOk();
+
+    $codes = collect($response->json('options'))->pluck('code')->toArray();
+
+    // attrA should appear (it belongs to productA's family)
+    expect($codes)->toContain($attrA->code);
+
+    // attrB must NOT appear (it belongs to a different family not selected)
+    expect($codes)->not->toContain($attrB->code);
 });
 
 it('should display readable channel and locale names in column headers', function () {

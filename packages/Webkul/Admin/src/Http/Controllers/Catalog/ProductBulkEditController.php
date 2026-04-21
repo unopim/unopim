@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
 use Illuminate\View\View;
@@ -231,6 +232,21 @@ class ProductBulkEditController extends Controller
         $query = $this->attributeRepository
             ->whereNotIn('code', ['sku'])
             ->whereNotIn('type', ['table', 'file']);
+
+        $productIds = session('bulk_edit_product_ids', []);
+
+        if (! empty($productIds)) {
+            $familyAttributeIds = DB::table('attributes as a')
+                ->distinct()
+                ->join('attribute_group_mappings as agm', 'agm.attribute_id', '=', 'a.id')
+                ->join('attribute_family_group_mappings as afgm', 'afgm.id', '=', 'agm.attribute_family_group_id')
+                ->join('products as p', 'p.attribute_family_id', '=', 'afgm.attribute_family_id')
+                ->whereIn('p.id', $productIds)
+                ->pluck('a.id')
+                ->toArray();
+
+            $query = $query->whereIn('id', $familyAttributeIds);
+        }
 
         if ($request->filled('ids')) {
             $ids = (array) $request->input('ids');
