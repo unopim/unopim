@@ -198,7 +198,7 @@ it('should update the product', function () {
     $family = AttributeFamily::where('id', $product->attribute_family_id);
     $attribute = Attribute::factory()->create(['value_per_locale' => false, 'value_per_channel' => false, 'type' => 'text']);
     $family->first()->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
-    $category = Category::first();
+    $category = Category::whereNotNull('parent_id')->first() ?? Category::factory()->create(['parent_id' => Category::first()->id]);
 
     $updatedproduct = [
         'sku'    => $product->sku,
