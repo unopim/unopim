@@ -586,16 +586,14 @@ class ImportController extends Controller
      * @param  array|null  $summary  The summary data to be normalized.
      * @return array The normalized summary data.
      */
-    private function normalizeSummary($summery)
+    private function normalizeSummary($summary)
     {
         $summaryData = [];
 
-        // Loop through the summary data, translating keys and handling null values
-        foreach (($summery ?? []) as $key => $value) {
+        foreach (($summary ?? []) as $key => $value) {
             $summaryData[trans(sprintf('admin::app.settings.data-transfer.tracker.summary.%s', $key))] = $value ?? 0;
         }
 
-        // Return the normalized summary data
         return $summaryData;
     }
 
