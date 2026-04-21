@@ -58,12 +58,16 @@ class AjaxOptionsController extends Controller
      */
     public function getOptions(): JsonResponse
     {
-        $attributeId = request()->input('attributeId');
-        $entityName = request()->input('entityName');
+        $attributeId = request()->input('attributeId') ?? request()->input('attribute_id');
+        $entityName = request()->input('entityName') ?? request()->input('entity_name');
         $page = request()->input('page');
-        $query = request()->input('query') ?? '';
+        $query = request()->input('query') ?? request()->input('search') ?? '';
 
-        $queryParams = request()->except(['page', 'query', 'entityName', 'attributeId']);
+        $queryParams = request()->except(['page', 'query', 'search', 'entityName', 'entity_name', 'attributeId', 'attribute_id']);
+
+        if (! $entityName) {
+            return new JsonResponse(['options' => [], 'page' => 1, 'lastPage' => 1]);
+        }
 
         $options = $this->getOptionsByParams($attributeId, $entityName, $page, $query, $queryParams);
 
