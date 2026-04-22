@@ -93,6 +93,10 @@ class AccountController extends Controller
         $user->update($data);
 
         if ($isPasswordChanged) {
+            // Revoke all Passport access tokens issued to this admin so previously-issued API
+            // credentials stop working after a password change (security best practice).
+            $user->tokens()->update(['revoked' => true]);
+
             Event::dispatch('admin.password.update.after', $user);
         }
 

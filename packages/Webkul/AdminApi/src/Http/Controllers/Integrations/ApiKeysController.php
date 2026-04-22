@@ -10,6 +10,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Laravel\Passport\ClientRepository;
+use Laravel\Passport\Token;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\AdminApi\DataGrids\Integrations\ApiKeysDataGrid;
 use Webkul\AdminApi\Repositories\ApiKeyRepository;
@@ -214,6 +215,10 @@ class ApiKeysController extends Controller
         }
 
         $client = $this->regenerateSecret($client);
+
+        // Invalidate any access tokens issued against the previous secret so old clients
+        // stop working immediately after a regenerate (security best practice).
+        Token::where('client_id', $client->getKey())->update(['revoked' => true]);
 
         return new JsonResponse([
             'secret_key' => $client->plainSecret,
