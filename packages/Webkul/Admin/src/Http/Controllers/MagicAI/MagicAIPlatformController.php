@@ -295,9 +295,10 @@ class MagicAIPlatformController extends Controller
      *
      * @throws ValidationException
      */
-    protected function validateModelNames(string $models): void
+    protected function validateModelNames(string &$models): void
     {
-        $modelList = array_map('trim', explode(',', $models));
+        $modelList = array_map(fn ($m) => ltrim(trim($m), '~'), explode(',', $models));
+        $models = implode(',', $modelList);
         $invalid = [];
 
         foreach ($modelList as $model) {
