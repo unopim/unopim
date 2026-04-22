@@ -3,16 +3,22 @@
         @lang('admin::app.configuration.platform.title')
     </x-slot>
 
+    @php
+        $canCreatePlatform = bouncer()->hasPermission('ai-agent.platform.create');
+    @endphp
+
     <v-magic-ai-platform>
         <div class="flex gap-4 justify-between items-center max-sm:flex-wrap">
             <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
                 @lang('admin::app.configuration.platform.title')
             </p>
-            <div class="flex gap-x-2.5 items-center">
-                <button type="button" class="primary-button">
-                    @lang('admin::app.configuration.platform.create-btn')
-                </button>
-            </div>
+            @if ($canCreatePlatform)
+                <div class="flex gap-x-2.5 items-center">
+                    <button type="button" class="primary-button">
+                        @lang('admin::app.configuration.platform.create-btn')
+                    </button>
+                </div>
+            @endif
         </div>
         <x-admin::shimmer.datagrid />
     </v-magic-ai-platform>
@@ -23,11 +29,13 @@
                 <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
                     @lang('admin::app.configuration.platform.title')
                 </p>
-                <div class="flex gap-x-2.5 items-center">
-                    <button type="button" class="primary-button" @click="openCreateModal()">
-                        @lang('admin::app.configuration.platform.create-btn')
-                    </button>
-                </div>
+                @if ($canCreatePlatform)
+                    <div class="flex gap-x-2.5 items-center">
+                        <button type="button" class="primary-button" @click="openCreateModal()">
+                            @lang('admin::app.configuration.platform.create-btn')
+                        </button>
+                    </div>
+                @endif
             </div>
 
             <!-- Setup Guide Banner (no platforms configured) -->
