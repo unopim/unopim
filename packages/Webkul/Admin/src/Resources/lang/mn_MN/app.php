@@ -518,6 +518,8 @@ return [
                 'is-filterable'         => 'Шүүж болох',
                 'ai-translate'          => 'ХИ Орчуулга',
                 'invalid-swatch-type'   => ':attribute нь :type төрлийн шинж чанарт :swatch_type өнгөний төрлийг ашиглахыг зөвшөөрөхгүй.',
+
+                'single-object-only'    => 'Үүсгэх хүсэлт бүр нь зөвхөн нэг шинж чанарын объект илгээх ёстой.',
                 'option'                => [
                     'color'    => 'Өнгөт сэлгэлт',
                     'dropdown' => 'Дусах',

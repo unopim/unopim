@@ -518,6 +518,8 @@ return [
                 'is-filterable'         => 'Filtrelenebilir',
                 'ai-translate'          => 'AI Çeviri',
                 'invalid-swatch-type'   => ':attribute, :type türü için :swatch_type swatch türü ile kullanılamaz.',
+
+                'single-object-only'    => 'Her oluşturma isteği yalnızca bir öznitelik nesnesi göndermelidir.',
                 'option'                => [
                     'color'    => 'Renk Örneği',
                     'dropdown' => 'Açılır Menü',

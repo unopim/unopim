@@ -518,6 +518,8 @@ return [
                 'is-filterable'         => 'È filtrabile',
                 'ai-translate'          => 'Traduzione IA',
                 'invalid-swatch-type'   => 'L\'attributo :attribute non è consentito per il tipo di attributo :type con il tipo di campione :swatch_type.',
+
+                'single-object-only'    => 'Ogni richiesta di creazione deve inviare un solo oggetto attributo.',
                 'option'                => [
                     'color'    => 'Colore campione',
                     'dropdown' => 'Menu a discesa',

@@ -60,6 +60,13 @@ class AttributeController extends ApiController
     public function store(): JsonResponse
     {
         $requestData = request()->all();
+
+        if (array_is_list($requestData) && count($requestData) > 0) {
+            return $this->validateErrorResponse([
+                'payload' => [trans('admin::app.catalog.attributes.create.single-object-only')],
+            ]);
+        }
+
         $rules = [
             'type' => [
                 'required',

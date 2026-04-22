@@ -518,6 +518,8 @@ return [
                 'is-filterable'         => 'Nafifilter',
                 'ai-translate'          => 'AI Pagsasalin',
                 'invalid-swatch-type'   => 'Ang :attribute ay hindi pinapayagan para sa uri ng katangian :type na may uri ng swatch :swatch_type.',
+
+                'single-object-only'    => 'Ang bawat create request ay dapat magpadala ng iisang attribute object.',
                 'option'                => [
                     'color'    => 'Color Swatch',
                     'dropdown' => 'Dropdown',

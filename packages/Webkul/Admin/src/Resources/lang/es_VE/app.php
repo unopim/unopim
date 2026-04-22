@@ -518,6 +518,8 @@ return [
                 'is-filterable'         => 'Es filtrable',
                 'ai-translate'          => 'Traducción IA',
                 'invalid-swatch-type'   => 'El :attribute no está permitido para el tipo de atributo :type con el tipo de muestra :swatch_type.',
+
+                'single-object-only'    => 'Cada solicitud de creación debe enviar un único objeto de atributo.',
                 'option'                => [
                     'color'    => 'Muestra de color',
                     'dropdown' => 'Desplegable',

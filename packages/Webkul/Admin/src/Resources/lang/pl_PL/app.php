@@ -518,6 +518,8 @@ return [
                 'is-filterable'         => 'Jest filtrowalne',
                 'ai-translate'          => 'Tłumaczenie SI',
                 'invalid-swatch-type'   => 'Atrybut :attribute nie jest dozwolony dla typu atrybutu :type z typem próbki :swatch_type.',
+
+                'single-object-only'    => 'Każde żądanie tworzenia musi zawierać tylko jeden obiekt atrybutu.',
                 'option'                => [
                     'color'    => 'Kolor próbki',
                     'dropdown' => 'Menu rozwijane',

@@ -518,6 +518,8 @@ return [
                 'is-filterable'         => 'Disponible dans la navigation par filtre',
                 'ai-translate'          => 'Traduction IA',
                 'invalid-swatch-type'   => 'Le :attribute n\'est pas autorisé pour le type d\'attribut :type avec le type d\'échantillon :swatch_type.',
+
+                'single-object-only'    => 'Chaque requête de création doit contenir un seul objet d\'attribut.',
                 'option'                => [
                     'color'    => 'Couleur',
                     'dropdown' => 'Dérouler',

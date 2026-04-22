@@ -518,6 +518,8 @@ return [
                 'is-filterable'         => 'फ़िल्टर योग्य है',
                 'ai-translate'          => 'एआई अनुवाद',
                 'invalid-swatch-type'   => ':attribute के लिए :type के साथ :swatch_type स्वैच प्रकार की अनुमति नहीं है।',
+
+                'single-object-only'    => 'प्रत्येक क्रिएट अनुरोध में केवल एक विशेषता ऑब्जेक्ट भेजा जाना चाहिए।',
                 'option'                => [
                     'color'    => 'रंग आदर्श',
                     'dropdown' => 'ड्रॉप डाउन',

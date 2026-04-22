@@ -518,6 +518,8 @@ return [
                 'is-filterable'         => '可篩選',
                 'ai-translate'          => '人工智慧翻譯',
                 'invalid-swatch-type'   => ':attribute 不允許用於屬性類型 :type，搭配色板類型 :swatch_type。',
+
+                'single-object-only'    => '每個建立請求只能傳送一個屬性物件。',
                 'option'                => [
                     'color'    => '顏色樣本',
                     'dropdown' => '下拉選單',

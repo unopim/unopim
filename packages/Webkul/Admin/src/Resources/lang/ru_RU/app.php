@@ -518,6 +518,8 @@ return [
                 'is-filterable'         => 'Фильтруемый',
                 'ai-translate'          => 'Перевод ИИ',
                 'invalid-swatch-type'   => 'Тип :attribute не разрешен для типа атрибута :type с типом образца :swatch_type.',
+
+                'single-object-only'    => 'В каждом запросе на создание можно передать только один объект атрибута.',
                 'option'                => [
                     'color'    => 'Образец цвета',
                     'dropdown' => 'Падать',

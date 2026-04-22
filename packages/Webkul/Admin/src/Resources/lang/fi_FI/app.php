@@ -518,6 +518,8 @@ return [
                 'is-filterable'         => 'On suodatettavissa',
                 'ai-translate'          => 'AI Käännös',
                 'invalid-swatch-type'   => ':attribute ei ole sallittu attribuuttityypille :type, jossa on swatch-tyyppi :swatch_type.',
+
+                'single-object-only'    => 'Jokaisen luontipyynnön tulee sisältää vain yksi attribuuttiolio.',
                 'option'                => [
                     'color'    => 'Väri',
                     'dropdown' => 'Pudotusvalikko',

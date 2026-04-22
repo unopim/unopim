@@ -518,6 +518,8 @@ return [
                 'is-filterable'         => 'قابل للتصفية',
                 'ai-translate'          => 'ترجمة الذكاء الاصطناعي',
                 'invalid-swatch-type'   => 'ال:attribute غير مسموح به لنوع السمة :type مع نوع العينة :swatch_type.',
+
+                'single-object-only'    => 'يجب إرسال كائن سمة واحد فقط لكل طلب إنشاء.',
                 'option'                => [
                     'color'    => 'تغيير الالوان',
                     'dropdown' => 'اسقاط',

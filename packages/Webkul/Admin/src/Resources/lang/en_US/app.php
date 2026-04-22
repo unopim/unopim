@@ -554,7 +554,8 @@ return [
                 'ai-translate'          => 'AI Translate',
                 'invalid-swatch-type'   => 'The :attribute is not allowed for attribute type :type with swatch type :swatch_type.',
 
-                'option' => [
+                'single-object-only' => 'Each create request must send a single attribute object.',
+                'option'             => [
                     'color'    => 'Color Swatch',
                     'dropdown' => 'Dropdown',
                     'image'    => 'Image Swatch',

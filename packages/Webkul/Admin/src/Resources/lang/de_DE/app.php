@@ -518,6 +518,8 @@ return [
                 'is-filterable'         => 'Ist filterbar',
                 'ai-translate'          => 'KI Übersetzen',
                 'invalid-swatch-type'   => 'Der :attribute ist für den Attributtyp :type mit dem Farbmuster :swatch_type nicht erlaubt.',
+
+                'single-object-only'    => 'Pro Erstellungsanfrage darf nur ein Attributobjekt gesendet werden.',
                 'option'                => [
                     'color'    => 'Farbfeld',
                     'dropdown' => 'Dropdown',

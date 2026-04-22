@@ -518,6 +518,8 @@ return [
                 'is-filterable'         => 'Je filtrabilno',
                 'ai-translate'          => 'AI Prevod',
                 'invalid-swatch-type'   => ':attribute nije dozvoljen za tip atributa :type s tipom uzorka :swatch_type.',
+
+                'single-object-only'    => 'Svaki zahtjev za stvaranje mora sadržavati samo jedan objekt atributa.',
                 'option'                => [
                     'color'    => 'Boja uzorka',
                     'dropdown' => 'Padajući izbornik',

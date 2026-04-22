@@ -518,6 +518,8 @@ return [
                 'is-filterable'         => '필터링 가능',
                 'ai-translate'          => 'AI 번역',
                 'invalid-swatch-type'   => ':attribute는 스와치 유형 :swatch_type의 속성 유형 :type에 대해 허용되지 않습니다.',
+
+                'single-object-only'    => '각 생성 요청은 속성 객체를 하나만 보내야 합니다.',
                 'option'                => [
                     'color'    => '샘플 색상',
                     'dropdown' => '드롭다운',

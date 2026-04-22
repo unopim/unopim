@@ -518,6 +518,8 @@ return [
                 'is-filterable'         => 'フィルタリング可能',
                 'ai-translate'          => 'AI翻訳',
                 'invalid-swatch-type'   => ':attribute は、スウォッチタイプ :swatch_type の属性タイプ :type には許可されていません。',
+
+                'single-object-only'    => '属性の作成リクエストには属性オブジェクトを1つだけ送信してください。',
                 'option'                => [
                     'color'    => 'カラー スウォッチ',
                     'dropdown' => 'ドロップダウン',

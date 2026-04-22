@@ -518,6 +518,8 @@ return [
                 'is-filterable'         => 'Фільтрований',
                 'ai-translate'          => 'Переклад ШІ',
                 'invalid-swatch-type'   => ':attribute не дозволено для типу атрибута :type з типом зразка :swatch_type.',
+
+                'single-object-only'    => 'Кожен запит на створення має містити лише один об\'єкт атрибута.',
                 'option'                => [
                     'color'    => 'Колір шаблону',
                     'dropdown' => 'Випадаючий список',

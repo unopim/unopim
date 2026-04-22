@@ -518,6 +518,8 @@ return [
                 'is-filterable'         => 'Is filterable',
                 'ai-translate'          => 'AI Translate',
                 'invalid-swatch-type'   => 'The :attribute is not allowed for attribute type :type with swatch type :swatch_type.',
+
+                'single-object-only'    => 'Each create request must send a single attribute object.',
                 'option'                => [
                     'color'    => 'Colour Swatch',
                     'dropdown' => 'Dropdown',

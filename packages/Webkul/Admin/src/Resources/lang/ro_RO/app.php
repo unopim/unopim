@@ -518,6 +518,8 @@ return [
                 'is-filterable'         => 'Este filtrabil',
                 'ai-translate'          => 'Traducere IA',
                 'invalid-swatch-type'   => 'Atributul :attribute nu este permis pentru tipul de atribut :type cu tipul de eșantion :swatch_type.',
+
+                'single-object-only'    => 'Fiecare cerere de creare trebuie să trimită un singur obiect de atribut.',
                 'option'                => [
                     'color'    => 'Eșantion de culoare',
                     'dropdown' => 'Meniu derulant',

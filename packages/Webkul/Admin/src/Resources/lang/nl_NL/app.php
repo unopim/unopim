@@ -518,6 +518,8 @@ return [
                 'is-filterable'         => 'Is filterbaar',
                 'ai-translate'          => 'AI Vertaling',
                 'invalid-swatch-type'   => 'De :attribute is niet toegestaan voor attribuuttype :type met swatchtype :swatch_type.',
+
+                'single-object-only'    => 'Elke aanmaakaanvraag moet één attribuutobject bevatten.',
                 'option'                => [
                     'color'    => 'Kleurstaal',
                     'dropdown' => 'Laten vallen',

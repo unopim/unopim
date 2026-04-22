@@ -518,6 +518,8 @@ return [
                 'is-filterable'         => 'Er filtrerbar',
                 'ai-translate'          => 'AI Oversæt',
                 'invalid-swatch-type'   => 'Attributten :attribute er ikke tilladt for attributtype :type med swatchtype :swatch_type.',
+
+                'single-object-only'    => 'Hver oprettelsesanmodning må kun indeholde ét attributobjekt.',
                 'option'                => [
                     'color'    => 'Farveprøve',
                     'dropdown' => 'Dropdown',

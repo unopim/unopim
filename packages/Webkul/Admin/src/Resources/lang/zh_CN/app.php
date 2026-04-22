@@ -518,6 +518,8 @@ return [
                 'is-filterable'         => '可筛选',
                 'ai-translate'          => 'AI翻译',
                 'invalid-swatch-type'   => ':attribute 不允许用于属性类型 :type 和样本类型 :swatch_type。',
+
+                'single-object-only'    => '每个创建请求只能发送一个属性对象。',
                 'option'                => [
                     'color'    => '色板',
                     'dropdown' => '落下',
