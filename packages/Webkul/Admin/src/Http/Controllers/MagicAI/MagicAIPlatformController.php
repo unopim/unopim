@@ -61,6 +61,8 @@ class MagicAIPlatformController extends Controller
             $data['is_default'] = false;
         }
 
+        $this->ensureDefaultPlatformIsEnabled($data);
+
         $extras = request()->input('extras');
         if ($extras) {
             $data['extras'] = is_string($extras) ? json_decode($extras, true) : $extras;
@@ -115,6 +117,8 @@ class MagicAIPlatformController extends Controller
         if (! isset($data['is_default'])) {
             $data['is_default'] = false;
         }
+
+        $this->ensureDefaultPlatformIsEnabled($data);
 
         $apiKey = request()->input('api_key');
         if ($apiKey && ! preg_match('/^\*+$/', $apiKey)) {
@@ -307,6 +311,20 @@ class MagicAIPlatformController extends Controller
                 'models' => trans('admin::app.configuration.platform.message.invalid-model-names', [
                     'names' => implode(', ', $invalid),
                 ]),
+            ]);
+        }
+    }
+
+    /**
+     * A platform cannot be marked default unless it is also enabled.
+     *
+     * @throws ValidationException
+     */
+    protected function ensureDefaultPlatformIsEnabled(array $data): void
+    {
+        if (! empty($data['is_default']) && empty($data['status'])) {
+            throw ValidationException::withMessages([
+                'is_default' => trans('admin::app.configuration.platform.message.default-requires-enabled'),
             ]);
         }
     }
