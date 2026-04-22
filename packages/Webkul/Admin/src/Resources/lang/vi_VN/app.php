@@ -602,6 +602,8 @@ return [
             'delete-success'    => 'Thuộc tính đã bị xoá',
             'update-success'    => 'Thuộc tính đã được cập nhật',
             'user-define-error' => 'Không thể xoá thuộc tính hệ thống',
+
+            'immutable-fields'  => 'Không thể sửa các trường sau: :fields.',
             'not-found'         => 'Không tìm thấy thuộc tính với mã ":code"',
         ],
         'attribute-options' => [
@@ -883,6 +885,8 @@ return [
             'update-success'    => 'Cập Nhật Trường Danh Mục Thành Công',
             'user-define-error' => 'Không thể xóa Trường Danh Mục hệ thống',
             'not-found'         => 'Không tìm thấy Trường Danh Mục với mã ":code"',
+
+            'immutable-fields'  => 'Không thể sửa các trường sau: :fields.',
         ],
         'category-fields-options' => [
             'create-success'      => 'Tùy chọn trường danh mục đã được tạo thành công',

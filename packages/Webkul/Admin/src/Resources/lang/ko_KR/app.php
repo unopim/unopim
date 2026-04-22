@@ -602,6 +602,8 @@ return [
             'delete-success'    => '속성 삭제 성공',
             'update-success'    => '속성 수정 성공',
             'user-define-error' => '시스템 속성은 삭제할 수 없습니다',
+
+            'immutable-fields'  => '다음 필드는 수정할 수 없습니다: :fields.',
             'not-found'         => '코드 ":code"에 해당하는 속성을 찾을 수 없습니다',
         ],
         'attribute-options' => [
@@ -883,6 +885,8 @@ return [
             'update-success'    => '카테고리 필드 업데이트 성공',
             'user-define-error' => '시스템 카테고리 필드는 삭제할 수 없습니다.',
             'not-found'         => '코드 ":code"의 카테고리 필드를 찾을 수 없습니다.',
+
+            'immutable-fields'  => '다음 필드는 수정할 수 없습니다: :fields.',
         ],
         'category-fields-options' => [
             'create-success'      => '카테고리 필드 옵션이 성공적으로 생성되었습니다.',

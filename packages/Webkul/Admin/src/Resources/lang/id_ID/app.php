@@ -602,6 +602,8 @@ return [
             'delete-success'    => 'Atribut berhasil dihapus',
             'update-success'    => 'Atribut berhasil diperbarui',
             'user-define-error' => 'Tidak dapat menghapus atribut sistem',
+
+            'immutable-fields'  => 'Field berikut tidak dapat diubah: :fields.',
             'not-found'         => 'Atribut dengan kode ":code" tidak dapat ditemukan',
         ],
         'attribute-options' => [
@@ -883,6 +885,8 @@ return [
             'update-success'    => 'Bidang kategori berhasil diperbarui',
             'user-define-error' => 'Tidak dapat menghapus bidang kategori sistem',
             'not-found'         => 'Bidang kategori dengan kode ":code" tidak dapat ditemukan',
+
+            'immutable-fields'  => 'Field berikut tidak dapat diubah: :fields.',
         ],
         'category-fields-options' => [
             'create-success'      => 'Opsi bidang kategori berhasil dibuat',

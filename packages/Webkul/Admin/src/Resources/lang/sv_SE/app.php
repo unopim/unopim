@@ -602,6 +602,8 @@ return [
             'delete-success'    => 'Attribut borttaget',
             'update-success'    => 'Attribut uppdaterad',
             'user-define-error' => 'Det går inte att ta bort systemattribut',
+
+            'immutable-fields'  => 'Följande fält kan inte ändras: :fields.',
             'not-found'         => 'Attributet med koden ":code" hittades inte',
         ],
         'attribute-options' => [
@@ -883,6 +885,8 @@ return [
             'update-success'    => 'Kategori fält uppdaterades framgångsrikt',
             'user-define-error' => 'Det går inte att radera systemdefinierade fält',
             'not-found'         => 'Kategori fält med kod ":code" kunde inte hittas',
+
+            'immutable-fields'  => 'Följande fält kan inte ändras: :fields.',
         ],
         'category-fields-options' => [
             'create-success'      => 'Kategoriens fältalternativ skapades',

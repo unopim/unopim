@@ -602,6 +602,8 @@ return [
             'delete-success'    => 'Атрибут видалено',
             'update-success'    => 'Атрибут оновлено',
             'user-define-error' => 'Не можна видаляти системні атрибути',
+
+            'immutable-fields'  => 'Наступні поля не можна змінювати: :fields.',
             'not-found'         => 'Атрибут з кодом ":code" не знайдено',
         ],
         'attribute-options' => [
@@ -883,6 +885,8 @@ return [
             'update-success'    => 'Поле категорії успішно оновлено',
             'user-define-error' => 'Поле категорії системи не можна видалити',
             'not-found'         => 'Поле категорії ":code" не знайдено',
+
+            'immutable-fields'  => 'Наступні поля не можна змінювати: :fields.',
         ],
         'category-fields-options' => [
             'create-success'      => 'Опцію категорії створено успішно',

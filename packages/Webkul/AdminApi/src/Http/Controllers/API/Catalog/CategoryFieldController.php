@@ -114,6 +114,13 @@ class CategoryFieldController extends ApiController
             return $this->modelNotFoundResponse(trans('admin::app.catalog.category_fields.not-found', ['code' => $code]));
         }
 
+        $immutable = array_intersect(['code', 'type', 'value_per_locale', 'is_unique'], array_keys(request()->all()));
+        if (! empty($immutable)) {
+            return $this->validateErrorResponse([
+                'immutable' => [trans('admin::app.catalog.category_fields.immutable-fields', ['fields' => implode(', ', $immutable)])],
+            ]);
+        }
+
         $requestData = request()->except(['code', 'type', 'value_per_locale', 'is_unique']);
         $requestData = $this->setLabels($requestData);
         $requestData['enable_wysiwyg'] = $categoryField->type == 'textarea' ? $requestData['enable_wysiwyg'] : 0;

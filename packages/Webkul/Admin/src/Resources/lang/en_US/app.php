@@ -640,6 +640,8 @@ return [
             'delete-success'    => 'Attribute Deleted Successfully',
             'update-success'    => 'Attribute Updated Successfully',
             'user-define-error' => 'Can not delete system Attribute',
+
+            'immutable-fields'  => 'The following fields cannot be modified: :fields.',
             'not-found'         => 'Attribute with code ":code" could not be found',
         ],
 
@@ -939,6 +941,8 @@ return [
             'update-success'    => 'Category Field Updated Successfully',
             'user-define-error' => 'Can not delete system Category Field',
             'not-found'         => 'Category Field with code ":code" could not be found',
+
+            'immutable-fields'  => 'The following fields cannot be modified: :fields.',
         ],
 
         'category-fields-options' => [

@@ -602,6 +602,8 @@ return [
             'delete-success'    => 'Katangian natanggal',
             'update-success'    => 'Katangian na-update',
             'user-define-error' => 'Hindi ma-delete ang system attribute',
+
+            'immutable-fields'  => 'Ang mga sumusunod na field ay hindi maaaring baguhin: :fields.',
             'not-found'         => 'Ang katangian na may code ":code" ay hindi natagpuan',
         ],
         'attribute-options' => [
@@ -883,6 +885,8 @@ return [
             'update-success'    => 'Matagumpay na na-update ang field ng kategorya',
             'user-define-error' => 'Hindi maaaring tanggalin ang field ng kategorya ng sistema',
             'not-found'         => 'Hindi natagpuan ang field ng kategorya na may code ":code"',
+
+            'immutable-fields'  => 'Ang mga sumusunod na field ay hindi maaaring baguhin: :fields.',
         ],
         'category-fields-options' => [
             'create-success'      => 'Nagtagumpay ang paglikha ng opsyon ng kategorya',

@@ -602,6 +602,8 @@ return [
             'delete-success'    => 'Öznitelik Silindi',
             'update-success'    => 'Öznitelik Güncellendi',
             'user-define-error' => 'Sistem öznitelikleri silinemez',
+
+            'immutable-fields'  => 'Şu alanlar değiştirilemez: :fields.',
             'not-found'         => '":code" kodlu öznitelik bulunamadı',
         ],
         'attribute-options' => [
@@ -883,6 +885,8 @@ return [
             'update-success'    => 'Kategori Alanı başarıyla güncellendi',
             'user-define-error' => 'Sistem tanımlı kategori alanı silinemez',
             'not-found'         => 'Kategori Alanı ":code" bulunamadı',
+
+            'immutable-fields'  => 'Şu alanlar değiştirilemez: :fields.',
         ],
         'category-fields-options' => [
             'create-success'      => 'Kategori alanı seçeneği başarıyla oluşturuldu',

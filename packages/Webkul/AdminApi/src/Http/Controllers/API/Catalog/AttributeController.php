@@ -123,6 +123,13 @@ class AttributeController extends ApiController
             return $this->modelNotFoundResponse(trans('admin::app.catalog.attributes.not-found', ['code' => $code]));
         }
 
+        $immutable = array_intersect(['type', 'code', 'swatch_type', 'value_per_locale', 'value_per_channel', 'is_unique'], array_keys(request()->all()));
+        if (! empty($immutable)) {
+            return $this->validateErrorResponse([
+                'immutable' => [trans('admin::app.catalog.attributes.immutable-fields', ['fields' => implode(', ', $immutable)])],
+            ]);
+        }
+
         $requestData = request()->except(['type', 'code', 'swatch_type', 'value_per_locale', 'value_per_channel', 'is_unique']);
         $requestData = $this->setLabels($requestData);
         $id = $attribute->id;

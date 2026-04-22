@@ -602,6 +602,8 @@ return [
             'delete-success'    => 'Atrybut usunięty',
             'update-success'    => 'Atrybut zaktualizowany',
             'user-define-error' => 'Nie można usunąć atrybutu systemowego',
+
+            'immutable-fields'  => 'Następujących pól nie można zmodyfikować: :fields.',
             'not-found'         => 'Nie znaleziono atrybutu o kodzie ":code"',
         ],
         'attribute-options' => [
@@ -883,6 +885,8 @@ return [
             'update-success'    => 'Pole kategorii zostało zaktualizowane',
             'user-define-error' => 'Nie można usunąć systemowego pola kategorii',
             'not-found'         => 'Nie znaleziono pola kategorii o kodzie ":code"',
+
+            'immutable-fields'  => 'Następujących pól nie można zmodyfikować: :fields.',
         ],
         'category-fields-options' => [
             'create-success'      => 'Opcja pola kategorii została utworzona',

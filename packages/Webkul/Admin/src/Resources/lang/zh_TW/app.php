@@ -602,6 +602,8 @@ return [
             'delete-success'    => '屬性已成功刪除',
             'update-success'    => '屬性已成功更新',
             'user-define-error' => '無法刪除系統屬性',
+
+            'immutable-fields'  => '以下欄位無法修改：:fields。',
             'not-found'         => '找不到代碼 ":code" 的屬性',
         ],
         'attribute-options' => [
@@ -883,6 +885,8 @@ return [
             'update-success'    => '類別欄位更新成功',
             'user-define-error' => '無法刪除系統預設類別欄位',
             'not-found'         => '找不到代碼為 ":code" 的類別欄位',
+
+            'immutable-fields'  => '以下欄位無法修改：:fields。',
         ],
         'category-fields-options' => [
             'create-success'      => '類別欄位選項建立成功',

@@ -602,6 +602,8 @@ return [
             'delete-success'    => 'Kenmerk met succes verwijderd',
             'update-success'    => 'Kenmerk succesvol bijgewerkt',
             'user-define-error' => 'Kan het systeem niet verwijderen',
+
+            'immutable-fields'  => 'De volgende velden kunnen niet worden gewijzigd: :fields.',
             'not-found'         => 'Kenmerk met code ":code" kon niet worden gevonden',
         ],
         'attribute-options' => [
@@ -883,6 +885,8 @@ return [
             'update-success'    => 'Categorie veld met succes bijgewerkt',
             'user-define-error' => 'Kan het veld systeemcategorie niet verwijderen',
             'not-found'         => 'Categorie -veld met code ":code" kon niet worden gevonden',
+
+            'immutable-fields'  => 'De volgende velden kunnen niet worden gewijzigd: :fields.',
         ],
         'category-fields-options' => [
             'create-success'      => 'Categorie -veldoptie met succes gemaakt',

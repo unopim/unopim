@@ -602,6 +602,8 @@ return [
             'delete-success'    => '属性が正常に削除されました',
             'update-success'    => '属性が正常に更新されました',
             'user-define-error' => 'システム属性を削除できません',
+
+            'immutable-fields'  => '次のフィールドは変更できません: :fields。',
             'not-found'         => 'コード ":code" の属性が見つかりませんでした',
         ],
         'attribute-options' => [
@@ -883,6 +885,8 @@ return [
             'update-success'    => 'カテゴリ フィールドが正常に更新されました',
             'user-define-error' => 'システム カテゴリ フィールドを削除できません',
             'not-found'         => 'コード ":code" のカテゴリ フィールドが見つかりませんでした',
+
+            'immutable-fields'  => '次のフィールドは変更できません: :fields。',
         ],
         'category-fields-options' => [
             'create-success'      => 'カテゴリ フィールド オプションが正常に作成されました',

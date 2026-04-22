@@ -602,6 +602,8 @@ return [
             'delete-success'    => 'Atribut uspješno izbrisan',
             'update-success'    => 'Atribut uspješno ažuriran',
             'user-define-error' => 'Ne možete obrisati sistemski atribut',
+
+            'immutable-fields'  => 'Sljedeća polja ne mogu se mijenjati: :fields.',
             'not-found'         => 'Atribut s kodom ":code" nije pronađen',
         ],
         'attribute-options' => [
@@ -883,6 +885,8 @@ return [
             'update-success'    => 'Polje Kategorije Ažurirano Uspješno',
             'user-define-error' => 'Ne možete obrisati sistemsko Polje Kategorije',
             'not-found'         => 'Polje Kategorije s kodom ":code" nije pronađeno',
+
+            'immutable-fields'  => 'Sljedeća polja ne mogu se mijenjati: :fields.',
         ],
         'category-fields-options' => [
             'create-success'      => 'Opcija polja kategorije uspješno stvorena',

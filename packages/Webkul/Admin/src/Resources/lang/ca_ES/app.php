@@ -602,6 +602,8 @@ return [
             'delete-success'    => 'Atribut eliminat amb èxit',
             'update-success'    => 'Atribut actualitzat amb èxit',
             'user-define-error' => 'No es pot eliminar un atribut del sistema',
+
+            'immutable-fields'  => 'No es poden modificar els camps següents: :fields.',
             'not-found'         => 'No s\'ha trobat l\'atribut amb codi ":code"',
         ],
         'attribute-options' => [
@@ -883,6 +885,8 @@ return [
             'update-success'    => 'Camp de Categoria Actualitzat Correctament',
             'user-define-error' => 'No es pot eliminar un Camp de Categoria del sistema',
             'not-found'         => 'No s\'ha trobat el Camp de Categoria amb el codi ":code"',
+
+            'immutable-fields'  => 'No es poden modificar els camps següents: :fields.',
         ],
         'category-fields-options' => [
             'create-success'      => 'Opció de Camp de Categoria Creada Correctament',

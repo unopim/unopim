@@ -602,6 +602,8 @@ return [
             'delete-success'    => 'Ominaisuus poistettu onnistuneesti',
             'update-success'    => 'Ominaisuus päivitetty onnistuneesti',
             'user-define-error' => 'Ei voi poistaa järjestelmän ominaisuutta',
+
+            'immutable-fields'  => 'Seuraavia kenttiä ei voi muokata: :fields.',
             'not-found'         => 'Ominaisuutta koodilla ":code" ei löytynyt',
         ],
         'attribute-options' => [
@@ -883,6 +885,8 @@ return [
             'update-success'    => 'Kategoriakenttä päivitettiin onnistuneesti',
             'user-define-error' => 'Ei voida poistaa järjestelmän kategoria kenttää',
             'not-found'         => 'Kategoria kenttää koodilla ":code" ei löydy',
+
+            'immutable-fields'  => 'Seuraavia kenttiä ei voi muokata: :fields.',
         ],
         'category-fields-options' => [
             'create-success'      => 'Kategoriakenttävaihtoehto luotu onnistuneesti',

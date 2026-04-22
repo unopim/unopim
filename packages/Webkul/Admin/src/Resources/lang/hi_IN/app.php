@@ -602,6 +602,8 @@ return [
             'delete-success'    => 'विशेषता सफलतापूर्वक हटा दी गई',
             'update-success'    => 'ATTRIBURE को सफलतापूर्वक अपडेट किया गया',
             'user-define-error' => 'सिस्टम विशेषता को हटा नहीं सकते',
+
+            'immutable-fields'  => 'निम्न फ़ील्ड्स संशोधित नहीं की जा सकतीं: :fields.',
             'not-found'         => 'कोड के साथ विशेषता ":code" नहीं मिल सकता है',
         ],
         'attribute-options' => [
@@ -883,6 +885,8 @@ return [
             'update-success'    => 'श्रेणी फ़ील्ड सफलतापूर्वक अपडेट किया गया',
             'user-define-error' => 'सिस्टम श्रेणी फ़ील्ड को हटा नहीं सकते',
             'not-found'         => 'कोड के साथ श्रेणी फ़ील्ड ":code" नहीं मिला',
+
+            'immutable-fields'  => 'निम्न फ़ील्ड्स संशोधित नहीं की जा सकतीं: :fields.',
         ],
         'category-fields-options' => [
             'create-success'      => 'श्रेणी फ़ील्ड विकल्प सफलतापूर्वक बनाया गया',

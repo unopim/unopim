@@ -602,6 +602,8 @@ return [
             'delete-success'    => '属性成功删除',
             'update-success'    => '属性成功更新',
             'user-define-error' => '无法删除系统属性',
+
+            'immutable-fields'  => '以下字段无法修改：:fields。',
             'not-found'         => '无法找到代码为“:code”的属性',
         ],
         'attribute-options' => [
@@ -883,6 +885,8 @@ return [
             'update-success'    => '类别字段成功更新',
             'user-define-error' => '无法删除系统类别字段',
             'not-found'         => '无法找到代码为“:code”的类别字段',
+
+            'immutable-fields'  => '以下字段无法修改：:fields。',
         ],
         'category-fields-options' => [
             'create-success'      => '类别字段选项成功创建了',

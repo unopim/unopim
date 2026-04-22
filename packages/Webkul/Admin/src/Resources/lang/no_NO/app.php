@@ -602,6 +602,8 @@ return [
             'delete-success'    => 'Attributt slettet',
             'update-success'    => 'Attributt oppdatert',
             'user-define-error' => 'Kan ikke slette systemattributt',
+
+            'immutable-fields'  => 'Følgende felter kan ikke endres: :fields.',
             'not-found'         => 'Fant ikke attributt med kode ":code"',
         ],
         'attribute-options' => [
@@ -883,6 +885,8 @@ return [
             'update-success'    => 'Kategorifelt Oppdatert',
             'user-define-error' => 'Kan ikke slette system Kategorifelt',
             'not-found'         => 'Kategorifelt med kode ":code" ble ikke funnet',
+
+            'immutable-fields'  => 'Følgende felter kan ikke endres: :fields.',
         ],
         'category-fields-options' => [
             'create-success'      => 'Kategori feltalternativ opprettet',

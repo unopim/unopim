@@ -602,6 +602,8 @@ return [
             'delete-success'    => 'Attribut slettet succesfuldt',
             'update-success'    => 'Attribut opdateret succesfuldt',
             'user-define-error' => 'Kan ikke slette systemattribut',
+
+            'immutable-fields'  => 'Følgende felter kan ikke ændres: :fields.',
             'not-found'         => 'Attribut med kode ":code" blev ikke fundet',
         ],
         'attribute-options' => [
@@ -883,6 +885,8 @@ return [
             'update-success'    => 'Kategori Felt Opdateret Med Succes',
             'user-define-error' => 'Kan ikke slette system Kategori Felt',
             'not-found'         => 'Kategori Felt med kode ":code" blev ikke fundet',
+
+            'immutable-fields'  => 'Følgende felter kan ikke ændres: :fields.',
         ],
         'category-fields-options' => [
             'create-success'      => 'Kategori Felt Option Oprettet Succesfuldt',

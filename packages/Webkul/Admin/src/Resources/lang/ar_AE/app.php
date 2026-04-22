@@ -602,6 +602,8 @@ return [
             'delete-success'    => 'تم حذف السمة بنجاح',
             'update-success'    => 'سمة تحديث بنجاح',
             'user-define-error' => 'لا يمكن حذف سمة النظام',
+
+            'immutable-fields'  => 'لا يمكن تعديل الحقول التالية: :fields.',
             'not-found'         => 'لم يتم العثور على السمة برمز ":code"',
         ],
         'attribute-options' => [
@@ -883,6 +885,8 @@ return [
             'update-success'    => 'تحديث حقل الفئة بنجاح',
             'user-define-error' => 'لا يمكن حذف حقل فئة النظام',
             'not-found'         => 'لم يتم العثور على عائلة السمات برمز ":code"',
+
+            'immutable-fields'  => 'لا يمكن تعديل الحقول التالية: :fields.',
         ],
         'category-fields-options' => [
             'create-success'      => 'خيار حقل الفئة تم إنشاؤه بنجاح',

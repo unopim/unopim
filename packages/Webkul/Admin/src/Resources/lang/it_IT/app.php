@@ -602,6 +602,8 @@ return [
             'delete-success'    => 'Attributo eliminato con successo',
             'update-success'    => 'Attributo aggiornato con successo',
             'user-define-error' => 'Non è possibile eliminare un attributo di sistema',
+
+            'immutable-fields'  => 'I seguenti campi non possono essere modificati: :fields.',
             'not-found'         => 'Attributo con codice ":code" non trovato',
         ],
         'attribute-options' => [
@@ -883,6 +885,8 @@ return [
             'update-success'    => 'Campo Categoria Aggiornato con Successo',
             'user-define-error' => 'Non puoi eliminare il campo categoria di sistema',
             'not-found'         => 'Campo Categoria con codice ":code" non trovato',
+
+            'immutable-fields'  => 'I seguenti campi non possono essere modificati: :fields.',
         ],
         'category-fields-options' => [
             'create-success'      => 'Opzione del campo categoria creata con successo',

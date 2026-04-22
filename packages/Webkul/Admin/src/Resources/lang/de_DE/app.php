@@ -602,6 +602,8 @@ return [
             'delete-success'    => 'Attribut erfolgreich gelöscht',
             'update-success'    => 'Attribut erfolgreich aktualisiert',
             'user-define-error' => 'Systemattribut kann nicht gelöscht werden',
+
+            'immutable-fields'  => 'Die folgenden Felder können nicht geändert werden: :fields.',
             'not-found'         => 'Attribut mit Code „:code“ konnte nicht gefunden werden',
         ],
         'attribute-options' => [
@@ -883,6 +885,8 @@ return [
             'update-success'    => 'Kategoriefeld erfolgreich aktualisiert',
             'user-define-error' => 'Systemkategoriefeld kann nicht gelöscht werden',
             'not-found'         => 'Kategoriefeld mit Code „:code“ konnte nicht gefunden werden',
+
+            'immutable-fields'  => 'Die folgenden Felder können nicht geändert werden: :fields.',
         ],
         'category-fields-options' => [
             'create-success'      => 'Kategoriefeldoption erfolgreich erstellt',

@@ -602,6 +602,8 @@ return [
             'delete-success'    => 'Attribut supprimé avec succès',
             'update-success'    => 'Attribut mis à jour avec succès',
             'user-define-error' => 'Impossible de supprimer un attribut système',
+
+            'immutable-fields'  => 'Les champs suivants ne peuvent pas être modifiés : :fields.',
             'not-found'         => 'L\'attribut avec le code ":code" est introuvable',
         ],
         'attribute-options' => [
@@ -883,6 +885,8 @@ return [
             'update-success'    => 'Le champ de catégorie a été mis à jour avec succès',
             'user-define-error' => 'Impossible de supprimer un champ de catégorie système',
             'not-found'         => 'Le champ de catégorie avec le code ":code" est introuvable',
+
+            'immutable-fields'  => 'Les champs suivants ne peuvent pas être modifiés : :fields.',
         ],
         'category-fields-options' => [
             'create-success'      => 'Option de champ de catégorie créée avec succès',

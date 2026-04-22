@@ -602,6 +602,8 @@ return [
             'delete-success'    => 'Atribut șters',
             'update-success'    => 'Atribut actualizat',
             'user-define-error' => 'Nu se poate șterge atributul de sistem',
+
+            'immutable-fields'  => 'Următoarele câmpuri nu pot fi modificate: :fields.',
             'not-found'         => 'Atributul cu codul ":code" nu a fost găsit',
         ],
         'attribute-options' => [
@@ -883,6 +885,8 @@ return [
             'update-success'    => 'Câmp de categorie actualizat cu succes',
             'user-define-error' => 'Nu se poate șterge câmpul de categorie sistem',
             'not-found'         => 'Câmp de categorie cu codul ":code" nu a fost găsit',
+
+            'immutable-fields'  => 'Următoarele câmpuri nu pot fi modificate: :fields.',
         ],
         'category-fields-options' => [
             'create-success'      => 'Opțiune câmp categorie creată',
