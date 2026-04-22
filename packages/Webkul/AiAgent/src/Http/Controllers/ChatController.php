@@ -104,7 +104,7 @@ class ChatController extends Controller
             'images'      => 'nullable|array|max:5',
             'images.*'    => 'image|mimes:jpeg,png,webp,gif|max:10240',
             'files'       => 'nullable|array|max:3',
-            'files.*'     => ['file', 'max:20480', function (string $attribute, $value, $fail) {
+            'files.*'     => ['file', 'max:102400', function (string $attribute, $value, $fail) {
                 $allowed = ['csv', 'xlsx', 'xls'];
                 $ext = strtolower($value->getClientOriginalExtension());
                 if (! in_array($ext, $allowed, true)) {
