@@ -495,7 +495,7 @@
                         this.selectedModels.splice(index, 1);
                     },
 
-                    saveWithTest(params, { resetForm, setErrors }) {
+                    async saveWithTest(params, { resetForm, setErrors }) {
                         this.saving = true;
                         let saveData = new FormData(this.$refs.platformForm);
 
@@ -508,6 +508,36 @@
                                 deployment: this.form.azure_deployment,
                                 api_version: this.form.azure_api_version,
                             }));
+                        }
+
+                        // Verify credentials with upstream before persisting (Issue #760).
+                        // Skip the test when the api_key is masked (user did not change it on update).
+                        const rawKey = saveData.get('api_key');
+                        const keyLooksMasked = typeof rawKey === 'string' && /^\*+$/.test(rawKey);
+                        if (!keyLooksMasked) {
+                            try {
+                                const testForm = new FormData();
+                                testForm.set('provider', saveData.get('provider') || '');
+                                testForm.set('api_url', saveData.get('api_url') || '');
+                                testForm.set('api_key', saveData.get('api_key') || '');
+                                testForm.set('models', saveData.get('models') || '');
+                                const testResponse = await this.$axios.post(
+                                    "{{ route('admin.magic_ai.platform.test') }}",
+                                    testForm
+                                );
+                                if (!testResponse.data?.success) {
+                                    throw testResponse;
+                                }
+                            } catch (testError) {
+                                this.saving = false;
+                                this.$emitter.emit('add-flash', {
+                                    type: 'error',
+                                    message: testError?.response?.data?.message
+                                        || testError?.data?.message
+                                        || "@lang('admin::app.configuration.platform.message.test-fail')",
+                                });
+                                return;
+                            }
                         }
 
                         let url;
