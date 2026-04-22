@@ -896,7 +896,7 @@ return [
         'families' => [
             'index' => [
                 'add'      => 'Criar grupo de atributos',
-                'title'    => 'Famílias',
+                'title'    => 'Famílias de atributos',
                 'datagrid' => [
                     'code'           => 'Código',
                     'delete'         => 'Excluir',
@@ -1778,6 +1778,12 @@ return [
             'client-not-found'               => 'Cliente não encontrado',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'Prompts',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Título',
@@ -1820,6 +1826,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'Prompts do sistema',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Título',

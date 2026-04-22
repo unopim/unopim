@@ -896,7 +896,7 @@ return [
         'families' => [
             'index' => [
                 'add'      => 'विशेषता परिवार बनाएँ',
-                'title'    => 'परिवार',
+                'title'    => 'विशेषता परिवार',
                 'datagrid' => [
                     'code'           => 'कोड',
                     'delete'         => 'मिटाना',
@@ -1778,6 +1778,12 @@ return [
             'client-not-found'               => 'ग्राहक नहीं मिला',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'प्रॉम्प्ट्स',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'आईडी',
                 'title'            => 'शीर्षक',
@@ -1820,6 +1826,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'सिस्टम प्रॉम्प्ट्स',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'आईडी',
                 'title'       => 'शीर्षक',

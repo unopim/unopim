@@ -896,7 +896,7 @@ return [
         'families' => [
             'index' => [
                 'add'      => 'إنشاء عائلة السمة',
-                'title'    => 'العائلات',
+                'title'    => 'عائلات السمات',
                 'datagrid' => [
                     'code'           => 'شفرة',
                     'delete'         => 'يمسح',
@@ -1778,6 +1778,12 @@ return [
             'client-not-found'               => 'لم يتم العثور على العميل',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'المحفزات',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'المعرف',
                 'title'            => 'العنوان',
@@ -1820,6 +1826,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'محفزات النظام',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'المعرف',
                 'title'       => 'العنوان',

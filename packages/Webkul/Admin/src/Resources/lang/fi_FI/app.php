@@ -896,7 +896,7 @@ return [
         'families' => [
             'index' => [
                 'add'      => 'Luo Attribuuttiperhe',
-                'title'    => 'Perheet',
+                'title'    => 'Attribuuttiperheet',
                 'datagrid' => [
                     'code'           => 'Koodi',
                     'delete'         => 'Poista',
@@ -1778,6 +1778,12 @@ return [
             'client-not-found'               => 'Asiakasta ei löytynyt',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'Kehotteet',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'Tunnus',
                 'title'            => 'Otsikko',
@@ -1820,6 +1826,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'Järjestelmäkehotteet',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Otsikko',

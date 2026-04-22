@@ -896,7 +896,7 @@ return [
         'families' => [
             'index' => [
                 'add'      => 'Buat keluarga atribut',
-                'title'    => 'Keluarga',
+                'title'    => 'Keluarga Atribut',
                 'datagrid' => [
                     'code'           => 'Kode',
                     'delete'         => 'Menghapus',
@@ -1778,6 +1778,12 @@ return [
             'client-not-found'               => 'Klien tidak ditemukan',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'Prompt',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Judul',
@@ -1820,6 +1826,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'System Prompt',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Judul',

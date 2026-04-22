@@ -1778,6 +1778,12 @@ return [
             'client-not-found'               => 'Клієнт не знайдено',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'Підказки',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Назва',
@@ -1820,6 +1826,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'Системні підказки',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Назва',

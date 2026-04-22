@@ -896,7 +896,7 @@ return [
         'families' => [
             'index' => [
                 'add'      => '建立屬性組',
-                'title'    => '屬性家族',
+                'title'    => '屬性族',
                 'datagrid' => [
                     'code'           => '代碼',
                     'delete'         => '刪除',
@@ -1778,6 +1778,12 @@ return [
             'client-not-found'               => '客戶端未找到',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => '提示詞',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => '標題',
@@ -1820,6 +1826,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => '系統提示詞',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => '標題',

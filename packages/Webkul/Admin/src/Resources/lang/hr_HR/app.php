@@ -896,7 +896,7 @@ return [
         'families' => [
             'index' => [
                 'add'      => 'Kreiraj obitelj atributa',
-                'title'    => 'Obitelji',
+                'title'    => 'Obitelji atributa',
                 'datagrid' => [
                     'code'           => 'Kod',
                     'delete'         => 'Izbriši',
@@ -1778,6 +1778,12 @@ return [
             'client-not-found'               => 'Klijent nije pronađen',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'Promptovi',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Naslov',
@@ -1820,6 +1826,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'Sustavni promptovi',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Naslov',

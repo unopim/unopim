@@ -896,7 +896,7 @@ return [
         'families' => [
             'index' => [
                 'add'      => 'Tạo nhóm thuộc tính',
-                'title'    => 'Các gia đình',
+                'title'    => 'Họ thuộc tính',
                 'datagrid' => [
                     'code'           => 'Mã',
                     'delete'         => 'Xóa',
@@ -1778,6 +1778,12 @@ return [
             'client-not-found'               => 'Không tìm thấy khách hàng',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'Lời nhắc',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Tiêu đề',
@@ -1820,6 +1826,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'Lời nhắc hệ thống',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Tiêu đề',

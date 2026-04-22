@@ -954,7 +954,7 @@ return [
         'families' => [
             'index' => [
                 'add'   => 'Create Attribute Family',
-                'title' => 'Families',
+                'title' => 'Attribute Families',
 
                 'datagrid' => [
                     'code'           => 'Code',
@@ -1902,6 +1902,12 @@ return [
         ],
 
         'prompt' => [
+            'index' => [
+
+                'title' => 'Prompts',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Title',
@@ -1945,6 +1951,12 @@ return [
         ],
 
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'System Prompts',
+
+            ],
+
             'datagrid' => [
                 'id'            => 'ID',
                 'title'         => 'Title',

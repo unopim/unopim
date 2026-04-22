@@ -896,7 +896,7 @@ return [
         'families' => [
             'index' => [
                 'add'      => 'Özellik ailesi oluştur',
-                'title'    => 'Aileler',
+                'title'    => 'Öznitelik Aileleri',
                 'datagrid' => [
                     'code'           => 'Kod',
                     'delete'         => 'Sil',
@@ -1778,6 +1778,12 @@ return [
             'client-not-found'               => 'Müşteri Bulunamadı',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'İstemler',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Başlık',
@@ -1820,6 +1826,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'Sistem istemleri',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Başlık',

@@ -896,7 +896,7 @@ return [
         'families' => [
             'index' => [
                 'add'      => 'Аттрибутын гэр бүлийг бий болгох',
-                'title'    => 'Гэр бүлүүд',
+                'title'    => 'Шинж чанарын гэр бүл',
                 'datagrid' => [
                     'code'           => 'Хуулө цааз',
                     'delete'         => 'Эдгээх',
@@ -1778,6 +1778,12 @@ return [
             'client-not-found'               => 'Үйлчлүүлэгч олдсонгүй',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'Санамжууд',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Гарчиг',
@@ -1820,6 +1826,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'Системийн санамжууд',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Гарчиг',

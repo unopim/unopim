@@ -896,7 +896,7 @@ return [
         'families' => [
             'index' => [
                 'add'      => '属性ファミリの作成',
-                'title'    => 'ファミリ',
+                'title'    => '属性ファミリ',
                 'datagrid' => [
                     'code'           => 'コード',
                     'delete'         => '削除',
@@ -1778,6 +1778,12 @@ return [
             'client-not-found'               => 'クライアントが見つかりません',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'プロンプト',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'タイトル',
@@ -1820,6 +1826,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'システムプロンプト',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'タイトル',

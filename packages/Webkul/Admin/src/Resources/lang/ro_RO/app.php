@@ -896,7 +896,7 @@ return [
         'families' => [
             'index' => [
                 'add'      => 'Creează familie de atribute',
-                'title'    => 'Familii',
+                'title'    => 'Familii de atribute',
                 'datagrid' => [
                     'code'           => 'Cod',
                     'delete'         => 'Șterge',
@@ -1778,6 +1778,12 @@ return [
             'client-not-found'               => 'Clientul nu a fost găsit',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'Prompturi',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Titlu',
@@ -1820,6 +1826,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'Prompturi de sistem',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Titlu',

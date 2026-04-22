@@ -1,11 +1,11 @@
 <x-admin::layouts>
     <x-slot:title>
-        @lang('admin::app.configuration.prompt.create.title')
+        @lang('admin::app.configuration.prompt.index.title')
     </x-slot>
     <v-create-prompt-form>
         <div class="flex  gap-4 justify-between items-center max-sm:flex-wrap">
             <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                @lang('admin::app.configuration.prompt.create.title')
+                @lang('admin::app.configuration.prompt.index.title')
             </p>
             <div class="flex gap-x-2.5 items-center">
                 <button

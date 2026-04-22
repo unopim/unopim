@@ -896,7 +896,7 @@ return [
         'families' => [
             'index' => [
                 'add'      => '创建属性家庭',
-                'title'    => '家庭',
+                'title'    => '属性族',
                 'datagrid' => [
                     'code'           => '代码',
                     'delete'         => '删除',
@@ -1778,6 +1778,12 @@ return [
             'client-not-found'               => '未找到客户',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => '提示词',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => '标题',
@@ -1820,6 +1826,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => '系统提示词',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => '标题',

@@ -896,7 +896,7 @@ return [
         'families' => [
             'index' => [
                 'add'      => 'Lumikha ng pamilya ng mga katangian',
-                'title'    => 'Mga Pamilya',
+                'title'    => 'Mga Attribute Family',
                 'datagrid' => [
                     'code'           => 'Kodigo',
                     'delete'         => 'Tanggalin',
@@ -1778,6 +1778,12 @@ return [
             'client-not-found'               => 'Ang client ay hindi natagpuan',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => 'Mga Prompt',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => 'Pamagat',
@@ -1820,6 +1826,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => 'Mga System Prompt',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => 'Pamagat',

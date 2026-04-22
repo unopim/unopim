@@ -896,7 +896,7 @@ return [
         'families' => [
             'index' => [
                 'add'      => '속성 그룹 만들기',
-                'title'    => '속성 그룹',
+                'title'    => '속성 패밀리',
                 'datagrid' => [
                     'code'           => '코드',
                     'delete'         => '삭제',
@@ -1778,6 +1778,12 @@ return [
             'client-not-found'               => '클라이언트를 찾을 수 없습니다',
         ],
         'prompt' => [
+            'index' => [
+
+                'title' => '프롬프트',
+
+            ],
+
             'datagrid' => [
                 'id'               => 'ID',
                 'title'            => '제목',
@@ -1820,6 +1826,12 @@ return [
             ],
         ],
         'system-prompt' => [
+            'index' => [
+
+                'title' => '시스템 프롬프트',
+
+            ],
+
             'datagrid' => [
                 'id'          => 'ID',
                 'title'       => '제목',
