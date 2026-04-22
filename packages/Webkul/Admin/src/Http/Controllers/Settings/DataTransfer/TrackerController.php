@@ -80,8 +80,8 @@ class TrackerController extends Controller
     private function mapJobStateToBatchState(string $jobState): string
     {
         return match ($jobState) {
-            'processing', 'processed' => 'processed',
-            'linking', 'linked'       => 'linked',
+            'processing', 'processed'  => 'processed',
+            'linking', 'linked'        => 'linked',
             'indexing', 'indexed'      => 'indexed',
             'completed'                => 'processed',
             default                    => $jobState,
