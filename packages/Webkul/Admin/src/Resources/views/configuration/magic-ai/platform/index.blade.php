@@ -511,6 +511,13 @@
                         this.saving = true;
                         let saveData = new FormData(this.$refs.platformForm);
 
+                        // The provider field is a custom multiselect component whose value lives in
+                        // this.form.provider, not in a native input. Make sure FormData carries it
+                        // so the backend's `provider` validation and the preflight test both see it.
+                        if (this.form.provider) {
+                            saveData.set('provider', this.form.provider);
+                        }
+
                         // Ensure the selected models are always in the payload regardless of the hidden
                         // input's DOM value (Vue :value binding can lag for dynamically-added checkboxes).
                         saveData.set('models', this.selectedModels.join(','));
@@ -524,15 +531,15 @@
 
                         // Verify credentials with upstream before persisting (Issue #760).
                         // Skip the test when the api_key is masked (user did not change it on update).
-                        const rawKey = saveData.get('api_key');
+                        const rawKey = this.form.api_key;
                         const keyLooksMasked = typeof rawKey === 'string' && /^\*+$/.test(rawKey);
                         if (!keyLooksMasked) {
                             try {
                                 const testForm = new FormData();
-                                testForm.set('provider', saveData.get('provider') || '');
-                                testForm.set('api_url', saveData.get('api_url') || '');
-                                testForm.set('api_key', saveData.get('api_key') || '');
-                                testForm.set('models', saveData.get('models') || '');
+                                testForm.set('provider', this.form.provider || '');
+                                testForm.set('api_url', this.form.api_url || '');
+                                testForm.set('api_key', this.form.api_key || '');
+                                testForm.set('models', this.selectedModels.join(','));
                                 const testResponse = await this.$axios.post(
                                     "{{ route('admin.magic_ai.platform.test') }}",
                                     testForm
