@@ -499,6 +499,10 @@
                         this.saving = true;
                         let saveData = new FormData(this.$refs.platformForm);
 
+                        // Ensure the selected models are always in the payload regardless of the hidden
+                        // input's DOM value (Vue :value binding can lag for dynamically-added checkboxes).
+                        saveData.set('models', this.selectedModels.join(','));
+
                         if (this.form.provider === 'azure') {
                             saveData.set('extras', JSON.stringify({
                                 deployment: this.form.azure_deployment,
