@@ -189,6 +189,7 @@
                                         rules="required"
                                         :label="trans('admin::app.configuration.platform.fields.api-key')"
                                         @change="onApiKeyEntered()"
+                                        @input="onApiKeyInput($event)"
                                     />
                                     <p v-if="fetchingModels" class="mt-1 text-xs text-violet-600">@lang('admin::app.configuration.platform.fetching-models')...</p>
                                     <x-admin::form.control-group.error control-name="api_key" />
@@ -434,6 +435,17 @@
                         if (this.form.api_key && this.form.api_key.length >= 10 && !this.form.api_key.match(/^\*+$/)) {
                             this.fetchModels();
                         }
+                    },
+
+                    // Debounced auto-fetch so models load as soon as the user pastes/types an API key,
+                    // without waiting for a blur/change event (Issue #761).
+                    onApiKeyInput(event) {
+                        if (this._apiKeyInputTimer) {
+                            clearTimeout(this._apiKeyInputTimer);
+                        }
+                        this._apiKeyInputTimer = setTimeout(() => {
+                            this.onApiKeyEntered();
+                        }, 500);
                     },
 
                     fetchModels() {
