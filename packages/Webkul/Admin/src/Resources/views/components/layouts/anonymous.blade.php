@@ -65,8 +65,6 @@
 
                 <!-- Page Content Blade Component -->
                 {{ $slot }}
-
-        {!! view_render_event('unopim.admin.layout.content.after') !!}
     </div>
 
     {!! view_render_event('unopim.admin.layout.body.after') !!}
