@@ -364,6 +364,8 @@ return [
                     'url'                        => 'Bitte geben Sie eine gültige URL ein.',
                     'regex'                      => 'Der Wert entspricht nicht dem erforderlichen Muster.',
                     'invalid-pattern'            => 'Ungültiges benutzerdefiniertes Muster angegeben.',
+
+                    'numeric'                    => 'Der Wert für das numerische Attribut „:attribute“ muss eine gültige Zahl sein.',
                     'select-attribute-or-family' => 'Bitte wählen Sie mindestens ein Attribut oder eine Attributfamilie aus.',
                     'failed'                     => 'Validierung fehlgeschlagen.',
                 ],

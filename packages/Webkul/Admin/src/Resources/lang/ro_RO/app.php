@@ -364,6 +364,8 @@ return [
                     'url'                        => 'Introduceți un URL valid.',
                     'regex'                      => 'Valoarea nu se potrivește cu modelul necesar.',
                     'invalid-pattern'            => 'Model personalizat invalid furnizat.',
+
+                    'numeric'                    => 'Valoarea atributului numeric „:attribute” trebuie să fie un număr valid.',
                     'select-attribute-or-family' => 'Vă rugăm să selectați cel puțin un atribut sau o familie de atribute.',
                     'failed'                     => 'Validarea a eșuat.',
                 ],

@@ -364,6 +364,8 @@ return [
                     'url'                        => '請輸入有效的網址。',
                     'regex'                      => '值不符合所需的格式。',
                     'invalid-pattern'            => '提供了無效的自訂模式。',
+
+                    'numeric'                    => '數字屬性「:attribute」的值必須為有效的數字。',
                     'select-attribute-or-family' => '請至少選擇一個屬性或屬性族。',
                     'failed'                     => '驗證失敗。',
                 ],

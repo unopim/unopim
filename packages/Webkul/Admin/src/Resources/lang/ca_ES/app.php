@@ -364,6 +364,8 @@ return [
                     'url'                        => 'Si us plau, introdueix una URL vàlida.',
                     'regex'                      => 'El valor no coincideix amb el patró requerit.',
                     'invalid-pattern'            => 'S\'ha proporcionat un patró personalitzat no vàlid.',
+
+                    'numeric'                    => 'El valor de l\'atribut numèric ":attribute" ha de ser un número vàlid.',
                     'select-attribute-or-family' => 'Si us plau, seleccioneu almenys un atribut o una família d’atributs.',
                     'failed'                     => 'La validació ha fallat.',
                 ],

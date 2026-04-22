@@ -364,6 +364,8 @@ return [
                     'url'                        => 'Lütfen geçerli bir URL girin.',
                     'regex'                      => 'Değer gerekli desenle eşleşmiyor.',
                     'invalid-pattern'            => 'Geçersiz özel desen sağlandı.',
+
+                    'numeric'                    => '":attribute" sayısal özelliğinin değeri geçerli bir sayı olmalıdır.',
                     'select-attribute-or-family' => 'Lütfen en az bir özellik veya özellik ailesi seçin.',
                     'failed'                     => 'Doğrulama başarısız oldu.',
                 ],

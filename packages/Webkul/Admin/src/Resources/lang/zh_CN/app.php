@@ -364,6 +364,8 @@ return [
                     'url'                        => '请输入有效的URL地址。',
                     'regex'                      => '该值不符合所需的模式。',
                     'invalid-pattern'            => '提供了无效的自定义模式。',
+
+                    'numeric'                    => '数字属性":attribute"的值必须为有效的数字。',
                     'select-attribute-or-family' => '请选择至少一个属性或一个属性族。',
                     'failed'                     => '验证失败。',
                 ],

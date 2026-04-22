@@ -364,6 +364,8 @@ return [
                     'url'                        => 'Anna kelvollinen URL.',
                     'regex'                      => 'Arvo ei vastaa vaadittua kaavaa.',
                     'invalid-pattern'            => 'Virheellinen mukautettu kaava annettu.',
+
+                    'numeric'                    => 'Numeerisen määritteen ":attribute" arvon on oltava kelvollinen luku.',
                     'select-attribute-or-family' => 'Valitse vähintään yksi attribuutti tai attribuuttiperhe.',
                     'failed'                     => 'Validointi epäonnistui.',
                 ],

@@ -364,6 +364,8 @@ return [
                     'url'                        => 'Vennligst oppgi en gyldig URL.',
                     'regex'                      => 'Verdien samsvarer ikke med det nødvendige mønsteret.',
                     'invalid-pattern'            => 'Ugyldig egendefinert mønster angitt.',
+
+                    'numeric'                    => 'Verdien for det numeriske attributtet «:attribute» må være et gyldig tall.',
                     'select-attribute-or-family' => 'Vennligst velg minst ett attributt eller en attributtfamilie.',
                     'failed'                     => 'Validering mislyktes.',
                 ],

@@ -364,6 +364,8 @@ return [
                     'url'                        => '유효한 URL을 입력하세요.',
                     'regex'                      => '값이 요구되는 패턴과 일치하지 않습니다.',
                     'invalid-pattern'            => '잘못된 사용자 지정 패턴입니다.',
+
+                    'numeric'                    => '숫자 속성 ":attribute"의 값은 유효한 숫자여야 합니다.',
                     'select-attribute-or-family' => '하나 이상의 속성 또는 속성 패밀리를 선택하세요.',
                     'failed'                     => '유효성 검사 실패.',
                 ],

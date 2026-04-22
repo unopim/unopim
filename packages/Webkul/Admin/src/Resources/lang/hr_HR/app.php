@@ -364,6 +364,8 @@ return [
                     'url'                        => 'Unesite valjani URL.',
                     'regex'                      => 'Vrijednost ne odgovara traženom obrascu.',
                     'invalid-pattern'            => 'Unesen je nevažeći prilagođeni obrazac.',
+
+                    'numeric'                    => 'Vrijednost numeričkog atributa „:attribute“ mora biti valjani broj.',
                     'select-attribute-or-family' => 'Molimo odaberite barem jedan atribut ili obitelj atributa.',
                     'failed'                     => 'Provjera valjanosti nije uspjela.',
                 ],

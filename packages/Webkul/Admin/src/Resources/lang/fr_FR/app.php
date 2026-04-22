@@ -364,6 +364,8 @@ return [
                     'url'                        => 'Veuillez entrer une URL valide.',
                     'regex'                      => 'La valeur ne correspond pas au modèle requis.',
                     'invalid-pattern'            => 'Modèle personnalisé invalide fourni.',
+
+                    'numeric'                    => 'La valeur de l\'attribut numérique « :attribute » doit être un nombre valide.',
                     'select-attribute-or-family' => 'Veuillez sélectionner au moins un attribut ou une famille d’attributs.',
                     'failed'                     => 'La validation a échoué.',
                 ],

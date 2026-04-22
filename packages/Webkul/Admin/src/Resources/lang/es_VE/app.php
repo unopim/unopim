@@ -364,6 +364,8 @@ return [
                     'url'                        => 'Por favor, ingrese una URL válida.',
                     'regex'                      => 'El valor no cumple con el patrón requerido.',
                     'invalid-pattern'            => 'Patrón personalizado inválido.',
+
+                    'numeric'                    => 'El valor del atributo numérico ":attribute" debe ser un número válido.',
                     'select-attribute-or-family' => 'Por favor seleccione al menos un atributo o una familia de atributos.',
                     'failed'                     => 'La validación falló.',
                 ],

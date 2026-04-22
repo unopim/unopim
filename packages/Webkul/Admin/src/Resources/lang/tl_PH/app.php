@@ -364,6 +364,8 @@ return [
                     'url'                        => 'Pakilagay ng wastong URL.',
                     'regex'                      => 'Hindi tumutugma ang halaga sa kinakailangang pattern.',
                     'invalid-pattern'            => 'Di-wastong pasadyang pattern ang ibinigay.',
+
+                    'numeric'                    => 'Ang halaga ng numerikong attribute na ":attribute" ay dapat maging wastong numero.',
                     'select-attribute-or-family' => 'Mangyaring pumili ng kahit isang attribute o isang pamilya ng attribute.',
                     'failed'                     => 'Nabigo ang pagpapatunay.',
                 ],

@@ -364,6 +364,8 @@ return [
                     'url'                        => 'Silakan masukkan URL yang valid.',
                     'regex'                      => 'Nilai tidak sesuai dengan pola yang diperlukan.',
                     'invalid-pattern'            => 'Pola khusus tidak valid.',
+
+                    'numeric'                    => 'Nilai untuk atribut numerik ":attribute" harus berupa angka yang valid.',
                     'select-attribute-or-family' => 'Silakan pilih setidaknya satu atribut atau satu keluarga atribut.',
                     'failed'                     => 'Validasi gagal.',
                 ],

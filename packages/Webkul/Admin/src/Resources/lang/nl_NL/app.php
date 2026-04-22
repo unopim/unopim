@@ -364,6 +364,8 @@ return [
                     'url'                        => 'Voer een geldige URL in.',
                     'regex'                      => 'Waarde komt niet overeen met het vereiste patroon.',
                     'invalid-pattern'            => 'Ongeldig aangepast patroon opgegeven.',
+
+                    'numeric'                    => 'De waarde voor het numerieke attribuut ":attribute" moet een geldig getal zijn.',
                     'select-attribute-or-family' => 'Selecteer ten minste één attribuut of een attribuutfamilie.',
                     'failed'                     => 'Validatie mislukt.',
                 ],

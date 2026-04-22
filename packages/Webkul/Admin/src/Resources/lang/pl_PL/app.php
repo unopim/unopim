@@ -364,6 +364,8 @@ return [
                     'url'                        => 'Wprowadź poprawny adres URL.',
                     'regex'                      => 'Wartość nie pasuje do wymaganego wzoru.',
                     'invalid-pattern'            => 'Podano nieprawidłowy własny wzorzec.',
+
+                    'numeric'                    => 'Wartość numerycznego atrybutu „:attribute” musi być prawidłową liczbą.',
                     'select-attribute-or-family' => 'Proszę wybrać co najmniej jeden atrybut lub rodzinę atrybutów.',
                     'failed'                     => 'Walidacja nie powiodła się.',
                 ],

@@ -364,6 +364,8 @@ return [
                     'url'                        => 'Vui lòng nhập một URL hợp lệ.',
                     'regex'                      => 'Giá trị không khớp với mẫu yêu cầu.',
                     'invalid-pattern'            => 'Mẫu tùy chỉnh không hợp lệ.',
+
+                    'numeric'                    => 'Giá trị cho thuộc tính số ":attribute" phải là một số hợp lệ.',
                     'select-attribute-or-family' => 'Vui lòng chọn ít nhất một thuộc tính hoặc một nhóm thuộc tính.',
                     'failed'                     => 'Xác thực không thành công.',
                 ],
