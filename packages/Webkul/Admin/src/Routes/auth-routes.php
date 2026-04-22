@@ -42,6 +42,8 @@ Route::group(['prefix' => config('app.admin_url')], function () {
      * Reset password routes.
      */
     Route::controller(ResetPasswordController::class)->prefix('reset-password')->group(function () {
+        Route::get('', fn () => redirect()->route('admin.forget_password.create'));
+
         Route::get('{token}', 'create')->name('admin.reset_password.create');
 
         Route::post('', 'store')->name('admin.reset_password.store');
