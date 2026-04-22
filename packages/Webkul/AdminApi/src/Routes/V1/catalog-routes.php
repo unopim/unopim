@@ -100,6 +100,7 @@ Route::group([
             Route::get('{code}', 'get')->name('admin.api.'.$nameSuffix.'.get');
             Route::post('', 'store')->name('admin.api.'.$nameSuffix.'.store');
             Route::put('{code}', 'update')->name('admin.api.'.$nameSuffix.'.update');
+            Route::delete('{code}', 'delete')->name('admin.api.'.$nameSuffix.'.delete');
             Route::patch('{code}', 'partialUpdate')->name('admin.api.'.$nameSuffix.'.patch');
         });
     }
