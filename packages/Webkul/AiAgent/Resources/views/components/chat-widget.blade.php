@@ -789,6 +789,7 @@ app.component('v-agenting-pim', {
             activeSessionId: null,
             showSessions: false,
             platforms: platforms,
+            defaultPlatformId: defaultPlatformId,
             selectedPlatformId: initialPlatform ? initialPlatform.id : null,
             selectedModel: pickTextModel(initialModels),
             trans: trans,
@@ -1634,7 +1635,8 @@ app.component('v-agenting-pim', {
                 const s = JSON.parse(raw);
                 if (s.activeTab) this.activeTab = s.activeTab;
                 if (s.activeCapability) this.activeCapability = this.capabilities.find(c => c.key === s.activeCapability) || null;
-                if (s.selectedPlatformId && this.platforms.find(p => p.id === s.selectedPlatformId)) {
+                // Restore platform only when it still matches the current server default; otherwise respect the newly-set default.
+                if (s.selectedPlatformId && s.selectedPlatformId === this.defaultPlatformId && this.platforms.find(p => p.id === s.selectedPlatformId)) {
                     this.selectedPlatformId = s.selectedPlatformId;
                     if (s.selectedModel && this.availableModels.includes(s.selectedModel)) {
                         this.selectedModel = s.selectedModel;
