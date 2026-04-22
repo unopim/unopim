@@ -444,7 +444,7 @@ return [
                 'shortcuts-escape-revert'     => 'Revert value + exit edit',
                 'shortcuts-clear-cell'        => 'Clear cell',
                 'shortcuts-copy'              => 'Copy',
-                'shortcuts-cut'              => 'Cut',
+                'shortcuts-cut'               => 'Cut',
                 'shortcuts-paste'             => 'Paste',
                 'shortcuts-fill-down'         => 'Fill down',
                 'shortcuts-fill-right'        => 'Fill right',
@@ -1190,6 +1190,8 @@ return [
                         'paused'     => 'Paused',
                         'cancelled'  => 'Cancelled',
                         'failed'     => 'Failed',
+
+                        'view'       => 'View',
                     ],
                 ],
 
