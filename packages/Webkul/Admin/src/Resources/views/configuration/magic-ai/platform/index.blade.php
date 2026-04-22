@@ -99,11 +99,11 @@
                             <a @click="setAsDefault(record)" v-if="!record.is_default_raw" title="@lang('admin::app.configuration.platform.set-default')">
                                 <span class="icon-star cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800"></span>
                             </a>
-                            <a @click="editModal(record.actions.find(a => a.index === 'action_1')?.url)" title="@lang('admin::app.configuration.platform.datagrid.edit')" aria-label="@lang('admin::app.configuration.platform.datagrid.edit')">
-                                <span :class="record.actions.find(a => a.index === 'action_1')?.icon" class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800"></span>
+                            <a v-if="record.actions.find(a => a.icon === 'icon-edit')" @click="editModal(record.actions.find(a => a.icon === 'icon-edit')?.url)" title="@lang('admin::app.configuration.platform.datagrid.edit')" aria-label="@lang('admin::app.configuration.platform.datagrid.edit')">
+                                <span class="icon-edit cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800"></span>
                             </a>
-                            <a @click="performAction(record.actions.find(a => a.index === 'action_2'))" title="@lang('admin::app.configuration.platform.datagrid.delete')" aria-label="@lang('admin::app.configuration.platform.datagrid.delete')">
-                                <span :class="record.actions.find(a => a.index === 'action_2')?.icon" class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800"></span>
+                            <a v-if="record.actions.find(a => a.icon === 'icon-delete')" @click="performAction(record.actions.find(a => a.icon === 'icon-delete'))" title="@lang('admin::app.configuration.platform.datagrid.delete')" aria-label="@lang('admin::app.configuration.platform.datagrid.delete')">
+                                <span class="icon-delete cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800"></span>
                             </a>
                         </div>
                     </div>
