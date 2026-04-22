@@ -385,6 +385,8 @@ return [
                 ],
                 'id'                          => 'ID',
                 'no-changes'                  => 'Ingen endringer å lagre.',
+
+                'invalid-datetime'            => 'Angi en gyldig dato og et gyldig klokkeslett.',
                 'success'                     => 'Jobb fullført.',
                 'fetch-failed'                => 'Henting mislyktes.',
                 'action'                      => 'Masseendring',

@@ -385,6 +385,8 @@ return [
                 ],
                 'id'                          => 'ID',
                 'no-changes'                  => 'Nicio modificare de salvat.',
+
+                'invalid-datetime'            => 'Introduceți o dată și oră valide.',
                 'success'                     => 'Sarcină executată cu succes.',
                 'fetch-failed'                => 'Eroare la preluare.',
                 'action'                      => 'Editare în masă',

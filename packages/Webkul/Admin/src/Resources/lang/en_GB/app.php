@@ -385,6 +385,8 @@ return [
                 ],
                 'id'                          => 'ID',
                 'no-changes'                  => 'No changes to save.',
+
+                'invalid-datetime'            => 'Please enter a valid date and time.',
                 'success'                     => 'Job executed successfully.',
                 'fetch-failed'                => 'Failed to fetch.',
                 'action'                      => 'Bulk Edit',

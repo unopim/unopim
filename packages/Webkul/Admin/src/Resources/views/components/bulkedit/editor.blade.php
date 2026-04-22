@@ -14,6 +14,7 @@
 @include('admin::components.bulkedit.type.select')
 @include('admin::components.bulkedit.type.multiselect')
 @include('admin::components.bulkedit.type.date')
+@include('admin::components.bulkedit.type.datetime')
 @include('admin::components.bulkedit.type.image')
 @include('admin::components.bulkedit.type.gallery')
 @include('admin::components.bulkedit.type.boolean')

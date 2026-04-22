@@ -293,6 +293,7 @@
                         case 'checkbox':
                         case 'multiselect': return 'v-spreadsheet-multiselect';
                         case 'date': return 'v-spreadsheet-date';
+                        case 'datetime': return 'v-spreadsheet-datetime';
                         case 'boolean': return 'v-spreadsheet-boolean';
                         case 'image': return 'v-spreadsheet-image';
                         case 'gallery': return 'v-spreadsheet-gallery';

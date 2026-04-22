@@ -385,6 +385,8 @@ return [
                 ],
                 'id'                          => 'ID',
                 'no-changes'                  => 'Tidak ada perubahan untuk disimpan.',
+
+                'invalid-datetime'            => 'Masukkan tanggal dan waktu yang valid.',
                 'success'                     => 'Pekerjaan berhasil dijalankan.',
                 'fetch-failed'                => 'Gagal mengambil data.',
                 'action'                      => 'Edit Massal',

@@ -385,6 +385,8 @@ return [
                 ],
                 'id'                          => 'ID',
                 'no-changes'                  => 'Kaydedilecek değişiklik yok.',
+
+                'invalid-datetime'            => 'Geçerli bir tarih ve saat girin.',
                 'success'                     => 'İşlem başarıyla gerçekleştirildi.',
                 'fetch-failed'                => 'Veri alınamadı.',
                 'action'                      => 'Toplu Düzenleme',

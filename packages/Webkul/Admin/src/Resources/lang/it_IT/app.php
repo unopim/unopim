@@ -385,6 +385,8 @@ return [
                 ],
                 'id'                          => 'ID',
                 'no-changes'                  => 'Nessuna modifica da salvare.',
+
+                'invalid-datetime'            => 'Inserisci una data e un\'ora valide.',
                 'success'                     => 'Operazione completata con successo.',
                 'fetch-failed'                => 'Impossibile recuperare i dati.',
                 'action'                      => 'Modifica di massa',

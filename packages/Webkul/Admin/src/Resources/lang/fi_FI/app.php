@@ -385,6 +385,8 @@ return [
                 ],
                 'id'                          => 'ID',
                 'no-changes'                  => 'Ei muutoksia tallennettavaksi.',
+
+                'invalid-datetime'            => 'Anna kelvollinen päivämäärä ja kellonaika.',
                 'success'                     => 'Toiminto suoritettu onnistuneesti.',
                 'fetch-failed'                => 'Tietojen haku epäonnistui.',
                 'action'                      => 'Massamuokkaus',

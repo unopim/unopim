@@ -385,6 +385,8 @@ return [
                 ],
                 'id'                          => 'ID',
                 'no-changes'                  => 'Ingen ændringer at gemme.',
+
+                'invalid-datetime'            => 'Indtast en gyldig dato og klokkeslæt.',
                 'success'                     => 'Handling gennemført med succes.',
                 'fetch-failed'                => 'Hentning mislykkedes.',
                 'action'                      => 'Masseændring',

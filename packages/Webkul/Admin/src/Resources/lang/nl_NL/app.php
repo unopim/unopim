@@ -385,6 +385,8 @@ return [
                 ],
                 'id'                          => 'ID',
                 'no-changes'                  => 'Geen wijzigingen om op te slaan.',
+
+                'invalid-datetime'            => 'Voer een geldige datum en tijd in.',
                 'success'                     => 'Taak succesvol uitgevoerd.',
                 'fetch-failed'                => 'Ophalen mislukt.',
                 'action'                      => 'Bulk Bewerken',

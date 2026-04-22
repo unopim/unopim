@@ -385,6 +385,8 @@ return [
                 ],
                 'id'                          => 'ID',
                 'no-changes'                  => 'Inga ändringar att spara.',
+
+                'invalid-datetime'            => 'Ange ett giltigt datum och klockslag.',
                 'success'                     => 'Uppgiften har utförts.',
                 'fetch-failed'                => 'Misslyckades med att hämta.',
                 'action'                      => 'Massredigering',

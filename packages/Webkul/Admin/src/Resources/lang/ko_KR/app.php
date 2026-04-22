@@ -385,6 +385,8 @@ return [
                 ],
                 'id'                          => 'ID',
                 'no-changes'                  => '저장할 변경 사항이 없습니다.',
+
+                'invalid-datetime'            => '유효한 날짜와 시간을 입력하세요.',
                 'success'                     => '작업이 성공적으로 실행되었습니다.',
                 'fetch-failed'                => '가져오기 실패.',
                 'action'                      => '일괄 편집',

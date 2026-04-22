@@ -385,6 +385,8 @@ return [
                 ],
                 'id'                          => 'ID',
                 'no-changes'                  => 'Walang pagbabago para i-save.',
+
+                'invalid-datetime'            => 'Maglagay ng wastong petsa at oras.',
                 'success'                     => 'Matagumpay na naisagawa ang gawain.',
                 'fetch-failed'                => 'Hindi nakuha ang datos.',
                 'action'                      => 'Maramihang Pag-edit',

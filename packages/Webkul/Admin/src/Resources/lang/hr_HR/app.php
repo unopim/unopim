@@ -385,6 +385,8 @@ return [
                 ],
                 'id'                          => 'ID',
                 'no-changes'                  => 'Nema promjena za spremiti.',
+
+                'invalid-datetime'            => 'Unesite valjani datum i vrijeme.',
                 'success'                     => 'Operacija uspješno izvršena.',
                 'fetch-failed'                => 'Preuzimanje nije uspjelo.',
                 'action'                      => 'Grupno uređivanje',
