@@ -7,7 +7,7 @@ return [
         'key'   => 'ai-agent',
         'name'  => 'ai-agent::app.acl.ai-agent',
         'route' => 'admin.configuration.edit',
-        'sort'  => 8,
+        'sort'  => 7,
     ],
     [
         'key'    => 'ai-agent.platform',
