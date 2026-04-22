@@ -143,12 +143,9 @@ class MagicAIPlatformController extends Controller
             $platform = $this->platformRepository->findOrFail($id);
 
             if ($platform->is_default) {
-                $otherCount = $this->platformRepository->findWhere(['status' => true])->count();
-                if ($otherCount <= 1) {
-                    return new JsonResponse([
-                        'message' => trans('admin::app.configuration.platform.message.cannot-delete-default'),
-                    ], JsonResponse::HTTP_BAD_REQUEST);
-                }
+                return new JsonResponse([
+                    'message' => trans('admin::app.configuration.platform.message.cannot-delete-default'),
+                ], JsonResponse::HTTP_BAD_REQUEST);
             }
 
             $this->platformRepository->delete($id);
