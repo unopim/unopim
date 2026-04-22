@@ -885,8 +885,9 @@ return [
             'not-found'         => 'Không tìm thấy Trường Danh Mục với mã ":code"',
         ],
         'category-fields-options' => [
-            'create-success' => 'Tùy chọn trường danh mục đã được tạo thành công',
-            'update-success' => 'Tùy chọn trường danh mục đã được cập nhật thành công',
+            'create-success'      => 'Tùy chọn trường danh mục đã được tạo thành công',
+            'update-success'      => 'Tùy chọn trường danh mục đã được cập nhật thành công',
+            'update-unknown-code' => 'Không có tuỳ chọn trường danh mục với mã ":code".',
         ],
         'families' => [
             'index' => [

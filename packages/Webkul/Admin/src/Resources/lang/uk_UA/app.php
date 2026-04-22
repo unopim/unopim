@@ -885,8 +885,9 @@ return [
             'not-found'         => 'Поле категорії ":code" не знайдено',
         ],
         'category-fields-options' => [
-            'create-success' => 'Опцію категорії створено успішно',
-            'update-success' => 'Опцію категорії оновлено успішно',
+            'create-success'      => 'Опцію категорії створено успішно',
+            'update-success'      => 'Опцію категорії оновлено успішно',
+            'update-unknown-code' => 'Опція поля категорії з кодом «:code» не існує.',
         ],
         'families' => [
             'index' => [

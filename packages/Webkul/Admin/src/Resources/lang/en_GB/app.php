@@ -885,8 +885,9 @@ return [
             'not-found'         => 'Category Field with code ":code" not found',
         ],
         'category-fields-options' => [
-            'create-success' => 'Category Field Option Created Successfully',
-            'update-success' => 'Category Field Option Updated Successfully',
+            'create-success'      => 'Category Field Option Created Successfully',
+            'update-success'      => 'Category Field Option Updated Successfully',
+            'update-unknown-code' => 'No category field option exists with code ":code".',
         ],
         'families' => [
             'index' => [

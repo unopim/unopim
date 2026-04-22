@@ -885,8 +885,9 @@ return [
             'not-found'         => 'Kategoria kenttää koodilla ":code" ei löydy',
         ],
         'category-fields-options' => [
-            'create-success' => 'Kategoriakenttävaihtoehto luotu onnistuneesti',
-            'update-success' => 'Kategoriakenttävaihtoehto päivitetty onnistuneesti',
+            'create-success'      => 'Kategoriakenttävaihtoehto luotu onnistuneesti',
+            'update-success'      => 'Kategoriakenttävaihtoehto päivitetty onnistuneesti',
+            'update-unknown-code' => 'Luokkakenttävalintaa koodilla ":code" ei ole olemassa.',
         ],
         'families' => [
             'index' => [

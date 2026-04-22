@@ -885,8 +885,9 @@ return [
             'not-found'         => 'لم يتم العثور على عائلة السمات برمز ":code"',
         ],
         'category-fields-options' => [
-            'create-success' => 'خيار حقل الفئة تم إنشاؤه بنجاح',
-            'update-success' => 'تم تحديث خيار حقل الفئة بنجاح',
+            'create-success'      => 'خيار حقل الفئة تم إنشاؤه بنجاح',
+            'update-success'      => 'تم تحديث خيار حقل الفئة بنجاح',
+            'update-unknown-code' => 'خيار حقل الفئة ذو الرمز ":code" غير موجود.',
         ],
         'families' => [
             'index' => [

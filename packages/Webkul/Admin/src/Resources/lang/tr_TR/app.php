@@ -885,8 +885,9 @@ return [
             'not-found'         => 'Kategori Alanı ":code" bulunamadı',
         ],
         'category-fields-options' => [
-            'create-success' => 'Kategori alanı seçeneği başarıyla oluşturuldu',
-            'update-success' => 'Kategori alanı seçeneği başarıyla güncellendi',
+            'create-success'      => 'Kategori alanı seçeneği başarıyla oluşturuldu',
+            'update-success'      => 'Kategori alanı seçeneği başarıyla güncellendi',
+            'update-unknown-code' => '":code" kodlu kategori alanı seçeneği bulunamadı.',
         ],
         'families' => [
             'index' => [

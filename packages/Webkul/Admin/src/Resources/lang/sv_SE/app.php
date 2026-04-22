@@ -885,8 +885,9 @@ return [
             'not-found'         => 'Kategori fält med kod ":code" kunde inte hittas',
         ],
         'category-fields-options' => [
-            'create-success' => 'Kategoriens fältalternativ skapades',
-            'update-success' => 'Kategoriens fältalternativ uppdaterades',
+            'create-success'      => 'Kategoriens fältalternativ skapades',
+            'update-success'      => 'Kategoriens fältalternativ uppdaterades',
+            'update-unknown-code' => 'Det finns inget kategorifältsalternativ med koden ":code".',
         ],
         'families' => [
             'index' => [

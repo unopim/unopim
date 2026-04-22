@@ -885,8 +885,9 @@ return [
             'not-found'         => 'No se encuentra el Campo de Categoría con el código ":code"',
         ],
         'category-fields-options' => [
-            'create-success' => 'Opción de campo de categoría creada con éxito',
-            'update-success' => 'Opción de campo de categoría actualizada con éxito',
+            'create-success'      => 'Opción de campo de categoría creada con éxito',
+            'update-success'      => 'Opción de campo de categoría actualizada con éxito',
+            'update-unknown-code' => 'No existe ninguna opción de campo de categoría con el código «:code».',
         ],
         'families' => [
             'index' => [

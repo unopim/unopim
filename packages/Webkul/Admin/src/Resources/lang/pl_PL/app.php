@@ -885,8 +885,9 @@ return [
             'not-found'         => 'Nie znaleziono pola kategorii o kodzie ":code"',
         ],
         'category-fields-options' => [
-            'create-success' => 'Opcja pola kategorii została utworzona',
-            'update-success' => 'Opcja pola kategorii została zaktualizowana',
+            'create-success'      => 'Opcja pola kategorii została utworzona',
+            'update-success'      => 'Opcja pola kategorii została zaktualizowana',
+            'update-unknown-code' => 'Nie istnieje opcja pola kategorii o kodzie „:code”.',
         ],
         'families' => [
             'index' => [

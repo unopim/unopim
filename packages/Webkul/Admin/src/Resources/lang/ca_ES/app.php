@@ -885,8 +885,9 @@ return [
             'not-found'         => 'No s\'ha trobat el Camp de Categoria amb el codi ":code"',
         ],
         'category-fields-options' => [
-            'create-success' => 'Opció de Camp de Categoria Creada Correctament',
-            'update-success' => 'Opció de Camp de Categoria Actualitzada Correctament',
+            'create-success'      => 'Opció de Camp de Categoria Creada Correctament',
+            'update-success'      => 'Opció de Camp de Categoria Actualitzada Correctament',
+            'update-unknown-code' => 'No existeix cap opció de camp de categoria amb el codi «:code».',
         ],
         'families' => [
             'index' => [

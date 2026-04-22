@@ -885,8 +885,9 @@ return [
             'not-found'         => 'Polje Kategorije s kodom ":code" nije pronađeno',
         ],
         'category-fields-options' => [
-            'create-success' => 'Opcija polja kategorije uspješno stvorena',
-            'update-success' => 'Opcija polja kategorije uspješno ažurirana',
+            'create-success'      => 'Opcija polja kategorije uspješno stvorena',
+            'update-success'      => 'Opcija polja kategorije uspješno ažurirana',
+            'update-unknown-code' => 'Ne postoji opcija polja kategorije s kodom „:code“.',
         ],
         'families' => [
             'index' => [

@@ -885,8 +885,9 @@ return [
             'not-found'         => '无法找到代码为“:code”的类别字段',
         ],
         'category-fields-options' => [
-            'create-success' => '类别字段选项成功创建了',
-            'update-success' => '类别字段选项成功更新',
+            'create-success'      => '类别字段选项成功创建了',
+            'update-success'      => '类别字段选项成功更新',
+            'update-unknown-code' => '不存在代码为":code"的类别字段选项。',
         ],
         'families' => [
             'index' => [

@@ -225,23 +225,18 @@ class CategoryFieldController extends ApiController
             foreach ($requestData as $optionInputs) {
                 $optionInputs = $this->setLabels($optionInputs, 'label');
 
-                $categoryFieldOption = $this->categoryFieldOptionRepository->findOneByField('code', $optionInputs['code']);
+                $categoryFieldOption = $this->categoryFieldOptionRepository
+                    ->findOneWhere(['code' => $optionInputs['code'], 'category_field_id' => $categoryField->id]);
 
                 if (! $categoryFieldOption) {
-                    $validator = $this->optionValidate($optionInputs, $categoryField->id);
+                    $errors[$optionInputs['code']] = [
+                        trans('admin::app.catalog.category-fields-options.update-unknown-code', ['code' => $optionInputs['code']]),
+                    ];
 
-                    if ($validator->fails()) {
-                        $errors[] = $validator->errors();
-
-                        continue;
-                    }
-
-                    $this->categoryFieldOptionRepository->create(array_merge([
-                        'category_field_id' => $categoryField->id,
-                    ], $optionInputs));
-                } else {
-                    $this->categoryFieldOptionRepository->update($optionInputs, $categoryFieldOption->id);
+                    continue;
                 }
+
+                $this->categoryFieldOptionRepository->update($optionInputs, $categoryFieldOption->id);
             }
 
             if (! empty($errors)) {

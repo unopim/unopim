@@ -885,8 +885,9 @@ return [
             'not-found'         => '找不到代碼為 ":code" 的類別欄位',
         ],
         'category-fields-options' => [
-            'create-success' => '類別欄位選項建立成功',
-            'update-success' => '類別欄位選項更新成功',
+            'create-success'      => '類別欄位選項建立成功',
+            'update-success'      => '類別欄位選項更新成功',
+            'update-unknown-code' => '不存在代碼為「:code」的類別欄位選項。',
         ],
         'families' => [
             'index' => [

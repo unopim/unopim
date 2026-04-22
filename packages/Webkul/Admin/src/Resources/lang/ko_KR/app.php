@@ -885,8 +885,9 @@ return [
             'not-found'         => '코드 ":code"의 카테고리 필드를 찾을 수 없습니다.',
         ],
         'category-fields-options' => [
-            'create-success' => '카테고리 필드 옵션이 성공적으로 생성되었습니다.',
-            'update-success' => '카테고리 필드 옵션이 성공적으로 업데이트되었습니다.',
+            'create-success'      => '카테고리 필드 옵션이 성공적으로 생성되었습니다.',
+            'update-success'      => '카테고리 필드 옵션이 성공적으로 업데이트되었습니다.',
+            'update-unknown-code' => '코드 ":code"에 해당하는 카테고리 필드 옵션이 없습니다.',
         ],
         'families' => [
             'index' => [

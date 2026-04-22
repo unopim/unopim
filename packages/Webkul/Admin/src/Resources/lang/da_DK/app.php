@@ -885,8 +885,9 @@ return [
             'not-found'         => 'Kategori Felt med kode ":code" blev ikke fundet',
         ],
         'category-fields-options' => [
-            'create-success' => 'Kategori Felt Option Oprettet Succesfuldt',
-            'update-success' => 'Kategori Felt Option Opdateret Succesfuldt',
+            'create-success'      => 'Kategori Felt Option Oprettet Succesfuldt',
+            'update-success'      => 'Kategori Felt Option Opdateret Succesfuldt',
+            'update-unknown-code' => 'Der findes ingen kategorifeltsindstilling med koden ":code".',
         ],
         'families' => [
             'index' => [

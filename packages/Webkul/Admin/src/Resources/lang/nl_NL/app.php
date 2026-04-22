@@ -885,8 +885,9 @@ return [
             'not-found'         => 'Categorie -veld met code ":code" kon niet worden gevonden',
         ],
         'category-fields-options' => [
-            'create-success' => 'Categorie -veldoptie met succes gemaakt',
-            'update-success' => 'Categorie veldoptie met succes bijgewerkt',
+            'create-success'      => 'Categorie -veldoptie met succes gemaakt',
+            'update-success'      => 'Categorie veldoptie met succes bijgewerkt',
+            'update-unknown-code' => 'Er bestaat geen categorieveldoptie met code ":code".',
         ],
         'families' => [
             'index' => [

@@ -885,8 +885,9 @@ return [
             'not-found'         => 'Câmp de categorie cu codul ":code" nu a fost găsit',
         ],
         'category-fields-options' => [
-            'create-success' => 'Opțiune câmp categorie creată',
-            'update-success' => 'Opțiune câmp categorie actualizată',
+            'create-success'      => 'Opțiune câmp categorie creată',
+            'update-success'      => 'Opțiune câmp categorie actualizată',
+            'update-unknown-code' => 'Nu există nicio opțiune de câmp de categorie cu codul „:code”.',
         ],
         'families' => [
             'index' => [

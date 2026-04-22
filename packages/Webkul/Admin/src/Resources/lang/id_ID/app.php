@@ -885,8 +885,9 @@ return [
             'not-found'         => 'Bidang kategori dengan kode ":code" tidak dapat ditemukan',
         ],
         'category-fields-options' => [
-            'create-success' => 'Opsi bidang kategori berhasil dibuat',
-            'update-success' => 'Opsi bidang kategori berhasil diperbarui',
+            'create-success'      => 'Opsi bidang kategori berhasil dibuat',
+            'update-success'      => 'Opsi bidang kategori berhasil diperbarui',
+            'update-unknown-code' => 'Opsi field kategori dengan kode ":code" tidak ditemukan.',
         ],
         'families' => [
             'index' => [

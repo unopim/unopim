@@ -885,8 +885,9 @@ return [
             'not-found'         => 'Hindi natagpuan ang field ng kategorya na may code ":code"',
         ],
         'category-fields-options' => [
-            'create-success' => 'Nagtagumpay ang paglikha ng opsyon ng kategorya',
-            'update-success' => 'Na-update ang opsyon ng kategorya',
+            'create-success'      => 'Nagtagumpay ang paglikha ng opsyon ng kategorya',
+            'update-success'      => 'Na-update ang opsyon ng kategorya',
+            'update-unknown-code' => 'Walang category field option na may code na ":code".',
         ],
         'families' => [
             'index' => [

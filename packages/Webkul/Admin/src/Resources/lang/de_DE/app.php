@@ -885,8 +885,9 @@ return [
             'not-found'         => 'Kategoriefeld mit Code „:code“ konnte nicht gefunden werden',
         ],
         'category-fields-options' => [
-            'create-success' => 'Kategoriefeldoption erfolgreich erstellt',
-            'update-success' => 'Kategoriefeldoption erfolgreich aktualisiert',
+            'create-success'      => 'Kategoriefeldoption erfolgreich erstellt',
+            'update-success'      => 'Kategoriefeldoption erfolgreich aktualisiert',
+            'update-unknown-code' => 'Eine Kategoriefeld-Option mit dem Code „:code“ existiert nicht.',
         ],
         'families' => [
             'index' => [

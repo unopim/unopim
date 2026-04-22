@@ -885,8 +885,9 @@ return [
             'not-found'         => 'コード ":code" のカテゴリ フィールドが見つかりませんでした',
         ],
         'category-fields-options' => [
-            'create-success' => 'カテゴリ フィールド オプションが正常に作成されました',
-            'update-success' => 'カテゴリ フィールド オプションが正常に更新されました',
+            'create-success'      => 'カテゴリ フィールド オプションが正常に作成されました',
+            'update-success'      => 'カテゴリ フィールド オプションが正常に更新されました',
+            'update-unknown-code' => 'コード「:code」のカテゴリフィールドオプションは存在しません。',
         ],
         'families' => [
             'index' => [
