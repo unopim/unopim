@@ -389,6 +389,8 @@ return [
                 'no-changes'                  => 'Inga ändringar att spara.',
 
                 'invalid-datetime'            => 'Ange ett giltigt datum och klockslag.',
+
+                'resize-column'               => 'Dra för att ändra kolumnbredd',
                 'success'                     => 'Uppgiften har utförts.',
                 'fetch-failed'                => 'Misslyckades med att hämta.',
                 'action'                      => 'Massredigering',

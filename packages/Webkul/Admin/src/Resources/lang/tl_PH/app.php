@@ -389,6 +389,8 @@ return [
                 'no-changes'                  => 'Walang pagbabago para i-save.',
 
                 'invalid-datetime'            => 'Maglagay ng wastong petsa at oras.',
+
+                'resize-column'               => 'I-drag upang baguhin ang lapad ng column',
                 'success'                     => 'Matagumpay na naisagawa ang gawain.',
                 'fetch-failed'                => 'Hindi nakuha ang datos.',
                 'action'                      => 'Maramihang Pag-edit',

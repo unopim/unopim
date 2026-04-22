@@ -389,6 +389,8 @@ return [
                 'no-changes'                  => 'Nessuna modifica da salvare.',
 
                 'invalid-datetime'            => 'Inserisci una data e un\'ora valide.',
+
+                'resize-column'               => 'Trascina per ridimensionare la colonna',
                 'success'                     => 'Operazione completata con successo.',
                 'fetch-failed'                => 'Impossibile recuperare i dati.',
                 'action'                      => 'Modifica di massa',

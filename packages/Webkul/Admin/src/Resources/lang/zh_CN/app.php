@@ -389,6 +389,8 @@ return [
                 'no-changes'                  => '没有可保存的更改。',
 
                 'invalid-datetime'            => '请输入有效的日期和时间。',
+
+                'resize-column'               => '拖动以调整列宽',
                 'success'                     => '任务已成功执行。',
                 'fetch-failed'                => '获取失败。',
                 'action'                      => '批量编辑',

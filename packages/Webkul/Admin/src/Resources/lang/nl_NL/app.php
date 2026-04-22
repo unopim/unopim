@@ -389,6 +389,8 @@ return [
                 'no-changes'                  => 'Geen wijzigingen om op te slaan.',
 
                 'invalid-datetime'            => 'Voer een geldige datum en tijd in.',
+
+                'resize-column'               => 'Sleep om kolom te vergroten of verkleinen',
                 'success'                     => 'Taak succesvol uitgevoerd.',
                 'fetch-failed'                => 'Ophalen mislukt.',
                 'action'                      => 'Bulk Bewerken',

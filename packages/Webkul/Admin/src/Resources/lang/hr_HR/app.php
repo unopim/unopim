@@ -389,6 +389,8 @@ return [
                 'no-changes'                  => 'Nema promjena za spremiti.',
 
                 'invalid-datetime'            => 'Unesite valjani datum i vrijeme.',
+
+                'resize-column'               => 'Povucite za promjenu širine stupca',
                 'success'                     => 'Operacija uspješno izvršena.',
                 'fetch-failed'                => 'Preuzimanje nije uspjelo.',
                 'action'                      => 'Grupno uređivanje',

@@ -389,6 +389,8 @@ return [
                 'no-changes'                  => 'Kaydedilecek değişiklik yok.',
 
                 'invalid-datetime'            => 'Geçerli bir tarih ve saat girin.',
+
+                'resize-column'               => 'Sütun genişliğini değiştirmek için sürükleyin',
                 'success'                     => 'İşlem başarıyla gerçekleştirildi.',
                 'fetch-failed'                => 'Veri alınamadı.',
                 'action'                      => 'Toplu Düzenleme',

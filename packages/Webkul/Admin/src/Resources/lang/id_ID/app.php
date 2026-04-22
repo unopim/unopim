@@ -389,6 +389,8 @@ return [
                 'no-changes'                  => 'Tidak ada perubahan untuk disimpan.',
 
                 'invalid-datetime'            => 'Masukkan tanggal dan waktu yang valid.',
+
+                'resize-column'               => 'Seret untuk mengubah lebar kolom',
                 'success'                     => 'Pekerjaan berhasil dijalankan.',
                 'fetch-failed'                => 'Gagal mengambil data.',
                 'action'                      => 'Edit Massal',

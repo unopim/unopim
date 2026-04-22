@@ -389,6 +389,8 @@ return [
                 'no-changes'                  => 'Không có thay đổi nào để lưu.',
 
                 'invalid-datetime'            => 'Vui lòng nhập ngày và giờ hợp lệ.',
+
+                'resize-column'               => 'Kéo để thay đổi kích thước cột',
                 'success'                     => 'Thực thi công việc thành công.',
                 'fetch-failed'                => 'Lấy dữ liệu thất bại.',
                 'action'                      => 'Chỉnh sửa hàng loạt',

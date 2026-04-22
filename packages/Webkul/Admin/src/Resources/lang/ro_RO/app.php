@@ -389,6 +389,8 @@ return [
                 'no-changes'                  => 'Nicio modificare de salvat.',
 
                 'invalid-datetime'            => 'Introduceți o dată și oră valide.',
+
+                'resize-column'               => 'Trageți pentru a redimensiona coloana',
                 'success'                     => 'Sarcină executată cu succes.',
                 'fetch-failed'                => 'Eroare la preluare.',
                 'action'                      => 'Editare în masă',

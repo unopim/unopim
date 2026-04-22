@@ -389,6 +389,8 @@ return [
                 'no-changes'                  => 'Keine Änderungen zum Speichern.',
 
                 'invalid-datetime'            => 'Bitte ein gültiges Datum mit Uhrzeit eingeben.',
+
+                'resize-column'               => 'Ziehen, um die Spaltenbreite zu ändern',
                 'success'                     => 'Vorgang erfolgreich abgeschlossen.',
                 'fetch-failed'                => 'Abruf fehlgeschlagen.',
                 'action'                      => 'Massenbearbeitung',

@@ -389,6 +389,8 @@ return [
                 'no-changes'                  => '沒有要儲存的變更。',
 
                 'invalid-datetime'            => '請輸入有效的日期與時間。',
+
+                'resize-column'               => '拖動以調整欄寬',
                 'success'                     => '任務執行成功。',
                 'fetch-failed'                => '取得資料失敗。',
                 'action'                      => '批次編輯',

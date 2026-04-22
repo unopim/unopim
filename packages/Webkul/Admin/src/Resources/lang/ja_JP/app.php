@@ -389,6 +389,8 @@ return [
                 'no-changes'                  => '保存する変更はありません。',
 
                 'invalid-datetime'            => '有効な日付と時刻を入力してください。',
+
+                'resize-column'               => 'ドラッグして列幅を変更',
                 'success'                     => 'ジョブが正常に実行されました。',
                 'fetch-failed'                => '取得に失敗しました。',
                 'action'                      => '一括編集',

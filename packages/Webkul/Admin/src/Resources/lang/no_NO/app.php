@@ -389,6 +389,8 @@ return [
                 'no-changes'                  => 'Ingen endringer å lagre.',
 
                 'invalid-datetime'            => 'Angi en gyldig dato og et gyldig klokkeslett.',
+
+                'resize-column'               => 'Dra for å endre kolonnebredde',
                 'success'                     => 'Jobb fullført.',
                 'fetch-failed'                => 'Henting mislyktes.',
                 'action'                      => 'Masseendring',

@@ -389,6 +389,8 @@ return [
                 'no-changes'                  => 'No hi ha canvis per desar.',
 
                 'invalid-datetime'            => 'Introdueix una data i hora vàlides.',
+
+                'resize-column'               => 'Arrossega per redimensionar la columna',
                 'success'                     => 'Operació completada amb èxit.',
                 'fetch-failed'                => 'Error en obtenir les dades.',
                 'action'                      => 'Edició en massa',

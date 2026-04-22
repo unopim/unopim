@@ -389,6 +389,8 @@ return [
                 'no-changes'                  => 'Brak zmian do zapisania.',
 
                 'invalid-datetime'            => 'Wprowadź prawidłową datę i godzinę.',
+
+                'resize-column'               => 'Przeciągnij, aby zmienić szerokość kolumny',
                 'success'                     => 'Zadanie zostało pomyślnie wykonane.',
                 'fetch-failed'                => 'Nie udało się pobrać.',
                 'action'                      => 'Edycja zbiorcza',

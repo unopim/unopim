@@ -389,6 +389,8 @@ return [
                 'no-changes'                  => 'Nenhuma alteração para salvar.',
 
                 'invalid-datetime'            => 'Informe uma data e hora válidas.',
+
+                'resize-column'               => 'Arraste para redimensionar a coluna',
                 'success'                     => 'A tarefa foi executada com sucesso.',
                 'fetch-failed'                => 'Falha ao buscar.',
                 'action'                      => 'Edição em massa',

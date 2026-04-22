@@ -389,6 +389,8 @@ return [
                 'no-changes'                  => 'Ei muutoksia tallennettavaksi.',
 
                 'invalid-datetime'            => 'Anna kelvollinen päivämäärä ja kellonaika.',
+
+                'resize-column'               => 'Vedä muuttaaksesi sarakkeen leveyttä',
                 'success'                     => 'Toiminto suoritettu onnistuneesti.',
                 'fetch-failed'                => 'Tietojen haku epäonnistui.',
                 'action'                      => 'Massamuokkaus',
