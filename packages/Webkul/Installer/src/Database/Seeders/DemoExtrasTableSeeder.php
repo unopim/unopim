@@ -77,6 +77,26 @@ class DemoExtrasTableSeeder extends Seeder
                     continue;
                 }
 
+                // The Magic AI config entries in the demo dump point at hardcoded
+                // platform/model/channel/locale values that don't reflect the
+                // target install (encrypted api_key with a different APP_KEY,
+                // model names the user hasn't configured, translation channels
+                // the user hasn't set up). Strip these so Magic AI starts in the
+                // same empty-placeholder state a fresh install has — the user
+                // can opt into their own values via Configuration → Magic AI.
+                if ($table === 'core_config') {
+                    $rows = array_values(array_filter(
+                        $rows,
+                        static fn (array $row): bool => ! str_starts_with($row['code'] ?? '', 'general.magic_ai.')
+                    ));
+                }
+
+                // The seeded platform row has an api_key encrypted with a
+                // different APP_KEY and is thus useless on any install. Skip it.
+                if ($table === 'magic_ai_platforms') {
+                    $rows = [];
+                }
+
                 DB::table($table)->delete();
 
                 if (empty($rows)) {

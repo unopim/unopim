@@ -129,7 +129,7 @@ return [
                 'title'         => 'admin::app.configuration.index.general.magic-ai.agentic-pim.open-by-default',
                 'type'          => 'boolean',
                 'info'          => 'admin::app.configuration.index.general.magic-ai.agentic-pim.open-by-default-info',
-                'default_value' => '1',
+                'default_value' => '0',
             ], [
                 'name'          => 'max_steps',
                 'title'         => 'admin::app.configuration.index.general.magic-ai.agentic-pim.max-steps',

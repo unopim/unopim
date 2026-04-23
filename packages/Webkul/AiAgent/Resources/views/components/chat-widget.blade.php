@@ -13,7 +13,7 @@
 
     // Default panel state for fresh sessions. Stored user preference in
     // sessionStorage still wins — see restoreState() below.
-    $openByDefault = (bool) (core()->getConfigData('general.magic_ai.agentic_pim.open_by_default') ?? true);
+    $openByDefault = (bool) (core()->getConfigData('general.magic_ai.agentic_pim.open_by_default') ?? false);
 @endphp
 
 <v-agenting-pim></v-agenting-pim>

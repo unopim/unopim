@@ -44,11 +44,13 @@ class CategoryDemoTableSeeder extends Seeder
 
             foreach ($categories as $category) {
                 if ($category['code'] === 'root') {
+                    // Preserve the root category's additional_data untouched so the
+                    // admin UI keeps its default `[root]` label (used by fillChannelForm
+                    // in E2E tests and matches the core installer's bare root setup).
                     DB::table('categories')->where('id', $root->id)->update([
-                        '_lft'            => (int) $category['_lft'],
-                        '_rgt'            => (int) $category['_rgt'],
-                        'additional_data' => json_encode($category['additional_data'], JSON_UNESCAPED_UNICODE),
-                        'updated_at'      => $now,
+                        '_lft'       => (int) $category['_lft'],
+                        '_rgt'       => (int) $category['_rgt'],
+                        'updated_at' => $now,
                     ]);
 
                     continue;
