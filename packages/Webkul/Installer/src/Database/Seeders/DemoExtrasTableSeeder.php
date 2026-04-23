@@ -62,8 +62,13 @@ class DemoExtrasTableSeeder extends Seeder
             return;
         }
 
+        $driver = DB::getDriverName();
+        $isMysql = in_array($driver, ['mysql', 'mariadb'], true);
+
         try {
-            DB::statement('SET FOREIGN_KEY_CHECKS = 0');
+            if ($isMysql) {
+                DB::statement('SET FOREIGN_KEY_CHECKS = 0');
+            }
 
             $appliedTables = [];
 
@@ -88,13 +93,17 @@ class DemoExtrasTableSeeder extends Seeder
                 $appliedTables[] = $table;
             }
 
-            DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+            if ($isMysql) {
+                DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+            }
 
             DatabaseSequenceHelper::fixSequences($appliedTables);
 
             $this->command?->info('Demo extras seeded successfully ('.count($appliedTables).' tables).');
         } catch (Throwable $e) {
-            DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+            if ($isMysql) {
+                DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+            }
             $this->command?->error('Failed to seed demo extras: '.$e->getMessage());
         }
     }
