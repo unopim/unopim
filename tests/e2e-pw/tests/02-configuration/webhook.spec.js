@@ -114,7 +114,7 @@ test.describe('UnoPim Webhook test cases', () => {
     await expect(adminPage.locator('#app').getByText('Date/Time')).toBeVisible();
     await expect(adminPage.locator('#app').getByText('SKU')).toBeVisible();
     await expect(adminPage.locator('#app').getByText('User', { exact: true })).toBeVisible();
-    await expect(adminPage.locator('#app').getByText('Status')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('Status').first()).toBeVisible();
     await expect(adminPage.locator('#app').getByText('Actions')).toBeVisible();
   });
 
@@ -126,7 +126,7 @@ test.describe('UnoPim Webhook test cases', () => {
     await expect(adminPage.locator('#app').getByText('Apply Filters')).toBeVisible();
     await expect(adminPage.locator('input[name="sku"]')).toBeVisible();
     await expect(adminPage.locator('input[name="user"]')).toBeVisible();
-    await expect(adminPage.locator('input[name="status"]')).toBeVisible();
+    await expect(adminPage.locator('[name="status"]').first()).toBeVisible();
     await expect(adminPage.locator('#app').getByText('Save')).toBeVisible();
   });
 
